@@ -1,0 +1,19 @@
+{
+	"extends": ["react-app"],
+	"plugins": ["prettier"],
+	"rules": {
+		"react/react-in-jsx-scope": "off",
+		"prettier/prettier": "error",
+		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],
+		"comma-dangle": [
+			"error",
+			{
+				"arrays": "always-multiline",
+				"objects": "always-multiline",
+				"imports": "always-multiline",
+				"exports": "always-multiline",
+				"functions": "never"
+			}
+		]
+	}
+}

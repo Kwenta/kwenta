@@ -1,0 +1,20 @@
+{
+	"meta": {
+		"description": "Kwenta description",
+		"og": {
+			"title": "Kwenta",
+			"description": "Kwenta description",
+			"image-alt": "Kwenta",
+			"site-name": "Kwenta"
+		}
+	},
+	"homepage": {
+		"page-title": "Kwenta | Simple crypto trading for everyone"
+	},
+	"exchange": {
+		"page-title": "Kwenta | Exchange"
+	},
+	"dashboard": {
+		"page-title": "Kwenta | Dashboard"
+	}
+}
