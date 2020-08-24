@@ -1,17 +1,16 @@
 export default {
-	// black
-	black1: '#000000',
-	black2: '#08080F',
-	black3: '#10101E',
-	black4: '#1A1A2E',
-	// grey
-	gray1: 'currentColor',
-	gray2: '#8A939F',
-	// white
-	white: '#ffffff',
-	// supplementary
+	black: '#000000',
+	vampire: '#08080F',
+	elderberry: '#10101E',
+	navy: '#1A1A2E',
+	stormcloud: '#57616B',
+	blueberry: '##6F6E95',
+	silver: '#8A939F',
+	white: '#FFFFFF',
 	purple: '#5D46CE',
+	purpleHover: '#7155F9',
 	red: '#CB366D',
+	redHover: '#FF568F',
 	green: '#66DD84',
 	yellow: '#FFDF6D',
 };

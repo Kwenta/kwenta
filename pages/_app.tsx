@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
+import { RecoilRoot } from 'recoil';
 
 import { ThemeProvider as SCThemeProvider } from 'styled-components';
 import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
@@ -40,11 +41,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			</Head>
 			<SCThemeProvider theme={scTheme}>
 				<MuiThemeProvider theme={muiTheme}>
-					<WithStateContainers>
-						<Layout>
-							<Component {...pageProps} />
-						</Layout>
-					</WithStateContainers>
+					<RecoilRoot>
+						<WithStateContainers>
+							<Layout>
+								<Component {...pageProps} />
+							</Layout>
+						</WithStateContainers>
+					</RecoilRoot>
 				</MuiThemeProvider>
 			</SCThemeProvider>
 		</>

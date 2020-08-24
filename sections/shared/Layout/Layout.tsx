@@ -21,8 +21,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
 const GlobalStyle = createGlobalStyle`
   body {
-		background-color: ${(props) => props.theme.colors.black1};
-		color: ${(props) => props.theme.colors.white}
+		background-color: ${(props) => props.theme.colors.black};
+		color: ${(props) => props.theme.colors.white};
+		font-family: ${(props) => props.theme.fonts.regular}
   }
 `;
 

@@ -1,13 +1,16 @@
 import React, { FC } from 'react';
 
-import Wallet from './Wallet';
+import Connector from './Connector';
+import Etherscan from './Etherscan';
 
 type WithStateContainersProps = {
 	children: React.ReactNode;
 };
 
 export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) => (
-	<Wallet.Provider>{children}</Wallet.Provider>
+	<Connector.Provider>
+		<Etherscan.Provider>{children}</Etherscan.Provider>
+	</Connector.Provider>
 );
 
 export default WithStateContainers;

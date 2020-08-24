@@ -17,4 +17,4 @@ export const INFURA_JSON_RPC_URLS: Record<NetworkId, string> = {
 	42: `https://kovan.infura.io/v3/${INFURA_PROJECT_ID}`,
 };
 
-export const DEFAULT_NETWORK_ID: NetworkId = 1;
+export const isMainNet = (networkId: NetworkId) => networkId === 1;

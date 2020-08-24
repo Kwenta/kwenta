@@ -9,6 +9,9 @@ i18n.use(initReactI18next).init({
 	},
 	fallbackLng: 'en',
 	lng: 'en',
+	interpolation: {
+		escapeValue: false, // react already safes from xss
+	},
 });
 
 export default i18n;
