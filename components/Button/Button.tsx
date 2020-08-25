@@ -40,7 +40,8 @@ const Button = styled.button<ButtonProps>`
 				}
 			}
 			${(props) =>
-				(props as ButtonProps).isActive &&
+				// @ts-ignore
+				props.isActive &&
 				css`
 					background-color: ${(props) => props.theme.colors.purpleHover};
 				`}
