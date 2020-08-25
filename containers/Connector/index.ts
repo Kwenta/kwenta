@@ -1,1 +1,1 @@
-export { default } from './Wallet';
+export { default } from './Connector';

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
-
 	return (
 		<>
 			<Head>

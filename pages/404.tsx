@@ -1,17 +1,17 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
-const HomePage = () => {
+const NotFoundPage = () => {
 	const { t } = useTranslation();
 
 	return (
 		<>
 			<Head>
-				<title>{t('homepage.page-title')}</title>
-				{/* <span>{etherscan.txLink('xxx')}</span> */}
+				<title>{t('not-found.page-title')}</title>
 			</Head>
+			<div>Not Found</div>
 		</>
 	);
 };
 
-export default HomePage;
+export default NotFoundPage;

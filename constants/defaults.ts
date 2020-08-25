@@ -1,13 +1,14 @@
-import { FIAT_CURRENCY_MAP } from './currency';
 import { Languages } from 'translations/constants';
-import { NetworkId } from './network';
+
+import { FIAT_CURRENCY_MAP } from './currency';
+import { NetworkIds } from '@synthetixio/js';
 
 // app defaults
 export const DEFAULT_LANGUAGE = Languages.EN;
 export const DEFAULT_FIAT_CURRENCY = FIAT_CURRENCY_MAP.USD;
 
 // network defaults
-export const DEFAULT_NETWORK_ID: NetworkId = 1;
+export const DEFAULT_NETWORK_ID = NetworkIds.Mainnet;
 export const DEFAULT_GAS_LIMIT = 500000;
 
 // ui defaults

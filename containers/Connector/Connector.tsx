@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
+import snxJSLib, { NetworkIds } from '@synthetixio/js';
 
 import { ethers } from 'ethers';
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
-
-import { NetworkId } from 'constants/network';
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 import { initOnboard, initNotify } from './config';
 
@@ -19,19 +17,14 @@ const useConnector = () => {
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 	const [networkId, setNetworkId] = useRecoilState(networkIdState);
-
-	const setDefaults = () => {
-		setProvider(null);
-		setNetworkId(DEFAULT_NETWORK_ID);
-		setWalletAddress(null);
-	};
+	const [snxJS, setSnxJS] = useState<ReturnType<typeof snxJSLib>>(snxJSLib({ networkId }));
 
 	useEffect(() => {
 		const onboard = initOnboard(networkId, {
 			address: setWalletAddress,
 			network: (_networkId: number) => {
 				// check for valid networkId
-				const networkId = _networkId as NetworkId;
+				const networkId = _networkId as NetworkIds;
 				setNetworkId(networkId);
 				onboard.config({ networkId });
 				notify.config({ networkId });
@@ -41,10 +34,12 @@ const useConnector = () => {
 					const provider = new ethers.providers.Web3Provider(wallet.provider);
 					const network = await provider.getNetwork();
 					setProvider(provider);
-					setNetworkId(network.chainId as NetworkId);
+					setNetworkId(network.chainId as NetworkIds);
 					setSigner(provider.getSigner());
 				} else {
-					setDefaults();
+					setProvider(null);
+					setSigner(null);
+					setWalletAddress(null);
 				}
 			},
 		});
@@ -55,25 +50,18 @@ const useConnector = () => {
 		// eslint-disable-next-line
 	}, []);
 
-	// const connectWallet = async () => {
-	// 	try {
-	// 		if (onboard) {
-	// 			await onboard.walletSelect();
-	// 			await onboard.walletCheck();
-	// 		}
-	// 	} catch (e) {
-	// 		console.log(e);
-	// 		setError(e);
-	// 	}
-
-	// 	setOnboard(onboard);
-	// };
+	useEffect(() => {
+		if (signer) {
+			setSnxJS(snxJSLib({ networkId, signer }));
+		}
+	}, [signer, networkId]);
 
 	return {
 		provider,
 		signer,
 		onboard,
 		notify,
+		snxJS,
 	};
 };
 

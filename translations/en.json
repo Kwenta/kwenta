@@ -8,6 +8,12 @@
 			"site-name": "Kwenta"
 		}
 	},
+	"header": {
+		"nav": {
+			"exchange": "exchange",
+			"dashboard": "dashboard"
+		}
+	},
 	"homepage": {
 		"page-title": "Kwenta"
 	},
@@ -16,5 +22,8 @@
 	},
 	"dashboard": {
 		"page-title": "Kwenta | Dashboard"
+	},
+	"not-found": {
+		"page-title": "Kwenta | Not Found"
 	}
 }

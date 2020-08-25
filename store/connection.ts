@@ -1,11 +1,12 @@
+import { NetworkIds } from '@synthetixio/js';
 import { atom, selector } from 'recoil';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { NetworkId } from 'constants/network';
+import { truncateAddress } from 'utils/formatters';
 
 const getKey = (subKey: string) => `connectionState/${subKey}`;
 
-export const networkIdState = atom<NetworkId>({
+export const networkIdState = atom<NetworkIds>({
 	key: getKey('networkId'),
 	default: DEFAULT_NETWORK_ID,
 });
@@ -15,7 +16,18 @@ export const walletAddressState = atom<string | null>({
 	default: null,
 });
 
-// export const isWalletConnectedState = selector({
-// 	key: getKey('isWalletConnected'),
-// 	get: ({ get }) => get(walletAddressState) != null,
-// });
+export const isWalletConnectedState = selector<boolean>({
+	key: getKey('isWalletConnected'),
+	get: ({ get }) => get(walletAddressState) != null,
+});
+
+export const truncatedWalletAddressState = selector<string | null>({
+	key: getKey('truncatedWalletAddress'),
+	get: ({ get }) => {
+		const walletAddress = get(walletAddressState);
+		if (walletAddress != null) {
+			return truncateAddress(walletAddress);
+		}
+		return walletAddress;
+	},
+});

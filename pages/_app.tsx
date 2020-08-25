@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useTranslation } from 'react-i18next';
 import { RecoilRoot } from 'recoil';
 
 import { ThemeProvider as SCThemeProvider } from 'styled-components';
@@ -15,8 +14,6 @@ import '../i18n';
 import Layout from 'sections/shared/Layout';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
-	const { t } = useTranslation();
-
 	return (
 		<>
 			<Head>
