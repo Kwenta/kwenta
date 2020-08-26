@@ -1,9 +1,11 @@
-export const synthSummaryUtilContract = {
+import { NetworkIds } from '@synthetixio/js';
+
+export default {
 	addresses: {
-		1: '0x0D69755e12107695E544842BF7F61D9193f09a54',
-		3: '0x26a3C1878c4f3598e58f8bFB60B3cD9EF083e892',
-		4: '0xba6c0220157008cecb7364b37e27885e7b5be74a',
-		42: '0xA2b5742922ae4CA1676349009E33DA5fB4D05dCB',
+		[NetworkIds.Mainnet]: '0x0D69755e12107695E544842BF7F61D9193f09a54',
+		[NetworkIds.Ropsten]: '0x26a3C1878c4f3598e58f8bFB60B3cD9EF083e892',
+		[NetworkIds.Rinkeby]: '0xba6c0220157008cecb7364b37e27885e7b5be74a',
+		[NetworkIds.Kovan]: '0xA2b5742922ae4CA1676349009E33DA5fB4D05dCB',
 	},
 	abi: [
 		{

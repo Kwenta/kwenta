@@ -4,7 +4,7 @@ import { atom, selector } from 'recoil';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { truncateAddress } from 'utils/formatters';
 
-const getKey = (subKey: string) => `connectionState/${subKey}`;
+const getKey = (subKey: string) => `connection/${subKey}`;
 
 export const networkIdState = atom<NetworkIds>({
 	key: getKey('networkId'),

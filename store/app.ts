@@ -4,7 +4,7 @@ import { Languages } from 'translations/constants';
 import { DEFAULT_LANGUAGE } from 'constants/defaults';
 import { FIAT_CURRENCY_MAP } from 'constants/currency';
 
-const getKey = (subKey: string) => `appState/${subKey}`;
+const getKey = (subKey: string) => `app/${subKey}`;
 
 export const languageState = atom<Languages>({
 	key: getKey('language'),
