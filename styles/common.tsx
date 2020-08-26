@@ -98,3 +98,11 @@ export const FullScreenModal = styled(Modal).attrs({
 	opacity: 1;
 	overflow: auto;
 `;
+
+export const numericValueCSS = css`
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+export const NumericValue = styled.span`
+	${numericValueCSS};
+`;

@@ -24,8 +24,9 @@ const Wallet = styled(FlexDivCentered)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	background-color: ${(props) => props.theme.colors.elderberry};
 	border: 1px solid ${(props) => props.theme.colors.navy};
+	color: ${(props) => props.theme.colors.white};
 	border-radius: 4px;
-	padding: 12px;
+	padding: 6px 12px;
 	font-size: 12px;
 	cursor: pointer;
 `;

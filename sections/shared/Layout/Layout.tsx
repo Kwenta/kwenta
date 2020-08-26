@@ -35,15 +35,26 @@ const GlobalStyle = createGlobalStyle`
 		box-sizing: border-box;
 	}
 
+	input[type='number'] {
+		-moz-appearance: textfield;
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+	}
+
+
 	body {
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 
 		background-color: ${(props) => props.theme.colors.black};
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.blueberry};
 		font-family: ${(props) =>
 			`${props.theme.fonts.regular}, -apple-system, BlinkMacSystemFont, sans-serif;`};
 		font-size: 16px;
+		margin: 0;
 	}
 
 	ul {

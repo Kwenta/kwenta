@@ -5,7 +5,10 @@ import { CurrencyKey } from 'constants/currency';
 
 type NumericValue = string | number;
 
-export const toBigNumber = (value: BigNumber | string | number) => new BigNumber(value);
+export const toBigNumber = (value: BigNumber | NumericValue) => new BigNumber(value);
+
+export const formatCryptoCurrency = (value: BigNumber | NumericValue) =>
+	toBigNumber(value).toFormat(4);
 
 export const truncateAddress = (address: string, first = 5, last = 5) =>
 	`${address.slice(0, first)}...${address.slice(-last, address.length)}`;

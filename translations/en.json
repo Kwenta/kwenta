@@ -18,12 +18,26 @@
 		"page-title": "Kwenta"
 	},
 	"exchange": {
-		"page-title": "Kwenta | Exchange"
+		"page-title": "Kwenta | Exchange",
+		"currency-card": {
+			"from": "from",
+			"into": "into",
+			"wallet-balance": "Wallet Balance",
+			"currency-selector": {
+				"no-value": "Select Synth"
+			}
+		}
 	},
 	"dashboard": {
 		"page-title": "Kwenta | Dashboard"
 	},
 	"not-found": {
 		"page-title": "Kwenta | Not Found"
+	},
+	"common": {
+		"order-type": {
+			"market": "market",
+			"limit": "limit"
+		}
 	}
 }

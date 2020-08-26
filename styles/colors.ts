@@ -4,7 +4,7 @@ export default {
 	elderberry: '#10101E',
 	navy: '#1A1A2E',
 	stormcloud: '#57616B',
-	blueberry: '##6F6E95',
+	blueberry: '#6F6E95',
 	silver: '#8A939F',
 	white: '#FFFFFF',
 	purple: '#5D46CE',
