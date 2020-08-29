@@ -106,3 +106,12 @@ export const numericValueCSS = css`
 export const NumericValue = styled.span`
 	${numericValueCSS};
 `;
+
+export const NoTextTransform = styled.span`
+	text-transform: none;
+`;
+
+export const TextButton = styled.button`
+	${resetButtonCSS};
+	background: transparent;
+`;

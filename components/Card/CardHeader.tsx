@@ -13,10 +13,12 @@ const CardHeader: FC<CardHeaderProps> = ({ children, ...rest }) => (
 
 const Container = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
-	border-bottom: 1px solid ${(props) => props.theme.colors.blueberry};
+	border-bottom: 1px solid #282834;
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;
+	text-transform: capitalize;
+	font-weight: 500;
 `;
 
 export default CardHeader;

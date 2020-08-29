@@ -1,10 +1,12 @@
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
 
 const NotConnected: FC = () => {
 	const { onboard } = Connector.useContainer();
+	const { t } = useTranslation();
 
 	const connectWallet = async () => {
 		try {
@@ -21,7 +23,7 @@ const NotConnected: FC = () => {
 
 	return (
 		<Button variant="primary" onClick={connectWallet}>
-			Connect your wallet
+			{t('header.not-connected.connect-wallet')}
 		</Button>
 	);
 };

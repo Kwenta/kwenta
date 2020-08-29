@@ -7,8 +7,11 @@ type NumericValue = string | number;
 
 export const toBigNumber = (value: BigNumber | NumericValue) => new BigNumber(value);
 
-export const formatCryptoCurrency = (value: BigNumber | NumericValue) =>
-	toBigNumber(value).toFormat(4);
+export const formatCryptoCurrency = (value: BigNumber | NumericValue, sign?: string) =>
+	`${sign || ''}${toBigNumber(value).toFormat(4)}`;
+
+export const formatFiatCurrency = (value: BigNumber | NumericValue, sign?: string) =>
+	`${sign || ''}${toBigNumber(value).toFormat(2)}`;
 
 export const truncateAddress = (address: string, first = 5, last = 5) =>
 	`${address.slice(0, first)}...${address.slice(-last, address.length)}`;
@@ -25,4 +28,7 @@ export const getDecimalPlaces = (value: NumericValue) =>
 	(value.toString().split('.')[1] || '').length;
 
 export const formatShortDate = (date: Date | number) => format(date, 'MMM d, yyyy');
+
 export const formatShortDateWithTime = (date: Date | number) => format(date, 'MMM d, yyyy H:mma');
+
+export const formatPercent = (value: number) => `${(value * 100).toFixed(2)}%`;

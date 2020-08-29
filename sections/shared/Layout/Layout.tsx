@@ -4,7 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 import Header from './Header';
 import Footer from './Footer';
 
-import { linkCSS } from 'styles/common';
+import { linkCSS, FlexDiv } from 'styles/common';
 
 type LayoutProps = {
 	children: React.ReactNode;
@@ -14,25 +14,68 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 	return (
 		<>
 			<GlobalStyle />
-			<PageContainer>
-				<Header />
-				<Content>{children}</Content>
-				<Footer />
-			</PageContainer>
+			<FullScreenContainer>
+				<PageContainer>
+					<Header />
+					<Content>{children}</Content>
+					<Footer />
+				</PageContainer>
+			</FullScreenContainer>
 		</>
 	);
 };
 
-const PageContainer = styled.div`
-	max-width: 1400px;
-	margin: 0 auto;
+const FullScreenContainer = styled(FlexDiv)`
+	flex-flow: column;
+	width: 100%;
+	height: 100vh;
+	position: relative;
 `;
 
-const Content = styled.section``;
+const PageContainer = styled.div`
+	padding: 0 14px;
+`;
+
+const Content = styled.section`
+	max-width: 1400px;
+	position: relative;
+	margin: 0 auto;
+`;
 
 const GlobalStyle = createGlobalStyle`
 	* {
 		box-sizing: border-box;
+	}
+
+	#__next {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+
+	body {
+		font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		margin: 0;
+		text-rendering: optimizeSpeed;
+		position: relative;
+		min-height: 100vh;
+		scroll-behavior: smooth;
+		background-color: ${(props) => props.theme.colors.black};
+		color: ${(props) => props.theme.colors.blueberry};
+		font-size: 16px;
+	}
+
+	a {
+		${linkCSS};
+		color: ${(props) => props.theme.colors.white};
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
 	}
 
 	input[type='number'] {
@@ -42,31 +85,7 @@ const GlobalStyle = createGlobalStyle`
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
 		-webkit-appearance: none;
-	}
-
-
-	body {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-
-		background-color: ${(props) => props.theme.colors.black};
-		color: ${(props) => props.theme.colors.blueberry};
-		font-family: ${(props) =>
-			`${props.theme.fonts.regular}, -apple-system, BlinkMacSystemFont, sans-serif;`};
-		font-size: 16px;
-		margin: 0;
-	}
-
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-	
-	a {
-		${linkCSS};
-		color: ${(props) => props.theme.colors.white};
-	}
+	}	
 `;
 
 export default Layout;

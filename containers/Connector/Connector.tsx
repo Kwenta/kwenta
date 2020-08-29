@@ -9,6 +9,7 @@ import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 import { initOnboard, initNotify } from './config';
 
 import { walletAddressState, networkIdState } from 'store/connection';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 const useConnector = () => {
 	// TODO: detect networkId
@@ -19,6 +20,7 @@ const useConnector = () => {
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
+	const [selectedWallet, setSelectedWallet] = useLocalStorage('selectedWallet', '');
 
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 
@@ -43,6 +45,7 @@ const useConnector = () => {
 					setProvider(provider);
 					setNetworkId(network.chainId as NetworkIds);
 					setSigner(provider.getSigner());
+					setSelectedWallet(wallet.name);
 				} else {
 					setProvider(ethers.getDefaultProvider(networkId));
 					setSigner(null);
@@ -56,6 +59,12 @@ const useConnector = () => {
 		setNotify(notify);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (selectedWallet && onboard) {
+			onboard.walletSelect(selectedWallet);
+		}
+	}, [onboard, selectedWallet]);
 
 	return {
 		provider,

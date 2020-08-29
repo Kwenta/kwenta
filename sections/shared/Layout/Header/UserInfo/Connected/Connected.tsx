@@ -6,19 +6,33 @@ import { truncatedWalletAddressState } from 'store/connection';
 import { FlexDivCentered } from 'styles/common';
 import Connector from 'containers/Connector';
 
+import NotificationIcon from 'assets/svg/app/notification.svg';
+import MenuIcon from 'assets/svg/app/menu.svg';
+
 const Connected: FC = () => {
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const { onboard } = Connector.useContainer();
 
 	return (
-		<>
+		<FlexDivCentered>
+			<Menu>
+				<NotificationIcon />
+				<MenuIcon />
+			</Menu>
 			<Wallet onClick={() => onboard!.walletSelect()}>
 				<ConnectionDot />
 				{truncatedWalletAddress}
 			</Wallet>
-		</>
+		</FlexDivCentered>
 	);
 };
+
+const Menu = styled.div`
+	padding-right: 26px;
+	display: grid;
+	grid-gap: 20px;
+	grid-auto-flow: column;
+`;
 
 const Wallet = styled(FlexDivCentered)`
 	font-family: ${(props) => props.theme.fonts.mono};

@@ -7,9 +7,13 @@ export function useLocalStorage(key: string, initialValue: any) {
 	const [storedValue, setStoredValue] = useState(() => {
 		try {
 			// Get from local storage by key
-			const item = window.localStorage.getItem(key);
-			// Parse stored json or if none return initialValue
-			return item ? JSON.parse(item) : initialValue;
+			if (typeof window !== 'undefined') {
+				const item = window.localStorage.getItem(key);
+				// Parse stored json or if none return initialValue
+				return item ? JSON.parse(item) : initialValue;
+			} else {
+				return initialValue;
+			}
 		} catch (error) {
 			// If error also return initialValue
 			console.log(error);

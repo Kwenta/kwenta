@@ -8,12 +8,14 @@ export const DEFAULT_LANGUAGE = Languages.EN;
 export const DEFAULT_FIAT_CURRENCY = FIAT_CURRENCY_MAP.USD;
 
 // exchange defaults
-export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sBTC;
-export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sUSD;
+export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
+export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sETH;
 
 // network defaults
-export const DEFAULT_NETWORK_ID = NetworkIds.Mainnet;
+export const DEFAULT_NETWORK_ID =
+	typeof window !== 'undefined' ? Number(window.ethereum?.networkVersion) : NetworkIds.Mainnet;
 export const DEFAULT_GAS_LIMIT = 500000;
+export const DEFAULT_GAS_BUFFER = 5000;
 
 // ui defaults
 export const DEFAULT_SEARCH_DEBOUNCE_MS = 300;

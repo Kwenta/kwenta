@@ -14,38 +14,41 @@ type CurrencyCardProps = {
 	side: 'base' | 'quote';
 	currencyKey?: CurrencyKey;
 	amount: string;
-	onAmounChange: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
+	onAmountChange: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
 	walletBalance: number | null;
+	onBalanceClick: () => void | undefined;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
 	side,
 	currencyKey,
 	amount,
-	onAmounChange,
+	onAmountChange,
 	walletBalance,
+	onBalanceClick,
+	...rest
 }) => {
 	const { t } = useTranslation();
 
 	const isBase = side === 'base';
 
 	return (
-		<StyledCard>
+		<StyledCard {...rest}>
 			<Card.Body>
 				<LabelContainer>
-					{isBase ? t('exchange.currency-card.from') : t('exchange.currency-card.into')}
+					{isBase ? t('exchange.currency-card.into') : t('exchange.currency-card.from')}
 				</LabelContainer>
 				<CurrencyContainer>
 					<CurrencySelector>
 						{currencyKey || t('exchange.currency-selector.no-value')}
 					</CurrencySelector>
 					{currencyKey && (
-						<CurrencyAmount value={amount} onChange={onAmounChange} placeholder="0" />
+						<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
 					)}
 				</CurrencyContainer>
 				<WalletBalanceContainer>
 					<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-					<WalletBalance>
+					<WalletBalance onClick={onBalanceClick || undefined}>
 						{walletBalance == null ? NO_VALUE : formatCryptoCurrency(walletBalance)}
 					</WalletBalance>
 				</WalletBalanceContainer>
@@ -82,11 +85,13 @@ const CurrencyAmount = styled(NumericInput)`
 const WalletBalanceContainer = styled(FlexDivRowCentered)``;
 
 const WalletBalanceLabel = styled.div`
+	text-transform: capitalize;
 	font-weight: 500;
 `;
 
 const WalletBalance = styled.div`
 	${numericValueCSS};
+	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 `;
 
 export default CurrencyCard;

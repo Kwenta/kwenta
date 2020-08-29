@@ -55,4 +55,5 @@ export const initNotify = (networkId: NetworkIds) =>
 	notify({
 		dappId: process.env.BN_NOTIFY_API_KEY!,
 		networkId,
+		desktopPosition: 'topRight',
 	});

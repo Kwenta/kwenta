@@ -17,9 +17,10 @@ const Button = styled.button<ButtonProps>`
 	outline: none;
 	padding: 0 40px;
     color: ${(props) => props.theme.colors.white};
+	text-transform: capitalize;
 
     &:disabled {
-        color: ${(props) => props.theme.colors.stormcloud};
+        background-color: ${(props) => props.theme.colors.stormcloud};
 		cursor: default;
 	}
 
@@ -44,7 +45,7 @@ const Button = styled.button<ButtonProps>`
 				props.isActive &&
 				css`
 					background-color: ${(props) => props.theme.colors.purpleHover};
-				`}
+				`};
 		`}
 
 `;

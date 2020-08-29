@@ -12,6 +12,9 @@
 		"nav": {
 			"exchange": "exchange",
 			"dashboard": "dashboard"
+		},
+		"not-connected": {
+			"connect-wallet": "Connect your wallet"
 		}
 	},
 	"homepage": {
@@ -22,9 +25,37 @@
 		"currency-card": {
 			"from": "from",
 			"into": "into",
-			"wallet-balance": "Wallet Balance",
+			"wallet-balance": "wallet balance",
 			"currency-selector": {
-				"no-value": "Select Synth"
+				"no-value": "select synth"
+			}
+		},
+		"market-details-card": {
+			"title": "market details",
+			"24h-vol": "24H Volume",
+			"24h-high": "24H High",
+			"24h-low": "24H Low",
+			"market-cap": "Market cap",
+			"price-feed": "Price Feed"
+		},
+		"chart-card": {
+			"compare": "compare",
+			"ratio": "ratio"
+		},
+		"trade-info": {
+			"slippage": "slippage",
+			"fee": "fee",
+			"fee-cost": "fee cost",
+			"button": {
+				"enter-amount": "enter amount",
+				"submit-order": "submit order",
+				"submitting-order": "submitting order..."
+			}
+		},
+		"modals": {
+			"confirm-transaction": {
+				"title": "confirm transaction",
+				"confirm-with-provider": "Confirm your transaction with your web3 provider"
 			}
 		}
 	},
@@ -38,6 +69,21 @@
 		"order-type": {
 			"market": "market",
 			"limit": "limit"
-		}
+		},
+		"currency": {
+			"currency-amount": "<0>{{currencyKey}}</0> Amount",
+			"currency-value": "<0>{{currencyKey}}</0> Value",
+			"currency-contract": "<0>{{currencyKey}}</0> Contract",
+			"currency-price": "<0>{{currencyKey}}</0> Price"
+		},
+		"contract": "contract",
+		"chart-periods": {
+			"1H": "1H",
+			"4H": "4H",
+			"1D": "1D",
+			"1W": "1W",
+			"1M": "1M"
+		},
+		"price": "price"
 	}
 }
