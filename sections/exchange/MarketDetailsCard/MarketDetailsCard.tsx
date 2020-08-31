@@ -8,7 +8,7 @@ import Card from 'components/Card';
 import { NO_VALUE } from 'constants/placeholder';
 import { Period } from 'constants/period';
 
-import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
+import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
 import { formatFiatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
@@ -17,6 +17,7 @@ import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 import snxContracts from 'lib/snxContracts';
+import Etherscan from 'containers/Etherscan';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -24,6 +25,7 @@ type MarketDetailsCardProps = {
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
+	const etherscanInstance = Etherscan.useContainer();
 
 	const volume24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
@@ -71,7 +73,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 							)}
 						</Label>
 						<Value>
-							{contractAddress != null ? truncateAddress(contractAddress, 6, 4) : NO_VALUE}
+							<ExternalLink href={etherscanInstance?.tokenLink(contractAddress)}>
+								{contractAddress != null ? truncateAddress(contractAddress, 6, 4) : NO_VALUE}
+							</ExternalLink>
 						</Value>
 					</Item>
 				</Column>

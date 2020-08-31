@@ -300,6 +300,7 @@ const TradeInfo = styled(FlexDivRowCentered)`
 	padding: 16px 32px;
 	max-width: 680px;
 	margin: 0 auto;
+	font-size: 12px;
 `;
 
 const TradeInfoItems = styled.div`

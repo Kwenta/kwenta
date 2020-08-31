@@ -19,6 +19,7 @@ const Container = styled(FlexDivCentered)`
 	justify-content: flex-start;
 	text-transform: capitalize;
 	font-weight: 500;
+	font-size: 14px;
 `;
 
 export default CardHeader;
