@@ -6,6 +6,11 @@ import { FIAT_CURRENCY_MAP } from 'constants/currency';
 
 const getKey = (subKey: string) => `app/${subKey}`;
 
+export const appReadyState = atom<boolean>({
+	key: getKey('appReady'),
+	default: false,
+});
+
 export const languageState = atom<Languages>({
 	key: getKey('language'),
 	default: DEFAULT_LANGUAGE,

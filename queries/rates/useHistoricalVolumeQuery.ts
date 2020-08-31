@@ -15,7 +15,7 @@ const useHistoricalVolumeQuery = (
 	const periodInHours = PERIOD_IN_HOURS[period];
 
 	return useQuery<number, any>(
-		QUERY_KEYS.Rates.HistoricalVolume(currencyKey as string, period),
+		QUERY_KEYS.Rates.HistoricalVolume(currencyKey!, period),
 		async () => {
 			const exchanges = (await snxData.exchanges.since({
 				minTimestamp: calculateTimestampForPeriod(periodInHours),
@@ -23,7 +23,7 @@ const useHistoricalVolumeQuery = (
 
 			return exchanges
 				.filter((exchange) =>
-					[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey)
+					[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey!)
 				)
 				.reduce((totalVolume, exchange) => {
 					totalVolume += exchange.fromAmountInUSD;

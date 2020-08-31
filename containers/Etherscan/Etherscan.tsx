@@ -8,9 +8,7 @@ import { networkIdState } from 'store/connection';
 
 const useEtherscan = () => {
 	const networkId = useRecoilValue(networkIdState);
-	const [etherscanInstance, setEtherscanInstance] = useState<EtherscanLinks>(
-		new EtherscanLinks(networkId)
-	);
+	const [etherscanInstance, setEtherscanInstance] = useState<EtherscanLinks | null>(null);
 
 	useEffect(() => {
 		setEtherscanInstance(new EtherscanLinks(networkId));

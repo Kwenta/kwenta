@@ -8,7 +8,6 @@ const HomePage = () => {
 		<>
 			<Head>
 				<title>{t('homepage.page-title')}</title>
-				{/* <span>{etherscan.txLink('xxx')}</span> */}
 			</Head>
 		</>
 	);

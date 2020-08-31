@@ -1,21 +1,19 @@
 import { useQuery } from 'react-query';
 import { ethers } from 'ethers';
 
-import Contracts from 'containers/Contracts';
+import snxContracts from 'lib/snxContracts';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
 export type Rates = Record<CurrencyKey, number>;
 
 const useExchangeRatesQuery = () => {
-	const { synthSummaryUtil } = Contracts.useContainer();
-
 	return useQuery<Rates, any>(
 		QUERY_KEYS.Rates.ExchangeRates,
 		async () => {
 			const exchangeRates: Rates = {};
 
-			const [synths, rates] = await synthSummaryUtil!.synthsRates();
+			const [synths, rates] = await snxContracts.synthSummaryUtil!.synthsRates();
 
 			synths.forEach((synth: CurrencyKey, idx: number) => {
 				const synthName = ethers.utils.parseBytes32String(synth) as CurrencyKey;
@@ -25,7 +23,7 @@ const useExchangeRatesQuery = () => {
 			return exchangeRates;
 		},
 		{
-			enabled: synthSummaryUtil,
+			enabled: snxContracts.synthSummaryUtil,
 		}
 	);
 };

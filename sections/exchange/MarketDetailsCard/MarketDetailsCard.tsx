@@ -1,23 +1,28 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
+import styled from 'styled-components';
 import { USD_SIGN, CurrencyKey } from 'constants/currency';
 
 import Card from 'components/Card';
-import styled from 'styled-components';
-import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
+
 import { NO_VALUE } from 'constants/placeholder';
-import { formatFiatCurrency, formatCryptoCurrency, truncateAddress } from 'utils/formatters';
-import Contracts from 'containers/Contracts';
+import { Period } from 'constants/period';
+
+import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
+
+import { truncateAddress } from 'utils/formatters/string';
+import { formatFiatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
+
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import { Period } from 'constants/period';
+
+import snxContracts from 'lib/snxContracts';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
-	const { snxJS } = Contracts.useContainer();
 	const { t } = useTranslation();
 
 	const volume24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
@@ -26,9 +31,11 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 	const rates24High = historicalRates24H.data?.high ?? null;
 	const rates24Low = historicalRates24H.data?.low ?? null;
 	const marketCapUSD = null;
+	let contractAddress = null;
 
-	// @ts-ignore
-	const contractAddress = snxJS && currencyKey ? snxJS[`Synth${currencyKey}`]?.address : null;
+	if (snxContracts.snxJS) {
+		contractAddress = (snxContracts.snxJS as any)[`Synth${currencyKey}`]?.address;
+	}
 
 	return (
 		<StyledCard>
@@ -38,14 +45,16 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					<Item>
 						<Label>{t('exchange.market-details-card.24h-vol')}</Label>
 						<Value>
-							{volume24H.data != null ? formatFiatCurrency(volume24H.data, USD_SIGN) : NO_VALUE}
+							{volume24H.data != null
+								? formatFiatCurrency(volume24H.data, { sign: USD_SIGN })
+								: NO_VALUE}
 						</Value>
 					</Item>
 					<Item>
 						<Label>{t('exchange.market-details-card.24h-high')}</Label>
 						<Value>
 							{rates24High != null
-								? `${formatCryptoCurrency(rates24High)} ${currencyKey}`
+								? `${formatCryptoCurrency(rates24High, { currencyKey: currencyKey ?? undefined })}`
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -70,13 +79,17 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					<Item>
 						<Label>{t('exchange.market-details-card.market-cap')}</Label>
 						<Value>
-							{marketCapUSD != null ? formatFiatCurrency(marketCapUSD, USD_SIGN) : NO_VALUE}
+							{marketCapUSD != null
+								? formatFiatCurrency(marketCapUSD, { sign: USD_SIGN })
+								: NO_VALUE}
 						</Value>
 					</Item>
 					<Item>
 						<Label>{t('exchange.market-details-card.24h-low')}</Label>
 						<Value>
-							{rates24Low != null ? `${formatCryptoCurrency(rates24Low)} ${currencyKey}` : NO_VALUE}
+							{rates24Low != null
+								? `${formatCryptoCurrency(rates24Low, { currencyKey: currencyKey ?? undefined })}`
+								: NO_VALUE}
 						</Value>
 					</Item>
 					<Item>

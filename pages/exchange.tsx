@@ -1,34 +1,41 @@
 import Head from 'next/head';
 import { useTranslation, Trans } from 'react-i18next';
 import { useState } from 'react';
-import { CurrencyKey, FIAT_CURRENCY_MAP } from 'constants/currency';
-import { DEFAULT_BASE_SYNTH, DEFAULT_QUOTE_SYNTH, DEFAULT_GAS_BUFFER } from 'constants/defaults';
-import CurrencyCard from 'sections/exchange/CurrencyCard';
-import {
-	FlexDivCentered,
-	resetButtonCSS,
-	FlexDivRowCentered,
-	NoTextTransform,
-} from 'styles/common';
+import { ethers } from 'ethers';
 import styled from 'styled-components';
 
+import { CurrencyKey, FIAT_CURRENCY_MAP } from 'constants/currency';
+import { DEFAULT_BASE_SYNTH, DEFAULT_QUOTE_SYNTH } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import { GWEI_UNIT } from 'constants/network';
+
 import get from 'lodash/get';
+
+import Connector from 'containers/Connector';
 
 import ArrowsIcon from 'assets/svg/app/arrows.svg';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery, { Rates } from 'queries/rates/useExchangeRatesQuery';
+
+import CurrencyCard from 'sections/exchange/CurrencyCard';
 import MarketDetailsCard from 'sections/exchange/MarketDetailsCard';
 import ChartCard from 'sections/exchange/PriceChartCard';
-import { NO_VALUE } from 'constants/placeholder';
+
 import Button from 'components/Button';
-import Contracts from 'containers/Contracts';
-import { ethers } from 'ethers';
-import { GWEI_UNIT } from 'constants/network';
-import Connector from 'containers/Connector';
+
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState } from 'store/connection';
+
+import {
+	FlexDivCentered,
+	resetButtonCSS,
+	FlexDivRowCentered,
+	NoTextTransform,
+} from 'styles/common';
+import snxContracts from 'lib/snxContracts';
+import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
 export const getExchangeRatesForCurrencies = (
 	rates: Rates | null,
@@ -39,7 +46,6 @@ export const getExchangeRatesForCurrencies = (
 const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
-	const { snxJS } = Contracts.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useState<{
 		base: CurrencyKey;
@@ -58,7 +64,12 @@ const ExchangePage = () => {
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const frozenSynthsQuery = useFrozenSynthsQuery();
 
+	const isBaseCurrencyFrozen = frozenSynthsQuery.data
+		? frozenSynthsQuery.data.includes(baseCurrencyKey)
+		: false;
+	console.log(isBaseCurrencyFrozen);
 	const rate = getExchangeRatesForCurrencies(
 		exchangeRatesQuery.data ?? null,
 		quoteCurrencyKey,
@@ -99,6 +110,8 @@ const ExchangePage = () => {
 		!baseCurrencyAmount || !ethGasStationQuery.data || !isWalletConnected || isSubmitting;
 
 	const handleSubmit = async () => {
+		const snxJS: any = snxContracts.snxJS;
+
 		if (snxJS) {
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey);

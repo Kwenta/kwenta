@@ -1,14 +1,16 @@
-import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import { useState, FC, ChangeEvent } from 'react';
+import { FC, ChangeEvent } from 'react';
+import styled from 'styled-components';
+
 import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import Card from 'components/Card';
-import styled from 'styled-components';
-import { FlexDivCentered, FlexDivRowCentered, numericValueCSS } from 'styles/common';
 import NumericInput from 'components/Input/NumericInput';
-import { NO_VALUE } from 'constants/placeholder';
-import { formatCryptoCurrency } from 'utils/formatters';
+
+import { FlexDivCentered, FlexDivRowCentered, numericValueCSS } from 'styles/common';
 
 type CurrencyCardProps = {
 	side: 'base' | 'quote';

@@ -2,7 +2,7 @@ import { NetworkIds } from '@synthetixio/js';
 import { atom, selector } from 'recoil';
 
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { truncateAddress } from 'utils/formatters';
+import { truncateAddress } from 'utils/formatters/string';
 
 const getKey = (subKey: string) => `connection/${subKey}`;
 

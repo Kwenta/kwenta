@@ -1,25 +1,25 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { useContext, FC, useState } from 'react';
-import { CurrencyKey, USD_SIGN } from 'constants/currency';
 import { LineChart, XAxis, YAxis, Line, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
+import get from 'lodash/get';
+
 import format from 'date-fns/format';
 import styled, { ThemeContext } from 'styled-components';
-import get from 'lodash/get';
-import { GridDivCenteredCol, TextButton, FlexDivRowCentered, NoTextTransform } from 'styles/common';
-
-import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
-import { formatFiatCurrency, formatPercent, formatCryptoCurrency } from 'utils/formatters';
+import { CurrencyKey, USD_SIGN } from 'constants/currency';
+import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
+
+import { GridDivCenteredCol, TextButton, FlexDivRowCentered, NoTextTransform } from 'styles/common';
+
+import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
-import { useRecoilValue } from 'recoil';
-import { synthsMapState } from 'store/synths';
 
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -28,7 +28,6 @@ type ChartCardProps = {
 
 const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
-	const synthsMap = useRecoilValue(synthsMapState);
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
@@ -54,10 +53,6 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 	};
 
 	const { t } = useTranslation();
-	// const synthSign =
-	// 	currencyKey && synthsMap && synthsMap[currencyKey] && synthsMap[currencyKey].sign;
-
-	const synthSign = '$';
 
 	const CustomTooltip = ({
 		active,
@@ -71,19 +66,12 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 			}
 		];
 		label: Date;
-	}) => {
-		if (active && payload && payload[0]) {
-			const { value } = payload[0];
-
-			return (
-				<TooltipContentStyle>
-					<LabelStyle>{format(label, 'do MMM yy | HH:mm')}</LabelStyle>
-				</TooltipContentStyle>
-			);
-		}
-
-		return null;
-	};
+	}) =>
+		active && payload && payload[0] ? (
+			<TooltipContentStyle>
+				<LabelStyle>{format(label, 'do MMM yy | HH:mm')}</LabelStyle>
+			</TooltipContentStyle>
+		) : null;
 
 	return (
 		<Container>
@@ -100,7 +88,9 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 							}
 						</CurrencyLabel>
 					)}
-					{price != null && <CurrencyPrice>{formatFiatCurrency(price, USD_SIGN)}</CurrencyPrice>}
+					{price != null && (
+						<CurrencyPrice>{formatFiatCurrency(price, { sign: USD_SIGN })}</CurrencyPrice>
+					)}
 					{change != null && (
 						<CurrencyChange isPositive={isChangePositive}>
 							{isChangePositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
@@ -160,7 +150,7 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 							orientation="right"
 							axisLine={false}
 							tickLine={false}
-							tickFormatter={(val) => formatFiatCurrency(val, synthSign || undefined)}
+							tickFormatter={(val) => formatFiatCurrency(val, { sign: USD_SIGN })}
 						/>
 						<Line dataKey="rate" stroke={chartColor} dot={false} strokeWidth={1.5} />
 						<Tooltip
