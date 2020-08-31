@@ -75,7 +75,7 @@ const ExchangePage = () => {
 	const isBaseCurrencyFrozen = frozenSynthsQuery.data
 		? frozenSynthsQuery.data.includes(baseCurrencyKey)
 		: false;
-	console.log(isBaseCurrencyFrozen);
+
 	const rate = getExchangeRatesForCurrencies(
 		exchangeRatesQuery.data ?? null,
 		quoteCurrencyKey,

@@ -114,7 +114,7 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 				<RechartsResponsiveContainer width="100%" height="100%">
 					<LineChart
 						data={rates}
-						margin={{ right: 20, bottom: 0 }}
+						margin={{ right: 40, bottom: 0 }}
 						onMouseMove={(e: any) => {
 							const currentRate = get(e, 'activePayload[0].payload.rate', null);
 							if (currentRate) {
