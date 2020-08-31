@@ -123,6 +123,9 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 								setCurrentPrice(null);
 							}
 						}}
+						onMouseLeave={(e: any) => {
+							setCurrentPrice(null);
+						}}
 					>
 						<XAxis
 							// @ts-ignore
