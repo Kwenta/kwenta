@@ -14,7 +14,9 @@ const useEtherscan = () => {
 		setEtherscanInstance(new EtherscanLinks(networkId));
 	}, [networkId]);
 
-	return etherscanInstance;
+	return {
+		etherscanInstance,
+	};
 };
 
 const Etherscan = createContainer(useEtherscan);

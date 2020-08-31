@@ -11,7 +11,7 @@ import { Period } from 'constants/period';
 import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import { formatFiatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
+import { formatFiatCurrency } from 'utils/formatters/number';
 
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
@@ -25,7 +25,7 @@ type MarketDetailsCardProps = {
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
-	const etherscanInstance = Etherscan.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 
 	const volume24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
@@ -56,7 +56,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 						<Label>{t('exchange.market-details-card.24h-high')}</Label>
 						<Value>
 							{rates24High != null
-								? `${formatCryptoCurrency(rates24High, { currencyKey: currencyKey ?? undefined })}`
+								? `${formatFiatCurrency(rates24High, { sign: USD_SIGN })}`
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -92,7 +92,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 						<Label>{t('exchange.market-details-card.24h-low')}</Label>
 						<Value>
 							{rates24Low != null
-								? `${formatCryptoCurrency(rates24Low, { currencyKey: currencyKey ?? undefined })}`
+								? `${formatFiatCurrency(rates24Low, { sign: USD_SIGN })}`
 								: NO_VALUE}
 						</Value>
 					</Item>
