@@ -1,4 +1,4 @@
 export default {
-	regular: `sans-serif`,
-	mono: `Monaco`,
+	regular: `AkkuratLLWeb-Regular`,
+	mono: `AkkuratMonoLLWeb-Regular`,
 };

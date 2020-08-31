@@ -9,6 +9,8 @@ import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
 import WithStateContainers from 'containers';
 import { scTheme, muiTheme } from 'styles/theme';
 
+import '@reach/dialog/styles.css';
+
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';

@@ -54,7 +54,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 
 	body {
-		font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+		font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		margin: 0;
@@ -86,6 +86,24 @@ const GlobalStyle = createGlobalStyle`
 	input::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 	}	
+
+	@font-face {
+		font-family: 'AkkuratLLWeb-Regular';
+		src: url('/fonts/AkkuratLLWeb-Regular.woff2') format('woff2'), 
+			 url('/fonts/AkkuratLLWeb-Regular.woff') format('woff');
+	}
+
+	@font-face {
+		font-family: 'AkkuratLLWeb-Bold';
+		src: url('/fonts/AkkuratLLWeb-Bold.woff2') format('woff2'), 
+		     url('/fonts/AkkuratLLWeb-Bold.woff') format('woff');
+	}
+
+	@font-face {
+		font-family: 'AkkuratMonoLLWeb-Regular';
+		src: url('/fonts/AkkuratMonoLLWeb-Regular.woff2') format('woff2'), 
+		     url('/fonts/AkkuratMonoLLWeb-Regular.woff') format('woff');
+	}
 `;
 
 export default Layout;

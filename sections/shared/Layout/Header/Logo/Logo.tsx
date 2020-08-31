@@ -4,17 +4,22 @@ import Link from 'next/link';
 
 import ROUTES from 'constants/routes';
 
+import LogoSvg from 'assets/svg/brand/logo.svg';
+
 const Logo: FC = () => {
 	return (
-		<Container>
+		<LogoContainer>
 			<Link href={ROUTES.Home}>
-				<a>KWENTA</a>
+				<a>
+					<LogoSvg />
+				</a>
 			</Link>
-		</Container>
+		</LogoContainer>
 	);
 };
 
-const Container = styled.span`
+const LogoContainer = styled.div`
+	padding-top: 5px;
 	a {
 		color: ${(props) => props.theme.colors.white};
 	}
