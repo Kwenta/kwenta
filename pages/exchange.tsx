@@ -37,6 +37,7 @@ import {
 } from 'styles/common';
 import snxContracts from 'lib/snxContracts';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 const TxConfirmationModal = dynamic(() => import('sections/exchange/TxConfirmationModal'), {
 	ssr: false,
@@ -154,7 +155,15 @@ const ExchangePage = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('exchange.page-title')}</title>
+				<title>
+					{baseCurrencyKey
+						? t('exchange.page-title-currency-pair', {
+								quoteCurrencyKey,
+								baseCurrencyKey,
+								rate: formatCryptoCurrency(inverseRate, { currencyKey: quoteCurrencyKey }),
+						  })
+						: t('exchange.page-title')}
+				</title>
 			</Head>
 			<>
 				<CardsContainer>

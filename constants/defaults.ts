@@ -8,8 +8,8 @@ export const DEFAULT_LANGUAGE = Languages.EN;
 export const DEFAULT_FIAT_CURRENCY = FIAT_CURRENCY_MAP.USD;
 
 // exchange defaults
-export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
 export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sETH;
+export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
 
 // network defaults
 export const DEFAULT_NETWORK_ID = NetworkIds.Mainnet;

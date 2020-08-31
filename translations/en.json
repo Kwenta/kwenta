@@ -22,6 +22,7 @@
 	},
 	"exchange": {
 		"page-title": "Kwenta | Exchange",
+		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
 		"currency-card": {
 			"from": "from",
 			"into": "into",
