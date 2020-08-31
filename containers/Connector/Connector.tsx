@@ -16,6 +16,7 @@ import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
+import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
 	const [networkId, setNetworkId] = useRecoilState(networkIdState);
@@ -26,7 +27,10 @@ const useConnector = () => {
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 
-	const [selectedWallet, setSelectedWallet] = useLocalStorage('selectedWallet', '');
+	const [selectedWallet, setSelectedWallet] = useLocalStorage(
+		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
+		''
+	);
 
 	useEffect(() => {
 		const init = async () => {
