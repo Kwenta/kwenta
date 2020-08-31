@@ -37,7 +37,7 @@ export const formatNumber = (value: NumericValue, options?: FormatNumberOptions)
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(toBigNumber(value).toFormat(options?.minDecimals));
+	formattedValue.push(toBigNumber(value).toFormat(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}

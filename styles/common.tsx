@@ -1,5 +1,4 @@
 import styled, { css, keyframes } from 'styled-components';
-import Modal from '@material-ui/core/Modal';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -83,20 +82,6 @@ export const GridDivCol = styled(GridDiv)`
 
 export const GridDivCenteredCol = styled(GridDivCentered)`
 	grid-auto-flow: column;
-`;
-
-export const FullScreenModal = styled(Modal).attrs({
-	disableEscapeKeyDown: true,
-	disableAutoFocus: true,
-	disableEnforceFocus: true,
-	disableRestoreFocus: true,
-})`
-	background-color: ${(props) => props.theme.colors.black};
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	opacity: 1;
-	overflow: auto;
 `;
 
 export const numericValueCSS = css`

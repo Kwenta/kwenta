@@ -1,5 +1,5 @@
-import { SCThemeInterface } from 'styles/theme';
+import { ThemeInterface } from 'styles/theme';
 
 declare module 'styled-components' {
-	interface DefaultTheme extends SCThemeInterface {}
+	interface DefaultTheme extends ThemeInterface {}
 }

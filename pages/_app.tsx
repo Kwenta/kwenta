@@ -3,11 +3,10 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 
-import { ThemeProvider as SCThemeProvider } from 'styled-components';
-import { ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from 'styled-components';
 
 import WithStateContainers from 'containers';
-import { scTheme, muiTheme } from 'styles/theme';
+import theme from 'styles/theme';
 
 import '@reach/dialog/styles.css';
 
@@ -38,17 +37,15 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<meta name="twitter:url" content="https://kwenta.io" />
 				<link rel="icon" href="/images/favicon.png" />
 			</Head>
-			<SCThemeProvider theme={scTheme}>
-				<MuiThemeProvider theme={muiTheme}>
-					<RecoilRoot>
-						<WithStateContainers>
-							<Layout>
-								<Component {...pageProps} />
-							</Layout>
-						</WithStateContainers>
-					</RecoilRoot>
-				</MuiThemeProvider>
-			</SCThemeProvider>
+			<ThemeProvider theme={theme}>
+				<RecoilRoot>
+					<WithStateContainers>
+						<Layout>
+							<Component {...pageProps} />
+						</Layout>
+					</WithStateContainers>
+				</RecoilRoot>
+			</ThemeProvider>
 		</>
 	);
 };
