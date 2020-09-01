@@ -52,12 +52,6 @@
 				"submit-order": "submit order",
 				"submitting-order": "submitting order..."
 			}
-		},
-		"modals": {
-			"confirm-transaction": {
-				"title": "confirm transaction",
-				"confirm-with-provider": "Confirm your transaction with your web3 provider"
-			}
 		}
 	},
 	"dashboard": {
@@ -65,6 +59,16 @@
 	},
 	"not-found": {
 		"page-title": "Kwenta | Not Found"
+	},
+	"modals": {
+		"select-synth": {
+			"title": "select synth",
+			"all-synths": "all synths"
+		},
+		"confirm-transaction": {
+			"title": "confirm transaction",
+			"confirm-with-provider": "Confirm your transaction with your web3 provider"
+		}
 	},
 	"common": {
 		"order-type": {
@@ -76,6 +80,12 @@
 			"currency-value": "<0>{{currencyKey}}</0> Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price"
+		},
+		"currency-category": {
+			"crypto": "crypto",
+			"forex": "forex",
+			"commodity": "commodities",
+			"equities": "equities"
 		},
 		"contract": "contract",
 		"chart-periods": {

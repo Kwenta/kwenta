@@ -5,6 +5,7 @@ import { FlexDivCentered } from 'styles/common';
 
 export type CardHeaderProps = {
 	children: React.ReactNode;
+	className?: string;
 };
 
 const CardHeader: FC<CardHeaderProps> = ({ children, ...rest }) => (

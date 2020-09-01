@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 export type CardBodyProps = {
 	children: React.ReactNode;
+	className?: string;
 };
 
 const CardBody: FC<CardBodyProps> = ({ children, ...rest }) => (

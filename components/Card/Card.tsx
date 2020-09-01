@@ -7,6 +7,7 @@ import CardBody, { CardBodyProps } from './CardBody';
 type CardProps = {
 	children: React.ReactNode;
 	isRounded?: boolean;
+	className?: string;
 };
 
 interface StaticComponents {

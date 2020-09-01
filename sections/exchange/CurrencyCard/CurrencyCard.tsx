@@ -21,6 +21,7 @@ type CurrencyCardProps = {
 	onAmountChange: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
 	walletBalance: number | null;
 	onBalanceClick: () => void | undefined;
+	onCurrencySelect: () => void;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
@@ -30,6 +31,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	onAmountChange,
 	walletBalance,
 	onBalanceClick,
+	onCurrencySelect,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -43,7 +45,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					{isBase ? t('exchange.currency-card.into') : t('exchange.currency-card.from')}
 				</LabelContainer>
 				<CurrencyContainer>
-					<CurrencySelector>
+					<CurrencySelector onClick={onCurrencySelect}>
 						{currencyKey || t('exchange.currency-selector.no-value')} <CaretDownIcon />
 					</CurrencySelector>
 					{currencyKey && (

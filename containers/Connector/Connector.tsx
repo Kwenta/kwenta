@@ -106,7 +106,7 @@ const useConnector = () => {
 					}
 				},
 			});
-			const notify = initNotify(network.id);
+			const notify = initNotify(network);
 
 			setOnboard(onboard);
 			setNotify(notify);

@@ -25,6 +25,8 @@ export type SynthDefinition = {
 	}>;
 };
 
+export type SynthDefinitions = SynthDefinition[];
+
 export type SynthDefinitionMap = Record<string, SynthDefinition>;
 
 export type TokenDefinition = {

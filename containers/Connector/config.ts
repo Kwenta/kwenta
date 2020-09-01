@@ -47,14 +47,13 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 			{ checkName: 'derivationPath' },
 			{ checkName: 'accounts' },
 			{ checkName: 'connect' },
-			{ checkName: 'network' },
 		],
 	});
 };
 
-export const initNotify = (networkId: NetworkId) =>
+export const initNotify = (network: Network) =>
 	notify({
 		dappId: process.env.BN_NOTIFY_API_KEY!,
-		networkId,
+		networkId: network.id,
 		desktopPosition: 'topRight',
 	});

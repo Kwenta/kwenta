@@ -40,7 +40,11 @@ import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import Services from 'containers/Services';
 
-const TxConfirmationModal = dynamic(() => import('sections/exchange/TxConfirmationModal'), {
+const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
+	ssr: false,
+});
+
+const SelectSynthModal = dynamic(() => import('sections/shared/modals/SelectSynthModal'), {
 	ssr: false,
 });
 
@@ -68,6 +72,7 @@ const ExchangePage = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
+	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -209,6 +214,7 @@ const ExchangePage = () => {
 								setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
 								setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 							}}
+							onCurrencySelect={() => setSelectSynthModalOpen(true)}
 						/>
 						<ChartCard
 							currencyKey={quoteCurrencyKey ?? null}
@@ -238,6 +244,7 @@ const ExchangePage = () => {
 								setBaseCurrencyAmount(`${baseCurrencyBalance}`);
 								setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 							}}
+							onCurrencySelect={() => setSelectSynthModalOpen(true)}
 						/>
 						<ChartCard
 							currencyKey={baseCurrencyKey ?? null}
@@ -283,6 +290,19 @@ const ExchangePage = () => {
 				</TradeInfo>
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal onDimiss={() => setTxConfirmationModalOpen(false)} />
+				)}
+				{selectSynthModalOpen && (
+					<SelectSynthModal
+						onDismiss={() => setSelectSynthModalOpen(false)}
+						synths={snxContracts.snxJS.synths ?? []}
+						exchangeRates={exchangeRatesQuery.data}
+						onSelect={(currencyKey) =>
+							setCurrencyPair({
+								base: currencyKey,
+								quote: quoteCurrencyKey,
+							})
+						}
+					/>
 				)}
 			</>
 		</>
