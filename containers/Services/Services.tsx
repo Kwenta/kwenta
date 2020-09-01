@@ -42,8 +42,8 @@ const useServices = () => {
 	}, [isAppReady, provider]);
 
 	useEffect(() => {
-		if (isAppReady) {
-			const { ExchangeRates, SystemStatus, Synthetix } = snxContracts.snxJS;
+		if (isAppReady && snxContracts.snxJS) {
+			const { ExchangeRates, SystemStatus, Synthetix } = snxContracts.snxJS.contracts;
 
 			const ratesUpdated$ = new Observable<RatesUpdatedEvent>((subscriber) => {
 				ExchangeRates.on(

@@ -1,23 +1,23 @@
 import { ethers } from 'ethers';
-import { NetworkIds } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/js';
 
 declare global {
 	interface Window {
 		web3?: {
 			eth?: {
 				net: {
-					getId: () => NetworkIds;
+					getId: () => NetworkId;
 				};
 			};
 			version: {
-				getNetwork(cb: (err: Error | undefined, networkId: NetworkIds) => void): void;
-				network: NetworkIds;
+				getNetwork(cb: (err: Error | undefined, networkId: NetworkId) => void): void;
+				network: NetworkId;
 			};
 		};
 		ethereum?: {
 			on: (event: string, cb: () => void) => void;
 			ethereum: ethers.providers.Provider | undefined;
-			networkVersion: NetworkIds;
+			networkVersion: NetworkId;
 			isMetaMask: boolean;
 		};
 	}

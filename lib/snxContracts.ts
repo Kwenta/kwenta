@@ -1,4 +1,4 @@
-import initSnxJS, { NetworkIds } from '@synthetixio/js';
+import initSnxJS, { NetworkId } from '@synthetixio/js';
 import { ethers, Signer } from 'ethers';
 
 import synthSummaryUtilContract from './contracts/synthSummaryUtilContract';
@@ -28,7 +28,7 @@ export type SynthDefinition = {
 export type SynthDefinitionMap = Record<string, SynthDefinition>;
 
 type ContractSettings = {
-	networkId: NetworkIds;
+	networkId: NetworkId;
 	provider?: ethers.providers.Provider;
 	signer?: Signer;
 };

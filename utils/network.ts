@@ -1,7 +1,7 @@
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { NetworkIds } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/js';
 
-export async function getDefaultNetworkId(): Promise<NetworkIds> {
+export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		if (window.web3?.eth?.net) {
 			const networkId = await window.web3.eth.net.getId();

@@ -152,11 +152,11 @@ const ExchangePage = () => {
 
 			const params = [quoteKeyBytes32, amountToExchange, baseKeyBytes32];
 			try {
-				const gasEstimate = await snxJS.Synthetix.estimateGas.exchange(...params);
+				const gasEstimate = await snxJS.contracts.Synthetix.estimateGas.exchange(...params);
 
 				setIsSubmitting(true);
 
-				const tx = await snxJS.Synthetix.exchange(...params, {
+				const tx = await snxJS.contracts.Synthetix.exchange(...params, {
 					gasPrice: ethGasStationQuery.data!.average * GWEI_UNIT,
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});

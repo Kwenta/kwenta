@@ -1,11 +1,11 @@
-import { NetworkIds } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/js';
 import onboard from 'bnc-onboard';
 import notify from 'bnc-notify';
 
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
 
-export const initOnboard = (networkId: NetworkIds, subscriptions: Subscriptions) => {
+export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(networkId);
 
 	return onboard({
@@ -51,7 +51,7 @@ export const initOnboard = (networkId: NetworkIds, subscriptions: Subscriptions)
 	});
 };
 
-export const initNotify = (networkId: NetworkIds) =>
+export const initNotify = (networkId: NetworkId) =>
 	notify({
 		dappId: process.env.BN_NOTIFY_API_KEY!,
 		networkId,

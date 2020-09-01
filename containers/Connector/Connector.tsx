@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkIds /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
+import { NetworkId /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
 import snxContracts from 'lib/snxContracts';
@@ -81,7 +81,7 @@ const useConnector = () => {
 						const provider = new ethers.providers.Web3Provider(wallet.provider);
 						const signer = provider.getSigner();
 						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkIds;
+						const networkId = network.chainId as NetworkId;
 
 						snxContracts.setContractSettings({
 							networkId,
