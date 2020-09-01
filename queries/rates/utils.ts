@@ -2,14 +2,16 @@ import subHours from 'date-fns/subHours';
 import orderBy from 'lodash/orderBy';
 import uniqBy from 'lodash/uniqBy';
 
-export const getMinAndMaxRate = (data) => {
-	if (data.length === 0) return [0, 0];
+import { RateUpdates, BaseRateUpdates } from 'constants/rates';
 
-	return data.reduce(
-		([min, max], val) => {
+export const getMinAndMaxRate = (rates: RateUpdates) => {
+	if (rates.length === 0) return [0, 0];
+
+	return rates.reduce(
+		([minRate, maxRate], val) => {
 			const { rate } = val;
-			const newMax = rate > max ? rate : max;
-			const newMin = rate < min ? rate : min;
+			const newMax = rate > maxRate ? rate : maxRate;
+			const newMin = rate < minRate ? rate : minRate;
 
 			return [newMin, newMax];
 		},
@@ -17,8 +19,8 @@ export const getMinAndMaxRate = (data) => {
 	);
 };
 
-const matchRates = (ratesA, ratesB, isQuote) => {
-	let rates = [];
+const matchRates = (ratesA: RateUpdates, ratesB: RateUpdates, isQuote: boolean) => {
+	const rates: BaseRateUpdates = [];
 	// For each base rate (USD)
 	ratesA.forEach((rateA) => {
 		// We search what was the quote rate in USD
@@ -35,20 +37,29 @@ const matchRates = (ratesA, ratesB, isQuote) => {
 			});
 		}
 	});
+
 	return rates;
 };
 
-export const calculateRateChange = (data) => {
-	if (data.length < 2) return 0;
-	const newPrice = data[0].rate;
-	const oldPrice = data[data.length - 1].rate;
+export const calculateRateChange = (rates: RateUpdates) => {
+	if (rates.length < 2) return 0;
+
+	const newPrice = rates[0].rate;
+	const oldPrice = rates[rates.length - 1].rate;
 	const percentageChange = (newPrice - oldPrice) / oldPrice;
+
 	return percentageChange;
 };
 
-export const matchPairRates = (baseRates, quoteRates) => {
-	if (!baseRates || baseRates.length === 0 || !quoteRates || quoteRates.length === 0) return [];
-	const rates = matchRates(baseRates, quoteRates).concat(matchRates(quoteRates, baseRates, true));
+export const matchPairRates = (baseRates: RateUpdates, quoteRates: RateUpdates) => {
+	if (!baseRates || baseRates.length === 0 || !quoteRates || quoteRates.length === 0) {
+		return [];
+	}
+	const rates = [
+		...matchRates(baseRates, quoteRates, false),
+		...matchRates(quoteRates, baseRates, true),
+	];
+
 	return orderBy(uniqBy(rates, 'timestamp'), 'timestamp', ['desc']);
 };
 
