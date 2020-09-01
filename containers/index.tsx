@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import Connector from './Connector';
+import Services from './Services';
 import Etherscan from './Etherscan';
 
 type WithStateContainersProps = {
@@ -9,7 +10,9 @@ type WithStateContainersProps = {
 
 export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) => (
 	<Connector.Provider>
-		<Etherscan.Provider>{children}</Etherscan.Provider>
+		<Services.Provider>
+			<Etherscan.Provider>{children}</Etherscan.Provider>
+		</Services.Provider>
 	</Connector.Provider>
 );
 

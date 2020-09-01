@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkIds, SUPPORTED_NETWORKS } from '@synthetixio/js';
+import { NetworkIds /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
 import snxContracts from 'lib/snxContracts';
@@ -55,9 +55,12 @@ const useConnector = () => {
 		if (isAppReady) {
 			const onboard = initOnboard(networkId, {
 				address: setWalletAddress,
-				network: (networkId: number) => {
+				network: (nextNetworkId: number) => {
+					if (nextNetworkId !== networkId) {
+						window.location.reload();
+					}
 					// TODO: currently, network change doesn't work well, may need to reload the page.
-
+					/*
 					// @ts-ignore
 					if (SUPPORTED_NETWORKS[networkId]) {
 						snxContracts.setContractSettings({
@@ -71,6 +74,7 @@ const useConnector = () => {
 					} else {
 						console.log(`unsupported networkId - ${networkId}`);
 					}
+					*/
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {

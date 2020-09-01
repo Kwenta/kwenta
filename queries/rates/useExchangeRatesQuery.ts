@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, BaseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 
 import snxContracts from 'lib/snxContracts';
@@ -7,7 +7,7 @@ import { CurrencyKey } from 'constants/currency';
 
 export type Rates = Record<CurrencyKey, number>;
 
-const useExchangeRatesQuery = () => {
+const useExchangeRatesQuery = (options?: BaseQueryOptions) => {
 	return useQuery<Rates, any>(
 		QUERY_KEYS.Rates.ExchangeRates,
 		async () => {
@@ -24,6 +24,7 @@ const useExchangeRatesQuery = () => {
 		},
 		{
 			enabled: snxContracts.synthSummaryUtil,
+			...options,
 		}
 	);
 };

@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import Card from 'components/Card';
@@ -42,7 +44,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				</LabelContainer>
 				<CurrencyContainer>
 					<CurrencySelector>
-						{currencyKey || t('exchange.currency-selector.no-value')}
+						{currencyKey || t('exchange.currency-selector.no-value')} <CaretDownIcon />
 					</CurrencySelector>
 					{currencyKey && (
 						<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
@@ -74,10 +76,24 @@ const CurrencyContainer = styled(FlexDivCentered)`
 `;
 
 const CurrencySelector = styled.div`
-	padding-right: 30px;
+	display: grid;
+	align-items: center;
+	grid-auto-flow: column;
+	grid-gap: 9px;
+	margin-right: 20px;
 	font-size: 16px;
-	font-weight: 500;
+	padding: 4px 10px;
+	margin-left: -10px;
+	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
+	&:hover {
+		background-color: ${(props) => props.theme.colors.black};
+		border-radius: 100px;
+		cursor: pointer;
+	}
+	svg {
+		color: ${(props) => props.theme.colors.purple};
+	}
 `;
 
 const CurrencyAmount = styled(NumericInput)`
@@ -88,7 +104,7 @@ const WalletBalanceContainer = styled(FlexDivRowCentered)``;
 
 const WalletBalanceLabel = styled.div`
 	text-transform: capitalize;
-	font-weight: 500;
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const WalletBalance = styled.div`

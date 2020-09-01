@@ -18,7 +18,7 @@ const Container = styled(FlexDivCentered)`
 	padding: 0 18px;
 	justify-content: flex-start;
 	text-transform: capitalize;
-	font-weight: 500;
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 `;
 

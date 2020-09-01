@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, BaseQueryOptions } from 'react-query';
 import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -10,7 +10,8 @@ import { HistoricalRatesUpdates } from './types';
 
 const useHistoricalRatesQuery = (
 	currencyKey: CurrencyKey | null,
-	period: Period = Period.ONE_DAY
+	period: Period = Period.ONE_DAY,
+	options?: BaseQueryOptions
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
@@ -36,6 +37,7 @@ const useHistoricalRatesQuery = (
 		},
 		{
 			enabled: currencyKey,
+			...options,
 		}
 	);
 };

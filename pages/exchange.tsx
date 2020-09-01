@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import { useTranslation, Trans } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 
@@ -27,7 +27,7 @@ import ChartCard from 'sections/exchange/PriceChartCard';
 import Button from 'components/Button';
 
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState } from 'store/connection';
+import { isWalletConnectedState, walletAddressState } from 'store/connection';
 
 import {
 	FlexDivCentered,
@@ -38,6 +38,7 @@ import {
 import snxContracts from 'lib/snxContracts';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
+import Services from 'containers/Services';
 
 const TxConfirmationModal = dynamic(() => import('sections/exchange/TxConfirmationModal'), {
 	ssr: false,
@@ -52,6 +53,7 @@ export const getExchangeRatesForCurrencies = (
 const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
+	const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useState<{
 		base: CurrencyKey;
@@ -64,18 +66,41 @@ const ExchangePage = () => {
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery({ refetchInterval: false });
 	const ethGasStationQuery = useEthGasStationQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 
 	const isBaseCurrencyFrozen = frozenSynthsQuery.data
 		? frozenSynthsQuery.data.includes(baseCurrencyKey)
 		: false;
+
+	useEffect(() => {
+		if (synthExchange$ && walletAddress) {
+			const subscription = synthExchange$.subscribe(({ fromAddress }) => {
+				if (fromAddress === walletAddress) {
+					synthsWalletBalancesQuery.refetch();
+				}
+			});
+			return () => subscription.unsubscribe();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [synthExchange$, walletAddress]);
+
+	useEffect(() => {
+		if (ratesUpdated$) {
+			const subscription = ratesUpdated$.subscribe(() => {
+				exchangeRatesQuery.refetch();
+			});
+			return () => subscription.unsubscribe();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ratesUpdated$]);
 
 	const rate = getExchangeRatesForCurrencies(
 		exchangeRatesQuery.data ?? null,

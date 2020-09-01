@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, BaseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
@@ -10,7 +10,7 @@ import snxContracts from 'lib/snxContracts';
 
 import { WalletBalancesMap } from './types';
 
-const useSynthsBalancesQuery = () => {
+const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -39,6 +39,7 @@ const useSynthsBalancesQuery = () => {
 		},
 		{
 			enabled: snxContracts.synthSummaryUtil && isWalletConnected,
+			...options,
 		}
 	);
 };

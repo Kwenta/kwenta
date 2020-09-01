@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery, BaseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -26,18 +26,22 @@ type GasSpeed = {
 	slow: number;
 };
 
-const useEthGasStationQuery = () => {
-	return useQuery<GasSpeed, any>(QUERY_KEYS.Network.EthGasStation, async () => {
-		const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);
+const useEthGasStationQuery = (options?: BaseQueryOptions) => {
+	return useQuery<GasSpeed, any>(
+		QUERY_KEYS.Network.EthGasStation,
+		async () => {
+			const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);
 
-		const { fast, average, safeLow } = result.data;
+			const { fast, average, safeLow } = result.data;
 
-		return {
-			fast: fast / 10,
-			average: average / 10,
-			slow: safeLow / 10,
-		};
-	});
+			return {
+				fast: fast / 10,
+				average: average / 10,
+				slow: safeLow / 10,
+			};
+		},
+		options
+	);
 };
 
 export default useEthGasStationQuery;

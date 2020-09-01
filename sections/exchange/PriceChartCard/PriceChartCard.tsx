@@ -186,7 +186,7 @@ const CurrencyLabel = styled.span`
 	padding-right: 20px;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.white};
-	font-weight: 500;
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const CurrencyChange = styled.span<{ isPositive: boolean }>`

@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, BaseQueryOptions } from 'react-query';
 import { compact } from 'lodash';
 import { ethers } from 'ethers';
 
@@ -7,7 +7,7 @@ import { CurrencyKeys } from 'constants/currency';
 
 import snxContracts from 'lib/snxContracts';
 
-const useFrozenSynthsQuery = () => {
+const useFrozenSynthsQuery = (options?: BaseQueryOptions) => {
 	const frozenSynthsQuery = useQuery<CurrencyKeys, any>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
@@ -16,6 +16,7 @@ const useFrozenSynthsQuery = () => {
 		},
 		{
 			enabled: snxContracts.synthSummaryUtil,
+			...options,
 		}
 	);
 

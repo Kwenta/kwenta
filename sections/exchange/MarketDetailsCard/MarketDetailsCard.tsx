@@ -137,7 +137,6 @@ const Label = styled.div`
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
-	font-weight: 500;
 `;
 
 export default MarketDetailsCard;
