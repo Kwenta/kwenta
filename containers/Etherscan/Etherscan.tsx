@@ -4,15 +4,17 @@ import { useRecoilValue } from 'recoil';
 
 import EtherscanLinks from 'utils/etherscan';
 
-import { networkIdState } from 'store/connection';
+import { networkState } from 'store/connection';
 
 const useEtherscan = () => {
-	const networkId = useRecoilValue(networkIdState);
+	const network = useRecoilValue(networkState);
 	const [etherscanInstance, setEtherscanInstance] = useState<EtherscanLinks | null>(null);
 
 	useEffect(() => {
-		setEtherscanInstance(new EtherscanLinks(networkId));
-	}, [networkId]);
+		if (network) {
+			setEtherscanInstance(new EtherscanLinks(network));
+		}
+	}, [network]);
 
 	return {
 		etherscanInstance,

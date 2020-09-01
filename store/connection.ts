@@ -1,14 +1,18 @@
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { atom, selector } from 'recoil';
 
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { truncateAddress } from 'utils/formatters/string';
+
+export type Network = {
+	id: NetworkId;
+	name: NetworkName;
+};
 
 const getKey = (subKey: string) => `connection/${subKey}`;
 
-export const networkIdState = atom<NetworkId>({
-	key: getKey('networkId'),
-	default: DEFAULT_NETWORK_ID,
+export const networkState = atom<Network | null>({
+	key: getKey('network'),
+	default: null,
 });
 
 export const walletAddressState = atom<string | null>({

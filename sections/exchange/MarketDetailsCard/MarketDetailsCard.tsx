@@ -16,8 +16,9 @@ import { formatFiatCurrency } from 'utils/formatters/number';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
-import snxContracts from 'lib/snxContracts';
+import snxContracts, { TokenDefinition } from 'lib/snxContracts';
 import Etherscan from 'containers/Etherscan';
+import { get } from 'lodash';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -33,11 +34,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 	const rates24High = historicalRates24H.data?.high ?? null;
 	const rates24Low = historicalRates24H.data?.low ?? null;
 	const marketCapUSD = null;
-	let contractAddress = null;
 
-	if (snxContracts.snxJS) {
-		contractAddress = (snxContracts.snxJS as any)[`Synth${currencyKey}`]?.address;
-	}
+	const token = get(snxContracts, ['tokensMap', currencyKey!], null) as TokenDefinition | null;
 
 	return (
 		<StyledCard>
@@ -62,7 +60,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					</Item>
 					<Item>
 						<Label>
-							{contractAddress != null ? (
+							{token?.address != null ? (
 								<Trans
 									i18nKey="common.currency.currency-contract"
 									values={{ currencyKey }}
@@ -73,9 +71,13 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 							)}
 						</Label>
 						<Value>
-							<ExternalLink href={etherscanInstance?.tokenLink(contractAddress)}>
-								{contractAddress != null ? truncateAddress(contractAddress, 6, 4) : NO_VALUE}
-							</ExternalLink>
+							{token?.address != null && etherscanInstance != null ? (
+								<ExternalLink href={etherscanInstance.tokenLink(token.address)}>
+									{truncateAddress(token.address, 6, 4)}
+								</ExternalLink>
+							) : (
+								NO_VALUE
+							)}
 						</Value>
 					</Item>
 				</Column>
@@ -98,7 +100,15 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					</Item>
 					<Item>
 						<Label>{t('exchange.market-details-card.price-feed')}</Label>
-						<Value>{NO_VALUE}</Value>
+						<Value>
+							{token?.feed != null && etherscanInstance != null ? (
+								<ExternalLink href={etherscanInstance.tokenLink(token.feed)}>
+									{truncateAddress(token.feed, 6, 4)}
+								</ExternalLink>
+							) : (
+								NO_VALUE
+							)}
+						</Value>
 					</Item>
 				</Column>
 			</StyledCardBody>

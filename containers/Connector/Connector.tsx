@@ -9,7 +9,7 @@ import snxContracts from 'lib/snxContracts';
 import { getDefaultNetworkId } from 'utils/network';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkIdState } from 'store/connection';
+import { walletAddressState, networkState } from 'store/connection';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -19,7 +19,7 @@ import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
-	const [networkId, setNetworkId] = useRecoilState(networkIdState);
+	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -42,7 +42,10 @@ const useConnector = () => {
 				provider,
 			});
 
-			setNetworkId(networkId);
+			setNetwork({
+				id: networkId,
+				name: snxContracts.snxJS?.currentNetwork,
+			});
 			setProvider(provider);
 			setAppReady(true);
 		};
@@ -52,11 +55,11 @@ const useConnector = () => {
 	}, []);
 
 	useEffect(() => {
-		if (isAppReady) {
-			const onboard = initOnboard(networkId, {
+		if (isAppReady && network) {
+			const onboard = initOnboard(network, {
 				address: setWalletAddress,
 				network: (nextNetworkId: number) => {
-					if (nextNetworkId !== networkId) {
+					if (nextNetworkId !== network.id) {
 						window.location.reload();
 					}
 					// TODO: currently, network change doesn't work well, may need to reload the page.
@@ -90,7 +93,10 @@ const useConnector = () => {
 						});
 						setProvider(provider);
 						setSigner(provider.getSigner());
-						setNetworkId(networkId);
+						setNetwork({
+							id: networkId,
+							name: network.name,
+						});
 						setSelectedWallet(wallet.name);
 					} else {
 						// @ts-ignore
@@ -100,7 +106,7 @@ const useConnector = () => {
 					}
 				},
 			});
-			const notify = initNotify(networkId);
+			const notify = initNotify(network.id);
 
 			setOnboard(onboard);
 			setNotify(notify);

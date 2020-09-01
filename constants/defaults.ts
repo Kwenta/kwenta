@@ -13,6 +13,7 @@ export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
 
 // network defaults
 export const DEFAULT_NETWORK_ID = NetworkId.Mainnet;
+
 export const DEFAULT_GAS_LIMIT = 500000;
 export const DEFAULT_GAS_BUFFER = 5000;
 

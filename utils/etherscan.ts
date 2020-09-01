@@ -1,9 +1,8 @@
 import { NetworkId } from '@synthetixio/js';
+import { Network } from 'store/connection';
 
-const getEtherscanBaseURL = (networkId: NetworkId) => {
-	const network = 'mainnet';
-
-	if (networkId === NetworkId.Mainnet || network == null) {
+const getEtherscanBaseURL = (network: Network) => {
+	if (network.id === NetworkId.Mainnet) {
 		return 'https://etherscan.io';
 	}
 	return `https://${network}.etherscan.io`;
@@ -11,16 +10,16 @@ const getEtherscanBaseURL = (networkId: NetworkId) => {
 
 class EtherscanLinks {
 	baseURL: string;
-	networkId: NetworkId;
+	network: Network;
 
-	constructor(networkId: NetworkId) {
-		this.networkId = networkId;
-		this.baseURL = getEtherscanBaseURL(networkId);
+	constructor(network: Network) {
+		this.network = network;
+		this.baseURL = getEtherscanBaseURL(network);
 	}
 
-	public setNetworkId(networkId: NetworkId) {
-		this.networkId = networkId;
-		this.baseURL = getEtherscanBaseURL(networkId);
+	public setNetworkId(network: Network) {
+		this.network = network;
+		this.baseURL = getEtherscanBaseURL(network);
 	}
 
 	public txLink(txId: string) {

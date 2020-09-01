@@ -27,6 +27,17 @@ export type SynthDefinition = {
 
 export type SynthDefinitionMap = Record<string, SynthDefinition>;
 
+export type TokenDefinition = {
+	symbol: CurrencyKey;
+	address: string;
+	asset: string;
+	decimals: number;
+	feed: string;
+	name: string;
+};
+
+export type TokenDefinitionMap = Record<string, SynthDefinition>;
+
 type ContractSettings = {
 	networkId: NetworkId;
 	provider?: ethers.providers.Provider;
@@ -38,6 +49,7 @@ type SnxJS = {
 	snxJS: ReturnType<typeof initSnxJS> | null;
 	setContractSettings: (contractSettings: ContractSettings) => void;
 	synthsMap: SynthDefinitionMap | null;
+	tokensMap: TokenDefinitionMap | null;
 	synthSummaryUtil: ethers.Contract | null;
 };
 
@@ -46,16 +58,19 @@ const snxContracts: SnxJS = {
 	snxJS: null,
 	synthSummaryUtil: null,
 	synthsMap: null,
+	tokensMap: null,
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.initialized = true;
 		this.snxJS = initSnxJS({ networkId, provider, signer });
 		this.synthsMap = keyBy(snxContracts.snxJS?.synths, 'name') as SynthDefinitionMap;
+		this.tokensMap = keyBy(snxContracts.snxJS?.tokens, 'symbol') as TokenDefinitionMap;
 		this.synthSummaryUtil = new ethers.Contract(
 			synthSummaryUtilContract.addresses[networkId],
 			synthSummaryUtilContract.abi,
 			provider
 		);
+		console.log(this.snxJS);
 	},
 };
 

@@ -1,17 +1,18 @@
-import { NetworkId } from '@synthetixio/js';
 import onboard from 'bnc-onboard';
 import notify from 'bnc-notify';
 
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
 
-export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(networkId);
+import { Network } from 'store/connection';
+
+export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
+	const infuraRpc = getInfuraRpcURL(network);
 
 	return onboard({
 		dappId: process.env.BN_ONBOARD_API_KEY,
 		hideBranding: true,
-		networkId,
+		networkId: network.id,
 		subscriptions,
 		walletSelect: {
 			wallets: [
@@ -23,7 +24,7 @@ export const initOnboard = (networkId: NetworkId, subscriptions: Subscriptions) 
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [networkId]: infuraRpc },
+					rpc: { [network.id]: infuraRpc },
 					preferred: true,
 				},
 				{ walletName: 'coinbase', preferred: true },
