@@ -5,7 +5,7 @@ const getEtherscanBaseURL = (network: Network) => {
 	if (network.id === NetworkId.Mainnet) {
 		return 'https://etherscan.io';
 	}
-	return `https://${network}.etherscan.io`;
+	return `https://${network.name}.etherscan.io`;
 };
 
 class EtherscanLinks {

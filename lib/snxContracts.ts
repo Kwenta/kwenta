@@ -70,7 +70,6 @@ const snxContracts: SnxJS = {
 			synthSummaryUtilContract.abi,
 			provider
 		);
-		console.log(this.snxJS);
 	},
 };
 
