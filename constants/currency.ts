@@ -15,7 +15,7 @@ import LINKIcon from 'assets/svg/currencies/crypto/LINK.svg';
 import TRXIcon from 'assets/svg/currencies/crypto/TRX.svg';
 import DASHIcon from 'assets/svg/currencies/crypto/DASH.svg';
 import ETCIcon from 'assets/svg/currencies/crypto/ETC.svg';
-import SNXIcon from 'assets/svg/currencies/crypto/SNX.svg';
+import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
 import COMPIcon from 'assets/svg/currencies/crypto/COMP.svg';
 import RENIcon from 'assets/svg/currencies/crypto/REN.svg';
 import LENDIcon from 'assets/svg/currencies/crypto/LEND.svg';
@@ -71,7 +71,7 @@ import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
 import sXAGIcon from '@synthetixio/assets/synths/sXAG.svg';
-import sBZIcon from '@synthetixio/assets/synths/sBZ.svg';
+// import sBZIcon from '@synthetixio/assets/synths/sBZ.svg';
 // Crypto Index Synths
 import sDEFIIcon from '@synthetixio/assets/synths/sDEFI.svg';
 import sCEXIcon from '@synthetixio/assets/synths/sCEX.svg';
@@ -260,7 +260,7 @@ export const currencyKeyToIconMap = {
 	[SYNTHS_MAP.sCHF]: { SynthIcon: sCHFIcon, AssetIcon: CHFIcon },
 	[SYNTHS_MAP.sXAU]: { SynthIcon: sXAUIcon, AssetIcon: GOLDIcon },
 	[SYNTHS_MAP.sXAG]: { SynthIcon: sXAGIcon, AssetIcon: SILVERIcon },
-	[SYNTHS_MAP.sBZ]: { SynthIcon: sBZIcon, AssetIcon: sBZIcon },
+	// [SYNTHS_MAP.sBZ]: { SynthIcon: sBZIcon, AssetIcon: sBZIcon },
 	[SYNTHS_MAP.sCEX]: { SynthIcon: sCEXIcon, AssetIcon: CEXIcon },
 	[SYNTHS_MAP.sDEFI]: { SynthIcon: sDEFIIcon, AssetIcon: DEFIIcon },
 	[SYNTHS_MAP.iCEX]: { SynthIcon: iCEXIcon, AssetIcon: CEXIcon },
