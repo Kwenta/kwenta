@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
 
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 import {
 	SynthetixEvents,
 	ExchangeRatesEvents,
@@ -42,8 +42,8 @@ const useServices = () => {
 	}, [isAppReady, provider]);
 
 	useEffect(() => {
-		if (isAppReady && snxContracts.snxJS) {
-			const { ExchangeRates, SystemStatus, Synthetix } = snxContracts.snxJS.contracts;
+		if (isAppReady && synthetix.js) {
+			const { ExchangeRates, SystemStatus, Synthetix } = synthetix.js.contracts;
 
 			const ratesUpdated$ = new Observable<RatesUpdatedEvent>((subscriber) => {
 				ExchangeRates.on(

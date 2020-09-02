@@ -5,17 +5,17 @@ import { ethers } from 'ethers';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKeys } from 'constants/currency';
 
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 
 const useFrozenSynthsQuery = (options?: BaseQueryOptions) => {
 	const frozenSynthsQuery = useQuery<CurrencyKeys, any>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
-			const frozenSynths = await snxContracts.synthSummaryUtil!.frozenSynths();
+			const frozenSynths = await synthetix.synthSummaryUtil!.frozenSynths();
 			return compact(frozenSynths.map(ethers.utils.parseBytes32String));
 		},
 		{
-			enabled: snxContracts.synthSummaryUtil,
+			enabled: synthetix.synthSummaryUtil,
 			...options,
 		}
 	);

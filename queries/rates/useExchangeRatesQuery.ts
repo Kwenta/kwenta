@@ -1,7 +1,7 @@
 import { useQuery, BaseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
@@ -13,7 +13,7 @@ const useExchangeRatesQuery = (options?: BaseQueryOptions) => {
 		async () => {
 			const exchangeRates: Rates = {};
 
-			const [synths, rates] = await snxContracts.synthSummaryUtil!.synthsRates();
+			const [synths, rates] = await synthetix.synthSummaryUtil!.synthsRates();
 
 			synths.forEach((synth: CurrencyKey, idx: number) => {
 				const synthName = ethers.utils.parseBytes32String(synth) as CurrencyKey;
@@ -23,7 +23,7 @@ const useExchangeRatesQuery = (options?: BaseQueryOptions) => {
 			return exchangeRates;
 		},
 		{
-			enabled: snxContracts.synthSummaryUtil,
+			enabled: synthetix.synthSummaryUtil,
 			...options,
 		}
 	);

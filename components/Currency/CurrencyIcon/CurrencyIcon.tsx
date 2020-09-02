@@ -5,6 +5,7 @@ import { CurrencyKey, currencyKeyToIconMap } from 'constants/currency';
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
 	type?: 'synth' | 'asset';
+	className?: string;
 };
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth', ...rest }) => {
@@ -18,6 +19,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 
 	const Icon = type === 'synth' && SynthIcon ? SynthIcon : AssetIcon;
 
+	// @ts-ignore
 	return <Icon width="24" height="24" {...rest} />;
 };
 

@@ -63,7 +63,13 @@
 	"modals": {
 		"select-synth": {
 			"title": "select synth",
-			"all-synths": "all synths"
+			"subtitle": {
+				"category-synths": "{{category}} synths",
+				"all-synths": "all synths"
+			},
+			"search": {
+				"placeholder": "search synths"
+			}
 		},
 		"confirm-transaction": {
 			"title": "confirm transaction",

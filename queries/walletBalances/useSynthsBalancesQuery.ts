@@ -6,7 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
 import { walletAddressState, isWalletConnectedState } from 'store/connection';
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 
 import { WalletBalancesMap } from './types';
 
@@ -23,7 +23,7 @@ const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 				synthsKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			] = await snxContracts.synthSummaryUtil!.synthsBalances(walletAddress);
+			] = await synthetix.synthSummaryUtil!.synthsBalances(walletAddress);
 
 			synthsKeys.forEach((key: string, i: string) => {
 				const synthName = ethers.utils.parseBytes32String(key) as CurrencyKey;
@@ -38,7 +38,7 @@ const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 			return balances;
 		},
 		{
-			enabled: snxContracts.synthSummaryUtil && isWalletConnected,
+			enabled: synthetix.synthSummaryUtil && isWalletConnected,
 			...options,
 		}
 	);

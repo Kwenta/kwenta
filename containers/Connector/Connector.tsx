@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkId /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
@@ -37,14 +37,14 @@ const useConnector = () => {
 			const networkId = await getDefaultNetworkId();
 			// @ts-ignore
 			const provider = ethers.getDefaultProvider(networkId);
-			snxContracts.setContractSettings({
+			synthetix.setContractSettings({
 				networkId,
 				provider,
 			});
 
 			setNetwork({
 				id: networkId,
-				name: snxContracts.snxJS?.currentNetwork,
+				name: synthetix.js!.currentNetwork,
 			});
 			setProvider(provider);
 			setAppReady(true);
@@ -66,7 +66,7 @@ const useConnector = () => {
 					/*
 					// @ts-ignore
 					if (SUPPORTED_NETWORKS[networkId]) {
-						snxContracts.setContractSettings({
+						synthetix.setContractSettings({
 							networkId,
 							provider: provider!,
 							signer: signer ?? undefined,
@@ -86,7 +86,7 @@ const useConnector = () => {
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
 
-						snxContracts.setContractSettings({
+						synthetix.setContractSettings({
 							networkId,
 							provider,
 							signer,
@@ -95,7 +95,7 @@ const useConnector = () => {
 						setSigner(provider.getSigner());
 						setNetwork({
 							id: networkId,
-							name: network.name,
+							name: network.name as NetworkName,
 						});
 						setSelectedWallet(wallet.name);
 					} else {

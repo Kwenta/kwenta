@@ -35,7 +35,7 @@ import {
 	FlexDivRowCentered,
 	NoTextTransform,
 } from 'styles/common';
-import snxContracts from 'lib/snxContracts';
+import synthetix from 'lib/synthetix';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import Services from 'containers/Services';
@@ -147,9 +147,9 @@ const ExchangePage = () => {
 		!baseCurrencyAmount || !ethGasStationQuery.data || !isWalletConnected || isSubmitting;
 
 	const handleSubmit = async () => {
-		const snxJS: any = snxContracts.snxJS;
+		const js: any = synthetix.js;
 
-		if (snxJS) {
+		if (js) {
 			setTxConfirmationModalOpen(true);
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey);
@@ -157,11 +157,11 @@ const ExchangePage = () => {
 
 			const params = [quoteKeyBytes32, amountToExchange, baseKeyBytes32];
 			try {
-				const gasEstimate = await snxJS.contracts.Synthetix.estimateGas.exchange(...params);
+				const gasEstimate = await js.contracts.Synthetix.estimateGas.exchange(...params);
 
 				setIsSubmitting(true);
 
-				const tx = await snxJS.contracts.Synthetix.exchange(...params, {
+				const tx = await js.contracts.Synthetix.exchange(...params, {
 					gasPrice: ethGasStationQuery.data!.average * GWEI_UNIT,
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
@@ -294,7 +294,7 @@ const ExchangePage = () => {
 				{selectSynthModalOpen && (
 					<SelectSynthModal
 						onDismiss={() => setSelectSynthModalOpen(false)}
-						synths={snxContracts.snxJS.synths ?? []}
+						synths={synthetix.js?.synths ?? []}
 						exchangeRates={exchangeRatesQuery.data}
 						onSelect={(currencyKey) =>
 							setCurrencyPair({

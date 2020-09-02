@@ -16,7 +16,7 @@ import { formatFiatCurrency } from 'utils/formatters/number';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
-import snxContracts, { TokenDefinition } from 'lib/snxContracts';
+import synthetix, { Token } from 'lib/synthetix';
 import Etherscan from 'containers/Etherscan';
 import { get } from 'lodash';
 
@@ -35,7 +35,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 	const rates24Low = historicalRates24H.data?.low ?? null;
 	const marketCapUSD = null;
 
-	const token = get(snxContracts, ['tokensMap', currencyKey!], null) as TokenDefinition | null;
+	const token =
+		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
 
 	return (
 		<StyledCard>
@@ -60,7 +61,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					</Item>
 					<Item>
 						<Label>
-							{token?.address != null ? (
+							{token?.address ? (
 								<Trans
 									i18nKey="common.currency.currency-contract"
 									values={{ currencyKey }}
@@ -71,7 +72,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 							)}
 						</Label>
 						<Value>
-							{token?.address != null && etherscanInstance != null ? (
+							{token?.address && etherscanInstance != null ? (
 								<ExternalLink href={etherscanInstance.tokenLink(token.address)}>
 									{truncateAddress(token.address, 6, 4)}
 								</ExternalLink>
