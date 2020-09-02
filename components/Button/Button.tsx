@@ -10,7 +10,6 @@ const Button = styled.button<ButtonProps>`
 	font-family: ${(props) => props.theme.fonts.regular};
 	border-radius: 100px;
 	height: 40px;
-	font-size: 12px;
 	border: none;
 	white-space: nowrap;
 	cursor: pointer;
@@ -47,6 +46,26 @@ const Button = styled.button<ButtonProps>`
 					background-color: ${(props) => props.theme.colors.purpleHover};
 				`};
 		`}
+
+		${(props) =>
+			props.variant === 'secondary' &&
+			css`
+				color: ${(props) => props.theme.colors.blueberry};
+				background-color: ${(props) => props.theme.colors.black};
+				&:hover {
+					&:not(:disabled) {
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.purple};
+					}
+				}
+				${(props) =>
+					// @ts-ignore
+					props.isActive &&
+					css`
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.purple};
+					`};
+			`}		
 
 `;
 

@@ -4,15 +4,18 @@ const withImages = require('next-images');
 const path = require('path');
 
 // SVG path for svg-react-loader
-const svgPath = path.resolve(__dirname, 'assets/svg');
+const inlineSvgPaths = [
+	path.resolve(__dirname, 'assets/svg'),
+	path.resolve(__dirname, 'node_modules/@synthetixio/assets'),
+];
 
 const plugins = [
 	withImages({
-		exclude: svgPath,
+		exclude: inlineSvgPaths,
 		webpack(config, options) {
 			config.module.rules.push({
 				test: /\.(svg)$/,
-				include: svgPath,
+				include: inlineSvgPaths,
 				loader: 'svg-react-loader',
 			});
 			return config;

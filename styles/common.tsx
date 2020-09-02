@@ -100,3 +100,19 @@ export const TextButton = styled.button`
 	${resetButtonCSS};
 	background: transparent;
 `;
+
+export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: boolean }>`
+	padding: 5px 0;
+	${(props) =>
+		props.isSelectable
+			? css`
+					cursor: pointer;
+					&:hover {
+						background-color: ${(props) => props.theme.colors.black};
+					}
+			  `
+			: css`
+					opacity: 0.5;
+					cursor: not-allowed;
+			  `}
+`;

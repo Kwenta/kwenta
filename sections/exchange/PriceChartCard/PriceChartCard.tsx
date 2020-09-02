@@ -12,14 +12,13 @@ import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer'
 import { CurrencyKey, USD_SIGN } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
+import ChangePercent from 'components/ChangePercent';
+
 import { GridDivCenteredCol, TextButton, FlexDivRowCentered, NoTextTransform } from 'styles/common';
 
-import { formatFiatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatFiatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-
-import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
-import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -91,12 +90,7 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 					{price != null && (
 						<CurrencyPrice>{formatFiatCurrency(price, { sign: USD_SIGN })}</CurrencyPrice>
 					)}
-					{change != null && (
-						<CurrencyChange isPositive={isChangePositive}>
-							{isChangePositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
-							{formatPercent(Math.abs(change))}
-						</CurrencyChange>
-					)}
+					{change != null && <ChangePercent value={change} />}
 				</div>
 				<Actions>
 					{PERIOD_LABELS.map((period) => (
@@ -189,16 +183,6 @@ const CurrencyLabel = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const CurrencyChange = styled.span<{ isPositive: boolean }>`
-	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
-	font-family: ${(props) => props.theme.fonts.mono};
-	svg {
-		margin-right: 5px;
-		width: 12px;
-		height: 12px;
-	}
-`;
-
 const CurrencyPrice = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.white};
@@ -229,7 +213,6 @@ const TooltipContentStyle = styled.div`
 
 const ItemStyle = styled.div`
 	color: ${(props) => props.theme.colors.white};
-	font-size: 12px;
 	padding: 3px 5px;
 `;
 

@@ -65,7 +65,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 const StyledCard = styled(Card)`
 	width: 312px;
-	font-size: 12px;
 `;
 
 const LabelContainer = styled.div`

@@ -64,7 +64,7 @@ const GlobalStyle = createGlobalStyle`
 		scroll-behavior: smooth;
 		background-color: ${(props) => props.theme.colors.black};
 		color: ${(props) => props.theme.colors.blueberry};
-		font-size: 14px;
+		font-size: 12px;
 	}
 
 	a {

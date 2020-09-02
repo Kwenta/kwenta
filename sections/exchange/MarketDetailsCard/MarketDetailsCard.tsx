@@ -118,7 +118,6 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 
 const StyledCard = styled(Card)`
 	max-width: 618px;
-	font-size: 12px;
 	width: 100%;
 `;
 
