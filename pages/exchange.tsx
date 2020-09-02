@@ -303,6 +303,7 @@ const ExchangePage = () => {
 							})
 						}
 						frozenSynths={frozenSynthsQuery.data || []}
+						excludedSynths={quoteCurrencyKey ? [quoteCurrencyKey] : undefined}
 					/>
 				)}
 			</>

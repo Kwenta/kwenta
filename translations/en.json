@@ -63,7 +63,8 @@
 	"modals": {
 		"select-synth": {
 			"title": "select synth",
-			"subtitle": {
+			"header": {
+				"search-results": "search results",
 				"category-synths": "{{category}} synths",
 				"all-synths": "all synths"
 			},
@@ -87,6 +88,8 @@
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price"
 		},
+		"total-assets": "{{total}} assets",
+		"total-results": "{{total}} results",
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
@@ -94,6 +97,7 @@
 			"equities": "equities"
 		},
 		"contract": "contract",
+		"search-results": "search results",
 		"chart-periods": {
 			"1H": "1H",
 			"4H": "4H",
