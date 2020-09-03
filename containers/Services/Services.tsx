@@ -48,13 +48,11 @@ const useServices = () => {
 			const ratesUpdated$ = new Observable<RatesUpdatedEvent>((subscriber) => {
 				ExchangeRates.on(
 					ExchangeRatesEvents.RATES_UPDATED,
-					(currencyKeys: RatesUpdatedEvent['currencyKeys'], rates: RatesUpdatedEvent['rates']) => {
-						console.log(currencyKeys);
-						return subscriber.next({
+					(currencyKeys: RatesUpdatedEvent['currencyKeys'], rates: RatesUpdatedEvent['rates']) =>
+						subscriber.next({
 							currencyKeys,
 							rates,
-						});
-					}
+						})
 				);
 			});
 

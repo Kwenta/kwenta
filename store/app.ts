@@ -5,6 +5,11 @@ import { Languages } from 'translations/constants';
 import { DEFAULT_LANGUAGE } from 'constants/defaults';
 import { FIAT_CURRENCY_MAP, USD_SIGN } from 'constants/currency';
 
+export type FiatCurrency = {
+	currency: string;
+	sign: string;
+};
+
 const getKey = (subKey: string) => `app/${subKey}`;
 
 export const appReadyState = atom<boolean>({
@@ -17,7 +22,7 @@ export const languageState = atom<Languages>({
 	default: DEFAULT_LANGUAGE,
 });
 
-export const fiatCurrencyState = atom<{ currency: string; sign: string }>({
+export const fiatCurrencyState = atom<FiatCurrency>({
 	key: getKey('fiatCurrency'),
 	default: {
 		currency: FIAT_CURRENCY_MAP.USD,

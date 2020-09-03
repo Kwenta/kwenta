@@ -72,6 +72,15 @@
 				"placeholder": "search synths"
 			}
 		},
+		"select-asset": {
+			"title": "select asset",
+			"total-synth-value": "total synth value",
+			"header": {
+				"your-synths": "your synths",
+				"holdings": "holdings",
+				"non-synths": "non-synths"
+			}
+		},
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction with your web3 provider"
@@ -86,7 +95,9 @@
 			"currency-amount": "<0>{{currencyKey}}</0> Amount",
 			"currency-value": "<0>{{currencyKey}}</0> Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
-			"currency-price": "<0>{{currencyKey}}</0> Price"
+			"currency-price": "<0>{{currencyKey}}</0> Price",
+			"synthetic-currency": "Synthetic {{currencyKey}}",
+			"convert-to-currency": "Convert to {{currencyKey}}"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",

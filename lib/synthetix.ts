@@ -48,9 +48,9 @@ export type Synth = {
 
 export type Synths = Synth[];
 
-export type SynthMap = Record<string, Synth>;
+export type SynthsMap = Record<string, Synth>;
 
-export type TokenMap = Record<string, Token>;
+export type TokensMap = Record<string, Token>;
 
 type ContractSettings = {
 	networkId: NetworkId;
@@ -61,8 +61,8 @@ type ContractSettings = {
 type Synthetix = {
 	js: ReturnType<typeof initSynthetixJS> | null;
 	setContractSettings: (contractSettings: ContractSettings) => void;
-	synthsMap: SynthMap | null;
-	tokensMap: TokenMap | null;
+	synthsMap: SynthsMap | null;
+	tokensMap: TokensMap | null;
 	synthSummaryUtil: ethers.Contract | null;
 };
 

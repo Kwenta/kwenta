@@ -1,26 +1,26 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 
 import { Synths } from 'lib/synthetix';
 
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
+import Button from 'components/Button';
 import Currency from 'components/Currency';
 import BaseModal from 'components/BaseModal';
+import SearchInput from 'components/Input/SearchInput';
 
-import { SelectableCurrencyRow, FlexDivRowCentered, FlexDivRow } from 'styles/common';
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
+
+import { SelectableCurrencyRow, FlexDivRow } from 'styles/common';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { CurrencyKey, CurrencyKeys, CATEGORY_MAP, Category } from 'constants/currency';
-
-import { fiatCurrencyState } from 'store/app';
-
-import SearchInput from 'components/Input/SearchInput';
-import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import { CurrencyKey, CurrencyKeys, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-import Button from 'components/Button';
+
+import { FiatCurrency } from 'store/app';
+import { RowsHeader, RowsContainer } from '../common';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -36,6 +36,7 @@ type SelectSynthModalProps = {
 	onSelect: (currencyKey: CurrencyKey) => void;
 	frozenSynths: CurrencyKeys;
 	excludedSynths?: CurrencyKeys;
+	fiatCurrency: FiatCurrency;
 };
 
 export const SelectSynthModal: FC<SelectSynthModalProps> = ({
@@ -45,12 +46,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	onSelect,
 	frozenSynths,
 	excludedSynths,
+	fiatCurrency,
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
-
-	const fiatCurrency = useRecoilValue(fiatCurrencyState);
 
 	const filteredSynths = useMemo(() => {
 		const allSynths = excludedSynths
@@ -78,7 +78,8 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
-	const synthsToRender = assetSearch ? searchFilteredSynths : filteredSynths;
+	const synthsResults = assetSearch ? searchFilteredSynths : filteredSynths;
+	const totalSynths = synthsResults.length;
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-synth.title')}>
@@ -95,7 +96,6 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 
 					return (
 						<CategoryButton
-							size="md"
 							variant="secondary"
 							isActive={isActive}
 							onClick={() => {
@@ -109,11 +109,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 					);
 				})}
 			</CategoryFilters>
-			<SynthsRowsTitle>
+			<RowsHeader>
 				{assetSearch ? (
 					<>
 						<span>{t('modals.select-synth.header.search-results')}</span>
-						<span>{t('common.total-results', { total: synthsToRender.length })}</span>
+						<span>{t('common.total-results', { total: totalSynths })}</span>
 					</>
 				) : (
 					<>
@@ -122,12 +122,12 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 								? t('modals.select-synth.header.category-synths', { category: synthCategory })
 								: t('modals.select-synth.header.all-synths')}
 						</span>
-						<span>{t('common.total-assets', { total: synthsToRender.length })}</span>
+						<span>{t('common.total-assets', { total: totalSynths })}</span>
 					</>
 				)}
-			</SynthsRowsTitle>
-			<SynthRowsContainer>
-				{synthsToRender.map((synth) => {
+			</RowsHeader>
+			<RowsContainer>
+				{synthsResults.map((synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
 					const isSelectable = !frozenSynths.includes(synth.name);
 
@@ -149,7 +149,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 						</StyledSelectableCurrencyRow>
 					);
 				})}
-			</SynthRowsContainer>
+			</RowsContainer>
 		</StyledBaseModal>
 	);
 };
@@ -193,17 +193,6 @@ const CategoryFilters = styled.div`
 
 const CategoryButton = styled(Button)`
 	text-transform: uppercase;
-`;
-
-const SynthRowsContainer = styled.div`
-	overflow: auto;
-	height: 100%;
-`;
-
-const SynthsRowsTitle = styled(FlexDivRow)`
-	text-transform: uppercase;
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding: 0 16px 9px 16px;
 `;
 
 export default SelectSynthModal;

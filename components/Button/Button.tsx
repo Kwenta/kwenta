@@ -4,11 +4,14 @@ type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg';
 	variant: 'primary' | 'secondary';
 	isActive?: boolean;
+	isRounded?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
 	font-family: ${(props) => props.theme.fonts.bold};
-	height: 40px;
+	height: 32px;
+	padding: 0 12px;
+	border-radius: ${(props) => (props.isRounded ? '100px' : '4px')};
 	border: none;
 	white-space: nowrap;
 	cursor: pointer;
@@ -34,10 +37,15 @@ const Button = styled.button<ButtonProps>`
 		`}
 
 	${(props) =>
+		props.size === 'lg' &&
+		css`
+			padding: 0 40px;
+			height: 40px;
+		`}		
+
+	${(props) =>
 		props.variant === 'primary' &&
 		css`
-			border-radius: 100px;
-			padding: 0 40px;
 			color: ${(props) => props.theme.colors.white};
 			background-color: ${(props) => props.theme.colors.purple};
 			&:hover {
@@ -56,8 +64,6 @@ const Button = styled.button<ButtonProps>`
 		${(props) =>
 			props.variant === 'secondary' &&
 			css`
-				border-radius: 4px;
-				padding: 0 12px;
 				color: ${(props) => props.theme.colors.blueberry};
 				background-color: ${(props) => props.theme.colors.black};
 				&:hover {

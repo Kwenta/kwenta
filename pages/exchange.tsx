@@ -39,12 +39,17 @@ import synthetix from 'lib/synthetix';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import Services from 'containers/Services';
+import { fiatCurrencyState } from 'store/app';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
 });
 
 const SelectSynthModal = dynamic(() => import('sections/shared/modals/SelectSynthModal'), {
+	ssr: false,
+});
+
+const SelectAssetModal = dynamic(() => import('sections/shared/modals/SelectAssetModal'), {
 	ssr: false,
 });
 
@@ -73,6 +78,8 @@ const ExchangePage = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
+	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
+	const fiatCurrency = useRecoilValue(fiatCurrencyState);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -120,13 +127,13 @@ const ExchangePage = () => {
 
 	const baseCurrencyBalance = get(
 		synthsWalletBalancesQuery.data,
-		[baseCurrencyKey, 'balance'],
+		['balancesMap', baseCurrencyKey, 'balance'],
 		null
 	);
 
 	const quoteCurrencyBalance = get(
 		synthsWalletBalancesQuery.data,
-		[quoteCurrencyKey, 'balance'],
+		['balancesMap', quoteCurrencyKey, 'balance'],
 		null
 	);
 
@@ -214,7 +221,7 @@ const ExchangePage = () => {
 								setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
 								setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 							}}
-							onCurrencySelect={() => setSelectSynthModalOpen(true)}
+							onCurrencySelect={() => setSelectAssetModalOpen(true)}
 						/>
 						<ChartCard
 							currencyKey={quoteCurrencyKey ?? null}
@@ -279,7 +286,13 @@ const ExchangePage = () => {
 						</TradeInfoItem>
 					</TradeInfoItems>
 					<div>
-						<Button variant="primary" disabled={buttonDisabled} onClick={handleSubmit}>
+						<Button
+							variant="primary"
+							isRounded={true}
+							disabled={buttonDisabled}
+							onClick={handleSubmit}
+							size="lg"
+						>
 							{isSubmitting
 								? t('exchange.trade-info.button.submitting-order')
 								: buttonDisabled
@@ -304,6 +317,22 @@ const ExchangePage = () => {
 						}
 						frozenSynths={frozenSynthsQuery.data || []}
 						excludedSynths={quoteCurrencyKey ? [quoteCurrencyKey] : undefined}
+						fiatCurrency={fiatCurrency}
+					/>
+				)}
+				{selectAssetModalOpen && (
+					<SelectAssetModal
+						onDismiss={() => setSelectAssetModalOpen(false)}
+						synthsMap={synthetix.synthsMap}
+						synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
+						synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
+						onSelect={(currencyKey) =>
+							setCurrencyPair({
+								base: quoteCurrencyKey,
+								quote: currencyKey,
+							})
+						}
+						fiatCurrency={fiatCurrency}
 					/>
 				)}
 			</>

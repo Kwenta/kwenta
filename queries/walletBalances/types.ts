@@ -1,12 +1,13 @@
 import { BigNumberish } from 'ethers';
 import { CurrencyKey } from 'constants/currency';
 
-export type WalletBalance = {
+export type SynthBalance = {
+	currencyKey: CurrencyKey;
 	balance: number;
 	balanceBN: BigNumberish;
 	usdBalance: number;
 };
 
-export type WalletBalances = WalletBalance[];
+export type SynthBalances = SynthBalance[];
 
-export type WalletBalancesMap = Record<CurrencyKey, WalletBalance>;
+export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
