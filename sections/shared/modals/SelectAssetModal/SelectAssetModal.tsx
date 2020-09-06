@@ -13,7 +13,7 @@ import { SelectableCurrencyRow, FlexDivRowCentered, NoTextTransform } from 'styl
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import { SynthBalances } from 'queries/walletBalances/useSynthsBalancesQuery';
+import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { FiatCurrency } from 'store/app';
 
@@ -24,7 +24,7 @@ import { RowsHeader, RowsContainer } from '../common';
 type SelectAssetModalProps = {
 	onDismiss: () => void;
 	synthsMap: SynthsMap | null;
-	synthBalances: SynthBalances;
+	synthBalances: SynthBalance[];
 	synthTotalUSDBalance: number | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	fiatCurrency: FiatCurrency;

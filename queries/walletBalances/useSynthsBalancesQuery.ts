@@ -17,8 +17,6 @@ export type SynthBalance = {
 	usdBalance: number;
 };
 
-export type SynthBalances = SynthBalance[];
-
 export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
 
 type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
@@ -28,7 +26,7 @@ const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	return useQuery<
-		{ balancesMap: SynthBalancesMap; balances: SynthBalances; totalUSDBalance: number },
+		{ balancesMap: SynthBalancesMap; balances: SynthBalance[]; totalUSDBalance: number },
 		any
 	>(
 		QUERY_KEYS.WalletBalances.Synths,
