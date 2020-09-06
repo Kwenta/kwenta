@@ -1,4 +1,4 @@
-import { CurrencyKey, CurrencyKeys } from '../../constants/currency';
+import { CurrencyKey } from '../../constants/currency';
 
 export type SynthExchangeEvent = {
 	fromAddress: string;
@@ -10,7 +10,7 @@ export type SynthExchangeEvent = {
 };
 
 export type RatesUpdatedEvent = {
-	currencyKeys: CurrencyKeys;
+	currencyKeys: CurrencyKey[];
 	rates: number[];
 };
 

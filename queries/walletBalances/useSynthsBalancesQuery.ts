@@ -1,17 +1,27 @@
 import { useQuery, BaseQueryOptions } from 'react-query';
-import { ethers } from 'ethers';
+import { ethers, BigNumberish } from 'ethers';
 import { useRecoilValue } from 'recoil';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, CurrencyKeys } from 'constants/currency';
-
-import { walletAddressState, isWalletConnectedState } from 'store/connection';
-import synthetix from 'lib/synthetix';
-
-import { SynthBalances, SynthBalancesMap } from './types';
 import { orderBy } from 'lodash';
 
-type SynthBalancesTuple = [CurrencyKeys, number[], number[]];
+import synthetix from 'lib/synthetix';
+
+import QUERY_KEYS from 'constants/queryKeys';
+import { CurrencyKey } from 'constants/currency';
+
+import { walletAddressState, isWalletConnectedState } from 'store/connection';
+
+export type SynthBalance = {
+	currencyKey: CurrencyKey;
+	balance: number;
+	balanceBN: BigNumberish;
+	usdBalance: number;
+};
+
+export type SynthBalances = SynthBalance[];
+
+export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
+
+type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 
 const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);

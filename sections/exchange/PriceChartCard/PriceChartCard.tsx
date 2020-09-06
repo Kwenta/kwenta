@@ -46,11 +46,6 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 		fontFamily: theme.fonts.mono,
 	};
 
-	const fontStyleMedium = {
-		...fontStyle,
-		fontFamily: theme.fonts.mono,
-	};
-
 	const { t } = useTranslation();
 
 	const CustomTooltip = ({
@@ -124,9 +119,10 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 						<XAxis
 							// @ts-ignore
 							dy={10}
+							minTickGap={20}
 							dataKey="timestamp"
 							allowDataOverflow={true}
-							tick={fontStyleMedium}
+							tick={fontStyle}
 							axisLine={false}
 							tickLine={false}
 							tickFormatter={(val) => {
@@ -143,13 +139,19 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 							type="number"
 							allowDataOverflow={true}
 							domain={['auto', 'auto']}
-							tick={fontStyleMedium}
+							tick={fontStyle}
 							orientation="right"
 							axisLine={false}
 							tickLine={false}
 							tickFormatter={(val) => formatFiatCurrency(val, { sign: USD_SIGN })}
 						/>
-						<Line dataKey="rate" stroke={chartColor} dot={false} strokeWidth={1.5} />
+						<Line
+							dataKey="rate"
+							stroke={chartColor}
+							dot={false}
+							strokeWidth={1.5}
+							isAnimationActive={false}
+						/>
 						<Tooltip
 							isAnimationActive={false}
 							position={{

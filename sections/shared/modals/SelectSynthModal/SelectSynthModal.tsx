@@ -16,7 +16,7 @@ import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { SelectableCurrencyRow, FlexDivRow } from 'styles/common';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { CurrencyKey, CurrencyKeys, CATEGORY_MAP } from 'constants/currency';
+import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
 import { FiatCurrency } from 'store/app';
@@ -34,8 +34,8 @@ type SelectSynthModalProps = {
 	synths: Synths;
 	exchangeRates?: Rates;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	frozenSynths: CurrencyKeys;
-	excludedSynths?: CurrencyKeys;
+	frozenSynths: CurrencyKey[];
+	excludedSynths?: CurrencyKey[];
 	fiatCurrency: FiatCurrency;
 };
 
@@ -86,7 +86,10 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 			<SearchContainer>
 				<AssetSearchInput
 					placeholder={t('modals.select-synth.search.placeholder')}
-					onChange={(e) => setAssetSearch(e.target.value)}
+					onChange={(e) => {
+						setSynthCategory(null);
+						setAssetSearch(e.target.value);
+					}}
 					value={assetSearch}
 				/>
 			</SearchContainer>

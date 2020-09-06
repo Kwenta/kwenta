@@ -1,24 +1,79 @@
 import { FC } from 'react';
-import { Dialog } from '@reach/dialog';
 
 import styled from 'styled-components';
 
+import { CurrencyKey } from 'constants/currency';
+
+import BaseModal from 'components/BaseModal';
+import Currency from 'components/Currency';
+
+import ArrowsIcon from 'assets/svg/app/arrows.svg';
+import { formatNumber } from 'utils/formatters/number';
+import { FlexDivRowCentered } from 'styles/common';
+
 type TxConfirmationModalProps = {
-	onDimiss: () => void;
+	onDismiss: () => void;
+	baseCurrencyKey: CurrencyKey;
+	baseCurrencyAmount: string;
+	quoteCurrencyKey: CurrencyKey;
+	quoteCurrencyAmount: string;
 };
 
-export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({ onDimiss }) => {
+export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
+	onDismiss,
+	baseCurrencyKey,
+	quoteCurrencyKey,
+	baseCurrencyAmount,
+	quoteCurrencyAmount,
+}) => {
 	return (
-		<StyledDialog isOpen={true} onDismiss={onDimiss} aria-label="tx confirmation modal">
-			<p>Hello there. I am a dialog</p>
-		</StyledDialog>
+		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={'Confirm Transaction'}>
+			<div
+				style={{
+					display: 'grid',
+					gridAutoFlow: 'column',
+					gridGap: '24px',
+					paddingBottom: '24px',
+					justifyContent: 'center',
+				}}
+			>
+				<div style={{ textAlign: 'center', color: 'white' }}>
+					<div style={{ paddingBottom: '8px' }}>From</div>
+					<Currency.Icon currencyKey={quoteCurrencyKey} width="40px" height="40px" />
+				</div>
+				<div>{/* <ArrowsIcon /> */}</div>
+				<div style={{ textAlign: 'center' }}>
+					<div style={{ paddingBottom: '8px', color: 'white' }}>Into</div>
+					<Currency.Icon currencyKey={baseCurrencyKey} width="40px" height="40px" />
+				</div>
+			</div>
+			<div style={{ textAlign: 'center', color: '#8A939F', paddingBottom: '48px' }}>
+				Confirm your transaction with your web3 provider
+			</div>
+			<div>
+				<FlexDivRowCentered style={{ paddingBottom: '16px' }}>
+					<div>{quoteCurrencyKey} Amount</div>
+					<div style={{ color: 'white', fontFamily: 'AkkuratMonoLLWeb-Regular' }}>
+						{formatNumber(quoteCurrencyAmount)}
+					</div>
+				</FlexDivRowCentered>
+				<FlexDivRowCentered style={{ paddingBottom: '16px' }}>
+					<div>{baseCurrencyKey} Amount</div>
+					<div style={{ color: 'white', fontFamily: 'AkkuratMonoLLWeb-Regular' }}>
+						{formatNumber(baseCurrencyAmount)}
+					</div>
+				</FlexDivRowCentered>
+			</div>
+		</StyledBaseModal>
 	);
 };
 
-const StyledDialog = styled(Dialog)`
-	width: 270px;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	border-radius: 4px;
+const StyledBaseModal = styled(BaseModal)`
+	[data-reach-dialog-content] {
+		width: 270px;
+	}
+	.card-body {
+	}
 `;
 
 export default TxConfirmationModal;

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
 import { SynthsMap } from 'lib/synthetix';
@@ -8,12 +8,12 @@ import Currency from 'components/Currency';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 
-import { SelectableCurrencyRow, FlexDivRowCentered } from 'styles/common';
+import { SelectableCurrencyRow, FlexDivRowCentered, NoTextTransform } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import { SynthBalances } from 'queries/walletBalances/types';
+import { SynthBalances } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { FiatCurrency } from 'store/app';
 
@@ -82,9 +82,13 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					</RowsHeader>
 					<RowsContainer>
 						<CryptoRow>
-							<span>ETH</span>
+							<Currency.Name currencyKey="ETH" showIcon={true} iconProps={{ type: 'asset' }} />
 							<Button variant="primary" isRounded={true}>
-								{t('common.currency.convert-to-currency', { currencyKey: 'sETH' })}
+								<Trans
+									i18nKey="common.currency.convert-to-currency"
+									values={{ currencyKey: 'sETH' }}
+									components={[<NoTextTransform />]}
+								/>
 							</Button>
 						</CryptoRow>
 					</RowsContainer>

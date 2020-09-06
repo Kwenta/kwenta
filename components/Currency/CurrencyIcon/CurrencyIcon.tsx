@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
 
-import { CurrencyKey, currencyKeyToIconMap } from 'constants/currency';
+import { CurrencyKey, CURRENCY_KEY_TO_ICON_MAP } from 'constants/currency';
 
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
 	type?: 'synth' | 'asset';
 	className?: string;
+	width?: string;
+	height?: string;
 };
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth', ...rest }) => {
-	const currencyIcon = currencyKeyToIconMap[currencyKey];
+	const currencyIcon = CURRENCY_KEY_TO_ICON_MAP[currencyKey];
 
 	if (!currencyIcon) {
 		return null;

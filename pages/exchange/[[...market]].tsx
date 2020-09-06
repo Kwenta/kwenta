@@ -40,6 +40,7 @@ import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import Services from 'containers/Services';
 import { fiatCurrencyState } from 'store/app';
+import { useRouter } from 'next/router';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -63,20 +64,30 @@ const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
 	const { synthExchange$, ratesUpdated$ } = Services.useContainer();
+	const router = useRouter();
+
+	let baseCurrencyFromQuery: CurrencyKey | null = null;
+	let quoteCurrencyFromQuery: CurrencyKey | null = null;
+
+	const market = router.query.market || [];
+	if (market.length) {
+		// check valid market
+		[baseCurrencyFromQuery, quoteCurrencyFromQuery] = market[0].split('-');
+	}
 
 	const [currencyPair, setCurrencyPair] = useState<{
 		base: CurrencyKey;
 		quote: CurrencyKey;
 	}>({
-		base: DEFAULT_BASE_SYNTH,
-		quote: DEFAULT_QUOTE_SYNTH,
+		base: baseCurrencyFromQuery ?? DEFAULT_BASE_SYNTH,
+		quote: quoteCurrencyFromQuery ?? DEFAULT_QUOTE_SYNTH,
 	});
-	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
-	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
+	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('500');
+	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('300');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
+	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(true);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
 	const fiatCurrency = useRecoilValue(fiatCurrencyState);
@@ -174,13 +185,14 @@ const ExchangePage = () => {
 				});
 				if (notify && tx) {
 					const { emitter } = notify.hash(tx.hash);
-
 					// emitter.on('txConfirmed', () => {
 					// 	synthsWalletBalancesQuery.refetch();
 					// });
 					await tx.wait();
+					setTxConfirmationModalOpen(false);
 					synthsWalletBalancesQuery.refetch();
 				}
+				setTxConfirmationModalOpen(false);
 				setIsSubmitting(false);
 			} catch (e) {
 				console.log(e);
@@ -189,14 +201,32 @@ const ExchangePage = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (
+			currencyPair.base &&
+			currencyPair.quote &&
+			quoteCurrencyFromQuery !== currencyPair.quote &&
+			baseCurrencyFromQuery !== currencyPair.base
+		) {
+			router.replace(
+				`/exchange/[[...market]]`,
+				`/exchange/${currencyPair.base}-${currencyPair.quote}`,
+				{
+					shallow: true,
+				}
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currencyPair, quoteCurrencyFromQuery, baseCurrencyFromQuery]);
+
 	return (
 		<>
 			<Head>
 				<title>
 					{baseCurrencyKey
 						? t('exchange.page-title-currency-pair', {
-								quoteCurrencyKey,
 								baseCurrencyKey,
+								quoteCurrencyKey,
 								rate: formatCryptoCurrency(inverseRate, { currencyKey: quoteCurrencyKey }),
 						  })
 						: t('exchange.page-title')}
@@ -302,7 +332,13 @@ const ExchangePage = () => {
 					</div>
 				</TradeInfo>
 				{txConfirmationModalOpen && (
-					<TxConfirmationModal onDimiss={() => setTxConfirmationModalOpen(false)} />
+					<TxConfirmationModal
+						onDismiss={() => setTxConfirmationModalOpen(false)}
+						baseCurrencyAmount={baseCurrencyAmount}
+						quoteCurrencyAmount={quoteCurrencyAmount}
+						baseCurrencyKey={baseCurrencyKey}
+						quoteCurrencyKey={quoteCurrencyKey}
+					/>
 				)}
 				{selectSynthModalOpen && (
 					<SelectSynthModal
@@ -310,10 +346,10 @@ const ExchangePage = () => {
 						synths={synthetix.js?.synths ?? []}
 						exchangeRates={exchangeRatesQuery.data}
 						onSelect={(currencyKey) =>
-							setCurrencyPair({
+							setCurrencyPair((pair) => ({
 								base: currencyKey,
-								quote: quoteCurrencyKey,
-							})
+								quote: pair.quote,
+							}))
 						}
 						frozenSynths={frozenSynthsQuery.data || []}
 						excludedSynths={quoteCurrencyKey ? [quoteCurrencyKey] : undefined}
@@ -327,10 +363,10 @@ const ExchangePage = () => {
 						synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
 						synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
 						onSelect={(currencyKey) =>
-							setCurrencyPair({
-								base: quoteCurrencyKey,
+							setCurrencyPair((pair) => ({
+								base: pair.base,
 								quote: currencyKey,
-							})
+							}))
 						}
 						fiatCurrency={fiatCurrency}
 					/>

@@ -96,8 +96,8 @@
 			"currency-value": "<0>{{currencyKey}}</0> Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
-			"synthetic-currency": "Synthetic {{currencyKey}}",
-			"convert-to-currency": "Convert to {{currencyKey}}"
+			"synthetic-currency": "Synthetic <0>{{currencyKey}}</0>",
+			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",

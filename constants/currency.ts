@@ -89,7 +89,6 @@ import sGBPIcon from '@synthetixio/assets/synths/sGBP.svg';
 import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
 
 export type CurrencyKey = string;
-export type CurrencyKeys = string[];
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
@@ -185,39 +184,8 @@ export const FIAT_CURRENCY_SIGN = {
 
 export const USD_SIGN = FIAT_CURRENCY_SIGN[FIAT_CURRENCY_MAP.USD];
 
-// lower rank -> higher MC
-export const CRYPTO_SYNTHS_BY_MC = {
-	[SYNTHS_MAP.sBTC]: 1,
-	[SYNTHS_MAP.sETH]: 2,
-	[SYNTHS_MAP.sXRP]: 3,
-	[SYNTHS_MAP.sBCH]: 4,
-	[SYNTHS_MAP.sLTC]: 5,
-	[SYNTHS_MAP.sEOS]: 6,
-	[SYNTHS_MAP.sBNB]: 7,
-	[SYNTHS_MAP.sXTZ]: 8,
-	[SYNTHS_MAP.sXMR]: 9,
-	[SYNTHS_MAP.sADA]: 10,
-	[SYNTHS_MAP.sLINK]: 11,
-	[SYNTHS_MAP.sTRX]: 12,
-	[SYNTHS_MAP.sDASH]: 13,
-	[SYNTHS_MAP.sETC]: 14,
-	[SYNTHS_MAP.iBTC]: 15,
-	[SYNTHS_MAP.iETH]: 16,
-	[SYNTHS_MAP.iXRP]: 17,
-	[SYNTHS_MAP.iBCH]: 18,
-	[SYNTHS_MAP.iLTC]: 19,
-	[SYNTHS_MAP.iEOS]: 20,
-	[SYNTHS_MAP.iBNB]: 21,
-	[SYNTHS_MAP.iXTZ]: 22,
-	[SYNTHS_MAP.iXMR]: 23,
-	[SYNTHS_MAP.iADA]: 24,
-	[SYNTHS_MAP.iLINK]: 25,
-	[SYNTHS_MAP.iTRX]: 26,
-	[SYNTHS_MAP.iDASH]: 27,
-	[SYNTHS_MAP.iETC]: 28,
-};
-
-export const currencyKeyToIconMap = {
+export const CURRENCY_KEY_TO_ICON_MAP = {
+	[CRYPTO_CURRENCY_MAP.ETH]: { AssetIcon: ETHIcon },
 	[CRYPTO_CURRENCY_MAP.SNX]: { AssetIcon: SNXIcon },
 	[CRYPTO_CURRENCY_MAP.KNC]: { AssetIcon: KNCIcon },
 	[CRYPTO_CURRENCY_MAP.LEND]: { AssetIcon: LENDIcon },
@@ -279,5 +247,3 @@ export const FIAT_SYNTHS = [
 	SYNTHS_MAP.sGBP,
 	SYNTHS_MAP.sCHF,
 ];
-
-export const BASE_TRADING_PAIRS = [SYNTHS_MAP.sUSD, SYNTHS_MAP.sBTC, SYNTHS_MAP.sETH];

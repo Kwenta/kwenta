@@ -22,7 +22,8 @@ export const QUERY_KEYS = {
 	},
 	WalletBalances: {
 		Synths: ['walletBalances', 'synths'],
-		ETH: ['walletBalances', 'eth'],
+		ETH: ['walletBalances', 'ETH'],
+		Tokens: ['walletBalances', 'tokens'],
 	},
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
