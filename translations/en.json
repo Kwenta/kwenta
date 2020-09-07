@@ -24,8 +24,6 @@
 		"page-title": "Kwenta | Exchange",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
 		"currency-card": {
-			"from": "from",
-			"into": "into",
 			"wallet-balance": "wallet balance",
 			"currency-selector": {
 				"no-value": "select synth"
@@ -52,6 +50,10 @@
 				"submit-order": "submit order",
 				"submitting-order": "submitting order..."
 			}
+		},
+		"common": {
+			"from": "from",
+			"into": "into"
 		}
 	},
 	"dashboard": {

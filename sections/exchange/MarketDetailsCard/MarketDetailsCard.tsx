@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { USD_SIGN, CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 
 import Card from 'components/Card';
 
@@ -11,29 +11,50 @@ import { Period } from 'constants/period';
 import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
 
 import { truncateAddress } from 'utils/formatters/string';
-import { formatFiatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
-import synthetix, { Token } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 import Etherscan from 'containers/Etherscan';
-import { get } from 'lodash';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
+	selectedPriceCurrency: CurrencyKey;
+	selectedPriceCurrencySign: string | undefined;
+	selectPriceCurrencyRate: number | null;
 };
 
-const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
+const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
+	currencyKey,
+	selectedPriceCurrency,
+	selectedPriceCurrencySign,
+	selectPriceCurrencyRate,
+}) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const volume24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
+	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
-	const rates24High = historicalRates24H.data?.high ?? null;
-	const rates24Low = historicalRates24H.data?.low ?? null;
+	let rates24High = historicalRates24H.data?.high ?? null;
+	let rates24Low = historicalRates24H.data?.low ?? null;
+	let volume24H = vol24H.data ?? null;
+
 	const marketCapUSD = null;
+
+	if (selectPriceCurrencyRate != null) {
+		if (rates24High) {
+			rates24High /= selectPriceCurrencyRate;
+		}
+		if (rates24Low) {
+			rates24Low /= selectPriceCurrencyRate;
+		}
+		if (volume24H) {
+			volume24H /= selectPriceCurrencyRate;
+		}
+	}
 
 	const token =
 		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
@@ -46,8 +67,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 					<Item>
 						<Label>{t('exchange.market-details-card.24h-vol')}</Label>
 						<Value>
-							{volume24H.data != null
-								? formatFiatCurrency(volume24H.data, { sign: USD_SIGN })
+							{volume24H != null
+								? formatCurrency(selectedPriceCurrency, volume24H, {
+										sign: selectedPriceCurrencySign,
+								  })
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -55,7 +78,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 						<Label>{t('exchange.market-details-card.24h-high')}</Label>
 						<Value>
 							{rates24High != null
-								? `${formatFiatCurrency(rates24High, { sign: USD_SIGN })}`
+								? `${formatCurrency(selectedPriceCurrency, rates24High, {
+										sign: selectedPriceCurrencySign,
+								  })}`
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -87,7 +112,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 						<Label>{t('exchange.market-details-card.market-cap')}</Label>
 						<Value>
 							{marketCapUSD != null
-								? formatFiatCurrency(marketCapUSD, { sign: USD_SIGN })
+								? formatCurrency(selectedPriceCurrency, marketCapUSD, {
+										sign: selectedPriceCurrencySign,
+								  })
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -95,7 +122,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey }) => {
 						<Label>{t('exchange.market-details-card.24h-low')}</Label>
 						<Value>
 							{rates24Low != null
-								? `${formatFiatCurrency(rates24Low, { sign: USD_SIGN })}`
+								? `${formatCurrency(selectedPriceCurrency, rates24Low, {
+										sign: selectedPriceCurrencySign,
+								  })}`
 								: NO_VALUE}
 						</Value>
 					</Item>
@@ -130,7 +159,7 @@ const StyledCardBody = styled(Card.Body)`
 `;
 
 const Item = styled(FlexDivRowCentered)`
-	border-bottom: 1px solid #282834;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 	padding: 8px 0;
 `;
 

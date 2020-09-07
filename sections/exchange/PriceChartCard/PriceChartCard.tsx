@@ -9,23 +9,32 @@ import styled, { ThemeContext } from 'styled-components';
 
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
-import { CurrencyKey, USD_SIGN } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
 import ChangePercent from 'components/ChangePercent';
 
 import { GridDivCenteredCol, TextButton, FlexDivRowCentered, NoTextTransform } from 'styles/common';
 
-import { formatFiatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
-	usdRate: number | null;
+	priceRate: number | null;
+	selectedPriceCurrency: CurrencyKey;
+	selectedPriceCurrencySign: string | undefined;
+	selectPriceCurrencyRate: number | null;
 };
 
-const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
+const ChartCard: FC<ChartCardProps> = ({
+	currencyKey,
+	priceRate,
+	selectedPriceCurrency,
+	selectedPriceCurrencySign,
+	selectPriceCurrencyRate,
+}) => {
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
@@ -38,7 +47,7 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 	const isChangePositive = change != null && change >= 0;
 	const chartColor = isChangePositive ? theme.colors.green : theme.colors.red;
 
-	const price = currentPrice || usdRate;
+	const price = currentPrice || priceRate;
 
 	const fontStyle = {
 		fontSize: '12px',
@@ -83,7 +92,9 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 						</CurrencyLabel>
 					)}
 					{price != null && (
-						<CurrencyPrice>{formatFiatCurrency(price, { sign: USD_SIGN })}</CurrencyPrice>
+						<CurrencyPrice>
+							{formatCurrency(selectedPriceCurrency, price, { sign: selectedPriceCurrencySign })}
+						</CurrencyPrice>
 					)}
 					{change != null && <ChangePercent value={change} />}
 				</div>
@@ -102,7 +113,13 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 			<ChartBody>
 				<RechartsResponsiveContainer width="100%" height="100%">
 					<LineChart
-						data={rates}
+						data={rates.map((rateData) => ({
+							...rateData,
+							rate:
+								selectPriceCurrencyRate != null
+									? rateData.rate / selectPriceCurrencyRate
+									: rateData.rate,
+						}))}
 						margin={{ right: 40, bottom: 0 }}
 						onMouseMove={(e: any) => {
 							const currentRate = get(e, 'activePayload[0].payload.rate', null);
@@ -143,7 +160,9 @@ const ChartCard: FC<ChartCardProps> = ({ currencyKey, usdRate }) => {
 							orientation="right"
 							axisLine={false}
 							tickLine={false}
-							tickFormatter={(val) => formatFiatCurrency(val, { sign: USD_SIGN })}
+							tickFormatter={(val) =>
+								formatCurrency(selectedPriceCurrency, val, { sign: selectedPriceCurrencySign })
+							}
 						/>
 						<Line
 							dataKey="rate"

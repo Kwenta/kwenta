@@ -3,18 +3,28 @@ import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
 
+import { CurrencyKey } from 'constants/currency';
+
+import { formatCurrency } from 'utils/formatters/number';
+
 import { ContainerRowMixin } from '../common';
-import { formatFiatCurrency } from 'utils/formatters/number';
 
 type CurrencyPriceProps = {
+	currencyKey: CurrencyKey;
 	price: number;
 	sign?: string;
 	change?: number;
 };
 
-export const CurrencyPrice: FC<CurrencyPriceProps> = ({ price, sign, change, ...rest }) => (
+export const CurrencyPrice: FC<CurrencyPriceProps> = ({
+	currencyKey,
+	price,
+	sign,
+	change,
+	...rest
+}) => (
 	<Container {...rest}>
-		<Price className="price">{formatFiatCurrency(price, { sign })}</Price>
+		<Price className="price">{formatCurrency(currencyKey, price, { sign })}</Price>
 		{change != null && <ChangePercent className="percent" value={change} />}
 	</Container>
 );

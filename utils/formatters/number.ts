@@ -5,6 +5,7 @@ import {
 	DEFAULT_NUMBER_DECIMALS,
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
+import { isFiatCurrency } from 'utils/currencies';
 
 export type NumericValue = BigNumber | string | number;
 
@@ -60,6 +61,15 @@ export const formatFiatCurrency = (value: NumericValue, options?: FormatCurrency
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
 	});
+
+export const formatCurrency = (
+	currencyKey: CurrencyKey,
+	value: NumericValue,
+	options?: FormatCurrencyOptions
+) =>
+	isFiatCurrency(currencyKey)
+		? formatFiatCurrency(value, options)
+		: formatCryptoCurrency(value, options);
 
 export const formatPercent = (value: NumericValue, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;

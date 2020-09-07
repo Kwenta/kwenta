@@ -2,6 +2,7 @@ import { useQuery, BaseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
+
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 

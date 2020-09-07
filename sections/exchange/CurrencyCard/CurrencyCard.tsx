@@ -7,7 +7,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
@@ -42,7 +42,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 		<StyledCard {...rest}>
 			<Card.Body>
 				<LabelContainer>
-					{isBase ? t('exchange.currency-card.into') : t('exchange.currency-card.from')}
+					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
 					<CurrencySelector onClick={onCurrencySelect}>
@@ -55,7 +55,9 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				<WalletBalanceContainer>
 					<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
 					<WalletBalance onClick={onBalanceClick || undefined}>
-						{walletBalance == null ? NO_VALUE : formatCryptoCurrency(walletBalance)}
+						{walletBalance == null || currencyKey == null
+							? NO_VALUE
+							: formatCurrency(currencyKey, walletBalance)}
 					</WalletBalance>
 				</WalletBalanceContainer>
 			</Card.Body>

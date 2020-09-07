@@ -15,9 +15,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
-import { FiatCurrency } from 'store/app';
-
-import { formatFiatCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import { RowsHeader, RowsContainer } from '../common';
 
@@ -27,7 +25,8 @@ type SelectAssetModalProps = {
 	synthBalances: SynthBalance[];
 	synthTotalUSDBalance: number | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	fiatCurrency: FiatCurrency;
+	selectedPriceCurrency: CurrencyKey;
+	selectedPriceCurrencySign: string | undefined;
 };
 
 export const SelectSynthModal: FC<SelectAssetModalProps> = ({
@@ -36,7 +35,8 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	synthBalances,
 	synthTotalUSDBalance,
 	onSelect,
-	fiatCurrency,
+	selectedPriceCurrency,
+	selectedPriceCurrencySign,
 }) => {
 	const { t } = useTranslation();
 	const hasNonSynths = true;
@@ -46,7 +46,9 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 			<TotalValue>
 				<Total>
 					{synthTotalUSDBalance != null
-						? formatFiatCurrency(synthTotalUSDBalance, { sign: fiatCurrency.sign })
+						? formatCurrency(selectedPriceCurrency, synthTotalUSDBalance, {
+								sign: selectedPriceCurrencySign,
+						  })
 						: NO_VALUE}
 				</Total>
 				<Title>{t('modals.select-asset.total-synth-value')}</Title>
@@ -69,7 +71,12 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 							}}
 						>
 							<Currency.Name currencyKey={currencyKey} name={name} showIcon={true} />
-							<Currency.Amount amount={balance} totalValue={usdBalance} sign={fiatCurrency.sign} />
+							<Currency.Amount
+								currencyKey={currencyKey}
+								amount={balance}
+								totalValue={usdBalance}
+								sign={selectedPriceCurrencySign}
+							/>
 						</StyledSelectableCurrencyRow>
 					);
 				})}

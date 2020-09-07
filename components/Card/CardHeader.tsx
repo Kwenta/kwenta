@@ -15,7 +15,7 @@ const CardHeader: FC<CardHeaderProps> = ({ children, ...rest }) => (
 const Container = styled(FlexDivCentered)`
 	position: relative;
 	color: ${(props) => props.theme.colors.white};
-	border-bottom: 1px solid #282834;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;

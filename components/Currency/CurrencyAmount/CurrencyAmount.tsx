@@ -1,19 +1,30 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatFiatCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
+
+import { CurrencyKey } from 'constants/currency';
 
 import { ContainerRowMixin } from '../common';
 
 type CurrencyAmountProps = {
+	currencyKey: CurrencyKey;
 	amount: number;
 	totalValue: number;
 	sign?: string;
 };
 
-export const CurrencyAmount: FC<CurrencyAmountProps> = ({ amount, totalValue, sign, ...rest }) => (
+export const CurrencyAmount: FC<CurrencyAmountProps> = ({
+	currencyKey,
+	amount,
+	totalValue,
+	sign,
+	...rest
+}) => (
 	<Container {...rest}>
-		<TotalValue className="total-value">{formatFiatCurrency(totalValue, { sign })}</TotalValue>
+		<TotalValue className="total-value">
+			{formatCurrency(currencyKey, totalValue, { sign })}
+		</TotalValue>
 		<Amount className="amount">{formatNumber(amount)}</Amount>
 	</Container>
 );

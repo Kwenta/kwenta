@@ -65,6 +65,7 @@ const GlobalStyle = createGlobalStyle`
 		background-color: ${(props) => props.theme.colors.black};
 		color: ${(props) => props.theme.colors.blueberry};
 		font-size: 12px;
+		line-height: 140%;
 	}
 
 	a {

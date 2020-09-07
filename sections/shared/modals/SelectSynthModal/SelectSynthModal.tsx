@@ -19,7 +19,6 @@ import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
-import { FiatCurrency } from 'store/app';
 import { RowsHeader, RowsContainer } from '../common';
 
 export const CATEGORY_FILTERS = [
@@ -36,7 +35,8 @@ type SelectSynthModalProps = {
 	onSelect: (currencyKey: CurrencyKey) => void;
 	frozenSynths: CurrencyKey[];
 	excludedSynths?: CurrencyKey[];
-	fiatCurrency: FiatCurrency;
+	selectedPriceCurrency: CurrencyKey;
+	selectedPriceCurrencySign: string | undefined;
 };
 
 export const SelectSynthModal: FC<SelectSynthModalProps> = ({
@@ -46,7 +46,8 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	onSelect,
 	frozenSynths,
 	excludedSynths,
-	fiatCurrency,
+	selectedPriceCurrency,
+	selectedPriceCurrencySign,
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
@@ -133,22 +134,31 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 				{synthsResults.map((synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
 					const isSelectable = !frozenSynths.includes(synth.name);
+					const currencyKey = synth.name;
 
 					return (
 						<StyledSelectableCurrencyRow
-							key={synth.name}
+							key={currencyKey}
 							onClick={
 								isSelectable
 									? () => {
-											onSelect(synth.name);
+											onSelect(currencyKey);
 											onDismiss();
 									  }
 									: undefined
 							}
 							isSelectable={isSelectable}
 						>
-							<Currency.Name currencyKey={synth.name} name={synth.desc} showIcon={true} />
-							{price != null ? <Currency.Price price={price} sign={fiatCurrency.sign} /> : NO_VALUE}
+							<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+							{price != null ? (
+								<Currency.Price
+									currencyKey={currencyKey}
+									price={price}
+									sign={selectedPriceCurrencySign}
+								/>
+							) : (
+								NO_VALUE
+							)}
 						</StyledSelectableCurrencyRow>
 					);
 				})}
