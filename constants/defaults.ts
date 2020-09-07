@@ -1,11 +1,10 @@
 import { Languages } from 'translations/constants';
 
-import { FIAT_CURRENCY_MAP, SYNTHS_MAP } from './currency';
+import { SYNTHS_MAP } from './currency';
 import { NetworkId } from '@synthetixio/js';
 
 // app defaults
 export const DEFAULT_LANGUAGE = Languages.EN;
-export const DEFAULT_FIAT_CURRENCY = FIAT_CURRENCY_MAP.USD;
 
 // exchange defaults
 export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sETH;

@@ -71,7 +71,7 @@ import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
 import sXAGIcon from '@synthetixio/assets/synths/sXAG.svg';
-// import sBZIcon from '@synthetixio/assets/synths/sBZ.svg';
+// import sOILIcon from '@synthetixio/assets/synths/sOIL.svg';
 // Crypto Index Synths
 import sDEFIIcon from '@synthetixio/assets/synths/sDEFI.svg';
 import sCEXIcon from '@synthetixio/assets/synths/sCEX.svg';
@@ -136,7 +136,7 @@ export const SYNTHS = [
 	'sNIKKEI',
 	'sXAU',
 	'sXAG',
-	// 'sBZ',
+	// 'sOIL',
 	'sEUR',
 	'sJPY',
 	'sUSD',
@@ -174,16 +174,6 @@ export const CRYPTO_CURRENCY = [
 ];
 
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
-
-export const FIAT_CURRENCY = ['USD', 'AUD'];
-export const FIAT_CURRENCY_MAP = keyBy(FIAT_CURRENCY);
-
-export const FIAT_CURRENCY_SIGN = {
-	[FIAT_CURRENCY_MAP.USD]: '$',
-	[FIAT_CURRENCY_MAP.AUD]: 'A$',
-};
-
-export const USD_SIGN = FIAT_CURRENCY_SIGN[FIAT_CURRENCY_MAP.USD];
 
 export const CURRENCY_KEY_TO_ICON_MAP = {
 	[CRYPTO_CURRENCY_MAP.ETH]: { AssetIcon: ETHIcon },
@@ -229,7 +219,7 @@ export const CURRENCY_KEY_TO_ICON_MAP = {
 	[SYNTHS_MAP.sCHF]: { SynthIcon: sCHFIcon, AssetIcon: CHFIcon },
 	[SYNTHS_MAP.sXAU]: { SynthIcon: sXAUIcon, AssetIcon: GOLDIcon },
 	[SYNTHS_MAP.sXAG]: { SynthIcon: sXAGIcon, AssetIcon: SILVERIcon },
-	// [SYNTHS_MAP.sBZ]: { SynthIcon: sBZIcon, AssetIcon: sBZIcon },
+	// [SYNTHS_MAP.sOIL]: { SynthIcon: sOILIcon, AssetIcon: sOILIcon },
 	[SYNTHS_MAP.sCEX]: { SynthIcon: sCEXIcon, AssetIcon: CEXIcon },
 	[SYNTHS_MAP.sDEFI]: { SynthIcon: sDEFIIcon, AssetIcon: DEFIIcon },
 	[SYNTHS_MAP.iCEX]: { SynthIcon: iCEXIcon, AssetIcon: CEXIcon },
@@ -238,13 +228,11 @@ export const CURRENCY_KEY_TO_ICON_MAP = {
 	[SYNTHS_MAP.sNIKKEI]: { SynthIcon: sNIKKEIIcon, AssetIcon: NIKKEIIcon },
 };
 
-export const sUSD_EXCHANGE_RATE = 1;
-
-export const FIAT_SYNTHS = [
+export const FIAT_SYNTHS = new Set([
 	SYNTHS_MAP.sEUR,
 	SYNTHS_MAP.sJPY,
 	SYNTHS_MAP.sUSD,
 	SYNTHS_MAP.sAUD,
 	SYNTHS_MAP.sGBP,
 	SYNTHS_MAP.sCHF,
-];
+]);
