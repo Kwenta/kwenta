@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { isWalletConnectedState } from 'store/connection';
+import { isWalletConnectedState } from 'store/wallet';
 
 import NotConnected from './NotConnected';
 import Connected from './Connected';

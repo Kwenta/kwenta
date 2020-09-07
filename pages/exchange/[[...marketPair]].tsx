@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
 import get from 'lodash/get';
 
-import { CurrencyKey, FIAT_CURRENCY_MAP } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_BASE_SYNTH, DEFAULT_QUOTE_SYNTH } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import { GWEI_UNIT } from 'constants/network';
@@ -24,11 +24,11 @@ import useExchangeRatesQuery, { Rates } from 'queries/rates/useExchangeRatesQuer
 
 import CurrencyCard from 'sections/exchange/CurrencyCard';
 import MarketDetailsCard from 'sections/exchange/MarketDetailsCard';
-import ChartCard from 'sections/exchange/PriceChartCard';
+import PriceChartCard from 'sections/exchange/PriceChartCard';
 
 import Button from 'components/Button';
 
-import { isWalletConnectedState, walletAddressState } from 'store/connection';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import synthetix from 'lib/synthetix';
 
@@ -72,7 +72,8 @@ const ExchangePage = () => {
 	let baseCurrencyFromQuery: CurrencyKey | null = null;
 	let quoteCurrencyFromQuery: CurrencyKey | null = null;
 
-	const market = router.query.market || [];
+	const market = router.query.marketPair || [];
+
 	if (market.length) {
 		// check valid market
 		[baseCurrencyFromQuery, quoteCurrencyFromQuery] = market[0].split('-');
@@ -94,8 +95,6 @@ const ExchangePage = () => {
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const selectedPriceCurrencySign =
-		synthetix.synthsMap != null ? synthetix.synthsMap[selectedPriceCurrency].sign : undefined;
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -151,14 +150,14 @@ const ExchangePage = () => {
 	const basePriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
 		baseCurrencyKey,
-		selectedPriceCurrency
+		selectedPriceCurrency.name
 	);
 	const quotePriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
 		quoteCurrencyKey,
-		selectedPriceCurrency
+		selectedPriceCurrency.name
 	);
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency];
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
 
@@ -269,17 +268,15 @@ const ExchangePage = () => {
 							}}
 							onCurrencySelect={() => setSelectAssetModalOpen(true)}
 						/>
-						<ChartCard
+						<PriceChartCard
 							currencyKey={quoteCurrencyKey ?? null}
 							priceRate={quotePriceRate ?? null}
 							selectedPriceCurrency={selectedPriceCurrency}
-							selectedPriceCurrencySign={selectedPriceCurrencySign}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 						<MarketDetailsCard
 							currencyKey={quoteCurrencyKey}
 							selectedPriceCurrency={selectedPriceCurrency}
-							selectedPriceCurrencySign={selectedPriceCurrencySign}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 					</LeftCardContainer>
@@ -307,17 +304,15 @@ const ExchangePage = () => {
 							}}
 							onCurrencySelect={() => setSelectSynthModalOpen(true)}
 						/>
-						<ChartCard
+						<PriceChartCard
 							currencyKey={baseCurrencyKey ?? null}
 							priceRate={basePriceRate ?? null}
 							selectedPriceCurrency={selectedPriceCurrency}
-							selectedPriceCurrencySign={selectedPriceCurrencySign}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 						<MarketDetailsCard
 							currencyKey={baseCurrencyKey}
 							selectedPriceCurrency={selectedPriceCurrency}
-							selectedPriceCurrencySign={selectedPriceCurrencySign}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 					</RightCardContainer>
@@ -332,11 +327,17 @@ const ExchangePage = () => {
 							<TradeInfoLabel>
 								<Trans
 									i18nKey="common.currency.currency-value"
-									values={{ currencyKey: FIAT_CURRENCY_MAP.USD }}
+									values={{ currencyKey: selectedPriceCurrency.asset }}
 									components={[<NoTextTransform />]}
 								/>
 							</TradeInfoLabel>
-							<TradeInfoValue>{NO_VALUE}</TradeInfoValue>
+							<TradeInfoValue>
+								{baseCurrencyAmount
+									? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+											sign: selectedPriceCurrency.sign,
+									  })
+									: NO_VALUE}
+							</TradeInfoValue>
 						</TradeInfoItem>
 						<TradeInfoItem>
 							<TradeInfoLabel>{t('exchange.trade-info.fee')}</TradeInfoLabel>
@@ -371,9 +372,7 @@ const ExchangePage = () => {
 						baseCurrencyKey={baseCurrencyKey}
 						quoteCurrencyKey={quoteCurrencyKey}
 						totalTradePrice={totalTradePrice}
-						synthsMap={synthetix.synthsMap}
 						selectedPriceCurrency={selectedPriceCurrency}
-						selectedPriceCurrencySign={selectedPriceCurrencySign}
 					/>
 				)}
 				{selectSynthModalOpen && (
@@ -390,7 +389,7 @@ const ExchangePage = () => {
 						frozenSynths={frozenSynthsQuery.data || []}
 						excludedSynths={quoteCurrencyKey ? [quoteCurrencyKey] : undefined}
 						selectedPriceCurrency={selectedPriceCurrency}
-						selectedPriceCurrencySign={selectedPriceCurrencySign}
+						selectPriceCurrencyRate={selectPriceCurrencyRate}
 					/>
 				)}
 				{selectAssetModalOpen && (
@@ -406,7 +405,7 @@ const ExchangePage = () => {
 							}))
 						}
 						selectedPriceCurrency={selectedPriceCurrency}
-						selectedPriceCurrencySign={selectedPriceCurrencySign}
+						selectPriceCurrencyRate={selectPriceCurrencyRate}
 					/>
 				)}
 			</>

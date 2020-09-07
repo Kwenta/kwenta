@@ -74,7 +74,7 @@ const synthetix: Synthetix = {
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({ networkId, provider, signer });
-
+		console.log(this.js);
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
 

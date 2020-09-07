@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import EtherscanLinks from 'utils/etherscan';
 
-import { networkState } from 'store/connection';
+import { networkState } from 'store/wallet';
 
 const useEtherscan = () => {
 	const network = useRecoilValue(networkState);

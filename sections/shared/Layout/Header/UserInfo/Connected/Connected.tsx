@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import { truncatedWalletAddressState } from 'store/connection';
+import { truncatedWalletAddressState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import Connector from 'containers/Connector';
 

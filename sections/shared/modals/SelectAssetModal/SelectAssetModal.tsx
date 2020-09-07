@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SynthsMap } from 'lib/synthetix';
+import { Synth, SynthsMap } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
 import BaseModal from 'components/BaseModal';
@@ -25,8 +25,8 @@ type SelectAssetModalProps = {
 	synthBalances: SynthBalance[];
 	synthTotalUSDBalance: number | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	selectedPriceCurrency: CurrencyKey;
-	selectedPriceCurrencySign: string | undefined;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
 };
 
 export const SelectSynthModal: FC<SelectAssetModalProps> = ({
@@ -36,7 +36,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	synthTotalUSDBalance,
 	onSelect,
 	selectedPriceCurrency,
-	selectedPriceCurrencySign,
+	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
 	const hasNonSynths = true;
@@ -46,9 +46,15 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 			<TotalValue>
 				<Total>
 					{synthTotalUSDBalance != null
-						? formatCurrency(selectedPriceCurrency, synthTotalUSDBalance, {
-								sign: selectedPriceCurrencySign,
-						  })
+						? formatCurrency(
+								selectedPriceCurrency.name,
+								selectPriceCurrencyRate != null
+									? (synthTotalUSDBalance /= selectPriceCurrencyRate)
+									: synthTotalUSDBalance,
+								{
+									sign: selectedPriceCurrency.sign,
+								}
+						  )
 						: NO_VALUE}
 				</Total>
 				<Title>{t('modals.select-asset.total-synth-value')}</Title>
@@ -59,7 +65,12 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 			</RowsHeader>
 			<RowsContainer style={{ height: 'auto' }}>
 				{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
-					const name = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
+					const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
+
+					let totalValue = usdBalance;
+					if (selectPriceCurrencyRate != null) {
+						totalValue /= selectPriceCurrencyRate;
+					}
 
 					return (
 						<StyledSelectableCurrencyRow
@@ -70,12 +81,12 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 								onDismiss();
 							}}
 						>
-							<Currency.Name currencyKey={currencyKey} name={name} showIcon={true} />
+							<Currency.Name currencyKey={currencyKey} name={synthDesc} showIcon={true} />
 							<Currency.Amount
 								currencyKey={currencyKey}
 								amount={balance}
-								totalValue={usdBalance}
-								sign={selectedPriceCurrencySign}
+								totalValue={totalValue}
+								sign={selectedPriceCurrency.sign}
 							/>
 						</StyledSelectableCurrencyRow>
 					);
@@ -90,13 +101,13 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					<RowsContainer>
 						<CryptoRow>
 							<Currency.Name currencyKey="ETH" showIcon={true} iconProps={{ type: 'asset' }} />
-							<Button variant="primary" isRounded={true}>
+							<ConvertButton variant="primary" isRounded={true}>
 								<Trans
 									i18nKey="common.currency.convert-to-currency"
 									values={{ currencyKey: 'sETH' }}
 									components={[<NoTextTransform />]}
 								/>
-							</Button>
+							</ConvertButton>
 						</CryptoRow>
 					</RowsContainer>
 				</>
@@ -143,6 +154,13 @@ const RowsSpacer = styled.div`
 
 const CryptoRow = styled(FlexDivRowCentered)`
 	padding: 5px 16px;
+`;
+
+const ConvertButton = styled(Button)`
+	text-transform: none;
+	&::first-letter {
+		text-transform: capitalize;
+	}
 `;
 
 export default SelectSynthModal;

@@ -9,7 +9,7 @@ import synthetix from 'lib/synthetix';
 import { getDefaultNetworkId } from 'utils/network';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/connection';
+import { walletAddressState, networkState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 

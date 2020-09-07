@@ -11,7 +11,6 @@
 		"lint:fix": "eslint . --ext ts,.tsx --fix"
 	},
 	"dependencies": {
-		"@reach/alert": "0.11.0",
 		"@reach/dialog": "0.11.0",
 		"@synthetixio/assets": "2.0.1",
 		"@synthetixio/js": "0.1.0",

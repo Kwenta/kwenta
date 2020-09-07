@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { walletAddressState, isWalletConnectedState } from 'store/connection';
+import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 

@@ -3,9 +3,10 @@ import { useContext, FC, useState } from 'react';
 import { LineChart, XAxis, YAxis, Line, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
-
-import format from 'date-fns/format';
 import styled, { ThemeContext } from 'styled-components';
+import format from 'date-fns/format';
+
+import { Synth } from 'lib/synthetix';
 
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
@@ -23,8 +24,7 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
-	selectedPriceCurrency: CurrencyKey;
-	selectedPriceCurrencySign: string | undefined;
+	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
@@ -32,7 +32,6 @@ const ChartCard: FC<ChartCardProps> = ({
 	currencyKey,
 	priceRate,
 	selectedPriceCurrency,
-	selectedPriceCurrencySign,
 	selectPriceCurrencyRate,
 }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
@@ -93,7 +92,9 @@ const ChartCard: FC<ChartCardProps> = ({
 					)}
 					{price != null && (
 						<CurrencyPrice>
-							{formatCurrency(selectedPriceCurrency, price, { sign: selectedPriceCurrencySign })}
+							{formatCurrency(selectedPriceCurrency.name, price, {
+								sign: selectedPriceCurrency.sign,
+							})}
 						</CurrencyPrice>
 					)}
 					{change != null && <ChangePercent value={change} />}
@@ -161,7 +162,9 @@ const ChartCard: FC<ChartCardProps> = ({
 							axisLine={false}
 							tickLine={false}
 							tickFormatter={(val) =>
-								formatCurrency(selectedPriceCurrency, val, { sign: selectedPriceCurrencySign })
+								formatCurrency(selectedPriceCurrency.name, val, {
+									sign: selectedPriceCurrency.sign,
+								})
 							}
 						/>
 						<Line

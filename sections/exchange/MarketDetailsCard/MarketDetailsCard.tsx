@@ -16,20 +16,18 @@ import { formatCurrency } from 'utils/formatters/number';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
-import synthetix from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
 import Etherscan from 'containers/Etherscan';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
-	selectedPriceCurrency: CurrencyKey;
-	selectedPriceCurrencySign: string | undefined;
+	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	currencyKey,
 	selectedPriceCurrency,
-	selectedPriceCurrencySign,
 	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
@@ -68,8 +66,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						<Label>{t('exchange.market-details-card.24h-vol')}</Label>
 						<Value>
 							{volume24H != null
-								? formatCurrency(selectedPriceCurrency, volume24H, {
-										sign: selectedPriceCurrencySign,
+								? formatCurrency(selectedPriceCurrency.name, volume24H, {
+										sign: selectedPriceCurrency.sign,
 								  })
 								: NO_VALUE}
 						</Value>
@@ -78,8 +76,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						<Label>{t('exchange.market-details-card.24h-high')}</Label>
 						<Value>
 							{rates24High != null
-								? `${formatCurrency(selectedPriceCurrency, rates24High, {
-										sign: selectedPriceCurrencySign,
+								? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
+										sign: selectedPriceCurrency.sign,
 								  })}`
 								: NO_VALUE}
 						</Value>
@@ -112,8 +110,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						<Label>{t('exchange.market-details-card.market-cap')}</Label>
 						<Value>
 							{marketCapUSD != null
-								? formatCurrency(selectedPriceCurrency, marketCapUSD, {
-										sign: selectedPriceCurrencySign,
+								? formatCurrency(selectedPriceCurrency.name, marketCapUSD, {
+										sign: selectedPriceCurrency.sign,
 								  })
 								: NO_VALUE}
 						</Value>
@@ -122,8 +120,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						<Label>{t('exchange.market-details-card.24h-low')}</Label>
 						<Value>
 							{rates24Low != null
-								? `${formatCurrency(selectedPriceCurrency, rates24Low, {
-										sign: selectedPriceCurrencySign,
+								? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
+										sign: selectedPriceCurrency.sign,
 								  })}`
 								: NO_VALUE}
 						</Value>

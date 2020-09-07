@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Synths } from 'lib/synthetix';
+import { Synths, Synth } from 'lib/synthetix';
 
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
@@ -13,7 +13,7 @@ import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { SelectableCurrencyRow, FlexDivRow } from 'styles/common';
+import { SelectableCurrencyRow } from 'styles/common';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
@@ -35,8 +35,8 @@ type SelectSynthModalProps = {
 	onSelect: (currencyKey: CurrencyKey) => void;
 	frozenSynths: CurrencyKey[];
 	excludedSynths?: CurrencyKey[];
-	selectedPriceCurrency: CurrencyKey;
-	selectedPriceCurrencySign: string | undefined;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
 };
 
 export const SelectSynthModal: FC<SelectSynthModalProps> = ({
@@ -47,7 +47,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	frozenSynths,
 	excludedSynths,
 	selectedPriceCurrency,
-	selectedPriceCurrencySign,
+	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
@@ -132,9 +132,13 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 			</RowsHeader>
 			<RowsContainer>
 				{synthsResults.map((synth) => {
-					const price = exchangeRates && exchangeRates[synth.name];
+					let price = exchangeRates && exchangeRates[synth.name];
 					const isSelectable = !frozenSynths.includes(synth.name);
 					const currencyKey = synth.name;
+
+					if (price != null && selectPriceCurrencyRate != null) {
+						price /= selectPriceCurrencyRate;
+					}
 
 					return (
 						<StyledSelectableCurrencyRow
@@ -154,7 +158,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 								<Currency.Price
 									currencyKey={currencyKey}
 									price={price}
-									sign={selectedPriceCurrencySign}
+									sign={selectedPriceCurrency.sign}
 								/>
 							) : (
 								NO_VALUE

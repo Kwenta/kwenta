@@ -8,7 +8,7 @@ export type Network = {
 	name: NetworkName;
 };
 
-const getKey = (subKey: string) => `connection/${subKey}`;
+const getKey = (subKey: string) => `wallet/${subKey}`;
 
 export const networkState = atom<Network | null>({
 	key: getKey('network'),

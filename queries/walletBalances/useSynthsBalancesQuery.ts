@@ -8,7 +8,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
-import { walletAddressState, isWalletConnectedState } from 'store/connection';
+import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 export type SynthBalance = {
 	currencyKey: CurrencyKey;

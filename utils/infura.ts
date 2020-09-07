@@ -1,4 +1,4 @@
-import { Network } from 'store/connection';
+import { Network } from 'store/wallet';
 
 export const GWEI_UNIT = 1000000000;
 

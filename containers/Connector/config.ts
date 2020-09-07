@@ -4,7 +4,7 @@ import notify from 'bnc-notify';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
 
-import { Network } from 'store/connection';
+import { Network } from 'store/wallet';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(network);

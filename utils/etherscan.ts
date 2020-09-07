@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/js';
-import { Network } from 'store/connection';
+import { Network } from 'store/wallet';
 
 const getEtherscanBaseURL = (network: Network) => {
 	if (network.id === NetworkId.Mainnet) {

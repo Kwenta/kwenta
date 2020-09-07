@@ -2,8 +2,6 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
-import { SynthsMap } from 'lib/synthetix';
-
 import { FlexDivRowCentered, numericValueCSS, NoTextTransform } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
@@ -14,7 +12,7 @@ import Currency from 'components/Currency';
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import { formatCurrency } from 'utils/formatters/number';
-import { synthToAsset } from 'utils/currencies';
+import { Synth } from 'lib/synthetix';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -23,9 +21,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyKey: CurrencyKey;
 	quoteCurrencyAmount: string;
 	totalTradePrice: number;
-	synthsMap: SynthsMap | null;
-	selectedPriceCurrency: CurrencyKey;
-	selectedPriceCurrencySign: string | undefined;
+	selectedPriceCurrency: Synth;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -35,9 +31,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	baseCurrencyAmount,
 	quoteCurrencyAmount,
 	totalTradePrice,
-	synthsMap,
 	selectedPriceCurrency,
-	selectedPriceCurrencySign,
 }) => {
 	const { t } = useTranslation();
 
@@ -88,13 +82,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					<SummaryItemLabel>
 						<Trans
 							i18nKey="common.currency.currency-value"
-							values={{ currencyKey: synthToAsset(selectedPriceCurrency) }}
+							values={{ currencyKey: selectedPriceCurrency.asset }}
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
 					<SummaryItemValue>
-						{formatCurrency(selectedPriceCurrency, totalTradePrice, {
-							sign: selectedPriceCurrencySign,
+						{formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+							sign: selectedPriceCurrency.sign,
 						})}
 					</SummaryItemValue>
 				</SummaryItem>
