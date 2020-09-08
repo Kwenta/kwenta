@@ -11,7 +11,7 @@ import { Side } from './types';
 
 type TradeCardProps = {
 	side: Side;
-	currencyKey: CurrencyKey;
+	currencyKey: CurrencyKey | null;
 	currencyAmount: string;
 	walletBalance: number | null;
 	onBalanceClick: () => void;

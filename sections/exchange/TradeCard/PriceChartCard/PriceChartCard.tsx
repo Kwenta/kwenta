@@ -79,25 +79,29 @@ const ChartCard: FC<ChartCardProps> = ({
 		<Container>
 			<ChartHeader>
 				<div>
-					{currencyKey && (
-						<CurrencyLabel>
-							{
-								<Trans
-									i18nKey="common.currency.currency-price"
-									values={{ currencyKey }}
-									components={[<NoTextTransform />]}
-								/>
-							}
-						</CurrencyLabel>
+					{currencyKey != null ? (
+						<>
+							<CurrencyLabel>
+								{
+									<Trans
+										i18nKey="common.currency.currency-price"
+										values={{ currencyKey }}
+										components={[<NoTextTransform />]}
+									/>
+								}
+							</CurrencyLabel>
+							{price != null && (
+								<CurrencyPrice>
+									{formatCurrency(selectedPriceCurrency.name, price, {
+										sign: selectedPriceCurrency.sign,
+									})}
+								</CurrencyPrice>
+							)}
+							{change != null && <ChangePercent value={change} />}
+						</>
+					) : (
+						<CurrencyLabel>{t('common.price')}</CurrencyLabel>
 					)}
-					{price != null && (
-						<CurrencyPrice>
-							{formatCurrency(selectedPriceCurrency.name, price, {
-								sign: selectedPriceCurrency.sign,
-							})}
-						</CurrencyPrice>
-					)}
-					{change != null && <ChangePercent value={change} />}
 				</div>
 				<Actions>
 					{PERIOD_LABELS.map((period) => (
@@ -174,16 +178,18 @@ const ChartCard: FC<ChartCardProps> = ({
 							strokeWidth={1.5}
 							isAnimationActive={false}
 						/>
-						<Tooltip
-							isAnimationActive={false}
-							position={{
-								y: 0,
-							}}
-							content={
-								// @ts-ignore
-								<CustomTooltip />
-							}
-						/>
+						{currencyKey != null && (
+							<Tooltip
+								isAnimationActive={false}
+								position={{
+									y: 0,
+								}}
+								content={
+									// @ts-ignore
+									<CustomTooltip />
+								}
+							/>
+						)}
 					</LineChart>
 				</RechartsResponsiveContainer>
 			</ChartBody>
@@ -202,6 +208,7 @@ const ChartHeader = styled(FlexDivRowCentered)`
 
 const CurrencyLabel = styled.span`
 	padding-right: 20px;
+	font-size: 14px;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};

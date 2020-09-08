@@ -1,6 +1,5 @@
 import { Languages } from 'translations/constants';
 
-import { SYNTHS_MAP } from './currency';
 import { NetworkId } from '@synthetixio/js';
 
 // app defaults
@@ -14,10 +13,6 @@ export const DEFAULT_PRICE_CURRENCY = {
 	category: 'crypto',
 	desc: '',
 };
-
-// exchange defaults
-export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sETH;
-export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
 
 // network defaults
 export const DEFAULT_NETWORK_ID = NetworkId.Mainnet;

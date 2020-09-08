@@ -18,7 +18,7 @@ import { Side } from '../types';
 
 type CurrencyCardProps = {
 	side: Side;
-	currencyKey?: CurrencyKey;
+	currencyKey: CurrencyKey | null;
 	amount: string;
 	onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	walletBalance: number | null;
@@ -47,10 +47,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
-					<CurrencySelector onClick={onCurrencySelect}>
-						{currencyKey || t('exchange.currency-selector.no-value')} <CaretDownIcon />
+					<CurrencySelector onClick={onCurrencySelect} noTextTransform={currencyKey != null}>
+						{currencyKey ?? t('exchange.currency-card.currency-selector.no-value')}{' '}
+						<CaretDownIcon />
 					</CurrencySelector>
-					{currencyKey && (
+					{currencyKey != null && (
 						<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
 					)}
 				</CurrencyContainer>
@@ -80,7 +81,8 @@ const CurrencyContainer = styled(FlexDivCentered)`
 	padding-bottom: 6px;
 `;
 
-const CurrencySelector = styled.div`
+const CurrencySelector = styled.div<{ noTextTransform: boolean }>`
+	text-transform: ${(props) => (props.noTextTransform ? 'unset' : 'capitalize')};
 	display: grid;
 	align-items: center;
 	grid-auto-flow: column;

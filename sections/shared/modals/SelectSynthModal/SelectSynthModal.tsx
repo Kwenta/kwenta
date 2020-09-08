@@ -34,7 +34,6 @@ type SelectSynthModalProps = {
 	exchangeRates?: Rates;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	frozenSynths: CurrencyKey[];
-	excludedSynths?: CurrencyKey[];
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
@@ -45,7 +44,6 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	synths,
 	onSelect,
 	frozenSynths,
-	excludedSynths,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 }) => {
@@ -53,15 +51,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 
-	const filteredSynths = useMemo(() => {
-		const allSynths = excludedSynths
-			? synths.filter((synth) => !excludedSynths.includes(synth.name))
-			: synths;
-
-		return synthCategory != null
-			? allSynths.filter((synth) => synth.category === synthCategory)
-			: allSynths;
-	}, [synths, excludedSynths, synthCategory]);
+	const filteredSynths = useMemo(
+		() =>
+			synthCategory != null ? synths.filter((synth) => synth.category === synthCategory) : synths,
+		[synths, synthCategory]
+	);
 
 	const searchFilteredSynths = useDebouncedMemo(
 		() =>
@@ -92,6 +86,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 						setAssetSearch(e.target.value);
 					}}
 					value={assetSearch}
+					autoFocus={true}
 				/>
 			</SearchContainer>
 			<CategoryFilters>
