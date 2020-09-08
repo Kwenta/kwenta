@@ -17,7 +17,7 @@ const Nav: FC = () => {
 		<nav>
 			<MenuLinks>
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
-					<MenuLinkItem key={link} isActive={asPath === link}>
+					<MenuLinkItem key={link} isActive={asPath.includes(link)}>
 						<Link href={link}>
 							<a>{t(i18nLabel)}</a>
 						</Link>
@@ -36,6 +36,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 	padding-right: 20px;
 	a {
 		${linkCSS};
+		font-family: ${(props) => props.theme.fonts.bold};
 		text-transform: capitalize;
 		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.silver)};
 		&:hover {
