@@ -39,7 +39,6 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
-	const hasNonSynths = true;
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-asset.title')}>
@@ -92,7 +91,8 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					);
 				})}
 			</RowsContainer>
-			{hasNonSynths && (
+			{/* TODO: implement */}
+			{false && (
 				<>
 					<RowsSpacer />
 					<RowsHeader>
