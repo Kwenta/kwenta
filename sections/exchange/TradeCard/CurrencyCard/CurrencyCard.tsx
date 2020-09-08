@@ -14,11 +14,13 @@ import NumericInput from 'components/Input/NumericInput';
 
 import { FlexDivCentered, FlexDivRowCentered, numericValueCSS } from 'styles/common';
 
+import { Side } from '../types';
+
 type CurrencyCardProps = {
-	side: 'base' | 'quote';
+	side: Side;
 	currencyKey?: CurrencyKey;
 	amount: string;
-	onAmountChange: ((event: ChangeEvent<HTMLInputElement>) => void) | undefined;
+	onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	walletBalance: number | null;
 	onBalanceClick: () => void | undefined;
 	onCurrencySelect: () => void;

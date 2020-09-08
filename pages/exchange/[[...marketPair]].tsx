@@ -21,9 +21,7 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery, { Rates } from 'queries/rates/useExchangeRatesQuery';
 
-import CurrencyCard from 'sections/exchange/CurrencyCard';
-import MarketDetailsCard from 'sections/exchange/MarketDetailsCard';
-import PriceChartCard from 'sections/exchange/PriceChartCard';
+import TradeSummaryCard from 'sections/exchange/TradeSummaryCard';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
@@ -36,7 +34,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import { priceCurrencyState } from 'store/app';
 
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
-import TradeInfoCard from 'sections/exchange/TradeInfoCard/TradeInfoCard';
+import TradeCard from 'sections/exchange/TradeCard';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -179,13 +177,15 @@ const ExchangePage = () => {
 					gasPrice: ethGasStationQuery.data!.average * GWEI_UNIT,
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
+
 				if (notify && tx) {
-					// emitter.on('txConfirmed', () => {
-					// 	synthsWalletBalancesQuery.refetch();
-					// });
-					await tx.wait();
-					setTxConfirmationModalOpen(false);
-					synthsWalletBalancesQuery.refetch();
+					const { emitter } = notify.hash(tx.hash);
+
+					emitter.on('txConfirmed', () => {
+						synthsWalletBalancesQuery.refetch();
+					});
+					// await tx.wait();
+					// synthsWalletBalancesQuery.refetch();
 				}
 			} catch (e) {
 				console.log(e);
@@ -232,10 +232,10 @@ const ExchangePage = () => {
 			<>
 				<CardsContainer>
 					<LeftCardContainer>
-						<CurrencyCard
+						<TradeCard
 							side="quote"
 							currencyKey={quoteCurrencyKey}
-							amount={quoteCurrencyAmount}
+							currencyAmount={quoteCurrencyAmount}
 							onAmountChange={(e) => {
 								const value = e.target.value;
 								const numValue = Number(value);
@@ -249,17 +249,9 @@ const ExchangePage = () => {
 								setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 							}}
 							onCurrencySelect={() => setSelectAssetModalOpen(true)}
-						/>
-						<PriceChartCard
-							currencyKey={quoteCurrencyKey ?? null}
-							priceRate={quotePriceRate ?? null}
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
-						/>
-						<MarketDetailsCard
-							currencyKey={quoteCurrencyKey}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
+							priceRate={quotePriceRate}
 						/>
 					</LeftCardContainer>
 					<Spacer>
@@ -268,10 +260,10 @@ const ExchangePage = () => {
 						</SwapCurrenciesButton>
 					</Spacer>
 					<RightCardContainer>
-						<CurrencyCard
+						<TradeCard
 							side="base"
 							currencyKey={baseCurrencyKey}
-							amount={baseCurrencyAmount}
+							currencyAmount={baseCurrencyAmount}
 							onAmountChange={(e) => {
 								const value = e.target.value;
 								const numValue = Number(value);
@@ -285,21 +277,13 @@ const ExchangePage = () => {
 								setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 							}}
 							onCurrencySelect={() => setSelectSynthModalOpen(true)}
-						/>
-						<PriceChartCard
-							currencyKey={baseCurrencyKey ?? null}
-							priceRate={basePriceRate ?? null}
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
-						/>
-						<MarketDetailsCard
-							currencyKey={baseCurrencyKey}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
+							priceRate={basePriceRate}
 						/>
 					</RightCardContainer>
 				</CardsContainer>
-				<TradeInfoCard
+				<TradeSummaryCard
 					selectedPriceCurrency={selectedPriceCurrency}
 					isButtonDisabled={isButtonDisabled}
 					isSubmitting={isSubmitting}

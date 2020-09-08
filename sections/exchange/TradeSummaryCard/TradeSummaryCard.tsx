@@ -16,7 +16,7 @@ import { NoTextTransform, numericValueCSS } from 'styles/common';
 
 import { RoundedContainer } from '../common';
 
-type TradeInfoCardProps = {
+type TradeSummaryCardProps = {
 	selectedPriceCurrency: Synth;
 	isButtonDisabled: boolean;
 	isSubmitting: boolean;
@@ -27,7 +27,7 @@ type TradeInfoCardProps = {
 	baseCurrency: Synth | null;
 };
 
-const TradeInfoCard: FC<TradeInfoCardProps> = ({
+const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	selectedPriceCurrency,
 	isButtonDisabled,
 	isSubmitting,
@@ -49,36 +49,36 @@ const TradeInfoCard: FC<TradeInfoCardProps> = ({
 
 	return (
 		<RoundedContainer>
-			<TradeInfoItems>
-				<TradeInfoItem>
-					<TradeInfoLabel>{t('exchange.trade-info.slippage')}</TradeInfoLabel>
-					<TradeInfoValue>{NO_VALUE}</TradeInfoValue>
-				</TradeInfoItem>
-				<TradeInfoItem>
-					<TradeInfoLabel>
+			<SummaryItems>
+				<SummaryItem>
+					<SummaryItemLabel>{t('exchange.trade-info.slippage')}</SummaryItemLabel>
+					<SummaryItemValue>{NO_VALUE}</SummaryItemValue>
+				</SummaryItem>
+				<SummaryItem>
+					<SummaryItemLabel>
 						<Trans
 							i18nKey="common.currency.currency-value"
 							values={{ currencyKey: selectedPriceCurrency.asset }}
 							components={[<NoTextTransform />]}
 						/>
-					</TradeInfoLabel>
-					<TradeInfoValue>
+					</SummaryItemLabel>
+					<SummaryItemValue>
 						{baseCurrencyAmount
 							? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
 									sign: selectedPriceCurrency.sign,
 							  })
 							: NO_VALUE}
-					</TradeInfoValue>
-				</TradeInfoItem>
-				<TradeInfoItem>
-					<TradeInfoLabel>{t('exchange.trade-info.fee')}</TradeInfoLabel>
-					<TradeInfoValue>
+					</SummaryItemValue>
+				</SummaryItem>
+				<SummaryItem>
+					<SummaryItemLabel>{t('exchange.trade-info.fee')}</SummaryItemLabel>
+					<SummaryItemValue>
 						{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
-					</TradeInfoValue>
-				</TradeInfoItem>
-				<TradeInfoItem>
-					<TradeInfoLabel>{t('exchange.trade-info.fee-cost')}</TradeInfoLabel>
-					<TradeInfoValue>
+					</SummaryItemValue>
+				</SummaryItem>
+				<SummaryItem>
+					<SummaryItemLabel>{t('exchange.trade-info.fee-cost')}</SummaryItemLabel>
+					<SummaryItemValue>
 						{exchangeFeeRate != null && baseCurrencyAmount
 							? formatCurrency(
 									selectedPriceCurrency.name,
@@ -86,46 +86,44 @@ const TradeInfoCard: FC<TradeInfoCardProps> = ({
 									{ sign: selectedPriceCurrency.sign }
 							  )
 							: NO_VALUE}
-					</TradeInfoValue>
-				</TradeInfoItem>
-			</TradeInfoItems>
-			<div>
-				<Button
-					variant="primary"
-					isRounded={true}
-					disabled={isButtonDisabled}
-					onClick={onSubmit}
-					size="lg"
-				>
-					{isSubmitting
-						? t('exchange.trade-info.button.submitting-order')
-						: isButtonDisabled
-						? t('exchange.trade-info.button.enter-amount')
-						: t('exchange.trade-info.button.submit-order')}
-				</Button>
-			</div>
+					</SummaryItemValue>
+				</SummaryItem>
+			</SummaryItems>
+			<Button
+				variant="primary"
+				isRounded={true}
+				disabled={isButtonDisabled}
+				onClick={onSubmit}
+				size="lg"
+			>
+				{isSubmitting
+					? t('exchange.trade-info.button.submitting-order')
+					: isButtonDisabled
+					? t('exchange.trade-info.button.enter-amount')
+					: t('exchange.trade-info.button.submit-order')}
+			</Button>
 		</RoundedContainer>
 	);
 };
 
-const TradeInfoItems = styled.div`
+const SummaryItems = styled.div`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
 `;
 
-const TradeInfoItem = styled.div`
+const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;
 `;
 
-const TradeInfoLabel = styled.div`
+const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
 `;
 
-const TradeInfoValue = styled.div`
+const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	${numericValueCSS};
 `;
 
-export default TradeInfoCard;
+export default TradeSummaryCard;
