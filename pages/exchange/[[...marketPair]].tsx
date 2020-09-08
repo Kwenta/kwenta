@@ -34,7 +34,7 @@ import synthetix from 'lib/synthetix';
 
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import { priceCurrencyState } from 'store/app';
 
@@ -43,6 +43,7 @@ import {
 	resetButtonCSS,
 	FlexDivRowCentered,
 	NoTextTransform,
+	numericValueCSS,
 } from 'styles/common';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
@@ -102,6 +103,16 @@ const ExchangePage = () => {
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
+
+	const baseCurrency =
+		baseCurrencyKey != null && synthetix.synthsMap != null
+			? synthetix.synthsMap[baseCurrencyKey]
+			: null;
+
+	const exchangeFeeRate: string | null =
+		baseCurrency != null && synthetix.js?.defaults != null
+			? synthetix.js.defaults.EXCHANGE_FEE_RATES[baseCurrency.category]
+			: null;
 
 	const isBaseCurrencyFrozen = frozenSynthsQuery.data
 		? frozenSynthsQuery.data.includes(baseCurrencyKey)
@@ -178,9 +189,7 @@ const ExchangePage = () => {
 		!baseCurrencyAmount || !ethGasStationQuery.data || !isWalletConnected || isSubmitting;
 
 	const handleSubmit = async () => {
-		const js: any = synthetix.js;
-
-		if (js) {
+		if (synthetix.js != null) {
 			setTxConfirmationModalOpen(true);
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey);
@@ -188,11 +197,11 @@ const ExchangePage = () => {
 
 			const params = [quoteKeyBytes32, amountToExchange, baseKeyBytes32];
 			try {
-				const gasEstimate = await js.contracts.Synthetix.estimateGas.exchange(...params);
+				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchange(...params);
 
 				setIsSubmitting(true);
 
-				const tx = await js.contracts.Synthetix.exchange(...params, {
+				const tx = await synthetix.js.contracts.Synthetix.exchange(...params, {
 					gasPrice: ethGasStationQuery.data!.average * GWEI_UNIT,
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
@@ -341,11 +350,25 @@ const ExchangePage = () => {
 						</TradeInfoItem>
 						<TradeInfoItem>
 							<TradeInfoLabel>{t('exchange.trade-info.fee')}</TradeInfoLabel>
-							<TradeInfoValue>{NO_VALUE}</TradeInfoValue>
+							<TradeInfoValue>
+								{exchangeFeeRate != null
+									? formatPercent(ethers.utils.formatEther(exchangeFeeRate))
+									: NO_VALUE}
+							</TradeInfoValue>
 						</TradeInfoItem>
 						<TradeInfoItem>
 							<TradeInfoLabel>{t('exchange.trade-info.fee-cost')}</TradeInfoLabel>
-							<TradeInfoValue>{NO_VALUE}</TradeInfoValue>
+							<TradeInfoValue>
+								{exchangeFeeRate != null && baseCurrencyAmount
+									? formatCurrency(
+											selectedPriceCurrency.name,
+											Number(baseCurrencyAmount) *
+												Number(ethers.utils.formatEther(exchangeFeeRate)) *
+												basePriceRate,
+											{ sign: selectedPriceCurrency.sign }
+									  )
+									: NO_VALUE}
+							</TradeInfoValue>
 						</TradeInfoItem>
 					</TradeInfoItems>
 					<div>
@@ -477,6 +500,7 @@ const TradeInfoLabel = styled.div`
 
 const TradeInfoValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
+	${numericValueCSS};
 `;
 
 export default ExchangePage;

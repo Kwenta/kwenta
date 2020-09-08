@@ -2,8 +2,7 @@ import { atom } from 'recoil';
 
 import { Languages } from 'translations/constants';
 
-import { DEFAULT_LANGUAGE } from 'constants/defaults';
-import { SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 import { Synth } from 'lib/synthetix';
 
 const getKey = (subKey: string) => `app/${subKey}`;
@@ -21,11 +20,5 @@ export const languageState = atom<Languages>({
 // TODO: find a better way to init this
 export const priceCurrencyState = atom<Synth>({
 	key: getKey('priceCurrency'),
-	default: {
-		name: SYNTHS_MAP.sEUR,
-		asset: 'USD',
-		sign: '$',
-		category: 'crypto',
-		desc: '',
-	},
+	default: DEFAULT_PRICE_CURRENCY,
 });

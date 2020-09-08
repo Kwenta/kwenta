@@ -6,6 +6,15 @@ import { NetworkId } from '@synthetixio/js';
 // app defaults
 export const DEFAULT_LANGUAGE = Languages.EN;
 
+// TODO: find a better way to init this
+export const DEFAULT_PRICE_CURRENCY = {
+	name: 'sUSD',
+	asset: 'USD',
+	sign: '$',
+	category: 'crypto',
+	desc: '',
+};
+
 // exchange defaults
 export const DEFAULT_BASE_SYNTH = SYNTHS_MAP.sETH;
 export const DEFAULT_QUOTE_SYNTH = SYNTHS_MAP.sBTC;
