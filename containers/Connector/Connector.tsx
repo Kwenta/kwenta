@@ -27,7 +27,7 @@ const useConnector = () => {
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 
-	const [selectedWallet, setSelectedWallet] = useLocalStorage(
+	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);

@@ -34,6 +34,8 @@ import { priceCurrencyState, appReadyState } from 'store/app';
 import synthetix from 'lib/synthetix';
 
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
+import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -55,13 +57,14 @@ const ExchangePage = () => {
 
 	const marketPairQuery = router.query.marketPair || [];
 
-	const [currencyPair, setCurrencyPair] = useState<{
+	const [currencyPair, setCurrencyPair] = useLocalStorage<{
 		base: CurrencyKey | null;
 		quote: CurrencyKey | null;
-	}>({
+	}>(LOCAL_STORAGE_KEYS.SELECTED_MARKET, {
 		base: null,
 		quote: null,
 	});
+
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -318,6 +321,7 @@ const ExchangePage = () => {
 						synths={synthetix.js?.synths ?? []}
 						exchangeRates={exchangeRatesQuery.data}
 						onSelect={(currencyKey) =>
+							// @ts-ignore
 							setCurrencyPair((pair) => ({
 								base: currencyKey,
 								quote: pair.quote === currencyKey ? null : pair.quote,
@@ -335,6 +339,7 @@ const ExchangePage = () => {
 						synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
 						synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
 						onSelect={(currencyKey) =>
+							// @ts-ignore
 							setCurrencyPair((pair) => ({
 								base: pair.base === currencyKey ? null : pair.base,
 								quote: currencyKey,
