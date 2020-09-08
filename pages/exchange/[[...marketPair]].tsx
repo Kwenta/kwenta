@@ -194,7 +194,7 @@ const ExchangePage = () => {
 					baseCurrencyFromQuery != null &&
 					quoteCurrencyFromQuery != null &&
 					synthetix.synthsMap != null &&
-					// validate synths (potentially redirect?)
+					// validate synths (potentially)
 					synthetix.synthsMap[baseCurrencyFromQuery] != null &&
 					synthetix.synthsMap[quoteCurrencyFromQuery] != null
 				) {
@@ -203,19 +203,19 @@ const ExchangePage = () => {
 						quote: quoteCurrencyFromQuery,
 					});
 				}
-			} else {
-				if (
-					quoteCurrencyFromQuery !== currencyPair.quote ||
-					baseCurrencyFromQuery !== currencyPair.base
-				) {
-					router.replace(
-						`/exchange/[[...market]]`,
-						`/exchange/${currencyPair.base}-${currencyPair.quote}`,
-						{
-							shallow: true,
-						}
-					);
-				}
+			} else if (
+				currencyPair.base != null &&
+				currencyPair.quote != null &&
+				(quoteCurrencyFromQuery !== currencyPair.quote ||
+					baseCurrencyFromQuery !== currencyPair.base)
+			) {
+				router.replace(
+					`/exchange/[[...market]]`,
+					`/exchange/${currencyPair.base}-${currencyPair.quote}`,
+					{
+						shallow: true,
+					}
+				);
 			}
 		}
 
