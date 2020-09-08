@@ -29,7 +29,7 @@ import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import { priceCurrencyState } from 'store/app';
+import { priceCurrencyState, appReadyState } from 'store/app';
 
 import synthetix from 'lib/synthetix';
 
@@ -53,22 +53,14 @@ const ExchangePage = () => {
 	const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 	const router = useRouter();
 
-	let baseCurrencyFromQuery: CurrencyKey | null = null;
-	let quoteCurrencyFromQuery: CurrencyKey | null = null;
-
-	const market = router.query.marketPair || [];
-
-	if (market.length) {
-		// check valid market
-		[baseCurrencyFromQuery, quoteCurrencyFromQuery] = market[0].split('-');
-	}
+	const marketPairQuery = router.query.marketPair || [];
 
 	const [currencyPair, setCurrencyPair] = useState<{
 		base: CurrencyKey | null;
 		quote: CurrencyKey | null;
 	}>({
-		base: baseCurrencyFromQuery,
-		quote: quoteCurrencyFromQuery,
+		base: null,
+		quote: null,
 	});
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
@@ -79,6 +71,7 @@ const ExchangePage = () => {
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const isAppReady = useRecoilValue(appReadyState);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -188,22 +181,46 @@ const ExchangePage = () => {
 	};
 
 	useEffect(() => {
-		if (
-			currencyPair.base &&
-			currencyPair.quote &&
-			quoteCurrencyFromQuery !== currencyPair.quote &&
-			baseCurrencyFromQuery !== currencyPair.base
-		) {
-			router.replace(
-				`/exchange/[[...market]]`,
-				`/exchange/${currencyPair.base}-${currencyPair.quote}`,
-				{
-					shallow: true,
+		if (marketPairQuery && isAppReady) {
+			let baseCurrencyFromQuery: CurrencyKey | null = null;
+			let quoteCurrencyFromQuery: CurrencyKey | null = null;
+			if (marketPairQuery.length) {
+				[baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketPairQuery[0].split('-');
+			}
+
+			if (currencyPair.base == null && currencyPair.quote == null) {
+				// TODO: validate currencies
+				if (
+					baseCurrencyFromQuery != null &&
+					quoteCurrencyFromQuery != null &&
+					synthetix.synthsMap != null &&
+					// validate synths (potentially redirect?)
+					synthetix.synthsMap[baseCurrencyFromQuery] != null &&
+					synthetix.synthsMap[quoteCurrencyFromQuery] != null
+				) {
+					setCurrencyPair({
+						base: baseCurrencyFromQuery,
+						quote: quoteCurrencyFromQuery,
+					});
 				}
-			);
+			} else {
+				if (
+					quoteCurrencyFromQuery !== currencyPair.quote ||
+					baseCurrencyFromQuery !== currencyPair.base
+				) {
+					router.replace(
+						`/exchange/[[...market]]`,
+						`/exchange/${currencyPair.base}-${currencyPair.quote}`,
+						{
+							shallow: true,
+						}
+					);
+				}
+			}
 		}
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currencyPair, quoteCurrencyFromQuery, baseCurrencyFromQuery]);
+	}, [currencyPair, marketPairQuery, isAppReady]);
 
 	return (
 		<>
