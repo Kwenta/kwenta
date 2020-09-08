@@ -12,7 +12,12 @@ import { formatCurrency } from 'utils/formatters/number';
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 
-import { FlexDivCentered, FlexDivRowCentered, numericValueCSS } from 'styles/common';
+import {
+	FlexDivCentered,
+	FlexDivRowCentered,
+	numericValueCSS,
+	CapitalizedText,
+} from 'styles/common';
 
 import { Side } from '../types';
 
@@ -47,8 +52,12 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
-					<CurrencySelector onClick={onCurrencySelect} noTextTransform={currencyKey != null}>
-						{currencyKey ?? t('exchange.currency-card.currency-selector.no-value')}{' '}
+					<CurrencySelector onClick={onCurrencySelect}>
+						{currencyKey ?? (
+							<CapitalizedText>
+								{t('exchange.currency-card.currency-selector.no-value')}
+							</CapitalizedText>
+						)}{' '}
 						<CaretDownIcon />
 					</CurrencySelector>
 					{currencyKey != null && (
@@ -81,8 +90,7 @@ const CurrencyContainer = styled(FlexDivCentered)`
 	padding-bottom: 6px;
 `;
 
-const CurrencySelector = styled.div<{ noTextTransform: boolean }>`
-	text-transform: ${(props) => (props.noTextTransform ? 'unset' : 'capitalize')};
+const CurrencySelector = styled.div`
 	display: grid;
 	align-items: center;
 	grid-auto-flow: column;

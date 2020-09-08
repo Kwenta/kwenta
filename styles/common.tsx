@@ -116,3 +116,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 					cursor: not-allowed;
 			  `}
 `;
+
+export const CapitalizedText = styled.span`
+	text-transform: capitalize;
+`;
