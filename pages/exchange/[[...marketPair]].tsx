@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
@@ -10,7 +10,6 @@ import get from 'lodash/get';
 
 import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_BASE_SYNTH, DEFAULT_QUOTE_SYNTH } from 'constants/defaults';
-import { NO_VALUE } from 'constants/placeholder';
 import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
@@ -26,25 +25,18 @@ import CurrencyCard from 'sections/exchange/CurrencyCard';
 import MarketDetailsCard from 'sections/exchange/MarketDetailsCard';
 import PriceChartCard from 'sections/exchange/PriceChartCard';
 
-import Button from 'components/Button';
-
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import synthetix from 'lib/synthetix';
 
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 
 import { priceCurrencyState } from 'store/app';
 
-import {
-	FlexDivCentered,
-	resetButtonCSS,
-	FlexDivRowCentered,
-	NoTextTransform,
-	numericValueCSS,
-} from 'styles/common';
+import { FlexDivCentered, resetButtonCSS } from 'styles/common';
+import TradeInfoCard from 'sections/exchange/TradeInfoCard/TradeInfoCard';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -104,20 +96,6 @@ const ExchangePage = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 
-	const baseCurrency =
-		baseCurrencyKey != null && synthetix.synthsMap != null
-			? synthetix.synthsMap[baseCurrencyKey]
-			: null;
-
-	const exchangeFeeRate: string | null =
-		baseCurrency != null && synthetix.js?.defaults != null
-			? synthetix.js.defaults.EXCHANGE_FEE_RATES[baseCurrency.category]
-			: null;
-
-	const isBaseCurrencyFrozen = frozenSynthsQuery.data
-		? frozenSynthsQuery.data.includes(baseCurrencyKey)
-		: false;
-
 	useEffect(() => {
 		if (synthExchange$ && walletAddress) {
 			const subscription = synthExchange$.subscribe(({ fromAddress }) => {
@@ -140,24 +118,23 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ratesUpdated$]);
 
+	const baseCurrency =
+		baseCurrencyKey != null && synthetix.synthsMap != null
+			? synthetix.synthsMap[baseCurrencyKey]
+			: null;
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-
 	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
-
 	const inverseRate = rate > 0 ? 1 / rate : 0;
-
 	const baseCurrencyBalance = get(
 		synthsWalletBalancesQuery.data,
 		['balancesMap', baseCurrencyKey, 'balance'],
 		null
 	);
-
 	const quoteCurrencyBalance = get(
 		synthsWalletBalancesQuery.data,
 		['balancesMap', quoteCurrencyKey, 'balance'],
 		null
 	);
-
 	const basePriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
 		baseCurrencyKey,
@@ -169,10 +146,9 @@ const ExchangePage = () => {
 		selectedPriceCurrency.name
 	);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
-
 	const totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
 
-	const swapCurrencies = () => {
+	const handleCurrencySwap = () => {
 		const baseAmount = baseCurrencyAmount;
 		const quoteAmount = quoteCurrencyAmount;
 
@@ -185,7 +161,7 @@ const ExchangePage = () => {
 		setQuoteCurrencyAmount(baseAmount);
 	};
 
-	const buttonDisabled =
+	const isButtonDisabled =
 		!baseCurrencyAmount || !ethGasStationQuery.data || !isWalletConnected || isSubmitting;
 
 	const handleSubmit = async () => {
@@ -197,8 +173,6 @@ const ExchangePage = () => {
 
 			const params = [quoteKeyBytes32, amountToExchange, baseKeyBytes32];
 			try {
-				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchange(...params);
-
 				setIsSubmitting(true);
 
 				const tx = await synthetix.js.contracts.Synthetix.exchange(...params, {
@@ -206,7 +180,6 @@ const ExchangePage = () => {
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
 				if (notify && tx) {
-					const { emitter } = notify.hash(tx.hash);
 					// emitter.on('txConfirmed', () => {
 					// 	synthsWalletBalancesQuery.refetch();
 					// });
@@ -214,11 +187,11 @@ const ExchangePage = () => {
 					setTxConfirmationModalOpen(false);
 					synthsWalletBalancesQuery.refetch();
 				}
-				setTxConfirmationModalOpen(false);
-				setIsSubmitting(false);
 			} catch (e) {
 				console.log(e);
+			} finally {
 				setIsSubmitting(false);
+				setTxConfirmationModalOpen(false);
 			}
 		}
 	};
@@ -290,7 +263,7 @@ const ExchangePage = () => {
 						/>
 					</LeftCardContainer>
 					<Spacer>
-						<SwapCurrenciesButton onClick={swapCurrencies}>
+						<SwapCurrenciesButton onClick={handleCurrencySwap}>
 							<ArrowsIcon />
 						</SwapCurrenciesButton>
 					</Spacer>
@@ -326,67 +299,16 @@ const ExchangePage = () => {
 						/>
 					</RightCardContainer>
 				</CardsContainer>
-				<TradeInfo>
-					<TradeInfoItems>
-						<TradeInfoItem>
-							<TradeInfoLabel>{t('exchange.trade-info.slippage')}</TradeInfoLabel>
-							<TradeInfoValue>{NO_VALUE}</TradeInfoValue>
-						</TradeInfoItem>
-						<TradeInfoItem>
-							<TradeInfoLabel>
-								<Trans
-									i18nKey="common.currency.currency-value"
-									values={{ currencyKey: selectedPriceCurrency.asset }}
-									components={[<NoTextTransform />]}
-								/>
-							</TradeInfoLabel>
-							<TradeInfoValue>
-								{baseCurrencyAmount
-									? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-											sign: selectedPriceCurrency.sign,
-									  })
-									: NO_VALUE}
-							</TradeInfoValue>
-						</TradeInfoItem>
-						<TradeInfoItem>
-							<TradeInfoLabel>{t('exchange.trade-info.fee')}</TradeInfoLabel>
-							<TradeInfoValue>
-								{exchangeFeeRate != null
-									? formatPercent(ethers.utils.formatEther(exchangeFeeRate))
-									: NO_VALUE}
-							</TradeInfoValue>
-						</TradeInfoItem>
-						<TradeInfoItem>
-							<TradeInfoLabel>{t('exchange.trade-info.fee-cost')}</TradeInfoLabel>
-							<TradeInfoValue>
-								{exchangeFeeRate != null && baseCurrencyAmount
-									? formatCurrency(
-											selectedPriceCurrency.name,
-											Number(baseCurrencyAmount) *
-												Number(ethers.utils.formatEther(exchangeFeeRate)) *
-												basePriceRate,
-											{ sign: selectedPriceCurrency.sign }
-									  )
-									: NO_VALUE}
-							</TradeInfoValue>
-						</TradeInfoItem>
-					</TradeInfoItems>
-					<div>
-						<Button
-							variant="primary"
-							isRounded={true}
-							disabled={buttonDisabled}
-							onClick={handleSubmit}
-							size="lg"
-						>
-							{isSubmitting
-								? t('exchange.trade-info.button.submitting-order')
-								: buttonDisabled
-								? t('exchange.trade-info.button.enter-amount')
-								: t('exchange.trade-info.button.submit-order')}
-						</Button>
-					</div>
-				</TradeInfo>
+				<TradeInfoCard
+					selectedPriceCurrency={selectedPriceCurrency}
+					isButtonDisabled={isButtonDisabled}
+					isSubmitting={isSubmitting}
+					baseCurrencyAmount={baseCurrencyAmount}
+					onSubmit={handleSubmit}
+					totalTradePrice={totalTradePrice}
+					basePriceRate={basePriceRate}
+					baseCurrency={baseCurrency}
+				/>
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}
@@ -473,34 +395,6 @@ const LeftCardContainer = styled.div`
 const RightCardContainer = styled.div`
 	${CardContainerMixin};
 	justify-items: left;
-`;
-
-const TradeInfo = styled(FlexDivRowCentered)`
-	border-radius: 1000px;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 16px 32px;
-	max-width: 680px;
-	margin: 0 auto;
-`;
-
-const TradeInfoItems = styled.div`
-	display: grid;
-	grid-auto-flow: column;
-	flex-grow: 1;
-`;
-
-const TradeInfoItem = styled.div`
-	display: grid;
-	grid-gap: 4px;
-`;
-
-const TradeInfoLabel = styled.div`
-	text-transform: capitalize;
-`;
-
-const TradeInfoValue = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	${numericValueCSS};
 `;
 
 export default ExchangePage;
