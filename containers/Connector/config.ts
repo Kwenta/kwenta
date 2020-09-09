@@ -33,7 +33,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					apiKey: process.env.PORTIS_APP_ID,
 					preferred: true,
 				},
-				{ walletName: 'trust', rpcUrl: infuraRpc },
+				// { walletName: 'trust', rpcUrl: infuraRpc },
 				{ walletName: 'dapper' },
 				{ walletName: 'walletLink', rpcUrl: infuraRpc },
 				{ walletName: 'opera' },
