@@ -32,7 +32,7 @@
 		"react-i18next": "11.7.0",
 		"react-query": "2.5.14",
 		"react-responsive": "8.1.0",
-		"react-select": "3.1.0",
+		"react-select": "^3.1.0",
 		"react-spring": "8.0.27",
 		"react-table": "7.5.0",
 		"recharts": "2.0.0-beta.6",

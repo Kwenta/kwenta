@@ -1,29 +1,46 @@
-import { FC } from 'react';
+import dynamic from 'next/dynamic';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { truncatedWalletAddressState } from 'store/wallet';
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import Connector from 'containers/Connector';
 
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 
+const SettingsModal = dynamic(() => import('sections/shared/modals/SettingsModal'), {
+	ssr: false,
+});
+
 const Connected: FC = () => {
+	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
+	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const { onboard } = Connector.useContainer();
 
 	return (
-		<FlexDivCentered>
-			<Menu>
-				<NotificationIcon />
-				<MenuIcon />
-			</Menu>
-			<Wallet onClick={() => onboard!.walletSelect()}>
-				<ConnectionDot />
-				{truncatedWalletAddress}
-			</Wallet>
-		</FlexDivCentered>
+		<>
+			<FlexDivCentered>
+				<Menu>
+					<MenuButton
+						onClick={() => setNotificationsModalOpened(true)}
+						isActive={notificationsModalOpened}
+					>
+						<NotificationIcon />
+					</MenuButton>
+					<MenuButton onClick={() => setSettingsModalOpened(true)} isActive={settingsModalOpened}>
+						<MenuIcon />
+					</MenuButton>
+				</Menu>
+				<Wallet onClick={() => onboard!.walletSelect()}>
+					<ConnectionDot />
+					{truncatedWalletAddress}
+				</Wallet>
+			</FlexDivCentered>
+			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+		</>
 	);
 };
 
@@ -51,6 +68,11 @@ const ConnectionDot = styled.span`
 	height: 8px;
 	border-radius: 100%;
 	background-color: ${(props) => props.theme.colors.green};
+`;
+
+const MenuButton = styled.button<{ isActive: boolean }>`
+	${resetButtonCSS};
+	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.white)};
 `;
 
 export default Connected;

@@ -87,6 +87,13 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction with your web3 provider"
+		},
+		"settings": {
+			"title": "settings",
+			"options": {
+				"currency": "currency",
+				"language": "language"
+			}
 		}
 	},
 	"common": {
