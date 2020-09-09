@@ -133,6 +133,15 @@ const ExchangePage = () => {
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 	const totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
 
+	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
+
+	const isButtonDisabled =
+		!baseCurrencyAmount ||
+		!ethGasStationQuery.data ||
+		!isWalletConnected ||
+		isSubmitting ||
+		insufficientBalance;
+
 	const handleCurrencySwap = () => {
 		const baseAmount = baseCurrencyAmount;
 		const quoteAmount = quoteCurrencyAmount;
@@ -146,14 +155,10 @@ const ExchangePage = () => {
 		setQuoteCurrencyAmount(baseAmount);
 	};
 
-	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
-
-	const isButtonDisabled =
-		!baseCurrencyAmount ||
-		!ethGasStationQuery.data ||
-		!isWalletConnected ||
-		isSubmitting ||
-		insufficientBalance;
+	function resetCurrencies() {
+		setQuoteCurrencyAmount('');
+		setBaseCurrencyAmount('');
+	}
 
 	const handleSubmit = async () => {
 		if (synthetix.js != null) {
@@ -327,13 +332,14 @@ const ExchangePage = () => {
 						onDismiss={() => setSelectSynthModalOpen(false)}
 						synths={synthetix.js?.synths ?? []}
 						exchangeRates={exchangeRatesQuery.data}
-						onSelect={(currencyKey) =>
+						onSelect={(currencyKey) => {
+							resetCurrencies();
 							// @ts-ignore
 							setCurrencyPair((pair) => ({
 								base: currencyKey,
 								quote: pair.quote === currencyKey ? null : pair.quote,
-							}))
-						}
+							}));
+						}}
 						frozenSynths={frozenSynthsQuery.data || []}
 						selectedPriceCurrency={selectedPriceCurrency}
 						selectPriceCurrencyRate={selectPriceCurrencyRate}
@@ -345,13 +351,14 @@ const ExchangePage = () => {
 						synthsMap={synthetix.synthsMap}
 						synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
 						synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
-						onSelect={(currencyKey) =>
+						onSelect={(currencyKey) => {
+							resetCurrencies();
 							// @ts-ignore
 							setCurrencyPair((pair) => ({
 								base: pair.base === currencyKey ? null : pair.base,
 								quote: currencyKey,
-							}))
-						}
+							}));
+						}}
 						selectedPriceCurrency={selectedPriceCurrency}
 						selectPriceCurrencyRate={selectPriceCurrencyRate}
 					/>
