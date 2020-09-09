@@ -67,6 +67,14 @@
 		},
 		"watchlist": {
 			"title": "Watchlist"
+		},
+		"tabs": {
+			"nav": {
+				"synth-balances": "Synth Balances",
+				"convert": "Convert",
+				"crypto-balances": "Crypto Balances",
+				"transactions": "Transactions"
+			}
 		}
 	},
 	"not-found": {
