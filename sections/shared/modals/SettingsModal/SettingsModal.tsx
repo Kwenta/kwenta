@@ -1,8 +1,7 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
-import orderBy from 'lodash/orderBy';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import BaseModal from 'components/BaseModal';
 import Select from 'components/Select';
@@ -12,44 +11,45 @@ import synthetix from 'lib/synthetix';
 import { priceCurrencyState } from 'store/app';
 import { HEADER_HEIGHT } from 'constants/ui';
 import { SYNTHS_MAP } from 'constants/currency';
+
 import { FlexDivRowCentered } from 'styles/common';
 
-// import { Synth } from '@synthetixio/js';
+import { networkState } from 'store/wallet';
 
 type SettingsModalProps = {
 	onDismiss: () => void;
 };
 
 const PRICE_CURRENCIES = [
-	SYNTHS_MAP.sEUR,
-	SYNTHS_MAP.sJPY,
 	SYNTHS_MAP.sUSD,
-	SYNTHS_MAP.sAUD,
-	SYNTHS_MAP.sGBP,
+	SYNTHS_MAP.sEUR,
 	SYNTHS_MAP.sCHF,
+	SYNTHS_MAP.sAUD,
+	SYNTHS_MAP.sJPY,
+	SYNTHS_MAP.sGBP,
 	SYNTHS_MAP.sBTC,
 	SYNTHS_MAP.sETH,
 ];
 
 export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
+	const network = useRecoilValue(networkState);
 	const [priceCurrency, setPriceCurrency] = useRecoilState(priceCurrencyState);
 
-	const currencyOptions =
-		synthetix.synthsMap != null
-			? orderBy(
-					PRICE_CURRENCIES.map((currencyKey) => {
-						const synth = synthetix.synthsMap![currencyKey];
-
-						return {
-							label: synth.asset,
-							value: synth,
-						};
-					}),
-					'label',
-					'asc'
-			  )
-			: [];
+	const currencyOptions = useMemo(() => {
+		if (network != null && synthetix.synthsMap != null) {
+			return PRICE_CURRENCIES.filter((currencyKey) => synthetix.synthsMap![currencyKey]).map(
+				(currencyKey) => {
+					const synth = synthetix.synthsMap![currencyKey];
+					return {
+						label: synth.asset,
+						value: synth,
+					};
+				}
+			);
+		}
+		return [];
+	}, [network]);
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.settings.title')}>

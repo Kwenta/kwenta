@@ -47,7 +47,7 @@ const Connected: FC = () => {
 const Menu = styled.div`
 	padding-right: 26px;
 	display: grid;
-	grid-gap: 20px;
+	grid-gap: 10px;
 	grid-auto-flow: column;
 `;
 
@@ -73,6 +73,10 @@ const ConnectionDot = styled.span`
 const MenuButton = styled.button<{ isActive: boolean }>`
 	${resetButtonCSS};
 	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.white)};
+	&:hover {
+		color: ${(props) => props.theme.colors.purple};
+	}
+	padding: 5px;
 `;
 
 export default Connected;

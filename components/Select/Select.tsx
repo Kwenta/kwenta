@@ -66,6 +66,13 @@ function Select<T>(props: Props<T>) {
 				fontSize: '12px',
 				color: colors.white,
 			}),
+			dropdownIndicator: (provided) => ({
+				...provided,
+				color: colors.purple,
+				'&:hover': {
+					color: colors.purpleHover,
+				},
+			}),
 		};
 		return styles;
 	}, [colors, fonts]);
