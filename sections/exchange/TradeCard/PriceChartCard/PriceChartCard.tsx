@@ -21,6 +21,8 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
+import media from 'styles/media';
+
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
@@ -199,6 +201,10 @@ const ChartCard: FC<ChartCardProps> = ({
 
 const Container = styled.div`
 	width: 100%;
+	padding: 0 60px;
+	${media.lessThan('extraLarge')`
+		padding: 0;
+	`}
 `;
 
 const ChartHeader = styled(FlexDivRowCentered)`

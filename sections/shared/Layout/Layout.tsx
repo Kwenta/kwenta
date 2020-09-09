@@ -37,7 +37,6 @@ const PageContainer = styled.div`
 `;
 
 const Content = styled.section`
-	max-width: 1400px;
 	position: relative;
 	margin: 0 auto;
 `;
