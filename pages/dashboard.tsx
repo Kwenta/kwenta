@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDiv, CapitalizedText } from 'styles/common';
-import TabButton from 'components/TabButton';
+import { TabList, TabPanel, TabButton } from 'components/Tab';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -28,33 +28,40 @@ const DashboardPage = () => {
 				<LeftCardContainer>
 					<CapitalizedText>
 						<div>{t('dashboard.your-profile.title')}</div>
-						<div>
+						<TabList>
 							<TabButton
+								name={TABS.SYNTH_BALANCES}
 								active={activeTab === TABS.SYNTH_BALANCES}
 								onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
 							>
 								{t('dashboard.tabs.nav.synth-balances')}
 							</TabButton>
 							<TabButton
+								name={TABS.CONVERT}
 								active={activeTab === TABS.CONVERT}
 								onClick={() => setActiveTab(TABS.CONVERT)}
 							>
 								{t('dashboard.tabs.nav.convert')}
 							</TabButton>
 							<TabButton
+								name={TABS.CRYPTO_BALANCES}
 								active={activeTab === TABS.CRYPTO_BALANCES}
 								onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
 							>
 								{t('dashboard.tabs.nav.crypto-balances')}
 							</TabButton>
 							<TabButton
+								name={TABS.TRANSACTIONS}
 								active={activeTab === TABS.TRANSACTIONS}
 								onClick={() => setActiveTab(TABS.TRANSACTIONS)}
 							>
 								{t('dashboard.tabs.nav.transactions')}
 							</TabButton>
-						</div>
-						<div>{activeTab === TABS.SYNTH_BALANCES && <SynthBalances />}</div>
+						</TabList>
+
+						<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+							<SynthBalances />
+						</TabPanel>
 					</CapitalizedText>
 				</LeftCardContainer>
 				<RightCardContainer>
