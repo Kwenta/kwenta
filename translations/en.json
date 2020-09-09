@@ -104,6 +104,7 @@
 		"currency": {
 			"currency-amount": "<0>{{currencyKey}}</0> Amount",
 			"currency-value": "<0>{{currencyKey}}</0> Value",
+			"estimated-currency-value": "Estimated <0>{{currencyKey}}</0> Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency": "Synthetic <0>{{currencyKey}}</0>",

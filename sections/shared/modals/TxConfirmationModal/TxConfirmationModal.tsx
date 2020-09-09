@@ -81,7 +81,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<SummaryItem>
 					<SummaryItemLabel>
 						<Trans
-							i18nKey="common.currency.currency-value"
+							i18nKey="common.currency.estimated-currency-value"
 							values={{ currencyKey: selectedPriceCurrency.asset }}
 							components={[<NoTextTransform />]}
 						/>
