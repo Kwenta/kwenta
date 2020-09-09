@@ -41,11 +41,12 @@
 			"compare": "compare",
 			"ratio": "ratio"
 		},
-		"trade-info": {
+		"summary-info": {
 			"slippage": "slippage",
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
+				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order..."

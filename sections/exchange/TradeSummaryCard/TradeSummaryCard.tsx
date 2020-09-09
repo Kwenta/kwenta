@@ -25,6 +25,7 @@ type TradeSummaryCardProps = {
 	totalTradePrice: number;
 	basePriceRate: number;
 	baseCurrency: Synth | null;
+	insufficientBalance: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -36,6 +37,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	totalTradePrice,
 	basePriceRate,
 	baseCurrency,
+	insufficientBalance,
 }) => {
 	const { t } = useTranslation();
 
@@ -47,11 +49,23 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const exchangeFeeRate =
 		exchangeFeeRateRaw != null ? Number(ethers.utils.formatEther(exchangeFeeRateRaw)) : null;
 
+	function getButtonLabel() {
+		if (insufficientBalance) {
+			return t('exchange.summary-info.button.insufficient-balance');
+		}
+		if (isButtonDisabled) {
+			return t('exchange.summary-info.button.enter-amount');
+		}
+		if (isSubmitting) {
+			return t('exchange.summary-info.button.submitting-order');
+		}
+		return t('exchange.summary-info.button.submit-order');
+	}
 	return (
 		<RoundedContainer>
 			<SummaryItems>
 				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.trade-info.slippage')}</SummaryItemLabel>
+					<SummaryItemLabel>{t('exchange.summary-info.slippage')}</SummaryItemLabel>
 					<SummaryItemValue>{NO_VALUE}</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
@@ -71,13 +85,13 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.trade-info.fee')}</SummaryItemLabel>
+					<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
 					<SummaryItemValue>
 						{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
 					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.trade-info.fee-cost')}</SummaryItemLabel>
+					<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
 					<SummaryItemValue>
 						{exchangeFeeRate != null && baseCurrencyAmount
 							? formatCurrency(
@@ -96,11 +110,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				onClick={onSubmit}
 				size="lg"
 			>
-				{isSubmitting
-					? t('exchange.trade-info.button.submitting-order')
-					: isButtonDisabled
-					? t('exchange.trade-info.button.enter-amount')
-					: t('exchange.trade-info.button.submit-order')}
+				{getButtonLabel()}
 			</Button>
 		</RoundedContainer>
 	);

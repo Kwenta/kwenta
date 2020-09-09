@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FC, ChangeEvent } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -45,6 +45,10 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	const isBase = side === 'base';
 
+	const hasWalletBalance = walletBalance != null && currencyKey != null;
+	const insufficientBalance =
+		!isBase && hasWalletBalance ? Number(amount) > Number(walletBalance) : false;
+
 	return (
 		<StyledCard {...rest}>
 			<Card.Body>
@@ -66,10 +70,12 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				</CurrencyContainer>
 				<WalletBalanceContainer>
 					<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-					<WalletBalance onClick={onBalanceClick || undefined}>
-						{walletBalance == null || currencyKey == null
-							? NO_VALUE
-							: formatCurrency(currencyKey, walletBalance)}
+					<WalletBalance
+						onClick={hasWalletBalance ? onBalanceClick : undefined}
+						insufficientBalance={insufficientBalance}
+					>
+						{/* @ts-ignore */}
+						{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
 					</WalletBalance>
 				</WalletBalanceContainer>
 			</Card.Body>
@@ -122,9 +128,14 @@ const WalletBalanceLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
-const WalletBalance = styled.div`
+const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+	${(props) =>
+		props.insufficientBalance &&
+		css`
+			color: ${props.theme.colors.red};
+		`}
 `;
 
 export default CurrencyCard;

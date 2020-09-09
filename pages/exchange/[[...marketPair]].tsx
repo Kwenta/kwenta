@@ -113,12 +113,12 @@ const ExchangePage = () => {
 	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
 	const inverseRate = rate > 0 ? 1 / rate : 0;
 	const baseCurrencyBalance =
-		baseCurrencyKey != null
-			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], null)
+		baseCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
+			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], 0)
 			: null;
 	const quoteCurrencyBalance =
-		quoteCurrencyKey != null
-			? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], null)
+		quoteCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
+			? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], 0)
 			: null;
 	const basePriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
@@ -146,8 +146,14 @@ const ExchangePage = () => {
 		setQuoteCurrencyAmount(baseAmount);
 	};
 
+	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
+
 	const isButtonDisabled =
-		!baseCurrencyAmount || !ethGasStationQuery.data || !isWalletConnected || isSubmitting;
+		!baseCurrencyAmount ||
+		!ethGasStationQuery.data ||
+		!isWalletConnected ||
+		isSubmitting ||
+		insufficientBalance;
 
 	const handleSubmit = async () => {
 		if (synthetix.js != null) {
@@ -303,6 +309,7 @@ const ExchangePage = () => {
 					totalTradePrice={totalTradePrice}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
+					insufficientBalance={insufficientBalance}
 				/>
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
