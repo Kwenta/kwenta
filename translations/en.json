@@ -61,7 +61,13 @@
 		}
 	},
 	"dashboard": {
-		"page-title": "Kwenta | Dashboard"
+		"page-title": "Kwenta | Dashboard",
+		"your-profile": {
+			"title": "Your Profile"
+		},
+		"watchlist": {
+			"title": "Watchlist"
+		}
 	},
 	"not-found": {
 		"page-title": "Kwenta | Not Found"
