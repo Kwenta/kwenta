@@ -23,6 +23,7 @@ import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
 import TradeCard from 'sections/exchange/TradeCard';
 import TradeSummaryCard from 'sections/exchange/TradeSummaryCard';
+import NoSynthsCard from 'sections/exchange/NoSynthsCard';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
@@ -236,6 +237,11 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyPair, marketPairQuery, isAppReady]);
 
+	const noSynths =
+		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
+			? synthsWalletBalancesQuery.data.balances.length === 0
+			: false;
+
 	return (
 		<>
 			<Head>
@@ -305,17 +311,21 @@ const ExchangePage = () => {
 						/>
 					</RightCardContainer>
 				</CardsContainer>
-				<TradeSummaryCard
-					selectedPriceCurrency={selectedPriceCurrency}
-					isButtonDisabled={isButtonDisabled}
-					isSubmitting={isSubmitting}
-					baseCurrencyAmount={baseCurrencyAmount}
-					onSubmit={handleSubmit}
-					totalTradePrice={totalTradePrice}
-					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
-					insufficientBalance={insufficientBalance}
-				/>
+				{noSynths ? (
+					<NoSynthsCard />
+				) : (
+					<TradeSummaryCard
+						selectedPriceCurrency={selectedPriceCurrency}
+						isButtonDisabled={isButtonDisabled}
+						isSubmitting={isSubmitting}
+						baseCurrencyAmount={baseCurrencyAmount}
+						onSubmit={handleSubmit}
+						totalTradePrice={totalTradePrice}
+						basePriceRate={basePriceRate}
+						baseCurrency={baseCurrency}
+						insufficientBalance={insufficientBalance}
+					/>
+				)}
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}

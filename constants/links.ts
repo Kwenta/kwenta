@@ -6,8 +6,7 @@ export const EXTERNAL_LINKS = {
 	Trading: {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
-		OneInchLink: (base: CurrencyKey, quote: CurrencyKey) =>
-			`https://1inch.exchange/#/${base}/${quote}`,
+		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 	},
 	Learn: {
 		Litepaper: 'https://www.synthetix.io/litepaper',
