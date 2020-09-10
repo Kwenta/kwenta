@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { priceCurrencyState } from 'store/app';
 
-import { FlexDiv, CapitalizedText, FlexDivRow, FlexDivCol } from 'styles/common';
+import { FlexDiv, FlexDivRow, FlexDivCol, SelectableCurrencyRow } from 'styles/common';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import useSynthsBalancesQuery, {
 	SynthBalance,
@@ -16,6 +16,7 @@ import Currency from 'components/Currency';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
+import { NO_VALUE } from 'constants/placeholder';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -28,6 +29,7 @@ const SynthBalances = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const synthsBalancesQuery = useSynthsBalancesQuery({ enabled: exchangeRatesQuery.isSuccess });
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
 	return (
 		<FlexDiv>
 			{synthsBalancesQuery.isSuccess &&
@@ -67,71 +69,105 @@ const SynthBalances = () => {
 const DashboardPage = () => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
+	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
+	const synthsBalancesQuery = useSynthsBalancesQuery({ enabled: exchangeRatesQuery.isSuccess });
+	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
+	const synths = synthetix.js?.synths ?? [];
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	return (
 		<>
 			<Head>
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<CardsContainer>
-				<LeftCardContainer>
-					<CapitalizedText>
-						<NoSynths />
-						<div>{t('dashboard.your-profile.title')}</div>
-						<TabList>
-							<TabButton
-								name={TABS.SYNTH_BALANCES}
-								active={activeTab === TABS.SYNTH_BALANCES}
-								onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
-							>
-								{t('dashboard.tabs.nav.synth-balances')}
-							</TabButton>
-							<TabButton
-								name={TABS.CONVERT}
-								active={activeTab === TABS.CONVERT}
-								onClick={() => setActiveTab(TABS.CONVERT)}
-							>
-								{t('dashboard.tabs.nav.convert')}
-							</TabButton>
-							<TabButton
-								name={TABS.CRYPTO_BALANCES}
-								active={activeTab === TABS.CRYPTO_BALANCES}
-								onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
-							>
-								{t('dashboard.tabs.nav.crypto-balances')}
-							</TabButton>
-							<TabButton
-								name={TABS.TRANSACTIONS}
-								active={activeTab === TABS.TRANSACTIONS}
-								onClick={() => setActiveTab(TABS.TRANSACTIONS)}
-							>
-								{t('dashboard.tabs.nav.transactions')}
-							</TabButton>
-						</TabList>
+			<Container>
+				<LeftContainer>
+					{noSynths ? (
+						<NoSynthsCard />
+					) : (
+						<>
+							<div>{t('dashboard.your-profile.title')}</div>
+							<TabList>
+								<TabButton
+									name={TABS.SYNTH_BALANCES}
+									active={activeTab === TABS.SYNTH_BALANCES}
+									onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
+								>
+									{t('dashboard.tabs.nav.synth-balances')}
+								</TabButton>
+								<TabButton
+									name={TABS.CONVERT}
+									active={activeTab === TABS.CONVERT}
+									onClick={() => setActiveTab(TABS.CONVERT)}
+								>
+									{t('dashboard.tabs.nav.convert')}
+								</TabButton>
+								<TabButton
+									name={TABS.CRYPTO_BALANCES}
+									active={activeTab === TABS.CRYPTO_BALANCES}
+									onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
+								>
+									{t('dashboard.tabs.nav.crypto-balances')}
+								</TabButton>
+								<TabButton
+									name={TABS.TRANSACTIONS}
+									active={activeTab === TABS.TRANSACTIONS}
+									onClick={() => setActiveTab(TABS.TRANSACTIONS)}
+								>
+									{t('dashboard.tabs.nav.transactions')}
+								</TabButton>
+							</TabList>
 
-						<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-							<SynthBalances />
-						</TabPanel>
-					</CapitalizedText>
-				</LeftCardContainer>
-				<RightCardContainer>
-					<RightBarTitle>{t('dashboard.watchlist.title')}</RightBarTitle>
-				</RightCardContainer>
-			</CardsContainer>
+							<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+								<SynthBalances />
+							</TabPanel>
+						</>
+					)}
+				</LeftContainer>
+				<RightContainer>
+					<CardTitle>{t('dashboard.trending')}</CardTitle>
+					{synths.map((synth) => {
+						const selectPriceCurrencyRate =
+							exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
+						let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
+						const currencyKey = synth.name;
+
+						if (price != null && selectPriceCurrencyRate != null) {
+							price /= selectPriceCurrencyRate;
+						}
+						return (
+							<SelectableCurrencyRow key={currencyKey} isSelectable={true}>
+								<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+								{price != null ? (
+									<Currency.Price
+										currencyKey={currencyKey}
+										price={price}
+										sign={selectedPriceCurrency.sign}
+										showChange
+									/>
+								) : (
+									NO_VALUE
+								)}
+							</SelectableCurrencyRow>
+						);
+					})}
+				</RightContainer>
+			</Container>
 		</>
 	);
 };
 
-const RightBarTitle = styled.div`
+const CardTitle = styled.div`
 	${fonts.body['bold-medium']}
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const CardsContainer = styled(FlexDiv)`
+const Container = styled(FlexDiv)`
 	justify-content: space-between;
+	align-items: flex-start;
 	width: 100%;
 `;
 
-const LeftCardContainer = styled.div`
+const LeftContainer = styled.div`
 	flex: 1;
 	max-width: 1000px;
 	display: flex;
@@ -141,7 +177,7 @@ const LeftCardContainer = styled.div`
 	padding: 48px 0px;
 `;
 
-const RightCardContainer = styled.div`
+const RightContainer = styled.div`
 	width: 356px;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 48px 32px;
@@ -167,8 +203,9 @@ const Center = styled.div`
 	margin-bottom: 78px;
 `;
 
-const NoSynths = () => (
-	<FlexDiv>
+const NoSynthsCard = () => {
+	const { t } = useTranslation();
+	return (
 		<FlexDivCol>
 			<NoSynthTitle>Learn How it Works</NoSynthTitle>
 			<NoSynthSubtitle>Get up and running on Kwenta and exchange everything.</NoSynthSubtitle>
@@ -177,8 +214,9 @@ const NoSynths = () => (
 					Learn More
 				</Button>
 			</Center>
+			<CardTitle>{t('dashboard.no-synths-card.convert')}</CardTitle>
 		</FlexDivCol>
-	</FlexDiv>
-);
+	);
+};
 
 export default DashboardPage;

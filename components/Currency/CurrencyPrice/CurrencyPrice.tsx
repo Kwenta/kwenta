@@ -8,26 +8,34 @@ import { CurrencyKey } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import { Period } from 'constants/period';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
 	price: number;
 	sign?: string;
-	change?: number;
+	showChange?: boolean;
+	period?: Period;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	currencyKey,
 	price,
 	sign,
-	change,
+	showChange,
+	period = Period.ONE_DAY,
 	...rest
-}) => (
-	<Container {...rest}>
-		<Price className="price">{formatCurrency(currencyKey, price, { sign })}</Price>
-		{change != null && <ChangePercent className="percent" value={change} />}
-	</Container>
-);
+}) => {
+	const historicalRates = useHistoricalRatesQuery(currencyKey, period);
+	const change = historicalRates.data?.change ?? null;
+	return (
+		<Container {...rest}>
+			<Price className="price">{formatCurrency(currencyKey, price, { sign })}</Price>
+			{change != null && showChange && <ChangePercent className="percent" value={change} />}
+		</Container>
+	);
+};
 
 const Container = styled.span`
 	${ContainerRowMixin};

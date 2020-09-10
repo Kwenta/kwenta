@@ -9,12 +9,14 @@ export const fonts = {
 		'bold-small': `
 			font-family: ${fontStyles.bold};
 			font-size: 12px;
+			font-weight: bold;
 			line-height: 140%;
 			letter-spacing: 0px;
 		`,
 		'bold-medium': `
 			font-family: ${fontStyles.bold};
 			font-size: 14px;
+			font-weight: bold;
 			line-height: 140%;
 			letter-spacing: 0.2px;
 		`,

@@ -63,9 +63,7 @@
 	},
 	"dashboard": {
 		"page-title": "Kwenta | Dashboard",
-		"your-profile": {
-			"title": "Your Profile"
-		},
+		"trending": "Trending",
 		"watchlist": {
 			"title": "Watchlist"
 		},
@@ -76,6 +74,9 @@
 				"crypto-balances": "Crypto Balances",
 				"transactions": "Transactions"
 			}
+		},
+		"no-synths-card": {
+			"convert": "Convert"
 		}
 	},
 	"not-found": {
