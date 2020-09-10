@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, SyntheticEvent } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 import styled from 'styled-components';
 import { HEADER_HEIGHT } from 'constants/ui';
@@ -7,7 +7,7 @@ type FullScreenModalProps = {
 	title: ReactNode;
 	isOpen: boolean;
 	children: ReactNode;
-	onDismiss?: () => void;
+	onDismiss?: (event?: SyntheticEvent<Element, Event> | undefined) => void;
 };
 
 export const FullScreenModal: FC<FullScreenModalProps> = ({
