@@ -37,7 +37,7 @@ export const allOrdersState = selector<OrderByStatus>({
 	get: ({ get }) => {
 		const orders = get(ordersState);
 
-		const groupedOrders = groupBy(orderBy(orders, 'timestamp', 'asc'), 'status') as OrderByStatus;
+		const groupedOrders = groupBy(orderBy(orders, 'timestamp', 'desc'), 'status') as OrderByStatus;
 
 		return {
 			pending: groupedOrders.pending ?? [],
