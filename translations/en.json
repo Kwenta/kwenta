@@ -112,6 +112,18 @@
 				"currency": "currency",
 				"language": "language"
 			}
+		},
+		"notifications": {
+			"title": "notifications",
+			"open-orders": {
+				"title": "open orders",
+				"no-results": "no open orders"
+			},
+			"recent-notifications": {
+				"title": "recent notifications",
+				"no-results": "no recent notifications"
+			},
+			"view-all": "view all"
 		}
 	},
 	"common": {
@@ -127,7 +139,8 @@
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency": "Synthetic <0>{{currencyKey}}</0>",
 			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
-			"get-currency": "Get <0>{{currencyKey}}</0>"
+			"get-currency": "Get <0>{{currencyKey}}</0>",
+			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",
@@ -146,6 +159,11 @@
 			"1W": "1W",
 			"1M": "1M"
 		},
-		"price": "price"
+		"price": "price",
+		"cancel": "cancel",
+		"order-types": {
+			"market": "market order",
+			"limit": "limit order"
+		}
 	}
 }

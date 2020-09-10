@@ -10,6 +10,10 @@ import Connector from 'containers/Connector';
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 
+const NotificationsModal = dynamic(() => import('sections/shared/modals/NotificationsModal'), {
+	ssr: false,
+});
+
 const SettingsModal = dynamic(() => import('sections/shared/modals/SettingsModal'), {
 	ssr: false,
 });
@@ -40,6 +44,9 @@ const Connected: FC = () => {
 				</Wallet>
 			</FlexDivCentered>
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+			{notificationsModalOpened && (
+				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
+			)}
 		</>
 	);
 };

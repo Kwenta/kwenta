@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 
 import { CurrencyKey } from 'constants/currency';
@@ -37,6 +37,8 @@ import synthetix from 'lib/synthetix';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
+import { ordersState } from 'store/orders';
+import produce from 'immer';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -76,6 +78,7 @@ const ExchangePage = () => {
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const isAppReady = useRecoilValue(appReadyState);
+	const setOrders = useSetRecoilState(ordersState);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -185,14 +188,40 @@ const ExchangePage = () => {
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
 
-				if (notify && tx) {
-					const { emitter } = notify.hash(tx.hash);
+				if (tx) {
+					setOrders((orders) =>
+						produce(orders, (draftState) => {
+							draftState.push({
+								timestamp: Date.now(),
+								hash: tx.hash,
+								baseCurrencyKey: baseCurrencyKey!,
+								baseCurrencyAmount,
+								quoteCurrencyKey: quoteCurrencyKey!,
+								quoteCurrencyAmount,
+								orderType: 'market',
+								status: 'pending',
+								transaction: tx,
+							});
+						})
+					);
 
-					emitter.on('txConfirmed', () => {
-						synthsWalletBalancesQuery.refetch();
-					});
-					// await tx.wait();
-					// synthsWalletBalancesQuery.refetch();
+					if (notify) {
+						const { emitter } = notify.hash(tx.hash);
+
+						emitter.on('txConfirmed', () => {
+							setOrders((orders) =>
+								produce(orders, (draftState) => {
+									const orderIndex = orders.findIndex((order) => order.hash === tx.hash);
+									if (draftState[orderIndex]) {
+										draftState[orderIndex].status = 'confirmed';
+									}
+								})
+							);
+							synthsWalletBalancesQuery.refetch();
+						});
+						// await tx.wait();
+						// synthsWalletBalancesQuery.refetch();
+					}
 				}
 			} catch (e) {
 				console.log(e);

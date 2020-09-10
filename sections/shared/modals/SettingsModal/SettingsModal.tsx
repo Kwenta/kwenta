@@ -3,18 +3,18 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import BaseModal from 'components/BaseModal';
 import Select from 'components/Select';
 
 import synthetix from 'lib/synthetix';
 
 import { priceCurrencyState } from 'store/app';
-import { HEADER_HEIGHT } from 'constants/ui';
 import { SYNTHS_MAP } from 'constants/currency';
 
 import { FlexDivRowCentered } from 'styles/common';
 
 import { networkState } from 'store/wallet';
+
+import { MenuModal } from '../common';
 
 type SettingsModalProps = {
 	onDismiss: () => void;
@@ -52,7 +52,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 	}, [network]);
 
 	return (
-		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.settings.title')}>
+		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.settings.title')}>
 			<Options>
 				<OptionRow>
 					<OptionLabel>{t('modals.settings.options.currency')}</OptionLabel>
@@ -75,17 +75,13 @@ export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 					</CurrencySelectContainer>
 				</OptionRow>
 			</Options>
-		</StyledBaseModal>
+		</StyledMenuModal>
 	);
 };
 
-const StyledBaseModal = styled(BaseModal)`
+const StyledMenuModal = styled(MenuModal)`
 	[data-reach-dialog-content] {
 		width: 216px;
-		margin-left: auto;
-		padding: 0;
-		margin-right: 12px;
-		margin-top: calc(${HEADER_HEIGHT} + 10px);
 	}
 	.card-body {
 		padding: 24px;
