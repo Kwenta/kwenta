@@ -29,12 +29,21 @@ const Connected: FC = () => {
 			<FlexDivCentered>
 				<Menu>
 					<MenuButton
-						onClick={() => setNotificationsModalOpened(true)}
+						onClick={() => {
+							setNotificationsModalOpened(!notificationsModalOpened);
+							setSettingsModalOpened(false);
+						}}
 						isActive={notificationsModalOpened}
 					>
 						<NotificationIcon />
 					</MenuButton>
-					<MenuButton onClick={() => setSettingsModalOpened(true)} isActive={settingsModalOpened}>
+					<MenuButton
+						onClick={() => {
+							setSettingsModalOpened(!settingsModalOpened);
+							setNotificationsModalOpened(false);
+						}}
+						isActive={settingsModalOpened}
+					>
 						<MenuIcon />
 					</MenuButton>
 				</Menu>

@@ -6,7 +6,7 @@ import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import CircleTick from 'assets/svg/app/circle-tick.svg';
 import Link from 'assets/svg/app/link.svg';
 
-import { CapitalizedText, ExternalLink, FlexDivRowCentered } from 'styles/common';
+import { CapitalizedText, ExternalLink, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Order } from 'store/orders';
 import Etherscan from 'containers/Etherscan';
 import { formatCurrency } from 'utils/formatters/number';
@@ -17,7 +17,6 @@ type CurrencyExchangeProps = {
 
 export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 	const { t } = useTranslation();
-	// const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const isConfirmed = order.status === 'confirmed';
@@ -40,7 +39,13 @@ export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 							baseCurrencyAmount: formatCurrency(order.baseCurrencyKey, order.baseCurrencyAmount),
 							baseCurrencyKey: order.baseCurrencyKey,
 						}}
-						components={[<CapitalizedText />, <span />, <span />, <span />, <span />]}
+						components={[
+							<CapitalizedText />,
+							<NumericValue />,
+							<span />,
+							<NumericValue />,
+							<span />,
+						]}
 					/>
 				</span>
 				{isConfirmed && (
