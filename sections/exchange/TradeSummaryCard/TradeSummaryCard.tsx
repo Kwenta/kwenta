@@ -18,7 +18,7 @@ import { RoundedContainer } from '../common';
 
 type TradeSummaryCardProps = {
 	selectedPriceCurrency: Synth;
-	isButtonDisabled: boolean;
+	isSubmissionDisabled: boolean;
 	isSubmitting: boolean;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
@@ -26,11 +26,12 @@ type TradeSummaryCardProps = {
 	basePriceRate: number;
 	baseCurrency: Synth | null;
 	insufficientBalance: boolean;
+	selectedBothSides: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	selectedPriceCurrency,
-	isButtonDisabled,
+	isSubmissionDisabled,
 	isSubmitting,
 	baseCurrencyAmount,
 	onSubmit,
@@ -38,6 +39,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	basePriceRate,
 	baseCurrency,
 	insufficientBalance,
+	selectedBothSides,
 }) => {
 	const { t } = useTranslation();
 
@@ -50,14 +52,18 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 		exchangeFeeRateRaw != null ? Number(ethers.utils.formatEther(exchangeFeeRateRaw)) : null;
 
 	function getButtonLabel() {
-		if (insufficientBalance) {
-			return t('exchange.summary-info.button.insufficient-balance');
-		}
-		if (isButtonDisabled) {
+		if (isSubmissionDisabled) {
+			// figure out the reason
+			if (!selectedBothSides) {
+				return t('exchange.summary-info.button.select-synth');
+			}
+			if (insufficientBalance) {
+				return t('exchange.summary-info.button.insufficient-balance');
+			}
+			if (isSubmitting) {
+				return t('exchange.summary-info.button.submitting-order');
+			}
 			return t('exchange.summary-info.button.enter-amount');
-		}
-		if (isSubmitting) {
-			return t('exchange.summary-info.button.submitting-order');
 		}
 		return t('exchange.summary-info.button.submit-order');
 	}
@@ -106,7 +112,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 			<Button
 				variant="primary"
 				isRounded={true}
-				disabled={isButtonDisabled}
+				disabled={isSubmissionDisabled}
 				onClick={onSubmit}
 				size="lg"
 			>

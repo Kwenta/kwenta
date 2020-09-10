@@ -48,6 +48,7 @@
 			"button": {
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
+				"select-synth": "select synth",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order..."
 			}

@@ -135,13 +135,21 @@ const ExchangePage = () => {
 	const totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
 
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
+	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	const isButtonDisabled =
+	const isSubmissionDisabled =
+		!selectedBothSides ||
 		!baseCurrencyAmount ||
+		!quoteCurrencyAmount ||
 		!ethGasStationQuery.data ||
 		!isWalletConnected ||
 		isSubmitting ||
 		insufficientBalance;
+
+	const noSynths =
+		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
+			? synthsWalletBalancesQuery.data.balances.length === 0
+			: false;
 
 	const handleCurrencySwap = () => {
 		const baseAmount = baseCurrencyAmount;
@@ -237,11 +245,6 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyPair, marketPairQuery, isAppReady]);
 
-	const noSynths =
-		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
-			? synthsWalletBalancesQuery.data.balances.length === 0
-			: false;
-
 	return (
 		<>
 			<Head>
@@ -316,14 +319,15 @@ const ExchangePage = () => {
 				) : (
 					<TradeSummaryCard
 						selectedPriceCurrency={selectedPriceCurrency}
-						isButtonDisabled={isButtonDisabled}
+						isSubmissionDisabled={isSubmissionDisabled}
 						isSubmitting={isSubmitting}
-						baseCurrencyAmount={baseCurrencyAmount}
 						onSubmit={handleSubmit}
 						totalTradePrice={totalTradePrice}
+						baseCurrencyAmount={baseCurrencyAmount}
 						basePriceRate={basePriceRate}
 						baseCurrency={baseCurrency}
 						insufficientBalance={insufficientBalance}
+						selectedBothSides={selectedBothSides}
 					/>
 				)}
 				{txConfirmationModalOpen && (
