@@ -82,7 +82,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	return (
 		<Container>
 			<ChartHeader>
-				<div>
+				<FlexDivRowCentered>
 					{currencyKey != null ? (
 						<>
 							<CurrencyLabel>
@@ -106,7 +106,7 @@ const ChartCard: FC<ChartCardProps> = ({
 					) : (
 						<CurrencyLabel>{t('common.price')}</CurrencyLabel>
 					)}
-				</div>
+				</FlexDivRowCentered>
 				<Actions>
 					{PERIOD_LABELS.map((period) => (
 						<StyledTextButton
