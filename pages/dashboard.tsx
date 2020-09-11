@@ -124,6 +124,15 @@ const DashboardPage = () => {
 								<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 									<SynthBalances />
 								</TabPanel>
+								<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
+									<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+								</TabPanel>
+								<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
+									<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+								</TabPanel>
+								<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
+									<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+								</TabPanel>
 							</FlexDivCol>
 						</DashboardLeftCol>
 					)}
@@ -159,6 +168,12 @@ const DashboardPage = () => {
 		</>
 	);
 };
+
+const ComingSoon = styled.div`
+	${fonts.data['title-large']}
+	color: ${(props) => props.theme.colors.white};
+	text-align: center;
+`;
 
 const DashboardTitle = styled.div`
 	${fonts.data['title-large']}
