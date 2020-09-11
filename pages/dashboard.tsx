@@ -16,6 +16,7 @@ import Currency from 'components/Currency';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
+import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
 
 const TABS = {
@@ -37,7 +38,7 @@ const SynthBalances = () => {
 					const synthDesc =
 						synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
 					return (
-						<SynthBalancesRow key={synth.currencyKey}>
+						<FlexDivRow key={synth.currencyKey}>
 							<div>
 								<Currency.Name currencyKey={synth.currencyKey} name={synthDesc} showIcon={true} />
 							</div>
@@ -59,16 +60,12 @@ const SynthBalances = () => {
 								)}
 							</div>
 							<div>Percent</div>
-						</SynthBalancesRow>
+						</FlexDivRow>
 					);
 				})}
 		</>
 	);
 };
-
-const SynthBalancesRow = styled(FlexDivRow)`
-	max-width: 686px;
-`;
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -88,41 +85,47 @@ const DashboardPage = () => {
 					{noSynths ? (
 						<NoSynthsCard />
 					) : (
-						<FlexDivCol>
-							<TabList>
-								<TabButton
-									name={TABS.SYNTH_BALANCES}
-									active={activeTab === TABS.SYNTH_BALANCES}
-									onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
-								>
-									{t('dashboard.tabs.nav.synth-balances')}
-								</TabButton>
-								<TabButton
-									name={TABS.CONVERT}
-									active={activeTab === TABS.CONVERT}
-									onClick={() => setActiveTab(TABS.CONVERT)}
-								>
-									{t('dashboard.tabs.nav.convert')}
-								</TabButton>
-								<TabButton
-									name={TABS.CRYPTO_BALANCES}
-									active={activeTab === TABS.CRYPTO_BALANCES}
-									onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
-								>
-									{t('dashboard.tabs.nav.crypto-balances')}
-								</TabButton>
-								<TabButton
-									name={TABS.TRANSACTIONS}
-									active={activeTab === TABS.TRANSACTIONS}
-									onClick={() => setActiveTab(TABS.TRANSACTIONS)}
-								>
-									{t('dashboard.tabs.nav.transactions')}
-								</TabButton>
-							</TabList>
-							<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-								<SynthBalances />
-							</TabPanel>
-						</FlexDivCol>
+						<DashboardLeftCol>
+							<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
+								<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
+								<ComingSoonBalanceChart />
+							</FlexDivCol>
+							<FlexDivCol>
+								<TabList style={{ marginBottom: '12px' }}>
+									<TabButton
+										name={TABS.SYNTH_BALANCES}
+										active={activeTab === TABS.SYNTH_BALANCES}
+										onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
+									>
+										{t('dashboard.tabs.nav.synth-balances')}
+									</TabButton>
+									<TabButton
+										name={TABS.CONVERT}
+										active={activeTab === TABS.CONVERT}
+										onClick={() => setActiveTab(TABS.CONVERT)}
+									>
+										{t('dashboard.tabs.nav.convert')}
+									</TabButton>
+									<TabButton
+										name={TABS.CRYPTO_BALANCES}
+										active={activeTab === TABS.CRYPTO_BALANCES}
+										onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
+									>
+										{t('dashboard.tabs.nav.crypto-balances')}
+									</TabButton>
+									<TabButton
+										name={TABS.TRANSACTIONS}
+										active={activeTab === TABS.TRANSACTIONS}
+										onClick={() => setActiveTab(TABS.TRANSACTIONS)}
+									>
+										{t('dashboard.tabs.nav.transactions')}
+									</TabButton>
+								</TabList>
+								<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+									<SynthBalances />
+								</TabPanel>
+							</FlexDivCol>
+						</DashboardLeftCol>
 					)}
 				</LeftContainer>
 				<RightContainer>
@@ -157,6 +160,16 @@ const DashboardPage = () => {
 	);
 };
 
+const DashboardTitle = styled.div`
+	${fonts.data['title-large']}
+	color: ${(props) => props.theme.colors.white};
+	margin-bottom: 70px;
+`;
+
+const DashboardLeftCol = styled(FlexDivCol)`
+	max-width: 686px;
+`;
+
 const CardTitle = styled.div`
 	${fonts.body['bold-medium']}
 	color: ${(props) => props.theme.colors.white};
@@ -172,14 +185,14 @@ const Container = styled(FlexDiv)`
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
 	max-width: 1000px;
-	padding: 48px 0px;
+	padding-bottom: 48px;
 	margin: 0px 75px;
 `;
 
 const RightContainer = styled(FlexDivCol)`
 	width: 356px;
 	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 48px 32px;
+	padding: 0px 32px 48px 32px;
 `;
 
 const NoSynthTitle = styled.div`

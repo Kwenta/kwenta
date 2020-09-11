@@ -77,6 +77,9 @@
 		},
 		"no-synths-card": {
 			"convert": "Convert"
+		},
+		"your-profile":{
+			"title": "Your Profile"
 		}
 	},
 	"not-found": {
@@ -169,6 +172,9 @@
 		"order-types": {
 			"market": "market order",
 			"limit": "limit order"
+		},
+		"features":{
+			"coming-soon":"Coming Soon"
 		}
 	}
 }

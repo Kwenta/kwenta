@@ -30,21 +30,30 @@ export const TabButton = (props: TabProps) => (
 	/>
 );
 
-export const TabList = ({ children }: { children: ReactNode }) => (
-	<div role="tablist">{children}</div>
+export const TabList = ({ children, ...props }: { children: ReactNode }) => (
+	<div role="tablist" {...props}>
+		{children}
+	</div>
 );
 
 export const TabPanel = ({
 	name,
 	activeTab,
 	children,
+	...props
 }: {
 	name: string;
 	activeTab: string;
 	children: ReactNode;
 }) =>
 	activeTab === name ? (
-		<div id={`${name}-tabpanel`} role="tabpanel" aria-labelledby={`${name}-tab`} tabIndex={-1}>
+		<div
+			id={`${name}-tabpanel`}
+			role="tabpanel"
+			aria-labelledby={`${name}-tab`}
+			tabIndex={-1}
+			{...props}
+		>
 			{children}
 		</div>
 	) : null;
