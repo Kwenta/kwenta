@@ -12,7 +12,7 @@ type ChangePercentProps = {
 };
 
 export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
-	const isPositive = value > 0;
+	const isPositive = value >= 0;
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>

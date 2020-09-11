@@ -44,7 +44,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
 
-	const change = isSUSD ? null : historicalRates.data?.change ?? null;
+	const change = historicalRates.data?.change ?? null;
 	const rates = historicalRates.data?.rates ?? [];
 
 	const isChangePositive = change != null && change >= 0;
@@ -129,7 +129,7 @@ const ChartCard: FC<ChartCardProps> = ({
 									? rateData.rate / selectPriceCurrencyRate
 									: rateData.rate,
 						}))}
-						margin={{ right: 40, bottom: 0 }}
+						margin={{ right: isSUSD ? 0 : 40, bottom: 0 }}
 						onMouseMove={(e: any) => {
 							const currentRate = get(e, 'activePayload[0].payload.rate', null);
 							if (currentRate) {
@@ -164,7 +164,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<YAxis
 							type="number"
 							allowDataOverflow={true}
-							domain={['auto', 'auto']}
+							domain={isSUSD ? [1, 1] : ['auto', 'auto']}
 							tick={fontStyle}
 							orientation="right"
 							axisLine={false}
