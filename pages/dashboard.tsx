@@ -142,7 +142,6 @@ const DashboardPage = () => {
 										currencyKey={currencyKey}
 										price={price}
 										sign={selectedPriceCurrency.sign}
-										showChange
 									/>
 								) : (
 									NO_VALUE
