@@ -10,7 +10,7 @@ import { Synth } from 'lib/synthetix';
 
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
 import ChangePercent from 'components/ChangePercent';
@@ -42,11 +42,13 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, selectedPeriod.period);
 
-	const change = historicalRates.data?.change ?? null;
+	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
+
+	const change = isSUSD ? null : historicalRates.data?.change ?? null;
 	const rates = historicalRates.data?.rates ?? [];
 
 	const isChangePositive = change != null && change >= 0;
-	const chartColor = isChangePositive ? theme.colors.green : theme.colors.red;
+	const chartColor = isChangePositive || isSUSD ? theme.colors.green : theme.colors.red;
 
 	const price = currentPrice || priceRate;
 

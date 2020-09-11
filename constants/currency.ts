@@ -236,3 +236,5 @@ export const FIAT_SYNTHS = new Set([
 	SYNTHS_MAP.sGBP,
 	SYNTHS_MAP.sCHF,
 ]);
+
+export const sUSD_EXCHANGE_RATE = 1;
