@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { truncatedWalletAddressState } from 'store/wallet';
+import { hasPendingOrderState } from 'store/orders';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import Connector from 'containers/Connector';
 
 import NotificationIcon from 'assets/svg/app/notification.svg';
+import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 
 const NotificationsModal = dynamic(() => import('sections/shared/modals/NotificationsModal'), {
@@ -22,6 +24,7 @@ const Connected: FC = () => {
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const hasPendingOrder = useRecoilValue(hasPendingOrderState);
 	const { onboard } = Connector.useContainer();
 
 	return (
@@ -35,7 +38,7 @@ const Connected: FC = () => {
 						}}
 						isActive={notificationsModalOpened}
 					>
-						<NotificationIcon />
+						{hasPendingOrder ? <NotificationAlertIcon /> : <NotificationIcon />}
 					</MenuButton>
 					<MenuButton
 						onClick={() => {
@@ -88,7 +91,7 @@ const ConnectionDot = styled.span`
 
 const MenuButton = styled.button<{ isActive: boolean }>`
 	${resetButtonCSS};
-	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.white)};
+	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.blueberry)};
 	&:hover {
 		color: ${(props) => props.theme.colors.purple};
 	}

@@ -32,8 +32,8 @@ export const ordersState = atom<Order[]>({
 	default: [],
 });
 
-export const allOrdersState = selector<OrderByStatus>({
-	key: getKey('allOrders'),
+export const ordersByStatusState = selector<OrderByStatus>({
+	key: getKey('ordersByStatus'),
 	get: ({ get }) => {
 		const orders = get(ordersState);
 
@@ -44,5 +44,14 @@ export const allOrdersState = selector<OrderByStatus>({
 			confirmed: groupedOrders.confirmed ?? [],
 			cancelled: groupedOrders.cancelled ?? [],
 		};
+	},
+});
+
+export const hasPendingOrderState = selector<boolean>({
+	key: getKey('hasPendingOrder'),
+	get: ({ get }) => {
+		const ordersByStatus = get(ordersByStatusState);
+
+		return ordersByStatus.pending.length > 0;
 	},
 });
