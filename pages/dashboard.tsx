@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { priceCurrencyState } from 'store/app';
 
-import { FlexDiv, FlexDivRow, FlexDivCol, SelectableCurrencyRow } from 'styles/common';
+import { FlexDiv, FlexDivCol, SelectableCurrencyRow, FlexDivRow } from 'styles/common';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import useSynthsBalancesQuery, {
 	SynthBalance,
@@ -31,25 +31,25 @@ const SynthBalances = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 
 	return (
-		<FlexDiv>
+		<>
 			{synthsBalancesQuery.isSuccess &&
 				synthsBalancesQuery.data.balances.map((synth: SynthBalance) => {
 					const synthDesc =
 						synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
 					return (
-						<FlexDivRow>
-							<FlexDivCol>
+						<SynthBalancesRow key={synth.currencyKey}>
+							<div>
 								<Currency.Name currencyKey={synth.currencyKey} name={synthDesc} showIcon={true} />
-							</FlexDivCol>
-							<FlexDivCol>
+							</div>
+							<div>
 								<Currency.Amount
 									currencyKey={synth.currencyKey}
 									amount={synth.balance}
 									totalValue={synth.usdBalance}
 									sign={selectedPriceCurrency.sign}
 								/>
-							</FlexDivCol>
-							<FlexDivCol>
+							</div>
+							<div>
 								{exchangeRatesQuery.data !== undefined && (
 									<Currency.Price
 										currencyKey={synth.currencyKey}
@@ -57,14 +57,18 @@ const SynthBalances = () => {
 										sign={selectedPriceCurrency.sign}
 									/>
 								)}
-							</FlexDivCol>
-							<FlexDivCol>Percent</FlexDivCol>
-						</FlexDivRow>
+							</div>
+							<div>Percent</div>
+						</SynthBalancesRow>
 					);
 				})}
-		</FlexDiv>
+		</>
 	);
 };
+
+const SynthBalancesRow = styled(FlexDivRow)`
+	max-width: 686px;
+`;
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -84,8 +88,7 @@ const DashboardPage = () => {
 					{noSynths ? (
 						<NoSynthsCard />
 					) : (
-						<>
-							<div>{t('dashboard.your-profile.title')}</div>
+						<FlexDivCol>
 							<TabList>
 								<TabButton
 									name={TABS.SYNTH_BALANCES}
@@ -116,11 +119,10 @@ const DashboardPage = () => {
 									{t('dashboard.tabs.nav.transactions')}
 								</TabButton>
 							</TabList>
-
 							<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 								<SynthBalances />
 							</TabPanel>
-						</>
+						</FlexDivCol>
 					)}
 				</LeftContainer>
 				<RightContainer>
@@ -162,21 +164,19 @@ const CardTitle = styled.div`
 
 const Container = styled(FlexDiv)`
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: start;
 	width: 100%;
+	flex-grow: 1;
 `;
 
-const LeftContainer = styled.div`
-	flex: 1;
+const LeftContainer = styled(FlexDivCol)`
+	flex-grow: 1;
 	max-width: 1000px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
 	padding: 48px 0px;
+	margin: 0px 75px;
 `;
 
-const RightContainer = styled.div`
+const RightContainer = styled(FlexDivCol)`
 	width: 356px;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 48px 32px;
