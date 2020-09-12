@@ -39,6 +39,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
 import produce from 'immer';
+import media from 'styles/media';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -413,7 +414,10 @@ const ExchangePage = () => {
 
 const CardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
-	padding-bottom: 24px;
+	padding: 0 60px 24px 60px;
+	${media.lessThan('extraLarge')`
+		padding: 0 0 24px 0;
+	`}
 `;
 
 const Spacer = styled.div`
