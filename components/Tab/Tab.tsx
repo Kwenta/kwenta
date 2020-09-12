@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import styled from 'styled-components';
 import { fonts } from 'styles/theme/fonts';
 
@@ -30,7 +30,13 @@ export const TabButton = (props: TabProps) => (
 	/>
 );
 
-export const TabList = ({ children, ...props }: { children: ReactNode }) => (
+export const TabList = ({
+	children,
+	...props
+}: {
+	children: ReactNode;
+	style?: CSSProperties | undefined;
+}) => (
 	<div role="tablist" {...props}>
 		{children}
 	</div>
