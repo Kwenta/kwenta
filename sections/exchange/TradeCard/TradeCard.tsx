@@ -20,6 +20,7 @@ type TradeCardProps = {
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 	onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	isSynthFrozen: boolean;
 };
 
 const TradeCard: FC<TradeCardProps> = ({
@@ -33,6 +34,7 @@ const TradeCard: FC<TradeCardProps> = ({
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 	onAmountChange,
+	isSynthFrozen,
 }) => (
 	<>
 		<CurrencyCard
@@ -49,6 +51,7 @@ const TradeCard: FC<TradeCardProps> = ({
 			priceRate={priceRate ?? null}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
+			isSynthFrozen={isSynthFrozen}
 		/>
 		<MarketDetailsCard
 			currencyKey={currencyKey}

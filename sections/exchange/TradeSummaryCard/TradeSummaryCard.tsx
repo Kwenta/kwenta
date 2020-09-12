@@ -27,6 +27,7 @@ type TradeSummaryCardProps = {
 	baseCurrency: Synth | null;
 	insufficientBalance: boolean;
 	selectedBothSides: boolean;
+	isBaseCurrencyFrozen: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -40,6 +41,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	baseCurrency,
 	insufficientBalance,
 	selectedBothSides,
+	isBaseCurrencyFrozen,
 }) => {
 	const { t } = useTranslation();
 
@@ -54,6 +56,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	function getButtonLabel() {
 		if (isSubmissionDisabled) {
 			// figure out the reason
+			if (isBaseCurrencyFrozen) {
+				return t('exchange.summary-info.button.synth-is-frozen');
+			}
 			if (!selectedBothSides) {
 				return t('exchange.summary-info.button.select-synth');
 			}

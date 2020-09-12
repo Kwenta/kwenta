@@ -33,7 +33,6 @@ type SelectSynthModalProps = {
 	synths: Synths;
 	exchangeRates?: Rates;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	frozenSynths: CurrencyKey[];
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
@@ -43,7 +42,6 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	exchangeRates,
 	synths,
 	onSelect,
-	frozenSynths,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 }) => {
@@ -128,7 +126,6 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 			<RowsContainer>
 				{synthsResults.map((synth) => {
 					let price = exchangeRates && exchangeRates[synth.name];
-					const isSelectable = !frozenSynths.includes(synth.name);
 					const currencyKey = synth.name;
 
 					if (price != null && selectPriceCurrencyRate != null) {
@@ -138,15 +135,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 					return (
 						<StyledSelectableCurrencyRow
 							key={currencyKey}
-							onClick={
-								isSelectable
-									? () => {
-											onSelect(currencyKey);
-											onDismiss();
-									  }
-									: undefined
-							}
-							isSelectable={isSelectable}
+							onClick={() => {
+								onSelect(currencyKey);
+								onDismiss();
+							}}
+							isSelectable={true}
 						>
 							<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
 							{price != null ? (

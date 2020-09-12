@@ -120,3 +120,14 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 export const CapitalizedText = styled.span`
 	text-transform: capitalize;
 `;
+
+export const absoluteCenteredCSS = css`
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+`;
+
+export const AbsoluteCenteredDiv = styled.div`
+	${absoluteCenteredCSS};
+`;

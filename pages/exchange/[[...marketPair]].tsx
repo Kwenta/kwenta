@@ -114,6 +114,10 @@ const ExchangePage = () => {
 		baseCurrencyKey != null && synthetix.synthsMap != null
 			? synthetix.synthsMap[baseCurrencyKey]
 			: null;
+	// const quoteCurrency =
+	// 	quoteCurrencyKey != null && synthetix.synthsMap != null
+	// 		? synthetix.synthsMap[quoteCurrencyKey]
+	// 		: null;
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
 	const inverseRate = rate > 0 ? 1 / rate : 0;
@@ -141,12 +145,25 @@ const ExchangePage = () => {
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
+	let isBaseCurrencyFrozen = false;
+	let isQuoteCurrencyFrozen = false;
+
+	if (frozenSynthsQuery.isSuccess && frozenSynthsQuery.data) {
+		if (baseCurrencyKey != null) {
+			isBaseCurrencyFrozen = frozenSynthsQuery.data.includes(baseCurrencyKey);
+		}
+		if (quoteCurrencyKey != null) {
+			isQuoteCurrencyFrozen = frozenSynthsQuery.data.includes(quoteCurrencyKey);
+		}
+	}
+
 	const isSubmissionDisabled =
 		!selectedBothSides ||
 		!baseCurrencyAmount ||
 		!quoteCurrencyAmount ||
 		!ethGasStationQuery.data ||
 		!isWalletConnected ||
+		isBaseCurrencyFrozen ||
 		isSubmitting ||
 		insufficientBalance;
 
@@ -313,6 +330,7 @@ const ExchangePage = () => {
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 							priceRate={quotePriceRate}
+							isSynthFrozen={isQuoteCurrencyFrozen}
 						/>
 					</LeftCardContainer>
 					<Spacer>
@@ -341,6 +359,7 @@ const ExchangePage = () => {
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 							priceRate={basePriceRate}
+							isSynthFrozen={isBaseCurrencyFrozen}
 						/>
 					</RightCardContainer>
 				</CardsContainer>
@@ -356,6 +375,7 @@ const ExchangePage = () => {
 						baseCurrencyAmount={baseCurrencyAmount}
 						basePriceRate={basePriceRate}
 						baseCurrency={baseCurrency}
+						isBaseCurrencyFrozen={isBaseCurrencyFrozen}
 						insufficientBalance={insufficientBalance}
 						selectedBothSides={selectedBothSides}
 					/>
@@ -384,7 +404,6 @@ const ExchangePage = () => {
 								quote: pair.quote === currencyKey ? null : pair.quote,
 							}));
 						}}
-						frozenSynths={frozenSynthsQuery.data || []}
 						selectedPriceCurrency={selectedPriceCurrency}
 						selectPriceCurrencyRate={selectPriceCurrencyRate}
 					/>

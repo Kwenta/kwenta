@@ -44,6 +44,11 @@ export type Synth = {
 	desc: string;
 	aggregator?: string;
 	subclass?: string;
+	inverted?: {
+		entryPoint: number;
+		lowerLimit: number;
+		upperLimit: number;
+	};
 };
 
 export type Synths = Synth[];

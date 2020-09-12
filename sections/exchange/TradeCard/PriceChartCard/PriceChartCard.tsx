@@ -3,8 +3,11 @@ import { useContext, FC, useState } from 'react';
 import { LineChart, XAxis, YAxis, Line, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
-import styled, { ThemeContext } from 'styled-components';
+import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
+
+import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
+import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import { Synth } from 'lib/synthetix';
 
@@ -15,7 +18,14 @@ import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from '
 
 import ChangePercent from 'components/ChangePercent';
 
-import { GridDivCenteredCol, TextButton, FlexDivRowCentered, NoTextTransform } from 'styles/common';
+import {
+	GridDivCenteredCol,
+	GridDivCenteredRow,
+	TextButton,
+	FlexDivRowCentered,
+	NoTextTransform,
+	AbsoluteCenteredDiv,
+} from 'styles/common';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -26,6 +36,7 @@ type ChartCardProps = {
 	priceRate: number | null;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
+	isSynthFrozen: boolean;
 };
 
 const ChartCard: FC<ChartCardProps> = ({
@@ -33,6 +44,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	priceRate,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
+	isSynthFrozen,
 }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const theme = useContext(ThemeContext);
@@ -49,6 +61,11 @@ const ChartCard: FC<ChartCardProps> = ({
 	const chartColor = isChangePositive || isSUSD ? theme.colors.green : theme.colors.red;
 
 	const price = currentPrice || priceRate;
+
+	const showOverlayMessage = isSynthFrozen;
+	const showLoader = historicalRates.isLoading;
+	const disabledInteraction = showLoader || showOverlayMessage;
+	const noData = historicalRates.isSuccess && historicalRates.data.rates.length === 0;
 
 	const fontStyle = {
 		fontSize: '12px',
@@ -118,83 +135,111 @@ const ChartCard: FC<ChartCardProps> = ({
 				</Actions>
 			</ChartHeader>
 			<ChartBody>
-				<RechartsResponsiveContainer width="100%" height="100%">
-					<LineChart
-						data={rates.map((rateData) => ({
-							...rateData,
-							rate:
-								selectPriceCurrencyRate != null
-									? rateData.rate / selectPriceCurrencyRate
-									: rateData.rate,
-						}))}
-						margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
-						onMouseMove={(e: any) => {
-							const currentRate = get(e, 'activePayload[0].payload.rate', null);
-							if (currentRate) {
-								setCurrentPrice(currentRate);
-							} else {
-								setCurrentPrice(null);
-							}
-						}}
-						onMouseLeave={(e: any) => {
-							setCurrentPrice(null);
-						}}
-					>
-						<XAxis
-							// @ts-ignore
-							dy={10}
-							minTickGap={20}
-							dataKey="timestamp"
-							allowDataOverflow={true}
-							tick={fontStyle}
-							axisLine={false}
-							tickLine={false}
-							tickFormatter={(val) => {
-								if (!isNumber(val)) {
-									return '';
+				<ChartData
+					disabledInteraction={disabledInteraction}
+					semiTransparent={showLoader || showOverlayMessage}
+				>
+					<RechartsResponsiveContainer width="100%" height="100%">
+						<LineChart
+							data={rates.map((rateData) => ({
+								...rateData,
+								rate:
+									selectPriceCurrencyRate != null
+										? rateData.rate / selectPriceCurrencyRate
+										: rateData.rate,
+							}))}
+							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
+							onMouseMove={(e: any) => {
+								const currentRate = get(e, 'activePayload[0].payload.rate', null);
+								if (currentRate) {
+									setCurrentPrice(currentRate);
+								} else {
+									setCurrentPrice(null);
 								}
-								const periodOverOneDay =
-									selectedPeriod != null && selectedPeriod.value > PERIOD_IN_HOURS.ONE_DAY;
-
-								return format(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
 							}}
-						/>
-						<YAxis
-							// TODO: might need to adjust the width to make sure we do not trim the values...
-							type="number"
-							allowDataOverflow={true}
-							domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
-							tick={fontStyle}
-							orientation="right"
-							axisLine={false}
-							tickLine={false}
-							tickFormatter={(val) =>
-								formatCurrency(selectedPriceCurrency.name, val, {
-									sign: selectedPriceCurrency.sign,
-								})
-							}
-						/>
-						<Line
-							dataKey="rate"
-							stroke={chartColor}
-							dot={false}
-							strokeWidth={1.5}
-							isAnimationActive={false}
-						/>
-						{currencyKey != null && (
-							<Tooltip
-								isAnimationActive={false}
-								position={{
-									y: 0,
+							onMouseLeave={(e: any) => {
+								setCurrentPrice(null);
+							}}
+						>
+							<XAxis
+								// @ts-ignore
+								dy={10}
+								minTickGap={20}
+								dataKey="timestamp"
+								allowDataOverflow={true}
+								tick={fontStyle}
+								axisLine={false}
+								tickLine={false}
+								tickFormatter={(val) => {
+									if (!isNumber(val)) {
+										return '';
+									}
+									const periodOverOneDay =
+										selectedPeriod != null && selectedPeriod.value > PERIOD_IN_HOURS.ONE_DAY;
+
+									return format(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
 								}}
-								content={
-									// @ts-ignore
-									<CustomTooltip />
+							/>
+							<YAxis
+								// TODO: might need to adjust the width to make sure we do not trim the values...
+								type="number"
+								allowDataOverflow={true}
+								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
+								tick={fontStyle}
+								orientation="right"
+								axisLine={false}
+								tickLine={false}
+								tickFormatter={(val) =>
+									formatCurrency(selectedPriceCurrency.name, val, {
+										sign: selectedPriceCurrency.sign,
+									})
 								}
 							/>
-						)}
-					</LineChart>
-				</RechartsResponsiveContainer>
+							<Line
+								dataKey="rate"
+								stroke={chartColor}
+								dot={false}
+								strokeWidth={1.5}
+								isAnimationActive={false}
+							/>
+							{currencyKey != null && !noData && (
+								<Tooltip
+									isAnimationActive={false}
+									position={{
+										y: 0,
+									}}
+									content={
+										// @ts-ignore
+										<CustomTooltip />
+									}
+								/>
+							)}
+						</LineChart>
+					</RechartsResponsiveContainer>
+				</ChartData>
+				<AbsoluteCenteredDiv>
+					{showOverlayMessage ? (
+						<OverlayMessage>
+							{isSynthFrozen && (
+								<>
+									<FrozenMessage>
+										<SnowflakeIcon />
+										<FrozenMessageTitle>
+											{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
+										</FrozenMessageTitle>
+										<FrozenMessageSubtitle>
+											{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
+										</FrozenMessageSubtitle>
+									</FrozenMessage>
+								</>
+							)}
+						</OverlayMessage>
+					) : showLoader ? (
+						<LoaderIcon />
+					) : noData ? (
+						<NoData>{t('exchange.price-chart-card.no-data')}</NoData>
+					) : undefined}
+				</AbsoluteCenteredDiv>
 			</ChartBody>
 		</Container>
 	);
@@ -202,6 +247,25 @@ const ChartCard: FC<ChartCardProps> = ({
 
 const Container = styled.div`
 	width: 100%;
+	position: relative;
+`;
+
+const ChartData = styled.div<{ disabledInteraction: boolean; semiTransparent: boolean }>`
+	width: 100%;
+	height: 100%;
+	position: relative;
+	${(props) =>
+		props.disabledInteraction &&
+		css`
+			pointer-events: none;
+		`};
+
+	${(props) =>
+		props.semiTransparent &&
+		css`
+			opacity: 0.5;
+			filter: blur(3px);
+		`}
 `;
 
 const ChartHeader = styled(FlexDivRowCentered)`
@@ -252,6 +316,29 @@ const ItemStyle = styled.div`
 
 const LabelStyle = styled(ItemStyle)`
 	text-transform: capitalize;
+`;
+
+const OverlayMessage = styled.div`
+	font-size: 14px;
+`;
+
+const FrozenMessage = styled(GridDivCenteredRow)`
+	justify-items: center;
+`;
+
+const FrozenMessageTitle = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	padding-top: 10px;
+	padding-bottom: 5px;
+`;
+
+const FrozenMessageSubtitle = styled.div`
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const NoData = styled.div`
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default ChartCard;
