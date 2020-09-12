@@ -127,7 +127,7 @@ const ChartCard: FC<ChartCardProps> = ({
 									? rateData.rate / selectPriceCurrencyRate
 									: rateData.rate,
 						}))}
-						margin={{ right: isSUSD ? 0 : 40, bottom: 0 }}
+						margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
 						onMouseMove={(e: any) => {
 							const currentRate = get(e, 'activePayload[0].payload.rate', null);
 							if (currentRate) {
@@ -160,9 +160,10 @@ const ChartCard: FC<ChartCardProps> = ({
 							}}
 						/>
 						<YAxis
+							// TODO: might need to adjust the width to make sure we do not trim the values...
 							type="number"
 							allowDataOverflow={true}
-							domain={isSUSD ? [1, 1] : ['auto', 'auto']}
+							domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
 							tick={fontStyle}
 							orientation="right"
 							axisLine={false}
