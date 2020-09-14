@@ -42,7 +42,7 @@ const SynthBalances = () => {
 					const synthDesc =
 						synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
 					return (
-						<FlexDivRow key={synth.currencyKey}>
+						<SynthBalanceRow key={synth.currencyKey}>
 							<div>
 								<Currency.Name currencyKey={synth.currencyKey} name={synthDesc} showIcon={true} />
 							</div>
@@ -64,12 +64,19 @@ const SynthBalances = () => {
 								)}
 							</div>
 							<div>{percent >= 1 ? percent : '<1'}%</div>
-						</FlexDivRow>
+						</SynthBalanceRow>
 					);
 				})}
 		</>
 	);
 };
+
+const SynthBalanceRow = styled(FlexDivRow)`
+	background: ${(props) => props.theme.colors.elderberry};
+	padding: 12px 22px 12px 16px;
+	margin-top: 2px;
+	align-items: center;
+`;
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
