@@ -14,6 +14,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 		hideBranding: true,
 		networkId: network.id,
 		subscriptions,
+		darkMode: true,
 		walletSelect: {
 			wallets: [
 				{ walletName: 'metamask', preferred: true },
@@ -21,6 +22,12 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					walletName: 'ledger',
 					rpcUrl: infuraRpc,
 					preferred: true,
+				},
+				{
+					walletName: 'trezor',
+					appUrl: 'https://www.synthetix.io',
+					email: 'info@synthetix.io',
+					rpcUrl: infuraRpc,
 				},
 				{
 					walletName: 'walletConnect',
@@ -33,14 +40,14 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					apiKey: process.env.PORTIS_APP_ID,
 					preferred: true,
 				},
-				// { walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'dapper' },
+				{ walletName: 'trust', rpcUrl: infuraRpc },
+				// { walletName: 'dapper' },
 				{ walletName: 'walletLink', rpcUrl: infuraRpc },
-				{ walletName: 'opera' },
-				{ walletName: 'operaTouch' },
-				{ walletName: 'torus' },
+				// { walletName: 'opera' },
+				// { walletName: 'operaTouch' },
+				// { walletName: 'torus' },
 				{ walletName: 'status' },
-				{ walletName: 'unilogin' },
+				// { walletName: 'unilogin' },
 			],
 		},
 		walletCheck: [

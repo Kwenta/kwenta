@@ -104,6 +104,45 @@ const GlobalStyle = createGlobalStyle`
 		src: url('/fonts/AkkuratMonoLLWeb-Regular.woff2') format('woff2'), 
 		     url('/fonts/AkkuratMonoLLWeb-Regular.woff') format('woff');
 	}
+	/* blocknative onboard style overrides */
+	.bn-onboard-custom {
+		&&& {
+			font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
+			color: ${(props) => props.theme.colors.white};
+			
+		}
+		&&.bn-onboard-modal {
+			background: rgba(0, 0, 0, 0.8);
+		}
+		&&.bn-onboard-modal-content-header-icon {
+			background: none;
+		}
+		&&.bn-onboard-selected-wallet {
+			background-color: ${(props) => props.theme.colors.navy};
+			color: ${(props) => props.theme.colors.white};
+		}
+		&&.bn-onboard-modal-content {
+			background-color: ${(props) => props.theme.colors.elderberry};
+		}
+		&&.bn-onboard-select-wallet-info {
+			cursor: pointer;
+			color: ${(props) => props.theme.colors.purpleHover};
+		}
+		&&.bn-onboard-dark-mode-background-hover {
+			&:hover {
+				background-color: ${(props) => props.theme.colors.navy};
+			}
+		}
+		&&.bn-onboard-prepare-button {
+			border-radius: 2px;
+			color: ${(props) => props.theme.colors.white} ;
+			background-color: ${(props) => props.theme.colors.elderberry} ;
+			border: 1px solid ${(props) => props.theme.colors.navy} ;
+		}
+		.bn-onboard-clickable {
+			color: ${(props) => props.theme.colors.purpleHover} !important;
+		}		
+	}
 `;
 
 export default Layout;
