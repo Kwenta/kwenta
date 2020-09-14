@@ -23,8 +23,8 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
 import TradeCard from 'sections/exchange/TradeCard';
-import TradeSummaryCard from 'sections/exchange/TradeSummaryCard';
-import NoSynthsCard from 'sections/exchange/NoSynthsCard';
+import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 
 import { hasOrdersNotificationState } from 'store/ui';
 
