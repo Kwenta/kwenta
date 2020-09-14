@@ -106,7 +106,7 @@
 			}
 		},
 		"select-asset": {
-			"title": "select asset",
+			"title": "select synth",
 			"total-synth-value": "total synth value",
 			"header": {
 				"your-synths": "your synths",
