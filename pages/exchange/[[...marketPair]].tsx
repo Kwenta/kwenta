@@ -87,7 +87,7 @@ const ExchangePage = () => {
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
-
+	console.log(frozenSynthsQuery.data);
 	useEffect(() => {
 		if (synthExchange$ && walletAddress) {
 			const subscription = synthExchange$.subscribe(({ fromAddress }) => {
@@ -150,10 +150,10 @@ const ExchangePage = () => {
 
 	if (frozenSynthsQuery.isSuccess && frozenSynthsQuery.data) {
 		if (baseCurrencyKey != null) {
-			isBaseCurrencyFrozen = frozenSynthsQuery.data.includes(baseCurrencyKey);
+			isBaseCurrencyFrozen = frozenSynthsQuery.data.has(baseCurrencyKey);
 		}
 		if (quoteCurrencyKey != null) {
-			isQuoteCurrencyFrozen = frozenSynthsQuery.data.includes(quoteCurrencyKey);
+			isQuoteCurrencyFrozen = frozenSynthsQuery.data.has(quoteCurrencyKey);
 		}
 	}
 
