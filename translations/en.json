@@ -14,7 +14,7 @@
 			"dashboard": "dashboard"
 		},
 		"not-connected": {
-			"connect-wallet": "Connect your wallet"
+			"connect-wallet": "Connect wallet"
 		}
 	},
 	"homepage": {
@@ -123,6 +123,13 @@
 			"options": {
 				"currency": "currency",
 				"language": "language"
+			}
+		},
+		"wallet": {
+			"title": "wallet options",
+			"options": {
+				"switch-wallet": "switch wallet",
+				"disconnect-wallet": "disconnect wallet"
 			}
 		},
 		"notifications": {

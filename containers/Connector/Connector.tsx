@@ -57,7 +57,7 @@ const useConnector = () => {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
 				network: (nextNetworkId: number) => {
-					if (nextNetworkId !== network.id) {
+					if (nextNetworkId != null && nextNetworkId !== network.id) {
 						window.location.reload();
 					}
 					// TODO: currently, network change doesn't work well, may need to reload the page.
@@ -97,10 +97,11 @@ const useConnector = () => {
 						});
 						setSelectedWallet(wallet.name);
 					} else {
-						// @ts-ignore
-						setProvider(ethers.getDefaultProvider(networkId));
+						// TODO: setting provider to null might cause issues, perhaps use a default provider?
+						// setProvider(null);
 						setSigner(null);
 						setWalletAddress(null);
+						setSelectedWallet(null);
 					}
 				},
 			});

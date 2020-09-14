@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg';
-	variant: 'primary' | 'secondary';
+	variant: 'primary' | 'secondary' | 'outline';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -10,6 +10,7 @@ type ButtonProps = {
 const Button = styled.button<ButtonProps>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	height: 32px;
+	font-size: 12px;
 	padding: 0 12px;
 	border-radius: ${(props) => (props.isRounded ? '100px' : '4px')};
 	border: none;
@@ -79,7 +80,29 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.white};
 						background-color: ${(props) => props.theme.colors.purple};
 					`};
-			`}		
+			`}	
+
+		${(props) =>
+			props.variant === 'outline' &&
+			css`
+				border-radius: 2px;
+				color: ${(props) => props.theme.colors.white};
+				background-color: ${(props) => props.theme.colors.elderberry};
+				border: 1px solid ${(props) => props.theme.colors.navy};
+				&:hover {
+					&:not(:disabled) {
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.navy};
+					}
+				}
+				${(props) =>
+					// @ts-ignore
+					props.isActive &&
+					css`
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.navy};
+					`};
+			`}					
 
 `;
 

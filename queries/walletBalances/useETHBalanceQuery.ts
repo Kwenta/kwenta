@@ -14,7 +14,7 @@ const useCryptoBalancesQuery = (options?: BaseQueryOptions) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	return useQuery<{ balance: number; balanceBN: BigNumber }, any>(
-		QUERY_KEYS.WalletBalances.ETH,
+		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? ''),
 		async () => {
 			const balanceBN = await provider!.getBalance(walletAddress!);
 

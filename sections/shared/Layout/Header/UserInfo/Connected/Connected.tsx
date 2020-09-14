@@ -6,11 +6,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { truncatedWalletAddressState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
-import Connector from 'containers/Connector';
 
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
+
+import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 
 const NotificationsModal = dynamic(() => import('sections/shared/modals/NotificationsModal'), {
 	ssr: false,
@@ -21,13 +22,13 @@ const SettingsModal = dynamic(() => import('sections/shared/modals/SettingsModal
 });
 
 const Connected: FC = () => {
+	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
 		hasOrdersNotificationState
 	);
-	const { onboard } = Connector.useContainer();
 
 	return (
 		<>
@@ -55,11 +56,14 @@ const Connected: FC = () => {
 						<MenuIcon />
 					</MenuButton>
 				</Menu>
-				<Wallet onClick={() => onboard!.walletSelect()}>
+				<Wallet role="button" onClick={() => setWalletOptionsModalOpened(true)}>
 					<ConnectionDot />
 					{truncatedWalletAddress}
 				</Wallet>
 			</FlexDivCentered>
+			{walletOptionsModalOpened && (
+				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
+			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 			{notificationsModalOpened && (
 				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />

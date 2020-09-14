@@ -29,7 +29,7 @@ const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
 		{ balancesMap: SynthBalancesMap; balances: SynthBalance[]; totalUSDBalance: number },
 		any
 	>(
-		QUERY_KEYS.WalletBalances.Synths,
+		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? ''),
 		async () => {
 			const balancesMap: SynthBalancesMap = {};
 

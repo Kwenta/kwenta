@@ -21,9 +21,9 @@ export const QUERY_KEYS = {
 		EthGasStation: ['network', 'ethGasStation'],
 	},
 	WalletBalances: {
-		Synths: ['walletBalances', 'synths'],
-		ETH: ['walletBalances', 'ETH'],
-		Tokens: ['walletBalances', 'tokens'],
+		Synths: (walletAddress: string) => ['walletBalances', 'synths', walletAddress],
+		ETH: (walletAddress: string) => ['walletBalances', 'ETH', walletAddress],
+		Tokens: (walletAddress: string) => ['walletBalances', 'tokens', walletAddress],
 	},
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
