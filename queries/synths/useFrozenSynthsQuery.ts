@@ -8,7 +8,7 @@ import { CurrencyKey } from 'constants/currency';
 import synthetix from 'lib/synthetix';
 
 const useFrozenSynthsQuery = (options?: BaseQueryOptions) => {
-	const frozenSynthsQuery = useQuery<Set<CurrencyKey>, any>(
+	return useQuery<Set<CurrencyKey>, any>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
 			const frozenSynths = await synthetix.synthSummaryUtil!.frozenSynths();
@@ -21,8 +21,6 @@ const useFrozenSynthsQuery = (options?: BaseQueryOptions) => {
 			...options,
 		}
 	);
-
-	return frozenSynthsQuery;
 };
 
 export default useFrozenSynthsQuery;

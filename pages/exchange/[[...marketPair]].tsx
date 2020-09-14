@@ -44,6 +44,7 @@ import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
+import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -162,7 +163,17 @@ const ExchangePage = () => {
 		}
 	}
 
+	const baseCurrencySuspendedQuery = useSynthSuspensionQuery(baseCurrencyKey);
+	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
+
+	const isBaseCurrencySuspended =
+		baseCurrencySuspendedQuery.isSuccess && baseCurrencySuspendedQuery.data.isSuspended;
+	const isQuoteCurrencySuspended =
+		quoteCurrencySuspendedQuery.isSuccess && quoteCurrencySuspendedQuery.data.isSuspended;
+
 	const isSubmissionDisabled =
+		isBaseCurrencySuspended ||
+		isQuoteCurrencySuspended ||
 		!selectedBothSides ||
 		!baseCurrencyAmount ||
 		!quoteCurrencyAmount ||
@@ -386,6 +397,8 @@ const ExchangePage = () => {
 						isBaseCurrencyFrozen={isBaseCurrencyFrozen}
 						insufficientBalance={insufficientBalance}
 						selectedBothSides={selectedBothSides}
+						isBaseCurrencySuspended={isBaseCurrencySuspended}
+						isQuoteCurrencySuspended={isQuoteCurrencySuspended}
 					/>
 				)}
 				{txConfirmationModalOpen && (

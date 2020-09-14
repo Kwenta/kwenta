@@ -50,6 +50,7 @@
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
+				"market-is-closed": "market is closed",
 				"insufficient-balance": "insufficient balance",
 				"synth-is-frozen": "synth is frozen",
 				"enter-amount": "enter amount",

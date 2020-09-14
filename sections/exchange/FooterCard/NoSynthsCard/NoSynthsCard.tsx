@@ -7,7 +7,7 @@ import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
-import { RoundedContainer, MessageButton } from '../common';
+import { RoundedContainer, Message, MessageButton } from '../common';
 
 const { sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
@@ -38,12 +38,5 @@ const NoSynthsCard: FC = () => {
 		</RoundedContainer>
 	);
 };
-
-const Message = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding-left: 20px;
-`;
 
 export default NoSynthsCard;

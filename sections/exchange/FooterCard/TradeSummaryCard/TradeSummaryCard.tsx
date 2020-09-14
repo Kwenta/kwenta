@@ -28,6 +28,8 @@ type TradeSummaryCardProps = {
 	insufficientBalance: boolean;
 	selectedBothSides: boolean;
 	isBaseCurrencyFrozen: boolean;
+	isQuoteCurrencySuspended: boolean;
+	isBaseCurrencySuspended: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -42,6 +44,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	insufficientBalance,
 	selectedBothSides,
 	isBaseCurrencyFrozen,
+	isQuoteCurrencySuspended,
+	isBaseCurrencySuspended,
 }) => {
 	const { t } = useTranslation();
 
@@ -56,6 +60,13 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	function getButtonLabel() {
 		if (isSubmissionDisabled) {
 			// figure out the reason
+			if (isQuoteCurrencySuspended || isBaseCurrencySuspended) {
+				// TODO: use the reason code to determine the real cause, for now just use market closure
+				return t('exchange.summary-info.button.market-is-closed');
+			}
+			if (isBaseCurrencyFrozen) {
+				return t('exchange.summary-info.button.synth-is-frozen');
+			}
 			if (isBaseCurrencyFrozen) {
 				return t('exchange.summary-info.button.synth-is-frozen');
 			}

@@ -82,7 +82,7 @@ const synthetix: Synthetix = {
 
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
-
+		console.log(this.js);
 		this.synthSummaryUtil = new ethers.Contract(
 			synthSummaryUtilContract.addresses[networkId],
 			synthSummaryUtilContract.abi,
