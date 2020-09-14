@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import styled from 'styled-components';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';

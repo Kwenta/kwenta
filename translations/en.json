@@ -89,6 +89,9 @@
 		},
 		"your-profile": {
 			"title": "Your Profile"
+		},
+		"synthSort": {
+			"price": "Price"
 		}
 	},
 	"not-found": {

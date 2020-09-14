@@ -12,6 +12,7 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 import useSynthsBalancesQuery, {
 	SynthBalance,
 } from 'queries/walletBalances/useSynthsBalancesQuery';
+import Select from 'components/Select';
 import Currency from 'components/Currency';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { fonts } from 'styles/theme/fonts';
@@ -75,6 +76,9 @@ const DashboardPage = () => {
 	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
 	const synths = synthetix.js?.synths ?? [];
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
+	const SYNTH_SORT_OPTIONS = [{ label: t('dashboard.synthSort.price'), value: 'PRICE' }];
+	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
 	return (
 		<>
 			<Head>
@@ -138,7 +142,19 @@ const DashboardPage = () => {
 					)}
 				</LeftContainer>
 				<RightContainer>
-					<CardTitle>{t('dashboard.trending')}</CardTitle>
+					<FlexDivRow>
+						<CardTitle>{t('dashboard.trending')}</CardTitle>
+						<Select
+							formatOptionLabel={(option) => <span>{option.label}</span>}
+							options={SYNTH_SORT_OPTIONS}
+							value={currentSynthSort}
+							onChange={(option: any) => {
+								if (option) {
+									setCurrentSynthSort(option);
+								}
+							}}
+						/>
+					</FlexDivRow>
 					{synths.map((synth) => {
 						const selectPriceCurrencyRate =
 							exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
