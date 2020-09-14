@@ -1,10 +1,10 @@
 import dynamic from 'next/dynamic';
 import { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { truncatedWalletAddressState } from 'store/wallet';
-import { hasPendingOrderState } from 'store/orders';
+import { hasOrdersNotificationState } from 'store/ui';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import Connector from 'containers/Connector';
 
@@ -24,7 +24,9 @@ const Connected: FC = () => {
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const hasPendingOrder = useRecoilValue(hasPendingOrderState);
+	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
+		hasOrdersNotificationState
+	);
 	const { onboard } = Connector.useContainer();
 
 	return (
@@ -35,10 +37,13 @@ const Connected: FC = () => {
 						onClick={() => {
 							setNotificationsModalOpened(!notificationsModalOpened);
 							setSettingsModalOpened(false);
+							if (hasOrdersNotification) {
+								setHasOrdersNotification(false);
+							}
 						}}
 						isActive={notificationsModalOpened}
 					>
-						{hasPendingOrder ? <NotificationAlertIcon /> : <NotificationIcon />}
+						{hasOrdersNotification ? <NotificationAlertIcon /> : <NotificationIcon />}
 					</MenuButton>
 					<MenuButton
 						onClick={() => {

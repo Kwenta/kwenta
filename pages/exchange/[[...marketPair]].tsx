@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
+import produce from 'immer';
 
 import { CurrencyKey } from 'constants/currency';
 import { GWEI_UNIT } from 'constants/network';
@@ -25,6 +26,8 @@ import TradeCard from 'sections/exchange/TradeCard';
 import TradeSummaryCard from 'sections/exchange/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/NoSynthsCard';
 
+import { hasOrdersNotificationState } from 'store/ui';
+
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import { formatCurrency } from 'utils/formatters/number';
@@ -32,14 +35,14 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import { priceCurrencyState, appReadyState } from 'store/app';
 
+import media from 'styles/media';
+
 import synthetix from 'lib/synthetix';
 
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
-import produce from 'immer';
-import media from 'styles/media';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -80,6 +83,7 @@ const ExchangePage = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const setOrders = useSetRecoilState(ordersState);
+	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -87,7 +91,7 @@ const ExchangePage = () => {
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
-	console.log(frozenSynthsQuery.data);
+
 	useEffect(() => {
 		if (synthExchange$ && walletAddress) {
 			const subscription = synthExchange$.subscribe(({ fromAddress }) => {
@@ -222,6 +226,7 @@ const ExchangePage = () => {
 							});
 						})
 					);
+					setHasOrdersNotification(true);
 
 					if (notify) {
 						const { emitter } = notify.hash(tx.hash);
