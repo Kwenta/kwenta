@@ -126,7 +126,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-select-wallet-info {
 			cursor: pointer;
-			color: ${(props) => props.theme.colors.purpleHover};
+			color: ${(props) => props.theme.colors.white};
 		}
 		&&.bn-onboard-dark-mode-background-hover {
 			&:hover {
@@ -140,7 +140,7 @@ const GlobalStyle = createGlobalStyle`
 			border: 1px solid ${(props) => props.theme.colors.navy} ;
 		}
 		.bn-onboard-clickable {
-			color: ${(props) => props.theme.colors.purpleHover} !important;
+			color: ${(props) => props.theme.colors.white} !important;
 		}		
 	}
 `;
