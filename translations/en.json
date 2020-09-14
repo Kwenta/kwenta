@@ -12,9 +12,6 @@
 		"nav": {
 			"exchange": "exchange",
 			"dashboard": "dashboard"
-		},
-		"not-connected": {
-			"connect-wallet": "Connect wallet"
 		}
 	},
 	"homepage": {
@@ -63,6 +60,9 @@
 		},
 		"no-synths-card": {
 			"message": "Your wallet has no Synths. Get <0>{{currencyKey}}</0> to start trading Synths:"
+		},
+		"connect-wallet-card": {
+			"message": "Connect your wallet to start trading"
 		},
 		"common": {
 			"from": "from",
@@ -190,6 +190,7 @@
 		},
 		"features": {
 			"coming-soon": "Coming Soon"
-		}
+		},
+		"connect-wallet": "Connect wallet"
 	}
 }

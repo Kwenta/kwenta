@@ -120,11 +120,25 @@ const useConnector = () => {
 		}
 	}, [onboard, selectedWallet]);
 
+	const connectWallet = async () => {
+		try {
+			if (onboard) {
+				const success = await onboard.walletSelect();
+				if (success) {
+					await onboard.walletCheck();
+				}
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
 	return {
 		provider,
 		signer,
 		onboard,
 		notify,
+		connectWallet,
 	};
 };
 

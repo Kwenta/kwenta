@@ -2,14 +2,12 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
-import Button from 'components/Button';
-
 import { EXTERNAL_LINKS } from 'constants/links';
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
-import { RoundedContainer } from '../common';
+import { RoundedContainer, MessageButton } from '../common';
 
 const { sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
@@ -28,14 +26,14 @@ const NoSynthsCard: FC = () => {
 				/>
 			</Message>
 			<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
-				<Button variant="primary" isRounded={true} size="lg">
+				<MessageButton>
 					<Trans
 						t={t}
 						i18nKey="common.currency.get-currency"
 						values={{ currencyKey: sUSD }}
 						components={[<NoTextTransform />]}
 					/>
-				</Button>
+				</MessageButton>
 			</ExternalLink>
 		</RoundedContainer>
 	);

@@ -23,7 +23,7 @@ import SettingsModal from 'sections/shared/modals/SettingsModal';
 const UserInfo: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { onboard } = Connector.useContainer();
+	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
@@ -31,19 +31,6 @@ const UserInfo: FC = () => {
 	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
 		hasOrdersNotificationState
 	);
-
-	const connectWallet = async () => {
-		try {
-			if (onboard) {
-				const success = await onboard.walletSelect();
-				if (success) {
-					await onboard.walletCheck();
-				}
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	};
 
 	return (
 		<>
@@ -86,7 +73,7 @@ const UserInfo: FC = () => {
 						</WalletButton>
 					) : (
 						<Button variant="primary" onClick={connectWallet}>
-							{t('header.not-connected.connect-wallet')}
+							{t('common.connect-wallet')}
 						</Button>
 					)}
 				</FlexDivCentered>

@@ -25,6 +25,7 @@ import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 import TradeCard from 'sections/exchange/TradeCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 
 import { hasOrdersNotificationState } from 'store/ui';
 
@@ -368,7 +369,9 @@ const ExchangePage = () => {
 						/>
 					</RightCardContainer>
 				</CardsContainer>
-				{noSynths ? (
+				{!isWalletConnected ? (
+					<ConnectWalletCard />
+				) : noSynths ? (
 					<NoSynthsCard />
 				) : (
 					<TradeSummaryCard
