@@ -8,9 +8,15 @@ import Currency from 'components/Currency';
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 
-import { SelectableCurrencyRow, FlexDivRowCentered, NoTextTransform } from 'styles/common';
+import {
+	SelectableCurrencyRow,
+	FlexDivRowCentered,
+	NoTextTransform,
+	ExternalLink,
+	FlexDivColCentered,
+} from 'styles/common';
 
-import { CurrencyKey } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -18,6 +24,7 @@ import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { RowsHeader, RowsContainer } from '../common';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 type SelectAssetModalProps = {
 	onDismiss: () => void;
@@ -28,6 +35,9 @@ type SelectAssetModalProps = {
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
+
+const { sUSD } = SYNTHS_MAP;
+const { ETH } = CRYPTO_CURRENCY_MAP;
 
 export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	onDismiss,
@@ -58,39 +68,64 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 				</Total>
 				<Title>{t('modals.select-asset.total-synth-value')}</Title>
 			</TotalValue>
-			<RowsHeader>
-				<span>{t('modals.select-asset.header.your-synths')}</span>
-				<span>{t('modals.select-asset.header.holdings')}</span>
-			</RowsHeader>
-			<RowsContainer style={{ height: 'auto' }}>
-				{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
-					const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
+			{synthBalances.length > 0 ? (
+				<>
+					<RowsHeader>
+						<span>{t('modals.select-asset.header.your-synths')}</span>
+						<span>{t('modals.select-asset.header.holdings')}</span>
+					</RowsHeader>
+					<RowsContainer style={{ height: 'auto' }}>
+						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
+							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
 
-					let totalValue = usdBalance;
-					if (selectPriceCurrencyRate != null) {
-						totalValue /= selectPriceCurrencyRate;
-					}
+							let totalValue = usdBalance;
+							if (selectPriceCurrencyRate != null) {
+								totalValue /= selectPriceCurrencyRate;
+							}
 
-					return (
-						<StyledSelectableCurrencyRow
-							key={currencyKey}
-							isSelectable={true}
-							onClick={() => {
-								onSelect(currencyKey);
-								onDismiss();
-							}}
-						>
-							<Currency.Name currencyKey={currencyKey} name={synthDesc} showIcon={true} />
-							<Currency.Amount
-								currencyKey={currencyKey}
-								amount={balance}
-								totalValue={totalValue}
-								sign={selectedPriceCurrency.sign}
+							return (
+								<StyledSelectableCurrencyRow
+									key={currencyKey}
+									isSelectable={true}
+									onClick={() => {
+										onSelect(currencyKey);
+										onDismiss();
+									}}
+								>
+									<Currency.Name currencyKey={currencyKey} name={synthDesc} showIcon={true} />
+									<Currency.Amount
+										currencyKey={currencyKey}
+										amount={balance}
+										totalValue={totalValue}
+										sign={selectedPriceCurrency.sign}
+									/>
+								</StyledSelectableCurrencyRow>
+							);
+						})}
+					</RowsContainer>
+				</>
+			) : (
+				<ContainerEmptyState>
+					<Message>
+						<Trans
+							t={t}
+							i18nKey="exchange.no-synths-card.message"
+							values={{ currencyKey: sUSD }}
+							components={[<NoTextTransform />]}
+						/>
+					</Message>
+					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
+						<Button variant="primary" isRounded={true} size="lg">
+							<Trans
+								t={t}
+								i18nKey="common.currency.get-currency"
+								values={{ currencyKey: sUSD }}
+								components={[<NoTextTransform />]}
 							/>
-						</StyledSelectableCurrencyRow>
-					);
-				})}
-			</RowsContainer>
+						</Button>
+					</ExternalLink>
+				</ContainerEmptyState>
+			)}
 			{/* TODO: implement */}
 			{false && (
 				<>
@@ -161,6 +196,18 @@ const ConvertButton = styled(Button)`
 	&::first-letter {
 		text-transform: capitalize;
 	}
+`;
+
+const ContainerEmptyState = styled(FlexDivColCentered)`
+	margin: 8px 0px;
+`;
+
+const Message = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	padding: 24px 32px;
+	text-align: center;
 `;
 
 export default SelectSynthModal;

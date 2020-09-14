@@ -12,6 +12,10 @@ export const FlexDivCol = styled(FlexDiv)`
 	flex-direction: column;
 `;
 
+export const FlexDivColCentered = styled(FlexDivCol)`
+	align-items: center;
+`;
+
 export const FlexDivRow = styled(FlexDiv)`
 	justify-content: space-between;
 `;
