@@ -34,6 +34,10 @@ export const fonts = {
 			line-height: 140%;
 			letter-spacing: 0.2px;
 		`,
+		xLarge: `
+			font-family: ${fontStyles.mono};
+			font-size: 20px;
+		`,
 	},
 	heading: {
 		h4: `

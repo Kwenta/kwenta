@@ -85,7 +85,10 @@
 			}
 		},
 		"no-synths-card": {
-			"convert": "Convert"
+			"convert": "Convert",
+			"title":"Learn How it Works",
+			"subtitle":"Get up and running on Kwenta and exchange everything.",
+			"learnMore": "Learn More"
 		},
 		"your-profile": {
 			"title": "Your Profile"

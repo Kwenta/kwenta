@@ -7,8 +7,7 @@ import Select from 'components/Select';
 
 import synthetix from 'lib/synthetix';
 
-import { priceCurrencyState } from 'store/app';
-import { SYNTHS_MAP } from 'constants/currency';
+import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
 
 import { FlexDivRowCentered } from 'styles/common';
 
@@ -19,17 +18,6 @@ import { MenuModal } from '../common';
 type SettingsModalProps = {
 	onDismiss: () => void;
 };
-
-const PRICE_CURRENCIES = [
-	SYNTHS_MAP.sUSD,
-	SYNTHS_MAP.sEUR,
-	SYNTHS_MAP.sCHF,
-	SYNTHS_MAP.sAUD,
-	SYNTHS_MAP.sJPY,
-	SYNTHS_MAP.sGBP,
-	SYNTHS_MAP.sBTC,
-	SYNTHS_MAP.sETH,
-];
 
 export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();

@@ -19,6 +19,7 @@ import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
+import { formatCurrency } from 'utils/formatters/number';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -36,6 +37,8 @@ const SynthBalances = () => {
 		<>
 			{synthsBalancesQuery.isSuccess &&
 				synthsBalancesQuery.data.balances.map((synth: SynthBalance) => {
+					const percent =
+						Math.floor(synth.usdBalance / synthsBalancesQuery.data.totalUSDBalance) * 100;
 					const synthDesc =
 						synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
 					return (
@@ -60,7 +63,7 @@ const SynthBalances = () => {
 									/>
 								)}
 							</div>
-							<div>Percent</div>
+							<div>{percent >= 1 ? percent : '<1'}%</div>
 						</FlexDivRow>
 					);
 				})}
@@ -79,6 +82,14 @@ const DashboardPage = () => {
 
 	const SYNTH_SORT_OPTIONS = [{ label: t('dashboard.synthSort.price'), value: 'PRICE' }];
 	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
+	const profit = formatCurrency(
+		selectedPriceCurrency.name,
+		synthsBalancesQuery.data?.totalUSDBalance || 0,
+		{
+			sign: selectedPriceCurrency.sign,
+		}
+	);
+
 	return (
 		<>
 			<Head>
@@ -92,6 +103,7 @@ const DashboardPage = () => {
 						<DashboardLeftCol>
 							<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
 								<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
+								<Profit>{profit}</Profit>
 								<ComingSoonBalanceChart />
 							</FlexDivCol>
 							<FlexDivCol>
@@ -194,6 +206,12 @@ const ComingSoon = styled.div`
 const DashboardTitle = styled.div`
 	${fonts.data['title-large']}
 	color: ${(props) => props.theme.colors.white};
+	margin-bottom: 4px;
+`;
+
+const Profit = styled.div`
+	${fonts.data['xLarge']}
+	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
 `;
 
@@ -250,11 +268,11 @@ const NoSynthsCard = () => {
 	const { t } = useTranslation();
 	return (
 		<FlexDivCol>
-			<NoSynthTitle>Learn How it Works</NoSynthTitle>
-			<NoSynthSubtitle>Get up and running on Kwenta and exchange everything.</NoSynthSubtitle>
+			<NoSynthTitle>{t('dashboard.no-synths-card.title')}</NoSynthTitle>
+			<NoSynthSubtitle>{t('dashboard.no-synths-card.subtitle')}</NoSynthSubtitle>
 			<Center>
 				<Button variant="primary" isRounded={true} size="lg">
-					Learn More
+					{t('dashboard.no-synths-card.learnMore')}
 				</Button>
 			</Center>
 			<CardTitle>{t('dashboard.no-synths-card.convert')}</CardTitle>
