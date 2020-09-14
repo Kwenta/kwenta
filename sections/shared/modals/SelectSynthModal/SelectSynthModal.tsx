@@ -124,36 +124,40 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 				)}
 			</RowsHeader>
 			<RowsContainer>
-				{synthsResults.map((synth) => {
-					let price = exchangeRates && exchangeRates[synth.name];
-					const currencyKey = synth.name;
+				{synthsResults.length > 0 ? (
+					synthsResults.map((synth) => {
+						let price = exchangeRates && exchangeRates[synth.name];
+						const currencyKey = synth.name;
 
-					if (price != null && selectPriceCurrencyRate != null) {
-						price /= selectPriceCurrencyRate;
-					}
+						if (price != null && selectPriceCurrencyRate != null) {
+							price /= selectPriceCurrencyRate;
+						}
 
-					return (
-						<StyledSelectableCurrencyRow
-							key={currencyKey}
-							onClick={() => {
-								onSelect(currencyKey);
-								onDismiss();
-							}}
-							isSelectable={true}
-						>
-							<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
-							{price != null ? (
-								<Currency.Price
-									currencyKey={currencyKey}
-									price={price}
-									sign={selectedPriceCurrency.sign}
-								/>
-							) : (
-								NO_VALUE
-							)}
-						</StyledSelectableCurrencyRow>
-					);
-				})}
+						return (
+							<StyledSelectableCurrencyRow
+								key={currencyKey}
+								onClick={() => {
+									onSelect(currencyKey);
+									onDismiss();
+								}}
+								isSelectable={true}
+							>
+								<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+								{price != null ? (
+									<Currency.Price
+										currencyKey={currencyKey}
+										price={price}
+										sign={selectedPriceCurrency.sign}
+									/>
+								) : (
+									NO_VALUE
+								)}
+							</StyledSelectableCurrencyRow>
+						);
+					})
+				) : (
+					<EmptyDisplay>{t(t('modals.select-synth.search.empty-results'))}</EmptyDisplay>
+				)}
 			</RowsContainer>
 		</StyledBaseModal>
 	);
@@ -198,6 +202,18 @@ const CategoryFilters = styled.div`
 
 const CategoryButton = styled(Button)`
 	text-transform: uppercase;
+`;
+
+const EmptyDisplay = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	text-align: center;
+	margin: 24px 0px;
+	height: 50px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default SelectSynthModal;
