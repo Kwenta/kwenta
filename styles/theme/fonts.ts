@@ -22,13 +22,14 @@ export const fonts = {
 		`,
 	},
 	data: {
-		'title-small': `
+		small: `
 			font-family: ${fontStyles.mono};
 			font-size: 12px;
+			font-weight: 500;
 			line-height: 140%;
 			letter-spacing: 0.2px;
 		`,
-		'title-large': `
+		large: `
 			font-family: ${fontStyles.mono};
 			font-size: 16px;
 			line-height: 140%;

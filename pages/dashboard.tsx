@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import synthetix from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
 import { useRecoilValue } from 'recoil';
 
 import Head from 'next/head';
@@ -14,6 +14,7 @@ import useSynthsBalancesQuery, {
 } from 'queries/walletBalances/useSynthsBalancesQuery';
 import Select from 'components/Select';
 import Currency from 'components/Currency';
+import ProgressBar from 'components/ProgressBar';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
@@ -63,13 +64,26 @@ const SynthBalances = () => {
 									/>
 								)}
 							</div>
-							<div>{percent >= 1 ? percent : '<1'}%</div>
+							<SynthBalancePercentRow>
+								<ProgressBar percentage={percent} />
+								<TypeDataSmall>{percent >= 1 ? percent : '<1'}%</TypeDataSmall>
+							</SynthBalancePercentRow>
 						</SynthBalanceRow>
 					);
 				})}
 		</>
 	);
 };
+
+const TypeDataSmall = styled.div`
+	${fonts.data.small}
+	margin-top: 5px;
+`;
+
+const SynthBalancePercentRow = styled.div`
+	align-items: center;
+	min-width: 112px;
+`;
 
 const SynthBalanceRow = styled(FlexDivRow)`
 	background: ${(props) => props.theme.colors.elderberry};
@@ -174,7 +188,7 @@ const DashboardPage = () => {
 							}}
 						/>
 					</FlexDivRow>
-					{synths.map((synth) => {
+					{synths.map((synth: Synth) => {
 						const selectPriceCurrencyRate =
 							exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
 						let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
@@ -205,19 +219,19 @@ const DashboardPage = () => {
 };
 
 const ComingSoon = styled.div`
-	${fonts.data['title-large']}
+	${fonts.data.large}
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
 `;
 
 const DashboardTitle = styled.div`
-	${fonts.data['title-large']}
+	${fonts.data.large}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 4px;
 `;
 
 const Profit = styled.div`
-	${fonts.data['xLarge']}
+	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
 `;
@@ -252,7 +266,7 @@ const RightContainer = styled(FlexDivCol)`
 `;
 
 const NoSynthTitle = styled.div`
-	${fonts.data['title-small']}
+	${fonts.data.small}
 	color: ${(props) => props.theme.colors.blueberry};
 	text-transform: uppercase;
 	text-align: center;

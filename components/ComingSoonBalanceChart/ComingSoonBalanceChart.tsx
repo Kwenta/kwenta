@@ -47,7 +47,7 @@ const StyledCardBody = styled(Card.Body)`
 `;
 
 const Message = styled.div`
-    ${fonts.data['title-large']}
+    ${fonts.data.large}
     color: ${(props) => props.theme.colors.white};
 	position: absolute;
 	left: 50%;
