@@ -144,15 +144,15 @@
 			"title": "notifications",
 			"open-orders": {
 				"title": "open orders",
-				"no-results": "no orders"
+				"no-results": "None"
 			},
 			"recent-notifications": {
 				"title": "recent notifications",
-				"no-results": "no notifications"
+				"no-results": "None"
 			},
 			"all-notifications": {
 				"title": "all notifications",
-				"no-results": "no notifications"
+				"no-results": "None"
 			},
 			"view-all": "view all"
 		}

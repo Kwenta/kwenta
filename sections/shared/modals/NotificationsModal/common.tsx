@@ -16,4 +16,5 @@ export const OrdersGroupListItem = styled.div`
 `;
 export const NoResults = styled.div`
 	color: ${(props) => props.theme.colors.white};
+	text-transform: capitalize;
 `;
