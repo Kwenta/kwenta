@@ -35,7 +35,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				{/* twitter */}
 				<meta name="twitter:image" content="/images/kwenta.png" />
 				<meta name="twitter:url" content="https://kwenta.io" />
-				<link rel="icon" href="/images/favicon.png" />
+				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
