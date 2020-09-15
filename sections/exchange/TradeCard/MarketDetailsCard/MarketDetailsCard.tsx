@@ -3,6 +3,9 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { CurrencyKey } from 'constants/currency';
 
+import Etherscan from 'containers/Etherscan';
+
+import { DesktopView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -18,7 +21,6 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
 
 import synthetix, { Synth } from 'lib/synthetix';
-import Etherscan from 'containers/Etherscan';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -60,88 +62,121 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	const token =
 		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
 
+	const volume24HItem = (
+		<Item>
+			<Label>{t('exchange.market-details-card.24h-vol')}</Label>
+			<Value>
+				{volume24H != null
+					? formatCurrency(selectedPriceCurrency.name, volume24H, {
+							sign: selectedPriceCurrency.sign,
+					  })
+					: NO_VALUE}
+			</Value>
+		</Item>
+	);
+
+	const rates24HighItem = (
+		<Item>
+			<Label>{t('exchange.market-details-card.24h-high')}</Label>
+			<Value>
+				{rates24High != null
+					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
+							sign: selectedPriceCurrency.sign,
+					  })}`
+					: NO_VALUE}
+			</Value>
+		</Item>
+	);
+
+	const tokenAddressItem = (
+		<Item>
+			<Label>
+				{token?.address ? (
+					<Trans
+						i18nKey="common.currency.currency-contract"
+						values={{ currencyKey }}
+						components={[<NoTextTransform />]}
+					/>
+				) : (
+					t('common.contract')
+				)}
+			</Label>
+			<Value>
+				{token?.address && etherscanInstance != null ? (
+					<ExternalLink href={etherscanInstance.tokenLink(token.address)}>
+						{truncateAddress(token.address, 6, 4)}
+					</ExternalLink>
+				) : (
+					NO_VALUE
+				)}
+			</Value>
+		</Item>
+	);
+
+	const marketCapItem = (
+		<Item>
+			<Label>{t('exchange.market-details-card.market-cap')}</Label>
+			<Value>
+				{marketCap != null
+					? formatCurrency(selectedPriceCurrency.name, marketCap, {
+							sign: selectedPriceCurrency.sign,
+					  })
+					: NO_VALUE}
+			</Value>
+		</Item>
+	);
+
+	const rates24HLowItem = (
+		<Item>
+			<Label>{t('exchange.market-details-card.24h-low')}</Label>
+			<Value>
+				{rates24Low != null
+					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
+							sign: selectedPriceCurrency.sign,
+					  })}`
+					: NO_VALUE}
+			</Value>
+		</Item>
+	);
+
+	const priceFeedItem = (
+		<Item>
+			<Label>{t('exchange.market-details-card.price-feed')}</Label>
+			<Value>
+				{token?.feed != null && etherscanInstance != null ? (
+					<ExternalLink href={etherscanInstance.tokenLink(token.feed)}>
+						{truncateAddress(token.feed, 6, 4)}
+					</ExternalLink>
+				) : (
+					NO_VALUE
+				)}
+			</Value>
+		</Item>
+	);
+
 	return (
 		<StyledCard>
 			<Card.Header>{t('exchange.market-details-card.title')}</Card.Header>
 			<StyledCardBody>
-				<Column>
-					<Item>
-						<Label>{t('exchange.market-details-card.24h-vol')}</Label>
-						<Value>
-							{volume24H != null
-								? formatCurrency(selectedPriceCurrency.name, volume24H, {
-										sign: selectedPriceCurrency.sign,
-								  })
-								: NO_VALUE}
-						</Value>
-					</Item>
-					<Item>
-						<Label>{t('exchange.market-details-card.24h-high')}</Label>
-						<Value>
-							{rates24High != null
-								? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
-										sign: selectedPriceCurrency.sign,
-								  })}`
-								: NO_VALUE}
-						</Value>
-					</Item>
-					<Item>
-						<Label>
-							{token?.address ? (
-								<Trans
-									i18nKey="common.currency.currency-contract"
-									values={{ currencyKey }}
-									components={[<NoTextTransform />]}
-								/>
-							) : (
-								t('common.contract')
-							)}
-						</Label>
-						<Value>
-							{token?.address && etherscanInstance != null ? (
-								<ExternalLink href={etherscanInstance.tokenLink(token.address)}>
-									{truncateAddress(token.address, 6, 4)}
-								</ExternalLink>
-							) : (
-								NO_VALUE
-							)}
-						</Value>
-					</Item>
-				</Column>
-				<Column>
-					<Item>
-						<Label>{t('exchange.market-details-card.market-cap')}</Label>
-						<Value>
-							{marketCap != null
-								? formatCurrency(selectedPriceCurrency.name, marketCap, {
-										sign: selectedPriceCurrency.sign,
-								  })
-								: NO_VALUE}
-						</Value>
-					</Item>
-					<Item>
-						<Label>{t('exchange.market-details-card.24h-low')}</Label>
-						<Value>
-							{rates24Low != null
-								? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
-										sign: selectedPriceCurrency.sign,
-								  })}`
-								: NO_VALUE}
-						</Value>
-					</Item>
-					<Item>
-						<Label>{t('exchange.market-details-card.price-feed')}</Label>
-						<Value>
-							{token?.feed != null && etherscanInstance != null ? (
-								<ExternalLink href={etherscanInstance.tokenLink(token.feed)}>
-									{truncateAddress(token.feed, 6, 4)}
-								</ExternalLink>
-							) : (
-								NO_VALUE
-							)}
-						</Value>
-					</Item>
-				</Column>
+				<MobileOrTabletView>
+					<Column>
+						{volume24HItem}
+						{rates24HighItem}
+						{rates24HLowItem}
+					</Column>
+				</MobileOrTabletView>
+				<DesktopView>
+					<Column>
+						{volume24HItem}
+						{rates24HighItem}
+						{tokenAddressItem}
+					</Column>
+					<Column>
+						{marketCapItem}
+						{rates24HLowItem}
+						{priceFeedItem}
+					</Column>
+				</DesktopView>
 			</StyledCardBody>
 		</StyledCard>
 	);
