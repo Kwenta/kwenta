@@ -43,3 +43,7 @@ export type HistoricalRatesUpdates = {
 	high: number;
 	change: number;
 };
+
+export type MarketCap = {
+	marketCap: number;
+};

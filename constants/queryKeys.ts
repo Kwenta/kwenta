@@ -15,6 +15,7 @@ export const QUERY_KEYS = {
 			currencyKey,
 			period,
 		],
+		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
 	},
 	Network: {
