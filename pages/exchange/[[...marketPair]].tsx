@@ -317,7 +317,7 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyPair, marketPairQuery, isAppReady]);
 
-	const QuoteCurrencyCard = () => (
+	const quoteCurrencyCard = (
 		<StyledCurrencyCard
 			side="quote"
 			currencyKey={quoteCurrencyKey}
@@ -337,7 +337,7 @@ const ExchangePage = () => {
 			onCurrencySelect={() => setSelectAssetModalOpen(true)}
 		/>
 	);
-	const QuotePriceChartCard = () => (
+	const quotePriceChartCard = (
 		<PriceChartCard
 			currencyKey={quoteCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
@@ -346,7 +346,8 @@ const ExchangePage = () => {
 			isSynthFrozen={isQuoteCurrencyFrozen}
 		/>
 	);
-	const QuoteMarketDetailsCard = () => (
+
+	const quoteMarketDetailsCard = (
 		<MarketDetailsCard
 			currencyKey={quoteCurrencyKey}
 			priceRate={quotePriceRate}
@@ -354,7 +355,8 @@ const ExchangePage = () => {
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
 		/>
 	);
-	const BaseCurrencyCard = () => (
+
+	const baseCurrencyCard = (
 		<StyledCurrencyCard
 			side="base"
 			currencyKey={baseCurrencyKey}
@@ -375,7 +377,7 @@ const ExchangePage = () => {
 		/>
 	);
 
-	const BasePriceChartCard = () => (
+	const basePriceChartCard = (
 		<PriceChartCard
 			currencyKey={baseCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
@@ -385,7 +387,7 @@ const ExchangePage = () => {
 		/>
 	);
 
-	const BaseMarketDetailsCard = () => (
+	const baseMarketDetailsCard = (
 		<MarketDetailsCard
 			currencyKey={baseCurrencyKey}
 			priceRate={basePriceRate}
@@ -412,24 +414,24 @@ const ExchangePage = () => {
 			<>
 				<MobileOrTabletView>
 					<Centered>
-						<QuoteCurrencyCard />
+						{quoteCurrencyCard}
 						<VerticalSpacer>
 							<SwapCurrenciesButton onClick={handleCurrencySwap}>
 								<ArrowsIcon />
 							</SwapCurrenciesButton>
 						</VerticalSpacer>
-						<BaseCurrencyCard />
+						{baseCurrencyCard}
 						<SliderContainer>
 							<Slider arrows={false} dots={true} appendDots={(dots) => <ul id="abc">{dots}</ul>}>
 								<SliderContent>
-									<QuotePriceChartCard />
+									{quotePriceChartCard}
 									<div style={{ height: '16px' }} />
-									<QuoteMarketDetailsCard />
+									{quoteMarketDetailsCard}
 								</SliderContent>
 								<SliderContent>
-									<BasePriceChartCard />
+									{basePriceChartCard}
 									<div style={{ height: '16px' }} />
-									<BaseMarketDetailsCard />
+									{baseMarketDetailsCard}
 								</SliderContent>
 							</Slider>
 						</SliderContainer>
@@ -438,9 +440,9 @@ const ExchangePage = () => {
 				<DesktopView>
 					<CardsContainer>
 						<LeftCardContainer>
-							<QuoteCurrencyCard />
-							<QuotePriceChartCard />
-							<QuoteMarketDetailsCard />
+							{quoteCurrencyCard}
+							{quotePriceChartCard}
+							{quoteMarketDetailsCard}
 						</LeftCardContainer>
 						<Spacer>
 							<SwapCurrenciesButton onClick={handleCurrencySwap}>
@@ -448,9 +450,9 @@ const ExchangePage = () => {
 							</SwapCurrenciesButton>
 						</Spacer>
 						<RightCardContainer>
-							<BaseCurrencyCard />
-							<BasePriceChartCard />
-							<BaseMarketDetailsCard />
+							{baseCurrencyCard}
+							{basePriceChartCard}
+							{baseMarketDetailsCard}
 						</RightCardContainer>
 					</CardsContainer>
 					{!isWalletConnected ? (
