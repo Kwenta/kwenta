@@ -38,11 +38,11 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
-	const marketCap = useSynthMarketCapQuery(currencyKey, priceRate, selectPriceCurrencyRate);
+	const synthMarketCap = useSynthMarketCapQuery(currencyKey, priceRate);
 
+	const marketCap = synthMarketCap.data ?? null;
 	let rates24High = historicalRates24H.data?.high ?? null;
 	let rates24Low = historicalRates24H.data?.low ?? null;
-	let marketCapUSD = marketCap.data?.marketCap ?? null;
 	let volume24H = vol24H.data ?? null;
 
 	if (selectPriceCurrencyRate != null) {
@@ -112,8 +112,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 					<Item>
 						<Label>{t('exchange.market-details-card.market-cap')}</Label>
 						<Value>
-							{marketCapUSD != null
-								? formatCurrency(selectedPriceCurrency.name, marketCapUSD, {
+							{marketCap != null
+								? formatCurrency(selectedPriceCurrency.name, marketCap, {
 										sign: selectedPriceCurrency.sign,
 								  })
 								: NO_VALUE}
