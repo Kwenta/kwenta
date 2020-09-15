@@ -168,7 +168,7 @@ const StyledBaseModal = styled(BaseModal)`
 		width: 400px;
 	}
 	.card-body {
-		height: 80vh;
+		max-height: 80vh;
 		padding: 16px 0;
 		overflow: hidden;
 	}

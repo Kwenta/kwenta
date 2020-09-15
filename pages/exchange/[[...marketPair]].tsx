@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import produce from 'immer';
+import Slider from 'react-slick';
 
 import { CurrencyKey } from 'constants/currency';
 import { GWEI_UNIT } from 'constants/network';
@@ -22,7 +23,9 @@ import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
-import TradeCard from 'sections/exchange/TradeCard';
+import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
+import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
+import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -45,6 +48,8 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
+import { DesktopView, MobileOrTabletView } from 'components/Media';
+import { zIndex } from 'constants/ui';
 
 const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
 	ssr: false,
@@ -309,6 +314,81 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyPair, marketPairQuery, isAppReady]);
 
+	const QuoteCurrencyCard = () => (
+		<StyledCurrencyCard
+			side="quote"
+			currencyKey={quoteCurrencyKey}
+			amount={quoteCurrencyAmount}
+			onAmountChange={(e) => {
+				const value = e.target.value;
+				const numValue = Number(value);
+
+				setQuoteCurrencyAmount(value);
+				setBaseCurrencyAmount(`${numValue * rate}`);
+			}}
+			walletBalance={quoteCurrencyBalance}
+			onBalanceClick={() => {
+				setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
+				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
+			}}
+			onCurrencySelect={() => setSelectAssetModalOpen(true)}
+		/>
+	);
+	const QuotePriceChartCard = () => (
+		<PriceChartCard
+			currencyKey={quoteCurrencyKey}
+			selectedPriceCurrency={selectedPriceCurrency}
+			selectPriceCurrencyRate={selectPriceCurrencyRate}
+			priceRate={quotePriceRate}
+			isSynthFrozen={isQuoteCurrencyFrozen}
+		/>
+	);
+	const QuoteMarketDetailsCard = () => (
+		<MarketDetailsCard
+			currencyKey={quoteCurrencyKey}
+			selectedPriceCurrency={selectedPriceCurrency}
+			selectPriceCurrencyRate={selectPriceCurrencyRate}
+		/>
+	);
+	const BaseCurrencyCard = () => (
+		<StyledCurrencyCard
+			side="base"
+			currencyKey={baseCurrencyKey}
+			amount={baseCurrencyAmount}
+			onAmountChange={(e) => {
+				const value = e.target.value;
+				const numValue = Number(value);
+
+				setBaseCurrencyAmount(value);
+				setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+			}}
+			walletBalance={baseCurrencyBalance}
+			onBalanceClick={() => {
+				setBaseCurrencyAmount(`${baseCurrencyBalance}`);
+				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
+			}}
+			onCurrencySelect={() => setSelectSynthModalOpen(true)}
+		/>
+	);
+
+	const BasePriceChartCard = () => (
+		<PriceChartCard
+			currencyKey={baseCurrencyKey}
+			selectedPriceCurrency={selectedPriceCurrency}
+			selectPriceCurrencyRate={selectPriceCurrencyRate}
+			priceRate={basePriceRate}
+			isSynthFrozen={isBaseCurrencyFrozen}
+		/>
+	);
+
+	const BaseMarketDetailsCard = () => (
+		<MarketDetailsCard
+			currencyKey={baseCurrencyKey}
+			selectedPriceCurrency={selectedPriceCurrency}
+			selectPriceCurrencyRate={selectPriceCurrencyRate}
+		/>
+	);
+
 	return (
 		<>
 			<Head>
@@ -325,82 +405,72 @@ const ExchangePage = () => {
 				</title>
 			</Head>
 			<>
-				<CardsContainer>
-					<LeftCardContainer>
-						<TradeCard
-							side="quote"
-							currencyKey={quoteCurrencyKey}
-							currencyAmount={quoteCurrencyAmount}
-							onAmountChange={(e) => {
-								const value = e.target.value;
-								const numValue = Number(value);
-
-								setQuoteCurrencyAmount(value);
-								setBaseCurrencyAmount(`${numValue * rate}`);
-							}}
-							walletBalance={quoteCurrencyBalance}
-							onBalanceClick={() => {
-								setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
-								setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
-							}}
-							onCurrencySelect={() => setSelectAssetModalOpen(true)}
+				<MobileOrTabletView>
+					<Centered>
+						<QuoteCurrencyCard />
+						<VerticalSpacer>
+							<SwapCurrenciesButton onClick={handleCurrencySwap}>
+								<ArrowsIcon />
+							</SwapCurrenciesButton>
+						</VerticalSpacer>
+						<BaseCurrencyCard />
+						<SliderContainer>
+							<Slider arrows={false} dots={true} appendDots={(dots) => <ul id="abc">{dots}</ul>}>
+								<SliderContent>
+									<QuotePriceChartCard />
+									<div style={{ height: '16px' }} />
+									<QuoteMarketDetailsCard />
+								</SliderContent>
+								<SliderContent>
+									<BasePriceChartCard />
+									<div style={{ height: '16px' }} />
+									<BaseMarketDetailsCard />
+								</SliderContent>
+							</Slider>
+						</SliderContainer>
+					</Centered>
+				</MobileOrTabletView>
+				<DesktopView>
+					<CardsContainer>
+						<LeftCardContainer>
+							<QuoteCurrencyCard />
+							<QuotePriceChartCard />
+							<QuoteMarketDetailsCard />
+						</LeftCardContainer>
+						<Spacer>
+							<SwapCurrenciesButton onClick={handleCurrencySwap}>
+								<ArrowsIcon />
+							</SwapCurrenciesButton>
+						</Spacer>
+						<RightCardContainer>
+							<BaseCurrencyCard />
+							<BasePriceChartCard />
+							<BaseMarketDetailsCard />
+						</RightCardContainer>
+					</CardsContainer>
+					{!isWalletConnected ? (
+						<ConnectWalletCard />
+					) : noSynths ? (
+						<NoSynthsCard />
+					) : (
+						<TradeSummaryCard
 							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
-							priceRate={quotePriceRate}
-							isSynthFrozen={isQuoteCurrencyFrozen}
+							isSubmissionDisabled={isSubmissionDisabled}
+							isSubmitting={isSubmitting}
+							onSubmit={handleSubmit}
+							totalTradePrice={totalTradePrice}
+							baseCurrencyAmount={baseCurrencyAmount}
+							basePriceRate={basePriceRate}
+							baseCurrency={baseCurrency}
+							isBaseCurrencyFrozen={isBaseCurrencyFrozen}
+							insufficientBalance={insufficientBalance}
+							selectedBothSides={selectedBothSides}
+							isBaseCurrencySuspended={isBaseCurrencySuspended}
+							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
 						/>
-					</LeftCardContainer>
-					<Spacer>
-						<SwapCurrenciesButton onClick={handleCurrencySwap}>
-							<ArrowsIcon />
-						</SwapCurrenciesButton>
-					</Spacer>
-					<RightCardContainer>
-						<TradeCard
-							side="base"
-							currencyKey={baseCurrencyKey}
-							currencyAmount={baseCurrencyAmount}
-							onAmountChange={(e) => {
-								const value = e.target.value;
-								const numValue = Number(value);
+					)}
+				</DesktopView>
 
-								setBaseCurrencyAmount(value);
-								setQuoteCurrencyAmount(`${numValue * inverseRate}`);
-							}}
-							walletBalance={baseCurrencyBalance}
-							onBalanceClick={() => {
-								setBaseCurrencyAmount(`${baseCurrencyBalance}`);
-								setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
-							}}
-							onCurrencySelect={() => setSelectSynthModalOpen(true)}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
-							priceRate={basePriceRate}
-							isSynthFrozen={isBaseCurrencyFrozen}
-						/>
-					</RightCardContainer>
-				</CardsContainer>
-				{!isWalletConnected ? (
-					<ConnectWalletCard />
-				) : noSynths ? (
-					<NoSynthsCard />
-				) : (
-					<TradeSummaryCard
-						selectedPriceCurrency={selectedPriceCurrency}
-						isSubmissionDisabled={isSubmissionDisabled}
-						isSubmitting={isSubmitting}
-						onSubmit={handleSubmit}
-						totalTradePrice={totalTradePrice}
-						baseCurrencyAmount={baseCurrencyAmount}
-						basePriceRate={basePriceRate}
-						baseCurrency={baseCurrency}
-						isBaseCurrencyFrozen={isBaseCurrencyFrozen}
-						insufficientBalance={insufficientBalance}
-						selectedBothSides={selectedBothSides}
-						isBaseCurrencySuspended={isBaseCurrencySuspended}
-						isQuoteCurrencySuspended={isQuoteCurrencySuspended}
-					/>
-				)}
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}
@@ -460,12 +530,6 @@ const CardsContainer = styled(FlexDivCentered)`
 	`}
 `;
 
-const Spacer = styled.div`
-	padding: 0 16px;
-	align-self: flex-start;
-	margin-top: 43px;
-`;
-
 const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
 	background-color: ${(props) => props.theme.colors.elderberry};
@@ -476,6 +540,13 @@ const SwapCurrenciesButton = styled.button`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	z-index: ${zIndex.BASE};
+`;
+
+const Spacer = styled.div`
+	padding: 0 16px;
+	align-self: flex-start;
+	margin-top: 43px;
 `;
 
 const CardContainerMixin = `
@@ -493,5 +564,50 @@ const RightCardContainer = styled.div`
 	${CardContainerMixin};
 	justify-items: left;
 `;
+
+const Centered = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	> * {
+		max-width: 364px;
+	}
+`;
+
+const VerticalSpacer = styled.div`
+	height: 2px;
+	position: relative;
+	${SwapCurrenciesButton} {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		border: 2px solid ${(props) => props.theme.colors.black};
+	}
+`;
+
+const StyledCurrencyCard = styled(CurrencyCard)`
+	width: 312px;
+	${media.lessThan('medium')`
+		width: 100%;
+	`}
+`;
+
+const SliderContainer = styled.div`
+	padding: 16px 0;
+	.slick-dots {
+		button:before {
+			color: white;
+		}
+		.slick-active {
+			button:before {
+				color: white;
+			}
+		}
+	}
+	* {
+		outline: none;
+	}
+`;
+
+const SliderContent = styled.div``;
 
 export default ExchangePage;

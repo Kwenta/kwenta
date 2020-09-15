@@ -29,6 +29,7 @@ type CurrencyCardProps = {
 	walletBalance: number | null;
 	onBalanceClick: () => void | undefined;
 	onCurrencySelect: () => void;
+	className?: string;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
@@ -50,7 +51,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 		!isBase && hasWalletBalance ? Number(amount) > Number(walletBalance) : false;
 
 	return (
-		<StyledCard {...rest}>
+		<Card {...rest}>
 			<Card.Body>
 				<LabelContainer>
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
@@ -79,13 +80,9 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</WalletBalance>
 				</WalletBalanceContainer>
 			</Card.Body>
-		</StyledCard>
+		</Card>
 	);
 };
-
-const StyledCard = styled(Card)`
-	width: 312px;
-`;
 
 const LabelContainer = styled.div`
 	padding-bottom: 13px;

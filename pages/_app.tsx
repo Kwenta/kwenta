@@ -8,6 +8,8 @@ import { ThemeProvider } from 'styled-components';
 import WithStateContainers from 'containers';
 import theme from 'styles/theme';
 
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
 
 import '../i18n';
