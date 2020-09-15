@@ -588,7 +588,7 @@ const VerticalSpacer = styled.div`
 	position: relative;
 	${SwapCurrenciesButton} {
 		position: absolute;
-		transform: translate(-50%, -50%), rotate(90deg);
+		transform: translate(-50%, -50%) rotate(90deg);
 		border: 2px solid ${(props) => props.theme.colors.black};
 	}
 `;
