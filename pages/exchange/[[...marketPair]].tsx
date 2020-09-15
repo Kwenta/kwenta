@@ -346,6 +346,7 @@ const ExchangePage = () => {
 	const QuoteMarketDetailsCard = () => (
 		<MarketDetailsCard
 			currencyKey={quoteCurrencyKey}
+			priceRate={quotePriceRate}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
 		/>
@@ -384,6 +385,7 @@ const ExchangePage = () => {
 	const BaseMarketDetailsCard = () => (
 		<MarketDetailsCard
 			currencyKey={baseCurrencyKey}
+			priceRate={basePriceRate}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
 		/>

@@ -22,12 +22,14 @@ import Etherscan from 'containers/Etherscan';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
+	priceRate: number | null;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	currencyKey,
+	priceRate,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 }) => {
@@ -36,7 +38,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
-	const marketCap = useSynthMarketCapQuery(currencyKey, selectPriceCurrencyRate);
+	const marketCap = useSynthMarketCapQuery(currencyKey, priceRate, selectPriceCurrencyRate);
 
 	let rates24High = historicalRates24H.data?.high ?? null;
 	let rates24Low = historicalRates24H.data?.low ?? null;

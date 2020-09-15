@@ -1,35 +1,44 @@
 import { BaseQueryOptions, useQuery } from 'react-query';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { MarketCap } from './types';
-import { CurrencyKey } from 'constants/currency';
-import synthetix from 'lib/synthetix';
 import { ethers } from 'ethers';
+import synthetix from 'lib/synthetix';
+
+import { CurrencyKey } from 'constants/currency';
+import QUERY_KEYS from 'constants/queryKeys';
+
+import { synthToContractName } from 'utils/currencies';
+
+import { MarketCap } from './types';
 
 const useSynthMarketCapQuery = (
 	currencyKey: CurrencyKey | null,
+	priceRate: number | null,
 	selectPriceCurrencyRate: number | null,
 	options?: BaseQueryOptions
 ) => {
 	return useQuery<MarketCap, any>(
 		QUERY_KEYS.Rates.MarketCap(currencyKey as string),
 		async () => {
-			const currencyKeyToContract = `Synth${currencyKey}`;
+			let marketCap = 0;
+			if (priceRate && selectPriceCurrencyRate && currencyKey) {
+				const totalSupply = Number(
+					ethers.utils.formatEther(
+						await synthetix.js!.contracts[synthToContractName(currencyKey)].totalSupply()
+					)
+				);
 
-			const totalSupply = Number(
-				ethers.utils.formatEther(await synthetix.js!.contracts[currencyKeyToContract].totalSupply())
-			);
+				marketCap = totalSupply * (priceRate / selectPriceCurrencyRate);
 
-			const priceRate = selectPriceCurrencyRate ?? 0;
-
-			const marketCap = totalSupply * priceRate;
-
-			return {
-				marketCap,
-			};
+				return {
+					marketCap,
+				};
+			} else {
+				return {
+					marketCap,
+				};
+			}
 		},
 		{
-			enabled: currencyKey && selectPriceCurrencyRate,
+			enabled: currencyKey && selectPriceCurrencyRate && priceRate,
 			...options,
 		}
 	);
