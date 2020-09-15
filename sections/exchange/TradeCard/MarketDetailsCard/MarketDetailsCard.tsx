@@ -15,18 +15,21 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
 
 import synthetix, { Synth } from 'lib/synthetix';
 import Etherscan from 'containers/Etherscan';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
+	priceRate: number | null;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	currencyKey,
+	priceRate,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 }) => {
@@ -35,12 +38,12 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const marketCap = useSynthMarketCapQuery(currencyKey, priceRate, selectPriceCurrencyRate);
 
 	let rates24High = historicalRates24H.data?.high ?? null;
 	let rates24Low = historicalRates24H.data?.low ?? null;
+	let marketCapUSD = marketCap.data?.marketCap ?? null;
 	let volume24H = vol24H.data ?? null;
-
-	const marketCapUSD = null;
 
 	if (selectPriceCurrencyRate != null) {
 		if (rates24High) {
