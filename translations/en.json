@@ -103,7 +103,7 @@
 			},
 			"search": {
 				"placeholder": "search synths",
-				"empty-results": "No results found. Please try again"
+				"empty-results": "No results found. Please try again."
 			}
 		},
 		"select-asset": {

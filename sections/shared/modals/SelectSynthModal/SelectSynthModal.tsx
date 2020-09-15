@@ -13,7 +13,7 @@ import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { SelectableCurrencyRow } from 'styles/common';
+import { FlexDivCentered, SelectableCurrencyRow } from 'styles/common';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
@@ -204,11 +204,9 @@ const CategoryButton = styled(Button)`
 	text-transform: uppercase;
 `;
 
-const EmptyDisplay = styled.div`
-	display: flex;
-	align-items: center;
+const EmptyDisplay = styled(FlexDivCentered)`
 	justify-content: center;
-	font-size: 16px;
+	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: center;
 	margin: 24px 0px;
