@@ -86,8 +86,8 @@
 		},
 		"no-synths-card": {
 			"convert": "Convert",
-			"title":"Learn How it Works",
-			"subtitle":"Get up and running on Kwenta and exchange everything.",
+			"title": "Learn How it Works",
+			"subtitle": "Get up and running on Kwenta and exchange everything.",
 			"learnMore": "Learn More"
 		},
 		"your-profile": {
@@ -189,6 +189,10 @@
 			"1D": "1D",
 			"1W": "1W",
 			"1M": "1M"
+		},
+		"transaction": {
+			"error": "An unexpected error occurred.",
+			"reattempt": "Try again?"
 		},
 		"price": "price",
 		"cancel": "cancel",

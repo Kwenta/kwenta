@@ -2,7 +2,12 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivRowCentered, numericValueCSS, NoTextTransform } from 'styles/common';
+import {
+	FlexDivRowCentered,
+	numericValueCSS,
+	NoTextTransform,
+	FlexDivColCentered,
+} from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -13,9 +18,12 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { Synth } from 'lib/synthetix';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
+	txError: boolean;
+	attemptRetry: () => void;
 	baseCurrencyKey: CurrencyKey;
 	baseCurrencyAmount: string;
 	quoteCurrencyKey: CurrencyKey;
@@ -26,6 +34,8 @@ type TxConfirmationModalProps = {
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	onDismiss,
+	txError,
+	attemptRetry,
 	baseCurrencyKey,
 	quoteCurrencyKey,
 	baseCurrencyAmount,
@@ -93,6 +103,12 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					</SummaryItemValue>
 				</SummaryItem>
 			</Summary>
+			{txError && (
+				<Actions>
+					<Message>{t('common.transaction.error')}</Message>
+					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
+				</Actions>
+			)}
 		</StyledBaseModal>
 	);
 };
@@ -149,6 +165,19 @@ const SummaryItemLabel = styled.div``;
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	${numericValueCSS};
+`;
+
+const Actions = styled(FlexDivColCentered)`
+	margin: 8px 0px;
+`;
+
+const Message = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	flex-grow: 1;
+	text-align: center;
+	margin: 16px 0px;
 `;
 
 export default TxConfirmationModal;

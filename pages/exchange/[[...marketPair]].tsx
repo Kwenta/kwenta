@@ -87,6 +87,7 @@ const ExchangePage = () => {
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
+	const [txError, setTxError] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const setOrders = useSetRecoilState(ordersState);
@@ -213,6 +214,7 @@ const ExchangePage = () => {
 
 	const handleSubmit = async () => {
 		if (synthetix.js != null) {
+			setTxError(false);
 			setTxConfirmationModalOpen(true);
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
@@ -263,11 +265,12 @@ const ExchangePage = () => {
 						// synthsWalletBalancesQuery.refetch();
 					}
 				}
+				setTxConfirmationModalOpen(false);
 			} catch (e) {
 				console.log(e);
+				setTxError(true);
 			} finally {
 				setIsSubmitting(false);
-				setTxConfirmationModalOpen(false);
 			}
 		}
 	};
@@ -476,6 +479,8 @@ const ExchangePage = () => {
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}
+						txError={txError}
+						attemptRetry={handleSubmit}
 						baseCurrencyAmount={baseCurrencyAmount}
 						quoteCurrencyAmount={quoteCurrencyAmount}
 						baseCurrencyKey={baseCurrencyKey!}
