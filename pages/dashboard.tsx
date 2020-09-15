@@ -92,6 +92,57 @@ const SynthBalanceRow = styled(FlexDivRow)`
 	align-items: center;
 `;
 
+const Transactions = () => {
+	const synthSortList = [{ label: 'All Synths', key: 'ALL_SYNTHS' }];
+	const [synthSort, setSynthSort] = useState(synthSortList[0]);
+
+	const orderTypeList = [{ label: 'All Order Types', key: 'ALL_ORDER_TYPES' }];
+	const [orderType, setOrderType] = useState(orderTypeList[0]);
+
+	const orderSizeList = [{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' }];
+	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
+
+	return (
+		<FlexDivRow>
+			<TransactionSelect
+				formatOptionLabel={(option: any) => <span>{option.label}</span>}
+				options={synthSortList}
+				value={synthSort}
+				onChange={(option: any) => {
+					if (option) {
+						setSynthSort(option);
+					}
+				}}
+			/>
+			<TransactionSelect
+				formatOptionLabel={(option: any) => <span>{option.label}</span>}
+				options={orderTypeList}
+				value={orderType}
+				onChange={(option: any) => {
+					if (option) {
+						setOrderType(option);
+					}
+				}}
+			/>
+			<TransactionSelect
+				formatOptionLabel={(option: any) => <span>{option.label}</span>}
+				options={orderSizeList}
+				value={orderSize}
+				onChange={(option: any) => {
+					if (option) {
+						setOrderSize(option);
+					}
+				}}
+			/>
+		</FlexDivRow>
+	);
+};
+
+const TransactionSelect = styled(Select)`
+	width: 33%;
+	max-width: 217px;
+`;
+
 const DashboardPage = () => {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
@@ -168,7 +219,7 @@ const DashboardPage = () => {
 									<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
 								</TabPanel>
 								<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
-									<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+									<Transactions />
 								</TabPanel>
 							</FlexDivCol>
 						</DashboardLeftCol>
