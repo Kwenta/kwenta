@@ -474,6 +474,7 @@ const ExchangePage = () => {
 							selectedBothSides={selectedBothSides}
 							isBaseCurrencySuspended={isBaseCurrencySuspended}
 							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
+							gasPrice={ethGasStationQuery.data}
 						/>
 					)}
 				</DesktopView>

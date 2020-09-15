@@ -6,6 +6,8 @@ import get from 'lodash/get';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
+import { GasSpeed } from 'queries/network/useGasStationQuery';
+
 import { NO_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
@@ -30,6 +32,7 @@ type TradeSummaryCardProps = {
 	isBaseCurrencyFrozen: boolean;
 	isQuoteCurrencySuspended: boolean;
 	isBaseCurrencySuspended: boolean;
+	gasPrice: GasSpeed | undefined;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -46,6 +49,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	isBaseCurrencyFrozen,
 	isQuoteCurrencySuspended,
 	isBaseCurrencySuspended,
+	gasPrice,
 }) => {
 	const { t } = useTranslation();
 
@@ -87,8 +91,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 		<RoundedContainer>
 			<SummaryItems>
 				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.summary-info.slippage')}</SummaryItemLabel>
-					<SummaryItemValue>{NO_VALUE}</SummaryItemValue>
+					<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
+					<SummaryItemValue>
+						{gasPrice != null
+							? t('exchange.summary-info.price-in-gwei', { price: gasPrice.average })
+							: NO_VALUE}
+					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
 					<SummaryItemLabel>

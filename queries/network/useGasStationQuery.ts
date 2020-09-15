@@ -20,7 +20,7 @@ type EthGasStationResponse = {
 	speed: number;
 };
 
-type GasSpeed = {
+export type GasSpeed = {
 	fast: number;
 	average: number;
 	slow: number;
