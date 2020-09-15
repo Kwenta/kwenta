@@ -109,7 +109,8 @@
 				"all-synths": "all synths"
 			},
 			"search": {
-				"placeholder": "search synths"
+				"placeholder": "search synths",
+				"empty-results": "No results found. Please try again."
 			}
 		},
 		"select-asset": {
