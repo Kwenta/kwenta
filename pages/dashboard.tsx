@@ -228,8 +228,8 @@ const DashboardPage = () => {
 				<RightContainer>
 					<FlexDivRow>
 						<CardTitle>{t('dashboard.trending')}</CardTitle>
-						<Select
-							formatOptionLabel={(option) => <span>{option.label}</span>}
+						<TrendingSortSelect
+							formatOptionLabel={(option: any) => <span>{option.label}</span>}
 							options={SYNTH_SORT_OPTIONS}
 							value={currentSynthSort}
 							onChange={(option: any) => {
@@ -269,6 +269,10 @@ const DashboardPage = () => {
 	);
 };
 
+const TrendingSortSelect = styled(Select)`
+	width: 30%;
+`;
+
 const ComingSoon = styled.div`
 	${fonts.data.large}
 	color: ${(props) => props.theme.colors.white};
@@ -298,22 +302,21 @@ const CardTitle = styled.div`
 
 const Container = styled(FlexDiv)`
 	justify-content: space-between;
-	align-items: start;
 	width: 100%;
 	flex-grow: 1;
 `;
 
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 1000px;
 	padding-bottom: 48px;
 	margin: 0px 75px;
+	padding-top: 55px;
 `;
 
 const RightContainer = styled(FlexDivCol)`
 	width: 356px;
 	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 0px 32px 48px 32px;
+	padding: 55px 32px 48px 32px;
 `;
 
 const NoSynthTitle = styled.div`

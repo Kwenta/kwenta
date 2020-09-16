@@ -33,7 +33,7 @@ const FullScreenContainer = styled(FlexDiv)`
 `;
 
 const PageContainer = styled.div`
-	padding: 0 14px;
+	padding-left: 14px;
 `;
 
 const Content = styled.section`

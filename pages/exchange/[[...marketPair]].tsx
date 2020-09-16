@@ -531,7 +531,7 @@ const ExchangePage = () => {
 
 const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
-	padding: 0 60px 24px 60px;
+	padding: 55px 60px 24px 60px;
 	${media.lessThan('xl')`
 		padding: 0 0 24px 0;
 	`}

@@ -10,23 +10,32 @@ import { DesktopView } from 'components/Media';
 
 const Header: FC = () => {
 	return (
-		<Container>
-			<LogoNav>
-				<Logo />
-				<DesktopView>
-					<Nav />
-				</DesktopView>
-			</LogoNav>
-			<UserMenu />
-		</Container>
+		<FixedPosition>
+			<Container>
+				<LogoNav>
+					<Logo />
+					<DesktopView>
+						<Nav />
+					</DesktopView>
+				</LogoNav>
+				<UserMenu />
+			</Container>
+		</FixedPosition>
 	);
 };
+
+const FixedPosition = styled.div`
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+`;
 
 const Container = styled.header`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-bottom: 40px;
+	padding-right: 30px;
 `;
 
 const LogoNav = styled(GridDivCenteredCol)`
