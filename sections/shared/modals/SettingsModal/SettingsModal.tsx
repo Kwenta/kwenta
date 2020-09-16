@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
 
@@ -15,6 +15,8 @@ import { networkState } from 'store/wallet';
 
 import { MenuModal } from '../common';
 
+import { usePersistedRecoilState } from 'hooks/usePersistedRecoilState';
+
 type SettingsModalProps = {
 	onDismiss: () => void;
 };
@@ -22,7 +24,7 @@ type SettingsModalProps = {
 export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const network = useRecoilValue(networkState);
-	const [priceCurrency, setPriceCurrency] = useRecoilState(priceCurrencyState);
+	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
 
 	const currencyOptions = useMemo(() => {
 		if (network != null && synthetix.synthsMap != null) {
