@@ -29,6 +29,9 @@ import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import SelectSynthModal from 'sections/shared/modals/SelectSynthModal';
+import SelectAssetModal from 'sections/shared/modals/SelectAssetModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
 
@@ -50,18 +53,6 @@ import { ordersState } from 'store/orders';
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopView, MobileOrTabletView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-
-const TxConfirmationModal = dynamic(() => import('sections/shared/modals/TxConfirmationModal'), {
-	ssr: false,
-});
-
-const SelectSynthModal = dynamic(() => import('sections/shared/modals/SelectSynthModal'), {
-	ssr: false,
-});
-
-const SelectAssetModal = dynamic(() => import('sections/shared/modals/SelectAssetModal'), {
-	ssr: false,
-});
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
