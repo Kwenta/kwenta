@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import dynamic from 'next/dynamic';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
@@ -53,6 +52,7 @@ import { ordersState } from 'store/orders';
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopView, MobileOrTabletView } from 'components/Media';
 import { zIndex } from 'constants/ui';
+import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -90,6 +90,11 @@ const ExchangePage = () => {
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, {
+		refetchInterval: false,
+	});
+
+	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
 	useEffect(() => {
 		if (synthExchange$ && walletAddress) {
@@ -178,7 +183,8 @@ const ExchangePage = () => {
 		!isWalletConnected ||
 		isBaseCurrencyFrozen ||
 		isSubmitting ||
-		insufficientBalance;
+		insufficientBalance ||
+		feeReclaimPeriodInSeconds > 0;
 
 	const noSynths =
 		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
@@ -441,6 +447,7 @@ const ExchangePage = () => {
 							isBaseCurrencySuspended={isBaseCurrencySuspended}
 							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
 							gasPrice={ethGasStationQuery.data}
+							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 						/>
 					)}
 				</DesktopView>

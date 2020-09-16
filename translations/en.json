@@ -51,6 +51,7 @@
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
+				"fee-reclaim-period": "fee reclaim period",
 				"market-is-closed": "market is closed",
 				"insufficient-balance": "insufficient balance",
 				"synth-is-frozen": "synth is frozen",

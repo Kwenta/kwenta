@@ -33,6 +33,7 @@ type TradeSummaryCardProps = {
 	isQuoteCurrencySuspended: boolean;
 	isBaseCurrencySuspended: boolean;
 	gasPrice: GasSpeed | undefined;
+	feeReclaimPeriodInSeconds: number;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -50,6 +51,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	isQuoteCurrencySuspended,
 	isBaseCurrencySuspended,
 	gasPrice,
+	feeReclaimPeriodInSeconds,
 }) => {
 	const { t } = useTranslation();
 
@@ -64,6 +66,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	function getButtonLabel() {
 		if (isSubmissionDisabled) {
 			// figure out the reason
+			if (feeReclaimPeriodInSeconds) {
+				return t('exchange.summary-info.button.fee-reclaim-period');
+			}
 			if (isQuoteCurrencySuspended || isBaseCurrencySuspended) {
 				// TODO: use the reason code to determine the real cause, for now just use market closure
 				return t('exchange.summary-info.button.market-is-closed');
