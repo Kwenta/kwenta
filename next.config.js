@@ -32,13 +32,4 @@ module.exports = withPlugins([...plugins], {
 		PORTIS_APP_ID: '26e198be-a8bb-4240-ad78-ae88579085bc',
 		ETHERSCAN_API_KEY: 'FXYZ4J7EFMQUGE66BXDEF97S9T2YQWU5P6',
 	},
-	async redirects() {
-		return [
-		  {
-			source: '/',
-			destination: '/exchange',
-			permanent: true,
-		  },
-		]
-	  },
 });
