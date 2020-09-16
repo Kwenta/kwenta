@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 
 import { ThemeProvider } from 'styled-components';
+import { MediaContextProvider } from 'styles/media';
 
 import WithStateContainers from 'containers';
 import theme from 'styles/theme';
@@ -42,9 +43,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
 					<WithStateContainers>
-						<Layout>
-							<Component {...pageProps} />
-						</Layout>
+						<MediaContextProvider>
+							<Layout>
+								<Component {...pageProps} />
+							</Layout>
+						</MediaContextProvider>
 					</WithStateContainers>
 				</RecoilRoot>
 			</ThemeProvider>

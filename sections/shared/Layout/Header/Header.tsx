@@ -6,13 +6,16 @@ import Nav from './Nav';
 import UserMenu from './UserInfo';
 
 import { GridDivCenteredCol } from 'styles/common';
+import { DesktopView } from 'components/Media';
 
 const Header: FC = () => {
 	return (
 		<Container>
 			<LogoNav>
 				<Logo />
-				<Nav />
+				<DesktopView>
+					<Nav />
+				</DesktopView>
 			</LogoNav>
 			<UserMenu />
 		</Container>

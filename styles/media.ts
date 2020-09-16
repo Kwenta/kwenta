@@ -1,17 +1,27 @@
 import { generateMedia } from 'styled-media-query';
+import { createMedia } from '@artsy/fresnel';
 
 export const breakpoints = {
-	small: 480,
-	medium: 768,
-	large: 1150,
-	extraLarge: 1300,
+	xs: 0,
+	sm: 480,
+	md: 768,
+	lg: 1150,
+	xl: 1300,
 };
 
-export const media = generateMedia({
-	small: `${breakpoints.small}px`,
-	medium: `${breakpoints.medium}px`,
-	large: `${breakpoints.large}px`,
-	extraLarge: `${breakpoints.extraLarge}px`,
+const AppMedia = createMedia({
+	breakpoints,
 });
 
-export default media;
+export const scMedia = generateMedia({
+	sm: `${breakpoints.sm}px`,
+	md: `${breakpoints.md}px`,
+	lg: `${breakpoints.lg}px`,
+	xl: `${breakpoints.xl}px`,
+});
+
+export const mediaStyles = AppMedia.createMediaStyle();
+
+export const { Media, MediaContextProvider } = AppMedia;
+
+export default scMedia;

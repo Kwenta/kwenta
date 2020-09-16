@@ -37,6 +37,7 @@ type ChartCardProps = {
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 	isSynthFrozen: boolean;
+	className?: string;
 };
 
 const ChartCard: FC<ChartCardProps> = ({
@@ -45,6 +46,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 	isSynthFrozen,
+	...rest
 }) => {
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const theme = useContext(ThemeContext);
@@ -95,7 +97,7 @@ const ChartCard: FC<ChartCardProps> = ({
 		) : null;
 
 	return (
-		<Container>
+		<Container {...rest}>
 			<ChartHeader>
 				<FlexDivRowCentered>
 					{currencyKey != null ? (

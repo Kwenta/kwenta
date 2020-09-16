@@ -43,7 +43,7 @@ import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
 
-import { FlexDivCentered, resetButtonCSS } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, resetButtonCSS } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
@@ -338,7 +338,7 @@ const ExchangePage = () => {
 		/>
 	);
 	const quotePriceChartCard = (
-		<PriceChartCard
+		<StyledPriceChartCard
 			currencyKey={quoteCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
@@ -348,7 +348,7 @@ const ExchangePage = () => {
 	);
 
 	const quoteMarketDetailsCard = (
-		<MarketDetailsCard
+		<StyledMarketDetailsCard
 			currencyKey={quoteCurrencyKey}
 			priceRate={quotePriceRate}
 			selectedPriceCurrency={selectedPriceCurrency}
@@ -378,7 +378,7 @@ const ExchangePage = () => {
 	);
 
 	const basePriceChartCard = (
-		<PriceChartCard
+		<StyledPriceChartCard
 			currencyKey={baseCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
@@ -388,7 +388,7 @@ const ExchangePage = () => {
 	);
 
 	const baseMarketDetailsCard = (
-		<MarketDetailsCard
+		<StyledMarketDetailsCard
 			currencyKey={baseCurrencyKey}
 			priceRate={basePriceRate}
 			selectedPriceCurrency={selectedPriceCurrency}
@@ -412,33 +412,8 @@ const ExchangePage = () => {
 				</title>
 			</Head>
 			<>
-				<MobileOrTabletView>
-					<Centered>
-						{quoteCurrencyCard}
-						<VerticalSpacer>
-							<SwapCurrenciesButton onClick={handleCurrencySwap}>
-								<ArrowsIcon />
-							</SwapCurrenciesButton>
-						</VerticalSpacer>
-						{baseCurrencyCard}
-						<SliderContainer>
-							<Slider arrows={false} dots={true} appendDots={(dots) => <ul id="abc">{dots}</ul>}>
-								<SliderContent>
-									{quotePriceChartCard}
-									<div style={{ height: '16px' }} />
-									{quoteMarketDetailsCard}
-								</SliderContent>
-								<SliderContent>
-									{basePriceChartCard}
-									<div style={{ height: '16px' }} />
-									{baseMarketDetailsCard}
-								</SliderContent>
-							</Slider>
-						</SliderContainer>
-					</Centered>
-				</MobileOrTabletView>
 				<DesktopView>
-					<CardsContainer>
+					<DesktopCardsContainer>
 						<LeftCardContainer>
 							{quoteCurrencyCard}
 							{quotePriceChartCard}
@@ -454,7 +429,7 @@ const ExchangePage = () => {
 							{basePriceChartCard}
 							{baseMarketDetailsCard}
 						</RightCardContainer>
-					</CardsContainer>
+					</DesktopCardsContainer>
 					{!isWalletConnected ? (
 						<ConnectWalletCard />
 					) : noSynths ? (
@@ -478,7 +453,31 @@ const ExchangePage = () => {
 						/>
 					)}
 				</DesktopView>
-
+				<MobileOrTabletView>
+					<MobileContainer>
+						{quoteCurrencyCard}
+						<VerticalSpacer>
+							<SwapCurrenciesButton onClick={handleCurrencySwap}>
+								<ArrowsIcon />
+							</SwapCurrenciesButton>
+						</VerticalSpacer>
+						{baseCurrencyCard}
+						<SliderContainer>
+							<Slider arrows={false} dots={true} appendDots={(dots) => <ul id="abc">{dots}</ul>}>
+								<SliderContent>
+									{quotePriceChartCard}
+									<div style={{ height: '16px' }} />
+									{quoteMarketDetailsCard}
+								</SliderContent>
+								<SliderContent>
+									{basePriceChartCard}
+									<div style={{ height: '16px' }} />
+									{baseMarketDetailsCard}
+								</SliderContent>
+							</Slider>
+						</SliderContainer>
+					</MobileContainer>
+				</MobileOrTabletView>
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}
@@ -532,10 +531,10 @@ const ExchangePage = () => {
 	);
 };
 
-const CardsContainer = styled(FlexDivCentered)`
+const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
 	padding: 0 60px 24px 60px;
-	${media.lessThan('extraLarge')`
+	${media.lessThan('xl')`
 		padding: 0 0 24px 0;
 	`}
 `;
@@ -575,13 +574,9 @@ const RightCardContainer = styled.div`
 	justify-items: left;
 `;
 
-const Centered = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	> * {
-		max-width: 364px;
-	}
+const MobileContainer = styled(FlexDivColCentered)`
+	max-width: 364px;
+	margin: 0 auto;
 `;
 
 const VerticalSpacer = styled.div`
@@ -596,13 +591,21 @@ const VerticalSpacer = styled.div`
 
 const StyledCurrencyCard = styled(CurrencyCard)`
 	width: 312px;
-	${media.lessThan('medium')`
+	${media.lessThan('md')`
 		width: 100%;
 	`}
 `;
 
+const StyledMarketDetailsCard = styled(MarketDetailsCard)`
+	max-width: 618px;
+	width: 100%;
+`;
+
+const StyledPriceChartCard = styled(PriceChartCard)``;
+
 const SliderContainer = styled.div`
 	padding: 16px 0;
+	width: 100%;
 	.slick-dots {
 		button:before {
 			color: white;

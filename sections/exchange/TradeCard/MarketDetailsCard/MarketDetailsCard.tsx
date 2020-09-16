@@ -27,6 +27,7 @@ type MarketDetailsCardProps = {
 	priceRate: number | null;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
+	className?: string;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
@@ -34,6 +35,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	priceRate,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
+	...rest
 }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
@@ -155,17 +157,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	);
 
 	return (
-		<StyledCard>
+		<Card {...rest}>
 			<Card.Header>{t('exchange.market-details-card.title')}</Card.Header>
-			<StyledCardBody>
-				<MobileOrTabletView>
-					<Column>
-						{volume24HItem}
-						{rates24HighItem}
-						{rates24HLowItem}
-					</Column>
-				</MobileOrTabletView>
-				<DesktopView>
+			<DesktopView>
+				<StyledCardBody>
 					<Column>
 						{volume24HItem}
 						{rates24HighItem}
@@ -176,16 +171,20 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						{rates24HLowItem}
 						{priceFeedItem}
 					</Column>
-				</DesktopView>
-			</StyledCardBody>
-		</StyledCard>
+				</StyledCardBody>
+			</DesktopView>
+			<MobileOrTabletView>
+				<StyledCardBody>
+					<Column>
+						{volume24HItem}
+						{rates24HighItem}
+						{rates24HLowItem}
+					</Column>
+				</StyledCardBody>
+			</MobileOrTabletView>
+		</Card>
 	);
 };
-
-const StyledCard = styled(Card)`
-	max-width: 618px;
-	width: 100%;
-`;
 
 const StyledCardBody = styled(Card.Body)`
 	display: grid;
