@@ -25,7 +25,7 @@ const Header: FC = () => {
 };
 
 const FixedPosition = styled.div`
-	position: fixed;
+	position: absolute;
 	top: 0;
 	width: 100%;
 	z-index: 1;
