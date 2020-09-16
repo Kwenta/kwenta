@@ -6,6 +6,7 @@ import Cross from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';
+import { zIndex } from 'constants/ui';
 
 type BaseModalProps = {
 	title: ReactNode;
@@ -13,7 +14,6 @@ type BaseModalProps = {
 	onDismiss: () => void;
 	children: ReactNode;
 	showCross?: boolean;
-	isFullScreen?: boolean;
 };
 
 export const BaseModal: FC<BaseModalProps> = ({
@@ -41,9 +41,9 @@ export const BaseModal: FC<BaseModalProps> = ({
 	</StyledDialogOverlay>
 );
 
-const StyledDialogOverlay = styled(DialogOverlay)<{ isFullScreen?: boolean }>`
-	background: ${(props) =>
-		props.isFullScreen ? props.theme.colors.black : 'hsla(0, 0%, 0%, 0.8)'};
+const StyledDialogOverlay = styled(DialogOverlay)`
+	z-index: ${zIndex.DIALOG_OVERLAY};
+	background: hsla(0, 0%, 0%, 0.8);
 `;
 
 const StyledDialogContent = styled(DialogContent)`
