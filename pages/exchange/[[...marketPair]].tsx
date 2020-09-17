@@ -461,7 +461,7 @@ const ExchangePage = () => {
 						</VerticalSpacer>
 						{baseCurrencyCard}
 						<SliderContainer>
-							<Slider arrows={false} dots={true} appendDots={(dots) => <ul id="abc">{dots}</ul>}>
+							<Slider arrows={false} dots={false}>
 								<SliderContent>
 									{quotePriceChartCard}
 									<div style={{ height: '16px' }} />

@@ -83,7 +83,7 @@ const StyledCardBody = styled(Card.Body)`
 const DismissButton = styled.button`
 	${resetButtonCSS};
 	position: absolute;
-	right: 16px;
+	right: 20px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 

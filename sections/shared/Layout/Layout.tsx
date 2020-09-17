@@ -32,13 +32,12 @@ const FullScreenContainer = styled(FlexDiv)`
 	position: relative;
 `;
 
-const PageContainer = styled.div`
-	padding: 0 20px;
-`;
+const PageContainer = styled.div``;
 
 const Content = styled.section`
 	position: relative;
 	margin: 0 auto;
+	padding: 0 20px;
 `;
 
 const GlobalStyle = createGlobalStyle`

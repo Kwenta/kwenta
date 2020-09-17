@@ -119,9 +119,7 @@ const UserInfo: FC = () => {
 	);
 };
 
-const Container = styled.div`
-	margin-top: 8px;
-`;
+const Container = styled.div``;
 
 const Menu = styled.div`
 	padding-right: 26px;

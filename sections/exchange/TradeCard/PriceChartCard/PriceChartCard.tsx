@@ -30,6 +30,7 @@ import {
 import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import media from 'styles/media';
 
 type ChartCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -291,6 +292,10 @@ const CurrencyPrice = styled.span`
 
 const Actions = styled(GridDivCenteredCol)`
 	grid-gap: 8px;
+	${media.lessThan('sm')`
+		overflow: auto;
+		width: 100px;
+	`}
 `;
 
 const ChartBody = styled.div`
