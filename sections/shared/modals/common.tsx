@@ -3,6 +3,7 @@ import { FlexDivRow } from 'styles/common';
 
 import { HEADER_HEIGHT } from 'constants/ui';
 import BaseModal from 'components/BaseModal';
+import media from 'styles/media';
 
 export const RowsContainer = styled.div`
 	overflow: auto;
@@ -21,6 +22,9 @@ export const MenuModal = styled(BaseModal)`
 		padding: 0;
 		margin-right: 12px;
 		margin-top: calc(${HEADER_HEIGHT} + 10px);
+		${media.lessThan('sm')`
+			margin: 0;
+		`}
 	}
 	.card-body {
 		padding: 24px;

@@ -13,7 +13,7 @@ const AppMedia = createMedia({
 	breakpoints,
 });
 
-export const scMedia = generateMedia({
+export const media = generateMedia({
 	sm: `${breakpoints.sm}px`,
 	md: `${breakpoints.md}px`,
 	lg: `${breakpoints.lg}px`,
@@ -24,4 +24,4 @@ export const mediaStyles = AppMedia.createMediaStyle();
 
 export const { Media, MediaContextProvider } = AppMedia;
 
-export default scMedia;
+export default media;

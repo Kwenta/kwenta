@@ -7,6 +7,7 @@ import Cross from 'assets/svg/app/cross.svg';
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';
 import { zIndex } from 'constants/ui';
+import media from 'styles/media';
 
 type BaseModalProps = {
 	title: ReactNode;
@@ -26,7 +27,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 }) => (
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
-			<Card>
+			<StyledCard className="card">
 				<StyledCardHeader className="card-header">
 					{title}
 					{showCross && (
@@ -35,8 +36,8 @@ export const BaseModal: FC<BaseModalProps> = ({
 						</DismissButton>
 					)}
 				</StyledCardHeader>
-				<Card.Body className="card-body">{children}</Card.Body>
-			</Card>
+				<StyledCardBody className="card-body">{children}</StyledCardBody>
+			</StyledCard>
 		</StyledDialogContent>
 	</StyledDialogOverlay>
 );
@@ -44,17 +45,39 @@ export const BaseModal: FC<BaseModalProps> = ({
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
 	background: hsla(0, 0%, 0%, 0.8);
+	${media.lessThan('sm')`
+		overflow: hidden;
+	`}
 `;
 
 const StyledDialogContent = styled(DialogContent)`
 	padding: 0;
 	border: 0;
 	background: none;
+	${media.lessThan('sm')`
+		&&& {		
+			width: 100%;
+			height: 100%;
+			margin: 0;
+		}
+	`}
+`;
+
+const StyledCard = styled(Card)`
+	height: 100%;
 `;
 
 const StyledCardHeader = styled(Card.Header)`
 	justify-content: center;
 	height: 45px;
+`;
+
+const StyledCardBody = styled(Card.Body)`
+	${media.lessThan('sm')`
+		&&& {
+			max-height: unset;
+		}
+	`}
 `;
 
 const DismissButton = styled.button`

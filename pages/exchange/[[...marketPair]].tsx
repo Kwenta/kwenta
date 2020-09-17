@@ -50,7 +50,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
-import { DesktopView, MobileOrTabletView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { zIndex } from 'constants/ui';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 
@@ -409,7 +409,7 @@ const ExchangePage = () => {
 				</title>
 			</Head>
 			<>
-				<DesktopView>
+				<DesktopOnlyView>
 					<DesktopCardsContainer>
 						<LeftCardContainer>
 							{quoteCurrencyCard}
@@ -450,7 +450,7 @@ const ExchangePage = () => {
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 						/>
 					)}
-				</DesktopView>
+				</DesktopOnlyView>
 				<MobileOrTabletView>
 					<MobileContainer>
 						{quoteCurrencyCard}
@@ -533,7 +533,7 @@ const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
 	padding: 55px 60px 24px 60px;
 	${media.lessThan('xl')`
-		padding: 0 0 24px 0;
+		padding: 55px 0 24px 0;
 	`}
 `;
 
@@ -573,6 +573,7 @@ const RightCardContainer = styled.div`
 `;
 
 const MobileContainer = styled(FlexDivColCentered)`
+	padding-top: 55px;
 	max-width: 364px;
 	margin: 0 auto;
 `;

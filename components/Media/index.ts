@@ -1,1 +1,7 @@
-export { DesktopView, MobileView, MobileOrTabletView, TabletView } from './Media';
+export {
+	DesktopOnlyView,
+	MobileOnlyView,
+	MobileOrTabletView,
+	MobileHiddenView,
+	TabletOnlyView,
+} from './Media';

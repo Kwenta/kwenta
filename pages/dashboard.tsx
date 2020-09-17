@@ -317,6 +317,7 @@ const RightContainer = styled(FlexDivCol)`
 	width: 356px;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 55px 32px 48px 32px;
+	margin-right: -20px;
 `;
 
 const NoSynthTitle = styled.div`

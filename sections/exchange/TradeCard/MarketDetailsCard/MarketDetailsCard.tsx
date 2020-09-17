@@ -5,7 +5,7 @@ import { CurrencyKey } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
-import { DesktopView, MobileOrTabletView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -159,7 +159,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	return (
 		<Card {...rest}>
 			<Card.Header>{t('exchange.market-details-card.title')}</Card.Header>
-			<DesktopView>
+			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>
 						{volume24HItem}
@@ -172,7 +172,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						{priceFeedItem}
 					</Column>
 				</StyledCardBody>
-			</DesktopView>
+			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<StyledCardBody>
 					<Column>

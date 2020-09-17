@@ -22,6 +22,7 @@ const Container = styled(FlexDivCentered)`
 	text-transform: capitalize;
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
+	flex-shrink: 0;
 `;
 
 export default CardHeader;

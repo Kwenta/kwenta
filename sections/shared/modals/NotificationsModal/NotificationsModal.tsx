@@ -39,7 +39,12 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	return isFullScreen ? (
 		<FullScreen onDismiss={onDismiss} orderGroups={orderGroups} />
 	) : (
-		<Popup onDismiss={onDismiss} orderGroups={orderGroups} setIsFullScreen={setIsFullScreen} />
+		<Popup
+			onDismiss={onDismiss}
+			orderGroups={orderGroups}
+			setIsFullScreen={setIsFullScreen}
+			ordersByStatus={ordersByStatus}
+		/>
 	);
 };
 

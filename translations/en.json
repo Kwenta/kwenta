@@ -146,11 +146,11 @@
 			"title": "notifications",
 			"open-orders": {
 				"title": "open orders",
-				"no-results": "None"
+				"no-results": "No open orders to show"
 			},
 			"recent-notifications": {
 				"title": "recent notifications",
-				"no-results": "None"
+				"no-results": "No recent transactions to show"
 			},
 			"all-notifications": {
 				"title": "all notifications",

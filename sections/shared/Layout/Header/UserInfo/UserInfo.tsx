@@ -19,7 +19,7 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
-import { DesktopView, MobileOrTabletView } from 'components/Media';
+import { MobileOnlyView, MobileHiddenView } from 'components/Media';
 
 const UserInfo: FC = () => {
 	const { t } = useTranslation();
@@ -36,7 +36,7 @@ const UserInfo: FC = () => {
 	return (
 		<>
 			<Container>
-				<DesktopView>
+				<MobileHiddenView>
 					<FlexDivCentered>
 						<Menu>
 							{isWalletConnected && (
@@ -79,8 +79,8 @@ const UserInfo: FC = () => {
 							</Button>
 						)}
 					</FlexDivCentered>
-				</DesktopView>
-				<MobileOrTabletView>
+				</MobileHiddenView>
+				<MobileOnlyView>
 					<Menu style={{ paddingRight: 0 }}>
 						{isWalletConnected && (
 							<MenuButton
@@ -106,7 +106,7 @@ const UserInfo: FC = () => {
 							<MenuIcon />
 						</MenuButton>
 					</Menu>
-				</MobileOrTabletView>
+				</MobileOnlyView>
 			</Container>
 			{walletOptionsModalOpened && (
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />

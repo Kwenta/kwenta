@@ -6,36 +6,36 @@ import Nav from './Nav';
 import UserMenu from './UserInfo';
 
 import { GridDivCenteredCol } from 'styles/common';
-import { DesktopView } from 'components/Media';
+import { MobileHiddenView } from 'components/Media';
+import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
-const Header: FC = () => {
-	return (
-		<FixedPosition>
-			<Container>
-				<LogoNav>
-					<Logo />
-					<DesktopView>
-						<Nav />
-					</DesktopView>
-				</LogoNav>
-				<UserMenu />
-			</Container>
-		</FixedPosition>
-	);
-};
+const Header: FC = () => (
+	<FixedPosition>
+		<Container>
+			<LogoNav>
+				<Logo />
+				<MobileHiddenView>
+					<Nav />
+				</MobileHiddenView>
+			</LogoNav>
+			<UserMenu />
+		</Container>
+	</FixedPosition>
+);
 
 const FixedPosition = styled.div`
 	position: absolute;
 	top: 0;
-	width: 100%;
-	z-index: 1;
+	left: 20px;
+	right: 20px;
+	z-index: ${zIndex.BASE};
 `;
 
 const Container = styled.header`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding-right: 30px;
+	height: ${HEADER_HEIGHT};
 `;
 
 const LogoNav = styled(GridDivCenteredCol)`
