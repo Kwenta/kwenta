@@ -1,14 +1,26 @@
 import Button from 'components/Button';
 import styled from 'styled-components';
 
-import { FlexDivCentered } from 'styles/common';
+import { GridDivCentered } from 'styles/common';
+import media from 'styles/media';
 
-export const RoundedContainer = styled(FlexDivCentered)`
+export const MessageContainer = styled(GridDivCentered)`
 	border-radius: 1000px;
+	grid-template-columns: 1fr auto;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 16px 32px;
 	max-width: 680px;
 	margin: 0 auto;
+	${media.lessThan('md')`
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		border-radius: 0;
+		box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};
+		justify-content: center;
+		display: flex;
+	`}
 `;
 
 export const Message = styled.div`

@@ -6,7 +6,8 @@ import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 import { NoTextTransform, ExternalLink } from 'styles/common';
 
-import { RoundedContainer, Message, MessageButton } from '../common';
+import { MessageContainer, Message, MessageButton } from '../common';
+import { DesktopOnlyView } from 'components/Media';
 
 const { sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
@@ -15,15 +16,17 @@ const NoSynthsCard: FC = () => {
 	const { t } = useTranslation();
 
 	return (
-		<RoundedContainer>
-			<Message>
-				<Trans
-					t={t}
-					i18nKey="exchange.no-synths-card.message"
-					values={{ currencyKey: sUSD }}
-					components={[<NoTextTransform />]}
-				/>
-			</Message>
+		<MessageContainer>
+			<DesktopOnlyView>
+				<Message>
+					<Trans
+						t={t}
+						i18nKey="exchange.no-synths-card.message"
+						values={{ currencyKey: sUSD }}
+						components={[<NoTextTransform />]}
+					/>
+				</Message>
+			</DesktopOnlyView>
 			<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
 				<MessageButton>
 					<Trans
@@ -34,7 +37,7 @@ const NoSynthsCard: FC = () => {
 					/>
 				</MessageButton>
 			</ExternalLink>
-		</RoundedContainer>
+		</MessageContainer>
 	);
 };
 

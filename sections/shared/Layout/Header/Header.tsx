@@ -37,7 +37,7 @@ const Container = styled.header`
 	${media.lessThan('sm')`
 		position: fixed;
 		background-color: ${(props) => props.theme.colors.black};
-		box-shadow: 0 0 16px 0 ${(props) => props.theme.colors.black};
+		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
 	`};
 `;
 

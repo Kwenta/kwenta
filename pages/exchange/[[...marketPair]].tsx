@@ -427,29 +427,6 @@ const ExchangePage = () => {
 							{baseMarketDetailsCard}
 						</RightCardContainer>
 					</DesktopCardsContainer>
-					{!isWalletConnected ? (
-						<ConnectWalletCard />
-					) : noSynths ? (
-						<NoSynthsCard />
-					) : (
-						<TradeSummaryCard
-							selectedPriceCurrency={selectedPriceCurrency}
-							isSubmissionDisabled={isSubmissionDisabled}
-							isSubmitting={isSubmitting}
-							onSubmit={handleSubmit}
-							totalTradePrice={totalTradePrice}
-							baseCurrencyAmount={baseCurrencyAmount}
-							basePriceRate={basePriceRate}
-							baseCurrency={baseCurrency}
-							isBaseCurrencyFrozen={isBaseCurrencyFrozen}
-							insufficientBalance={insufficientBalance}
-							selectedBothSides={selectedBothSides}
-							isBaseCurrencySuspended={isBaseCurrencySuspended}
-							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
-							gasPrice={ethGasStationQuery.data}
-							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-						/>
-					)}
 				</DesktopOnlyView>
 				<MobileOrTabletView>
 					<MobileContainer>
@@ -464,18 +441,43 @@ const ExchangePage = () => {
 							<Slider arrows={false} dots={false}>
 								<SliderContent>
 									{quotePriceChartCard}
-									<div style={{ height: '16px' }} />
+									<SliderContentSpacer />
 									{quoteMarketDetailsCard}
 								</SliderContent>
 								<SliderContent>
 									{basePriceChartCard}
-									<div style={{ height: '16px' }} />
+									<SliderContentSpacer />
 									{baseMarketDetailsCard}
 								</SliderContent>
 							</Slider>
 						</SliderContainer>
 					</MobileContainer>
+					<MobileFooterCardSpacer />
 				</MobileOrTabletView>
+				{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
+				{!isWalletConnected ? (
+					<ConnectWalletCard />
+				) : noSynths ? (
+					<NoSynthsCard />
+				) : (
+					<TradeSummaryCard
+						selectedPriceCurrency={selectedPriceCurrency}
+						isSubmissionDisabled={isSubmissionDisabled}
+						isSubmitting={isSubmitting}
+						onSubmit={handleSubmit}
+						totalTradePrice={totalTradePrice}
+						baseCurrencyAmount={baseCurrencyAmount}
+						basePriceRate={basePriceRate}
+						baseCurrency={baseCurrency}
+						isBaseCurrencyFrozen={isBaseCurrencyFrozen}
+						insufficientBalance={insufficientBalance}
+						selectedBothSides={selectedBothSides}
+						isBaseCurrencySuspended={isBaseCurrencySuspended}
+						isQuoteCurrencySuspended={isQuoteCurrencySuspended}
+						gasPrice={ethGasStationQuery.data}
+						feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
+					/>
+				)}
 				{txConfirmationModalOpen && (
 					<TxConfirmationModal
 						onDismiss={() => setTxConfirmationModalOpen(false)}
@@ -621,5 +623,13 @@ const SliderContainer = styled.div`
 `;
 
 const SliderContent = styled.div``;
+
+const SliderContentSpacer = styled.div`
+	height: 16px;
+`;
+
+const MobileFooterCardSpacer = styled.div`
+	height: 80px;
+`;
 
 export default ExchangePage;

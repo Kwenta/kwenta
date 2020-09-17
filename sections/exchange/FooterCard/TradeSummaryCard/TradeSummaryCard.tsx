@@ -11,12 +11,13 @@ import { GasSpeed } from 'queries/network/useGasStationQuery';
 import { NO_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
+import { DesktopOnlyView } from 'components/Media';
 
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import { NoTextTransform, numericValueCSS } from 'styles/common';
 
-import { RoundedContainer } from '../common';
+import { MessageContainer } from '../common';
 
 type TradeSummaryCardProps = {
 	selectedPriceCurrency: Synth;
@@ -93,51 +94,53 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 		return t('exchange.summary-info.button.submit-order');
 	}
 	return (
-		<RoundedContainer>
-			<SummaryItems>
-				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
-					<SummaryItemValue>
-						{gasPrice != null
-							? t('exchange.summary-info.price-in-gwei', { price: gasPrice.average })
-							: NO_VALUE}
-					</SummaryItemValue>
-				</SummaryItem>
-				<SummaryItem>
-					<SummaryItemLabel>
-						<Trans
-							i18nKey="common.currency.currency-value"
-							values={{ currencyKey: selectedPriceCurrency.asset }}
-							components={[<NoTextTransform />]}
-						/>
-					</SummaryItemLabel>
-					<SummaryItemValue>
-						{baseCurrencyAmount
-							? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-									sign: selectedPriceCurrency.sign,
-							  })
-							: NO_VALUE}
-					</SummaryItemValue>
-				</SummaryItem>
-				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-					<SummaryItemValue>
-						{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
-					</SummaryItemValue>
-				</SummaryItem>
-				<SummaryItem>
-					<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
-					<SummaryItemValue>
-						{exchangeFeeRate != null && baseCurrencyAmount
-							? formatCurrency(
-									selectedPriceCurrency.name,
-									Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
-									{ sign: selectedPriceCurrency.sign }
-							  )
-							: NO_VALUE}
-					</SummaryItemValue>
-				</SummaryItem>
-			</SummaryItems>
+		<MessageContainer>
+			<DesktopOnlyView>
+				<SummaryItems>
+					<SummaryItem>
+						<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
+						<SummaryItemValue>
+							{gasPrice != null
+								? t('exchange.summary-info.price-in-gwei', { price: gasPrice.average })
+								: NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+					<SummaryItem>
+						<SummaryItemLabel>
+							<Trans
+								i18nKey="common.currency.currency-value"
+								values={{ currencyKey: selectedPriceCurrency.asset }}
+								components={[<NoTextTransform />]}
+							/>
+						</SummaryItemLabel>
+						<SummaryItemValue>
+							{baseCurrencyAmount
+								? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+										sign: selectedPriceCurrency.sign,
+								  })
+								: NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+					<SummaryItem>
+						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+						<SummaryItemValue>
+							{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+					<SummaryItem>
+						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+						<SummaryItemValue>
+							{exchangeFeeRate != null && baseCurrencyAmount
+								? formatCurrency(
+										selectedPriceCurrency.name,
+										Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
+										{ sign: selectedPriceCurrency.sign }
+								  )
+								: NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+				</SummaryItems>
+			</DesktopOnlyView>
 			<Button
 				variant="primary"
 				isRounded={true}
@@ -147,7 +150,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 			>
 				{getButtonLabel()}
 			</Button>
-		</RoundedContainer>
+		</MessageContainer>
 	);
 };
 
