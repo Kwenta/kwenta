@@ -1,10 +1,13 @@
 import { FC } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
+import { zIndex } from 'constants/ui';
+
 import Header from './Header';
 import Footer from './Footer';
 
 import { linkCSS, FlexDiv } from 'styles/common';
+import media from 'styles/media';
 
 type LayoutProps = {
 	children: React.ReactNode;
@@ -111,7 +114,11 @@ const GlobalStyle = createGlobalStyle`
 			
 		}
 		&&.bn-onboard-modal {
+			z-index: ${zIndex.DIALOG_OVERLAY};
 			background: rgba(0, 0, 0, 0.8);
+			${media.lessThan('sm')`
+				align-items: flex-start;
+			`};
 		}
 		&&.bn-onboard-modal-content-header-icon {
 			background: none;
@@ -122,6 +129,9 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-modal-content {
 			background-color: ${(props) => props.theme.colors.elderberry};
+			${media.lessThan('sm')`
+				height: 100%;
+			`};
 		}
 		&&.bn-onboard-select-wallet-info {
 			cursor: pointer;
