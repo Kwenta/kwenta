@@ -23,7 +23,7 @@ const Header: FC = () => (
 );
 
 const Container = styled.header`
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
@@ -35,6 +35,7 @@ const Container = styled.header`
 	line-height: ${HEADER_HEIGHT};
 	padding: 0 20px;
 	${media.lessThan('sm')`
+		position: fixed;
 		background-color: ${(props) => props.theme.colors.black};
 		box-shadow: 0 0 16px 0 ${(props) => props.theme.colors.black};
 	`};
