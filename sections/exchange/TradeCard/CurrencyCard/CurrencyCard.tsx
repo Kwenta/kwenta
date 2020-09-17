@@ -57,7 +57,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
-					<CurrencySelector onClick={onCurrencySelect}>
+					<CurrencySelector onClick={onCurrencySelect} role="button">
 						{currencyKey ?? (
 							<CapitalizedText>
 								{t('exchange.currency-card.currency-selector.no-value')}
