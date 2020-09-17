@@ -37,7 +37,7 @@
 		"react-spring": "8.0.27",
 		"react-table": "7.5.0",
 		"recharts": "2.0.0-beta.6",
-		"recoil": "0.0.10",
+		"recoil": "0.0.12",
 		"slick-carousel": "1.8.1",
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
