@@ -31,6 +31,9 @@ export const QUERY_KEYS = {
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
 		FeeReclaimPeriod: (currencyKey: CurrencyKey) => ['synths', 'feeReclaimPeriod', currencyKey],
 	},
+	Trades: {
+		AllTrades: ['trades', 'allTrades'],
+	},
 };
 
 export default QUERY_KEYS;
