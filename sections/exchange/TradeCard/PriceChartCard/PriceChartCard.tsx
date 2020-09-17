@@ -292,7 +292,7 @@ const Actions = styled(GridDivCenteredCol)`
 	grid-gap: 8px;
 	${media.lessThan('sm')`
 		overflow: auto;
-		width: 60px;
+		width: 70px;
 	`}
 `;
 
