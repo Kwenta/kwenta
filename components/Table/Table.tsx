@@ -2,10 +2,8 @@ import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row } from 'react-table';
 
-import SortDownIcon from 'assets/app/caret-down.svg';
-import SortUpIcon from 'assets/app/caret-up.svg';
-// TODO figure out what icon this should be
-import SortIcon from 'assets/app/caret-right.svg';
+import SortDownIcon from 'assets/svg/app/caret-down.svg';
+import SortUpIcon from 'assets/svg/app/caret-up.svg';
 
 import { FlexDivCentered } from 'styles/common';
 
@@ -71,15 +69,7 @@ export const Table: FC<TableProps> = ({
 							{column.render('Header')}
 							{column.sortable && (
 								<SortIconContainer>
-									{column.isSorted ? (
-										column.isSortedDesc ? (
-											<SortDownIcon />
-										) : (
-											<SortUpIcon />
-										)
-									) : (
-										<SortIcon />
-									)}
+									{column.isSorted ? column.isSortedDesc ? <SortDownIcon /> : <SortUpIcon /> : ' '}
 								</SortIconContainer>
 							)}
 						</TableCellHead>

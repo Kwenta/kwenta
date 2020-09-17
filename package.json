@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.2.2",
+		"@material-ui/core": "^4.11.0",
 		"@reach/dialog": "0.11.0",
 		"@synthetixio/assets": "2.0.1",
 		"@synthetixio/js": "0.1.1",
@@ -41,7 +42,7 @@
 		"slick-carousel": "1.8.1",
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
-		"synthetix-data": "2.1.23",
+		"synthetix-data": "^2.1.29",
 		"unstated-next": "1.1.0",
 		"use-immer": "0.4.1"
 	},

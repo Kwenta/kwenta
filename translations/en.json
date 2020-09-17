@@ -205,6 +205,30 @@
 		"features": {
 			"coming-soon": "Coming Soon"
 		},
-		"connect-wallet": "Connect wallet"
+		"connect-wallet": "Connect wallet",
+		"tx-status": {
+			"waiting": "Waiting",
+			"open": "Open",
+			"closed": "Closed",
+			"closing": "Closing",
+			"in": "Transferred in",
+			"out": "Transferred out",
+			"complete": "Complete",
+			"pending": "Pending",
+			"confirmed": "Confirmed",
+			"cancelled": "Cancelled",
+			"failed": "failed"
+		}
+	},
+	"assets":{
+		"exchanges":{
+			"table": {
+				"orderType":"Order Type",
+				"from":"From",
+				"to":"To",
+				"value":"USD Value",
+				"no-results":"No Results"
+			}
+		}
 	}
 }

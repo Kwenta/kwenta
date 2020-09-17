@@ -7,7 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 export const useAllTradesQuery = (
 	maxBlock = Number.MAX_SAFE_INTEGER,
 	max = 100,
-	options: BaseQueryOptions
+	options?: BaseQueryOptions
 ) =>
 	useQuery<HistoricalTrades, any>(
 		QUERY_KEYS.Trades.AllTrades,
@@ -18,3 +18,5 @@ export const useAllTradesQuery = (
 			}),
 		options
 	);
+
+export default useAllTradesQuery;

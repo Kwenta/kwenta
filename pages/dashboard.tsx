@@ -12,10 +12,12 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 import useSynthsBalancesQuery, {
 	SynthBalance,
 } from 'queries/walletBalances/useSynthsBalancesQuery';
+import TradeHistory from 'components/TradeHistory';
 import Select from 'components/Select';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useAllTradesQuery from 'queries/trades/useAllTradesQuery';
 import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
@@ -93,6 +95,8 @@ const SynthBalanceRow = styled(FlexDivRow)`
 `;
 
 const Transactions = () => {
+	const allTradesQuery = useAllTradesQuery();
+
 	const synthSortList = [{ label: 'All Synths', key: 'ALL_SYNTHS' }];
 	const [synthSort, setSynthSort] = useState(synthSortList[0]);
 
@@ -103,38 +107,47 @@ const Transactions = () => {
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
 	return (
-		<FlexDivRow>
-			<TransactionSelect
-				formatOptionLabel={(option: any) => <span>{option.label}</span>}
-				options={synthSortList}
-				value={synthSort}
-				onChange={(option: any) => {
-					if (option) {
-						setSynthSort(option);
-					}
-				}}
-			/>
-			<TransactionSelect
-				formatOptionLabel={(option: any) => <span>{option.label}</span>}
-				options={orderTypeList}
-				value={orderType}
-				onChange={(option: any) => {
-					if (option) {
-						setOrderType(option);
-					}
-				}}
-			/>
-			<TransactionSelect
-				formatOptionLabel={(option: any) => <span>{option.label}</span>}
-				options={orderSizeList}
-				value={orderSize}
-				onChange={(option: any) => {
-					if (option) {
-						setOrderSize(option);
-					}
-				}}
-			/>
-		</FlexDivRow>
+		<>
+			<FlexDivRow>
+				<TransactionSelect
+					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					options={synthSortList}
+					value={synthSort}
+					onChange={(option: any) => {
+						if (option) {
+							setSynthSort(option);
+						}
+					}}
+				/>
+				<TransactionSelect
+					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					options={orderTypeList}
+					value={orderType}
+					onChange={(option: any) => {
+						if (option) {
+							setOrderType(option);
+						}
+					}}
+				/>
+				<TransactionSelect
+					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					options={orderSizeList}
+					value={orderSize}
+					onChange={(option: any) => {
+						if (option) {
+							setOrderSize(option);
+						}
+					}}
+				/>
+			</FlexDivRow>
+			<FlexDivRow>
+				<TradeHistory
+					trades={allTradesQuery.data || []}
+					isLoaded={allTradesQuery.isSuccess}
+					isLoading={allTradesQuery.isLoading}
+				/>
+			</FlexDivRow>
+		</>
 	);
 };
 
