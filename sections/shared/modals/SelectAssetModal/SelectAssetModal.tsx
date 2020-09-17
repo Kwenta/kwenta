@@ -17,7 +17,6 @@ import {
 } from 'styles/common';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
-import { NO_VALUE } from 'constants/placeholder';
 
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
@@ -25,6 +24,7 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { RowsHeader, RowsContainer } from '../common';
 import { EXTERNAL_LINKS } from 'constants/links';
+import Connector from 'containers/Connector';
 
 type SelectAssetModalProps = {
 	onDismiss: () => void;
@@ -34,6 +34,7 @@ type SelectAssetModalProps = {
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
+	isWalletConnected: boolean;
 };
 
 const { sUSD } = SYNTHS_MAP;
@@ -47,8 +48,10 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	onSelect,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
+	isWalletConnected,
 }) => {
 	const { t } = useTranslation();
+	const { connectWallet } = Connector.useContainer();
 
 	return (
 		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-asset.title')}>
@@ -64,7 +67,9 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 									sign: selectedPriceCurrency.sign,
 								}
 						  )
-						: NO_VALUE}
+						: formatCurrency(selectedPriceCurrency.name, 0, {
+								sign: selectedPriceCurrency.sign,
+						  })}
 				</Total>
 				<Title>{t('modals.select-asset.total-synth-value')}</Title>
 			</TotalValue>
@@ -104,6 +109,18 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						})}
 					</RowsContainer>
 				</>
+			) : !isWalletConnected ? (
+				<ContainerEmptyState>
+					<Message>{t('exchange.connect-wallet-card.message')}</Message>
+					<MessageButton
+						onClick={() => {
+							onDismiss();
+							connectWallet();
+						}}
+					>
+						{t('common.connect-wallet')}
+					</MessageButton>
+				</ContainerEmptyState>
 			) : (
 				<ContainerEmptyState>
 					<Message>
@@ -115,14 +132,14 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						/>
 					</Message>
 					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
-						<Button variant="primary" isRounded={true} size="lg">
+						<MessageButton>
 							<Trans
 								t={t}
 								i18nKey="common.currency.get-currency"
 								values={{ currencyKey: sUSD }}
 								components={[<NoTextTransform />]}
 							/>
-						</Button>
+						</MessageButton>
 					</ExternalLink>
 				</ContainerEmptyState>
 			)}
@@ -176,7 +193,7 @@ const Total = styled.div`
 	font-size: 20px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
-	padding-bottom: 5px;
+	padding-bottom: 10px;
 `;
 
 const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
@@ -200,6 +217,10 @@ const ConvertButton = styled(Button)`
 
 const ContainerEmptyState = styled(FlexDivColCentered)`
 	margin: 8px 0px;
+	padding: 0 30px;
+	button {
+		width: 200px;
+	}
 `;
 
 const Message = styled.div`
@@ -208,6 +229,10 @@ const Message = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding: 24px 32px;
 	text-align: center;
+`;
+
+const MessageButton = styled(Button).attrs({ variant: 'primary', size: 'lg', isRounded: true })`
+	width: 200px;
 `;
 
 export default SelectSynthModal;

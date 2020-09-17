@@ -524,6 +524,7 @@ const ExchangePage = () => {
 						}}
 						selectedPriceCurrency={selectedPriceCurrency}
 						selectPriceCurrencyRate={selectPriceCurrencyRate}
+						isWalletConnected={isWalletConnected}
 					/>
 				)}
 			</>
