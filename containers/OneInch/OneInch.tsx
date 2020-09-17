@@ -6,6 +6,7 @@ import ethers, { Contract } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { NetworkId } from '@synthetixio/js';
+import BigNumber from 'bignumber.js';
 
 const sUSDTokenAddress = '0x57ab1ec28d129707052df4df418d58a2d46d5f51';
 const ethTokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
@@ -13,7 +14,7 @@ const ethTokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 const useOneInch = () => {
 	const [oneInchContract, setOneInchContract] = useState<Contract | null>(null);
 	const isAppReady = useRecoilValue(appReadyState);
-	const { signer } = Connector.useContainer();
+	const { signer, provider } = Connector.useContainer();
 
 	useEffect(() => {
 		if (signer) {
@@ -43,7 +44,12 @@ const useOneInch = () => {
 					amountBN,
 					swapRates.returnAmount,
 					swapRates.distribution,
-					0
+					0,
+					{
+						value: amountBN,
+						gasPrice: provider?.getGasPrice,
+						gasLimit: 30000,
+					}
 				);
 				return tx;
 			}
