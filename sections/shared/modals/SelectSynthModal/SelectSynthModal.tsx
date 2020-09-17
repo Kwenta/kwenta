@@ -156,7 +156,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 						);
 					})
 				) : (
-					<EmptyDisplay>{t(t('modals.select-synth.search.empty-results'))}</EmptyDisplay>
+					<EmptyDisplay>{t('modals.select-synth.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
 		</StyledBaseModal>
