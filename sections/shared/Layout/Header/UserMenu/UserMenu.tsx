@@ -19,9 +19,8 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
-import { MobileOnlyView, MobileHiddenView } from 'components/Media';
 
-const UserInfo: FC = () => {
+const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
@@ -36,52 +35,8 @@ const UserInfo: FC = () => {
 	return (
 		<>
 			<Container>
-				<MobileHiddenView>
-					<FlexDivCentered>
-						<Menu>
-							{isWalletConnected && (
-								<MenuButton
-									onClick={() => {
-										setNotificationsModalOpened(!notificationsModalOpened);
-										setSettingsModalOpened(false);
-										if (hasOrdersNotification) {
-											setHasOrdersNotification(false);
-										}
-									}}
-									isActive={notificationsModalOpened}
-								>
-									{hasOrdersNotification ? <NotificationAlertIcon /> : <NotificationIcon />}
-								</MenuButton>
-							)}
-							<MenuButton
-								onClick={() => {
-									setSettingsModalOpened(!settingsModalOpened);
-									setNotificationsModalOpened(false);
-								}}
-								isActive={settingsModalOpened}
-							>
-								<MenuIcon />
-							</MenuButton>
-						</Menu>
-						{isWalletConnected ? (
-							<WalletButton
-								size="sm"
-								variant="outline"
-								onClick={() => setWalletOptionsModalOpened(true)}
-							>
-								<ConnectionDot />
-								{truncatedWalletAddress}
-								<StyledCaretDownIcon />
-							</WalletButton>
-						) : (
-							<Button variant="primary" onClick={connectWallet}>
-								{t('common.connect-wallet')}
-							</Button>
-						)}
-					</FlexDivCentered>
-				</MobileHiddenView>
-				<MobileOnlyView>
-					<Menu style={{ paddingRight: 0 }}>
+				<FlexDivCentered>
+					<Menu>
 						{isWalletConnected && (
 							<MenuButton
 								onClick={() => {
@@ -106,7 +61,22 @@ const UserInfo: FC = () => {
 							<MenuIcon />
 						</MenuButton>
 					</Menu>
-				</MobileOnlyView>
+					{isWalletConnected ? (
+						<WalletButton
+							size="sm"
+							variant="outline"
+							onClick={() => setWalletOptionsModalOpened(true)}
+						>
+							<ConnectionDot />
+							{truncatedWalletAddress}
+							<StyledCaretDownIcon />
+						</WalletButton>
+					) : (
+						<Button variant="primary" onClick={connectWallet}>
+							{t('common.connect-wallet')}
+						</Button>
+					)}
+				</FlexDivCentered>
 			</Container>
 			{walletOptionsModalOpened && (
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
@@ -163,4 +133,4 @@ const StyledCaretDownIcon = styled(CaretDownIcon)`
 	margin-left: 7px;
 `;
 
-export default UserInfo;
+export default UserMenu;

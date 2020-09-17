@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
 type FullScreenModalProps = {
-	title: ReactNode;
+	title?: ReactNode;
 	isOpen: boolean;
 	children: ReactNode;
 	onDismiss?: (event?: SyntheticEvent<Element, Event> | undefined) => void;
@@ -19,7 +19,7 @@ export const FullScreenModal: FC<FullScreenModalProps> = ({
 }) => (
 	<StyledDialogOverlay isOpen={isOpen} onDismiss={onDismiss} {...rest}>
 		<StyledDialogContent aria-label="modal">
-			<Title className="title">{title}</Title>
+			{title && <Title className="title">{title}</Title>}
 			<Content className="content">{children}</Content>
 		</StyledDialogContent>
 	</StyledDialogOverlay>

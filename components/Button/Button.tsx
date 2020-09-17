@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 
 type ButtonProps = {
-	size?: 'sm' | 'md' | 'lg';
-	variant: 'primary' | 'secondary' | 'outline';
+	size?: 'sm' | 'md' | 'lg' | 'xl';
+	variant: 'primary' | 'secondary' | 'outline' | 'alt';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -43,6 +43,13 @@ const Button = styled.button<ButtonProps>`
 			padding: 0 40px;
 			height: 40px;
 		`}		
+
+
+	${(props) =>
+		props.size === 'xl' &&
+		css`
+			height: 48px;
+		`}				
 
 	${(props) =>
 		props.variant === 'primary' &&
@@ -102,7 +109,29 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.white};
 						background-color: ${(props) => props.theme.colors.navy};
 					`};
-			`}					
+			`}		
+
+		${(props) =>
+			props.variant === 'alt' &&
+			css`
+				border-radius: 2px;
+				color: ${(props) => props.theme.colors.white};
+				background-color: ${(props) => props.theme.colors.navy};
+				border: 1px solid ${(props) => props.theme.colors.navy};
+				&:hover {
+					&:not(:disabled) {
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.navy};
+					}
+				}
+				${(props) =>
+					// @ts-ignore
+					props.isActive &&
+					css`
+						color: ${(props) => props.theme.colors.white};
+						background-color: ${(props) => props.theme.colors.navy};
+					`};
+			`}								
 
 `;
 
