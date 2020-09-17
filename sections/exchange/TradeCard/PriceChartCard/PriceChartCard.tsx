@@ -104,13 +104,11 @@ const ChartCard: FC<ChartCardProps> = ({
 					{currencyKey != null ? (
 						<>
 							<CurrencyLabel>
-								{
-									<Trans
-										i18nKey="common.currency.currency-price"
-										values={{ currencyKey }}
-										components={[<NoTextTransform />]}
-									/>
-								}
+								<Trans
+									i18nKey="common.currency.currency-price"
+									values={{ currencyKey }}
+									components={[<NoTextTransform />]}
+								/>
 							</CurrencyLabel>
 							{price != null && (
 								<CurrencyPrice>
