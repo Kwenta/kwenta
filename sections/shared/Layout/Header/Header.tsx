@@ -34,7 +34,7 @@ const Container = styled.header`
 	height: ${HEADER_HEIGHT};
 	line-height: ${HEADER_HEIGHT};
 	padding: 0 20px;
-	${media.lessThan('sm')`
+	${media.lessThan('md')`
 		position: fixed;
 		background-color: ${(props) => props.theme.colors.black};
 		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
