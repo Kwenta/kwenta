@@ -338,6 +338,7 @@ const ExchangePage = () => {
 	);
 	const quotePriceChartCard = (
 		<StyledPriceChartCard
+			side="quote"
 			currencyKey={quoteCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}
@@ -378,6 +379,7 @@ const ExchangePage = () => {
 
 	const basePriceChartCard = (
 		<StyledPriceChartCard
+			side="base"
 			currencyKey={baseCurrencyKey}
 			selectedPriceCurrency={selectedPriceCurrency}
 			selectPriceCurrencyRate={selectPriceCurrencyRate}

@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { useContext, FC, useState } from 'react';
-import { LineChart, XAxis, YAxis, Line, Tooltip } from 'recharts';
+import { AreaChart, XAxis, YAxis, Area, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
@@ -32,7 +32,10 @@ import { formatCurrency } from 'utils/formatters/number';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import media from 'styles/media';
 
+import { Side } from '../types';
+
 type ChartCardProps = {
+	side: Side;
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
 	selectedPriceCurrency: Synth;
@@ -42,6 +45,7 @@ type ChartCardProps = {
 };
 
 const ChartCard: FC<ChartCardProps> = ({
+	side,
 	currencyKey,
 	priceRate,
 	selectedPriceCurrency,
@@ -69,6 +73,8 @@ const ChartCard: FC<ChartCardProps> = ({
 	const showLoader = historicalRates.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
 	const noData = historicalRates.isSuccess && historicalRates.data.rates.length === 0;
+
+	let linearGradientId = `priceChartCardArea-${side}`;
 
 	const fontStyle = {
 		fontSize: '12px',
@@ -141,7 +147,7 @@ const ChartCard: FC<ChartCardProps> = ({
 					semiTransparent={showLoader || showOverlayMessage}
 				>
 					<RechartsResponsiveContainer width="100%" height="100%">
-						<LineChart
+						<AreaChart
 							data={rates.map((rateData) => ({
 								...rateData,
 								rate:
@@ -162,6 +168,12 @@ const ChartCard: FC<ChartCardProps> = ({
 								setCurrentPrice(null);
 							}}
 						>
+							<defs>
+								<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
+									<stop offset="5%" stopColor={chartColor} stopOpacity={0.5} />
+									<stop offset="95%" stopColor={chartColor} stopOpacity={0} />
+								</linearGradient>
+							</defs>
 							<XAxis
 								// @ts-ignore
 								dy={10}
@@ -196,11 +208,13 @@ const ChartCard: FC<ChartCardProps> = ({
 									})
 								}
 							/>
-							<Line
+							<Area
 								dataKey="rate"
 								stroke={chartColor}
 								dot={false}
 								strokeWidth={1.5}
+								fillOpacity={0.5}
+								fill={`url(#${linearGradientId})`}
 								isAnimationActive={false}
 							/>
 							{currencyKey != null && !noData && (
@@ -215,7 +229,7 @@ const ChartCard: FC<ChartCardProps> = ({
 									}
 								/>
 							)}
-						</LineChart>
+						</AreaChart>
 					</RechartsResponsiveContainer>
 				</ChartData>
 				<AbsoluteCenteredDiv>
