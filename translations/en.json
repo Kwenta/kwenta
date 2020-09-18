@@ -15,7 +15,14 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta"
+		"page-title": "Kwenta",
+		"nav": {
+			"exchange": "View Exchange",
+			"wallet": "Connect Wallet",
+			"why": "Why Kwenta?",
+			"how": "How it Works",
+			"faq": "FAQ"
+		}
 	},
 	"exchange": {
 		"page-title": "Kwenta | Exchange",
@@ -220,14 +227,14 @@
 			"failed": "failed"
 		}
 	},
-	"assets":{
-		"exchanges":{
+	"assets": {
+		"exchanges": {
 			"table": {
-				"orderType":"Order Type",
-				"from":"From",
-				"to":"To",
-				"value":"USD Value",
-				"no-results":"No Results"
+				"orderType": "Order Type",
+				"from": "From",
+				"to": "To",
+				"value": "USD Value",
+				"no-results": "No Results"
 			}
 		}
 	}
