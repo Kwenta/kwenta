@@ -37,7 +37,7 @@ type SelectAssetModalProps = {
 	isWalletConnected: boolean;
 };
 
-const { sUSD } = SYNTHS_MAP;
+const { sETH, sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
 
 export const SelectSynthModal: FC<SelectAssetModalProps> = ({
@@ -108,6 +108,25 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 							);
 						})}
 					</RowsContainer>
+					{/* TODO: this list needs to contain crypto -> synth supported assets (so we need to check existing assets + verify they are supported as synths) */}
+					<RowsSpacer />
+					<RowsHeader>
+						<span>{t('modals.select-asset.header.non-synths')}</span>
+					</RowsHeader>
+					<RowsContainer>
+						<CryptoRow>
+							<Currency.Name currencyKey={ETH} showIcon={true} iconProps={{ type: 'asset' }} />
+							<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sETH)}>
+								<ConvertButton variant="primary" isRounded={true}>
+									<Trans
+										i18nKey="common.currency.convert-to-currency"
+										values={{ currencyKey: sETH }}
+										components={[<NoTextTransform />]}
+									/>
+								</ConvertButton>
+							</ExternalLink>
+						</CryptoRow>
+					</RowsContainer>
 				</>
 			) : !isWalletConnected ? (
 				<ContainerEmptyState>
@@ -142,27 +161,6 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						</MessageButton>
 					</ExternalLink>
 				</ContainerEmptyState>
-			)}
-			{/* TODO: implement */}
-			{false && (
-				<>
-					<RowsSpacer />
-					<RowsHeader>
-						<span>{t('modals.select-asset.header.non-synths')}</span>
-					</RowsHeader>
-					<RowsContainer>
-						<CryptoRow>
-							<Currency.Name currencyKey="ETH" showIcon={true} iconProps={{ type: 'asset' }} />
-							<ConvertButton variant="primary" isRounded={true}>
-								<Trans
-									i18nKey="common.currency.convert-to-currency"
-									values={{ currencyKey: 'sETH' }}
-									components={[<NoTextTransform />]}
-								/>
-							</ConvertButton>
-						</CryptoRow>
-					</RowsContainer>
-				</>
 			)}
 		</StyledBaseModal>
 	);
