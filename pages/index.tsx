@@ -6,6 +6,8 @@ import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/svg/marketing/market-order-preview.svg';
 import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 
+import HomeLayout from 'sections/shared/Layout/HomeLayout';
+
 const HomePage = () => {
 	const { t } = useTranslation();
 
@@ -14,19 +16,21 @@ const HomePage = () => {
 			<Head>
 				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<Container>
-				<LogoNoTextSVG />
-				<Header>The last exchange you’ll ever use</Header>
-				<MarketOrderPreview />
-				<DifferentAssetsSection>
-					<AssetCollectionWrapper>
-						<AssetCollections />
-					</AssetCollectionWrapper>
-					<Col>
-						<Header>Trade 213 different assets</Header>
-					</Col>
-				</DifferentAssetsSection>
-			</Container>
+			<HomeLayout>
+				<Container>
+					<LogoNoTextSVG />
+					<Header>The last exchange you’ll ever use</Header>
+					<MarketOrderPreview />
+					<DifferentAssetsSection>
+						<AssetCollectionWrapper>
+							<AssetCollections />
+						</AssetCollectionWrapper>
+						<Col>
+							<Header>Trade 213 different assets</Header>
+						</Col>
+					</DifferentAssetsSection>
+				</Container>
+			</HomeLayout>
 		</>
 	);
 };

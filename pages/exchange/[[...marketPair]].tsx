@@ -22,6 +22,8 @@ import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
+
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
@@ -45,7 +47,7 @@ import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
 
-import { FlexDivCentered, FlexDivColCentered, resetButtonCSS } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, resetButtonCSS, PageContent } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
@@ -408,129 +410,139 @@ const ExchangePage = () => {
 						: t('exchange.page-title')}
 				</title>
 			</Head>
-			<>
-				<DesktopOnlyView>
-					<DesktopCardsContainer>
-						<LeftCardContainer>
+			<AppLayout>
+				<StyledPageContent>
+					<DesktopOnlyView>
+						<DesktopCardsContainer>
+							<LeftCardContainer>
+								{quoteCurrencyCard}
+								{quotePriceChartCard}
+								{quoteMarketDetailsCard}
+							</LeftCardContainer>
+							<Spacer>
+								<SwapCurrenciesButton onClick={handleCurrencySwap}>
+									<ArrowsIcon />
+								</SwapCurrenciesButton>
+							</Spacer>
+							<RightCardContainer>
+								{baseCurrencyCard}
+								{basePriceChartCard}
+								{baseMarketDetailsCard}
+							</RightCardContainer>
+						</DesktopCardsContainer>
+					</DesktopOnlyView>
+					<MobileOrTabletView>
+						<MobileContainer>
 							{quoteCurrencyCard}
-							{quotePriceChartCard}
-							{quoteMarketDetailsCard}
-						</LeftCardContainer>
-						<Spacer>
-							<SwapCurrenciesButton onClick={handleCurrencySwap}>
-								<ArrowsIcon />
-							</SwapCurrenciesButton>
-						</Spacer>
-						<RightCardContainer>
+							<VerticalSpacer>
+								<SwapCurrenciesButton onClick={handleCurrencySwap}>
+									<ArrowsIcon />
+								</SwapCurrenciesButton>
+							</VerticalSpacer>
 							{baseCurrencyCard}
-							{basePriceChartCard}
-							{baseMarketDetailsCard}
-						</RightCardContainer>
-					</DesktopCardsContainer>
-				</DesktopOnlyView>
-				<MobileOrTabletView>
-					<MobileContainer>
-						{quoteCurrencyCard}
-						<VerticalSpacer>
-							<SwapCurrenciesButton onClick={handleCurrencySwap}>
-								<ArrowsIcon />
-							</SwapCurrenciesButton>
-						</VerticalSpacer>
-						{baseCurrencyCard}
-						<SliderContainer>
-							<Slider arrows={false} dots={false}>
-								<SliderContent>
-									{quotePriceChartCard}
-									<SliderContentSpacer />
-									{quoteMarketDetailsCard}
-								</SliderContent>
-								<SliderContent>
-									{basePriceChartCard}
-									<SliderContentSpacer />
-									{baseMarketDetailsCard}
-								</SliderContent>
-							</Slider>
-						</SliderContainer>
-					</MobileContainer>
-					<MobileFooterCardSpacer />
-				</MobileOrTabletView>
-				{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
-				{!isWalletConnected ? (
-					<ConnectWalletCard />
-				) : noSynths ? (
-					<NoSynthsCard />
-				) : (
-					<TradeSummaryCard
-						selectedPriceCurrency={selectedPriceCurrency}
-						isSubmissionDisabled={isSubmissionDisabled}
-						isSubmitting={isSubmitting}
-						onSubmit={handleSubmit}
-						totalTradePrice={totalTradePrice}
-						baseCurrencyAmount={baseCurrencyAmount}
-						basePriceRate={basePriceRate}
-						baseCurrency={baseCurrency}
-						isBaseCurrencyFrozen={isBaseCurrencyFrozen}
-						insufficientBalance={insufficientBalance}
-						selectedBothSides={selectedBothSides}
-						isBaseCurrencySuspended={isBaseCurrencySuspended}
-						isQuoteCurrencySuspended={isQuoteCurrencySuspended}
-						gasPrice={ethGasStationQuery.data}
-						feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-					/>
-				)}
-				{txConfirmationModalOpen && (
-					<TxConfirmationModal
-						onDismiss={() => setTxConfirmationModalOpen(false)}
-						txError={txError}
-						attemptRetry={handleSubmit}
-						baseCurrencyAmount={baseCurrencyAmount}
-						quoteCurrencyAmount={quoteCurrencyAmount}
-						baseCurrencyKey={baseCurrencyKey!}
-						quoteCurrencyKey={quoteCurrencyKey!}
-						totalTradePrice={totalTradePrice}
-						selectedPriceCurrency={selectedPriceCurrency}
-					/>
-				)}
-				{selectSynthModalOpen && (
-					<SelectSynthModal
-						onDismiss={() => setSelectSynthModalOpen(false)}
-						synths={synthetix.js?.synths ?? []}
-						exchangeRates={exchangeRatesQuery.data}
-						onSelect={(currencyKey) => {
-							resetCurrencies();
-							// @ts-ignore
-							setCurrencyPair((pair) => ({
-								base: currencyKey,
-								quote: pair.quote === currencyKey ? null : pair.quote,
-							}));
-						}}
-						selectedPriceCurrency={selectedPriceCurrency}
-						selectPriceCurrencyRate={selectPriceCurrencyRate}
-					/>
-				)}
-				{selectAssetModalOpen && (
-					<SelectAssetModal
-						onDismiss={() => setSelectAssetModalOpen(false)}
-						synthsMap={synthetix.synthsMap}
-						synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
-						synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
-						onSelect={(currencyKey) => {
-							resetCurrencies();
-							// @ts-ignore
-							setCurrencyPair((pair) => ({
-								base: pair.base === currencyKey ? null : pair.base,
-								quote: currencyKey,
-							}));
-						}}
-						selectedPriceCurrency={selectedPriceCurrency}
-						selectPriceCurrencyRate={selectPriceCurrencyRate}
-						isWalletConnected={isWalletConnected}
-					/>
-				)}
-			</>
+							<SliderContainer>
+								<Slider arrows={false} dots={false}>
+									<SliderContent>
+										{quotePriceChartCard}
+										<SliderContentSpacer />
+										{quoteMarketDetailsCard}
+									</SliderContent>
+									<SliderContent>
+										{basePriceChartCard}
+										<SliderContentSpacer />
+										{baseMarketDetailsCard}
+									</SliderContent>
+								</Slider>
+							</SliderContainer>
+						</MobileContainer>
+						<MobileFooterCardSpacer />
+					</MobileOrTabletView>
+					{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
+					{!isWalletConnected ? (
+						<ConnectWalletCard />
+					) : noSynths ? (
+						<NoSynthsCard />
+					) : (
+						<TradeSummaryCard
+							selectedPriceCurrency={selectedPriceCurrency}
+							isSubmissionDisabled={isSubmissionDisabled}
+							isSubmitting={isSubmitting}
+							onSubmit={handleSubmit}
+							totalTradePrice={totalTradePrice}
+							baseCurrencyAmount={baseCurrencyAmount}
+							basePriceRate={basePriceRate}
+							baseCurrency={baseCurrency}
+							isBaseCurrencyFrozen={isBaseCurrencyFrozen}
+							insufficientBalance={insufficientBalance}
+							selectedBothSides={selectedBothSides}
+							isBaseCurrencySuspended={isBaseCurrencySuspended}
+							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
+							gasPrice={ethGasStationQuery.data}
+							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
+						/>
+					)}
+					{txConfirmationModalOpen && (
+						<TxConfirmationModal
+							onDismiss={() => setTxConfirmationModalOpen(false)}
+							txError={txError}
+							attemptRetry={handleSubmit}
+							baseCurrencyAmount={baseCurrencyAmount}
+							quoteCurrencyAmount={quoteCurrencyAmount}
+							baseCurrencyKey={baseCurrencyKey!}
+							quoteCurrencyKey={quoteCurrencyKey!}
+							totalTradePrice={totalTradePrice}
+							selectedPriceCurrency={selectedPriceCurrency}
+						/>
+					)}
+					{selectSynthModalOpen && (
+						<SelectSynthModal
+							onDismiss={() => setSelectSynthModalOpen(false)}
+							synths={synthetix.js?.synths ?? []}
+							exchangeRates={exchangeRatesQuery.data}
+							onSelect={(currencyKey) => {
+								resetCurrencies();
+								// @ts-ignore
+								setCurrencyPair((pair) => ({
+									base: currencyKey,
+									quote: pair.quote === currencyKey ? null : pair.quote,
+								}));
+							}}
+							selectedPriceCurrency={selectedPriceCurrency}
+							selectPriceCurrencyRate={selectPriceCurrencyRate}
+						/>
+					)}
+					{selectAssetModalOpen && (
+						<SelectAssetModal
+							onDismiss={() => setSelectAssetModalOpen(false)}
+							synthsMap={synthetix.synthsMap}
+							synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
+							synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
+							onSelect={(currencyKey) => {
+								resetCurrencies();
+								// @ts-ignore
+								setCurrencyPair((pair) => ({
+									base: pair.base === currencyKey ? null : pair.base,
+									quote: currencyKey,
+								}));
+							}}
+							selectedPriceCurrency={selectedPriceCurrency}
+							selectPriceCurrencyRate={selectPriceCurrencyRate}
+							isWalletConnected={isWalletConnected}
+						/>
+					)}
+				</StyledPageContent>
+			</AppLayout>
 		</>
 	);
 };
+
+const StyledPageContent = styled(PageContent)`
+	${media.greaterThan('xl')`
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	`}
+`;
 
 const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;

@@ -1,47 +1,21 @@
 import { FC } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 import { zIndex } from 'constants/ui';
 
-import Header from './Header';
-import Footer from './Footer';
-
-import { linkCSS, FlexDiv } from 'styles/common';
+import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 
 type LayoutProps = {
 	children: React.ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children }) => {
-	return (
-		<>
-			<GlobalStyle />
-			<FullScreenContainer>
-				<PageContainer>
-					<Header />
-					<Content>{children}</Content>
-					<Footer />
-				</PageContainer>
-			</FullScreenContainer>
-		</>
-	);
-};
-
-const FullScreenContainer = styled(FlexDiv)`
-	flex-flow: column;
-	width: 100%;
-	height: 100vh;
-	position: relative;
-`;
-
-const PageContainer = styled.div``;
-
-const Content = styled.section`
-	position: relative;
-	margin: 0 auto;
-	padding: 0 20px;
-`;
+const Layout: FC<LayoutProps> = ({ children }) => (
+	<>
+		<GlobalStyle />
+		{children}
+	</>
+);
 
 const GlobalStyle = createGlobalStyle`
 	* {
