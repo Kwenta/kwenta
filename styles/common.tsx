@@ -135,3 +135,11 @@ export const absoluteCenteredCSS = css`
 export const AbsoluteCenteredDiv = styled.div`
 	${absoluteCenteredCSS};
 `;
+
+export const PageContent = styled.section`
+	position: relative;
+	margin: 0 auto;
+	padding: 0 20px;
+	width: 100%;
+	flex-grow: 1;
+`;

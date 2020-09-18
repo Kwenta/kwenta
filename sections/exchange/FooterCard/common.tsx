@@ -5,6 +5,7 @@ import { GridDivCentered } from 'styles/common';
 import media from 'styles/media';
 
 export const MessageContainer = styled(GridDivCentered)`
+	width: 100%;
 	border-radius: 1000px;
 	grid-template-columns: 1fr auto;
 	background-color: ${(props) => props.theme.colors.elderberry};

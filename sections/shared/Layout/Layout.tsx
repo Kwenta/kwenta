@@ -13,34 +13,22 @@ type LayoutProps = {
 	children: React.ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children }) => {
-	return (
-		<>
-			<GlobalStyle />
-			<FullScreenContainer>
-				<PageContainer>
-					<Header />
-					<Content>{children}</Content>
-					<Footer />
-				</PageContainer>
-			</FullScreenContainer>
-		</>
-	);
-};
+const Layout: FC<LayoutProps> = ({ children }) => (
+	<>
+		<GlobalStyle />
+		<FullScreenContainer>
+			<Header />
+			{children}
+			<Footer />
+		</FullScreenContainer>
+	</>
+);
 
 const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
 	height: 100vh;
 	position: relative;
-`;
-
-const PageContainer = styled.div``;
-
-const Content = styled.section`
-	position: relative;
-	margin: 0 auto;
-	padding: 0 20px;
 `;
 
 const GlobalStyle = createGlobalStyle`

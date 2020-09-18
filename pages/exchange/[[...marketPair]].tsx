@@ -45,7 +45,7 @@ import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
 
-import { FlexDivCentered, FlexDivColCentered, resetButtonCSS } from 'styles/common';
+import { FlexDivCentered, FlexDivColCentered, resetButtonCSS, PageContent } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { ordersState } from 'store/orders';
@@ -408,7 +408,7 @@ const ExchangePage = () => {
 						: t('exchange.page-title')}
 				</title>
 			</Head>
-			<>
+			<StyledPageContent>
 				<DesktopOnlyView>
 					<DesktopCardsContainer>
 						<LeftCardContainer>
@@ -527,10 +527,18 @@ const ExchangePage = () => {
 						isWalletConnected={isWalletConnected}
 					/>
 				)}
-			</>
+			</StyledPageContent>
 		</>
 	);
 };
+
+const StyledPageContent = styled(PageContent)`
+	${media.greaterThan('xl')`
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+	`}
+`;
 
 const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
