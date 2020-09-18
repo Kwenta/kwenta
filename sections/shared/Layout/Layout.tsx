@@ -1,12 +1,9 @@
 import { FC } from 'react';
-import styled, { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
 import { zIndex } from 'constants/ui';
 
-import Header from './Header';
-import Footer from './Footer';
-
-import { linkCSS, FlexDiv } from 'styles/common';
+import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 
 type LayoutProps = {
@@ -16,20 +13,9 @@ type LayoutProps = {
 const Layout: FC<LayoutProps> = ({ children }) => (
 	<>
 		<GlobalStyle />
-		<FullScreenContainer>
-			<Header />
-			{children}
-			<Footer />
-		</FullScreenContainer>
+		{children}
 	</>
 );
-
-const FullScreenContainer = styled(FlexDiv)`
-	flex-flow: column;
-	width: 100%;
-	height: 100vh;
-	position: relative;
-`;
 
 const GlobalStyle = createGlobalStyle`
 	* {

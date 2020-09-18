@@ -24,6 +24,8 @@ import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatCurrency } from 'utils/formatters/number';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
+
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
 	CONVERT: 'convert',
@@ -180,106 +182,108 @@ const DashboardPage = () => {
 			<Head>
 				<title>{t('dashboard.page-title')}</title>
 			</Head>
-			<PageContent>
-				<Container>
-					<LeftContainer>
-						{noSynths ? (
-							<NoSynthsCard />
-						) : (
-							<DashboardLeftCol>
-								<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
-									<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
-									<Profit>{profit}</Profit>
-									<ComingSoonBalanceChart />
-								</FlexDivCol>
-								<FlexDivCol>
-									<TabList style={{ marginBottom: '12px' }}>
-										<TabButton
-											name={TABS.SYNTH_BALANCES}
-											active={activeTab === TABS.SYNTH_BALANCES}
-											onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
-										>
-											{t('dashboard.tabs.nav.synth-balances')}
-										</TabButton>
-										<TabButton
-											name={TABS.CONVERT}
-											active={activeTab === TABS.CONVERT}
-											onClick={() => setActiveTab(TABS.CONVERT)}
-										>
-											{t('dashboard.tabs.nav.convert')}
-										</TabButton>
-										<TabButton
-											name={TABS.CRYPTO_BALANCES}
-											active={activeTab === TABS.CRYPTO_BALANCES}
-											onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
-										>
-											{t('dashboard.tabs.nav.crypto-balances')}
-										</TabButton>
-										<TabButton
-											name={TABS.TRANSACTIONS}
-											active={activeTab === TABS.TRANSACTIONS}
-											onClick={() => setActiveTab(TABS.TRANSACTIONS)}
-										>
-											{t('dashboard.tabs.nav.transactions')}
-										</TabButton>
-									</TabList>
-									<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-										<SynthBalances />
-									</TabPanel>
-									<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
-										<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-									</TabPanel>
-									<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
-										<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-									</TabPanel>
-									<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
-										<Transactions />
-									</TabPanel>
-								</FlexDivCol>
-							</DashboardLeftCol>
-						)}
-					</LeftContainer>
-					<RightContainer>
-						<FlexDivRow>
-							<CardTitle>{t('dashboard.trending')}</CardTitle>
-							<TrendingSortSelect
-								formatOptionLabel={(option: any) => <span>{option.label}</span>}
-								options={SYNTH_SORT_OPTIONS}
-								value={currentSynthSort}
-								onChange={(option: any) => {
-									if (option) {
-										setCurrentSynthSort(option);
-									}
-								}}
-							/>
-						</FlexDivRow>
-						{synths.map((synth: Synth) => {
-							const selectPriceCurrencyRate =
-								exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
-							let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
-							const currencyKey = synth.name;
+			<AppLayout>
+				<PageContent>
+					<Container>
+						<LeftContainer>
+							{noSynths ? (
+								<NoSynthsCard />
+							) : (
+								<DashboardLeftCol>
+									<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
+										<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
+										<Profit>{profit}</Profit>
+										<ComingSoonBalanceChart />
+									</FlexDivCol>
+									<FlexDivCol>
+										<TabList style={{ marginBottom: '12px' }}>
+											<TabButton
+												name={TABS.SYNTH_BALANCES}
+												active={activeTab === TABS.SYNTH_BALANCES}
+												onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
+											>
+												{t('dashboard.tabs.nav.synth-balances')}
+											</TabButton>
+											<TabButton
+												name={TABS.CONVERT}
+												active={activeTab === TABS.CONVERT}
+												onClick={() => setActiveTab(TABS.CONVERT)}
+											>
+												{t('dashboard.tabs.nav.convert')}
+											</TabButton>
+											<TabButton
+												name={TABS.CRYPTO_BALANCES}
+												active={activeTab === TABS.CRYPTO_BALANCES}
+												onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
+											>
+												{t('dashboard.tabs.nav.crypto-balances')}
+											</TabButton>
+											<TabButton
+												name={TABS.TRANSACTIONS}
+												active={activeTab === TABS.TRANSACTIONS}
+												onClick={() => setActiveTab(TABS.TRANSACTIONS)}
+											>
+												{t('dashboard.tabs.nav.transactions')}
+											</TabButton>
+										</TabList>
+										<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+											<SynthBalances />
+										</TabPanel>
+										<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
+											<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+										</TabPanel>
+										<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
+											<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+										</TabPanel>
+										<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
+											<Transactions />
+										</TabPanel>
+									</FlexDivCol>
+								</DashboardLeftCol>
+							)}
+						</LeftContainer>
+						<RightContainer>
+							<FlexDivRow>
+								<CardTitle>{t('dashboard.trending')}</CardTitle>
+								<TrendingSortSelect
+									formatOptionLabel={(option: any) => <span>{option.label}</span>}
+									options={SYNTH_SORT_OPTIONS}
+									value={currentSynthSort}
+									onChange={(option: any) => {
+										if (option) {
+											setCurrentSynthSort(option);
+										}
+									}}
+								/>
+							</FlexDivRow>
+							{synths.map((synth: Synth) => {
+								const selectPriceCurrencyRate =
+									exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
+								let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
+								const currencyKey = synth.name;
 
-							if (price != null && selectPriceCurrencyRate != null) {
-								price /= selectPriceCurrencyRate;
-							}
-							return (
-								<SelectableCurrencyRow key={currencyKey} isSelectable={true}>
-									<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
-									{price != null ? (
-										<Currency.Price
-											currencyKey={currencyKey}
-											price={price}
-											sign={selectedPriceCurrency.sign}
-										/>
-									) : (
-										NO_VALUE
-									)}
-								</SelectableCurrencyRow>
-							);
-						})}
-					</RightContainer>
-				</Container>
-			</PageContent>
+								if (price != null && selectPriceCurrencyRate != null) {
+									price /= selectPriceCurrencyRate;
+								}
+								return (
+									<SelectableCurrencyRow key={currencyKey} isSelectable={true}>
+										<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+										{price != null ? (
+											<Currency.Price
+												currencyKey={currencyKey}
+												price={price}
+												sign={selectedPriceCurrency.sign}
+											/>
+										) : (
+											NO_VALUE
+										)}
+									</SelectableCurrencyRow>
+								);
+							})}
+						</RightContainer>
+					</Container>
+				</PageContent>
+			</AppLayout>
 		</>
 	);
 };
