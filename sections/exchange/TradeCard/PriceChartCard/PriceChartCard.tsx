@@ -129,17 +129,19 @@ const ChartCard: FC<ChartCardProps> = ({
 						<CurrencyLabel>{t('common.price')}</CurrencyLabel>
 					)}
 				</FlexDivRowCentered>
-				<Actions>
-					{PERIOD_LABELS.map((period) => (
-						<StyledTextButton
-							key={period.value}
-							isActive={period.value === selectedPeriod.value}
-							onClick={() => setSelectedPeriod(period)}
-						>
-							{t(period.i18nLabel)}
-						</StyledTextButton>
-					))}
-				</Actions>
+				{!isSynthFrozen && (
+					<Actions>
+						{PERIOD_LABELS.map((period) => (
+							<StyledTextButton
+								key={period.value}
+								isActive={period.value === selectedPeriod.value}
+								onClick={() => setSelectedPeriod(period)}
+							>
+								{t(period.i18nLabel)}
+							</StyledTextButton>
+						))}
+					</Actions>
+				)}
 			</ChartHeader>
 			<ChartBody>
 				<ChartData
