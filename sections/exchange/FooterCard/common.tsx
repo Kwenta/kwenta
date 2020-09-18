@@ -1,7 +1,7 @@
 import Button from 'components/Button';
 import styled from 'styled-components';
 
-import { GridDivCentered } from 'styles/common';
+import { FixedFooterMixin, GridDivCentered } from 'styles/common';
 import media from 'styles/media';
 
 export const MessageContainer = styled(GridDivCentered)`
@@ -13,11 +13,7 @@ export const MessageContainer = styled(GridDivCentered)`
 	max-width: 680px;
 	margin: 0 auto;
 	${media.lessThan('md')`
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		border-radius: 0;
+		${FixedFooterMixin};
 		box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};
 		justify-content: center;
 		display: flex;

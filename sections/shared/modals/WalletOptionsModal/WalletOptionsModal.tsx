@@ -14,25 +14,25 @@ type WalletOptionsProps = {
 
 export const WalletOptionsModal: FC<WalletOptionsProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { onboard } = Connector.useContainer();
+	const { switchWallet, disconnectWallet } = Connector.useContainer();
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.wallet.title')}>
 			<OptionButton
 				onClick={() => {
 					onDismiss();
-					onboard?.walletSelect();
+					switchWallet();
 				}}
 			>
-				{t('modals.wallet.options.switch-wallet')}
+				{t('common.wallet.switch-wallet')}
 			</OptionButton>
 			<OptionButton
 				onClick={() => {
 					onDismiss();
-					onboard?.walletReset();
+					disconnectWallet();
 				}}
 			>
-				{t('modals.wallet.options.disconnect-wallet')}
+				{t('common.wallet.disconnect-wallet')}
 			</OptionButton>
 		</StyledMenuModal>
 	);

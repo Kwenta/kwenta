@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'outline' | 'alt';
+	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -131,7 +131,25 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.white};
 						background-color: ${(props) => props.theme.colors.navy};
 					`};
-			`}								
+			`}		
+
+	${(props) =>
+		props.variant === 'danger' &&
+		css`
+			color: ${(props) => props.theme.colors.white};
+			background-color: ${(props) => props.theme.colors.red};
+			&:hover {
+				&:not(:disabled) {
+					background-color: ${(props) => props.theme.colors.redHover};
+				}
+			}
+			${(props) =>
+				// @ts-ignore
+				props.isActive &&
+				css`
+					background-color: ${(props) => props.theme.colors.redHover};
+				`};
+		`}									
 
 `;
 

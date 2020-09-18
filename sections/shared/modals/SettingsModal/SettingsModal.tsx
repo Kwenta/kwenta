@@ -1,21 +1,17 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
 
-import synthetix from 'lib/synthetix';
-
-import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
+import { priceCurrencyState } from 'store/app';
 
 import { FlexDivRowCentered } from 'styles/common';
 
-import { networkState } from 'store/wallet';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import useCurrencyOptions from 'hooks/useCurrencyOptions';
 
 import { MenuModal } from '../common';
-
-import { usePersistedRecoilState } from 'hooks/usePersistedRecoilState';
 
 type SettingsModalProps = {
 	onDismiss: () => void;
@@ -23,23 +19,8 @@ type SettingsModalProps = {
 
 export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
 	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
-
-	const currencyOptions = useMemo(() => {
-		if (network != null && synthetix.synthsMap != null) {
-			return PRICE_CURRENCIES.filter((currencyKey) => synthetix.synthsMap![currencyKey]).map(
-				(currencyKey) => {
-					const synth = synthetix.synthsMap![currencyKey];
-					return {
-						label: synth.asset,
-						value: synth,
-					};
-				}
-			);
-		}
-		return [];
-	}, [network]);
+	const currencyOptions = useCurrencyOptions();
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.settings.title')}>
@@ -81,6 +62,7 @@ const StyledMenuModal = styled(MenuModal)`
 const Options = styled.div``;
 
 const OptionLabel = styled.div`
+	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;

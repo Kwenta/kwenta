@@ -137,7 +137,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 							connectWallet();
 						}}
 					>
-						{t('common.connect-wallet')}
+						{t('common.wallet.connect-wallet')}
 					</MessageButton>
 				</ContainerEmptyState>
 			) : (

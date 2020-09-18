@@ -12,3 +12,5 @@ export function usePersistedRecoilState<T>(recoilState: RecoilState<T>) {
 
 	return [storedValue, setValue] as const;
 }
+
+export default usePersistedRecoilState;

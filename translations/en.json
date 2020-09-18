@@ -136,11 +136,7 @@
 			}
 		},
 		"wallet": {
-			"title": "wallet options",
-			"options": {
-				"switch-wallet": "switch wallet",
-				"disconnect-wallet": "disconnect wallet"
-			}
+			"title": "wallet options"
 		},
 		"notifications": {
 			"title": "notifications",
@@ -205,7 +201,12 @@
 		"features": {
 			"coming-soon": "Coming Soon"
 		},
-		"connect-wallet": "Connect wallet",
+		"wallet": {
+			"connect-wallet": "connect wallet",
+			"switch-wallet": "switch wallet",
+			"disconnect-wallet": "disconnect wallet"
+		},
+
 		"tx-status": {
 			"waiting": "Waiting",
 			"open": "Open",
@@ -218,16 +219,17 @@
 			"confirmed": "Confirmed",
 			"cancelled": "Cancelled",
 			"failed": "failed"
-		}
+		},
+		"switch": "switch"
 	},
-	"assets":{
-		"exchanges":{
+	"assets": {
+		"exchanges": {
 			"table": {
-				"orderType":"Order Type",
-				"from":"From",
-				"to":"To",
-				"value":"USD Value",
-				"no-results":"No Results"
+				"orderType": "Order Type",
+				"from": "From",
+				"to": "To",
+				"value": "USD Value",
+				"no-results": "No Results"
 			}
 		}
 	}

@@ -133,12 +133,34 @@ const useConnector = () => {
 		}
 	};
 
+	const disconnectWallet = async () => {
+		try {
+			if (onboard) {
+				onboard.walletReset();
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	const switchWallet = async () => {
+		try {
+			if (onboard) {
+				onboard.walletSelect();
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
 	return {
 		provider,
 		signer,
 		onboard,
 		notify,
 		connectWallet,
+		disconnectWallet,
+		switchWallet,
 	};
 };
 

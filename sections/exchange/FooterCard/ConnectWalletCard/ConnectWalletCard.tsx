@@ -16,7 +16,7 @@ const ConnectWalletCard: FC = () => {
 			<DesktopOnlyView>
 				<Message>{t('exchange.connect-wallet-card.message')}</Message>
 			</DesktopOnlyView>
-			<MessageButton onClick={connectWallet}>{t('common.connect-wallet')}</MessageButton>
+			<MessageButton onClick={connectWallet}>{t('common.wallet.connect-wallet')}</MessageButton>
 		</MessageContainer>
 	);
 };

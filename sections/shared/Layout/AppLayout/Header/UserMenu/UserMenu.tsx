@@ -9,7 +9,7 @@ import Button from 'components/Button';
 
 import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
-import { FlexDivCentered, resetButtonCSS } from 'styles/common';
+import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
 
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
@@ -67,13 +67,13 @@ const UserMenu: FC = () => {
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 						>
-							<ConnectionDot />
+							<StyledConnectionDot />
 							{truncatedWalletAddress}
 							<StyledCaretDownIcon />
 						</WalletButton>
 					) : (
 						<Button variant="primary" onClick={connectWallet}>
-							{t('common.connect-wallet')}
+							{t('common.wallet.connect-wallet')}
 						</Button>
 					)}
 				</FlexDivCentered>
@@ -108,13 +108,8 @@ const WalletButton = styled(Button)`
 	border-radius: 4px;
 `;
 
-const ConnectionDot = styled.span`
+const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background-color: ${(props) => props.theme.colors.green};
 `;
 
 const MenuButton = styled.button<{ isActive: boolean }>`

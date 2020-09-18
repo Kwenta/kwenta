@@ -9,6 +9,7 @@ import { resetButtonCSS } from 'styles/common';
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
+import CrossIcon from 'assets/svg/app/cross.svg';
 
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 
@@ -47,7 +48,7 @@ const MobileUserMenu: FC = () => {
 						}}
 						isActive={settingsModalOpened}
 					>
-						<MenuIcon />
+						{settingsModalOpened ? <CrossIcon /> : <MenuIcon />}
 					</MenuButton>
 				</Menu>
 			</Container>
@@ -72,9 +73,9 @@ const Menu = styled.div`
 
 const MenuButton = styled.button<{ isActive: boolean }>`
 	${resetButtonCSS};
-	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.blueberry)};
+	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
 	&:hover {
-		color: ${(props) => props.theme.colors.purple};
+		color: ${(props) => props.theme.colors.white};
 	}
 	padding: 5px;
 `;

@@ -143,3 +143,19 @@ export const PageContent = styled.section`
 	width: 100%;
 	flex-grow: 1;
 `;
+
+export const ConnectionDot = styled.span`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.theme.colors.green};
+`;
+
+export const FixedFooterMixin = `
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border-radius: 0;	
+`;
