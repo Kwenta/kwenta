@@ -206,7 +206,6 @@
 			"switch-wallet": "switch wallet",
 			"disconnect-wallet": "disconnect wallet"
 		},
-
 		"tx-status": {
 			"waiting": "Waiting",
 			"open": "Open",
@@ -220,7 +219,13 @@
 			"cancelled": "Cancelled",
 			"failed": "failed"
 		},
-		"switch": "switch"
+		"switch": "switch",
+		"gas-prices": {
+			"slow": "Slow {{price}}",
+			"average": "Average {{price}}",
+			"fast": "Fast {{price}}"
+		},
+		"edit": "edit"
 	},
 	"assets": {
 		"exchanges": {

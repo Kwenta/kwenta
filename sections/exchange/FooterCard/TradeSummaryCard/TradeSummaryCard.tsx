@@ -1,12 +1,13 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import get from 'lodash/get';
+import Tippy from '@tippyjs/react';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
-import { GasSpeed } from 'queries/network/useGasStationQuery';
+import { GasSpeed, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
 import { NO_VALUE } from 'constants/placeholder';
 
@@ -15,9 +16,12 @@ import { DesktopOnlyView } from 'components/Media';
 
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
-import { NoTextTransform, numericValueCSS } from 'styles/common';
+import { NoTextTransform, numericValueCSS, TextButton } from 'styles/common';
 
 import { MessageContainer } from '../common';
+import { gasSpeedState } from 'store/wallet';
+import { useRecoilState } from 'recoil';
+import isNumber from 'lodash/isNumber';
 
 type TradeSummaryCardProps = {
 	selectedPriceCurrency: Synth;
@@ -33,7 +37,7 @@ type TradeSummaryCardProps = {
 	isBaseCurrencyFrozen: boolean;
 	isQuoteCurrencySuspended: boolean;
 	isBaseCurrencySuspended: boolean;
-	gasPrice: GasSpeed | undefined;
+	gasPrices: GasSpeed | undefined;
 	feeReclaimPeriodInSeconds: number;
 };
 
@@ -51,10 +55,20 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	isBaseCurrencyFrozen,
 	isQuoteCurrencySuspended,
 	isBaseCurrencySuspended,
-	gasPrice,
+	gasPrices,
 	feeReclaimPeriodInSeconds,
 }) => {
 	const { t } = useTranslation();
+	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+
+	let gweiPrice: null | number = null;
+	if (isNumber(gasSpeed)) {
+		gweiPrice = gasSpeed;
+	} else if (gasPrices != null) {
+		gweiPrice = gasPrices[gasSpeed];
+	}
+
+	console.log(gasSpeed);
 
 	const exchangeFeeRateRaw: string | null =
 		baseCurrency != null
@@ -100,9 +114,36 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<SummaryItem>
 						<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
 						<SummaryItemValue>
-							{gasPrice != null
-								? t('exchange.summary-info.price-in-gwei', { price: gasPrice.average })
-								: NO_VALUE}
+							{gweiPrice != null ? (
+								<>
+									{t('exchange.summary-info.price-in-gwei', {
+										price: gweiPrice,
+									})}
+									<Tippy
+										trigger="click"
+										content={
+											<div>
+												{GAS_SPEEDS.map((speed) => (
+													<GasSpeedButtonContainer key={speed}>
+														<Button
+															variant="secondary"
+															onClick={() => setGasSpeed(speed)}
+															isActive={gasSpeed === speed}
+														>
+															{t(`common.gas-prices.${speed}`, { price: gasPrices![speed] })}
+														</Button>
+													</GasSpeedButtonContainer>
+												))}
+											</div>
+										}
+										interactive={true}
+									>
+										<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
+									</Tippy>
+								</>
+							) : (
+								NO_VALUE
+							)}
 						</SummaryItemValue>
 					</SummaryItem>
 					<SummaryItem>
@@ -172,6 +213,20 @@ const SummaryItemLabel = styled.div`
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	${numericValueCSS};
+`;
+
+const StyledGasEditButton = styled.span`
+	padding-left: 5px;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.purpleHover};
+	text-transform: uppercase;
+`;
+
+const GasSpeedButtonContainer = styled.div`
+	padding-bottom: 5px;
+	button {
+		width: 100%;
+	}
 `;
 
 export default TradeSummaryCard;

@@ -26,13 +26,16 @@ export type GasSpeed = {
 	slow: number;
 };
 
+export type GasSpeeds = keyof GasSpeed;
+
+export const GAS_SPEEDS: GasSpeeds[] = ['slow', 'average', 'fast'];
+
 const useEthGasStationQuery = (options?: BaseQueryOptions) => {
 	return useQuery<GasSpeed, any>(
 		QUERY_KEYS.Network.EthGasStation,
 		async () => {
 			const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);
-
-			const { fast, average, safeLow } = result.data;
+			const { safeLow, average, fast } = result.data;
 
 			return {
 				fast: fast / 10,

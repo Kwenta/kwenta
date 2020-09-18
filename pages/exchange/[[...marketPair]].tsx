@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
+import isNumber from 'lodash/isNumber';
 import produce from 'immer';
 import Slider from 'react-slick';
 
@@ -36,7 +37,7 @@ import SelectAssetModal from 'sections/shared/modals/SelectAssetModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
 
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { gasSpeedState, isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
@@ -85,6 +86,7 @@ const ExchangePage = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
+	const gasSpeed = useRecoilValue(gasSpeedState);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -223,8 +225,9 @@ const ExchangePage = () => {
 			try {
 				setIsSubmitting(true);
 
+				const gweiPrice = isNumber(gasSpeed) ? gasSpeed : ethGasStationQuery.data![gasSpeed];
 				const tx = await synthetix.js.contracts.Synthetix.exchange(...params, {
-					gasPrice: ethGasStationQuery.data!.average * GWEI_UNIT,
+					gasPrice: gweiPrice * GWEI_UNIT,
 					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
 				});
 
@@ -479,7 +482,7 @@ const ExchangePage = () => {
 							selectedBothSides={selectedBothSides}
 							isBaseCurrencySuspended={isBaseCurrencySuspended}
 							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
-							gasPrice={ethGasStationQuery.data}
+							gasPrices={ethGasStationQuery.data}
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 						/>
 					)}

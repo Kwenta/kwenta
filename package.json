@@ -16,6 +16,7 @@
 		"@reach/dialog": "0.11.0",
 		"@synthetixio/assets": "2.0.1",
 		"@synthetixio/js": "0.1.1",
+		"@tippyjs/react": "^4.1.0",
 		"axios": "0.20.0",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.3.1",
