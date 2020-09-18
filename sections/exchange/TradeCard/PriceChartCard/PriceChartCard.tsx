@@ -170,12 +170,13 @@ const ChartCard: FC<ChartCardProps> = ({
 						>
 							<defs>
 								<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
-									<stop offset="5%" stopColor={chartColor} stopOpacity={0.5} />
-									<stop offset="95%" stopColor={chartColor} stopOpacity={0} />
+									<stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
+									<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
 								</linearGradient>
 							</defs>
 							<XAxis
 								// @ts-ignore
+								dx={-5}
 								dy={10}
 								minTickGap={20}
 								dataKey="timestamp"
@@ -196,6 +197,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							<YAxis
 								// TODO: might need to adjust the width to make sure we do not trim the values...
 								type="number"
+								hide={true}
 								allowDataOverflow={true}
 								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
 								tick={fontStyle}
@@ -212,8 +214,7 @@ const ChartCard: FC<ChartCardProps> = ({
 								dataKey="rate"
 								stroke={chartColor}
 								dot={false}
-								strokeWidth={1.5}
-								fillOpacity={0.5}
+								strokeWidth={2}
 								fill={`url(#${linearGradientId})`}
 								isAnimationActive={false}
 							/>
