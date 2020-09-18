@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
-import LogoNoTextPNG from 'assets/png/brand/logo-no-text.png';
+import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/svg/marketing/market-order-preview.svg';
 import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 
@@ -15,7 +15,7 @@ const HomePage = () => {
 				<title>{t('homepage.page-title')}</title>
 			</Head>
 			<Container>
-				<img src={LogoNoTextPNG} />
+				<LogoNoTextSVG />
 				<Header>The last exchange you’ll ever use</Header>
 				<MarketOrderPreview />
 				<DifferentAssetsSection>
