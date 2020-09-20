@@ -221,9 +221,9 @@
 		},
 		"switch": "switch",
 		"gas-prices": {
-			"slow": "Slow {{price}}",
-			"average": "Average {{price}}",
-			"fast": "Fast {{price}}"
+			"slow": "Slow",
+			"average": "Average",
+			"fast": "Fast"
 		},
 		"edit": "edit"
 	},

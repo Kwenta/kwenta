@@ -1,27 +1,27 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import get from 'lodash/get';
 import Tippy from '@tippyjs/react';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
+import { useRecoilState } from 'recoil';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
-import { GasSpeed, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
+import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
 import { NO_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
 import { DesktopOnlyView } from 'components/Media';
+import NumericInput from 'components/Input/NumericInput';
 
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
-import { NoTextTransform, numericValueCSS, TextButton } from 'styles/common';
+import { NoTextTransform, numericValueCSS, NumericValue } from 'styles/common';
 
 import { MessageContainer } from '../common';
-import { gasSpeedState } from 'store/wallet';
-import { useRecoilState } from 'recoil';
-import isNumber from 'lodash/isNumber';
 
 type TradeSummaryCardProps = {
 	selectedPriceCurrency: Synth;
@@ -37,7 +37,7 @@ type TradeSummaryCardProps = {
 	isBaseCurrencyFrozen: boolean;
 	isQuoteCurrencySuspended: boolean;
 	isBaseCurrencySuspended: boolean;
-	gasPrices: GasSpeed | undefined;
+	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 };
 
@@ -60,15 +60,10 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 
-	let gweiPrice: null | number = null;
-	if (isNumber(gasSpeed)) {
-		gweiPrice = gasSpeed;
-	} else if (gasPrices != null) {
-		gweiPrice = gasPrices[gasSpeed];
-	}
-
-	console.log(gasSpeed);
+	const hasCustomGasPrice = customGasPrice !== '';
+	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
 
 	const exchangeFeeRateRaw: string | null =
 		baseCurrency != null
@@ -114,32 +109,42 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<SummaryItem>
 						<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
 						<SummaryItemValue>
-							{gweiPrice != null ? (
+							{gasPrice != null ? (
 								<>
 									{t('exchange.summary-info.price-in-gwei', {
-										price: gweiPrice,
+										price: hasCustomGasPrice ? Number(customGasPrice) : gasPrice,
 									})}
-									<Tippy
+									<GasPriceTooltip
 										trigger="click"
+										arrow={false}
 										content={
-											<div>
+											<>
+												<CustomGasPrice
+													value={customGasPrice}
+													onChange={(e) => setCustomGasPrice(e.target.value)}
+													placeholder="Custom"
+												/>
 												{GAS_SPEEDS.map((speed) => (
 													<GasSpeedButtonContainer key={speed}>
 														<Button
 															variant="secondary"
-															onClick={() => setGasSpeed(speed)}
-															isActive={gasSpeed === speed}
+															onClick={() => {
+																setCustomGasPrice('');
+																setGasSpeed(speed);
+															}}
+															isActive={hasCustomGasPrice ? false : gasSpeed === speed}
 														>
-															{t(`common.gas-prices.${speed}`, { price: gasPrices![speed] })}
+															<span>{t(`common.gas-prices.${speed}`)}</span>
+															<NumericValue>{gasPrices![speed]}</NumericValue>
 														</Button>
 													</GasSpeedButtonContainer>
 												))}
-											</div>
+											</>
 										}
 										interactive={true}
 									>
 										<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
-									</Tippy>
+									</GasPriceTooltip>
 								</>
 							) : (
 								NO_VALUE
@@ -225,7 +230,24 @@ const StyledGasEditButton = styled.span`
 const GasSpeedButtonContainer = styled.div`
 	padding-bottom: 5px;
 	button {
-		width: 100%;
+		width: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+`;
+
+const GasPriceTooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.black};
+`;
+
+const CustomGasPrice = styled(NumericInput)`
+	width: 100px;
+	border: 1px solid ${(props) => props.theme.colors.stormcloud};
+	margin-bottom: 5px;
+	font-size: 12px;
+	::placeholder {
+		font-family: ${(props) => props.theme.fonts.regular};
 	}
 `;
 

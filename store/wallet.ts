@@ -1,5 +1,5 @@
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
-import { GasSpeed, GasSpeeds } from 'queries/network/useGasStationQuery';
+import { GasSpeed } from 'queries/network/useGasStationQuery';
 import { atom, selector } from 'recoil';
 
 import { truncateAddress } from 'utils/formatters/string';
@@ -37,7 +37,12 @@ export const truncatedWalletAddressState = selector<string | null>({
 	},
 });
 
-export const gasSpeedState = atom<GasSpeeds | number>({
+export const gasSpeedState = atom<GasSpeed>({
 	key: getKey('gasSpeed'),
 	default: 'average',
+});
+
+export const customGasPriceState = atom<string>({
+	key: getKey('customGasPrice'),
+	default: '',
 });
