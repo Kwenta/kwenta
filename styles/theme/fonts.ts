@@ -20,6 +20,12 @@ export const fonts = {
 			line-height: 140%;
 			letter-spacing: 0.2px;
 		`,
+		'thin-small': `
+			font-family: ${fontStyles.regular};
+			font-size: 12px;
+			line-height: 140%;
+			letter-spacing: 0px;
+		`,
 	},
 	data: {
 		small: `

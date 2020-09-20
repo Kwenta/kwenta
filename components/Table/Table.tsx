@@ -128,7 +128,6 @@ const TableCell = styled(FlexDivCentered)`
 
 const TableCellHead = styled(TableCell)`
 	user-select: none;
-	text-transform: uppercase;
 `;
 
 const SortIconContainer = styled.span`
@@ -155,17 +154,16 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				height: ${CARD_HEIGHT};
 			}
 			${TableRow} {
-				background-color: ${(props) => props.theme.colors.black};
+				background-color: ${(props) => props.theme.colors.elderberry};
 				margin-bottom: 8px;
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.black};
+				background-color: ${(props) => props.theme.colors.elderberry};
 			}
 			${TableBodyRow} {
-				background-color: ${(props) => props.theme.colors.black};
+				background-color: ${(props) => props.theme.colors.elderberry};
 				&:hover {
-					background-color: ${(props) => props.theme.colors.elderberry};
 					> * {
 						transition: transform 0.2s ease-out;
 						transform: scale(1.02);

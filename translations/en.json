@@ -97,6 +97,9 @@
 		},
 		"synthSort": {
 			"price": "Price"
+		},
+		"table": {
+			"market":"Market"
 		}
 	},
 	"not-found": {
