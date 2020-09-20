@@ -30,7 +30,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					accessor: 'orderType',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<StyledOrderType>{t('dashboard.table.market')}</StyledOrderType>
+						<StyledOrderType>{t('dashboard.transactions.orderTypeSort.market')}</StyledOrderType>
 					),
 					sortable: true,
 				},
@@ -56,7 +56,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					Header: <StyledTableHeader>{t('assets.exchanges.table.to')}</StyledTableHeader>,
 					accessor: 'toAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade, HistoricalTrade['price']>) => (
+					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
 							&nbsp;
@@ -74,7 +74,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					Header: <StyledTableHeader>{t('assets.exchanges.table.value')}</StyledTableHeader>,
 					accessor: 'amount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade, HistoricalTrade['amount']>) => (
+					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<span>{formatCurrencyWithSign(USD_SIGN, cellProps.row.original.toAmountInUSD)}</span>
 					),
 					sortable: true,

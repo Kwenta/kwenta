@@ -23,8 +23,8 @@ import Button from 'components/Button';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatCurrency } from 'utils/formatters/number';
-
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { filterTradesByCategory, CATEGORY_MAP, Category } from 'constants/currency';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -97,12 +97,23 @@ const SynthBalanceRow = styled(FlexDivRow)`
 `;
 
 const Transactions = () => {
+	const { t } = useTranslation();
+
 	const allTradesQuery = useAllTradesQuery();
 
-	const synthSortList = [{ label: 'All Synths', key: 'ALL_SYNTHS' }];
+	const synthSortList = [
+		{ label: t('dashboard.transactions.synthSort.allSynths'), key: 'ALL_SYNTHS' },
+		{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
+		{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
+		{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
+		{ label: t('common.currency-category.equities'), key: CATEGORY_MAP['equities'] },
+	];
 	const [synthSort, setSynthSort] = useState(synthSortList[0]);
-
-	const orderTypeList = [{ label: 'All Order Types', key: 'ALL_ORDER_TYPES' }];
+	const orderTypeList = [
+		{ label: t('dashboard.transactions.orderTypeSort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
+		{ label: t('dashboard.transactions.orderTypeSort.market'), key: 'MARKET' },
+		{ label: t('dashboard.transactions.orderTypeSort.limit'), key: 'LIMIT' },
+	];
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 
 	const orderSizeList = [{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' }];
@@ -112,7 +123,7 @@ const Transactions = () => {
 		<>
 			<FlexDivRow>
 				<TransactionSelect
-					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					formatOptionLabel={(option: any) => <Capitalize>{option.label}</Capitalize>}
 					options={synthSortList}
 					value={synthSort}
 					onChange={(option: any) => {
@@ -122,7 +133,7 @@ const Transactions = () => {
 					}}
 				/>
 				<TransactionSelect
-					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					formatOptionLabel={(option: any) => <Capitalize>{option.label}</Capitalize>}
 					options={orderTypeList}
 					value={orderType}
 					onChange={(option: any) => {
@@ -132,7 +143,7 @@ const Transactions = () => {
 					}}
 				/>
 				<TransactionSelect
-					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					formatOptionLabel={(option: any) => <Capitalize>{option.label}</Capitalize>}
 					options={orderSizeList}
 					value={orderSize}
 					onChange={(option: any) => {
@@ -144,7 +155,11 @@ const Transactions = () => {
 			</FlexDivRow>
 			<FlexDivRow>
 				<TradeHistory
-					trades={allTradesQuery.data || []}
+					trades={
+						synthSort.key !== 'ALL_SYNTHS'
+							? filterTradesByCategory(allTradesQuery.data || [], synthSort.key as Category)
+							: allTradesQuery.data || []
+					}
 					isLoaded={allTradesQuery.isSuccess}
 					isLoading={allTradesQuery.isLoading}
 				/>
@@ -156,6 +171,10 @@ const Transactions = () => {
 const TransactionSelect = styled(Select)`
 	width: 33%;
 	max-width: 217px;
+`;
+
+const Capitalize = styled.span`
+	text-transform: capitalize;
 `;
 
 const DashboardPage = () => {
