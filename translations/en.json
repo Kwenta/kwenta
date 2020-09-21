@@ -46,8 +46,7 @@
 			"no-data": "No data"
 		},
 		"summary-info": {
-			"gas-price": "gas price",
-			"price-in-gwei": "{{price}} GWEI",
+			"gas-price-gwei": "gas price (GWEI)",
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {

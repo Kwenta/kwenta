@@ -34,7 +34,7 @@ const Container = styled.header`
 	top: 0;
 	left: 0;
 	right: 0;
-	z-index: ${zIndex.BASE};
+	z-index: ${zIndex.HEADER};
 	${media.lessThan('md')`
 		position: fixed;
 		background-color: ${(props) => props.theme.colors.black};

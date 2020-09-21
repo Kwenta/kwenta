@@ -465,7 +465,6 @@ const ExchangePage = () => {
 								</Slider>
 							</SliderContainer>
 						</MobileContainer>
-						<MobileFooterCardSpacer />
 					</MobileOrTabletView>
 					{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
 					{!isWalletConnected ? (
@@ -650,10 +649,6 @@ const SliderContent = styled.div``;
 
 const SliderContentSpacer = styled.div`
 	height: 16px;
-`;
-
-const MobileFooterCardSpacer = styled.div`
-	height: 80px;
 `;
 
 export default ExchangePage;

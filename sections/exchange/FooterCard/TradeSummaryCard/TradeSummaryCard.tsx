@@ -17,12 +17,14 @@ import { CurrencyKey } from 'constants/currency';
 import { secondsToTime } from 'utils/formatters/date';
 
 import Button from 'components/Button';
-import { DesktopOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOnlyView } from 'components/Media';
 import NumericInput from 'components/Input/NumericInput';
+import Card from 'components/Card';
 
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import { NoTextTransform, numericValueCSS, NumericValue } from 'styles/common';
+import media from 'styles/media';
 
 import { MessageContainer } from '../common';
 
@@ -107,116 +109,124 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 		}
 		return t('exchange.summary-info.button.submit-order');
 	}
+
+	const summaryItems = (
+		<SummaryItems>
+			<SummaryItem>
+				<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
+				<SummaryItemValue>
+					{gasPrice != null ? (
+						<>
+							{hasCustomGasPrice ? Number(customGasPrice) : gasPrice}
+							<GasPriceTooltip
+								trigger="click"
+								arrow={false}
+								content={
+									<>
+										<CustomGasPrice
+											value={customGasPrice}
+											onChange={(e) => setCustomGasPrice(e.target.value)}
+											placeholder="Custom"
+										/>
+										{GAS_SPEEDS.map((speed) => (
+											<GasSpeedButtonContainer key={speed}>
+												<Button
+													variant="secondary"
+													onClick={() => {
+														setCustomGasPrice('');
+														setGasSpeed(speed);
+													}}
+													isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+												>
+													<span>{t(`common.gas-prices.${speed}`)}</span>
+													<NumericValue>{gasPrices![speed]}</NumericValue>
+												</Button>
+											</GasSpeedButtonContainer>
+										))}
+									</>
+								}
+								interactive={true}
+							>
+								<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
+							</GasPriceTooltip>
+						</>
+					) : (
+						NO_VALUE
+					)}
+				</SummaryItemValue>
+			</SummaryItem>
+			<SummaryItem>
+				<SummaryItemLabel>
+					<Trans
+						i18nKey="common.currency.currency-value"
+						values={{ currencyKey: selectedPriceCurrency.asset }}
+						components={[<NoTextTransform />]}
+					/>
+				</SummaryItemLabel>
+				<SummaryItemValue>
+					{baseCurrencyAmount
+						? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+								sign: selectedPriceCurrency.sign,
+						  })
+						: NO_VALUE}
+				</SummaryItemValue>
+			</SummaryItem>
+			<SummaryItem>
+				<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+				<SummaryItemValue>
+					{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
+				</SummaryItemValue>
+			</SummaryItem>
+			<SummaryItem>
+				<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+				<SummaryItemValue>
+					{exchangeFeeRate != null && baseCurrencyAmount
+						? formatCurrency(
+								selectedPriceCurrency.name,
+								Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
+								{ sign: selectedPriceCurrency.sign }
+						  )
+						: NO_VALUE}
+				</SummaryItemValue>
+			</SummaryItem>
+		</SummaryItems>
+	);
+
 	return (
-		<MessageContainer>
-			<DesktopOnlyView>
-				<SummaryItems>
-					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.gas-price')}</SummaryItemLabel>
-						<SummaryItemValue>
-							{gasPrice != null ? (
-								<>
-									{t('exchange.summary-info.price-in-gwei', {
-										price: hasCustomGasPrice ? Number(customGasPrice) : gasPrice,
-									})}
-									<GasPriceTooltip
-										trigger="click"
-										arrow={false}
-										content={
-											<>
-												<CustomGasPrice
-													value={customGasPrice}
-													onChange={(e) => setCustomGasPrice(e.target.value)}
-													placeholder="Custom"
-												/>
-												{GAS_SPEEDS.map((speed) => (
-													<GasSpeedButtonContainer key={speed}>
-														<Button
-															variant="secondary"
-															onClick={() => {
-																setCustomGasPrice('');
-																setGasSpeed(speed);
-															}}
-															isActive={hasCustomGasPrice ? false : gasSpeed === speed}
-														>
-															<span>{t(`common.gas-prices.${speed}`)}</span>
-															<NumericValue>{gasPrices![speed]}</NumericValue>
-														</Button>
-													</GasSpeedButtonContainer>
-												))}
-											</>
-										}
-										interactive={true}
-									>
-										<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
-									</GasPriceTooltip>
-								</>
-							) : (
-								NO_VALUE
-							)}
-						</SummaryItemValue>
-					</SummaryItem>
-					<SummaryItem>
-						<SummaryItemLabel>
-							<Trans
-								i18nKey="common.currency.currency-value"
-								values={{ currencyKey: selectedPriceCurrency.asset }}
-								components={[<NoTextTransform />]}
-							/>
-						</SummaryItemLabel>
-						<SummaryItemValue>
-							{baseCurrencyAmount
-								? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-										sign: selectedPriceCurrency.sign,
-								  })
-								: NO_VALUE}
-						</SummaryItemValue>
-					</SummaryItem>
-					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-						<SummaryItemValue>
-							{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
-						</SummaryItemValue>
-					</SummaryItem>
-					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
-						<SummaryItemValue>
-							{exchangeFeeRate != null && baseCurrencyAmount
-								? formatCurrency(
-										selectedPriceCurrency.name,
-										Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
-										{ sign: selectedPriceCurrency.sign }
-								  )
-								: NO_VALUE}
-						</SummaryItemValue>
-					</SummaryItem>
-				</SummaryItems>
-			</DesktopOnlyView>
-			<ErrorTooltip
-				visible={feeReclaimPeriodInSeconds > 0}
-				placement="top"
-				content={
-					<div>
-						{t('exchange.errors.fee-reclamation', {
-							waitingPeriod: secondsToTime(feeReclaimPeriodInSeconds),
-							currencyKey: quoteCurrencyKey,
-						})}
-					</div>
-				}
-			>
-				<span>
-					<Button
-						variant="primary"
-						isRounded={true}
-						disabled={isSubmissionDisabled}
-						onClick={onSubmit}
-						size="lg"
-					>
-						{getButtonLabel()}
-					</Button>
-				</span>
-			</ErrorTooltip>
-		</MessageContainer>
+		<>
+			<MobileOnlyView>
+				<MobileCard>
+					<Card.Body>{summaryItems}</Card.Body>
+				</MobileCard>
+			</MobileOnlyView>
+			<MessageContainer>
+				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
+				<ErrorTooltip
+					visible={feeReclaimPeriodInSeconds > 0}
+					placement="top"
+					content={
+						<div>
+							{t('exchange.errors.fee-reclamation', {
+								waitingPeriod: secondsToTime(feeReclaimPeriodInSeconds),
+								currencyKey: quoteCurrencyKey,
+							})}
+						</div>
+					}
+				>
+					<span>
+						<Button
+							variant="primary"
+							isRounded={true}
+							disabled={isSubmissionDisabled}
+							onClick={onSubmit}
+							size="lg"
+						>
+							{getButtonLabel()}
+						</Button>
+					</span>
+				</ErrorTooltip>
+			</MessageContainer>
+		</>
 	);
 };
 
@@ -224,12 +234,21 @@ const SummaryItems = styled.div`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
+	${media.lessThan('sm')`
+		grid-auto-flow: unset;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
+		grid-gap: 20px;
+	`}
 `;
 
 const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;
 	width: 110px;
+	${media.lessThan('sm')`
+		width: unset;
+	`}
 `;
 
 const SummaryItemLabel = styled.div`
@@ -282,6 +301,10 @@ const ErrorTooltip = styled(Tippy)`
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.red};
 	}
+`;
+
+const MobileCard = styled(Card)`
+	margin-bottom: 86px;
 `;
 
 export default TradeSummaryCard;
