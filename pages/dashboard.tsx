@@ -22,9 +22,9 @@ import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
-import { formatCurrency } from 'utils/formatters/number';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { CATEGORY_MAP } from 'constants/currency';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -187,186 +187,77 @@ const Capitalize = styled.span`
 	text-transform: capitalize;
 `;
 
-const DashboardPage = () => {
+const Dashboard = () => {
 	const { t } = useTranslation();
-	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const synthsBalancesQuery = useSynthsBalancesQuery({ enabled: exchangeRatesQuery.isSuccess });
 	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
-	const synths = synthetix.js?.synths ?? [];
+
+	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 
-	const SYNTH_SORT_OPTIONS = [{ label: t('dashboard.synthSort.price'), value: 'PRICE' }];
-	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
-	const profit = formatCurrency(
-		selectedPriceCurrency.name,
-		synthsBalancesQuery.data?.totalUSDBalance || 0,
-		{
-			sign: selectedPriceCurrency.sign,
-		}
-	);
-
-	return (
+	return noSynths ? (
+		<NoSynthsCard />
+	) : (
 		<>
-			<Head>
-				<title>{t('dashboard.page-title')}</title>
-			</Head>
-			<AppLayout>
-				<PageContent>
-					<Container>
-						<LeftContainer>
-							{noSynths ? (
-								<NoSynthsCard />
-							) : (
-								<DashboardLeftCol>
-									<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
-										<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
-										<Profit>{profit}</Profit>
-										<ComingSoonBalanceChart />
-									</FlexDivCol>
-									<FlexDivCol>
-										<TabList style={{ marginBottom: '12px' }}>
-											<TabButton
-												name={TABS.SYNTH_BALANCES}
-												active={activeTab === TABS.SYNTH_BALANCES}
-												onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
-											>
-												{t('dashboard.tabs.nav.synth-balances')}
-											</TabButton>
-											<TabButton
-												name={TABS.CONVERT}
-												active={activeTab === TABS.CONVERT}
-												onClick={() => setActiveTab(TABS.CONVERT)}
-											>
-												{t('dashboard.tabs.nav.convert')}
-											</TabButton>
-											<TabButton
-												name={TABS.CRYPTO_BALANCES}
-												active={activeTab === TABS.CRYPTO_BALANCES}
-												onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
-											>
-												{t('dashboard.tabs.nav.crypto-balances')}
-											</TabButton>
-											<TabButton
-												name={TABS.TRANSACTIONS}
-												active={activeTab === TABS.TRANSACTIONS}
-												onClick={() => setActiveTab(TABS.TRANSACTIONS)}
-											>
-												{t('dashboard.tabs.nav.transactions')}
-											</TabButton>
-										</TabList>
-										<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-											<SynthBalances />
-										</TabPanel>
-										<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
-											<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-										</TabPanel>
-										<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
-											<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-										</TabPanel>
-										<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
-											<Transactions />
-										</TabPanel>
-									</FlexDivCol>
-								</DashboardLeftCol>
-							)}
-						</LeftContainer>
-						<RightContainer>
-							<FlexDivRow>
-								<CardTitle>{t('dashboard.trending')}</CardTitle>
-								<TrendingSortSelect
-									formatOptionLabel={(option: any) => <span>{option.label}</span>}
-									options={SYNTH_SORT_OPTIONS}
-									value={currentSynthSort}
-									onChange={(option: any) => {
-										if (option) {
-											setCurrentSynthSort(option);
-										}
-									}}
-								/>
-							</FlexDivRow>
-							{synths.map((synth: Synth) => {
-								const selectPriceCurrencyRate =
-									exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
-								let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
-								const currencyKey = synth.name;
-
-								if (price != null && selectPriceCurrencyRate != null) {
-									price /= selectPriceCurrencyRate;
-								}
-								return (
-									<SelectableCurrencyRow key={currencyKey} isSelectable={true}>
-										<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
-										{price != null ? (
-											<Currency.Price
-												currencyKey={currencyKey}
-												price={price}
-												sign={selectedPriceCurrency.sign}
-											/>
-										) : (
-											NO_VALUE
-										)}
-									</SelectableCurrencyRow>
-								);
-							})}
-						</RightContainer>
-					</Container>
-				</PageContent>
-			</AppLayout>
+			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
+				<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
+				<Profit>
+					<Currency.Price
+						currencyKey={selectedPriceCurrency.name}
+						price={synthsBalancesQuery.data?.totalUSDBalance || 0}
+						sign={selectedPriceCurrency.sign}
+					/>
+				</Profit>
+				<ComingSoonBalanceChart />
+			</FlexDivCol>
+			<FlexDivCol>
+				<TabList style={{ marginBottom: '12px' }}>
+					<TabButton
+						name={TABS.SYNTH_BALANCES}
+						active={activeTab === TABS.SYNTH_BALANCES}
+						onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
+					>
+						{t('dashboard.tabs.nav.synth-balances')}
+					</TabButton>
+					<TabButton
+						name={TABS.CONVERT}
+						active={activeTab === TABS.CONVERT}
+						onClick={() => setActiveTab(TABS.CONVERT)}
+					>
+						{t('dashboard.tabs.nav.convert')}
+					</TabButton>
+					<TabButton
+						name={TABS.CRYPTO_BALANCES}
+						active={activeTab === TABS.CRYPTO_BALANCES}
+						onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
+					>
+						{t('dashboard.tabs.nav.crypto-balances')}
+					</TabButton>
+					<TabButton
+						name={TABS.TRANSACTIONS}
+						active={activeTab === TABS.TRANSACTIONS}
+						onClick={() => setActiveTab(TABS.TRANSACTIONS)}
+					>
+						{t('dashboard.tabs.nav.transactions')}
+					</TabButton>
+				</TabList>
+				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+					<SynthBalances />
+				</TabPanel>
+				<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
+					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+				</TabPanel>
+				<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
+					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+				</TabPanel>
+				<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
+					<Transactions />
+				</TabPanel>
+			</FlexDivCol>
 		</>
 	);
 };
-
-const TrendingSortSelect = styled(Select)`
-	width: 30%;
-`;
-
-const ComingSoon = styled.div`
-	${fonts.data.large}
-	color: ${(props) => props.theme.colors.white};
-	text-align: center;
-`;
-
-const DashboardTitle = styled.div`
-	${fonts.data.large}
-	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 4px;
-`;
-
-const Profit = styled.div`
-	${fonts.data.xLarge}
-	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 70px;
-`;
-
-const DashboardLeftCol = styled(FlexDivCol)`
-	max-width: 686px;
-`;
-
-const CardTitle = styled.div`
-	${fonts.body['bold-medium']}
-	color: ${(props) => props.theme.colors.white};
-`;
-
-const Container = styled(FlexDiv)`
-	justify-content: space-between;
-	width: 100%;
-	flex-grow: 1;
-`;
-
-const LeftContainer = styled(FlexDivCol)`
-	flex-grow: 1;
-	padding-bottom: 48px;
-	margin: 0px 75px;
-	padding-top: 55px;
-`;
-
-const RightContainer = styled(FlexDivCol)`
-	width: 356px;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 55px 32px 48px 32px;
-	margin-right: -20px;
-`;
 
 const NoSynthTitle = styled.div`
 	${fonts.data.small}
@@ -403,5 +294,141 @@ const NoSynthsCard = () => {
 		</FlexDivCol>
 	);
 };
+
+const TrendingSynths = () => {
+	const { t } = useTranslation();
+
+	const SYNTH_SORT_OPTIONS = [{ label: t('dashboard.synthSort.price'), value: 'PRICE' }];
+	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
+
+	const synths = synthetix.js?.synths ?? [];
+	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
+	return (
+		<>
+			<FlexDivRow>
+				<CardTitle>{t('dashboard.trending')}</CardTitle>
+				<TrendingSortSelect
+					formatOptionLabel={(option: any) => <span>{option.label}</span>}
+					options={SYNTH_SORT_OPTIONS}
+					value={currentSynthSort}
+					onChange={(option: any) => {
+						if (option) {
+							setCurrentSynthSort(option);
+						}
+					}}
+				/>
+			</FlexDivRow>
+			{synths.map((synth: Synth) => {
+				const selectPriceCurrencyRate =
+					exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
+				let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
+				const currencyKey = synth.name;
+
+				if (price != null && selectPriceCurrencyRate != null) {
+					price /= selectPriceCurrencyRate;
+				}
+				return (
+					<SelectableCurrencyRow key={currencyKey} isSelectable={true}>
+						<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+						{price != null ? (
+							<Currency.Price
+								currencyKey={selectedPriceCurrency.name}
+								price={price}
+								sign={selectedPriceCurrency.sign}
+							/>
+						) : (
+							NO_VALUE
+						)}
+					</SelectableCurrencyRow>
+				);
+			})}
+		</>
+	);
+};
+
+const DashboardPage = () => {
+	const { t } = useTranslation();
+
+	return (
+		<>
+			<Head>
+				<title>{t('dashboard.page-title')}</title>
+			</Head>
+			<AppLayout>
+				<PageContent>
+					<DesktopOnlyView>
+						<Container>
+							<LeftContainer>
+								<Dashboard />
+							</LeftContainer>
+							<RightContainer>
+								<TrendingSynths />
+							</RightContainer>
+						</Container>
+					</DesktopOnlyView>
+					<MobileOrTabletView>
+						<MobileContainer>
+							<Dashboard />
+						</MobileContainer>
+					</MobileOrTabletView>
+				</PageContent>
+			</AppLayout>
+		</>
+	);
+};
+
+const MobileContainer = styled.div`
+	max-width: 364px;
+`;
+
+const TrendingSortSelect = styled(Select)`
+	width: 30%;
+`;
+
+const ComingSoon = styled.div`
+	${fonts.data.large}
+	color: ${(props) => props.theme.colors.white};
+	text-align: center;
+`;
+
+const DashboardTitle = styled.div`
+	${fonts.data.large}
+	color: ${(props) => props.theme.colors.white};
+	margin-bottom: 4px;
+`;
+
+const Profit = styled.div`
+	${fonts.data.xLarge}
+	color: ${(props) => props.theme.colors.white};
+	margin-bottom: 70px;
+`;
+
+const CardTitle = styled.div`
+	${fonts.body['bold-medium']}
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const Container = styled(FlexDiv)`
+	justify-content: space-between;
+	width: 100%;
+	flex-grow: 1;
+`;
+
+const LeftContainer = styled(FlexDivCol)`
+	flex-grow: 1;
+	padding-bottom: 48px;
+	margin: 0px 75px;
+	padding-top: 55px;
+	max-width: 1000px;
+`;
+
+const RightContainer = styled(FlexDivCol)`
+	width: 356px;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	padding: 55px 32px 48px 32px;
+	margin-right: -20px;
+`;
 
 export default DashboardPage;
