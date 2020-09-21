@@ -231,7 +231,7 @@ const HomePage = () => {
 							<ChartBanner />
 							<OverlayText>
 								<Header>{t('homepage.footer.cta.title')}</Header>
-								<CTAButton>{t('homepage.footer.cta.button')}</CTAButton>
+								<CTAButton variant="primary">{t('homepage.footer.cta.button')}</CTAButton>
 							</OverlayText>
 						</ChartGraphicContainer>
 					</StackSection>
