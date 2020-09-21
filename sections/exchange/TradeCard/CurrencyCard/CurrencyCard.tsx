@@ -12,6 +12,8 @@ import { formatCurrency } from 'utils/formatters/number';
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 
+import { Synth } from 'lib/synthetix';
+
 import {
 	FlexDivCentered,
 	FlexDivRowCentered,
@@ -29,6 +31,9 @@ type CurrencyCardProps = {
 	walletBalance: number | null;
 	onBalanceClick: () => void | undefined;
 	onCurrencySelect: () => void;
+	priceRate: number;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
 	className?: string;
 };
 
@@ -40,6 +45,9 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	walletBalance,
 	onBalanceClick,
 	onCurrencySelect,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+	priceRate,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -50,14 +58,25 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const insufficientBalance =
 		!isBase && hasWalletBalance ? Number(amount) > Number(walletBalance) : false;
 
+	let tradeAmount = Number(amount) * priceRate;
+	if (selectPriceCurrencyRate) {
+		tradeAmount /= selectPriceCurrencyRate;
+	}
+
+	const currencyKeySelected = currencyKey != null;
+
 	return (
 		<Card {...rest}>
-			<Card.Body>
+			<StyledCardBody>
 				<LabelContainer>
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
-					<CurrencySelector onClick={onCurrencySelect} role="button">
+					<CurrencySelector
+						onClick={onCurrencySelect}
+						role="button"
+						currencyKeySelected={currencyKeySelected}
+					>
 						{currencyKey ?? (
 							<CapitalizedText>
 								{t('exchange.currency-card.currency-selector.no-value')}
@@ -65,8 +84,15 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						)}{' '}
 						<CaretDownIcon />
 					</CurrencySelector>
-					{currencyKey != null && (
-						<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
+					{currencyKeySelected && (
+						<CurrencyAmountContainer>
+							<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
+							<CurrencyAmountValue>
+								{formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+									sign: selectedPriceCurrency.sign,
+								})}
+							</CurrencyAmountValue>
+						</CurrencyAmountContainer>
 					)}
 				</CurrencyContainer>
 				<WalletBalanceContainer>
@@ -79,13 +105,18 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
 					</WalletBalance>
 				</WalletBalanceContainer>
-			</Card.Body>
+			</StyledCardBody>
 		</Card>
 	);
 };
 
+const StyledCardBody = styled(Card.Body)`
+	padding-top: 11px;
+	padding-bottom: 11px;
+`;
+
 const LabelContainer = styled.div`
-	padding-bottom: 13px;
+	padding-bottom: 2px;
 	text-transform: capitalize;
 `;
 
@@ -93,7 +124,7 @@ const CurrencyContainer = styled(FlexDivCentered)`
 	padding-bottom: 6px;
 `;
 
-const CurrencySelector = styled.div`
+const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
 	display: grid;
 	align-items: center;
 	grid-auto-flow: column;
@@ -112,10 +143,32 @@ const CurrencySelector = styled.div`
 	svg {
 		color: ${(props) => props.theme.colors.purple};
 	}
+	${(props) =>
+		!props.currencyKeySelected
+			? css`
+					margin: 12px 0 12px -10px;
+			  `
+			: css``};
+`;
+
+const CurrencyAmountContainer = styled.div`
+	background-color: ${(props) => props.theme.colors.black};
+	border-radius: 4px;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
 	font-size: 16px;
+	border: 0;
+	height: 30px;
+`;
+
+const CurrencyAmountValue = styled.div`
+	${numericValueCSS};
+	padding: 0px 8px 2px 8px;
+	font-size: 10px;
+	width: 150px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 `;
 
 const WalletBalanceContainer = styled(FlexDivRowCentered)``;

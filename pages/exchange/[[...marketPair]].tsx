@@ -155,7 +155,10 @@ const ExchangePage = () => {
 		selectedPriceCurrency.name
 	);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
-	const totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
+	let totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
+	if (selectPriceCurrencyRate) {
+		totalTradePrice /= selectPriceCurrencyRate;
+	}
 
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
@@ -324,6 +327,11 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currencyPair, marketPairQuery, isAppReady]);
 
+	const selectPriceCurrencyProps = {
+		selectedPriceCurrency,
+		selectPriceCurrencyRate,
+	};
+
 	const quoteCurrencyCard = (
 		<StyledCurrencyCard
 			side="quote"
@@ -342,16 +350,17 @@ const ExchangePage = () => {
 				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 			}}
 			onCurrencySelect={() => setSelectAssetModalOpen(true)}
+			priceRate={quotePriceRate}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 	const quotePriceChartCard = (
 		<StyledPriceChartCard
 			side="quote"
 			currencyKey={quoteCurrencyKey}
-			selectedPriceCurrency={selectedPriceCurrency}
-			selectPriceCurrencyRate={selectPriceCurrencyRate}
 			priceRate={quotePriceRate}
 			isSynthFrozen={isQuoteCurrencyFrozen}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -359,8 +368,7 @@ const ExchangePage = () => {
 		<StyledMarketDetailsCard
 			currencyKey={quoteCurrencyKey}
 			priceRate={quotePriceRate}
-			selectedPriceCurrency={selectedPriceCurrency}
-			selectPriceCurrencyRate={selectPriceCurrencyRate}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -382,6 +390,8 @@ const ExchangePage = () => {
 				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 			}}
 			onCurrencySelect={() => setSelectSynthModalOpen(true)}
+			priceRate={basePriceRate}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -389,10 +399,9 @@ const ExchangePage = () => {
 		<StyledPriceChartCard
 			side="base"
 			currencyKey={baseCurrencyKey}
-			selectedPriceCurrency={selectedPriceCurrency}
-			selectPriceCurrencyRate={selectPriceCurrencyRate}
 			priceRate={basePriceRate}
 			isSynthFrozen={isBaseCurrencyFrozen}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -400,8 +409,7 @@ const ExchangePage = () => {
 		<StyledMarketDetailsCard
 			currencyKey={baseCurrencyKey}
 			priceRate={basePriceRate}
-			selectedPriceCurrency={selectedPriceCurrency}
-			selectPriceCurrencyRate={selectPriceCurrencyRate}
+			{...selectPriceCurrencyProps}
 		/>
 	);
 
