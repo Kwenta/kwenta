@@ -99,9 +99,7 @@ const ExchangePage = () => {
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const frozenSynthsQuery = useFrozenSynthsQuery();
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, {
-		refetchInterval: false,
-	});
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
@@ -491,6 +489,7 @@ const ExchangePage = () => {
 							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
 							gasPrices={ethGasStationQuery.data}
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
+							quoteCurrencyKey={quoteCurrencyKey}
 						/>
 					)}
 					{txConfirmationModalOpen && (

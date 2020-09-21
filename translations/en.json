@@ -70,6 +70,9 @@
 		"common": {
 			"from": "from",
 			"into": "into"
+		},
+		"errors": {
+			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}"
 		}
 	},
 	"dashboard": {
@@ -98,11 +101,11 @@
 		"synthSort": {
 			"price": "Price"
 		},
-		"transactions":{
+		"transactions": {
 			"synthSort": {
 				"allSynths": "All Synths"
-			}, 
-			"orderTypeSort":  {
+			},
+			"orderTypeSort": {
 				"allOrderTypes": "All Order Types",
 				"market": "Market",
 				"limit": "Limit"

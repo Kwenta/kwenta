@@ -5,3 +5,7 @@ export const truncateAddress = (address: string, first = 5, last = 5) =>
 
 export const formatCurrencyPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
 	`${baseCurrencyKey} / ${quoteCurrencyKey}`;
+
+export const strPadLeft = (string: string | number, pad: string, length: number) => {
+	return (new Array(length + 1).join(pad) + string).slice(-length);
+};

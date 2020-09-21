@@ -12,6 +12,9 @@ import synthetix, { Synth } from 'lib/synthetix';
 import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
 import { NO_VALUE } from 'constants/placeholder';
+import { CurrencyKey } from 'constants/currency';
+
+import { secondsToTime } from 'utils/formatters/date';
 
 import Button from 'components/Button';
 import { DesktopOnlyView } from 'components/Media';
@@ -39,6 +42,7 @@ type TradeSummaryCardProps = {
 	isBaseCurrencySuspended: boolean;
 	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
+	quoteCurrencyKey: CurrencyKey | null;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -57,6 +61,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	isBaseCurrencySuspended,
 	gasPrices,
 	feeReclaimPeriodInSeconds,
+	quoteCurrencyKey,
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
@@ -187,15 +192,30 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					</SummaryItem>
 				</SummaryItems>
 			</DesktopOnlyView>
-			<Button
-				variant="primary"
-				isRounded={true}
-				disabled={isSubmissionDisabled}
-				onClick={onSubmit}
-				size="lg"
+			<ErrorTooltip
+				visible={feeReclaimPeriodInSeconds > 0}
+				placement="top"
+				content={
+					<div>
+						{t('exchange.errors.fee-reclamation', {
+							waitingPeriod: secondsToTime(feeReclaimPeriodInSeconds),
+							currencyKey: quoteCurrencyKey,
+						})}
+					</div>
+				}
 			>
-				{getButtonLabel()}
-			</Button>
+				<span>
+					<Button
+						variant="primary"
+						isRounded={true}
+						disabled={isSubmissionDisabled}
+						onClick={onSubmit}
+						size="lg"
+					>
+						{getButtonLabel()}
+					</Button>
+				</span>
+			</ErrorTooltip>
 		</MessageContainer>
 	);
 };
@@ -252,6 +272,15 @@ const CustomGasPrice = styled(NumericInput)`
 	font-size: 12px;
 	::placeholder {
 		font-family: ${(props) => props.theme.fonts.regular};
+	}
+`;
+
+const ErrorTooltip = styled(Tippy)`
+	font-size: 12px;
+	background-color: ${(props) => props.theme.colors.red};
+	color: ${(props) => props.theme.colors.white};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.red};
 	}
 `;
 
