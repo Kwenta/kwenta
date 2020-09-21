@@ -15,7 +15,90 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta"
+		"page-title": "Kwenta",
+		"nav": {
+			"exchange": "View Exchange",
+			"wallet": "Connect Wallet",
+			"why": "Why Kwenta?",
+			"how": "How it Works",
+			"faq": "FAQ"
+		},
+		"hero": {
+			"title": "The last exchange you’ll ever use"
+		},
+		"assets": {
+			"title": "Trade 213 different assets",
+			"indicies": "Unique Indicies",
+			"equities": "Traditional Equities",
+			"stablecoins": "FIAT Stablecoins",
+			"cryptocurrencies": "Cryptocurrencies"
+		},
+		"features": {
+			"title": "All the features you’re used to",
+			"order-types": {
+				"title": "Advanced Order Types",
+				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			},
+			"options-futures": {
+				"title": "Options & Futures",
+				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			},
+			"leverage": {
+				"title": "Leverage",
+				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			}
+		},
+		"second-hero": {
+			"title": "Without the limits of a traditional exchange",
+			"infinite-liquidity": {
+				"title": "Infinite Liquidity",
+				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nulla."
+			},
+			"zero-slippage": {
+				"title": "Zero Slippage",
+				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+			},
+			"trading-pairs": {
+				"title": "No Trading Pairs",
+				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+			}
+		},
+		"steps": {
+			"title": "Start trading in just 3 steps",
+			"one": {
+				"title": "Get a web3 wallet with Ethereum in it",
+				"subtitle": "Step One",
+				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+			},
+			"two": {
+				"title": "Head to Kwenta and convert some ETH to sUSD",
+				"subtitle": "Step Two",
+				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+			},
+			"three": {
+				"title": "Trade any synth to any synth, starting with sUSD",
+				"subtitle": "Step Three",
+				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+			}
+		},
+		"faq": {
+			"title": "Frequently Asked Questions",
+			"tabs": {
+				"one": "GENERAL",
+				"two": "ETHEREUM",
+				"three": "SOMETHING"
+			}
+		},
+		"footer": {
+			"cta": {
+				"title": "Make your first trade",
+				"button": "View Exchange"
+			},
+			"subtext": {
+				"powered": "Powered By",
+				"copyright": "Kwenta Inc. 2020©"
+			}
+		}
 	},
 	"exchange": {
 		"page-title": "Kwenta | Exchange",
