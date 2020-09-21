@@ -7,10 +7,11 @@ import Table from 'components/Table';
 
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
 
-import { formatCurrency, formatCurrencyWithSign } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { fonts } from 'styles/theme/fonts';
-
-const USD_SIGN = '$';
+import { priceCurrencyState } from 'store/app';
+import { useRecoilValue } from 'recoil';
+import Currency from 'components/Currency';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -20,7 +21,7 @@ type TradeHistoryProps = {
 
 const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
-
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	return (
 		<StyledTable
 			palette="primary"
@@ -75,7 +76,13 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					accessor: 'amount',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<span>{formatCurrencyWithSign(USD_SIGN, cellProps.row.original.toAmountInUSD)}</span>
+						<StyledValue>
+							<Currency.Price
+								currencyKey={cellProps.row.original.toCurrencyKey}
+								price={cellProps.row.original.toAmountInUSD}
+								sign={selectedPriceCurrency.sign}
+							/>
+						</StyledValue>
 					),
 					sortable: true,
 				},
@@ -111,6 +118,11 @@ const StyledCurrencyKey = styled.span`
 
 const StyledPrice = styled.span`
 	color: ${(props) => props.theme.colors.silver};
+`;
+
+const StyledValue = styled.div`
+	${fonts.body['thin-small']}
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default TradeHistory;

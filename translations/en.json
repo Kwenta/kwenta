@@ -328,7 +328,7 @@
 				"orderType": "Order Type",
 				"from": "From",
 				"to": "To",
-				"value": "USD Value",
+				"value": "Value",
 				"no-results": "No Results"
 			}
 		}

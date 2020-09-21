@@ -98,7 +98,6 @@ const SynthBalanceRow = styled(FlexDivRow)`
 
 const Transactions = () => {
 	const { t } = useTranslation();
-
 	const allTradesQuery = useAllTradesQuery();
 
 	const synthFilterList = [
@@ -112,7 +111,7 @@ const Transactions = () => {
 	const orderTypeList = [
 		{ label: t('dashboard.transactions.orderTypeSort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
 		{ label: t('dashboard.transactions.orderTypeSort.market'), key: 'MARKET' },
-		{ label: t('dashboard.transactions.orderTypeSort.limit'), key: 'LIMIT' },
+		/* { label: t('dashboard.transactions.orderTypeSort.limit'), key: 'LIMIT' }, */
 	];
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 

@@ -1,7 +1,5 @@
 import keyBy from 'lodash/keyBy';
 
-import { HistoricalTrade } from 'queries/trades/types';
-
 // Crypto
 import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
