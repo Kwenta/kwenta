@@ -14,7 +14,6 @@ const { ETH } = CRYPTO_CURRENCY_MAP;
 
 const NoSynthsCard: FC = () => {
 	const { t } = useTranslation();
-
 	return (
 		<MessageContainer>
 			<DesktopOnlyView>
