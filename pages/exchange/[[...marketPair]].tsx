@@ -35,16 +35,18 @@ import SelectSynthModal from 'sections/shared/modals/SelectSynthModal';
 import SelectAssetModal from 'sections/shared/modals/SelectAssetModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
-
 import {
 	customGasPriceState,
 	gasSpeedState,
 	isWalletConnectedState,
 	walletAddressState,
 } from 'store/wallet';
+import { ordersState } from 'store/orders';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 import { priceCurrencyState, appReadyState } from 'store/app';
 
@@ -54,11 +56,11 @@ import synthetix from 'lib/synthetix';
 
 import { FlexDivCentered, FlexDivColCentered, resetButtonCSS, PageContent } from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import { useLocalStorage } from 'hooks/useLocalStorage';
-import { ordersState } from 'store/orders';
+import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
+import { zIndex } from 'constants/ui';
+
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { zIndex } from 'constants/ui';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 
 const ExchangePage = () => {
@@ -234,9 +236,11 @@ const ExchangePage = () => {
 				const gasPrice =
 					customGasPrice !== '' ? Number(customGasPrice) : ethGasStationQuery.data![gasSpeed];
 
+				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchange(...params);
+
 				const tx = await synthetix.js.contracts.Synthetix.exchange(...params, {
 					gasPrice: gasPrice * GWEI_UNIT,
-					// gasLimit: gasEstimate + DEFAULT_GAS_BUFFER,
+					gasLimit: Number(gasEstimate) + DEFAULT_GAS_BUFFER,
 				});
 
 				if (tx) {
