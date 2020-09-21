@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import synthetix, { Synth } from 'lib/synthetix';
 import { useRecoilValue } from 'recoil';
@@ -24,7 +24,7 @@ import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
 import { formatCurrency } from 'utils/formatters/number';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { filterTradesByCategory, CATEGORY_MAP, Category } from 'constants/currency';
+import { CATEGORY_MAP } from 'constants/currency';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -101,14 +101,14 @@ const Transactions = () => {
 
 	const allTradesQuery = useAllTradesQuery();
 
-	const synthSortList = [
+	const synthFilterList = [
 		{ label: t('dashboard.transactions.synthSort.allSynths'), key: 'ALL_SYNTHS' },
 		{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
 		{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
 		{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
 		{ label: t('common.currency-category.equities'), key: CATEGORY_MAP['equities'] },
 	];
-	const [synthSort, setSynthSort] = useState(synthSortList[0]);
+	const [synthFilter, setSynthFilter] = useState(synthFilterList[0]);
 	const orderTypeList = [
 		{ label: t('dashboard.transactions.orderTypeSort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
 		{ label: t('dashboard.transactions.orderTypeSort.market'), key: 'MARKET' },
@@ -119,16 +119,31 @@ const Transactions = () => {
 	const orderSizeList = [{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' }];
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
+	const synths = synthetix.js?.synths || [];
+	const filteredSynthKeys = useMemo(
+		() => synths.filter((synth) => synth.category === synthFilter.key).map((synth) => synth.name),
+		[synths, synthFilter.key]
+	);
+
+	const trades = allTradesQuery.data || [];
+	const filteredHistoricalTrades = useMemo(
+		() =>
+			synthFilter.key !== 'ALL_SYNTHS'
+				? trades.filter((trade) => filteredSynthKeys.indexOf(trade.fromCurrencyKey) !== -1)
+				: trades,
+		[trades, filteredSynthKeys, synthFilter.key]
+	);
+
 	return (
 		<>
 			<FlexDivRow>
 				<TransactionSelect
 					formatOptionLabel={(option: any) => <Capitalize>{option.label}</Capitalize>}
-					options={synthSortList}
-					value={synthSort}
+					options={synthFilterList}
+					value={synthFilter}
 					onChange={(option: any) => {
 						if (option) {
-							setSynthSort(option);
+							setSynthFilter(option);
 						}
 					}}
 				/>
@@ -155,11 +170,7 @@ const Transactions = () => {
 			</FlexDivRow>
 			<FlexDivRow>
 				<TradeHistory
-					trades={
-						synthSort.key !== 'ALL_SYNTHS'
-							? filterTradesByCategory(allTradesQuery.data || [], synthSort.key as Category)
-							: allTradesQuery.data || []
-					}
+					trades={filteredHistoricalTrades}
 					isLoaded={allTradesQuery.isSuccess}
 					isLoading={allTradesQuery.isLoading}
 				/>
