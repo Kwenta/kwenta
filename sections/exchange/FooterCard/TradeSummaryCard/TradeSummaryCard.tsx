@@ -209,6 +209,7 @@ const SummaryItems = styled.div`
 const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;
+	width: 110px;
 `;
 
 const SummaryItemLabel = styled.div`
@@ -218,6 +219,9 @@ const SummaryItemLabel = styled.div`
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	${numericValueCSS};
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 `;
 
 const StyledGasEditButton = styled.span`
