@@ -178,7 +178,7 @@
 			"estimated-currency-value": "Estimated <0>{{currencyKey}}</0> Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
-			"synthetic-currency": "Synthetic <0>{{currencyKey}}</0>",
+			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
 			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>"

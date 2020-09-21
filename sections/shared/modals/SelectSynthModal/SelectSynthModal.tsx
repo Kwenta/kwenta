@@ -142,7 +142,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 								}}
 								isSelectable={true}
 							>
-								<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+								<Currency.Name
+									currencyKey={currencyKey}
+									name={t('common.currency.synthetic-currency-name', { currencyName: synth.desc })}
+									showIcon={true}
+								/>
 								{price != null ? (
 									<Currency.Price
 										currencyKey={currencyKey}
