@@ -1,20 +1,14 @@
 import React, { memo, FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Tooltip from '@material-ui/core/Tooltip';
 import { CellProps } from 'react-table';
 
 import Table from 'components/Table';
 
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
 
-import {
-	LONG_CRYPTO_CURRENCY_DECIMALS,
-	SHORT_CRYPTO_CURRENCY_DECIMALS,
-	formatCurrencyWithKey,
-	formatCurrency,
-	formatCurrencyWithSign,
-} from 'utils/formatters/number';
+import { formatCurrency, formatCurrencyWithSign } from 'utils/formatters/number';
+import { fonts } from 'styles/theme/fonts';
 
 const USD_SIGN = '$';
 
@@ -32,71 +26,61 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 			palette="primary"
 			columns={[
 				{
-					Header: <>{t('assets.exchanges.table.orderType')}</>,
-					accessor: 'toAmount',
+					Header: <StyledTableHeader>{t('assets.exchanges.table.orderType')}</StyledTableHeader>,
+					accessor: 'orderType',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<Tooltip
-							title={formatCurrency(
-								String(cellProps.row.original.toAmount),
-								LONG_CRYPTO_CURRENCY_DECIMALS
-							)}
-							placement="top"
-						>
-							<span>
-								{formatCurrencyWithKey(
-									cellProps.row.original.toCurrencyKey,
-									cellProps.row.original.toAmount,
-									SHORT_CRYPTO_CURRENCY_DECIMALS
-								)}
-							</span>
-						</Tooltip>
+						<StyledOrderType>{t('dashboard.transactions.orderTypeSort.market')}</StyledOrderType>
 					),
 					sortable: true,
 				},
 				{
-					Header: <>{t('assets.exchanges.table.from')}</>,
+					Header: <StyledTableHeader>{t('assets.exchanges.table.from')}</StyledTableHeader>,
 					accessor: 'fromAmount',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<Tooltip
-							title={formatCurrency(
-								String(cellProps.row.original.fromAmount),
-								LONG_CRYPTO_CURRENCY_DECIMALS
-							)}
-							placement="top"
-						>
-							<span>
-								{formatCurrencyWithKey(
+						<span>
+							<StyledCurrencyKey>{cellProps.row.original.fromCurrencyKey}</StyledCurrencyKey>
+							&nbsp;
+							<StyledPrice>
+								{formatCurrency(
 									cellProps.row.original.fromCurrencyKey,
-									cellProps.row.original.fromAmount,
-									SHORT_CRYPTO_CURRENCY_DECIMALS
+									cellProps.row.original.fromAmount
 								)}
-							</span>
-						</Tooltip>
+							</StyledPrice>
+						</span>
 					),
 					sortable: true,
 				},
 				{
-					Header: <>{t('assets.exchanges.table.to')}</>,
-					accessor: 'price',
+					Header: <StyledTableHeader>{t('assets.exchanges.table.to')}</StyledTableHeader>,
+					accessor: 'toAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade, HistoricalTrade['price']>) => (
-						<span>{formatCurrencyWithSign(USD_SIGN, cellProps.cell.value)}</span>
+					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+						<span>
+							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
+							&nbsp;
+							<StyledPrice>
+								{formatCurrency(
+									cellProps.row.original.toCurrencyKey,
+									cellProps.row.original.toAmount
+								)}
+							</StyledPrice>
+						</span>
 					),
 					sortable: true,
 				},
 				{
-					Header: <>{t('assets.exchanges.table.value')}</>,
+					Header: <StyledTableHeader>{t('assets.exchanges.table.value')}</StyledTableHeader>,
 					accessor: 'amount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade, HistoricalTrade['amount']>) => (
-						<span>{formatCurrencyWithSign(USD_SIGN, cellProps.cell.value)}</span>
+					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+						<span>{formatCurrencyWithSign(USD_SIGN, cellProps.row.original.toAmountInUSD)}</span>
 					),
 					sortable: true,
 				},
 			]}
-			data={trades.slice(0, 6)} // TODO paging
+			data={trades}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
@@ -108,10 +92,25 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 });
 
 const StyledTable = styled(Table)`
-	position: initial;
-	.table-body-cell {
-		height: 38px;
-	}
+	margin-top: 16px;
+`;
+
+const StyledTableHeader = styled.div`
+	${fonts.body['bold-small']}
+	color: ${(props) => props.theme.colors.blueberry};
+`;
+
+const StyledOrderType = styled.div`
+	${fonts.body['thin-small']}
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const StyledCurrencyKey = styled.span`
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const StyledPrice = styled.span`
+	color: ${(props) => props.theme.colors.silver};
 `;
 
 export default TradeHistory;

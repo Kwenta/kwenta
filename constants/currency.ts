@@ -1,5 +1,7 @@
 import keyBy from 'lodash/keyBy';
 
+import { HistoricalTrade } from 'queries/trades/types';
+
 // Crypto
 import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
@@ -237,4 +239,27 @@ export const FIAT_SYNTHS = new Set([
 	SYNTHS_MAP.sCHF,
 ]);
 
+export const INDEX_SYNTHS: string[] = [];
+export const EQUITY_SYNTHS: string[] = [];
+export const COMMODITY_SYNTHS = ['sXAU', 'sXAG'];
+
 export const sUSD_EXCHANGE_RATE = 1;
+
+const CATEGORY_SYNTH_LIST_MAP = {
+	crypto: [
+		...CRYPTO_CURRENCY.map((crypto) => `s${crypto}`),
+		...CRYPTO_CURRENCY.map((crypto) => `i${crypto}`),
+	],
+	forex: [...FIAT_SYNTHS],
+	index: INDEX_SYNTHS,
+	equities: EQUITY_SYNTHS,
+	commodity: COMMODITY_SYNTHS,
+	inverse: SYNTHS.filter((synth) => synth.toLocaleLowerCase().startsWith('i')),
+};
+
+export const filterTradesByCategory = (trades: HistoricalTrade[], category: Category) =>
+	trades.filter(
+		(trade) =>
+			CATEGORY_SYNTH_LIST_MAP[category].indexOf(trade.fromCurrencyKey) !== -1 ||
+			CATEGORY_SYNTH_LIST_MAP[category].indexOf(trade.toCurrencyKey) !== -1
+	);

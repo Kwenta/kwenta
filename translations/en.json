@@ -97,6 +97,16 @@
 		},
 		"synthSort": {
 			"price": "Price"
+		},
+		"transactions":{
+			"synthSort": {
+				"allSynths": "All Synths"
+			}, 
+			"orderTypeSort":  {
+				"allOrderTypes": "All Order Types",
+				"market": "Market",
+				"limit": "Limit"
+			}
 		}
 	},
 	"not-found": {
