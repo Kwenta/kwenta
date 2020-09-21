@@ -93,6 +93,10 @@
 			"cta": {
 				"title": "Make your first trade",
 				"button": "View Exchange"
+			},
+			"subtext": {
+				"powered": "Powered By",
+				"copyright": "Kwenta Inc. 2020©"
 			}
 		}
 	},
