@@ -14,12 +14,7 @@ import NumericInput from 'components/Input/NumericInput';
 
 import { Synth } from 'lib/synthetix';
 
-import {
-	FlexDivCentered,
-	FlexDivRowCentered,
-	numericValueCSS,
-	CapitalizedText,
-} from 'styles/common';
+import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
 
 import { Side } from '../types';
 
@@ -120,7 +115,7 @@ const LabelContainer = styled.div`
 	text-transform: capitalize;
 `;
 
-const CurrencyContainer = styled(FlexDivCentered)`
+const CurrencyContainer = styled(FlexDivRowCentered)`
 	padding-bottom: 6px;
 `;
 
@@ -154,6 +149,7 @@ const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
 const CurrencyAmountContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.black};
 	border-radius: 4px;
+	width: 180px;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
