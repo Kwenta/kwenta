@@ -8,7 +8,7 @@ import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 
-const useCryptoBalancesQuery = (options?: BaseQueryOptions) => {
+const useETHBalancesQuery = (options?: BaseQueryOptions) => {
 	const { provider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -30,4 +30,4 @@ const useCryptoBalancesQuery = (options?: BaseQueryOptions) => {
 	);
 };
 
-export default useCryptoBalancesQuery;
+export default useETHBalancesQuery;
