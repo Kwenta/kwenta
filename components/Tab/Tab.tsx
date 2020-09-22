@@ -7,7 +7,7 @@ import { fonts } from 'styles/theme/fonts';
 type TabProps = {
 	name: string;
 	active: boolean;
-	onClick: () => void;
+	onClick?: () => void;
 	children: ReactNode;
 };
 

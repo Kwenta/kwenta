@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { priceCurrencyState } from 'store/app';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 import { FlexDivCol } from 'styles/common';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
@@ -23,12 +24,14 @@ const TABS = {
 };
 
 const DashboardCard = () => {
+	const router = useRouter();
+	const { tab } = router.query;
 	const { t } = useTranslation();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
+	const activeTab = !!tab ? tab[0] : TABS.SYNTH_BALANCES;
 
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
@@ -57,33 +60,22 @@ const DashboardCard = () => {
 			</FlexDivCol>
 			<FlexDivCol>
 				<TabList style={{ marginBottom: '12px' }}>
-					<TabButton
-						name={TABS.SYNTH_BALANCES}
-						active={activeTab === TABS.SYNTH_BALANCES}
-						onClick={() => setActiveTab(TABS.SYNTH_BALANCES)}
-					>
-						{t('dashboard.tabs.nav.synth-balances')}
+					<TabButton name={TABS.SYNTH_BALANCES} active={activeTab === TABS.SYNTH_BALANCES}>
+						<Link href={`${TABS.SYNTH_BALANCES}`}>{t('dashboard.tabs.nav.synth-balances')}</Link>
 					</TabButton>
-					<TabButton
-						name={TABS.CONVERT}
-						active={activeTab === TABS.CONVERT}
-						onClick={() => setActiveTab(TABS.CONVERT)}
-					>
-						{t('dashboard.tabs.nav.convert')}
+					<TabButton name={TABS.CONVERT} active={activeTab === TABS.CONVERT}>
+						<Link href={`${TABS.CONVERT}`}>{t('dashboard.tabs.nav.convert')}</Link>
 					</TabButton>
 					{/*<TabButton
 						name={TABS.CRYPTO_BALANCES}
 						active={activeTab === TABS.CRYPTO_BALANCES}
-						onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
 					>
-						{t('dashboard.tabs.nav.crypto-balances')}
+						<Link href={`${TABS.CRYPTO_BALANCES}`}>
+							{t('dashboard.tabs.nav.crypto-balances')}
+						</Link>
 					</TabButton>*/}
-					<TabButton
-						name={TABS.TRANSACTIONS}
-						active={activeTab === TABS.TRANSACTIONS}
-						onClick={() => setActiveTab(TABS.TRANSACTIONS)}
-					>
-						{t('dashboard.tabs.nav.transactions')}
+					<TabButton name={TABS.TRANSACTIONS} active={activeTab === TABS.TRANSACTIONS}>
+						<Link href={`${TABS.TRANSACTIONS}`}>{t('dashboard.tabs.nav.transactions')}</Link>
 					</TabButton>
 				</TabList>
 				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
