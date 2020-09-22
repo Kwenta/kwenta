@@ -7,8 +7,8 @@ import {
 	FlexDivColCentered,
 	GridDivCentered,
 	FlexDiv,
-	FlexDivRow,
 	AbsoluteCenteredDiv,
+	FlexDivRowCentered,
 } from 'styles/common';
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/svg/marketing/market-order-preview.svg';
@@ -28,6 +28,8 @@ import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import React, { useState } from 'react';
 import { TabButton, TabList, TabPanel } from 'components/Tab';
 import Button from 'components/Button/Button';
+
+import media from 'styles/media';
 
 const HomePage = () => {
 	const [activeTab, setActiveTab] = useState('0');
@@ -69,6 +71,7 @@ const HomePage = () => {
 		{
 			title: t('homepage.features.leverage.title'),
 			copy: t('homepage.features.leverage.copy'),
+			comingSoon: true,
 		},
 		{
 			title: t('homepage.features.options-futures.title'),
@@ -80,7 +83,10 @@ const HomePage = () => {
 		features.map((e, i) => (
 			<FeatureCard key={i}>
 				<FeatureCardDotPoint />
-				<Title>{e.title}</Title>
+				<FlexDivCentered>
+					<Title>{e.title}</Title>
+					{e.comingSoon && <ComingSoonTag>COMING SOON</ComingSoonTag>}
+				</FlexDivCentered>
 				<Copy>{e.copy}</Copy>
 			</FeatureCard>
 		));
@@ -106,7 +112,7 @@ const HomePage = () => {
 	const returnBenefits = () =>
 		benefits.map((e, i) => (
 			<BenefitCard key={i}>
-				<BenefitIcon>{e.svg}</BenefitIcon>
+				{e.svg}
 				<Title>{e.title}</Title>
 				<Copy>{e.copy}</Copy>
 			</BenefitCard>
@@ -146,6 +152,7 @@ const HomePage = () => {
 				<StepCopy>{e.copy}</StepCopy>
 			</StepCard>
 		));
+
 	return (
 		<>
 			<Head>
@@ -164,35 +171,37 @@ const HomePage = () => {
 							<AssetCollections />
 						</AssetCollectionWrapper>
 						<Col>
-							<Header>{t('homepage.assets.title')}</Header>
-
-							<AssetContainer>{returnAssetCards()}</AssetContainer>
+							<LeftSubHeader>{t('homepage.assets.title')}</LeftSubHeader>
+							<GridContainer>{returnAssetCards()}</GridContainer>
 						</Col>
 					</FlexSection>
 
 					<FlexSection>
 						<Col>
-							<Header>{t('homepage.features.title')}</Header>
+							<LeftSubHeader>{t('homepage.features.title')}</LeftSubHeader>
 						</Col>
 						<Col>
-							<AssetContainer>{returnFeatureCards()}</AssetContainer>
+							<GridContainer>{returnFeatureCards()}</GridContainer>
 						</Col>
 					</FlexSection>
 
 					<StackSection>
-						<Header>{t('homepage.second-hero.title')}</Header>
+						<CenterSubHeader>{t('homepage.second-hero.title')}</CenterSubHeader>
 						<SwapPreview />
 						<BenefitContainer>{returnBenefits()}</BenefitContainer>
 					</StackSection>
 				</DarkContainer>
+
 				<LightContainer>
 					<FlexSection>
-						<Header>{t('homepage.steps.title')}</Header>
+						<Col>
+							<LeftSubHeader>{t('homepage.steps.title')}</LeftSubHeader>
+						</Col>
 						<StepList>{returnSteps()}</StepList>
 					</FlexSection>
 
 					<StackSection>
-						<Header>{t('homepage.faq.title')}</Header>
+						<CenterSubHeader>{t('homepage.faq.title')}</CenterSubHeader>
 						<TabList style={{ marginBottom: '12px' }}>
 							<StyledTabButton
 								name={t('homepage.faq.tabs.one')}
@@ -216,7 +225,7 @@ const HomePage = () => {
 								{t('homepage.faq.tabs.three')}
 							</StyledTabButton>
 						</TabList>
-						<TabPanel name={t('homepage.faq.tabs.omne')} activeTab={'0'}>
+						<TabPanel name={t('homepage.faq.tabs.one')} activeTab={'0'}>
 							<FAQPanel>{t('common.features.coming-soon')}</FAQPanel>
 						</TabPanel>
 						<TabPanel name={t('homepage.faq.tabs.two')} activeTab={'1'}>
@@ -230,7 +239,7 @@ const HomePage = () => {
 						<ChartGraphicContainer>
 							<ChartBanner />
 							<OverlayText>
-								<Header>{t('homepage.footer.cta.title')}</Header>
+								<Subtext>{t('homepage.footer.cta.title')}</Subtext>
 								<CTAButton variant="primary">{t('homepage.footer.cta.button')}</CTAButton>
 							</OverlayText>
 						</ChartGraphicContainer>
@@ -241,9 +250,26 @@ const HomePage = () => {
 	);
 };
 
+const Header = styled.p`
+	font-weight: 700;
+	font-size: 48px;
+	line-height: 120%;
+	text-align: center;
+	letter-spacing: 0.2px;
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const SubHeader = styled.p`
+	font-size: 64px;
+	font-weight: 400;
+	line-height: 120%;
+	letter-spacing: 0.2px;
+	width: 75%;
+	color: ${(props) => props.theme.colors.white};
+`;
+
 const DarkContainer = styled(FlexDivColCentered)`
 	width: 100%;
-	padding: 55px 0px 24px 0px;
 	margin-top: 60px;
 `;
 
@@ -254,19 +280,20 @@ const LightContainer = styled(FlexDivCol)`
 	margin-top: 60px;
 `;
 
-const Header = styled.p`
-	font-size: 48px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 58px;
-	letter-spacing: 0.20000000298023224px;
+const LeftSubHeader = styled(SubHeader)`
+	text-align: left;
+`;
+
+const CenterSubHeader = styled(SubHeader)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.white};
 `;
 
 const FlexSection = styled(FlexDiv)`
 	width: 100%;
 	margin: 24px 0px;
+	${media.lessThan('lg')`
+		flex-direction: column;
+	`}
 `;
 
 const StackSection = styled(FlexDivColCentered)`
@@ -279,8 +306,9 @@ const AssetCollectionWrapper = styled.div`
 	margin-left: -20px;
 `;
 
-const Col = styled.div`
+const Col = styled(FlexDivCol)`
 	width: 50%;
+	margin: 64px;
 `;
 
 const AssetCard = styled(FlexDivCentered)`
@@ -300,12 +328,14 @@ const AssetCardText = styled.p`
 	text-align: center;
 `;
 
-const AssetContainer = styled(GridDivCentered)`
-	grid-template-columns: repeat(2, 1fr);
-	grid-gap: 16px;
+const GridContainer = styled(GridDivCentered)`
+	grid-template-columns: repeat(2, 350px);
+	grid-gap: 24px;
 `;
 
-const FeatureCard = styled(FlexDivCol)``;
+const FeatureCard = styled(FlexDivCol)`
+	margin-bottom: 16px;
+`;
 
 const Title = styled.p`
 	font-size: 16px;
@@ -327,12 +357,14 @@ const Copy = styled.p`
 
 const BenefitCard = styled(FlexDivCol)`
 	align-items: flex-start;
-	max-width: 500px;
+	width: 33%;
+	margin: 24px 16px;
 `;
 
-const BenefitIcon = styled(FlexDivCentered)``;
-
-const BenefitContainer = styled(FlexDivRow)``;
+const BenefitContainer = styled(FlexDivRowCentered)`
+	margin: 64px 0px;
+	justify-content: center;
+`;
 
 const StepBox = styled.div`
 	position: relative;
@@ -373,6 +405,7 @@ const StepTitle = styled.p`
 	letter-spacing: -0.03em;
 	color: #f7f8fa;
 `;
+
 const StepCopy = styled.p`
 	font-size: 16px;
 	line-height: 24px;
@@ -412,7 +445,28 @@ const OverlayText = styled(AbsoluteCenteredDiv)`
 
 const CTAButton = styled(Button)`
 	color: ${(props) => props.theme.colors.black};
+	background: ${(props) => props.theme.colors.white};
 	width: 50%;
+`;
+
+const ComingSoonTag = styled(FlexDivCentered)`
+	width: 128px;
+	height: 24px;
+	background: ${(props) => props.theme.colors.purple};
+	border-radius: 50px;
+	color: ${(props) => props.theme.colors.white};
+	font-weight: bold;
+	justify-content: center;
+	margin-left: 8px;
+`;
+
+const Subtext = styled.p`
+	font-weight: bold;
+	font-size: 32px;
+	line-height: 120%;
+	text-align: center;
+	letter-spacing: 0.2px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 export default HomePage;

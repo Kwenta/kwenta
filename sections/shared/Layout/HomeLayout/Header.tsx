@@ -58,6 +58,9 @@ const Link = styled(TextButton)`
 	text-align: center;
 	color: #8a939f;
 	margin: 0px 8px;
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 const WalletButton = styled(TextButton)`
