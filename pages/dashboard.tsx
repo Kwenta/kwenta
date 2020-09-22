@@ -16,7 +16,6 @@ import Currency from 'components/Currency';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useAllTradesQuery from 'queries/trades/useAllTradesQuery';
 import { fonts } from 'styles/theme/fonts';
-import Button from 'components/Button';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 import { NO_VALUE } from 'constants/placeholder';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -24,6 +23,9 @@ import { CATEGORY_MAP } from 'constants/currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
+import NoSynths from 'sections/dashboard/NoSynths';
+
+import { CardTitle } from 'sections/dashboard/common';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -142,7 +144,7 @@ const Dashboard = () => {
 	};
 
 	return noSynths ? (
-		<NoSynthsCard />
+		<NoSynths />
 	) : (
 		<>
 			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
@@ -206,42 +208,6 @@ const Dashboard = () => {
 				</TabPanel>
 			</FlexDivCol>
 		</>
-	);
-};
-
-const NoSynthTitle = styled.div`
-	${fonts.data.small}
-	color: ${(props) => props.theme.colors.blueberry};
-	text-transform: uppercase;
-	text-align: center;
-	margin-bottom: 4px;
-`;
-
-const NoSynthSubtitle = styled.div`
-	${fonts.heading.h4}
-	color: ${(props) => props.theme.colors.white};
-	text-align:center;
-	margin-bottom: 33px;
-`;
-
-const Center = styled.div`
-	margin: 0 auto;
-	margin-bottom: 78px;
-`;
-
-const NoSynthsCard = () => {
-	const { t } = useTranslation();
-	return (
-		<FlexDivCol>
-			<NoSynthTitle>{t('dashboard.no-synths-card.title')}</NoSynthTitle>
-			<NoSynthSubtitle>{t('dashboard.no-synths-card.subtitle')}</NoSynthSubtitle>
-			<Center>
-				<Button variant="primary" isRounded={true} size="lg">
-					{t('dashboard.no-synths-card.learnMore')}
-				</Button>
-			</Center>
-			<CardTitle>{t('dashboard.no-synths-card.convert')}</CardTitle>
-		</FlexDivCol>
 	);
 };
 
@@ -353,11 +319,6 @@ const Profit = styled.div`
 	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
-`;
-
-const CardTitle = styled.div`
-	${fonts.body['bold-medium']}
-	color: ${(props) => props.theme.colors.white};
 `;
 
 const Container = styled(FlexDiv)`
