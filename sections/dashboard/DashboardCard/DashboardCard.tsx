@@ -18,7 +18,7 @@ import { fonts } from 'styles/theme/fonts';
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
 	CONVERT: 'convert',
-	CRYPTO_BALANCES: 'crypto-balances',
+	// CRYPTO_BALANCES: 'crypto-balances',
 	TRANSACTIONS: 'transactions',
 };
 
@@ -71,13 +71,13 @@ const DashboardCard = () => {
 					>
 						{t('dashboard.tabs.nav.convert')}
 					</TabButton>
-					<TabButton
+					{/*<TabButton
 						name={TABS.CRYPTO_BALANCES}
 						active={activeTab === TABS.CRYPTO_BALANCES}
 						onClick={() => setActiveTab(TABS.CRYPTO_BALANCES)}
 					>
 						{t('dashboard.tabs.nav.crypto-balances')}
-					</TabButton>
+					</TabButton>*/}
 					<TabButton
 						name={TABS.TRANSACTIONS}
 						active={activeTab === TABS.TRANSACTIONS}
@@ -97,9 +97,9 @@ const DashboardCard = () => {
 				<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
 					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
 				</TabPanel>
-				<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
+				{/*<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
 					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-				</TabPanel>
+				</TabPanel> */}
 				<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
 					<Transactions />
 				</TabPanel>
