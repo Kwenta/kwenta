@@ -69,7 +69,18 @@ export const Table: FC<TableProps> = ({
 							{column.render('Header')}
 							{column.sortable && (
 								<SortIconContainer>
-									{column.isSorted ? column.isSortedDesc ? <SortDownIcon /> : <SortUpIcon /> : ' '}
+									{column.isSorted ? (
+										column.isSortedDesc ? (
+											<StyledSortDownIcon />
+										) : (
+											<StyledSortUpIcon />
+										)
+									) : (
+										<>
+											<StyledSortUpIcon />
+											<StyledSortDownIcon />
+										</>
+									)}
 								</SortIconContainer>
 							)}
 						</TableCellHead>
@@ -132,8 +143,8 @@ const TableCellHead = styled(TableCell)`
 
 const SortIconContainer = styled.span`
 	display: flex;
-	align-items: center;
 	margin-left: 5px;
+	flex-direction: column;
 `;
 
 const ReactTable = styled.div<{ palette: TablePalette }>`
@@ -171,6 +182,20 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				}
 			}
 		`}
+`;
+
+// @ts-ignore
+const StyledSortDownIcon = styled(SortDownIcon)`
+	width: 5px;
+	height: 5px;
+	color: ${(props) => props.theme.colors.blueberry};
+`;
+
+// @ts-ignore
+const StyledSortUpIcon = styled(SortUpIcon)`
+	width: 5px;
+	height: 5px;
+	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 export default Table;

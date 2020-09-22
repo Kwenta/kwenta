@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol } from 'styles/common';
@@ -7,6 +6,7 @@ import { fonts } from 'styles/theme/fonts';
 import Button from 'components/Button';
 
 import { Center, CardTitle } from '../common';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const NoSynthsCard = () => {
 	const { t } = useTranslation();
@@ -17,7 +17,9 @@ const NoSynthsCard = () => {
 			<NoSynthSubtitle>{t('dashboard.no-synths-card.subtitle')}</NoSynthSubtitle>
 			<Center>
 				<Button variant="primary" isRounded={true} size="lg">
-					{t('dashboard.no-synths-card.learnMore')}
+					<a href={EXTERNAL_LINKS.Learn.MainSite} target="_blank" rel="noreferrer">
+						{t('dashboard.no-synths-card.learnMore')}
+					</a>
 				</Button>
 			</Center>
 			<CardTitle>{t('dashboard.no-synths-card.convert')}</CardTitle>

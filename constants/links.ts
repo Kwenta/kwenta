@@ -9,6 +9,7 @@ export const EXTERNAL_LINKS = {
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 	},
 	Learn: {
+		MainSite: 'https://www.synthetix.io',
 		Litepaper: 'https://www.synthetix.io/litepaper',
 		Tokens: 'https://www.synthetix.io/tokens',
 		Blog: 'https://blog.synthetix.io/',
