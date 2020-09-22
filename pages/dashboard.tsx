@@ -127,10 +127,19 @@ const Dashboard = () => {
 	const { t } = useTranslation();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
+
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
+
 	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
 
-	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const selectPriceCurrencyProps = {
+		selectedPriceCurrency,
+		selectPriceCurrencyRate,
+	};
 
 	return noSynths ? (
 		<NoSynthsCard />
@@ -180,10 +189,10 @@ const Dashboard = () => {
 				</TabList>
 				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 					<SynthBalances
-						selectedPriceCurrency={selectedPriceCurrency}
 						balances={synthsBalancesQuery.data?.balances ?? []}
 						totalUSDBalance={synthsBalancesQuery.data?.totalUSDBalance ?? 0}
-						exchangeRates={exchangeRatesQuery.data}
+						exchangeRates={exchangeRates}
+						{...selectPriceCurrencyProps}
 					/>
 				</TabPanel>
 				<TabPanel name={TABS.CONVERT} activeTab={activeTab}>

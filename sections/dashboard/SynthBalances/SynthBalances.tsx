@@ -13,23 +13,35 @@ import { formatPercent } from 'utils/formatters/number';
 import media from 'styles/media';
 
 type SynthBalancesProps = {
-	selectedPriceCurrency: Synth;
-	exchangeRates?: Rates;
+	exchangeRates: Rates | null;
 	balances: SynthBalance[];
 	totalUSDBalance: number;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
 };
 
 const SynthBalances: FC<SynthBalancesProps> = ({
-	selectedPriceCurrency,
 	exchangeRates,
 	balances,
 	totalUSDBalance,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
 }) => (
 	<>
 		{balances.map((synth: SynthBalance) => {
 			const percent = synth.usdBalance / totalUSDBalance;
 			const synthDesc =
 				synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
+
+			let totalValue = synth.usdBalance;
+			if (selectPriceCurrencyRate) {
+				totalValue /= selectPriceCurrencyRate;
+			}
+
+			let price = exchangeRates && exchangeRates[synth.currencyKey];
+			if (price != null && selectPriceCurrencyRate != null) {
+				price /= selectPriceCurrencyRate;
+			}
 
 			return (
 				<SynthBalanceRow key={synth.currencyKey}>
@@ -40,15 +52,15 @@ const SynthBalances: FC<SynthBalancesProps> = ({
 						<Currency.Amount
 							currencyKey={synth.currencyKey}
 							amount={synth.balance}
-							totalValue={synth.usdBalance}
+							totalValue={totalValue}
 							sign={selectedPriceCurrency.sign}
 						/>
 					</AmountCol>
 					<ExchangeRateCol>
-						{exchangeRates && (
+						{price != null && (
 							<Currency.Price
 								currencyKey={synth.currencyKey}
-								price={exchangeRates[synth.currencyKey]}
+								price={price}
 								sign={selectedPriceCurrency.sign}
 							/>
 						)}

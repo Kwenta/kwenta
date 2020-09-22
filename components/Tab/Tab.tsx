@@ -1,5 +1,7 @@
 import { CSSProperties, ReactNode } from 'react';
 import styled from 'styled-components';
+
+import { resetButtonCSS } from 'styles/common';
 import { fonts } from 'styles/theme/fonts';
 
 type TabProps = {
@@ -59,11 +61,13 @@ const TabPanelContainer = styled.div`
 `;
 
 const StyledTabButton = styled.button<TabProps>`
-    ${fonts.body['bold-small']}
-    background-color: ${(props) => props.theme.colors.black};
-    color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
-    outline: none;
-    border: none;
-    cursor: pointer;
-    border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
+	${resetButtonCSS};
+	${fonts.body['bold-medium']};
+	padding: 1px 6px;
+	background-color: ${(props) => props.theme.colors.black};
+	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
+	border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
