@@ -9,13 +9,10 @@ import { priceCurrencyState } from 'store/app';
 
 import { FlexDiv, FlexDivCol, SelectableCurrencyRow, FlexDivRow, PageContent } from 'styles/common';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
-import useSynthsBalancesQuery, {
-	SynthBalance,
-} from 'queries/walletBalances/useSynthsBalancesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import TradeHistory from 'components/TradeHistory';
 import Select from 'components/Select';
 import Currency from 'components/Currency';
-import ProgressBar from 'components/ProgressBar';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useAllTradesQuery from 'queries/trades/useAllTradesQuery';
 import { fonts } from 'styles/theme/fonts';
@@ -26,75 +23,14 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { CATEGORY_MAP } from 'constants/currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
+import SynthBalances from 'sections/dashboard/SynthBalances';
+
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
 	CONVERT: 'convert',
 	CRYPTO_BALANCES: 'crypto-balances',
 	TRANSACTIONS: 'transactions',
 };
-
-const SynthBalances = () => {
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
-	const synthsBalancesQuery = useSynthsBalancesQuery({ enabled: exchangeRatesQuery.isSuccess });
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-
-	return (
-		<>
-			{synthsBalancesQuery.isSuccess &&
-				synthsBalancesQuery.data.balances.map((synth: SynthBalance) => {
-					const percent =
-						Math.floor(synth.usdBalance / synthsBalancesQuery.data.totalUSDBalance) * 100;
-					const synthDesc =
-						synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
-					return (
-						<SynthBalanceRow key={synth.currencyKey}>
-							<div>
-								<Currency.Name currencyKey={synth.currencyKey} name={synthDesc} showIcon={true} />
-							</div>
-							<div>
-								<Currency.Amount
-									currencyKey={synth.currencyKey}
-									amount={synth.balance}
-									totalValue={synth.usdBalance}
-									sign={selectedPriceCurrency.sign}
-								/>
-							</div>
-							<div>
-								{exchangeRatesQuery.data !== undefined && (
-									<Currency.Price
-										currencyKey={synth.currencyKey}
-										price={exchangeRatesQuery.data[synth.currencyKey]}
-										sign={selectedPriceCurrency.sign}
-									/>
-								)}
-							</div>
-							<SynthBalancePercentRow>
-								<ProgressBar percentage={percent} />
-								<TypeDataSmall>{percent >= 1 ? percent : '<1'}%</TypeDataSmall>
-							</SynthBalancePercentRow>
-						</SynthBalanceRow>
-					);
-				})}
-		</>
-	);
-};
-
-const TypeDataSmall = styled.div`
-	${fonts.data.small}
-	margin-top: 5px;
-`;
-
-const SynthBalancePercentRow = styled.div`
-	align-items: center;
-	min-width: 112px;
-`;
-
-const SynthBalanceRow = styled(FlexDivRow)`
-	background: ${(props) => props.theme.colors.elderberry};
-	padding: 12px 22px 12px 16px;
-	margin-top: 2px;
-	align-items: center;
-`;
 
 const Transactions = () => {
 	const { t } = useTranslation();
@@ -190,7 +126,7 @@ const Capitalize = styled.span`
 const Dashboard = () => {
 	const { t } = useTranslation();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
-	const synthsBalancesQuery = useSynthsBalancesQuery({ enabled: exchangeRatesQuery.isSuccess });
+	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
 
 	const [activeTab, setActiveTab] = useState(TABS.SYNTH_BALANCES);
@@ -243,7 +179,12 @@ const Dashboard = () => {
 					</TabButton>
 				</TabList>
 				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-					<SynthBalances />
+					<SynthBalances
+						selectedPriceCurrency={selectedPriceCurrency}
+						balances={synthsBalancesQuery.data?.balances ?? []}
+						totalUSDBalance={synthsBalancesQuery.data?.totalUSDBalance ?? 0}
+						exchangeRates={exchangeRatesQuery.data}
+					/>
 				</TabPanel>
 				<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
 					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>

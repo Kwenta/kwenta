@@ -9,16 +9,6 @@ type TabProps = {
 	children: ReactNode;
 };
 
-const StyledTabButton = styled.button<TabProps>`
-    ${fonts.body['bold-small']}
-    background-color: ${(props) => props.theme.colors.black};
-    color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
-    outline: none;
-    border: none;
-    cursor: pointer;
-    border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
-`;
-
 export const TabButton = (props: TabProps) => (
 	<StyledTabButton
 		id={`${props.name}-tab`}
@@ -53,7 +43,7 @@ export const TabPanel = ({
 	children: ReactNode;
 }) =>
 	activeTab === name ? (
-		<div
+		<TabPanelContainer
 			id={`${name}-tabpanel`}
 			role="tabpanel"
 			aria-labelledby={`${name}-tab`}
@@ -61,5 +51,19 @@ export const TabPanel = ({
 			{...props}
 		>
 			{children}
-		</div>
+		</TabPanelContainer>
 	) : null;
+
+const TabPanelContainer = styled.div`
+	outline: none;
+`;
+
+const StyledTabButton = styled.button<TabProps>`
+    ${fonts.body['bold-small']}
+    background-color: ${(props) => props.theme.colors.black};
+    color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
+    outline: none;
+    border: none;
+    cursor: pointer;
+    border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
+`;
