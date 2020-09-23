@@ -4,10 +4,7 @@ const withImages = require('next-images');
 const path = require('path');
 
 // SVG path for svg-react-loader
-const inlineSvgPaths = [
-	path.resolve(__dirname, 'assets/svg'),
-	path.resolve(__dirname, 'node_modules/@synthetixio/assets'),
-];
+const inlineSvgPaths = [path.resolve(__dirname, 'assets/svg')];
 
 const plugins = [
 	withImages({
