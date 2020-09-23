@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { priceCurrencyState } from 'store/app';
@@ -64,22 +63,33 @@ const DashboardCard = () => {
 				<ComingSoonBalanceChart />
 			</FlexDivCol>
 			<TabList style={{ marginBottom: '12px' }}>
-				<TabButton name={TABS.SYNTH_BALANCES} active={activeTab === TABS.SYNTH_BALANCES}>
-					<Link href={`${TABS.SYNTH_BALANCES}`}>{t('dashboard.tabs.nav.synth-balances')}</Link>
+				<TabButton
+					name={TABS.SYNTH_BALANCES}
+					active={activeTab === TABS.SYNTH_BALANCES}
+					onClick={() => router.push(TABS.SYNTH_BALANCES)}
+				>
+					{t('dashboard.tabs.nav.synth-balances')}
 				</TabButton>
-				<TabButton name={TABS.CONVERT} active={activeTab === TABS.CONVERT}>
-					<Link href={`${TABS.CONVERT}`}>{t('dashboard.tabs.nav.convert')}</Link>
+				<TabButton
+					name={TABS.CONVERT}
+					active={activeTab === TABS.CONVERT}
+					onClick={() => router.push(TABS.CONVERT)}
+				>
+					{t('dashboard.tabs.nav.convert')}
 				</TabButton>
 				{/*<TabButton
 						name={TABS.CRYPTO_BALANCES}
 						active={activeTab === TABS.CRYPTO_BALANCES}
+						onClick={() => router.push(TABS.CRYPTO_BALANCES)}
 					>
-						<Link href={`${TABS.CRYPTO_BALANCES}`}>
-							{t('dashboard.tabs.nav.crypto-balances')}
-						</Link>
-					</TabButton>*/}
-				<TabButton name={TABS.TRANSACTIONS} active={activeTab === TABS.TRANSACTIONS}>
-					<Link href={`${TABS.TRANSACTIONS}`}>{t('dashboard.tabs.nav.transactions')}</Link>
+						{t('dashboard.tabs.nav.crypto-balances')}
+				</TabButton>*/}
+				<TabButton
+					name={TABS.TRANSACTIONS}
+					active={activeTab === TABS.TRANSACTIONS}
+					onClick={() => router.push(TABS.TRANSACTIONS)}
+				>
+					{t('dashboard.tabs.nav.transactions')}
 				</TabButton>
 			</TabList>
 			<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
