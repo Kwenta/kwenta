@@ -14,7 +14,7 @@ export type TablePalette = 'primary';
 const CARD_HEIGHT = '40px';
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
-	sortType?: string;
+	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
 	sortable?: boolean;
 };
 

@@ -1,7 +1,7 @@
 import React, { memo, FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
+import { CellProps, Row } from 'react-table';
 
 import { priceCurrencyState } from 'store/app';
 import { useRecoilValue } from 'recoil';
@@ -31,7 +31,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 				{
 					Header: <StyledTableHeader>{t('assets.exchanges.table.orderType')}</StyledTableHeader>,
 					accessor: 'orderType',
-					sortType: 'basic',
+					sortType: 'alphanumeric',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<StyledOrderType>{t('dashboard.transactions.orderTypeSort.market')}</StyledOrderType>
 					),
@@ -40,7 +40,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 				{
 					Header: <StyledTableHeader>{t('assets.exchanges.table.from')}</StyledTableHeader>,
 					accessor: 'fromAmount',
-					sortType: 'basic',
+					sortType: compareHistoricalTradeFromCurrencyKey,
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.fromCurrencyKey}</StyledCurrencyKey>
@@ -58,7 +58,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 				{
 					Header: <StyledTableHeader>{t('assets.exchanges.table.to')}</StyledTableHeader>,
 					accessor: 'toAmount',
-					sortType: 'basic',
+					sortType: compareHistoricalTradeToCurrencyKey,
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
@@ -76,7 +76,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 				{
 					Header: <StyledTableHeader>{t('assets.exchanges.table.value')}</StyledTableHeader>,
 					accessor: 'amount',
-					sortType: 'basic',
+					sortType: compareHistoricalTradeUSDValue,
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
 						<StyledValue>
 							<Currency.Price
@@ -99,6 +99,19 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 		/>
 	);
 });
+
+const compareHistoricalTradeUSDValue = (rowA: Row<HistoricalTrade>, rowB: Row<HistoricalTrade>) =>
+	rowA.original.toAmountInUSD > rowB.original.toAmountInUSD ? -1 : 1;
+
+const compareHistoricalTradeFromCurrencyKey = (
+	rowA: Row<HistoricalTrade>,
+	rowB: Row<HistoricalTrade>
+) => (rowA.original.fromCurrencyKey > rowB.original.fromCurrencyKey ? -1 : 1);
+
+const compareHistoricalTradeToCurrencyKey = (
+	rowA: Row<HistoricalTrade>,
+	rowB: Row<HistoricalTrade>
+) => (rowA.original.toCurrencyKey > rowB.original.toCurrencyKey ? -1 : 1);
 
 const StyledTable = styled(Table)`
 	margin-top: 16px;
