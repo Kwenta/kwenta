@@ -15,7 +15,6 @@ import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuer
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
-import NoSynths from 'sections/dashboard/NoSynths';
 import Transactions from 'sections/dashboard/Transactions';
 
 import { FlexDivCol } from 'styles/common';
@@ -41,8 +40,6 @@ const DashboardCard = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
-	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
-
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,
 		selectPriceCurrencyRate,
@@ -53,9 +50,7 @@ const DashboardCard = () => {
 		return <Loader />;
 	}
 
-	return noSynths ? (
-		<NoSynths />
-	) : (
+	return (
 		<>
 			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px', flexShrink: 0 }}>
 				<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>

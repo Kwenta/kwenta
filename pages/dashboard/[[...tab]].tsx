@@ -7,12 +7,17 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import NoSynthsCard from 'sections/dashboard/NoSynths';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
 	const dashboardCard = <DashboardCard />;
-
+	const noSynthsCard = <NoSynthsCard />;
+	const activeView = noSynths ? noSynthsCard : dashboardCard;
 	return (
 		<>
 			<Head>
@@ -22,7 +27,7 @@ const DashboardPage = () => {
 				<PageContent>
 					<DesktopOnlyView>
 						<Container>
-							<LeftContainer>{dashboardCard}</LeftContainer>
+							<LeftContainer>{activeView}</LeftContainer>
 							<RightContainer>
 								<TrendingSynths />
 							</RightContainer>
@@ -30,7 +35,7 @@ const DashboardPage = () => {
 						</Container>
 					</DesktopOnlyView>
 					<MobileOrTabletView>
-						<MobileContainer>{dashboardCard}</MobileContainer>
+						<MobileContainer>{activeView}</MobileContainer>
 					</MobileOrTabletView>
 				</PageContent>
 			</AppLayout>
