@@ -80,13 +80,11 @@ const Transactions = () => {
 					}}
 				/>
 			</FlexDivRow>
-			<TradeHistoryContainer>
-				<TradeHistory
-					trades={filteredHistoricalTrades}
-					isLoaded={allTradesQuery.isSuccess}
-					isLoading={allTradesQuery.isLoading}
-				/>
-			</TradeHistoryContainer>
+			<TradeHistory
+				trades={filteredHistoricalTrades}
+				isLoaded={allTradesQuery.isSuccess}
+				isLoading={allTradesQuery.isLoading}
+			/>
 		</>
 	);
 };
@@ -94,10 +92,6 @@ const Transactions = () => {
 const TransactionSelect = styled(Select)`
 	width: 33%;
 	max-width: 217px;
-`;
-
-const TradeHistoryContainer = styled(FlexDivRow)`
-	height: 100%;
 `;
 
 export default Transactions;

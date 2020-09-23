@@ -87,25 +87,23 @@ const DashboardCard = () => {
 					<Link href={`${TABS.TRANSACTIONS}`}>{t('dashboard.tabs.nav.transactions')}</Link>
 				</TabButton>
 			</TabList>
-			<TabPanelContainer>
-				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
-					<SynthBalances
-						balances={synthsBalancesQuery.data?.balances ?? []}
-						totalUSDBalance={synthsBalancesQuery.data?.totalUSDBalance ?? 0}
-						exchangeRates={exchangeRates}
-						{...selectPriceCurrencyProps}
-					/>
-				</TabPanel>
-				<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
-					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-				</TabPanel>
-				{/*<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
+			<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+				<SynthBalances
+					balances={synthsBalancesQuery.data?.balances ?? []}
+					totalUSDBalance={synthsBalancesQuery.data?.totalUSDBalance ?? 0}
+					exchangeRates={exchangeRates}
+					{...selectPriceCurrencyProps}
+				/>
+			</TabPanel>
+			<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
+				<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+			</TabPanel>
+			{/*<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
 					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
 				</TabPanel> */}
-				<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
-					<Transactions />
-				</TabPanel>
-			</TabPanelContainer>
+			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
+				<Transactions />
+			</TabPanel>
 		</>
 	);
 };
@@ -126,11 +124,6 @@ const Profit = styled.div`
 	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
-`;
-
-const TabPanelContainer = styled.div`
-	overflow: auto;
-	height: 100%;
 `;
 
 export default DashboardCard;

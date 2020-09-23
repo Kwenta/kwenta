@@ -25,8 +25,8 @@ const DashboardPage = () => {
 							<LeftContainer>{dashboardCard}</LeftContainer>
 							<RightContainer>
 								<TrendingSynths />
-								<BottomShadow />
 							</RightContainer>
+							<BottomShadow />
 						</Container>
 					</DesktopOnlyView>
 					<MobileOrTabletView>
@@ -38,6 +38,8 @@ const DashboardPage = () => {
 	);
 };
 
+const SPACING_FROM_HEADER = '80px';
+
 const MobileContainer = styled.div`
 	max-width: 364px;
 `;
@@ -47,21 +49,23 @@ const Container = styled(FlexDiv)`
 	width: 100%;
 	flex-grow: 1;
 	height: 100vh;
+	position: relative;
 `;
 
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
-	padding-bottom: 48px;
-	margin: 0px 75px;
-	padding-top: 80px;
 	max-width: 1000px;
 	position: relative;
+	overflow: auto;
+	margin-top: ${SPACING_FROM_HEADER};
+	overflow: auto;
+	padding: 0 75px;
 `;
 
 const RightContainer = styled(FlexDivCol)`
 	width: 320px;
 	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 80px 0 5px 0;
+	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	margin-right: -20px;
 	flex-shrink: 0;
 	position: relative;
@@ -69,11 +73,11 @@ const RightContainer = styled(FlexDivCol)`
 
 const BottomShadow = styled.div`
 	background: linear-gradient(360deg, #10101e 0%, rgba(16, 16, 30, 0) 100%);
-	position: absolute;
+	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 32px;
+	height: 16px;
 	pointer-events: none;
 `;
 

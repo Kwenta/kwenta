@@ -58,8 +58,6 @@ export const TabPanel = ({
 
 const TabPanelContainer = styled.div`
 	outline: none;
-	overflow: auto;
-	height: 100%;
 `;
 
 const StyledTabButton = styled.button<TabProps>`
