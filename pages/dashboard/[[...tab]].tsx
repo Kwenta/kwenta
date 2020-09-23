@@ -11,6 +11,8 @@ import TrendingSynths from 'sections/dashboard/TrendingSynths';
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
+	const dashboardCard = <DashboardCard />;
+
 	return (
 		<>
 			<Head>
@@ -20,18 +22,14 @@ const DashboardPage = () => {
 				<PageContent>
 					<DesktopOnlyView>
 						<Container>
-							<LeftContainer>
-								<DashboardCard />
-							</LeftContainer>
+							<LeftContainer>{dashboardCard}</LeftContainer>
 							<RightContainer>
 								<TrendingSynths />
 							</RightContainer>
 						</Container>
 					</DesktopOnlyView>
 					<MobileOrTabletView>
-						<MobileContainer>
-							<DashboardCard />
-						</MobileContainer>
+						<MobileContainer>{dashboardCard}</MobileContainer>
 					</MobileOrTabletView>
 				</PageContent>
 			</AppLayout>
