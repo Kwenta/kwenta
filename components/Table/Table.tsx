@@ -174,12 +174,6 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableBodyRow} {
 				background-color: ${(props) => props.theme.colors.elderberry};
-				&:hover {
-					> * {
-						transition: transform 0.2s ease-out;
-						transform: scale(1.02);
-					}
-				}
 			}
 		`}
 `;

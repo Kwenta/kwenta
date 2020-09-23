@@ -3,14 +3,16 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 
+import { priceCurrencyState } from 'store/app';
+import { useRecoilValue } from 'recoil';
+
 import Table from 'components/Table';
 
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
 
 import { formatCurrency } from 'utils/formatters/number';
 import { fonts } from 'styles/theme/fonts';
-import { priceCurrencyState } from 'store/app';
-import { useRecoilValue } from 'recoil';
+
 import Currency from 'components/Currency';
 
 type TradeHistoryProps = {
@@ -103,12 +105,11 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledTableHeader = styled.div`
-	${fonts.body['bold-small']}
+	${fonts.body.boldSmall};
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 const StyledOrderType = styled.div`
-	${fonts.body['thin-small']}
 	color: ${(props) => props.theme.colors.white};
 `;
 
@@ -121,7 +122,6 @@ const StyledPrice = styled.span`
 `;
 
 const StyledValue = styled.div`
-	${fonts.body['thin-small']}
 	color: ${(props) => props.theme.colors.white};
 `;
 

@@ -8,6 +8,6 @@ export const Center = styled.div`
 `;
 
 export const CardTitle = styled.div`
-	${fonts.body['bold-medium']}
+	${fonts.body.boldMedium}
 	color: ${(props) => props.theme.colors.white};
 `;

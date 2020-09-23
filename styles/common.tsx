@@ -116,8 +116,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 					}
 			  `
 			: css`
-					opacity: 0.5;
-					cursor: not-allowed;
+					cursor: default;
 			  `}
 `;
 

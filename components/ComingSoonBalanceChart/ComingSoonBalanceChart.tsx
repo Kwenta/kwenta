@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis } from 'recharts';
+
+import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
 import Card from 'components/Card';
 
@@ -55,7 +57,7 @@ const Message = styled.div`
 	transform: translate(-50%, -50%);
 `;
 
-const StyledResponsiveContainer = styled(ResponsiveContainer)`
+const StyledResponsiveContainer = styled(RechartsResponsiveContainer)`
 	filter: blur(4px);
 `;
 

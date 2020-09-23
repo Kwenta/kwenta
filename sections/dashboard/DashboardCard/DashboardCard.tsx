@@ -1,19 +1,24 @@
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { priceCurrencyState } from 'store/app';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { FlexDivCol } from 'styles/common';
+import { priceCurrencyState } from 'store/app';
+
 import { TabList, TabPanel, TabButton } from 'components/Tab';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import Currency from 'components/Currency';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import Loader from 'components/Loader';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
+
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import NoSynths from 'sections/dashboard/NoSynths';
 import Transactions from 'sections/dashboard/Transactions';
+
+import { FlexDivCol } from 'styles/common';
 import { fonts } from 'styles/theme/fonts';
 
 const TABS = {
@@ -43,11 +48,16 @@ const DashboardCard = () => {
 		selectPriceCurrencyRate,
 	};
 
+	// TODO: temp workaround... synthsBalancesQuery is idle at first, and so we make sure to proceed only when this query is successful so we know which view to show.
+	if (!synthsBalancesQuery.isSuccess) {
+		return <Loader />;
+	}
+
 	return noSynths ? (
 		<NoSynths />
 	) : (
 		<>
-			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px' }}>
+			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px', flexShrink: 0 }}>
 				<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
 				<Profit>
 					<Currency.Price
@@ -58,15 +68,14 @@ const DashboardCard = () => {
 				</Profit>
 				<ComingSoonBalanceChart />
 			</FlexDivCol>
-			<FlexDivCol>
-				<TabList style={{ marginBottom: '12px' }}>
-					<TabButton name={TABS.SYNTH_BALANCES} active={activeTab === TABS.SYNTH_BALANCES}>
-						<Link href={`${TABS.SYNTH_BALANCES}`}>{t('dashboard.tabs.nav.synth-balances')}</Link>
-					</TabButton>
-					<TabButton name={TABS.CONVERT} active={activeTab === TABS.CONVERT}>
-						<Link href={`${TABS.CONVERT}`}>{t('dashboard.tabs.nav.convert')}</Link>
-					</TabButton>
-					{/*<TabButton
+			<TabList style={{ marginBottom: '12px' }}>
+				<TabButton name={TABS.SYNTH_BALANCES} active={activeTab === TABS.SYNTH_BALANCES}>
+					<Link href={`${TABS.SYNTH_BALANCES}`}>{t('dashboard.tabs.nav.synth-balances')}</Link>
+				</TabButton>
+				<TabButton name={TABS.CONVERT} active={activeTab === TABS.CONVERT}>
+					<Link href={`${TABS.CONVERT}`}>{t('dashboard.tabs.nav.convert')}</Link>
+				</TabButton>
+				{/*<TabButton
 						name={TABS.CRYPTO_BALANCES}
 						active={activeTab === TABS.CRYPTO_BALANCES}
 					>
@@ -74,10 +83,11 @@ const DashboardCard = () => {
 							{t('dashboard.tabs.nav.crypto-balances')}
 						</Link>
 					</TabButton>*/}
-					<TabButton name={TABS.TRANSACTIONS} active={activeTab === TABS.TRANSACTIONS}>
-						<Link href={`${TABS.TRANSACTIONS}`}>{t('dashboard.tabs.nav.transactions')}</Link>
-					</TabButton>
-				</TabList>
+				<TabButton name={TABS.TRANSACTIONS} active={activeTab === TABS.TRANSACTIONS}>
+					<Link href={`${TABS.TRANSACTIONS}`}>{t('dashboard.tabs.nav.transactions')}</Link>
+				</TabButton>
+			</TabList>
+			<TabPanelContainer>
 				<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 					<SynthBalances
 						balances={synthsBalancesQuery.data?.balances ?? []}
@@ -95,7 +105,7 @@ const DashboardCard = () => {
 				<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
 					<Transactions />
 				</TabPanel>
-			</FlexDivCol>
+			</TabPanelContainer>
 		</>
 	);
 };
@@ -107,15 +117,20 @@ const ComingSoon = styled.div`
 `;
 
 const DashboardTitle = styled.div`
-	${fonts.data.large}
+	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 4px;
+	margin-bottom: 10px;
 `;
 
 const Profit = styled.div`
 	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
+`;
+
+const TabPanelContainer = styled.div`
+	overflow: auto;
+	height: 100%;
 `;
 
 export default DashboardCard;

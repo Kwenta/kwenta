@@ -6,17 +6,15 @@ const fontStyles = {
 
 export const fonts = {
 	body: {
-		'bold-small': `
+		boldSmall: `
 			font-family: ${fontStyles.bold};
 			font-size: 12px;
-			font-weight: bold;
 		`,
-		'bold-medium': `
+		boldMedium: `
 			font-family: ${fontStyles.bold};
 			font-size: 14px;
-			font-weight: bold;
 		`,
-		'thin-small': `
+		thinSmall: `
 			font-family: ${fontStyles.regular};
 			font-size: 12px;
 		`,

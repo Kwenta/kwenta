@@ -25,6 +25,7 @@ const DashboardPage = () => {
 							<LeftContainer>{dashboardCard}</LeftContainer>
 							<RightContainer>
 								<TrendingSynths />
+								<BottomShadow />
 							</RightContainer>
 						</Container>
 					</DesktopOnlyView>
@@ -45,21 +46,35 @@ const Container = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
+	height: 100vh;
 `;
 
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
 	padding-bottom: 48px;
 	margin: 0px 75px;
-	padding-top: 55px;
+	padding-top: 80px;
 	max-width: 1000px;
+	position: relative;
 `;
 
 const RightContainer = styled(FlexDivCol)`
-	width: 356px;
+	width: 320px;
 	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 55px 32px 48px 32px;
+	padding: 80px 0 5px 0;
 	margin-right: -20px;
+	flex-shrink: 0;
+	position: relative;
+`;
+
+const BottomShadow = styled.div`
+	background: linear-gradient(360deg, #10101e 0%, rgba(16, 16, 30, 0) 100%);
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 32px;
+	pointer-events: none;
 `;
 
 export default DashboardPage;

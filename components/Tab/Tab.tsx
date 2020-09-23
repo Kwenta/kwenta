@@ -58,11 +58,13 @@ export const TabPanel = ({
 
 const TabPanelContainer = styled.div`
 	outline: none;
+	overflow: auto;
+	height: 100%;
 `;
 
 const StyledTabButton = styled.button<TabProps>`
 	${resetButtonCSS};
-	${fonts.body['bold-medium']};
+	${fonts.body.boldMedium};
 	padding: 1px 6px;
 	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
