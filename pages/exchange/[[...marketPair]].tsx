@@ -15,7 +15,7 @@ import { GWEI_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
 import Services from 'containers/Services';
 
-import ArrowsIcon from 'assets/svg/app/arrows.svg';
+import ArrowsIcon from 'assets/inline-svg/app/arrows.svg';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';

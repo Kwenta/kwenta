@@ -10,19 +10,19 @@ import {
 	AbsoluteCenteredDiv,
 	FlexDivRowCentered,
 } from 'styles/common';
-import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
-import MarketOrderPreview from 'assets/svg/marketing/market-order-preview.svg';
-import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
-import AssetDotPoint from 'assets/svg/marketing/asset-card-dot.svg';
-import FeatureCardDotPoint from 'assets/svg/marketing/feature-card-dot.svg';
-import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
-import InfiniteLiquidity from 'assets/svg/marketing/infinite-liquidity.svg';
-import TradingPairs from 'assets/svg/marketing/trading-pairs.svg';
-import ZeroSlippage from 'assets/svg/marketing/zero-slippage.svg';
-import StepOne from 'assets/svg/marketing/step-one.svg';
-import StepTwo from 'assets/svg/marketing/step-two.svg';
-import StepThree from 'assets/svg/marketing/step-three.svg';
-import ChartBanner from 'assets/svg/marketing/chart-banner.svg';
+import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
+import MarketOrderPreview from 'assets/inline-svg/marketing/market-order-preview.svg';
+import AssetCollections from 'assets/inline-svg/marketing/asset-collections.svg';
+import AssetDotPoint from 'assets/inline-svg/marketing/asset-card-dot.svg';
+import FeatureCardDotPoint from 'assets/inline-svg/marketing/feature-card-dot.svg';
+import SwapPreview from 'assets/inline-svg/marketing/swap-preview.svg';
+import InfiniteLiquidity from 'assets/inline-svg/marketing/infinite-liquidity.svg';
+import TradingPairs from 'assets/inline-svg/marketing/trading-pairs.svg';
+import ZeroSlippage from 'assets/inline-svg/marketing/zero-slippage.svg';
+import StepOne from 'assets/inline-svg/marketing/step-one.svg';
+import StepTwo from 'assets/inline-svg/marketing/step-two.svg';
+import StepThree from 'assets/inline-svg/marketing/step-three.svg';
+import ChartBanner from 'assets/inline-svg/marketing/chart-banner.svg';
 
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import React, { useState } from 'react';

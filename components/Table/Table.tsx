@@ -2,12 +2,12 @@ import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row } from 'react-table';
 
-import SortDownIcon from 'assets/svg/app/caret-down.svg';
-import SortUpIcon from 'assets/svg/app/caret-up.svg';
+import SortDownIcon from 'assets/inline-svg/app/caret-down.svg';
+import SortUpIcon from 'assets/inline-svg/app/caret-up.svg';
 
 import { FlexDivCentered } from 'styles/common';
 
-import Spinner from 'assets/svg/app/loader.svg';
+import Spinner from 'assets/inline-svg/app/loader.svg';
 
 export type TablePalette = 'primary';
 

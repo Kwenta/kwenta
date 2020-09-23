@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import TextLogo from 'assets/svg/brand/text-logo-white.svg';
+import TextLogo from 'assets/inline-svg/brand/text-logo-white.svg';
 import { FlexDiv, FlexDivRowCentered } from 'styles/common';
 import { useTranslation } from 'react-i18next';
-import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
-import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
+import MediumLogo from 'assets/inline-svg/marketing/medium-icon.svg';
+import TwitterLogo from 'assets/inline-svg/marketing/twitter-icon.svg';
 
 const Footer: React.FC = () => {
 	const { t } = useTranslation();

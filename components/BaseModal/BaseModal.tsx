@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 import styled from 'styled-components';
 
-import CrossIcon from 'assets/svg/app/cross.svg';
+import CrossIcon from 'assets/inline-svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';

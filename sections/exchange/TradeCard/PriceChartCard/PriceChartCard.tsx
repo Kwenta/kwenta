@@ -6,8 +6,8 @@ import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
 
-import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
-import LoaderIcon from 'assets/svg/app/loader.svg';
+import SnowflakeIcon from 'assets/inline-svg/app/snowflake.svg';
+import LoaderIcon from 'assets/inline-svg/app/loader.svg';
 
 import { Synth } from 'lib/synthetix';
 

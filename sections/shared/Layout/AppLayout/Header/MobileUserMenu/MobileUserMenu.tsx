@@ -6,10 +6,10 @@ import { isWalletConnectedState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
 import { resetButtonCSS } from 'styles/common';
 
-import NotificationIcon from 'assets/svg/app/notification.svg';
-import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
-import MenuIcon from 'assets/svg/app/menu.svg';
-import CrossIcon from 'assets/svg/app/cross.svg';
+import NotificationIcon from 'assets/inline-svg/app/notification.svg';
+import NotificationAlertIcon from 'assets/inline-svg/app/notification-alert.svg';
+import MenuIcon from 'assets/inline-svg/app/menu.svg';
+import CrossIcon from 'assets/inline-svg/app/cross.svg';
 
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 

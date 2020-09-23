@@ -4,7 +4,7 @@ const withImages = require('next-images');
 const path = require('path');
 
 // SVG path for svg-react-loader
-const inlineSvgPaths = [path.resolve(__dirname, 'assets/svg')];
+const inlineSvgPaths = [path.resolve(__dirname, 'assets/inline-svg')];
 
 const plugins = [
 	withImages({
