@@ -3,11 +3,15 @@ import styled from 'styled-components';
 import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivRow, CapitalizedText } from 'styles/common';
 import useAllTradesQuery from 'queries/trades/useAllTradesQuery';
+
 import { CATEGORY_MAP } from 'constants/currency';
-import TradeHistory from 'components/TradeHistory';
+
 import Select from 'components/Select';
+
+import { FlexDivRow, CapitalizedText } from 'styles/common';
+
+import TradeHistory from './TradeHistory';
 
 const Transactions = () => {
 	const { t } = useTranslation();
