@@ -13,7 +13,7 @@ import { CurrencyKey } from 'constants/currency';
 import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
-import Services from 'containers/Services';
+// import Services from 'containers/Services';
 
 import ArrowsIcon from 'assets/inline-svg/app/arrows.svg';
 
@@ -39,7 +39,7 @@ import {
 	customGasPriceState,
 	gasSpeedState,
 	isWalletConnectedState,
-	walletAddressState,
+	// walletAddressState,
 } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
@@ -66,7 +66,7 @@ import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
-	const { synthExchange$, ratesUpdated$ } = Services.useContainer();
+	// const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 	const router = useRouter();
 
 	const marketPairQuery = router.query.marketPair || [];
@@ -83,7 +83,7 @@ const ExchangePage = () => {
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
+	// const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
@@ -97,35 +97,37 @@ const ExchangePage = () => {
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery({ refetchInterval: false });
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
+	const exchangeRatesQuery = useExchangeRatesQuery();
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
-	useEffect(() => {
-		if (synthExchange$ && walletAddress) {
-			const subscription = synthExchange$.subscribe(({ fromAddress }) => {
-				if (fromAddress === walletAddress) {
-					synthsWalletBalancesQuery.refetch();
-				}
-			});
-			return () => subscription.unsubscribe();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [synthExchange$, walletAddress]);
+	// disable usage of .on for now
 
-	useEffect(() => {
-		if (ratesUpdated$) {
-			const subscription = ratesUpdated$.subscribe(() => {
-				exchangeRatesQuery.refetch();
-			});
-			return () => subscription.unsubscribe();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ratesUpdated$]);
+	// useEffect(() => {
+	// 	if (synthExchange$ && walletAddress) {
+	// 		const subscription = synthExchange$.subscribe(({ fromAddress }) => {
+	// 			if (fromAddress === walletAddress) {
+	// 				synthsWalletBalancesQuery.refetch();
+	// 			}
+	// 		});
+	// 		return () => subscription.unsubscribe();
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [synthExchange$, walletAddress]);
+
+	// useEffect(() => {
+	// 	if (ratesUpdated$) {
+	// 		const subscription = ratesUpdated$.subscribe(() => {
+	// 			exchangeRatesQuery.refetch();
+	// 		});
+	// 		return () => subscription.unsubscribe();
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [ratesUpdated$]);
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
