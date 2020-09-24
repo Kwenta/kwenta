@@ -189,8 +189,8 @@ const ExchangePage = () => {
 		isBaseCurrencySuspended ||
 		isQuoteCurrencySuspended ||
 		!selectedBothSides ||
-		!baseCurrencyAmount ||
-		!quoteCurrencyAmount ||
+		!Number(baseCurrencyAmount) ||
+		!Number(quoteCurrencyAmount) ||
 		!ethGasStationQuery.data ||
 		!isWalletConnected ||
 		isBaseCurrencyFrozen ||
