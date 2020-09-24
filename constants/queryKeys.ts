@@ -33,6 +33,7 @@ export const QUERY_KEYS = {
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
+		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],
 	},
 };
 

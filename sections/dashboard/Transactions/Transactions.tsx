@@ -2,8 +2,7 @@ import { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
-
-import useAllTradesQuery from 'queries/trades/useAllTradesQuery';
+import { useRecoilValue } from 'recoil';
 
 import { CATEGORY_MAP } from 'constants/currency';
 
@@ -12,10 +11,14 @@ import Select from 'components/Select';
 import { FlexDivRow, CapitalizedText } from 'styles/common';
 
 import TradeHistory from './TradeHistory';
+import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
+import { walletAddressState } from 'store/wallet';
+import { HistoricalTrade } from 'queries/trades/types';
 
 const Transactions = () => {
 	const { t } = useTranslation();
-	const allTradesQuery = useAllTradesQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const walletTradesQuery = useWalletTradesQuery({ walletAddress: walletAddress || '' });
 
 	const synthFilterList = [
 		{ label: t('dashboard.transactions.synthSort.allSynths'), key: 'ALL_SYNTHS' },
@@ -41,11 +44,13 @@ const Transactions = () => {
 		[synths, synthFilter.key]
 	);
 
-	const trades = allTradesQuery.data || [];
+	const trades = walletTradesQuery.data || [];
 	const filteredHistoricalTrades = useMemo(
 		() =>
 			synthFilter.key !== 'ALL_SYNTHS'
-				? trades.filter((trade) => filteredSynthKeys.indexOf(trade.fromCurrencyKey) !== -1)
+				? trades.filter(
+						(trade: HistoricalTrade) => filteredSynthKeys.indexOf(trade.fromCurrencyKey) !== -1
+				  )
 				: trades,
 		[trades, filteredSynthKeys, synthFilter.key]
 	);
@@ -87,8 +92,8 @@ const Transactions = () => {
 			<TradeHistoryContainer>
 				<TradeHistory
 					trades={filteredHistoricalTrades}
-					isLoaded={allTradesQuery.isSuccess}
-					isLoading={allTradesQuery.isLoading}
+					isLoaded={walletTradesQuery.isSuccess}
+					isLoading={walletTradesQuery.isLoading}
 				/>
 			</TradeHistoryContainer>
 		</>

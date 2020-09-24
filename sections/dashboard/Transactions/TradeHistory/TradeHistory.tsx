@@ -5,15 +5,12 @@ import { CellProps, Row } from 'react-table';
 
 import { priceCurrencyState } from 'store/app';
 import { useRecoilValue } from 'recoil';
-
 import Table from 'components/Table';
-
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
-
 import { formatCurrency } from 'utils/formatters/number';
 import { fonts } from 'styles/theme/fonts';
-
 import Currency from 'components/Currency';
+import LinkIcon from 'assets/inline-svg/app/link.svg';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -88,6 +85,11 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					),
 					sortable: true,
 				},
+				{
+					accessor: 'link',
+					Cell: (cellProps: CellProps<HistoricalTrade>) => <StyledLinkIcon />,
+					sortable: false,
+				},
 			]}
 			data={trades}
 			isLoading={isLoading && !isLoaded}
@@ -99,6 +101,13 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 		/>
 	);
 });
+
+// @ts-ignore
+const StyledLinkIcon = styled(LinkIcon)`
+	width: 14px;
+	height: 14px;
+	color: ${(props) => props.theme.colors.blueberry};
+`;
 
 const compareHistoricalTradeUSDValue = (rowA: Row<HistoricalTrade>, rowB: Row<HistoricalTrade>) =>
 	rowA.original.toAmountInUSD > rowB.original.toAmountInUSD ? -1 : 1;
