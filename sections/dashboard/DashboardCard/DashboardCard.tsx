@@ -129,7 +129,7 @@ const PortfolioTitle = styled.div`
 const PortfolioValue = styled.div`
 	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 70px;
+	margin-bottom: 40px;
 `;
 
 const StyledTabList = styled(TabList)`

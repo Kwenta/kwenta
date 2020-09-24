@@ -54,7 +54,13 @@ import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
 
-import { FlexDivCentered, FlexDivColCentered, resetButtonCSS, PageContent } from 'styles/common';
+import {
+	FlexDivCentered,
+	FlexDivColCentered,
+	resetButtonCSS,
+	PageContent,
+	MobileContainerMixin,
+} from 'styles/common';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
 import { zIndex } from 'constants/ui';
@@ -612,9 +618,7 @@ const RightCardContainer = styled.div`
 `;
 
 const MobileContainer = styled(FlexDivColCentered)`
-	padding-top: 55px;
-	max-width: 364px;
-	margin: 0 auto;
+	${MobileContainerMixin};
 `;
 
 const VerticalSpacer = styled.div`

@@ -57,7 +57,7 @@ const Message = styled.div`
 `;
 
 const StyledResponsiveContainer = styled(RechartsResponsiveContainer)`
-	filter: blur(4px);
+	filter: blur(2px);
 `;
 
 export default ComingSoonBalanceChart;

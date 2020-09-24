@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
-import { FlexDiv, FlexDivCol, PageContent } from 'styles/common';
+import { FlexDiv, FlexDivCol, PageContent, MobileContainerMixin } from 'styles/common';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -49,8 +49,7 @@ const DashboardPage = () => {
 const SPACING_FROM_HEADER = '80px';
 
 const MobileContainer = styled.div`
-	max-width: 364px;
-	margin: 0 auto;
+	${MobileContainerMixin};
 `;
 
 const Container = styled(FlexDiv)`

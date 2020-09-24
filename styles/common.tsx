@@ -158,3 +158,9 @@ export const FixedFooterMixin = `
 	right: 0;
 	border-radius: 0;	
 `;
+
+export const MobileContainerMixin = `
+	padding-top: 55px;
+	max-width: 364px;
+	margin: 0 auto;
+`;
