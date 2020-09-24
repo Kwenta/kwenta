@@ -14,6 +14,7 @@ type CurrencyPriceProps = {
 	price: number;
 	sign?: string;
 	change?: number;
+	conversionRate?: number | null;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -21,11 +22,16 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	price,
 	sign,
 	change,
+	conversionRate,
 	...rest
 }) => {
 	return (
 		<Container {...rest}>
-			<Price className="price">{formatCurrency(currencyKey, price, { sign })}</Price>
+			<Price className="price">
+				{formatCurrency(currencyKey, conversionRate != null ? price / conversionRate : price, {
+					sign,
+				})}
+			</Price>
 			{change != null && <ChangePercent className="percent" value={change} />}
 		</Container>
 	);

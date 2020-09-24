@@ -51,18 +51,19 @@ const DashboardCard = () => {
 
 	return (
 		<>
-			<FlexDivCol style={{ minHeight: '160px', marginBottom: '26px', flexShrink: 0 }}>
-				<DashboardTitle>{t('dashboard.your-profile.title')}</DashboardTitle>
-				<Profit>
+			<Totals>
+				<PortfolioTitle>{t('dashboard.your-portfolio.title')}</PortfolioTitle>
+				<PortfolioValue>
 					<Currency.Price
 						currencyKey={selectedPriceCurrency.name}
 						price={synthsBalancesQuery.data?.totalUSDBalance || 0}
+						conversionRate={selectPriceCurrencyRate}
 						sign={selectedPriceCurrency.sign}
 					/>
-				</Profit>
+				</PortfolioValue>
 				<ComingSoonBalanceChart />
-			</FlexDivCol>
-			<TabList style={{ marginBottom: '12px' }}>
+			</Totals>
+			<StyledTabList>
 				<TabButton
 					name={TABS.SYNTH_BALANCES}
 					active={activeTab === TABS.SYNTH_BALANCES}
@@ -91,7 +92,7 @@ const DashboardCard = () => {
 				>
 					{t('dashboard.tabs.nav.transactions')}
 				</TabButton>
-			</TabList>
+			</StyledTabList>
 			<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 				<SynthBalances
 					balances={synthsBalancesQuery.data?.balances ?? []}
@@ -119,16 +120,26 @@ const ComingSoon = styled.div`
 	text-align: center;
 `;
 
-const DashboardTitle = styled.div`
+const PortfolioTitle = styled.div`
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 10px;
 `;
 
-const Profit = styled.div`
+const PortfolioValue = styled.div`
 	${fonts.data.xLarge}
 	color: ${(props) => props.theme.colors.white};
 	margin-bottom: 70px;
+`;
+
+const StyledTabList = styled(TabList)`
+	margin-bottom: 12px;
+`;
+
+const Totals = styled(FlexDivCol)`
+	min-height: 160px;
+	margin-bottom: 26px;
+	flex-shrink: 0;
 `;
 
 export default DashboardCard;
