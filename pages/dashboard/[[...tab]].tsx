@@ -22,6 +22,8 @@ const DashboardPage = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
+	// TODO: refactor activeView with better logic, this is kinda broken at the moment.
+
 	let activeView = <Loader />;
 
 	if (isWalletConnected) {
