@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +14,7 @@ import TradeHistory from './TradeHistory';
 import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
 import { walletAddressState } from 'store/wallet';
 import { HistoricalTrade } from 'queries/trades/types';
+import { Synth } from '@synthetixio/js';
 
 const Transactions = () => {
 	const { t } = useTranslation();
@@ -35,24 +36,67 @@ const Transactions = () => {
 	];
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 
-	const orderSizeList = [{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' }];
+	const orderSizeList = [
+		{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' },
+		{ label: '< 1000', key: 'LTET1000' },
+		{ label: '1000 < x < 10,000', key: 'GT1000LTET10000' },
+		{ label: '10,000 < x < 100,000', key: 'GT10000LTET100000' },
+		{ label: '100,000+', key: 'GT100000' },
+	];
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
 	const synths = synthetix.js?.synths || [];
-	const filteredSynthKeys = useMemo(
-		() => synths.filter((synth) => synth.category === synthFilter.key).map((synth) => synth.name),
-		[synths, synthFilter.key]
+
+	const createSynthTypeFilter = useCallback(
+		(synths: Synth[], synthFilter: string) => (trade: HistoricalTrade) =>
+			synths
+				.filter((synth) => synth.category === synthFilter || synthFilter === 'ALL_SYNTHS')
+				.map((synth) => synth.name)
+				.indexOf(trade.fromCurrencyKey) !== -1,
+		[]
+	);
+
+	// This will always return true until we add limit orders back in.
+	const createOrderTypeFilter = useCallback(
+		(orderType: string) => (trade: HistoricalTrade) => true,
+		[]
+	);
+
+	const createOrderSizeFilter = useCallback(
+		(orderSize: string) => (trade: HistoricalTrade) => {
+			switch (orderSize) {
+				case orderSizeList[1].key:
+					return trade.fromAmount <= 1000;
+				case orderSizeList[2].key:
+					return 1000 < trade.fromAmount && trade.fromAmount <= 10000;
+				case orderSizeList[3].key:
+					return 10000 < trade.fromAmount && trade.fromAmount <= 100000;
+				case orderSizeList[4].key:
+					return trade.fromAmount >= 100000;
+				default:
+					return true;
+			}
+		},
+		[orderSizeList]
 	);
 
 	const trades = walletTradesQuery.data || [];
 	const filteredHistoricalTrades = useMemo(
 		() =>
-			synthFilter.key !== 'ALL_SYNTHS'
-				? trades.filter(
-						(trade: HistoricalTrade) => filteredSynthKeys.indexOf(trade.fromCurrencyKey) !== -1
-				  )
-				: trades,
-		[trades, filteredSynthKeys, synthFilter.key]
+			trades
+				.filter(createSynthTypeFilter(synths, synthFilter.key))
+				.filter(createOrderTypeFilter(orderType.key))
+				.filter(createOrderSizeFilter(orderSize.key)),
+		[
+			trades,
+			orderSize.key,
+			orderType.key,
+			synthFilter.key,
+			synths,
+			createSynthTypeFilter,
+			createOrderTypeFilter,
+			createOrderSizeFilter,
+		]
 	);
 
 	return (

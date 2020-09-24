@@ -80,22 +80,13 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					accessor: 'amount',
 					sortType: compareHistoricalTradeUSDValue,
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<>
-							<StyledValue>
-								<Currency.Price
-									currencyKey={cellProps.row.original.toCurrencyKey}
-									price={cellProps.row.original.toAmountInUSD}
-									sign={selectedPriceCurrency.sign}
-								/>
-							</StyledValue>
-							<a
-								href={`${etherScanLinks.txLink(cellProps.row.original.hash)}`}
-								target="_blank"
-								rel="noreferrer"
-							>
-								<StyledLinkIcon />
-							</a>
-						</>
+						<StyledValue>
+							<Currency.Price
+								currencyKey={cellProps.row.original.toCurrencyKey}
+								price={cellProps.row.original.toAmountInUSD}
+								sign={selectedPriceCurrency.sign}
+							/>
+						</StyledValue>
 					),
 					sortable: true,
 				},
