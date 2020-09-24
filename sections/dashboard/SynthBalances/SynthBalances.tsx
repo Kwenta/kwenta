@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import synthetix, { Synth } from 'lib/synthetix';
+import { useTranslation } from 'react-i18next';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
@@ -26,54 +27,56 @@ const SynthBalances: FC<SynthBalancesProps> = ({
 	totalUSDBalance,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
-}) => (
-	<>
-		{balances.map((synth: SynthBalance) => {
-			const percent = synth.usdBalance / totalUSDBalance;
-			const synthDesc =
-				synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
+}) => {
+	const { t } = useTranslation();
+	return (
+		<>
+			{balances.map((synth: SynthBalance) => {
+				const percent = synth.usdBalance / totalUSDBalance;
+				const synthDesc =
+					synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
 
-			let totalValue = synth.usdBalance;
-			if (selectPriceCurrencyRate) {
-				totalValue /= selectPriceCurrencyRate;
-			}
+				const totalValue = synth.usdBalance;
+				const price = exchangeRates && exchangeRates[synth.currencyKey];
 
-			let price = exchangeRates && exchangeRates[synth.currencyKey];
-			if (price != null && selectPriceCurrencyRate != null) {
-				price /= selectPriceCurrencyRate;
-			}
-
-			return (
-				<SynthBalanceRow key={synth.currencyKey}>
-					<div>
-						<Currency.Name currencyKey={synth.currencyKey} name={synthDesc} showIcon={true} />
-					</div>
-					<AmountCol>
-						<Currency.Amount
-							currencyKey={synth.currencyKey}
-							amount={synth.balance}
-							totalValue={totalValue}
-							sign={selectedPriceCurrency.sign}
-						/>
-					</AmountCol>
-					<ExchangeRateCol>
-						{price != null && (
-							<Currency.Price
+				return (
+					<SynthBalanceRow key={synth.currencyKey}>
+						<div>
+							<Currency.Name
 								currencyKey={synth.currencyKey}
-								price={price}
-								sign={selectedPriceCurrency.sign}
+								name={t('common.currency.synthetic-currency-name', { currencyName: synthDesc })}
+								showIcon={true}
 							/>
-						)}
-					</ExchangeRateCol>
-					<SynthBalancePercentRow>
-						<ProgressBar percentage={percent} />
-						<TypeDataSmall>{formatPercent(percent)}</TypeDataSmall>
-					</SynthBalancePercentRow>
-				</SynthBalanceRow>
-			);
-		})}
-	</>
-);
+						</div>
+						<AmountCol>
+							<Currency.Amount
+								currencyKey={synth.currencyKey}
+								amount={synth.balance}
+								totalValue={totalValue}
+								sign={selectedPriceCurrency.sign}
+								conversionRate={selectPriceCurrencyRate}
+							/>
+						</AmountCol>
+						<ExchangeRateCol>
+							{price != null && (
+								<Currency.Price
+									currencyKey={synth.currencyKey}
+									price={price}
+									sign={selectedPriceCurrency.sign}
+									conversionRate={selectPriceCurrencyRate}
+								/>
+							)}
+						</ExchangeRateCol>
+						<SynthBalancePercentRow>
+							<ProgressBar percentage={percent} />
+							<TypeDataSmall>{formatPercent(percent)}</TypeDataSmall>
+						</SynthBalancePercentRow>
+					</SynthBalanceRow>
+				);
+			})}
+		</>
+	);
+};
 
 const SynthBalanceRow = styled.div`
 	background: ${(props) => props.theme.colors.elderberry};
@@ -83,7 +86,7 @@ const SynthBalanceRow = styled.div`
 	grid-gap: 20px;
 	justify-content: space-between;
 	align-items: center;
-	grid-template-columns: repeat(4, minmax(120px, 150px));
+	grid-template-columns: repeat(4, minmax(80px, 150px));
 	${media.lessThan('md')`
 		grid-template-columns: auto auto;
 	`}

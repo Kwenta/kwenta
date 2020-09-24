@@ -3,12 +3,15 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDiv, FlexDivCol, PageContent } from 'styles/common';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import NoSynthsCard from 'sections/dashboard/NoSynths';
+
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import media from 'styles/media';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
@@ -47,6 +50,7 @@ const SPACING_FROM_HEADER = '80px';
 
 const MobileContainer = styled.div`
 	max-width: 364px;
+	margin: 0 auto;
 `;
 
 const Container = styled(FlexDiv)`
@@ -62,18 +66,24 @@ const LeftContainer = styled(FlexDivCol)`
 	max-width: 1000px;
 	position: relative;
 	overflow: auto;
-	margin-top: ${SPACING_FROM_HEADER};
+	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 	overflow: auto;
-	padding: 0 75px;
+	${media.lessThan('xl')`
+		max-width: 680px;
+	`}
+	${media.lessThan('lg')`
+		max-width: 480px;
+	`}
 `;
 
 const RightContainer = styled(FlexDivCol)`
-	width: 320px;
+	width: 340px;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	margin-right: -20px;
 	flex-shrink: 0;
 	position: relative;
+	margin-left: 20px;
 `;
 
 const BottomShadow = styled.div`

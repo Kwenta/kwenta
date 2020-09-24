@@ -25,6 +25,8 @@ const TrendingSynths = () => {
 	const synths = synthetix.js?.synths ?? [];
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const selectPriceCurrencyRate =
+		exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
 
 	return (
 		<>
@@ -45,22 +47,22 @@ const TrendingSynths = () => {
 			</Container>
 			<Rows>
 				{synths.map((synth: Synth) => {
-					const selectPriceCurrencyRate =
-						exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
-					let price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
+					const price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
 					const currencyKey = synth.name;
 
-					if (price != null && selectPriceCurrencyRate != null) {
-						price /= selectPriceCurrencyRate;
-					}
 					return (
 						<StyledSelectableCurrencyRow key={currencyKey} isSelectable={false}>
-							<Currency.Name currencyKey={currencyKey} name={synth.desc} showIcon={true} />
+							<Currency.Name
+								currencyKey={currencyKey}
+								name={t('common.currency.synthetic-currency-name', { currencyName: synth.desc })}
+								showIcon={true}
+							/>
 							{price != null ? (
 								<Currency.Price
 									currencyKey={selectedPriceCurrency.name}
 									price={price}
 									sign={selectedPriceCurrency.sign}
+									conversionRate={selectPriceCurrencyRate}
 								/>
 							) : (
 								NO_VALUE
