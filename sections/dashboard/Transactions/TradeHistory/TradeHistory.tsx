@@ -11,6 +11,8 @@ import { formatCurrency } from 'utils/formatters/number';
 import { fonts } from 'styles/theme/fonts';
 import Currency from 'components/Currency';
 import LinkIcon from 'assets/inline-svg/app/link.svg';
+import { Network, networkState } from 'store/wallet';
+import EtherscanLinks from 'utils/etherscan';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -21,6 +23,9 @@ type TradeHistoryProps = {
 const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
+	const network = useRecoilValue(networkState);
+	const etherScanLinks = new EtherscanLinks(network || ({} as Network));
 	return (
 		<StyledTable
 			palette="primary"
@@ -75,19 +80,36 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					accessor: 'amount',
 					sortType: compareHistoricalTradeUSDValue,
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<StyledValue>
-							<Currency.Price
-								currencyKey={cellProps.row.original.toCurrencyKey}
-								price={cellProps.row.original.toAmountInUSD}
-								sign={selectedPriceCurrency.sign}
-							/>
-						</StyledValue>
+						<>
+							<StyledValue>
+								<Currency.Price
+									currencyKey={cellProps.row.original.toCurrencyKey}
+									price={cellProps.row.original.toAmountInUSD}
+									sign={selectedPriceCurrency.sign}
+								/>
+							</StyledValue>
+							<a
+								href={`${etherScanLinks.txLink(cellProps.row.original.hash)}`}
+								target="_blank"
+								rel="noreferrer"
+							>
+								<StyledLinkIcon />
+							</a>
+						</>
 					),
 					sortable: true,
 				},
 				{
 					accessor: 'link',
-					Cell: (cellProps: CellProps<HistoricalTrade>) => <StyledLinkIcon />,
+					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+						<a
+							href={`${etherScanLinks.txLink(cellProps.row.original.hash)}`}
+							target="_blank"
+							rel="noreferrer"
+						>
+							<StyledLinkIcon />
+						</a>
+					),
 					sortable: false,
 				},
 			]}
