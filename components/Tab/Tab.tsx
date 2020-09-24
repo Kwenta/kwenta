@@ -62,7 +62,7 @@ const TabPanelContainer = styled.div`
 
 const StyledTabButton = styled.button<TabProps>`
 	${resetButtonCSS};
-	${fonts.body.boldMedium};
+	${fonts.body.boldSmall};
 	padding: 1px 6px;
 	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
