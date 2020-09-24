@@ -16,6 +16,8 @@ import Currency from 'components/Currency';
 
 import ArrowsIcon from 'assets/inline-svg/app/circle-arrows.svg';
 
+import OneInchImage from 'assets/svg/providers/1inch.svg';
+
 import { formatCurrency } from 'utils/formatters/number';
 import { Synth } from 'lib/synthetix';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
@@ -30,6 +32,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyAmount: string;
 	totalTradePrice: number;
 	selectedPriceCurrency: Synth;
+	txProvider: 'synthetix' | '1inch';
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -42,6 +45,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	quoteCurrencyAmount,
 	totalTradePrice,
 	selectedPriceCurrency,
+	txProvider,
 }) => {
 	const { t } = useTranslation();
 
@@ -103,6 +107,12 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					</SummaryItemValue>
 				</SummaryItem>
 			</Summary>
+			{txProvider === '1inch' && (
+				<TxProvider>
+					<span>Powered By</span>
+					<img src={OneInchImage} width="40" height="40" alt="DEX Aggregator - 1inch.exchange" />
+				</TxProvider>
+			)}
 			{txError && (
 				<Actions>
 					<Message>{t('common.transaction.error')}</Message>
@@ -178,6 +188,15 @@ const Message = styled.div`
 	flex-grow: 1;
 	text-align: center;
 	margin: 16px 0px;
+`;
+
+const TxProvider = styled.div`
+	padding-top: 32px;
+	text-align: center;
+	img {
+		vertical-align: middle;
+		margin-left: 10px;
+	}
 `;
 
 export default TxConfirmationModal;

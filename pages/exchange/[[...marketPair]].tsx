@@ -522,6 +522,7 @@ const ExchangePage = () => {
 							quoteCurrencyKey={quoteCurrencyKey!}
 							totalTradePrice={totalTradePrice}
 							selectedPriceCurrency={selectedPriceCurrency}
+							txProvider="synthetix"
 						/>
 					)}
 					{selectSynthModalOpen && (

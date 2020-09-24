@@ -1,10 +1,11 @@
+import styled, { css } from 'styled-components';
+
 import Button from 'components/Button';
-import styled from 'styled-components';
 
 import { FixedFooterMixin, GridDivCentered } from 'styles/common';
 import media from 'styles/media';
 
-export const MessageContainer = styled(GridDivCentered)`
+export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
 	width: 100%;
 	border-radius: 1000px;
 	grid-template-columns: 1fr auto;
@@ -12,6 +13,11 @@ export const MessageContainer = styled(GridDivCentered)`
 	padding: 16px 32px;
 	max-width: 720px;
 	margin: 0 auto;
+	${(props) =>
+		props.attached &&
+		css`
+			border-radius: 4px;
+		`}
 	${media.lessThan('md')`
 		${FixedFooterMixin};
 		box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};

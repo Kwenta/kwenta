@@ -7,7 +7,6 @@ import { priceCurrencyState } from 'store/app';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
-import Loader from 'components/Loader';
 import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -15,9 +14,12 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
+import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
 
 import { FlexDivCol } from 'styles/common';
 import { fonts } from 'styles/theme/fonts';
+
+import { ConvertContainer } from '../common';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -43,11 +45,6 @@ const DashboardCard = () => {
 		selectedPriceCurrency,
 		selectPriceCurrencyRate,
 	};
-
-	// TODO: temp workaround... synthsBalancesQuery is idle at first, and so we make sure to proceed only when this query is successful so we know which view to show.
-	if (!synthsBalancesQuery.isSuccess) {
-		return <Loader />;
-	}
 
 	return (
 		<>
@@ -102,7 +99,9 @@ const DashboardCard = () => {
 				/>
 			</TabPanel>
 			<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
-				<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
+				<ConvertContainer>
+					<CurrencyConvertCard />
+				</ConvertContainer>
 			</TabPanel>
 			{/*<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
 					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
@@ -113,12 +112,6 @@ const DashboardCard = () => {
 		</>
 	);
 };
-
-const ComingSoon = styled.div`
-	${fonts.data.large}
-	color: ${(props) => props.theme.colors.white};
-	text-align: center;
-`;
 
 const PortfolioTitle = styled.div`
 	font-size: 14px;

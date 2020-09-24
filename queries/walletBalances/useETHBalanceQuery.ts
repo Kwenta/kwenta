@@ -19,7 +19,7 @@ const useETHBalancesQuery = (options?: BaseQueryOptions) => {
 			const balanceBN = await provider!.getBalance(walletAddress!);
 
 			return {
-				balance: Number(balanceBN),
+				balance: Number(balanceBN) / 1e18,
 				balanceBN,
 			};
 		},

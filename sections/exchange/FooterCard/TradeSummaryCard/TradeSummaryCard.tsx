@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { ethers } from 'ethers';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import get from 'lodash/get';
 import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
@@ -45,6 +45,8 @@ type TradeSummaryCardProps = {
 	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
+	showFee?: boolean;
+	attached?: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -64,6 +66,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	gasPrices,
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
+	showFee = true,
+	attached,
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
@@ -111,7 +115,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	}
 
 	const summaryItems = (
-		<SummaryItems>
+		<SummaryItems attached={attached}>
 			<SummaryItem>
 				<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
 				<SummaryItemValue>
@@ -126,7 +130,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 										<CustomGasPrice
 											value={customGasPrice}
 											onChange={(e) => setCustomGasPrice(e.target.value)}
-											placeholder="Custom"
+											placeholder={t('common.custom')}
 										/>
 										{GAS_SPEEDS.map((speed) => (
 											<GasSpeedButtonContainer key={speed}>
@@ -171,24 +175,28 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						: NO_VALUE}
 				</SummaryItemValue>
 			</SummaryItem>
-			<SummaryItem>
-				<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-				<SummaryItemValue>
-					{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
-				</SummaryItemValue>
-			</SummaryItem>
-			<SummaryItem>
-				<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
-				<SummaryItemValue>
-					{exchangeFeeRate != null && baseCurrencyAmount
-						? formatCurrency(
-								selectedPriceCurrency.name,
-								Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
-								{ sign: selectedPriceCurrency.sign }
-						  )
-						: NO_VALUE}
-				</SummaryItemValue>
-			</SummaryItem>
+			{showFee && (
+				<>
+					<SummaryItem>
+						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+						<SummaryItemValue>
+							{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+					<SummaryItem>
+						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+						<SummaryItemValue>
+							{exchangeFeeRate != null && baseCurrencyAmount
+								? formatCurrency(
+										selectedPriceCurrency.name,
+										Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
+										{ sign: selectedPriceCurrency.sign }
+								  )
+								: NO_VALUE}
+						</SummaryItemValue>
+					</SummaryItem>
+				</>
+			)}
 		</SummaryItems>
 	);
 
@@ -199,7 +207,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOnlyView>
-			<MessageContainer>
+			<MessageContainer attached={attached}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}
@@ -230,7 +238,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	);
 };
 
-const SummaryItems = styled.div`
+const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
@@ -240,6 +248,14 @@ const SummaryItems = styled.div`
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
+
+	${(props) =>
+		props.attached &&
+		css`
+			& {
+				grid-template-rows: unset;
+			}
+		`}
 `;
 
 const SummaryItem = styled.div`

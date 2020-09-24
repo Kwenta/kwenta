@@ -141,7 +141,7 @@
 				"submitting-order": "submitting order..."
 			}
 		},
-		"no-synths-card": {
+		"onboard": {
 			"message": "Your wallet has no Synths. Get <0>{{currencyKey}}</0> to start trading Synths:"
 		},
 		"connect-wallet-card": {
@@ -169,7 +169,7 @@
 				"transactions": "Transactions"
 			}
 		},
-		"no-synths-card": {
+		"onboard": {
 			"convert": "Convert",
 			"title": "Learn How it Works",
 			"subtitle": "Get up and running on Kwenta and exchange everything.",
@@ -318,6 +318,7 @@
 			"average": "Average",
 			"fast": "Fast"
 		},
+		"custom": "Custom",
 		"edit": "edit"
 	},
 	"assets": {

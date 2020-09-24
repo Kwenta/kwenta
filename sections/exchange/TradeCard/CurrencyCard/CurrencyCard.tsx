@@ -24,8 +24,8 @@ type CurrencyCardProps = {
 	amount: string;
 	onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	walletBalance: number | null;
-	onBalanceClick: () => void | undefined;
-	onCurrencySelect: () => void;
+	onBalanceClick: () => void;
+	onCurrencySelect?: () => void;
 	priceRate: number;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
@@ -59,6 +59,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	}
 
 	const currencyKeySelected = currencyKey != null;
+	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
 		<Card {...rest}>
@@ -68,16 +69,16 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				</LabelContainer>
 				<CurrencyContainer>
 					<CurrencySelector
-						onClick={onCurrencySelect}
+						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						role="button"
-						currencyKeySelected={currencyKeySelected}
+						currencyKeySelected={hasCurrencySelectCallback ? currencyKeySelected : false}
 					>
 						{currencyKey ?? (
 							<CapitalizedText>
 								{t('exchange.currency-card.currency-selector.no-value')}
 							</CapitalizedText>
 						)}{' '}
-						<CaretDownIcon />
+						{hasCurrencySelectCallback && <CaretDownIcon />}
 					</CurrencySelector>
 					{currencyKeySelected && (
 						<CurrencyAmountContainer>
@@ -130,11 +131,6 @@ const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
 	margin-left: -10px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
-	&:hover {
-		background-color: ${(props) => props.theme.colors.black};
-		border-radius: 100px;
-		cursor: pointer;
-	}
 	svg {
 		color: ${(props) => props.theme.colors.purple};
 	}
@@ -143,7 +139,13 @@ const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
 			? css`
 					margin: 12px 0 12px -10px;
 			  `
-			: css``};
+			: css`
+					&:hover {
+						background-color: ${(props) => props.theme.colors.black};
+						border-radius: 100px;
+						cursor: pointer;
+					}
+			  `};
 `;
 
 const CurrencyAmountContainer = styled.div`

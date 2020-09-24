@@ -21,7 +21,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 
 	const Icon = type === 'synth' && SynthIcon ? SynthIcon : AssetIcon;
 
-	return <img src={Icon} width="24" height="24" alt={`${currencyKey} icon`} />;
+	return <img src={Icon} width="24" height="24" alt={`${currencyKey} icon`} {...rest} />;
 };
 
 export default CurrencyIcon;

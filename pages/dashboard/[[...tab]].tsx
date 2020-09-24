@@ -4,23 +4,38 @@ import { useTranslation } from 'react-i18next';
 
 import { FlexDiv, FlexDivCol, PageContent, MobileContainerMixin } from 'styles/common';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Loader from 'components/Loader';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
-import NoSynthsCard from 'sections/dashboard/NoSynths';
+import Onboard from 'sections/dashboard/Onboard';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import media from 'styles/media';
+import { isWalletConnectedState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const noSynths = !synthsBalancesQuery.data || synthsBalancesQuery.data.balances.length === 0;
-	const dashboardCard = <DashboardCard />;
-	const noSynthsCard = <NoSynthsCard />;
-	const activeView = noSynths ? noSynthsCard : dashboardCard;
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
+	let activeView = <Loader />;
+
+	if (isWalletConnected) {
+		if (synthsBalancesQuery.isSuccess) {
+			const noSynths = synthsBalancesQuery.data
+				? synthsBalancesQuery.data.balances.length === 0
+				: false;
+
+			activeView = noSynths ? <Onboard /> : <DashboardCard />;
+		}
+	} else {
+		activeView = <Onboard />;
+	}
+
 	return (
 		<>
 			<Head>

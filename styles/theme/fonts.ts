@@ -35,8 +35,9 @@ export const fonts = {
 	},
 	heading: {
 		h4: `
-			font-family: ${fontStyles.regular};
+			font-family: ${fontStyles.bold};
 			font-size: 20px;
+			line-height: 24px;
 		`,
 	},
 };

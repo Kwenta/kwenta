@@ -149,7 +149,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					<Message>
 						<Trans
 							t={t}
-							i18nKey="exchange.no-synths-card.message"
+							i18nKey="exchange.onboard.message"
 							values={{ currencyKey: sUSD }}
 							components={[<NoTextTransform />]}
 						/>

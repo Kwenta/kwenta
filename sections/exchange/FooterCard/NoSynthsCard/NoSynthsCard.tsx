@@ -12,15 +12,20 @@ import { DesktopOnlyView } from 'components/Media';
 const { sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
 
-const NoSynthsCard: FC = () => {
+type NoSynthsCardProps = {
+	attached?: boolean;
+};
+
+const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
+
 	return (
-		<MessageContainer>
+		<MessageContainer attached={attached}>
 			<DesktopOnlyView>
 				<Message>
 					<Trans
 						t={t}
-						i18nKey="exchange.no-synths-card.message"
+						i18nKey="exchange.onboard.message"
 						values={{ currencyKey: sUSD }}
 						components={[<NoTextTransform />]}
 					/>

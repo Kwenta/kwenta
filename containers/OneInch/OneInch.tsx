@@ -16,7 +16,7 @@ const useOneInch = () => {
 	const { signer } = Connector.useContainer();
 
 	useEffect(() => {
-		if (signer) {
+		if (isAppReady && signer) {
 			const contract = new ethers.Contract(
 				oneSplitAuditContract.addresses[NetworkId.Mainnet],
 				oneSplitAuditContract.abi,
@@ -26,9 +26,9 @@ const useOneInch = () => {
 		}
 	}, [isAppReady, signer]);
 
-	const swap = async (amount: string) => {
+	const swap = async (amount: string, gasPrice: number) => {
 		try {
-			if (oneInchContract) {
+			if (oneInchContract != null) {
 				const amountBN = ethers.utils.parseEther(amount);
 				const swapRates = await oneInchContract.functions.getExpectedReturn(
 					ethTokenAddress,
@@ -37,17 +37,20 @@ const useOneInch = () => {
 					100,
 					0
 				);
-				const tx = oneInchContract.functions.swap(
+
+				const swapParams = [
 					ethTokenAddress,
 					sUSDTokenAddress,
 					amountBN,
 					swapRates.returnAmount,
 					swapRates.distribution,
 					0,
-					{
-						value: amountBN,
-					}
-				);
+				];
+
+				const tx = oneInchContract.functions.swap(...swapParams, {
+					value: amountBN,
+					gasPrice,
+				});
 				return tx;
 			}
 		} catch (e) {

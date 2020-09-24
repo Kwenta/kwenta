@@ -1,6 +1,9 @@
 export const ROUTES = {
 	Home: '/',
-	Dashboard: '/dashboard',
+	Dashboard: {
+		Home: '/dashboard',
+		Convert: '/dashboard/convert',
+	},
 	Exchange: '/exchange',
 };
 

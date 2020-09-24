@@ -7,12 +7,16 @@ import { DesktopOnlyView } from 'components/Media';
 
 import { MessageButton, MessageContainer, Message } from '../common';
 
-const ConnectWalletCard: FC = () => {
+type ConnectWalletCardProps = {
+	attached?: boolean;
+};
+
+const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 
 	return (
-		<MessageContainer>
+		<MessageContainer attached={attached}>
 			<DesktopOnlyView>
 				<Message>{t('exchange.connect-wallet-card.message')}</Message>
 			</DesktopOnlyView>
