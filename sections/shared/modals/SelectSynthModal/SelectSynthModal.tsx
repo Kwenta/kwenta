@@ -126,12 +126,8 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 			<RowsContainer>
 				{synthsResults.length > 0 ? (
 					synthsResults.map((synth) => {
-						let price = exchangeRates && exchangeRates[synth.name];
+						const price = exchangeRates && exchangeRates[synth.name];
 						const currencyKey = synth.name;
-
-						if (price != null && selectPriceCurrencyRate != null) {
-							price /= selectPriceCurrencyRate;
-						}
 
 						return (
 							<StyledSelectableCurrencyRow
@@ -152,6 +148,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 										currencyKey={currencyKey}
 										price={price}
 										sign={selectedPriceCurrency.sign}
+										conversionRate={selectPriceCurrencyRate}
 									/>
 								) : (
 									NO_VALUE

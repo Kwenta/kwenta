@@ -83,10 +83,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
 							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
 
-							let totalValue = usdBalance;
-							if (selectPriceCurrencyRate != null) {
-								totalValue /= selectPriceCurrencyRate;
-							}
+							const totalValue = usdBalance;
 
 							return (
 								<StyledSelectableCurrencyRow
@@ -97,12 +94,19 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 										onDismiss();
 									}}
 								>
-									<Currency.Name currencyKey={currencyKey} name={synthDesc} showIcon={true} />
+									<Currency.Name
+										currencyKey={currencyKey}
+										name={t('common.currency.synthetic-currency-name', {
+											currencyName: synthDesc,
+										})}
+										showIcon={true}
+									/>
 									<Currency.Amount
 										currencyKey={currencyKey}
 										amount={balance}
 										totalValue={totalValue}
 										sign={selectedPriceCurrency.sign}
+										conversionRate={selectPriceCurrencyRate}
 									/>
 								</StyledSelectableCurrencyRow>
 							);
