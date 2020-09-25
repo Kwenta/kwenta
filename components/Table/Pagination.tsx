@@ -45,10 +45,10 @@ const PageLink = styled.span`
 
 // @ts-ignore
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
-    width: 14px;
-    height: 14px;
-    color: ${(props) => props.theme.colors.purple};
-    cursor: pointer:
+	width: 14px;
+	height: 14px;
+	color: ${(props) => props.theme.colors.purple};
+	cursor: pointer;
 `;
 
 // @ts-ignore
@@ -60,8 +60,8 @@ const StyledRightArrowIcon = styled(RightArrowIcon)`
 `;
 
 const PaginationContainer = styled(FlexDivCentered)`
-	${fonts.body['boldSmall']}
-    background-color: ${(props) => props.theme.colors.elderberry};
+	${fonts.body.boldSmall};
+	background-color: ${(props) => props.theme.colors.elderberry};
 	justify-content: center;
 	padding: 23px 0px;
 	color: ${(props) => props.theme.colors.silver};

@@ -117,6 +117,7 @@ export const Table: FC<TableProps> = ({
 					</TableBody>
 				)}
 			</ReactTable>
+			{/* @ts-ignore */}
 			{showPagination ? <Pagination /> : undefined}
 		</>
 	);
