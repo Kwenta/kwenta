@@ -2,17 +2,25 @@ import React, { memo, FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
+import { useRecoilValue } from 'recoil';
 
 import { priceCurrencyState } from 'store/app';
-import { useRecoilValue } from 'recoil';
-import Table from 'components/Table';
+
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
+
 import { formatCurrency } from 'utils/formatters/number';
+
+import { NO_VALUE } from 'constants/placeholder';
+
 import { fonts } from 'styles/theme/fonts';
+import { ExternalLink } from 'styles/common';
+
+import Etherscan from 'containers/Etherscan';
+
+import Table from 'components/Table';
 import Currency from 'components/Currency';
+
 import LinkIcon from 'assets/inline-svg/app/link.svg';
-import { Network, networkState } from 'store/wallet';
-import EtherscanLinks from 'utils/etherscan';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -23,9 +31,8 @@ type TradeHistoryProps = {
 const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const { etherscanInstance } = Etherscan.useContainer();
 
-	const network = useRecoilValue(networkState);
-	const etherScanLinks = new EtherscanLinks(network || ({} as Network));
 	return (
 		<StyledTable
 			palette="primary"
@@ -91,16 +98,15 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					sortable: true,
 				},
 				{
-					accessor: 'link',
-					Cell: (cellProps: CellProps<HistoricalTrade>) => (
-						<a
-							href={`${etherScanLinks.txLink(cellProps.row.original.hash)}`}
-							target="_blank"
-							rel="noreferrer"
-						>
-							<StyledLinkIcon />
-						</a>
-					),
+					id: 'link',
+					Cell: (cellProps: CellProps<HistoricalTrade>) =>
+						etherscanInstance != null && cellProps.row.original.hash ? (
+							<ExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
+								<StyledLinkIcon />
+							</ExternalLink>
+						) : (
+							NO_VALUE
+						),
 					sortable: false,
 				},
 			]}
