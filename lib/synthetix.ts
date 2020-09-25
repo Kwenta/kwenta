@@ -29,7 +29,6 @@ export type Token = {
 export type Feed = {
 	asset: string;
 	category: string;
-	desc?: string;
 	description?: string;
 	exchange?: string;
 	feed?: string;
@@ -41,7 +40,7 @@ export type Synth = {
 	asset: string;
 	category: string;
 	sign: string;
-	desc: string;
+	description: string;
 	aggregator?: string;
 	subclass?: string;
 	inverted?: {

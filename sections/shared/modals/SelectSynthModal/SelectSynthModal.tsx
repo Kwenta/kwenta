@@ -58,12 +58,12 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	const searchFilteredSynths = useDebouncedMemo(
 		() =>
 			assetSearch
-				? filteredSynths.filter(({ name, desc }) => {
+				? filteredSynths.filter(({ name, description }) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 
 						return (
 							name.toLowerCase().includes(assetSearchLC) ||
-							desc.toLowerCase().includes(assetSearchLC)
+							description.toLowerCase().includes(assetSearchLC)
 						);
 				  })
 				: filteredSynths,
@@ -140,7 +140,9 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 							>
 								<Currency.Name
 									currencyKey={currencyKey}
-									name={t('common.currency.synthetic-currency-name', { currencyName: synth.desc })}
+									name={t('common.currency.synthetic-currency-name', {
+										currencyName: synth.description,
+									})}
 									showIcon={true}
 								/>
 								{price != null ? (

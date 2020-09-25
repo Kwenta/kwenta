@@ -54,7 +54,9 @@ const TrendingSynths = () => {
 						<StyledSelectableCurrencyRow key={currencyKey} isSelectable={false}>
 							<Currency.Name
 								currencyKey={currencyKey}
-								name={t('common.currency.synthetic-currency-name', { currencyName: synth.desc })}
+								name={t('common.currency.synthetic-currency-name', {
+									currencyName: synth.description,
+								})}
 								showIcon={true}
 							/>
 							{price != null ? (

@@ -34,7 +34,7 @@ const SynthBalances: FC<SynthBalancesProps> = ({
 			{balances.map((synth: SynthBalance) => {
 				const percent = synth.usdBalance / totalUSDBalance;
 				const synthDesc =
-					synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.desc : '';
+					synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
 
 				const totalValue = synth.usdBalance;
 				const price = exchangeRates && exchangeRates[synth.currencyKey];

@@ -81,7 +81,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					</RowsHeader>
 					<RowsContainer style={{ height: 'auto' }}>
 						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
-							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.desc : null;
+							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.description : null;
 
 							const totalValue = usdBalance;
 

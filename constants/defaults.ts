@@ -11,7 +11,7 @@ export const DEFAULT_PRICE_CURRENCY = {
 	asset: 'USD',
 	sign: '$',
 	category: 'crypto',
-	desc: '',
+	description: '',
 };
 
 // network defaults
