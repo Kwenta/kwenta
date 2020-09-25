@@ -8,6 +8,7 @@ import SortUpIcon from 'assets/inline-svg/app/caret-up.svg';
 import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/inline-svg/app/loader.svg';
+import Pagination from './Pagination';
 
 export type TablePalette = 'primary';
 
@@ -28,6 +29,7 @@ type TableProps = {
 	className?: string;
 	isLoading?: boolean;
 	noResultsMessage?: React.ReactNode;
+	showPagination?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -40,6 +42,7 @@ export const Table: FC<TableProps> = ({
 	palette = 'primary',
 	isLoading = false,
 	className,
+	showPagination = false,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -57,62 +60,65 @@ export const Table: FC<TableProps> = ({
 	);
 
 	return (
-		<ReactTable {...getTableProps()} palette={palette} className={className}>
-			{headerGroups.map((headerGroup) => (
-				<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
-					{headerGroup.headers.map((column: any) => (
-						<TableCellHead
-							{...column.getHeaderProps(
-								column.sortable ? column.getSortByToggleProps() : undefined
-							)}
-						>
-							{column.render('Header')}
-							{column.sortable && (
-								<SortIconContainer>
-									{column.isSorted ? (
-										column.isSortedDesc ? (
-											<StyledSortDownIcon />
-										) : (
-											<StyledSortUpIcon />
-										)
-									) : (
-										<>
-											<StyledSortUpIcon />
-											<StyledSortDownIcon />
-										</>
-									)}
-								</SortIconContainer>
-							)}
-						</TableCellHead>
-					))}
-				</TableRow>
-			))}
-			{isLoading ? (
-				<Spinner />
-			) : noResultsMessage != null ? (
-				noResultsMessage
-			) : (
-				<TableBody className="table-body" {...getTableBodyProps()}>
-					{rows.map((row) => {
-						prepareRow(row);
-
-						return (
-							<TableBodyRow
-								className="table-body-row"
-								{...row.getRowProps()}
-								onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+		<>
+			<ReactTable {...getTableProps()} palette={palette} className={className}>
+				{headerGroups.map((headerGroup) => (
+					<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
+						{headerGroup.headers.map((column: any) => (
+							<TableCellHead
+								{...column.getHeaderProps(
+									column.sortable ? column.getSortByToggleProps() : undefined
+								)}
 							>
-								{row.cells.map((cell) => (
-									<TableCell className="table-body-cell" {...cell.getCellProps()}>
-										{cell.render('Cell')}
-									</TableCell>
-								))}
-							</TableBodyRow>
-						);
-					})}
-				</TableBody>
-			)}
-		</ReactTable>
+								{column.render('Header')}
+								{column.sortable && (
+									<SortIconContainer>
+										{column.isSorted ? (
+											column.isSortedDesc ? (
+												<StyledSortDownIcon />
+											) : (
+												<StyledSortUpIcon />
+											)
+										) : (
+											<>
+												<StyledSortUpIcon />
+												<StyledSortDownIcon />
+											</>
+										)}
+									</SortIconContainer>
+								)}
+							</TableCellHead>
+						))}
+					</TableRow>
+				))}
+				{isLoading ? (
+					<Spinner />
+				) : noResultsMessage != null ? (
+					noResultsMessage
+				) : (
+					<TableBody className="table-body" {...getTableBodyProps()}>
+						{rows.map((row) => {
+							prepareRow(row);
+
+							return (
+								<TableBodyRow
+									className="table-body-row"
+									{...row.getRowProps()}
+									onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+								>
+									{row.cells.map((cell) => (
+										<TableCell className="table-body-cell" {...cell.getCellProps()}>
+											{cell.render('Cell')}
+										</TableCell>
+									))}
+								</TableBodyRow>
+							);
+						})}
+					</TableBody>
+				)}
+			</ReactTable>
+			{showPagination ? <Pagination /> : undefined}
+		</>
 	);
 };
 

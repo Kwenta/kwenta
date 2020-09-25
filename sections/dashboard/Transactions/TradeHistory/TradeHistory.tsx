@@ -111,6 +111,7 @@ const TradeHistory: FC<TradeHistoryProps> = memo(({ trades, isLoading, isLoaded 
 					<div>{t('assets.exchanges.table.no-results')}</div>
 				) : undefined
 			}
+			showPagination
 		/>
 	);
 });
