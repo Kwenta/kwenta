@@ -79,17 +79,10 @@ const Container = styled(FlexDiv)`
 
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 1000px;
+	max-width: 800px;
 	position: relative;
 	overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
-	overflow: auto;
-	${media.lessThan('xl')`
-		max-width: 680px;
-	`}
-	${media.lessThan('lg')`
-		max-width: 480px;
-	`}
 `;
 
 const RightContainer = styled(FlexDivCol)`

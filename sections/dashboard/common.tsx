@@ -8,7 +8,7 @@ export const CardTitle = styled.div`
 `;
 
 export const ConvertContainer = styled.div`
-	max-width: 720px;
+	max-width: 800px;
 	margin: 0 auto;
 	width: 100%;
 `;
