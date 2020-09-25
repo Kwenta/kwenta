@@ -1,6 +1,6 @@
 import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
-import { useTable, useFlexLayout, useSortBy, Column, Row } from 'react-table';
+import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 
 import SortDownIcon from 'assets/inline-svg/app/caret-down.svg';
 import SortUpIcon from 'assets/inline-svg/app/caret-up.svg';
@@ -49,13 +49,34 @@ export const Table: FC<TableProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		columnsDeps
 	);
-	const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+
+	// TODO: How do I tell Typescript about the usePagination props?
+	const {
+		getTableProps,
+		getTableBodyProps,
+		headerGroups,
+		// @ts-ignore
+		page,
+		prepareRow,
+		// @ts-ignore
+		canPreviousPage,
+		// @ts-ignore
+		canNextPage,
+		// @ts-ignore
+		pageCount,
+		// @ts-ignore
+		gotoPage,
+		// @ts-ignore
+		state: { pageIndex },
+	} = useTable(
 		{
 			columns: memoizedColumns,
 			data,
+			initialState: { pageSize: showPagination ? 8 : data.length },
 			...options,
 		},
 		useSortBy,
+		usePagination,
 		useFlexLayout
 	);
 
@@ -97,7 +118,7 @@ export const Table: FC<TableProps> = ({
 					noResultsMessage
 				) : (
 					<TableBody className="table-body" {...getTableBodyProps()}>
-						{rows.map((row) => {
+						{page.map((row: Row) => {
 							prepareRow(row);
 
 							return (
@@ -106,7 +127,7 @@ export const Table: FC<TableProps> = ({
 									{...row.getRowProps()}
 									onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 								>
-									{row.cells.map((cell) => (
+									{row.cells.map((cell: Cell) => (
 										<TableCell className="table-body-cell" {...cell.getCellProps()}>
 											{cell.render('Cell')}
 										</TableCell>
@@ -117,8 +138,15 @@ export const Table: FC<TableProps> = ({
 					</TableBody>
 				)}
 			</ReactTable>
-			{/* @ts-ignore */}
-			{showPagination ? <Pagination /> : undefined}
+			{showPagination ? (
+				<Pagination
+					pageIndex={pageIndex}
+					pageCount={pageCount}
+					canNextPage={canNextPage}
+					canPreviousPage={canPreviousPage}
+					setPage={gotoPage}
+				/>
+			) : undefined}
 		</>
 	);
 };
