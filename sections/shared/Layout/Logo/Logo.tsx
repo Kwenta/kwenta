@@ -6,22 +6,21 @@ import ROUTES from 'constants/routes';
 
 import LogoSvg from 'assets/inline-svg/brand/logo.svg';
 
-const Logo: FC = () => {
-	return (
-		<LogoContainer>
-			<Link href={ROUTES.Home}>
-				<a>
-					<LogoSvg />
-				</a>
-			</Link>
-		</LogoContainer>
-	);
-};
+const Logo: FC = () => (
+	<LogoContainer>
+		<Link href={ROUTES.Home}>
+			<a>
+				<LogoSvg />
+			</a>
+		</Link>
+	</LogoContainer>
+);
 
-const LogoContainer = styled.div`
-	padding-top: 5px;
+const LogoContainer = styled.span`
 	a {
-		color: ${(props) => props.theme.colors.white};
+		position: relative;
+		top: 2px;
+		display: inline-block;
 	}
 `;
 

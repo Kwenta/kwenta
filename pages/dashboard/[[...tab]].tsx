@@ -12,7 +12,6 @@ import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import media from 'styles/media';
 import { isWalletConnectedState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
