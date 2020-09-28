@@ -113,7 +113,7 @@ export const Table: FC<TableProps> = ({
 					</TableRow>
 				))}
 				{isLoading ? (
-					<Spinner />
+					<StyledSpinner />
 				) : noResultsMessage != null ? (
 					noResultsMessage
 				) : (
@@ -150,6 +150,11 @@ export const Table: FC<TableProps> = ({
 		</>
 	);
 };
+
+const StyledSpinner = styled(Spinner)`
+	display: block;
+	margin: auto;
+`;
 
 export const TableRow = styled.div``;
 
