@@ -148,7 +148,11 @@ const ChartCard: FC<ChartCardProps> = ({
 					disabledInteraction={disabledInteraction}
 					semiTransparent={showLoader || showOverlayMessage}
 				>
-					<RechartsResponsiveContainer width="100%" height="100%">
+					<RechartsResponsiveContainer
+						width="100%"
+						height="100%"
+						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
+					>
 						<AreaChart
 							data={rates.map((rateData) => ({
 								...rateData,
