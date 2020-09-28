@@ -74,7 +74,7 @@ const StyledTabButton = styled(TabButton)`
 	background: none;
 	color: ${(props) => props.theme.colors.purple};
 	padding-bottom: 8px;
-	margin: 0px 24px;
+	margin: 0px 10px;
 	border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
 	&:hover {
 		border-bottom-color: ${(props) => props.theme.colors.white};

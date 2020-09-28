@@ -18,7 +18,7 @@ const Assets = () => {
 	const assets = t('homepage.assets.list', { returnObjects: true }) as string[];
 
 	return (
-		<StyledFlexSection>
+		<StyledFlexSection id="why">
 			<AssetCollectionWrapper>
 				<img src={AssetCollections} alt="" style={{ width: '100%', maxWidth: '700px' }} />
 				<DesktopOnlyView>

@@ -39,7 +39,7 @@ const Steps = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledFlexSection>
+		<StyledFlexSection id="how">
 			<LeftSubHeader>{t('homepage.steps.title')}</LeftSubHeader>
 			<StepList>
 				{STEPS.map(({ id, image, subtitle, title, copy }) => (
@@ -75,6 +75,9 @@ const StepList = styled(FlexDivColCentered)``;
 const StepCard = styled(FlexDivCol)`
 	width: 400px;
 	margin: 24px 0px;
+	${media.lessThan('lg')`
+		width: unset;
+	`}
 `;
 
 const StepIcon = styled.div`
@@ -94,6 +97,7 @@ const StepTitle = styled(Paragraph)`
 	font-size: 32px;
 	line-height: 41px;
 	color: ${(props) => props.theme.colors.white};
+	padding: 20px 0 40px 0;
 `;
 
 const StepCopy = styled(Paragraph)`

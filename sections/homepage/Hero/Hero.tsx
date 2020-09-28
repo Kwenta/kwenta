@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
-import MarketOrderPreview from 'assets/svg/marketing/market-order-preview.svg';
+import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
 import { Paragraph } from 'styles/common';
 import { StackSection, StyledResponsiveImage } from '../common';
@@ -21,7 +21,7 @@ const Hero = () => {
 };
 
 const StyledStackSection = styled(StackSection)`
-	padding-bottom: 50px;
+	padding-bottom: 200px;
 `;
 
 const Header = styled(Paragraph)`
@@ -32,6 +32,7 @@ const Header = styled(Paragraph)`
 	letter-spacing: 0.2px;
 	color: ${(props) => props.theme.colors.white};
 	padding-top: 40px;
+	padding-bottom: 80px;
 `;
 
 export default Hero;
