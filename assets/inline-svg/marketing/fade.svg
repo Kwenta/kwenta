@@ -1,6 +1,6 @@
 <svg width="684" height="771" viewBox="0 0 684 771" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#fade-filter0_d)">
-<rect x="680" y="6.10352e-05" width="764" height="717" transform="rotate(90 680 6.10352e-05)" fill="url(#paint0_linear)"/>
+<rect x="680" y="6.10352e-05" width="764" height="717" transform="rotate(90 680 6.10352e-05)" fill="url(#fade_paint0_linear)"/>
 </g>
 <defs>
 <filter id="fade-filter0_d" x="-40.3296" y="0" width="723.659" height="770.659" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
@@ -12,7 +12,7 @@
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
 </filter>
-<linearGradient id="paint0_linear" x1="1062" y1="217.5" x2="1062" y2="893.359" gradientUnits="userSpaceOnUse">
+<linearGradient id="fade_paint0_linear" x1="1062" y1="217.5" x2="1062" y2="893.359" gradientUnits="userSpaceOnUse">
 <stop stop-opacity="0"/>
 <stop offset="1"/>
 </linearGradient>
