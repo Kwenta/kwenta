@@ -71,7 +71,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					<CurrencySelector
 						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						role="button"
-						currencyKeySelected={hasCurrencySelectCallback ? currencyKeySelected : false}
 					>
 						{currencyKey ?? (
 							<CapitalizedText>
@@ -120,7 +119,7 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 	padding-bottom: 6px;
 `;
 
-const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
+const CurrencySelector = styled.div<{ onClick: any }>`
 	display: grid;
 	align-items: center;
 	grid-auto-flow: column;
@@ -135,7 +134,7 @@ const CurrencySelector = styled.div<{ currencyKeySelected: boolean }>`
 		color: ${(props) => props.theme.colors.purple};
 	}
 	${(props) =>
-		!props.currencyKeySelected
+		!props.onClick
 			? css`
 					margin: 12px 0 12px -10px;
 			  `
