@@ -4,6 +4,8 @@ import styled from 'styled-components';
 
 import { TabButton, TabList, TabPanel } from 'components/Tab';
 
+import media from 'styles/media';
+
 import { StackSection, CenterSubHeader } from '../common';
 
 const FAQ = () => {
@@ -11,8 +13,8 @@ const FAQ = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StackSection id="faq">
-			<CenterSubHeader>{t('homepage.faq.title')}</CenterSubHeader>
+		<StyledStackSection id="faq">
+			<StyledCenterSubHeader>{t('homepage.faq.title')}</StyledCenterSubHeader>
 			<TabList style={{ marginBottom: '12px' }}>
 				<StyledTabButton
 					name={t('homepage.faq.tabs.one')}
@@ -45,24 +47,38 @@ const FAQ = () => {
 			<TabPanel name={t('homepage.faq.tabs.three')} activeTab={'2'}>
 				<FAQPanel>{t('common.features.coming-soon')}</FAQPanel>
 			</TabPanel>
-		</StackSection>
+		</StyledStackSection>
 	);
 };
+
+const StyledStackSection = styled(StackSection)`
+	padding-top: 220px;
+	${media.lessThan('lg')`
+		padding-top: 160px;
+	`}
+`;
+
+const StyledCenterSubHeader = styled(CenterSubHeader)`
+	padding-bottom: 64px;
+	${media.lessThan('lg')`
+		padding-bottom: 53px;
+	`}
+	${media.lessThan('md')`
+		padding-bottom: 36px;
+	`}
+`;
 
 const FAQPanel = styled.div``;
 
 const StyledTabButton = styled(TabButton)`
-	background: linear-gradient(180deg, #f2de82 0%, #d1a866 100%);
-	background-clip: text;
-	background-size: 100%;
-	background-repeat: repeat;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	-moz-background-clip: text;
-	-moz-text-fill-color: transparent;
+	background: none;
+	color: ${(props) => props.theme.colors.purple};
 	padding-bottom: 8px;
 	margin: 0px 24px;
-	border-bottom: ${(props) => (props.active ? `2px solid #f2de82` : 'none')};
+	border-bottom: ${(props) => (props.active ? `2px solid ${props.theme.colors.purple}` : 'none')};
+	&:hover {
+		border-bottom-color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 export default FAQ;

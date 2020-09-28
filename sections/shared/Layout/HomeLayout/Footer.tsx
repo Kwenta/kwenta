@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FlexDiv, FlexDivRowCentered } from 'styles/common';
+import { FlexDiv, FlexDivRowCentered, Paragraph } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import TextLogo from 'assets/inline-svg/brand/text-logo-white.svg';
@@ -33,16 +33,14 @@ const Footer: React.FC = () => {
 	);
 };
 
-export default Footer;
-
 const Section = styled(FlexDivRowCentered)`
 	height: 260px;
-	padding: 0px 64px;
+	padding: 0px 20px;
 	margin: 64px 0;
 	justify-content: space-between;
 `;
 
-const Subtext = styled.p`
+const Subtext = styled(Paragraph)`
 	font-size: 13px;
 	line-height: 16px;
 	color: #747b80;
@@ -56,3 +54,5 @@ const SocialIcons = styled(FlexDiv)``;
 const Icons = styled.div`
 	margin: 0px 16px;
 `;
+
+export default Footer;

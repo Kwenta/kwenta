@@ -13,8 +13,6 @@ import Steps from 'sections/homepage/Steps';
 import FAQ from 'sections/homepage/FAQ';
 import ChartBanner from 'sections/homepage/ChartBanner';
 
-import { FlexDivCol, FlexDivColCentered } from 'styles/common';
-
 const HomePage = () => {
 	const { t } = useTranslation();
 
@@ -25,31 +23,40 @@ const HomePage = () => {
 			</Head>
 			<HomeLayout>
 				<DarkContainer>
-					<Hero />
-					<Assets />
-					<Features />
-					<Benefits />
+					<Container>
+						<Hero />
+						<Assets />
+						<Features />
+						<Benefits />
+					</Container>
 				</DarkContainer>
 				<LightContainer>
-					<Steps />
-					<FAQ />
-					<ChartBanner />
+					<Container>
+						<Steps />
+						<FAQ />
+						<ChartBanner />
+					</Container>
 				</LightContainer>
 			</HomeLayout>
 		</>
 	);
 };
 
-const DarkContainer = styled(FlexDivColCentered)`
+export const Container = styled.div`
+	max-width: 1150px;
 	width: 100%;
-	margin-top: 60px;
+	margin: 0 auto;
 `;
 
-const LightContainer = styled(FlexDivCol)`
-	background: #0d0d18;
+const DarkContainer = styled.div`
 	width: 100%;
-	padding: 55px 0px 24px 0px;
-	margin-top: 60px;
+	padding: 55px 20px 0 20px;
+`;
+
+const LightContainer = styled.div`
+	width: 100%;
+	background: #0d0d18;
+	padding: 0 20px;
 `;
 
 export default HomePage;

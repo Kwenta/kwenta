@@ -2,33 +2,29 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import FeatureCardDotPoint from 'assets/inline-svg/marketing/feature-card-dot.svg';
+import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
 
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 
-import { Col, Copy, FlexSection, GridContainer, LeftSubHeader, Title } from '../common';
+import { Copy, FlexSection, GridContainer, LeftSubHeader, Title } from '../common';
+import media from 'styles/media';
 
 const FEATURES = [
 	{
-		id: 'order-types',
-		title: 'homepage.features.order-types.title',
-		copy: 'homepage.features.order-types.copy',
+		id: 'infinite-liquidity',
+		title: 'homepage.features.infinite-liquidity.title',
+		copy: 'homepage.features.infinite-liquidity.copy',
 	},
 	{
-		id: 'options-futures',
-		title: 'homepage.features.options-futures.title',
-		copy: 'homepage.features.options-futures.copy',
+		id: 'zero-slippage',
+		title: 'homepage.features.zero-slippage.title',
+		copy: 'homepage.features.zero-slippage.copy',
 	},
 	{
-		id: 'leverage',
-		title: 'homepage.features.leverage.title',
-		copy: 'homepage.features.leverage.copy',
+		id: 'synthetic-futures',
+		title: 'homepage.features.synthetic-futures.title',
+		copy: 'homepage.features.synthetic-futures.copy',
 		comingSoon: true,
-	},
-	{
-		id: 'options-futures2',
-		title: 'homepage.features.options-futures.title',
-		copy: 'homepage.features.options-futures.copy',
 	},
 ];
 
@@ -36,30 +32,62 @@ const Features = () => {
 	const { t } = useTranslation();
 
 	return (
-		<FlexSection>
-			<Col>
-				<LeftSubHeader>{t('homepage.features.title')}</LeftSubHeader>
-			</Col>
-			<Col>
-				<GridContainer>
+		<StyledContainer>
+			<FlexSection>
+				<StyledLeftSubHeader>{t('homepage.features.title')}</StyledLeftSubHeader>
+				<StyledGridContainer>
 					{FEATURES.map(({ id, title, comingSoon, copy }) => (
 						<FeatureCard key={id}>
-							<FeatureCardDotPoint />
-							<FlexDivCentered>
+							<FeatureIconContainer>
+								<LogoNoTextSVG />
+							</FeatureIconContainer>
+							<FeatureContentTitle>
 								<Title>{t(title)}</Title>
 								{comingSoon && <ComingSoonTag>COMING SOON</ComingSoonTag>}
-							</FlexDivCentered>
+							</FeatureContentTitle>
 							<Copy>{t(copy)}</Copy>
 						</FeatureCard>
 					))}
-				</GridContainer>
-			</Col>
-		</FlexSection>
+				</StyledGridContainer>
+			</FlexSection>
+		</StyledContainer>
 	);
 };
 
+const StyledGridContainer = styled(GridContainer)`
+	${media.lessThan('lg')`
+		grid-template-columns: repeat(3, auto);
+	`}
+	${media.lessThan('md')`
+		grid-template-columns: auto;
+	`}
+`;
+
+const StyledContainer = styled.div`
+	padding-bottom: 240px;
+	${media.lessThan('lg')`
+		padding-bottom: 140px;
+	`}
+`;
+
+const StyledLeftSubHeader = styled(LeftSubHeader)`
+	padding-top: 80px;
+	${media.lessThan('lg')`
+		padding-top: 0;
+		padding-bottom: 56px;
+	`}
+`;
+
 const FeatureCard = styled(FlexDivCol)`
 	margin-bottom: 16px;
+`;
+
+const FeatureIconContainer = styled.div`
+	padding-bottom: 40px;
+`;
+
+const FeatureContentTitle = styled(FlexDivCentered)`
+	padding-bottom: 14px;
 `;
 
 const ComingSoonTag = styled(FlexDivCentered)`

@@ -6,8 +6,10 @@ import Link from 'next/link';
 import { HEADER_HEIGHT } from 'constants/ui';
 import ROUTES from 'constants/routes';
 
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
 
+import AppHeader from '../AppLayout/Header';
 import { TextButton } from 'styles/common';
 
 import Logo from '../Logo';
@@ -16,22 +18,29 @@ const Header: FC = () => {
 	const { t } = useTranslation();
 
 	return (
-		<Container>
-			<Logo />
-			<Links>
-				<StyledLink href="#why">{t('homepage.nav.why')}</StyledLink>
-				<StyledLink href="#how">{t('homepage.nav.how')}</StyledLink>
-				<StyledLink href="#faq">{t('homepage.nav.faq')}</StyledLink>
-			</Links>
-			<div>
-				<WalletButton>{t('homepage.nav.wallet')}</WalletButton>
-				<Link href={ROUTES.Exchange}>
-					<Button variant="primary" isRounded={false} size="md">
-						{t('homepage.nav.exchange')}
-					</Button>
-				</Link>
-			</div>
-		</Container>
+		<>
+			<MobileHiddenView>
+				<Container>
+					<Logo />
+					<Links>
+						<StyledLink href="#why">{t('homepage.nav.why')}</StyledLink>
+						<StyledLink href="#how">{t('homepage.nav.how')}</StyledLink>
+						<StyledLink href="#faq">{t('homepage.nav.faq')}</StyledLink>
+					</Links>
+					<div>
+						<WalletButton>{t('homepage.nav.wallet')}</WalletButton>
+						<Link href={ROUTES.Exchange}>
+							<Button variant="primary" isRounded={false} size="md">
+								{t('homepage.nav.exchange')}
+							</Button>
+						</Link>
+					</div>
+				</Container>
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<AppHeader />
+			</MobileOnlyView>
+		</>
 	);
 };
 

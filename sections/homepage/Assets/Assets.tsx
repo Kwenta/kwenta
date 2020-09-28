@@ -2,61 +2,49 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
+import { FlexDivCentered, FlexDivCol, Paragraph } from 'styles/common';
+// import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
+import AssetCollections from 'assets/png/marketing/asset-collections.png';
+import Fade from 'assets/inline-svg/marketing/fade.svg';
 import AssetDotPoint from 'assets/inline-svg/marketing/asset-card-dot.svg';
 
-import { FlexSection, GridContainer } from '../common';
+import media from 'styles/media';
 
-const ASSETS = [
-	{
-		id: 'equities',
-		copy: 'homepage.assets.equities',
-	},
-	{
-		id: 'indices',
-		copy: 'homepage.assets.indices',
-	},
-	{
-		id: 'stablecoins',
-		copy: 'homepage.assets.stablecoins',
-	},
-	{
-		id: 'cryptocurrencies',
-		copy: 'homepage.assets.cryptocurrencies',
-	},
-];
+import { FlexSection, GridContainer, SubHeader } from '../common';
+import { DesktopOnlyView } from 'components/Media';
 
 const Assets = () => {
 	const { t } = useTranslation();
+	const assets = t('homepage.assets.list', { returnObjects: true }) as string[];
 
 	return (
-		<FlexSection>
+		<StyledFlexSection>
 			<AssetCollectionWrapper>
-				<img src={AssetCollections} alt="" />
+				<img src={AssetCollections} alt="" style={{ width: '100%', maxWidth: '700px' }} />
+				<DesktopOnlyView>
+					<Fade />
+				</DesktopOnlyView>
 			</AssetCollectionWrapper>
 			<Col>
 				<LeftSubHeader>{t('homepage.assets.title')}</LeftSubHeader>
 				<GridContainer>
-					{ASSETS.map(({ id, copy }) => (
-						<AssetCard key={id}>
+					{assets.map((text, idx) => (
+						<AssetCard key={idx}>
 							<AssetDotPoint />
-							<AssetCardText>{t(copy)}</AssetCardText>
+							<AssetCardText>{text}</AssetCardText>
 						</AssetCard>
 					))}
 				</GridContainer>
 			</Col>
-		</FlexSection>
+		</StyledFlexSection>
 	);
 };
 
-const SubHeader = styled.p`
-	font-size: 64px;
-	font-weight: 400;
-	line-height: 120%;
-	letter-spacing: 0.2px;
-	width: 75%;
-	color: ${(props) => props.theme.colors.white};
+const StyledFlexSection = styled(FlexSection)`
+	padding-bottom: 150px;
+	${media.lessThan('md')`
+		flex-direction: column;
+	`}
 `;
 
 const LeftSubHeader = styled(SubHeader)`
@@ -64,14 +52,18 @@ const LeftSubHeader = styled(SubHeader)`
 `;
 
 const AssetCollectionWrapper = styled.div`
-	width: 50%;
-	margin-left: -20px;
+	position: relative;
+	width: 100%;
+	max-width: 50%;
+	margin: 0 auto;
+	svg {
+		position: absolute;
+		left: 0;
+		top: 0;
+	}
 `;
 
-const Col = styled(FlexDivCol)`
-	width: 50%;
-	margin: 64px;
-`;
+const Col = styled(FlexDivCol)``;
 
 const AssetCard = styled(FlexDivCentered)`
 	background: #0d0d18;
@@ -81,8 +73,8 @@ const AssetCard = styled(FlexDivCentered)`
 	padding: 16px;
 `;
 
-const AssetCardText = styled.p`
-	font-weight: 800;
+const AssetCardText = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.white};

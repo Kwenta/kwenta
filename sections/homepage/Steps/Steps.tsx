@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivColCentered } from 'styles/common';
+import { FlexDivCol, FlexDivColCentered, Paragraph } from 'styles/common';
 
 import StepOne from 'assets/svg/marketing/step-one.svg';
 import StepTwo from 'assets/svg/marketing/step-two.svg';
 import StepThree from 'assets/svg/marketing/step-three.svg';
 
-import { FlexSection, Col, LeftSubHeader } from '../common';
+import media from 'styles/media';
+
+import { FlexSection, LeftSubHeader } from '../common';
 
 const STEPS = [
 	{
@@ -37,10 +39,8 @@ const Steps = () => {
 	const { t } = useTranslation();
 
 	return (
-		<FlexSection>
-			<Col>
-				<LeftSubHeader>{t('homepage.steps.title')}</LeftSubHeader>
-			</Col>
+		<StyledFlexSection>
+			<LeftSubHeader>{t('homepage.steps.title')}</LeftSubHeader>
 			<StepList>
 				{STEPS.map(({ id, image, subtitle, title, copy }) => (
 					<StepCard key={id}>
@@ -55,17 +55,22 @@ const Steps = () => {
 					</StepCard>
 				))}
 			</StepList>
-		</FlexSection>
+		</StyledFlexSection>
 	);
 };
+
+const StyledFlexSection = styled(FlexSection)`
+	padding-top: 170px;
+	${media.lessThan('lg')`
+		padding-top: 80px;
+	`}
+`;
 
 const StepBox = styled.div`
 	position: relative;
 `;
 
-const StepList = styled(FlexDivColCentered)`
-	width: 50%;
-`;
+const StepList = styled(FlexDivColCentered)``;
 
 const StepCard = styled(FlexDivCol)`
 	width: 400px;
@@ -76,33 +81,24 @@ const StepIcon = styled.div`
 	position: relative;
 `;
 
-const StepSubtitle = styled.p`
+const StepSubtitle = styled(Paragraph)`
 	font-size: 16px;
-	background: linear-gradient(180deg, #f2de82 0%, #d1a866 100%);
-	background-clip: text;
-	background-size: 100%;
-	background-repeat: repeat;
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	-moz-background-clip: text;
-	-moz-text-fill-color: transparent;
+	color: ${(props) => props.theme.colors.purple};
 	position: absolute;
 	bottom: 0;
 	margin-bottom: 5px;
 `;
 
-const StepTitle = styled.p`
-	font-weight: 500;
-	font-size: 34px;
+const StepTitle = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 32px;
 	line-height: 41px;
-	letter-spacing: -0.03em;
-	color: #f7f8fa;
+	color: ${(props) => props.theme.colors.white};
 `;
 
-const StepCopy = styled.p`
+const StepCopy = styled(Paragraph)`
 	font-size: 16px;
 	line-height: 24px;
-	letter-spacing: -0.005em;
 	color: #92969f;
 `;
 

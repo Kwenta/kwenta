@@ -1,10 +1,10 @@
 <svg width="1397" height="509" viewBox="0 0 1397 509" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g filter="url(#chart_banner_1)">
-<rect x="93" y="119" width="1254" height="289" rx="3.27" fill="url(#chart_banner_3)"/>
-<rect x="93" y="119" width="1254" height="289" rx="3.27" fill="url(#chart_banner_2)"/>
+<g filter="url(#filter0_d)">
+<rect x="93" y="119" width="1254" height="289" rx="3.27" fill="url(#pattern0)"/>
+<rect x="93" y="119" width="1254" height="289" rx="3.27" fill="url(#paint0_linear)"/>
 </g>
 <defs>
-<filter id="chart_banner_1" x="-76.08" y="0.980002" width="1472.16" height="507.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="filter0_d" x="-76.08" y="0.980002" width="1472.16" height="507.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
 <feMorphology radius="41.81" operator="dilate" in="SourceAlpha" result="effect1_dropShadow"/>
@@ -14,10 +14,10 @@
 <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
 <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
 </filter>
-<pattern id="chart_banner_3" patternContentUnits="objectBoundingBox" width="1" height="1">
+<pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0" transform="translate(-0.0379617 -1.03969) scale(0.000374911 0.00162691)"/>
 </pattern>
-<linearGradient id="chart_banner_2" x1="720" y1="266.32" x2="720" y2="422.45" gradientUnits="userSpaceOnUse">
+<linearGradient id="paint0_linear" x1="720" y1="266.32" x2="720" y2="422.45" gradientUnits="userSpaceOnUse">
 <stop stop-opacity="0"/>
 <stop offset="1"/>
 </linearGradient>

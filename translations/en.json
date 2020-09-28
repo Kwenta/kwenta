@@ -25,25 +25,29 @@
 			"title": "Derivatives trading with infinite liquidity"
 		},
 		"assets": {
-			"title": "Trade 213 different assets",
-			"indices": "Unique Indices",
-			"equities": "Traditional Equities",
-			"stablecoins": "FIAT Stablecoins",
-			"cryptocurrencies": "Cryptocurrencies"
+			"title": "Trade a range of different assets",
+			"list": [
+				"Unique Indices",
+				"Forex",
+				"Traditional Equities",
+				"Cryptocurrencies",
+				"Commodities",
+				"Short positions"
+			]
 		},
 		"features": {
-			"title": "All the features you’re used to",
-			"order-types": {
-				"title": "Advanced Order Types",
-				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			"title": "Unique trading features",
+			"infinite-liquidity": {
+				"title": "Infinite liquidity",
+				"copy": "All trading is peer-to-contract, using  the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."
 			},
-			"options-futures": {
-				"title": "Options & Futures",
-				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			"zero-slippage": {
+				"title": "Zero slippage",
+				"copy": "Infinite liquidity means that traders never have to worry about moving the orderbook and being affected by slippage."
 			},
-			"leverage": {
-				"title": "Leverage",
-				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nullami vitae."
+			"synthetic-futures": {
+				"title": "Synthetic futures",
+				"copy": "Once futures is built on the Synthetix protocol, it will soon be supported on Kwenta, offering perpetual future contracts on a non-custodial, permissionless platform."
 			}
 		},
 		"second-hero": {

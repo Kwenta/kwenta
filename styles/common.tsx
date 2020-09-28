@@ -164,3 +164,11 @@ export const MobileContainerMixin = `
 	max-width: 364px;
 	margin: 0 auto;
 `;
+
+export const Paragraph = styled.p`
+	margin: 0;
+`;
+
+export const ResponsiveImage = styled.img`
+	width: 100%;
+`;

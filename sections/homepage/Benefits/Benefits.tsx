@@ -1,14 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivRowCentered } from 'styles/common';
 
 import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
 import InfiniteLiquidity from 'assets/svg/marketing/infinite-liquidity.svg';
 import TradingPairs from 'assets/svg/marketing/trading-pairs.svg';
 import ZeroSlippage from 'assets/svg/marketing/zero-slippage.svg';
 
-import { StackSection, CenterSubHeader, Title, Copy } from '../common';
+import { FlexDivCol, FlexDivRowCentered } from 'styles/common';
+
+import media from 'styles/media';
+
+import { StackSection, CenterSubHeader, Title, Copy, StyledResponsiveImage } from '../common';
 
 const BENEFITS = [
 	{
@@ -36,13 +39,13 @@ const Benefits = () => {
 
 	return (
 		<StackSection>
-			<CenterSubHeader>{t('homepage.second-hero.title')}</CenterSubHeader>
-			<img src={SwapPreview} alt="" />
+			<StyledCenterSubHeader>{t('homepage.second-hero.title')}</StyledCenterSubHeader>
+			<StyledResponsiveImage src={SwapPreview} alt="" />
 			<BenefitContainer>
 				{BENEFITS.map(({ id, image, title, copy }) => (
 					<BenefitCard key={id}>
 						{image}
-						<Title>{t(title)}</Title>
+						<StyledTitle>{t(title)}</StyledTitle>
 						<Copy>{t(copy)}</Copy>
 					</BenefitCard>
 				))}
@@ -51,15 +54,26 @@ const Benefits = () => {
 	);
 };
 
+const StyledCenterSubHeader = styled(CenterSubHeader)`
+	padding-bottom: 56px;
+`;
+
 const BenefitCard = styled(FlexDivCol)`
 	align-items: flex-start;
-	width: 33%;
 	margin: 24px 16px;
+`;
+
+const StyledTitle = styled(Title)`
+	padding-bottom: 14px;
+	padding-top: 40px;
 `;
 
 const BenefitContainer = styled(FlexDivRowCentered)`
 	margin: 64px 0px;
 	justify-content: center;
+	${media.lessThan('md')`
+		flex-direction: column;
+	`}
 `;
 
 export default Benefits;
