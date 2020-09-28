@@ -2,7 +2,7 @@ import subHours from 'date-fns/subHours';
 import orderBy from 'lodash/orderBy';
 import uniqBy from 'lodash/uniqBy';
 
-import { RateUpdates, BaseRateUpdates, BaseRateUpdate } from './types';
+import { RateUpdates, BaseRateUpdates, BaseRateUpdate, SynthExchange } from './types';
 
 export const getMinAndMaxRate = (rates: RateUpdates) => {
 	if (rates.length === 0) return [0, 0];
@@ -85,3 +85,13 @@ export const mockHistoricalRates = (
 
 	return rates;
 };
+
+export const getVolume = (exchanges: SynthExchange[], currencyKey: string) =>
+	exchanges
+		.filter((exchange: SynthExchange) =>
+			[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey!)
+		)
+		.reduce((totalVolume: number, exchange: SynthExchange) => {
+			totalVolume += exchange.fromAmountInUSD;
+			return totalVolume;
+		}, 0);
