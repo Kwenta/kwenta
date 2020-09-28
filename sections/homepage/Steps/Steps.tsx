@@ -40,7 +40,7 @@ const Steps = () => {
 
 	return (
 		<StyledFlexSection id="how">
-			<LeftSubHeader>{t('homepage.steps.title')}</LeftSubHeader>
+			<StyledLeftSubHeader>{t('homepage.steps.title')}</StyledLeftSubHeader>
 			<StepList>
 				{STEPS.map(({ id, image, subtitle, title, copy }) => (
 					<StepCard key={id}>
@@ -66,6 +66,13 @@ const StyledFlexSection = styled(FlexSection)`
 	`}
 `;
 
+const StyledLeftSubHeader = styled(LeftSubHeader)`
+	${media.lessThan('lg')`
+		padding-top: 0;
+		padding-bottom: 56px;
+	`}
+`;
+
 const StepBox = styled.div`
 	position: relative;
 `;
@@ -75,7 +82,7 @@ const StepList = styled(FlexDivColCentered)``;
 const StepCard = styled(FlexDivCol)`
 	width: 400px;
 	margin: 24px 0px;
-	${media.lessThan('lg')`
+	${media.lessThan('md')`
 		width: unset;
 	`}
 `;

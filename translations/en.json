@@ -50,17 +50,17 @@
 				"copy": "Once futures is built on the Synthetix protocol, it will soon be supported on Kwenta, offering perpetual future contracts on a non-custodial, permissionless platform."
 			}
 		},
-		"second-hero": {
-			"title": "Without the limits of a traditional exchange",
-			"infinite-liquidity": {
+		"benefits": {
+			"title": "Without the limits of a centralised exchange",
+			"peer-to-contract": {
 				"title": "Peer-to-contract (P2C) trading",
 				"copy": "All trades are executed against the Synthetix smart contracts, so traders don’t have to worry about the limitations of the peer-to-peer trading model, such as liquidity, slippage, or orderbooks."
 			},
-			"zero-slippage": {
+			"trading-pair": {
 				"title": "No trading pair restrictions",
 				"copy": "Any Synth can be traded instantly into any other Synth so you’re not restricted to whichever trading pairs the exchange offers, which is a necessary restriction of the centralised exchange model."
 			},
-			"trading-pairs": {
+			"permissionless": {
 				"title": "Permissionless and non-custodial",
 				"copy": "Kwenta is a dApp that leverages the Synthetix protocol, which means no creating an account, no deposits or withdrawals, and no surrendering custody of your funds."
 			}

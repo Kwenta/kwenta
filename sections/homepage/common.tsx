@@ -37,7 +37,9 @@ export const StackSection = styled(FlexDivColCentered)`
 
 export const FlexSection = styled(FlexDivRow)`
 	width: 100%;
+	/* justify-content: center; */
 	${media.lessThan('lg')`
+		align-items: center;
 		flex-direction: column;
 	`}
 `;
@@ -45,8 +47,12 @@ export const FlexSection = styled(FlexDivRow)`
 export const GridContainer = styled(GridDiv)`
 	grid-template-columns: repeat(2, 280px);
 	grid-gap: 24px;
+	justify-content: center;
+	${media.lessThan('md')`
+	grid-template-columns: repeat(2, auto);
+	`}
 	${media.lessThan('sm')`
-		grid-template-columns: auto;
+		grid-template-columns: 1fr;
 	`}
 `;
 

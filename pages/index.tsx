@@ -50,7 +50,7 @@ export const Container = styled.div`
 
 const DarkContainer = styled.div`
 	width: 100%;
-	padding: 55px 20px 0 20px;
+	padding: 100px 20px 0 20px;
 `;
 
 const LightContainer = styled.div`

@@ -32,7 +32,7 @@ const Features = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledContainer>
+		<Container>
 			<FlexSection>
 				<StyledLeftSubHeader>{t('homepage.features.title')}</StyledLeftSubHeader>
 				<StyledGridContainer>
@@ -50,7 +50,7 @@ const Features = () => {
 					))}
 				</StyledGridContainer>
 			</FlexSection>
-		</StyledContainer>
+		</Container>
 	);
 };
 
@@ -63,7 +63,7 @@ const StyledGridContainer = styled(GridContainer)`
 	`}
 `;
 
-const StyledContainer = styled.div`
+const Container = styled.div`
 	padding-bottom: 240px;
 	${media.lessThan('lg')`
 		padding-bottom: 140px;
@@ -71,6 +71,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledLeftSubHeader = styled(LeftSubHeader)`
+	max-width: 500px;
 	padding-top: 80px;
 	${media.lessThan('lg')`
 		padding-top: 0;
