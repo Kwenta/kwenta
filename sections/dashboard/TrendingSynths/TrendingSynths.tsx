@@ -28,6 +28,13 @@ const TrendingSynths = () => {
 	const selectPriceCurrencyRate =
 		exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
 
+	const priceSort = (a: Synth, b: Synth) => {
+		const priceA = (exchangeRatesQuery.data && exchangeRatesQuery.data[a.name]) || 0;
+		const priceB = (exchangeRatesQuery.data && exchangeRatesQuery.data[b.name]) || 0;
+
+		return priceA > priceB ? -1 : 1;
+	};
+
 	return (
 		<>
 			<Container>
@@ -46,7 +53,7 @@ const TrendingSynths = () => {
 				</FlexDivRow>
 			</Container>
 			<Rows>
-				{synths.map((synth: Synth) => {
+				{synths.sort(priceSort).map((synth: Synth) => {
 					const price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
 					const currencyKey = synth.name;
 
