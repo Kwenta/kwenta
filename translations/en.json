@@ -25,7 +25,7 @@
 			"title": "Derivatives trading with infinite liquidity"
 		},
 		"assets": {
-			"title": "Trade a range of different assets",
+			"title": "Trade a vast range of assets unique to Ethereum",
 			"list": [
 				"Unique Indices",
 				"Forex",
@@ -39,7 +39,7 @@
 			"title": "Unique trading features",
 			"infinite-liquidity": {
 				"title": "Infinite liquidity",
-				"copy": "All trading is peer-to-contract, using  the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."
+				"copy": "All trading is peer-to-contract, using the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."
 			},
 			"zero-slippage": {
 				"title": "Zero slippage",
@@ -53,42 +53,41 @@
 		"second-hero": {
 			"title": "Without the limits of a traditional exchange",
 			"infinite-liquidity": {
-				"title": "Infinite Liquidity",
-				"copy": "Ut eget orci faucibus, volutpat mi vitae, dignissim justo. Aenean tellus risus, fringilla et auctor non, dictum eget nulla."
+				"title": "Peer-to-contract (P2C) trading",
+				"copy": "All trades are executed against the Synthetix smart contracts, so traders don’t have to worry about the limitations of the peer-to-peer trading model, such as liquidity, slippage, or orderbooks."
 			},
 			"zero-slippage": {
-				"title": "Zero Slippage",
-				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+				"title": "No trading pair restrictions",
+				"copy": "Any Synth can be traded instantly into any other Synth so you’re not restricted to whichever trading pairs the exchange offers, which is a necessary restriction of the centralised exchange model."
 			},
 			"trading-pairs": {
-				"title": "No Trading Pairs",
-				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+				"title": "Permissionless and non-custodial",
+				"copy": "Kwenta is a dApp that leverages the Synthetix protocol, which means no creating an account, no deposits or withdrawals, and no surrendering custody of your funds."
 			}
 		},
 		"steps": {
 			"title": "Start trading in just 3 steps",
 			"one": {
-				"title": "Get a web3 wallet with Ethereum in it",
+				"title": "You’ll need a web3 wallet with ETH for gas",
 				"subtitle": "Step One",
-				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+				"copy": "Kwenta is on the Etherem blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
 			},
 			"two": {
-				"title": "Head to Kwenta and convert some ETH to sUSD",
+				"title": "Acquire sUSD (or any other Synth)",
 				"subtitle": "Step Two",
-				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+				"copy": "To start trading, you’ll need a synthetic asset derivative supported by Kwenta, known as Synths. The most accessible Synth is sUSD, which can be purchased on dApps such as Uniswap, Curve, or 1inch."
 			},
 			"three": {
-				"title": "Trade any synth to any synth, starting with sUSD",
+				"title": "Use Kwenta to trade the full range of Synths",
 				"subtitle": "Step Three",
-				"copy": "Fusce elementum efficitur nibh, ut porta erat consequat vitae. Quisque at arcu vestibulum, imperdiet tellus in, tincidunt est."
+				"copy": "Once you’ve got sUSD or any other Synth, you can trade between the entire range of Synths to craft a diverse portfolio of assets, all on-chain and without surrendering custody to an exchange!"
 			}
 		},
 		"faq": {
 			"title": "Frequently Asked Questions",
 			"tabs": {
-				"one": "GENERAL",
-				"two": "ETHEREUM",
-				"three": "SOMETHING"
+				"one": "Getting started",
+				"two": "Trading on Kwenta"
 			}
 		},
 		"footer": {

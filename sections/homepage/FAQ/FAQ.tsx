@@ -30,21 +30,11 @@ const FAQ = () => {
 				>
 					{t('homepage.faq.tabs.two')}
 				</StyledTabButton>
-				<StyledTabButton
-					name={t('homepage.faq.tabs.three')}
-					active={activeTab === '2'}
-					onClick={() => setActiveTab('2')}
-				>
-					{t('homepage.faq.tabs.three')}
-				</StyledTabButton>
 			</TabList>
 			<TabPanel name={t('homepage.faq.tabs.one')} activeTab={'0'}>
 				<FAQPanel>{t('common.features.coming-soon')}</FAQPanel>
 			</TabPanel>
 			<TabPanel name={t('homepage.faq.tabs.two')} activeTab={'1'}>
-				<FAQPanel>{t('common.features.coming-soon')}</FAQPanel>
-			</TabPanel>
-			<TabPanel name={t('homepage.faq.tabs.three')} activeTab={'2'}>
 				<FAQPanel>{t('common.features.coming-soon')}</FAQPanel>
 			</TabPanel>
 		</StyledStackSection>
