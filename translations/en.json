@@ -98,7 +98,7 @@
 			},
 			"subtext": {
 				"powered": "Powered By",
-				"copyright": "Kwenta Inc. 2020©"
+				"copyright": "Kwenta Inc. {{currentYear}}©"
 			}
 		}
 	},

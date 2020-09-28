@@ -77,5 +77,5 @@ export const Subtext = styled(Paragraph)`
 `;
 
 export const StyledResponsiveImage = styled(ResponsiveImage)`
-	max-width: 1150px;
+	max-width: 1200px;
 `;

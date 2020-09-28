@@ -5,7 +5,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 
 import Button from 'components/Button';
 
-import { FlexDivCol } from 'styles/common';
+import { FlexDivCol, ExternalLink } from 'styles/common';
 import { fonts } from 'styles/theme/fonts';
 
 import { CardTitle, ConvertContainer } from '../common';
@@ -21,9 +21,9 @@ const Onboard = () => {
 			<Subtitle>{t('dashboard.onboard.subtitle')}</Subtitle>
 			<Center>
 				<Button variant="primary" isRounded={true} size="lg">
-					<a href={EXTERNAL_LINKS.Learn.MainSite} target="_blank" rel="noreferrer">
+					<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
 						{t('dashboard.onboard.learnMore')}
-					</a>
+					</ExternalLink>
 				</Button>
 			</Center>
 			<ConvertContainer>
