@@ -74,11 +74,14 @@ const StyledCenterSubHeader = styled(CenterSubHeader)`
 `;
 
 // @ts-ignore
-const AccordionOpenIcon = styled(PlusThinIcon)``;
+const AccordionOpenIcon = styled(PlusThinIcon)`
+	flex-shrink: 0;
+`;
 
 // @ts-ignore
 const AccordionCloseIcon = styled(PlusThinIcon)`
 	transform: rotate(45deg);
+	flex-shrink: 0;
 `;
 
 const StyledTabs = styled(Tabs)`
@@ -124,6 +127,9 @@ const StyledAccordion = styled(Accordion)`
 		${AccordionCloseIcon} {
 			display: none;
 		}
+		${media.lessThan('sm')`
+			font-size: 20px;
+		`}
 	}
 	[data-reach-accordion-panel] {
 		color: ${(props) => props.theme.colors.white};
@@ -131,7 +137,7 @@ const StyledAccordion = styled(Accordion)`
 		line-height: 22px;
 		padding-top: 8px;
 		outline: none;
-		padding-right: 20px;
+		padding-right: 40px;
 	}
 	[data-state='open'] {
 		[data-reach-accordion-button] {
