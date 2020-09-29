@@ -85,42 +85,43 @@
 		},
 		"faq": {
 			"title": "Frequently Asked Questions",
-			"tabs": [
-				{
+			"tabs": {
+				"explainer-video": "Explainer video",
+				"getting-started": {
 					"title": "Getting started",
-					"items": [
-						{
+					"items": {
+						"qna1": {
 							"question": "What is Ethereum?",
 							"answer": "Ethereum enables the creation of infrastructure that can exist entirely online, managed and run by a vast network of people, meaning that no-one controls it and it would be extremely difficult (if not impossible) to shut down. This puts it out of the reach of governments or other authorities.  Ethereum was created by a team of Bitcoin enthusiasts, who wanted to expand on its design of decentralized money to build out other decentralized use cases (‘decentralized’ means it’s not controlled by a central authority). There is a huge ecosystem of projects on the Ethereum blockchain, all of which can interact with each other."
 						},
-						{
+						"qna2": {
 							"question": "What is DeFi?",
 							"answer": "DeFi stands for decentralised finance, and represents an ecosystem of open financial tools, products, and protocols on Ethereum. Both Kwenta and the Synthetix protocol that it’s built on are part of the DeFi ecosystem. DeFi runs on smart contracts, which are a key feature of the Ethereum blockchain. Smart contracts are programs or protocols that execute or control certain events and actions according to however they’re coded. They allow for the creation of decentralised infrastructure that carries out certain tasks: for example, a smart contract that enables lending and borrowing will have smart contracts that lock funds that are deposited as collateral and enable users to borrow other assets against their own collateral."
 						},
-						{
+						"qna3": {
 							"question": "What’s a dApp?",
 							"answer": "dApp stands for decentralised application. dApps are frontend interfaces providing access to open-source protocols on the blockchain. If the underlying protocol is openly accessible, then there can be multiple dApps providing different interfaces for the same protocol/s. dApps allow people to use their cryptocurrency wallets to interact directly with smart contracts, meaning there’s no need to create accounts or make deposits or withdrawals, as users never need to surrender custody of their assets."
 						}
-					]
+					}
 				},
-				{
+				"trading-on-kwenta": {
 					"title": "Trading on Kwenta",
-					"items": [
-						{
+					"items": {
+						"qna1": {
 							"question": "Where does the liquidity come from?",
 							"answer": "Kwenta is built on the Synthetix protocol, so the Synth liquidity traders can access on Kwenta is entirely created by SNX stakers on Synthetix."
 						},
-						{
+						"qna2": {
 							"question": "How does trading work if there are no counterparties?",
-							"answer": "There are no direct counterparties for each trade in the Synthetix protocol, but it does use a counterparty-like model in which SNX stakers assume a proportion of the Synthetix debt pool when they mint sUSD. For more details, see the {{litePaper}}."
+							"answer": "There are no direct counterparties for each trade in the Synthetix protocol, but it does use a counterparty-like model in which SNX stakers assume a proportion of the Synthetix debt pool when they mint sUSD. For more details, see the Synthetix <0>litepaper</0>."
 						},
-						{
+						"qna3": {
 							"question": "How are the gas costs calculated?",
 							"answer": "Transactions cost a certain amount proportional to how much processing power is required for Ethereum miners to process it. Kwenta uses the Synthetix protocol, which is far more complex than the majority of other Ethereum projects, so its transactions require more gas to be executed."
 						}
-					]
+					}
 				}
-			]
+			}
 		},
 		"footer": {
 			"cta": {
