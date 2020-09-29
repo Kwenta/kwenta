@@ -151,6 +151,7 @@ export const Table: FC<TableProps> = ({
 	);
 };
 
+// @ts-ignore
 const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: auto;
