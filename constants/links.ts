@@ -8,6 +8,7 @@ export const EXTERNAL_LINKS = {
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
+		Litepaper: 'https://docs.synthetix.io/litepaper/',
 	},
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',

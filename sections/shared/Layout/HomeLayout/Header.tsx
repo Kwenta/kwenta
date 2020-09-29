@@ -74,6 +74,9 @@ const WalletButton = styled(TextButton)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	margin-right: 16px;
 	font-size: 12px;
+	&:hover {
+		color: ${(props) => props.theme.colors.silver};
+	}
 `;
 
 export default Header;
