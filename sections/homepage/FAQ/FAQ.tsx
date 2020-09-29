@@ -73,15 +73,20 @@ const StyledCenterSubHeader = styled(CenterSubHeader)`
 	`}
 `;
 
+const AccordionIconMixin = `
+	flex-shrink: 0;
+	margin-left: 40px;
+`;
+
 // @ts-ignore
 const AccordionOpenIcon = styled(PlusThinIcon)`
-	flex-shrink: 0;
+	${AccordionIconMixin};
 `;
 
 // @ts-ignore
 const AccordionCloseIcon = styled(PlusThinIcon)`
 	transform: rotate(45deg);
-	flex-shrink: 0;
+	${AccordionIconMixin};
 `;
 
 const StyledTabs = styled(Tabs)`
