@@ -10,7 +10,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(network);
 
 	return onboard({
-		dappId: process.env.BN_ONBOARD_API_KEY,
+		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 		hideBranding: true,
 		networkId: network.id,
 		subscriptions,
@@ -37,7 +37,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{ walletName: 'coinbase', preferred: true },
 				{
 					walletName: 'portis',
-					apiKey: process.env.PORTIS_APP_ID,
+					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
 					preferred: true,
 				},
 				{ walletName: 'trust', rpcUrl: infuraRpc },
@@ -60,7 +60,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 
 export const initNotify = (network: Network) =>
 	notify({
-		dappId: process.env.BN_NOTIFY_API_KEY!,
+		dappId: process.env.NEXT_PUBLIC_BN_NOTIFY_API_KEY!,
 		networkId: network.id,
 		desktopPosition: 'topRight',
 	});
