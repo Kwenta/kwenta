@@ -21,7 +21,7 @@ const Button = styled.button<ButtonProps>`
 	text-transform: capitalize;
 
     &:disabled {
-        background-color: ${(props) => props.theme.colors.stormcloud};
+        background: ${(props) => props.theme.colors.stormcloud};
 		cursor: default;
 	}
 
