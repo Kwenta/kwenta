@@ -16,7 +16,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -108,11 +107,6 @@ const CurrencyConvertCard = () => {
 		baseCurrencySuspendedQuery.isSuccess && baseCurrencySuspendedQuery.data.isSuspended;
 	const isQuoteCurrencySuspended =
 		quoteCurrencySuspendedQuery.isSuccess && quoteCurrencySuspendedQuery.data.isSuspended;
-
-	const noSynths =
-		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
-			? synthsWalletBalancesQuery.data.balances.length === 0
-			: false;
 
 	const isSubmissionDisabled =
 		isBaseCurrencySuspended ||
@@ -237,8 +231,6 @@ const CurrencyConvertCard = () => {
 			{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={true} />
-			) : noSynths ? (
-				<NoSynthsCard attached={true} />
 			) : (
 				<TradeSummaryCard
 					selectedPriceCurrency={selectedPriceCurrency}
