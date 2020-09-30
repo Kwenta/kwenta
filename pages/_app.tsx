@@ -33,20 +33,20 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 					content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
 				/>
 				<meta name="description" content={t('meta.description')} />
-				<meta name="twitter:card" content="summary_large_image" />
-				<meta name="twitter:site" content="@kwenta_io" />
-				<meta name="twitter:creator" content="@kwenta_io" />
 				{/* open graph */}
 				<meta property="og:url" content="https://kwenta.io/" />
 				<meta property="og:type" content="website" />
 				<meta property="og:title" content={t('meta.og.title')} />
 				<meta property="og:description" content={t('meta.description')} />
-				<meta property="og:image" content="/images/kwenta.png" />
+				<meta property="og:image" content="/images/kwenta-facebook.png" />
 				<meta property="og:image:alt" content={t('meta.og.title')} />
 				<meta property="og:site_name" content={t('meta.og.site-name')} />
 				{/* twitter */}
-				{/* <meta name="twitter:image" content="/images/kwenta.png" />
-				<meta name="twitter:url" content="https://kwenta.io" /> */}
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:site" content="@kwenta_io" />
+				<meta name="twitter:creator" content="@kwenta_io" />
+				<meta name="twitter:image" content="/images/kwenta-twitter.jpg" />
+				<meta name="twitter:url" content="https://kwenta.io" />
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
 			<ThemeProvider theme={theme}>
