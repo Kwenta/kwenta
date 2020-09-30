@@ -66,7 +66,7 @@ const Content = styled.main`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: calc(100% - 20px);
+	height: calc(100% - 40px);
 `;
 
 const Copy = styled.div`
