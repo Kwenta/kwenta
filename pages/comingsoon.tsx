@@ -84,7 +84,8 @@ const Copy = styled.div`
 `;
 
 const Title = styled.h1`
-	margin: 0;
+	max-width: 500px;
+	margin: 0 auto;
 	font-family: ${(props) => props.theme.fonts.bold};
 	line-height: 57.6px;
 	letter-spacing: 0.2px;
