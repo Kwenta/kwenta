@@ -135,9 +135,9 @@ const StyledButton = styled(Button)`
 
 const FrameOuter = styled.div`
 	position: absolute;
-	top: -8px;
+	top: -10px;
 	right: 8px;
-	bottom: -8px;
+	bottom: -10px;
 	left: 8px;
 	pointer-events: none;
 	border: 1px solid ${(props) => props.theme.colors.goldColors.color1};
