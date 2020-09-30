@@ -8,7 +8,7 @@ import LogoSvg from 'assets/inline-svg/brand/logo.svg';
 
 const Logo: FC = () => (
 	<LogoContainer>
-		<Link href={ROUTES.Home}>
+		<Link href={ROUTES.Homepage.Home}>
 			<a>
 				<LogoSvg />
 			</a>

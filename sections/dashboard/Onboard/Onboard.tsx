@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { EXTERNAL_LINKS } from 'constants/links';
-
 import Button from 'components/Button';
 
-import { FlexDivCol, ExternalLink } from 'styles/common';
+import { FlexDivCol } from 'styles/common';
 import { fonts } from 'styles/theme/fonts';
 
 import { CardTitle, ConvertContainer } from '../common';
 
 import CurrencyConvertCard from '../CurrencyConvertCard';
+import Link from 'next/link';
+import ROUTES from 'constants/routes';
 
 const Onboard = () => {
 	const { t } = useTranslation();
@@ -20,11 +20,11 @@ const Onboard = () => {
 			<Title>{t('dashboard.onboard.title')}</Title>
 			<Subtitle>{t('dashboard.onboard.subtitle')}</Subtitle>
 			<Center>
-				<Button variant="primary" isRounded={true} size="lg">
-					<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
-						{t('dashboard.onboard.learnMore')}
-					</ExternalLink>
-				</Button>
+				<Link href={ROUTES.Homepage.How}>
+					<Button variant="primary" isRounded={true} size="lg">
+						{t('dashboard.onboard.learn-more')}
+					</Button>
+				</Link>
 			</Center>
 			<ConvertContainer>
 				<StyledCardTitle>{t('dashboard.onboard.convert')}</StyledCardTitle>

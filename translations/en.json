@@ -209,7 +209,7 @@
 			"convert": "Convert",
 			"title": "Learn How it Works",
 			"subtitle": "Get up and running on Kwenta and exchange everything.",
-			"learnMore": "Learn More"
+			"learn-more": "Learn More"
 		},
 		"your-portfolio": {
 			"title": "Your Portfolio"

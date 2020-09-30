@@ -1,5 +1,9 @@
 export const ROUTES = {
-	Home: '/',
+	Root: '/',
+	Homepage: {
+		Home: '/',
+		How: '/#how',
+	},
 	Dashboard: {
 		Home: '/dashboard',
 		Convert: '/dashboard/convert',
