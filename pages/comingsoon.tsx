@@ -27,7 +27,9 @@ const ComingSoon = () => {
 					<Copy>coming soon</Copy>
 					<Title>Derivatives Trading with Infinite Liquidity</Title>
 					<Frame>
-						<Heading>Sign up for a chance to be part of the Kwenta Elite!</Heading>
+						<Heading>
+							Sign up for a chance to be part of the <Underlined>Kwenta Elite!</Underlined>
+						</Heading>
 						<StyledParagraph>
 							Kwenta Elite members will get early access to the exchange and a welcome package
 							including sUSD and an NFT that grants exclusive access to a group of DeFi’s finest
@@ -69,6 +71,9 @@ const Content = styled.main`
 
 const Copy = styled.div`
 	font-size: 16px;
+	background: ${(props) => props.theme.colors.gold};
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.goldColors.color1};
 	padding-bottom: 16px;
@@ -136,6 +141,10 @@ const FrameOuter = styled.div`
 	left: 8px;
 	pointer-events: none;
 	border: 1px solid ${(props) => props.theme.colors.goldColors.color1};
+`;
+
+const Underlined = styled.span`
+	border-bottom: 1.5px solid ${(props) => props.theme.colors.goldColors.color1};
 `;
 
 export default ComingSoon;
