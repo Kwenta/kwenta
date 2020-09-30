@@ -38,7 +38,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<meta property="og:type" content="website" />
 				<meta property="og:title" content={t('meta.og.title')} />
 				<meta property="og:description" content={t('meta.description')} />
-				<meta property="og:image" content="/images/kwenta-facebook.png" />
+				<meta property="og:image" content="/images/kwenta-facebook.jpg" />
 				<meta property="og:image:alt" content={t('meta.og.title')} />
 				<meta property="og:site_name" content={t('meta.og.site-name')} />
 				{/* twitter */}
