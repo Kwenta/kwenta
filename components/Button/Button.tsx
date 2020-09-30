@@ -55,17 +55,17 @@ const Button = styled.button<ButtonProps>`
 		props.variant === 'primary' &&
 		css`
 			color: ${(props) => props.theme.colors.white};
-			background-color: ${(props) => props.theme.colors.purple};
+			background: ${(props) => props.theme.colors.gold};
 			&:hover {
 				&:not(:disabled) {
-					background-color: ${(props) => props.theme.colors.purpleHover};
+					background: ${(props) => props.theme.colors.goldHover};
 				}
 			}
 			${(props) =>
 				// @ts-ignore
 				props.isActive &&
 				css`
-					background-color: ${(props) => props.theme.colors.purpleHover};
+					background: ${(props) => props.theme.colors.goldHover};
 				`};
 		`}
 
@@ -77,7 +77,7 @@ const Button = styled.button<ButtonProps>`
 				&:hover {
 					&:not(:disabled) {
 						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.purple};
+						background: ${(props) => props.theme.colors.gold};
 					}
 				}
 				${(props) =>
@@ -85,7 +85,7 @@ const Button = styled.button<ButtonProps>`
 					props.isActive &&
 					css`
 						color: ${(props) => props.theme.colors.white};
-						background-color: ${(props) => props.theme.colors.purple};
+						background: ${(props) => props.theme.colors.gold};
 					`};
 			`}	
 

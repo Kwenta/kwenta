@@ -196,7 +196,7 @@ const Footer = styled.div`
 const SwitchWalletButton = styled(TextButton)`
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.purpleHover};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	text-transform: uppercase;
 `;
 

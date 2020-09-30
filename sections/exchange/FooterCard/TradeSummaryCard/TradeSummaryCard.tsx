@@ -282,7 +282,7 @@ const SummaryItemValue = styled.div`
 const StyledGasEditButton = styled.span`
 	padding-left: 5px;
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.purpleHover};
+	color: ${(props) => props.theme.colors.goldColors.color3};
 	text-transform: uppercase;
 `;
 

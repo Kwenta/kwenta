@@ -114,9 +114,10 @@ const StyledConnectionDot = styled(ConnectionDot)`
 
 const MenuButton = styled.button<{ isActive: boolean }>`
 	${resetButtonCSS};
-	color: ${(props) => (props.isActive ? props.theme.colors.purple : props.theme.colors.blueberry)};
+	color: ${(props) =>
+		props.isActive ? props.theme.colors.goldColors.color1 : props.theme.colors.blueberry};
 	&:hover {
-		color: ${(props) => props.theme.colors.purple};
+		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 	padding: 5px;
 `;

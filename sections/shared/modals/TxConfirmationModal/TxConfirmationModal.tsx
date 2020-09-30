@@ -152,7 +152,7 @@ const CurrencyItemTitle = styled.div`
 `;
 
 const ArrowsIconContainer = styled.div`
-	color: ${(props) => props.theme.colors.purple};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	padding-bottom: 2px;
 `;
 

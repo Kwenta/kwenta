@@ -1,1 +1,25 @@
-<svg width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="8" fill="#fff"/><path d="M8 3l5 3.086v3.087L8 6.086V3z" fill="url(#favicon0_linear)"/><path d="M8 12.568l5-3.087V6.395L8 9.481v3.087z" fill="#0B0C0B"/><path d="M8 3L3 6.086v3.087l5-3.087V3z" fill="url(#favicon1_linear)"/><path d="M8 12.568L3 9.48V6.395l5 3.086v3.087z" fill="url(#favicon2_linear)"/><path d="M8 3l5 3.086v3.087L8 6.086V3z" fill="url(#favicon3_linear)"/><path d="M8 12.568l5-3.087V6.395L8 9.481v3.087z" fill="#0B0C0B"/><path d="M8 3L3 6.086v3.087l5-3.087V3z" fill="url(#favicon4_linear)"/><path d="M8 12.568L3 9.48V6.395l5 3.086v3.087z" fill="url(#favicon5_linear)"/><defs><linearGradient id="favicon0_linear" x1="7.969" y1="4.265" x2="12.969" y2="8.216" gradientUnits="userSpaceOnUse"><stop stop-color="#707070"/><stop offset="1" stop-color="#DBDBDB"/></linearGradient><linearGradient id="favicon1_linear" x1="8.031" y1="4.265" x2="3.031" y2="8.216" gradientUnits="userSpaceOnUse"><stop stop-color="#3F3E3E"/><stop offset="1" stop-color="#929292"/></linearGradient><linearGradient id="favicon2_linear" x1="5.5" y1="12.568" x2="5.5" y2="6.395" gradientUnits="userSpaceOnUse"><stop stop-color="#666"/><stop offset="1"/></linearGradient><linearGradient id="favicon3_linear" x1="7.969" y1="4.265" x2="12.969" y2="8.216" gradientUnits="userSpaceOnUse"><stop stop-color="#A512FF"/><stop offset="1" stop-color="#FF61EF"/></linearGradient><linearGradient id="favicon4_linear" x1="8.031" y1="4.265" x2="3.031" y2="8.216" gradientUnits="userSpaceOnUse"><stop stop-color="#4B0DCE"/><stop offset="1" stop-color="#772385"/></linearGradient><linearGradient id="favicon5_linear" x1="5.5" y1="12.568" x2="5.5" y2="6.395" gradientUnits="userSpaceOnUse"><stop stop-color="#666"/><stop offset="1"/></linearGradient></defs></svg>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="16" cy="16" r="16" fill="white"/>
+<path d="M15.85 4L28 11.3767V18.7536L15.85 11.3767V4Z" fill="url(#favicon_paint0_linear)"/>
+<path d="M15.85 26.95L28 19.6478V12.3455L15.85 19.6478V26.95Z" fill="url(#favicon_paint1_linear)"/>
+<path d="M15.85 4L4 11.3767V18.7536L15.85 11.3767V4Z" fill="url(#favicon_paint2_linear)"/>
+<path d="M15.85 26.95L4 19.6478V12.3455L15.85 19.6478V26.95Z" fill="url(#favicon_paint3_linear)"/>
+<defs>
+<linearGradient id="favicon_paint0_linear" x1="38.3607" y1="11.3356" x2="8.39941" y2="11.3356" gradientUnits="userSpaceOnUse">
+<stop stop-color="#996939"/>
+<stop offset="1" stop-color="#D0A875"/>
+</linearGradient>
+<linearGradient id="favicon_paint1_linear" x1="21.925" y1="26.95" x2="24.8757" y2="-0.98517" gradientUnits="userSpaceOnUse">
+<stop stop-color="#272728"/>
+<stop offset="1" stop-color="#4B4B4B"/>
+</linearGradient>
+<linearGradient id="favicon_paint2_linear" x1="15.9232" y1="7.02448" x2="3.99645" y2="16.3688" gradientUnits="userSpaceOnUse">
+<stop stop-color="#996939"/>
+<stop offset="1" stop-color="#D0A875"/>
+</linearGradient>
+<linearGradient id="favicon_paint3_linear" x1="9.92499" y1="26.95" x2="9.92499" y2="12.3455" gradientUnits="userSpaceOnUse">
+<stop stop-color="#363636"/>
+<stop offset="1" stop-color="#333232"/>
+</linearGradient>
+</defs>
+</svg>

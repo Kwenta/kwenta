@@ -325,7 +325,7 @@ const ChartBody = styled.div`
 const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
 	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
 	border-bottom: 2px solid
-		${(props) => (props.isActive ? props.theme.colors.purple : 'transparent')};
+		${(props) => (props.isActive ? props.theme.colors.goldColors.color1 : 'transparent')};
 `;
 
 const TooltipContentStyle = styled.div`

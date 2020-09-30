@@ -131,7 +131,7 @@ const CurrencySelector = styled.div<{ onClick: any }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
 	svg {
-		color: ${(props) => props.theme.colors.purple};
+		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 	${(props) =>
 		!props.onClick

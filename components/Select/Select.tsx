@@ -68,9 +68,9 @@ function Select<T>(props: Props<T>) {
 			}),
 			dropdownIndicator: (provided) => ({
 				...provided,
-				color: colors.purple,
+				color: colors.goldColors.color1,
 				'&:hover': {
-					color: colors.purpleHover,
+					color: colors.goldColors.color3,
 				},
 			}),
 		};

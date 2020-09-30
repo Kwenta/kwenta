@@ -157,20 +157,20 @@ const StyledTabs = styled(Tabs)`
 	}
 	[data-reach-tab] {
 		outline: none;
-		color: ${(props) => props.theme.colors.purple};
+		color: ${(props) => props.theme.colors.goldColors.color1};
 		&:hover {
-			color: ${(props) => props.theme.colors.purpleHover};
+			color: ${(props) => props.theme.colors.goldColors.color3};
 		}
 		&[data-selected] {
-			color: ${(props) => props.theme.colors.purpleHover};
+			color: ${(props) => props.theme.colors.goldColors.color3};
 		}
 	}
 	[data-reach-tab-panel] {
 		outline: none;
 		a {
-			color: ${(props) => props.theme.colors.purple};
+			color: ${(props) => props.theme.colors.goldColors.color1};
 			&:hover {
-				color: ${(props) => props.theme.colors.purpleHover};
+				color: ${(props) => props.theme.colors.goldColors.color3};
 			}
 		}
 	}
@@ -180,7 +180,7 @@ const StyledAccordion = styled(Accordion)`
 	outline: none;
 	[data-reach-accordion-item] {
 		padding: 24px 0;
-		border-bottom: 1px solid ${(props) => props.theme.colors.purple};
+		border-bottom: 1px solid ${(props) => props.theme.colors.goldColors.color1};
 	}
 	[data-reach-accordion-button] {
 		${resetButtonCSS};

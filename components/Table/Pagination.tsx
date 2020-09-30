@@ -62,7 +62,7 @@ const PageLink = styled.span<{ active?: boolean }>`
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
 	width: 14px;
 	height: 14px;
-	color: ${(props) => props.theme.colors.purple};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	cursor: pointer;
 `;
 
@@ -70,7 +70,7 @@ const StyledLeftArrowIcon = styled(LeftArrowIcon)`
 const StyledRightArrowIcon = styled(RightArrowIcon)`
 	width: 14px;
 	height: 14px;
-	color: ${(props) => props.theme.colors.purple};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	cursor: pointer;
 `;
 

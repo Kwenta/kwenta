@@ -94,7 +94,7 @@ const FeatureContentTitle = styled(FlexDivCentered)`
 const ComingSoonTag = styled(FlexDivCentered)`
 	width: 128px;
 	height: 24px;
-	background: ${(props) => props.theme.colors.purple};
+	background: ${(props) => props.theme.colors.goldColors.color1};
 	border-radius: 50px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
