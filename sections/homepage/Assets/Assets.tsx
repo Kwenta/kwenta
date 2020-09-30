@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
-// import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
-// import Fade from 'assets/inline-svg/marketing/fade.svg';
 import AssetDotPoint from 'assets/inline-svg/marketing/asset-card-dot.svg';
 
 import media from 'styles/media';

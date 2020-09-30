@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-// import ChartBanner from 'assets/svg/marketing/chart-banner.svg';
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 
 import Button from 'components/Button';
@@ -24,7 +23,9 @@ const FAQ = () => {
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Exchange}>
-						<Button variant="primary">{t('homepage.footer.cta.button')}</Button>
+						<Button variant="primary" size="lg">
+							{t('homepage.footer.cta.button')}
+						</Button>
 					</Link>
 				</OverlayText>
 			</ChartGraphicContainer>
@@ -33,9 +34,9 @@ const FAQ = () => {
 };
 
 const StyledStackSection = styled(StackSection)`
-	padding-top: 185px;
+	padding-top: 300px;
 	${media.lessThan('sm')`
-		padding-top: 160px;
+		padding-top: 280px;
 	`}
 `;
 
@@ -55,17 +56,16 @@ const ChartGraphicContainer = styled(FlexDivCentered)`
 `;
 
 const OverlayText = styled(AbsoluteCenteredDiv)`
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	padding: 0 20px;
 `;
 
 const StyledSubtext = styled(Subtext)`
-	padding-bottom: 64px;
-	${media.lessThan('sm')`
-		padding-bottom: 32px;
-	`}
+	padding-bottom: 32px;
 `;
 
 export default FAQ;
