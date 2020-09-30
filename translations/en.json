@@ -129,7 +129,7 @@
 				"button": "View Exchange"
 			},
 			"subtext": {
-				"powered": "Powered By",
+				"powered": "Powered by",
 				"copyright": "Kwenta Inc. {{currentYear}}©"
 			}
 		}

@@ -9,10 +9,13 @@ import ROUTES from 'constants/routes';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
 
+import UserMenu from '../AppLayout/Header/UserMenu';
 import AppHeader from '../AppLayout/Header';
-import { TextButton } from 'styles/common';
+
+import media from 'styles/media';
 
 import Logo from '../Logo';
+import { GridDivCenteredCol } from 'styles/common';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -27,14 +30,14 @@ const Header: FC = () => {
 						<StyledLink href="#how">{t('homepage.nav.how')}</StyledLink>
 						<StyledLink href="#faq">{t('homepage.nav.faq')}</StyledLink>
 					</Links>
-					<div>
-						<WalletButton>{t('homepage.nav.wallet')}</WalletButton>
+					<MenuContainer>
+						<UserMenu isTextButton={true} />
 						<Link href={ROUTES.Exchange}>
 							<Button variant="primary" isRounded={false} size="md">
 								{t('homepage.nav.exchange')}
 							</Button>
 						</Link>
-					</div>
+					</MenuContainer>
 				</Container>
 			</MobileHiddenView>
 			<MobileOnlyView>
@@ -51,12 +54,18 @@ const Container = styled.header`
 	display: grid;
 	align-items: center;
 	width: 100%;
-	grid-template-columns: auto 1fr auto;
+	grid-template-columns: 1fr 1fr 1fr;
+	${media.lessThan('md')`
+		grid-template-columns: auto auto;
+	`}
 `;
 
 const Links = styled.div`
-	padding-left: 100px;
+	white-space: nowrap;
 	justify-self: center;
+	${media.lessThan('md')`
+		display: none;
+	`}
 `;
 
 const StyledLink = styled.a`
@@ -69,14 +78,9 @@ const StyledLink = styled.a`
 	}
 `;
 
-const WalletButton = styled(TextButton)`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-right: 16px;
-	font-size: 12px;
-	&:hover {
-		color: ${(props) => props.theme.colors.silver};
-	}
+const MenuContainer = styled(GridDivCenteredCol)`
+	grid-gap: 24px;
+	justify-self: end;
 `;
 
 export default Header;

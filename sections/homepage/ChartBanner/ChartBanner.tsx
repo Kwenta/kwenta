@@ -9,7 +9,7 @@ import Button from 'components/Button';
 import media from 'styles/media';
 
 import { AbsoluteCenteredDiv, FlexDivCentered } from 'styles/common';
-import { StackSection, Subtext, StyledResponsiveImage } from '../common';
+import { StackSection, Subtext } from '../common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
 
@@ -40,11 +40,11 @@ const StyledStackSection = styled(StackSection)`
 	`}
 `;
 
-const ChartBannerImage = styled(StyledResponsiveImage)`
-	${media.lessThan('lg')`
-		width: unset;
-	`}
-`;
+// const ChartBannerImage = styled(StyledResponsiveImage)`
+// 	${media.lessThan('lg')`
+// 		width: unset;
+// 	`}
+// `;
 
 const ChartGraphicContainer = styled(FlexDivCentered)`
 	position: relative;
@@ -66,6 +66,10 @@ const OverlayText = styled(AbsoluteCenteredDiv)`
 
 const StyledSubtext = styled(Subtext)`
 	padding-bottom: 32px;
+`;
+
+const ChartBannerImage = styled.img`
+	max-width: 1440px;
 `;
 
 export default FAQ;

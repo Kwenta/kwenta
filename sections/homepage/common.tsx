@@ -17,7 +17,7 @@ export const SubHeader = styled(Paragraph)`
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
-	${media.lessThan('lg')`
+	${media.lessThan('md')`
 		font-size: 32px;
 		text-align: center;
 	`}

@@ -1,33 +1,37 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { HEADER_HEIGHT, zIndex } from 'constants/ui';
+
+import { GridDivCenteredCol } from 'styles/common';
+import media from 'styles/media';
+
 import Logo from '../../Logo';
+
 import Nav from './Nav';
 import UserMenu from './UserMenu';
 import MobileUserMenu from './MobileUserMenu';
 
-import { GridDivCenteredCol } from 'styles/common';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, zIndex } from 'constants/ui';
-import media from 'styles/media';
+const Header: FC = () => {
+	const logo = <Logo />;
 
-const Header: FC = () => (
-	<Container>
-		<MobileHiddenView>
-			<LogoNav>
-				<Logo />
-				<Nav />
-			</LogoNav>
-			<UserMenu />
-		</MobileHiddenView>
-		<MobileOnlyView>
-			<LogoNav>
-				<Logo />
-			</LogoNav>
-			<MobileUserMenu />
-		</MobileOnlyView>
-	</Container>
-);
+	return (
+		<Container>
+			<MobileHiddenView>
+				<LogoNav>
+					{logo}
+					<Nav />
+				</LogoNav>
+				<UserMenu />
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<LogoNav>{logo}</LogoNav>
+				<MobileUserMenu />
+			</MobileOnlyView>
+		</Container>
+	);
+};
 
 const Container = styled.header`
 	position: absolute;

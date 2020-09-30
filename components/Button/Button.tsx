@@ -1,8 +1,9 @@
 import styled, { css } from 'styled-components';
+import { resetButtonCSS } from 'styles/common';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger';
+	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger' | 'text';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -151,6 +152,23 @@ const Button = styled.button<ButtonProps>`
 				`};
 		`}									
 
+		${(props) =>
+			props.variant === 'text' &&
+			css`
+				${resetButtonCSS};
+				color: ${(props) => props.theme.colors.white};
+				&:hover {
+					&:not(:disabled) {
+						color: ${(props) => props.theme.colors.silver};
+					}
+				}
+				${(props) =>
+					// @ts-ignore
+					props.isActive &&
+					css`
+						color: ${(props) => props.theme.colors.white};
+					`};
+			`}	
 `;
 
 export default Button;

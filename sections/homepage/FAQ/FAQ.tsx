@@ -8,6 +8,7 @@ import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reac
 import { EXTERNAL_LINKS } from 'constants/links';
 
 import PlusThinIcon from 'assets/inline-svg/app/plus-thin.svg';
+import LinkIcon from 'assets/inline-svg/app/link.svg';
 
 import media from 'styles/media';
 
@@ -94,11 +95,11 @@ const FAQ = () => {
 										<AccordionPanel>
 											{answer}
 											{link && (
-												<div>
+												<ExplainerVideoLink>
 													<ExternalLink href={link}>
-														{t('homepage.faq.tabs.explainer-video')}
+														{t('homepage.faq.tabs.explainer-video')} <LinkIcon />
 													</ExternalLink>
-												</div>
+												</ExplainerVideoLink>
 											)}
 										</AccordionPanel>
 									</AccordionItem>
@@ -157,6 +158,11 @@ const StyledTabs = styled(Tabs)`
 	}
 	[data-reach-tab] {
 		outline: none;
+		text-transform: uppercase;
+		padding: 0;
+		padding-bottom: 4px;
+		margin: 0 16px;
+		border-width: 2px;
 		color: ${(props) => props.theme.colors.goldColors.color1};
 		&:hover {
 			color: ${(props) => props.theme.colors.goldColors.color3};
@@ -194,7 +200,7 @@ const StyledAccordion = styled(Accordion)`
 		${AccordionCloseIcon} {
 			display: none;
 		}
-		${media.lessThan('sm')`
+		${media.lessThan('md')`
 			font-size: 20px;
 		`}
 	}
@@ -214,6 +220,17 @@ const StyledAccordion = styled(Accordion)`
 			${AccordionCloseIcon} {
 				display: unset;
 			}
+		}
+	}
+`;
+
+const ExplainerVideoLink = styled.div`
+	padding-top: 15px;
+	a {
+		display: flex;
+		align-items: center;
+		svg {
+			margin-left: 10px;
 		}
 	}
 `;

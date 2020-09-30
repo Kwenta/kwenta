@@ -20,7 +20,11 @@ import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
-const UserMenu: FC = () => {
+type UserMenuProps = {
+	isTextButton?: boolean;
+};
+
+const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
@@ -72,7 +76,7 @@ const UserMenu: FC = () => {
 							<StyledCaretDownIcon />
 						</WalletButton>
 					) : (
-						<Button variant="primary" onClick={connectWallet}>
+						<Button variant={isTextButton ? 'text' : 'primary'} onClick={connectWallet}>
 							{t('common.wallet.connect-wallet')}
 						</Button>
 					)}
