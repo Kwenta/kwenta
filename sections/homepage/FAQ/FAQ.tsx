@@ -158,6 +158,7 @@ const StyledTabs = styled(Tabs)`
 	}
 	[data-reach-tab] {
 		outline: none;
+		white-space: nowrap;
 		text-transform: uppercase;
 		padding: 0;
 		padding-bottom: 4px;
