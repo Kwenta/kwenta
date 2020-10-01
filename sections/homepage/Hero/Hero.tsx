@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
-import { FlexDiv, Paragraph } from 'styles/common';
+import { GridDiv, Paragraph } from 'styles/common';
 import { StackSection } from '../common';
 
 import media from 'styles/media';
@@ -25,7 +25,10 @@ const Hero = () => {
 };
 
 const StyledStackSection = styled(StackSection)`
-	padding-bottom: 100px;
+	padding-bottom: 80px;
+	${media.lessThan('md')`
+		padding-bottom: 40px;
+	`}
 `;
 
 const Header = styled(Paragraph)`
@@ -38,10 +41,11 @@ const Header = styled(Paragraph)`
 	padding-top: 40px;
 `;
 
-const HeroImageContainer = styled(FlexDiv)`
-	overflow: hidden;
-	justify-content: center;
+const HeroImageContainer = styled(GridDiv)`
 	width: 100vw;
+	overflow: hidden;
+	display: grid;
+	justify-content: center;
 `;
 
 const HeroImage = styled.img`
