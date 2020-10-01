@@ -1,16 +1,17 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import Link from 'next/link';
 
-import { EXTERNAL_LINKS } from 'constants/links';
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { SYNTHS_MAP } from 'constants/currency';
 
-import { NoTextTransform, ExternalLink } from 'styles/common';
+import { NoTextTransform } from 'styles/common';
+
+import { DesktopOnlyView } from 'components/Media';
+import ROUTES from 'constants/routes';
 
 import { MessageContainer, Message, MessageButton } from '../common';
-import { DesktopOnlyView } from 'components/Media';
 
 const { sUSD } = SYNTHS_MAP;
-const { ETH } = CRYPTO_CURRENCY_MAP;
 
 type NoSynthsCardProps = {
 	attached?: boolean;
@@ -31,7 +32,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					/>
 				</Message>
 			</DesktopOnlyView>
-			<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
+			<Link href={ROUTES.Dashboard.Convert}>
 				<MessageButton>
 					<Trans
 						t={t}
@@ -40,7 +41,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 						components={[<NoTextTransform />]}
 					/>
 				</MessageButton>
-			</ExternalLink>
+			</Link>
 		</MessageContainer>
 	);
 };

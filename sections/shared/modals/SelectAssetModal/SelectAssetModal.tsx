@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-
+import Link from 'next/link';
 import { Synth, SynthsMap } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
@@ -24,6 +24,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
+import ROUTES from 'constants/routes';
 
 type SelectAssetModalProps = {
 	onDismiss: () => void;
@@ -153,7 +154,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 							components={[<NoTextTransform />]}
 						/>
 					</Message>
-					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sUSD)}>
+					<Link href={ROUTES.Dashboard.Convert}>
 						<MessageButton>
 							<Trans
 								t={t}
@@ -162,7 +163,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 								components={[<NoTextTransform />]}
 							/>
 						</MessageButton>
-					</ExternalLink>
+					</Link>
 				</ContainerEmptyState>
 			)}
 		</StyledBaseModal>
