@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
-import { Paragraph } from 'styles/common';
+import { FlexDiv, Paragraph } from 'styles/common';
 import { StackSection } from '../common';
 
 import media from 'styles/media';
@@ -17,7 +17,9 @@ const Hero = () => {
 		<StyledStackSection>
 			<LogoNoTextSVG />
 			<Header>{t('homepage.hero.title')}</Header>
-			<HeroImage src={MarketOrderPreview} alt="" />
+			<HeroImageContainer>
+				<HeroImage src={MarketOrderPreview} alt="" />
+			</HeroImageContainer>
 		</StyledStackSection>
 	);
 };
@@ -34,6 +36,12 @@ const Header = styled(Paragraph)`
 	letter-spacing: 0.2px;
 	color: ${(props) => props.theme.colors.white};
 	padding-top: 40px;
+`;
+
+const HeroImageContainer = styled(FlexDiv)`
+	overflow: hidden;
+	justify-content: center;
+	width: 100vw;
 `;
 
 const HeroImage = styled.img`
