@@ -2,7 +2,6 @@ import { CSSProperties, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import { resetButtonCSS } from 'styles/common';
-import { fonts } from 'styles/theme/fonts';
 
 type TabProps = {
 	name: string;
@@ -62,7 +61,7 @@ const TabPanelContainer = styled.div`
 
 const StyledTabButton = styled.button<TabProps>`
 	${resetButtonCSS};
-	${fonts.body.boldSmall};
+	font-family: ${(props) => props.theme.fonts.bold};
 	padding: 0;
 	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};

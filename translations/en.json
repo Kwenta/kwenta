@@ -242,7 +242,6 @@
 		},
 		"select-asset": {
 			"title": "select synth",
-			"total-synth-value": "total synth value",
 			"header": {
 				"your-synths": "your synths",
 				"holdings": "holdings",
@@ -357,6 +356,9 @@
 			"1inch": {
 				"title": "DEX Aggregator - 1inch.exchange"
 			}
+		},
+		"totals": {
+			"total-synth-value": "total synth value"
 		}
 	},
 	"assets": {

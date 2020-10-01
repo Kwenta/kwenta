@@ -172,3 +172,7 @@ export const Paragraph = styled.p`
 export const ResponsiveImage = styled.img`
 	width: 100%;
 `;
+
+export const BoldText = styled.span`
+	font-family: ${(props) => props.theme.fonts.bold};
+`;

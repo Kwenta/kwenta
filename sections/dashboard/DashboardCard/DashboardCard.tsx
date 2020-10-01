@@ -7,7 +7,6 @@ import { priceCurrencyState } from 'store/app';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
-import ComingSoonBalanceChart from 'components/ComingSoonBalanceChart';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -16,15 +15,13 @@ import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
 import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
 
-import { FlexDivCol } from 'styles/common';
-import { fonts } from 'styles/theme/fonts';
+import { BoldText } from 'styles/common';
 
-import { ConvertContainer } from '../common';
+import { CardTitle, ConvertContainer } from '../common';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
 	CONVERT: 'convert',
-	// CRYPTO_BALANCES: 'crypto-balances',
 	TRANSACTIONS: 'transactions',
 };
 
@@ -49,16 +46,16 @@ const DashboardCard = () => {
 	return (
 		<>
 			<Totals>
-				<PortfolioTitle>{t('dashboard.your-portfolio.title')}</PortfolioTitle>
-				<PortfolioValue>
-					<Currency.Price
+				<PortfolioCardTitle>{t('dashboard.your-portfolio.title')}</PortfolioCardTitle>
+				<PortfolioCard>
+					<StyledCurrencyPrice
 						currencyKey={selectedPriceCurrency.name}
 						price={synthsBalancesQuery.data?.totalUSDBalance || 0}
 						conversionRate={selectPriceCurrencyRate}
 						sign={selectedPriceCurrency.sign}
 					/>
-				</PortfolioValue>
-				<ComingSoonBalanceChart />
+					<Title>{t('common.totals.total-synth-value')}</Title>
+				</PortfolioCard>
 			</Totals>
 			<StyledTabList>
 				<TabButton
@@ -75,13 +72,6 @@ const DashboardCard = () => {
 				>
 					{t('dashboard.tabs.nav.convert')}
 				</TabButton>
-				{/*<TabButton
-						name={TABS.CRYPTO_BALANCES}
-						active={activeTab === TABS.CRYPTO_BALANCES}
-						onClick={() => router.push(TABS.CRYPTO_BALANCES)}
-					>
-						{t('dashboard.tabs.nav.crypto-balances')}
-				</TabButton>*/}
 				<TabButton
 					name={TABS.TRANSACTIONS}
 					active={activeTab === TABS.TRANSACTIONS}
@@ -103,9 +93,6 @@ const DashboardCard = () => {
 					<CurrencyConvertCard />
 				</ConvertContainer>
 			</TabPanel>
-			{/*<TabPanel name={TABS.CRYPTO_BALANCES} activeTab={activeTab}>
-					<ComingSoon>{t('common.features.coming-soon')}</ComingSoon>
-				</TabPanel> */}
 			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
 				<Transactions />
 			</TabPanel>
@@ -113,26 +100,37 @@ const DashboardCard = () => {
 	);
 };
 
-const PortfolioTitle = styled.div`
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 10px;
+const PortfolioCardTitle = styled(CardTitle)`
+	margin-bottom: 12px;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	padding-bottom: 5px;
 `;
 
-const PortfolioValue = styled.div`
-	${fonts.data.xLarge}
+const PortfolioCard = styled.div`
+	font-family: ${(props) => props.theme.fonts.mono};
+	border-radius: 4px;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	padding: 24px;
+	display: grid;
+	grid-gap: 10px;
+	justify-items: center;
+`;
+
+const Title = styled(BoldText)`
+	text-transform: uppercase;
+`;
+
+const StyledCurrencyPrice = styled(Currency.Price)`
+	font-size: 20px;
 	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 40px;
 `;
 
 const StyledTabList = styled(TabList)`
 	margin-bottom: 12px;
 `;
 
-const Totals = styled(FlexDivCol)`
-	min-height: 160px;
-	margin-bottom: 26px;
-	flex-shrink: 0;
+const Totals = styled.div`
+	padding-bottom: 30px;
 `;
 
 export default DashboardCard;

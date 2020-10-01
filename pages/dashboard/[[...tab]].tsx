@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 import { FlexDiv, FlexDivCol, PageContent, MobileContainerMixin } from 'styles/common';
+
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Loader from 'components/Loader';
 
@@ -12,8 +14,8 @@ import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+
 import { isWalletConnectedState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();

@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { fonts } from 'styles/theme/fonts';
 import { FlexDivCentered } from 'styles/common';
 import LeftArrowIcon from 'assets/inline-svg/app/caret-left.svg';
 import RightArrowIcon from 'assets/inline-svg/app/caret-right.svg';
@@ -52,7 +51,7 @@ const Pagination = ({
 };
 
 const PageLink = styled.span<{ active?: boolean }>`
-	${fonts.body.boldSmall};
+	font-family: ${(props) => props.theme.fonts.bold};
 	margin: 0px 7px;
 	cursor: pointer;
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.silver)};

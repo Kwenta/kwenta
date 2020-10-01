@@ -9,7 +9,6 @@ import ProgressBar from 'components/ProgressBar';
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
-import { fonts } from 'styles/theme/fonts';
 import { formatPercent } from 'utils/formatters/number';
 import media from 'styles/media';
 
@@ -110,7 +109,7 @@ const ExchangeRateCol = styled.div`
 `;
 
 const TypeDataSmall = styled.div`
-	${fonts.data.small}
+	font-family: ${(props) => props.theme.fonts.mono};
 	margin-top: 5px;
 `;
 

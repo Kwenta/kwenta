@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 
-import { fonts } from 'styles/theme/fonts';
-
 export const CardTitle = styled.div`
-	${fonts.body.boldMedium}
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 `;
 

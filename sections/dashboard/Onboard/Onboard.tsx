@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import Button from 'components/Button';
 
 import { FlexDivCol } from 'styles/common';
-import { fonts } from 'styles/theme/fonts';
 
 import { CardTitle, ConvertContainer } from '../common';
 
@@ -35,7 +34,7 @@ const Onboard = () => {
 };
 
 const Title = styled.div`
-	${fonts.body.boldSmall};
+	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.blueberry};
 	text-transform: uppercase;
 	text-align: center;
@@ -43,7 +42,9 @@ const Title = styled.div`
 `;
 
 const Subtitle = styled.div`
-	${fonts.heading.h4};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 20px;
+	line-height: 24px;
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
 	margin-bottom: 33px;
@@ -55,7 +56,7 @@ export const Center = styled.div`
 `;
 
 const StyledCardTitle = styled(CardTitle)`
-	padding-bottom: 2px;
+	padding-bottom: 5px;
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 	margin-bottom: 24px;
 `;

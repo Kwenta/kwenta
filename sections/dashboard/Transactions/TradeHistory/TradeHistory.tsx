@@ -12,7 +12,6 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { NO_VALUE } from 'constants/placeholder';
 
-import { fonts } from 'styles/theme/fonts';
 import { ExternalLink } from 'styles/common';
 
 import Etherscan from 'containers/Etherscan';
@@ -147,7 +146,7 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledTableHeader = styled.div`
-	${fonts.body.boldSmall};
+	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 

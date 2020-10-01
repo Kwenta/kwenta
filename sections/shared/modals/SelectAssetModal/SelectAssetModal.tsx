@@ -71,7 +71,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 								sign: selectedPriceCurrency.sign,
 						  })}
 				</Total>
-				<Title>{t('modals.select-asset.total-synth-value')}</Title>
+				<Title>{t('common.totals.total-synth-value')}</Title>
 			</TotalValue>
 			{synthBalances.length > 0 ? (
 				<>
