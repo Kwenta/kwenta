@@ -67,18 +67,21 @@ const GlobalStyle = createGlobalStyle`
 		font-family: 'AkkuratLLWeb-Regular';
 		src: url('/fonts/AkkuratLLWeb-Regular.woff2') format('woff2'), 
 			 url('/fonts/AkkuratLLWeb-Regular.woff') format('woff');
+		font-display: sans-serif;
 	}
 
 	@font-face {
 		font-family: 'AkkuratLLWeb-Bold';
 		src: url('/fonts/AkkuratLLWeb-Bold.woff2') format('woff2'), 
 		     url('/fonts/AkkuratLLWeb-Bold.woff') format('woff');
+		font-display: sans-serif;
 	}
 
 	@font-face {
 		font-family: 'AkkuratMonoLLWeb-Regular';
 		src: url('/fonts/AkkuratMonoLLWeb-Regular.woff2') format('woff2'), 
 		     url('/fonts/AkkuratMonoLLWeb-Regular.woff') format('woff');
+		font-display: monospace;
 	}
 	/* blocknative onboard style overrides */
 	.bn-onboard-custom {
