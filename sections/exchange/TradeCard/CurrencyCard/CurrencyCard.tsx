@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FC, ChangeEvent } from 'react';
+import { FC, ChangeEvent, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 
 import { CurrencyKey } from 'constants/currency';
@@ -69,6 +69,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				</LabelContainer>
 				<CurrencyContainer>
 					<CurrencySelector
+						currencyKeySelected={currencyKeySelected}
 						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						role="button"
 					>
@@ -119,7 +120,10 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 	padding-bottom: 6px;
 `;
 
-const CurrencySelector = styled.div<{ onClick: any }>`
+const CurrencySelector = styled.div<{
+	currencyKeySelected: boolean;
+	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
+}>`
 	display: grid;
 	align-items: center;
 	grid-auto-flow: column;
@@ -133,18 +137,22 @@ const CurrencySelector = styled.div<{ onClick: any }>`
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
+
 	${(props) =>
-		!props.onClick
-			? css`
-					margin: 12px 0 12px -10px;
-			  `
-			: css`
-					&:hover {
-						background-color: ${(props) => props.theme.colors.black};
-						border-radius: 100px;
-						cursor: pointer;
-					}
-			  `};
+		!props.currencyKeySelected &&
+		css`
+			margin: 12px 0 12px -10px;
+		`};
+
+	${(props) =>
+		props.onClick &&
+		css`
+			&:hover {
+				background-color: ${(props) => props.theme.colors.black};
+				border-radius: 100px;
+				cursor: pointer;
+			}
+		`};
 `;
 
 const CurrencyAmountContainer = styled.div`
