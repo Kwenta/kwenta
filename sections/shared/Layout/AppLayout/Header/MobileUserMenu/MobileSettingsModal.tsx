@@ -15,7 +15,6 @@ import {
 	FixedFooterMixin,
 	FlexDivCentered,
 	FlexDivRowCentered,
-	linkCSS,
 	TextButton,
 } from 'styles/common';
 
@@ -48,11 +47,9 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				{MENU_LINKS.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						<Link href={link}>
-							<a>
-								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-									{t(i18nLabel)}
-								</MenuButton>
-							</a>
+							<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
+								{t(i18nLabel)}
+							</MenuButton>
 						</Link>
 					</MenuButtonContainer>
 				))}
@@ -145,11 +142,9 @@ const MenuButtonContainer = styled.div`
 `;
 
 const MenuButton = styled(Button).attrs({ variant: 'alt', size: 'xl' })`
+	outline: none;
 	width: 100%;
 	font-size: 14px;
-	a {
-		${linkCSS};
-	}
 `;
 
 const CurrencySelectContainer = styled.div`
