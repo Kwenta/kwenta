@@ -109,8 +109,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Summary>
 			{txProvider === '1inch' && (
 				<TxProvider>
-					<span>Powered by</span>
-					<img src={OneInchImage} width="40" height="40" alt="DEX Aggregator - 1inch.exchange" />
+					<span>{t('common.powered-by')}</span>
+					<img
+						src={OneInchImage}
+						width="40"
+						height="40"
+						alt={t('common.dex-aggregators.1inch.title')}
+					/>
 				</TxProvider>
 			)}
 			{txError && (

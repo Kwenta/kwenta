@@ -7,7 +7,6 @@ import media from 'styles/media';
 
 export const RowsContainer = styled.div`
 	overflow: auto;
-	height: 100%;
 `;
 
 export const RowsHeader = styled(FlexDivRow)`
@@ -29,4 +28,17 @@ export const MenuModal = styled(BaseModal)`
 	.card-body {
 		padding: 24px;
 	}
+`;
+
+export const CenteredModal = styled(BaseModal)`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	[data-reach-dialog-content] {
+		margin: 0;
+	}
+	${media.lessThan('sm')`
+		display: unset;
+	`}
 `;

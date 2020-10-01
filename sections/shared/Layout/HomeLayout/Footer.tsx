@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
 	return (
 		<FooterContainer>
 			<Container>
-				<Subtext>{t('homepage.footer.subtext.powered')}</Subtext>
+				<Subtext>{t('common.powered-by')}</Subtext>
 				<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
 					<img src={TextLogo} alt="" />
 				</ExternalLink>

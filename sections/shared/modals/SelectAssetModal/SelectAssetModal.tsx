@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { Synth, SynthsMap } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
-import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 
 import {
@@ -22,7 +21,7 @@ import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { formatCurrency } from 'utils/formatters/number';
 
-import { RowsHeader, RowsContainer } from '../common';
+import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 
@@ -79,7 +78,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						<span>{t('modals.select-asset.header.your-synths')}</span>
 						<span>{t('modals.select-asset.header.holdings')}</span>
 					</RowsHeader>
-					<RowsContainer style={{ height: 'auto' }}>
+					<RowsContainer>
 						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
 							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.description : null;
 
@@ -117,7 +116,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					<RowsHeader>
 						<span>{t('modals.select-asset.header.non-synths')}</span>
 					</RowsHeader>
-					<RowsContainer>
+					<CryptoRowsContainer>
 						<CryptoRow>
 							<Currency.Name currencyKey={ETH} showIcon={true} iconProps={{ type: 'asset' }} />
 							<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sETH)}>
@@ -130,7 +129,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 								</ConvertButton>
 							</ExternalLink>
 						</CryptoRow>
-					</RowsContainer>
+					</CryptoRowsContainer>
 				</>
 			) : !isWalletConnected ? (
 				<ContainerEmptyState>
@@ -170,7 +169,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 	);
 };
 
-const StyledBaseModal = styled(BaseModal)`
+const StyledBaseModal = styled(CenteredModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
@@ -235,6 +234,10 @@ const Message = styled.div`
 
 const MessageButton = styled(Button).attrs({ variant: 'primary', size: 'lg', isRounded: true })`
 	width: 200px;
+`;
+
+const CryptoRowsContainer = styled(RowsContainer)`
+	flex-shrink: 0;
 `;
 
 export default SelectSynthModal;

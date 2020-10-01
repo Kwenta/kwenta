@@ -8,7 +8,6 @@ import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import Button from 'components/Button';
 import Currency from 'components/Currency';
-import BaseModal from 'components/BaseModal';
 import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
@@ -19,7 +18,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
-import { RowsHeader, RowsContainer } from '../common';
+import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -75,7 +74,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	const totalSynths = synthsResults.length;
 
 	return (
-		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-synth.title')}>
+		<StyledCenteredModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-synth.title')}>
 			<SearchContainer>
 				<AssetSearchInput
 					placeholder={t('modals.select-synth.search.placeholder')}
@@ -162,16 +161,16 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 					<EmptyDisplay>{t('modals.select-synth.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
-		</StyledBaseModal>
+		</StyledCenteredModal>
 	);
 };
 
-const StyledBaseModal = styled(BaseModal)`
+const StyledCenteredModal = styled(CenteredModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
 	.card-body {
-		max-height: 80vh;
+		height: 80vh;
 		padding: 16px 0;
 		overflow: hidden;
 	}

@@ -323,9 +323,13 @@ const ChartBody = styled.div`
 `;
 
 const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
+	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
 	border-bottom: 2px solid
 		${(props) => (props.isActive ? props.theme.colors.goldColors.color1 : 'transparent')};
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 const TooltipContentStyle = styled.div`

@@ -76,6 +76,7 @@ const StyledCardBody = styled(Card.Body)`
 	${media.lessThan('sm')`
 		&&& {
 			max-height: unset;
+			height: unset;
 		}
 	`}
 `;
@@ -85,6 +86,9 @@ const DismissButton = styled.button`
 	position: absolute;
 	right: 20px;
 	color: ${(props) => props.theme.colors.blueberry};
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 export default BaseModal;

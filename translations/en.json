@@ -127,10 +127,6 @@
 			"cta": {
 				"title": "Start trading today",
 				"button": "View Exchange"
-			},
-			"subtext": {
-				"powered": "Powered by",
-				"copyright": "Kwenta Inc. {{currentYear}}©"
 			}
 		}
 	},
@@ -355,7 +351,13 @@
 			"fast": "Fast"
 		},
 		"custom": "Custom",
-		"edit": "edit"
+		"edit": "edit",
+		"powered-by": "Powered by",
+		"dex-aggregators": {
+			"1inch": {
+				"title": "DEX Aggregator - 1inch.exchange"
+			}
+		}
 	},
 	"assets": {
 		"exchanges": {
