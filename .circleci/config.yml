@@ -58,9 +58,10 @@ jobs:
           key: next-cache-{{ arch }}-{{ checksum "package-lock.json" }}
           paths:
             - .next/cache
+      - run: tar -cvzf build.tar .next
       - store_artifacts:
-          path: .next
-          destination: .next
+          path: build.tar
+          destination: build.tar
 
 workflows:
   lint_and_build:
