@@ -8,6 +8,8 @@ import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
+import { ordersState } from 'store/orders';
+import { hasOrdersNotificationState } from 'store/ui';
 import { appReadyState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
 
@@ -26,6 +28,8 @@ const useConnector = () => {
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
+	const setOrders = useSetRecoilState(ordersState);
+	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
@@ -126,6 +130,10 @@ const useConnector = () => {
 				const success = await onboard.walletSelect();
 				if (success) {
 					await onboard.walletCheck();
+
+					// TODO: since orders are not persisted, we need to reset them.
+					setOrders([]);
+					setHasOrdersNotification(false);
 				}
 			}
 		} catch (e) {
