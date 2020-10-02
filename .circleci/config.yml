@@ -48,10 +48,19 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - next-cache-{{ arch }}-{{ checksum "package-lock.json" }}
+            - next-cache-{{ arch }}-
+            - next-cache-
       - run: npm run build
+      - save_cache:
+          key: next-cache-{{ arch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - .next/cache
       - store_artifacts:
           path: .next
-          destination: build
+          destination: .next
 
 workflows:
   lint_and_build:
