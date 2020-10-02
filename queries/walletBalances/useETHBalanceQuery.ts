@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import { walletAddressState, isWalletConnectedState } from 'store/wallet';
+import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 
@@ -14,9 +14,10 @@ const useETHBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 	const { provider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
 
 	return useQuery<PromiseResult>(
-		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? ''),
+		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? '', network?.id!),
 		async () => {
 			const balanceBN = await provider!.getBalance(walletAddress!);
 
@@ -26,7 +27,7 @@ const useETHBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 			};
 		},
 		{
-			enabled: provider && isWalletConnected && walletAddress,
+			enabled: provider && isWalletConnected,
 			...options,
 		}
 	);

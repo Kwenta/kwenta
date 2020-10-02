@@ -30,8 +30,13 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		ETH: (walletAddress: string) => ['walletBalances', 'ETH', walletAddress],
-		Tokens: (walletAddress: string) => ['walletBalances', 'tokens', walletAddress],
+		ETH: (walletAddress: string, networkId: NetworkId) => ['walletBalances', 'ETH', networkId],
+		Tokens: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalances',
+			'tokens',
+			walletAddress,
+			networkId,
+		],
 	},
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
