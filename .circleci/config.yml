@@ -62,5 +62,4 @@ workflows:
                 - prepare
       - build:
           requires:
-                - prepare
                 - lint
