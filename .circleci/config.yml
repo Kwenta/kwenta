@@ -22,7 +22,9 @@ jobs:
             - node-deps-{{ arch }}-{{ checksum "package-lock.json" }}
             - node-deps-{{ arch }}-
             - node-deps-
-      - run: npm install
+      - run:
+          name: Install dependencies
+          command: npm install
       - save_cache:
           key: node-deps-{{ arch }}-{{ checksum "package-lock.json" }}
           paths:
@@ -40,7 +42,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: npm run lint
+      - run:
+          name: Lint
+          command: npm run lint
 
   build:
     <<: *env_defaults
@@ -53,12 +57,16 @@ jobs:
             - next-cache-{{ arch }}-{{ checksum "package-lock.json" }}
             - next-cache-{{ arch }}-
             - next-cache-
-      - run: npm run build
+      - run:
+          name: Build
+          command: npm run build
       - save_cache:
           key: next-cache-{{ arch }}-{{ checksum "package-lock.json" }}
           paths:
             - .next/cache
-      - run: tar -cvzf build.tar .next
+      - run:
+          name: Compress artifacts
+          command: tar -cvzf build.tar .next
       - store_artifacts:
           path: build.tar
           destination: build.tar
