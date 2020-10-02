@@ -7,7 +7,7 @@
 		"start": "next start",
 		"tsc": "tsc --noEmit",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
-		"lint": "eslint . --ext ts,.tsx",
+		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix"
 	},
 	"dependencies": {
