@@ -1,4 +1,4 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { QueryConfig, useQuery } from 'react-query';
 import { compact } from 'lodash';
 import { ethers } from 'ethers';
 
@@ -7,8 +7,10 @@ import { CurrencyKey } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
-const useFrozenSynthsQuery = (options?: BaseQueryOptions) => {
-	return useQuery<Set<CurrencyKey>, any>(
+type PromiseResult = Set<CurrencyKey>;
+
+const useFrozenSynthsQuery = (options?: QueryConfig<PromiseResult>) => {
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
 			const frozenSynths = await synthetix.synthSummaryUtil!.frozenSynths();

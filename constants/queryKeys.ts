@@ -1,3 +1,4 @@
+import { NetworkId } from '@synthetixio/js';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -23,7 +24,12 @@ export const QUERY_KEYS = {
 		EthGasStation: ['network', 'ethGasStation'],
 	},
 	WalletBalances: {
-		Synths: (walletAddress: string) => ['walletBalances', 'synths', walletAddress],
+		Synths: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalances',
+			'synths',
+			walletAddress,
+			networkId,
+		],
 		ETH: (walletAddress: string) => ['walletBalances', 'ETH', walletAddress],
 		Tokens: (walletAddress: string) => ['walletBalances', 'tokens', walletAddress],
 	},

@@ -1,23 +1,40 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
+import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { Period } from 'constants/period';
+import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
-import useSynthExchangesSinceQuery from './useSynthExchangesSinceQuery';
-import { getVolume } from './utils';
+import { calculateTimestampForPeriod } from './utils';
+import { SynthExchanges } from './types';
+
+type PromiseResult = number;
 
 const useHistoricalVolumeQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: BaseQueryOptions
+	options?: QueryConfig<PromiseResult>
 ) => {
-	const synthExchangesQuery = useSynthExchangesSinceQuery(period, options);
-	return useQuery<number, any>(
+	const periodInHours = PERIOD_IN_HOURS[period];
+
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Rates.HistoricalVolume(currencyKey!, period),
-		async () => getVolume(synthExchangesQuery.data || [], currencyKey!),
+		async () => {
+			const exchanges = (await snxData.exchanges.since({
+				minTimestamp: calculateTimestampForPeriod(periodInHours),
+			})) as SynthExchanges;
+
+			return exchanges
+				.filter((exchange) =>
+					[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey!)
+				)
+				.reduce((totalVolume, exchange) => {
+					totalVolume += exchange.fromAmountInUSD;
+					return totalVolume;
+				}, 0);
+		},
 		{
-			enabled: currencyKey && synthExchangesQuery.isSuccess,
+			enabled: currencyKey,
 			...options,
 		}
 	);

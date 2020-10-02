@@ -104,9 +104,13 @@ const CurrencyConvertCard = () => {
 	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
 
 	const isBaseCurrencySuspended =
-		baseCurrencySuspendedQuery.isSuccess && baseCurrencySuspendedQuery.data.isSuspended;
+		baseCurrencySuspendedQuery.isSuccess &&
+		baseCurrencySuspendedQuery.data &&
+		baseCurrencySuspendedQuery.data.isSuspended;
 	const isQuoteCurrencySuspended =
-		quoteCurrencySuspendedQuery.isSuccess && quoteCurrencySuspendedQuery.data.isSuspended;
+		quoteCurrencySuspendedQuery.isSuccess &&
+		quoteCurrencySuspendedQuery.data &&
+		quoteCurrencySuspendedQuery.data.isSuspended;
 
 	const isSubmissionDisabled =
 		isBaseCurrencySuspended ||

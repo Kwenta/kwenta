@@ -1,4 +1,4 @@
-import { BaseQueryOptions, useQuery } from 'react-query';
+import { QueryConfig, useQuery } from 'react-query';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
 
@@ -7,12 +7,14 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { synthToContractName } from 'utils/currencies';
 
+type PromiseResult = number;
+
 const useSynthMarketCapQuery = (
 	currencyKey: CurrencyKey | null,
 	priceRate: number | null,
-	options?: BaseQueryOptions
+	options?: QueryConfig<PromiseResult>
 ) => {
-	return useQuery<number, any>(
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Rates.MarketCap(currencyKey as string),
 		async () => {
 			const totalSupply = Number(

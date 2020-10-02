@@ -1,4 +1,4 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -8,8 +8,10 @@ import { CurrencyKey } from 'constants/currency';
 
 export type Rates = Record<CurrencyKey, number>;
 
-const useExchangeRatesQuery = (options?: BaseQueryOptions) => {
-	return useQuery<Rates, any>(
+type PromiseResult = Rates;
+
+const useExchangeRatesQuery = (options?: QueryConfig<PromiseResult>) => {
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Rates.ExchangeRates,
 		async () => {
 			const exchangeRates: Rates = {};

@@ -1,4 +1,4 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -13,14 +13,16 @@ import {
 } from './utils';
 import { HistoricalRatesUpdates } from './types';
 
+type PromiseResult = HistoricalRatesUpdates;
+
 const useHistoricalRatesQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: BaseQueryOptions
+	options?: QueryConfig<PromiseResult>
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
-	return useQuery<HistoricalRatesUpdates, any>(
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period),
 		async () => {
 			if (currencyKey === SYNTHS_MAP.sUSD) {

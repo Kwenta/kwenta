@@ -1,4 +1,4 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import { BigNumber } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
@@ -8,12 +8,14 @@ import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 
-const useETHBalancesQuery = (options?: BaseQueryOptions) => {
+type PromiseResult = { balance: number; balanceBN: BigNumber };
+
+const useETHBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 	const { provider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	return useQuery<{ balance: number; balanceBN: BigNumber }, any>(
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? ''),
 		async () => {
 			const balanceBN = await provider!.getBalance(walletAddress!);

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkId, Network as NetworkName /*SUPPORTED_NETWORKS*/ } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
-import synthetix from 'lib/synthetix';
+import synthetix, { SUPPORTED_NETWORKS } from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
@@ -30,7 +30,6 @@ const useConnector = () => {
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
@@ -40,7 +39,11 @@ const useConnector = () => {
 		const init = async () => {
 			const networkId = await getDefaultNetworkId();
 			// @ts-ignore
-			const provider = ethers.getDefaultProvider(networkId);
+			const provider = new ethers.providers.InfuraProvider(
+				networkId,
+				process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			);
+
 			synthetix.setContractSettings({
 				networkId,
 				provider,
@@ -60,26 +63,23 @@ const useConnector = () => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
-				network: (nextNetworkId: number) => {
-					if (nextNetworkId != null && nextNetworkId !== network.id) {
-						window.location.reload();
-					}
-					// TODO: currently, network change doesn't work well, may need to reload the page.
-					/*
-					// @ts-ignore
-					if (SUPPORTED_NETWORKS[networkId]) {
+				network: (networkId: number) => {
+					if (networkId != null) {
+						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
+						const signer = provider.getSigner();
+
 						synthetix.setContractSettings({
 							networkId,
-							provider: provider!,
-							signer: signer ?? undefined,
+							provider,
+							signer,
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
-						setNetworkId(networkId);
-					} else {
-						console.log(`unsupported networkId - ${networkId}`);
+						setNetwork({
+							id: networkId,
+							name: SUPPORTED_NETWORKS[networkId as NetworkId],
+						});
 					}
-					*/
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {

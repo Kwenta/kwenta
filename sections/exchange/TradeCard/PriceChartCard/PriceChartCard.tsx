@@ -72,7 +72,8 @@ const ChartCard: FC<ChartCardProps> = ({
 	const showOverlayMessage = isSynthFrozen;
 	const showLoader = historicalRates.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
-	const noData = historicalRates.isSuccess && historicalRates.data.rates.length === 0;
+	const noData =
+		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
 
 	let linearGradientId = `priceChartCardArea-${side}`;
 

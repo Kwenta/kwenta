@@ -1,8 +1,6 @@
 import subHours from 'date-fns/subHours';
-import orderBy from 'lodash/orderBy';
-import uniqBy from 'lodash/uniqBy';
 
-import { RateUpdates, BaseRateUpdates, BaseRateUpdate, SynthExchange } from './types';
+import { RateUpdates, BaseRateUpdate } from './types';
 
 export const getMinAndMaxRate = (rates: RateUpdates) => {
 	if (rates.length === 0) return [0, 0];
@@ -19,28 +17,6 @@ export const getMinAndMaxRate = (rates: RateUpdates) => {
 	);
 };
 
-const matchRates = (ratesA: RateUpdates, ratesB: RateUpdates, isQuote: boolean) => {
-	const rates: BaseRateUpdates = [];
-	// For each base rate (USD)
-	ratesA.forEach((rateA) => {
-		// We search what was the quote rate in USD
-		// prior (or same time) the base rate ticker
-		const matchRate = ratesB.find((rateB) => {
-			return rateB.timestamp <= rateA.timestamp;
-		});
-		// if one is found, we do rate = base / quote
-		// and push it to the rates array
-		if (matchRate) {
-			rates.push({
-				rate: isQuote ? matchRate.rate / rateA.rate : rateA.rate / matchRate.rate,
-				timestamp: rateA.timestamp,
-			});
-		}
-	});
-
-	return rates;
-};
-
 export const calculateRateChange = (rates: RateUpdates) => {
 	if (rates.length < 2) return 0;
 
@@ -49,18 +25,6 @@ export const calculateRateChange = (rates: RateUpdates) => {
 	const percentageChange = (newPrice - oldPrice) / oldPrice;
 
 	return percentageChange;
-};
-
-export const matchPairRates = (baseRates: RateUpdates, quoteRates: RateUpdates) => {
-	if (!baseRates || baseRates.length === 0 || !quoteRates || quoteRates.length === 0) {
-		return [];
-	}
-	const rates = [
-		...matchRates(baseRates, quoteRates, false),
-		...matchRates(quoteRates, baseRates, true),
-	];
-
-	return orderBy(uniqBy(rates, 'timestamp'), 'timestamp', ['desc']);
 };
 
 export const calculateTimestampForPeriod = (periodInHours: number) =>
@@ -85,13 +49,3 @@ export const mockHistoricalRates = (
 
 	return rates;
 };
-
-export const getVolume = (exchanges: SynthExchange[], currencyKey: string) =>
-	exchanges
-		.filter((exchange: SynthExchange) =>
-			[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey!)
-		)
-		.reduce((totalVolume: number, exchange: SynthExchange) => {
-			totalVolume += exchange.fromAmountInUSD;
-			return totalVolume;
-		}, 0);

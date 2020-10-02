@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -30,8 +30,10 @@ export type GasSpeed = keyof GasPrices;
 
 export const GAS_SPEEDS: GasSpeed[] = ['slow', 'average', 'fast'];
 
-const useEthGasStationQuery = (options?: BaseQueryOptions) => {
-	return useQuery<GasPrices, any>(
+type PromiseResult = GasPrices;
+
+const useEthGasStationQuery = (options?: QueryConfig<PromiseResult>) => {
+	return useQuery<PromiseResult>(
 		QUERY_KEYS.Network.EthGasStation,
 		async () => {
 			const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);

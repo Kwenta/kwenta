@@ -1,8 +1,15 @@
-import initSynthetixJS, { NetworkId } from '@synthetixio/js';
+import initSynthetixJS, { NetworkId, Network } from '@synthetixio/js';
 import { ethers, Signer } from 'ethers';
 
 import synthSummaryUtilContract from './contracts/synthSummaryUtilContract';
 import keyBy from 'lodash/keyBy';
+
+export const SUPPORTED_NETWORKS = {
+	[NetworkId.Mainnet]: Network.Mainnet,
+	[NetworkId.Kovan]: Network.Kovan,
+	[NetworkId.Ropsten]: Network.Ropsten,
+	[NetworkId.Rinkeby]: Network.Rinkeby,
+};
 
 export type Token = {
 	address: string;

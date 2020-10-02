@@ -1,8 +1,10 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalTrades } from './types';
+
+type PromiseResult = HistoricalTrades;
 
 export const useWalletTradesQuery = ({
 	walletAddress,
@@ -11,15 +13,15 @@ export const useWalletTradesQuery = ({
 }: {
 	walletAddress: string;
 	max?: number;
-	options?: BaseQueryOptions;
+	options?: QueryConfig<PromiseResult>;
 }) =>
-	useQuery<HistoricalTrades, any>(
+	useQuery<PromiseResult>(
 		QUERY_KEYS.Trades.WalletTrades(walletAddress),
 		() =>
 			snxData.exchanges.since({
 				fromAddress: walletAddress,
 				maxBlock: Number.MAX_SAFE_INTEGER,
-				max: max,
+				max,
 			}),
 		options
 	);

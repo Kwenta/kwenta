@@ -1,20 +1,22 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import snxData from 'synthetix-data';
 
-import { HistoricalTrades } from './types';
 import QUERY_KEYS from 'constants/queryKeys';
+import { HistoricalTrades } from './types';
+
+type PromiseResult = HistoricalTrades;
 
 export const useAllTradesQuery = (
 	maxBlock = Number.MAX_SAFE_INTEGER,
 	max = 100,
-	options?: BaseQueryOptions
+	options?: QueryConfig<PromiseResult>
 ) =>
-	useQuery<HistoricalTrades, any>(
+	useQuery<PromiseResult>(
 		QUERY_KEYS.Trades.AllTrades,
 		() =>
 			snxData.exchanges.since({
-				maxBlock: maxBlock,
-				max: max,
+				maxBlock,
+				max,
 			}),
 		options
 	);

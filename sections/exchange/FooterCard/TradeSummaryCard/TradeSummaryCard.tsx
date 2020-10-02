@@ -40,8 +40,8 @@ type TradeSummaryCardProps = {
 	insufficientBalance: boolean;
 	selectedBothSides: boolean;
 	isBaseCurrencyFrozen: boolean;
-	isQuoteCurrencySuspended: boolean;
-	isBaseCurrencySuspended: boolean;
+	isQuoteCurrencySuspended?: boolean;
+	isBaseCurrencySuspended?: boolean;
 	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;

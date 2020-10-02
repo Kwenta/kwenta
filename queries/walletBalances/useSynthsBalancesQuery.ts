@@ -1,4 +1,4 @@
-import { useQuery, BaseQueryOptions } from 'react-query';
+import { useQuery, QueryConfig } from 'react-query';
 import { ethers, BigNumberish } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { orderBy } from 'lodash';
@@ -8,7 +8,7 @@ import synthetix from 'lib/synthetix';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
-import { walletAddressState, isWalletConnectedState } from 'store/wallet';
+import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 export type SynthBalance = {
 	currencyKey: CurrencyKey;
@@ -21,18 +21,21 @@ export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
 
 type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 
-const useSynthsBalancesQuery = (options?: BaseQueryOptions) => {
+type PromiseResult = {
+	balancesMap: SynthBalancesMap;
+	balances: SynthBalance[];
+	totalUSDBalance: number;
+};
+
+const useSynthsBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
 
-	return useQuery<
-		{ balancesMap: SynthBalancesMap; balances: SynthBalance[]; totalUSDBalance: number },
-		any
-	>(
-		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? ''),
+	return useQuery<PromiseResult>(
+		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? '', network?.id!),
 		async () => {
 			const balancesMap: SynthBalancesMap = {};
-
 			const [
 				currencyKeys,
 				synthsBalances,
