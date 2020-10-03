@@ -47,6 +47,7 @@ type TradeSummaryCardProps = {
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
 	attached?: boolean;
+	className?: string;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -68,6 +69,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	quoteCurrencyKey,
 	showFee = true,
 	attached,
+	...rest
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
@@ -207,7 +209,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOnlyView>
-			<MessageContainer attached={attached}>
+			<MessageContainer attached={attached} {...rest}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}

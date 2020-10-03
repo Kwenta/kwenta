@@ -14,14 +14,26 @@ import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { isWalletConnectedState } from 'store/wallet';
+import { priceCurrencyState } from 'store/app';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
+
+	const selectPriceCurrencyProps = {
+		selectedPriceCurrency,
+		selectPriceCurrencyRate,
+	};
 
 	// TODO: refactor activeView with better logic, this is kinda broken at the moment.
 
@@ -33,7 +45,11 @@ const DashboardPage = () => {
 				? synthsBalancesQuery.data.balances.length === 0
 				: false;
 
-			activeView = noSynths ? <Onboard /> : <DashboardCard />;
+			activeView = noSynths ? (
+				<Onboard />
+			) : (
+				<DashboardCard exchangeRates={exchangeRates} {...selectPriceCurrencyProps} />
+			);
 		}
 	} else {
 		activeView = <Onboard />;
@@ -50,7 +66,7 @@ const DashboardPage = () => {
 						<Container>
 							<LeftContainer>{activeView}</LeftContainer>
 							<RightContainer>
-								<TrendingSynths />
+								<TrendingSynths exchangeRates={exchangeRates} {...selectPriceCurrencyProps} />
 							</RightContainer>
 							<BottomShadow />
 						</Container>
@@ -68,6 +84,7 @@ const SPACING_FROM_HEADER = '80px';
 
 const MobileContainer = styled.div`
 	${MobileContainerMixin};
+	padding-top: 90px;
 `;
 
 const Container = styled(FlexDiv)`
@@ -80,7 +97,7 @@ const Container = styled(FlexDiv)`
 
 const LeftContainer = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 800px;
+	max-width: 1000px;
 	position: relative;
 	overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;

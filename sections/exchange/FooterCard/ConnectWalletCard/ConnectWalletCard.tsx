@@ -9,14 +9,15 @@ import { MessageButton, MessageContainer, Message } from '../common';
 
 type ConnectWalletCardProps = {
 	attached?: boolean;
+	className?: string;
 };
 
-const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached }) => {
+const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 
 	return (
-		<MessageContainer attached={attached}>
+		<MessageContainer attached={attached} {...rest}>
 			<DesktopOnlyView>
 				<Message>{t('exchange.connect-wallet-card.message')}</Message>
 			</DesktopOnlyView>

@@ -1,3 +1,5 @@
+import { CurrencyKey } from './currency';
+
 export const ROUTES = {
 	Root: '/',
 	Homepage: {
@@ -8,7 +10,12 @@ export const ROUTES = {
 		Home: '/dashboard',
 		Convert: '/dashboard/convert',
 	},
-	Exchange: '/exchange',
+	Exchange: {
+		Home: '/exchange',
+		MarketPair: (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
+			`/exchange/${baseCurrencyKey}-${quoteCurrencyKey}`,
+		Into: (currencyKey: CurrencyKey) => `/exchange/${currencyKey}`,
+	},
 };
 
 export default ROUTES;

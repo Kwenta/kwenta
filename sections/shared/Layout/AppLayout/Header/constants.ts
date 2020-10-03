@@ -14,7 +14,7 @@ export const MENU_LINKS: MenuLinks = [
 	},
 	{
 		i18nLabel: 'header.nav.exchange',
-		link: ROUTES.Exchange,
+		link: ROUTES.Exchange.Home,
 	},
 ];
 

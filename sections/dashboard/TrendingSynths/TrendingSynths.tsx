@@ -1,44 +1,68 @@
-import { useState } from 'react';
+import { useState, FC, useMemo } from 'react';
 import styled from 'styled-components';
-import synthetix, { Synth } from 'lib/synthetix';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { priceCurrencyState } from 'store/app';
+
+import synthetix, { Synth } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
 import Select from 'components/Select';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import { NO_VALUE } from 'constants/placeholder';
 
 import { CardTitle } from 'sections/dashboard/common';
 
-import { SelectableCurrencyRow, FlexDivRow } from 'styles/common';
+import { SelectableCurrencyRow, FlexDivRowCentered } from 'styles/common';
 
-const TrendingSynths = () => {
+type TrendingSynthsProps = {
+	exchangeRates: Rates | null;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
+};
+
+enum SynthSort {
+	Price,
+	Rates24HLow,
+	Rates24HHigh,
+	Volume,
+}
+
+const priceSort = (exchangeRates: Rates, a: Synth, b: Synth) => {
+	const priceA = exchangeRates[a.name] || 0;
+	const priceB = exchangeRates[b.name] || 0;
+
+	return priceA > priceB ? -1 : 1;
+};
+
+const TrendingSynths: FC<TrendingSynthsProps> = ({
+	exchangeRates,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+}) => {
 	const { t } = useTranslation();
 
-	const SYNTH_SORT_OPTIONS = [{ label: t('dashboard.synthSort.price'), value: 'PRICE' }];
+	const SYNTH_SORT_OPTIONS = useMemo(
+		() => [{ label: t('dashboard.synthSort.price'), value: SynthSort.Price }],
+		[t]
+	);
 	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
 
 	const synths = synthetix.js?.synths ?? [];
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const selectPriceCurrencyRate =
-		exchangeRatesQuery.data && exchangeRatesQuery.data[selectedPriceCurrency.name];
 
-	const priceSort = (a: Synth, b: Synth) => {
-		const priceA = (exchangeRatesQuery.data && exchangeRatesQuery.data[a.name]) || 0;
-		const priceB = (exchangeRatesQuery.data && exchangeRatesQuery.data[b.name]) || 0;
-
-		return priceA > priceB ? -1 : 1;
-	};
+	const sortedSynths = useMemo(() => {
+		if (exchangeRates != null) {
+			if (currentSynthSort.value === SynthSort.Price) {
+				return synths.sort((a: Synth, b: Synth) => priceSort(exchangeRates, a, b));
+			}
+		}
+		return synths;
+	}, [synths, currentSynthSort, exchangeRates]);
 
 	return (
 		<>
 			<Container>
-				<FlexDivRow>
+				<TitleSortContainer>
 					<CardTitle>{t('dashboard.trending')}</CardTitle>
 					<TrendingSortSelect
 						formatOptionLabel={(option: any) => <span>{option.label}</span>}
@@ -50,11 +74,11 @@ const TrendingSynths = () => {
 							}
 						}}
 					/>
-				</FlexDivRow>
+				</TitleSortContainer>
 			</Container>
 			<Rows>
-				{synths.sort(priceSort).map((synth: Synth) => {
-					const price = exchangeRatesQuery.data && exchangeRatesQuery.data[synth.name];
+				{sortedSynths.map((synth: Synth) => {
+					const price = exchangeRates && exchangeRates[synth.name];
 					const currencyKey = synth.name;
 
 					return (
@@ -88,13 +112,19 @@ const Container = styled.div`
 	padding: 0 32px;
 `;
 
+const TitleSortContainer = styled(FlexDivRowCentered)`
+	margin-top: -10px;
+`;
+
 const Rows = styled.div`
 	overflow: auto;
+	padding-top: 10px;
 `;
 
 const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
 	padding-left: 32px;
 	padding-right: 32px;
+	padding-bottom: 13px;
 `;
 
 const TrendingSortSelect = styled(Select)`

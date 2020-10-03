@@ -68,6 +68,7 @@ import { zIndex } from 'constants/ui';
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
+import ROUTES from 'constants/routes';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -332,7 +333,7 @@ const ExchangePage = () => {
 			) {
 				router.replace(
 					`/exchange/[[...market]]`,
-					`/exchange/${currencyPair.base}-${currencyPair.quote}`,
+					ROUTES.Exchange.MarketPair(currencyPair.base, currencyPair.quote),
 					{
 						shallow: true,
 					}

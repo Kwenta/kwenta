@@ -1,15 +1,15 @@
+import { FC } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { priceCurrencyState } from 'store/app';
+import { Synth } from 'lib/synthetix';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
@@ -25,18 +25,23 @@ const TABS = {
 	TRANSACTIONS: 'transactions',
 };
 
-const DashboardCard = () => {
+type DashboardCardProps = {
+	exchangeRates: Rates | null;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
+};
+
+const DashboardCard: FC<DashboardCardProps> = ({
+	exchangeRates,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+}) => {
+	const { t } = useTranslation();
 	const router = useRouter();
 	const { tab } = router.query;
-	const { t } = useTranslation();
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: false });
+
 	const synthsBalancesQuery = useSynthsBalancesQuery();
-
-	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const activeTab = !!tab ? tab[0] : TABS.SYNTH_BALANCES;
-
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,

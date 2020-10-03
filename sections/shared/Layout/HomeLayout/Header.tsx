@@ -32,7 +32,7 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<UserMenu isTextButton={true} />
-						<Link href={ROUTES.Exchange}>
+						<Link href={ROUTES.Exchange.Home}>
 							<Button variant="primary" isRounded={false} size="md">
 								{t('homepage.nav.exchange')}
 							</Button>

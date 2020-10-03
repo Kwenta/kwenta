@@ -158,7 +158,6 @@ const CurrencySelector = styled.div<{
 const CurrencyAmountContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.black};
 	border-radius: 4px;
-	width: 180px;
 `;
 
 const CurrencyAmount = styled(NumericInput)`

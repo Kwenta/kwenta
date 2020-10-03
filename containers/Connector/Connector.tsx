@@ -75,6 +75,8 @@ const useConnector = () => {
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
+						setProvider(provider);
+						setSigner(signer);
 						setNetwork({
 							id: networkId,
 							name: SUPPORTED_NETWORKS[networkId as NetworkId],

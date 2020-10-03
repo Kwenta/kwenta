@@ -234,9 +234,9 @@ const CurrencyConvertCard = () => {
 			</Container>
 			{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
 			{!isWalletConnected ? (
-				<ConnectWalletCard attached={true} />
+				<StyledConnectWalletCard attached={true} />
 			) : (
-				<TradeSummaryCard
+				<StyledTradeSummaryCard
 					selectedPriceCurrency={selectedPriceCurrency}
 					isSubmissionDisabled={isSubmissionDisabled}
 					isSubmitting={isSubmitting}
@@ -292,9 +292,14 @@ const Container = styled.div`
 const StyledCurrencyCard = styled(CurrencyCard)`
 	padding: 0 14px;
 	width: 100%;
-	/* ${media.lessThan('md')`
-		width: 100%;
-	`} */
+`;
+
+const StyledConnectWalletCard = styled(ConnectWalletCard)`
+	max-width: 1000px;
+`;
+
+const StyledTradeSummaryCard = styled(TradeSummaryCard)`
+	max-width: 1000px;
 `;
 
 export default CurrencyConvertCard;
