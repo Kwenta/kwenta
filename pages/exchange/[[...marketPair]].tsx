@@ -625,6 +625,8 @@ const RightCardContainer = styled.div`
 
 const MobileContainer = styled(FlexDivColCentered)`
 	${MobileContainerMixin};
+	/* on mobile the footer card is fixed */
+	margin-bottom: 70px;
 `;
 
 const VerticalSpacer = styled.div`

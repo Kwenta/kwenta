@@ -323,6 +323,8 @@ const ErrorTooltip = styled(Tippy)`
 
 const MobileCard = styled(Card)`
 	margin-bottom: 86px;
+	/* TODO: the following value is shared with the exchange, needs to be a constant. It basically cancels the added margin */
+	margin-top: -70px;
 `;
 
 export default TradeSummaryCard;
