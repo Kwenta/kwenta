@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 
 import Connector from 'containers/Connector';
 
-import { DesktopOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOnlyView } from 'components/Media';
 
-import { MessageButton, MessageContainer, Message } from '../common';
+import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
 type ConnectWalletCardProps = {
 	attached?: boolean;
@@ -17,12 +17,17 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) =>
 	const { connectWallet } = Connector.useContainer();
 
 	return (
-		<MessageContainer attached={attached} {...rest}>
-			<DesktopOnlyView>
-				<Message>{t('exchange.connect-wallet-card.message')}</Message>
-			</DesktopOnlyView>
-			<MessageButton onClick={connectWallet}>{t('common.wallet.connect-wallet')}</MessageButton>
-		</MessageContainer>
+		<>
+			<MobileOnlyView>
+				<FixedMessageContainerSpacer />
+			</MobileOnlyView>
+			<MessageContainer attached={attached} {...rest}>
+				<DesktopOnlyView>
+					<Message>{t('exchange.connect-wallet-card.message')}</Message>
+				</DesktopOnlyView>
+				<MessageButton onClick={connectWallet}>{t('common.wallet.connect-wallet')}</MessageButton>
+			</MessageContainer>
+		</>
 	);
 };
 

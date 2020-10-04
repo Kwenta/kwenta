@@ -26,6 +26,10 @@ export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
 	`}
 `;
 
+export const FixedMessageContainerSpacer = styled.div`
+	height: 70px;
+`;
+
 export const Message = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-size: 14px;
