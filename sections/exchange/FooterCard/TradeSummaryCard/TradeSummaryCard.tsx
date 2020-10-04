@@ -13,11 +13,12 @@ import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey } from 'constants/currency';
+import { MOBILE_WIDTH } from 'constants/ui';
 
 import { secondsToTime } from 'utils/formatters/date';
 
 import Button from 'components/Button';
-import { DesktopOnlyView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NumericInput from 'components/Input/NumericInput';
 import Card from 'components/Card';
 
@@ -204,11 +205,11 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 
 	return (
 		<>
-			<MobileOnlyView>
+			<MobileOrTabletView>
 				<MobileCard>
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
-			</MobileOnlyView>
+			</MobileOrTabletView>
 			<MessageContainer attached={attached} {...rest}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
@@ -244,7 +245,7 @@ const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
-	${media.lessThan('sm')`
+	${media.lessThan('md')`
 		grid-auto-flow: unset;
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
@@ -264,7 +265,7 @@ const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;
 	width: 110px;
-	${media.lessThan('sm')`
+	${media.lessThan('md')`
 		width: unset;
 	`}
 `;
@@ -322,7 +323,8 @@ const ErrorTooltip = styled(Tippy)`
 `;
 
 const MobileCard = styled(Card)`
-	margin-bottom: 86px;
+	margin: 0 auto 86px auto;
+	max-width: ${MOBILE_WIDTH};
 `;
 
 export default TradeSummaryCard;

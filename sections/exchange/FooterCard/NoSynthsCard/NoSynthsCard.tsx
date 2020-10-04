@@ -6,7 +6,7 @@ import { SYNTHS_MAP } from 'constants/currency';
 
 import { NoTextTransform } from 'styles/common';
 
-import { DesktopOnlyView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ROUTES from 'constants/routes';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
@@ -22,9 +22,9 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 
 	return (
 		<>
-			<MobileOnlyView>
+			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
-			</MobileOnlyView>
+			</MobileOrTabletView>
 			<MessageContainer attached={attached}>
 				<DesktopOnlyView>
 					<Message>

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import Connector from 'containers/Connector';
 
-import { DesktopOnlyView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 
@@ -18,9 +18,9 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) =>
 
 	return (
 		<>
-			<MobileOnlyView>
+			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
-			</MobileOnlyView>
+			</MobileOrTabletView>
 			<MessageContainer attached={attached} {...rest}>
 				<DesktopOnlyView>
 					<Message>{t('exchange.connect-wallet-card.message')}</Message>

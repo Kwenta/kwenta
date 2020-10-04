@@ -1,3 +1,4 @@
+import { MOBILE_WIDTH } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
 export const FlexDiv = styled.div`
@@ -161,7 +162,7 @@ export const FixedFooterMixin = `
 
 export const MobileContainerMixin = `
 	padding-top: 55px;
-	max-width: 364px;
+	max-width: ${MOBILE_WIDTH};
 	margin: 0 auto;
 `;
 
