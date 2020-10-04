@@ -3,20 +3,21 @@ import { BigNumber } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 
-type PromiseResult = { balance: number; balanceBN: BigNumber };
+export type Balance = { balance: number; balanceBN: BigNumber };
 
-const useETHBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
+const useETHBalancesQuery = (options?: QueryConfig<Balance>) => {
 	const { provider } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
-	return useQuery<PromiseResult>(
+	return useQuery<Balance>(
 		QUERY_KEYS.WalletBalances.ETH(walletAddress ?? '', network?.id!),
 		async () => {
 			const balanceBN = await provider!.getBalance(walletAddress!);
@@ -28,6 +29,7 @@ const useETHBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 		},
 		{
 			enabled: provider && isWalletConnected,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

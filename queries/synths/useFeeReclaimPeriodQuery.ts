@@ -7,18 +7,17 @@ import QUERY_KEYS from 'constants/queryKeys';
 import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
-
-type PromiseResult = number;
 
 const useFeeReclaimPeriodQuery = (
 	currencyKey: CurrencyKey | null,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<number>
 ) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	return useQuery<PromiseResult>(
+	return useQuery<number>(
 		QUERY_KEYS.Synths.FeeReclaimPeriod(currencyKey ?? ''),
 		async () => {
 			const maxSecsLeftInWaitingPeriod = (await synthetix.js?.contracts.Exchanger.maxSecsLeftInWaitingPeriod(
@@ -30,6 +29,7 @@ const useFeeReclaimPeriodQuery = (
 		},
 		{
 			enabled: synthetix.js && currencyKey != null && isWalletConnected,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

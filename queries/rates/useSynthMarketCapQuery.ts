@@ -4,17 +4,16 @@ import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { synthToContractName } from 'utils/currencies';
-
-type PromiseResult = number;
 
 const useSynthMarketCapQuery = (
 	currencyKey: CurrencyKey | null,
 	priceRate: number | null,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<number>
 ) => {
-	return useQuery<PromiseResult>(
+	return useQuery<number>(
 		QUERY_KEYS.Rates.MarketCap(currencyKey as string),
 		async () => {
 			const totalSupply = Number(
@@ -27,6 +26,7 @@ const useSynthMarketCapQuery = (
 		},
 		{
 			enabled: currencyKey != null && priceRate != null,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

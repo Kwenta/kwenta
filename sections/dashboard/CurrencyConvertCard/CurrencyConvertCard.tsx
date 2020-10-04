@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
@@ -9,10 +9,10 @@ import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
@@ -25,16 +25,24 @@ import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import { priceCurrencyState } from 'store/app';
-
 import media from 'styles/media';
 
-import synthetix from 'lib/synthetix';
-
-import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
+import synthetix, { Synth } from 'lib/synthetix';
 import OneInch from 'containers/OneInch';
 
-const CurrencyConvertCard = () => {
+type CurrencyConvertCardProps = {
+	exchangeRates: Rates | null;
+	synthBalances: Balances | null;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
+};
+
+const CurrencyConvertCard: FC<CurrencyConvertCardProps> = ({
+	exchangeRates,
+	synthBalances,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+}) => {
 	const { notify } = Connector.useContainer();
 	const { swap } = OneInch.useContainer();
 
@@ -52,7 +60,6 @@ const CurrencyConvertCard = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -60,22 +67,19 @@ const CurrencyConvertCard = () => {
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ETHBalanceQuery = useETHBalanceQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
 			? synthetix.synthsMap[baseCurrencyKey]
 			: null;
 
-	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
 	const inverseRate = rate > 0 ? 1 / rate : 0;
 	const baseCurrencyBalance =
-		baseCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
-			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], 0)
+		baseCurrencyKey != null && synthBalances != null
+			? get(synthBalances, ['balancesMap', baseCurrencyKey, 'balance'], 0)
 			: null;
 	const quoteCurrencyBalance =
 		quoteCurrencyKey != null && ETHBalanceQuery.isSuccess
@@ -91,7 +95,6 @@ const CurrencyConvertCard = () => {
 		quoteCurrencyKey,
 		selectedPriceCurrency.name
 	);
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 	let totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
 	if (selectPriceCurrencyRate) {
 		totalTradePrice /= selectPriceCurrencyRate;
@@ -100,21 +103,7 @@ const CurrencyConvertCard = () => {
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	const baseCurrencySuspendedQuery = useSynthSuspensionQuery(baseCurrencyKey);
-	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
-
-	const isBaseCurrencySuspended =
-		baseCurrencySuspendedQuery.isSuccess &&
-		baseCurrencySuspendedQuery.data &&
-		baseCurrencySuspendedQuery.data.isSuspended;
-	const isQuoteCurrencySuspended =
-		quoteCurrencySuspendedQuery.isSuccess &&
-		quoteCurrencySuspendedQuery.data &&
-		quoteCurrencySuspendedQuery.data.isSuspended;
-
 	const isSubmissionDisabled =
-		isBaseCurrencySuspended ||
-		isQuoteCurrencySuspended ||
 		!selectedBothSides ||
 		!Number(baseCurrencyAmount) ||
 		!Number(quoteCurrencyAmount) ||
@@ -164,7 +153,8 @@ const CurrencyConvertCard = () => {
 								}
 							})
 						);
-						synthsWalletBalancesQuery.refetch();
+						ETHBalanceQuery.refetch();
+						// synthsWalletBalancesQuery.refetch();
 					});
 				}
 			}
@@ -232,7 +222,6 @@ const CurrencyConvertCard = () => {
 				{quoteCurrencyCard}
 				{baseCurrencyCard}
 			</Container>
-			{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
 			{!isWalletConnected ? (
 				<StyledConnectWalletCard attached={true} />
 			) : (
@@ -248,8 +237,8 @@ const CurrencyConvertCard = () => {
 					isBaseCurrencyFrozen={false}
 					insufficientBalance={insufficientBalance}
 					selectedBothSides={selectedBothSides}
-					isBaseCurrencySuspended={isBaseCurrencySuspended}
-					isQuoteCurrencySuspended={isQuoteCurrencySuspended}
+					isBaseCurrencySuspended={false}
+					isQuoteCurrencySuspended={false}
 					gasPrices={ethGasStationQuery.data}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}

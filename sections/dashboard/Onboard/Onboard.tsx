@@ -1,17 +1,35 @@
+import { FC } from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
 
 import { FlexDivCol } from 'styles/common';
 
+import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
+
 import { CardTitle, ConvertContainer } from '../common';
 
-import CurrencyConvertCard from '../CurrencyConvertCard';
-import Link from 'next/link';
 import ROUTES from 'constants/routes';
+import { Synth } from 'lib/synthetix';
 
-const Onboard = () => {
+import CurrencyConvertCard from '../CurrencyConvertCard';
+
+type OnboardProps = {
+	exchangeRates: Rates | null;
+	synthBalances: Balances | null;
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
+};
+
+const Onboard: FC<OnboardProps> = ({
+	exchangeRates,
+	synthBalances,
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+}) => {
 	const { t } = useTranslation();
 
 	return (
@@ -27,7 +45,12 @@ const Onboard = () => {
 			</Center>
 			<ConvertContainer>
 				<StyledCardTitle>{t('dashboard.onboard.convert')}</StyledCardTitle>
-				<CurrencyConvertCard />
+				<CurrencyConvertCard
+					exchangeRates={exchangeRates}
+					synthBalances={synthBalances}
+					selectedPriceCurrency={selectedPriceCurrency}
+					selectPriceCurrencyRate={selectPriceCurrencyRate}
+				/>
 			</ConvertContainer>
 		</FlexDivCol>
 	);

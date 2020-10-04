@@ -30,10 +30,8 @@ export type GasSpeed = keyof GasPrices;
 
 export const GAS_SPEEDS: GasSpeed[] = ['slow', 'average', 'fast'];
 
-type PromiseResult = GasPrices;
-
-const useEthGasStationQuery = (options?: QueryConfig<PromiseResult>) => {
-	return useQuery<PromiseResult>(
+const useEthGasStationQuery = (options?: QueryConfig<GasPrices>) => {
+	return useQuery<GasPrices>(
 		QUERY_KEYS.Network.EthGasStation,
 		async () => {
 			const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);

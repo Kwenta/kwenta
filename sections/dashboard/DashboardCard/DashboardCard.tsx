@@ -8,7 +8,7 @@ import { Synth } from 'lib/synthetix';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
@@ -27,12 +27,14 @@ const TABS = {
 
 type DashboardCardProps = {
 	exchangeRates: Rates | null;
+	synthBalances: Balances | null;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
 const DashboardCard: FC<DashboardCardProps> = ({
 	exchangeRates,
+	synthBalances,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
 }) => {
@@ -40,7 +42,6 @@ const DashboardCard: FC<DashboardCardProps> = ({
 	const router = useRouter();
 	const { tab } = router.query;
 
-	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const activeTab = !!tab ? tab[0] : TABS.SYNTH_BALANCES;
 
 	const selectPriceCurrencyProps = {
@@ -55,7 +56,7 @@ const DashboardCard: FC<DashboardCardProps> = ({
 				<PortfolioCard>
 					<StyledCurrencyPrice
 						currencyKey={selectedPriceCurrency.name}
-						price={synthsBalancesQuery.data?.totalUSDBalance || 0}
+						price={synthBalances?.totalUSDBalance ?? 0}
 						conversionRate={selectPriceCurrencyRate}
 						sign={selectedPriceCurrency.sign}
 					/>
@@ -87,15 +88,19 @@ const DashboardCard: FC<DashboardCardProps> = ({
 			</StyledTabList>
 			<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
 				<SynthBalances
-					balances={synthsBalancesQuery.data?.balances ?? []}
-					totalUSDBalance={synthsBalancesQuery.data?.totalUSDBalance ?? 0}
+					balances={synthBalances?.balances ?? []}
+					totalUSDBalance={synthBalances?.totalUSDBalance ?? 0}
 					exchangeRates={exchangeRates}
 					{...selectPriceCurrencyProps}
 				/>
 			</TabPanel>
 			<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
 				<ConvertContainer>
-					<CurrencyConvertCard />
+					<CurrencyConvertCard
+						exchangeRates={exchangeRates}
+						synthBalances={synthBalances}
+						{...selectPriceCurrencyProps}
+					/>
 				</ConvertContainer>
 			</TabPanel>
 			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>

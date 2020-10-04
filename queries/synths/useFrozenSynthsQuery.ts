@@ -4,13 +4,14 @@ import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import synthetix from 'lib/synthetix';
 
-type PromiseResult = Set<CurrencyKey>;
+export type FrozenSynths = Set<CurrencyKey>;
 
-const useFrozenSynthsQuery = (options?: QueryConfig<PromiseResult>) => {
-	return useQuery<PromiseResult>(
+const useFrozenSynthsQuery = (options?: QueryConfig<FrozenSynths>) => {
+	return useQuery<FrozenSynths>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
 			const frozenSynths = await synthetix.synthSummaryUtil!.frozenSynths();
@@ -20,6 +21,7 @@ const useFrozenSynthsQuery = (options?: QueryConfig<PromiseResult>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

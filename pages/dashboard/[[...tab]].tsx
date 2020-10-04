@@ -22,10 +22,12 @@ import { priceCurrencyState } from 'store/app';
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
-	const synthsBalancesQuery = useSynthsBalancesQuery();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+
+	// TODO: consider putting these in context... too much prop drilling going on.
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
@@ -35,24 +37,35 @@ const DashboardPage = () => {
 		selectPriceCurrencyRate,
 	};
 
-	// TODO: refactor activeView with better logic, this is kinda broken at the moment.
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
 
 	let activeView = <Loader />;
 
+	const onboardProps = {
+		synthBalances,
+		exchangeRates,
+		...selectPriceCurrencyProps,
+	};
+
 	if (isWalletConnected) {
-		if (synthsBalancesQuery.isSuccess) {
-			const noSynths = synthsBalancesQuery.data
-				? synthsBalancesQuery.data.balances.length === 0
-				: false;
+		if (synthBalances != null) {
+			const noSynths = synthBalances.balances.length === 0;
 
 			activeView = noSynths ? (
-				<Onboard />
+				<Onboard {...onboardProps} />
 			) : (
-				<DashboardCard exchangeRates={exchangeRates} {...selectPriceCurrencyProps} />
+				<DashboardCard
+					exchangeRates={exchangeRates}
+					synthBalances={synthBalances}
+					{...selectPriceCurrencyProps}
+				/>
 			);
 		}
 	} else {
-		activeView = <Onboard />;
+		activeView = <Onboard {...onboardProps} />;
 	}
 
 	return (

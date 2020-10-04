@@ -4,8 +4,6 @@ import snxData from 'synthetix-data';
 import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalTrades } from './types';
 
-type PromiseResult = HistoricalTrades;
-
 export const useWalletTradesQuery = ({
 	walletAddress,
 	max = 100,
@@ -13,9 +11,9 @@ export const useWalletTradesQuery = ({
 }: {
 	walletAddress: string;
 	max?: number;
-	options?: QueryConfig<PromiseResult>;
+	options?: QueryConfig<HistoricalTrades>;
 }) =>
-	useQuery<PromiseResult>(
+	useQuery<HistoricalTrades>(
 		QUERY_KEYS.Trades.WalletTrades(walletAddress),
 		() =>
 			snxData.exchanges.since({

@@ -12,17 +12,16 @@ import {
 	mockHistoricalRates,
 } from './utils';
 import { HistoricalRatesUpdates } from './types';
-
-type PromiseResult = HistoricalRatesUpdates;
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 const useHistoricalRatesQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<HistoricalRatesUpdates>
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
-	return useQuery<PromiseResult>(
+	return useQuery<HistoricalRatesUpdates>(
 		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period),
 		async () => {
 			if (currencyKey === SYNTHS_MAP.sUSD) {
@@ -53,6 +52,7 @@ const useHistoricalRatesQuery = (
 		},
 		{
 			enabled: currencyKey,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

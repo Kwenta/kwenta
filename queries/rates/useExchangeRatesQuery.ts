@@ -5,13 +5,12 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 export type Rates = Record<CurrencyKey, number>;
 
-type PromiseResult = Rates;
-
-const useExchangeRatesQuery = (options?: QueryConfig<PromiseResult>) => {
-	return useQuery<PromiseResult>(
+const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
+	return useQuery<Rates>(
 		QUERY_KEYS.Rates.ExchangeRates,
 		async () => {
 			const exchangeRates: Rates = {};
@@ -27,6 +26,7 @@ const useExchangeRatesQuery = (options?: QueryConfig<PromiseResult>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

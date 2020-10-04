@@ -6,14 +6,15 @@ import QUERY_KEYS from 'constants/queryKeys';
 import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
-type PromiseResult = { isSuspended: boolean; reasonCode: number };
+export type SynthSuspended = { isSuspended: boolean; reasonCode: number };
 
 const useSynthSuspensionQuery = (
 	currencyKey: CurrencyKey | null,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<SynthSuspended>
 ) => {
-	return useQuery<PromiseResult>(
+	return useQuery<SynthSuspended>(
 		QUERY_KEYS.Synths.Suspension(currencyKey ?? ''),
 		async () => {
 			const [suspended, reason] = (await synthetix.js?.contracts.SystemStatus.synthSuspension(
@@ -27,6 +28,7 @@ const useSynthSuspensionQuery = (
 		},
 		{
 			enabled: synthetix.js && currencyKey != null,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

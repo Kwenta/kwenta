@@ -4,14 +4,12 @@ import snxData from 'synthetix-data';
 import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalTrades } from './types';
 
-type PromiseResult = HistoricalTrades;
-
 export const useAllTradesQuery = (
 	maxBlock = Number.MAX_SAFE_INTEGER,
 	max = 100,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<HistoricalTrades>
 ) =>
-	useQuery<PromiseResult>(
+	useQuery<HistoricalTrades>(
 		QUERY_KEYS.Trades.AllTrades,
 		() =>
 			snxData.exchanges.since({

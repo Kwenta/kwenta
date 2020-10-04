@@ -7,6 +7,7 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
@@ -21,18 +22,18 @@ export type SynthBalancesMap = Record<CurrencyKey, SynthBalance>;
 
 type SynthBalancesTuple = [CurrencyKey[], number[], number[]];
 
-type PromiseResult = {
+export type Balances = {
 	balancesMap: SynthBalancesMap;
 	balances: SynthBalance[];
 	totalUSDBalance: number;
 };
 
-const useSynthsBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
+const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
-	return useQuery<PromiseResult>(
+	return useQuery<Balances>(
 		QUERY_KEYS.WalletBalances.Synths(walletAddress ?? '', network?.id!),
 		async () => {
 			const balancesMap: SynthBalancesMap = {};
@@ -71,6 +72,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<PromiseResult>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil && isWalletConnected,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

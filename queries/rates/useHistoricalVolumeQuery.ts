@@ -7,17 +7,16 @@ import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import { calculateTimestampForPeriod } from './utils';
 import { SynthExchanges } from './types';
-
-type PromiseResult = number;
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 const useHistoricalVolumeQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: QueryConfig<PromiseResult>
+	options?: QueryConfig<number>
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
-	return useQuery<PromiseResult>(
+	return useQuery<number>(
 		QUERY_KEYS.Rates.HistoricalVolume(currencyKey!, period),
 		async () => {
 			const exchanges = (await snxData.exchanges.since({
@@ -35,6 +34,7 @@ const useHistoricalVolumeQuery = (
 		},
 		{
 			enabled: currencyKey,
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);
