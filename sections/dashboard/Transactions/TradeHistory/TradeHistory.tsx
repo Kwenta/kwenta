@@ -165,7 +165,7 @@ const StyledLinkIcon = styled(LinkIcon)`
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};
 	&:hover {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 `;
 
