@@ -5,7 +5,6 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 export type Rates = Record<CurrencyKey, number>;
 
@@ -26,7 +25,6 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

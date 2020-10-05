@@ -7,7 +7,6 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
@@ -72,7 +71,6 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil && isWalletConnected,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

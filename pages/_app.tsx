@@ -3,12 +3,17 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { ReactQueryCacheProvider, QueryCache } from 'react-query';
 
 import { ThemeProvider } from 'styled-components';
 import { MediaContextProvider } from 'styles/media';
 
+import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
+
 import WithStateContainers from 'containers';
 import theme from 'styles/theme';
+
+import { ReactQueryDevtools } from 'react-query-devtools';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -20,6 +25,14 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
+
+const queryCache = new QueryCache({
+	defaultConfig: {
+		queries: {
+			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
+		},
+	},
+});
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
@@ -50,9 +63,12 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<RecoilRoot>
 					<WithStateContainers>
 						<MediaContextProvider>
-							<Layout>
-								<Component {...pageProps} />
-							</Layout>
+							<ReactQueryCacheProvider queryCache={queryCache}>
+								<Layout>
+									<Component {...pageProps} />
+								</Layout>
+								<ReactQueryDevtools />
+							</ReactQueryCacheProvider>
 						</MediaContextProvider>
 					</WithStateContainers>
 				</RecoilRoot>

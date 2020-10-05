@@ -4,7 +4,6 @@ import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import synthetix from 'lib/synthetix';
 
@@ -21,7 +20,6 @@ const useFrozenSynthsQuery = (options?: QueryConfig<FrozenSynths>) => {
 		},
 		{
 			enabled: synthetix.synthSummaryUtil,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

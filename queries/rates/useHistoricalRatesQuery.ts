@@ -12,7 +12,6 @@ import {
 	mockHistoricalRates,
 } from './utils';
 import { HistoricalRatesUpdates } from './types';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 const useHistoricalRatesQuery = (
 	currencyKey: CurrencyKey | null,
@@ -52,7 +51,6 @@ const useHistoricalRatesQuery = (
 		},
 		{
 			enabled: currencyKey,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

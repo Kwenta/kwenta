@@ -3,7 +3,6 @@ import { BigNumber } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 
@@ -29,7 +28,6 @@ const useETHBalancesQuery = (options?: QueryConfig<Balance>) => {
 		},
 		{
 			enabled: provider && isWalletConnected,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

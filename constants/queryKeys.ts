@@ -30,7 +30,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		ETH: (walletAddress: string, networkId: NetworkId) => ['walletBalances', 'ETH', networkId],
+		ETH: (walletAddress: string, networkId: NetworkId) => [
+			'walletBalances',
+			'ETH',
+			walletAddress,
+			networkId,
+		],
 		Tokens: (walletAddress: string, networkId: NetworkId) => [
 			'walletBalances',
 			'tokens',

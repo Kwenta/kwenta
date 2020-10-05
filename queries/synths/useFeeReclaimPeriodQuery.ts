@@ -7,7 +7,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 const useFeeReclaimPeriodQuery = (
@@ -29,7 +28,6 @@ const useFeeReclaimPeriodQuery = (
 		},
 		{
 			enabled: synthetix.js && currencyKey != null && isWalletConnected,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

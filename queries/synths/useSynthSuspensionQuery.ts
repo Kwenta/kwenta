@@ -6,7 +6,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 export type SynthSuspended = { isSuspended: boolean; reasonCode: number };
 
@@ -28,7 +27,6 @@ const useSynthSuspensionQuery = (
 		},
 		{
 			enabled: synthetix.js && currencyKey != null,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

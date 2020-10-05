@@ -7,7 +7,6 @@ import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import { calculateTimestampForPeriod } from './utils';
 import { SynthExchanges } from './types';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 const useHistoricalVolumeQuery = (
 	currencyKey: CurrencyKey | null,
@@ -34,7 +33,6 @@ const useHistoricalVolumeQuery = (
 		},
 		{
 			enabled: currencyKey,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);

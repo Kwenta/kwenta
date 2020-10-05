@@ -4,7 +4,6 @@ import synthetix from 'lib/synthetix';
 
 import { CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
 import { synthToContractName } from 'utils/currencies';
 
@@ -26,7 +25,6 @@ const useSynthMarketCapQuery = (
 		},
 		{
 			enabled: currencyKey != null && priceRate != null,
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
 			...options,
 		}
 	);
