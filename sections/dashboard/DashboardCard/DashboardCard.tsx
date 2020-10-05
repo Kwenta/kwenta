@@ -104,7 +104,7 @@ const DashboardCard: FC<DashboardCardProps> = ({
 				</ConvertContainer>
 			</TabPanel>
 			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
-				<Transactions />
+				<Transactions {...selectPriceCurrencyProps} />
 			</TabPanel>
 		</>
 	);

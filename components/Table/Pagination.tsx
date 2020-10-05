@@ -1,9 +1,12 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { FC } from 'react';
+import styled, { css } from 'styled-components';
 
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered, TextButton } from 'styles/common';
+
 import LeftArrowIcon from 'assets/inline-svg/app/caret-left.svg';
 import RightArrowIcon from 'assets/inline-svg/app/caret-right.svg';
+
+const ELLIPSIS_CUTOFF_PAGE_COUNT = 6;
 
 type PaginationProps = {
 	pageIndex: number;
@@ -13,13 +16,13 @@ type PaginationProps = {
 	setPage: (page: number) => void;
 };
 
-const Pagination = ({
+const Pagination: FC<PaginationProps> = ({
 	pageIndex,
 	pageCount,
 	canNextPage = true,
 	canPreviousPage = true,
 	setPage,
-}: PaginationProps) => {
+}) => {
 	let pageLinks: React.ReactNode[] = [];
 	for (let i = 0; i < pageCount; i++) {
 		pageLinks.push(
@@ -29,10 +32,10 @@ const Pagination = ({
 		);
 	}
 
-	if (pageCount > 6) {
+	if (pageCount > ELLIPSIS_CUTOFF_PAGE_COUNT) {
 		pageLinks = [
 			...pageLinks.slice(0, 3),
-			<PageLink>...</PageLink>,
+			<Ellipsis>...</Ellipsis>,
 			...pageLinks.slice(pageLinks.length - 3, pageLinks.length),
 		];
 	}
@@ -40,43 +43,59 @@ const Pagination = ({
 	return (
 		<PaginationContainer>
 			{pageCount > 1 ? (
-				<span>
-					{canPreviousPage && <StyledLeftArrowIcon onClick={() => setPage(pageIndex - 1)} />}
+				<>
+					<StyledLeftArrowIcon onClick={() => setPage(pageIndex - 1)} disabled={canNextPage} />
 					{pageLinks}
-					{canNextPage && <StyledRightArrowIcon onClick={() => setPage(pageIndex + 1)} />}
-				</span>
+					<StyledRightArrowIcon onClick={() => setPage(pageIndex + 1)} disabled={canPreviousPage} />
+				</>
 			) : undefined}
 		</PaginationContainer>
 	);
 };
 
-const PageLink = styled.span<{ active?: boolean }>`
+const pageLinkCSS = css`
 	font-family: ${(props) => props.theme.fonts.bold};
 	margin: 0px 7px;
-	cursor: pointer;
+`;
+
+const Ellipsis = styled.span`
+	${pageLinkCSS};
+`;
+
+const PageLink = styled(TextButton)<{ active?: boolean }>`
+	${pageLinkCSS};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.silver)};
+`;
+
+const arrowIconCSS = css`
+	width: 14px;
+	height: 14px;
+	color: ${(props) => props.theme.colors.goldColors.color1};
+	cursor: pointer;
+	&[disabled] {
+		cursor: default;
+		opacity: 0.5;
+	}
 `;
 
 // @ts-ignore
 const StyledLeftArrowIcon = styled(LeftArrowIcon)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	cursor: pointer;
+	${arrowIconCSS};
+	margin-right: 10px;
 `;
 
 // @ts-ignore
 const StyledRightArrowIcon = styled(RightArrowIcon)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	cursor: pointer;
+	${arrowIconCSS};
+	margin-left: 10px;
 `;
 
 const PaginationContainer = styled(FlexDivCentered)`
 	background-color: ${(props) => props.theme.colors.elderberry};
 	justify-content: center;
 	padding: 23px 0px;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
 `;
 
 export default Pagination;

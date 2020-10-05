@@ -13,6 +13,7 @@ import Pagination from './Pagination';
 export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
+const MAX_PAGE_ROWS = 10;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -72,7 +73,7 @@ export const Table: FC<TableProps> = ({
 		{
 			columns: memoizedColumns,
 			data,
-			initialState: { pageSize: showPagination ? 8 : data.length },
+			initialState: { pageSize: showPagination ? MAX_PAGE_ROWS : data.length },
 			...options,
 		},
 		useSortBy,
@@ -82,63 +83,65 @@ export const Table: FC<TableProps> = ({
 
 	return (
 		<>
-			<ReactTable {...getTableProps()} palette={palette} className={className}>
-				{headerGroups.map((headerGroup) => (
-					<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
-						{headerGroup.headers.map((column: any) => (
-							<TableCellHead
-								{...column.getHeaderProps(
-									column.sortable ? column.getSortByToggleProps() : undefined
-								)}
-							>
-								{column.render('Header')}
-								{column.sortable && (
-									<SortIconContainer>
-										{column.isSorted ? (
-											column.isSortedDesc ? (
-												<StyledSortDownIcon />
-											) : (
-												<StyledSortUpIcon />
-											)
-										) : (
-											<>
-												<StyledSortUpIcon />
-												<StyledSortDownIcon />
-											</>
-										)}
-									</SortIconContainer>
-								)}
-							</TableCellHead>
-						))}
-					</TableRow>
-				))}
-				{isLoading ? (
-					<StyledSpinner />
-				) : noResultsMessage != null ? (
-					noResultsMessage
-				) : (
-					<TableBody className="table-body" {...getTableBodyProps()}>
-						{page.map((row: Row) => {
-							prepareRow(row);
-
-							return (
-								<TableBodyRow
-									className="table-body-row"
-									{...row.getRowProps()}
-									onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+			<TableContainer>
+				<ReactTable {...getTableProps()} palette={palette} className={className}>
+					{headerGroups.map((headerGroup) => (
+						<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
+							{headerGroup.headers.map((column: any) => (
+								<TableCellHead
+									{...column.getHeaderProps(
+										column.sortable ? column.getSortByToggleProps() : undefined
+									)}
 								>
-									{row.cells.map((cell: Cell) => (
-										<TableCell className="table-body-cell" {...cell.getCellProps()}>
-											{cell.render('Cell')}
-										</TableCell>
-									))}
-								</TableBodyRow>
-							);
-						})}
-					</TableBody>
-				)}
-			</ReactTable>
-			{showPagination ? (
+									{column.render('Header')}
+									{column.sortable && (
+										<SortIconContainer>
+											{column.isSorted ? (
+												column.isSortedDesc ? (
+													<StyledSortDownIcon />
+												) : (
+													<StyledSortUpIcon />
+												)
+											) : (
+												<>
+													<StyledSortUpIcon />
+													<StyledSortDownIcon />
+												</>
+											)}
+										</SortIconContainer>
+									)}
+								</TableCellHead>
+							))}
+						</TableRow>
+					))}
+					{isLoading ? (
+						<StyledSpinner />
+					) : noResultsMessage != null ? (
+						noResultsMessage
+					) : (
+						<TableBody className="table-body" {...getTableBodyProps()}>
+							{page.map((row: Row) => {
+								prepareRow(row);
+
+								return (
+									<TableBodyRow
+										className="table-body-row"
+										{...row.getRowProps()}
+										onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+									>
+										{row.cells.map((cell: Cell) => (
+											<TableCell className="table-body-cell" {...cell.getCellProps()}>
+												{cell.render('Cell')}
+											</TableCell>
+										))}
+									</TableBodyRow>
+								);
+							})}
+						</TableBody>
+					)}
+				</ReactTable>
+			</TableContainer>
+			{showPagination && data.length > MAX_PAGE_ROWS ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
@@ -150,6 +153,10 @@ export const Table: FC<TableProps> = ({
 		</>
 	);
 };
+
+const TableContainer = styled.div`
+	overflow: auto;
+`;
 
 // @ts-ignore
 const StyledSpinner = styled(Spinner)`
@@ -207,7 +214,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableRow} {
 				background-color: ${(props) => props.theme.colors.elderberry};
-				margin-bottom: 8px;
+				margin-bottom: 2px;
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};

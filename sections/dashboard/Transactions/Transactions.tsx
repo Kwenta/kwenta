@@ -1,25 +1,28 @@
-import { useState, useMemo, useCallback } from 'react';
+import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import synthetix from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-
 import { CATEGORY_MAP } from 'constants/currency';
 
 import Select from 'components/Select';
 
-import { FlexDivRow, CapitalizedText } from 'styles/common';
+import { CapitalizedText, GridDiv } from 'styles/common';
 
 import TradeHistory from './TradeHistory';
 import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
-import { walletAddressState } from 'store/wallet';
 import { HistoricalTrade } from 'queries/trades/types';
-import { Synth } from '@synthetixio/js';
 
-const Transactions = () => {
+type TransactionsProps = {
+	selectedPriceCurrency: Synth;
+	selectPriceCurrencyRate: number | null;
+};
+
+const Transactions: FC<TransactionsProps> = ({
+	selectedPriceCurrency,
+	selectPriceCurrencyRate,
+}) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
-	const walletTradesQuery = useWalletTradesQuery({ walletAddress: walletAddress || '' });
+	const walletTradesQuery = useWalletTradesQuery();
 
 	const synthFilterList = [
 		{ label: t('dashboard.transactions.synthSort.allSynths'), key: 'ALL_SYNTHS' },
@@ -101,8 +104,8 @@ const Transactions = () => {
 
 	return (
 		<>
-			<FlexDivRow>
-				<TransactionSelect
+			<Filters>
+				<Select
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={synthFilterList}
 					value={synthFilter}
@@ -112,7 +115,7 @@ const Transactions = () => {
 						}
 					}}
 				/>
-				<TransactionSelect
+				<Select
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={orderTypeList}
 					value={orderType}
@@ -122,7 +125,7 @@ const Transactions = () => {
 						}
 					}}
 				/>
-				<TransactionSelect
+				<Select
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={orderSizeList}
 					value={orderSize}
@@ -132,25 +135,21 @@ const Transactions = () => {
 						}
 					}}
 				/>
-			</FlexDivRow>
-			<TradeHistoryContainer>
-				<TradeHistory
-					trades={filteredHistoricalTrades}
-					isLoaded={walletTradesQuery.isSuccess}
-					isLoading={walletTradesQuery.isLoading}
-				/>
-			</TradeHistoryContainer>
+			</Filters>
+			<TradeHistory
+				trades={filteredHistoricalTrades}
+				isLoaded={walletTradesQuery.isSuccess}
+				isLoading={walletTradesQuery.isLoading}
+				selectedPriceCurrency={selectedPriceCurrency}
+				selectPriceCurrencyRate={selectPriceCurrencyRate}
+			/>
 		</>
 	);
 };
 
-const TransactionSelect = styled(Select)`
-	width: 33%;
-	max-width: 217px;
-`;
-
-const TradeHistoryContainer = styled.div`
-	overflow: auto;
+const Filters = styled(GridDiv)`
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 18px;
 `;
 
 export default Transactions;
