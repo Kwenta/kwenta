@@ -40,7 +40,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					<MessageButton>
 						<Trans
 							t={t}
-							i18nKey="common.currency.get-currency"
+							i18nKey="common.currency.buy-currency"
 							values={{ currencyKey: sUSD }}
 							components={[<NoTextTransform />]}
 						/>

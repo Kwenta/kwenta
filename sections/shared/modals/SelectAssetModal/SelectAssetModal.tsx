@@ -123,7 +123,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 							<ExternalLink href={EXTERNAL_LINKS.Trading.OneInchLink(ETH, sETH)}>
 								<ConvertButton variant="primary" isRounded={true}>
 									<Trans
-										i18nKey="common.currency.convert-to-currency"
+										i18nKey="common.currency.trade-to-currency"
 										values={{ currencyKey: sETH }}
 										components={[<NoTextTransform />]}
 									/>
@@ -158,7 +158,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 						<MessageButton>
 							<Trans
 								t={t}
-								i18nKey="common.currency.get-currency"
+								i18nKey="common.currency.buy-currency"
 								values={{ currencyKey: sUSD }}
 								components={[<NoTextTransform />]}
 							/>

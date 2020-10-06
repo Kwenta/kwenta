@@ -153,7 +153,7 @@
 			"overlay-messages": {
 				"frozen-synth": {
 					"title": "This Synth has been frozen",
-					"subtitle": "Reset in progress."
+					"subtitle": "Restart pending."
 				}
 			},
 			"no-data": "No data"
@@ -250,7 +250,7 @@
 		},
 		"confirm-transaction": {
 			"title": "confirm transaction",
-			"confirm-with-provider": "Confirm your transaction with your web3 provider"
+			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
 		"settings": {
 			"title": "settings",
@@ -266,11 +266,11 @@
 			"title": "notifications",
 			"open-orders": {
 				"title": "open orders",
-				"no-results": "No open orders to show"
+				"no-results": "No open orders"
 			},
 			"recent-notifications": {
 				"title": "recent notifications",
-				"no-results": "No recent transactions to show"
+				"no-results": "No recent transactions"
 			},
 			"all-notifications": {
 				"title": "all notifications",
@@ -291,8 +291,8 @@
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
-			"convert-to-currency": "Convert to <0>{{currencyKey}}</0>",
-			"get-currency": "Get <0>{{currencyKey}}</0>",
+			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
+			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>"
 		},
 		"total-assets": "{{total}} assets",
@@ -314,7 +314,7 @@
 		},
 		"transaction": {
 			"error": "An unexpected error occurred.",
-			"reattempt": "Try again?"
+			"reattempt": "Try again"
 		},
 		"price": "price",
 		"cancel": "cancel",
