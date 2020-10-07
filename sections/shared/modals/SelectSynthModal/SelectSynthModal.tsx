@@ -7,18 +7,18 @@ import { Synths, Synth } from 'lib/synthetix';
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import Button from 'components/Button';
-import Currency from 'components/Currency';
 import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { FlexDivCentered, SelectableCurrencyRow } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 
-import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
+
+import SynthRow from './SynthRow';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -30,7 +30,7 @@ export const CATEGORY_FILTERS = [
 type SelectSynthModalProps = {
 	onDismiss: () => void;
 	synths: Synths;
-	exchangeRates?: Rates;
+	exchangeRates: Rates | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
@@ -129,32 +129,17 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 						const currencyKey = synth.name;
 
 						return (
-							<StyledSelectableCurrencyRow
+							<SynthRow
 								key={currencyKey}
+								synth={synth}
+								price={price}
+								selectedPriceCurrency={selectedPriceCurrency}
+								selectPriceCurrencyRate={selectPriceCurrencyRate}
 								onClick={() => {
 									onSelect(currencyKey);
 									onDismiss();
 								}}
-								isSelectable={true}
-							>
-								<Currency.Name
-									currencyKey={currencyKey}
-									name={t('common.currency.synthetic-currency-name', {
-										currencyName: synth.description,
-									})}
-									showIcon={true}
-								/>
-								{price != null ? (
-									<Currency.Price
-										currencyKey={currencyKey}
-										price={price}
-										sign={selectedPriceCurrency.sign}
-										conversionRate={selectPriceCurrencyRate}
-									/>
-								) : (
-									NO_VALUE
-								)}
-							</StyledSelectableCurrencyRow>
+							/>
 						);
 					})
 				) : (
@@ -174,10 +159,6 @@ const StyledCenteredModal = styled(CenteredModal)`
 		padding: 16px 0;
 		overflow: hidden;
 	}
-`;
-
-const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
-	padding: 5px 16px;
 `;
 
 const SearchContainer = styled.div`

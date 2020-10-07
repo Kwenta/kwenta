@@ -10,7 +10,6 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { SelectableCurrencyRow } from 'styles/common';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-// import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import { Period } from 'constants/period';
 
 type SynthRow = {
@@ -18,22 +17,23 @@ type SynthRow = {
 	synth: Synth;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
+	onClick: () => void;
 };
 const SynthRow: FC<SynthRow> = ({
 	price,
 	synth,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
+	onClick,
 }) => {
 	const { t } = useTranslation();
 
 	const currencyKey = synth.name;
 
-	// useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
 	return (
-		<StyledSelectableCurrencyRow isSelectable={false}>
+		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable={true}>
 			<Currency.Name
 				currencyKey={currencyKey}
 				name={t('common.currency.synthetic-currency-name', {
@@ -43,7 +43,7 @@ const SynthRow: FC<SynthRow> = ({
 			/>
 			{price != null ? (
 				<Currency.Price
-					currencyKey={selectedPriceCurrency.name}
+					currencyKey={currencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
@@ -57,9 +57,7 @@ const SynthRow: FC<SynthRow> = ({
 };
 
 const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
-	padding-left: 32px;
-	padding-right: 32px;
-	padding-bottom: 13px;
+	padding: 5px 16px;
 `;
 
 export default SynthRow;

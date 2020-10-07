@@ -41,6 +41,7 @@ const Container = styled.span`
 	${ContainerRowMixin};
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.white};
+	justify-items: end;
 `;
 
 const Price = styled.span``;

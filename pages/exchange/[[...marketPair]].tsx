@@ -534,7 +534,7 @@ const ExchangePage = () => {
 						<SelectSynthModal
 							onDismiss={() => setSelectSynthModalOpen(false)}
 							synths={synthetix.js?.synths ?? []}
-							exchangeRates={exchangeRatesQuery.data}
+							exchangeRates={exchangeRates}
 							onSelect={(currencyKey) => {
 								resetCurrencies();
 								// @ts-ignore

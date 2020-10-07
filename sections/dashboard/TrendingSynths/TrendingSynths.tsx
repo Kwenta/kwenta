@@ -107,12 +107,6 @@ const Rows = styled.div`
 	padding-top: 10px;
 `;
 
-// const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
-// 	padding-left: 32px;
-// 	padding-right: 32px;
-// 	padding-bottom: 13px;
-// `;
-
 const TrendingSortSelect = styled(Select)`
 	width: 30%;
 `;
