@@ -647,6 +647,9 @@ const StyledCurrencyCard = styled(CurrencyCard)`
 const StyledMarketDetailsCard = styled(MarketDetailsCard)`
 	max-width: 618px;
 	width: 100%;
+	${media.lessThan('md')`
+		max-width: unset;
+	`}
 `;
 
 const StyledPriceChartCard = styled(PriceChartCard)``;

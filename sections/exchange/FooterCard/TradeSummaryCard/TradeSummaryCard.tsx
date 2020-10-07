@@ -324,7 +324,6 @@ const ErrorTooltip = styled(Tippy)`
 
 const MobileCard = styled(Card)`
 	margin: 0 auto 86px auto;
-	max-width: ${MOBILE_WIDTH};
 `;
 
 export default TradeSummaryCard;
