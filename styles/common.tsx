@@ -162,7 +162,6 @@ export const FixedFooterMixin = `
 
 export const MobileContainerMixin = `
 	padding-top: 55px;
-	max-width: ${MOBILE_WIDTH};
 	margin: 0 auto;
 `;
 
