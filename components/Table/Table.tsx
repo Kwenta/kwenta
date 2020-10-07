@@ -168,7 +168,7 @@ const TableContainer = styled.div`
 // @ts-ignore
 const StyledSpinner = styled(Spinner)`
 	display: block;
-	margin: auto;
+	margin: 30px auto;
 `;
 
 export const TableRow = styled.div``;
