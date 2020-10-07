@@ -7,6 +7,7 @@ import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import AssetDotPoint from 'assets/inline-svg/marketing/asset-card-dot.svg';
 
 import media from 'styles/media';
+import { Media } from 'styles/media';
 
 import { GridContainer, SubHeader } from '../common';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -29,7 +30,7 @@ const Assets = () => {
 
 	return (
 		<Container id="why">
-			<DesktopOnlyView>
+			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
 						<AssetsImage src={AssetCollections} alt="" />
@@ -40,12 +41,12 @@ const Assets = () => {
 						{assetCards}
 					</Col>
 				</FlexDivRowCentered>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
+			</Media>
+			<Media lessThan="lg">
 				{title}
 				<MobileImage src={AssetCollections} alt="" />
 				{assetCards}
-			</MobileOrTabletView>
+			</Media>
 		</Container>
 	);
 };
@@ -57,7 +58,7 @@ const Container = styled.div`
 const LeftSubHeader = styled(SubHeader)`
 	text-align: left;
 	max-width: 500px;
-	${media.lessThan('md')`
+	${media.lessThan('lg')`
 		max-width: unset;
 		text-align: center;
 	`}
