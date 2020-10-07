@@ -1,4 +1,3 @@
-import { MOBILE_WIDTH } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
 export const FlexDiv = styled.div`

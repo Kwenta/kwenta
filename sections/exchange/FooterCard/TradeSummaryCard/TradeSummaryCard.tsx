@@ -13,7 +13,6 @@ import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import { CurrencyKey } from 'constants/currency';
-import { MOBILE_WIDTH } from 'constants/ui';
 
 import { secondsToTime } from 'utils/formatters/date';
 
