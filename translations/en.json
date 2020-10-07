@@ -174,7 +174,7 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Get <0>{{currencyKey}}</0> to start trading Synths:"
+			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to start trading Synths:"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
