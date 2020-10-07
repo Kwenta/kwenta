@@ -93,7 +93,7 @@ const StepIcon = styled.div`
 
 const StepSubtitle = styled(Paragraph)`
 	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	font-family: ${(props) => props.theme.fonts.bold};
 	position: absolute;
 	bottom: 0;
