@@ -11,7 +11,7 @@ import synthetix, { Synth } from 'lib/synthetix';
 
 import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
-import { NO_VALUE } from 'constants/placeholder';
+import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import { CurrencyKey } from 'constants/currency';
 import { MOBILE_WIDTH } from 'constants/ui';
 
@@ -124,7 +124,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				<SummaryItemValue>
 					{gasPrice != null ? (
 						<>
-							{hasCustomGasPrice ? Number(customGasPrice) : gasPrice}
+							{hasCustomGasPrice ? Number(customGasPrice) : `${ESTIMATE_VALUE} ${gasPrice}`}
 							<GasPriceTooltip
 								trigger="click"
 								arrow={false}
