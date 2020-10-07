@@ -33,7 +33,7 @@ const TrendingSynths: FC = () => {
 
 	const historicalVolumeCache = queryCache.getQueries(['rates', 'historicalVolume']);
 	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
-	console.log(historicalRatesCache);
+
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
