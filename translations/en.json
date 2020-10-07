@@ -211,7 +211,11 @@
 			"title": "Your Portfolio"
 		},
 		"synth-sort": {
-			"price": "Price"
+			"price": "Price",
+			"24h-vol": "24H Volume",
+			"24h-high": "24H High",
+			"24h-low": "24H Low",
+			"24h-change": "24H Change"
 		},
 		"transactions": {
 			"synth-sort": {

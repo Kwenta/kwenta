@@ -10,7 +10,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { SelectableCurrencyRow } from 'styles/common';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-// import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
+import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import { Period } from 'constants/period';
 
 type SynthRow = {
@@ -29,7 +29,7 @@ const SynthRow: FC<SynthRow> = ({
 
 	const currencyKey = synth.name;
 
-	// useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
+	useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
 	return (

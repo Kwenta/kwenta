@@ -2,6 +2,7 @@ import { useState, FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { useQueryCache } from 'react-query';
 
 import { priceCurrencyState } from 'store/app';
 
@@ -9,31 +10,30 @@ import synthetix, { Synth } from 'lib/synthetix';
 
 import Select from 'components/Select';
 
-import useExchangeRatesQuery, { Rates } from 'queries/rates/useExchangeRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { CardTitle } from 'sections/dashboard/common';
 
 import { FlexDivRowCentered } from 'styles/common';
 
 import SynthRow from './SynthRow';
+import { numericSort, toCurrencyKeyMap } from './utils';
 
 enum SynthSort {
 	Price,
 	Rates24HLow,
 	Rates24HHigh,
 	Volume,
+	Change,
 }
-
-const priceSort = (exchangeRates: Rates, a: Synth, b: Synth) => {
-	const priceA = exchangeRates[a.name] || 0;
-	const priceB = exchangeRates[b.name] || 0;
-
-	return priceA > priceB ? -1 : 1;
-};
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
+	const queryCache = useQueryCache();
 
+	const historicalVolumeCache = queryCache.getQueries(['rates', 'historicalVolume']);
+	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
+	console.log(historicalRatesCache);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
@@ -41,7 +41,13 @@ const TrendingSynths: FC = () => {
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const SYNTH_SORT_OPTIONS = useMemo(
-		() => [{ label: t('dashboard.synth-sort.price'), value: SynthSort.Price }],
+		() => [
+			{ label: t('dashboard.synth-sort.24h-vol'), value: SynthSort.Volume },
+			{ label: t('dashboard.synth-sort.24h-high'), value: SynthSort.Rates24HHigh },
+			{ label: t('dashboard.synth-sort.24h-low'), value: SynthSort.Rates24HLow },
+			{ label: t('dashboard.synth-sort.24h-change'), value: SynthSort.Change },
+			{ label: t('dashboard.synth-sort.price'), value: SynthSort.Price },
+		],
 		[t]
 	);
 	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
@@ -49,13 +55,31 @@ const TrendingSynths: FC = () => {
 	const synths = synthetix.js?.synths ?? [];
 
 	const sortedSynths = useMemo(() => {
-		if (exchangeRates != null) {
-			if (currentSynthSort.value === SynthSort.Price) {
-				return synths.sort((a: Synth, b: Synth) => priceSort(exchangeRates, a, b));
-			}
+		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
+			return synths.sort((a: Synth, b: Synth) => numericSort(exchangeRates, a, b));
+		}
+		if (currentSynthSort.value === SynthSort.Volume && historicalVolumeCache != null) {
+			return synths.sort((a: Synth, b: Synth) =>
+				numericSort(toCurrencyKeyMap(historicalVolumeCache), a, b)
+			);
+		}
+		if (currentSynthSort.value === SynthSort.Rates24HHigh && historicalRatesCache != null) {
+			return synths.sort((a: Synth, b: Synth) =>
+				numericSort(toCurrencyKeyMap(historicalRatesCache, 'high'), a, b)
+			);
+		}
+		if (currentSynthSort.value === SynthSort.Rates24HLow && historicalRatesCache != null) {
+			return synths.sort((a: Synth, b: Synth) =>
+				numericSort(toCurrencyKeyMap(historicalRatesCache, 'low'), a, b)
+			);
+		}
+		if (currentSynthSort.value === SynthSort.Change && historicalRatesCache != null) {
+			return synths.sort((a: Synth, b: Synth) =>
+				numericSort(toCurrencyKeyMap(historicalRatesCache, 'change'), a, b)
+			);
 		}
 		return synths;
-	}, [synths, currentSynthSort, exchangeRates]);
+	}, [synths, currentSynthSort, exchangeRates, historicalVolumeCache, historicalRatesCache]);
 
 	return (
 		<>
@@ -108,7 +132,7 @@ const Rows = styled.div`
 `;
 
 const TrendingSortSelect = styled(Select)`
-	width: 30%;
+	width: 120px;
 `;
 
 export default TrendingSynths;
