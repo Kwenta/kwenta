@@ -210,17 +210,24 @@
 		"your-portfolio": {
 			"title": "Your Portfolio"
 		},
-		"synthSort": {
+		"synth-sort": {
 			"price": "Price"
 		},
 		"transactions": {
-			"synthSort": {
+			"synth-sort": {
 				"allSynths": "All Synths"
 			},
-			"orderTypeSort": {
+			"order-type-sort": {
 				"allOrderTypes": "All Order Types",
 				"market": "Market",
 				"limit": "Limit"
+			},
+			"table": {
+				"orderType": "Order Type",
+				"from": "From",
+				"to": "To",
+				"value": "Value",
+				"no-results": "No transactions found"
 			}
 		}
 	},
@@ -359,17 +366,10 @@
 		},
 		"totals": {
 			"total-synth-value": "total synth value"
-		}
-	},
-	"assets": {
-		"exchanges": {
-			"table": {
-				"orderType": "Order Type",
-				"from": "From",
-				"to": "To",
-				"value": "Value",
-				"no-results": "No Results"
-			}
+		},
+		"pagination": {
+			"page": "Page",
+			"page-of-total-pages": "{{page}} of {{totalPages}}"
 		}
 	}
 }

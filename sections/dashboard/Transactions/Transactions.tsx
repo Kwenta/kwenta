@@ -25,7 +25,7 @@ const Transactions: FC<TransactionsProps> = ({
 	const walletTradesQuery = useWalletTradesQuery();
 
 	const synthFilterList = [
-		{ label: t('dashboard.transactions.synthSort.allSynths'), key: 'ALL_SYNTHS' },
+		{ label: t('dashboard.transactions.synth-sort.allSynths'), key: 'ALL_SYNTHS' },
 		{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
 		{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
 		{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
@@ -33,9 +33,9 @@ const Transactions: FC<TransactionsProps> = ({
 	];
 	const [synthFilter, setSynthFilter] = useState(synthFilterList[0]);
 	const orderTypeList = [
-		{ label: t('dashboard.transactions.orderTypeSort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
-		{ label: t('dashboard.transactions.orderTypeSort.market'), key: 'MARKET' },
-		/* { label: t('dashboard.transactions.orderTypeSort.limit'), key: 'LIMIT' }, */
+		{ label: t('dashboard.transactions.order-type-sort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
+		{ label: t('dashboard.transactions.order-type-sort.market'), key: 'MARKET' },
+		/* { label: t('dashboard.transactions.order-type-sort.limit'), key: 'LIMIT' }, */
 	];
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 

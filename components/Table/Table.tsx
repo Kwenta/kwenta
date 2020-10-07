@@ -13,7 +13,7 @@ import Pagination from './Pagination';
 export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
-const MAX_PAGE_ROWS = 10;
+const MAX_PAGE_ROWS = 1;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -68,6 +68,10 @@ export const Table: FC<TableProps> = ({
 		// @ts-ignore
 		gotoPage,
 		// @ts-ignore
+		nextPage,
+		// @ts-ignore
+		previousPage,
+		// @ts-ignore
 		state: { pageIndex },
 	} = useTable(
 		{
@@ -116,31 +120,32 @@ export const Table: FC<TableProps> = ({
 					))}
 					{isLoading ? (
 						<StyledSpinner />
-					) : noResultsMessage != null ? (
-						noResultsMessage
 					) : (
-						<TableBody className="table-body" {...getTableBodyProps()}>
-							{page.map((row: Row) => {
-								prepareRow(row);
+						page.length > 0 && (
+							<TableBody className="table-body" {...getTableBodyProps()}>
+								{page.map((row: Row) => {
+									prepareRow(row);
 
-								return (
-									<TableBodyRow
-										className="table-body-row"
-										{...row.getRowProps()}
-										onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
-									>
-										{row.cells.map((cell: Cell) => (
-											<TableCell className="table-body-cell" {...cell.getCellProps()}>
-												{cell.render('Cell')}
-											</TableCell>
-										))}
-									</TableBodyRow>
-								);
-							})}
-						</TableBody>
+									return (
+										<TableBodyRow
+											className="table-body-row"
+											{...row.getRowProps()}
+											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+										>
+											{row.cells.map((cell: Cell) => (
+												<TableCell className="table-body-cell" {...cell.getCellProps()}>
+													{cell.render('Cell')}
+												</TableCell>
+											))}
+										</TableBodyRow>
+									);
+								})}
+							</TableBody>
+						)
 					)}
 				</ReactTable>
 			</TableContainer>
+			{noResultsMessage}
 			{showPagination && data.length > MAX_PAGE_ROWS ? (
 				<Pagination
 					pageIndex={pageIndex}
@@ -148,6 +153,8 @@ export const Table: FC<TableProps> = ({
 					canNextPage={canNextPage}
 					canPreviousPage={canPreviousPage}
 					setPage={gotoPage}
+					previousPage={previousPage}
+					nextPage={nextPage}
 				/>
 			) : undefined}
 		</>

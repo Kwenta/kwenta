@@ -66,9 +66,11 @@ function Select<T>(props: Props<T>) {
 				fontSize: '12px',
 				color: colors.white,
 			}),
-			dropdownIndicator: (provided) => ({
+			dropdownIndicator: (provided, state) => ({
 				...provided,
 				color: colors.goldColors.color1,
+				transition: 'transform 0.2s ease-in-out',
+				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {
 					color: colors.goldColors.color3,
 				},

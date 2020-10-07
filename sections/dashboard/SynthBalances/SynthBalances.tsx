@@ -1,16 +1,23 @@
 import { FC } from 'react';
 import styled from 'styled-components';
+import Link from 'next/link';
 import synthetix, { Synth } from 'lib/synthetix';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+
+import ROUTES from 'constants/routes';
+import { SYNTHS_MAP } from 'constants/currency';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
+import Button from 'components/Button';
 
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import { formatPercent } from 'utils/formatters/number';
+
 import media from 'styles/media';
+import { GridDivCentered, NoTextTransform } from 'styles/common';
 
 type SynthBalancesProps = {
 	exchangeRates: Rates | null;
@@ -20,6 +27,8 @@ type SynthBalancesProps = {
 	selectPriceCurrencyRate: number | null;
 };
 
+const { sUSD } = SYNTHS_MAP;
+
 const SynthBalances: FC<SynthBalancesProps> = ({
 	exchangeRates,
 	balances,
@@ -28,6 +37,32 @@ const SynthBalances: FC<SynthBalancesProps> = ({
 	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
+
+	if (balances.length === 0) {
+		return (
+			<NoBalancesContainer>
+				<Message>
+					<Trans
+						t={t}
+						i18nKey="exchange.onboard.message"
+						values={{ currencyKey: sUSD }}
+						components={[<NoTextTransform />]}
+					/>
+				</Message>
+				<Link href={ROUTES.Dashboard.Convert}>
+					<Button size="lg" variant="primary" isRounded={true}>
+						<Trans
+							t={t}
+							i18nKey="common.currency.buy-currency"
+							values={{ currencyKey: sUSD }}
+							components={[<NoTextTransform />]}
+						/>
+					</Button>
+				</Link>
+			</NoBalancesContainer>
+		);
+	}
+
 	return (
 		<>
 			{balances.map((synth: SynthBalance) => {
@@ -111,6 +146,28 @@ const ExchangeRateCol = styled.div`
 const TypeDataSmall = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	margin-top: 5px;
+`;
+
+export const NoBalancesContainer = styled(GridDivCentered)`
+	width: 100%;
+	border-radius: 4px;
+	grid-template-columns: 1fr auto;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	padding: 16px 32px;
+	margin: 0 auto;
+	${media.lessThan('md')`
+		justify-items: center;
+		grid-template-columns: unset;
+		grid-gap: 30px;
+	`}
+`;
+
+export const Message = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	flex-grow: 1;
+	text-align: center;
 `;
 
 export default SynthBalances;

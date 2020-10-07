@@ -10,7 +10,7 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { NO_VALUE } from 'constants/placeholder';
 
-import { ExternalLink, NoTextTransform } from 'styles/common';
+import { ExternalLink, GridDivCenteredRow, NoTextTransform } from 'styles/common';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -18,6 +18,7 @@ import Table from 'components/Table';
 import Currency from 'components/Currency';
 
 import LinkIcon from 'assets/inline-svg/app/link.svg';
+import NoNotificationIcon from 'assets/inline-svg/app/no-notifications.svg';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -62,16 +63,18 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 			palette="primary"
 			columns={[
 				{
-					Header: <StyledTableHeader>{t('assets.exchanges.table.orderType')}</StyledTableHeader>,
+					Header: (
+						<StyledTableHeader>{t('dashboard.transactions.table.orderType')}</StyledTableHeader>
+					),
 					accessor: 'orderType',
 					Cell: () => (
-						<StyledOrderType>{t('dashboard.transactions.orderTypeSort.market')}</StyledOrderType>
+						<StyledOrderType>{t('dashboard.transactions.order-type-sort.market')}</StyledOrderType>
 					),
 					sortable: true,
 					width: 200,
 				},
 				{
-					Header: <StyledTableHeader>{t('assets.exchanges.table.from')}</StyledTableHeader>,
+					Header: <StyledTableHeader>{t('dashboard.transactions.table.from')}</StyledTableHeader>,
 					accessor: 'fromAmount',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
@@ -89,7 +92,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 					sortable: true,
 				},
 				{
-					Header: <StyledTableHeader>{t('assets.exchanges.table.to')}</StyledTableHeader>,
+					Header: <StyledTableHeader>{t('dashboard.transactions.table.to')}</StyledTableHeader>,
 					accessor: 'toAmount',
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<HistoricalTrade>) => (
@@ -147,10 +150,13 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
-					<div>{t('assets.exchanges.table.no-results')}</div>
+					<TableNoResults>
+						<NoNotificationIcon />
+						{t('dashboard.transactions.table.no-results')}
+					</TableNoResults>
 				) : undefined
 			}
-			showPagination
+			showPagination={true}
 		/>
 	);
 };
@@ -189,6 +195,15 @@ const StyledCurrencyKey = styled.span`
 
 const StyledPrice = styled.span`
 	color: ${(props) => props.theme.colors.silver};
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
 `;
 
 export default TradeHistory;

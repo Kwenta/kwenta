@@ -41,7 +41,7 @@ const TrendingSynths: FC = () => {
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const SYNTH_SORT_OPTIONS = useMemo(
-		() => [{ label: t('dashboard.synthSort.price'), value: SynthSort.Price }],
+		() => [{ label: t('dashboard.synth-sort.price'), value: SynthSort.Price }],
 		[t]
 	);
 	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
