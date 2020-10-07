@@ -6,67 +6,20 @@ import { useRecoilValue } from 'recoil';
 import { FlexDiv, FlexDivCol, PageContent, MobileContainerMixin } from 'styles/common';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Loader from 'components/Loader';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
 import { isWalletConnectedState } from 'store/wallet';
-import { priceCurrencyState } from 'store/app';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 
-	// TODO: consider putting these in context... too much prop drilling going on.
-	const synthsBalancesQuery = useSynthsBalancesQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-
-	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
-
-	const selectPriceCurrencyProps = {
-		selectedPriceCurrency,
-		selectPriceCurrencyRate,
-	};
-
-	const synthBalances =
-		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
-			? synthsBalancesQuery.data
-			: null;
-
-	let activeView = <Loader />;
-
-	const onboardProps = {
-		synthBalances,
-		exchangeRates,
-		...selectPriceCurrencyProps,
-	};
-
-	if (isWalletConnected) {
-		if (synthBalances != null) {
-			const noSynths = synthBalances.balances.length === 0;
-
-			activeView = noSynths ? (
-				<Onboard {...onboardProps} />
-			) : (
-				<DashboardCard
-					exchangeRates={exchangeRates}
-					synthBalances={synthBalances}
-					{...selectPriceCurrencyProps}
-				/>
-			);
-		}
-	} else {
-		activeView = <Onboard {...onboardProps} />;
-	}
+	const activeView = isWalletConnected ? <DashboardCard /> : <Onboard />;
 
 	return (
 		<>
@@ -79,7 +32,7 @@ const DashboardPage = () => {
 						<Container>
 							<LeftContainer>{activeView}</LeftContainer>
 							<RightContainer>
-								<TrendingSynths exchangeRates={exchangeRates} {...selectPriceCurrencyProps} />
+								<TrendingSynths />
 							</RightContainer>
 							<BottomShadow />
 						</Container>

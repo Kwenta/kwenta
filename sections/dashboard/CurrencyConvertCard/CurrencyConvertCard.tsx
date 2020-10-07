@@ -8,11 +8,12 @@ import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency
 import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
+import OneInch from 'containers/OneInch';
 
-import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
@@ -22,27 +23,15 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { hasOrdersNotificationState } from 'store/ui';
 import { customGasPriceState, gasSpeedState, isWalletConnectedState } from 'store/wallet';
 import { ordersState } from 'store/orders';
+import { priceCurrencyState } from 'store/app';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import media from 'styles/media';
 
-import synthetix, { Synth } from 'lib/synthetix';
-import OneInch from 'containers/OneInch';
+import synthetix from 'lib/synthetix';
 
-type CurrencyConvertCardProps = {
-	exchangeRates: Rates | null;
-	synthBalances: Balances | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
-};
-
-const CurrencyConvertCard: FC<CurrencyConvertCardProps> = ({
-	exchangeRates,
-	synthBalances,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const CurrencyConvertCard: FC = () => {
 	const { notify } = Connector.useContainer();
 	const { swap } = OneInch.useContainer();
 
@@ -62,6 +51,7 @@ const CurrencyConvertCard: FC<CurrencyConvertCardProps> = ({
 	const [txError, setTxError] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 
@@ -69,6 +59,16 @@ const CurrencyConvertCard: FC<CurrencyConvertCardProps> = ({
 
 	const ETHBalanceQuery = useETHBalanceQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
+
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
@@ -154,7 +154,7 @@ const CurrencyConvertCard: FC<CurrencyConvertCardProps> = ({
 							})
 						);
 						ETHBalanceQuery.refetch();
-						// synthsWalletBalancesQuery.refetch();
+						synthsBalancesQuery.refetch();
 					});
 				}
 			}

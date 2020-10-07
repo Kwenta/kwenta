@@ -1,25 +1,21 @@
 import { useState, FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+
+import { priceCurrencyState } from 'store/app';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
-import Currency from 'components/Currency';
 import Select from 'components/Select';
 
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
-
-import { NO_VALUE } from 'constants/placeholder';
+import useExchangeRatesQuery, { Rates } from 'queries/rates/useExchangeRatesQuery';
 
 import { CardTitle } from 'sections/dashboard/common';
 
-import { SelectableCurrencyRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered } from 'styles/common';
 
-type TrendingSynthsProps = {
-	exchangeRates: Rates | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
-};
+import SynthRow from './SynthRow';
 
 enum SynthSort {
 	Price,
@@ -35,12 +31,14 @@ const priceSort = (exchangeRates: Rates, a: Synth, b: Synth) => {
 	return priceA > priceB ? -1 : 1;
 };
 
-const TrendingSynths: FC<TrendingSynthsProps> = ({
-	exchangeRates,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
+
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const SYNTH_SORT_OPTIONS = useMemo(
 		() => [{ label: t('dashboard.synthSort.price'), value: SynthSort.Price }],
@@ -82,25 +80,13 @@ const TrendingSynths: FC<TrendingSynthsProps> = ({
 					const currencyKey = synth.name;
 
 					return (
-						<StyledSelectableCurrencyRow key={currencyKey} isSelectable={false}>
-							<Currency.Name
-								currencyKey={currencyKey}
-								name={t('common.currency.synthetic-currency-name', {
-									currencyName: synth.description,
-								})}
-								showIcon={true}
-							/>
-							{price != null ? (
-								<Currency.Price
-									currencyKey={selectedPriceCurrency.name}
-									price={price}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
-								/>
-							) : (
-								NO_VALUE
-							)}
-						</StyledSelectableCurrencyRow>
+						<SynthRow
+							key={currencyKey}
+							synth={synth}
+							price={price}
+							selectedPriceCurrency={selectedPriceCurrency}
+							selectPriceCurrencyRate={selectPriceCurrencyRate}
+						/>
 					);
 				})}
 			</Rows>
@@ -121,11 +107,11 @@ const Rows = styled.div`
 	padding-top: 10px;
 `;
 
-const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
-	padding-left: 32px;
-	padding-right: 32px;
-	padding-bottom: 13px;
-`;
+// const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
+// 	padding-left: 32px;
+// 	padding-right: 32px;
+// 	padding-bottom: 13px;
+// `;
 
 const TrendingSortSelect = styled(Select)`
 	width: 30%;

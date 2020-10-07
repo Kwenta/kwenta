@@ -3,13 +3,12 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { Synth } from 'lib/synthetix';
-
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
+import Loader from 'components/Loader';
 
-import { Balances } from 'queries/walletBalances/useSynthsBalancesQuery';
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
@@ -18,6 +17,8 @@ import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
 import { BoldText } from 'styles/common';
 
 import { CardTitle, ConvertContainer } from '../common';
+import { useRecoilValue } from 'recoil';
+import { priceCurrencyState } from 'store/app';
 
 const TABS = {
 	SYNTH_BALANCES: 'synth-balances',
@@ -25,29 +26,38 @@ const TABS = {
 	TRANSACTIONS: 'transactions',
 };
 
-type DashboardCardProps = {
-	exchangeRates: Rates | null;
-	synthBalances: Balances | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
-};
-
-const DashboardCard: FC<DashboardCardProps> = ({
-	exchangeRates,
-	synthBalances,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { tab } = router.query;
 
-	const activeTab = !!tab ? tab[0] : TABS.SYNTH_BALANCES;
+	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery();
+
+	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
+
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
 
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,
 		selectPriceCurrencyRate,
 	};
+
+	if (synthsBalancesQuery.isLoading) {
+		return <Loader />;
+	}
+
+	// TODO: switch to set/route based tabs
+	const activeTab = !!tab
+		? tab[0]
+		: synthBalances?.balances.length === 0
+		? TABS.CONVERT
+		: TABS.SYNTH_BALANCES;
 
 	return (
 		<>
@@ -96,11 +106,7 @@ const DashboardCard: FC<DashboardCardProps> = ({
 			</TabPanel>
 			<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
 				<ConvertContainer>
-					<CurrencyConvertCard
-						exchangeRates={exchangeRates}
-						synthBalances={synthBalances}
-						{...selectPriceCurrencyProps}
-					/>
+					<CurrencyConvertCard />
 				</ConvertContainer>
 			</TabPanel>
 			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
