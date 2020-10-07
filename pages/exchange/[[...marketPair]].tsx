@@ -573,7 +573,7 @@ const ExchangePage = () => {
 };
 
 const StyledPageContent = styled(PageContent)`
-	${media.greaterThan('xl')`
+	${media.greaterThan('md')`
 		display: flex;
 		flex-direction: column;
 		justify-content: space-around;
@@ -582,9 +582,9 @@ const StyledPageContent = styled(PageContent)`
 
 const DesktopCardsContainer = styled(FlexDivCentered)`
 	justify-content: center;
-	padding: 55px 60px 24px 60px;
+	padding: 0 60px;
 	${media.lessThan('xl')`
-		padding: 55px 0 24px 0;
+		padding: 0 24px;
 	`}
 `;
 

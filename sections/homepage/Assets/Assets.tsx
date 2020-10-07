@@ -10,7 +10,6 @@ import media from 'styles/media';
 import { Media } from 'styles/media';
 
 import { GridContainer, SubHeader } from '../common';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 const Assets = () => {
 	const { t } = useTranslation();
