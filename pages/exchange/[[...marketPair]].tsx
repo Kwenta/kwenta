@@ -592,17 +592,16 @@ const StyledPageContent = styled(PageContent)`
 	${media.greaterThan('md')`
 		display: flex;
 		flex-direction: column;
-		justify-content: space-around;
+		justify-content: space-between;
+		padding-bottom: 40px;
+		padding-top: 55px;
 	`}
 `;
 
 const DesktopCardsContainer = styled(FlexDiv)`
 	align-items: flex-start;
 	justify-content: center;
-	padding: 0 60px;
-	${media.lessThan('xl')`
-		padding: 0 24px;
-	`}
+	padding-bottom: 24px;
 `;
 
 const SwapCurrenciesButton = styled.button`

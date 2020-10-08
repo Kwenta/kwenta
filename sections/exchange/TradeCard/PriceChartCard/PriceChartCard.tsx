@@ -320,10 +320,7 @@ const Actions = styled(GridDivCenteredCol)`
 
 const ChartBody = styled.div`
 	padding-top: 10px;
-	height: 350px;
-	${media.greaterThan('lg')`
-		height: 35vh;
-	`};
+	height: 35vh;
 `;
 
 const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
