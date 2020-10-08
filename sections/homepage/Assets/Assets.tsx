@@ -3,25 +3,64 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
+// import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
-import AssetDotPoint from 'assets/inline-svg/marketing/asset-card-dot.svg';
+// import Fade from 'assets/inline-svg/marketing/fade.svg';
+import CommoditiesIcon from 'assets/inline-svg/marketing/icon-commodities.svg';
+import CryptoIcon from 'assets/inline-svg/marketing/icon-crypto.svg';
+import EquitiesIcon from 'assets/inline-svg/marketing/icon-equities.svg';
+import ForexIcon from 'assets/inline-svg/marketing/icon-forex.svg';
+import IndicesIcon from 'assets/inline-svg/marketing/icon-indices.svg';
+import ShortIcon from 'assets/inline-svg/marketing/icon-short.svg';
 
 import media from 'styles/media';
 import { Media } from 'styles/media';
 
 import { GridContainer, SubHeader } from '../common';
 
+const ASSETS = [
+	{
+		id: 'index',
+		image: <IndicesIcon />,
+		label: 'homepage.assets.index',
+	},
+	{
+		id: 'forex',
+		image: <ForexIcon />,
+		label: 'homepage.assets.forex',
+	},
+	{
+		id: 'equities',
+		image: <EquitiesIcon />,
+		label: 'homepage.assets.equities',
+	},
+	{
+		id: 'crypto',
+		image: <CryptoIcon />,
+		label: 'homepage.assets.crypto',
+	},
+	{
+		id: 'commodity',
+		image: <CommoditiesIcon />,
+		label: 'homepage.assets.commodity',
+	},
+	{
+		id: 'short',
+		image: <ShortIcon />,
+		label: 'homepage.assets.short',
+	},
+];
+
 const Assets = () => {
 	const { t } = useTranslation();
-	const assets = t('homepage.assets.list', { returnObjects: true }) as string[];
 
 	const title = <LeftSubHeader>{t('homepage.assets.title')}</LeftSubHeader>;
 	const assetCards = (
 		<GridContainer>
-			{assets.map((text, idx) => (
-				<AssetCard key={idx}>
-					<AssetDotPoint />
-					<AssetCardText>{text}</AssetCardText>
+			{ASSETS.map(({ id, label, image }) => (
+				<AssetCard key={id}>
+					{image}
+					<AssetCardText>{t(label)}</AssetCardText>
 				</AssetCard>
 			))}
 		</GridContainer>
