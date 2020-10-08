@@ -55,7 +55,7 @@ import media from 'styles/media';
 import synthetix from 'lib/synthetix';
 
 import {
-	FlexDivCentered,
+	FlexDiv,
 	FlexDivColCentered,
 	resetButtonCSS,
 	PageContent,
@@ -596,7 +596,8 @@ const StyledPageContent = styled(PageContent)`
 	`}
 `;
 
-const DesktopCardsContainer = styled(FlexDivCentered)`
+const DesktopCardsContainer = styled(FlexDiv)`
+	align-items: flex-start;
 	justify-content: center;
 	padding: 0 60px;
 	${media.lessThan('xl')`

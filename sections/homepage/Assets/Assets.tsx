@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
 // import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
-// import Fade from 'assets/inline-svg/marketing/fade.svg';
+import Fade from 'assets/inline-svg/marketing/fade.svg';
 import CommoditiesIcon from 'assets/inline-svg/marketing/icon-commodities.svg';
 import CryptoIcon from 'assets/inline-svg/marketing/icon-crypto.svg';
 import EquitiesIcon from 'assets/inline-svg/marketing/icon-equities.svg';
@@ -72,7 +72,7 @@ const Assets = () => {
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
 						<AssetsImage src={AssetCollections} alt="" />
-						{/* <Fade /> */}
+						<Fade />
 					</AssetCollectionWrapper>
 					<Col>
 						{title}
@@ -106,9 +106,14 @@ const AssetCollectionWrapper = styled.div`
 	position: relative;
 	flex-shrink: 0;
 	svg {
-		position: absolute;
-		left: 0;
-		top: 0;
+		display: none;
+		${media.between('lg', 'xl')`
+			display: unset;
+			position: absolute;
+			left: -50px;
+			top: -120px;
+			pointer-events: none;
+		`}
 	}
 `;
 

@@ -10,7 +10,13 @@ export const breakpoints = {
 };
 
 const AppMedia = createMedia({
-	breakpoints,
+	breakpoints: {
+		xs: breakpoints.xs,
+		sm: breakpoints.sm + 1,
+		md: breakpoints.md + 1,
+		lg: breakpoints.lg + 1,
+		xl: breakpoints.xl + 1,
+	},
 });
 
 export const media = generateMedia({
