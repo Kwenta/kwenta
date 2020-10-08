@@ -1,4 +1,4 @@
-import { useState, FC, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';

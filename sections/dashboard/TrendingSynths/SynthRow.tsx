@@ -1,17 +1,20 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 
 import { Synth } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
+import { Period } from 'constants/period';
+import ROUTES from 'constants/routes';
 
-import { SelectableCurrencyRow } from 'styles/common';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
-import { Period } from 'constants/period';
+
+import { SelectableCurrencyRow } from 'styles/common';
 
 type SynthRow = {
 	price: number | null;
@@ -26,6 +29,7 @@ const SynthRow: FC<SynthRow> = ({
 	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 
 	const currencyKey = synth.name;
 
@@ -33,7 +37,10 @@ const SynthRow: FC<SynthRow> = ({
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
 	return (
-		<StyledSelectableCurrencyRow isSelectable={false}>
+		<StyledSelectableCurrencyRow
+			isSelectable={true}
+			onClick={() => router.push(ROUTES.Exchange.Into(currencyKey))}
+		>
 			<Currency.Name
 				currencyKey={currencyKey}
 				name={t('common.currency.synthetic-currency-name', {

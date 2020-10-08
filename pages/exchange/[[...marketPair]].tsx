@@ -48,7 +48,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import { useLocalStorage } from 'hooks/useLocalStorage';
 
-import { priceCurrencyState, appReadyState } from 'store/app';
+import { priceCurrencyState } from 'store/app';
 
 import media from 'styles/media';
 
@@ -96,7 +96,6 @@ const ExchangePage = () => {
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
-	const isAppReady = useRecoilValue(appReadyState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -216,6 +215,20 @@ const ExchangePage = () => {
 			? synthsWalletBalancesQuery.data.balances.length === 0
 			: false;
 
+	const routeToMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
+		router.replace(
+			`/exchange/[[...marketPair]]`,
+			ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey),
+			{
+				shallow: true,
+			}
+		);
+
+	const routeToBaseCurrency = (baseCurrencyKey: CurrencyKey) =>
+		router.replace(`/exchange/[[...marketPair]]`, ROUTES.Exchange.Into(baseCurrencyKey), {
+			shallow: true,
+		});
+
 	const handleCurrencySwap = () => {
 		const baseAmount = baseCurrencyAmount;
 		const quoteAmount = quoteCurrencyAmount;
@@ -227,6 +240,10 @@ const ExchangePage = () => {
 
 		setBaseCurrencyAmount(quoteAmount);
 		setQuoteCurrencyAmount(baseAmount);
+
+		if (quoteCurrencyKey != null && baseCurrencyKey != null) {
+			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
+		}
 	};
 
 	function resetCurrencies() {
@@ -303,46 +320,34 @@ const ExchangePage = () => {
 	};
 
 	useEffect(() => {
-		if (marketPairQuery && isAppReady) {
-			let baseCurrencyFromQuery: CurrencyKey | null = null;
-			let quoteCurrencyFromQuery: CurrencyKey | null = null;
-			if (marketPairQuery.length) {
-				[baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketPairQuery[0].split('-');
-			}
+		if (marketPairQuery.length) {
+			if (synthetix.synthsMap != null) {
+				const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketPairQuery[0].split('-') as [
+					CurrencyKey,
+					CurrencyKey
+				];
 
-			if (currencyPair.base == null && currencyPair.quote == null) {
-				// TODO: validate currencies
-				if (
-					baseCurrencyFromQuery != null &&
-					quoteCurrencyFromQuery != null &&
-					synthetix.synthsMap != null &&
-					// validate synths (potentially)
-					synthetix.synthsMap[baseCurrencyFromQuery] != null &&
-					synthetix.synthsMap[quoteCurrencyFromQuery] != null
-				) {
+				const validBaseCurrency =
+					baseCurrencyFromQuery != null && synthetix.synthsMap[baseCurrencyFromQuery] != null;
+				const validQuoteCurrency =
+					quoteCurrencyFromQuery != null && synthetix.synthsMap[quoteCurrencyFromQuery] != null;
+
+				if (validBaseCurrency && validQuoteCurrency) {
 					setCurrencyPair({
 						base: baseCurrencyFromQuery,
 						quote: quoteCurrencyFromQuery,
 					});
+				} else if (validBaseCurrency) {
+					setCurrencyPair({
+						base: baseCurrencyFromQuery,
+						quote: null,
+					});
 				}
-			} else if (
-				currencyPair.base != null &&
-				currencyPair.quote != null &&
-				(quoteCurrencyFromQuery !== currencyPair.quote ||
-					baseCurrencyFromQuery !== currencyPair.base)
-			) {
-				router.replace(
-					`/exchange/[[...market]]`,
-					ROUTES.Exchange.MarketPair(currencyPair.base, currencyPair.quote),
-					{
-						shallow: true,
-					}
-				);
 			}
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currencyPair, marketPairQuery, isAppReady]);
+	}, [marketPairQuery]);
 
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,
@@ -542,6 +547,14 @@ const ExchangePage = () => {
 									base: currencyKey,
 									quote: pair.quote === currencyKey ? null : pair.quote,
 								}));
+
+								if (currencyPair.quote != null) {
+									if (currencyPair.quote !== currencyKey) {
+										routeToMarketPair(currencyKey, currencyPair.quote);
+									}
+								} else {
+									routeToBaseCurrency(currencyKey);
+								}
 							}}
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
@@ -560,6 +573,9 @@ const ExchangePage = () => {
 									base: pair.base === currencyKey ? null : pair.base,
 									quote: currencyKey,
 								}));
+								if (currencyPair.base && currencyPair.base !== currencyKey) {
+									routeToMarketPair(currencyPair.base, currencyKey);
+								}
 							}}
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
