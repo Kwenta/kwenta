@@ -39,7 +39,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
-	const { connectWallet, disconnectWallet, switchWallet } = Connector.useContainer();
+	const { connectWallet, disconnectWallet } = Connector.useContainer();
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
@@ -88,7 +88,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							<SwitchWalletButton
 								onClick={() => {
 									onDismiss();
-									switchWallet();
+									connectWallet();
 								}}
 							>
 								{t('common.switch')}

@@ -45,7 +45,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{ walletName: 'walletLink', rpcUrl: infuraRpc },
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
-				{ walletName: 'unilogin' },
+				// { walletName: 'unilogin' },
 				{ walletName: 'authereum' },
 			],
 		},

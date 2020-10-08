@@ -9,10 +9,16 @@ import get from 'lodash/get';
 import produce from 'immer';
 import Slider from 'react-slick';
 
+import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
+import { zIndex } from 'constants/ui';
+import ROUTES from 'constants/routes';
 import { CurrencyKey } from 'constants/currency';
 import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
+import Etherscan from 'containers/Etherscan';
+
 // import Services from 'containers/Services';
 
 import ArrowsIcon from 'assets/inline-svg/app/arrows.svg';
@@ -61,18 +67,15 @@ import {
 	PageContent,
 	MobileContainerMixin,
 } from 'styles/common';
-import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
-import { zIndex } from 'constants/ui';
 
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
-import ROUTES from 'constants/routes';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 	// const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 	const router = useRouter();
 
@@ -305,8 +308,14 @@ const ExchangePage = () => {
 							);
 							synthsWalletBalancesQuery.refetch();
 						});
-						// await tx.wait();
-						// synthsWalletBalancesQuery.refetch();
+
+						emitter.on('all', () => {
+							if (typeof window !== 'undefined' && etherscanInstance != null) {
+								return {
+									onclick: () => window.open(etherscanInstance.txLink(tx.hash)),
+								};
+							}
+						});
 					}
 				}
 				setTxConfirmationModalOpen(false);

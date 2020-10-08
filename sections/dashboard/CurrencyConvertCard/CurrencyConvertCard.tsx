@@ -9,6 +9,7 @@ import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
 import OneInch from 'containers/OneInch';
+import Etherscan from 'containers/Etherscan';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -34,6 +35,7 @@ import synthetix from 'lib/synthetix';
 const CurrencyConvertCard: FC = () => {
 	const { notify } = Connector.useContainer();
 	const { swap } = OneInch.useContainer();
+	const { etherscanInstance } = Etherscan.useContainer();
 
 	const [currencyPair] = useState<{
 		base: CurrencyKey | null;
@@ -155,6 +157,14 @@ const CurrencyConvertCard: FC = () => {
 						);
 						ETHBalanceQuery.refetch();
 						synthsBalancesQuery.refetch();
+					});
+
+					emitter.on('all', () => {
+						if (typeof window !== 'undefined' && etherscanInstance != null) {
+							return {
+								onclick: () => window.open(etherscanInstance.txLink(tx.hash)),
+							};
+						}
 					});
 				}
 			}

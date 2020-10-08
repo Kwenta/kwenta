@@ -337,6 +337,7 @@
 		"wallet": {
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "switch wallet",
+			"switch-accounts": "switch accounts",
 			"disconnect-wallet": "disconnect wallet"
 		},
 		"tx-status": {

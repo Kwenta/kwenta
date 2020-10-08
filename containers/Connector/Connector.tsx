@@ -126,16 +126,20 @@ const useConnector = () => {
 		}
 	}, [onboard, selectedWallet]);
 
+	const resetCachedUI = () => {
+		// TODO: since orders are not persisted, we need to reset them.
+		setOrders([]);
+		setHasOrdersNotification(false);
+	};
+
 	const connectWallet = async () => {
 		try {
 			if (onboard) {
+				onboard.walletReset();
 				const success = await onboard.walletSelect();
 				if (success) {
 					await onboard.walletCheck();
-
-					// TODO: since orders are not persisted, we need to reset them.
-					setOrders([]);
-					setHasOrdersNotification(false);
+					resetCachedUI();
 				}
 			}
 		} catch (e) {
@@ -147,20 +151,32 @@ const useConnector = () => {
 		try {
 			if (onboard) {
 				onboard.walletReset();
+				resetCachedUI();
 			}
 		} catch (e) {
 			console.log(e);
 		}
 	};
 
-	const switchWallet = async () => {
+	const switchAccounts = async () => {
 		try {
 			if (onboard) {
-				onboard.walletSelect();
+				onboard.accountSelect();
 			}
 		} catch (e) {
 			console.log(e);
 		}
+	};
+
+	const isHardwareWallet = () => {
+		if (onboard) {
+			const onboardState = onboard.getState();
+			console.log(onboardState);
+			if (onboardState.address != null) {
+				return onboardState.wallet.type === 'hardware';
+			}
+		}
+		return false;
 	};
 
 	return {
@@ -170,7 +186,8 @@ const useConnector = () => {
 		notify,
 		connectWallet,
 		disconnectWallet,
-		switchWallet,
+		switchAccounts,
+		isHardwareWallet,
 	};
 };
 
