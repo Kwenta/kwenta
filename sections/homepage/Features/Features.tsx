@@ -92,14 +92,14 @@ const FeatureContentTitle = styled(FlexDivCentered)`
 `;
 
 const ComingSoonTag = styled(FlexDivCentered)`
-	width: 128px;
+	width: 104px;
 	height: 24px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
+	background: ${(props) => props.theme.colors.gold};
 	border-radius: 50px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
-	margin-left: 8px;
+	margin-left: 16px;
 `;
 
 export default Features;

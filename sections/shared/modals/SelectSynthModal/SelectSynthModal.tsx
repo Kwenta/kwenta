@@ -11,7 +11,7 @@ import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered, BottomShadow } from 'styles/common';
 
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
@@ -146,9 +146,15 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 					<EmptyDisplay>{t('modals.select-synth.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
+			<StyledBottomShadow />
 		</StyledCenteredModal>
 	);
 };
+
+const StyledBottomShadow = styled(BottomShadow)`
+	position: absolute;
+	height: 32px;
+`;
 
 const StyledCenteredModal = styled(CenteredModal)`
 	[data-reach-dialog-content] {

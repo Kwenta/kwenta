@@ -46,6 +46,10 @@ const HeroImageContainer = styled(GridDiv)`
 	overflow: hidden;
 	display: grid;
 	justify-content: center;
+	margin-top: -40px;
+	${media.lessThan('sm')`
+		margin-top: 0;
+	`}
 `;
 
 const HeroImage = styled.img`

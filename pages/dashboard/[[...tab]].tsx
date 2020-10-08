@@ -7,6 +7,8 @@ import { FlexDiv, FlexDivCol, PageContent, MobileContainerMixin } from 'styles/c
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
+import { BottomShadow } from 'styles/common';
+
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
@@ -77,16 +79,6 @@ const RightContainer = styled(FlexDivCol)`
 	flex-shrink: 0;
 	position: relative;
 	margin-left: 20px;
-`;
-
-const BottomShadow = styled.div`
-	background: linear-gradient(360deg, #10101e 0%, rgba(16, 16, 30, 0) 100%);
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 16px;
-	pointer-events: none;
 `;
 
 export default DashboardPage;

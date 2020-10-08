@@ -190,7 +190,7 @@ const StyledCardBody = styled(Card.Body)`
 	display: grid;
 	grid-gap: 40px;
 	grid-auto-flow: column;
-	padding: 0 18px;
+	padding: 8px 18px;
 `;
 
 const Item = styled(FlexDivRowCentered)`

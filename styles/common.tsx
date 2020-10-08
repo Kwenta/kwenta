@@ -175,3 +175,13 @@ export const ResponsiveImage = styled.img`
 export const BoldText = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
+
+export const BottomShadow = styled.div`
+	background: linear-gradient(360deg, #10101e 0%, rgba(16, 16, 30, 0) 100%);
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 16px;
+	pointer-events: none;
+`;
