@@ -1,7 +1,7 @@
 import { useState, FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { useQueryCache } from 'react-query';
 
 import { priceCurrencyState } from 'store/app';
@@ -18,17 +18,14 @@ import { FlexDivRowCentered } from 'styles/common';
 
 import SynthRow from './SynthRow';
 import { numericSort, toCurrencyKeyMap } from './utils';
-
-enum SynthSort {
-	Price,
-	Rates24HLow,
-	Rates24HHigh,
-	Volume,
-	Change,
-}
+import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
+import { trendingSynthsOptionState } from 'store/ui';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
+
+	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
+
 	const queryCache = useQueryCache();
 
 	const historicalVolumeCache = queryCache.getQueries(['rates', 'historicalVolume']);
@@ -40,43 +37,37 @@ const TrendingSynths: FC = () => {
 
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
-	const SYNTH_SORT_OPTIONS = useMemo(
-		() => [
-			{ label: t('dashboard.synth-sort.24h-vol'), value: SynthSort.Volume },
-			{ label: t('dashboard.synth-sort.24h-high'), value: SynthSort.Rates24HHigh },
-			{ label: t('dashboard.synth-sort.24h-low'), value: SynthSort.Rates24HLow },
-			{ label: t('dashboard.synth-sort.24h-change'), value: SynthSort.Change },
-			{ label: t('dashboard.synth-sort.price'), value: SynthSort.Price },
-		],
-		[t]
-	);
-	const [currentSynthSort, setCurrentSynthSort] = useState(SYNTH_SORT_OPTIONS[0]);
-
 	const synths = synthetix.js?.synths ?? [];
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
 			return synths.sort((a: Synth, b: Synth) => numericSort(exchangeRates, a, b));
 		}
-		if (currentSynthSort.value === SynthSort.Volume && historicalVolumeCache != null) {
+		if (
+			currentSynthSort.value === SynthSort.Volume &&
+			historicalVolumeCache != null &&
+			historicalVolumeCache.length > 0
+		) {
 			return synths.sort((a: Synth, b: Synth) =>
 				numericSort(toCurrencyKeyMap(historicalVolumeCache), a, b)
 			);
 		}
-		if (currentSynthSort.value === SynthSort.Rates24HHigh && historicalRatesCache != null) {
-			return synths.sort((a: Synth, b: Synth) =>
-				numericSort(toCurrencyKeyMap(historicalRatesCache, 'high'), a, b)
-			);
-		}
-		if (currentSynthSort.value === SynthSort.Rates24HLow && historicalRatesCache != null) {
-			return synths.sort((a: Synth, b: Synth) =>
-				numericSort(toCurrencyKeyMap(historicalRatesCache, 'low'), a, b)
-			);
-		}
-		if (currentSynthSort.value === SynthSort.Change && historicalRatesCache != null) {
-			return synths.sort((a: Synth, b: Synth) =>
-				numericSort(toCurrencyKeyMap(historicalRatesCache, 'change'), a, b)
-			);
+		if (historicalRatesCache != null && historicalRatesCache.length > 0) {
+			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(toCurrencyKeyMap(historicalRatesCache, 'high'), a, b)
+				);
+			}
+			if (currentSynthSort.value === SynthSort.Rates24HLow) {
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(toCurrencyKeyMap(historicalRatesCache, 'low'), a, b)
+				);
+			}
+			if (currentSynthSort.value === SynthSort.Change) {
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(toCurrencyKeyMap(historicalRatesCache, 'change'), a, b)
+				);
+			}
 		}
 		return synths;
 	}, [synths, currentSynthSort, exchangeRates, historicalVolumeCache, historicalRatesCache]);
@@ -87,7 +78,8 @@ const TrendingSynths: FC = () => {
 				<TitleSortContainer>
 					<CardTitle>{t('dashboard.trending')}</CardTitle>
 					<TrendingSortSelect
-						formatOptionLabel={(option: any) => <span>{option.label}</span>}
+						inputId="synth-sort-options"
+						formatOptionLabel={(option: any) => <span>{t(option.label)}</span>}
 						options={SYNTH_SORT_OPTIONS}
 						value={currentSynthSort}
 						onChange={(option: any) => {

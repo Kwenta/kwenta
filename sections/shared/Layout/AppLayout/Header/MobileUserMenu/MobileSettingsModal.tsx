@@ -59,6 +59,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					<OptionLabel>{t('modals.settings.options.currency')}</OptionLabel>
 					<CurrencySelectContainer>
 						<Select
+							inputId="mobile-currency-options"
 							formatOptionLabel={(option) => (
 								<span>
 									{option.value.sign} {option.value.asset}

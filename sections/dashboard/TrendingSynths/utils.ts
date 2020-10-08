@@ -10,8 +10,11 @@ export const toCurrencyKeyMap = (
 	query.reduce((acc, query) => {
 		// the third item is the currencyKey (according to the queryKeys.ts file)
 		const currencyKey = query.queryKey[2] as string;
-		// @ts-ignore
-		acc[currencyKey] = dataField ? query.state.data[dataField] : query.state.data;
+
+		if (query.state.data != null) {
+			// @ts-ignore
+			acc[currencyKey] = dataField ? query.state.data[dataField] : query.state.data;
+		}
 
 		return acc;
 	}, {});

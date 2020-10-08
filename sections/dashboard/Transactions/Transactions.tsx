@@ -106,6 +106,7 @@ const Transactions: FC<TransactionsProps> = ({
 		<>
 			<Filters>
 				<Select
+					inputId="synth-filter-list"
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={synthFilterList}
 					value={synthFilter}
@@ -116,6 +117,7 @@ const Transactions: FC<TransactionsProps> = ({
 					}}
 				/>
 				<Select
+					inputId="order-type-list"
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={orderTypeList}
 					value={orderType}
@@ -126,6 +128,7 @@ const Transactions: FC<TransactionsProps> = ({
 					}}
 				/>
 				<Select
+					inputId="order-size-list"
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={orderSizeList}
 					value={orderSize}

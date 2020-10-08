@@ -29,6 +29,7 @@ export const SettingsModal: FC<SettingsModalProps> = ({ onDismiss }) => {
 					<OptionLabel>{t('modals.settings.options.currency')}</OptionLabel>
 					<CurrencySelectContainer>
 						<Select
+							inputId="currency-options"
 							formatOptionLabel={(option) => (
 								<span>
 									{option.value.sign} {option.value.asset}
