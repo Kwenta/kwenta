@@ -13,7 +13,7 @@ import Pagination from './Pagination';
 export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
-const MAX_PAGE_ROWS = 1;
+const MAX_PAGE_ROWS = 10;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
