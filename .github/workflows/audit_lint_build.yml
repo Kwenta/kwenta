@@ -1,0 +1,69 @@
+name: Audit, Lint, Build
+
+on: [push]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+      env:
+        CI: true
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Audit dependencies
+      run: audit-ci --critical --report-type important
+
+    - name: Lockfile lint
+      run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "github:"
+
+  build:
+    needs: audit
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:12.19
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+      env:
+        CI: true
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.npm
+          **/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: npm install --no-audit
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run build
+
+    # - name: Compress artifacts
+    #   run: tar -cvzf build.tar .next
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build
+        path: .next
