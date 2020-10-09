@@ -8,9 +8,9 @@ jobs:
 
     container:
       image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+      # credentials:
+      #   username: synthetixio
+      #   password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
       env:
         CI: true
 
