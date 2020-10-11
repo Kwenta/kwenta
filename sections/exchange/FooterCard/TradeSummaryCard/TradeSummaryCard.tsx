@@ -1,13 +1,11 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { ethers } from 'ethers';
 import styled, { css } from 'styled-components';
-import get from 'lodash/get';
 import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
 
-import synthetix, { Synth } from 'lib/synthetix';
+import { Synth } from 'lib/synthetix';
 
 import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
 
@@ -48,6 +46,7 @@ type TradeSummaryCardProps = {
 	showFee?: boolean;
 	attached?: boolean;
 	className?: string;
+	exchangeFeeRate: number | null;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -69,6 +68,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	quoteCurrencyKey,
 	showFee = true,
 	attached,
+	exchangeFeeRate,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -77,14 +77,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
-
-	const exchangeFeeRateRaw: string | null =
-		baseCurrency != null
-			? get(synthetix.js, ['defaults', 'EXCHANGE_FEE_RATES', baseCurrency.category], null)
-			: null;
-
-	const exchangeFeeRate =
-		exchangeFeeRateRaw != null ? Number(ethers.utils.formatEther(exchangeFeeRateRaw)) : null;
 
 	function getButtonLabel() {
 		if (isSubmissionDisabled) {

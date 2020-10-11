@@ -271,6 +271,7 @@ const CurrencyConvertCard: FC = () => {
 					quoteCurrencyKey={quoteCurrencyKey}
 					showFee={false}
 					attached={true}
+					exchangeFeeRate={null}
 				/>
 			)}
 			{txConfirmationModalOpen && (

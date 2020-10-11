@@ -71,6 +71,7 @@ import {
 import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
+import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -111,6 +112,9 @@ const ExchangePage = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
+	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
+
+	const exchangeFeeRate = exchangeFeeRateQuery.data ?? null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
 
@@ -553,6 +557,7 @@ const ExchangePage = () => {
 							gasPrices={ethGasStationQuery.data}
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 							quoteCurrencyKey={quoteCurrencyKey}
+							exchangeFeeRate={exchangeFeeRate}
 						/>
 					)}
 					{txConfirmationModalOpen && (
