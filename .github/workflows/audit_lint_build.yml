@@ -8,15 +8,18 @@ jobs:
 
     container:
       image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
-      # credentials:
-      #   username: synthetixio
-      #   password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
       env:
         CI: true
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GH_READ_REPO }}
+        submodules: recursive
 
     - name: Audit dependencies
       run: audit-ci --critical --report-type important
@@ -32,7 +35,7 @@ jobs:
       image: ghcr.io/synthetixio/docker-node/alpine:12.19
       credentials:
         username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_WRITE }}
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
       env:
         CI: true
 
