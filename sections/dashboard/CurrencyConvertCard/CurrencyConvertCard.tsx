@@ -32,6 +32,8 @@ import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
 
+// TOOD: the convert/exchange currency cards are very similar, it needs to be refactored into a reusable component.
+
 const CurrencyConvertCard: FC = () => {
 	const { notify } = Connector.useContainer();
 	const { swap } = OneInch.useContainer();
@@ -144,6 +146,8 @@ const CurrencyConvertCard: FC = () => {
 				setHasOrdersNotification(true);
 
 				if (notify) {
+					// TODO: move this to a shared function
+
 					const { emitter } = notify.hash(tx.hash);
 
 					emitter.on('txConfirmed', () => {
@@ -157,6 +161,9 @@ const CurrencyConvertCard: FC = () => {
 						);
 						ETHBalanceQuery.refetch();
 						synthsBalancesQuery.refetch();
+						return {
+							autoDismiss: 0,
+						};
 					});
 
 					emitter.on('all', () => {
@@ -189,10 +196,15 @@ const CurrencyConvertCard: FC = () => {
 			amount={quoteCurrencyAmount}
 			onAmountChange={(e) => {
 				const value = e.target.value;
-				const numValue = Number(value);
+				if (value === '') {
+					setQuoteCurrencyAmount('');
+					setBaseCurrencyAmount('');
+				} else {
+					const numValue = Math.abs(Number(value));
 
-				setQuoteCurrencyAmount(value);
-				setBaseCurrencyAmount(`${numValue * rate}`);
+					setQuoteCurrencyAmount(`${numValue}`);
+					setBaseCurrencyAmount(`${numValue * rate}`);
+				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
@@ -211,10 +223,15 @@ const CurrencyConvertCard: FC = () => {
 			amount={baseCurrencyAmount}
 			onAmountChange={(e) => {
 				const value = e.target.value;
-				const numValue = Number(value);
+				if (value === '') {
+					setBaseCurrencyAmount('');
+					setQuoteCurrencyAmount('');
+				} else {
+					const numValue = Math.abs(Number(value));
 
-				setBaseCurrencyAmount(value);
-				setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+					setBaseCurrencyAmount(`${numValue}`);
+					setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+				}
 			}}
 			walletBalance={baseCurrencyBalance}
 			onBalanceClick={() => {

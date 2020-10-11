@@ -83,10 +83,15 @@ const GlobalStyle = createGlobalStyle`
 		     url('/fonts/AkkuratMonoLLWeb-Regular.woff') format('woff');
 		font-display: monospace;
 	}
+	.bn-notify-custom {
+ 	   && {
+			font-family: ${(props) => props.theme.fonts.regular};
+		}
+	}
 	/* blocknative onboard style overrides */
 	.bn-onboard-custom {
 		&&& {
-			font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
+			font-family: ${(props) => props.theme.fonts.regular};
 			color: ${(props) => props.theme.colors.white};
 			
 		}

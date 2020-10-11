@@ -45,7 +45,7 @@ import {
 	customGasPriceState,
 	gasSpeedState,
 	isWalletConnectedState,
-	// walletAddressState,
+	walletAddressState,
 } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
@@ -93,7 +93,7 @@ const ExchangePage = () => {
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	// const walletAddress = useRecoilValue(walletAddressState);
+	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
 	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
@@ -167,8 +167,11 @@ const ExchangePage = () => {
 		quoteCurrencyKey,
 		selectedPriceCurrency.name
 	);
+	const baseCurrencyAmountNum = Number(baseCurrencyAmount);
+	const quoteCurrencyAmountNum = Number(quoteCurrencyAmount);
+
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
-	let totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
+	let totalTradePrice = baseCurrencyAmountNum * basePriceRate;
 	if (selectPriceCurrencyRate) {
 		totalTradePrice /= selectPriceCurrencyRate;
 	}
@@ -204,8 +207,8 @@ const ExchangePage = () => {
 		isBaseCurrencySuspended ||
 		isQuoteCurrencySuspended ||
 		!selectedBothSides ||
-		!Number(baseCurrencyAmount) ||
-		!Number(quoteCurrencyAmount) ||
+		!baseCurrencyAmountNum ||
+		!quoteCurrencyAmountNum ||
 		!ethGasStationQuery.data ||
 		!isWalletConnected ||
 		isBaseCurrencyFrozen ||
@@ -261,17 +264,26 @@ const ExchangePage = () => {
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
 			const amountToExchange = ethers.utils.parseEther(quoteCurrencyAmount);
+			const exchangeProvider = ethers.utils.formatBytes32String('KWENTA');
 
-			const params = [quoteKeyBytes32, amountToExchange, baseKeyBytes32];
+			const params = [
+				quoteKeyBytes32,
+				amountToExchange,
+				baseKeyBytes32,
+				walletAddress,
+				exchangeProvider,
+			];
 			try {
 				setIsSubmitting(true);
 
 				const gasPrice =
 					customGasPrice !== '' ? Number(customGasPrice) : ethGasStationQuery.data![gasSpeed];
 
-				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchange(...params);
+				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
+					...params
+				);
 
-				const tx = await synthetix.js.contracts.Synthetix.exchange(...params, {
+				const tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...params, {
 					gasPrice: gasPrice * GWEI_UNIT,
 					gasLimit: Number(gasEstimate) + DEFAULT_GAS_BUFFER,
 				});
@@ -307,6 +319,9 @@ const ExchangePage = () => {
 								})
 							);
 							synthsWalletBalancesQuery.refetch();
+							return {
+								autoDismiss: 0,
+							};
 						});
 
 						emitter.on('all', () => {
@@ -370,10 +385,15 @@ const ExchangePage = () => {
 			amount={quoteCurrencyAmount}
 			onAmountChange={(e) => {
 				const value = e.target.value;
-				const numValue = Number(value);
+				if (value === '') {
+					setQuoteCurrencyAmount('');
+					setBaseCurrencyAmount('');
+				} else {
+					const numValue = Math.abs(Number(value));
 
-				setQuoteCurrencyAmount(value);
-				setBaseCurrencyAmount(`${numValue * rate}`);
+					setQuoteCurrencyAmount(`${numValue}`);
+					setBaseCurrencyAmount(`${numValue * rate}`);
+				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
@@ -410,10 +430,15 @@ const ExchangePage = () => {
 			amount={baseCurrencyAmount}
 			onAmountChange={(e) => {
 				const value = e.target.value;
-				const numValue = Number(value);
+				if (value === '') {
+					setBaseCurrencyAmount('');
+					setQuoteCurrencyAmount('');
+				} else {
+					const numValue = Math.abs(Number(value));
 
-				setBaseCurrencyAmount(value);
-				setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+					setBaseCurrencyAmount(`${numValue}`);
+					setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+				}
 			}}
 			walletBalance={baseCurrencyBalance}
 			onBalanceClick={() => {
