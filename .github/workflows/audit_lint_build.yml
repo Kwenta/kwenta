@@ -15,7 +15,6 @@ jobs:
         CI: true
 
     steps:
-    - run: chown -R node:node $GITHUB_WORKSPACE
     - name: Checkout
       uses: actions/checkout@v2
       with:
