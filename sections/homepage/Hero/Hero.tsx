@@ -14,22 +14,15 @@ const Hero = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledStackSection>
+		<StackSection>
 			<LogoNoTextSVG />
 			<Header>{t('homepage.hero.title')}</Header>
 			<HeroImageContainer>
 				<HeroImage src={MarketOrderPreview} alt="" />
 			</HeroImageContainer>
-		</StyledStackSection>
+		</StackSection>
 	);
 };
-
-const StyledStackSection = styled(StackSection)`
-	padding-bottom: 80px;
-	${media.lessThan('md')`
-		padding-bottom: 40px;
-	`}
-`;
 
 const Header = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};

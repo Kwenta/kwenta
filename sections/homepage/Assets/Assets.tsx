@@ -90,6 +90,10 @@ const Assets = () => {
 };
 
 const Container = styled.div`
+	padding-top: 80px;
+	${media.lessThan('md')`
+		padding-top: 40px;
+	`}
 	padding-bottom: 150px;
 `;
 

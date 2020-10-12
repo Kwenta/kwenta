@@ -73,51 +73,57 @@ const FAQ = () => {
 	) as Array<{ title: string; items: Item[] }>;
 
 	return (
-		<StyledStackSection id="faq">
-			<StyledCenterSubHeader>{t('homepage.faq.title')}</StyledCenterSubHeader>
-			<StyledTabs>
-				<TabList>
-					{tabs.map(({ title }) => (
-						<Tab key={title}>{title}</Tab>
-					))}
-				</TabList>
-				<TabPanels>
-					{tabs.map(({ title, items }) => (
-						<TabPanel key={title}>
-							<StyledAccordion collapsible={true} multiple={true}>
-								{items.map(({ question, answer, link }) => (
-									<AccordionItem key={question}>
-										<AccordionButton>
-											{question}
-											<AccordionOpenIcon />
-											<AccordionCloseIcon />
-										</AccordionButton>
-										<AccordionPanel>
-											{answer}
-											{link && (
-												<ExplainerVideoLink>
-													<ExternalLink href={link}>
-														{t('homepage.faq.tabs.explainer-video')} <LinkIcon />
-													</ExternalLink>
-												</ExplainerVideoLink>
-											)}
-										</AccordionPanel>
-									</AccordionItem>
-								))}
-							</StyledAccordion>
-						</TabPanel>
-					))}
-				</TabPanels>
-			</StyledTabs>
-		</StyledStackSection>
+		<Container>
+			<StyledStackSection id="faq">
+				<StyledCenterSubHeader>{t('homepage.faq.title')}</StyledCenterSubHeader>
+				<StyledTabs>
+					<TabList>
+						{tabs.map(({ title }) => (
+							<Tab key={title}>{title}</Tab>
+						))}
+					</TabList>
+					<TabPanels>
+						{tabs.map(({ title, items }) => (
+							<TabPanel key={title}>
+								<StyledAccordion collapsible={true} multiple={true}>
+									{items.map(({ question, answer, link }) => (
+										<AccordionItem key={question}>
+											<AccordionButton>
+												{question}
+												<AccordionOpenIcon />
+												<AccordionCloseIcon />
+											</AccordionButton>
+											<AccordionPanel>
+												{answer}
+												{link && (
+													<ExplainerVideoLink>
+														<ExternalLink href={link}>
+															{t('homepage.faq.tabs.explainer-video')} <LinkIcon />
+														</ExternalLink>
+													</ExplainerVideoLink>
+												)}
+											</AccordionPanel>
+										</AccordionItem>
+									))}
+								</StyledAccordion>
+							</TabPanel>
+						))}
+					</TabPanels>
+				</StyledTabs>
+			</StyledStackSection>
+		</Container>
 	);
 };
 
-const StyledStackSection = styled(StackSection)`
-	padding-top: 220px;
+const Container = styled.div`
+	padding-top: 140px;
 	${media.lessThan('lg')`
-		padding-top: 160px;
+		padding-top: 80px;
 	`}
+`;
+
+const StyledStackSection = styled(StackSection)`
+	padding-top: 80px;
 `;
 
 const StyledCenterSubHeader = styled(CenterSubHeader)`

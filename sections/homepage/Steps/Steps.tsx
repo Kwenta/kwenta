@@ -39,31 +39,37 @@ const Steps = () => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledFlexSection id="how">
-			<StyledLeftSubHeader>{t('homepage.steps.title')}</StyledLeftSubHeader>
-			<StepList>
-				{STEPS.map(({ id, image, subtitle, title, copy }) => (
-					<StepCard key={id}>
-						<StepBox>
-							<StepIcon>
-								{image}
-								<StepSubtitle>{t(subtitle)}</StepSubtitle>
-							</StepIcon>
-						</StepBox>
-						<StepTitle>{t(title)}</StepTitle>
-						<StepCopy>{t(copy)}</StepCopy>
-					</StepCard>
-				))}
-			</StepList>
-		</StyledFlexSection>
+		<Container>
+			<StyledFlexSection id="how">
+				<StyledLeftSubHeader>{t('homepage.steps.title')}</StyledLeftSubHeader>
+				<StepList>
+					{STEPS.map(({ id, image, subtitle, title, copy }) => (
+						<StepCard key={id}>
+							<StepBox>
+								<StepIcon>
+									{image}
+									<StepSubtitle>{t(subtitle)}</StepSubtitle>
+								</StepIcon>
+							</StepBox>
+							<StepTitle>{t(title)}</StepTitle>
+							<StepCopy>{t(copy)}</StepCopy>
+						</StepCard>
+					))}
+				</StepList>
+			</StyledFlexSection>
+		</Container>
 	);
 };
 
-const StyledFlexSection = styled(FlexSection)`
-	padding-top: 170px;
+const Container = styled.div`
+	padding-top: 90px;
 	${media.lessThan('lg')`
-		padding-top: 80px;
+		padding-top: 0;
 	`}
+`;
+
+const StyledFlexSection = styled(FlexSection)`
+	padding-top: 80px;
 `;
 
 const StyledLeftSubHeader = styled(LeftSubHeader)`
