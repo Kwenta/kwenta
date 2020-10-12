@@ -227,7 +227,7 @@ const CurrencyConvertCard: FC = () => {
 				} else {
 					const numValue = Number(value);
 
-					setBaseCurrencyAmount(`${numValue}`);
+					setBaseCurrencyAmount(value);
 					setQuoteCurrencyAmount(`${numValue * inverseRate}`);
 				}
 			}}

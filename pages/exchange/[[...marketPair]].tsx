@@ -388,14 +388,13 @@ const ExchangePage = () => {
 			currencyKey={quoteCurrencyKey}
 			amount={quoteCurrencyAmount}
 			onAmountChange={(value) => {
-				console.log(value);
 				if (value === '') {
 					setQuoteCurrencyAmount('');
 					setBaseCurrencyAmount('');
 				} else {
 					const numValue = Number(value);
 
-					setQuoteCurrencyAmount(`${numValue}`);
+					setQuoteCurrencyAmount(value);
 					setBaseCurrencyAmount(`${numValue * rate}`);
 				}
 			}}
@@ -433,7 +432,6 @@ const ExchangePage = () => {
 			currencyKey={baseCurrencyKey}
 			amount={baseCurrencyAmount}
 			onAmountChange={(value) => {
-				console.log(value);
 				if (value === '') {
 					setBaseCurrencyAmount('');
 					setQuoteCurrencyAmount('');
