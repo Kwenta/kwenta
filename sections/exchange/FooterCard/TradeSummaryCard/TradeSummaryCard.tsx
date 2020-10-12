@@ -283,7 +283,7 @@ const StyledGasEditButton = styled.span`
 const GasSpeedButtonContainer = styled.div`
 	padding-bottom: 5px;
 	button {
-		width: 100px;
+		width: 120px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -295,7 +295,7 @@ const GasPriceTooltip = styled(Tippy)`
 `;
 
 const CustomGasPrice = styled(NumericInput)`
-	width: 100px;
+	width: 120px;
 	border: 1px solid ${(props) => props.theme.colors.stormcloud};
 	margin-bottom: 5px;
 	font-size: 12px;
