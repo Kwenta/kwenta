@@ -10,7 +10,7 @@ import { MediaContextProvider } from 'styles/media';
 
 import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
 
-import WithStateContainers from 'containers';
+import WithAppContainers from 'containers';
 import theme from 'styles/theme';
 
 import { ReactQueryDevtools } from 'react-query-devtools';
@@ -61,7 +61,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<WithStateContainers>
+					<WithAppContainers>
 						<MediaContextProvider>
 							<ReactQueryCacheProvider queryCache={queryCache}>
 								<Layout>
@@ -70,7 +70,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 								<ReactQueryDevtools />
 							</ReactQueryCacheProvider>
 						</MediaContextProvider>
-					</WithStateContainers>
+					</WithAppContainers>
 				</RecoilRoot>
 			</ThemeProvider>
 		</>

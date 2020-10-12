@@ -5,11 +5,11 @@ import Services from './Services';
 import Etherscan from './Etherscan';
 import OneInch from './OneInch';
 
-type WithStateContainersProps = {
+type WithAppContainersProps = {
 	children: React.ReactNode;
 };
 
-export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) => (
+export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
 		<Services.Provider>
 			<Etherscan.Provider>
@@ -19,4 +19,4 @@ export const WithStateContainers: FC<WithStateContainersProps> = ({ children }) 
 	</Connector.Provider>
 );
 
-export default WithStateContainers;
+export default WithAppContainers;
