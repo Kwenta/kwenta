@@ -29,7 +29,7 @@
 		"immer": "7.0.8",
 		"lodash": "4.17.20",
 		"memoize-one": "5.1.1",
-		"next": "latest",
+		"next": "9.5.5",
 		"next-compose-plugins": "2.2.0",
 		"next-images": "1.4.0",
 		"react": "16.13.1",
