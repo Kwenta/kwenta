@@ -171,7 +171,6 @@ const useConnector = () => {
 	const isHardwareWallet = () => {
 		if (onboard) {
 			const onboardState = onboard.getState();
-			console.log(onboardState);
 			if (onboardState.address != null) {
 				return onboardState.wallet.type === 'hardware';
 			}
