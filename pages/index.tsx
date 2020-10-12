@@ -12,6 +12,7 @@ import Benefits from 'sections/homepage/Benefits';
 import Steps from 'sections/homepage/Steps';
 import FAQ from 'sections/homepage/FAQ';
 import ChartBanner from 'sections/homepage/ChartBanner';
+import WithHomepageContainers from 'sections/homepage/containers';
 
 const HomePage = () => {
 	const { t } = useTranslation();
@@ -21,23 +22,25 @@ const HomePage = () => {
 			<Head>
 				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<HomeLayout>
-				<DarkContainer>
-					<Container>
-						<Hero />
-						<Assets />
-						<Features />
-						<Benefits />
-					</Container>
-				</DarkContainer>
-				<LightContainer>
-					<Container>
-						<Steps />
-						<FAQ />
-						<ChartBanner />
-					</Container>
-				</LightContainer>
-			</HomeLayout>
+			<WithHomepageContainers>
+				<HomeLayout>
+					<DarkContainer>
+						<Container>
+							<Hero />
+							<Assets />
+							<Features />
+							<Benefits />
+						</Container>
+					</DarkContainer>
+					<LightContainer>
+						<Container>
+							<Steps />
+							<FAQ />
+							<ChartBanner />
+						</Container>
+					</LightContainer>
+				</HomeLayout>
+			</WithHomepageContainers>
 		</>
 	);
 };

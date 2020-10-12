@@ -16,6 +16,8 @@ import ShortIcon from 'assets/inline-svg/marketing/icon-short.svg';
 import media from 'styles/media';
 import { Media } from 'styles/media';
 
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+
 import { GridContainer, SubHeader } from '../common';
 
 const ASSETS = [
@@ -53,6 +55,7 @@ const ASSETS = [
 
 const Assets = () => {
 	const { t } = useTranslation();
+	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = <LeftSubHeader>{t('homepage.assets.title')}</LeftSubHeader>;
 	const assetCards = (
@@ -67,7 +70,7 @@ const Assets = () => {
 	);
 
 	return (
-		<Container id="why">
+		<Container id="why" ref={whyKwentaRef}>
 			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>

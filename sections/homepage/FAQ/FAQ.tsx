@@ -7,6 +7,8 @@ import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reac
 
 import { EXTERNAL_LINKS } from 'constants/links';
 
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+
 import PlusThinIcon from 'assets/inline-svg/app/plus-thin.svg';
 import LinkIcon from 'assets/inline-svg/app/link.svg';
 
@@ -23,6 +25,7 @@ type Item = {
 
 const FAQ = () => {
 	const { t } = useTranslation();
+	const { faqRef } = SmoothScroll.useContainer();
 
 	const tabs = useMemo(
 		() => [
@@ -74,7 +77,7 @@ const FAQ = () => {
 
 	return (
 		<Container>
-			<StyledStackSection id="faq">
+			<StyledStackSection id="faq" ref={faqRef}>
 				<StyledCenterSubHeader>{t('homepage.faq.title')}</StyledCenterSubHeader>
 				<StyledTabs>
 					<TabList>

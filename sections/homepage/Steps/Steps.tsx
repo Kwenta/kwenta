@@ -11,6 +11,8 @@ import media from 'styles/media';
 
 import { FlexSection, LeftSubHeader } from '../common';
 
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+
 const STEPS = [
 	{
 		id: 'step-one',
@@ -37,10 +39,11 @@ const STEPS = [
 
 const Steps = () => {
 	const { t } = useTranslation();
+	const { howItWorksRef } = SmoothScroll.useContainer();
 
 	return (
 		<Container>
-			<StyledFlexSection id="how">
+			<StyledFlexSection id="how" ref={howItWorksRef}>
 				<StyledLeftSubHeader>{t('homepage.steps.title')}</StyledLeftSubHeader>
 				<StepList>
 					{STEPS.map(({ id, image, subtitle, title, copy }) => (

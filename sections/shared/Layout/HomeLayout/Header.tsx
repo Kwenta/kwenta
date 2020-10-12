@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
@@ -15,10 +15,34 @@ import AppHeader from '../AppLayout/Header';
 import media from 'styles/media';
 
 import Logo from '../Logo';
-import { GridDivCenteredCol } from 'styles/common';
+import { GridDivCenteredCol, TextButton } from 'styles/common';
+
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
+	const { whyKwentaRef, howItWorksRef, faqRef } = SmoothScroll.useContainer();
+
+	const links = useMemo(
+		() => [
+			{
+				id: 'why',
+				label: t('homepage.nav.why'),
+				ref: whyKwentaRef,
+			},
+			{
+				id: 'how',
+				label: t('homepage.nav.how'),
+				ref: howItWorksRef,
+			},
+			{
+				id: 'how',
+				label: t('homepage.nav.faq'),
+				ref: faqRef,
+			},
+		],
+		[t, whyKwentaRef, howItWorksRef, faqRef]
+	);
 
 	return (
 		<>
@@ -26,9 +50,20 @@ const Header: FC = () => {
 				<Container>
 					<Logo />
 					<Links>
-						<StyledLink href="#why">{t('homepage.nav.why')}</StyledLink>
-						<StyledLink href="#how">{t('homepage.nav.how')}</StyledLink>
-						<StyledLink href="#faq">{t('homepage.nav.faq')}</StyledLink>
+						{links.map(({ id, label, ref }) => (
+							<StyledTextButton
+								key={id}
+								onClick={() => {
+									if (ref && ref.current) {
+										ref.current.scrollIntoView({
+											behavior: 'smooth',
+										});
+									}
+								}}
+							>
+								{label}
+							</StyledTextButton>
+						))}
 					</Links>
 					<MenuContainer>
 						<UserMenu isTextButton={true} />
@@ -68,7 +103,7 @@ const Links = styled.div`
 	`}
 `;
 
-const StyledLink = styled.a`
+const StyledTextButton = styled(TextButton)`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.silver};
