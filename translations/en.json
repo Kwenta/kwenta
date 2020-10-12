@@ -355,9 +355,9 @@
 		},
 		"switch": "switch",
 		"gas-prices": {
-			"slow": "Slow",
 			"average": "Average",
-			"fast": "Fast"
+			"fast": "Fast",
+			"fastest": "Fastest"
 		},
 		"custom": "Custom",
 		"edit": "edit",

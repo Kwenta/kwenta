@@ -21,26 +21,26 @@ type EthGasStationResponse = {
 };
 
 export type GasPrices = {
+	fastest: number;
 	fast: number;
 	average: number;
-	slow: number;
 };
 
 export type GasSpeed = keyof GasPrices;
 
-export const GAS_SPEEDS: GasSpeed[] = ['slow', 'average', 'fast'];
+export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest'];
 
 const useEthGasStationQuery = (options?: QueryConfig<GasPrices>) => {
 	return useQuery<GasPrices>(
 		QUERY_KEYS.Network.EthGasStation,
 		async () => {
 			const result = await axios.get<EthGasStationResponse>(ETH_GAS_STATION_API_URL);
-			const { safeLow, average, fast } = result.data;
+			const { average, fast, fastest } = result.data;
 
 			return {
+				fastest: fastest / 10,
 				fast: fast / 10,
 				average: average / 10,
-				slow: safeLow / 10,
 			};
 		},
 		options

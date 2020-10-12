@@ -39,7 +39,7 @@ export const truncatedWalletAddressState = selector<string | null>({
 
 export const gasSpeedState = atom<GasSpeed>({
 	key: getKey('gasSpeed'),
-	default: 'average',
+	default: 'fast',
 });
 
 export const customGasPriceState = atom<string>({
