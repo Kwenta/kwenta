@@ -387,13 +387,13 @@ const ExchangePage = () => {
 			side="quote"
 			currencyKey={quoteCurrencyKey}
 			amount={quoteCurrencyAmount}
-			onAmountChange={(e) => {
-				const value = e.target.value;
+			onAmountChange={(value) => {
+				console.log(value);
 				if (value === '') {
 					setQuoteCurrencyAmount('');
 					setBaseCurrencyAmount('');
 				} else {
-					const numValue = Math.abs(Number(value));
+					const numValue = Number(value);
 
 					setQuoteCurrencyAmount(`${numValue}`);
 					setBaseCurrencyAmount(`${numValue * rate}`);
@@ -432,15 +432,15 @@ const ExchangePage = () => {
 			side="base"
 			currencyKey={baseCurrencyKey}
 			amount={baseCurrencyAmount}
-			onAmountChange={(e) => {
-				const value = e.target.value;
+			onAmountChange={(value) => {
+				console.log(value);
 				if (value === '') {
 					setBaseCurrencyAmount('');
 					setQuoteCurrencyAmount('');
 				} else {
-					const numValue = Math.abs(Number(value));
+					const numValue = Number(value);
 
-					setBaseCurrencyAmount(`${numValue}`);
+					setBaseCurrencyAmount(value);
 					setQuoteCurrencyAmount(`${numValue * inverseRate}`);
 				}
 			}}

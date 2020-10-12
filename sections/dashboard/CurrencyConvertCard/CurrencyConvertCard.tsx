@@ -194,15 +194,14 @@ const CurrencyConvertCard: FC = () => {
 			side="quote"
 			currencyKey={CRYPTO_CURRENCY_MAP.ETH}
 			amount={quoteCurrencyAmount}
-			onAmountChange={(e) => {
-				const value = e.target.value;
+			onAmountChange={(value) => {
 				if (value === '') {
 					setQuoteCurrencyAmount('');
 					setBaseCurrencyAmount('');
 				} else {
-					const numValue = Math.abs(Number(value));
+					const numValue = Number(value);
 
-					setQuoteCurrencyAmount(`${numValue}`);
+					setQuoteCurrencyAmount(value);
 					setBaseCurrencyAmount(`${numValue * rate}`);
 				}
 			}}
@@ -221,13 +220,12 @@ const CurrencyConvertCard: FC = () => {
 			side="base"
 			currencyKey={baseCurrencyKey}
 			amount={baseCurrencyAmount}
-			onAmountChange={(e) => {
-				const value = e.target.value;
+			onAmountChange={(value) => {
 				if (value === '') {
 					setBaseCurrencyAmount('');
 					setQuoteCurrencyAmount('');
 				} else {
-					const numValue = Math.abs(Number(value));
+					const numValue = Number(value);
 
 					setBaseCurrencyAmount(`${numValue}`);
 					setQuoteCurrencyAmount(`${numValue * inverseRate}`);

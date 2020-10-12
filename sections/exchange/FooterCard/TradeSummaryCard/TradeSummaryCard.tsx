@@ -123,7 +123,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 									<>
 										<CustomGasPrice
 											value={customGasPrice}
-											onChange={(e) => setCustomGasPrice(e.target.value)}
+											onChange={(_, value) => setCustomGasPrice(value)}
 											placeholder={t('common.custom')}
 										/>
 										{GAS_SPEEDS.map((speed) => (

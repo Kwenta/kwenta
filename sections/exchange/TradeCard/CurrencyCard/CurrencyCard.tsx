@@ -1,5 +1,5 @@
+import { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FC, ChangeEvent, MouseEvent } from 'react';
 import styled, { css } from 'styled-components';
 
 import { CurrencyKey } from 'constants/currency';
@@ -22,7 +22,7 @@ type CurrencyCardProps = {
 	side: Side;
 	currencyKey: CurrencyKey | null;
 	amount: string;
-	onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	onAmountChange: (value: string) => void;
 	walletBalance: number | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
@@ -82,7 +82,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</CurrencySelector>
 					{currencyKeySelected && (
 						<CurrencyAmountContainer>
-							<CurrencyAmount value={amount} onChange={onAmountChange} placeholder="0" />
+							<CurrencyAmount
+								value={amount}
+								onChange={(_, value) => onAmountChange(value)}
+								placeholder="0"
+							/>
 							<CurrencyAmountValue>
 								{formatCurrency(selectedPriceCurrency.name, tradeAmount, {
 									sign: selectedPriceCurrency.sign,
