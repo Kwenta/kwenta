@@ -1,4 +1,4 @@
-name: Audit, Lint, Build
+name: Kwenta CI
 
 on: [push]
 
