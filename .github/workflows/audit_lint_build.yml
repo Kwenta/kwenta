@@ -32,7 +32,7 @@ jobs:
   build:
     needs: audit
     # run only on audit success or audit skipped
-    if: needs.audit.result == 'success' || needs.audit.result == 'skipped'
+    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
     runs-on: ubuntu-latest
 
     container:
