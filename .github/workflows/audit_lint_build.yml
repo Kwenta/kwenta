@@ -47,8 +47,8 @@ jobs:
       uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
       with:
         path: |
-          ~/.npm
-          **/node_modules
+          .npm
+          node_modules
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
@@ -63,7 +63,7 @@ jobs:
     - name: Cache next.js build cache
       uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
       with:
-        path: '~/.next/cache'
+        path: .next/cache
         key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-next.js-
