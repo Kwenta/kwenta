@@ -1,0 +1,78 @@
+name: Kwenta CI
+
+on: [push]
+
+jobs:
+  audit:
+    # run only on master/dev branch and pull requests
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+      with:
+        token: ${{ secrets.GH_READ_REPO }}
+        submodules: recursive
+
+    - name: Audit dependencies
+      run: audit-ci --critical --report-type important
+
+    - name: Lockfile lint
+      run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "github:"
+
+  build:
+    needs: audit
+    # run only on audit success or audit skipped
+    if: always() && needs.audit.result == 'success' || always() && needs.audit.result == 'skipped'
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:12.19
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+
+    - name: Cache node modules
+      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+      with:
+        path: |
+          .npm
+          node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+
+    - name: Install dependencies
+      run: npm install --no-audit
+
+    - name: Lint
+      run: npm run lint
+
+    - name: Cache next.js build cache
+      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+      with:
+        path: .next/cache
+        key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-next.js-
+
+    - name: Build
+      run: npm run build
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
+      with:
+        name: build
+        path: .next
