@@ -31,6 +31,7 @@ jobs:
 
   build:
     needs: audit
+    if: ${{ always() }}
     runs-on: ubuntu-latest
 
     container:
