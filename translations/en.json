@@ -234,7 +234,9 @@
 		}
 	},
 	"not-found": {
-		"page-title": "Not Found | Kwenta"
+		"page-title": "Not Found | Kwenta",
+		"title": "404",
+		"subtitle": "Page not found."
 	},
 	"modals": {
 		"select-synth": {
