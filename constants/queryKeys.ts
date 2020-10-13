@@ -58,6 +58,9 @@ export const QUERY_KEYS = {
 		AllTrades: ['trades', 'allTrades'],
 		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],
 	},
+	SystemStatus: {
+		IsUpgrading: ['systemStatus', 'isUpgrading'],
+	},
 };
 
 export default QUERY_KEYS;

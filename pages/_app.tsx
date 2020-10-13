@@ -15,6 +15,8 @@ import theme from 'styles/theme';
 
 import { ReactQueryDevtools } from 'react-query-devtools';
 
+import SystemStatus from 'sections/shared/SystemStatus';
+
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
@@ -65,7 +67,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 						<MediaContextProvider>
 							<ReactQueryCacheProvider queryCache={queryCache}>
 								<Layout>
-									<Component {...pageProps} />
+									<SystemStatus>
+										<Component {...pageProps} />
+									</SystemStatus>
 								</Layout>
 								<ReactQueryDevtools />
 							</ReactQueryCacheProvider>

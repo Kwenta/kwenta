@@ -185,3 +185,10 @@ export const BottomShadow = styled.div`
 	height: 16px;
 	pointer-events: none;
 `;
+
+export const FullScreenContainer = styled(FlexDiv)`
+	flex-flow: column;
+	width: 100%;
+	height: 100vh;
+	position: relative;
+`;

@@ -238,6 +238,11 @@
 		"title": "404",
 		"subtitle": "Page not found."
 	},
+	"system-status": {
+		"page-title": "Maintenance | Kwenta",
+		"title": "Kwenta is currently down for maintenance",
+		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
+	},
 	"modals": {
 		"select-synth": {
 			"title": "select synth",
