@@ -22,6 +22,23 @@ const GlobalStyle = createGlobalStyle`
 		box-sizing: border-box;
 	}
 
+	*::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background-color: transparent;
+	}
+
+	/* scrollbar itself */
+	*::-webkit-scrollbar-thumb {
+		background: ${(props) => props.theme.colors.gold};
+		border-radius: 16px;
+		&:hover {
+			background: ${(props) => props.theme.colors.goldHover};
+		}
+	}
+
 	#__next {
 		width: 100%;
 		height: 100%;
