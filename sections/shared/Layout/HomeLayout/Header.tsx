@@ -36,7 +36,7 @@ const Header: FC = () => {
 				ref: howItWorksRef,
 			},
 			{
-				id: 'how',
+				id: 'faq',
 				label: t('homepage.nav.faq'),
 				ref: faqRef,
 			},
