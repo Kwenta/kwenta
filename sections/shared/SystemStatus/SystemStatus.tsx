@@ -87,11 +87,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	}, [systemResumed$]);
 	*/
 
-	if (!appOnMaintenance) {
-		return <>{children}</>;
-	}
-
-	return (
+	return appOnMaintenance ? (
 		<>
 			<Head>
 				<title>{t('system-status.page-title')}</title>
@@ -116,6 +112,8 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 				</StyledPageContent>
 			</FullScreenContainer>
 		</>
+	) : (
+		<>{children}</>
 	);
 };
 
