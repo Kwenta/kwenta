@@ -21,7 +21,7 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef, howItWorksRef, faqRef } = SmoothScroll.useContainer();
+	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
 
 	const links = useMemo(
 		() => [
@@ -54,11 +54,7 @@ const Header: FC = () => {
 							<StyledTextButton
 								key={id}
 								onClick={() => {
-									if (ref && ref.current) {
-										ref.current.scrollIntoView({
-											behavior: 'smooth',
-										});
-									}
+									scrollToRef(ref);
 								}}
 							>
 								{label}
