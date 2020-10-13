@@ -1,5 +1,5 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="16" cy="16" r="16" fill="white"/>
+<circle cx="16" cy="16" r="16" fill="#000"/>
 <path d="M15.85 4L28 11.3767V18.7536L15.85 11.3767V4Z" fill="url(#favicon_paint0_linear)"/>
 <path d="M15.85 26.95L28 19.6478V12.3455L15.85 19.6478V26.95Z" fill="url(#favicon_paint1_linear)"/>
 <path d="M15.85 4L4 11.3767V18.7536L15.85 11.3767V4Z" fill="url(#favicon_paint2_linear)"/>
