@@ -21,23 +21,19 @@ const GlobalStyle = createGlobalStyle`
 	* {
 		box-sizing: border-box;
 	}
-
-	*::-webkit-scrollbar {
-		width: 6px;
-		height: 6px;
+	::-webkit-scrollbar {
+    	width: 12px;
 	}
 
-	*::-webkit-scrollbar-track {
-		background-color: transparent;
+	::-webkit-scrollbar-track {
+		box-shadow: inset 0 0 12px 12px transparent;
+		border: solid 3px transparent;
 	}
 
-	/* scrollbar itself */
-	*::-webkit-scrollbar-thumb {
-		background: #2C2C42;
+	::-webkit-scrollbar-thumb {
+		box-shadow: inset 0 0 12px 12px #2C2C42;
+		border: solid 3px transparent;
 		border-radius: 16px;
-		&:hover {
-			background: #3B3B5A;
-		}
 	}
 
 	#__next {
