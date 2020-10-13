@@ -31,3 +31,8 @@ yarn-error.log*
 .env.production.local
 
 .vercel
+
+#lighthouse reports
+.lighthouseci
+lighthouse-desktop-report
+lighthouse-mobile-report
