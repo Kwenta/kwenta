@@ -23,7 +23,8 @@ const GlobalStyle = createGlobalStyle`
 	}
 
 	*::-webkit-scrollbar {
-		width: 8px;
+		width: 6px;
+		height: 6px;
 	}
 
 	*::-webkit-scrollbar-track {
@@ -32,10 +33,10 @@ const GlobalStyle = createGlobalStyle`
 
 	/* scrollbar itself */
 	*::-webkit-scrollbar-thumb {
-		background: ${(props) => props.theme.colors.gold};
+		background: #2C2C42;
 		border-radius: 16px;
 		&:hover {
-			background: ${(props) => props.theme.colors.goldHover};
+			background: #3B3B5A;
 		}
 	}
 
