@@ -19,7 +19,7 @@ Start trading on [Kwenta.io](https://kwenta.io).
 
 ## Blockchain stack
 
-- ethers.js
+- ethers.js - A complete Ethereum wallet implementation.
 - Blocknative Onboard - for ethereum wallet connectivity.
 - Blocknative Notify - for tx notifications.
 - [synthetix-data](https://github.com/Synthetixio/synthetix-data) - for historical data (powered by [TheGraph](https://thegraph.com/)).
