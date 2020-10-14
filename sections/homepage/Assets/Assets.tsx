@@ -70,7 +70,7 @@ const Assets = () => {
 	);
 
 	return (
-		<Container id="why" ref={whyKwentaRef}>
+		<Container ref={whyKwentaRef}>
 			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>

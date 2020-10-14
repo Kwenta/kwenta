@@ -77,7 +77,7 @@ const FAQ = () => {
 
 	return (
 		<Container>
-			<StyledStackSection id="faq" ref={faqRef}>
+			<StyledStackSection ref={faqRef}>
 				<StyledCenterSubHeader>{t('homepage.faq.title')}</StyledCenterSubHeader>
 				<StyledTabs>
 					<TabList>

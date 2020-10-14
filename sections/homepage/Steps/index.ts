@@ -1,1 +1,1 @@
-export { default } from './Steps';
+export { default, STEPS } from './Steps';

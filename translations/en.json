@@ -205,7 +205,10 @@
 			"convert": "Convert",
 			"title": "Learn How it Works",
 			"subtitle": "Get up and running on Kwenta and exchange everything.",
-			"learn-more": "Learn More"
+			"learn-more": "Learn More",
+			"how-it-works-modal": {
+				"title": "How it works"
+			}
 		},
 		"your-portfolio": {
 			"title": "Your Portfolio"

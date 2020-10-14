@@ -1,6 +1,5 @@
-import { FC } from 'react';
+import { useState, FC } from 'react';
 import styled from 'styled-components';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
@@ -9,29 +8,38 @@ import { FlexDivCol } from 'styles/common';
 
 import { CardTitle, ConvertContainer } from '../common';
 
-import ROUTES from 'constants/routes';
-
 import CurrencyConvertCard from '../CurrencyConvertCard';
+
+import HowItWorksModal from './HowItWorksModal';
 
 const Onboard: FC = () => {
 	const { t } = useTranslation();
+	const [howItWorksModalOpened, setHowItWorksModalOpened] = useState<boolean>(false);
 
 	return (
-		<FlexDivCol>
-			<Title>{t('dashboard.onboard.title')}</Title>
-			<Subtitle>{t('dashboard.onboard.subtitle')}</Subtitle>
-			<Center>
-				<Link href={ROUTES.Homepage.How}>
-					<Button variant="primary" isRounded={true} size="lg">
+		<>
+			<FlexDivCol>
+				<Title>{t('dashboard.onboard.title')}</Title>
+				<Subtitle>{t('dashboard.onboard.subtitle')}</Subtitle>
+				<Center>
+					<Button
+						variant="primary"
+						isRounded={true}
+						size="lg"
+						onClick={() => setHowItWorksModalOpened(true)}
+					>
 						{t('dashboard.onboard.learn-more')}
 					</Button>
-				</Link>
-			</Center>
-			<ConvertContainer>
-				<StyledCardTitle>{t('dashboard.onboard.convert')}</StyledCardTitle>
-				<CurrencyConvertCard />
-			</ConvertContainer>
-		</FlexDivCol>
+				</Center>
+				<ConvertContainer>
+					<StyledCardTitle>{t('dashboard.onboard.convert')}</StyledCardTitle>
+					<CurrencyConvertCard />
+				</ConvertContainer>
+			</FlexDivCol>
+			{howItWorksModalOpened && (
+				<HowItWorksModal onDismiss={() => setHowItWorksModalOpened(false)} />
+			)}
+		</>
 	);
 };
 

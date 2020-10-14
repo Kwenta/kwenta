@@ -13,7 +13,7 @@ import { FlexSection, LeftSubHeader } from '../common';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
-const STEPS = [
+export const STEPS = [
 	{
 		id: 'step-one',
 		image: <img src={StepOne} alt="" />,
@@ -43,7 +43,7 @@ const Steps = () => {
 
 	return (
 		<Container>
-			<StyledFlexSection id="how" ref={howItWorksRef}>
+			<StyledFlexSection ref={howItWorksRef}>
 				<StyledLeftSubHeader>{t('homepage.steps.title')}</StyledLeftSubHeader>
 				<StepList>
 					{STEPS.map(({ id, image, subtitle, title, copy }) => (
