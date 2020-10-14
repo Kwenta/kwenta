@@ -4,7 +4,7 @@ import { useSetRecoilState, useRecoilState } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
-import synthetix, { SUPPORTED_NETWORKS } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
@@ -37,7 +37,9 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init = async () => {
+			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
+
 			// @ts-ignore
 			const provider = new ethers.providers.InfuraProvider(
 				networkId,
@@ -64,7 +66,12 @@ const useConnector = () => {
 			const onboard = initOnboard(network, {
 				address: setWalletAddress,
 				network: (networkId: number) => {
-					if (networkId != null) {
+					const isSupportedNetwork =
+						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
+							? true
+							: false;
+
+					if (isSupportedNetwork) {
 						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
 						const signer = provider.getSigner();
 
@@ -77,9 +84,11 @@ const useConnector = () => {
 						notify.config({ networkId });
 						setProvider(provider);
 						setSigner(signer);
+
 						setNetwork({
 							id: networkId,
-							name: SUPPORTED_NETWORKS[networkId as NetworkId],
+							// @ts-ignore
+							name: synthetix.chainIdToNetwork[networkId],
 						});
 					}
 				},

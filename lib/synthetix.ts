@@ -3,13 +3,7 @@ import { ethers, Signer } from 'ethers';
 
 import synthSummaryUtilContract from './contracts/synthSummaryUtilContract';
 import keyBy from 'lodash/keyBy';
-
-export const SUPPORTED_NETWORKS = {
-	[NetworkId.Mainnet]: Network.Mainnet,
-	[NetworkId.Kovan]: Network.Kovan,
-	[NetworkId.Ropsten]: Network.Ropsten,
-	[NetworkId.Rinkeby]: Network.Rinkeby,
-};
+import invert from 'lodash/invert';
 
 export type Token = {
 	address: string;
@@ -75,6 +69,7 @@ type Synthetix = {
 	synthsMap: SynthsMap | null;
 	tokensMap: TokensMap | null;
 	synthSummaryUtil: ethers.Contract | null;
+	chainIdToNetwork: Record<NetworkId, Network> | null;
 };
 
 const synthetix: Synthetix = {
@@ -82,6 +77,7 @@ const synthetix: Synthetix = {
 	synthSummaryUtil: null,
 	synthsMap: null,
 	tokensMap: null,
+	chainIdToNetwork: null,
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({ networkId, provider, signer });
@@ -94,6 +90,8 @@ const synthetix: Synthetix = {
 			synthSummaryUtilContract.abi,
 			provider
 		);
+		// @ts-ignore
+		this.chainIdToNetwork = invert(this.js.networkToChainId);
 	},
 };
 
