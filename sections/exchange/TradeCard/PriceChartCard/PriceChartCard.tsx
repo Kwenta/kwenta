@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import { useContext, FC, useState } from 'react';
+import { useContext, FC, useState, useMemo } from 'react';
 import { AreaChart, XAxis, YAxis, Area, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
@@ -53,6 +53,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	isSynthFrozen,
 	...rest
 }) => {
+	const { t } = useTranslation();
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
@@ -83,7 +84,15 @@ const ChartCard: FC<ChartCardProps> = ({
 		fontFamily: theme.fonts.mono,
 	};
 
-	const { t } = useTranslation();
+	const computedRates = useMemo(() => {
+		if (selectPriceCurrencyRate != null) {
+			return rates.map((rateData) => ({
+				...rateData,
+				rate: rateData.rate / selectPriceCurrencyRate,
+			}));
+		}
+		return rates;
+	}, [rates, selectPriceCurrencyRate]);
 
 	const CustomTooltip = ({
 		active,
@@ -160,13 +169,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
 					>
 						<AreaChart
-							data={rates.map((rateData) => ({
-								...rateData,
-								rate:
-									selectPriceCurrencyRate != null
-										? rateData.rate / selectPriceCurrencyRate
-										: rateData.rate,
-							}))}
+							data={computedRates}
 							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
 							onMouseMove={(e: any) => {
 								const currentRate = get(e, 'activePayload[0].payload.rate', null);
