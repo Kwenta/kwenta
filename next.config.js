@@ -20,4 +20,16 @@ const plugins = [
 	}),
 ];
 
-module.exports = withPlugins([...plugins]);
+module.exports = withPlugins([...plugins], {
+	exportPathMap: function (defaultPathMap) {
+		return {
+			...defaultPathMap,
+			'/dashboard': {
+				page: '/dashboard/[[...tab]]',
+			},
+			'/exchange': {
+				page: '/exchange/[[...marketPair]]',
+			},
+		};
+	},
+});
