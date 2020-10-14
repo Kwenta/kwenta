@@ -101,6 +101,14 @@ const ChartCard: FC<ChartCardProps> = ({
 		active && payload && payload[0] ? (
 			<TooltipContentStyle>
 				<LabelStyle>{format(label, 'do MMM yy | HH:mm')}</LabelStyle>
+				<LabelStyle>
+					{t('exchange.price-chart-card.tooltip.price')}{' '}
+					<CurrencyPrice>
+						{formatCurrency(selectedPriceCurrency.name, payload[0].value, {
+							sign: selectedPriceCurrency.sign,
+						})}
+					</CurrencyPrice>
+				</LabelStyle>
 			</TooltipContentStyle>
 		) : null;
 
@@ -334,10 +342,11 @@ const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
 `;
 
 const TooltipContentStyle = styled.div`
+	font-family: ${(props) => props.theme.fonts.regular};
 	padding: 5px;
 	border-radius: 4px;
 	background-color: ${(props) => props.theme.colors.elderberry};
-	text-align: center;
+	text-align: left;
 `;
 
 const ItemStyle = styled.div`

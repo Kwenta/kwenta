@@ -154,6 +154,9 @@
 					"subtitle": "Restart pending."
 				}
 			},
+			"tooltip": {
+				"price": "price:"
+			},
 			"no-data": "No data"
 		},
 		"summary-info": {
