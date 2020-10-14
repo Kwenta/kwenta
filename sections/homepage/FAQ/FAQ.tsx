@@ -30,25 +30,6 @@ const FAQ = () => {
 	const tabs = useMemo(
 		() => [
 			{
-				title: t('homepage.faq.tabs.getting-started.title'),
-				items: [
-					{
-						question: t('homepage.faq.tabs.getting-started.items.qna1.question'),
-						answer: t('homepage.faq.tabs.getting-started.items.qna1.answer'),
-						link: 'https://www.youtube.com/watch?v=TDGq4aeevgY',
-					},
-					{
-						question: t('homepage.faq.tabs.getting-started.items.qna2.question'),
-						answer: t('homepage.faq.tabs.getting-started.items.qna2.answer'),
-						link: 'https://www.youtube.com/watch?v=k9HYC0EJU6E',
-					},
-					{
-						question: t('homepage.faq.tabs.getting-started.items.qna3.question'),
-						answer: t('homepage.faq.tabs.getting-started.items.qna3.answer'),
-					},
-				],
-			},
-			{
 				title: t('homepage.faq.tabs.trading-on-kwenta.title'),
 				items: [
 					{
@@ -68,6 +49,25 @@ const FAQ = () => {
 					{
 						question: t('homepage.faq.tabs.trading-on-kwenta.items.qna3.question'),
 						answer: t('homepage.faq.tabs.trading-on-kwenta.items.qna3.answer'),
+					},
+				],
+			},
+			{
+				title: t('homepage.faq.tabs.getting-started.title'),
+				items: [
+					{
+						question: t('homepage.faq.tabs.getting-started.items.qna1.question'),
+						answer: t('homepage.faq.tabs.getting-started.items.qna1.answer'),
+						link: 'https://www.youtube.com/watch?v=TDGq4aeevgY',
+					},
+					{
+						question: t('homepage.faq.tabs.getting-started.items.qna2.question'),
+						answer: t('homepage.faq.tabs.getting-started.items.qna2.answer'),
+						link: 'https://www.youtube.com/watch?v=k9HYC0EJU6E',
+					},
+					{
+						question: t('homepage.faq.tabs.getting-started.items.qna3.question'),
+						answer: t('homepage.faq.tabs.getting-started.items.qna3.answer'),
 					},
 				],
 			},
