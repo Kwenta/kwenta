@@ -3,8 +3,9 @@
 
 # Kwenta
 
-A dApp enabling derivatives trading with infinite liquidity — powered by the Synthetix protocol.<br />
-Visit [Kwenta.io](https://kwenta.io).
+A dApp enabling derivatives trading with infinite liquidity — powered by the Synthetix protocol.
+
+Start trading on [Kwenta.io](https://kwenta.io).
 
 ## Tech stack
 
