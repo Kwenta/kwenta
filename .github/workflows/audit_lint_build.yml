@@ -123,6 +123,8 @@ jobs:
 
       - name: Archive artifacts
         uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
+        # run on lighthouse fail
+        if: always()
         with:
           name: lighthouse-reports
           path: |
