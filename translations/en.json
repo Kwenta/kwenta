@@ -151,7 +151,7 @@
 			"overlay-messages": {
 				"frozen-synth": {
 					"title": "This Synth has been frozen",
-					"subtitle": "Restart pending."
+					"subtitle": "Reset in progress."
 				}
 			},
 			"tooltip": {
@@ -165,9 +165,8 @@
 			"fee-cost": "fee cost",
 			"button": {
 				"fee-reclaim-period": "fee reclaim period",
-				"market-is-closed": "market is closed",
+				"market-closed": "market closed",
 				"insufficient-balance": "insufficient balance",
-				"synth-is-frozen": "synth is frozen",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"submit-order": "submit order",

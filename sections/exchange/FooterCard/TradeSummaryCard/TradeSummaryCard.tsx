@@ -84,15 +84,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 			if (feeReclaimPeriodInSeconds) {
 				return t('exchange.summary-info.button.fee-reclaim-period');
 			}
-			if (isQuoteCurrencySuspended || isBaseCurrencySuspended) {
-				// TODO: use the reason code to determine the real cause, for now just use market closure
-				return t('exchange.summary-info.button.market-is-closed');
-			}
-			if (isBaseCurrencyFrozen) {
-				return t('exchange.summary-info.button.synth-is-frozen');
-			}
-			if (isBaseCurrencyFrozen) {
-				return t('exchange.summary-info.button.synth-is-frozen');
+			if (isQuoteCurrencySuspended || isBaseCurrencySuspended || isBaseCurrencyFrozen) {
+				return t('exchange.summary-info.button.market-closed');
 			}
 			if (!selectedBothSides) {
 				return t('exchange.summary-info.button.select-synth');

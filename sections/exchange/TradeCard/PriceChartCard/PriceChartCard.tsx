@@ -153,10 +153,7 @@ const ChartCard: FC<ChartCardProps> = ({
 				)}
 			</ChartHeader>
 			<ChartBody>
-				<ChartData
-					disabledInteraction={disabledInteraction}
-					semiTransparent={showLoader || showOverlayMessage}
-				>
+				<ChartData disabledInteraction={disabledInteraction}>
 					<RechartsResponsiveContainer
 						width="100%"
 						height="100%"
@@ -250,21 +247,19 @@ const ChartCard: FC<ChartCardProps> = ({
 				</ChartData>
 				<AbsoluteCenteredDiv>
 					{showOverlayMessage ? (
-						<OverlayMessage>
+						<>
 							{isSynthFrozen && (
-								<>
-									<FrozenMessage>
-										<SnowflakeIcon />
-										<FrozenMessageTitle>
-											{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
-										</FrozenMessageTitle>
-										<FrozenMessageSubtitle>
-											{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
-										</FrozenMessageSubtitle>
-									</FrozenMessage>
-								</>
+								<OverlayMessage>
+									<SnowflakeIcon />
+									<OverlayMessageTitle>
+										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
+									</OverlayMessageTitle>
+									<OverlayMessageSubtitle>
+										{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
+									</OverlayMessageSubtitle>
+								</OverlayMessage>
 							)}
-						</OverlayMessage>
+						</>
 					) : showLoader ? (
 						<LoaderIcon />
 					) : noData ? (
@@ -281,7 +276,7 @@ const Container = styled.div`
 	position: relative;
 `;
 
-const ChartData = styled.div<{ disabledInteraction: boolean; semiTransparent: boolean }>`
+const ChartData = styled.div<{ disabledInteraction: boolean }>`
 	width: 100%;
 	height: 100%;
 	position: relative;
@@ -289,14 +284,8 @@ const ChartData = styled.div<{ disabledInteraction: boolean; semiTransparent: bo
 		props.disabledInteraction &&
 		css`
 			pointer-events: none;
+			opacity: 0;
 		`};
-
-	${(props) =>
-		props.semiTransparent &&
-		css`
-			opacity: 0.5;
-			filter: blur(3px);
-		`}
 `;
 
 const ChartHeader = styled(FlexDivRowCentered)`
@@ -358,22 +347,20 @@ const LabelStyle = styled(ItemStyle)`
 	text-transform: capitalize;
 `;
 
-const OverlayMessage = styled.div`
-	font-size: 14px;
-`;
-
-const FrozenMessage = styled(GridDivCenteredRow)`
+const OverlayMessage = styled(GridDivCenteredRow)`
 	justify-items: center;
 `;
 
-const FrozenMessageTitle = styled.div`
+const OverlayMessageTitle = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
 	padding-top: 10px;
 	padding-bottom: 5px;
 `;
 
-const FrozenMessageSubtitle = styled.div`
-	color: ${(props) => props.theme.colors.white};
+const OverlayMessageSubtitle = styled.div`
+	color: ${(props) => props.theme.colors.silver};
 `;
 
 const NoData = styled.div`

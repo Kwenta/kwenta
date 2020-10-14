@@ -183,17 +183,10 @@ const ExchangePage = () => {
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	let isBaseCurrencyFrozen = false;
-	let isQuoteCurrencyFrozen = false;
-
-	if (frozenSynthsQuery.isSuccess && frozenSynthsQuery.data) {
-		if (baseCurrencyKey != null) {
-			isBaseCurrencyFrozen = frozenSynthsQuery.data.has(baseCurrencyKey);
-		}
-		if (quoteCurrencyKey != null) {
-			isQuoteCurrencyFrozen = frozenSynthsQuery.data.has(quoteCurrencyKey);
-		}
-	}
+	let isBaseCurrencyFrozen =
+		frozenSynthsQuery.isSuccess && frozenSynthsQuery.data && baseCurrencyKey != null
+			? frozenSynthsQuery.data.has(baseCurrencyKey)
+			: false;
 
 	const baseCurrencySuspendedQuery = useSynthSuspensionQuery(baseCurrencyKey);
 	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
@@ -413,7 +406,7 @@ const ExchangePage = () => {
 			side="quote"
 			currencyKey={quoteCurrencyKey}
 			priceRate={quotePriceRate}
-			isSynthFrozen={isQuoteCurrencyFrozen}
+			isSynthFrozen={false}
 			{...selectPriceCurrencyProps}
 		/>
 	);
