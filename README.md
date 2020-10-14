@@ -17,7 +17,7 @@ Start trading on [Kwenta.io](https://kwenta.io).
 - Styled-Components
 - Immer
 
-## Blockchain stack
+## Ethereum stack
 
 - ethers.js v5 - Ethereum wallet implementation.
 - Blocknative Onboard - for ethereum wallet connectivity.
