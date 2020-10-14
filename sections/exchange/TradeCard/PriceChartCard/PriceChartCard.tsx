@@ -169,7 +169,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
 					>
 						<AreaChart
-							data={computedRates}
+							data={disabledInteraction ? [] : computedRates}
 							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
 							onMouseMove={(e: any) => {
 								const currentRate = get(e, 'activePayload[0].payload.rate', null);
