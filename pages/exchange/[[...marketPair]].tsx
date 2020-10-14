@@ -268,14 +268,14 @@ const ExchangePage = () => {
 			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
 			const amountToExchange = ethers.utils.parseEther(quoteCurrencyAmount);
-			const exchangeProvider = ethers.utils.formatBytes32String('KWENTA');
+			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
 			const params = [
 				quoteKeyBytes32,
 				amountToExchange,
 				baseKeyBytes32,
 				walletAddress,
-				exchangeProvider,
+				trackingCode,
 			];
 			try {
 				setIsSubmitting(true);
