@@ -3,7 +3,7 @@ import { resetButtonCSS } from 'styles/common';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger' | 'text';
+	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
@@ -132,7 +132,28 @@ const Button = styled.button<ButtonProps>`
 						color: ${(props) => props.theme.colors.white};
 						background-color: ${(props) => props.theme.colors.navy};
 					`};
-			`}		
+			`}
+
+${(props) =>
+	props.variant === 'select' &&
+	css`
+		border: 0;
+		border-radius: 0;
+		color: ${(props) => props.theme.colors.blueberry};
+		background-color: ${(props) => props.theme.colors.elderberry};
+		&:hover {
+			&:not(:disabled) {
+				color: ${(props) => props.theme.colors.white};
+			}
+		}
+		${(props) =>
+			// @ts-ignore
+			props.isActive &&
+			css`
+				color: ${(props) => props.theme.colors.white};
+				background-color: ${(props) => props.theme.colors.navy};
+			`};
+	`}					
 
 	${(props) =>
 		props.variant === 'danger' &&

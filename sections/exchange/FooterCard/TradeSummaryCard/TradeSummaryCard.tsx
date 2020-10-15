@@ -113,28 +113,29 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 								trigger="click"
 								arrow={false}
 								content={
-									<>
-										<CustomGasPrice
-											value={customGasPrice}
-											onChange={(_, value) => setCustomGasPrice(value)}
-											placeholder={t('common.custom')}
-										/>
+									<GasSelectContainer>
+										<CustomGasPriceContainer>
+											<CustomGasPrice
+												value={customGasPrice}
+												onChange={(_, value) => setCustomGasPrice(value)}
+												placeholder={t('common.custom')}
+											/>
+										</CustomGasPriceContainer>
 										{GAS_SPEEDS.map((speed) => (
-											<GasSpeedButtonContainer key={speed}>
-												<Button
-													variant="secondary"
-													onClick={() => {
-														setCustomGasPrice('');
-														setGasSpeed(speed);
-													}}
-													isActive={hasCustomGasPrice ? false : gasSpeed === speed}
-												>
-													<span>{t(`common.gas-prices.${speed}`)}</span>
-													<NumericValue>{gasPrices![speed]}</NumericValue>
-												</Button>
-											</GasSpeedButtonContainer>
+											<StyedGasButton
+												key={speed}
+												variant="select"
+												onClick={() => {
+													setCustomGasPrice('');
+													setGasSpeed(speed);
+												}}
+												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+											>
+												<span>{t(`common.gas-prices.${speed}`)}</span>
+												<NumericValue>{gasPrices![speed]}</NumericValue>
+											</StyedGasButton>
 										))}
-									</>
+									</GasSelectContainer>
 								}
 								interactive={true}
 							>
@@ -266,35 +267,48 @@ const SummaryItemValue = styled.div`
 	text-overflow: ellipsis;
 `;
 
+const GasPriceTooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 0.5px solid ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
+	width: 120px;
+	.tippy-content {
+		padding: 0;
+	}
+`;
+
+const GasSelectContainer = styled.div`
+	padding: 16px 0 8px 0;
+`;
+
+const CustomGasPriceContainer = styled.div`
+	margin: 0 10px 5px 10px;
+`;
+
+const CustomGasPrice = styled(NumericInput)`
+	width: 100%;
+	border: 0;
+	font-size: 12px;
+	::placeholder {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
+`;
+
+const StyedGasButton = styled(Button)`
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-left: 10px;
+	padding-right: 10px;
+`;
+
 const StyledGasEditButton = styled.span`
+	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
 	color: ${(props) => props.theme.colors.goldColors.color3};
 	text-transform: uppercase;
-`;
-
-const GasSpeedButtonContainer = styled.div`
-	padding-bottom: 5px;
-	button {
-		width: 120px;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-`;
-
-const GasPriceTooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.black};
-`;
-
-const CustomGasPrice = styled(NumericInput)`
-	width: 120px;
-	border: 1px solid ${(props) => props.theme.colors.stormcloud};
-	margin-bottom: 5px;
-	font-size: 12px;
-	::placeholder {
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `;
 
 const ErrorTooltip = styled(Tippy)`
