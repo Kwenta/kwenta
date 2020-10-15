@@ -158,7 +158,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	return (
 		<Card {...rest}>
-			<Card.Header>{t('exchange.market-details-card.title')}</Card.Header>
+			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>
@@ -191,6 +191,10 @@ const StyledCardBody = styled(Card.Body)`
 	grid-gap: 40px;
 	grid-auto-flow: column;
 	padding: 8px 18px;
+`;
+
+const StyledCardHeader = styled(Card.Header)`
+	height: 40px;
 `;
 
 const Item = styled(FlexDivRowCentered)`
