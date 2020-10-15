@@ -6,7 +6,7 @@ module.exports = {
 				configPath: 'tests/lighthouse/desktop.conf.js',
 				plugins: ['lighthouse-plugin-field-performance', 'lighthouse-plugin-social-sharing'],
 				chromeFlags:
-					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito',
+					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',
 			},
 			url: [`${process.env.BASE_URL}`, `${process.env.BASE_URL}/exchange`],
 		},
