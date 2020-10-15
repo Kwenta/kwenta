@@ -305,6 +305,7 @@ const ExchangePage = () => {
 
 					if (notify) {
 						const { emitter } = notify.hash(tx.hash);
+						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
 
 						emitter.on('txConfirmed', () => {
 							setOrders((orders) =>
@@ -318,15 +319,14 @@ const ExchangePage = () => {
 							synthsWalletBalancesQuery.refetch();
 							return {
 								autoDismiss: 0,
+								link,
 							};
 						});
 
 						emitter.on('all', () => {
-							if (typeof window !== 'undefined' && etherscanInstance != null) {
-								return {
-									onclick: () => window.open(etherscanInstance.txLink(tx.hash)),
-								};
-							}
+							return {
+								link,
+							};
 						});
 					}
 				}
