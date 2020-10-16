@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+lint-results.sarif
 
 # next.js
 /.next/
