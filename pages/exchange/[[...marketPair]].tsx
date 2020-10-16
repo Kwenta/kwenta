@@ -512,14 +512,14 @@ const ExchangePage = () => {
 							<SliderContainer>
 								<Slider arrows={false} dots={false}>
 									<SliderContent>
-										{quotePriceChartCard}
-										<SliderContentSpacer />
-										{quoteMarketDetailsCard}
-									</SliderContent>
-									<SliderContent>
 										{basePriceChartCard}
 										<SliderContentSpacer />
 										{baseMarketDetailsCard}
+									</SliderContent>
+									<SliderContent>
+										{quotePriceChartCard}
+										<SliderContentSpacer />
+										{quoteMarketDetailsCard}
 									</SliderContent>
 								</Slider>
 							</SliderContainer>
@@ -703,16 +703,6 @@ const StyledPriceChartCard = styled(PriceChartCard)``;
 const SliderContainer = styled.div`
 	padding: 16px 0;
 	width: 100%;
-	.slick-dots {
-		button:before {
-			color: white;
-		}
-		.slick-active {
-			button:before {
-				color: white;
-			}
-		}
-	}
 	* {
 		outline: none;
 	}
