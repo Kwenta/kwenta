@@ -1,7 +1,6 @@
 import initSynthetixJS, { NetworkId, Network } from '@synthetixio/js';
 import { ethers, Signer } from 'ethers';
 
-import synthSummaryUtilContract from './contracts/synthSummaryUtilContract';
 import keyBy from 'lodash/keyBy';
 import invert from 'lodash/invert';
 
@@ -68,13 +67,11 @@ type Synthetix = {
 	setContractSettings: (contractSettings: ContractSettings) => void;
 	synthsMap: SynthsMap | null;
 	tokensMap: TokensMap | null;
-	synthSummaryUtil: ethers.Contract | null;
 	chainIdToNetwork: Record<NetworkId, Network> | null;
 };
 
 const synthetix: Synthetix = {
 	js: null,
-	synthSummaryUtil: null,
 	synthsMap: null,
 	tokensMap: null,
 	chainIdToNetwork: null,
@@ -85,11 +82,6 @@ const synthetix: Synthetix = {
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
 
-		this.synthSummaryUtil = new ethers.Contract(
-			synthSummaryUtilContract.addresses[networkId],
-			synthSummaryUtilContract.abi,
-			provider
-		);
 		// @ts-ignore
 		this.chainIdToNetwork = invert(this.js.networkToChainId);
 	},
