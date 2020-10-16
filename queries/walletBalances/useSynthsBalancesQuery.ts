@@ -40,7 +40,9 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 				currencyKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			] = (await synthetix.synthSummaryUtil!.synthsBalances(walletAddress)) as SynthBalancesTuple;
+			] = (await synthetix.js?.contracts.SynthUtil!.synthsBalances(
+				walletAddress
+			)) as SynthBalancesTuple;
 
 			let totalUSDBalance = 0;
 
@@ -70,7 +72,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 			};
 		},
 		{
-			enabled: synthetix.synthSummaryUtil && isWalletConnected,
+			enabled: synthetix.js && isWalletConnected,
 			...options,
 		}
 	);
