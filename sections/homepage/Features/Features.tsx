@@ -2,7 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
+import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
+import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
+import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
 
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 
@@ -14,16 +16,19 @@ const FEATURES = [
 		id: 'infinite-liquidity',
 		title: 'homepage.features.infinite-liquidity.title',
 		copy: 'homepage.features.infinite-liquidity.copy',
+		image: <img src={InfiniteLiquidityIcon} alt="" />,
 	},
 	{
 		id: 'zero-slippage',
 		title: 'homepage.features.zero-slippage.title',
 		copy: 'homepage.features.zero-slippage.copy',
+		image: <img src={SlippageIcon} alt="" />,
 	},
 	{
 		id: 'synthetic-futures',
 		title: 'homepage.features.synthetic-futures.title',
 		copy: 'homepage.features.synthetic-futures.copy',
+		image: <img src={FuturesIcon} alt="" />,
 		comingSoon: true,
 	},
 ];
@@ -36,11 +41,9 @@ const Features = () => {
 			<FlexSection>
 				<StyledLeftSubHeader>{t('homepage.features.title')}</StyledLeftSubHeader>
 				<StyledGridContainer>
-					{FEATURES.map(({ id, title, comingSoon, copy }) => (
+					{FEATURES.map(({ id, title, comingSoon, copy, image }) => (
 						<FeatureCard key={id}>
-							<FeatureIconContainer>
-								<LogoNoTextSVG />
-							</FeatureIconContainer>
+							<FeatureIconContainer>{image}</FeatureIconContainer>
 							<FeatureContentTitle>
 								<Title>{t(title)}</Title>
 								{comingSoon && <ComingSoonTag>COMING SOON</ComingSoonTag>}
@@ -85,6 +88,10 @@ const FeatureCard = styled(FlexDivCol)`
 
 const FeatureIconContainer = styled.div`
 	padding-bottom: 40px;
+	img {
+		width: 64px;
+		height: 64px;
+	}
 `;
 
 const FeatureContentTitle = styled(FlexDivCentered)`
