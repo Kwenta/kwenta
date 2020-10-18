@@ -15,7 +15,7 @@
 	"homepage": {
 		"page-title": "Kwenta | derivatives trading with infinite liquidity",
 		"nav": {
-			"exchange": "Start Trading",
+			"start-trading": "Start Trading",
 			"wallet": "Connect Wallet",
 			"why": "Why Kwenta?",
 			"how": "How it Works",
