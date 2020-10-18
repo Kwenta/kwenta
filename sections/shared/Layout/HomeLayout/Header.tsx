@@ -63,9 +63,9 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<UserMenu isTextButton={true} />
-						<Link href={ROUTES.Exchange.Home}>
+						<Link href={ROUTES.Dashboard.Home}>
 							<Button variant="primary" isRounded={false} size="md">
-								{t('homepage.nav.exchange')}
+								{t('homepage.nav.start-trading')}
 							</Button>
 						</Link>
 					</MenuContainer>

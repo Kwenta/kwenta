@@ -116,7 +116,7 @@ const Col = styled.div`
 `;
 
 const AssetCard = styled(FlexDivCentered)`
-	background: #0d0d18;
+	background: ${(props) => props.theme.colors.elderberry};
 	border: ${(props) => `1px solid ${props.theme.colors.black}`};
 	box-sizing: border-box;
 	border-radius: 3px;
