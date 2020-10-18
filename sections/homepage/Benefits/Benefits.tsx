@@ -4,9 +4,9 @@ import styled from 'styled-components';
 
 import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
 import SwapPreviewMd from 'assets/svg/marketing/swap-preview-md.svg';
-import ArrowIcon from 'assets/svg/marketing/arrow.svg';
-import LayersIcon from 'assets/svg/marketing/layers.svg';
-import CogIcon from 'assets/svg/marketing/cog.svg';
+import P2CIcon from 'assets/svg/marketing/icon-p2c.svg';
+import PermissionlessIcon from 'assets/svg/marketing/icon-permissionless.svg';
+import RestrictionsIcon from 'assets/svg/marketing/icon-restrictions.svg';
 
 import { FlexDivCol } from 'styles/common';
 
@@ -18,19 +18,19 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 const BENEFITS = [
 	{
 		id: 'peer-to-contract',
-		image: <img src={ArrowIcon} alt="" />,
+		image: <img src={P2CIcon} alt="" />,
 		title: 'homepage.benefits.peer-to-contract.title',
 		copy: 'homepage.benefits.peer-to-contract.copy',
 	},
 	{
 		id: 'trading-pair',
-		image: <img src={CogIcon} alt="" />,
+		image: <img src={RestrictionsIcon} alt="" />,
 		title: 'homepage.benefits.trading-pair.title',
 		copy: 'homepage.benefits.trading-pair.copy',
 	},
 	{
 		id: 'permissionless',
-		image: <img src={LayersIcon} alt="" />,
+		image: <img src={PermissionlessIcon} alt="" />,
 		title: 'homepage.benefits.permissionless.title',
 		copy: 'homepage.benefits.permissionless.copy',
 	},
@@ -71,6 +71,10 @@ const StyledCenterSubHeader = styled(CenterSubHeader)`
 
 const BenefitCard = styled(FlexDivCol)`
 	align-items: flex-start;
+	img {
+		width: 64px;
+		height: 64px;
+	}
 `;
 
 const StyledTitle = styled(Title)`
