@@ -46,7 +46,7 @@ const Features = () => {
 							<FeatureIconContainer>{image}</FeatureIconContainer>
 							<FeatureContentTitle>
 								<Title>{t(title)}</Title>
-								{comingSoon && <ComingSoonTag>COMING SOON</ComingSoonTag>}
+								{comingSoon && <ComingSoonTag>{t('common.features.coming-soon')}</ComingSoonTag>}
 							</FeatureContentTitle>
 							<Copy>{t(copy)}</Copy>
 						</FeatureCard>
