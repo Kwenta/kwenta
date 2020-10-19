@@ -21,6 +21,7 @@ const plugins = [
 ];
 
 module.exports = withPlugins([...plugins], {
+	trailingSlash: true,
 	exportPathMap: function (defaultPathMap) {
 		return {
 			...defaultPathMap,
