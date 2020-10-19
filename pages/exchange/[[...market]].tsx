@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
@@ -8,6 +8,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import produce from 'immer';
 import Slider from 'react-slick';
+import castArray from 'lodash/castArray';
 
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
@@ -80,7 +81,10 @@ const ExchangePage = () => {
 	// const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 	const router = useRouter();
 
-	const marketPairQuery = router.query.marketPair || [];
+	const marketQuery = useMemo(
+		() => (router.query.market ? castArray(router.query.market)[0] : null),
+		[router.query]
+	);
 
 	const [currencyPair, setCurrencyPair] = useLocalStorage<{
 		base: CurrencyKey | null;
@@ -220,7 +224,7 @@ const ExchangePage = () => {
 
 	const routeToMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
 		router.replace(
-			`/exchange/[[...marketPair]]`,
+			`/exchange/[[...market]]`,
 			ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey),
 			{
 				shallow: true,
@@ -228,7 +232,7 @@ const ExchangePage = () => {
 		);
 
 	const routeToBaseCurrency = (baseCurrencyKey: CurrencyKey) =>
-		router.replace(`/exchange/[[...marketPair]]`, ROUTES.Exchange.Into(baseCurrencyKey), {
+		router.replace(`/exchange/[[...market]]`, ROUTES.Exchange.Into(baseCurrencyKey), {
 			shallow: true,
 		});
 
@@ -341,9 +345,9 @@ const ExchangePage = () => {
 	};
 
 	useEffect(() => {
-		if (marketPairQuery.length) {
+		if (marketQuery != null) {
 			if (synthetix.synthsMap != null) {
-				const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketPairQuery[0].split('-') as [
+				const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketQuery.split('-') as [
 					CurrencyKey,
 					CurrencyKey
 				];
@@ -368,7 +372,7 @@ const ExchangePage = () => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [marketPairQuery]);
+	}, [marketQuery]);
 
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,

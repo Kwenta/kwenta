@@ -28,7 +28,7 @@ module.exports = withPlugins([...plugins], {
 				page: '/dashboard/[[...tab]]',
 			},
 			'/exchange': {
-				page: '/exchange/[[...marketPair]]',
+				page: '/exchange/[[...market]]',
 			},
 		};
 	},
