@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
+import castArray from 'lodash/castArray';
+
+import ROUTES from 'constants/routes';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
@@ -20,8 +23,6 @@ import { BoldText } from 'styles/common';
 import { CardTitle, ConvertContainer } from '../common';
 
 import { priceCurrencyState } from 'store/app';
-import ROUTES from 'constants/routes';
-import castArray from 'lodash/castArray';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
