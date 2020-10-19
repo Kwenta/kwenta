@@ -21,7 +21,7 @@ const plugins = [
 ];
 
 module.exports = withPlugins([...plugins], {
-	trailingSlash: true,
+	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
 	exportPathMap: function (defaultPathMap) {
 		return {
 			...defaultPathMap,
