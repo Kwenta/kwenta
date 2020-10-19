@@ -47,6 +47,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{ walletName: 'status' },
 				// { walletName: 'unilogin' },
 				{ walletName: 'authereum' },
+				{ walletName: 'imToken' },
 			],
 		},
 		walletCheck: [
