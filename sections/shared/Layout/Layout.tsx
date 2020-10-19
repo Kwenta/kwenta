@@ -1,21 +1,33 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import i18n from 'i18n';
 
 import { zIndex } from 'constants/ui';
 
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 
+import { languageState } from 'store/app';
+
 type LayoutProps = {
 	children: React.ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children }) => (
-	<>
-		<GlobalStyle />
-		{children}
-	</>
-);
+const Layout: FC<LayoutProps> = ({ children }) => {
+	const language = useRecoilValue(languageState);
+
+	useEffect(() => {
+		i18n.changeLanguage(language);
+	}, [language]);
+
+	return (
+		<>
+			<GlobalStyle />
+			{children}
+		</>
+	);
+};
 
 const GlobalStyle = createGlobalStyle`
 	* {

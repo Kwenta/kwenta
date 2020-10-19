@@ -4,30 +4,30 @@ import { atom, selector } from 'recoil';
 
 import { truncateAddress } from 'utils/formatters/string';
 
+import { getWalletKey } from '../utils';
+
 export type Network = {
 	id: NetworkId;
 	name: NetworkName;
 };
 
-const getKey = (subKey: string) => `wallet/${subKey}`;
-
 export const networkState = atom<Network | null>({
-	key: getKey('network'),
+	key: getWalletKey('network'),
 	default: null,
 });
 
 export const walletAddressState = atom<string | null>({
-	key: getKey('walletAddress'),
+	key: getWalletKey('walletAddress'),
 	default: null,
 });
 
 export const isWalletConnectedState = selector<boolean>({
-	key: getKey('isWalletConnected'),
+	key: getWalletKey('isWalletConnected'),
 	get: ({ get }) => get(walletAddressState) != null,
 });
 
 export const truncatedWalletAddressState = selector<string | null>({
-	key: getKey('truncatedWalletAddress'),
+	key: getWalletKey('truncatedWalletAddress'),
 	get: ({ get }) => {
 		const walletAddress = get(walletAddressState);
 		if (walletAddress != null) {
@@ -38,11 +38,11 @@ export const truncatedWalletAddressState = selector<string | null>({
 });
 
 export const gasSpeedState = atom<GasSpeed>({
-	key: getKey('gasSpeed'),
+	key: getWalletKey('gasSpeed'),
 	default: 'fast',
 });
 
 export const customGasPriceState = atom<string>({
-	key: getKey('customGasPrice'),
+	key: getWalletKey('customGasPrice'),
 	default: '',
 });

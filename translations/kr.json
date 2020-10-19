@@ -1,0 +1,390 @@
+{
+	"meta": {
+		"description": "암호화폐, 외환, 지수, 상품을 이더리움상에서 제로 슬리피지로 거래하십시오",
+		"og": {
+			"title": "퀀타",
+			"site-name": "퀀타"
+		}
+	},
+	"header": {
+		"nav": {
+			"exchange": "거래소",
+			"dashboard": "대시보드"
+		}
+	},
+	"homepage": {
+		"page-title": "퀀타 | 무한 유동성이 제공되는 파생상품 거래소",
+		"nav": {
+			"start-trading": "거래 시작하기",
+			"wallet": "지갑 연결하기",
+			"why": "퀀타 소개",
+			"how": "사용 가이드",
+			"faq": "FAQ"
+		},
+		"hero": {
+			"title": "무한 유동성이 제공되는 파생상품 거래소"
+		},
+		"assets": {
+			"title": "이더리움상에서 다양한 종류의 자산을 거래하세요",
+			"index": "지수",
+			"forex": "외환",
+			"equities": "주식",
+			"crypto": "암호화폐",
+			"commodity": "상품",
+			"short": "숏 포지션"
+		},
+		"features": {
+			"title": "특별한 거래 환경",
+			"infinite-liquidity": {
+				"title": "무한 유동성",
+				"copy": "모든 거래는 신세틱스의 유동성 풀 모델에 기반한 p2c (peer-to-contract)로 이뤄집니다. 덕분에 거래상대방이 매칭되길 기다릴 필요도 없고 무한한 유동성이 제공됩니다."
+			},
+			"zero-slippage": {
+				"title": "제로 슬리피지",
+				"copy": "무한한 유동성이란 오더북이 필요없고, 슬리피지를 겪을 우려도 없음을 의미합니다."
+			},
+			"synthetic-futures": {
+				"title": "합성자산 선물",
+				"copy": "신세틱스 프로토콜 기반 선물이 만들어지는 대로 퀀타에서 지원될 예정입니다. 논-커스터디얼, 퍼미션리스 플랫폼에서 제공되는 영구계약입니다."
+			}
+		},
+		"benefits": {
+			"title": "중앙화된 거래소의 한계점 극복",
+			"peer-to-contract": {
+				"title": "Peer-to-contract (P2C) 거래",
+				"copy": "모든 거래는 신세틱스 스마트컨트랙를 대상으로 이뤄지기에 트레이더분들은 유동성 부족, 슬리피지,오더북 같은 peer-to-peer (P2P) 트레이딩 모델의 한계점들에 대해 걱정하실 필요가 없습니다."
+			},
+			"trading-pair": {
+				"title": "제한없는 거래 자산 페어링",
+				"copy": "어떤 신스이든 원하시는 신스로 바로 거래될 수 있습니다. 중앙화된 거래소에선 주어진 자산 페이링으로만 거래 가능하지만 퀀타에선 이런 제약이 없습니다."
+			},
+			"permissionless": {
+				"title": "퍼미션리스, 논-커스터디얼",
+				"copy": "퀀타는 신세틱스 프로토콜을 레버리지하는 디앱입니다. 따라서 계정을 생성할 필요가 없으며, 예치나 인출의 개념이 필요없고, 귀하의 자금을 수탁하실 필요도 없습니다."
+			}
+		},
+		"steps": {
+			"title": "거래를 시작하기 위한 3단계",
+			"one": {
+				"title": "가스비를 지불하실 웹3 월렛과 이더리움이 필요합니다",
+				"subtitle": "스텝 1",
+				"copy": "퀀타는 이더리움 블록체인상의 플랫폼으로, 다른 이더리움 디앱처럼 거래 가스비를 지불하기 위해 이더리움이 있는 웹3 월렛이 있으셔야 합니다. 보편적인 월렛 카테고리에는 하드웨어, 브라우저 익스텐션, 모바일 월렛 등이 있습니다."
+			},
+			"two": {
+				"title": "sUSD 준비 (혹은 기타 다른 신스)",
+				"subtitle": "스텝 2",
+				"copy": "거래를 시작하기 위해선, 퀀타에서 지원되는 합성자산 파생상품, 즉 신스가 있으셔야 합니다. 가장 쉽게 구하실 수 있는 신스는 sUSD이며, 유니스왑, 커브, 1인치와 같은 디앱에서 구매하실 수 있습니다."
+			},
+			"three": {
+				"title": "퀀타에서 모든 종류의 신스를 거래하세요",
+				"subtitle": "스텝 3",
+				"copy": "sUSD 혹은 기타 다른 신스를 가지고 계시다면 퀀타상의 모든 종류의 신스와 거래하여 다양한 자산 포토폴리오를 만드실 수 있습니다. 모든 거래는 온체인상에서 이뤄지고 어떤 거래소에도 자산을 수탁하실 필요가 없습니다!"
+			}
+		},
+		"faq": {
+			"title": "FAQ",
+			"tabs": {
+				"explainer-video": "비디오 가이드",
+				"getting-started": {
+					"title": "기초 개념",
+					"items": {
+						"qna1": {
+							"question": "이더리움이란?",
+							"answer": "이더리움은 온라인상에서 수많은 사람들의 네트워크에 의해 관리되고 운용되는 인프라를 만들 수 있게 합니다. 즉, 아무도 통제할 수 없으며 중지시키는 것이 불가능하지는 않더라도 매우 어렵습니다.그렇기에 정부나 감독기관의 감독에서 벗어날 수 있습니다. 이더리움은 비트코인의 열성지지자들에 의해 만들어졌습니다. 이들은 탈중앙화된 화폐의 디자인을 다른 탈중앙화된 사용 케이스로 확대하길 원했습니다. ('탈중앙화된'이란 중앙기관에 의해 통제되지 않는다는 의미입니다). 이더리움 블록체인상에는 수많은 프로젝트들의 생태계가 형성돼 있으며, 이들 프로젝트는 서로 상호작용을 주고 받을 수 있습니다."
+						},
+						"qna2": {
+							"question": "디파이란?",
+							"answer": "디파이 (Decentralized Finance)는 탈중앙화된 금융을 의미합니다. 이더리움상의 개방형 금융 관련 툴, 상품, 프로토콜들의 생태계이며, 퀀타와 신세틱스 프로토콜 모두 디파이 생태계의 일원입니다. 디파이는 이더리움 블록체인의 핵심 요소인 스마트 컨트랙트상에서 구동됩니다. 스마트 컨트랙트는 이벤트나 활동을 코딩이 된 대로 수행하고 컨트롤하는 프로그램 혹은 프로토콜입니다. 이를 통해 특정 태스크를 수행할 수 있는 탈중앙화된 인프라를 만들 수 있습니다: 예컨대, 대출과 대여를 가능케하는 스마트컨트랙트라면 예치된 자금을 담보로 락킹하고 이 담보를 기반으로 다른 자산을 빌릴 수 있게 하는 스마트 컨트랙트를 가질 것입니다."
+						},
+						"qna3": {
+							"question": "디앱이란?",
+							"answer": "디앱 (dApp. Decentralized App)은 탈중앙화된 앱입니다.디앱은 블록체인상에서 오픈소스 프로토콜을 이용할 수 있게 해주는 프론트엔드 인터페이스입니다. 만약 기저 프로토콜이 오픈소스로 개방돼 있다면, 그 프로토콜을 이용하기 위한 다양한 인터페이스를 제공하는 복수의 디앱이 있을 수 있습니다. 디앱은 유저들이 암호화폐 월렛을 이용해 스마트 컨트랙트와 직접 상호작용할 수 있게 합니다. 즉, 유저들이 자산을 수탁시켜야 할 필요가 없기에 계정을 만들거나 예치, 인출을 할 필요가 없게 됩니다."
+						}
+					}
+				},
+				"trading-on-kwenta": {
+					"title": "퀀타에서 거래하기",
+					"items": {
+						"qna1": {
+							"question": "퀀타의 유동성은 어디서 오나요?",
+							"answer": "퀀타는 신세틱스 프로토콜을 기반으로 만들어졌습니다. 따라서 트레이더분들이 사용하시는 신스의 유동성은 온전히 신세틱스에 SNX를 스테이킹한 유저들에 의해 공급됩니다."
+						},
+						"qna2": {
+							"question": "거래 상대방이 없는데 어떻게 거래가 이뤄질 수 있나요?",
+							"answer": "신세틱스 프로토콜에서의 거래엔 직접적인 거래 상대방이 없습니다 대신 SNX 스테이커들이 sUSD를 부채로 발행시 신세틱스 부채 풀의 일부를 맡게 되며, 트레이더들은 이 부채 풀 전체를 거래 상대방으로 거래합니다. 보다 자세한 사항은 저희 라이트페이퍼에서 확인하실 수 있습니다 <0>litepaper</0>."
+						},
+						"qna3": {
+							"question": "가스비는 어떻게 계산되나요?",
+							"answer": "거래비용은 이더리움 채굴자들이 거래체결을 수행하기 위해 얼마나 많은 컴퓨팅 파워를 소모해야 되는지에 비례해 결정됩니다. 퀀타는 신세틱스 프로토콜을 이용하며, 다른 대부분의 이더리움 프로젝트들보다 훨씬 고도화된 프로토콜이어서 상대적으로 가스비가 높습니다."
+						}
+					}
+				}
+			}
+		},
+		"footer": {
+			"cta": {
+				"title": "지금 거래를 시작하세요",
+				"button": "거래소 둘러보기"
+			}
+		}
+	},
+	"exchange": {
+		"page-title": "거래소 | 퀀타",
+		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"currency-card": {
+			"wallet-balance": "지갑 잔고",
+			"currency-selector": {
+				"no-value": "신스를 선택하세요"
+			}
+		},
+		"market-details-card": {
+			"title": "마켓 데이터",
+			"24h-vol": "24H 거래량",
+			"24h-high": "24H 최고가",
+			"24h-low": "24H 최저가",
+			"market-cap": "시가총액",
+			"price-feed": "가격 데이터"
+		},
+		"price-chart-card": {
+			"compare": "비교하기",
+			"ratio": "요율",
+			"overlay-messages": {
+				"frozen-synth": {
+					"title": "이 신스는 동결됐습니다",
+					"subtitle": "리셋 진행중."
+				}
+			},
+			"tooltip": {
+				"price": "가격:"
+			},
+			"no-data": "데이터 없음"
+		},
+		"summary-info": {
+			"gas-price-gwei": "가스 가격 (GWEI)",
+			"fee": "fee",
+			"fee-cost": "수수료 비용",
+			"button": {
+				"fee-reclaim-period": "수수료 상환 기간",
+				"market-closed": "마켓 종료",
+				"insufficient-balance": "잔액 부족",
+				"enter-amount": "금액을 입력하세요",
+				"select-synth": "신스를 선택하세요",
+				"submit-order": "주문을 제출하세요",
+				"submitting-order": "주문 제출 중..."
+			}
+		},
+		"onboard": {
+			"message": "귀하의 월렛엔 신스가 없습니다. <0>{{currencyKey}}</0> 를 구매하시어 신스 거래를 시작하세요:"
+		},
+		"connect-wallet-card": {
+			"message": "거래 시작을 위해 지갑을 연결하세요"
+		},
+		"common": {
+			"from": "from",
+			"into": "into"
+		},
+		"errors": {
+			"fee-reclamation": "거래를 마친 뒤엔 일정시간 대기가 필요합니다.{{currencyKey}}를 거래하시기 전에 약 {{waitingPeriod}} 분을 기다려 주세요 "
+		}
+	},
+	"dashboard": {
+		"page-title": "대시보드 | 퀀타",
+		"trending": "Trending",
+		"watchlist": {
+			"title": "Watchlist"
+		},
+		"tabs": {
+			"nav": {
+				"synth-balances": "신스 잔고",
+				"convert": "전환",
+				"crypto-balances": "암호화폐 잔고",
+				"transactions": "거래"
+			}
+		},
+		"onboard": {
+			"convert": "전환",
+			"title": "사용 가이드",
+			"subtitle": "퀀타에서 모든 자산을 거래하세요",
+			"learn-more": "더 알아보기",
+			"how-it-works-modal": {
+				"title": "사용 가이드"
+			}
+		},
+		"your-portfolio": {
+			"title": "귀하의 포토폴리오"
+		},
+		"synth-sort": {
+			"price": "가격",
+			"24h-vol": "24H 거래량",
+			"24h-high": "24H 최고점",
+			"24h-low": "24H 최저점",
+			"24h-change": "24H 변동"
+		},
+		"transactions": {
+			"synth-sort": {
+				"allSynths": "모든 신스"
+			},
+			"order-type-sort": {
+				"allOrderTypes": "모든 주문 유형",
+				"market": "마켓",
+				"limit": "리밋"
+			},
+			"table": {
+				"orderType": "주문 유형",
+				"from": "From",
+				"to": "To",
+				"value": "금액",
+				"no-results": "발견된 거래가 없습니다"
+			}
+		}
+	},
+	"not-found": {
+		"page-title": "Not Found | Kwenta",
+		"title": "404",
+		"subtitle": "Page not found."
+	},
+	"system-status": {
+		"page-title": "점검 | 퀀타",
+		"title": "현재 점검중입니다",
+		"subtitle": "불편을 드려 죄송합니다. 빠른 시간 내에 복구하겠습니다."
+	},
+	"modals": {
+		"select-synth": {
+			"title": "신스를 선택하세요",
+			"header": {
+				"search-results": "검색 결과",
+				"category-synths": "{{category}} synths",
+				"all-synths": "all synths"
+			},
+			"search": {
+				"placeholder": "신스를 검색하세요",
+				"empty-results": "검색 결과가 없습니다. 다시 검색해 보세요."
+			}
+		},
+		"select-asset": {
+			"title": "신스를 선택하세요",
+			"header": {
+				"your-synths": "귀하의 신스",
+				"holdings": "holdings",
+				"non-synths": "non-synths"
+			}
+		},
+		"confirm-transaction": {
+			"title": "거래를 컨펌하세요",
+			"confirm-with-provider": "귀하의 지갑에서 거래를 컨펌하세요."
+		},
+		"settings": {
+			"title": "셋팅",
+			"options": {
+				"currency": "화폐",
+				"language": "언어"
+			}
+		},
+		"wallet": {
+			"title": "월렛 옵션"
+		},
+		"notifications": {
+			"title": "알림",
+			"open-orders": {
+				"title": "오프 오더",
+				"no-results": "오픈 오더 없음"
+			},
+			"recent-notifications": {
+				"title": "최근 알림",
+				"no-results": "최근 기록이 없습니다"
+			},
+			"all-notifications": {
+				"title": "모든 알림",
+				"no-results": "없음"
+			},
+			"view-all": "모두 보기"
+		}
+	},
+	"common": {
+		"order-type": {
+			"market": "마켓",
+			"limit": "리밋"
+		},
+		"currency": {
+			"currency-amount": "금액 <0>{{currencyKey}}</0>",
+			"currency-value": "가격 <0>{{currencyKey}}</0>",
+			"estimated-currency-value": "예상되는 <0>{{currencyKey}}</0> 가격",
+			"currency-contract": "<0>{{currencyKey}}</0> 컨트랙트",
+			"currency-price": "<0>{{currencyKey}}</0> 가격",
+			"synthetic-currency-name": "합성 {{currencyName}}",
+			"trade-to-currency": "<0>{{currencyKey}}</0> 로 거래",
+			"buy-currency": "<0>{{currencyKey}}</0> 매수",
+			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> 를 <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>"
+		},
+		"total-assets": "{{total}} assets",
+		"total-results": "{{total}} results",
+		"currency-category": {
+			"crypto": "암호화폐",
+			"forex": "외환",
+			"commodity": "상품",
+			"equities": "주식"
+		},
+		"contract": "컨트랙트",
+		"search-results": "search results",
+		"chart-periods": {
+			"1H": "1H",
+			"4H": "4H",
+			"1D": "1D",
+			"1W": "1W",
+			"1M": "1M"
+		},
+		"transaction": {
+			"error": "오류가 발생했습니다.",
+			"reattempt": "다시 시도해 주세요"
+		},
+		"price": "price",
+		"cancel": "cancel",
+		"order-types": {
+			"market": "마켓 오더",
+			"limit": "리밋 오더"
+		},
+		"features": {
+			"coming-soon": "Coming Soon"
+		},
+		"wallet": {
+			"connect-wallet": "지갑을 연결해 주세요",
+			"switch-wallet": "지갑 전환",
+			"switch-accounts": "계정 전환",
+			"disconnect-wallet": "지갑 연결을 해지합니다"
+		},
+		"tx-status": {
+			"waiting": "대기 중",
+			"open": "개시",
+			"closed": "종료",
+			"closing": "종료 중",
+			"in": "입고됐습니다",
+			"out": "인출됐습니다",
+			"complete": "완료",
+			"pending": "진행",
+			"confirmed": "화인됐습니다",
+			"cancelled": "취소됐습니다",
+			"failed": "오류가 발생했습니다"
+		},
+		"switch": "전환",
+		"gas-prices": {
+			"average": "평균",
+			"fast": "빠름",
+			"fastest": "가장 빠름"
+		},
+		"custom": "Custom",
+		"edit": "edit",
+		"powered-by": "Powered by",
+		"dex-aggregators": {
+			"1inch": {
+				"title": "DEX Aggregator - 1inch.exchange"
+			}
+		},
+		"totals": {
+			"total-synth-value": "총 신스 금액"
+		},
+		"pagination": {
+			"page": "Page",
+			"page-of-total-pages": "{{page}} of {{totalPages}}"
+		}
+	}
+}

@@ -5,7 +5,7 @@ import { mediaStyles } from 'styles/media';
 export default class MyDocument extends Document {
 	render() {
 		return (
-			<Html>
+			<Html lang="en">
 				<Head>
 					<style type="text/css" dangerouslySetInnerHTML={{ __html: mediaStyles }} />
 				</Head>
