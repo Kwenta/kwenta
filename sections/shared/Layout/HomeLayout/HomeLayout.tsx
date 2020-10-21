@@ -11,11 +11,9 @@ type HomeLayoutProps = {
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<>
 		<GlobalStyle />
-		<Container>
-			<Header />
-			{children}
-			<Footer />
-		</Container>
+		<Header />
+		<Content>{children}</Content>
+		<Footer />
 	</>
 );
 
@@ -25,7 +23,7 @@ const GlobalStyle = createGlobalStyle`
 	}
 `;
 
-const Container = styled.div`
+const Content = styled.div`
 	${(props) => props.theme.animations.show};
 `;
 

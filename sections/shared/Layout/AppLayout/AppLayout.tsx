@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 
 import { FullScreenContainer } from 'styles/common';
 
@@ -10,14 +9,10 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => (
-	<StyledFullScreenContainer>
+	<FullScreenContainer>
 		<Header />
 		{children}
-	</StyledFullScreenContainer>
+	</FullScreenContainer>
 );
-
-const StyledFullScreenContainer = styled(FullScreenContainer)`
-	${(props) => props.theme.animations.show};
-`;
 
 export default AppLayout;

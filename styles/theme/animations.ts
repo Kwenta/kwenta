@@ -10,7 +10,7 @@ const keyframes = {
 const animations = {
 	show: `
         opacity: 0;
-        animation: show 200ms ease-out forwards;
+        animation: show 300ms ease-out forwards;
         ${keyframes.show}
   `,
 };
