@@ -17,6 +17,7 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
+import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '@reach/dialog/styles.css';
