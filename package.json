@@ -19,7 +19,7 @@
 		"@reach/disclosure": "0.11.2",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.3",
-		"@synthetixio/js": "0.1.5",
+		"@synthetixio/js": "0.1.9",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.20.0",
 		"bignumber.js": "9.0.0",
