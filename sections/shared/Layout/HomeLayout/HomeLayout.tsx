@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import Footer from './Footer';
 
 import Header from './Header';
@@ -11,9 +11,11 @@ type HomeLayoutProps = {
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<>
 		<GlobalStyle />
-		<Header />
-		{children}
-		<Footer />
+		<Container>
+			<Header />
+			{children}
+			<Footer />
+		</Container>
 	</>
 );
 
@@ -21,6 +23,10 @@ const GlobalStyle = createGlobalStyle`
 	body {
 		overflow-x: hidden;
 	}
+`;
+
+const Container = styled.div`
+	${(props) => props.theme.animations.show};
 `;
 
 export default HomeLayout;
