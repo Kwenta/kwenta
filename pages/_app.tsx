@@ -37,7 +37,6 @@ const queryCache = new QueryCache({
 	},
 });
 
-// trigger deploy
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
 
