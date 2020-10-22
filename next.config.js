@@ -21,6 +21,7 @@ const plugins = [
 ];
 
 module.exports = withPlugins([...plugins], {
+	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
 	exportPathMap: function (defaultPathMap) {
 		return {
 			...defaultPathMap,
@@ -28,7 +29,7 @@ module.exports = withPlugins([...plugins], {
 				page: '/dashboard/[[...tab]]',
 			},
 			'/exchange': {
-				page: '/exchange/[[...marketPair]]',
+				page: '/exchange/[[...market]]',
 			},
 		};
 	},

@@ -1,15 +1,14 @@
 import { atom } from 'recoil';
 
 import { DEFAULT_SORT_OPTION } from 'sections/dashboard/TrendingSynths/constants';
-
-const getKey = (subKey: string) => `ui/${subKey}`;
+import { getUIKey } from '../utils';
 
 export const hasOrdersNotificationState = atom<boolean>({
-	key: getKey('hasOrderNotifications'),
+	key: getUIKey('hasOrderNotifications'),
 	default: false,
 });
 
 export const trendingSynthsOptionState = atom<typeof DEFAULT_SORT_OPTION>({
-	key: getKey('trendingSynthsOption'),
+	key: getUIKey('trendingSynthsOption'),
 	default: DEFAULT_SORT_OPTION,
 });

@@ -1,12 +1,13 @@
-import { Languages } from 'translations/constants';
+import { Language } from 'translations/constants';
 
-import { NetworkId } from '@synthetixio/js';
+import localStore from 'utils/localStore';
+import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
+
+import { NetworkId, Synth } from '@synthetixio/js';
 
 // app defaults
-export const DEFAULT_LANGUAGE = Languages.EN;
-
-// TODO: find a better way to init this
-export const DEFAULT_PRICE_CURRENCY = {
+export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
+export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKey) ?? {
 	name: 'sUSD',
 	asset: 'USD',
 	sign: '$',

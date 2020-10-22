@@ -149,6 +149,7 @@ const CurrencyConvertCard: FC = () => {
 					// TODO: move this to a shared function
 
 					const { emitter } = notify.hash(tx.hash);
+					const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
 
 					emitter.on('txConfirmed', () => {
 						setOrders((orders) =>
@@ -163,15 +164,14 @@ const CurrencyConvertCard: FC = () => {
 						synthsBalancesQuery.refetch();
 						return {
 							autoDismiss: 0,
+							link,
 						};
 					});
 
 					emitter.on('all', () => {
-						if (typeof window !== 'undefined' && etherscanInstance != null) {
-							return {
-								onclick: () => window.open(etherscanInstance.txLink(tx.hash)),
-							};
-						}
+						return {
+							link,
+						};
 					});
 				}
 			}

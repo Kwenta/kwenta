@@ -3,7 +3,7 @@ import { CurrencyKey } from 'constants/currency';
 import { orderBy, groupBy } from 'lodash';
 import { Transaction } from 'ethers';
 
-const getKey = (subKey: string) => `orders/${subKey}`;
+import { getOrdersKey } from '../utils';
 
 export type OrderType = 'market' | 'limit';
 export type OrderStatus = 'pending' | 'confirmed' | 'cancelled';
@@ -28,12 +28,12 @@ export type OrderByStatus = {
 
 // TOOD: fetch from local storage
 export const ordersState = atom<Order[]>({
-	key: getKey('orders'),
+	key: getOrdersKey('orders'),
 	default: [],
 });
 
 export const ordersByStatusState = selector<OrderByStatus>({
-	key: getKey('ordersByStatus'),
+	key: getOrdersKey('ordersByStatus'),
 	get: ({ get }) => {
 		const orders = get(ordersState);
 
@@ -48,7 +48,7 @@ export const ordersByStatusState = selector<OrderByStatus>({
 });
 
 export const hasPendingOrderState = selector<boolean>({
-	key: getKey('hasPendingOrder'),
+	key: getOrdersKey('hasPendingOrder'),
 	get: ({ get }) => {
 		const ordersByStatus = get(ordersByStatusState);
 

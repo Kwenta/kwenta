@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { ethers } from 'ethers';
 
@@ -10,7 +10,7 @@ import { getDefaultNetworkId } from 'utils/network';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
-import { appReadyState } from 'store/app';
+import { appReadyState, languageState } from 'store/app';
 import { walletAddressState, networkState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
@@ -22,6 +22,7 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
+	const language = useRecoilValue(languageState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
@@ -120,7 +121,9 @@ const useConnector = () => {
 					}
 				},
 			});
-			const notify = initNotify(network);
+			const notify = initNotify(network, {
+				clientLocale: language,
+			});
 
 			setOnboard(onboard);
 			setNotify(notify);
@@ -134,6 +137,14 @@ const useConnector = () => {
 			onboard.walletSelect(selectedWallet);
 		}
 	}, [onboard, selectedWallet]);
+
+	useEffect(() => {
+		if (notify) {
+			notify.config({
+				clientLocale: language,
+			});
+		}
+	}, [language, notify]);
 
 	const resetCachedUI = () => {
 		// TODO: since orders are not persisted, we need to reset them.

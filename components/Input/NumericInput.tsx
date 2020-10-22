@@ -39,6 +39,7 @@ const NumericInput: FC<NumericInputProps> = ({
 				}
 			}}
 			min="0"
+			step="any"
 		/>
 	);
 };

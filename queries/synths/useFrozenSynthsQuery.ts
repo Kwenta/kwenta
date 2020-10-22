@@ -13,13 +13,14 @@ const useFrozenSynthsQuery = (options?: QueryConfig<FrozenSynths>) => {
 	return useQuery<FrozenSynths>(
 		QUERY_KEYS.Synths.FrozenSynths,
 		async () => {
-			const frozenSynths = await synthetix.synthSummaryUtil!.frozenSynths();
+			const frozenSynths = await synthetix.js?.contracts.SynthUtil!.frozenSynths();
+
 			return new Set<CurrencyKey>([
 				...compact(frozenSynths.map(ethers.utils.parseBytes32String)),
 			] as CurrencyKey[]);
 		},
 		{
-			enabled: synthetix.synthSummaryUtil,
+			enabled: synthetix.js,
 			...options,
 		}
 	);

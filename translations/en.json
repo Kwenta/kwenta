@@ -1,4 +1,8 @@
 {
+	"languages": {
+		"en": "English",
+		"kr": "한국어"
+	},
 	"meta": {
 		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
 		"og": {
@@ -15,7 +19,7 @@
 	"homepage": {
 		"page-title": "Kwenta | derivatives trading with infinite liquidity",
 		"nav": {
-			"exchange": "Start Trading",
+			"start-trading": "Start Trading",
 			"wallet": "Connect Wallet",
 			"why": "Why Kwenta?",
 			"how": "How it Works",

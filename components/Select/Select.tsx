@@ -27,12 +27,13 @@ function Select<T>(props: Props<T>) {
 				color: colors.white,
 				cursor: 'pointer',
 				boxShadow: 'none',
-				border: `1px solid ${colors.navy}`,
+				border: `1px solid rgba(255, 255, 255, 0.1)`,
 				borderRadius: '4px',
 				outline: 'none',
-				height: '24px',
+				minHeight: 'unset',
+				height: 'unset',
 				'&:hover': {
-					border: `1px solid ${colors.navy}`,
+					border: `1px solid rgba(255, 255, 255, 0.1)`,
 				},
 				fontSize: '12px',
 				backgroundColor: colors.elderberry,
@@ -40,7 +41,7 @@ function Select<T>(props: Props<T>) {
 			menu: (provided) => ({
 				...provided,
 				backgroundColor: colors.elderberry,
-				border: `1px solid ${colors.navy}`,
+				border: `1px solid rgba(255, 255, 255, 0.1)`,
 				boxShadow: 'none',
 				padding: 0,
 			}),
@@ -60,6 +61,7 @@ function Select<T>(props: Props<T>) {
 				'&:hover': {
 					backgroundColor: colors.navy,
 				},
+				padding: '6px 8px',
 			}),
 			placeholder: (provided) => ({
 				...provided,
@@ -70,6 +72,7 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				color: colors.goldColors.color1,
 				transition: 'transform 0.2s ease-in-out',
+				padding: '0 8px',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {
 					color: colors.goldColors.color3,
