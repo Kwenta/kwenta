@@ -9,6 +9,7 @@
 		"tsc": "tsc --noEmit",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && tsc",
+		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix"
 	},
 	"dependencies": {
@@ -18,12 +19,12 @@
 		"@reach/disclosure": "0.11.2",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.3",
-		"@synthetixio/js": "0.1.3",
+		"@synthetixio/js": "0.1.4",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.20.0",
 		"bignumber.js": "9.0.0",
-		"bnc-notify": "1.3.1",
-		"bnc-onboard": "1.11.1",
+		"bnc-notify": "1.5.0",
+		"bnc-onboard": "1.14.0",
 		"date-fns": "2.15.0",
 		"ethers": "5.0.8",
 		"i18next": "19.7.0",
@@ -52,6 +53,7 @@
 		"use-immer": "0.4.1"
 	},
 	"devDependencies": {
+		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@types/date-fns": "2.6.0",
 		"@types/lodash": "4.14.159",
 		"@types/node": "14.0.13",

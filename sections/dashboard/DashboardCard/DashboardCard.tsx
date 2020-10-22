@@ -1,7 +1,11 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
+import castArray from 'lodash/castArray';
+
+import ROUTES from 'constants/routes';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
@@ -17,19 +21,30 @@ import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
 import { BoldText } from 'styles/common';
 
 import { CardTitle, ConvertContainer } from '../common';
-import { useRecoilValue } from 'recoil';
+
 import { priceCurrencyState } from 'store/app';
 
-const TABS = {
-	SYNTH_BALANCES: 'synth-balances',
-	CONVERT: 'convert',
-	TRANSACTIONS: 'transactions',
-};
+enum Tab {
+	SynthBalances = 'synth-balances',
+	Convert = 'convert',
+	Transactions = 'transactions',
+}
+
+const Tabs = Object.values(Tab);
 
 const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { tab } = router.query;
+
+	const tabQuery = useMemo(() => {
+		if (router.query.tab) {
+			const tab = castArray(router.query.tab)[0] as Tab;
+			if (Tabs.includes(tab)) {
+				return tab;
+			}
+		}
+		return null;
+	}, [router.query]);
 
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -43,6 +58,33 @@ const DashboardCard: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
+	const activeTab =
+		tabQuery != null ? tabQuery : synthBalances?.balances.length ? Tab.SynthBalances : Tab.Convert;
+
+	const TABS = useMemo(
+		() => [
+			{
+				name: Tab.SynthBalances,
+				label: t('dashboard.tabs.nav.synth-balances'),
+				active: activeTab === Tab.SynthBalances,
+				onClick: () => router.push(ROUTES.Dashboard.SynthBalances),
+			},
+			{
+				name: Tab.Convert,
+				label: t('dashboard.tabs.nav.convert'),
+				active: activeTab === Tab.Convert,
+				onClick: () => router.push(ROUTES.Dashboard.Convert),
+			},
+			{
+				name: Tab.Transactions,
+				label: t('dashboard.tabs.nav.transactions'),
+				active: activeTab === Tab.Transactions,
+				onClick: () => router.push(ROUTES.Dashboard.Transactions),
+			},
+		],
+		[t, activeTab, router]
+	);
+
 	const selectPriceCurrencyProps = {
 		selectedPriceCurrency,
 		selectPriceCurrencyRate,
@@ -51,13 +93,6 @@ const DashboardCard: FC = () => {
 	if (synthsBalancesQuery.isLoading) {
 		return <Loader />;
 	}
-
-	// TODO: switch to set/route based tabs
-	const activeTab = !!tab
-		? tab[0]
-		: synthBalances?.balances.length === 0
-		? TABS.CONVERT
-		: TABS.SYNTH_BALANCES;
 
 	return (
 		<>
@@ -74,29 +109,13 @@ const DashboardCard: FC = () => {
 				</PortfolioCard>
 			</Totals>
 			<StyledTabList>
-				<TabButton
-					name={TABS.SYNTH_BALANCES}
-					active={activeTab === TABS.SYNTH_BALANCES}
-					onClick={() => router.push(TABS.SYNTH_BALANCES)}
-				>
-					{t('dashboard.tabs.nav.synth-balances')}
-				</TabButton>
-				<TabButton
-					name={TABS.CONVERT}
-					active={activeTab === TABS.CONVERT}
-					onClick={() => router.push(TABS.CONVERT)}
-				>
-					{t('dashboard.tabs.nav.convert')}
-				</TabButton>
-				<TabButton
-					name={TABS.TRANSACTIONS}
-					active={activeTab === TABS.TRANSACTIONS}
-					onClick={() => router.push(TABS.TRANSACTIONS)}
-				>
-					{t('dashboard.tabs.nav.transactions')}
-				</TabButton>
+				{TABS.map(({ name, label, active, onClick }) => (
+					<TabButton key={name} name={name} active={active} onClick={onClick}>
+						{label}
+					</TabButton>
+				))}
 			</StyledTabList>
-			<TabPanel name={TABS.SYNTH_BALANCES} activeTab={activeTab}>
+			<TabPanel name={Tab.SynthBalances} activeTab={activeTab}>
 				<SynthBalances
 					balances={synthBalances?.balances ?? []}
 					totalUSDBalance={synthBalances?.totalUSDBalance ?? 0}
@@ -104,12 +123,12 @@ const DashboardCard: FC = () => {
 					{...selectPriceCurrencyProps}
 				/>
 			</TabPanel>
-			<TabPanel name={TABS.CONVERT} activeTab={activeTab}>
+			<TabPanel name={Tab.Convert} activeTab={activeTab}>
 				<ConvertContainer>
 					<CurrencyConvertCard />
 				</ConvertContainer>
 			</TabPanel>
-			<TabPanel name={TABS.TRANSACTIONS} activeTab={activeTab}>
+			<TabPanel name={Tab.Transactions} activeTab={activeTab}>
 				<Transactions {...selectPriceCurrencyProps} />
 			</TabPanel>
 		</>

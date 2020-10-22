@@ -141,6 +141,7 @@ export const PageContent = styled.section`
 	padding: 0 20px;
 	width: 100%;
 	flex-grow: 1;
+	${(props) => props.theme.animations.show};
 `;
 
 export const ConnectionDot = styled.span`

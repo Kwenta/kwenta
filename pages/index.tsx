@@ -58,7 +58,7 @@ const DarkContainer = styled.div`
 
 const LightContainer = styled.div`
 	width: 100%;
-	background: #0d0d18;
+	background: ${(props) => props.theme.colors.elderberry};
 	padding: 0 20px;
 `;
 

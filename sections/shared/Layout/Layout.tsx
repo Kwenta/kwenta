@@ -1,64 +1,61 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import i18n from 'i18n';
 
 import { zIndex } from 'constants/ui';
 
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
 
+import { languageState } from 'store/app';
+
 type LayoutProps = {
 	children: React.ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children }) => (
-	<>
-		<GlobalStyle />
-		{children}
-	</>
-);
+const Layout: FC<LayoutProps> = ({ children }) => {
+	const language = useRecoilValue(languageState);
+
+	useEffect(() => {
+		i18n.changeLanguage(language);
+	}, [language]);
+
+	return (
+		<>
+			<GlobalStyle />
+			{children}
+		</>
+	);
+};
 
 const GlobalStyle = createGlobalStyle`
-	* {
-		box-sizing: border-box;
-	}
-	::-webkit-scrollbar {
-    	width: 13px;
-		height: 13px;
-	}
+	${media.greaterThan('mdUp')`
+		@media (prefers-color-scheme: light) {
+			::-webkit-scrollbar {
+				width: 13px;
+				height: 13px;
+			}
 
-	::-webkit-scrollbar-track {
-		box-shadow: inset 0 0 13px 13px transparent;
-		border: solid 3px transparent;
-	}
+			::-webkit-scrollbar-track {
+				box-shadow: inset 0 0 13px 13px transparent;
+				border: solid 3px transparent;
+			}
 
-	::-webkit-scrollbar-thumb {
-		box-shadow: inset 0 0 13px 13px #2C2C42;
-		border: solid 3px transparent;
-		border-radius: 16px;
-		&:hover {
-			box-shadow: inset 0 0 13px 13px #3B3B5A;
+			::-webkit-scrollbar-thumb {
+				box-shadow: inset 0 0 13px 13px #2C2C42;
+				border: solid 3px transparent;
+				border-radius: 16px;
+				&:hover {
+					box-shadow: inset 0 0 13px 13px #3B3B5A;
+				}
+			}
 		}
-	}
-
-	#__next {
-		width: 100%;
-		height: 100%;
-		position: relative;
-	}
+	`};
 
 	body {
-		font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		margin: 0;
-		text-rendering: optimizeSpeed;
-		position: relative;
-		min-height: 100vh;
-		scroll-behavior: smooth;
 		background-color: ${(props) => props.theme.colors.black};
 		color: ${(props) => props.theme.colors.blueberry};
-		font-size: 12px;
-		line-height: 140%;
 	}
 
 	a {
@@ -66,41 +63,6 @@ const GlobalStyle = createGlobalStyle`
 		color: ${(props) => props.theme.colors.white};
 	}
 
-	ul {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	input[type='number'] {
-		-moz-appearance: textfield;
-	}
-
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-	}	
-
-	@font-face {
-		font-family: 'AkkuratLLWeb-Regular';
-		src: url('/fonts/AkkuratLLWeb-Regular.woff2') format('woff2'), 
-			 url('/fonts/AkkuratLLWeb-Regular.woff') format('woff');
-		font-display: sans-serif;
-	}
-
-	@font-face {
-		font-family: 'AkkuratLLWeb-Bold';
-		src: url('/fonts/AkkuratLLWeb-Bold.woff2') format('woff2'), 
-		     url('/fonts/AkkuratLLWeb-Bold.woff') format('woff');
-		font-display: sans-serif;
-	}
-
-	@font-face {
-		font-family: 'AkkuratMonoLLWeb-Regular';
-		src: url('/fonts/AkkuratMonoLLWeb-Regular.woff2') format('woff2'), 
-		     url('/fonts/AkkuratMonoLLWeb-Regular.woff') format('woff');
-		font-display: monospace;
-	}
 	.bn-notify-custom {
  	   && {
 			font-family: ${(props) => props.theme.fonts.regular};

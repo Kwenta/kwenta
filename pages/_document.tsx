@@ -3,20 +3,6 @@ import { ServerStyleSheet } from 'styled-components';
 import { mediaStyles } from 'styles/media';
 
 export default class MyDocument extends Document {
-	render() {
-		return (
-			<Html>
-				<Head>
-					<style type="text/css" dangerouslySetInnerHTML={{ __html: mediaStyles }} />
-				</Head>
-				<body>
-					<Main />
-					<NextScript />
-				</body>
-			</Html>
-		);
-	}
-
 	static async getInitialProps(ctx: any) {
 		const styledComponentsSheet = new ServerStyleSheet();
 		const originalRenderPage = ctx.renderPage;
@@ -41,5 +27,32 @@ export default class MyDocument extends Document {
 		} finally {
 			styledComponentsSheet.seal();
 		}
+	}
+
+	render() {
+		return (
+			<Html lang="en">
+				<Head>
+					<style type="text/css" dangerouslySetInnerHTML={{ __html: mediaStyles }} />
+					<link
+						rel="preload"
+						href="/fonts/AkkuratLLWeb-Regular.woff2"
+						as="font"
+						type="font/woff2"
+					/>
+					<link rel="preload" href="/fonts/AkkuratLLWeb-Bold.woff2" as="font" type="font/woff2" />
+					<link
+						rel="preload"
+						href="/fonts/AkkuratMonoLLWeb-Regular.woff2"
+						as="font"
+						type="font/woff2"
+					/>
+				</Head>
+				<body>
+					<Main />
+					<NextScript />
+				</body>
+			</Html>
+		);
 	}
 }

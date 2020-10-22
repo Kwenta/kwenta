@@ -2,19 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
-// import AssetCollections from 'assets/svg/marketing/asset-collections.svg';
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import Fade from 'assets/inline-svg/marketing/fade.svg';
-import CommoditiesIcon from 'assets/inline-svg/marketing/icon-commodities.svg';
-import CryptoIcon from 'assets/inline-svg/marketing/icon-crypto.svg';
-import EquitiesIcon from 'assets/inline-svg/marketing/icon-equities.svg';
-import ForexIcon from 'assets/inline-svg/marketing/icon-forex.svg';
-import IndicesIcon from 'assets/inline-svg/marketing/icon-indices.svg';
-import ShortIcon from 'assets/inline-svg/marketing/icon-short.svg';
 
-import media from 'styles/media';
-import { Media } from 'styles/media';
+import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
+import media, { Media } from 'styles/media';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
@@ -23,32 +15,26 @@ import { GridContainer, SubHeader } from '../common';
 const ASSETS = [
 	{
 		id: 'index',
-		image: <IndicesIcon />,
 		label: 'homepage.assets.index',
 	},
 	{
 		id: 'forex',
-		image: <ForexIcon />,
 		label: 'homepage.assets.forex',
 	},
 	{
 		id: 'equities',
-		image: <EquitiesIcon />,
 		label: 'homepage.assets.equities',
 	},
 	{
 		id: 'crypto',
-		image: <CryptoIcon />,
 		label: 'homepage.assets.crypto',
 	},
 	{
 		id: 'commodity',
-		image: <CommoditiesIcon />,
 		label: 'homepage.assets.commodity',
 	},
 	{
 		id: 'short',
-		image: <ShortIcon />,
 		label: 'homepage.assets.short',
 	},
 ];
@@ -60,9 +46,9 @@ const Assets = () => {
 	const title = <LeftSubHeader>{t('homepage.assets.title')}</LeftSubHeader>;
 	const assetCards = (
 		<GridContainer>
-			{ASSETS.map(({ id, label, image }) => (
+			{ASSETS.map(({ id, label }) => (
 				<AssetCard key={id}>
-					{image}
+					<Bullet />
 					<AssetCardText>{t(label)}</AssetCardText>
 				</AssetCard>
 			))}
@@ -130,11 +116,11 @@ const Col = styled.div`
 `;
 
 const AssetCard = styled(FlexDivCentered)`
-	background: #0d0d18;
+	background: ${(props) => props.theme.colors.elderberry};
 	border: ${(props) => `1px solid ${props.theme.colors.black}`};
 	box-sizing: border-box;
 	border-radius: 3px;
-	padding: 10px;
+	padding: 16px;
 `;
 
 const AssetCardText = styled(Paragraph)`
@@ -160,6 +146,14 @@ const MobileImage = styled(AssetsImage)`
 		width: 100%;
 		margin-bottom: 60px;
 	`}
+`;
+
+export const Bullet = styled.span`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background: ${(props) => props.theme.colors.gold};
 `;
 
 export default Assets;

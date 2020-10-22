@@ -14,7 +14,7 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 		async () => {
 			const exchangeRates: Rates = {};
 
-			const [synths, rates] = await synthetix.synthSummaryUtil!.synthsRates();
+			const [synths, rates] = await synthetix.js?.contracts.SynthUtil.synthsRates();
 
 			synths.forEach((synth: CurrencyKey, idx: number) => {
 				const synthName = ethers.utils.parseBytes32String(synth) as CurrencyKey;
@@ -24,7 +24,7 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 			return exchangeRates;
 		},
 		{
-			enabled: synthetix.synthSummaryUtil,
+			enabled: synthetix.js,
 			...options,
 		}
 	);

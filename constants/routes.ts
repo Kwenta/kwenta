@@ -1,5 +1,10 @@
 import { CurrencyKey } from './currency';
 
+const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
+
+const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
+	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
+
 export const ROUTES = {
 	Root: '/',
 	Homepage: {
@@ -7,13 +12,15 @@ export const ROUTES = {
 	},
 	Dashboard: {
 		Home: '/dashboard',
-		Convert: '/dashboard/convert',
+		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
+		SynthBalances: normalizeRoute('/dashboard', 'synth-balances', 'tab'),
+		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
-			`/exchange/${baseCurrencyKey}-${quoteCurrencyKey}`,
-		Into: (currencyKey: CurrencyKey) => `/exchange/${currencyKey}`,
+			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
+		Into: (currencyKey: CurrencyKey) => normalizeRoute(`/exchange`, currencyKey, 'market'),
 	},
 };
 

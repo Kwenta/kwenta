@@ -5,11 +5,6 @@ import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import useCurrencyOptions from 'hooks/useCurrencyOptions';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-
-import { priceCurrencyState } from 'store/app';
-
 import {
 	ConnectionDot,
 	FixedFooterMixin,
@@ -20,12 +15,13 @@ import {
 
 import Connector from 'containers/Connector';
 
-import Select from 'components/Select';
+import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
+
 import FullScreenModal from 'components/FullScreenModal';
 import Button from 'components/Button';
 
 import { MENU_LINKS } from '../constants';
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
 
 type MobileSettingsModalProps = {
 	onDismiss: () => void;
@@ -34,8 +30,6 @@ type MobileSettingsModalProps = {
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const currencyOptions = useCurrencyOptions();
-	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
@@ -55,27 +49,14 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				))}
 			</Container>
 			<Container hasBorder={true}>
-				<OptionRow>
-					<OptionLabel>{t('modals.settings.options.currency')}</OptionLabel>
-					<CurrencySelectContainer>
-						<Select
-							inputId="mobile-currency-options"
-							formatOptionLabel={(option) => (
-								<span>
-									{option.value.sign} {option.value.asset}
-								</span>
-							)}
-							options={currencyOptions}
-							value={{ label: priceCurrency.asset, value: priceCurrency }}
-							onChange={(option) => {
-								if (option) {
-									// @ts-ignore
-									setPriceCurrency(option.value);
-								}
-							}}
-						/>
-					</CurrencySelectContainer>
-				</OptionRow>
+				{OPTIONS.map(({ id, label, SelectComponent }) => (
+					<OptionRow key={id}>
+						<OptionLabel>{t(label)}</OptionLabel>
+						<CurrencySelectContainer>
+							<SelectComponent />
+						</CurrencySelectContainer>
+					</OptionRow>
+				))}
 			</Container>
 			<Footer>
 				{isWalletConnected ? (
