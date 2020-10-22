@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { Languages } from 'translations/constants';
+import { Language } from 'translations/constants';
 
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 import { SYNTHS_MAP } from 'constants/currency';
@@ -27,7 +27,7 @@ export const appReadyState = atom<boolean>({
 	default: false,
 });
 
-export const languageState = atom<Languages>({
+export const languageState = atom<Language>({
 	key: languageStateKey,
 	default: DEFAULT_LANGUAGE,
 });

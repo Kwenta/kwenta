@@ -1,10 +1,12 @@
 import onboard from 'bnc-onboard';
-import notify from 'bnc-notify';
+import notify, { InitOptions } from 'bnc-notify';
 
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
 
 import { Network } from 'store/wallet';
+
+import notifyMessages from 'translations/bnc-notify/notifyMessages';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(network);
@@ -58,10 +60,11 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	});
 };
 
-export const initNotify = (network: Network) =>
+export const initNotify = (network: Network, options: InitOptions) =>
 	notify({
 		darkMode: true,
 		dappId: process.env.NEXT_PUBLIC_BN_NOTIFY_API_KEY!,
 		networkId: network.id,
 		desktopPosition: 'topRight',
+		notifyMessages,
 	});

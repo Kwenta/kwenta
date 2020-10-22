@@ -7,13 +7,13 @@ import { languageState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 import { useTranslation } from 'react-i18next';
-import { Languages } from 'translations/constants';
+import { Language } from 'translations/constants';
 
 export const LanguageSelect: FC = () => {
 	const { t } = useTranslation();
 	const [language, setLanguage] = usePersistedRecoilState(languageState);
 
-	const languages = t('languages', { returnObjects: true }) as Record<Languages, string>;
+	const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
 
 	const languageOptions = useMemo(
 		() =>
