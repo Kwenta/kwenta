@@ -33,6 +33,7 @@ body {
 	font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeSpeed;
 	margin: 0;
 	position: relative;
 	min-height: 100vh;

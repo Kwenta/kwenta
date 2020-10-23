@@ -5,10 +5,10 @@ import { Svg } from 'react-optimized-image';
 
 import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
 
-import LeftArrowIcon from 'assets/inline-svg/app/caret-left.svg';
-import LeftEndArrowIcon from 'assets/inline-svg/app/caret-left-end.svg';
-import RightArrowIcon from 'assets/inline-svg/app/caret-right.svg';
-import RightEndArrowIcon from 'assets/inline-svg/app/caret-right-end.svg';
+import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
+import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
+import RightArrowIcon from 'assets/svg/app/caret-right.svg';
+import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg';
 
 type PaginationProps = {
 	pageIndex: number;

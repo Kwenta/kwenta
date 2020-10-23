@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
-import Fade from 'assets/inline-svg/marketing/fade.svg';
+import Fade from 'assets/svg/marketing/fade.svg';
 
 import { FlexDivCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
 import media, { Media } from 'styles/media';

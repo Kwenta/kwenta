@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-import LoaderIcon from 'assets/inline-svg/app/loader.svg';
+import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import { AbsoluteCenteredDiv } from 'styles/common';
 

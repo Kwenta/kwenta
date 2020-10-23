@@ -15,7 +15,7 @@ import { CurrencyKey } from 'constants/currency';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 
-import ArrowsIcon from 'assets/inline-svg/app/circle-arrows.svg';
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 

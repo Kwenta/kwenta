@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Img, { Svg } from 'react-optimized-image';
+import { Svg } from 'react-optimized-image';
 
 import { FlexDivCentered, Paragraph, ExternalLink } from 'styles/common';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
-import MediumLogo from 'assets/inline-svg/marketing/medium-icon.svg';
-import TwitterLogo from 'assets/inline-svg/marketing/twitter-icon.svg';
+import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 
 import media from 'styles/media';
 
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
 			<Container>
 				<Subtext>{t('common.powered-by')}</Subtext>
 				<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
-					<Img src={TextLogo} alt="" />
+					<Svg src={TextLogo} />
 				</ExternalLink>
 			</Container>
 			<SocialIcons>

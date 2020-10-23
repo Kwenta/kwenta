@@ -3,9 +3,9 @@ import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import CircleEllipsis from 'assets/inline-svg/app/circle-ellipsis.svg';
-import CircleTick from 'assets/inline-svg/app/circle-tick.svg';
-import Link from 'assets/inline-svg/app/link.svg';
+import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
+import CircleTick from 'assets/svg/app/circle-tick.svg';
+import Link from 'assets/svg/app/link.svg';
 
 import { CapitalizedText, ExternalLink, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Order } from 'store/orders';

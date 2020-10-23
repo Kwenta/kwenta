@@ -4,8 +4,8 @@ import { Svg } from 'react-optimized-image';
 import { formatPercent } from 'utils/formatters/number';
 import styled from 'styled-components';
 
-import ChangePositiveIcon from 'assets/inline-svg/app/change-positive.svg';
-import ChangeNegativeIcon from 'assets/inline-svg/app/change-negative.svg';
+import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
+import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 
 type ChangePercentProps = {
 	value: number;

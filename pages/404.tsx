@@ -8,8 +8,8 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
 
-import CaretLeftXLIcon from 'assets/inline-svg/app/caret-left-xl.svg';
-import CaretRightXLICon from 'assets/inline-svg/app/caret-right-xl.svg';
+import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
+import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
 
 const NotFoundPage = () => {
 	const { t } = useTranslation();

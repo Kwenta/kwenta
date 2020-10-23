@@ -2,43 +2,43 @@ import React, { FC } from 'react';
 import Img from 'react-optimized-image';
 
 // Crypto
-import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
+// import BTCIcon from 'assets/svg/currencies/crypto/BTC.svg';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
-import XRPIcon from 'assets/svg/currencies/crypto/XRP.svg';
-import BCHIcon from 'assets/svg/currencies/crypto/BCH.svg';
-import LTCIcon from 'assets/svg/currencies/crypto/LTC.svg';
-import EOSIcon from 'assets/svg/currencies/crypto/EOS.svg';
-import BNBIcon from 'assets/svg/currencies/crypto/BNB.svg';
-import XTZIcon from 'assets/svg/currencies/crypto/XTZ.svg';
-import XMRIcon from 'assets/svg/currencies/crypto/XMR.svg';
-import ADAIcon from 'assets/svg/currencies/crypto/ADA.svg';
-import LINKIcon from 'assets/svg/currencies/crypto/LINK.svg';
-import TRXIcon from 'assets/svg/currencies/crypto/TRX.svg';
-import DASHIcon from 'assets/svg/currencies/crypto/DASH.svg';
-import ETCIcon from 'assets/svg/currencies/crypto/ETC.svg';
-import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
-import COMPIcon from 'assets/svg/currencies/crypto/COMP.svg';
-import RENIcon from 'assets/svg/currencies/crypto/REN.svg';
-import LENDIcon from 'assets/svg/currencies/crypto/LEND.svg';
-import KNCIcon from 'assets/svg/currencies/crypto/KNC.svg';
+// import XRPIcon from 'assets/svg/currencies/crypto/XRP.svg';
+// import BCHIcon from 'assets/svg/currencies/crypto/BCH.svg';
+// import LTCIcon from 'assets/svg/currencies/crypto/LTC.svg';
+// import EOSIcon from 'assets/svg/currencies/crypto/EOS.svg';
+// import BNBIcon from 'assets/svg/currencies/crypto/BNB.svg';
+// import XTZIcon from 'assets/svg/currencies/crypto/XTZ.svg';
+// import XMRIcon from 'assets/svg/currencies/crypto/XMR.svg';
+// import ADAIcon from 'assets/svg/currencies/crypto/ADA.svg';
+// import LINKIcon from 'assets/svg/currencies/crypto/LINK.svg';
+// import TRXIcon from 'assets/svg/currencies/crypto/TRX.svg';
+// import DASHIcon from 'assets/svg/currencies/crypto/DASH.svg';
+// import ETCIcon from 'assets/svg/currencies/crypto/ETC.svg';
+// import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
+// import COMPIcon from 'assets/svg/currencies/crypto/COMP.svg';
+// import RENIcon from 'assets/svg/currencies/crypto/REN.svg';
+// import LENDIcon from 'assets/svg/currencies/crypto/LEND.svg';
+// import KNCIcon from 'assets/svg/currencies/crypto/KNC.svg';
 // Commodity
-import GOLDIcon from 'assets/svg/currencies/commodity/GOLD.svg';
-import SILVERIcon from 'assets/svg/currencies/commodity/SILVER.svg';
+// import GOLDIcon from 'assets/svg/currencies/commodity/GOLD.svg';
+// import SILVERIcon from 'assets/svg/currencies/commodity/SILVER.svg';
 // Equities
-import FTSEIcon from 'assets/svg/currencies/equities/FTSE.svg';
-import NIKKEIIcon from 'assets/svg/currencies/equities/NIKKEI.svg';
+// import FTSEIcon from 'assets/svg/currencies/equities/FTSE.svg';
+// import NIKKEIIcon from 'assets/svg/currencies/equities/NIKKEI.svg';
 // Fiat
-import AUDIcon from 'assets/svg/currencies/fiat/AUD.svg';
+// import AUDIcon from 'assets/svg/currencies/fiat/AUD.svg';
 // import CADIcon  from 'assets/svg/currencies/fiat/CAD.svg';
-import CHFIcon from 'assets/svg/currencies/fiat/CHF.svg';
-import EURIcon from 'assets/svg/currencies/fiat/EUR.svg';
-import GBPIcon from 'assets/svg/currencies/fiat/GBP.svg';
-import JPYIcon from 'assets/svg/currencies/fiat/JPY.svg';
+// import CHFIcon from 'assets/svg/currencies/fiat/CHF.svg';
+// import EURIcon from 'assets/svg/currencies/fiat/EUR.svg';
+// import GBPIcon from 'assets/svg/currencies/fiat/GBP.svg';
+// import JPYIcon from 'assets/svg/currencies/fiat/JPY.svg';
 // import KRWIcon  from 'assets/svg/currencies/fiat/KRW.svg';
-import USDIcon from 'assets/svg/currencies/fiat/USD.svg';
+// import USDIcon from 'assets/svg/currencies/fiat/USD.svg';
 // Indices
-import CEXIcon from 'assets/svg/currencies/indices/CEX.svg';
-import DEFIIcon from 'assets/svg/currencies/indices/DEFI.svg';
+// import CEXIcon from 'assets/svg/currencies/indices/CEX.svg';
+// import DEFIIcon from 'assets/svg/currencies/indices/DEFI.svg';
 
 // Crypto Synths
 import sBTCIcon from '@synthetixio/assets/synths/sBTC.svg';
@@ -89,7 +89,7 @@ import sAUDIcon from '@synthetixio/assets/synths/sAUD.svg';
 import sGBPIcon from '@synthetixio/assets/synths/sGBP.svg';
 import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
 
-import { CurrencyKey, CURRENCY_KEY_TO_ICON_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
@@ -100,18 +100,154 @@ type CurrencyIconProps = {
 };
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth', ...rest }) => {
-	const currencyIcon = CURRENCY_KEY_TO_ICON_MAP[currencyKey];
+	const props = {
+		width: '24px',
+		height: '24px',
+		alt: currencyKey,
+		...rest,
+	};
 
-	if (!currencyIcon) {
-		return null;
+	// TODO: next-optimized-images does not support dynamic imports yet... so it needs to be manually defined.
+
+	// most of the "asset" types were disabled since they were not widely used.
+	switch (currencyKey) {
+		case CRYPTO_CURRENCY_MAP.ETH: {
+			return <Img src={ETHIcon} {...props} />;
+		}
+
+		case SYNTHS_MAP.sBTC: {
+			return <Img src={sBTCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sETH: {
+			return type === 'synth' ? (
+				<Img src={sETHIcon} {...props} />
+			) : (
+				<Img src={ETHIcon} {...props} />
+			);
+		}
+		case SYNTHS_MAP.sXRP: {
+			return <Img src={sXRPIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sBCH: {
+			return <Img src={sBCHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sLTC: {
+			return <Img src={sLTCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sEOS: {
+			return <Img src={sEOSIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sBNB: {
+			return <Img src={sBNBIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sXTZ: {
+			return <Img src={sXTZIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sXMR: {
+			return <Img src={sXMRIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sADA: {
+			return <Img src={sADAIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sLINK: {
+			return <Img src={sLINKIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sTRX: {
+			return <Img src={sTRXIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sDASH: {
+			return <Img src={sDASHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sETC: {
+			return <Img src={sETCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iBTC: {
+			return <Img src={iBTCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iETH: {
+			return <Img src={iETHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iXRP: {
+			return <Img src={iXRPIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iBCH: {
+			return <Img src={iBCHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iLTC: {
+			return <Img src={iLTCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iEOS: {
+			return <Img src={iEOSIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iBNB: {
+			return <Img src={iBNBIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iXTZ: {
+			return <Img src={iXTZIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iXMR: {
+			return <Img src={iXMRIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iADA: {
+			return <Img src={iADAIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iLINK: {
+			return <Img src={iLINKIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iTRX: {
+			return <Img src={iTRXIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iDASH: {
+			return <Img src={iDASHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iETC: {
+			return <Img src={iETCIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sEUR: {
+			return <Img src={sEURIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sJPY: {
+			return <Img src={sJPYIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sUSD: {
+			return <Img src={sUSDIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sAUD: {
+			return <Img src={sAUDIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sGBP: {
+			return <Img src={sGBPIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sCHF: {
+			return <Img src={sCHFIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sXAU: {
+			return <Img src={sXAUIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sXAG: {
+			return <Img src={sXAGIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sCEX: {
+			return <Img src={sCEXIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sDEFI: {
+			return <Img src={sDEFIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iCEX: {
+			return <Img src={iCEXIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iDEFI: {
+			return <Img src={iDEFIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sFTSE: {
+			return <Img src={sFTSEIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sNIKKEI: {
+			return <Img src={sNIKKEIIcon} {...props} />;
+		}
+		default:
+			return null;
 	}
-
-	const { SynthIcon, AssetIcon } = currencyIcon;
-
-	// const Icon = type === 'synth' && SynthIcon ? SynthIcon : AssetIcon;
-	const Icon = sADAIcon;
-
-	return <Img src={sADAIcon} width="24" height="24" alt={`${currencyKey} icon`} {...rest} />;
 };
 
 export default CurrencyIcon;

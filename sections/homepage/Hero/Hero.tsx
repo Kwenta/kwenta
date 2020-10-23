@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
 
-import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
+import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
 import { GridDiv, Paragraph } from 'styles/common';

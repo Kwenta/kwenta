@@ -10,8 +10,8 @@ import { EXTERNAL_LINKS } from 'constants/links';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
-import PlusThinIcon from 'assets/inline-svg/app/plus-thin.svg';
-import LinkIcon from 'assets/inline-svg/app/link.svg';
+import PlusThinIcon from 'assets/svg/app/plus-thin.svg';
+import LinkIcon from 'assets/svg/app/link.svg';
 
 import media from 'styles/media';
 

@@ -6,7 +6,7 @@ import { Svg } from 'react-optimized-image';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import CaretDownIcon from 'assets/inline-svg/app/caret-down.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
 import { formatCurrency } from 'utils/formatters/number';
 

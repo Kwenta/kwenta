@@ -18,10 +18,10 @@ import Logo from 'sections/shared/Layout/Logo';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 
-import SystemDownIcon from 'assets/inline-svg/app/system-down.svg';
-import DiscordIcon from 'assets/inline-svg/social/discord.svg';
-import TwitterIcon from 'assets/inline-svg/social/twitter.svg';
-import GithubIcon from 'assets/inline-svg/social/github.svg';
+import SystemDownIcon from 'assets/svg/app/system-down.svg';
+import DiscordIcon from 'assets/svg/social/discord.svg';
+import TwitterIcon from 'assets/svg/social/twitter.svg';
+import GithubIcon from 'assets/svg/social/github.svg';
 
 // import Services from 'containers/Services';
 import useIsSystemUpgrading from 'queries/systemStatus/useIsSystemUpgrading';

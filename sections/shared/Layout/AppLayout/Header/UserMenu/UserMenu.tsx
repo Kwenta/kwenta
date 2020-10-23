@@ -12,10 +12,10 @@ import { isWalletConnectedState, truncatedWalletAddressState } from 'store/walle
 import { hasOrdersNotificationState } from 'store/ui';
 import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
 
-import NotificationIcon from 'assets/inline-svg/app/notification.svg';
-import NotificationAlertIcon from 'assets/inline-svg/app/notification-alert.svg';
-import MenuIcon from 'assets/inline-svg/app/menu.svg';
-import CaretDownIcon from 'assets/inline-svg/app/caret-down.svg';
+import NotificationIcon from 'assets/svg/app/notification.svg';
+import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
+import MenuIcon from 'assets/svg/app/menu.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';

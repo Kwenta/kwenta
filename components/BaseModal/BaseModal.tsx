@@ -3,7 +3,7 @@ import { DialogOverlay, DialogContent } from '@reach/dialog';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import CrossIcon from 'assets/inline-svg/app/cross.svg';
+import CrossIcon from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';

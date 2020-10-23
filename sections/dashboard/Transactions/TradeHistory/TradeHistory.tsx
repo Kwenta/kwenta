@@ -18,8 +18,8 @@ import Etherscan from 'containers/Etherscan';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 
-import LinkIcon from 'assets/inline-svg/app/link.svg';
-import NoNotificationIcon from 'assets/inline-svg/app/no-notifications.svg';
+import LinkIcon from 'assets/svg/app/link.svg';
+import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
