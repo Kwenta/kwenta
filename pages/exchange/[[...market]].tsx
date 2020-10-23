@@ -9,6 +9,7 @@ import get from 'lodash/get';
 import produce from 'immer';
 import Slider from 'react-slick';
 import castArray from 'lodash/castArray';
+import { Svg } from 'react-optimized-image';
 
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
@@ -494,7 +495,7 @@ const ExchangePage = () => {
 							</LeftCardContainer>
 							<Spacer>
 								<SwapCurrenciesButton onClick={handleCurrencySwap}>
-									<ArrowsIcon />
+									<Svg src={ArrowsIcon} />
 								</SwapCurrenciesButton>
 							</Spacer>
 							<RightCardContainer>
@@ -509,7 +510,7 @@ const ExchangePage = () => {
 							{quoteCurrencyCard}
 							<VerticalSpacer>
 								<SwapCurrenciesButton onClick={handleCurrencySwap}>
-									<ArrowsIcon />
+									<Svg src={ArrowsIcon} />
 								</SwapCurrenciesButton>
 							</VerticalSpacer>
 							{baseCurrencyCard}

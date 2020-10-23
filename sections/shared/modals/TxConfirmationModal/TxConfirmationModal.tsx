@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
+import Img, { Svg } from 'react-optimized-image';
 
 import {
 	FlexDivRowCentered,
@@ -61,7 +62,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					<Currency.Icon currencyKey={quoteCurrencyKey} width="40px" height="40px" />
 				</CurrencyItem>
 				<ArrowsIconContainer>
-					<ArrowsIcon />
+					<Svg src={ArrowsIcon} />
 				</ArrowsIconContainer>
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
@@ -110,7 +111,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txProvider === '1inch' && (
 				<TxProvider>
 					<span>{t('common.powered-by')}</span>
-					<img
+					<Img
 						src={OneInchImage}
 						width="40"
 						height="40"

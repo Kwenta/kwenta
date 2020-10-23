@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import {
@@ -33,17 +34,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <DiscordIcon />,
+		icon: <Svg src={DiscordIcon} />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <TwitterIcon />,
+		icon: <Svg src={TwitterIcon} />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <GithubIcon />,
+		icon: <Svg src={GithubIcon} />,
 	},
 ];
 
@@ -98,7 +99,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 						<Logo />
 					</Header>
 					<Container>
-						<StyledSystemDownIcon />
+						<Svg src={SystemDownIcon} />
 						<Title>{t('system-status.title')}</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
 						<Links>
@@ -137,14 +138,14 @@ const Container = styled(FlexDivColCentered)`
 `;
 
 // @ts-ignore
-const StyledSystemDownIcon = styled(SystemDownIcon)`
-	margin-bottom: 51px;
-	${media.lessThan('sm')`
-		svg {
-			margin-bottom: 46px;
-		}
-	`}
-`;
+// const StyledSystemDownIcon = styled(SystemDownIcon)`
+// 	margin-bottom: 51px;
+// 	${media.lessThan('sm')`
+// 		svg {
+// 			margin-bottom: 46px;
+// 		}
+// 	`}
+// `;
 
 const titleCSS = css`
 	font-size: 20px;

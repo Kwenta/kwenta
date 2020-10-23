@@ -169,10 +169,6 @@ export const Paragraph = styled.p`
 	margin: 0;
 `;
 
-export const ResponsiveImage = styled.img`
-	width: 100%;
-`;
-
 export const BoldText = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 `;

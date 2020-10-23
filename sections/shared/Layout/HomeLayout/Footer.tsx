@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Img, { Svg } from 'react-optimized-image';
 
 import { FlexDivCentered, Paragraph, ExternalLink } from 'styles/common';
 
@@ -20,15 +21,15 @@ const Footer: React.FC = () => {
 			<Container>
 				<Subtext>{t('common.powered-by')}</Subtext>
 				<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
-					<img src={TextLogo} alt="" />
+					<Img src={TextLogo} alt="" />
 				</ExternalLink>
 			</Container>
 			<SocialIcons>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
-					<TwitterLogo />
+					<Svg src={TwitterLogo} />
 				</ExternalLink>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Medium}>
-					<MediumLogo />
+					<Svg src={MediumLogo} />
 				</ExternalLink>
 			</SocialIcons>
 		</FooterContainer>

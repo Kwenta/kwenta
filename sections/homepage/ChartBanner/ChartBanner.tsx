@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Img from 'react-optimized-image';
 
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 
@@ -19,7 +20,7 @@ const FAQ = () => {
 	return (
 		<StyledStackSection>
 			<ChartGraphicContainer>
-				<ChartBannerImage src={ChartBanner} alt="" />
+				<ChartBannerImage src={ChartBanner} alt="" webp={true} />
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Exchange.Home}>
@@ -39,12 +40,6 @@ const StyledStackSection = styled(StackSection)`
 		padding-top: 280px;
 	`}
 `;
-
-// const ChartBannerImage = styled(StyledResponsiveImage)`
-// 	${media.lessThan('lg')`
-// 		width: unset;
-// 	`}
-// `;
 
 const ChartGraphicContainer = styled(FlexDivCentered)`
 	position: relative;
@@ -68,7 +63,7 @@ const StyledSubtext = styled(Subtext)`
 	padding-bottom: 32px;
 `;
 
-const ChartBannerImage = styled.img`
+const ChartBannerImage = styled(Img)`
 	max-width: 1440px;
 `;
 

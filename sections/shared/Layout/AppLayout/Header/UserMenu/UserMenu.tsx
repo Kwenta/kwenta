@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Svg } from 'react-optimized-image';
 
 import Connector from 'containers/Connector';
 
@@ -52,7 +53,11 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 								}}
 								isActive={notificationsModalOpened}
 							>
-								{hasOrdersNotification ? <NotificationAlertIcon /> : <NotificationIcon />}
+								{hasOrdersNotification ? (
+									<Svg src={NotificationAlertIcon} />
+								) : (
+									<Svg src={NotificationIcon} />
+								)}
 							</MenuButton>
 						)}
 						<MenuButton
@@ -62,7 +67,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							}}
 							isActive={settingsModalOpened}
 						>
-							<MenuIcon />
+							<Svg src={MenuIcon} />
 						</MenuButton>
 					</Menu>
 					{isWalletConnected ? (
@@ -73,7 +78,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						>
 							<StyledConnectionDot />
 							{truncatedWalletAddress}
-							<StyledCaretDownIcon />
+							<StyledCaretDownIcon src={CaretDownIcon} />
 						</WalletButton>
 					) : (
 						<Button variant={isTextButton ? 'text' : 'primary'} onClick={connectWallet}>
@@ -126,8 +131,7 @@ const MenuButton = styled.button<{ isActive: boolean }>`
 	padding: 5px;
 `;
 
-// @ts-ignore
-const StyledCaretDownIcon = styled(CaretDownIcon)`
+const StyledCaretDownIcon = styled(Svg)`
 	width: 8px;
 	color: ${(props) => props.theme.colors.blueberry};
 	margin-left: 7px;

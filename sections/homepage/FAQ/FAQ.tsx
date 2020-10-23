@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
@@ -93,15 +94,15 @@ const FAQ = () => {
 										<AccordionItem key={question}>
 											<AccordionButton>
 												{question}
-												<AccordionOpenIcon />
-												<AccordionCloseIcon />
+												<AccordionOpenIcon src={PlusThinIcon} />
+												<AccordionCloseIcon src={PlusThinIcon} />
 											</AccordionButton>
 											<AccordionPanel>
 												{answer}
 												{link && (
 													<ExplainerVideoLink>
 														<ExternalLink href={link}>
-															{t('homepage.faq.tabs.explainer-video')} <LinkIcon />
+															{t('homepage.faq.tabs.explainer-video')} <Svg src={LinkIcon} />
 														</ExternalLink>
 													</ExplainerVideoLink>
 												)}
@@ -144,13 +145,11 @@ const AccordionIconMixin = `
 	margin-left: 40px;
 `;
 
-// @ts-ignore
-const AccordionOpenIcon = styled(PlusThinIcon)`
+const AccordionOpenIcon = styled(Svg)`
 	${AccordionIconMixin};
 `;
 
-// @ts-ignore
-const AccordionCloseIcon = styled(PlusThinIcon)`
+const AccordionCloseIcon = styled(Svg)`
 	transform: rotate(45deg);
 	${AccordionIconMixin};
 `;

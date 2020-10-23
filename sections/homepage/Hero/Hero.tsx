@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Img, { Svg } from 'react-optimized-image';
 
 import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
@@ -15,10 +16,10 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<LogoNoTextSVG />
+			<Svg src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
 			<HeroImageContainer>
-				<HeroImage src={MarketOrderPreview} alt="" />
+				<HeroImage src={MarketOrderPreview} alt="" webp={true} />
 			</HeroImageContainer>
 		</StackSection>
 	);
@@ -45,7 +46,7 @@ const HeroImageContainer = styled(GridDiv)`
 	`}
 `;
 
-const HeroImage = styled.img`
+const HeroImage = styled(Img)`
 	max-width: 1400px;
 	${media.lessThan('md')`
 		width: 1140px;

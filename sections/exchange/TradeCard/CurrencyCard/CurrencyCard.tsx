@@ -1,6 +1,7 @@
 import { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -78,7 +79,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								{t('exchange.currency-card.currency-selector.no-value')}
 							</CapitalizedText>
 						)}{' '}
-						{hasCurrencySelectCallback && <CaretDownIcon />}
+						{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}
 					</CurrencySelector>
 					{currencyKeySelected && (
 						<CurrencyAmountContainer>
