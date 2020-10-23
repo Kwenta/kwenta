@@ -39,6 +39,7 @@ export default class MyDocument extends Document {
 						href="/fonts/AkkuratLLWeb-Regular.woff2"
 						as="font"
 						type="font/woff2"
+						crossOrigin="anonymous"
 					/>
 					<link rel="preload" href="/fonts/AkkuratLLWeb-Bold.woff2" as="font" type="font/woff2" />
 					<link
@@ -46,6 +47,7 @@ export default class MyDocument extends Document {
 						href="/fonts/AkkuratMonoLLWeb-Regular.woff2"
 						as="font"
 						type="font/woff2"
+						crossOrigin="anonymous"
 					/>
 				</Head>
 				<body>
