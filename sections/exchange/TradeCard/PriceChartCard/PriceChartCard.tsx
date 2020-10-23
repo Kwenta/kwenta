@@ -5,9 +5,10 @@ import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
+import { Svg } from 'react-optimized-image';
 
-import SnowflakeIcon from 'assets/inline-svg/app/snowflake.svg';
-import LoaderIcon from 'assets/inline-svg/app/loader.svg';
+import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
+import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import { Synth } from 'lib/synthetix';
 
@@ -253,7 +254,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<>
 							{isSynthFrozen && (
 								<OverlayMessage>
-									<SnowflakeIcon />
+									<Svg src={SnowflakeIcon} />
 									<OverlayMessageTitle>
 										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
 									</OverlayMessageTitle>
@@ -264,7 +265,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							)}
 						</>
 					) : showLoader ? (
-						<LoaderIcon />
+						<Svg src={LoaderIcon} />
 					) : noData ? (
 						<NoData>{t('exchange.price-chart-card.no-data')}</NoData>
 					) : undefined}

@@ -34,6 +34,8 @@
 		"next": "9.5.5",
 		"next-compose-plugins": "2.2.0",
 		"next-images": "1.4.0",
+		"next-optimized-images": "^3.0.0-canary.10",
+		"next-translate": "^0.17.3",
 		"react": "16.13.1",
 		"react-dom": "16.13.1",
 		"react-i18next": "11.7.0",
@@ -77,11 +79,15 @@
 		"eslint-plugin-react-hooks": "2.5.1",
 		"file-loader": "6.0.0",
 		"husky": "4.2.3",
+		"imagemin-mozjpeg": "^9.0.0",
+		"imagemin-optipng": "^8.0.0",
+		"imagemin-svgo": "^8.0.0",
 		"lint-staged": "10.0.10",
 		"prettier": "2.0.5",
 		"svg-react-loader": "0.4.6",
 		"typescript": "3.9.7",
-		"url-loader": "4.1.0"
+		"url-loader": "4.1.0",
+		"webp-loader": "^0.6.0"
 	},
 	"husky": {
 		"hooks": {
