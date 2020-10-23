@@ -91,7 +91,6 @@ import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
 
 import { CurrencyKey, CURRENCY_KEY_TO_ICON_MAP } from 'constants/currency';
 
-console.log('spy', sJPYIcon);
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
 	type?: 'synth' | 'asset';
