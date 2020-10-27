@@ -28,7 +28,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{
 					walletName: "lattice",
 					appName: "Kwenta",
-					rpcUrl: "https://mainnet.infura.io/v3/c334bb4b45a444979057f0fb8a0c9d1b",
+					rpcUrl: infuraRpc,
 					preferred: true,
 				},
 				{
