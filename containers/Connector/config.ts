@@ -26,6 +26,12 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					preferred: true,
 				},
 				{
+					walletName: "lattice",
+					appName: "Kwenta",
+					rpcUrl: "https://mainnet.infura.io/v3/c334bb4b45a444979057f0fb8a0c9d1b",
+					preferred: true,
+				},
+				{
 					walletName: 'trezor',
 					appUrl: 'https://www.synthetix.io',
 					email: 'info@synthetix.io',
