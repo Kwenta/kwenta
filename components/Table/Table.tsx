@@ -103,14 +103,26 @@ export const Table: FC<TableProps> = ({
 										<SortIconContainer>
 											{column.isSorted ? (
 												column.isSortedDesc ? (
-													<StyledSortDownIcon src={SortDownIcon} />
+													<StyledSortDownIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												) : (
-													<StyledSortUpIcon src={SortUpIcon} />
+													<StyledSortUpIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
 												)
 											) : (
 												<>
-													<StyledSortUpIcon src={SortUpIcon} />
-													<StyledSortDownIcon src={SortDownIcon} />
+													<StyledSortUpIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
+													<StyledSortDownIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												</>
 											)}
 										</SortIconContainer>

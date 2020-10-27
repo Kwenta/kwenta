@@ -78,7 +78,10 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						>
 							<StyledConnectionDot />
 							{truncatedWalletAddress}
-							<StyledCaretDownIcon src={CaretDownIcon} />
+							<StyledCaretDownIcon
+								src={CaretDownIcon}
+								viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
+							/>
 						</WalletButton>
 					) : (
 						<Button variant={isTextButton ? 'text' : 'primary'} onClick={connectWallet}>

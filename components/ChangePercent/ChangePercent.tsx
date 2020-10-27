@@ -17,7 +17,17 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? <Svg src={ChangePositiveIcon} /> : <Svg src={ChangeNegativeIcon} />}
+			{isPositive ? (
+				<Svg
+					src={ChangePositiveIcon}
+					viewBox={`0 0 ${ChangePositiveIcon.width} ${ChangePositiveIcon.height}`}
+				/>
+			) : (
+				<Svg
+					src={ChangeNegativeIcon}
+					viewBox={`0 0 ${ChangeNegativeIcon.width} ${ChangeNegativeIcon.height}`}
+				/>
+			)}
 			{formatPercent(Math.abs(value))}
 		</CurrencyChange>
 	);

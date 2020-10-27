@@ -138,7 +138,10 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 					Cell: (cellProps: CellProps<HistoricalTrade>) =>
 						etherscanInstance != null && cellProps.row.original.hash ? (
 							<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
-								<StyledLinkIcon src={LinkIcon} />
+								<StyledLinkIcon
+									src={LinkIcon}
+									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+								/>
 							</StyledExternalLink>
 						) : (
 							NO_VALUE

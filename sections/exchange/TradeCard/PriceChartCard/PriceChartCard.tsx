@@ -64,6 +64,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
 
 	const change = historicalRates.data?.change ?? null;
+	// eslint-disable-next-line
 	const rates = historicalRates.data?.rates ?? [];
 
 	const isChangePositive = change != null && change >= 0;

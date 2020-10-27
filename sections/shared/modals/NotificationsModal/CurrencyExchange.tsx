@@ -62,7 +62,7 @@ export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 			</FlexDivRowCentered>
 			{isConfirmed && etherscanInstance != null && (
 				<StyledExternalLink href={etherscanInstance.txLink(order.hash)}>
-					<Svg src={Link} />
+					<Svg src={Link} viewBox={`0 0 ${Link.width} ${Link.height}`} />
 				</StyledExternalLink>
 			)}
 		</Container>
