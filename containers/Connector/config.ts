@@ -26,10 +26,9 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					preferred: true,
 				},
 				{
-					walletName: "lattice",
-					appName: "Kwenta",
+					walletName: 'lattice',
+					appName: 'Kwenta',
 					rpcUrl: infuraRpc,
-					preferred: true,
 				},
 				{
 					walletName: 'trezor',
