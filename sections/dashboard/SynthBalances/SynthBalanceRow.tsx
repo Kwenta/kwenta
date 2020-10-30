@@ -6,15 +6,16 @@ import { useTranslation } from 'react-i18next';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
+import { Period } from 'constants/period';
+
 import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 import { formatPercent } from 'utils/formatters/number';
 
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import { Period } from 'constants/period';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
