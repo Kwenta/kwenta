@@ -18,7 +18,8 @@ const ProgressBarWrapper = styled.div`
 const Bar = styled.div<{ percentage: number }>`
 	height: 100%;
 	width: ${(props) => props.percentage * 100}%;
-	border: 2px solid ${(props) => props.theme.colors.goldColors.color1};
+	height: 4px;
+	background: ${(props) => props.theme.colors.gold};
 `;
 
 export default ProgressBar;
