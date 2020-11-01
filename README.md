@@ -5,7 +5,7 @@
 
 A dApp enabling derivatives trading with infinite liquidity — powered by the Synthetix protocol.
 
-The trading UI is available on IPFS [Kwenta.eth.link](https://kwenta.eth.link) and [Kwenta.io](https://kwenta.io).
+The trading UI is available on IPFS [kwenta.eth.link](https://kwenta.eth.link) and [kwenta.io](https://kwenta.io).
 
 ## Tech stack
 
