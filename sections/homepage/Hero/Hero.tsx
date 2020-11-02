@@ -41,8 +41,13 @@ const HeroImageContainer = styled(GridDiv)`
 	display: grid;
 	justify-content: center;
 	margin-top: -40px;
+	min-height: 839px;
+	${media.lessThan('md')`
+		min-height: 684px;
+	`}
 	${media.lessThan('sm')`
 		margin-top: 0;
+		min-height: 338px;
 	`}
 `;
 
