@@ -21,8 +21,6 @@ import { GWEI_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 
-// import Services from 'containers/Services';
-
 import ArrowsIcon from 'assets/svg/app/arrows.svg';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
@@ -79,7 +77,6 @@ const ExchangePage = () => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
-	// const { synthExchange$, ratesUpdated$ } = Services.useContainer();
 	const router = useRouter();
 
 	const marketQuery = useMemo(
@@ -122,30 +119,6 @@ const ExchangePage = () => {
 	const exchangeFeeRate = exchangeFeeRateQuery.data ?? null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
-
-	// disable usage of .on for now
-
-	// useEffect(() => {
-	// 	if (synthExchange$ && walletAddress) {
-	// 		const subscription = synthExchange$.subscribe(({ fromAddress }) => {
-	// 			if (fromAddress === walletAddress) {
-	// 				synthsWalletBalancesQuery.refetch();
-	// 			}
-	// 		});
-	// 		return () => subscription.unsubscribe();
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [synthExchange$, walletAddress]);
-
-	// useEffect(() => {
-	// 	if (ratesUpdated$) {
-	// 		const subscription = ratesUpdated$.subscribe(() => {
-	// 			exchangeRatesQuery.refetch();
-	// 		});
-	// 		return () => subscription.unsubscribe();
-	// 	}
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [ratesUpdated$]);
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
