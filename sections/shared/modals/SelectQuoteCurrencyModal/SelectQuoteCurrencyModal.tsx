@@ -54,7 +54,11 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	const { connectWallet } = Connector.useContainer();
 
 	return (
-		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-asset.title')}>
+		<StyledBaseModal
+			onDismiss={onDismiss}
+			isOpen={true}
+			title={t('modals.select-quote-currency.title')}
+		>
 			<TotalValue>
 				<Total>
 					{synthTotalUSDBalance != null
@@ -76,8 +80,8 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 			{synthBalances.length > 0 ? (
 				<>
 					<RowsHeader>
-						<span>{t('modals.select-asset.header.your-synths')}</span>
-						<span>{t('modals.select-asset.header.holdings')}</span>
+						<span>{t('modals.select-quote-currency.header.your-synths')}</span>
+						<span>{t('modals.select-quote-currency.header.holdings')}</span>
 					</RowsHeader>
 					<RowsContainer>
 						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
@@ -115,7 +119,7 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 					{/* TODO: this list needs to contain crypto -> synth supported assets (so we need to check existing assets + verify they are supported as synths) */}
 					<RowsSpacer />
 					<RowsHeader>
-						<span>{t('modals.select-asset.header.non-synths')}</span>
+						<span>{t('modals.select-quote-currency.header.non-synths')}</span>
 					</RowsHeader>
 					<CryptoRowsContainer>
 						<CryptoRow>

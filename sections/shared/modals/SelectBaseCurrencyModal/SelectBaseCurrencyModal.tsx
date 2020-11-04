@@ -74,10 +74,14 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	const totalSynths = synthsResults.length;
 
 	return (
-		<StyledCenteredModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-synth.title')}>
+		<StyledCenteredModal
+			onDismiss={onDismiss}
+			isOpen={true}
+			title={t('modals.select-base-currency.title')}
+		>
 			<SearchContainer>
 				<AssetSearchInput
-					placeholder={t('modals.select-synth.search.placeholder')}
+					placeholder={t('modals.select-base-currency.search.placeholder')}
 					onChange={(e) => {
 						setSynthCategory(null);
 						setAssetSearch(e.target.value);
@@ -108,15 +112,17 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 			<RowsHeader>
 				{assetSearch ? (
 					<>
-						<span>{t('modals.select-synth.header.search-results')}</span>
+						<span>{t('modals.select-base-currency.header.search-results')}</span>
 						<span>{t('common.total-results', { total: totalSynths })}</span>
 					</>
 				) : (
 					<>
 						<span>
 							{synthCategory != null
-								? t('modals.select-synth.header.category-synths', { category: synthCategory })
-								: t('modals.select-synth.header.all-synths')}
+								? t('modals.select-base-currency.header.category-synths', {
+										category: synthCategory,
+								  })
+								: t('modals.select-base-currency.header.all-synths')}
 						</span>
 						<span>{t('common.total-assets', { total: totalSynths })}</span>
 					</>
@@ -143,7 +149,7 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 						);
 					})
 				) : (
-					<EmptyDisplay>{t('modals.select-synth.search.empty-results')}</EmptyDisplay>
+					<EmptyDisplay>{t('modals.select-base-currency.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
 			<StyledBottomShadow />
