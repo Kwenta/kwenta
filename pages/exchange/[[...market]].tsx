@@ -12,10 +12,9 @@ import castArray from 'lodash/castArray';
 import { Svg } from 'react-optimized-image';
 
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import { DEFAULT_GAS_BUFFER } from 'constants/defaults';
 import { zIndex } from 'constants/ui';
 import ROUTES from 'constants/routes';
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import { GWEI_UNIT } from 'constants/network';
 
 import Connector from 'containers/Connector';
@@ -72,6 +71,7 @@ import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
+import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -106,6 +106,7 @@ const ExchangePage = () => {
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
+	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -149,6 +150,12 @@ const ExchangePage = () => {
 		quoteCurrencyKey,
 		selectedPriceCurrency.name
 	);
+	const ethPriceRate = getExchangeRatesForCurrencies(
+		exchangeRates,
+		SYNTHS_MAP.sETH,
+		selectedPriceCurrency.name
+	);
+
 	const baseCurrencyAmountNum = Number(baseCurrencyAmount);
 	const quoteCurrencyAmountNum = Number(quoteCurrencyAmount);
 
@@ -232,35 +239,81 @@ const ExchangePage = () => {
 		setBaseCurrencyAmount('');
 	}
 
+	const gasPrice = useMemo(
+		() =>
+			customGasPrice !== ''
+				? Number(customGasPrice)
+				: ethGasStationQuery.data != null
+				? ethGasStationQuery.data[gasSpeed]
+				: null,
+		[customGasPrice, ethGasStationQuery.data, gasSpeed]
+	);
+
+	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
+		gasPrice,
+		gasLimit,
+		ethPriceRate,
+	]);
+
+	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (gasLimit == null && !isSubmissionDisabled) {
+				const gasLimitEstimate = await getGasLimitEstimateForExchange();
+
+				setGasLimit(gasLimitEstimate);
+			}
+		};
+		getGasLimitEstimate();
+		// eslint-disable-next-line
+	}, [isSubmissionDisabled, gasLimit]);
+
+	// reset estimated gas limit when currencies are changed.
+	useEffect(() => {
+		setGasLimit(null);
+	}, [baseCurrencyKey, quoteCurrencyKey]);
+
+	const getExchangeParams = () => {
+		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
+		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
+		const amountToExchange = ethers.utils.parseEther(quoteCurrencyAmount);
+		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
+
+		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
+	};
+
+	const getGasLimitEstimateForExchange = async () => {
+		try {
+			if (synthetix.js != null) {
+				const exchangeParams = getExchangeParams();
+				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
+					...exchangeParams
+				);
+
+				return normalizeGasLimit(Number(gasEstimate));
+			}
+		} catch (e) {
+			console.log(e);
+		}
+		return null;
+	};
+
 	const handleSubmit = async () => {
-		if (synthetix.js != null) {
+		if (synthetix.js != null && gasPrice != null) {
 			setTxError(false);
 			setTxConfirmationModalOpen(true);
-			const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-			const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-			const amountToExchange = ethers.utils.parseEther(quoteCurrencyAmount);
-			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
+			const exchangeParams = getExchangeParams();
 
-			const params = [
-				quoteKeyBytes32,
-				amountToExchange,
-				baseKeyBytes32,
-				walletAddress,
-				trackingCode,
-			];
 			try {
 				setIsSubmitting(true);
 
-				const gasPrice =
-					customGasPrice !== '' ? Number(customGasPrice) : ethGasStationQuery.data![gasSpeed];
+				const gasLimitEstimate = await getGasLimitEstimateForExchange();
 
-				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
-					...params
-				);
+				setGasLimit(gasLimitEstimate);
 
-				const tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...params, {
+				const tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...exchangeParams, {
 					gasPrice: gasPrice * GWEI_UNIT,
-					gasLimit: Number(gasEstimate) + DEFAULT_GAS_BUFFER,
+					gasLimit: gasLimitEstimate,
 				});
 
 				if (tx) {
@@ -527,6 +580,7 @@ const ExchangePage = () => {
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 							quoteCurrencyKey={quoteCurrencyKey}
 							exchangeFeeRate={exchangeFeeRate}
+							transactionFee={transactionFee}
 						/>
 					)}
 					{txConfirmationModalOpen && (
