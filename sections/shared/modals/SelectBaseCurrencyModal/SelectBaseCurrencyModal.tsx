@@ -27,7 +27,7 @@ export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.commodity,
 ];
 
-type SelectSynthModalProps = {
+type SelectBaseCurrencyModalProps = {
 	onDismiss: () => void;
 	synths: Synths;
 	exchangeRates: Rates | null;
@@ -36,7 +36,7 @@ type SelectSynthModalProps = {
 	selectPriceCurrencyRate: number | null;
 };
 
-export const SelectSynthModal: FC<SelectSynthModalProps> = ({
+export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	onDismiss,
 	exchangeRates,
 	synths,
@@ -203,4 +203,4 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-export default SelectSynthModal;
+export default SelectBaseCurrencyModal;

@@ -37,7 +37,7 @@ import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import SelectSynthModal from 'sections/shared/modals/SelectSynthModal';
+import SelectBaseCurrencyModal from 'sections/shared/modals/SelectBaseCurrencyModal';
 import SelectQuoteCurrencyModal from 'sections/shared/modals/SelectQuoteCurrencyModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
@@ -98,7 +98,7 @@ const ExchangePage = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
-	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
+	const [selectBaseCurrencyModal, setSelectBaseCurrencyModal] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
@@ -418,7 +418,7 @@ const ExchangePage = () => {
 				setBaseCurrencyAmount(`${baseCurrencyBalance}`);
 				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 			}}
-			onCurrencySelect={() => setSelectSynthModalOpen(true)}
+			onCurrencySelect={() => setSelectBaseCurrencyModal(true)}
 			priceRate={basePriceRate}
 			{...selectPriceCurrencyProps}
 		/>
@@ -543,9 +543,9 @@ const ExchangePage = () => {
 							txProvider="synthetix"
 						/>
 					)}
-					{selectSynthModalOpen && (
-						<SelectSynthModal
-							onDismiss={() => setSelectSynthModalOpen(false)}
+					{selectBaseCurrencyModal && (
+						<SelectBaseCurrencyModal
+							onDismiss={() => setSelectBaseCurrencyModal(false)}
 							synths={synthetix.js?.synths ?? []}
 							exchangeRates={exchangeRates}
 							onSelect={(currencyKey) => {
