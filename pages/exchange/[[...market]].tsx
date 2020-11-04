@@ -546,8 +546,6 @@ const ExchangePage = () => {
 					{selectBaseCurrencyModal && (
 						<SelectBaseCurrencyModal
 							onDismiss={() => setSelectBaseCurrencyModal(false)}
-							synths={synthetix.js?.synths ?? []}
-							exchangeRates={exchangeRates}
 							onSelect={(currencyKey) => {
 								resetCurrencies();
 								// @ts-ignore
@@ -571,9 +569,6 @@ const ExchangePage = () => {
 					{selectQuoteCurrencyModalOpen && (
 						<SelectQuoteCurrencyModal
 							onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
-							synthsMap={synthetix.synthsMap}
-							synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
-							synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
 							onSelect={(currencyKey) => {
 								resetCurrencies();
 								// @ts-ignore
@@ -587,7 +582,6 @@ const ExchangePage = () => {
 							}}
 							selectedPriceCurrency={selectedPriceCurrency}
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
-							isWalletConnected={isWalletConnected}
 						/>
 					)}
 				</StyledPageContent>

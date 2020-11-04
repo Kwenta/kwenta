@@ -2,9 +2,9 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Synths, Synth } from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
 
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
@@ -29,8 +29,6 @@ export const CATEGORY_FILTERS = [
 
 type SelectBaseCurrencyModalProps = {
 	onDismiss: () => void;
-	synths: Synths;
-	exchangeRates: Rates | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
@@ -38,8 +36,6 @@ type SelectBaseCurrencyModalProps = {
 
 export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	onDismiss,
-	exchangeRates,
-	synths,
 	onSelect,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
@@ -47,6 +43,11 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+
+	// eslint-disable-next-line
+	const synths = synthetix.js?.synths ?? [];
+	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const filteredSynths = useMemo(
 		() =>
