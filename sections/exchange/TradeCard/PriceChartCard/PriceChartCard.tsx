@@ -354,6 +354,7 @@ const LabelStyle = styled(ItemStyle)`
 
 const OverlayMessage = styled(GridDivCenteredRow)`
 	justify-items: center;
+	text-align: center;
 `;
 
 const OverlayMessageTitle = styled.div`
