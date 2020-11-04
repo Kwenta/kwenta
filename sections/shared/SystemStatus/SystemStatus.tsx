@@ -88,7 +88,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	}, [systemResumed$]);
 	*/
 
-	return appOnMaintenance ? (
+	return true ? (
 		<>
 			<Head>
 				<title>{t('system-status.page-title')}</title>
@@ -99,7 +99,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 						<Logo />
 					</Header>
 					<Container>
-						<Svg src={SystemDownIcon} />
+						<StyledSystemDownIcon src={SystemDownIcon} />
 						<Title>{t('system-status.title')}</Title>
 						<Subtitle>{t('system-status.subtitle')}</Subtitle>
 						<Links>
@@ -137,15 +137,14 @@ const Container = styled(FlexDivColCentered)`
 	margin-top: -${HEADER_HEIGHT};
 `;
 
-// @ts-ignore
-// const StyledSystemDownIcon = styled(SystemDownIcon)`
-// 	margin-bottom: 51px;
-// 	${media.lessThan('sm')`
-// 		svg {
-// 			margin-bottom: 46px;
-// 		}
-// 	`}
-// `;
+const StyledSystemDownIcon = styled(Svg)`
+	margin-bottom: 51px;
+	${media.lessThan('sm')`
+		svg {
+			margin-bottom: 46px;
+		}
+	`}
+`;
 
 const titleCSS = css`
 	font-size: 20px;
