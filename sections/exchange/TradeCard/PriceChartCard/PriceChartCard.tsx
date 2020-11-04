@@ -6,6 +6,7 @@ import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
+import { useMediaQuery } from 'react-responsive';
 
 import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
@@ -31,7 +32,7 @@ import {
 import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import media from 'styles/media';
+import media, { breakpoints } from 'styles/media';
 
 import { Side } from '../types';
 
@@ -77,6 +78,8 @@ const ChartCard: FC<ChartCardProps> = ({
 	const disabledInteraction = showLoader || showOverlayMessage;
 	const noData =
 		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
+
+	const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 
 	let linearGradientId = `priceChartCardArea-${side}`;
 
@@ -187,13 +190,13 @@ const ChartCard: FC<ChartCardProps> = ({
 						>
 							<defs>
 								<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
+									<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
 									<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
 								</linearGradient>
 							</defs>
 							<XAxis
 								// @ts-ignore
-								dx={-5}
+								dx={-1}
 								dy={10}
 								minTickGap={20}
 								dataKey="timestamp"
@@ -214,11 +217,10 @@ const ChartCard: FC<ChartCardProps> = ({
 							<YAxis
 								// TODO: might need to adjust the width to make sure we do not trim the values...
 								type="number"
-								hide={true}
 								allowDataOverflow={true}
 								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
 								tick={fontStyle}
-								orientation="right"
+								orientation={side === 'quote' || isMobile ? 'left' : 'right'}
 								axisLine={false}
 								tickLine={false}
 								tickFormatter={(val) =>
