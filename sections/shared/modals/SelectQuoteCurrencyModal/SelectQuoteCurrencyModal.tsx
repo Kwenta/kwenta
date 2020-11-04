@@ -26,7 +26,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import ROUTES from 'constants/routes';
 
-type SelectAssetModalProps = {
+type SelectQuoteCurrencyModalProps = {
 	onDismiss: () => void;
 	synthsMap: SynthsMap | null;
 	synthBalances: SynthBalance[];
@@ -40,7 +40,7 @@ type SelectAssetModalProps = {
 const { sETH, sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
 
-export const SelectSynthModal: FC<SelectAssetModalProps> = ({
+export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	onDismiss,
 	synthsMap,
 	synthBalances,
@@ -241,4 +241,4 @@ const CryptoRowsContainer = styled(RowsContainer)`
 	flex-shrink: 0;
 `;
 
-export default SelectSynthModal;
+export default SelectQuoteCurrencyModal;

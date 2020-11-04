@@ -38,7 +38,7 @@ import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import SelectSynthModal from 'sections/shared/modals/SelectSynthModal';
-import SelectAssetModal from 'sections/shared/modals/SelectAssetModal';
+import SelectQuoteCurrencyModal from 'sections/shared/modals/SelectQuoteCurrencyModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
 import {
@@ -99,7 +99,7 @@ const ExchangePage = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectSynthModalOpen, setSelectSynthModalOpen] = useState<boolean>(false);
-	const [selectAssetModalOpen, setSelectAssetModalOpen] = useState<boolean>(false);
+	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const setOrders = useSetRecoilState(ordersState);
@@ -374,7 +374,7 @@ const ExchangePage = () => {
 				setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
 				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 			}}
-			onCurrencySelect={() => setSelectAssetModalOpen(true)}
+			onCurrencySelect={() => setSelectQuoteCurrencyModalOpen(true)}
 			priceRate={quotePriceRate}
 			{...selectPriceCurrencyProps}
 		/>
@@ -568,9 +568,9 @@ const ExchangePage = () => {
 							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 					)}
-					{selectAssetModalOpen && (
-						<SelectAssetModal
-							onDismiss={() => setSelectAssetModalOpen(false)}
+					{selectQuoteCurrencyModalOpen && (
+						<SelectQuoteCurrencyModal
+							onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
 							synthsMap={synthetix.synthsMap}
 							synthBalances={synthsWalletBalancesQuery.data?.balances ?? []}
 							synthTotalUSDBalance={synthsWalletBalancesQuery.data?.totalUSDBalance ?? null}
