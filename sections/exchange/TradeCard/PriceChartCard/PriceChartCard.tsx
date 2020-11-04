@@ -6,7 +6,7 @@ import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
-import { useMediaQuery } from 'react-responsive';
+// import { useMediaQuery } from 'react-responsive';
 
 import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
@@ -32,7 +32,7 @@ import {
 import { formatCurrency } from 'utils/formatters/number';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import media, { breakpoints } from 'styles/media';
+import media from 'styles/media';
 
 import { Side } from '../types';
 
@@ -79,7 +79,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const noData =
 		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
 
-	const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
+	// const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 
 	let linearGradientId = `priceChartCardArea-${side}`;
 
@@ -220,7 +220,7 @@ const ChartCard: FC<ChartCardProps> = ({
 								allowDataOverflow={true}
 								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
 								tick={fontStyle}
-								orientation={side === 'quote' || isMobile ? 'left' : 'right'}
+								orientation="right"
 								axisLine={false}
 								tickLine={false}
 								tickFormatter={(val) =>
