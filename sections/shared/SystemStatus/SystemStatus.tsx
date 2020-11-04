@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
@@ -23,7 +23,6 @@ import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
 
-// import Services from 'containers/Services';
 import useIsSystemUpgrading from 'queries/systemStatus/useIsSystemUpgrading';
 
 type SystemStatusProps = {
@@ -48,47 +47,17 @@ const SOCIAL_LINKS = [
 	},
 ];
 
-// const IS_PROD = !!process.env.NEXT_PUBLIC_IS_PROD;
+const IS_PROD = !!process.env.NEXT_PUBLIC_IS_PROD;
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
-	const [appOnMaintenance, setAppOnMaintenance] = useState<boolean>(false);
-	// const { systemSuspended$, systemResumed$ } = Services.useContainer();
 
-	// current onchain state
-	const isSystemUpgradingQuery = useIsSystemUpgrading({ refetchInterval: false });
+	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
+	const isSystemUpgradingQuery = useIsSystemUpgrading({ refetchInterval: false, enabled: IS_PROD });
 
-	// note: using an effect for `isSystemUpgradingQuery` is not mandatory, its only to make it consistent with the events.
-	useEffect(() => {
-		if (isSystemUpgradingQuery.data != null) {
-			setAppOnMaintenance(isSystemUpgradingQuery.data);
-		}
-	}, [isSystemUpgradingQuery.data]);
+	const appOnMaintenance = isSystemUpgradingQuery.isSuccess ? isSystemUpgradingQuery.data : false;
 
-	/*
-
-	events are disabled for now since they fire too many requests to infura...
-
-	useEffect(() => {
-		if (IS_PROD && systemSuspended$) {
-			const subscription = systemSuspended$.subscribe(() => {
-				setAppOnMaintenance(true);
-			});
-			return () => subscription.unsubscribe();
-		}
-	}, [systemSuspended$]);
-
-	useEffect(() => {
-		if (IS_PROD && systemResumed$) {
-			const subscription = systemResumed$.subscribe(() => {
-				setAppOnMaintenance(false);
-			});
-			return () => subscription.unsubscribe();
-		}
-	}, [systemResumed$]);
-	*/
-
-	return true ? (
+	return IS_PROD && appOnMaintenance ? (
 		<>
 			<Head>
 				<title>{t('system-status.page-title')}</title>
