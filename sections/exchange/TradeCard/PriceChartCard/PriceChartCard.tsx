@@ -8,10 +8,10 @@ import format from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
 // import { useMediaQuery } from 'react-responsive';
 
-import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
+import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
@@ -34,25 +34,21 @@ import media from 'styles/media';
 
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 type ChartCardProps = {
 	side: Side;
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
-	isSynthFrozen: boolean;
 	className?: string;
 };
 
-const ChartCard: FC<ChartCardProps> = ({
-	side,
-	currencyKey,
-	priceRate,
-	isSynthFrozen,
-	...rest
-}) => {
+const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
+
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
@@ -69,7 +65,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const price = currentPrice || priceRate;
 
-	const showOverlayMessage = isSynthFrozen;
+	const showOverlayMessage = isMarketClosed;
 	const showLoader = historicalRates.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
 	const noData =
@@ -148,7 +144,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<CurrencyLabel>{t('common.price')}</CurrencyLabel>
 					)}
 				</FlexDivRowCentered>
-				{!isSynthFrozen && (
+				{!isMarketClosed && (
 					<Actions>
 						{PERIOD_LABELS.map((period) => (
 							<StyledTextButton
@@ -250,19 +246,39 @@ const ChartCard: FC<ChartCardProps> = ({
 				</ChartData>
 				<AbsoluteCenteredDiv>
 					{showOverlayMessage ? (
-						<>
-							{isSynthFrozen && (
-								<OverlayMessage>
-									<Svg src={SnowflakeIcon} />
+						<OverlayMessage>
+							<MarketClosureIcon marketClosureReason={marketClosureReason} />
+							{marketClosureReason === 'frozen' ? (
+								<>
 									<OverlayMessageTitle>
 										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
 									</OverlayMessageTitle>
 									<OverlayMessageSubtitle>
 										{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
 									</OverlayMessageSubtitle>
-								</OverlayMessage>
+								</>
+							) : marketClosureReason === 'market-closure' ? (
+								<>
+									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
+									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
+								</>
+							) : marketClosureReason === 'circuit-breaker' ? (
+								<>
+									<OverlayMessageTitle>Circuit breaker triggered</OverlayMessageTitle>
+									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
+								</>
+							) : marketClosureReason === 'emergency' ? (
+								<>
+									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
+									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
+								</>
+							) : (
+								<>
+									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
+									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
+								</>
 							)}
-						</>
+						</OverlayMessage>
 					) : showLoader ? (
 						<Svg src={LoaderIcon} />
 					) : noData ? (

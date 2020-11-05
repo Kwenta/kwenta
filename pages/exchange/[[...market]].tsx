@@ -25,7 +25,6 @@ import ArrowsIcon from 'assets/svg/app/arrows.svg';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
@@ -65,12 +64,12 @@ import {
 	MobileContainerMixin,
 } from 'styles/common';
 
-import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -113,7 +112,6 @@ const ExchangePage = () => {
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
 
@@ -167,25 +165,14 @@ const ExchangePage = () => {
 	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	let isBaseCurrencyFrozen =
-		frozenSynthsQuery.isSuccess && frozenSynthsQuery.data && baseCurrencyKey != null
-			? frozenSynthsQuery.data.has(baseCurrencyKey)
-			: false;
+	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
+	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 
-	const baseCurrencySuspendedQuery = useSynthSuspensionQuery(baseCurrencyKey);
-	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
-	const isBaseCurrencySuspended =
-		baseCurrencySuspendedQuery.isSuccess &&
-		baseCurrencySuspendedQuery.data &&
-		baseCurrencySuspendedQuery.data.isSuspended;
-	const isQuoteCurrencySuspended =
-		quoteCurrencySuspendedQuery.isSuccess &&
-		quoteCurrencySuspendedQuery.data &&
-		quoteCurrencySuspendedQuery.data.isSuspended;
+	const isBaseCurrencyFrozen = baseCurrencyMarketClosed.isCurrencyFrozen;
 
 	const isSubmissionDisabled =
-		isBaseCurrencySuspended ||
-		isQuoteCurrencySuspended ||
+		baseCurrencyMarketClosed.isCurrencySuspended ||
+		quoteCurrencyMarketClosed.isCurrencySuspended ||
 		!selectedBothSides ||
 		!baseCurrencyAmountNum ||
 		!quoteCurrencyAmountNum ||
@@ -425,12 +412,7 @@ const ExchangePage = () => {
 		/>
 	);
 	const quotePriceChartCard = (
-		<StyledPriceChartCard
-			side="quote"
-			currencyKey={quoteCurrencyKey}
-			priceRate={quotePriceRate}
-			isSynthFrozen={false}
-		/>
+		<StyledPriceChartCard side="quote" currencyKey={quoteCurrencyKey} priceRate={quotePriceRate} />
 	);
 
 	const quoteMarketDetailsCard = (
@@ -464,12 +446,7 @@ const ExchangePage = () => {
 	);
 
 	const basePriceChartCard = (
-		<StyledPriceChartCard
-			side="base"
-			currencyKey={baseCurrencyKey}
-			priceRate={basePriceRate}
-			isSynthFrozen={isBaseCurrencyFrozen}
-		/>
+		<StyledPriceChartCard side="base" currencyKey={baseCurrencyKey} priceRate={basePriceRate} />
 	);
 
 	const baseMarketDetailsCard = (
@@ -554,8 +531,8 @@ const ExchangePage = () => {
 							isBaseCurrencyFrozen={isBaseCurrencyFrozen}
 							insufficientBalance={insufficientBalance}
 							selectedBothSides={selectedBothSides}
-							isBaseCurrencySuspended={isBaseCurrencySuspended}
-							isQuoteCurrencySuspended={isQuoteCurrencySuspended}
+							isBaseCurrencySuspended={baseCurrencyMarketClosed.isCurrencySuspended}
+							isQuoteCurrencySuspended={quoteCurrencyMarketClosed.isCurrencySuspended}
 							gasPrices={ethGasStationQuery.data}
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 							quoteCurrencyKey={quoteCurrencyKey}

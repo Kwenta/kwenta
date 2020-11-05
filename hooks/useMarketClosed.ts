@@ -1,31 +1,18 @@
 import { CurrencyKey } from 'constants/currency';
 
 import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
-import useSynthSuspensionQuery from 'queries/synths/useSynthSuspensionQuery';
+import useSynthSuspensionQuery, {
+	SynthSuspensionReason,
+} from 'queries/synths/useSynthSuspensionQuery';
 
-/*
-	suspension reasons
+export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
 
-	1: "System Upgrade"
-	2: "Market Closure"
-	55: "Circuit Breaker (Phase one)"
-	65: "Decentralized Circuit Breaker (Phase two)"
-	99999: "Emergency"
-*/
-
-export type MarketClosureReason = 'frozen' | number | undefined;
-
-const useMarketClosed = (
-	currencyKey: CurrencyKey
-): {
-	isMarketClosed: boolean;
-	marketClosureReason: MarketClosureReason;
-} => {
+const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const currencySuspendedQuery = useSynthSuspensionQuery(currencyKey);
 
 	const isCurrencyFrozen =
-		frozenSynthsQuery.isSuccess && frozenSynthsQuery.data
+		currencyKey != null && frozenSynthsQuery.isSuccess && frozenSynthsQuery.data
 			? frozenSynthsQuery.data.has(currencyKey)
 			: false;
 
@@ -36,7 +23,11 @@ const useMarketClosed = (
 
 	return {
 		isMarketClosed: isCurrencyFrozen || isCurrencySuspended,
-		marketClosureReason: isCurrencyFrozen ? 'frozen' : currencySuspendedQuery.data?.reasonCode,
+		isCurrencyFrozen,
+		isCurrencySuspended,
+		marketClosureReason: isCurrencyFrozen
+			? 'frozen'
+			: (currencySuspendedQuery.data?.reason as MarketClosureReason),
 	};
 };
 

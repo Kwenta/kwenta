@@ -1,16 +1,11 @@
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
-
-import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
-import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';
-// import LimitResetIcon from 'assets/svg/app/market-closure/limit-reset.svg';
-import CircuitBreakerIcon from 'assets/svg/app/market-closure/circuit-breaker.svg';
-import EmergencyShutdownIcon from 'assets/svg/app/market-closure/emergency-shutdown.svg';
 
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 import { CurrencyKey } from 'constants/currency';
+
+import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import CurrencyIcon from '../CurrencyIcon';
 
@@ -23,54 +18,6 @@ type CurrencyNameProps = {
 	showIcon?: boolean;
 	iconProps?: object;
 	marketClosureReason?: MarketClosureReason;
-};
-
-const getMarketClosureIcon = (marketClosureReason: MarketClosureReason) => {
-	const sharedProps = {
-		width: 16,
-		height: 16,
-		className: 'market-closure-icon',
-	};
-	const defaultIcon = (
-		<Svg
-			{...sharedProps}
-			src={MarketPauseIcon}
-			viewBox={`0 0 ${MarketPauseIcon.width} ${MarketPauseIcon.height}`}
-		/>
-	);
-
-	switch (marketClosureReason) {
-		case 'frozen':
-			return (
-				<Svg
-					{...sharedProps}
-					src={FrozenIcon}
-					viewBox={`0 0 ${FrozenIcon.width} ${FrozenIcon.height}`}
-				/>
-			);
-		case 1:
-			return defaultIcon;
-		case 55:
-		case 65:
-			return (
-				<Svg
-					{...sharedProps}
-					src={CircuitBreakerIcon}
-					viewBox={`0 0 ${CircuitBreakerIcon.width} ${CircuitBreakerIcon.height}`}
-				/>
-			);
-		// Emergency
-		case 99999:
-			return (
-				<Svg
-					{...sharedProps}
-					src={EmergencyShutdownIcon}
-					viewBox={`0 0 ${EmergencyShutdownIcon.width} ${EmergencyShutdownIcon.height}`}
-				/>
-			);
-		default:
-			return defaultIcon;
-	}
 };
 
 export const CurrencyName: FC<CurrencyNameProps> = ({
@@ -86,9 +33,9 @@ export const CurrencyName: FC<CurrencyNameProps> = ({
 		{showIcon && (
 			<CurrencyIconContainer>
 				<CurrencyIcon className="icon" currencyKey={currencyKey} {...iconProps} />
-				{marketClosureReason ? (
+				{marketClosureReason != null ? (
 					<MarketClosureIconContainer>
-						{getMarketClosureIcon(marketClosureReason)}
+						<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
 					</MarketClosureIconContainer>
 				) : null}
 			</CurrencyIconContainer>
