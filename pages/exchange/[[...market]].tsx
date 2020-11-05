@@ -520,6 +520,7 @@ const ExchangePage = () => {
 					) : noSynths ? (
 						<NoSynthsCard />
 					) : (
+						// instead of passing all the props, just pass the reason why the submission was disabled...
 						<TradeSummaryCard
 							isSubmissionDisabled={isSubmissionDisabled}
 							isSubmitting={isSubmitting}

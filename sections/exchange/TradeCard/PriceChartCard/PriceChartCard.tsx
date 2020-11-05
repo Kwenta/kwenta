@@ -166,7 +166,7 @@ const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }
 						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
 					>
 						<AreaChart
-							data={disabledInteraction ? [] : computedRates}
+							data={computedRates}
 							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
 							onMouseMove={(e: any) => {
 								const currentRate = get(e, 'activePayload[0].payload.rate', null);
@@ -248,36 +248,12 @@ const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }
 					{showOverlayMessage ? (
 						<OverlayMessage>
 							<MarketClosureIcon marketClosureReason={marketClosureReason} />
-							{marketClosureReason === 'frozen' ? (
-								<>
-									<OverlayMessageTitle>
-										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
-									</OverlayMessageTitle>
-									<OverlayMessageSubtitle>
-										{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
-									</OverlayMessageSubtitle>
-								</>
-							) : marketClosureReason === 'market-closure' ? (
-								<>
-									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
-									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
-								</>
-							) : marketClosureReason === 'circuit-breaker' ? (
-								<>
-									<OverlayMessageTitle>Circuit breaker triggered</OverlayMessageTitle>
-									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
-								</>
-							) : marketClosureReason === 'emergency' ? (
-								<>
-									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
-									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
-								</>
-							) : (
-								<>
-									<OverlayMessageTitle>This market has been closed</OverlayMessageTitle>
-									<OverlayMessageSubtitle>reset in progress</OverlayMessageSubtitle>
-								</>
-							)}
+							<OverlayMessageTitle>
+								{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.title`)}
+							</OverlayMessageTitle>
+							<OverlayMessageSubtitle>
+								{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.subtitle`)}
+							</OverlayMessageSubtitle>
 						</OverlayMessage>
 					) : showLoader ? (
 						<Svg src={LoaderIcon} />
@@ -303,7 +279,7 @@ const ChartData = styled.div<{ disabledInteraction: boolean }>`
 		props.disabledInteraction &&
 		css`
 			pointer-events: none;
-			opacity: 0;
+			opacity: 0.1;
 		`};
 `;
 

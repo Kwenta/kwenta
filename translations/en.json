@@ -153,9 +153,21 @@
 			"compare": "compare",
 			"ratio": "ratio",
 			"overlay-messages": {
-				"frozen-synth": {
+				"frozen": {
 					"title": "This Synth has been frozen",
 					"subtitle": "Reset in progress."
+				},
+				"market-closure": {
+					"title": "This market has been closed",
+					"subtitle": "Reset in progress."
+				},
+				"circuit-breaker": {
+					"title": "This market has been closed",
+					"subtitle": "Reset in progress"
+				},
+				"emergency": {
+					"title": "Emergency shutdown activated",
+					"subtitle": "Reset in progress"
 				}
 			},
 			"tooltip": {
