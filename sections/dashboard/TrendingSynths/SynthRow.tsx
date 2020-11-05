@@ -15,6 +15,7 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 type SynthRowProps = {
 	price: number | null;
@@ -35,6 +36,7 @@ const SynthRow: FC<SynthRowProps> = ({
 
 	useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
 		<StyledSelectableCurrencyRow
@@ -47,6 +49,7 @@ const SynthRow: FC<SynthRowProps> = ({
 					currencyName: synth.description,
 				})}
 				showIcon={true}
+				marketClosureReason={marketClosureReason}
 			/>
 			{price != null ? (
 				<Currency.Price

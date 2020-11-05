@@ -175,7 +175,6 @@ const ExchangePage = () => {
 
 	const baseCurrencySuspendedQuery = useSynthSuspensionQuery(baseCurrencyKey);
 	const quoteCurrencySuspendedQuery = useSynthSuspensionQuery(quoteCurrencyKey);
-
 	const isBaseCurrencySuspended =
 		baseCurrencySuspendedQuery.isSuccess &&
 		baseCurrencySuspendedQuery.data &&

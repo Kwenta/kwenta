@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Link from 'next/link';
-import synthetix, { Synth } from 'lib/synthetix';
+import { Synth } from 'lib/synthetix';
 import { isWalletConnectedState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
@@ -10,7 +10,6 @@ import Currency from 'components/Currency';
 import Button from 'components/Button';
 
 import {
-	SelectableCurrencyRow,
 	FlexDivRowCentered,
 	NoTextTransform,
 	ExternalLink,
@@ -27,6 +26,8 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import ROUTES from 'constants/routes';
+
+import SynthRow from './SynthRow';
 
 type SelectQuoteCurrencyModalProps = {
 	onDismiss: () => void;
@@ -49,7 +50,6 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 
-	const { synthsMap } = synthetix;
 	const synthBalances = synthsWalletBalancesQuery.data?.balances ?? [];
 	let synthTotalUSDBalance = synthsWalletBalancesQuery.data?.totalUSDBalance ?? null;
 
@@ -84,35 +84,20 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 						<span>{t('modals.select-quote-currency.header.holdings')}</span>
 					</RowsHeader>
 					<RowsContainer>
-						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
-							const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.description : null;
-
-							const totalValue = usdBalance;
+						{synthBalances.map((synth) => {
+							const currencyKey = synth.currencyKey;
 
 							return (
-								<StyledSelectableCurrencyRow
-									key={currencyKey}
-									isSelectable={true}
+								<SynthRow
+									key={synth.currencyKey}
+									synth={synth}
 									onClick={() => {
 										onSelect(currencyKey);
 										onDismiss();
 									}}
-								>
-									<Currency.Name
-										currencyKey={currencyKey}
-										name={t('common.currency.synthetic-currency-name', {
-											currencyName: synthDesc,
-										})}
-										showIcon={true}
-									/>
-									<Currency.Amount
-										currencyKey={currencyKey}
-										amount={balance}
-										totalValue={totalValue}
-										sign={selectedPriceCurrency.sign}
-										conversionRate={selectPriceCurrencyRate}
-									/>
-								</StyledSelectableCurrencyRow>
+									selectedPriceCurrency={selectedPriceCurrency}
+									selectPriceCurrencyRate={selectPriceCurrencyRate}
+								/>
 							);
 						})}
 					</RowsContainer>
@@ -200,10 +185,6 @@ const Total = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding-bottom: 10px;
-`;
-
-const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
-	padding: 5px 16px;
 `;
 
 const RowsSpacer = styled.div`
