@@ -5,9 +5,11 @@ import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
 import styled, { css, ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
+import { Svg } from 'react-optimized-image';
+// import { useMediaQuery } from 'react-responsive';
 
-import SnowflakeIcon from 'assets/inline-svg/app/snowflake.svg';
-import LoaderIcon from 'assets/inline-svg/app/loader.svg';
+import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
+import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import { Synth } from 'lib/synthetix';
 
@@ -63,6 +65,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
 
 	const change = historicalRates.data?.change ?? null;
+	// eslint-disable-next-line
 	const rates = historicalRates.data?.rates ?? [];
 
 	const isChangePositive = change != null && change >= 0;
@@ -75,6 +78,8 @@ const ChartCard: FC<ChartCardProps> = ({
 	const disabledInteraction = showLoader || showOverlayMessage;
 	const noData =
 		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
+
+	// const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 
 	let linearGradientId = `priceChartCardArea-${side}`;
 
@@ -185,13 +190,13 @@ const ChartCard: FC<ChartCardProps> = ({
 						>
 							<defs>
 								<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0%" stopColor={chartColor} stopOpacity={0.2} />
+									<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
 									<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
 								</linearGradient>
 							</defs>
 							<XAxis
 								// @ts-ignore
-								dx={-5}
+								dx={-1}
 								dy={10}
 								minTickGap={20}
 								dataKey="timestamp"
@@ -212,7 +217,6 @@ const ChartCard: FC<ChartCardProps> = ({
 							<YAxis
 								// TODO: might need to adjust the width to make sure we do not trim the values...
 								type="number"
-								hide={true}
 								allowDataOverflow={true}
 								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
 								tick={fontStyle}
@@ -253,7 +257,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<>
 							{isSynthFrozen && (
 								<OverlayMessage>
-									<SnowflakeIcon />
+									<Svg src={SnowflakeIcon} />
 									<OverlayMessageTitle>
 										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
 									</OverlayMessageTitle>
@@ -264,7 +268,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							)}
 						</>
 					) : showLoader ? (
-						<LoaderIcon />
+						<Svg src={LoaderIcon} />
 					) : noData ? (
 						<NoData>{t('exchange.price-chart-card.no-data')}</NoData>
 					) : undefined}
@@ -352,6 +356,7 @@ const LabelStyle = styled(ItemStyle)`
 
 const OverlayMessage = styled(GridDivCenteredRow)`
 	justify-items: center;
+	text-align: center;
 `;
 
 const OverlayMessageTitle = styled.div`

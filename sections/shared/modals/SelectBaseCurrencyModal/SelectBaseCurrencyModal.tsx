@@ -2,9 +2,9 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Synths, Synth } from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
 
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import Button from 'components/Button';
 import SearchInput from 'components/Input/SearchInput';
@@ -27,19 +27,15 @@ export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.commodity,
 ];
 
-type SelectSynthModalProps = {
+type SelectBaseCurrencyModalProps = {
 	onDismiss: () => void;
-	synths: Synths;
-	exchangeRates: Rates | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
 
-export const SelectSynthModal: FC<SelectSynthModalProps> = ({
+export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	onDismiss,
-	exchangeRates,
-	synths,
 	onSelect,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
@@ -47,6 +43,11 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+
+	// eslint-disable-next-line
+	const synths = synthetix.js?.synths ?? [];
+	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const filteredSynths = useMemo(
 		() =>
@@ -74,10 +75,14 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 	const totalSynths = synthsResults.length;
 
 	return (
-		<StyledCenteredModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-synth.title')}>
+		<StyledCenteredModal
+			onDismiss={onDismiss}
+			isOpen={true}
+			title={t('modals.select-base-currency.title')}
+		>
 			<SearchContainer>
 				<AssetSearchInput
-					placeholder={t('modals.select-synth.search.placeholder')}
+					placeholder={t('modals.select-base-currency.search.placeholder')}
 					onChange={(e) => {
 						setSynthCategory(null);
 						setAssetSearch(e.target.value);
@@ -108,15 +113,17 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 			<RowsHeader>
 				{assetSearch ? (
 					<>
-						<span>{t('modals.select-synth.header.search-results')}</span>
+						<span>{t('modals.select-base-currency.header.search-results')}</span>
 						<span>{t('common.total-results', { total: totalSynths })}</span>
 					</>
 				) : (
 					<>
 						<span>
 							{synthCategory != null
-								? t('modals.select-synth.header.category-synths', { category: synthCategory })
-								: t('modals.select-synth.header.all-synths')}
+								? t('modals.select-base-currency.header.category-synths', {
+										category: synthCategory,
+								  })
+								: t('modals.select-base-currency.header.all-synths')}
 						</span>
 						<span>{t('common.total-assets', { total: totalSynths })}</span>
 					</>
@@ -143,7 +150,7 @@ export const SelectSynthModal: FC<SelectSynthModalProps> = ({
 						);
 					})
 				) : (
-					<EmptyDisplay>{t('modals.select-synth.search.empty-results')}</EmptyDisplay>
+					<EmptyDisplay>{t('modals.select-base-currency.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
 			<StyledBottomShadow />
@@ -203,4 +210,4 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-export default SelectSynthModal;
+export default SelectBaseCurrencyModal;

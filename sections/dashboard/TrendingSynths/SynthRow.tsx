@@ -16,13 +16,13 @@ import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
 
-type SynthRow = {
+type SynthRowProps = {
 	price: number | null;
 	synth: Synth;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };
-const SynthRow: FC<SynthRow> = ({
+const SynthRow: FC<SynthRowProps> = ({
 	price,
 	synth,
 	selectedPriceCurrency,

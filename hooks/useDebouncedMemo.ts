@@ -10,6 +10,7 @@ export function useDebouncedMemo<T>(
 ): T {
 	const [state, setState] = useState(factory());
 
+	// eslint-disable-next-line
 	const debouncedSetState = useCallback(debounce(setState, debounceMs), []);
 
 	useEffect(() => {

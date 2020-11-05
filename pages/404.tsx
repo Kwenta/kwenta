@@ -1,14 +1,15 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { Svg } from 'react-optimized-image';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
 
-import CaretLeftXLIcon from 'assets/inline-svg/app/caret-left-xl.svg';
-import CaretRightXLICon from 'assets/inline-svg/app/caret-right-xl.svg';
+import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
+import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
 
 const NotFoundPage = () => {
 	const { t } = useTranslation();
@@ -20,12 +21,12 @@ const NotFoundPage = () => {
 			</Head>
 			<AppLayout>
 				<Container>
-					<CaretLeftXLIcon />
+					<Svg src={CaretLeftXLIcon} />
 					<Content>
 						<Title>{t('not-found.title')}</Title>
 						<Subtitle>{t('not-found.subtitle')}</Subtitle>
 					</Content>
-					<CaretRightXLICon />
+					<Svg src={CaretRightXLICon} />
 				</Container>
 			</AppLayout>
 		</>

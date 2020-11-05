@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Img, { Svg } from 'react-optimized-image';
 
-import LogoNoTextSVG from 'assets/inline-svg/brand/logo-no-text.svg';
+import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
 import { GridDiv, Paragraph } from 'styles/common';
@@ -15,10 +16,10 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<LogoNoTextSVG />
+			<Svg src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
 			<HeroImageContainer>
-				<HeroImage src={MarketOrderPreview} alt="" />
+				<HeroImage src={MarketOrderPreview} alt="" webp={true} />
 			</HeroImageContainer>
 		</StackSection>
 	);
@@ -40,12 +41,17 @@ const HeroImageContainer = styled(GridDiv)`
 	display: grid;
 	justify-content: center;
 	margin-top: -40px;
+	min-height: 839px;
+	${media.lessThan('md')`
+		min-height: 684px;
+	`}
 	${media.lessThan('sm')`
 		margin-top: 0;
+		min-height: 338px;
 	`}
 `;
 
-const HeroImage = styled.img`
+const HeroImage = styled(Img)`
 	max-width: 1400px;
 	${media.lessThan('md')`
 		width: 1140px;

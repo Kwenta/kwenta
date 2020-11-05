@@ -2,7 +2,9 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Synth, SynthsMap } from 'lib/synthetix';
+import synthetix, { Synth } from 'lib/synthetix';
+import { isWalletConnectedState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 import Currency from 'components/Currency';
 import Button from 'components/Button';
@@ -17,7 +19,7 @@ import {
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -26,35 +28,37 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import Connector from 'containers/Connector';
 import ROUTES from 'constants/routes';
 
-type SelectAssetModalProps = {
+type SelectQuoteCurrencyModalProps = {
 	onDismiss: () => void;
-	synthsMap: SynthsMap | null;
-	synthBalances: SynthBalance[];
-	synthTotalUSDBalance: number | null;
 	onSelect: (currencyKey: CurrencyKey) => void;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
-	isWalletConnected: boolean;
 };
 
 const { sETH, sUSD } = SYNTHS_MAP;
 const { ETH } = CRYPTO_CURRENCY_MAP;
 
-export const SelectSynthModal: FC<SelectAssetModalProps> = ({
+export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	onDismiss,
-	synthsMap,
-	synthBalances,
-	synthTotalUSDBalance,
 	onSelect,
 	selectedPriceCurrency,
 	selectPriceCurrencyRate,
-	isWalletConnected,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+
+	const { synthsMap } = synthetix;
+	const synthBalances = synthsWalletBalancesQuery.data?.balances ?? [];
+	let synthTotalUSDBalance = synthsWalletBalancesQuery.data?.totalUSDBalance ?? null;
 
 	return (
-		<StyledBaseModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-asset.title')}>
+		<StyledBaseModal
+			onDismiss={onDismiss}
+			isOpen={true}
+			title={t('modals.select-quote-currency.title')}
+		>
 			<TotalValue>
 				<Total>
 					{synthTotalUSDBalance != null
@@ -76,8 +80,8 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 			{synthBalances.length > 0 ? (
 				<>
 					<RowsHeader>
-						<span>{t('modals.select-asset.header.your-synths')}</span>
-						<span>{t('modals.select-asset.header.holdings')}</span>
+						<span>{t('modals.select-quote-currency.header.your-synths')}</span>
+						<span>{t('modals.select-quote-currency.header.holdings')}</span>
 					</RowsHeader>
 					<RowsContainer>
 						{synthBalances.map(({ currencyKey, balance, usdBalance }) => {
@@ -115,7 +119,7 @@ export const SelectSynthModal: FC<SelectAssetModalProps> = ({
 					{/* TODO: this list needs to contain crypto -> synth supported assets (so we need to check existing assets + verify they are supported as synths) */}
 					<RowsSpacer />
 					<RowsHeader>
-						<span>{t('modals.select-asset.header.non-synths')}</span>
+						<span>{t('modals.select-quote-currency.header.non-synths')}</span>
 					</RowsHeader>
 					<CryptoRowsContainer>
 						<CryptoRow>
@@ -241,4 +245,4 @@ const CryptoRowsContainer = styled(RowsContainer)`
 	flex-shrink: 0;
 `;
 
-export default SelectSynthModal;
+export default SelectQuoteCurrencyModal;

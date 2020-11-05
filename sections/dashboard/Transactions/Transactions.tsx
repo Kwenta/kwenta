@@ -24,30 +24,42 @@ const Transactions: FC<TransactionsProps> = ({
 	const { t } = useTranslation();
 	const walletTradesQuery = useWalletTradesQuery();
 
-	const synthFilterList = [
-		{ label: t('dashboard.transactions.synth-sort.allSynths'), key: 'ALL_SYNTHS' },
-		{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
-		{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
-		{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
-		{ label: t('common.currency-category.equities'), key: CATEGORY_MAP['equities'] },
-	];
+	const synthFilterList = useMemo(
+		() => [
+			{ label: t('dashboard.transactions.synth-sort.allSynths'), key: 'ALL_SYNTHS' },
+			{ label: t('common.currency-category.crypto'), key: CATEGORY_MAP['crypto'] },
+			{ label: t('common.currency-category.forex'), key: CATEGORY_MAP['forex'] },
+			{ label: t('common.currency-category.commodity'), key: CATEGORY_MAP['commodity'] },
+			{ label: t('common.currency-category.equities'), key: CATEGORY_MAP['equities'] },
+		],
+		[t]
+	);
+	const orderTypeList = useMemo(
+		() => [
+			{
+				label: t('dashboard.transactions.order-type-sort.allOrderTypes'),
+				key: 'ALL_ORDER_TYPES',
+			},
+			{ label: t('dashboard.transactions.order-type-sort.market'), key: 'MARKET' },
+			/* { label: t('dashboard.transactions.order-type-sort.limit'), key: 'LIMIT' }, */
+		],
+		[t]
+	);
+	const orderSizeList = useMemo(
+		() => [
+			{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' },
+			{ label: '< 1000', key: 'LTET1000' },
+			{ label: '1000 < x < 10,000', key: 'GT1000LTET10000' },
+			{ label: '10,000 < x < 100,000', key: 'GT10000LTET100000' },
+			{ label: '100,000+', key: 'GT100000' },
+		],
+		[]
+	);
 	const [synthFilter, setSynthFilter] = useState(synthFilterList[0]);
-	const orderTypeList = [
-		{ label: t('dashboard.transactions.order-type-sort.allOrderTypes'), key: 'ALL_ORDER_TYPES' },
-		{ label: t('dashboard.transactions.order-type-sort.market'), key: 'MARKET' },
-		/* { label: t('dashboard.transactions.order-type-sort.limit'), key: 'LIMIT' }, */
-	];
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
-
-	const orderSizeList = [
-		{ label: 'All Sizes', key: 'ALL_ORDER_SIZES' },
-		{ label: '< 1000', key: 'LTET1000' },
-		{ label: '1000 < x < 10,000', key: 'GT1000LTET10000' },
-		{ label: '10,000 < x < 100,000', key: 'GT10000LTET100000' },
-		{ label: '100,000+', key: 'GT100000' },
-	];
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
+	// eslint-disable-next-line
 	const synths = synthetix.js?.synths || [];
 
 	const createSynthTypeFilter = useCallback(
@@ -83,7 +95,7 @@ const Transactions: FC<TransactionsProps> = ({
 		[orderSizeList]
 	);
 
-	const trades = walletTradesQuery.data || [];
+	const trades = useMemo(() => walletTradesQuery.data || [], [walletTradesQuery.data]);
 	const filteredHistoricalTrades = useMemo(
 		() =>
 			trades

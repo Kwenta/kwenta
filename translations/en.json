@@ -253,7 +253,7 @@
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	},
 	"modals": {
-		"select-synth": {
+		"select-base-currency": {
 			"title": "select synth",
 			"header": {
 				"search-results": "search results",
@@ -265,7 +265,7 @@
 				"empty-results": "No results found. Please try again."
 			}
 		},
-		"select-asset": {
+		"select-quote-currency": {
 			"title": "select synth",
 			"header": {
 				"your-synths": "your synths",

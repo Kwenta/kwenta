@@ -1,15 +1,16 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Svg } from 'react-optimized-image';
 
 import { isWalletConnectedState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
 import { resetButtonCSS } from 'styles/common';
 
-import NotificationIcon from 'assets/inline-svg/app/notification.svg';
-import NotificationAlertIcon from 'assets/inline-svg/app/notification-alert.svg';
-import MenuIcon from 'assets/inline-svg/app/menu.svg';
-import CrossIcon from 'assets/inline-svg/app/cross.svg';
+import NotificationIcon from 'assets/svg/app/notification.svg';
+import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
+import MenuIcon from 'assets/svg/app/menu.svg';
+import CrossIcon from 'assets/svg/app/cross.svg';
 
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 
@@ -38,7 +39,11 @@ const MobileUserMenu: FC = () => {
 							}}
 							isActive={notificationsModalOpened}
 						>
-							{hasOrdersNotification ? <NotificationAlertIcon /> : <NotificationIcon />}
+							{hasOrdersNotification ? (
+								<Svg src={NotificationAlertIcon} />
+							) : (
+								<Svg src={NotificationIcon} />
+							)}
 						</MenuButton>
 					)}
 					<MenuButton
@@ -48,7 +53,7 @@ const MobileUserMenu: FC = () => {
 						}}
 						isActive={settingsModalOpened}
 					>
-						{settingsModalOpened ? <CrossIcon /> : <MenuIcon />}
+						{settingsModalOpened ? <Svg src={CrossIcon} /> : <Svg src={MenuIcon} />}
 					</MenuButton>
 				</Menu>
 			</Container>

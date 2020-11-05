@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
+import { Svg } from 'react-optimized-image';
 
 import { Synth } from 'lib/synthetix';
 
@@ -18,6 +19,8 @@ import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import NumericInput from 'components/Input/NumericInput';
 import Card from 'components/Card';
+
+import InfoIcon from 'assets/svg/app/info.svg';
 
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
@@ -47,6 +50,7 @@ type TradeSummaryCardProps = {
 	attached?: boolean;
 	className?: string;
 	exchangeFeeRate: number | null;
+	transactionFee?: number | null;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -69,6 +73,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	showFee = true,
 	attached,
 	exchangeFeeRate,
+	transactionFee,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -101,6 +106,14 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 		return t('exchange.summary-info.button.submit-order');
 	}
 
+	const gasPriceItem = hasCustomGasPrice ? (
+		<span>{Number(customGasPrice)}</span>
+	) : (
+		<span>
+			{ESTIMATE_VALUE} {gasPrice}
+		</span>
+	);
+
 	const summaryItems = (
 		<SummaryItems attached={attached}>
 			<SummaryItem>
@@ -108,7 +121,25 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				<SummaryItemValue>
 					{gasPrice != null ? (
 						<>
-							{hasCustomGasPrice ? Number(customGasPrice) : `${ESTIMATE_VALUE} ${gasPrice}`}
+							{transactionFee != null ? (
+								<GasPriceCostTooltip
+									content={
+										<span>
+											{formatCurrency(selectedPriceCurrency.name, transactionFee, {
+												sign: selectedPriceCurrency.sign,
+											})}
+										</span>
+									}
+									arrow={false}
+								>
+									<GasPriceItem>
+										{gasPriceItem}
+										<Svg src={InfoIcon} />
+									</GasPriceItem>
+								</GasPriceCostTooltip>
+							) : (
+								gasPriceItem
+							)}
 							<GasPriceTooltip
 								trigger="click"
 								arrow={false}
@@ -277,6 +308,15 @@ const GasPriceTooltip = styled(Tippy)`
 	}
 `;
 
+const GasPriceCostTooltip = styled(GasPriceTooltip)`
+	width: auto;
+	font-size: 12px;
+	.tippy-content {
+		padding: 5px;
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
+`;
+
 const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
@@ -301,6 +341,15 @@ const StyedGasButton = styled(Button)`
 	justify-content: space-between;
 	padding-left: 10px;
 	padding-right: 10px;
+`;
+
+const GasPriceItem = styled.span`
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	svg {
+		margin-left: 5px;
+	}
 `;
 
 const StyledGasEditButton = styled.span`

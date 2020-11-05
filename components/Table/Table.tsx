@@ -1,13 +1,14 @@
 import React, { FC, useMemo, DependencyList } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import { Svg } from 'react-optimized-image';
 
-import SortDownIcon from 'assets/inline-svg/app/caret-down.svg';
-import SortUpIcon from 'assets/inline-svg/app/caret-up.svg';
+import SortDownIcon from 'assets/svg/app/caret-down.svg';
+import SortUpIcon from 'assets/svg/app/caret-up.svg';
 
 import { FlexDivCentered } from 'styles/common';
 
-import Spinner from 'assets/inline-svg/app/loader.svg';
+import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
 
 export type TablePalette = 'primary';
@@ -102,14 +103,26 @@ export const Table: FC<TableProps> = ({
 										<SortIconContainer>
 											{column.isSorted ? (
 												column.isSortedDesc ? (
-													<StyledSortDownIcon />
+													<StyledSortDownIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												) : (
-													<StyledSortUpIcon />
+													<StyledSortUpIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
 												)
 											) : (
 												<>
-													<StyledSortUpIcon />
-													<StyledSortDownIcon />
+													<StyledSortUpIcon
+														src={SortUpIcon}
+														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
+													/>
+													<StyledSortDownIcon
+														src={SortDownIcon}
+														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
+													/>
 												</>
 											)}
 										</SortIconContainer>
@@ -119,7 +132,7 @@ export const Table: FC<TableProps> = ({
 						</TableRow>
 					))}
 					{isLoading ? (
-						<StyledSpinner />
+						<StyledSpinner src={Spinner} />
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
@@ -165,8 +178,7 @@ const TableContainer = styled.div`
 	overflow: auto;
 `;
 
-// @ts-ignore
-const StyledSpinner = styled(Spinner)`
+const StyledSpinner = styled(Svg)`
 	display: block;
 	margin: 30px auto;
 `;
@@ -233,15 +245,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 		`}
 `;
 
-// @ts-ignore
-const StyledSortDownIcon = styled(SortDownIcon)`
+const StyledSortDownIcon = styled(Svg)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
-// @ts-ignore
-const StyledSortUpIcon = styled(SortUpIcon)`
+const StyledSortUpIcon = styled(Svg)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.blueberry};
