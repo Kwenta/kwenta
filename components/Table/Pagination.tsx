@@ -1,13 +1,14 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
 
 import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
 
-import LeftArrowIcon from 'assets/inline-svg/app/caret-left.svg';
-import LeftEndArrowIcon from 'assets/inline-svg/app/caret-left-end.svg';
-import RightArrowIcon from 'assets/inline-svg/app/caret-right.svg';
-import RightEndArrowIcon from 'assets/inline-svg/app/caret-right-end.svg';
+import LeftArrowIcon from 'assets/svg/app/caret-left.svg';
+import LeftEndArrowIcon from 'assets/svg/app/caret-left-end.svg';
+import RightArrowIcon from 'assets/svg/app/caret-right.svg';
+import RightEndArrowIcon from 'assets/svg/app/caret-right-end.svg';
 
 type PaginationProps = {
 	pageIndex: number;
@@ -34,10 +35,13 @@ const Pagination: FC<PaginationProps> = ({
 		<PaginationContainer>
 			<span>
 				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<LeftEndArrowIcon />
+					<Svg
+						src={LeftEndArrowIcon}
+						viewBox={`0 0 ${LeftEndArrowIcon.width} ${LeftEndArrowIcon.height}`}
+					/>
 				</ArrowButton>
 				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<LeftArrowIcon />
+					<Svg src={LeftArrowIcon} viewBox={`0 0 ${LeftArrowIcon.width} ${LeftArrowIcon.height}`} />
 				</ArrowButton>
 			</span>
 			<PageInfo>
@@ -46,10 +50,16 @@ const Pagination: FC<PaginationProps> = ({
 			</PageInfo>
 			<span>
 				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<RightArrowIcon />
+					<Svg
+						src={RightArrowIcon}
+						viewBox={`0 0 ${RightArrowIcon.width} ${RightArrowIcon.height}`}
+					/>
 				</ArrowButton>
 				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<RightEndArrowIcon />
+					<Svg
+						src={RightEndArrowIcon}
+						viewBox={`0 0 ${RightEndArrowIcon.width} ${RightEndArrowIcon.height}`}
+					/>
 				</ArrowButton>
 			</span>
 		</PaginationContainer>

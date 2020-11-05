@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Img from 'react-optimized-image';
 
 import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
 import SwapPreviewMd from 'assets/svg/marketing/swap-preview-md.svg';
@@ -12,25 +13,25 @@ import { FlexDivCol } from 'styles/common';
 
 import media from 'styles/media';
 
-import { StackSection, CenterSubHeader, Title, Copy, StyledResponsiveImage } from '../common';
+import { StackSection, CenterSubHeader, Title, Copy } from '../common';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 const BENEFITS = [
 	{
 		id: 'peer-to-contract',
-		image: <img src={P2CIcon} alt="" />,
+		image: <Img src={P2CIcon} alt="" />,
 		title: 'homepage.benefits.peer-to-contract.title',
 		copy: 'homepage.benefits.peer-to-contract.copy',
 	},
 	{
 		id: 'trading-pair',
-		image: <img src={RestrictionsIcon} alt="" />,
+		image: <Img src={RestrictionsIcon} alt="" />,
 		title: 'homepage.benefits.trading-pair.title',
 		copy: 'homepage.benefits.trading-pair.copy',
 	},
 	{
 		id: 'permissionless',
-		image: <img src={PermissionlessIcon} alt="" />,
+		image: <Img src={PermissionlessIcon} alt="" />,
 		title: 'homepage.benefits.permissionless.title',
 		copy: 'homepage.benefits.permissionless.copy',
 	},
@@ -43,10 +44,10 @@ const Benefits = () => {
 		<StackSection>
 			<StyledCenterSubHeader>{t('homepage.benefits.title')}</StyledCenterSubHeader>
 			<DesktopOnlyView>
-				<StyledResponsiveImage src={SwapPreview} alt="" />
+				<ResponsiveImage src={SwapPreview} alt="" webp={true} />
 			</DesktopOnlyView>
 			<MobileOrTabletView>
-				<StyledResponsiveImage src={SwapPreviewMd} alt="" />
+				<ResponsiveImage src={SwapPreviewMd} alt="" webp={true} />
 			</MobileOrTabletView>
 			<BenefitContainer>
 				{BENEFITS.map(({ id, image, title, copy }) => (
@@ -60,6 +61,11 @@ const Benefits = () => {
 		</StackSection>
 	);
 };
+
+export const ResponsiveImage = styled(Img)`
+	width: 100%;
+	max-width: 1200px;
+`;
 
 const StyledCenterSubHeader = styled(CenterSubHeader)`
 	padding-bottom: 56px;

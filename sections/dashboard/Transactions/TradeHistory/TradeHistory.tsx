@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Synth } from 'lib/synthetix';
+import { Svg } from 'react-optimized-image';
 
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
 
@@ -17,8 +18,8 @@ import Etherscan from 'containers/Etherscan';
 import Table from 'components/Table';
 import Currency from 'components/Currency';
 
-import LinkIcon from 'assets/inline-svg/app/link.svg';
-import NoNotificationIcon from 'assets/inline-svg/app/no-notifications.svg';
+import LinkIcon from 'assets/svg/app/link.svg';
+import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
@@ -137,7 +138,10 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 					Cell: (cellProps: CellProps<HistoricalTrade>) =>
 						etherscanInstance != null && cellProps.row.original.hash ? (
 							<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.hash)}>
-								<StyledLinkIcon />
+								<StyledLinkIcon
+									src={LinkIcon}
+									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+								/>
 							</StyledExternalLink>
 						) : (
 							NO_VALUE
@@ -151,7 +155,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
 					<TableNoResults>
-						<NoNotificationIcon />
+						<Svg src={NoNotificationIcon} />
 						{t('dashboard.transactions.table.no-results')}
 					</TableNoResults>
 				) : undefined
@@ -165,8 +169,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
 `;
 
-// @ts-ignore
-const StyledLinkIcon = styled(LinkIcon)`
+const StyledLinkIcon = styled(Svg)`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

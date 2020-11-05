@@ -1,13 +1,6 @@
 import styled from 'styled-components';
 
-import {
-	FlexDivCol,
-	FlexDivColCentered,
-	FlexDivRow,
-	GridDiv,
-	Paragraph,
-	ResponsiveImage,
-} from 'styles/common';
+import { FlexDivCol, FlexDivColCentered, FlexDivRow, GridDiv, Paragraph } from 'styles/common';
 
 import media from 'styles/media';
 
@@ -33,6 +26,7 @@ export const CenterSubHeader = styled(SubHeader)`
 
 export const StackSection = styled(FlexDivColCentered)`
 	width: 100%;
+	${(props) => props.theme.animations.show};
 `;
 
 export const FlexSection = styled(FlexDivRow)`
@@ -80,8 +74,4 @@ export const Subtext = styled(Paragraph)`
 	text-align: center;
 	letter-spacing: 0.2px;
 	color: ${(props) => props.theme.colors.white};
-`;
-
-export const StyledResponsiveImage = styled(ResponsiveImage)`
-	max-width: 1200px;
 `;

@@ -24,6 +24,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	...rest
 }) => (
 	<Container {...rest}>
+		<Amount className="amount">{formatNumber(amount)}</Amount>
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
@@ -31,7 +32,6 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 				{ sign }
 			)}
 		</TotalValue>
-		<Amount className="amount">{formatNumber(amount)}</Amount>
 	</Container>
 );
 
@@ -41,9 +41,9 @@ const Container = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
-const Amount = styled.span``;
-const TotalValue = styled.span`
+const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};
 `;
+const TotalValue = styled.span``;
 
 export default CurrencyAmount;

@@ -37,6 +37,7 @@ const TrendingSynths: FC = () => {
 
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
+	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
 
 	const sortedSynths = useMemo(() => {

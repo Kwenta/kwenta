@@ -12,14 +12,14 @@ import { SelectableCurrencyRow } from 'styles/common';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import { Period } from 'constants/period';
 
-type SynthRow = {
+type SynthRowProps = {
 	price: number | null;
 	synth: Synth;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 	onClick: () => void;
 };
-const SynthRow: FC<SynthRow> = ({
+const SynthRow: FC<SynthRowProps> = ({
 	price,
 	synth,
 	selectedPriceCurrency,

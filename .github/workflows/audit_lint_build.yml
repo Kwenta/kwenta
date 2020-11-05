@@ -92,8 +92,8 @@ jobs:
 
   verify:
       needs: build
-      # run only on master/dev branch and pull requests
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+      # run only on master/dev branch
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
       runs-on: ubuntu-latest
 
       container:
