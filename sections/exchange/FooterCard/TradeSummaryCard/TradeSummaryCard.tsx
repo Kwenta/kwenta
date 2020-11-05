@@ -28,9 +28,9 @@ import { NoTextTransform, numericValueCSS, NumericValue } from 'styles/common';
 import media from 'styles/media';
 
 import { MessageContainer } from '../common';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type TradeSummaryCardProps = {
-	selectedPriceCurrency: Synth;
 	isSubmissionDisabled: boolean;
 	isSubmitting: boolean;
 	baseCurrencyAmount: string;
@@ -54,7 +54,6 @@ type TradeSummaryCardProps = {
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
-	selectedPriceCurrency,
 	isSubmissionDisabled,
 	isSubmitting,
 	baseCurrencyAmount,
@@ -79,6 +78,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;

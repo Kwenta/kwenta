@@ -24,13 +24,13 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { hasOrdersNotificationState } from 'store/ui';
 import { customGasPriceState, gasSpeedState, isWalletConnectedState } from 'store/wallet';
 import { ordersState } from 'store/orders';
-import { priceCurrencyState } from 'store/app';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import media from 'styles/media';
 
 import synthetix from 'lib/synthetix';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 // TOOD: the convert/exchange currency cards are very similar, it needs to be refactored into a reusable component.
 
@@ -55,9 +55,9 @@ const CurrencyConvertCard: FC = () => {
 	const [txError, setTxError] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -67,7 +67,6 @@ const CurrencyConvertCard: FC = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
@@ -251,7 +250,6 @@ const CurrencyConvertCard: FC = () => {
 				<StyledConnectWalletCard attached={true} />
 			) : (
 				<StyledTradeSummaryCard
-					selectedPriceCurrency={selectedPriceCurrency}
 					isSubmissionDisabled={isSubmissionDisabled}
 					isSubmitting={isSubmitting}
 					onSubmit={handleSubmit}
@@ -282,7 +280,6 @@ const CurrencyConvertCard: FC = () => {
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={CRYPTO_CURRENCY_MAP.ETH}
 					totalTradePrice={totalTradePrice}
-					selectedPriceCurrency={selectedPriceCurrency}
 					txProvider="1inch"
 				/>
 			)}

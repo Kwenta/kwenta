@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import synthetix, { Synth } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 
 import Currency from 'components/Currency';
 
@@ -11,20 +11,16 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type SynthRowProps = {
 	synth: SynthBalance;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	onClick: () => void;
 };
-const SynthRow: FC<SynthRowProps> = ({
-	synth,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-	onClick,
-}) => {
+const SynthRow: FC<SynthRowProps> = ({ synth, onClick }) => {
 	const { t } = useTranslation();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+
 	const { synthsMap } = synthetix;
 	const { currencyKey, usdBalance, balance } = synth;
 	const synthDesc = synthsMap != null ? synthsMap[currencyKey]?.description : null;

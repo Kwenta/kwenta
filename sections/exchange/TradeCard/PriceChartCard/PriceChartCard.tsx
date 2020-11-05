@@ -11,8 +11,6 @@ import { Svg } from 'react-optimized-image';
 import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 
-import { Synth } from 'lib/synthetix';
-
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
@@ -35,13 +33,12 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import media from 'styles/media';
 
 import { Side } from '../types';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type ChartCardProps = {
 	side: Side;
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	isSynthFrozen: boolean;
 	className?: string;
 };
@@ -50,13 +47,12 @@ const ChartCard: FC<ChartCardProps> = ({
 	side,
 	currencyKey,
 	priceRate,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
 	isSynthFrozen,
 	...rest
 }) => {
 	const { t } = useTranslation();
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 

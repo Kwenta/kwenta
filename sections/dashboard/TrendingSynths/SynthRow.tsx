@@ -16,21 +16,16 @@ import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type SynthRowProps = {
 	price: number | null;
 	synth: Synth;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 };
-const SynthRow: FC<SynthRowProps> = ({
-	price,
-	synth,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.name;
 

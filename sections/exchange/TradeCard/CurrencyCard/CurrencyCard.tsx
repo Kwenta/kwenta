@@ -13,11 +13,10 @@ import { formatCurrency } from 'utils/formatters/number';
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 
-import { Synth } from 'lib/synthetix';
-
 import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
 
 import { Side } from '../types';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -28,8 +27,6 @@ type CurrencyCardProps = {
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
 	priceRate: number;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	className?: string;
 };
 
@@ -41,12 +38,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	walletBalance,
 	onBalanceClick,
 	onCurrencySelect,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
 	priceRate,
 	...rest
 }) => {
 	const { t } = useTranslation();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const isBase = side === 'base';
 

@@ -20,25 +20,19 @@ import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
 
-import synthetix, { Synth } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	className?: string;
 };
 
-const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
-	currencyKey,
-	priceRate,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-	...rest
-}) => {
+const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);

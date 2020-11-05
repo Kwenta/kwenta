@@ -20,8 +20,8 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 
 import { formatCurrency } from 'utils/formatters/number';
-import { Synth } from 'lib/synthetix';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -32,7 +32,6 @@ type TxConfirmationModalProps = {
 	quoteCurrencyKey: CurrencyKey;
 	quoteCurrencyAmount: string;
 	totalTradePrice: number;
-	selectedPriceCurrency: Synth;
 	txProvider: 'synthetix' | '1inch';
 };
 
@@ -45,10 +44,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	baseCurrencyAmount,
 	quoteCurrencyAmount,
 	totalTradePrice,
-	selectedPriceCurrency,
 	txProvider,
 }) => {
 	const { t } = useTranslation();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	return (
 		<StyledBaseModal

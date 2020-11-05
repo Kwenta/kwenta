@@ -51,9 +51,7 @@ import { ordersState } from 'store/orders';
 import { formatCurrency } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import { useLocalStorage } from 'hooks/useLocalStorage';
-
-import { priceCurrencyState } from 'store/app';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 import media from 'styles/media';
 
@@ -72,6 +70,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
 import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -101,11 +100,12 @@ const ExchangePage = () => {
 	const [selectBaseCurrencyModal, setSelectBaseCurrencyModal] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
@@ -159,7 +159,6 @@ const ExchangePage = () => {
 	const baseCurrencyAmountNum = Number(baseCurrencyAmount);
 	const quoteCurrencyAmountNum = Number(quoteCurrencyAmount);
 
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 	let totalTradePrice = baseCurrencyAmountNum * basePriceRate;
 	if (selectPriceCurrencyRate) {
 		totalTradePrice /= selectPriceCurrencyRate;
@@ -400,11 +399,6 @@ const ExchangePage = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [marketQuery]);
 
-	const selectPriceCurrencyProps = {
-		selectedPriceCurrency,
-		selectPriceCurrencyRate,
-	};
-
 	const quoteCurrencyCard = (
 		<StyledCurrencyCard
 			side="quote"
@@ -428,7 +422,6 @@ const ExchangePage = () => {
 			}}
 			onCurrencySelect={() => setSelectQuoteCurrencyModalOpen(true)}
 			priceRate={quotePriceRate}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 	const quotePriceChartCard = (
@@ -437,16 +430,11 @@ const ExchangePage = () => {
 			currencyKey={quoteCurrencyKey}
 			priceRate={quotePriceRate}
 			isSynthFrozen={false}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 
 	const quoteMarketDetailsCard = (
-		<StyledMarketDetailsCard
-			currencyKey={quoteCurrencyKey}
-			priceRate={quotePriceRate}
-			{...selectPriceCurrencyProps}
-		/>
+		<StyledMarketDetailsCard currencyKey={quoteCurrencyKey} priceRate={quotePriceRate} />
 	);
 
 	const baseCurrencyCard = (
@@ -472,7 +460,6 @@ const ExchangePage = () => {
 			}}
 			onCurrencySelect={() => setSelectBaseCurrencyModal(true)}
 			priceRate={basePriceRate}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -482,16 +469,11 @@ const ExchangePage = () => {
 			currencyKey={baseCurrencyKey}
 			priceRate={basePriceRate}
 			isSynthFrozen={isBaseCurrencyFrozen}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 
 	const baseMarketDetailsCard = (
-		<StyledMarketDetailsCard
-			currencyKey={baseCurrencyKey}
-			priceRate={basePriceRate}
-			{...selectPriceCurrencyProps}
-		/>
+		<StyledMarketDetailsCard currencyKey={baseCurrencyKey} priceRate={basePriceRate} />
 	);
 
 	return (
@@ -562,7 +544,6 @@ const ExchangePage = () => {
 						<NoSynthsCard />
 					) : (
 						<TradeSummaryCard
-							selectedPriceCurrency={selectedPriceCurrency}
 							isSubmissionDisabled={isSubmissionDisabled}
 							isSubmitting={isSubmitting}
 							onSubmit={handleSubmit}
@@ -592,7 +573,6 @@ const ExchangePage = () => {
 							baseCurrencyKey={baseCurrencyKey!}
 							quoteCurrencyKey={quoteCurrencyKey!}
 							totalTradePrice={totalTradePrice}
-							selectedPriceCurrency={selectedPriceCurrency}
 							txProvider="synthetix"
 						/>
 					)}
@@ -615,8 +595,6 @@ const ExchangePage = () => {
 									routeToBaseCurrency(currencyKey);
 								}
 							}}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 					)}
 					{selectQuoteCurrencyModalOpen && (
@@ -633,8 +611,6 @@ const ExchangePage = () => {
 									routeToMarketPair(currencyPair.base, currencyKey);
 								}
 							}}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
 						/>
 					)}
 				</StyledPageContent>

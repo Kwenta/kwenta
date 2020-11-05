@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
 import castArray from 'lodash/castArray';
 
 import ROUTES from 'constants/routes';
@@ -22,7 +21,7 @@ import { BoldText } from 'styles/common';
 
 import { CardTitle, ConvertContainer } from '../common';
 
-import { priceCurrencyState } from 'store/app';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
@@ -46,13 +45,11 @@ const DashboardCard: FC = () => {
 		return null;
 	}, [router.query]);
 
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
-
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
@@ -85,11 +82,6 @@ const DashboardCard: FC = () => {
 		[t, activeTab, router]
 	);
 
-	const selectPriceCurrencyProps = {
-		selectedPriceCurrency,
-		selectPriceCurrencyRate,
-	};
-
 	if (synthsBalancesQuery.isLoading) {
 		return <Loader />;
 	}
@@ -120,7 +112,6 @@ const DashboardCard: FC = () => {
 					balances={synthBalances?.balances ?? []}
 					totalUSDBalance={synthBalances?.totalUSDBalance ?? 0}
 					exchangeRates={exchangeRates}
-					{...selectPriceCurrencyProps}
 				/>
 			</TabPanel>
 			<TabPanel name={Tab.Convert} activeTab={activeTab}>
@@ -129,7 +120,7 @@ const DashboardCard: FC = () => {
 				</ConvertContainer>
 			</TabPanel>
 			<TabPanel name={Tab.Transactions} activeTab={activeTab}>
-				<Transactions {...selectPriceCurrencyProps} />
+				<Transactions />
 			</TabPanel>
 		</>
 	);

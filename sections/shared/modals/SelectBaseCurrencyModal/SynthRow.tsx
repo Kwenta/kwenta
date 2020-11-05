@@ -12,22 +12,16 @@ import { SelectableCurrencyRow } from 'styles/common';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import { Period } from 'constants/period';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type SynthRowProps = {
 	price: number | null;
 	synth: Synth;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	onClick: () => void;
 };
-const SynthRow: FC<SynthRowProps> = ({
-	price,
-	synth,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-	onClick,
-}) => {
+const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.name;
 

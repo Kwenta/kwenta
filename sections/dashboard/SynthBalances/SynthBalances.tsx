@@ -21,13 +21,7 @@ type SynthBalancesProps = Omit<SynthBalanceRowProps, 'synth'> & {
 
 const { sUSD } = SYNTHS_MAP;
 
-const SynthBalances: FC<SynthBalancesProps> = ({
-	exchangeRates,
-	balances,
-	totalUSDBalance,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const SynthBalances: FC<SynthBalancesProps> = ({ exchangeRates, balances, totalUSDBalance }) => {
 	const { t } = useTranslation();
 
 	if (balances.length === 0) {
@@ -61,8 +55,6 @@ const SynthBalances: FC<SynthBalancesProps> = ({
 				<SynthBalanceRow
 					key={synth.currencyKey}
 					synth={synth}
-					selectPriceCurrencyRate={selectPriceCurrencyRate}
-					selectedPriceCurrency={selectedPriceCurrency}
 					totalUSDBalance={totalUSDBalance}
 					exchangeRates={exchangeRates}
 				/>

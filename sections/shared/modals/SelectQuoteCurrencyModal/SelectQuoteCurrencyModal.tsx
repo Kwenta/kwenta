@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Synth } from 'lib/synthetix';
 import { isWalletConnectedState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
@@ -28,12 +27,11 @@ import Connector from 'containers/Connector';
 import ROUTES from 'constants/routes';
 
 import SynthRow from './SynthRow';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type SelectQuoteCurrencyModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 };
 
 const { sETH, sUSD } = SYNTHS_MAP;
@@ -42,13 +40,12 @@ const { ETH } = CRYPTO_CURRENCY_MAP;
 export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	onDismiss,
 	onSelect,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const synthBalances = synthsWalletBalancesQuery.data?.balances ?? [];
 	let synthTotalUSDBalance = synthsWalletBalancesQuery.data?.totalUSDBalance ?? null;
@@ -95,8 +92,6 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 										onSelect(currencyKey);
 										onDismiss();
 									}}
-									selectedPriceCurrency={selectedPriceCurrency}
-									selectPriceCurrencyRate={selectPriceCurrencyRate}
 								/>
 							);
 						})}
