@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
@@ -17,7 +17,9 @@ import useEthGasStationQuery from 'queries/network/useGasStationQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
-import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import TradeSummaryCard, {
+	SubmissionDisabledReason,
+} from 'sections/exchange/FooterCard/TradeSummaryCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
@@ -98,22 +100,39 @@ const CurrencyConvertCard: FC = () => {
 		quoteCurrencyKey,
 		selectedPriceCurrency.name
 	);
-	let totalTradePrice = Number(baseCurrencyAmount) * basePriceRate;
+	const baseCurrencyAmountNum = Number(baseCurrencyAmount);
+	const quoteCurrencyAmountNum = Number(quoteCurrencyAmount);
+
+	let totalTradePrice = baseCurrencyAmountNum * basePriceRate;
 	if (selectPriceCurrencyRate) {
 		totalTradePrice /= selectPriceCurrencyRate;
 	}
 
-	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
+	const insufficientBalance = quoteCurrencyAmountNum > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	const isSubmissionDisabled =
-		!selectedBothSides ||
-		!Number(baseCurrencyAmount) ||
-		!Number(quoteCurrencyAmount) ||
-		!ethGasStationQuery.data ||
-		!isWalletConnected ||
-		isSubmitting ||
-		insufficientBalance;
+	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+		if (!selectedBothSides) {
+			return 'select-synth';
+		}
+		if (insufficientBalance) {
+			return 'insufficient-balance';
+		}
+		if (isSubmitting) {
+			return 'submitting-order';
+		}
+		if (!isWalletConnected || !baseCurrencyAmountNum || !quoteCurrencyAmountNum) {
+			return 'enter-amount';
+		}
+		return null;
+	}, [
+		selectedBothSides,
+		insufficientBalance,
+		isSubmitting,
+		baseCurrencyAmountNum,
+		quoteCurrencyAmountNum,
+		isWalletConnected,
+	]);
 
 	const handleSubmit = async () => {
 		setTxError(false);
@@ -183,11 +202,6 @@ const CurrencyConvertCard: FC = () => {
 		}
 	};
 
-	const selectPriceCurrencyProps = {
-		selectedPriceCurrency,
-		selectPriceCurrencyRate,
-	};
-
 	const quoteCurrencyCard = (
 		<StyledCurrencyCard
 			side="quote"
@@ -210,7 +224,6 @@ const CurrencyConvertCard: FC = () => {
 				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 			}}
 			priceRate={quotePriceRate}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -236,7 +249,6 @@ const CurrencyConvertCard: FC = () => {
 				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 			}}
 			priceRate={basePriceRate}
-			{...selectPriceCurrencyProps}
 		/>
 	);
 
@@ -250,18 +262,12 @@ const CurrencyConvertCard: FC = () => {
 				<StyledConnectWalletCard attached={true} />
 			) : (
 				<StyledTradeSummaryCard
-					isSubmissionDisabled={isSubmissionDisabled}
-					isSubmitting={isSubmitting}
+					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={handleSubmit}
 					totalTradePrice={totalTradePrice}
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					isBaseCurrencyFrozen={false}
-					insufficientBalance={insufficientBalance}
-					selectedBothSides={selectedBothSides}
-					isBaseCurrencySuspended={false}
-					isQuoteCurrencySuspended={false}
 					gasPrices={ethGasStationQuery.data}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}

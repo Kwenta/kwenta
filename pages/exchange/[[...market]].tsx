@@ -31,7 +31,9 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
-import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import TradeSummaryCard, {
+	SubmissionDisabledReason,
+} from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -163,26 +165,38 @@ const ExchangePage = () => {
 		totalTradePrice /= selectPriceCurrencyRate;
 	}
 
-	const insufficientBalance = Number(quoteCurrencyAmount) > Number(quoteCurrencyBalance);
+	const insufficientBalance = quoteCurrencyAmountNum > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 
-	const isBaseCurrencyFrozen = baseCurrencyMarketClosed.isCurrencyFrozen;
-
-	const isSubmissionDisabled =
-		baseCurrencyMarketClosed.isCurrencySuspended ||
-		quoteCurrencyMarketClosed.isCurrencySuspended ||
-		!selectedBothSides ||
-		!baseCurrencyAmountNum ||
-		!quoteCurrencyAmountNum ||
-		!ethGasStationQuery.data ||
-		!isWalletConnected ||
-		isBaseCurrencyFrozen ||
-		isSubmitting ||
-		insufficientBalance ||
-		feeReclaimPeriodInSeconds > 0;
+	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+		if (feeReclaimPeriodInSeconds > 0) {
+			return 'fee-reclaim-period';
+		}
+		if (!selectedBothSides) {
+			return 'select-synth';
+		}
+		if (insufficientBalance) {
+			return 'insufficient-balance';
+		}
+		if (isSubmitting) {
+			return 'submitting-order';
+		}
+		if (!isWalletConnected || !baseCurrencyAmountNum || !quoteCurrencyAmountNum) {
+			return 'enter-amount';
+		}
+		return null;
+	}, [
+		selectedBothSides,
+		insufficientBalance,
+		isSubmitting,
+		feeReclaimPeriodInSeconds,
+		baseCurrencyAmountNum,
+		quoteCurrencyAmountNum,
+		isWalletConnected,
+	]);
 
 	const noSynths =
 		synthsWalletBalancesQuery.isSuccess && synthsWalletBalancesQuery.data
@@ -244,7 +258,7 @@ const ExchangePage = () => {
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (gasLimit == null && !isSubmissionDisabled) {
+			if (gasLimit == null && submissionDisabledReason != null) {
 				const gasLimitEstimate = await getGasLimitEstimateForExchange();
 
 				setGasLimit(gasLimitEstimate);
@@ -252,7 +266,7 @@ const ExchangePage = () => {
 		};
 		getGasLimitEstimate();
 		// eslint-disable-next-line
-	}, [isSubmissionDisabled, gasLimit]);
+	}, [submissionDisabledReason, gasLimit]);
 
 	// reset estimated gas limit when currencies are changed.
 	useEffect(() => {
@@ -527,20 +541,13 @@ const ExchangePage = () => {
 					) : noSynths ? (
 						<NoSynthsCard />
 					) : (
-						// instead of passing all the props, just pass the reason why the submission was disabled...
 						<TradeSummaryCard
-							isSubmissionDisabled={isSubmissionDisabled}
-							isSubmitting={isSubmitting}
+							submissionDisabledReason={submissionDisabledReason}
 							onSubmit={handleSubmit}
 							totalTradePrice={totalTradePrice}
 							baseCurrencyAmount={baseCurrencyAmount}
 							basePriceRate={basePriceRate}
 							baseCurrency={baseCurrency}
-							isBaseCurrencyFrozen={isBaseCurrencyFrozen}
-							insufficientBalance={insufficientBalance}
-							selectedBothSides={selectedBothSides}
-							isBaseCurrencySuspended={baseCurrencyMarketClosed.isCurrencySuspended}
-							isQuoteCurrencySuspended={quoteCurrencyMarketClosed.isCurrencySuspended}
 							gasPrices={ethGasStationQuery.data}
 							feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 							quoteCurrencyKey={quoteCurrencyKey}

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import Tippy from '@tippyjs/react';
@@ -30,19 +30,21 @@ import media from 'styles/media';
 import { MessageContainer } from '../common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
+export type SubmissionDisabledReason =
+	| 'fee-reclaim-period'
+	| 'select-synth'
+	| 'insufficient-balance'
+	| 'submitting-order'
+	| 'connect-wallet'
+	| 'enter-amount';
+
 type TradeSummaryCardProps = {
-	isSubmissionDisabled: boolean;
-	isSubmitting: boolean;
+	submissionDisabledReason: SubmissionDisabledReason | null;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
 	totalTradePrice: number;
 	basePriceRate: number;
 	baseCurrency: Synth | null;
-	insufficientBalance: boolean;
-	selectedBothSides: boolean;
-	isBaseCurrencyFrozen: boolean;
-	isQuoteCurrencySuspended?: boolean;
-	isBaseCurrencySuspended?: boolean;
 	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
@@ -54,18 +56,12 @@ type TradeSummaryCardProps = {
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
-	isSubmissionDisabled,
-	isSubmitting,
+	submissionDisabledReason,
 	baseCurrencyAmount,
 	onSubmit,
 	totalTradePrice,
 	basePriceRate,
 	baseCurrency,
-	insufficientBalance,
-	selectedBothSides,
-	isBaseCurrencyFrozen,
-	isQuoteCurrencySuspended,
-	isBaseCurrencySuspended,
 	gasPrices,
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
@@ -83,28 +79,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
 
-	function getButtonLabel() {
-		if (isSubmissionDisabled) {
-			// figure out the reason
-			if (feeReclaimPeriodInSeconds) {
-				return t('exchange.summary-info.button.fee-reclaim-period');
-			}
-			if (isQuoteCurrencySuspended || isBaseCurrencySuspended || isBaseCurrencyFrozen) {
-				return t('exchange.summary-info.button.market-closed');
-			}
-			if (!selectedBothSides) {
-				return t('exchange.summary-info.button.select-synth');
-			}
-			if (insufficientBalance) {
-				return t('exchange.summary-info.button.insufficient-balance');
-			}
-			if (isSubmitting) {
-				return t('exchange.summary-info.button.submitting-order');
-			}
-			return t('exchange.summary-info.button.enter-amount');
-		}
-		return t('exchange.summary-info.button.submit-order');
-	}
+	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
+		submissionDisabledReason,
+	]);
 
 	const gasPriceItem = hasCustomGasPrice ? (
 		<span>{Number(customGasPrice)}</span>
@@ -248,7 +225,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 							onClick={onSubmit}
 							size="lg"
 						>
-							{getButtonLabel()}
+							{isSubmissionDisabled
+								? t(`exchange.summary-info.button.${submissionDisabledReason}`)
+								: t('exchange.summary-info.button.submit-order')}
 						</Button>
 					</span>
 				</ErrorTooltip>
