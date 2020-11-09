@@ -33,7 +33,7 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached}>
+			<MessageContainer attached={attached} className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						{t(`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`)}

@@ -21,7 +21,7 @@ const ConnectWalletCard: FC<ConnectWalletCardProps> = ({ attached, ...rest }) =>
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} {...rest}>
+			<MessageContainer attached={attached} className="footer-card" {...rest}>
 				<DesktopOnlyView>
 					<Message>{t('exchange.connect-wallet-card.message')}</Message>
 				</DesktopOnlyView>

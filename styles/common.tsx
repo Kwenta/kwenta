@@ -1,4 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
+import media from './media';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -188,4 +189,29 @@ export const FullScreenContainer = styled(FlexDiv)`
 	width: 100%;
 	height: 100vh;
 	position: relative;
+`;
+
+export const MinimalExchangeFooter = styled.div`
+	.footer-card {
+		max-width: 1000px;
+	}
+`;
+
+export const MinimalExchangeCards = styled.div`
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-gap: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	margin: 0 auto;
+	${media.lessThan('md')`
+		grid-template-columns: unset;
+		grid-template-rows: auto auto;
+		padding-bottom: 24px;
+	`}
+
+	.currency-card {
+		padding: 0 14px;
+		width: 100%;
+	}
 `;

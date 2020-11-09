@@ -151,7 +151,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	);
 
 	return (
-		<Card {...rest}>
+		<Card className="market-details-card" {...rest}>
 			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>

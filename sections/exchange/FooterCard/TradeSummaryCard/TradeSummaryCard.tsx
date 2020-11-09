@@ -203,7 +203,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} {...rest}>
+			<MessageContainer attached={attached} className="footer-card" {...rest}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}
