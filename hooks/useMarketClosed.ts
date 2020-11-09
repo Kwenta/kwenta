@@ -6,6 +6,7 @@ import useSynthSuspensionQuery, {
 } from 'queries/synths/useSynthSuspensionQuery';
 
 export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
+export type MarketClosure = ReturnType<typeof useMarketClosed>;
 
 const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 	const frozenSynthsQuery = useFrozenSynthsQuery();

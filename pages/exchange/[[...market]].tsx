@@ -33,6 +33,7 @@ import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import SelectBaseCurrencyModal from 'sections/shared/modals/SelectBaseCurrencyModal';
@@ -517,6 +518,12 @@ const ExchangePage = () => {
 					{/* TODO: consolidate all the cards into one FooterCard that will take care of rendering the correct card */}
 					{!isWalletConnected ? (
 						<ConnectWalletCard />
+					) : baseCurrencyMarketClosed.isMarketClosed ||
+					  quoteCurrencyMarketClosed.isMarketClosed ? (
+						<MarketClosureCard
+							baseCurrencyMarketClosed={baseCurrencyMarketClosed}
+							quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
+						/>
 					) : noSynths ? (
 						<NoSynthsCard />
 					) : (

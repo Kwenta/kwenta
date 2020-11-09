@@ -162,7 +162,7 @@
 					"subtitle": "Reset in progress."
 				},
 				"circuit-breaker": {
-					"title": "This market has been closed",
+					"title": "Circuit breaker triggered",
 					"subtitle": "Reset in progress"
 				},
 				"emergency": {
@@ -181,7 +181,6 @@
 			"fee-cost": "fee cost",
 			"button": {
 				"fee-reclaim-period": "fee reclaim period",
-				"market-closed": "market closed",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
@@ -194,6 +193,28 @@
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
+		},
+		"footer-card": {
+			"market-closure": {
+				"button-label": "market closed",
+				"reasons": {
+					"frozen": {
+						"message": "This Synth has been frozen - reset in progress."
+					},
+					"market-closure": {
+						"message": "This market has been closed - reset in progress."
+					},
+					"circuit-breaker": {
+						"message": "Circuit breaker triggered - reset in progress."
+					},
+					"emergency": {
+						"message": "Emergency shutdown activated - reset in progress."
+					},
+					"both-synths-suspended": {
+						"message": "Synths selected are currently paused - reset in progress."
+					}
+				}
+			}
 		},
 		"common": {
 			"from": "from",
