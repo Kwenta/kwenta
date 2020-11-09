@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
 import { MinimalExchangeFooter, MinimalExchangeCards } from 'styles/common';
 
@@ -10,7 +10,7 @@ const CurrencyConvertCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
 		displayMode: 'onboard',
 		defaultBaseCurrencyKey: SYNTHS_MAP.sUSD,
-		defaultQuoteCurrencyKey: 'ETH',
+		defaultQuoteCurrencyKey: CRYPTO_CURRENCY_MAP.ETH,
 	});
 
 	return (
