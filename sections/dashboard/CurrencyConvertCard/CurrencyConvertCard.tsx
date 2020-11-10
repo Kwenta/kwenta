@@ -8,9 +8,12 @@ import useExchange from 'sections/exchange/hooks/useExchange';
 
 const CurrencyConvertCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
-		displayMode: 'onboard',
 		defaultBaseCurrencyKey: SYNTHS_MAP.sUSD,
 		defaultQuoteCurrencyKey: CRYPTO_CURRENCY_MAP.ETH,
+		footerCardAttached: true,
+		persistSelectedCurrencies: false,
+		allowCurrencySelection: false,
+		showNoSynthsCard: false,
 	});
 
 	return (

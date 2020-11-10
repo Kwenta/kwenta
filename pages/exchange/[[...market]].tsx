@@ -41,7 +41,13 @@ const ExchangePage = () => {
 		handleCurrencySwap,
 		footerCard,
 	} = useExchange({
-		displayMode: 'full',
+		showPriceCard: true,
+		showMarketDetailsCard: true,
+		footerCardAttached: false,
+		routingEnabled: true,
+		persistSelectedCurrencies: true,
+		allowCurrencySelection: true,
+		showNoSynthsCard: true,
 	});
 
 	return (

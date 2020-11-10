@@ -51,23 +51,28 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
 import useCurrencyPair from './useCurrencyPair';
 
-/*
-	"full mode" - the exchange with price chart / market info
-	"minimal" - just the convert cards
-	"onboard" - special use case for onboarding users from ETH -> sUSD
-*/
-type DisplayMode = 'full' | 'minimal' | 'onboard';
-
 type ExchangeCardProps = {
-	displayMode: DisplayMode;
-	defaultBaseCurrencyKey?: CurrencyKey;
-	defaultQuoteCurrencyKey?: CurrencyKey;
+	defaultBaseCurrencyKey?: CurrencyKey | null;
+	defaultQuoteCurrencyKey?: CurrencyKey | null;
+	showPriceCard?: boolean;
+	showMarketDetailsCard?: boolean;
+	footerCardAttached?: boolean;
+	routingEnabled?: boolean;
+	persistSelectedCurrencies?: boolean;
+	allowCurrencySelection?: boolean;
+	showNoSynthsCard?: boolean;
 };
 
 const useExchange = ({
-	displayMode = 'full',
-	defaultBaseCurrencyKey,
-	defaultQuoteCurrencyKey,
+	defaultBaseCurrencyKey = null,
+	defaultQuoteCurrencyKey = null,
+	showPriceCard = false,
+	showMarketDetailsCard = false,
+	footerCardAttached = false,
+	routingEnabled = false,
+	persistSelectedCurrencies = false,
+	allowCurrencySelection = true,
+	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { notify } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
@@ -79,17 +84,10 @@ const useExchange = ({
 		[router.query]
 	);
 
-	const isFullModeDisplay = displayMode === 'full';
-	const isOnboardModeDisplay = displayMode === 'onboard';
-	const routingEnabled = isFullModeDisplay;
-	const showPriceCard = isFullModeDisplay;
-	const showMarketDetailsCard = isFullModeDisplay;
-	const footerCardAttached = displayMode === 'minimal' || displayMode === 'onboard';
-
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
-		localStorage: isFullModeDisplay,
-		defaultBaseCurrencyKey: defaultBaseCurrencyKey ?? null,
-		defaultQuoteCurrencyKey: defaultQuoteCurrencyKey ?? null,
+		persistSelectedCurrencies,
+		defaultBaseCurrencyKey,
+		defaultQuoteCurrencyKey,
 	});
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
@@ -111,7 +109,9 @@ const useExchange = ({
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
-	const ETHBalanceQuery = useETHBalanceQuery({ enabled: isQuoteCurrencyETH });
+	const ETHBalanceQuery = useETHBalanceQuery({
+		enabled: isQuoteCurrencyETH,
+	});
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasStationQuery = useEthGasStationQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -388,7 +388,7 @@ const useExchange = ({
 	};
 
 	useEffect(() => {
-		if (isFullModeDisplay && marketQuery != null) {
+		if (routingEnabled && marketQuery != null) {
 			if (synthetix.synthsMap != null) {
 				const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketQuery.split('-') as [
 					CurrencyKey,
@@ -413,9 +413,8 @@ const useExchange = ({
 				}
 			}
 		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [marketQuery, isFullModeDisplay]);
+	}, [marketQuery, routingEnabled]);
 
 	const quoteCurrencyCard = (
 		<CurrencyCard
@@ -439,7 +438,7 @@ const useExchange = ({
 				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
 			}}
 			onCurrencySelect={
-				isOnboardModeDisplay ? undefined : () => setSelectQuoteCurrencyModalOpen(true)
+				allowCurrencySelection ? () => setSelectQuoteCurrencyModalOpen(true) : undefined
 			}
 			priceRate={quotePriceRate}
 		/>
@@ -473,7 +472,7 @@ const useExchange = ({
 				setBaseCurrencyAmount(`${baseCurrencyBalance}`);
 				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
 			}}
-			onCurrencySelect={isOnboardModeDisplay ? undefined : () => setSelectBaseCurrencyModal(true)}
+			onCurrencySelect={allowCurrencySelection ? () => setSelectBaseCurrencyModal(true) : undefined}
 			priceRate={basePriceRate}
 		/>
 	);
@@ -486,6 +485,9 @@ const useExchange = ({
 		<MarketDetailsCard currencyKey={baseCurrencyKey} priceRate={basePriceRate} />
 	) : null;
 
+	// TODO: support more providers
+	const txProvider = isQuoteCurrencyETH ? '1inch' : 'synthetix';
+
 	const footerCard = (
 		<>
 			{!isWalletConnected ? (
@@ -496,7 +498,7 @@ const useExchange = ({
 					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
 					attached={footerCardAttached}
 				/>
-			) : noSynths && displayMode === 'full' ? (
+			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard />
 			) : (
 				<TradeSummaryCard
@@ -512,7 +514,8 @@ const useExchange = ({
 					quoteCurrencyKey={quoteCurrencyKey}
 					exchangeFeeRate={exchangeFeeRate}
 					transactionFee={transactionFee}
-					showFee={isOnboardModeDisplay ? false : true}
+					// show fee's only for "synthetix" (provider)
+					showFee={txProvider === 'synthetix' ? true : false}
 				/>
 			)}
 			{txConfirmationModalOpen && (
@@ -525,8 +528,7 @@ const useExchange = ({
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice}
-					// TODO: support more providers
-					txProvider={isQuoteCurrencyETH ? '1inch' : 'synthetix'}
+					txProvider={txProvider}
 				/>
 			)}
 			{selectBaseCurrencyModal && (

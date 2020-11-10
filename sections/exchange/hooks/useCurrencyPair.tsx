@@ -6,13 +6,13 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import useLocalStorage from 'hooks/useLocalStorage';
 
 type CurrencyPairProps = {
-	localStorage: boolean;
+	persistSelectedCurrencies: boolean;
 	defaultBaseCurrencyKey: CurrencyKey | null;
 	defaultQuoteCurrencyKey: CurrencyKey | null;
 };
 
 const useCurrencyPair = ({
-	localStorage = false,
+	persistSelectedCurrencies = false,
 	defaultBaseCurrencyKey = null,
 	defaultQuoteCurrencyKey = null,
 }: CurrencyPairProps) => {
@@ -32,7 +32,7 @@ const useCurrencyPair = ({
 		quote: defaultQuoteCurrencyKey,
 	});
 
-	return localStorage ? currencyPairLocalStorage : currencyPair;
+	return persistSelectedCurrencies ? currencyPairLocalStorage : currencyPair;
 };
 
 export default useCurrencyPair;
