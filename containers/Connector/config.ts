@@ -72,4 +72,5 @@ export const initNotify = (network: Network, options: InitOptions) =>
 		networkId: network.id,
 		desktopPosition: 'topRight',
 		notifyMessages,
+		...options,
 	});
