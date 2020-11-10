@@ -77,6 +77,8 @@ const ExchangeFooter = styled.div`
 			width: unset;
 			position: unset;
 			box-shadow: unset;
+		}
+		.trade-summary-card {
 			margin-bottom: 24px;
 		}
 	`}
