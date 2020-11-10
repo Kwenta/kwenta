@@ -5,7 +5,7 @@ import synthetix from 'lib/synthetix';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
-import { synthToAsset } from 'utils/currencies';
+import { iStandardSynth, synthToAsset } from 'utils/currencies';
 
 export type Rates = Record<CurrencyKey, number>;
 
@@ -22,7 +22,10 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 				const rate = Number(ethers.utils.formatEther(rates[idx]));
 
 				exchangeRates[synthName] = rate;
-				exchangeRates[synthToAsset(synthName)] = rate;
+				// only interested in the standard synths (sETH -> ETH, etc)
+				if (iStandardSynth(synthName)) {
+					exchangeRates[synthToAsset(synthName)] = rate;
+				}
 			});
 
 			return exchangeRates;
