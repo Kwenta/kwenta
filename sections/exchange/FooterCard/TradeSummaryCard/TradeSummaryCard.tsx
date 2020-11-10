@@ -199,7 +199,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	return (
 		<>
 			<MobileOrTabletView>
-				<MobileCard>
+				<MobileCard className="footer-card">
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>

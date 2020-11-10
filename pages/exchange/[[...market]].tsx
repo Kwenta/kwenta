@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import Slider from 'react-slick';
 import { Svg } from 'react-optimized-image';
 
-import { zIndex } from 'constants/ui';
-
 import ArrowsIcon from 'assets/svg/app/arrows.svg';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -17,9 +15,9 @@ import media from 'styles/media';
 import {
 	FlexDiv,
 	FlexDivColCentered,
-	resetButtonCSS,
 	PageContent,
 	MobileContainerMixin,
+	SwapCurrenciesButton,
 } from 'styles/common';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -147,19 +145,6 @@ const DesktopCardsContainer = styled(FlexDiv)`
 	align-items: flex-start;
 	justify-content: center;
 	padding-bottom: 24px;
-`;
-
-const SwapCurrenciesButton = styled.button`
-	${resetButtonCSS};
-	background-color: ${(props) => props.theme.colors.elderberry};
-	color: ${(props) => props.theme.colors.white};
-	height: 32px;
-	width: 32px;
-	border-radius: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: ${zIndex.BASE};
 `;
 
 const Spacer = styled.div`

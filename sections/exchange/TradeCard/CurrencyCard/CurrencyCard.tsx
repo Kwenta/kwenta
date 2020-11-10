@@ -59,7 +59,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
-		<Card {...rest}>
+		<Card className="currency-card" {...rest}>
 			<StyledCardBody>
 				<LabelContainer>
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}

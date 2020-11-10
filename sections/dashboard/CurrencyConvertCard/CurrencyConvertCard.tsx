@@ -1,9 +1,9 @@
 import { FC } from 'react';
+import styled from 'styled-components';
 
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
-import { MinimalExchangeFooter, MinimalExchangeCards } from 'styles/common';
-
+import media from 'styles/media';
 import useExchange from 'sections/exchange/hooks/useExchange';
 
 const CurrencyConvertCard: FC = () => {
@@ -18,13 +18,38 @@ const CurrencyConvertCard: FC = () => {
 
 	return (
 		<>
-			<MinimalExchangeCards>
+			<ExchangeCards>
 				{quoteCurrencyCard}
 				{baseCurrencyCard}
-			</MinimalExchangeCards>
-			<MinimalExchangeFooter>{footerCard}</MinimalExchangeFooter>
+			</ExchangeCards>
+			<ExchangeFooter>{footerCard}</ExchangeFooter>
 		</>
 	);
 };
+
+export const ExchangeFooter = styled.div`
+	.footer-card {
+		max-width: 1000px;
+	}
+`;
+
+export const ExchangeCards = styled.div`
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-gap: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	margin: 0 auto;
+	${media.lessThan('md')`
+		grid-template-columns: unset;
+		grid-template-rows: auto auto;
+		padding-bottom: 24px;
+	`}
+
+	.currency-card {
+		padding: 0 14px;
+		width: 100%;
+	}
+`;
 
 export default CurrencyConvertCard;
