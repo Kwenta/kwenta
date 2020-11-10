@@ -499,7 +499,7 @@ const useExchange = ({
 					attached={footerCardAttached}
 				/>
 			) : showNoSynthsCard && noSynths ? (
-				<NoSynthsCard />
+				<NoSynthsCard attached={footerCardAttached} />
 			) : (
 				<TradeSummaryCard
 					attached={footerCardAttached}
