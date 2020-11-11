@@ -47,11 +47,15 @@ const SOCIAL_LINKS = [
 	},
 ];
 
+export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
+
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
-	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({ refetchInterval: false });
+	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
+		refetchInterval: REFRESH_INTERVAL,
+	});
 
 	const appOnMaintenance = isSystemOnMaintenanceQuery.isSuccess
 		? isSystemOnMaintenanceQuery.data
