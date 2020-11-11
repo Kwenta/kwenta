@@ -282,9 +282,8 @@ const useExchange = ({
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (gasLimit == null && submissionDisabledReason != null) {
+			if (gasLimit == null && submissionDisabledReason == null) {
 				const gasLimitEstimate = await getGasLimitEstimateForExchange();
-
 				setGasLimit(gasLimitEstimate);
 			}
 		};

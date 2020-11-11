@@ -61,13 +61,17 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 						usdBalance,
 					};
 
-					totalUSDBalance.plus(usdBalance);
+					totalUSDBalance = totalUSDBalance.plus(usdBalance);
 				}
 			});
 
 			return {
 				balancesMap,
-				balances: orderBy(Object.values(balancesMap), 'usdBalance', 'desc'),
+				balances: orderBy(
+					Object.values(balancesMap),
+					(balance) => balance.usdBalance.toNumber(),
+					'desc'
+				),
 				totalUSDBalance,
 			};
 		},

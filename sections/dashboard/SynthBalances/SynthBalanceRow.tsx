@@ -30,7 +30,8 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.currencyKey;
-	const percent = synth.usdBalance.dividedBy(totalUSDBalance);
+	const percent = synth.usdBalance.dividedBy(totalUSDBalance).toNumber();
+
 	const synthDesc =
 		synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
 
@@ -69,7 +70,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 					)}
 				</ExchangeRateCol>
 				<SynthBalancePercentRow>
-					<ProgressBar percentage={percent.toNumber()} />
+					<ProgressBar percentage={percent} />
 					<TypeDataSmall>{formatPercent(percent)}</TypeDataSmall>
 				</SynthBalancePercentRow>
 			</Container>
