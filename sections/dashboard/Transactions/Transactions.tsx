@@ -12,15 +12,7 @@ import TradeHistory from './TradeHistory';
 import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
 import { HistoricalTrade } from 'queries/trades/types';
 
-type TransactionsProps = {
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
-};
-
-const Transactions: FC<TransactionsProps> = ({
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const Transactions: FC = () => {
 	const { t } = useTranslation();
 	const walletTradesQuery = useWalletTradesQuery();
 
@@ -155,8 +147,6 @@ const Transactions: FC<TransactionsProps> = ({
 				trades={filteredHistoricalTrades}
 				isLoaded={walletTradesQuery.isSuccess}
 				isLoading={walletTradesQuery.isLoading}
-				selectedPriceCurrency={selectedPriceCurrency}
-				selectPriceCurrencyRate={selectPriceCurrencyRate}
 			/>
 		</>
 	);

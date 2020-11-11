@@ -25,7 +25,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 			<MobileOrTabletView>
 				<FixedMessageContainerSpacer />
 			</MobileOrTabletView>
-			<MessageContainer attached={attached}>
+			<MessageContainer attached={attached} className="footer-card">
 				<DesktopOnlyView>
 					<Message>
 						<Trans

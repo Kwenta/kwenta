@@ -1,10 +1,8 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useQueryCache } from 'react-query';
-
-import { priceCurrencyState } from 'store/app';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
@@ -31,11 +29,8 @@ const TrendingSynths: FC = () => {
 	const historicalVolumeCache = queryCache.getQueries(['rates', 'historicalVolume']);
 	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
 
-	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.data ?? null;
-
-	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
@@ -96,15 +91,7 @@ const TrendingSynths: FC = () => {
 					const price = exchangeRates && exchangeRates[synth.name];
 					const currencyKey = synth.name;
 
-					return (
-						<SynthRow
-							key={currencyKey}
-							synth={synth}
-							price={price}
-							selectedPriceCurrency={selectedPriceCurrency}
-							selectPriceCurrencyRate={selectPriceCurrencyRate}
-						/>
-					);
+					return <SynthRow key={currencyKey} synth={synth} price={price} />;
 				})}
 			</Rows>
 		</>

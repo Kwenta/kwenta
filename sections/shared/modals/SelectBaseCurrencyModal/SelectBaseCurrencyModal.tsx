@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import synthetix, { Synth } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
@@ -30,15 +30,11 @@ export const CATEGORY_FILTERS = [
 type SelectBaseCurrencyModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 };
 
 export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	onDismiss,
 	onSelect,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
@@ -140,8 +136,6 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 								key={currencyKey}
 								synth={synth}
 								price={price}
-								selectedPriceCurrency={selectedPriceCurrency}
-								selectPriceCurrencyRate={selectPriceCurrencyRate}
 								onClick={() => {
 									onSelect(currencyKey);
 									onDismiss();

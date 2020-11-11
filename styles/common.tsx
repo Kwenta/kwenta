@@ -1,3 +1,4 @@
+import { zIndex } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
 export const FlexDiv = styled.div`
@@ -188,4 +189,17 @@ export const FullScreenContainer = styled(FlexDiv)`
 	width: 100%;
 	height: 100vh;
 	position: relative;
+`;
+
+export const SwapCurrenciesButton = styled.button`
+	${resetButtonCSS};
+	background-color: ${(props) => props.theme.colors.elderberry};
+	color: ${(props) => props.theme.colors.white};
+	height: 32px;
+	width: 32px;
+	border-radius: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: ${zIndex.BASE};
 `;

@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import synthetix, { Synth } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
+import BigNumber from 'bignumber.js';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
@@ -16,26 +17,21 @@ import { formatPercent } from 'utils/formatters/number';
 
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
 	synth: SynthBalance;
-	totalUSDBalance: number;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
+	totalUSDBalance: BigNumber;
 };
 
-const SynthBalanceRow: FC<SynthBalanceRowProps> = ({
-	exchangeRates,
-	synth,
-	totalUSDBalance,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, totalUSDBalance }) => {
 	const { t } = useTranslation();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.currencyKey;
-	const percent = synth.usdBalance / totalUSDBalance;
+	const percent = synth.usdBalance.dividedBy(totalUSDBalance).toNumber();
+
 	const synthDesc =
 		synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
 

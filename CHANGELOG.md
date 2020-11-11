@@ -1,5 +1,11 @@
 # Changelog
 
+## 12 Nov 2020
+
+- (Exchange) - Add synth suspension states (frozen, circuit breaker, market closure, etc.)
+- (Exchange) - Fix a rounding bug that caused "max balance" to not work properly.
+- (Homepage) - Replaced the placeholder image for "synth exchange" with the live version, so it is now possible to make an exchange from the homepage.
+
 ## 5 Nov 2020
 
 - Optimize all assets (jpg, png, svg) for faster load times.
