@@ -5,6 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
+import BigNumber from 'bignumber.js';
 
 import ROUTES from 'constants/routes';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
@@ -50,6 +51,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
 import useCurrencyPair from './useCurrencyPair';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -135,15 +137,21 @@ const useExchange = ({
 	const inverseRate = rate > 0 ? 1 / rate : 0;
 	const baseCurrencyBalance =
 		baseCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
-			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], 0)
+			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
 			: null;
-	const quoteCurrencyBalance = isQuoteCurrencyETH
-		? quoteCurrencyKey != null && ETHBalanceQuery.isSuccess
-			? get(ETHBalanceQuery.data, 'balance', 0)
-			: null
-		: quoteCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
-		? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], 0)
-		: null;
+
+	let quoteCurrencyBalance: BigNumber | null = null;
+	if (quoteCurrencyKey != null) {
+		if (isQuoteCurrencyETH) {
+			quoteCurrencyBalance = ETHBalanceQuery.isSuccess
+				? get(ETHBalanceQuery.data, 'balance', zeroBN)
+				: null;
+		} else {
+			quoteCurrencyBalance = synthsWalletBalancesQuery.isSuccess
+				? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
+				: null;
+		}
+	}
 
 	const basePriceRate = getExchangeRatesForCurrencies(
 		exchangeRates,
@@ -161,21 +169,23 @@ const useExchange = ({
 		selectedPriceCurrency.name
 	);
 
-	const baseCurrencyAmountNum = Number(baseCurrencyAmount);
-	const quoteCurrencyAmountNum = Number(quoteCurrencyAmount);
+	const baseCurrencyAmountBN = toBigNumber(baseCurrencyAmount);
+	const quoteCurrencyAmountBN = toBigNumber(quoteCurrencyAmount);
 
-	let totalTradePrice = baseCurrencyAmountNum * basePriceRate;
+	let totalTradePrice = baseCurrencyAmountBN.multipliedBy(basePriceRate);
 	if (selectPriceCurrencyRate) {
-		totalTradePrice /= selectPriceCurrencyRate;
+		totalTradePrice = totalTradePrice.dividedBy(selectPriceCurrencyRate);
 	}
 
-	const insufficientBalance = quoteCurrencyAmountNum > Number(quoteCurrencyBalance);
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 
 	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+		const insufficientBalance =
+			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
+
 		if (feeReclaimPeriodInSeconds > 0) {
 			return 'fee-reclaim-period';
 		}
@@ -188,17 +198,23 @@ const useExchange = ({
 		if (isSubmitting) {
 			return 'submitting-order';
 		}
-		if (!isWalletConnected || !baseCurrencyAmountNum || !quoteCurrencyAmountNum) {
+		if (
+			!isWalletConnected ||
+			baseCurrencyAmountBN.isNaN() ||
+			quoteCurrencyAmountBN.isNaN() ||
+			baseCurrencyAmountBN.lte(0) ||
+			quoteCurrencyAmountBN.lte(0)
+		) {
 			return 'enter-amount';
 		}
 		return null;
 	}, [
+		quoteCurrencyBalance,
 		selectedBothSides,
-		insufficientBalance,
 		isSubmitting,
 		feeReclaimPeriodInSeconds,
-		baseCurrencyAmountNum,
-		quoteCurrencyAmountNum,
+		baseCurrencyAmountBN,
+		quoteCurrencyAmountBN,
 		isWalletConnected,
 	]);
 
@@ -426,16 +442,16 @@ const useExchange = ({
 					setQuoteCurrencyAmount('');
 					setBaseCurrencyAmount('');
 				} else {
-					const numValue = Number(value);
-
 					setQuoteCurrencyAmount(value);
-					setBaseCurrencyAmount(`${numValue * rate}`);
+					setBaseCurrencyAmount(toBigNumber(value).multipliedBy(rate).toString());
 				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
-				setQuoteCurrencyAmount(`${quoteCurrencyBalance}`);
-				setBaseCurrencyAmount(`${Number(quoteCurrencyBalance) * rate}`);
+				if (quoteCurrencyBalance != null) {
+					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
+					setBaseCurrencyAmount(quoteCurrencyBalance.multipliedBy(rate).toString());
+				}
 			}}
 			onCurrencySelect={
 				allowCurrencySelection ? () => setSelectQuoteCurrencyModalOpen(true) : undefined
@@ -461,16 +477,18 @@ const useExchange = ({
 					setBaseCurrencyAmount('');
 					setQuoteCurrencyAmount('');
 				} else {
-					const numValue = Number(value);
-
 					setBaseCurrencyAmount(value);
-					setQuoteCurrencyAmount(`${numValue * inverseRate}`);
+					setQuoteCurrencyAmount(toBigNumber(value).multipliedBy(inverseRate).toString());
 				}
 			}}
 			walletBalance={baseCurrencyBalance}
 			onBalanceClick={() => {
-				setBaseCurrencyAmount(`${baseCurrencyBalance}`);
-				setQuoteCurrencyAmount(`${Number(baseCurrencyBalance) * inverseRate}`);
+				if (baseCurrencyBalance != null) {
+					setBaseCurrencyAmount(baseCurrencyBalance.toString());
+					setQuoteCurrencyAmount(
+						toBigNumber(baseCurrencyBalance).multipliedBy(inverseRate).toString()
+					);
+				}
 			}}
 			onCurrencySelect={allowCurrencySelection ? () => setSelectBaseCurrencyModal(true) : undefined}
 			priceRate={basePriceRate}
@@ -505,7 +523,7 @@ const useExchange = ({
 					attached={footerCardAttached}
 					submissionDisabledReason={submissionDisabledReason}
 					onSubmit={handleSubmit}
-					totalTradePrice={totalTradePrice}
+					totalTradePrice={totalTradePrice.toString()}
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
@@ -527,7 +545,7 @@ const useExchange = ({
 					quoteCurrencyAmount={quoteCurrencyAmount}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
-					totalTradePrice={totalTradePrice}
+					totalTradePrice={totalTradePrice.toString()}
 					txProvider={txProvider}
 				/>
 			)}

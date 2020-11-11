@@ -42,7 +42,7 @@ type TradeSummaryCardProps = {
 	submissionDisabledReason: SubmissionDisabledReason | null;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
-	totalTradePrice: number;
+	totalTradePrice: string;
 	basePriceRate: number;
 	baseCurrency: Synth | null;
 	gasPrices: GasPrices | undefined;

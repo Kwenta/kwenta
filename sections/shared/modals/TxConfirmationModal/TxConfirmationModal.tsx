@@ -31,7 +31,7 @@ type TxConfirmationModalProps = {
 	baseCurrencyAmount: string;
 	quoteCurrencyKey: CurrencyKey;
 	quoteCurrencyAmount: string;
-	totalTradePrice: number;
+	totalTradePrice: string;
 	txProvider: 'synthetix' | '1inch';
 };
 

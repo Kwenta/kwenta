@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { useRecoilValue } from 'recoil';
@@ -9,9 +10,13 @@ const useSelectedPriceCurrency = () => {
 	const exchangeRates = exchangeRatesQuery.data ?? null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
+	const getPriceAtCurrentRate = (price: BigNumber) =>
+		selectPriceCurrencyRate != null ? price.dividedBy(selectPriceCurrencyRate) : price;
+
 	return {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,
+		getPriceAtCurrentRate,
 	};
 };
 

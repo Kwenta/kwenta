@@ -2,13 +2,14 @@ import { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
+import BigNumber from 'bignumber.js';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
@@ -23,7 +24,7 @@ type CurrencyCardProps = {
 	currencyKey: CurrencyKey | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: number | null;
+	walletBalance: BigNumber | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
 	priceRate: number;
@@ -42,17 +43,22 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const {
+		selectPriceCurrencyRate,
+		selectedPriceCurrency,
+		getPriceAtCurrentRate,
+	} = useSelectedPriceCurrency();
 
 	const isBase = side === 'base';
 
 	const hasWalletBalance = walletBalance != null && currencyKey != null;
-	const insufficientBalance =
-		!isBase && hasWalletBalance ? Number(amount) > Number(walletBalance) : false;
+	const amountBN = amount === '' ? zeroBN : toBigNumber(amount);
 
-	let tradeAmount = Number(amount) * priceRate;
-	if (selectPriceCurrencyRate) {
-		tradeAmount /= selectPriceCurrencyRate;
+	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
+
+	let tradeAmount = amountBN.multipliedBy(priceRate);
+	if (selectPriceCurrencyRate != null) {
+		tradeAmount = getPriceAtCurrentRate(tradeAmount);
 	}
 
 	const currencyKeySelected = currencyKey != null;

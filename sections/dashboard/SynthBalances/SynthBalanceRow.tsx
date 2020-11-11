@@ -2,6 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
+import BigNumber from 'bignumber.js';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
@@ -21,7 +22,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
 	synth: SynthBalance;
-	totalUSDBalance: number;
+	totalUSDBalance: BigNumber;
 };
 
 const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, totalUSDBalance }) => {
@@ -29,7 +30,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.currencyKey;
-	const percent = synth.usdBalance / totalUSDBalance;
+	const percent = synth.usdBalance.dividedBy(totalUSDBalance);
 	const synthDesc =
 		synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
 
@@ -68,7 +69,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 					)}
 				</ExchangeRateCol>
 				<SynthBalancePercentRow>
-					<ProgressBar percentage={percent} />
+					<ProgressBar percentage={percent.toNumber()} />
 					<TypeDataSmall>{formatPercent(percent)}</TypeDataSmall>
 				</SynthBalancePercentRow>
 			</Container>

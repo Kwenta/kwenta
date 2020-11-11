@@ -22,6 +22,7 @@ import { BoldText } from 'styles/common';
 import { CardTitle, ConvertContainer } from '../common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { zeroBN } from 'utils/formatters/number';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
@@ -110,7 +111,7 @@ const DashboardCard: FC = () => {
 			<TabPanel name={Tab.SynthBalances} activeTab={activeTab}>
 				<SynthBalances
 					balances={synthBalances?.balances ?? []}
-					totalUSDBalance={synthBalances?.totalUSDBalance ?? 0}
+					totalUSDBalance={synthBalances?.totalUSDBalance ?? zeroBN}
 					exchangeRates={exchangeRates}
 				/>
 			</TabPanel>

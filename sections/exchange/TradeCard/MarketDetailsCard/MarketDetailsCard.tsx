@@ -32,13 +32,17 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const {
+		selectPriceCurrencyRate,
+		selectedPriceCurrency,
+		getPriceAtCurrentRate,
+	} = useSelectedPriceCurrency();
 
 	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
-	const synthMarketCap = useSynthMarketCapQuery(currencyKey, priceRate);
+	const synthMarketCap = useSynthMarketCapQuery(currencyKey);
 
-	const marketCap = synthMarketCap.data ?? null;
+	let marketCap = synthMarketCap.data ?? null;
 	let rates24High = historicalRates24H.data?.high ?? null;
 	let rates24Low = historicalRates24H.data?.low ?? null;
 	let volume24H = vol24H.data ?? null;
@@ -51,7 +55,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 			rates24Low /= selectPriceCurrencyRate;
 		}
 		if (volume24H) {
-			volume24H /= selectPriceCurrencyRate;
+			volume24H = getPriceAtCurrentRate(volume24H);
+		}
+		if (marketCap) {
+			marketCap = getPriceAtCurrentRate(marketCap);
 		}
 	}
 

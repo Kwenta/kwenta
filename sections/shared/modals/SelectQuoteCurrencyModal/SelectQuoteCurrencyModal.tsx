@@ -45,7 +45,11 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 	const { connectWallet } = Connector.useContainer();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const {
+		selectPriceCurrencyRate,
+		selectedPriceCurrency,
+		getPriceAtCurrentRate,
+	} = useSelectedPriceCurrency();
 
 	const synthBalances = synthsWalletBalancesQuery.data?.balances ?? [];
 	let synthTotalUSDBalance = synthsWalletBalancesQuery.data?.totalUSDBalance ?? null;
@@ -62,7 +66,7 @@ export const SelectQuoteCurrencyModal: FC<SelectQuoteCurrencyModalProps> = ({
 						? formatCurrency(
 								selectedPriceCurrency.name,
 								selectPriceCurrencyRate != null
-									? (synthTotalUSDBalance /= selectPriceCurrencyRate)
+									? getPriceAtCurrentRate(synthTotalUSDBalance)
 									: synthTotalUSDBalance,
 								{
 									sign: selectedPriceCurrency.sign,

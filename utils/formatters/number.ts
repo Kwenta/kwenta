@@ -33,6 +33,8 @@ export const getDecimalPlaces = (value: NumericValue) =>
 
 export const toBigNumber = (value: NumericValue) => new BigNumber(value);
 
+export const zeroBN = toBigNumber(0);
+
 // TODO: implement max decimals
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;

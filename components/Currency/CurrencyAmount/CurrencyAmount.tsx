@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatCurrency, formatNumber } from 'utils/formatters/number';
+import { formatCurrency, formatNumber, NumericValue, toBigNumber } from 'utils/formatters/number';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -9,10 +9,10 @@ import { ContainerRowMixin } from '../common';
 
 type CurrencyAmountProps = {
 	currencyKey: CurrencyKey;
-	amount: number;
-	totalValue: number;
+	amount: NumericValue;
+	totalValue: NumericValue;
 	sign?: string;
-	conversionRate?: number | null;
+	conversionRate?: NumericValue | null;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -28,7 +28,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
-				conversionRate != null ? totalValue / conversionRate : totalValue,
+				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
 				{ sign }
 			)}
 		</TotalValue>
