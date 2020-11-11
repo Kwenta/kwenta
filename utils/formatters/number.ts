@@ -33,6 +33,8 @@ export const getDecimalPlaces = (value: NumericValue) =>
 
 export const toBigNumber = (value: NumericValue) => new BigNumber(value);
 
+export const zeroBN = toBigNumber(0);
+
 // TODO: implement max decimals
 export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -79,7 +81,7 @@ export const formatCurrency = (
 export const formatPercent = (value: NumericValue, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
 
-	return `${(Number(value) * 100).toFixed(decimals)}%`;
+	return `${toBigNumber(value).multipliedBy(100).toFixed(decimals)}%`;
 };
 
 // TODO: figure out a robust way to get the correct precision.

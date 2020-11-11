@@ -23,7 +23,7 @@ import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
 
-import useIsSystemUpgrading from 'queries/systemStatus/useIsSystemUpgrading';
+import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -47,17 +47,17 @@ const SOCIAL_LINKS = [
 	},
 ];
 
-const IS_PROD = !!process.env.NEXT_PUBLIC_IS_PROD;
-
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
-	const isSystemUpgradingQuery = useIsSystemUpgrading({ refetchInterval: false, enabled: IS_PROD });
+	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({ refetchInterval: false });
 
-	const appOnMaintenance = isSystemUpgradingQuery.isSuccess ? isSystemUpgradingQuery.data : false;
+	const appOnMaintenance = isSystemOnMaintenanceQuery.isSuccess
+		? isSystemOnMaintenanceQuery.data
+		: false;
 
-	return IS_PROD && appOnMaintenance ? (
+	return appOnMaintenance ? (
 		<>
 			<Head>
 				<title>{t('system-status.page-title')}</title>

@@ -8,12 +8,10 @@ import format from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
 // import { useMediaQuery } from 'react-responsive';
 
-import SnowflakeIcon from 'assets/svg/app/snowflake.svg';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 
-import { Synth } from 'lib/synthetix';
-
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
+import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
@@ -35,28 +33,22 @@ import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import media from 'styles/media';
 
 import { Side } from '../types';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 type ChartCardProps = {
 	side: Side;
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
-	isSynthFrozen: boolean;
 	className?: string;
 };
 
-const ChartCard: FC<ChartCardProps> = ({
-	side,
-	currencyKey,
-	priceRate,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-	isSynthFrozen,
-	...rest
-}) => {
+const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
+
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
@@ -73,7 +65,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const price = currentPrice || priceRate;
 
-	const showOverlayMessage = isSynthFrozen;
+	const showOverlayMessage = isMarketClosed;
 	const showLoader = historicalRates.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
 	const noData =
@@ -152,7 +144,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<CurrencyLabel>{t('common.price')}</CurrencyLabel>
 					)}
 				</FlexDivRowCentered>
-				{!isSynthFrozen && (
+				{!isMarketClosed && (
 					<Actions>
 						{PERIOD_LABELS.map((period) => (
 							<StyledTextButton
@@ -174,7 +166,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
 					>
 						<AreaChart
-							data={disabledInteraction ? [] : computedRates}
+							data={computedRates}
 							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
 							onMouseMove={(e: any) => {
 								const currentRate = get(e, 'activePayload[0].payload.rate', null);
@@ -254,19 +246,15 @@ const ChartCard: FC<ChartCardProps> = ({
 				</ChartData>
 				<AbsoluteCenteredDiv>
 					{showOverlayMessage ? (
-						<>
-							{isSynthFrozen && (
-								<OverlayMessage>
-									<Svg src={SnowflakeIcon} />
-									<OverlayMessageTitle>
-										{t('exchange.price-chart-card.overlay-messages.frozen-synth.title')}
-									</OverlayMessageTitle>
-									<OverlayMessageSubtitle>
-										{t('exchange.price-chart-card.overlay-messages.frozen-synth.subtitle')}
-									</OverlayMessageSubtitle>
-								</OverlayMessage>
-							)}
-						</>
+						<OverlayMessage>
+							<MarketClosureIcon marketClosureReason={marketClosureReason} />
+							<OverlayMessageTitle>
+								{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.title`)}
+							</OverlayMessageTitle>
+							<OverlayMessageSubtitle>
+								{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.subtitle`)}
+							</OverlayMessageSubtitle>
+						</OverlayMessage>
 					) : showLoader ? (
 						<Svg src={LoaderIcon} />
 					) : noData ? (
@@ -291,7 +279,7 @@ const ChartData = styled.div<{ disabledInteraction: boolean }>`
 		props.disabledInteraction &&
 		css`
 			pointer-events: none;
-			opacity: 0;
+			opacity: 0.1;
 		`};
 `;
 

@@ -5,16 +5,16 @@ import ChangePercent from 'components/ChangePercent';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, NumericValue, toBigNumber } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
-	price: number;
+	price: NumericValue;
 	sign?: string;
 	change?: number;
-	conversionRate?: number | null;
+	conversionRate?: NumericValue | null;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -28,9 +28,13 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	return (
 		<Container {...rest}>
 			<Price className="price">
-				{formatCurrency(currencyKey, conversionRate != null ? price / conversionRate : price, {
-					sign,
-				})}
+				{formatCurrency(
+					currencyKey,
+					conversionRate != null ? toBigNumber(price).dividedBy(conversionRate) : price,
+					{
+						sign,
+					}
+				)}
 			</Price>
 			{change != null && <ChangePercent className="percent" value={change} />}
 		</Container>

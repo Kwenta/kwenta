@@ -1,9 +1,13 @@
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
 
-import CurrencyIcon from '../CurrencyIcon';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 import { CurrencyKey } from 'constants/currency';
+
+import MarketClosureIcon from 'components/MarketClosureIcon';
+
+import CurrencyIcon from '../CurrencyIcon';
 
 import { ContainerRowMixin } from '../common';
 
@@ -13,6 +17,7 @@ type CurrencyNameProps = {
 	name?: string | null;
 	showIcon?: boolean;
 	iconProps?: object;
+	marketClosureReason?: MarketClosureReason;
 };
 
 export const CurrencyName: FC<CurrencyNameProps> = ({
@@ -21,10 +26,20 @@ export const CurrencyName: FC<CurrencyNameProps> = ({
 	name = null,
 	showIcon = false,
 	iconProps = {},
+	marketClosureReason,
 	...rest
 }) => (
 	<Container showIcon={showIcon} {...rest}>
-		{showIcon && <CurrencyIcon className="icon" currencyKey={currencyKey} {...iconProps} />}
+		{showIcon && (
+			<CurrencyIconContainer>
+				<CurrencyIcon className="icon" currencyKey={currencyKey} {...iconProps} />
+				{marketClosureReason != null ? (
+					<MarketClosureIconContainer>
+						<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
+					</MarketClosureIconContainer>
+				) : null}
+			</CurrencyIconContainer>
+		)}
 		<NameAndSymbol>
 			<Symbol className="symbol">{symbol || currencyKey}</Symbol>
 			{name && <Name className="name">{name}</Name>}
@@ -36,6 +51,7 @@ const Container = styled.span<{ showIcon?: boolean }>`
 	${(props) =>
 		props.showIcon &&
 		css`
+			position: relative;
 			display: inline-grid;
 			align-items: center;
 			grid-auto-flow: column;
@@ -55,6 +71,17 @@ const Symbol = styled.span`
 
 const Name = styled.span`
 	color: ${(props) => props.theme.colors.blueberry};
+`;
+
+const CurrencyIconContainer = styled.span`
+	position: relative;
+`;
+
+const MarketClosureIconContainer = styled.span`
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	transform: translate(10%, 10%);
 `;
 
 export default CurrencyName;

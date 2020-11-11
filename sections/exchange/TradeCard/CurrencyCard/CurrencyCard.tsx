@@ -2,34 +2,32 @@ import { FC, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
+import BigNumber from 'bignumber.js';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 
-import { Synth } from 'lib/synthetix';
-
 import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
 
 import { Side } from '../types';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type CurrencyCardProps = {
 	side: Side;
 	currencyKey: CurrencyKey | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: number | null;
+	walletBalance: BigNumber | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
 	priceRate: number;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 	className?: string;
 };
 
@@ -41,29 +39,33 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	walletBalance,
 	onBalanceClick,
 	onCurrencySelect,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
 	priceRate,
 	...rest
 }) => {
 	const { t } = useTranslation();
+	const {
+		selectPriceCurrencyRate,
+		selectedPriceCurrency,
+		getPriceAtCurrentRate,
+	} = useSelectedPriceCurrency();
 
 	const isBase = side === 'base';
 
 	const hasWalletBalance = walletBalance != null && currencyKey != null;
-	const insufficientBalance =
-		!isBase && hasWalletBalance ? Number(amount) > Number(walletBalance) : false;
+	const amountBN = amount === '' ? zeroBN : toBigNumber(amount);
 
-	let tradeAmount = Number(amount) * priceRate;
-	if (selectPriceCurrencyRate) {
-		tradeAmount /= selectPriceCurrencyRate;
+	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
+
+	let tradeAmount = amountBN.multipliedBy(priceRate);
+	if (selectPriceCurrencyRate != null) {
+		tradeAmount = getPriceAtCurrentRate(tradeAmount);
 	}
 
 	const currencyKeySelected = currencyKey != null;
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
-		<Card {...rest}>
+		<Card className="currency-card" {...rest}>
 			<StyledCardBody>
 				<LabelContainer>
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}

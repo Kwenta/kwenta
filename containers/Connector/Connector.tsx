@@ -15,7 +15,7 @@ import { walletAddressState, networkState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
-import { useLocalStorage } from 'hooks/useLocalStorage';
+import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';

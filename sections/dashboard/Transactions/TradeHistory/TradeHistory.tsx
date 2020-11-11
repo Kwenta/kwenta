@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { Synth } from 'lib/synthetix';
 import { Svg } from 'react-optimized-image';
 
 import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
@@ -20,42 +19,18 @@ import Currency from 'components/Currency';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type TradeHistoryProps = {
 	trades: HistoricalTrades;
 	isLoading: boolean;
 	isLoaded: boolean;
-	selectedPriceCurrency: Synth;
-	selectPriceCurrencyRate: number | null;
 };
 
-/*
-
-TODO: investigate if we need this
-
-const compareHistoricalTradeUSDValue = (rowA: Row<HistoricalTrade>, rowB: Row<HistoricalTrade>) =>
-	rowA.original.toAmountInUSD > rowB.original.toAmountInUSD ? -1 : 1;
-
-const compareHistoricalTradeFromCurrencyKey = (
-	rowA: Row<HistoricalTrade>,
-	rowB: Row<HistoricalTrade>
-) => (rowA.original.fromCurrencyKey > rowB.original.fromCurrencyKey ? -1 : 1);
-
-const compareHistoricalTradeToCurrencyKey = (
-	rowA: Row<HistoricalTrade>,
-	rowB: Row<HistoricalTrade>
-) => (rowA.original.toCurrencyKey > rowB.original.toCurrencyKey ? -1 : 1);
-*/
-
-const TradeHistory: FC<TradeHistoryProps> = ({
-	trades,
-	isLoading,
-	isLoaded,
-	selectedPriceCurrency,
-	selectPriceCurrencyRate,
-}) => {
+const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const columnsDeps = useMemo(() => [selectPriceCurrencyRate], [selectPriceCurrencyRate]);
 

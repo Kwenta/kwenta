@@ -1,30 +1,30 @@
 import { QueryConfig, useQuery } from 'react-query';
 import { ethers } from 'ethers';
 import synthetix from 'lib/synthetix';
+import BigNumber from 'bignumber.js';
 
 import { CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { synthToContractName } from 'utils/currencies';
 
+import { toBigNumber } from 'utils/formatters/number';
+
 const useSynthMarketCapQuery = (
 	currencyKey: CurrencyKey | null,
-	priceRate: number | null,
-	options?: QueryConfig<number>
+	options?: QueryConfig<BigNumber>
 ) => {
-	return useQuery<number>(
+	return useQuery<BigNumber>(
 		QUERY_KEYS.Rates.MarketCap(currencyKey as string),
 		async () => {
-			const totalSupply = Number(
-				ethers.utils.formatEther(
-					await synthetix.js!.contracts[synthToContractName(currencyKey!)].totalSupply()
-				)
+			const totalSupply = ethers.utils.formatEther(
+				await synthetix.js!.contracts[synthToContractName(currencyKey!)].totalSupply()
 			);
 
-			return totalSupply * priceRate!;
+			return toBigNumber(totalSupply);
 		},
 		{
-			enabled: currencyKey != null && priceRate != null,
+			enabled: currencyKey != null,
 			...options,
 		}
 	);
