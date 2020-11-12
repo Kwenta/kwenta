@@ -3,6 +3,7 @@ import { ethers, Signer } from 'ethers';
 
 import keyBy from 'lodash/keyBy';
 import invert from 'lodash/invert';
+import { CurrencyKey } from 'constants/currency';
 
 export type Token = {
 	address: string;
@@ -70,7 +71,7 @@ type Synthetix = {
 	chainIdToNetwork: Record<NetworkId, Network> | null;
 };
 
-const HIDDEN_SYNTHS = ['sOIL', 'iOIL'];
+const HIDDEN_SYNTHS: CurrencyKey[] = [];
 
 const synthetix: Synthetix = {
 	js: null,
