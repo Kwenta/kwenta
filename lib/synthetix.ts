@@ -70,6 +70,8 @@ type Synthetix = {
 	chainIdToNetwork: Record<NetworkId, Network> | null;
 };
 
+const HIDDEN_SYNTHS = ['sOIL', 'iOIL'];
+
 const synthetix: Synthetix = {
 	js: null,
 	synthsMap: null,
@@ -78,6 +80,10 @@ const synthetix: Synthetix = {
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({ networkId, provider, signer });
+
+		if (HIDDEN_SYNTHS.length) {
+			this.js.synths = this.js.synths.filter((synth) => !HIDDEN_SYNTHS.includes(synth.name));
+		}
 
 		this.synthsMap = keyBy(this.js.synths, 'name');
 		this.tokensMap = keyBy(this.js.tokens, 'symbol');
