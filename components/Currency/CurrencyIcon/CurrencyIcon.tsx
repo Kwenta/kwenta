@@ -72,7 +72,8 @@ import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
 import sXAGIcon from '@synthetixio/assets/synths/sXAG.svg';
-// import sOILIcon from '@synthetixio/assets/synths/sOIL.svg';
+import sOILIcon from '@synthetixio/assets/synths/sOIL.svg';
+import iOILIcon from '@synthetixio/assets/synths/iOIL.svg';
 // Crypto Index Synths
 import sDEFIIcon from '@synthetixio/assets/synths/sDEFI.svg';
 import sCEXIcon from '@synthetixio/assets/synths/sCEX.svg';
@@ -244,6 +245,12 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case SYNTHS_MAP.sNIKKEI: {
 			return <Img src={sNIKKEIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sOIL: {
+			return <Img src={sOILIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iOIL: {
+			return <Img src={iOILIcon} {...props} />;
 		}
 		default:
 			return null;
