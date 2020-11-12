@@ -161,6 +161,10 @@
 					"title": "This market has been closed",
 					"subtitle": "Reset in progress."
 				},
+				"system-upgrade": {
+					"title": "Synth paused manually",
+					"subtitle": "Please check the Synthetix Discord for details."
+				},
 				"circuit-breaker": {
 					"title": "Circuit breaker triggered",
 					"subtitle": "Reset in progress"
@@ -203,6 +207,9 @@
 					},
 					"market-closure": {
 						"message": "This market has been closed - reset in progress."
+					},
+					"system-upgrade": {
+						"message": "Synth paused manually. Please check the Synthetix Discord for details."
 					},
 					"circuit-breaker": {
 						"message": "Circuit breaker triggered - reset in progress."
