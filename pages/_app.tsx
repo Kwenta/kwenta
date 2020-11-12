@@ -37,7 +37,7 @@ const queryCache = new QueryCache({
 	},
 });
 
-// release - 15 Oct 2020!
+// release - 12 Nov 2020!
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
 	const { t } = useTranslation();
