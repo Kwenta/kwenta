@@ -1,5 +1,6 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { ethers } from 'ethers';
+import { useRecoilValue } from 'recoil';
 
 import synthetix from 'lib/synthetix';
 
@@ -7,9 +8,13 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 import { iStandardSynth, synthToAsset } from 'utils/currencies';
 
+import { appReadyState } from 'store/app';
+
 export type Rates = Record<CurrencyKey, number>;
 
 const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
+	const isAppReady = useRecoilValue(appReadyState);
+
 	return useQuery<Rates>(
 		QUERY_KEYS.Rates.ExchangeRates,
 		async () => {
@@ -31,7 +36,7 @@ const useExchangeRatesQuery = (options?: QueryConfig<Rates>) => {
 			return exchangeRates;
 		},
 		{
-			enabled: synthetix.js,
+			enabled: isAppReady,
 			...options,
 		}
 	);

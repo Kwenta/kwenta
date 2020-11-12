@@ -1,12 +1,17 @@
 import { useQuery, QueryConfig } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import synthetix from 'lib/synthetix';
 
+import { appReadyState } from 'store/app';
+
 const IS_PROD = !!process.env.NEXT_PUBLIC_IS_PROD;
 
 const useIsSystemOnMaintenance = (options?: QueryConfig<boolean>) => {
+	const isAppReady = useRecoilValue(appReadyState);
+
 	return useQuery<boolean>(
 		QUERY_KEYS.SystemStatus.IsUpgrading,
 		async () => {
@@ -18,7 +23,7 @@ const useIsSystemOnMaintenance = (options?: QueryConfig<boolean>) => {
 			return isSystemUpgrading || (isExchangePaused && IS_PROD);
 		},
 		{
-			enabled: synthetix.js,
+			enabled: isAppReady,
 			...options,
 		}
 	);
