@@ -10,6 +10,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 
 import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import { appReadyState } from 'store/app';
+
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 export type SynthBalance = {
@@ -29,6 +31,7 @@ export type Balances = {
 };
 
 const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
+	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
@@ -76,7 +79,7 @@ const useSynthsBalancesQuery = (options?: QueryConfig<Balances>) => {
 			};
 		},
 		{
-			enabled: synthetix.js && isWalletConnected,
+			enabled: isAppReady && isWalletConnected,
 			...options,
 		}
 	);

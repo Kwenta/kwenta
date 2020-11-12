@@ -3,16 +3,18 @@ import { BigNumberish, ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { CurrencyKey } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
-import { CurrencyKey } from 'constants/currency';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { appReadyState } from 'store/app';
 
 const useFeeReclaimPeriodQuery = (
 	currencyKey: CurrencyKey | null,
 	options?: QueryConfig<number>
 ) => {
+	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -27,7 +29,7 @@ const useFeeReclaimPeriodQuery = (
 			return Number(maxSecsLeftInWaitingPeriod);
 		},
 		{
-			enabled: synthetix.js && currencyKey != null && isWalletConnected,
+			enabled: isAppReady && currencyKey != null && isWalletConnected,
 			...options,
 		}
 	);

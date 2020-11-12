@@ -1,11 +1,13 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { BigNumberish, ethers } from 'ethers';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { CurrencyKey } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
-import { CurrencyKey } from 'constants/currency';
+import { appReadyState } from 'store/app';
 
 /*
 	Suspension Reasons:
@@ -51,6 +53,8 @@ const useSynthSuspensionQuery = (
 	currencyKey: CurrencyKey | null,
 	options?: QueryConfig<SynthSuspended>
 ) => {
+	const isAppReady = useRecoilValue(appReadyState);
+
 	return useQuery<SynthSuspended>(
 		QUERY_KEYS.Synths.Suspension(currencyKey ?? ''),
 		async () => {
@@ -66,7 +70,7 @@ const useSynthSuspensionQuery = (
 			};
 		},
 		{
-			enabled: synthetix.js && currencyKey != null,
+			enabled: isAppReady && currencyKey != null,
 			...options,
 		}
 	);
