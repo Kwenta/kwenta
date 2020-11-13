@@ -15,7 +15,7 @@ import Etherscan from 'containers/Etherscan';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-import useEthGasStationQuery from 'queries/network/useGasStationQuery';
+import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
@@ -115,7 +115,7 @@ const useExchange = ({
 		enabled: isQuoteCurrencyETH,
 	});
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
-	const ethGasStationQuery = useEthGasStationQuery();
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
@@ -267,10 +267,10 @@ const useExchange = ({
 		() =>
 			customGasPrice !== ''
 				? Number(customGasPrice)
-				: ethGasStationQuery.data != null
-				? ethGasStationQuery.data[gasSpeed]
+				: ethGasPriceQuery.data != null
+				? ethGasPriceQuery.data[gasSpeed]
 				: null,
-		[customGasPrice, ethGasStationQuery.data, gasSpeed]
+		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
@@ -526,7 +526,7 @@ const useExchange = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					gasPrices={ethGasStationQuery.data}
+					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey}
 					exchangeFeeRate={exchangeFeeRate}

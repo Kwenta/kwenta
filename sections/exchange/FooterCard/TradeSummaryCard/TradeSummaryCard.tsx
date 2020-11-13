@@ -8,7 +8,7 @@ import { Svg } from 'react-optimized-image';
 
 import { Synth } from 'lib/synthetix';
 
-import { GasPrices, GAS_SPEEDS } from 'queries/network/useGasStationQuery';
+import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 import { CurrencyKey } from 'constants/currency';
