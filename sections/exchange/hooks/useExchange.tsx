@@ -111,9 +111,7 @@ const useExchange = ({
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
-	const ETHBalanceQuery = useETHBalanceQuery({
-		enabled: isQuoteCurrencyETH,
-	});
+	const ETHBalanceQuery = useETHBalanceQuery();
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -143,9 +141,7 @@ const useExchange = ({
 	let quoteCurrencyBalance: BigNumber | null = null;
 	if (quoteCurrencyKey != null) {
 		if (isQuoteCurrencyETH) {
-			quoteCurrencyBalance = ETHBalanceQuery.isSuccess
-				? get(ETHBalanceQuery.data, 'balance', zeroBN)
-				: null;
+			quoteCurrencyBalance = ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
 		} else {
 			quoteCurrencyBalance = synthsWalletBalancesQuery.isSuccess
 				? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
