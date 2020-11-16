@@ -85,7 +85,7 @@ jobs:
 
     - name: Archive artifacts
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
+      uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
         path: .next
@@ -127,7 +127,7 @@ jobs:
             GH_TOKEN: ${{ secrets.GH_READ_REPO }}
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@27bce4eee761b5bc643f46a8dfb41b430c8d05f6 # pin@v2
+        uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
         # run on lighthouse fail
         if: always()
         with:
