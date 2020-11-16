@@ -17,45 +17,12 @@ const conf = {
 				{
 					preset: 'lighthouse:no-pwa',
 					matchingUrlPattern: `https://[^/]+/$`,
-					assertions: {
-						'categories:accessibility': ['warn', { minScore: 0.75 }],
-						'categories:performance': ['error', { minScore: 0.45 }],
-						'categories:seo': ['error', { minScore: 0.85 }],
-						'categories:best-practices': ['error', { minScore: 0.85 }],
-						'button-name': ['warn'],
-						bypass: ['warn'],
-						'html-has-lang': ['warn'],
-						'link-name': ['warn'],
-						'unused-javascript': 'off',
-
-						// remove after fixed:
-						'font-display': ['warn'],
-						'offscreen-images': ['warn'],
-						'total-byte-weight': ['warn'],
-						'unsized-images': ['warn'],
-						'uses-responsive-images': ['warn'],
-					},
+					assertions: {},
 				},
 				{
 					preset: 'lighthouse:no-pwa',
 					matchingUrlPattern: `https://[^/]+/exchange$`,
-					assertions: {
-						'categories:accessibility': ['warn', { minScore: 0.55 }],
-						'categories:performance': ['error', { minScore: 0.45 }],
-						'categories:seo': ['error', { minScore: 0.8 }],
-						'categories:best-practices': ['error', { minScore: 0.85 }],
-						'button-name': ['warn'],
-						bypass: ['warn'],
-						'html-has-lang': ['warn'],
-						'link-name': ['warn'],
-						'unused-javascript': 'off',
-						'color-contrast': ['warn'],
-
-						// remove after fixed:
-						'font-display': ['warn'],
-						'uses-rel-preconnect': ['warn'],
-						'uses-text-compression': ['warn'],
-					},
+					assertions: {},
 				},
 			],
 		},
