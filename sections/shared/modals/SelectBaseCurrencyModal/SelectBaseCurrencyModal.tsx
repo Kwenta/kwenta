@@ -43,7 +43,7 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 
 	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const filteredSynths = useMemo(
 		() =>
