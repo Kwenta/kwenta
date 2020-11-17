@@ -4,12 +4,7 @@ import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {
-		HistoricalVolume: (currencyKey: CurrencyKey, period: Period) => [
-			'rates',
-			'historicalVolume',
-			currencyKey,
-			period,
-		],
+		HistoricalVolume: (period: Period) => ['rates', 'historicalVolume', period],
 		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
 			'rates',
 			'historicalRates',

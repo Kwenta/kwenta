@@ -38,14 +38,21 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		getPriceAtCurrentRate,
 	} = useSelectedPriceCurrency();
 
-	const vol24H = useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
-	const historicalRates24H = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
-	const synthMarketCap = useSynthMarketCapQuery(currencyKey);
+	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
+	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 
-	let marketCap = synthMarketCap.data ?? null;
-	let rates24High = historicalRates24H.data?.high ?? null;
-	let rates24Low = historicalRates24H.data?.low ?? null;
-	let volume24H = vol24H.data ?? null;
+	let marketCap = synthMarketCapQuery.isSuccess ? synthMarketCapQuery.data ?? null : null;
+	let rates24High = historicalRates24HQuery.isSuccess
+		? historicalRates24HQuery.data?.high ?? null
+		: null;
+	let rates24Low = historicalRates24HQuery.isSuccess
+		? historicalRates24HQuery.data?.low ?? null
+		: null;
+	let volume24H =
+		vol24HQuery.isSuccess && currencyKey != null
+			? (vol24HQuery.data && vol24HQuery.data[currencyKey]) ?? null
+			: null;
 
 	if (selectPriceCurrencyRate != null) {
 		if (rates24High) {

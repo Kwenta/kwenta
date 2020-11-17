@@ -12,7 +12,6 @@ import { Period } from 'constants/period';
 import ROUTES from 'constants/routes';
 
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
@@ -29,7 +28,6 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 
 	const currencyKey = synth.name;
 
-	useHistoricalVolumeQuery(currencyKey, Period.ONE_DAY);
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 

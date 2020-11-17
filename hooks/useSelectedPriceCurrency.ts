@@ -7,7 +7,7 @@ import { priceCurrencyState } from 'store/app';
 const useSelectedPriceCurrency = () => {
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
 	const getPriceAtCurrentRate = (price: BigNumber) =>
