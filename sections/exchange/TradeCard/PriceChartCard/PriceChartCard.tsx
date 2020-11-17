@@ -56,9 +56,16 @@ const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }
 
 	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
 
-	const change = historicalRates.data?.change ?? null;
+	const change =
+		historicalRates.isSuccess && currencyKey != null && historicalRates.data
+			? historicalRates.data[currencyKey].change ?? null
+			: null;
+
 	// eslint-disable-next-line
-	const rates = historicalRates.data?.rates ?? [];
+	const rates =
+		historicalRates.isSuccess && currencyKey != null && historicalRates.data
+			? historicalRates.data[currencyKey].rates ?? []
+			: [];
 
 	const isChangePositive = change != null && change >= 0;
 	const chartColor = isChangePositive || isSUSD ? theme.colors.green : theme.colors.red;
@@ -68,8 +75,7 @@ const ChartCard: FC<ChartCardProps> = ({ side, currencyKey, priceRate, ...rest }
 	const showOverlayMessage = isMarketClosed;
 	const showLoader = historicalRates.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
-	const noData =
-		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
+	const noData = historicalRates.isSuccess && rates.length === 0;
 
 	// const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 

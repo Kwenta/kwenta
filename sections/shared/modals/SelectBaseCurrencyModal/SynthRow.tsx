@@ -44,7 +44,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					change={historicalRates.data && historicalRates.data[currencyKey].change}
 				/>
 			) : (
 				NO_VALUE

@@ -1,14 +1,15 @@
 import { NetworkId } from '@synthetixio/js';
+import castArray from 'lodash/castArray';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {
 		HistoricalVolume: (period: Period) => ['rates', 'historicalVolume', period],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
+		HistoricalRates: (currencyKey: CurrencyKey | CurrencyKey[], period: Period) => [
 			'rates',
 			'historicalRates',
-			currencyKey,
+			castArray(currencyKey).join('|'),
 			period,
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],

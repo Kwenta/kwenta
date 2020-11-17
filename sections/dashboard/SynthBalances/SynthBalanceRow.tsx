@@ -65,7 +65,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 							price={price}
 							sign={selectedPriceCurrency.sign}
 							conversionRate={selectPriceCurrencyRate}
-							change={historicalRates.data?.change}
+							change={historicalRates.data && historicalRates.data[currencyKey].change}
 						/>
 					)}
 				</ExchangeRateCol>

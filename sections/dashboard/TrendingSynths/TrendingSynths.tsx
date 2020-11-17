@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
-import { useQueryCache } from 'react-query';
+import mapValues from 'lodash/mapValues';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
@@ -10,34 +10,36 @@ import Select from 'components/Select';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
+import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 import { CardTitle } from 'sections/dashboard/common';
 
 import { FlexDivRowCentered } from 'styles/common';
 
-import SynthRow from './SynthRow';
-import { numericSort, toCurrencyKeyMap } from './utils';
-import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
+import { Period } from 'constants/period';
+
+import SynthRow from './SynthRow';
+import { numericSort } from './utils';
+import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const queryCache = useQueryCache();
-
-	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
+	// eslint-disable-next-line
+	const synths = synthetix.js?.synths ?? [];
+	const currencyKeys = useMemo(() => synths.map((synth) => synth.name), [synths]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const historicalVolumeQuery = useHistoricalVolumeQuery();
+	const historicalRatesQuery = useHistoricalRatesQuery(currencyKeys, Period.ONE_DAY);
+	const historicalVolumeQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const historicalVolume = historicalVolumeQuery.isSuccess
 		? historicalVolumeQuery.data ?? null
 		: null;
-
-	// eslint-disable-next-line
-	const synths = synthetix.js?.synths ?? [];
+	const historicalRates = historicalRatesQuery.isSuccess ? historicalRatesQuery.data ?? null : null;
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
@@ -46,25 +48,37 @@ const TrendingSynths: FC = () => {
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
 			return synths.sort((a: Synth, b: Synth) => numericSort(historicalVolume, a, b));
 		}
-		if (historicalRatesCache != null && historicalRatesCache.length > 0) {
+		if (historicalRates != null) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(toCurrencyKeyMap(historicalRatesCache, 'high'), a, b)
+					numericSort(
+						mapValues(historicalRates, (rates) => rates.high),
+						a,
+						b
+					)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Rates24HLow) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(toCurrencyKeyMap(historicalRatesCache, 'low'), a, b)
+					numericSort(
+						mapValues(historicalRates, (rates) => rates.low),
+						a,
+						b
+					)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Change) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(toCurrencyKeyMap(historicalRatesCache, 'change'), a, b)
+					numericSort(
+						mapValues(historicalRates, (rates) => rates.change),
+						a,
+						b
+					)
 				);
 			}
 		}
 		return synths;
-	}, [synths, currentSynthSort, exchangeRates, historicalVolume, historicalRatesCache]);
+	}, [synths, currentSynthSort, exchangeRates, historicalVolume, historicalRates]);
 
 	return (
 		<>
@@ -86,10 +100,15 @@ const TrendingSynths: FC = () => {
 			</Container>
 			<Rows>
 				{sortedSynths.map((synth: Synth) => {
-					const price = exchangeRates && exchangeRates[synth.name];
 					const currencyKey = synth.name;
 
-					return <SynthRow key={currencyKey} synth={synth} price={price} />;
+					const price = exchangeRates && exchangeRates[currencyKey];
+					const change =
+						historicalRates && historicalRates[currencyKey] && historicalRates[currencyKey].change;
+
+					return (
+						<SynthRow key={currencyKey} synth={synth} price={price} change={change ?? undefined} />
+					);
 				})}
 			</Rows>
 		</>

@@ -8,10 +8,7 @@ import { Synth } from 'lib/synthetix';
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { Period } from 'constants/period';
 import ROUTES from 'constants/routes';
-
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
@@ -19,16 +16,17 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type SynthRowProps = {
 	price: number | null;
+	change?: number;
 	synth: Synth;
 };
-const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
+const SynthRow: FC<SynthRowProps> = ({ price, synth, change }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.name;
 
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	// const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
@@ -50,7 +48,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					change={change}
 				/>
 			) : (
 				NO_VALUE

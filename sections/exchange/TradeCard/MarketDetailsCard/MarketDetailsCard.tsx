@@ -43,12 +43,14 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 
 	let marketCap = synthMarketCapQuery.isSuccess ? synthMarketCapQuery.data ?? null : null;
-	let rates24High = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.high ?? null
-		: null;
-	let rates24Low = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.low ?? null
-		: null;
+	let rates24High =
+		historicalRates24HQuery.isSuccess && currencyKey != null && historicalRates24HQuery.data
+			? historicalRates24HQuery.data[currencyKey].high ?? null
+			: null;
+	let rates24Low =
+		historicalRates24HQuery.isSuccess && currencyKey != null && historicalRates24HQuery.data
+			? historicalRates24HQuery.data[currencyKey].low ?? null
+			: null;
 	let volume24H =
 		vol24HQuery.isSuccess && currencyKey != null
 			? (vol24HQuery.data && vol24HQuery.data[currencyKey]) ?? null
