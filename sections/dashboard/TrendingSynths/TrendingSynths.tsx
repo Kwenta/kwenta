@@ -9,6 +9,7 @@ import synthetix, { Synth } from 'lib/synthetix';
 import Select from 'components/Select';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { CardTitle } from 'sections/dashboard/common';
 
@@ -26,11 +27,14 @@ const TrendingSynths: FC = () => {
 
 	const queryCache = useQueryCache();
 
-	const historicalVolumeCache = queryCache.getQueries(['rates', 'historicalVolume']);
 	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const historicalVolumeQuery = useHistoricalVolumeQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const historicalVolume = historicalVolumeQuery.isSuccess
+		? historicalVolumeQuery.data ?? null
+		: null;
 
 	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
@@ -39,14 +43,8 @@ const TrendingSynths: FC = () => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
 			return synths.sort((a: Synth, b: Synth) => numericSort(exchangeRates, a, b));
 		}
-		if (
-			currentSynthSort.value === SynthSort.Volume &&
-			historicalVolumeCache != null &&
-			historicalVolumeCache.length > 0
-		) {
-			return synths.sort((a: Synth, b: Synth) =>
-				numericSort(toCurrencyKeyMap(historicalVolumeCache), a, b)
-			);
+		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
+			return synths.sort((a: Synth, b: Synth) => numericSort(historicalVolume, a, b));
 		}
 		if (historicalRatesCache != null && historicalRatesCache.length > 0) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
@@ -66,7 +64,7 @@ const TrendingSynths: FC = () => {
 			}
 		}
 		return synths;
-	}, [synths, currentSynthSort, exchangeRates, historicalVolumeCache, historicalRatesCache]);
+	}, [synths, currentSynthSort, exchangeRates, historicalVolume, historicalRatesCache]);
 
 	return (
 		<>

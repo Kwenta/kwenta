@@ -2,39 +2,45 @@ import { useQuery, QueryConfig } from 'react-query';
 import snxData from 'synthetix-data';
 import BigNumber from 'bignumber.js';
 
+import { zeroBN } from 'utils/formatters/number';
+
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
 import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import { calculateTimestampForPeriod } from './utils';
 import { SynthExchanges } from './types';
-import { zeroBN } from 'utils/formatters/number';
+
+type HistoricalVolume = Record<CurrencyKey, BigNumber>;
 
 const useHistoricalVolumeQuery = (
-	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: QueryConfig<BigNumber>
+	options?: QueryConfig<HistoricalVolume>
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
-	return useQuery<BigNumber>(
-		QUERY_KEYS.Rates.HistoricalVolume(currencyKey!, period),
+	return useQuery<HistoricalVolume>(
+		QUERY_KEYS.Rates.HistoricalVolume(period),
 		async () => {
 			const exchanges = (await snxData.exchanges.since({
 				minTimestamp: calculateTimestampForPeriod(periodInHours),
 			})) as SynthExchanges;
 
-			return exchanges
-				.filter((exchange) =>
-					[exchange.fromCurrencyKey, exchange.toCurrencyKey].includes(currencyKey!)
-				)
-				.reduce((totalVolume, exchange) => {
-					totalVolume.plus(exchange.fromAmountInUSD);
-					return totalVolume;
-				}, zeroBN);
+			return exchanges.reduce((totalVol, { fromCurrencyKey, toCurrencyKey, fromAmountInUSD }) => {
+				if (totalVol[fromCurrencyKey] != null) {
+					totalVol[fromCurrencyKey] = totalVol[fromCurrencyKey].plus(fromAmountInUSD);
+				} else {
+					totalVol[fromCurrencyKey] = zeroBN;
+				}
+				if (totalVol[toCurrencyKey] != null) {
+					totalVol[toCurrencyKey] = totalVol[toCurrencyKey].plus(fromAmountInUSD);
+				} else {
+					totalVol[toCurrencyKey] = zeroBN;
+				}
+				return totalVol;
+			}, {} as HistoricalVolume);
 		},
 		{
-			enabled: currencyKey,
 			...options,
 		}
 	);

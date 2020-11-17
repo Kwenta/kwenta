@@ -118,9 +118,11 @@ const useExchange = ({
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
 
-	const exchangeFeeRate = exchangeFeeRateQuery.data ?? null;
+	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
 
-	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.data ?? 0;
+	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
+		? feeReclaimPeriodQuery.data ?? 0
+		: 0;
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
@@ -130,7 +132,7 @@ const useExchange = ({
 	// 	quoteCurrencyKey != null && synthetix.synthsMap != null
 	// 		? synthetix.synthsMap[quoteCurrencyKey]
 	// 		: null;
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
 	const inverseRate = rate > 0 ? 1 / rate : 0;
 	const baseCurrencyBalance =

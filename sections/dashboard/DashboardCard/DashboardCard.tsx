@@ -50,7 +50,7 @@ const DashboardCard: FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const synthsBalancesQuery = useSynthsBalancesQuery();
 
-	const exchangeRates = exchangeRatesQuery.data ?? null;
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data

@@ -10,7 +10,11 @@ const conf = {
 				chromeFlags:
 					'--headless --no-sandbox --ignore-certificate-errors --disable-gpu --incognito --disable-dev-shm-usage',
 			},
-			url: [`${process.env.BASE_URL}`, `${process.env.BASE_URL}/exchange`],
+			url: [
+				`${process.env.BASE_URL}`,
+				`${process.env.BASE_URL}/exchange`,
+				`${process.env.BASE_URL}/dashboard`,
+			],
 		},
 		assert: {
 			assertMatrix: [
