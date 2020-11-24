@@ -18,7 +18,7 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.5",
-		"@synthetixio/js": "2.33.0-ovm",
+		"@synthetixio/js": "2.33.1",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.20.0",
 		"bignumber.js": "9.0.0",
