@@ -28,7 +28,9 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 
 	const currencyKey = synth.name;
 
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
+		refetchInterval: false,
+	});
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (

@@ -40,9 +40,7 @@ const useHistoricalVolumeQuery = (
 				return totalVol;
 			}, {} as HistoricalVolume);
 		},
-		{
-			...options,
-		}
+		options
 	);
 };
 
