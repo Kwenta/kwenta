@@ -34,7 +34,7 @@ export const linkCSS = css`
 
 export const ExternalLink = styled.a.attrs({
 	target: '_blank',
-	rel: 'noopener',
+	rel: 'noopener noreferrer',
 })`
 	${linkCSS};
 `;
