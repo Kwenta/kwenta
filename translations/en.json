@@ -252,6 +252,12 @@
 			"learn-more": "Learn More",
 			"how-it-works-modal": {
 				"title": "How it works"
+			},
+			"convert-card": {
+				"disabled-message": {
+					"title": "On-ramp Coming Soon.",
+					"body": "Swap from any token into sUSD with 1inch to get started."
+				}
 			}
 		},
 		"your-portfolio": {
@@ -358,7 +364,8 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
-			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>"
+			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
+			"swap-currency": "Swap for <0>{{currencyKey}}</0>"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",
