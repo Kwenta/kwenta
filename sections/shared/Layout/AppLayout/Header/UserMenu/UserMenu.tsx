@@ -75,6 +75,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							size="sm"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
+							data-testid="wallet-btn"
 						>
 							<StyledConnectionDot />
 							{truncatedWalletAddress}
