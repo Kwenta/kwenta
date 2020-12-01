@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"baseUrl": "../../node_modules",
+        "types": ["cypress", "@types/puppeteer-core", "@synthetixio/synpress/support"],
+        "outDir": "./output"
+    },
+    "include": ["**/*.*"]
+}
