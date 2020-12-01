@@ -6,4 +6,7 @@ const absoluteSynpressNodeModulesPath = path.join(
 
 module.exports = {
 	extends: `${absoluteSynpressNodeModulesPath}/.eslintrc.js`,
+	rules: {
+		'ui-testing/no-css-page-layout-selector': ['warn', 'cypress'],
+	},
 };
