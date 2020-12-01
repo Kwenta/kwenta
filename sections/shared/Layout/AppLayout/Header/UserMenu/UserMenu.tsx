@@ -84,7 +84,11 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							/>
 						</WalletButton>
 					) : (
-						<Button variant={isTextButton ? 'text' : 'primary'} onClick={connectWallet}>
+						<Button
+							variant={isTextButton ? 'text' : 'primary'}
+							onClick={connectWallet}
+							data-testid="connect-wallet"
+						>
 							{t('common.wallet.connect-wallet')}
 						</Button>
 					)}
