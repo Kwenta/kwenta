@@ -10,7 +10,8 @@
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
-		"lint:fix": "eslint . --ext ts,.tsx --fix"
+		"lint:fix": "eslint . --ext ts,.tsx --fix",
+		"test:e2e": "start-server-and-test dev http-get://localhost:3000 'synpress run'"
 	},
 	"dependencies": {
 		"@artsy/fresnel": "1.3.0",
