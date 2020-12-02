@@ -5,9 +5,6 @@
 		["styled-components", { "ssr": true, "displayName": true }]
 	],
 	"env": {
-		"production": {
-			"plugins": [["react-remove-properties", { "properties": ["data-testid"] }]]
-		},
 		"development": {
 			"plugins": [
 				[
