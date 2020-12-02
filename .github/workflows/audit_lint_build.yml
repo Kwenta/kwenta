@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
+      image: ghcr.io/synthetixio/docker-sec-tools/base:12.20
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-node/alpine:12.19
+      image: ghcr.io/synthetixio/docker-node/alpine:12.20
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -98,7 +98,7 @@ jobs:
       runs-on: ubuntu-latest
 
       container:
-        image: ghcr.io/synthetixio/docker-e2e/base:12.19
+        image: ghcr.io/synthetixio/docker-e2e/base:12.20
         credentials:
           username: synthetixio
           password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -141,9 +141,6 @@ jobs:
         env:
             GH_TOKEN: ${{ secrets.GH_READ_REPO }}
 
-      - name: Run e2e tests
-        run: npm run test:e2e
-
       - name: Archive artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
         # run on lighthouse fail
@@ -154,4 +151,12 @@ jobs:
             .lighthouseci
             lighthouse-desktop-report
             lighthouse-mobile-report
-      continue-on-error: true
+        continue-on-error: true
+
+      - name: Download build
+        uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
+        with:
+          name: build
+
+      - name: Run e2e tests
+        run: npm run test:e2e
