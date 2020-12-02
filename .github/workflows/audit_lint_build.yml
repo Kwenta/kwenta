@@ -93,7 +93,7 @@ jobs:
   verify:
       needs: build
       # run only on master/dev branch
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+      # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
       runs-on: ubuntu-latest
 
       container:
@@ -125,6 +125,9 @@ jobs:
           lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js || true
         env:
             GH_TOKEN: ${{ secrets.GH_READ_REPO }}
+
+      - name: Run e2e tests
+        run: npm run test:e2e
 
       - name: Archive artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
