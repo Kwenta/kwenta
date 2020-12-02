@@ -94,6 +94,7 @@ jobs:
       needs: build
       # run only on master/dev branch
       # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+      if: always()
       runs-on: ubuntu-latest
 
       container:
