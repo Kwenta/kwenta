@@ -161,6 +161,8 @@ jobs:
 
       - name: Run e2e tests
         run: npm run test:e2e
+        env:
+            SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - name: Archive e2e artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
