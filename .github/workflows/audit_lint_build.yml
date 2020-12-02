@@ -157,6 +157,7 @@ jobs:
         uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
         with:
           name: build
+          path: .next
 
       - name: Run e2e tests
         run: npm run test:e2e
