@@ -84,7 +84,7 @@ jobs:
       run: npm run build
 
     - name: Archive artifacts
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+      # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
