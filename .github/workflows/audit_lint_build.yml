@@ -165,6 +165,7 @@ jobs:
             SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
             CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive e2e artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
