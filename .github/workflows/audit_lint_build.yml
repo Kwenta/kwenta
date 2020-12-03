@@ -86,7 +86,7 @@ jobs:
       run: tar -zcvf build.tar.gz .next
 
     - name: Archive build
-      # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
@@ -95,8 +95,7 @@ jobs:
   verify:
       needs: build
       # run only on master/dev branch
-      # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
-      if: always()
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       runs-on: ubuntu-latest
 
       container:
