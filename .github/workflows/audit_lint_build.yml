@@ -52,7 +52,6 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-          ${{ runner.os }}-
       continue-on-error: true
 
     - name: Install dependencies
@@ -83,12 +82,15 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Archive artifacts
+    - name: Compress build
+      run: tar -zcvf build.tar.gz .next
+
+    - name: Archive build
       # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
-        path: .next
+        path: build.tar.gz
 
   verify:
       needs: build
@@ -108,19 +110,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
 
-      - name: Cache node modules
-        uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
-        with:
-          path: |
-            .npm
-            node_modules
-          key: ${{ runner.os }}-node-verify-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-verify-
-        continue-on-error: true
+      # - name: Cache node modules
+      #   uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+      #   with:
+      #     path: |
+      #       .npm
+      #       node_modules
+      #     key: ${{ runner.os }}-node-verify-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-verify-
+      #   continue-on-error: true
 
-      - name: Install dependencies
-        run: npm install --no-audit
+      # - name: Install dependencies
+      #   run: npm install --no-audit
 
       - name: Set deployment url
         shell: bash
@@ -139,7 +141,7 @@ jobs:
           lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js || true
           lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js || true
         env:
-            GH_TOKEN: ${{ secrets.GH_READ_REPO }}
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive lighthouse artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
@@ -157,7 +159,9 @@ jobs:
         uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
         with:
           name: build
-          path: .next
+
+      - name: Extract build
+        run: tar -xf build.tar.gz
 
       - name: Run e2e tests
         run: npm run test:e2e:ci
