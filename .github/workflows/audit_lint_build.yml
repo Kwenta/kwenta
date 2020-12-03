@@ -49,9 +49,9 @@ jobs:
         path: |
           .npm
           node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
+          ${{ runner.os }}-build-
       continue-on-error: true
 
     - name: Install dependencies
@@ -116,9 +116,9 @@ jobs:
           path: |
             .npm
             node_modules
-          key: ${{ runner.os }}-node-verify-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-verify-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-verify-
+            ${{ runner.os }}-verify-
         continue-on-error: true
 
       - name: Install dependencies
