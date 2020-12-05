@@ -9,10 +9,10 @@ describe('Wallet tests', () => {
 		exchange.getMetamaskWalletAddress().then((address) => {
 			metamaskWalletAddress = address;
 		});
+		exchange.visit();
 	});
 	context('Connect metamask wallet', () => {
 		it(`should login with success`, () => {
-			exchange.visit();
 			exchange.connectMetamaskWallet();
 			exchange.acceptMetamaskAccessRequest();
 			exchange.waitUntilLoggedIn();
