@@ -3,9 +3,9 @@ import ExchangePage from '../pages/exchange/exchange-page';
 const exchange = new ExchangePage();
 
 describe('Trades tests', () => {
-	context('Trade sUSD => sETH', () => {
+	context('Trade sUSD => iETH', () => {
 		before(() => {
-			exchange.visit('sETH-sUSD');
+			exchange.visit('iETH-sUSD');
 			exchange.connectMetamaskWallet();
 			exchange.waitUntilLoggedIn();
 		});
