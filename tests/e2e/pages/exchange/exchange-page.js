@@ -1,5 +1,6 @@
 import Page from '../page';
 import Header from './header';
+import Notifications from './notifications';
 import Onboard from './onboard';
 
 export default class ExchangePage extends Page {
@@ -7,6 +8,15 @@ export default class ExchangePage extends Page {
 		super();
 		this.header = new Header();
 		this.onboard = new Onboard();
+		this.notifications = new Notifications();
+	}
+
+	getCurrencyAmount() {
+		return cy.findByTestId('left-side').findByTestId('currency-amount');
+	}
+
+	getSubmitOrderBtn() {
+		return cy.findByTestId('submit-order');
 	}
 
 	visit(pair) {
@@ -34,5 +44,22 @@ export default class ExchangePage extends Page {
 	getLoggedInWalletAddress() {
 		const walletButton = this.header.getWalletButton();
 		return walletButton.invoke('text');
+	}
+
+	waitForTransactionSuccess() {
+		cy.waitUntil(
+			() => {
+				const txSuccessNotification = this.notifications.getTransactionSuccessNotification();
+				return txSuccessNotification.should('exist');
+			},
+			{
+				timeout: 60000,
+			}
+		);
+	}
+
+	getTransactionUrl() {
+		const txUrl = this.notifications.getTransactionSuccessNotificationLink();
+		return txUrl.invoke('attr', 'href');
 	}
 }
