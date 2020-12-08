@@ -1,3 +1,5 @@
+/* eslint-disable ui-testing/no-hard-wait */
+/* eslint-disable cypress/no-unnecessary-waiting */
 import Page from '../page';
 import Header from './header';
 import Notifications from './notifications';
@@ -39,6 +41,8 @@ export default class ExchangePage extends Page {
 			const walletButton = this.header.getWalletButton();
 			return walletButton.should('exist');
 		});
+		// waiting for wallet button is not enough in rare cases to be logged in
+		cy.wait(2000);
 	}
 
 	getLoggedInWalletAddress() {
