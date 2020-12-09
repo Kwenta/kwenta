@@ -135,26 +135,6 @@ jobs:
             echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME.${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
           fi
 
-      - name: Run lighthouse
-        run: |
-          lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js
-          lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js
-        env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Archive lighthouse artifacts
-        uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
-        # run on lighthouse fail
-        if: always()
-        with:
-          name: lighthouse-reports
-          path: |
-            .lighthouseci
-            lighthouse-desktop-report
-            lighthouse-mobile-report
-        continue-on-error: true
-
       - name: Download build
         uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
         with:
