@@ -21,7 +21,10 @@ export default class Page {
 	waitUntilAvailableOnEtherscan(url, alias) {
 		cy.request(url).as(alias);
 		cy.get(`@${alias}`).then((response) => {
-			if (response.body.includes('This transaction has been included into Block No')) {
+			if (
+				response.body.includes('This transaction has been included into Block No') ||
+				response.body.includes('</i>Pending</span>')
+			) {
 				cy.wait(10000);
 				this.waitUntilAvailableOnEtherscan(url, alias);
 			}
