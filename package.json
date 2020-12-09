@@ -12,7 +12,6 @@
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
-		"test:e2e:ci": "synpress run --record"
 		"test:e2e:ci": "synpress run --record --parallel"
 	},
 	"dependencies": {
