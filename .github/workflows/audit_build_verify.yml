@@ -97,6 +97,12 @@ jobs:
       # run only on master/dev branch
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       runs-on: ubuntu-latest
+      strategy:
+        # when one test fails, DO NOT cancel the other containers, because this will kill Cypress processes leaving the Dashboard hanging
+        # https://github.com/cypress-io/github-action/issues/48
+        fail-fast: false
+        matrix:
+          containers: [1, 2]
 
       container:
         image: ghcr.io/synthetixio/docker-e2e/base:12.20
