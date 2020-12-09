@@ -7,6 +7,7 @@ describe('Trades tests', () => {
 		before(() => {
 			exchange.visit('iETH-sUSD');
 			exchange.connectMetamaskWallet();
+			exchange.acceptMetamaskAccessRequest();
 			exchange.waitUntilLoggedIn();
 		});
 		it(`should exchange with success`, () => {
