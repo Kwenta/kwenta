@@ -5,6 +5,7 @@ import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
+import BigNumber from 'bignumber.js';
 
 import { Synth } from 'lib/synthetix';
 
@@ -53,6 +54,7 @@ type TradeSummaryCardProps = {
 	className?: string;
 	exchangeFeeRate: number | null;
 	transactionFee?: number | null;
+	feeCost: BigNumber | null;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -69,6 +71,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	attached,
 	exchangeFeeRate,
 	transactionFee,
+	feeCost,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -182,12 +185,11 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<SummaryItem>
 						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
 						<SummaryItemValue>
-							{exchangeFeeRate != null && baseCurrencyAmount
-								? formatCurrency(
-										selectedPriceCurrency.name,
-										Number(baseCurrencyAmount) * exchangeFeeRate * basePriceRate,
-										{ sign: selectedPriceCurrency.sign }
-								  )
+							{feeCost != null
+								? formatCurrency(selectedPriceCurrency.name, feeCost, {
+										sign: selectedPriceCurrency.sign,
+										minDecimals: feeCost.lt(0.01) ? 4 : 2,
+								  })
 								: NO_VALUE}
 						</SummaryItemValue>
 					</SummaryItem>
