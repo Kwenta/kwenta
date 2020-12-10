@@ -2,12 +2,13 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Img, { Svg } from 'react-optimized-image';
-
+import BigNumber from 'bignumber.js';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
 	NoTextTransform,
 	FlexDivColCentered,
+	Tooltip,
 } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
@@ -19,9 +20,14 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 
-import { formatCurrency } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	LONG_CRYPTO_CURRENCY_DECIMALS,
+	toBigNumber,
+} from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { ESTIMATE_VALUE } from 'constants/placeholder';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -32,6 +38,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyKey: CurrencyKey;
 	quoteCurrencyAmount: string;
 	totalTradePrice: string;
+	feeAmountInBaseCurrency: BigNumber | null;
 	txProvider: 'synthetix' | '1inch';
 };
 
@@ -44,10 +51,22 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	baseCurrencyAmount,
 	quoteCurrencyAmount,
 	totalTradePrice,
+	feeAmountInBaseCurrency,
 	txProvider,
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const getBaseCurrencyAmount = (decimals?: number) =>
+		formatCurrency(
+			baseCurrencyKey,
+			feeAmountInBaseCurrency != null
+				? toBigNumber(baseCurrencyAmount).minus(feeAmountInBaseCurrency)
+				: baseCurrencyAmount,
+			{
+				minDecimals: decimals,
+			}
+		);
 
 	return (
 		<StyledBaseModal
@@ -90,7 +109,17 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
-					<SummaryItemValue>{formatCurrency(baseCurrencyKey, baseCurrencyAmount)}</SummaryItemValue>
+					<SummaryItemValue>
+						<StyledTooltip
+							placement="right"
+							content={<span>{getBaseCurrencyAmount(LONG_CRYPTO_CURRENCY_DECIMALS)}</span>}
+							arrow={false}
+						>
+							<span>
+								{ESTIMATE_VALUE} {getBaseCurrencyAmount()}
+							</span>
+						</StyledTooltip>
+					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
 					<SummaryItemLabel>
@@ -201,6 +230,14 @@ const TxProvider = styled.div`
 	img {
 		vertical-align: middle;
 		margin-left: 10px;
+	}
+`;
+
+const StyledTooltip = styled(Tooltip)`
+	.tippy-content {
+		padding: 5px;
+		font-family: ${(props) => props.theme.fonts.mono};
+		font-size: 12px;
 	}
 `;
 

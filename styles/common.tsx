@@ -1,3 +1,4 @@
+import Tippy from '@tippyjs/react';
 import { zIndex } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
@@ -202,4 +203,10 @@ export const SwapCurrenciesButton = styled.button`
 	align-items: center;
 	justify-content: center;
 	z-index: ${zIndex.BASE};
+`;
+
+export const Tooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 0.5px solid ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
 `;
