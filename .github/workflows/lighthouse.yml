@@ -1,0 +1,45 @@
+name: Lighthouse scan
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Url of website to scan
+        required: true
+        default: https://kwenta.io/
+
+jobs:
+  lighthouse_scan:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-e2e/base:12.20
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+      options: --shm-size=7gb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+
+      - name: Run lighthouse
+        run: |
+          lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js
+          lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            BASE_URL: ${{ github.event.inputs.url }}
+        continue-on-error: true
+
+      - name: Archive lighthouse artifacts
+        uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
+        # run on lighthouse fail
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: |
+            .lighthouseci
+            lighthouse-desktop-report
+            lighthouse-mobile-report
+        continue-on-error: true

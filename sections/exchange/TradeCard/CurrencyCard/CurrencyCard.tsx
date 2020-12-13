@@ -67,7 +67,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	return (
 		<Card className="currency-card" {...rest}>
 			<StyledCardBody>
-				<LabelContainer>
+				<LabelContainer data-testid="destination">
 					{isBase ? t('exchange.common.into') : t('exchange.common.from')}
 				</LabelContainer>
 				<CurrencyContainer>
@@ -75,6 +75,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						currencyKeySelected={currencyKeySelected}
 						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 						role="button"
+						data-testid="currency-selector"
 					>
 						{currencyKey ?? (
 							<CapitalizedText>
@@ -89,8 +90,9 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								value={amount}
 								onChange={(_, value) => onAmountChange(value)}
 								placeholder="0"
+								data-testid="currency-amount"
 							/>
-							<CurrencyAmountValue>
+							<CurrencyAmountValue data-testid="amount-value">
 								{formatCurrency(selectedPriceCurrency.name, tradeAmount, {
 									sign: selectedPriceCurrency.sign,
 								})}
@@ -103,6 +105,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					<WalletBalance
 						onClick={hasWalletBalance ? onBalanceClick : undefined}
 						insufficientBalance={insufficientBalance}
+						data-testid="wallet-balance"
 					>
 						{/* @ts-ignore */}
 						{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
