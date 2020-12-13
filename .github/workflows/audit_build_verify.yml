@@ -153,6 +153,7 @@ jobs:
         run: npm run test:e2e:ci
         env:
             SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+            PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
             CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
