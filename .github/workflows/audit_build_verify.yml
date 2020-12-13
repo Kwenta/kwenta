@@ -121,6 +121,7 @@ jobs:
           path: |
             .npm
             node_modules
+            ~/.cache/Cypress
           key: ${{ runner.os }}-verify-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-verify-
