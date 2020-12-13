@@ -1,11 +1,18 @@
 import ExchangePage from '../pages/exchange/exchange-page';
 
 const exchange = new ExchangePage();
+const testedAsset = 'sETH';
 
 describe('Trades tests', () => {
-	context('Trade sUSD => sADA', () => {
+	context(`Trade sUSD => ${testedAsset}`, () => {
 		before(() => {
-			exchange.visit('sADA-sUSD');
+			exchange.snxExchangerSettle(testedAsset).then((settleTx) => {
+				if (settleTx) {
+					exchange.waitUntilAvailableOnEtherscan(settleTx, 'settleTx');
+				}
+			});
+			exchange.snxCheckWaitingPeriod(testedAsset);
+			exchange.visit(`${testedAsset}-sUSD`);
 			exchange.connectMetamaskWallet();
 			exchange.acceptMetamaskAccessRequest();
 			exchange.waitUntilLoggedIn();
