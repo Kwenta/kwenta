@@ -92,7 +92,7 @@ jobs:
         name: build
         path: build.tar.gz
 
-  verify:
+  e2e:
       needs: build
       # run only on master/dev branch
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
@@ -122,9 +122,9 @@ jobs:
             .npm
             node_modules
             ~/.cache/Cypress
-          key: ${{ runner.os }}-verify-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-e2e-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-verify-
+            ${{ runner.os }}-e2e-
         continue-on-error: true
 
       - name: Install dependencies
