@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-sec-tools/base:12.19
+      image: ghcr.io/synthetixio/docker-sec-tools/base:12.20
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-node/alpine:12.19
+      image: ghcr.io/synthetixio/docker-node/alpine:12.20
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -49,10 +49,9 @@ jobs:
         path: |
           .npm
           node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-build-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-node-
-          ${{ runner.os }}-
+          ${{ runner.os }}-build-
       continue-on-error: true
 
     - name: Install dependencies
@@ -83,29 +82,53 @@ jobs:
     - name: Build
       run: npm run build
 
-    - name: Archive artifacts
+    - name: Compress build
+      run: tar -zcvf build.tar.gz .next
+
+    - name: Archive build
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
       with:
         name: build
-        path: .next
+        path: build.tar.gz
 
-  verify:
+  e2e:
       needs: build
       # run only on master/dev branch
-      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
       runs-on: ubuntu-latest
+      strategy:
+        # when one test fails, DO NOT cancel the other containers, because this will kill Cypress processes leaving the Dashboard hanging
+        # https://github.com/cypress-io/github-action/issues/48
+        fail-fast: false
+        matrix:
+          containers: [1, 2]
 
       container:
-        image: ghcr.io/synthetixio/docker-e2e/base:12.19
+        image: ghcr.io/synthetixio/docker-e2e/base:12.20
         credentials:
           username: synthetixio
           password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-        options: --shm-size=4gb
+        options: --shm-size=7gb
 
       steps:
       - name: Checkout
         uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+
+      - name: Cache node modules
+        uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+        with:
+          path: |
+            .npm
+            node_modules
+            ~/.cache/Cypress
+          key: ${{ runner.os }}-e2e-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-e2e-
+        continue-on-error: true
+
+      - name: Install dependencies
+        run: npm install --no-audit
 
       - name: Set deployment url
         shell: bash
@@ -119,21 +142,29 @@ jobs:
             echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME.${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
           fi
 
-      - name: Run lighthouse
-        run: |
-          lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js || true
-          lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js || true
-        env:
-            GH_TOKEN: ${{ secrets.GH_READ_REPO }}
+      - name: Download build
+        uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
+        with:
+          name: build
 
-      - name: Archive artifacts
+      - name: Extract build
+        run: tar -xf build.tar.gz
+
+      - name: Run e2e tests
+        run: npm run test:e2e:ci
+        env:
+            SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+            PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+            CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Archive e2e artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
-        # run on lighthouse fail
         if: always()
         with:
-          name: lighthouse-reports
+          name: e2e-artifacts
           path: |
-            .lighthouseci
-            lighthouse-desktop-report
-            lighthouse-mobile-report
-      continue-on-error: true
+            tests/e2e/videos
+            tests/e2e/screenshots
+        continue-on-error: true
