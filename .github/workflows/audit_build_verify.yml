@@ -144,7 +144,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
+        uses: actions/download-artifact@f144d3c3916a86f4d6b11ff379d17a49d8f85dbc # pin@v2
         with:
           name: build
 
