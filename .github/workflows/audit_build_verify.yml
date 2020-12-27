@@ -121,14 +121,15 @@ jobs:
           path: |
             .npm
             node_modules
-            ~/.cache/Cypress
-          key: ${{ runner.os }}-e2e-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-e2e_tests-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-e2e-
+            ${{ runner.os }}-e2e_tests-
         continue-on-error: true
 
       - name: Install dependencies
         run: npm install --no-audit
+        env:
+            CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Set deployment url
         shell: bash
@@ -143,7 +144,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@f8e41fbffeebb48c0273438d220bb2387727471f # pin@v2
+        uses: actions/download-artifact@f144d3c3916a86f4d6b11ff379d17a49d8f85dbc # pin@v2
         with:
           name: build
 
@@ -158,6 +159,7 @@ jobs:
             CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
             CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Archive e2e artifacts
         uses: actions/upload-artifact@726a6dcd0199f578459862705eed35cda05af50b # pin@v2
