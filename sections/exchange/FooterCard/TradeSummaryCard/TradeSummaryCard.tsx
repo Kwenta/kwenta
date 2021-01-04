@@ -183,10 +183,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						</SummaryItemValue>
 					</SummaryItem>
 					<SummaryItem>
-						<SummaryItemLabel data-testid="exchange-fee-cost">
-							{t('exchange.summary-info.fee-cost')}
-						</SummaryItemLabel>
-						<SummaryItemValue>
+						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+						<SummaryItemValue data-testid="exchange-fee-cost">
 							{feeCost != null
 								? formatCurrency(selectedPriceCurrency.name, feeCost, {
 										sign: selectedPriceCurrency.sign,
