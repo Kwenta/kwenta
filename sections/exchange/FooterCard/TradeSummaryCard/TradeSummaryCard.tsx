@@ -87,9 +87,9 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	]);
 
 	const gasPriceItem = hasCustomGasPrice ? (
-		<span>{Number(customGasPrice)}</span>
+		<span data-testid="gas-price">{Number(customGasPrice)}</span>
 	) : (
-		<span>
+		<span data-testid="gas-price">
 			{ESTIMATE_VALUE} {gasPrice}
 		</span>
 	);
@@ -166,7 +166,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						components={[<NoTextTransform />]}
 					/>
 				</SummaryItemLabel>
-				<SummaryItemValue>
+				<SummaryItemValue data-testid="total-trade-price">
 					{baseCurrencyAmount
 						? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
 								sign: selectedPriceCurrency.sign,
@@ -178,12 +178,14 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				<>
 					<SummaryItem>
 						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-						<SummaryItemValue>
+						<SummaryItemValue data-testid="exchange-fee-rate">
 							{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
 						</SummaryItemValue>
 					</SummaryItem>
 					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+						<SummaryItemLabel data-testid="exchange-fee-cost">
+							{t('exchange.summary-info.fee-cost')}
+						</SummaryItemLabel>
 						<SummaryItemValue>
 							{feeCost != null
 								? formatCurrency(selectedPriceCurrency.name, feeCost, {
@@ -226,6 +228,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 							disabled={isSubmissionDisabled}
 							onClick={onSubmit}
 							size="lg"
+							data-testid="submit-order"
 						>
 							{isSubmissionDisabled
 								? t(`exchange.summary-info.button.${submissionDisabledReason}`)

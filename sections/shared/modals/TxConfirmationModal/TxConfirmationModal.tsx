@@ -77,39 +77,49 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			<Currencies>
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
-					<Currency.Icon currencyKey={quoteCurrencyKey} width="40px" height="40px" />
+					<Currency.Icon
+						currencyKey={quoteCurrencyKey}
+						width="40px"
+						height="40px"
+						data-testid="quote-currency-img"
+					/>
 				</CurrencyItem>
 				<ArrowsIconContainer>
 					<Svg src={ArrowsIcon} />
 				</ArrowsIconContainer>
 				<CurrencyItem>
 					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
-					<Currency.Icon currencyKey={baseCurrencyKey} width="40px" height="40px" />
+					<Currency.Icon
+						currencyKey={baseCurrencyKey}
+						width="40px"
+						height="40px"
+						data-testid="base-currency-img"
+					/>
 				</CurrencyItem>
 			</Currencies>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			<Summary>
 				<SummaryItem>
-					<SummaryItemLabel>
+					<SummaryItemLabel data-testid="quote-currency-label">
 						<Trans
 							i18nKey="common.currency.currency-amount"
 							values={{ currencyKey: quoteCurrencyKey }}
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
-					<SummaryItemValue>
+					<SummaryItemValue data-testid="quote-currency-value">
 						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
 					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
-					<SummaryItemLabel>
+					<SummaryItemLabel data-testid="base-currency-label">
 						<Trans
 							i18nKey="common.currency.currency-amount"
 							values={{ currencyKey: baseCurrencyKey }}
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
-					<SummaryItemValue>
+					<SummaryItemValue data-testid="base-currency-value">
 						<StyledTooltip
 							placement="right"
 							content={<span>{getBaseCurrencyAmount(LONG_CRYPTO_CURRENCY_DECIMALS)}</span>}
@@ -122,14 +132,14 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
-					<SummaryItemLabel>
+					<SummaryItemLabel data-testid="total-trade-price-label">
 						<Trans
 							i18nKey="common.currency.estimated-currency-value"
 							values={{ currencyKey: selectedPriceCurrency.asset }}
 							components={[<NoTextTransform />]}
 						/>
 					</SummaryItemLabel>
-					<SummaryItemValue>
+					<SummaryItemValue data-testid="total-trade-price-value">
 						{formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
 							sign: selectedPriceCurrency.sign,
 						})}
@@ -150,7 +160,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txError && (
 				<Actions>
 					<Message>{t('common.transaction.error')}</Message>
-					<MessageButton onClick={attemptRetry}>{t('common.transaction.reattempt')}</MessageButton>
+					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
+						{t('common.transaction.reattempt')}
+					</MessageButton>
 				</Actions>
 			)}
 		</StyledBaseModal>
