@@ -67,17 +67,17 @@ const ExchangePage = () => {
 				<StyledPageContent>
 					<DesktopOnlyView>
 						<DesktopCardsContainer>
-							<LeftCardContainer>
+							<LeftCardContainer data-testid="left-side">
 								{quoteCurrencyCard}
 								{quotePriceChartCard}
 								{quoteMarketDetailsCard}
 							</LeftCardContainer>
 							<Spacer>
-								<SwapCurrenciesButton onClick={handleCurrencySwap}>
+								<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
 									<Svg src={ArrowsIcon} />
 								</SwapCurrenciesButton>
 							</Spacer>
-							<RightCardContainer>
+							<RightCardContainer data-testid="right-side">
 								{baseCurrencyCard}
 								{basePriceChartCard}
 								{baseMarketDetailsCard}
@@ -88,19 +88,19 @@ const ExchangePage = () => {
 						<MobileContainer>
 							{quoteCurrencyCard}
 							<VerticalSpacer>
-								<SwapCurrenciesButton onClick={handleCurrencySwap}>
+								<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
 									<Svg src={ArrowsIcon} />
 								</SwapCurrenciesButton>
 							</VerticalSpacer>
 							{baseCurrencyCard}
 							<SliderContainer>
 								<Slider arrows={false} dots={false}>
-									<SliderContent>
+									<SliderContent data-testid="left-side">
 										{basePriceChartCard}
 										<SliderContentSpacer />
 										{baseMarketDetailsCard}
 									</SliderContent>
-									<SliderContent>
+									<SliderContent data-testid="right-side">
 										{quotePriceChartCard}
 										<SliderContentSpacer />
 										{quoteMarketDetailsCard}

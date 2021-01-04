@@ -3,5 +3,29 @@
 	"plugins": [
 		"react-optimized-image/plugin",
 		["styled-components", { "ssr": true, "displayName": true }]
-	]
+	],
+	"env": {
+		"development": {
+			"plugins": [
+				[
+					"react-generate-property",
+					{ "customProperty": "data-qa-prop", "dirLevel": 1 }
+				],
+				[
+					"transform-react-qa-classes",
+					{
+						"attribute": "data-qa-class",
+						"format": "camel"
+					}
+				],
+				[
+					"transform-react-styled-components-qa",
+					{
+						"attribute": "data-qa-styled",
+						"format": "camel"
+					}
+				]
+			]
+		}
+	}
 }
