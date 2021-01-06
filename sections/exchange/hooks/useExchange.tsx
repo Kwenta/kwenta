@@ -277,6 +277,20 @@ const useExchange = ({
 		ethPriceRate,
 	]);
 
+	const feeAmountInBaseCurrency = useMemo(() => {
+		if (exchangeFeeRate != null && baseCurrencyAmount) {
+			return toBigNumber(baseCurrencyAmount).multipliedBy(exchangeFeeRate);
+		}
+		return null;
+	}, [baseCurrencyAmount, exchangeFeeRate]);
+
+	const feeCost = useMemo(() => {
+		if (feeAmountInBaseCurrency != null) {
+			return feeAmountInBaseCurrency.multipliedBy(basePriceRate);
+		}
+		return null;
+	}, [feeAmountInBaseCurrency, basePriceRate]);
+
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
@@ -529,6 +543,7 @@ const useExchange = ({
 					quoteCurrencyKey={quoteCurrencyKey}
 					exchangeFeeRate={exchangeFeeRate}
 					transactionFee={transactionFee}
+					feeCost={feeCost}
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix' ? true : false}
 				/>
@@ -540,6 +555,7 @@ const useExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
+					feeAmountInBaseCurrency={feeAmountInBaseCurrency}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
