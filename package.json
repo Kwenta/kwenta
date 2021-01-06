@@ -22,7 +22,7 @@
 		"@synthetixio/assets": "2.0.5",
 		"@synthetixio/js": "2.35.5",
 		"@tippyjs/react": "4.1.0",
-		"axios": "0.20.0",
+		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
 		"bnc-notify": "1.5.0",
 		"bnc-onboard": "1.14.0",
