@@ -1,16 +1,19 @@
-import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
+import detectEthereumProvider from '@metamask/detect-provider';
 import { NetworkId } from '@synthetixio/js';
+
+import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { GWEI_UNIT } from 'constants/network';
+
+type EthereumProvider = {
+	isMetaMask: boolean;
+	networkVersion: string;
+};
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
-		if (window.web3?.eth?.net) {
-			const networkId = await window.web3.eth.net.getId();
-			return Number(networkId);
-		} else if (window.web3?.version?.network) {
-			return Number(window.web3.version.network);
-		} else if (window.ethereum?.networkVersion) {
-			return Number(window.ethereum?.networkVersion);
+		const provider = (await detectEthereumProvider()) as EthereumProvider;
+		if (provider) {
+			return Number(provider.networkVersion);
 		}
 		return DEFAULT_NETWORK_ID;
 	} catch (e) {
