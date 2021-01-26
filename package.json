@@ -29,7 +29,7 @@
 		"date-fns": "2.15.0",
 		"ethers": "5.0.8",
 		"i18next": "19.7.0",
-		"immer": "7.0.8",
+		"immer": "8.0.1",
 		"lodash": "4.17.20",
 		"next": "10.0.0",
 		"next-compose-plugins": "2.2.0",
@@ -50,7 +50,7 @@
 		"styled-media-query": "2.1.2",
 		"synthetix-data": "2.1.29",
 		"unstated-next": "1.1.0",
-		"use-immer": "0.4.1"
+		"use-immer": "0.4.2"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
