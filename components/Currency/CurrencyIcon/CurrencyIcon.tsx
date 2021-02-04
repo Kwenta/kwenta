@@ -54,6 +54,13 @@ import sADAIcon from '@synthetixio/assets/synths/sADA.svg';
 import sLINKIcon from '@synthetixio/assets/synths/sLINK.svg';
 import sTRXIcon from '@synthetixio/assets/synths/sTRX.svg';
 import sDASHIcon from '@synthetixio/assets/synths/sDASH.svg';
+import sAAVEIcon from '@synthetixio/assets/synths/sAAVE.svg';
+import sUNIIcon from '@synthetixio/assets/synths/sUNI.svg';
+import sYFIIcon from '@synthetixio/assets/synths/sYFI.svg';
+import sDOTIcon from '@synthetixio/assets/synths/sDOT.svg';
+import sRENIcon from '@synthetixio/assets/synths/sREN.svg';
+import sCOMPIcon from '@synthetixio/assets/synths/sCOMP.svg';
+
 import sETCIcon from '@synthetixio/assets/synths/sETC.svg';
 import iBTCIcon from '@synthetixio/assets/synths/iBTC.svg';
 import iETHIcon from '@synthetixio/assets/synths/iETH.svg';
@@ -69,6 +76,13 @@ import iLINKIcon from '@synthetixio/assets/synths/iLINK.svg';
 import iTRXIcon from '@synthetixio/assets/synths/iTRX.svg';
 import iDASHIcon from '@synthetixio/assets/synths/iDASH.svg';
 import iETCIcon from '@synthetixio/assets/synths/iETC.svg';
+import iAAVEIcon from '@synthetixio/assets/synths/iAAVE.svg';
+import iUNIIcon from '@synthetixio/assets/synths/iUNI.svg';
+import iYFIIcon from '@synthetixio/assets/synths/iYFI.svg';
+import iDOTIcon from '@synthetixio/assets/synths/iDOT.svg';
+import iRENIcon from '@synthetixio/assets/synths/iREN.svg';
+import iCOMPIcon from '@synthetixio/assets/synths/iCOMP.svg';
+
 // Commoditiy Synths
 import sXAUIcon from '@synthetixio/assets/synths/sXAU.svg';
 import sXAGIcon from '@synthetixio/assets/synths/sXAG.svg';
@@ -158,6 +172,24 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case SYNTHS_MAP.sDASH: {
 			return <Img src={sDASHIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sAAVE: {
+			return <Img src={sAAVEIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sUNI: {
+			return <Img src={sUNIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sYFI: {
+			return <Img src={sYFIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sDOT: {
+			return <Img src={sDOTIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sREN: {
+			return <Img src={sRENIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sCOMP: {
+			return <Img src={sCOMPIcon} {...props} />;
 		}
 		case SYNTHS_MAP.sETC: {
 			return <Img src={sETCIcon} {...props} />;
@@ -251,6 +283,24 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case SYNTHS_MAP.iOIL: {
 			return <Img src={iOILIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iAAVE: {
+			return <Img src={iAAVEIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iUNI: {
+			return <Img src={iUNIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iYFI: {
+			return <Img src={iYFIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iDOT: {
+			return <Img src={iDOTIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iREN: {
+			return <Img src={iRENIcon} {...props} />;
+		}
+		case SYNTHS_MAP.iCOMP: {
+			return <Img src={iCOMPIcon} {...props} />;
 		}
 		default:
 			return null;

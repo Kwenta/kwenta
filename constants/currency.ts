@@ -29,6 +29,12 @@ export const SYNTHS = [
 	'sLINK',
 	'sTRX',
 	'sDASH',
+	'sAAVE',
+	'sUNI',
+	'sYFI',
+	'sDOT',
+	'sREN',
+	'sCOMP',
 	'sETC',
 	'iBTC',
 	'iETH',
@@ -60,6 +66,12 @@ export const SYNTHS = [
 	'sDEFI',
 	'iCEX',
 	'iDEFI',
+	'iAAVE',
+	'iUNI',
+	'iYFI',
+	'iDOT',
+	'iREN',
+	'iCOMP',
 ];
 
 export const SYNTHS_MAP = keyBy(SYNTHS);
