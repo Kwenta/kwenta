@@ -58,7 +58,10 @@ const useSynthSuspensionQuery = (
 	return useQuery<SynthSuspended>(
 		QUERY_KEYS.Synths.Suspension(currencyKey ?? ''),
 		async () => {
-			const [isSuspended, reason] = (await synthetix.js?.contracts.SystemStatus.synthSuspension(
+			const [
+				isSuspended,
+				reason,
+			] = (await synthetix.js?.contracts.SystemStatus.synthExchangeSuspension(
 				ethers.utils.formatBytes32String(currencyKey!)
 			)) as [boolean, BigNumberish];
 
