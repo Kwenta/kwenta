@@ -28,16 +28,8 @@ import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import { NoTextTransform, numericValueCSS, NumericValue } from 'styles/common';
 import media from 'styles/media';
 
-import { MessageContainer } from '../common';
+import { MessageContainer, SubmissionDisabledReason } from '../common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
-export type SubmissionDisabledReason =
-	| 'fee-reclaim-period'
-	| 'select-synth'
-	| 'insufficient-balance'
-	| 'submitting-order'
-	| 'connect-wallet'
-	| 'enter-amount';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: SubmissionDisabledReason | null;

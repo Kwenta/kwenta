@@ -27,7 +27,7 @@ type CurrencyCardProps = {
 	walletBalance: BigNumber | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: number;
+	priceRate: number | null;
 	className?: string;
 };
 
@@ -56,8 +56,8 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
 
-	let tradeAmount = amountBN.multipliedBy(priceRate);
-	if (selectPriceCurrencyRate != null) {
+	let tradeAmount = priceRate != null ? amountBN.multipliedBy(priceRate) : null;
+	if (selectPriceCurrencyRate != null && tradeAmount != null) {
 		tradeAmount = getPriceAtCurrentRate(tradeAmount);
 	}
 
@@ -93,9 +93,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								data-testid="currency-amount"
 							/>
 							<CurrencyAmountValue data-testid="amount-value">
-								{formatCurrency(selectedPriceCurrency.name, tradeAmount, {
-									sign: selectedPriceCurrency.sign,
-								})}
+								{tradeAmount != null
+									? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+											sign: selectedPriceCurrency.sign,
+									  })
+									: null}
 							</CurrencyAmountValue>
 						</CurrencyAmountContainer>
 					)}

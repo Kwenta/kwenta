@@ -21,15 +21,16 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
-import TradeSummaryCard, {
-	SubmissionDisabledReason,
-} from 'sections/exchange/FooterCard/TradeSummaryCard';
+import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
+import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import SelectBaseCurrencyModal from 'sections/shared/modals/SelectBaseCurrencyModal';
 import SelectQuoteCurrencyModal from 'sections/shared/modals/SelectQuoteCurrencyModal';
+import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
 import { hasOrdersNotificationState } from 'store/ui';
 import {
@@ -99,6 +100,7 @@ const useExchange = ({
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectBaseCurrencyModal, setSelectBaseCurrencyModal] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
+	const [selectBalancerTradeModal, setSelectBalancerTradeModal] = useState<boolean>(false);
 	const [txError, setTxError] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
@@ -471,7 +473,12 @@ const useExchange = ({
 		/>
 	);
 	const quotePriceChartCard = showPriceCard ? (
-		<PriceChartCard side="quote" currencyKey={quoteCurrencyKey} priceRate={quotePriceRate} />
+		<PriceChartCard
+			side="quote"
+			currencyKey={quoteCurrencyKey}
+			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
+			priceRate={quotePriceRate}
+		/>
 	) : null;
 
 	const quoteMarketDetailsCard = showMarketDetailsCard ? (
@@ -507,7 +514,12 @@ const useExchange = ({
 	);
 
 	const basePriceChartCard = showPriceCard ? (
-		<PriceChartCard side="base" currencyKey={baseCurrencyKey} priceRate={basePriceRate} />
+		<PriceChartCard
+			side="base"
+			currencyKey={baseCurrencyKey}
+			priceRate={basePriceRate}
+			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
+		/>
 	) : null;
 
 	const baseMarketDetailsCard = showMarketDetailsCard ? (
@@ -521,6 +533,13 @@ const useExchange = ({
 		<>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={footerCardAttached} />
+			) : (baseCurrencyMarketClosed.isMarketClosed && baseCurrencyKey === SYNTHS_MAP.sTSLA) ||
+			  (quoteCurrencyMarketClosed.isMarketClosed && quoteCurrencyKey === SYNTHS_MAP.sTSLA) ? (
+				<TradeBalancerFooterCard
+					synth={SYNTHS_MAP.sTSLA}
+					attached={footerCardAttached}
+					onClick={() => setSelectBalancerTradeModal(true)}
+				/>
 			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
 				<MarketClosureCard
 					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
@@ -598,6 +617,9 @@ const useExchange = ({
 						}
 					}}
 				/>
+			)}
+			{selectBalancerTradeModal && (
+				<BalancerTradeModal onDismiss={() => setSelectBalancerTradeModal(false)} />
 			)}
 		</>
 	);

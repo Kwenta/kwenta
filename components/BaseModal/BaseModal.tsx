@@ -16,6 +16,7 @@ type BaseModalProps = {
 	onDismiss: () => void;
 	children: ReactNode;
 	showCross?: boolean;
+	lowercase?: boolean;
 };
 
 export const BaseModal: FC<BaseModalProps> = ({
@@ -24,12 +25,13 @@ export const BaseModal: FC<BaseModalProps> = ({
 	children,
 	isOpen,
 	showCross = true,
+	lowercase,
 	...rest
 }) => (
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
 			<StyledCard className="card">
-				<StyledCardHeader className="card-header">
+				<StyledCardHeader lowercase={lowercase} className="card-header">
 					{title}
 					{showCross && (
 						<DismissButton onClick={onDismiss}>

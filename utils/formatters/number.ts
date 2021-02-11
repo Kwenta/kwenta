@@ -107,3 +107,13 @@ export const formatCurrencyWithKey = (
 	value: NumericValue,
 	decimals?: number
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
+
+export function scale(
+	input: BigNumber,
+	decimalPlaces: number,
+	isDivision: boolean = false
+): BigNumber {
+	const scalePow = new BigNumber(decimalPlaces.toString());
+	const scaleMul = new BigNumber(10).pow(scalePow);
+	return isDivision ? input.div(scaleMul) : input.times(scaleMul);
+}
