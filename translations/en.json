@@ -159,7 +159,9 @@
 				},
 				"market-closure": {
 					"title": "This market has been closed",
-					"subtitle": "Reset in progress."
+					"subtitle": "Reset in progress.",
+					"after-hours": "Aftermarket trading pool available <linkTag>{{linkText}}</linkTag>",
+					"here": "here"
 				},
 				"system-upgrade": {
 					"title": "Synth paused",
@@ -189,11 +191,13 @@
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"submit-order": "submit order",
-				"submitting-order": "submitting order..."
+				"submitting-order": "submitting order...",
+				"submitting-approval": "submitting approval...",
+				"approve-balancer": "approve balancer contract"
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to start trading Synths:"
+			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
@@ -219,6 +223,10 @@
 					},
 					"both-synths-suspended": {
 						"message": "Synths selected are currently paused - reset in progress."
+					},
+					"after-hours": {
+						"message": "{{asset}} stock exchange is closed - trade on Balancer in the meantime",
+						"button-label": "Open Balancer Pool"
 					}
 				}
 			}
@@ -322,6 +330,21 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"afterHours": {
+			"title": "Aftermarket {{synth}} Trading Pool",
+			"approve": "Approve {{synth}}",
+			"balancer-pool": "Balancer Pool",
+			"slippage-levels": {
+				"low": "Low",
+				"medium": "Medium",
+				"high": "High"
+			},
+			"powered-by-balancer": "Powered by Balancer",
+			"max-slippage-tolerance": "Max Slippage Tolerance",
+			"estimated-slippage": "Estimated Slippage",
+			"confirm-text": "Confirm your transaction with your web3 provider",
+			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade {{synth}} at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
 		},
 		"settings": {
 			"title": "settings",
@@ -428,6 +451,9 @@
 		"dex-aggregators": {
 			"1inch": {
 				"title": "DEX Aggregator - 1inch.exchange"
+			},
+			"balancer": {
+				"title": "Balancer"
 			}
 		},
 		"totals": {
