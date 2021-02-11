@@ -52,6 +52,7 @@ export const SYNTHS = [
 	'iETC',
 	'sFTSE',
 	'sNIKKEI',
+	'sTSLA',
 	'sXAU',
 	'sXAG',
 	'sOIL',

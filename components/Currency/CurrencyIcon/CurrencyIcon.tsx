@@ -96,6 +96,7 @@ import iCEXIcon from '@synthetixio/assets/synths/iCEX.svg';
 // Equity Synths
 import sFTSEIcon from '@synthetixio/assets/synths/sFTSE.svg';
 import sNIKKEIIcon from '@synthetixio/assets/synths/sNIKKEI.svg';
+import sTSLAIcon from '@synthetixio/assets/synths/sTSLA.svg';
 // Forex Synths
 import sEURIcon from '@synthetixio/assets/synths/sEUR.svg';
 import sJPYIcon from '@synthetixio/assets/synths/sJPY.svg';
@@ -277,6 +278,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case SYNTHS_MAP.sNIKKEI: {
 			return <Img src={sNIKKEIIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sTSLA: {
+			return <Img src={sTSLAIcon} {...props} />;
 		}
 		case SYNTHS_MAP.sOIL: {
 			return <Img src={sOILIcon} {...props} />;
