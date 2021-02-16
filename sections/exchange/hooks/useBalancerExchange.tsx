@@ -7,6 +7,10 @@ import produce from 'immer';
 import { SOR } from '@balancer-labs/sor';
 import { BigNumber } from 'bignumber.js';
 import { NetworkId } from '@synthetixio/js';
+import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import { CurrencyKey, SYNTHS_MAP, sUSD_EXCHANGE_RATE, SYNTH_DECIMALS } from 'constants/currency';
 import useInterval from 'hooks/useInterval';
@@ -54,8 +58,6 @@ type ExchangeCardProps = {
 	showNoSynthsCard?: boolean;
 };
 
-const TX_PROVIDER = 'balancer';
-
 const BALANCER_LINKS = {
 	[NetworkId.Mainnet]: {
 		poolsUrl:
@@ -76,6 +78,7 @@ const useBalancerExchange = ({
 	persistSelectedCurrencies = false,
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
+	const { t } = useTranslation();
 	const { notify, provider, signer } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const network = useRecoilValue(networkState);
@@ -105,7 +108,7 @@ const useBalancerExchange = ({
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
-	const [txError, setTxError] = useState<boolean>(false);
+	const [txError, setTxError] = useState<string | null>(null);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -380,7 +383,7 @@ const useBalancerExchange = ({
 					: setBaseCurrencyAmount(formattedResult.toString());
 			}
 		},
-		[smartOrderRouter, quoteCurrencyAddress, baseCurrencyAddress, hasSetCostOutputTokenCalled]
+		[smartOrderRouter, quoteCurrencyAddress, baseCurrencyAddress]
 	);
 
 	const handleApprove = useCallback(async () => {
@@ -448,7 +451,7 @@ const useBalancerExchange = ({
 			balancerProxyContract?.address != null &&
 			provider != null
 		) {
-			setTxError(false);
+			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
 			try {
@@ -491,7 +494,7 @@ const useBalancerExchange = ({
 					if (notify) {
 						const { emitter } = notify.hash(tx.hash);
 						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
-
+						// TODO: replace with monitorHash
 						emitter.on('txConfirmed', () => {
 							setOrders((orders) =>
 								produce(orders, (draftState) => {
@@ -518,7 +521,7 @@ const useBalancerExchange = ({
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
 				console.log(e);
-				setTxError(true);
+				setTxError(e.message);
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -597,6 +600,7 @@ const useBalancerExchange = ({
 			onBalanceClick={handleAmountChangeQuoteMaxClick}
 			onCurrencySelect={undefined}
 			priceRate={quoteCurrencyKey === SYNTHS_MAP.sUSD ? quotePriceRate : null}
+			label={t('exchange.common.from')}
 		/>
 	);
 
@@ -610,6 +614,7 @@ const useBalancerExchange = ({
 			onBalanceClick={handleAmountChangeBaseMaxClick}
 			onCurrencySelect={undefined}
 			priceRate={baseCurrencyKey === SYNTHS_MAP.sUSD ? basePriceRate : null}
+			label={t('exchange.common.into')}
 		/>
 	);
 
@@ -640,7 +645,10 @@ const useBalancerExchange = ({
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
-					txProvider={TX_PROVIDER}
+					txProvider="balancer"
+					quoteCurrencyLabel={t('exchange.common.from')}
+					baseCurrencyLabel={t('exchange.common.into')}
+					icon={<Svg src={ArrowsIcon} />}
 				/>
 			)}
 			{approveModalOpen && (

@@ -13,7 +13,8 @@
 	"header": {
 		"nav": {
 			"exchange": "exchange",
-			"dashboard": "dashboard"
+			"dashboard": "dashboard",
+			"shorting": "shorting"
 		}
 	},
 	"homepage": {
@@ -186,12 +187,15 @@
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
+				"approve": "approve",
+				"approving": "approving",
 				"fee-reclaim-period": "fee reclaim period",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
+				"short-c-ratio-low": "c-ratio low",
 				"submitting-approval": "submitting approval...",
 				"approve-balancer": "approve balancer contract"
 			}
@@ -296,6 +300,88 @@
 			}
 		}
 	},
+	"shorting": {
+		"page-title": "Shorting | Kwenta",
+		"common": {
+			"collateral": "collateral",
+			"posting": "posting",
+			"shorting": "shorting",
+			"interestRate": "Interest Rate"
+		},
+		"rewards": {
+			"available": "Available Rewards",
+			"button": {
+				"claim": "Claim",
+				"submitting": "Submitting..."
+			}
+		},
+		"history": {
+			"assetsSort": {
+				"allAssets": "All Assets"
+			},
+			"datesSort": {
+				"allDates": "All Dates",
+				"pastWeek": "Past Week",
+				"pastMonth": "Past Month",
+				"pastYear": "Past Year"
+			},
+			"sizesSort": {
+				"allSizes": "All Sizes"
+			},
+			"manageShort": {
+				"noResults": "Short not found",
+				"title": "Manage Position",
+				"close": "Close",
+				"subtitle": "Position Details",
+				"fields": {
+					"collateral": "Collateral ({{asset}})",
+					"liquidationPrice": "Liquidation Price ({{asset}})",
+					"profitLoss": "Profit / Loss ({{asset}})",
+					"shorting": "Shorting",
+					"collateralRatio": "Collateral Ratio",
+					"date": "Date Opened",
+					"interestRate": "Interest Rate",
+					"interestAccrued": "Interest Accrued"
+				},
+				"sections": {
+					"addCollateral": {
+						"nav-title": "Add Collateral"
+					},
+					"removeCollateral": {
+						"nav-title": "Remove Collateral"
+					},
+					"decreasePosition": {
+						"nav-title": "Decrease Position"
+					},
+					"increasePosition": {
+						"nav-title": "Increase Position"
+					},
+					"interestAccrued": {
+						"nav-title": "Interest Accrued"
+					},
+					"closePosition": {
+						"nav-title": "Close Position"
+					},
+					"panel": {
+						"collateral": "Collateral",
+						"shorting": "Shorting",
+						"wallet-balance": "Wallet Balance"
+					}
+				}
+			},
+			"table": {
+				"id": "ID",
+				"date": "Date",
+				"shorting": "Shorting",
+				"collateral": "Collateral",
+				"liquidationPrice": "Liquidation Price",
+				"cRatio": "C-Ratio",
+				"profitLoss": "Profit / Loss",
+				"noResults": "No shorts found",
+				"interestAccrued": "Interest Accrued"
+			}
+		}
+	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
 		"title": "404",
@@ -327,8 +413,18 @@
 				"non-synths": "non-synths"
 			}
 		},
+		"select-short-currency": {
+			"title": "select short asset",
+			"header": {
+				"your-synths": "your <0>{{currencyKey}}</0> balance"
+			}
+		},
 		"confirm-transaction": {
 			"title": "confirm transaction",
+			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"approve-transaction": {
+			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
 		"afterHours": {
@@ -412,6 +508,7 @@
 			"reattempt": "Try again"
 		},
 		"price": "price",
+		"asset": "asset",
 		"cancel": "cancel",
 		"order-types": {
 			"market": "market order",
@@ -457,7 +554,8 @@
 			}
 		},
 		"totals": {
-			"total-synth-value": "total synth value"
+			"total-synth-value": "total synth value",
+			"your-currencyKey-balance": "your <0>{{currencyKey}}</0> balance"
 		},
 		"pagination": {
 			"page": "Page",

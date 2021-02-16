@@ -44,7 +44,6 @@ const ExchangePage = () => {
 		footerCardAttached: false,
 		routingEnabled: true,
 		persistSelectedCurrencies: true,
-		allowCurrencySelection: true,
 		showNoSynthsCard: true,
 	});
 

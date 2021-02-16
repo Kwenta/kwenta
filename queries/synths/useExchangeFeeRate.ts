@@ -1,6 +1,8 @@
 import { useQuery, QueryConfig } from 'react-query';
-import { BigNumberish, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import { toBigNumber } from 'utils/formatters/number';
+import BigNumber from 'bignumber.js';
 
 import { appReadyState } from 'store/app';
 
@@ -12,19 +14,19 @@ import synthetix from 'lib/synthetix';
 const useExchangeFeeRate = (
 	quoteCurrencyKey: CurrencyKey | null,
 	baseCurrencyKey: CurrencyKey | null,
-	options?: QueryConfig<number>
+	options?: QueryConfig<BigNumber>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
-	return useQuery<number>(
+	return useQuery<BigNumber>(
 		QUERY_KEYS.Synths.ExchangeFeeRate(quoteCurrencyKey ?? '', baseCurrencyKey ?? ''),
 		async () => {
 			const feeRateForExchange = (await synthetix.js?.contracts.Exchanger.feeRateForExchange(
 				ethers.utils.formatBytes32String(quoteCurrencyKey!),
 				ethers.utils.formatBytes32String(baseCurrencyKey!)
-			)) as BigNumberish;
+			)) as ethers.BigNumber;
 
-			return Number(ethers.utils.formatEther(feeRateForExchange));
+			return toBigNumber(ethers.utils.formatEther(feeRateForExchange));
 		},
 		{
 			enabled: isAppReady && quoteCurrencyKey != null && baseCurrencyKey != null,

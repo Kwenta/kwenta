@@ -18,6 +18,7 @@ function useInterval(callback: () => void, delay: number | null, deps: Array<any
 			const id = setInterval(tick, delay);
 			return () => clearInterval(id);
 		}
+		// eslint-disable-next-line
 	}, [delay, ...deps]);
 }
 

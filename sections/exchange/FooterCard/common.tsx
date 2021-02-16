@@ -52,4 +52,7 @@ export type SubmissionDisabledReason =
 	| 'connect-wallet'
 	| 'enter-amount'
 	| 'submitting-approval'
-	| 'approve-balancer';
+	| 'approve-balancer'
+	| 'approving'
+	| 'claim'
+	| 'submitting';

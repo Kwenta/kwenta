@@ -1,4 +1,4 @@
-import { BigNumberish } from 'ethers';
+import { ethers } from 'ethers';
 import get from 'lodash/get';
 import { CurrencyKey } from '../constants/currency';
 import { isSynth } from './currencies';
@@ -39,7 +39,7 @@ export const getCurrencyKeyUSDBalance = (balances: Balances, currencyKey: Curren
 export const getCurrencyKeyUSDBalanceBN = (
 	balances: Balances,
 	currencyKey: CurrencyKey
-): BigNumberish =>
+): ethers.BigNumber =>
 	isSynth(currencyKey)
 		? get(balances, getSynthBalancePath(currencyKey, 'balanceBN'))
 		: get(balances, getCryptoCurrencyBalancePath(currencyKey, 'balanceBN'));

@@ -6,12 +6,18 @@ import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
 import BigNumber from 'bignumber.js';
+import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import ROUTES from 'constants/routes';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
-
-import Connector from 'containers/Connector';
-import Etherscan from 'containers/Etherscan';
+import {
+	CRYPTO_CURRENCY_MAP,
+	CurrencyKey,
+	DEFAULT_TOKEN_DECIMALS,
+	SYNTHS_MAP,
+} from 'constants/currency';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -53,6 +59,7 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
 import useCurrencyPair from './useCurrencyPair';
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import Notify from 'containers/Notify';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -77,8 +84,8 @@ const useExchange = ({
 	allowCurrencySelection = true,
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
-	const { notify } = Connector.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { t } = useTranslation();
+	const { monitorHash } = Notify.useContainer();
 	const { swap } = OneInch.useContainer();
 	const router = useRouter();
 
@@ -100,8 +107,8 @@ const useExchange = ({
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectBaseCurrencyModal, setSelectBaseCurrencyModal] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
+	const [txError, setTxError] = useState<string | null>(null);
 	const [selectBalancerTradeModal, setSelectBalancerTradeModal] = useState<boolean>(false);
-	const [txError, setTxError] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -135,8 +142,13 @@ const useExchange = ({
 	// 		? synthetix.synthsMap[quoteCurrencyKey]
 	// 		: null;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-	const rate = getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
-	const inverseRate = rate > 0 ? 1 / rate : 0;
+
+	const rate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
+		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
+	);
+	const inverseRate = useMemo(() => (rate > 0 ? 1 / rate : 0), [rate]);
+
 	const baseCurrencyBalance =
 		baseCurrencyKey != null && synthsWalletBalancesQuery.isSuccess
 			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
@@ -153,29 +165,33 @@ const useExchange = ({
 		}
 	}
 
-	const basePriceRate = getExchangeRatesForCurrencies(
-		exchangeRates,
-		baseCurrencyKey,
-		selectedPriceCurrency.name
+	const basePriceRate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
+		[exchangeRates, baseCurrencyKey, selectedPriceCurrency.name]
 	);
-	const quotePriceRate = getExchangeRatesForCurrencies(
-		exchangeRates,
-		quoteCurrencyKey,
-		selectedPriceCurrency.name
+	const quotePriceRate = useMemo(
+		() =>
+			getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name),
+		[exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name]
 	);
-	const ethPriceRate = getExchangeRatesForCurrencies(
-		exchangeRates,
-		SYNTHS_MAP.sETH,
-		selectedPriceCurrency.name
+	const ethPriceRate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const baseCurrencyAmountBN = toBigNumber(baseCurrencyAmount);
-	const quoteCurrencyAmountBN = toBigNumber(quoteCurrencyAmount);
+	const baseCurrencyAmountBN = useMemo(() => toBigNumber(baseCurrencyAmount), [baseCurrencyAmount]);
+	const quoteCurrencyAmountBN = useMemo(() => toBigNumber(quoteCurrencyAmount), [
+		quoteCurrencyAmount,
+	]);
 
-	let totalTradePrice = baseCurrencyAmountBN.multipliedBy(basePriceRate);
-	if (selectPriceCurrencyRate) {
-		totalTradePrice = totalTradePrice.dividedBy(selectPriceCurrencyRate);
-	}
+	const totalTradePrice = useMemo(() => {
+		let tradePrice = quoteCurrencyAmountBN.multipliedBy(quotePriceRate);
+		if (selectPriceCurrencyRate) {
+			tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+		}
+
+		return tradePrice;
+	}, [quoteCurrencyAmountBN, quotePriceRate, selectPriceCurrencyRate]);
 
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
@@ -313,7 +329,7 @@ const useExchange = ({
 	const getExchangeParams = () => {
 		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = ethers.utils.parseEther(quoteCurrencyAmount);
+		const amountToExchange = ethers.utils.parseUnits(quoteCurrencyAmount, DEFAULT_TOKEN_DECIMALS);
 		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
 		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
@@ -337,7 +353,7 @@ const useExchange = ({
 
 	const handleSubmit = async () => {
 		if (synthetix.js != null && gasPrice != null) {
-			setTxError(false);
+			setTxError(null);
 			setTxConfirmationModalOpen(true);
 			const exchangeParams = getExchangeParams();
 
@@ -379,11 +395,9 @@ const useExchange = ({
 					);
 					setHasOrdersNotification(true);
 
-					if (notify) {
-						const { emitter } = notify.hash(tx.hash);
-						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
-
-						emitter.on('txConfirmed', () => {
+					monitorHash({
+						txHash: tx.hash,
+						onTxConfirmed: () => {
 							setOrders((orders) =>
 								produce(orders, (draftState) => {
 									const orderIndex = orders.findIndex((order) => order.hash === tx.hash);
@@ -393,23 +407,13 @@ const useExchange = ({
 								})
 							);
 							synthsWalletBalancesQuery.refetch();
-							return {
-								autoDismiss: 0,
-								link,
-							};
-						});
-
-						emitter.on('all', () => {
-							return {
-								link,
-							};
-						});
-					}
+						},
+					});
 				}
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
 				console.log(e);
-				setTxError(true);
+				setTxError(e.message);
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -470,6 +474,7 @@ const useExchange = ({
 				allowCurrencySelection ? () => setSelectQuoteCurrencyModalOpen(true) : undefined
 			}
 			priceRate={quotePriceRate}
+			label={t('exchange.common.from')}
 		/>
 	);
 	const quotePriceChartCard = showPriceCard ? (
@@ -510,6 +515,7 @@ const useExchange = ({
 			}}
 			onCurrencySelect={allowCurrencySelection ? () => setSelectBaseCurrencyModal(true) : undefined}
 			priceRate={basePriceRate}
+			label={t('exchange.common.into')}
 		/>
 	);
 
@@ -560,7 +566,7 @@ const useExchange = ({
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey}
-					exchangeFeeRate={exchangeFeeRate}
+					feeRate={exchangeFeeRate}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					// show fee's only for "synthetix" (provider)
@@ -579,6 +585,9 @@ const useExchange = ({
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider={txProvider}
+					quoteCurrencyLabel={t('exchange.common.from')}
+					baseCurrencyLabel={t('exchange.common.into')}
+					icon={<Svg src={ArrowsIcon} />}
 				/>
 			)}
 			{selectBaseCurrencyModal && (

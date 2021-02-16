@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 import BigNumber from 'bignumber.js';
 import {
 	FlexDivRowCentered,
@@ -15,8 +15,6 @@ import { CurrencyKey } from 'constants/currency';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-
-import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BalancerImage from 'assets/svg/providers/balancer.svg';
@@ -32,7 +30,7 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
-	txError: boolean;
+	txError: string | null;
 	attemptRetry: () => void;
 	baseCurrencyKey: CurrencyKey;
 	baseCurrencyAmount: string;
@@ -41,6 +39,9 @@ type TxConfirmationModalProps = {
 	totalTradePrice: string;
 	feeAmountInBaseCurrency: BigNumber | null;
 	txProvider: 'synthetix' | '1inch' | 'balancer';
+	quoteCurrencyLabel: ReactNode;
+	baseCurrencyLabel: ReactNode;
+	icon: ReactNode;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -54,6 +55,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	totalTradePrice,
 	feeAmountInBaseCurrency,
 	txProvider,
+	quoteCurrencyLabel,
+	baseCurrencyLabel,
+	icon,
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -77,7 +81,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		>
 			<Currencies>
 				<CurrencyItem>
-					<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
+					<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={quoteCurrencyKey}
 						width="40px"
@@ -85,11 +89,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						data-testid="quote-currency-img"
 					/>
 				</CurrencyItem>
-				<ArrowsIconContainer>
-					<Svg src={ArrowsIcon} />
-				</ArrowsIconContainer>
+				<ArrowsIconContainer>{icon}</ArrowsIconContainer>
 				<CurrencyItem>
-					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
+					<CurrencyItemTitle>{baseCurrencyLabel}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey}
 						width="40px"
@@ -169,9 +171,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					/>
 				</TxProvider>
 			)}
-			{txError && (
+			{txError != null && (
 				<Actions>
-					<Message>{t('common.transaction.error')}</Message>
+					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>

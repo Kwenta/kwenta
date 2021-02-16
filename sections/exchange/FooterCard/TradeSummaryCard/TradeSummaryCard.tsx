@@ -44,9 +44,12 @@ type TradeSummaryCardProps = {
 	showFee?: boolean;
 	attached?: boolean;
 	className?: string;
-	exchangeFeeRate: number | null;
+	feeRate: BigNumber | null;
 	transactionFee?: number | null;
 	feeCost: BigNumber | null;
+	isApproved?: boolean;
+	isCreateShort?: boolean;
+	shortInterestRate?: BigNumber | null;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -61,9 +64,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	quoteCurrencyKey,
 	showFee = true,
 	attached,
-	exchangeFeeRate,
+	feeRate,
 	transactionFee,
 	feeCost,
+	isApproved = true,
+	isCreateShort = false,
+	shortInterestRate = null,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -125,7 +131,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 											/>
 										</CustomGasPriceContainer>
 										{GAS_SPEEDS.map((speed) => (
-											<StyedGasButton
+											<StyledGasButton
 												key={speed}
 												variant="select"
 												onClick={() => {
@@ -136,7 +142,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 											>
 												<span>{t(`common.gas-prices.${speed}`)}</span>
 												<NumericValue>{gasPrices![speed]}</NumericValue>
-											</StyedGasButton>
+											</StyledGasButton>
 										))}
 									</GasSelectContainer>
 								}
@@ -151,27 +157,38 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				</SummaryItemValue>
 			</SummaryItem>
 			<SummaryItem>
-				<SummaryItemLabel>
-					<Trans
-						i18nKey="common.currency.currency-value"
-						values={{ currencyKey: selectedPriceCurrency.asset }}
-						components={[<NoTextTransform />]}
-					/>
-				</SummaryItemLabel>
-				<SummaryItemValue data-testid="total-trade-price">
-					{baseCurrencyAmount
-						? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-								sign: selectedPriceCurrency.sign,
-						  })
-						: NO_VALUE}
-				</SummaryItemValue>
+				{isCreateShort ? (
+					<>
+						<SummaryItemLabel>{t('shorting.common.interestRate')}</SummaryItemLabel>
+						<SummaryItemValue data-testid="short-interest-rate">
+							{formatPercent((shortInterestRate ?? 0).toString())}
+						</SummaryItemValue>
+					</>
+				) : (
+					<>
+						<SummaryItemLabel>
+							<Trans
+								i18nKey="common.currency.currency-value"
+								values={{ currencyKey: selectedPriceCurrency.asset }}
+								components={[<NoTextTransform />]}
+							/>
+						</SummaryItemLabel>
+						<SummaryItemValue data-testid="total-trade-price">
+							{baseCurrencyAmount
+								? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+										sign: selectedPriceCurrency.sign,
+								  })
+								: NO_VALUE}
+						</SummaryItemValue>
+					</>
+				)}
 			</SummaryItem>
 			{showFee && (
 				<>
 					<SummaryItem>
 						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
 						<SummaryItemValue data-testid="exchange-fee-rate">
-							{exchangeFeeRate != null ? formatPercent(exchangeFeeRate) : NO_VALUE}
+							{feeRate != null ? formatPercent(feeRate) : NO_VALUE}
 						</SummaryItemValue>
 					</SummaryItem>
 					<SummaryItem>
@@ -222,6 +239,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						>
 							{isSubmissionDisabled
 								? t(`exchange.summary-info.button.${submissionDisabledReason}`)
+								: !isApproved
+								? t('exchange.summary-info.button.approve')
 								: t('exchange.summary-info.button.submit-order')}
 						</Button>
 					</span>
@@ -231,7 +250,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	);
 };
 
-const SummaryItems = styled.div<{ attached?: boolean }>`
+export const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
@@ -251,7 +270,7 @@ const SummaryItems = styled.div<{ attached?: boolean }>`
 		`}
 `;
 
-const SummaryItem = styled.div`
+export const SummaryItem = styled.div`
 	display: grid;
 	grid-gap: 4px;
 	width: 110px;
@@ -260,11 +279,11 @@ const SummaryItem = styled.div`
 	`}
 `;
 
-const SummaryItemLabel = styled.div`
+export const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
 `;
 
-const SummaryItemValue = styled.div`
+export const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	${numericValueCSS};
 	max-width: 100px;
@@ -272,7 +291,7 @@ const SummaryItemValue = styled.div`
 	text-overflow: ellipsis;
 `;
 
-const GasPriceTooltip = styled(Tippy)`
+export const GasPriceTooltip = styled(Tippy)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
@@ -282,7 +301,7 @@ const GasPriceTooltip = styled(Tippy)`
 	}
 `;
 
-const GasPriceCostTooltip = styled(GasPriceTooltip)`
+export const GasPriceCostTooltip = styled(GasPriceTooltip)`
 	width: auto;
 	font-size: 12px;
 	.tippy-content {
@@ -291,15 +310,15 @@ const GasPriceCostTooltip = styled(GasPriceTooltip)`
 	}
 `;
 
-const GasSelectContainer = styled.div`
+export const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
 
-const CustomGasPriceContainer = styled.div`
+export const CustomGasPriceContainer = styled.div`
 	margin: 0 10px 5px 10px;
 `;
 
-const CustomGasPrice = styled(NumericInput)`
+export const CustomGasPrice = styled(NumericInput)`
 	width: 100%;
 	border: 0;
 	font-size: 12px;
@@ -308,7 +327,7 @@ const CustomGasPrice = styled(NumericInput)`
 	}
 `;
 
-const StyedGasButton = styled(Button)`
+export const StyledGasButton = styled(Button)`
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -317,7 +336,7 @@ const StyedGasButton = styled(Button)`
 	padding-right: 10px;
 `;
 
-const GasPriceItem = styled.span`
+export const GasPriceItem = styled.span`
 	display: inline-flex;
 	align-items: center;
 	cursor: pointer;
@@ -326,7 +345,7 @@ const GasPriceItem = styled.span`
 	}
 `;
 
-const StyledGasEditButton = styled.span`
+export const StyledGasEditButton = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
@@ -334,7 +353,7 @@ const StyledGasEditButton = styled.span`
 	text-transform: uppercase;
 `;
 
-const ErrorTooltip = styled(Tippy)`
+export const ErrorTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
 	color: ${(props) => props.theme.colors.white};
@@ -343,7 +362,7 @@ const ErrorTooltip = styled(Tippy)`
 	}
 `;
 
-const MobileCard = styled(Card)`
+export const MobileCard = styled(Card)`
 	margin: 0 auto 86px auto;
 `;
 
