@@ -25,6 +25,9 @@ import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import SelectShortCurrencyModal from 'sections/shared/modals/SelectShortCurrencyModal';
+import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
+
+import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 
 import {
 	customGasPriceState,
@@ -32,6 +35,8 @@ import {
 	isWalletConnectedState,
 	walletAddressState,
 } from 'store/wallet';
+import { appReadyState } from 'store/app';
+import { customShortCRatioState, shortCRatioState } from 'store/ui';
 
 import { getExchangeRatesForCurrencies, synthToContractName } from 'utils/currencies';
 
@@ -48,20 +53,16 @@ import useCollateralShortDataQuery from 'queries/collateral/useCollateralShortDa
 import Notify from 'containers/Notify';
 
 import { NoTextTransform } from 'styles/common';
-import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
-import { appReadyState } from 'store/app';
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
+import { SHORT_C_RATIO } from '../ShortingCard/components/CRatioSelector/CRatioSelector';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
 	defaultQuoteCurrencyKey?: CurrencyKey | null;
-	shortRatio: number;
 };
 
 const useShort = ({
 	defaultBaseCurrencyKey = null,
 	defaultQuoteCurrencyKey = null,
-	shortRatio,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
 	const { notify } = Connector.useContainer();
@@ -90,7 +91,15 @@ const useShort = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const [isLockedSafeRatio, setIsLockedSafeRatio] = useState<boolean>(true);
+	const selectedShortCRatio = useRecoilValue(shortCRatioState);
+	const customShortCRatio = useRecoilValue(customShortCRatioState);
+
+	const shortCRatio = useMemo(
+		() => (customShortCRatio !== '' ? Number(customShortCRatio) : selectedShortCRatio),
+		[customShortCRatio, selectedShortCRatio]
+	);
+
+	const shortCRatioTooLow = useMemo(() => shortCRatio < SHORT_C_RATIO.highRisk, [shortCRatio]);
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
@@ -201,8 +210,12 @@ const useShort = ({
 		) {
 			return 'enter-amount';
 		}
+		if (shortCRatioTooLow) {
+			return 'c-ratio-too-low';
+		}
 		return null;
 	}, [
+		shortCRatioTooLow,
 		isApproving,
 		quoteCurrencyBalance,
 		selectedBothSides,
@@ -294,6 +307,11 @@ const useShort = ({
 	useEffect(() => {
 		setGasLimit(null);
 	}, [baseCurrencyKey, quoteCurrencyKey]);
+
+	useEffect(() => {
+		setQuoteCurrencyAmount('');
+		setBaseCurrencyAmount('');
+	}, [shortCRatio]);
 
 	const getShortParams = () => {
 		return [
@@ -412,11 +430,9 @@ const useShort = ({
 					setBaseCurrencyAmount('');
 				} else {
 					setQuoteCurrencyAmount(value);
-					if (isLockedSafeRatio) {
-						setBaseCurrencyAmount(
-							toBigNumber(value).multipliedBy(rate).dividedBy(shortRatio).toString()
-						);
-					}
+					setBaseCurrencyAmount(
+						toBigNumber(value).multipliedBy(rate).dividedBy(shortCRatio).dividedBy(100).toString()
+					);
 				}
 			}}
 			walletBalance={quoteCurrencyBalance}
@@ -442,11 +458,13 @@ const useShort = ({
 					setQuoteCurrencyAmount('');
 				} else {
 					setBaseCurrencyAmount(value);
-					if (isLockedSafeRatio) {
-						setQuoteCurrencyAmount(
-							toBigNumber(value).multipliedBy(inverseRate).multipliedBy(shortRatio).toString()
-						);
-					}
+					setQuoteCurrencyAmount(
+						toBigNumber(value)
+							.multipliedBy(inverseRate)
+							.multipliedBy(shortCRatio)
+							.dividedBy(100)
+							.toString()
+					);
 				}
 			}}
 			walletBalance={baseCurrencyBalance}

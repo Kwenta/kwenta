@@ -1,4 +1,6 @@
 import Tippy from '@tippyjs/react';
+import Button from 'components/Button';
+import NumericInput from 'components/Input/NumericInput';
 import { zIndex } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
@@ -209,4 +211,41 @@ export const Tooltip = styled(Tippy)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
+`;
+
+export const SolidTooltip = styled(Tooltip).attrs({
+	trigger: 'click',
+	arrow: false,
+	interactive: true,
+})`
+	width: 150px;
+	.tippy-content {
+		padding: 0;
+	}
+`;
+
+export const SolidTooltipContent = styled.div`
+	padding: 16px 0 8px 0;
+`;
+
+export const SolidTooltipCustomValueContainer = styled.div`
+	margin: 0 10px 5px 10px;
+`;
+
+export const SolidTooltipCustomValue = styled(NumericInput)`
+	width: 100%;
+	border: 0;
+	font-size: 12px;
+	::placeholder {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
+`;
+
+export const SolidTooltipItemButton = styled(Button)`
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-left: 10px;
+	padding-right: 10px;
 `;

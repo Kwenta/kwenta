@@ -189,6 +189,7 @@
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
+				"c-ratio-too-low": "C-Ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
@@ -306,7 +307,13 @@
 			"collateral": "collateral",
 			"posting": "posting",
 			"shorting": "shorting",
-			"interestRate": "Interest Rate"
+			"interestRate": "Interest Rate",
+			"cRatio": "C-Ratio"
+		},
+		"c-ratio": {
+			"safe": "safe",
+			"safeMax": "safe max",
+			"highRisk": "high risk"
 		},
 		"rewards": {
 			"available": "Available Rewards",

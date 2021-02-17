@@ -70,52 +70,54 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
-		<Card className="currency-card" {...rest}>
-			<StyledCardBody>
+		<Card className={`currency-card currency-card-${side}`} {...rest}>
+			<StyledCardBody className="currency-card-body">
 				<LabelContainer data-testid="destination">{label}</LabelContainer>
-				<CurrencyContainer>
-					<CurrencySelector
-						currencyKeySelected={currencyKeySelected}
-						onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
-						role="button"
-						data-testid="currency-selector"
-					>
-						{currencyKey ?? (
-							<CapitalizedText>
-								{t('exchange.currency-card.currency-selector.no-value')}
-							</CapitalizedText>
-						)}{' '}
-						{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}
-					</CurrencySelector>
-					{currencyKeySelected && (
-						<CurrencyAmountContainer>
-							<CurrencyAmount
-								value={amount}
-								onChange={(_, value) => onAmountChange(value)}
-								placeholder="0"
-								data-testid="currency-amount"
-							/>
-							<CurrencyAmountValue data-testid="amount-value">
-								{tradeAmount != null
-									? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
-											sign: selectedPriceCurrency.sign,
-									  })
-									: null}
-							</CurrencyAmountValue>
-						</CurrencyAmountContainer>
-					)}
-				</CurrencyContainer>
-				<WalletBalanceContainer>
-					<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-					<WalletBalance
-						onClick={hasWalletBalance ? onBalanceClick : undefined}
-						insufficientBalance={insufficientBalance}
-						data-testid="wallet-balance"
-					>
-						{/* @ts-ignore */}
-						{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
-					</WalletBalance>
-				</WalletBalanceContainer>
+				<CurrencyWalletBalanceContainer className="currency-wallet-container">
+					<CurrencyContainer className="currency-container">
+						<CurrencySelector
+							currencyKeySelected={currencyKeySelected}
+							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
+							role="button"
+							data-testid="currency-selector"
+						>
+							{currencyKey ?? (
+								<CapitalizedText>
+									{t('exchange.currency-card.currency-selector.no-value')}
+								</CapitalizedText>
+							)}{' '}
+							{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}
+						</CurrencySelector>
+						{currencyKeySelected && (
+							<CurrencyAmountContainer className="currency-amount-container">
+								<CurrencyAmount
+									value={amount}
+									onChange={(_, value) => onAmountChange(value)}
+									placeholder="0"
+									data-testid="currency-amount"
+								/>
+								<CurrencyAmountValue data-testid="amount-value">
+									{tradeAmount != null
+										? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+												sign: selectedPriceCurrency.sign,
+										  })
+										: null}
+								</CurrencyAmountValue>
+							</CurrencyAmountContainer>
+						)}
+					</CurrencyContainer>
+					<WalletBalanceContainer>
+						<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
+						<WalletBalance
+							onClick={hasWalletBalance ? onBalanceClick : undefined}
+							insufficientBalance={insufficientBalance}
+							data-testid="wallet-balance"
+						>
+							{/* @ts-ignore */}
+							{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
+						</WalletBalance>
+					</WalletBalanceContainer>
+				</CurrencyWalletBalanceContainer>
 			</StyledCardBody>
 		</Card>
 	);
@@ -130,6 +132,8 @@ const LabelContainer = styled.div`
 	padding-bottom: 2px;
 	text-transform: capitalize;
 `;
+
+const CurrencyWalletBalanceContainer = styled.div``;
 
 const CurrencyContainer = styled(FlexDivRowCentered)`
 	padding-bottom: 6px;
@@ -173,7 +177,7 @@ const CurrencySelector = styled.div<{
 const CurrencyAmountContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.black};
 	border-radius: 4px;
-	width: 70%;
+	width: 100%;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
