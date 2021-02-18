@@ -1,5 +1,5 @@
 import { FC, useMemo, useState, useEffect, useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
@@ -16,7 +16,7 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
-import { FixedFooterMixin, GridDivCentered } from 'styles/common';
+import { GridDivCentered } from 'styles/common';
 import media from 'styles/media';
 
 import { gasSpeedState, walletAddressState } from 'store/wallet';

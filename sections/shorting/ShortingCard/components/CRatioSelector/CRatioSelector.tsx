@@ -22,9 +22,9 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 export type ShortCRatioLevel = 'safe' | 'safeMax' | 'highRisk';
 
 export const SHORT_C_RATIO: Record<ShortCRatioLevel, number> = {
-	safe: 200,
-	safeMax: 165,
-	highRisk: 155,
+	safe: 2,
+	safeMax: 1.65,
+	highRisk: 1.55,
 };
 
 export const shortCRatios = Object.entries(SHORT_C_RATIO) as [ShortCRatioLevel, number][];
@@ -41,13 +41,9 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 	const hasCustomShortCRatio = useMemo(() => customShortCRatio !== '', [customShortCRatio]);
 
 	const shortCRatio = useMemo(
-		() => (hasCustomShortCRatio ? Number(customShortCRatio) : selectedShortCRatio),
+		() => (hasCustomShortCRatio ? Number(customShortCRatio) / 100 : selectedShortCRatio),
 		[hasCustomShortCRatio, selectedShortCRatio, customShortCRatio]
 	);
-
-	const formattedShortCRatio = useMemo(() => formatPercent(shortCRatio / 100, { minDecimals: 0 }), [
-		shortCRatio,
-	]);
 
 	const shortCRatioTooLow = useMemo(() => shortCRatio < SHORT_C_RATIO.highRisk, [shortCRatio]);
 
@@ -78,9 +74,7 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 								isActive={hasCustomShortCRatio ? false : shortCRatioValue === selectedShortCRatio}
 							>
 								<span>{t(`shorting.c-ratio.${shortCRatioLevel}`)}</span>
-								<NumericValue>
-									{formatPercent(shortCRatioValue / 100, { minDecimals: 0 })}
-								</NumericValue>
+								<NumericValue>{formatPercent(shortCRatioValue, { minDecimals: 0 })}</NumericValue>
 							</SolidTooltipItemButton>
 						))}
 					</SolidTooltipContent>
@@ -91,7 +85,7 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 					tooltipOpened={tooltipOpened}
 					shortCRatioTooLow={shortCRatioTooLow}
 				>
-					{formattedShortCRatio}{' '}
+					{formatPercent(shortCRatio, { minDecimals: 0 })}{' '}
 					<Svg src={CaretDownIcon} viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`} />
 				</DropdownSelection>
 			</StyledSolidTooltip>

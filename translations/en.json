@@ -341,8 +341,8 @@
 				"close": "Close",
 				"subtitle": "Position Details",
 				"fields": {
-					"collateral": "Collateral ({{asset}})",
-					"liquidationPrice": "Liquidation Price ({{asset}})",
+					"collateral": "Collateral",
+					"liquidationPrice": "Liquidation Price",
 					"profitLoss": "Profit / Loss ({{asset}})",
 					"shorting": "Shorting",
 					"collateralRatio": "Collateral Ratio",

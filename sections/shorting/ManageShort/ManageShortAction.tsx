@@ -35,6 +35,7 @@ import { NoTextTransform } from 'styles/common';
 
 import { ShortingTab } from './ManageShort';
 import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
+import styled from 'styled-components';
 
 interface ManageShortActionProps {
 	short: Short;
@@ -301,7 +302,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({ short, tab, isActive })
 		currencyKey != null && synthetix.synthsMap != null ? synthetix.synthsMap[currencyKey] : null;
 
 	return (
-		<>
+		<Container>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={true} />
 			) : (
@@ -365,8 +366,14 @@ const ManageShortAction: FC<ManageShortActionProps> = ({ short, tab, isActive })
 					icon={<Svg src={ArrowRightIcon} />}
 				/>
 			)}
-		</>
+		</Container>
 	);
 };
+
+const Container = styled.div`
+	.footer-card {
+		max-width: unset;
+	}
+`;
 
 export default ManageShortAction;

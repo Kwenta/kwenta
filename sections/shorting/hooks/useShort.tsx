@@ -95,7 +95,7 @@ const useShort = ({
 	const customShortCRatio = useRecoilValue(customShortCRatioState);
 
 	const shortCRatio = useMemo(
-		() => (customShortCRatio !== '' ? Number(customShortCRatio) : selectedShortCRatio),
+		() => (customShortCRatio !== '' ? Number(customShortCRatio) / 100 : selectedShortCRatio),
 		[customShortCRatio, selectedShortCRatio]
 	);
 
@@ -431,7 +431,7 @@ const useShort = ({
 				} else {
 					setQuoteCurrencyAmount(value);
 					setBaseCurrencyAmount(
-						toBigNumber(value).multipliedBy(rate).dividedBy(shortCRatio).dividedBy(100).toString()
+						toBigNumber(value).multipliedBy(rate).dividedBy(shortCRatio).toString()
 					);
 				}
 			}}
@@ -459,11 +459,7 @@ const useShort = ({
 				} else {
 					setBaseCurrencyAmount(value);
 					setQuoteCurrencyAmount(
-						toBigNumber(value)
-							.multipliedBy(inverseRate)
-							.multipliedBy(shortCRatio)
-							.dividedBy(100)
-							.toString()
+						toBigNumber(value).multipliedBy(inverseRate).multipliedBy(shortCRatio).toString()
 					);
 				}
 			}}

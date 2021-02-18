@@ -106,8 +106,8 @@ const ManageShort: FC = () => {
 						<LeftTabContainer>
 							{TABS.map(({ name, label, active, onClick }) =>
 								name === ShortingTab.ClosePosition ? null : (
-									<StyledTabList>
-										<TabButton key={name} name={name} active={active} onClick={onClick}>
+									<StyledTabList key={name}>
+										<TabButton name={name} active={active} onClick={onClick}>
 											{label}
 										</TabButton>
 									</StyledTabList>
@@ -126,7 +126,7 @@ const ManageShort: FC = () => {
 						) : null}
 					</FlexDivRow>
 					{TABS.map(({ name }) => (
-						<TabPanel name={name} activeTab={activeTab}>
+						<TabPanel key={name} name={name} activeTab={activeTab}>
 							<ManageShortAction tab={name} isActive={name === activeTab} short={short} />
 						</TabPanel>
 					))}

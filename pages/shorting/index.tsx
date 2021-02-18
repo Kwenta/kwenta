@@ -11,7 +11,6 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import { GridDiv, PageContent } from 'styles/common';
 import media from 'styles/media';
 import { SYNTHS_MAP } from 'constants/currency';
-import { FlexDivRow } from 'styles/common';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
