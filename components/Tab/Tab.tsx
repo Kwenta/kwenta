@@ -65,8 +65,8 @@ const StyledTabButton = styled.button<TabProps>`
 	padding: 0;
 	background-color: ${(props) => props.theme.colors.black};
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.blueberry)};
-	border-bottom: ${(props) =>
-		props.active ? `2px solid ${props.theme.colors.goldColors.color1}` : 'none'};
+	border-bottom: 2px solid
+		${(props) => (props.active ? props.theme.colors.goldColors.color1 : 'transparent')};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}

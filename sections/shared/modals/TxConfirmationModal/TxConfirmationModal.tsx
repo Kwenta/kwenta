@@ -34,14 +34,14 @@ type TxConfirmationModalProps = {
 	attemptRetry: () => void;
 	baseCurrencyKey: CurrencyKey;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey: CurrencyKey;
-	quoteCurrencyAmount: string;
+	quoteCurrencyKey?: CurrencyKey;
+	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
 	feeAmountInBaseCurrency: BigNumber | null;
 	txProvider: 'synthetix' | '1inch' | 'balancer';
-	quoteCurrencyLabel: ReactNode;
+	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;
-	icon: ReactNode;
+	icon?: ReactNode;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -80,16 +80,18 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			title={t('modals.confirm-transaction.title')}
 		>
 			<Currencies>
-				<CurrencyItem>
-					<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
-					<Currency.Icon
-						currencyKey={quoteCurrencyKey}
-						width="40px"
-						height="40px"
-						data-testid="quote-currency-img"
-					/>
-				</CurrencyItem>
-				<ArrowsIconContainer>{icon}</ArrowsIconContainer>
+				{quoteCurrencyKey && (
+					<CurrencyItem>
+						<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
+						<Currency.Icon
+							currencyKey={quoteCurrencyKey}
+							width="40px"
+							height="40px"
+							data-testid="quote-currency-img"
+						/>
+					</CurrencyItem>
+				)}
+				{icon && <ArrowsIconContainer>{icon}</ArrowsIconContainer>}
 				<CurrencyItem>
 					<CurrencyItemTitle>{baseCurrencyLabel}</CurrencyItemTitle>
 					<Currency.Icon
@@ -102,18 +104,20 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Currencies>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			<Summary>
-				<SummaryItem>
-					<SummaryItemLabel data-testid="quote-currency-label">
-						<Trans
-							i18nKey="common.currency.currency-amount"
-							values={{ currencyKey: quoteCurrencyKey }}
-							components={[<NoTextTransform />]}
-						/>
-					</SummaryItemLabel>
-					<SummaryItemValue data-testid="quote-currency-value">
-						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
-					</SummaryItemValue>
-				</SummaryItem>
+				{quoteCurrencyKey != null && quoteCurrencyAmount != null && (
+					<SummaryItem>
+						<SummaryItemLabel data-testid="quote-currency-label">
+							<Trans
+								i18nKey="common.currency.currency-amount"
+								values={{ currencyKey: quoteCurrencyKey }}
+								components={[<NoTextTransform />]}
+							/>
+						</SummaryItemLabel>
+						<SummaryItemValue data-testid="quote-currency-value">
+							{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
+						</SummaryItemValue>
+					</SummaryItem>
+				)}
 				<SummaryItem>
 					<SummaryItemLabel data-testid="base-currency-label">
 						<Trans

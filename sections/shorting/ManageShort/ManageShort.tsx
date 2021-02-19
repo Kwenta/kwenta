@@ -11,7 +11,7 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Loader from 'components/Loader';
 import { CardTitle } from 'sections/dashboard/common';
 import BackIcon from 'assets/svg/app/go-back.svg';
-import { FlexDivRow } from 'styles/common';
+import { FlexDivRow, IconButton } from 'styles/common';
 import useShortHistoryQuery from 'queries/short/useShortHistoryQuery';
 
 import ManageShortAction from './ManageShortAction';
@@ -44,48 +44,63 @@ const ManageShort: FC = () => {
 
 	const shortHistoryQuery = useShortHistoryQuery();
 	const shortHistory = useMemo(() => shortHistoryQuery.data || [], [shortHistoryQuery.data]);
-	const short = find(shortHistory, ({ id }) => id === Number(positionID ?? 0));
+	const short = useMemo(() => find(shortHistory, ({ id }) => id === Number(positionID ?? 0)), [
+		shortHistory,
+		positionID,
+	]);
 
 	const activeTab = tabQuery != null ? tabQuery : ShortingTab.AddCollateral;
 
-	const TABS = useMemo(
-		() =>
-			short?.id != null
-				? [
-						{
-							name: ShortingTab.AddCollateral,
-							label: t('shorting.history.manageShort.sections.addCollateral.nav-title'),
-							active: activeTab === ShortingTab.AddCollateral,
-							onClick: () => router.push(ROUTES.Shorting.ManageShortAddCollateral(short.id)),
-						},
-						{
-							name: ShortingTab.RemoveCollateral,
-							label: t('shorting.history.manageShort.sections.removeCollateral.nav-title'),
-							active: activeTab === ShortingTab.RemoveCollateral,
-							onClick: () => router.push(ROUTES.Shorting.ManageShortRemoveCollateral(short.id)),
-						},
-						{
-							name: ShortingTab.DecreasePosition,
-							label: t('shorting.history.manageShort.sections.decreasePosition.nav-title'),
-							active: activeTab === ShortingTab.DecreasePosition,
-							onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
-						},
-						{
-							name: ShortingTab.IncreasePosition,
-							label: t('shorting.history.manageShort.sections.increasePosition.nav-title'),
-							active: activeTab === ShortingTab.IncreasePosition,
-							onClick: () => router.push(ROUTES.Shorting.ManageShortIncreasePosition(short.id)),
-						},
-						{
-							name: ShortingTab.ClosePosition,
-							label: t('shorting.history.manageShort.sections.closePosition.nav-title'),
-							active: activeTab === ShortingTab.ClosePosition,
-							onClick: () => router.push(ROUTES.Shorting.ManageShortClosePosition(short.id)),
-						},
-				  ]
-				: [],
-		[t, activeTab, router, short?.id]
-	);
+	const TABS = useMemo(() => {
+		return short?.id != null
+			? [
+					{
+						name: ShortingTab.AddCollateral,
+						label: t(
+							`shorting.history.manageShort.sections.${ShortingTab.AddCollateral}.nav-title`
+						),
+						active: activeTab === ShortingTab.AddCollateral,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortAddCollateral(short.id)),
+					},
+					{
+						name: ShortingTab.RemoveCollateral,
+						label: t(
+							`shorting.history.manageShort.sections.${ShortingTab.RemoveCollateral}.nav-title`
+						),
+						active: activeTab === ShortingTab.RemoveCollateral,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortRemoveCollateral(short.id)),
+					},
+					{
+						name: ShortingTab.DecreasePosition,
+						label: t(
+							`shorting.history.manageShort.sections.${ShortingTab.DecreasePosition}.nav-title`
+						),
+						active: activeTab === ShortingTab.DecreasePosition,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
+					},
+					{
+						name: ShortingTab.IncreasePosition,
+						label: t(
+							`shorting.history.manageShort.sections.${ShortingTab.IncreasePosition}.nav-title`
+						),
+						active: activeTab === ShortingTab.IncreasePosition,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortIncreasePosition(short.id)),
+					},
+					{
+						isClosePosition: true,
+						name: ShortingTab.ClosePosition,
+						label: t(
+							`shorting.history.manageShort.sections.${ShortingTab.ClosePosition}.nav-title`
+						),
+						active: activeTab === ShortingTab.ClosePosition,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortClosePosition(short.id)),
+					},
+			  ]
+			: [];
+	}, [t, activeTab, router, short?.id]);
+
+	const leftTabs = useMemo(() => TABS.filter((tab) => !tab.isClosePosition), [TABS]);
+	const closeTab = useMemo(() => TABS.find((tab) => tab.isClosePosition), [TABS]);
 
 	return (
 		<Container>
@@ -97,33 +112,28 @@ const ManageShort: FC = () => {
 				)
 			) : (
 				<>
-					<div onClick={() => router.push(ROUTES.Shorting.Home)}>
+					<IconButton onClick={() => router.push(ROUTES.Shorting.Home)}>
 						<StyledBackIcon src={BackIcon} viewBox={`0 0 ${BackIcon.width} ${BackIcon.height}`} />
-					</div>
+					</IconButton>
 					<ManageShortTitle>{t('shorting.history.manageShort.title')}</ManageShortTitle>
 					<YourPositionCard short={short} />
 					<FlexDivRow>
-						<LeftTabContainer>
-							{TABS.map(({ name, label, active, onClick }) =>
-								name === ShortingTab.ClosePosition ? null : (
-									<StyledTabList key={name}>
-										<TabButton name={name} active={active} onClick={onClick}>
-											{label}
-										</TabButton>
-									</StyledTabList>
-								)
-							)}
-						</LeftTabContainer>
-						{TABS.length > 0 ? (
-							<CloseTabButton
-								key={TABS[TABS.length - 1].name}
-								name={TABS[TABS.length - 1].name}
-								active={TABS[TABS.length - 1].active}
-								onClick={TABS[TABS.length - 1].onClick}
-							>
-								{TABS[TABS.length - 1].label}
-							</CloseTabButton>
-						) : null}
+						<StyledTabList>
+							{leftTabs.map(({ name, label, active, onClick }) => (
+								<StyledTabButton key={name} name={name} active={active} onClick={onClick}>
+									{label}
+								</StyledTabButton>
+							))}
+							{closeTab != null ? (
+								<CloseTabButton
+									name={closeTab.name}
+									active={closeTab.active}
+									onClick={closeTab.onClick}
+								>
+									{TABS[TABS.length - 1].label}
+								</CloseTabButton>
+							) : null}
+						</StyledTabList>
 					</FlexDivRow>
 					{TABS.map(({ name }) => (
 						<TabPanel key={name} name={name} activeTab={activeTab}>
@@ -140,13 +150,11 @@ const Container = styled.div`
 	position: relative;
 `;
 
-const LeftTabContainer = styled(FlexDivRow)`
-	justify-content: flex-start;
-`;
+const StyledTabButton = styled(TabButton)``;
 
-const CloseTabButton = styled(TabButton)`
-	color: ${(props) => props.theme.colors.red};
-	margin-bottom: 12px;
+const CloseTabButton = styled(TabButton)<{ active: boolean }>`
+	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.red)};
+	margin-left: auto;
 `;
 
 const NoResultsFound = styled.div`
@@ -169,14 +177,16 @@ const StyledBackIcon = styled(Svg)`
 	height: 18px;
 	color: ${(props) => props.theme.colors.blueberry};
 	&:hover {
-		cursor: pointer;
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 `;
 
 const StyledTabList = styled(TabList)`
-	margin-bottom: 12px;
-	margin-right: 30px;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-bottom: 0.5px solid ${(props) => props.theme.colors.navy};
+	margin-bottom: 30px;
 `;
 
 export default ManageShort;
