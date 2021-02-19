@@ -106,7 +106,7 @@ const useShort = ({
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const collateralShortDataQuery = useCollateralShortDataQuery(quoteCurrencyKey);
+	const collateralShortDataQuery = useCollateralShortDataQuery(baseCurrencyKey);
 	const issueFeeRate = collateralShortDataQuery.isSuccess
 		? collateralShortDataQuery?.data?.issueFeeRate ?? null
 		: null;

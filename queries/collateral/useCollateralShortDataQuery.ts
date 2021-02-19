@@ -17,6 +17,12 @@ export type ShortFeeData = {
 	shortingRewards: BigNumber | null;
 };
 
+const collateralShortNoData = {
+	issueFeeRate: null,
+	shortRate: null,
+	shortingRewards: null,
+};
+
 const useCollateralShortDataQuery = (
 	currencyKey: CurrencyKey | null,
 	options?: QueryConfig<ShortFeeData>
@@ -27,25 +33,29 @@ const useCollateralShortDataQuery = (
 		QUERY_KEYS.Collateral.ShortIssuanceFee,
 		async () => {
 			if (currencyKey == null) {
-				return {
-					issueFeeRate: null,
-					shortRate: null,
-					shortingRewards: null,
-				};
+				return collateralShortNoData;
 			}
-			const feeRateForExchange = await synthetix.js?.contracts.CollateralShort.issueFeeRate();
-			const shortRate = await synthetix.js?.contracts.CollateralManager.getShortRate(
-				synthetix.js?.toBytes32(currencyKey)
-			);
-			const shortingRewards = await synthetix.js?.contracts.CollateralShort.shortingRewards(
-				synthetix.js?.toBytes32(currencyKey)
-			);
 
-			return {
-				issueFeeRate: toBigNumber(ethers.utils.formatEther(feeRateForExchange)),
-				shortRate: toBigNumber(ethers.utils.formatEther(shortRate)),
-				shortingRewards: toBigNumber(ethers.utils.formatEther(shortingRewards)),
-			};
+			try {
+				const currencyKeyBytes32 = synthetix.js?.toBytes32(currencyKey);
+
+				const [issueFeeRate, shortRate, shortingRewards] = await Promise.all([
+					synthetix.js?.contracts.CollateralShort.issueFeeRate(),
+					Promise.resolve('0'),
+					// TODO: check why this fails
+					// synthetix.js?.contracts.CollateralManager.getShortRate(currencyKeyBytes32),
+					synthetix.js?.contracts.CollateralShort.shortingRewards(currencyKeyBytes32),
+				]);
+
+				return {
+					issueFeeRate: toBigNumber(ethers.utils.formatEther(issueFeeRate)),
+					shortRate: toBigNumber(ethers.utils.formatEther(shortRate)),
+					shortingRewards: toBigNumber(ethers.utils.formatEther(shortingRewards)),
+				};
+			} catch (e) {
+				console.log(e);
+				return collateralShortNoData;
+			}
 		},
 		{
 			enabled: isAppReady,
