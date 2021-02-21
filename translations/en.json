@@ -351,23 +351,36 @@
 					"interestAccrued": "Interest Accrued"
 				},
 				"sections": {
-					"addCollateral": {
-						"nav-title": "Add Collateral"
+					"add-collateral": {
+						"nav-title": "Add Collateral",
+						"tx-confirm": {
+							"base-currency-label": "posting"
+						}
 					},
-					"removeCollateral": {
-						"nav-title": "Remove Collateral"
+					"remove-collateral": {
+						"nav-title": "Remove Collateral",
+						"tx-confirm": {
+							"base-currency-label": "withdrawing"
+						}
 					},
-					"decreasePosition": {
-						"nav-title": "Decrease Position"
+					"decrease-position": {
+						"nav-title": "Decrease Position",
+						"tx-confirm": {
+							"base-currency-label": "decreasing"
+						}
 					},
-					"increasePosition": {
-						"nav-title": "Increase Position"
+					"increase-position": {
+						"nav-title": "Increase Position",
+						"tx-confirm": {
+							"base-currency-label": "increasing"
+						}
 					},
-					"interestAccrued": {
-						"nav-title": "Interest Accrued"
-					},
-					"closePosition": {
-						"nav-title": "Close Position"
+					"close-position": {
+						"nav-title": "Close Position",
+						"tx-confirm": {
+							"quote-currency-label": "returning",
+							"base-currency-label": "receiving"
+						}
 					},
 					"panel": {
 						"collateral": "Collateral",

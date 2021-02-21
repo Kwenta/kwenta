@@ -249,3 +249,7 @@ export const SolidTooltipItemButton = styled(Button)`
 	padding-left: 10px;
 	padding-right: 10px;
 `;
+
+export const IconButton = styled.button`
+	${resetButtonCSS};
+`;
