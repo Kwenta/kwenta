@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
 import BigNumber from 'bignumber.js';
@@ -8,7 +8,6 @@ import { Synth } from 'lib/synthetix';
 
 import { GasPrices } from 'queries/network/useEthGasPriceQuery';
 
-import { NO_VALUE } from 'constants/placeholder';
 import { CurrencyKey } from 'constants/currency';
 
 import { secondsToTime } from 'utils/formatters/date';
@@ -17,22 +16,22 @@ import Button from 'components/Button';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
-
-import { NoTextTransform } from 'styles/common';
+import { formatPercent } from 'utils/formatters/number';
 
 import { MessageContainer, SubmissionDisabledReason } from '../common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItems, SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
 import GasPriceSummaryItem from './GasPriceSummaryItem';
+import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
+import FeeRateSummaryItem from './FeeRateSummaryItem';
+import FeeCostSummaryItem from './FeeCostSummaryItem';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: SubmissionDisabledReason | null;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
-	totalTradePrice: string;
+	totalTradePrice: string | null;
 	basePriceRate: number;
 	baseCurrency: Synth | null;
 	gasPrices: GasPrices | undefined;
@@ -70,7 +69,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
 		submissionDisabledReason,
@@ -88,43 +86,13 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						</SummaryItemValue>
 					</>
 				) : (
-					<>
-						<SummaryItemLabel>
-							<Trans
-								i18nKey="common.currency.currency-value"
-								values={{ currencyKey: selectedPriceCurrency.asset }}
-								components={[<NoTextTransform />]}
-							/>
-						</SummaryItemLabel>
-						<SummaryItemValue data-testid="total-trade-price">
-							{baseCurrencyAmount
-								? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-										sign: selectedPriceCurrency.sign,
-								  })
-								: NO_VALUE}
-						</SummaryItemValue>
-					</>
+					<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
 				)}
 			</SummaryItem>
 			{showFee && (
 				<>
-					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
-						<SummaryItemValue data-testid="exchange-fee-rate">
-							{feeRate != null ? formatPercent(feeRate) : NO_VALUE}
-						</SummaryItemValue>
-					</SummaryItem>
-					<SummaryItem>
-						<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
-						<SummaryItemValue data-testid="exchange-fee-cost">
-							{feeCost != null
-								? formatCurrency(selectedPriceCurrency.name, feeCost, {
-										sign: selectedPriceCurrency.sign,
-										minDecimals: feeCost.lt(0.01) ? 4 : 2,
-								  })
-								: NO_VALUE}
-						</SummaryItemValue>
-					</SummaryItem>
+					<FeeRateSummaryItem feeRate={feeRate} />
+					<FeeCostSummaryItem feeCost={feeCost} />
 				</>
 			)}
 		</SummaryItems>

@@ -161,22 +161,18 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 		}
 	};
 
-	const summaryItems = (
-		<SummaryItems attached={false}>
-			<SummaryItem>
-				<StyledSummaryItemLabel>{t('shorting.rewards.available')}</StyledSummaryItemLabel>
-				<BoldSummaryItemValue>
-					{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey: synth })}
-				</BoldSummaryItemValue>
-			</SummaryItem>
-			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
-		</SummaryItems>
-	);
-
 	return (
 		<>
 			<MessageContainer attached={false} className="footer-card">
-				{summaryItems}
+				<SummaryItems attached={false}>
+					<SummaryItem>
+						<StyledSummaryItemLabel>{t('shorting.rewards.available')}</StyledSummaryItemLabel>
+						<BoldSummaryItemValue>
+							{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey: synth })}
+						</BoldSummaryItemValue>
+					</SummaryItem>
+					<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
+				</SummaryItems>
 				<Button
 					variant="primary"
 					isRounded={true}

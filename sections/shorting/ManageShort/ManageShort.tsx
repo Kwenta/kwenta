@@ -31,12 +31,12 @@ const ManageShort: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const [tabQuery, positionID] = useMemo(() => {
+	const [tabQuery, loanId] = useMemo(() => {
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as ShortingTab;
-			const positionID = castArray(router.query.tab)[1] as ShortingTab;
+			const loanId = castArray(router.query.tab)[1] as ShortingTab;
 			if (ShortingTabs.includes(tab)) {
-				return [tab, positionID];
+				return [tab, loanId];
 			}
 		}
 		return [null, null];
@@ -44,9 +44,9 @@ const ManageShort: FC = () => {
 
 	const shortHistoryQuery = useShortHistoryQuery();
 	const shortHistory = useMemo(() => shortHistoryQuery.data || [], [shortHistoryQuery.data]);
-	const short = useMemo(() => find(shortHistory, ({ id }) => id === Number(positionID ?? 0)), [
+	const short = useMemo(() => find(shortHistory, ({ id }) => id === Number(loanId ?? 0)), [
 		shortHistory,
-		positionID,
+		loanId,
 	]);
 
 	const activeTab = tabQuery != null ? tabQuery : ShortingTab.AddCollateral;
@@ -101,6 +101,8 @@ const ManageShort: FC = () => {
 
 	const leftTabs = useMemo(() => TABS.filter((tab) => !tab.isClosePosition), [TABS]);
 	const closeTab = useMemo(() => TABS.find((tab) => tab.isClosePosition), [TABS]);
+
+	// TODO: support for when a short is closed
 
 	return (
 		<Container>

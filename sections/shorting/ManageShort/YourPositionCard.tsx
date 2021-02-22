@@ -133,7 +133,11 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						<LightFieldText>
 							{t('shorting.history.manageShort.fields.interestAccrued')}
 						</LightFieldText>
-						<DataField>{formatPercent(short.interestAccrued)}</DataField>
+						<DataField>
+							{formatCurrency(short.synthBorrowed, short.interestAccrued ?? 0, {
+								currencyKey: short.synthBorrowed,
+							})}
+						</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>{t('shorting.history.manageShort.fields.date')}</LightFieldText>
