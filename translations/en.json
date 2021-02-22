@@ -366,13 +366,13 @@
 					"decrease-position": {
 						"nav-title": "Decrease Position",
 						"tx-confirm": {
-							"base-currency-label": "decreasing"
+							"base-currency-label": "decreasing position"
 						}
 					},
 					"increase-position": {
 						"nav-title": "Increase Position",
 						"tx-confirm": {
-							"base-currency-label": "increasing"
+							"base-currency-label": "increasing position"
 						}
 					},
 					"close-position": {
@@ -380,7 +380,9 @@
 						"tx-confirm": {
 							"quote-currency-label": "returning",
 							"base-currency-label": "receiving"
-						}
+						},
+						"close-button-label": "Close position",
+						"total-to-replay-label": "Total to repay"
 					},
 					"panel": {
 						"collateral": "Collateral",
