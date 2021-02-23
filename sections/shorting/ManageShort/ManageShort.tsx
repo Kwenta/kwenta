@@ -52,8 +52,6 @@ const ManageShort: FC = () => {
 
 	const shortPositionQuery = useCollateralShortPositionQuery(loanId);
 
-	console.log(shortPositionQuery);
-
 	const short = useMemo(() => (shortPositionQuery.isSuccess ? shortPositionQuery.data : null), [
 		shortPositionQuery.data,
 		shortPositionQuery.isSuccess,
