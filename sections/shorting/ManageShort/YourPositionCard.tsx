@@ -27,6 +27,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import useCollateralShortInfoQuery from 'queries/collateral/useCollateralShortInfoQuery';
+import { NO_VALUE } from 'constants/placeholder';
 
 type YourPositionCardProps = {
 	short: ShortPosition;
@@ -74,10 +75,9 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
-	// TODO: implement
-	const PnL = 1;
-
-	const isPositivePnL = useMemo(() => PnL > 0, [PnL]);
+	const isPositivePnL = useMemo(() => (short.profitLoss != null ? short.profitLoss > 0 : null), [
+		short.profitLoss,
+	]);
 
 	return (
 		<StyledCard>
@@ -123,12 +123,17 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
-						{/* 
-				      need to put profit loss here. this is just a placeholder for now
-				    */}
 						<DataField positive={isPositivePnL}>
-							{isPositivePnL ? '+' : '-'}
-							{formatCurrency(SYNTHS_MAP.sUSD, 1, { sign: synthetix.synthsMap?.sUSD.sign })}
+							{short.profitLoss != null ? (
+								<>
+									{isPositivePnL ? '+' : '-'}
+									{formatCurrency(SYNTHS_MAP.sUSD, short.profitLoss, {
+										sign: synthetix.synthsMap?.sUSD.sign,
+									})}
+								</>
+							) : (
+								NO_VALUE
+							)}
 						</DataField>
 					</Row>
 				</LeftCol>
@@ -161,7 +166,9 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>{t('shorting.history.manageShort.fields.date')}</LightFieldText>
-						<DataField>{formatDateWithTime(short.createdAt)}</DataField>
+						<DataField>
+							{short.createdAt != null ? formatDateWithTime(short.createdAt) : NO_VALUE}
+						</DataField>
 					</Row>
 				</RightCol>
 			</StyledCardBody>
@@ -211,7 +218,7 @@ const LightFieldText = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
-const DataField = styled.div<{ positive?: boolean }>`
+const DataField = styled.div<{ positive?: boolean | null }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) =>
 		props.positive != null

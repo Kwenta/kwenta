@@ -25,10 +25,11 @@ export type ShortPosition = {
 	collateralLocked: CurrencyKey;
 	collateralLockedAmount: BigNumber;
 	collateralRatio: BigNumber;
-	txHash: string;
-	createdAt: Date;
-	isOpen: boolean;
-	closedAt: Date;
+	txHash: string | null;
+	createdAt: Date | null;
+	isOpen: boolean | null;
+	closedAt: Date | null;
+	profitLoss: number | null;
 };
 
 const useCollateralShortPositionQuery = (
@@ -53,33 +54,46 @@ const useCollateralShortPositionQuery = (
 			};
 			const collateralRatio = (await CollateralShort.collateralRatio(loan)) as ethers.BigNumber;
 
-			const response = (await request(
-				SHORT_GRAPH_ENDPOINT,
-				gql`
-					query shorts($id: String!) {
-						shorts(where: { id: $id }) {
-							txHash
-							isOpen
-							createdAt
-							closedAt
+			let txHash = null;
+			let isOpen = null;
+			let createdAt = null;
+			let closedAt = null;
+
+			try {
+				const response = (await request(
+					SHORT_GRAPH_ENDPOINT,
+					gql`
+						query shorts($id: String!) {
+							shorts(where: { id: $id }) {
+								txHash
+								isOpen
+								createdAt
+								closedAt
+							}
 						}
+					`,
+					{
+						id: loanId,
 					}
-				`,
-				{
-					id: loanId,
-				}
-			)) as {
-				shorts: Array<{
-					txHash: string;
-					isOpen: boolean;
-					createdAt: string;
-					closedAt: string;
-				}>;
-			};
+				)) as {
+					shorts: Array<{
+						txHash: string;
+						isOpen: boolean;
+						createdAt: string;
+						closedAt: string;
+					}>;
+				};
 
-			const subgraphShort = response.shorts[0];
+				const subgraphShort = response.shorts[0];
 
-			// pnl
+				txHash = subgraphShort.txHash;
+				isOpen = subgraphShort.isOpen;
+				createdAt = fromUnixTime(Number(subgraphShort.createdAt));
+				closedAt = fromUnixTime(Number(subgraphShort.closedAt));
+			} catch (e) {
+				console.log(e.message);
+			}
+
 			return {
 				id: loanId as string,
 				accruedInterest: toBigNumber(
@@ -93,10 +107,12 @@ const useCollateralShortPositionQuery = (
 					utils.formatUnits(loan.collateral, DEFAULT_TOKEN_DECIMALS)
 				),
 				collateralRatio: toBigNumber(utils.formatUnits(collateralRatio, DEFAULT_TOKEN_DECIMALS)),
-				txHash: subgraphShort.txHash,
-				isOpen: subgraphShort.isOpen,
-				createdAt: fromUnixTime(Number(subgraphShort.createdAt)),
-				closedAt: fromUnixTime(Number(subgraphShort.closedAt)),
+				txHash,
+				isOpen,
+				createdAt,
+				closedAt,
+				// TODO: implement
+				profitLoss: null,
 			};
 		},
 		{
