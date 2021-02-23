@@ -10,7 +10,7 @@ import Button from 'components/Button';
 
 import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
-import { FlexDivCentered, resetButtonCSS, ConnectionDot } from 'styles/common';
+import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
@@ -20,6 +20,8 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
+
+import ConnectionDot from '../ConnectionDot';
 
 type UserMenuProps = {
 	isTextButton?: boolean;

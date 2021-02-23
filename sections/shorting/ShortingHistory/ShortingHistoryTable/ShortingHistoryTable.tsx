@@ -10,7 +10,7 @@ import { formatNumber, formatPercent, formatCurrency } from 'utils/formatters/nu
 
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink, GridDivCenteredRow, IconButton } from 'styles/common';
 import Etherscan from 'containers/Etherscan';
 
 import Table from 'components/Table';
@@ -157,13 +157,15 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				{
 					id: 'edit',
 					Cell: (cellProps: CellProps<Short>) => (
-						<div
+						<IconButton
 							onClick={() =>
-								router.push(ROUTES.Shorting.ManageShortAddCollateral(cellProps.row.original.id))
+								router.push(
+									ROUTES.Shorting.ManageShortAddCollateral(`${cellProps.row.original.id}`)
+								)
 							}
 						>
 							<StyledLinkIcon src={EditIcon} viewBox={`0 0 ${EditIcon.width} ${EditIcon.height}`} />
-						</div>
+						</IconButton>
 					),
 					sortable: false,
 					width: 30,

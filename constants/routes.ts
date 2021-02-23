@@ -24,15 +24,15 @@ export const ROUTES = {
 	},
 	Shorting: {
 		Home: '/shorting',
-		ManageShortAddCollateral: (id: number) =>
+		ManageShortAddCollateral: (id: string) =>
 			normalizeRoute(`/shorting/manage/add-collateral`, String(id), 'id'),
-		ManageShortRemoveCollateral: (id: number) =>
+		ManageShortRemoveCollateral: (id: string) =>
 			normalizeRoute(`/shorting/manage/remove-collateral`, String(id), 'id'),
-		ManageShortDecreasePosition: (id: number) =>
+		ManageShortDecreasePosition: (id: string) =>
 			normalizeRoute(`/shorting/manage/decrease-position`, String(id), 'id'),
-		ManageShortIncreasePosition: (id: number) =>
+		ManageShortIncreasePosition: (id: string) =>
 			normalizeRoute(`/shorting/manage/increase-position`, String(id), 'id'),
-		ManageShortClosePosition: (id: number) =>
+		ManageShortClosePosition: (id: string) =>
 			normalizeRoute(`/shorting/manage/close-position`, String(id), 'id'),
 	},
 };

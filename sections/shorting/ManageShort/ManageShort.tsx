@@ -1,18 +1,26 @@
 import { FC, useMemo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
-import find from 'lodash/find';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import castArray from 'lodash/castArray';
+import add from 'date-fns/add';
+import isAfter from 'date-fns/isAfter';
+import Countdown, { zeroPad } from 'react-countdown';
 
 import ROUTES from 'constants/routes';
+
+import useCollateralShortPositionQuery from 'queries/collateral/useCollateralShortPositionQuery';
+import useCollateralShortInfoQuery from 'queries/collateral/useCollateralShortInfoQuery';
+
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Loader from 'components/Loader';
+
 import { CardTitle } from 'sections/dashboard/common';
+
 import BackIcon from 'assets/svg/app/go-back.svg';
-import { FlexDivRow, IconButton } from 'styles/common';
-import useShortHistoryQuery from 'queries/short/useShortHistoryQuery';
+
+import { FlexDivRow, IconButton, CenteredMessage } from 'styles/common';
 
 import ManageShortAction from './ManageShortAction';
 import YourPositionCard from './YourPositionCard';
@@ -34,7 +42,7 @@ const ManageShort: FC = () => {
 	const [tabQuery, loanId] = useMemo(() => {
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as ShortingTab;
-			const loanId = castArray(router.query.tab)[1] as ShortingTab;
+			const loanId = castArray(router.query.tab)[1] as string;
 			if (ShortingTabs.includes(tab)) {
 				return [tab, loanId];
 			}
@@ -42,12 +50,21 @@ const ManageShort: FC = () => {
 		return [null, null];
 	}, [router.query]);
 
-	const shortHistoryQuery = useShortHistoryQuery();
-	const shortHistory = useMemo(() => shortHistoryQuery.data || [], [shortHistoryQuery.data]);
-	const short = useMemo(() => find(shortHistory, ({ id }) => id === Number(loanId ?? 0)), [
-		shortHistory,
-		loanId,
+	const shortPositionQuery = useCollateralShortPositionQuery(loanId);
+
+	console.log(shortPositionQuery);
+
+	const short = useMemo(() => (shortPositionQuery.isSuccess ? shortPositionQuery.data : null), [
+		shortPositionQuery.data,
+		shortPositionQuery.isSuccess,
 	]);
+
+	const collateralShortInfoQuery = useCollateralShortInfoQuery();
+
+	const collateralShortInfo = useMemo(
+		() => (collateralShortInfoQuery.isSuccess ? collateralShortInfoQuery.data ?? null : null),
+		[collateralShortInfoQuery.isSuccess, collateralShortInfoQuery.data]
+	);
 
 	const activeTab = tabQuery != null ? tabQuery : ShortingTab.AddCollateral;
 
@@ -102,12 +119,25 @@ const ManageShort: FC = () => {
 	const leftTabs = useMemo(() => TABS.filter((tab) => !tab.isClosePosition), [TABS]);
 	const closeTab = useMemo(() => TABS.find((tab) => tab.isClosePosition), [TABS]);
 
-	// TODO: support for when a short is closed
+	const nextInteractionDate = useMemo(
+		() =>
+			short != null
+				? add(short.lastInteraction, { seconds: collateralShortInfo?.interactionDelay })
+				: null,
+		[short, collateralShortInfo?.interactionDelay]
+	);
+
+	const interactionDisabled = useMemo(() => {
+		if (nextInteractionDate != null) {
+			return isAfter(nextInteractionDate, new Date());
+		}
+		return false;
+	}, [nextInteractionDate]);
 
 	return (
 		<Container>
 			{short == null ? (
-				shortHistoryQuery.isLoading ? (
+				shortPositionQuery.isLoading ? (
 					<Loader />
 				) : (
 					<NoResultsFound>{t('shorting.history.manageShort.noResults')}</NoResultsFound>
@@ -137,20 +167,47 @@ const ManageShort: FC = () => {
 							) : null}
 						</StyledTabList>
 					</FlexDivRow>
-					{TABS.map(({ name }) => (
-						<TabPanel key={name} name={name} activeTab={activeTab}>
-							<ManageShortAction tab={name} isActive={name === activeTab} short={short} />
-						</TabPanel>
-					))}
+					<TabsContainer>
+						<TabPanelsContainer interactionDisabled={interactionDisabled}>
+							{TABS.map(({ name }) => (
+								<TabPanel key={name} name={name} activeTab={activeTab}>
+									<ManageShortAction
+										tab={name}
+										isActive={name === activeTab}
+										short={short}
+										refetchShortPosition={() => shortPositionQuery.refetch()}
+									/>
+								</TabPanel>
+							))}
+						</TabPanelsContainer>
+						{interactionDisabled && nextInteractionDate != null && (
+							<CenteredMessage>
+								<div>{t('shorting.history.manageShort.interaction-disabled.title')}</div>
+								<div>
+									{t('shorting.history.manageShort.interaction-disabled.message.part1')}{' '}
+									<Countdown
+										date={nextInteractionDate}
+										renderer={({ minutes, seconds }) => {
+											const duration = [
+												`${zeroPad(minutes)}${t('common.time.minutes')}`,
+												`${zeroPad(seconds)}${t('common.time.seconds')}`,
+											];
+
+											return <span>{duration.join(':')}</span>;
+										}}
+									/>{' '}
+									{t('shorting.history.manageShort.interaction-disabled.message.part2')}
+								</div>
+							</CenteredMessage>
+						)}
+					</TabsContainer>
 				</>
 			)}
 		</Container>
 	);
 };
 
-const Container = styled.div`
-	position: relative;
-`;
+const Container = styled.div``;
 
 const StyledTabButton = styled(TabButton)``;
 
@@ -189,6 +246,20 @@ const StyledTabList = styled(TabList)`
 	width: 100%;
 	border-bottom: 0.5px solid ${(props) => props.theme.colors.navy};
 	margin-bottom: 30px;
+`;
+
+const TabsContainer = styled.div`
+	position: relative;
+`;
+
+const TabPanelsContainer = styled.div<{ interactionDisabled: boolean }>`
+	${(props) =>
+		props.interactionDisabled &&
+		css`
+			pointer-events: none;
+			opacity: 0.2;
+			user-select: none;
+		`}
 `;
 
 export default ManageShort;

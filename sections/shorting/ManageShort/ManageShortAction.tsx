@@ -3,15 +3,15 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
-import { Short } from 'queries/short/types';
-
 import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import ROUTES from 'constants/routes';
 
 import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 
@@ -19,7 +19,7 @@ import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useCollateralShortDataQuery from 'queries/collateral/useCollateralShortDataQuery';
-import useShortHistoryQuery from 'queries/short/useShortHistoryQuery';
+import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 
@@ -58,16 +58,20 @@ import {
 } from 'sections/exchange/FooterCard/common';
 
 import { ShortingTab } from './ManageShort';
-import { useRouter } from 'next/router';
-import ROUTES from 'constants/routes';
 
-interface ManageShortActionProps {
-	short: Short;
+type ManageShortActionProps = {
+	short: ShortPosition;
 	tab: ShortingTab;
 	isActive: boolean;
-}
+	refetchShortPosition: () => void;
+};
 
-const ManageShortAction: FC<ManageShortActionProps> = ({ short, tab, isActive }) => {
+const ManageShortAction: FC<ManageShortActionProps> = ({
+	short,
+	tab,
+	isActive,
+	refetchShortPosition,
+}) => {
 	const { t } = useTranslation();
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [isApproved, setIsApproved] = useState<boolean>(false);
@@ -80,7 +84,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({ short, tab, isActive })
 	const [txError, setTxError] = useState<string | null>(null);
 	const { notify } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
-	const shortHistoryQuery = useShortHistoryQuery();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -278,7 +281,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({ short, tab, isActive })
 							if (onSuccess != null) {
 								onSuccess();
 							}
-							shortHistoryQuery.refetch();
+							refetchShortPosition();
 						},
 					});
 				}

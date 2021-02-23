@@ -41,9 +41,9 @@ import {
 
 import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 
-interface ShortingRewardsProps {
+type ShortingRewardsProps = {
 	synth: CurrencyKey;
-}
+};
 
 const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 	const { t } = useTranslation();

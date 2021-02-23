@@ -350,6 +350,13 @@
 					"interestRate": "Interest Rate",
 					"interestAccrued": "Interest Accrued"
 				},
+				"interaction-disabled": {
+					"title": "There is a waiting period after interacting with a loan.",
+					"message": {
+						"part1": "Please wait approximately",
+						"part2": "before reinteracting with it."
+					}
+				},
 				"sections": {
 					"add-collateral": {
 						"nav-title": "Add Collateral",
@@ -582,6 +589,14 @@
 		"pagination": {
 			"page": "Page",
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
 		}
 	}
 }
