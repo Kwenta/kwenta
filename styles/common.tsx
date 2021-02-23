@@ -148,14 +148,6 @@ export const PageContent = styled.section`
 	${(props) => props.theme.animations.show};
 `;
 
-export const ConnectionDot = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background-color: ${(props) => props.theme.colors.green};
-`;
-
 export const FixedFooterMixin = `
 	position: fixed;
 	bottom: 0;
@@ -252,4 +244,14 @@ export const SolidTooltipItemButton = styled(Button)`
 
 export const IconButton = styled.button`
 	${resetButtonCSS};
+`;
+
+export const CenteredMessage = styled.div`
+	${absoluteCenteredCSS};
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	text-align: center;
+	display: grid;
+	grid-gap: 10px;
 `;

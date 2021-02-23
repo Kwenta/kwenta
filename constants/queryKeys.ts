@@ -50,7 +50,6 @@ export const QUERY_KEYS = {
 		],
 	},
 	Collateral: {
-		ShortIssuanceFee: ['collateral', 'short', 'issuanceFee'],
 		ShortHistory: (walletAddress: string) => ['collateral', 'short', 'history', walletAddress],
 		ShortContract: (contractAddress: string) => [
 			'collateral',
@@ -58,6 +57,11 @@ export const QUERY_KEYS = {
 			'contract',
 			contractAddress,
 		],
+		// todo: rename this
+		ShortData: (currencyKey: string) => ['collateral', 'short', 'data', currencyKey],
+		ShortInfo: ['collateral', 'short'],
+		ShortPosition: (loanId: string) => ['collateral', 'short', 'position', loanId],
+		ShortRewards: (currencyKey: string) => ['collateral', 'short', 'rewards', currencyKey],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],

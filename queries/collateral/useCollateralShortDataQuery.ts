@@ -30,7 +30,7 @@ const useCollateralShortDataQuery = (
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<ShortFeeData>(
-		QUERY_KEYS.Collateral.ShortIssuanceFee,
+		QUERY_KEYS.Collateral.ShortData(currencyKey as string),
 		async () => {
 			if (currencyKey == null) {
 				return collateralShortNoData;

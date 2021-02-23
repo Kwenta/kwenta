@@ -7,9 +7,12 @@ import Etherscan from 'containers/Etherscan';
 
 import Card from 'components/Card';
 
-import { Short } from 'queries/short/types';
+import { SYNTHS_MAP } from 'constants/currency';
 
-import { formatCurrency, formatNumber, formatPercent } from 'utils/formatters/number';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
+
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatDateWithTime } from 'utils/formatters/date';
 
 import { FlexDivRow, ExternalLink } from 'styles/common';
@@ -19,38 +22,57 @@ import LinkIcon from 'assets/svg/app/link.svg';
 
 import synthetix from 'lib/synthetix';
 
-import { SHORT_C_RATIO } from '../ShortingCard/components/CRatioSelector/CRatioSelector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { NO_VALUE } from 'constants/placeholder';
-import { SYNTHS_MAP } from 'constants/currency';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-interface YourPositionCardProps {
-	short: Short;
-}
+import useCollateralShortInfoQuery from 'queries/collateral/useCollateralShortInfoQuery';
+
+type YourPositionCardProps = {
+	short: ShortPosition;
+};
 
 const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const collateralValue = useMemo(
-		() => short.collateralLockedAmount * short.collateralLockedPrice,
-		[short.collateralLockedAmount, short.collateralLockedPrice]
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const collateralShortInfoQuery = useCollateralShortInfoQuery();
+
+	const collateralShortInfo = useMemo(
+		() => (collateralShortInfoQuery.isSuccess ? collateralShortInfoQuery.data ?? null : null),
+		[collateralShortInfoQuery.isSuccess, collateralShortInfoQuery.data]
 	);
 
-	const collateralCRatio = useMemo(
-		() => collateralValue / (short.synthBorrowedAmount * short.synthBorrowedPrice),
-		[collateralValue, short.synthBorrowedAmount, short.synthBorrowedPrice]
+	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio ?? zeroBN, [
+		collateralShortInfo?.minCollateralRatio,
+	]);
+
+	const exchangeRates = useMemo(
+		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
+		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
+	);
+
+	const collateralLockedPrice = useMemo(
+		() =>
+			getExchangeRatesForCurrencies(
+				exchangeRates,
+				short.collateralLocked,
+				selectedPriceCurrency.name
+			),
+		[exchangeRates, selectedPriceCurrency.name, short.collateralLocked]
+	);
+
+	const collateralValue = useMemo(
+		() => short.collateralLockedAmount.multipliedBy(collateralLockedPrice),
+		[short.collateralLockedAmount, collateralLockedPrice]
 	);
 
 	const liquidationPrice = useMemo(
-		() => collateralValue / (short.synthBorrowedAmount * (short.contractData?.minCratio ?? 0)),
-		[collateralValue, short.synthBorrowedAmount, short.contractData?.minCratio]
+		() => collateralValue.dividedBy(short.synthBorrowedAmount.multipliedBy(minCollateralRatio)),
+		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
-
-	// TOOD: confirm when this should be positive/negative
-	const positiveCollateralCRatio = useMemo(() => collateralCRatio > SHORT_C_RATIO.highRisk, [
-		collateralCRatio,
-	]);
 
 	// TODO: implement
 	const PnL = 1;
@@ -61,12 +83,10 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		<StyledCard>
 			<StyledCardHeader>
 				{t('shorting.history.manageShort.subtitle')}
-				{etherscanInstance != null && short.txHash ? (
+				{etherscanInstance != null && short.txHash && (
 					<StyledExternalLink href={etherscanInstance.txLink(short.txHash)}>
 						<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
 					</StyledExternalLink>
-				) : (
-					NO_VALUE
 				)}
 			</StyledCardHeader>
 			<StyledCardBody>
@@ -95,7 +115,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 								asset: short.synthBorrowed,
 							})}
 						</LightFieldText>
-						<DataField>{formatNumber(0)}</DataField>
+						<DataField>{formatPercent(0)}</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>
@@ -125,8 +145,8 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						<LightFieldText>
 							{t('shorting.history.manageShort.fields.collateralRatio')}
 						</LightFieldText>
-						<DataField positive={positiveCollateralCRatio}>
-							{formatPercent(collateralCRatio)}
+						<DataField positive={short.collateralRatio.gt(minCollateralRatio)}>
+							{formatPercent(short.collateralRatio)}
 						</DataField>
 					</Row>
 					<Row>
@@ -134,7 +154,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 							{t('shorting.history.manageShort.fields.interestAccrued')}
 						</LightFieldText>
 						<DataField>
-							{formatCurrency(short.synthBorrowed, short.interestAccrued ?? 0, {
+							{formatCurrency(short.synthBorrowed, short.accruedInterest ?? 0, {
 								currencyKey: short.synthBorrowed,
 							})}
 						</DataField>
