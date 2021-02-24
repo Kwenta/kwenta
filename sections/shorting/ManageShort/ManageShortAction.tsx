@@ -277,13 +277,13 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				if (transaction != null && notify != null) {
 					monitorHash({
 						txHash: transaction.hash,
-						onTxConfirmed: () => {
-							if (onSuccess != null) {
-								onSuccess();
-							}
-							refetchShortPosition();
-						},
 					});
+
+					await transaction.wait();
+					if (onSuccess != null) {
+						onSuccess();
+					}
+					refetchShortPosition();
 				}
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
