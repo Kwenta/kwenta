@@ -20,7 +20,7 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { Short } from 'queries/short/types';
+import { Short } from 'queries/collateral/subgraph/types';
 
 type ShortingHistoryTableProps = {
 	shortHistory: Short[];

@@ -14,7 +14,7 @@ import synthetix from 'lib/synthetix';
 
 import { toBigNumber } from 'utils/formatters/number';
 import request, { gql } from 'graphql-request';
-import { SHORT_GRAPH_ENDPOINT } from 'queries/short/utils';
+import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
 
 export type ShortPosition = {
 	id: string;

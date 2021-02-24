@@ -11,7 +11,7 @@ import Countdown, { zeroPad } from 'react-countdown';
 import ROUTES from 'constants/routes';
 
 import useCollateralShortPositionQuery from 'queries/collateral/useCollateralShortPositionQuery';
-import useCollateralShortInfoQuery from 'queries/collateral/useCollateralShortInfoQuery';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Loader from 'components/Loader';
@@ -57,14 +57,19 @@ const ManageShort: FC = () => {
 		shortPositionQuery.isSuccess,
 	]);
 
-	const collateralShortInfoQuery = useCollateralShortInfoQuery();
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const collateralShortInfo = useMemo(
-		() => (collateralShortInfoQuery.isSuccess ? collateralShortInfoQuery.data ?? null : null),
-		[collateralShortInfoQuery.isSuccess, collateralShortInfoQuery.data]
+		() =>
+			collateralShortContractInfoQuery.isSuccess
+				? collateralShortContractInfoQuery.data ?? null
+				: null,
+		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const activeTab = tabQuery != null ? tabQuery : ShortingTab.AddCollateral;
+	const activeTab = useMemo(() => (tabQuery != null ? tabQuery : ShortingTab.AddCollateral), [
+		tabQuery,
+	]);
 
 	const TABS = useMemo(() => {
 		return short?.id != null
@@ -160,7 +165,7 @@ const ManageShort: FC = () => {
 									active={closeTab.active}
 									onClick={closeTab.onClick}
 								>
-									{TABS[TABS.length - 1].label}
+									{closeTab.label}
 								</CloseTabButton>
 							) : null}
 						</StyledTabList>

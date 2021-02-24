@@ -26,7 +26,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import useCollateralShortInfoQuery from 'queries/collateral/useCollateralShortInfoQuery';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import { NO_VALUE } from 'constants/placeholder';
 
 type YourPositionCardProps = {
@@ -39,11 +39,14 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const collateralShortInfoQuery = useCollateralShortInfoQuery();
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const collateralShortInfo = useMemo(
-		() => (collateralShortInfoQuery.isSuccess ? collateralShortInfoQuery.data ?? null : null),
-		[collateralShortInfoQuery.isSuccess, collateralShortInfoQuery.data]
+		() =>
+			collateralShortContractInfoQuery.isSuccess
+				? collateralShortContractInfoQuery.data ?? null
+				: null,
+		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
 	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio ?? zeroBN, [

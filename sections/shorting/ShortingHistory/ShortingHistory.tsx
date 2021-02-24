@@ -9,8 +9,8 @@ import Select from 'components/Select';
 import { appReadyState } from 'store/app';
 import { CapitalizedText, GridDiv } from 'styles/common';
 import { SYNTHS_MAP } from 'constants/currency';
-import { Short } from 'queries/short/types';
-import useShortHistoryQuery from 'queries/short/useShortHistoryQuery';
+import { Short } from 'queries/collateral/subgraph/types';
+import useShortHistoryQuery from 'queries/collateral/subgraph/useShortHistoryQuery';
 
 import ShortingHistoryTable from './ShortingHistoryTable';
 

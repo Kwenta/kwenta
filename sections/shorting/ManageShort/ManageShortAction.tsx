@@ -18,7 +18,6 @@ import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useCollateralShortDataQuery from 'queries/collateral/useCollateralShortDataQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
@@ -58,6 +57,7 @@ import {
 } from 'sections/exchange/FooterCard/common';
 
 import { ShortingTab } from './ManageShort';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -91,7 +91,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
-	const collateralShortDataQuery = useCollateralShortDataQuery(short.synthBorrowed);
+	const collateralShortDataQuery = useCollateralShortContractInfoQuery();
 	const issueFeeRate = collateralShortDataQuery.isSuccess
 		? collateralShortDataQuery?.data?.issueFeeRate ?? null
 		: null;

@@ -25,7 +25,6 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useCollateralShortDataQuery from 'queries/collateral/useCollateralShortDataQuery';
 
 import { SYNTHS_MAP } from 'constants/currency';
 import { CurrencyKey } from 'constants/currency';
@@ -40,6 +39,7 @@ import {
 } from 'sections/exchange/FooterCard/common';
 
 import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
+import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewards';
 
 type ShortingRewardsProps = {
 	synth: CurrencyKey;
@@ -57,9 +57,9 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 	const { monitorHash } = Notify.useContainer();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const collateralShortDataQuery = useCollateralShortDataQuery(synth);
-	const shortingRewards = collateralShortDataQuery.isSuccess
-		? collateralShortDataQuery?.data?.shortingRewards ?? null
+	const collateralShortRewardsQuery = useCollateralShortRewards(synth);
+	const shortingRewards = collateralShortRewardsQuery.isSuccess
+		? collateralShortRewardsQuery?.data ?? null
 		: null;
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
@@ -82,7 +82,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 		if (synthetix.js != null && walletAddress != null) {
 			try {
 				const gasLimitEstimate = await synthetix.js.contracts.CollateralShort.estimateGas.getReward(
-					synthetix.js?.toBytes32(synth),
+					ethers.utils.formatBytes32String(synth),
 					walletAddress
 				);
 				return normalizeGasLimit(Number(gasLimitEstimate));
@@ -135,7 +135,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 				setGasLimit(gasLimitEstimate);
 
 				tx = (await synthetix.js.contracts.CollateralShort.open(
-					synthetix.js?.toBytes32(synth),
+					ethers.utils.formatBytes32String(synth),
 					walletAddress,
 					{
 						gasPrice: gasPriceWei,
@@ -147,7 +147,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 					monitorHash({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
-							collateralShortDataQuery.refetch();
+							collateralShortRewardsQuery.refetch();
 						},
 					});
 				}
@@ -179,7 +179,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 					disabled={isSubmissionDisabled}
 					onClick={onSubmit}
 					size="lg"
-					data-testid="submit-order"
+					data-testid="claim-rewards"
 				>
 					{isSubmissionDisabled
 						? t(`shorting.rewards.button.${submissionDisabledReason}`)

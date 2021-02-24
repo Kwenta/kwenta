@@ -17,11 +17,11 @@ export type CollateralShortInfo = {
 	interactionDelay: number;
 };
 
-const useCollateralShortInfoQuery = (options?: QueryConfig<CollateralShortInfo>) => {
+const useCollateralShortContractInfoQuery = (options?: QueryConfig<CollateralShortInfo>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<CollateralShortInfo>(
-		QUERY_KEYS.Collateral.ShortInfo,
+		QUERY_KEYS.Collateral.ShortContractInfo,
 		async () => {
 			const { CollateralShort } = synthetix.js!.contracts;
 
@@ -44,4 +44,4 @@ const useCollateralShortInfoQuery = (options?: QueryConfig<CollateralShortInfo>)
 	);
 };
 
-export default useCollateralShortInfoQuery;
+export default useCollateralShortContractInfoQuery;

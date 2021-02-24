@@ -16,6 +16,8 @@ import Connector from 'containers/Connector';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+import useCollateralShortRate from 'queries/collateral/useCollateralShortRate';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
@@ -49,10 +51,10 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
-import useCollateralShortDataQuery from 'queries/collateral/useCollateralShortDataQuery';
 import Notify from 'containers/Notify';
 
 import { NoTextTransform } from 'styles/common';
+
 import { SHORT_C_RATIO } from '../ShortingCard/components/CRatioSelector/CRatioSelector';
 
 type ShortCardProps = {
@@ -106,12 +108,13 @@ const useShort = ({
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const collateralShortDataQuery = useCollateralShortDataQuery(baseCurrencyKey);
-	const issueFeeRate = collateralShortDataQuery.isSuccess
-		? collateralShortDataQuery?.data?.issueFeeRate ?? null
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
+	const collateralShortRateQuery = useCollateralShortRate(baseCurrencyKey);
+	const issueFeeRate = collateralShortContractInfoQuery.isSuccess
+		? collateralShortContractInfoQuery?.data?.issueFeeRate ?? null
 		: null;
-	const shortRate = collateralShortDataQuery.isSuccess
-		? collateralShortDataQuery?.data?.shortRate ?? null
+	const shortRate = collateralShortRateQuery.isSuccess
+		? collateralShortRateQuery?.data ?? null
 		: null;
 
 	const baseCurrency =

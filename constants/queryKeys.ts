@@ -57,11 +57,10 @@ export const QUERY_KEYS = {
 			'contract',
 			contractAddress,
 		],
-		// todo: rename this
-		ShortData: (currencyKey: string) => ['collateral', 'short', 'data', currencyKey],
-		ShortInfo: ['collateral', 'short'],
+		ShortContractInfo: ['collateral', 'short', 'contractInfo'],
 		ShortPosition: (loanId: string) => ['collateral', 'short', 'position', loanId],
 		ShortRewards: (currencyKey: string) => ['collateral', 'short', 'rewards', currencyKey],
+		ShortRate: (currencyKey: string) => ['collateral', 'short', 'rate', currencyKey],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
