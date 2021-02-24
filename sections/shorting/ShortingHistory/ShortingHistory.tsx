@@ -9,10 +9,12 @@ import Select from 'components/Select';
 import { appReadyState } from 'store/app';
 import { CapitalizedText, GridDiv } from 'styles/common';
 import { SYNTHS_MAP } from 'constants/currency';
-import { Short } from 'queries/collateral/subgraph/types';
+import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
 import useShortHistoryQuery from 'queries/collateral/subgraph/useShortHistoryQuery';
 
 import ShortingHistoryTable from './ShortingHistoryTable';
+
+const day = 86400 * 1000;
 
 const ShortingHistory: FC = () => {
 	const { t } = useTranslation();
@@ -65,7 +67,7 @@ const ShortingHistory: FC = () => {
 	const synths = synthetix.js?.synths || [];
 
 	const createSynthTypeFilter = useCallback(
-		(synths: Synth[], synthFilter: string) => (short: Short) =>
+		(synths: Synth[], synthFilter: string) => (short: HistoricalShortPosition) =>
 			synths
 				.filter((synth) => synth.name === synthFilter || synthFilter === 'ALL_SYNTHS')
 				.map((synth) => synth.name)
@@ -74,9 +76,9 @@ const ShortingHistory: FC = () => {
 	);
 
 	const createDatesTypeFilter = useCallback(
-		(datesFilter: string) => (short: Short) => {
+		(datesFilter: string) => (short: HistoricalShortPosition) => {
 			const currentTime = new Date().getTime();
-			const day = 86400 * 1000;
+
 			switch (datesFilter) {
 				case datesFilterList[1].key:
 					return short.createdAt > currentTime - day * 7;
@@ -92,7 +94,7 @@ const ShortingHistory: FC = () => {
 	);
 
 	const createShortSizeFilter = useCallback(
-		(shortSize: string) => (short: Short) => {
+		(shortSize: string) => (short: HistoricalShortPosition) => {
 			switch (shortSize) {
 				case shortSizeFilterList[1].key:
 					return short.synthBorrowedAmount <= 1000;
@@ -146,7 +148,7 @@ const ShortingHistory: FC = () => {
 					}}
 				/>
 				<Select
-					inputId="order-type-list"
+					inputId="date-filter-list"
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={datesFilterList}
 					value={datesFilter}
@@ -157,7 +159,7 @@ const ShortingHistory: FC = () => {
 					}}
 				/>
 				<Select
-					inputId="order-size-list"
+					inputId="short-size-list"
 					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
 					options={shortSizeFilterList}
 					value={shortSize}

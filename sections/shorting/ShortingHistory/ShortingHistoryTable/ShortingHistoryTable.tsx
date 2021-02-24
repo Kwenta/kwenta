@@ -20,10 +20,13 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { Short } from 'queries/collateral/subgraph/types';
+import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 type ShortingHistoryTableProps = {
-	shortHistory: Short[];
+	shortHistory: HistoricalShortPosition[];
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -37,8 +40,28 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const columnsDeps = useMemo(() => [selectPriceCurrencyRate], [selectPriceCurrencyRate]);
 	const router = useRouter();
+
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
+
+	const collateralShortContractInfo = collateralShortContractInfoQuery.isSuccess
+		? collateralShortContractInfoQuery?.data ?? null
+		: null;
+
+	const minCratio = collateralShortContractInfo?.minCollateralRatio;
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+
+	const exchangeRates = useMemo(
+		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
+		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
+	);
+
+	const columnsDeps = useMemo(() => [minCratio, exchangeRates, selectPriceCurrencyRate], [
+		minCratio,
+		selectPriceCurrencyRate,
+		exchangeRates,
+	]);
 
 	return (
 		<StyledTable
@@ -47,14 +70,16 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				{
 					Header: <StyledTableHeader>{t('shorting.history.table.id')}</StyledTableHeader>,
 					accessor: 'id',
-					Cell: (cellProps: CellProps<Short>) => <WhiteText>{cellProps.row.original.id}</WhiteText>,
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
+						<WhiteText>{cellProps.row.original.id}</WhiteText>
+					),
 					sortable: true,
 					width: 50,
 				},
 				{
 					Header: <StyledTableHeader>{t('shorting.history.table.date')}</StyledTableHeader>,
 					accessor: 'date',
-					Cell: (cellProps: CellProps<Short>) => (
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<WhiteText>{formatDateWithTime(cellProps.row.original.createdAt)}</WhiteText>
 					),
 					width: 80,
@@ -63,7 +88,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				{
 					Header: <StyledTableHeader>{t('shorting.history.table.shorting')}</StyledTableHeader>,
 					accessor: 'synthBorrowedAmount',
-					Cell: (cellProps: CellProps<Short>) => (
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
 							<StyledPrice>{formatNumber(cellProps.row.original.synthBorrowedAmount)}</StyledPrice>
@@ -75,7 +100,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				{
 					Header: <StyledTableHeader>{t('shorting.history.table.collateral')}</StyledTableHeader>,
 					accessor: 'collateralLockedAmount',
-					Cell: (cellProps: CellProps<Short>) => (
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.collateralLocked}</StyledCurrencyKey>
 							<StyledPrice>
@@ -91,19 +116,31 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						<StyledTableHeader>{t('shorting.history.table.liquidationPrice')}</StyledTableHeader>
 					),
 					accessor: 'liquidationPrice',
-					Cell: (cellProps: CellProps<Short>) => (
-						<span>
-							<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
-							<StyledPrice>
-								{formatNumber(
-									(cellProps.row.original.collateralLockedAmount *
-										cellProps.row.original.collateralLockedPrice) /
-										(cellProps.row.original.synthBorrowedAmount *
-											(cellProps.row.original.contractData?.minCratio ?? 0))
-								)}
-							</StyledPrice>
-						</span>
-					),
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+						const {
+							collateralLockedAmount,
+							synthBorrowedAmount,
+							collateralLocked,
+						} = cellProps.row.original;
+
+						const collateralLockedPrice = getExchangeRatesForCurrencies(
+							exchangeRates,
+							collateralLocked,
+							selectedPriceCurrency.name
+						);
+
+						return (
+							<span>
+								<StyledCurrencyKey>{collateralLocked}</StyledCurrencyKey>
+								<StyledPrice>
+									{formatNumber(
+										(collateralLockedAmount * collateralLockedPrice) /
+											(synthBorrowedAmount * (minCratio ? minCratio.toNumber() : 0))
+									)}
+								</StyledPrice>
+							</span>
+						);
+					},
 					width: 100,
 					sortable: true,
 				},
@@ -112,7 +149,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						<StyledTableHeader>{t('shorting.history.table.interestAccrued')}</StyledTableHeader>
 					),
 					accessor: 'interestAccrued',
-					Cell: (cellProps: CellProps<Short>) => (
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
 							<StyledPrice>{formatNumber(cellProps.row.original.interestAccrued)}</StyledPrice>
@@ -124,16 +161,35 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				{
 					Header: <StyledTableHeader>{t('shorting.history.table.cRatio')}</StyledTableHeader>,
 					accessor: 'cRatio',
-					Cell: (cellProps: CellProps<Short>) => (
-						<PriceChangeText isPositive={true}>
-							{formatPercent(
-								(cellProps.row.original.collateralLockedAmount *
-									cellProps.row.original.collateralLockedPrice) /
-									(cellProps.row.original.synthBorrowedAmount *
-										cellProps.row.original.synthBorrowedPrice)
-							)}
-						</PriceChangeText>
-					),
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+						const {
+							collateralLockedAmount,
+							synthBorrowedAmount,
+							synthBorrowed,
+							collateralLocked,
+						} = cellProps.row.original;
+
+						const collateralLockedPrice = getExchangeRatesForCurrencies(
+							exchangeRates,
+							collateralLocked,
+							selectedPriceCurrency.name
+						);
+
+						const synthBorrowedPrice = getExchangeRatesForCurrencies(
+							exchangeRates,
+							synthBorrowed,
+							selectedPriceCurrency.name
+						);
+
+						return (
+							<PriceChangeText isPositive={true}>
+								{formatPercent(
+									(collateralLockedAmount * collateralLockedPrice) /
+										(synthBorrowedAmount * synthBorrowedPrice)
+								)}
+							</PriceChangeText>
+						);
+					},
 					width: 100,
 					sortable: true,
 				},
@@ -156,7 +212,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				},
 				{
 					id: 'edit',
-					Cell: (cellProps: CellProps<Short>) => (
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<IconButton
 							onClick={() =>
 								router.push(
@@ -172,7 +228,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				},
 				{
 					id: 'link',
-					Cell: (cellProps: CellProps<Short>) =>
+					Cell: (cellProps: CellProps<HistoricalShortPosition>) =>
 						etherscanInstance != null && cellProps.row.original.txHash ? (
 							<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
 								<StyledLinkIcon

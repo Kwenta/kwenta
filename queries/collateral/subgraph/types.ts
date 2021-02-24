@@ -1,6 +1,6 @@
 import { CurrencyKey } from 'constants/currency';
 
-export type Short = {
+export type HistoricalShortPosition = {
 	id: number;
 	txHash: string;
 	account: string;
@@ -13,7 +13,6 @@ export type Short = {
 	createdAt: number;
 	closedAt: number | null;
 	isOpen: boolean;
-	contractData?: ShortContract;
 	interestAccrued: number;
 	collateralChanges?: ShortCollateralChange[];
 	liquidations?: ShortLiquidation[];
@@ -25,7 +24,7 @@ export type ShortCollateralChange = {
 	isDeposit: boolean;
 	amount: number;
 	collateralAfter: number;
-	short?: Short;
+	short?: HistoricalShortPosition;
 	timestamp: number;
 };
 
@@ -34,7 +33,7 @@ export type ShortLoanChange = {
 	isRepayment: boolean;
 	amount: number;
 	loanAfter: number;
-	short?: Short;
+	short?: HistoricalShortPosition;
 	timestamp: number;
 };
 
@@ -44,13 +43,13 @@ export type ShortLiquidation = {
 	isClosed: boolean;
 	liquidatedAmount: number;
 	liquidatedCollateral: number;
-	short?: Short;
+	short?: HistoricalShortPosition;
 	timestamp: number;
 };
 
 export type ShortContract = {
 	id: string;
-	shorts?: Short[];
+	shorts?: HistoricalShortPosition[];
 	contractUpdates?: ShortContractUpdate[];
 	canOpenLoans: boolean;
 	interactionDelay: number;
@@ -65,6 +64,5 @@ export type ShortContractUpdate = {
 	id: string;
 	field: string;
 	value: string;
-	contractData?: ShortContract;
 	timestamp: number;
 };

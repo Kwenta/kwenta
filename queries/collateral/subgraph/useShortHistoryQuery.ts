@@ -1,58 +1,48 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { request } from 'graphql-request';
+import { gql, request } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import { Short } from './types';
-import { shortsQuery } from './query';
-import { mockShorts } from './mockShorts';
+import { HistoricalShortPosition } from './types';
 import { formatShort, SHORT_GRAPH_ENDPOINT } from './utils';
 
-const useShortHistoryQuery = (options?: QueryConfig<Short[]>) => {
+// TODO: remove mocked address
+const mockWalletAddress = '0x864b81c40d8314d5c4289a14eb92f03b9f43b6bc';
+
+const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	return useQuery<Short[]>(
+	return useQuery<HistoricalShortPosition[]>(
 		QUERY_KEYS.Collateral.ShortHistory(walletAddress ?? ''),
 		async () => {
-			if (walletAddress != null) {
-				const response = await request(SHORT_GRAPH_ENDPOINT, shortsQuery, {
-					account: walletAddress,
-				});
-
-				return (response?.shorts ?? []).length > 0
-					? response.shorts.map((short: Partial<Short>) => ({
-							...formatShort(short),
-							synthBorrowedPrice: getExchangeRatesForCurrencies(
-								exchangeRates,
-								short.synthBorrowed as string,
-								selectedPriceCurrency.name
-							) as number,
-							collateralLockedPrice: getExchangeRatesForCurrencies(
-								exchangeRates,
-								short.collateralLocked as string,
-								selectedPriceCurrency.name
-							) as number,
-							interestAccrued: 1,
-					  }))
-					: mockShorts.map((short) => ({
-							...formatShort(short),
-							collateralLockedPrice: short.collateralLockedPrice,
-							synthBorrowedPrice: short.synthBorrowedPrice,
-					  }));
-			} else {
-				return [];
-			}
+			const response = await request(
+				SHORT_GRAPH_ENDPOINT,
+				gql`
+					query shorts($account: String!) {
+						shorts(where: { account: $account, isOpen: true }, orderBy: id, orderDirection: desc) {
+							id
+							txHash
+							account
+							collateralLocked
+							collateralLockedAmount
+							synthBorrowed
+							synthBorrowedAmount
+							isOpen
+							createdAt
+							closedAt
+						}
+					}
+				`,
+				{
+					account: mockWalletAddress,
+				}
+			);
+			return (response?.shorts ?? []).map(formatShort);
 		},
 		{
 			enabled: isAppReady && isWalletConnected,

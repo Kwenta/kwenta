@@ -1,11 +1,11 @@
-import { Short, ShortContract, ShortLiquidation } from './types';
+import { HistoricalShortPosition, ShortLiquidation } from './types';
 import { hexToAscii } from 'utils/formatters/string';
 
 export const SHORT_GRAPH_ENDPOINT =
 	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 
 // TODO use big number anywhere - don't think these are related to input fields so not yet?
-export const formatShort = (response: any): Partial<Short> => ({
+export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
 	id: Number(response.id),
 	txHash: response.txHash,
 	account: response.account,
@@ -16,21 +16,10 @@ export const formatShort = (response: any): Partial<Short> => ({
 	createdAt: Number(response.createdAt) * 1000,
 	closedAt: response.closedAt != null ? Number(response.closedAt) * 1000 : null,
 	isOpen: Boolean(response.isOpen),
-	contractData: formatShortContractData(response.contractData),
 	collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
 	liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
 	loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
-});
-
-export const formatShortContractData = (response: any): ShortContract => ({
-	id: response.id,
-	canOpenLoans: Boolean(response.canOpenLoans),
-	interactionDelay: Number(response.interactionDelay),
-	issueFeeRate: response.issueFeeRate / 1e18,
-	manager: response.manager,
-	maxLoansPerAccount: response.maxLoansPerAccount,
-	minCollateral: response.minCollateral / 1e18,
-	minCratio: response.minCratio / 1e18,
+	interestAccrued: 1,
 });
 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({
