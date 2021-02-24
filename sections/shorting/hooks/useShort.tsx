@@ -55,8 +55,6 @@ import Notify from 'containers/Notify';
 
 import { NoTextTransform } from 'styles/common';
 
-import { SHORT_C_RATIO } from '../ShortingCard/components/CRatioSelector/CRatioSelector';
-
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
 	defaultQuoteCurrencyKey?: CurrencyKey | null;
@@ -101,8 +99,6 @@ const useShort = ({
 		[customShortCRatio, selectedShortCRatio]
 	);
 
-	const shortCRatioTooLow = useMemo(() => shortCRatio < SHORT_C_RATIO.highRisk, [shortCRatio]);
-
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
@@ -110,12 +106,22 @@ const useShort = ({
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 	const collateralShortRateQuery = useCollateralShortRate(baseCurrencyKey);
-	const issueFeeRate = collateralShortContractInfoQuery.isSuccess
-		? collateralShortContractInfoQuery?.data?.issueFeeRate ?? null
+
+	const collateralShortContractInfo = collateralShortContractInfoQuery.isSuccess
+		? collateralShortContractInfoQuery?.data ?? null
 		: null;
+
+	const issueFeeRate = collateralShortContractInfo?.issueFeeRate;
+	const minCratio = collateralShortContractInfo?.minCollateralRatio;
+
 	const shortRate = collateralShortRateQuery.isSuccess
 		? collateralShortRateQuery?.data ?? null
 		: null;
+
+	const shortCRatioTooLow = useMemo(
+		() => (minCratio != null ? toBigNumber(shortCRatio).lt(minCratio) : false),
+		[shortCRatio, minCratio]
+	);
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
@@ -159,14 +165,6 @@ const useShort = ({
 	const quoteCurrencyAmountBN = useMemo(() => toBigNumber(quoteCurrencyAmount), [
 		quoteCurrencyAmount,
 	]);
-
-	// const baseCurrencyAmountEthersBN = useMemo(() => {
-	// 	try {
-	// 		return ethers.utils.parseUnits(baseCurrencyAmount.toString(), DEFAULT_TOKEN_DECIMALS);
-	// 	} catch {
-	// 		return ethers.BigNumber.from('0');
-	// 	}
-	// }, [baseCurrencyAmount]);
 
 	const totalTradePrice = useMemo(() => {
 		if (quoteCurrencyAmountBN.isNaN()) {
@@ -505,7 +503,7 @@ const useShort = ({
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}
-					feeRate={issueFeeRate}
+					feeRate={issueFeeRate ?? null}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					showFee={true}

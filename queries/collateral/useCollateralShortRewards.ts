@@ -10,29 +10,32 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import synthetix from 'lib/synthetix';
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 const useCollateralShortRewards = (
 	currencyKey: CurrencyKey | null,
 	options?: QueryConfig<BigNumber>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const walletAddress = useRecoilValue(walletAddressState);
 
 	return useQuery<BigNumber>(
 		QUERY_KEYS.Collateral.ShortRewards(currencyKey as string),
 		async () => {
 			try {
-				const shortingRewards = (await synthetix.js!.contracts.CollateralShort.shortingRewards(
-					ethers.utils.formatBytes32String(currencyKey as string)
+				const earned = (await synthetix.js!.contracts[`ShortingRewards${currencyKey}`].earned(
+					walletAddress
 				)) as ethers.BigNumber;
 
-				return toBigNumber(ethers.utils.formatEther(shortingRewards));
+				return toBigNumber(ethers.utils.formatEther(earned));
 			} catch (e) {
 				console.log(e);
 				return zeroBN;
 			}
 		},
 		{
-			enabled: isAppReady && currencyKey != null,
+			enabled: isAppReady && currencyKey != null && isWalletConnected,
 			...options,
 		}
 	);

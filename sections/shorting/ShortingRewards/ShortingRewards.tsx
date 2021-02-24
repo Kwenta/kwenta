@@ -61,7 +61,6 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 	const shortingRewards = collateralShortRewardsQuery.isSuccess
 		? collateralShortRewardsQuery?.data ?? null
 		: null;
-
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {

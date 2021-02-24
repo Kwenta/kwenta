@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import { customShortCRatioState, shortCRatioState } from 'store/ui';
-import { formatPercent } from 'utils/formatters/number';
+import { formatPercent, toBigNumber } from 'utils/formatters/number';
 
 import { Svg } from 'react-optimized-image';
 
@@ -18,6 +18,7 @@ import {
 } from 'styles/common';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 export type ShortCRatioLevel = 'safe' | 'safeMax' | 'highRisk';
 
@@ -40,13 +41,23 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 
 	const hasCustomShortCRatio = useMemo(() => customShortCRatio !== '', [customShortCRatio]);
 
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
+
+	const collateralShortContractInfo = collateralShortContractInfoQuery.isSuccess
+		? collateralShortContractInfoQuery?.data ?? null
+		: null;
+
+	const minCratio = collateralShortContractInfo?.minCollateralRatio;
+
 	const shortCRatio = useMemo(
 		() => (hasCustomShortCRatio ? Number(customShortCRatio) / 100 : selectedShortCRatio),
 		[hasCustomShortCRatio, selectedShortCRatio, customShortCRatio]
 	);
 
-	const shortCRatioTooLow = useMemo(() => shortCRatio < SHORT_C_RATIO.highRisk, [shortCRatio]);
-
+	const shortCRatioTooLow = useMemo(
+		() => (minCratio != null ? toBigNumber(shortCRatio).lt(minCratio) : false),
+		[shortCRatio, minCratio]
+	);
 	return (
 		<Container>
 			<Label>{t('shorting.common.cRatio')}</Label>
