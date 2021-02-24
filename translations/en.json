@@ -189,16 +189,16 @@
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
-				"c-ratio-too-low": "C-Ratio is too low",
+				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
-				"short-c-ratio-low": "c-ratio low",
 				"submitting-approval": "submitting approval...",
-				"approve-balancer": "approve balancer contract"
+				"approve-balancer": "approve balancer contract",
+				"add-more-collateral": "add more collateral"
 			}
 		},
 		"onboard": {
@@ -597,6 +597,7 @@
 			"hours": "h",
 			"minutes": "m",
 			"seconds": "s"
-		}
+		},
+		"min": "min"
 	}
 }

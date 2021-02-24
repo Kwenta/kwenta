@@ -100,4 +100,5 @@ export type SubmissionDisabledReason =
 	| 'approving'
 	| 'claim'
 	| 'submitting'
-	| 'c-ratio-too-low';
+	| 'c-ratio-too-low'
+	| 'add-more-collateral';

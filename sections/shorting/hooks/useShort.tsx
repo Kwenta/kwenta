@@ -49,7 +49,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
 
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { toBigNumber, zeroBN, formatNumber } from 'utils/formatters/number';
 
 import Notify from 'containers/Notify';
 
@@ -113,6 +113,7 @@ const useShort = ({
 
 	const issueFeeRate = collateralShortContractInfo?.issueFeeRate;
 	const minCratio = collateralShortContractInfo?.minCollateralRatio;
+	const minCollateral = collateralShortContractInfo?.minCollateral;
 
 	const shortRate = collateralShortRateQuery.isSuccess
 		? collateralShortRateQuery?.data ?? null
@@ -214,6 +215,9 @@ const useShort = ({
 		if (shortCRatioTooLow) {
 			return 'c-ratio-too-low';
 		}
+		if (minCollateral != null && quoteCurrencyAmountBN.lt(minCollateral)) {
+			return 'add-more-collateral';
+		}
 		return null;
 	}, [
 		shortCRatioTooLow,
@@ -224,6 +228,7 @@ const useShort = ({
 		baseCurrencyAmountBN,
 		quoteCurrencyAmountBN,
 		isWalletConnected,
+		minCollateral,
 	]);
 
 	const noSynths =
@@ -444,7 +449,17 @@ const useShort = ({
 				}
 			}}
 			priceRate={quotePriceRate}
-			label={t('shorting.common.collateral')}
+			label={
+				<span>
+					{t('shorting.common.collateral')}
+					{minCollateral != null && (
+						<NoTextTransform>
+							{' '}
+							({t('common.min')} {formatNumber(minCollateral)} {quoteCurrencyKey})
+						</NoTextTransform>
+					)}
+				</span>
+			}
 		/>
 	);
 
