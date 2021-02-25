@@ -348,7 +348,7 @@
 					"collateralRatio": "Collateral Ratio",
 					"date": "Date Opened",
 					"interestRate": "Interest Rate",
-					"interestAccrued": "Interest Accrued"
+					"accruedInterest": "Accrued Interest"
 				},
 				"interaction-disabled": {
 					"title": "There is a waiting period after interacting with a loan.",
@@ -407,7 +407,7 @@
 				"cRatio": "C-Ratio",
 				"profitLoss": "Profit / Loss",
 				"noResults": "No shorts found",
-				"interestAccrued": "Interest Accrued"
+				"accruedInterest": "Accrued Interest"
 			}
 		}
 	},

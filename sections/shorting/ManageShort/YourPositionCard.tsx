@@ -108,7 +108,8 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(short.collateralLocked, liquidationPrice, {
-								currencyKey: short.collateralLocked,
+								currencyKey: short.synthBorrowed,
+								sign: selectedPriceCurrency.sign,
 							})}
 						</DataField>
 					</Row>
@@ -159,7 +160,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.interestAccrued')}
+							{t('shorting.history.manageShort.fields.accruedInterest')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.accruedInterest ?? 0, {

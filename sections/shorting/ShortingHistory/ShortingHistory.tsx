@@ -2,40 +2,33 @@ import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import synthetix, { Synth } from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
+import isAfter from 'date-fns/isAfter';
+import sub from 'date-fns/sub';
 import { useRecoilValue } from 'recoil';
+
+import { historicalShortsPositionState } from 'store/shorts';
 
 import Select from 'components/Select';
 
-import { appReadyState } from 'store/app';
 import { CapitalizedText, GridDiv } from 'styles/common';
-import { SYNTHS_MAP } from 'constants/currency';
 import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
 import useShortHistoryQuery from 'queries/collateral/subgraph/useShortHistoryQuery';
 
 import ShortingHistoryTable from './ShortingHistoryTable';
 
-const day = 86400 * 1000;
+import { SYNTHS_TO_SHORT } from '../constants';
 
 const ShortingHistory: FC = () => {
 	const { t } = useTranslation();
-	const isAppReady = useRecoilValue(appReadyState);
 	const shortHistoryQuery = useShortHistoryQuery();
-
-	const synthsAvailableToShort = useMemo(() => {
-		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) =>
-				[SYNTHS_MAP.sBTC, SYNTHS_MAP.sETH].includes(synth.name)
-			);
-		}
-		return [];
-	}, [isAppReady]);
+	const historicalShortsPosition = useRecoilValue(historicalShortsPositionState);
 
 	const synthFilterList = useMemo(
 		() => [
 			{ label: t('shorting.history.assetsSort.allAssets'), key: 'ALL_SYNTHS' },
-			...synthsAvailableToShort.map((synth) => ({ label: synth.name, key: synth.name })),
+			...SYNTHS_TO_SHORT.map((synth) => ({ label: synth, key: synth })),
 		],
-		[t, synthsAvailableToShort]
+		[t]
 	);
 
 	const datesFilterList = useMemo(
@@ -77,15 +70,15 @@ const ShortingHistory: FC = () => {
 
 	const createDatesTypeFilter = useCallback(
 		(datesFilter: string) => (short: HistoricalShortPosition) => {
-			const currentTime = new Date().getTime();
+			const now = new Date();
 
 			switch (datesFilter) {
 				case datesFilterList[1].key:
-					return short.createdAt > currentTime - day * 7;
+					return isAfter(short.createdAt, sub(now, { weeks: 1 }));
 				case datesFilterList[2].key:
-					return short.createdAt > currentTime - day * 30;
+					return isAfter(short.createdAt, sub(now, { months: 1 }));
 				case datesFilterList[3].key:
-					return short.createdAt > currentTime - day * 365;
+					return isAfter(short.createdAt, sub(now, { years: 1 }));
 				default:
 					return true;
 			}
@@ -97,15 +90,15 @@ const ShortingHistory: FC = () => {
 		(shortSize: string) => (short: HistoricalShortPosition) => {
 			switch (shortSize) {
 				case shortSizeFilterList[1].key:
-					return short.synthBorrowedAmount <= 1000;
+					return short.synthBorrowedAmount.lte(1000);
 				case shortSizeFilterList[2].key:
-					return 1000 < short.synthBorrowedAmount && short.synthBorrowedAmount <= 10000;
+					return short.synthBorrowedAmount.gt(1000) && short.synthBorrowedAmount.lte(10000);
 				case shortSizeFilterList[3].key:
-					return 10000 < short.synthBorrowedAmount && short.synthBorrowedAmount <= 100000;
+					return short.synthBorrowedAmount.gt(10000) && short.synthBorrowedAmount.lte(100000);
 				case shortSizeFilterList[4].key:
-					return 100000 < short.synthBorrowedAmount && short.synthBorrowedAmount <= 1000000;
+					return short.synthBorrowedAmount.gt(100000) && short.synthBorrowedAmount.lte(1000000);
 				case shortSizeFilterList[5].key:
-					return short.synthBorrowedAmount >= 1000000;
+					return short.synthBorrowedAmount.gte(1000000);
 				default:
 					return true;
 			}
@@ -113,7 +106,10 @@ const ShortingHistory: FC = () => {
 		[shortSizeFilterList]
 	);
 
-	const shortHistory = useMemo(() => shortHistoryQuery.data || [], [shortHistoryQuery.data]);
+	const shortHistory = useMemo(
+		() => [...historicalShortsPosition, ...(shortHistoryQuery.data || [])],
+		[shortHistoryQuery.data, historicalShortsPosition]
+	);
 
 	const filteredShortHistory = useMemo(
 		() =>
@@ -138,7 +134,7 @@ const ShortingHistory: FC = () => {
 			<Filters>
 				<Select
 					inputId="synth-filter-list"
-					formatOptionLabel={(option: any) => <CapitalizedText>{option.label}</CapitalizedText>}
+					formatOptionLabel={(option: any) => <span>{option.label}</span>}
 					options={synthFilterList}
 					value={synthFilter}
 					onChange={(option: any) => {

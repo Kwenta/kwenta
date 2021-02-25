@@ -8,9 +8,8 @@ import { useRouter } from 'next/router';
 import { formatDateWithTime } from 'utils/formatters/date';
 import { formatNumber, formatPercent, formatCurrency } from 'utils/formatters/number';
 
-import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-import { ExternalLink, GridDivCenteredRow, IconButton } from 'styles/common';
+import { ExternalLink, GridDivCenteredCol, GridDivCenteredRow, IconButton } from 'styles/common';
 import Etherscan from 'containers/Etherscan';
 
 import Table from 'components/Table';
@@ -82,7 +81,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<WhiteText>{formatDateWithTime(cellProps.row.original.createdAt)}</WhiteText>
 					),
-					width: 80,
+					width: 100,
 					sortable: true,
 				},
 				{
@@ -121,6 +120,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 							collateralLockedAmount,
 							synthBorrowedAmount,
 							collateralLocked,
+							synthBorrowed,
 						} = cellProps.row.original;
 
 						const collateralLockedPrice = getExchangeRatesForCurrencies(
@@ -131,11 +131,18 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 
 						return (
 							<span>
-								<StyledCurrencyKey>{collateralLocked}</StyledCurrencyKey>
+								<StyledCurrencyKey>{synthBorrowed}</StyledCurrencyKey>
 								<StyledPrice>
-									{formatNumber(
-										(collateralLockedAmount * collateralLockedPrice) /
-											(synthBorrowedAmount * (minCratio ? minCratio.toNumber() : 0))
+									{formatCurrency(
+										collateralLocked,
+										collateralLockedAmount
+											.multipliedBy(collateralLockedPrice)
+											.dividedBy(
+												synthBorrowedAmount.multipliedBy(minCratio ? minCratio.toNumber() : 0)
+											),
+										{
+											sign: selectedPriceCurrency.sign,
+										}
 									)}
 								</StyledPrice>
 							</span>
@@ -146,13 +153,13 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				},
 				{
 					Header: (
-						<StyledTableHeader>{t('shorting.history.table.interestAccrued')}</StyledTableHeader>
+						<StyledTableHeader>{t('shorting.history.table.accruedInterest')}</StyledTableHeader>
 					),
-					accessor: 'interestAccrued',
+					accessor: 'accruedInterest',
 					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
-							<StyledPrice>{formatNumber(cellProps.row.original.interestAccrued)}</StyledPrice>
+							<StyledPrice>{formatNumber(cellProps.row.original.accruedInterest)}</StyledPrice>
 						</span>
 					),
 					width: 100,
@@ -184,13 +191,14 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						return (
 							<PriceChangeText isPositive={true}>
 								{formatPercent(
-									(collateralLockedAmount * collateralLockedPrice) /
-										(synthBorrowedAmount * synthBorrowedPrice)
+									collateralLockedAmount
+										.multipliedBy(collateralLockedPrice)
+										.dividedBy(synthBorrowedAmount.multipliedBy(synthBorrowedPrice))
 								)}
 							</PriceChangeText>
 						);
 					},
-					width: 100,
+					width: 50,
 					sortable: true,
 				},
 				{
@@ -207,40 +215,37 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 							})}
 						</PriceChangeText>
 					),
-					width: 100,
+					width: 80,
 					sortable: true,
 				},
 				{
-					id: 'edit',
+					id: 'actions',
 					Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-						<IconButton
-							onClick={() =>
-								router.push(
-									ROUTES.Shorting.ManageShortAddCollateral(`${cellProps.row.original.id}`)
-								)
-							}
-						>
-							<StyledLinkIcon src={EditIcon} viewBox={`0 0 ${EditIcon.width} ${EditIcon.height}`} />
-						</IconButton>
+						<ActionsContainer>
+							<IconButton
+								onClick={() =>
+									router.push(
+										ROUTES.Shorting.ManageShortAddCollateral(`${cellProps.row.original.id}`)
+									)
+								}
+							>
+								<StyledLinkIcon
+									src={EditIcon}
+									viewBox={`0 0 ${EditIcon.width} ${EditIcon.height}`}
+								/>
+							</IconButton>
+							{etherscanInstance != null && cellProps.row.original.txHash && (
+								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
+									<StyledLinkIcon
+										src={LinkIcon}
+										viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+									/>
+								</StyledExternalLink>
+							)}
+						</ActionsContainer>
 					),
 					sortable: false,
-					width: 30,
-				},
-				{
-					id: 'link',
-					Cell: (cellProps: CellProps<HistoricalShortPosition>) =>
-						etherscanInstance != null && cellProps.row.original.txHash ? (
-							<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
-								<StyledLinkIcon
-									src={LinkIcon}
-									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-								/>
-							</StyledExternalLink>
-						) : (
-							NO_VALUE
-						),
-					sortable: false,
-					width: 30,
+					width: 50,
 				},
 			]}
 			columnsDeps={columnsDeps}
@@ -260,8 +265,17 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 	);
 };
 
-const StyledExternalLink = styled(ExternalLink)`
+const StyledExternalLink = styled(ExternalLink)``;
+
+const ActionsContainer = styled(GridDivCenteredCol)`
+	grid-gap: 10px;
 	margin-left: auto;
+
+	button {
+		&:hover {
+			color: ${(props) => props.theme.colors.goldColors.color1};
+		}
+	}
 `;
 
 const StyledLinkIcon = styled(Svg)`

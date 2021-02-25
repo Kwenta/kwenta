@@ -1,5 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { gql, request } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
@@ -8,14 +8,19 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { HistoricalShortPosition } from './types';
 import { formatShort, SHORT_GRAPH_ENDPOINT } from './utils';
+import { historicalShortsPositionState } from 'store/shorts';
+import produce from 'immer';
 
 // TODO: remove mocked address
-const mockWalletAddress = '0x864b81c40d8314d5c4289a14eb92f03b9f43b6bc';
+// const mockWalletAddress = '0x864b81c40d8314d5c4289a14eb92f03b9f43b6bc';
 
 const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const [historicalShortPositions, setHistoricalShortPositions] = useRecoilState(
+		historicalShortsPositionState
+	);
 
 	return useQuery<HistoricalShortPosition[]>(
 		QUERY_KEYS.Collateral.ShortHistory(walletAddress ?? ''),
@@ -27,7 +32,6 @@ const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) 
 						shorts(where: { account: $account, isOpen: true }, orderBy: id, orderDirection: desc) {
 							id
 							txHash
-							account
 							collateralLocked
 							collateralLockedAmount
 							synthBorrowed
@@ -39,10 +43,30 @@ const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) 
 					}
 				`,
 				{
-					account: mockWalletAddress,
+					account: walletAddress,
 				}
 			);
-			return (response?.shorts ?? []).map(formatShort);
+
+			const shorts = (response?.shorts ?? []).map(formatShort) as HistoricalShortPosition[];
+			if (historicalShortPositions.length > 0) {
+				const loanIndexesToDelete: number[] = [];
+				historicalShortPositions.forEach((loan, index) => {
+					if (shorts.find((short) => short.id === loan.id)) {
+						loanIndexesToDelete.push(index);
+					}
+				});
+
+				if (loanIndexesToDelete.length > 0) {
+					setHistoricalShortPositions(
+						produce(historicalShortPositions, (draftState) => {
+							loanIndexesToDelete.forEach((index) => {
+								draftState.splice(index, 1);
+							});
+						})
+					);
+				}
+			}
+			return shorts;
 		},
 		{
 			enabled: isAppReady && isWalletConnected,
