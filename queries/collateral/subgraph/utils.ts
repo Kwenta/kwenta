@@ -1,25 +1,26 @@
 import { HistoricalShortPosition, ShortLiquidation } from './types';
 import { hexToAscii } from 'utils/formatters/string';
+import { toBigNumber } from 'utils/formatters/number';
 
 export const SHORT_GRAPH_ENDPOINT =
 	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 
 // TODO use big number anywhere - don't think these are related to input fields so not yet?
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
-	id: Number(response.id),
+	id: response.id,
 	txHash: response.txHash,
-	account: response.account,
 	collateralLocked: hexToAscii(response.collateralLocked),
-	collateralLockedAmount: response.collateralLockedAmount / 1e18,
+	collateralLockedAmount: toBigNumber(response.collateralLockedAmount / 1e18),
 	synthBorrowed: hexToAscii(response.synthBorrowed),
-	synthBorrowedAmount: response.synthBorrowedAmount / 1e18,
-	createdAt: Number(response.createdAt) * 1000,
-	closedAt: response.closedAt != null ? Number(response.closedAt) * 1000 : null,
+	synthBorrowedAmount: toBigNumber(response.synthBorrowedAmount / 1e18),
+	createdAt: new Date(Number(response.createdAt) * 1000),
+	closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
 	isOpen: Boolean(response.isOpen),
 	collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
 	liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
 	loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
-	interestAccrued: 1,
+	accruedInterest: toBigNumber(1),
+	profitLoss: null,
 });
 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({

@@ -1,22 +1,21 @@
+import BigNumber from 'bignumber.js';
 import { CurrencyKey } from 'constants/currency';
 
 export type HistoricalShortPosition = {
-	id: number;
+	id: string;
 	txHash: string;
-	account: string;
 	collateralLocked: CurrencyKey;
-	collateralLockedAmount: number;
-	collateralLockedPrice: number;
+	collateralLockedAmount: BigNumber;
 	synthBorrowed: CurrencyKey;
-	synthBorrowedAmount: number;
-	synthBorrowedPrice: number;
-	createdAt: number;
-	closedAt: number | null;
+	synthBorrowedAmount: BigNumber;
+	createdAt: Date;
+	closedAt: Date | null;
 	isOpen: boolean;
-	interestAccrued: number;
+	accruedInterest: BigNumber;
 	collateralChanges?: ShortCollateralChange[];
 	liquidations?: ShortLiquidation[];
 	loanChanges?: ShortLoanChange[];
+	profitLoss: BigNumber | null;
 };
 
 export type ShortCollateralChange = {
@@ -45,19 +44,6 @@ export type ShortLiquidation = {
 	liquidatedCollateral: number;
 	short?: HistoricalShortPosition;
 	timestamp: number;
-};
-
-export type ShortContract = {
-	id: string;
-	shorts?: HistoricalShortPosition[];
-	contractUpdates?: ShortContractUpdate[];
-	canOpenLoans: boolean;
-	interactionDelay: number;
-	issueFeeRate: number;
-	maxLoansPerAccount: number;
-	minCollateral: number;
-	minCratio: number;
-	manager: string;
 };
 
 export type ShortContractUpdate = {

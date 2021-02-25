@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
+import { ethers, utils } from 'ethers';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
+import produce from 'immer';
 
 import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
@@ -54,6 +55,9 @@ import { toBigNumber, zeroBN, formatNumber } from 'utils/formatters/number';
 import Notify from 'containers/Notify';
 
 import { NoTextTransform } from 'styles/common';
+import { historicalShortsPositionState } from 'store/shorts';
+
+import { SYNTHS_TO_SHORT } from '../constants';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -93,6 +97,7 @@ const useShort = ({
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const selectedShortCRatio = useRecoilValue(shortCRatioState);
 	const customShortCRatio = useRecoilValue(customShortCRatioState);
+	const setHistoricalShortPositions = useSetRecoilState(historicalShortsPositionState);
 
 	const shortCRatio = useMemo(
 		() => (customShortCRatio !== '' ? Number(customShortCRatio) / 100 : selectedShortCRatio),
@@ -239,9 +244,7 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) =>
-				[SYNTHS_MAP.sBTC, SYNTHS_MAP.sETH].includes(synth.name)
-			);
+			return synthetix.js!.synths.filter((synth) => SYNTHS_TO_SHORT.includes(synth.name));
 		}
 		return [];
 	}, [isAppReady]);
@@ -386,10 +389,49 @@ const useShort = ({
 		}
 	};
 
+	const onLoanCreated = useCallback(
+		async (
+			_owner: string,
+			loanId: ethers.BigNumber,
+			amount: ethers.BigNumber,
+			collateral: ethers.BigNumber,
+			currency: string,
+			_issueFee: ethers.BigNumber,
+			tx: ethers.Event
+		) => {
+			if (synthetix.js != null) {
+				// const { CollateralShort } = synthetix.js.contracts;
+
+				setHistoricalShortPositions((orders) =>
+					produce(orders, (draftState) => {
+						draftState.push({
+							id: loanId.toString(),
+							accruedInterest: toBigNumber(0),
+							synthBorrowed: utils.parseBytes32String(currency),
+							synthBorrowedAmount: toBigNumber(utils.formatUnits(amount, DEFAULT_TOKEN_DECIMALS)),
+							collateralLocked: SYNTHS_MAP.sUSD,
+							collateralLockedAmount: toBigNumber(
+								utils.formatUnits(collateral, DEFAULT_TOKEN_DECIMALS)
+							),
+							txHash: tx.transactionHash,
+							isOpen: true,
+							createdAt: new Date(),
+							closedAt: null,
+							profitLoss: null,
+						});
+					})
+				);
+			}
+		},
+		[setHistoricalShortPositions]
+	);
+
 	const handleSubmit = async () => {
 		if (synthetix.js != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
+
+			const { CollateralShort } = synthetix.js.contracts;
 
 			try {
 				setIsSubmitting(true);
@@ -402,7 +444,7 @@ const useShort = ({
 
 				setGasLimit(gasLimitEstimate);
 
-				tx = (await synthetix.js.contracts.CollateralShort.open(...getShortParams(), {
+				tx = (await CollateralShort.open(...getShortParams(), {
 					gasPrice: gasPriceWei,
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
@@ -424,6 +466,22 @@ const useShort = ({
 			}
 		}
 	};
+
+	useEffect(() => {
+		const unsubs: Function[] = [];
+
+		if (isAppReady && walletAddress != null) {
+			const { CollateralShort } = synthetix.js!.contracts;
+
+			const loanCreatedEvent = CollateralShort.filters.LoanCreated(walletAddress);
+
+			CollateralShort.on(loanCreatedEvent, onLoanCreated);
+			unsubs.push(() => CollateralShort.off(loanCreatedEvent, onLoanCreated));
+		}
+		return () => {
+			unsubs.forEach((unsub) => unsub());
+		};
+	}, [isAppReady, walletAddress, onLoanCreated]);
 
 	const quoteCurrencyCard = (
 		<CurrencyCard
