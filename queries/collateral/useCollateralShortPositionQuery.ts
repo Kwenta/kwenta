@@ -35,6 +35,8 @@ export type ShortPosition = {
 
 const useCollateralShortPositionQuery = (
 	loanId: string | null,
+	loanTxHash?: string | null,
+	skipSubgraph?: boolean,
 	options?: QueryConfig<ShortPosition>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -56,45 +58,47 @@ const useCollateralShortPositionQuery = (
 			};
 			const collateralRatio = (await CollateralShort.collateralRatio(loan)) as ethers.BigNumber;
 
-			let txHash = null;
+			let txHash = loanTxHash ?? null;
 			let isOpen = null;
 			let createdAt = null;
 			let closedAt = null;
 			let profitLoss = null;
 
-			try {
-				const response = (await request(
-					SHORT_GRAPH_ENDPOINT,
-					gql`
-						query shorts($id: String!) {
-							shorts(where: { id: $id }) {
-								txHash
-								isOpen
-								createdAt
-								closedAt
+			if (skipSubgraph == null) {
+				try {
+					const response = (await request(
+						SHORT_GRAPH_ENDPOINT,
+						gql`
+							query shorts($id: String!) {
+								shorts(where: { id: $id }) {
+									txHash
+									isOpen
+									createdAt
+									closedAt
+								}
 							}
+						`,
+						{
+							id: loanId,
 						}
-					`,
-					{
-						id: loanId,
-					}
-				)) as {
-					shorts: Array<{
-						txHash: string;
-						isOpen: boolean;
-						createdAt: string;
-						closedAt: string;
-					}>;
-				};
+					)) as {
+						shorts: Array<{
+							txHash: string;
+							isOpen: boolean;
+							createdAt: string;
+							closedAt: string;
+						}>;
+					};
 
-				const subgraphShort = response.shorts[0];
+					const subgraphShort = response.shorts[0];
 
-				txHash = subgraphShort.txHash;
-				isOpen = subgraphShort.isOpen;
-				createdAt = fromUnixTime(Number(subgraphShort.createdAt));
-				closedAt = fromUnixTime(Number(subgraphShort.closedAt));
-			} catch (e) {
-				console.log(e.message);
+					txHash = subgraphShort.txHash;
+					isOpen = subgraphShort.isOpen;
+					createdAt = fromUnixTime(Number(subgraphShort.createdAt));
+					closedAt = fromUnixTime(Number(subgraphShort.closedAt));
+				} catch (e) {
+					console.log(e.message);
+				}
 			}
 
 			if (txHash != null && provider != null) {

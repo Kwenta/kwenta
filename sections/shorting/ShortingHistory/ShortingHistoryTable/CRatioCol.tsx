@@ -14,7 +14,11 @@ type CRatioColType = {
 };
 
 const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
-	const collateralShortPositionQuery = useCollateralShortPositionQuery(cellProps.row.original.id);
+	const collateralShortPositionQuery = useCollateralShortPositionQuery(
+		cellProps.row.original.id,
+		cellProps.row.original.txHash,
+		true
+	);
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),
 		[collateralShortPositionQuery]
