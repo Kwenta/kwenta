@@ -7,8 +7,6 @@ import Etherscan from 'containers/Etherscan';
 
 import Card from 'components/Card';
 
-import { SYNTHS_MAP } from 'constants/currency';
-
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
@@ -20,7 +18,7 @@ import media from 'styles/media';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 
-import synthetix from 'lib/synthetix';
+import ProfitLoss from 'sections/shorting/components/ProfitLoss';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -78,10 +76,6 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
-	const isPositivePnL = useMemo(() => (short.profitLoss != null ? short.profitLoss.gt(0) : null), [
-		short.profitLoss,
-	]);
-
 	return (
 		<StyledCard>
 			<StyledCardHeader>
@@ -127,18 +121,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
-						<DataField isPositive={isPositivePnL}>
-							{short.profitLoss != null ? (
-								<>
-									{isPositivePnL ? '+' : '-'}
-									{formatCurrency(SYNTHS_MAP.sUSD, short.profitLoss, {
-										sign: synthetix.synthsMap?.sUSD.sign,
-									})}
-								</>
-							) : (
-								NO_VALUE
-							)}
-						</DataField>
+						<ProfitLoss value={short.profitLoss} />
 					</Row>
 				</LeftCol>
 				<RightCol>
