@@ -81,7 +81,6 @@ const synthetix: Synthetix = {
 
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({ networkId, provider, signer });
-
 		if (HIDDEN_SYNTHS.length) {
 			this.js.synths = this.js.synths.filter((synth) => !HIDDEN_SYNTHS.includes(synth.name));
 		}

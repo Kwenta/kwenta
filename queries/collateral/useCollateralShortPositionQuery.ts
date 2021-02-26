@@ -15,6 +15,7 @@ import synthetix from 'lib/synthetix';
 import { toBigNumber } from 'utils/formatters/number';
 import request, { gql } from 'graphql-request';
 import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
+import Connector from 'containers/Connector';
 
 export type ShortPosition = {
 	id: string;
@@ -29,7 +30,7 @@ export type ShortPosition = {
 	createdAt: Date | null;
 	isOpen: boolean | null;
 	closedAt: Date | null;
-	profitLoss: number | null;
+	profitLoss: BigNumber | null;
 };
 
 const useCollateralShortPositionQuery = (
@@ -39,11 +40,12 @@ const useCollateralShortPositionQuery = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const { provider } = Connector.useContainer();
 
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			const { CollateralShort, CollateralStateShort } = synthetix.js!.contracts;
+			const { CollateralShort, CollateralStateShort, ExchangeRates } = synthetix.js!.contracts;
 
 			const loan = (await CollateralStateShort.getLoan(walletAddress, loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
@@ -58,6 +60,7 @@ const useCollateralShortPositionQuery = (
 			let isOpen = null;
 			let createdAt = null;
 			let closedAt = null;
+			let profitLoss = null;
 
 			try {
 				const response = (await request(
@@ -94,6 +97,27 @@ const useCollateralShortPositionQuery = (
 				console.log(e.message);
 			}
 
+			if (txHash != null && provider != null) {
+				const { blockNumber: creationBlockNumber } = await provider.getTransaction(txHash);
+				let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
+					ExchangeRates.rateForCurrency(loan.currency, {
+						blockTag: creationBlockNumber,
+					}),
+					ExchangeRates.rateForCurrency(loan.currency),
+				])) as [ethers.BigNumber, ethers.BigNumber];
+
+				const loanAmount = toBigNumber(utils.formatUnits(loan.amount, DEFAULT_TOKEN_DECIMALS));
+				const initialUSDPrice = toBigNumber(
+					utils.formatUnits(initialCollateralPrice, DEFAULT_TOKEN_DECIMALS)
+				);
+				const latestUSDPrice = toBigNumber(
+					utils.formatUnits(latestCollateralPrice, DEFAULT_TOKEN_DECIMALS)
+				);
+
+				const pnlPercentage = initialUSDPrice.minus(latestUSDPrice).dividedBy(initialUSDPrice);
+				profitLoss = pnlPercentage.multipliedBy(loanAmount).multipliedBy(initialUSDPrice);
+			}
+
 			return {
 				id: loanId as string,
 				accruedInterest: toBigNumber(
@@ -111,8 +135,7 @@ const useCollateralShortPositionQuery = (
 				isOpen,
 				createdAt,
 				closedAt,
-				// TODO: implement
-				profitLoss: null,
+				profitLoss,
 			};
 		},
 		{

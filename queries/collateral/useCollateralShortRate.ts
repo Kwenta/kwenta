@@ -21,11 +21,11 @@ const useCollateralShortRate = (
 		QUERY_KEYS.Collateral.ShortRate(currencyKey as string),
 		async () => {
 			try {
-				const shortingRewards = (await synthetix.js!.contracts.CollateralManager.getShortRate(
+				const shortRate = (await synthetix.js!.contracts.CollateralManager.getShortRate(
 					ethers.utils.formatBytes32String(currencyKey as string)
 				)) as ethers.BigNumber;
 
-				return toBigNumber(ethers.utils.formatEther(shortingRewards));
+				return toBigNumber(ethers.utils.formatEther(shortRate));
 			} catch (e) {
 				console.log(e);
 				return zeroBN;

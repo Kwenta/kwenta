@@ -2,10 +2,12 @@ import { HistoricalShortPosition, ShortLiquidation } from './types';
 import { hexToAscii } from 'utils/formatters/string';
 import { toBigNumber } from 'utils/formatters/number';
 
+// MainNet - 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
+// Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
+
 export const SHORT_GRAPH_ENDPOINT =
 	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 
-// TODO use big number anywhere - don't think these are related to input fields so not yet?
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
 	id: response.id,
 	txHash: response.txHash,
@@ -19,8 +21,6 @@ export const formatShort = (response: any): Partial<HistoricalShortPosition> => 
 	collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
 	liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
 	loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
-	accruedInterest: toBigNumber(1),
-	profitLoss: null,
 });
 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({

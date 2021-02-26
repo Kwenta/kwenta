@@ -1,6 +1,7 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { gql, request } from 'graphql-request';
+import produce from 'immer';
 
 import { appReadyState } from 'store/app';
 import { walletAddressState, isWalletConnectedState } from 'store/wallet';
@@ -9,10 +10,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalShortPosition } from './types';
 import { formatShort, SHORT_GRAPH_ENDPOINT } from './utils';
 import { historicalShortsPositionState } from 'store/shorts';
-import produce from 'immer';
-
-// TODO: remove mocked address
-// const mockWalletAddress = '0x864b81c40d8314d5c4289a14eb92f03b9f43b6bc';
 
 const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -66,6 +63,7 @@ const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) 
 					);
 				}
 			}
+
 			return shorts;
 		},
 		{

@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+
 import synthetix from 'lib/synthetix';
 
 import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
@@ -58,6 +60,7 @@ import {
 
 import { ShortingTab } from './ManageShort';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+import Card from 'components/Card';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -385,6 +388,24 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		}
 	}, [checkAllowance, needsApproval]);
 
+	const closeTabSummaryItems = (
+		<SummaryItems attached={false}>
+			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
+			<SummaryItem>
+				<SummaryItemLabel>
+					{t('shorting.history.manageShort.sections.close-position.total-to-replay-label')}
+				</SummaryItemLabel>
+				<SummaryItemValue>
+					{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
+						currencyKey: short.synthBorrowed,
+					})}
+				</SummaryItemValue>
+			</SummaryItem>
+			<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
+		</SummaryItems>
+	);
+
+	// TODO: refactor closeTab to its own component
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -393,23 +414,13 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				<>
 					{isCloseTab ? (
 						<>
+							<MobileOrTabletView>
+								<MobileCard className="trade-summary-card">
+									<Card.Body>{closeTabSummaryItems}</Card.Body>
+								</MobileCard>
+							</MobileOrTabletView>
 							<MessageContainer attached={false} className="footer-card">
-								<SummaryItems attached={false}>
-									<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
-									<SummaryItem>
-										<SummaryItemLabel>
-											{t(
-												'shorting.history.manageShort.sections.close-position.total-to-replay-label'
-											)}
-										</SummaryItemLabel>
-										<SummaryItemValue>
-											{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
-												currencyKey: short.synthBorrowed,
-											})}
-										</SummaryItemValue>
-									</SummaryItem>
-									<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
-								</SummaryItems>
+								<DesktopOnlyView>{closeTabSummaryItems}</DesktopOnlyView>
 								<Button variant="danger" isRounded={true} onClick={handleSubmit} size="lg">
 									{t('shorting.history.manageShort.sections.close-position.close-button-label')}
 								</Button>
@@ -514,6 +525,10 @@ const Container = styled.div`
 			margin-bottom: 20px;
 		`};
 	}
+`;
+
+export const MobileCard = styled(Card)`
+	margin: 0 auto 86px auto;
 `;
 
 export default ManageShortAction;

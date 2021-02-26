@@ -78,7 +78,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
-	const isPositivePnL = useMemo(() => (short.profitLoss != null ? short.profitLoss > 0 : null), [
+	const isPositivePnL = useMemo(() => (short.profitLoss != null ? short.profitLoss.gt(0) : null), [
 		short.profitLoss,
 	]);
 
@@ -127,7 +127,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
-						<DataField positive={isPositivePnL}>
+						<DataField isPositive={isPositivePnL}>
 							{short.profitLoss != null ? (
 								<>
 									{isPositivePnL ? '+' : '-'}
@@ -154,7 +154,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						<LightFieldText>
 							{t('shorting.history.manageShort.fields.collateralRatio')}
 						</LightFieldText>
-						<DataField positive={short.collateralRatio.gt(minCollateralRatio)}>
+						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
 							{formatPercent(short.collateralRatio)}
 						</DataField>
 					</Row>
@@ -222,11 +222,11 @@ const LightFieldText = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
-const DataField = styled.div<{ positive?: boolean | null }>`
+const DataField = styled.div<{ isPositive?: boolean | null }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) =>
-		props.positive != null
-			? props.positive
+		props.isPositive != null
+			? props.isPositive
 				? props.theme.colors.green
 				: props.theme.colors.red
 			: props.theme.colors.white};
