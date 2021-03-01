@@ -23,7 +23,7 @@ const ProfitLoss = ({ value }: ProfitLossType) => {
 			{value != null ? (
 				<Container isPositive={isPositive}>
 					{isPositive != null && (isPositive ? '+' : '-')}
-					{formatCurrency(selectedPriceCurrency.name, value, {
+					{formatCurrency(selectedPriceCurrency.name, value.abs(), {
 						sign: selectedPriceCurrency.sign,
 					})}
 				</Container>

@@ -17,7 +17,7 @@ type LiquidationPriceColType = {
 
 const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -43,16 +43,26 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 		? collateralShortContractInfoQuery?.data ?? null
 		: null;
 
-	const minCratio = collateralShortContractInfo?.minCollateralRatio;
+	const minCratio = useMemo(() => collateralShortContractInfo?.minCollateralRatio ?? 0, [
+		collateralShortContractInfo?.minCollateralRatio,
+	]);
+
+	const liquidationPrice = useMemo(
+		() =>
+			collateralLockedAmount
+				.multipliedBy(collateralLockedPrice)
+				.dividedBy(synthBorrowedAmount.multipliedBy(minCratio)),
+		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCratio]
+	);
 
 	return (
 		<span>
 			<StyledPrice>
 				{formatCurrency(
 					collateralLocked,
-					collateralLockedAmount
-						.multipliedBy(collateralLockedPrice)
-						.dividedBy(synthBorrowedAmount.multipliedBy(minCratio ? minCratio.toNumber() : 0)),
+					selectPriceCurrencyRate != null
+						? liquidationPrice.dividedBy(selectPriceCurrencyRate)
+						: liquidationPrice,
 					{
 						sign: selectedPriceCurrency.sign,
 					}

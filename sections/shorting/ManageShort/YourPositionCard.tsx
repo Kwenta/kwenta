@@ -36,7 +36,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const collateralShortInfo = useMemo(
@@ -101,10 +101,16 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 							{t('shorting.history.manageShort.fields.liquidationPrice')}
 						</LightFieldText>
 						<DataField>
-							{formatCurrency(short.collateralLocked, liquidationPrice, {
-								currencyKey: short.synthBorrowed,
-								sign: selectedPriceCurrency.sign,
-							})}
+							{formatCurrency(
+								short.collateralLocked,
+								selectPriceCurrencyRate != null
+									? liquidationPrice.dividedBy(selectPriceCurrencyRate)
+									: liquidationPrice,
+								{
+									currencyKey: short.synthBorrowed,
+									sign: selectedPriceCurrency.sign,
+								}
+							)}
 						</DataField>
 					</Row>
 					<Row>
@@ -121,7 +127,13 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
-						<ProfitLoss value={short.profitLoss} />
+						<ProfitLoss
+							value={
+								selectPriceCurrencyRate != null
+									? short.profitLoss?.dividedBy(selectPriceCurrencyRate)
+									: short.profitLoss
+							}
+						/>
 					</Row>
 				</LeftCol>
 				<RightCol>

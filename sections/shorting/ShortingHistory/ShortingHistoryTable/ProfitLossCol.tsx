@@ -5,12 +5,14 @@ import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
 import useCollateralShortPositionQuery from 'queries/collateral/useCollateralShortPositionQuery';
 
 import ProfitLoss from 'sections/shorting/components/ProfitLoss';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 type ProfitLossColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
 };
 
 const ProfitLossCol: FC<ProfitLossColType> = ({ cellProps }) => {
+	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
 		cellProps.row.original.txHash,
@@ -21,7 +23,13 @@ const ProfitLossCol: FC<ProfitLossColType> = ({ cellProps }) => {
 		[collateralShortPositionQuery]
 	);
 
-	return <ProfitLoss value={collateralShortPosition?.profitLoss} />;
+	let value = collateralShortPosition?.profitLoss;
+
+	if (selectPriceCurrencyRate != null && value != null) {
+		value = value.dividedBy(selectPriceCurrencyRate);
+	}
+
+	return <ProfitLoss value={value} />;
 };
 
 export default ProfitLossCol;
