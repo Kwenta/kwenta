@@ -29,8 +29,8 @@ const Shorting: FC = () => {
 				<StyledPageContent>
 					<ShortingCard />
 					<ShortingRewardsContainer>
-						<ShortingRewards synth={SYNTHS_MAP.sETH} />
-						<ShortingRewards synth={SYNTHS_MAP.sBTC} />
+						<ShortingRewards currencyKey={SYNTHS_MAP.sETH} />
+						<ShortingRewards currencyKey={SYNTHS_MAP.sBTC} />
 					</ShortingRewardsContainer>
 					{isWalletConnected && <ShortingHistory />}
 				</StyledPageContent>
