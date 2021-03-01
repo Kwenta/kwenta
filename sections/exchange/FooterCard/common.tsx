@@ -87,18 +87,3 @@ export const MessageButton = styled(Button).attrs({
 	size: 'lg',
 	isRounded: true,
 })``;
-
-export type SubmissionDisabledReason =
-	| 'fee-reclaim-period'
-	| 'select-synth'
-	| 'insufficient-balance'
-	| 'submitting-order'
-	| 'connect-wallet'
-	| 'enter-amount'
-	| 'submitting-approval'
-	| 'approve-balancer'
-	| 'approving'
-	| 'claim'
-	| 'submitting'
-	| 'c-ratio-too-low'
-	| 'add-more-collateral';

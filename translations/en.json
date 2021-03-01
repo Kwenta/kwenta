@@ -310,16 +310,25 @@
 			"interestRate": "Interest Rate",
 			"cRatio": "C-Ratio"
 		},
+		"shorting-card": {
+			"summary-info": {
+				"button": {
+					"c-ratio-too-low": "c-ratio is too low",
+					"add-more-collateral": "add more collateral",
+					"min-collateral": "min. collateral is <0>{{amount}}</0> <1>{{currencyKey}}</1>"
+				}
+			}
+		},
 		"c-ratio": {
 			"safe": "safe",
 			"safeMax": "safe max",
 			"highRisk": "high risk"
 		},
 		"rewards": {
-			"available": "Available Rewards",
+			"available": "available rewards",
 			"button": {
-				"claim": "Claim",
-				"submitting": "Submitting..."
+				"claim": "claim",
+				"claiming": "claiming..."
 			}
 		},
 		"history": {

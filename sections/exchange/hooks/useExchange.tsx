@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, ReactNode } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -28,7 +28,6 @@ import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/MarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
@@ -198,21 +197,21 @@ const useExchange = ({
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		const insufficientBalance =
 			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
 
 		if (feeReclaimPeriodInSeconds > 0) {
-			return 'fee-reclaim-period';
+			return t('exchange.summary-info.button.fee-reclaim-period');
 		}
 		if (!selectedBothSides) {
-			return 'select-synth';
+			return t('exchange.summary-info.button.select-synth');
 		}
 		if (insufficientBalance) {
-			return 'insufficient-balance';
+			return t('exchange.summary-info.button.insufficient-balance');
 		}
 		if (isSubmitting) {
-			return 'submitting-order';
+			return t('exchange.summary-info.button.submitting-order');
 		}
 		if (
 			!isWalletConnected ||
@@ -221,7 +220,7 @@ const useExchange = ({
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
-			return 'enter-amount';
+			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
 	}, [
@@ -232,6 +231,7 @@ const useExchange = ({
 		baseCurrencyAmountBN,
 		quoteCurrencyAmountBN,
 		isWalletConnected,
+		t,
 	]);
 
 	const noSynths =

@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect, useCallback } from 'react';
+import { FC, useMemo, useState, useEffect, useCallback, ReactNode } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -38,7 +38,6 @@ import {
 	SummaryItemValue,
 } from 'sections/exchange/FooterCard/common';
 
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewards';
 
 type ShortingRewardsProps = {
@@ -63,15 +62,15 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 		: null;
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		if (isSubmitting) {
-			return 'submitting';
+			return t('shorting.rewards.button.claiming');
 		}
 		if (shortingRewards == null || shortingRewards.lte(0)) {
-			return 'claim';
+			return t('shorting.rewards.button.claim');
 		}
 		return null;
-	}, [shortingRewards, isSubmitting]);
+	}, [shortingRewards, isSubmitting, t]);
 
 	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
 		submissionDisabledReason,
@@ -180,9 +179,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ synth }) => {
 					size="lg"
 					data-testid="claim-rewards"
 				>
-					{isSubmissionDisabled
-						? t(`shorting.rewards.button.${submissionDisabledReason}`)
-						: t('shorting.rewards.button.claim')}
+					{isSubmissionDisabled ? submissionDisabledReason : t('shorting.rewards.button.claim')}
 				</Button>
 			</MessageContainer>
 			{txConfirmationModalOpen && (

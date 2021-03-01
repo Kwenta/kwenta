@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -23,7 +23,6 @@ import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeBalancerSummaryCard from 'sections/exchange/FooterCard/TradeBalancerSummaryCard';
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -161,31 +160,35 @@ const useBalancerExchange = ({
 		totalTradePrice = totalTradePrice.dividedBy(selectPriceCurrencyRate);
 	}
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const isApproved = useMemo(
+		() =>
+			baseAllowance == null ||
+			baseAllowance === '0' ||
+			scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance),
+		[baseAllowance, quoteCurrencyAmountBN]
+	);
+
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		const insufficientBalance =
 			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
 
-		if (
-			baseAllowance == null ||
-			baseAllowance === '0' ||
-			scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance)
-		) {
-			return 'approve-balancer';
-		}
 		if (feeReclaimPeriodInSeconds > 0) {
-			return 'fee-reclaim-period';
+			return t('exchange.summary-info.button.fee-reclaim-period');
 		}
 		if (!selectedBothSides) {
-			return 'select-synth';
+			return t('exchange.summary-info.button.select-synth');
 		}
 		if (insufficientBalance) {
-			return 'insufficient-balance';
+			return t('exchange.summary-info.button.insufficient-balance');
 		}
 		if (isSubmitting) {
-			return 'submitting-order';
+			return t('exchange.summary-info.button.submitting-order');
 		}
 		if (isApproving) {
-			return 'submitting-approval';
+			return t('exchange.summary-info.button.submitting-approval');
+		}
+		if (!isApproved) {
+			return t('exchange.summary-info.button.approve-balancer');
 		}
 		if (
 			!isWalletConnected ||
@@ -194,7 +197,7 @@ const useBalancerExchange = ({
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
-			return 'enter-amount';
+			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
 	}, [
@@ -205,8 +208,9 @@ const useBalancerExchange = ({
 		baseCurrencyAmountBN,
 		quoteCurrencyAmountBN,
 		isWalletConnected,
-		baseAllowance,
 		isApproving,
+		t,
+		isApproved,
 	]);
 
 	const noSynths =
@@ -627,7 +631,7 @@ const useBalancerExchange = ({
 			) : (
 				<TradeBalancerSummaryCard
 					submissionDisabledReason={submissionDisabledReason}
-					onSubmit={submissionDisabledReason === 'approve-balancer' ? handleApprove : handleSubmit}
+					onSubmit={isApproved ? handleSubmit : handleApprove}
 					gasPrices={ethGasPriceQuery.data}
 					estimatedSlippage={estimatedSlippage}
 					maxSlippageTolerance={maxSlippageTolerance}

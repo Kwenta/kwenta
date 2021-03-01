@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { ethers, utils } from 'ethers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import produce from 'immer';
 
@@ -29,8 +29,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import SelectShortCurrencyModal from 'sections/shared/modals/SelectShortCurrencyModal';
 import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
-
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 
 import {
 	customGasPriceState,
@@ -192,21 +190,21 @@ const useShort = ({
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		const insufficientBalance =
 			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
 
 		if (!selectedBothSides) {
-			return 'select-synth';
+			return t('exchange.summary-info.button.select-synth');
 		}
 		if (insufficientBalance) {
-			return 'insufficient-balance';
+			return t('exchange.summary-info.button.insufficient-balance');
 		}
 		if (isSubmitting) {
-			return 'submitting-order';
+			return t('exchange.summary-info.button.submitting-order');
 		}
 		if (isApproving) {
-			return 'approving';
+			return t('exchange.summary-info.button.approving');
 		}
 		if (
 			!isWalletConnected ||
@@ -215,16 +213,29 @@ const useShort = ({
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
-			return 'enter-amount';
+			return t('exchange.summary-info.button.enter-amount');
+		}
+		if (!isApproved) {
+			return t('exchange.summary-info.button.approve');
 		}
 		if (shortCRatioTooLow) {
-			return 'c-ratio-too-low';
+			return t('shorting.shorting-card.summary-info.button.c-ratio-too-low');
 		}
 		if (minCollateral != null && quoteCurrencyAmountBN.lt(minCollateral)) {
-			return 'add-more-collateral';
+			return (
+				<span>
+					<Trans
+						t={t}
+						i18nKey="shorting.shorting-card.summary-info.button.min-collateral"
+						values={{ amount: formatNumber(minCollateral), currencyKey: quoteCurrencyKey }}
+						components={[<span />, <NoTextTransform />]}
+					/>
+				</span>
+			);
 		}
 		return null;
 	}, [
+		quoteCurrencyKey,
 		shortCRatioTooLow,
 		isApproving,
 		quoteCurrencyBalance,
@@ -234,6 +245,8 @@ const useShort = ({
 		quoteCurrencyAmountBN,
 		isWalletConnected,
 		minCollateral,
+		isApproved,
+		t,
 	]);
 
 	const noSynths =
@@ -343,7 +356,7 @@ const useShort = ({
 		return null;
 	};
 
-	const approve = async () => {
+	const handleApprove = async () => {
 		if (quoteCurrencyKey != null && gasPrice != null) {
 			setTxError(null);
 			setTxApproveModalOpen(true);
@@ -507,17 +520,7 @@ const useShort = ({
 				}
 			}}
 			priceRate={quotePriceRate}
-			label={
-				<span>
-					{t('shorting.common.collateral')}
-					{minCollateral != null && (
-						<NoTextTransform>
-							{' '}
-							({t('common.min')} {formatNumber(minCollateral)} {quoteCurrencyKey})
-						</NoTextTransform>
-					)}
-				</span>
-			}
+			label={t('shorting.common.collateral')}
 		/>
 	);
 
@@ -568,7 +571,7 @@ const useShort = ({
 				<TradeSummaryCard
 					attached={true}
 					submissionDisabledReason={submissionDisabledReason}
-					onSubmit={isApproved ? handleSubmit : approve}
+					onSubmit={isApproved ? handleSubmit : handleApprove}
 					totalTradePrice={totalTradePrice.toString()}
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
@@ -580,7 +583,6 @@ const useShort = ({
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					showFee={true}
-					isApproved={isApproved}
 					isCreateShort={true}
 					shortInterestRate={shortRate}
 				/>
@@ -606,7 +608,7 @@ const useShort = ({
 				<TxApproveModal
 					onDismiss={() => setTxApproveModalOpen(false)}
 					txError={txError}
-					attemptRetry={approve}
+					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
 				/>

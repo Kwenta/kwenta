@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
@@ -18,7 +18,7 @@ import Card from 'components/Card';
 
 import { formatPercent } from 'utils/formatters/number';
 
-import { MessageContainer, SubmissionDisabledReason } from '../common';
+import { MessageContainer } from '../common';
 
 import { SummaryItems, SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
@@ -28,7 +28,7 @@ import FeeRateSummaryItem from './FeeRateSummaryItem';
 import FeeCostSummaryItem from './FeeCostSummaryItem';
 
 type TradeSummaryCardProps = {
-	submissionDisabledReason: SubmissionDisabledReason | null;
+	submissionDisabledReason: ReactNode;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
 	totalTradePrice: string | null;
@@ -43,7 +43,6 @@ type TradeSummaryCardProps = {
 	feeRate: BigNumber | null;
 	transactionFee?: number | null;
 	feeCost: BigNumber | null;
-	isApproved?: boolean;
 	isCreateShort?: boolean;
 	shortInterestRate?: BigNumber | null;
 };
@@ -63,7 +62,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	feeRate,
 	transactionFee,
 	feeCost,
-	isApproved = true,
 	isCreateShort = false,
 	shortInterestRate = null,
 	...rest
@@ -129,9 +127,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 							data-testid="submit-order"
 						>
 							{isSubmissionDisabled
-								? t(`exchange.summary-info.button.${submissionDisabledReason}`)
-								: !isApproved
-								? t('exchange.summary-info.button.approve')
+								? submissionDisabledReason
 								: t('exchange.summary-info.button.submit-order')}
 						</Button>
 					</span>

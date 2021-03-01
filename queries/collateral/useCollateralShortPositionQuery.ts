@@ -102,24 +102,28 @@ const useCollateralShortPositionQuery = (
 			}
 
 			if (txHash != null && provider != null) {
-				const { blockNumber: creationBlockNumber } = await provider.getTransaction(txHash);
-				let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
-					ExchangeRates.rateForCurrency(loan.currency, {
-						blockTag: creationBlockNumber,
-					}),
-					ExchangeRates.rateForCurrency(loan.currency),
-				])) as [ethers.BigNumber, ethers.BigNumber];
+				const x = await provider.getTransaction(txHash);
+				console.log(txHash, x);
+				const tx = await provider.getTransaction(txHash);
+				if (tx != null) {
+					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
+						ExchangeRates.rateForCurrency(loan.currency, {
+							blockTag: tx.blockNumber,
+						}),
+						ExchangeRates.rateForCurrency(loan.currency),
+					])) as [ethers.BigNumber, ethers.BigNumber];
 
-				const loanAmount = toBigNumber(utils.formatUnits(loan.amount, DEFAULT_TOKEN_DECIMALS));
-				const initialUSDPrice = toBigNumber(
-					utils.formatUnits(initialCollateralPrice, DEFAULT_TOKEN_DECIMALS)
-				);
-				const latestUSDPrice = toBigNumber(
-					utils.formatUnits(latestCollateralPrice, DEFAULT_TOKEN_DECIMALS)
-				);
+					const loanAmount = toBigNumber(utils.formatUnits(loan.amount, DEFAULT_TOKEN_DECIMALS));
+					const initialUSDPrice = toBigNumber(
+						utils.formatUnits(initialCollateralPrice, DEFAULT_TOKEN_DECIMALS)
+					);
+					const latestUSDPrice = toBigNumber(
+						utils.formatUnits(latestCollateralPrice, DEFAULT_TOKEN_DECIMALS)
+					);
 
-				const pnlPercentage = initialUSDPrice.minus(latestUSDPrice).dividedBy(initialUSDPrice);
-				profitLoss = pnlPercentage.multipliedBy(loanAmount).multipliedBy(initialUSDPrice);
+					const pnlPercentage = initialUSDPrice.minus(latestUSDPrice).dividedBy(initialUSDPrice);
+					profitLoss = pnlPercentage.multipliedBy(loanAmount).multipliedBy(initialUSDPrice);
+				}
 			}
 
 			return {

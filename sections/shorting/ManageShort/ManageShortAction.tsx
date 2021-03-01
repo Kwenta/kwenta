@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect, useCallback } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback, ReactNode } from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -47,8 +47,6 @@ import { NoTextTransform } from 'styles/common';
 import media from 'styles/media';
 
 import Button from 'components/Button';
-
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 
 import {
 	SummaryItems,
@@ -218,21 +216,33 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		synthCollateralPriceRate,
 	]);
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
-			return 'enter-amount';
+			return t('exchange.summary-info.button.enter-amount');
 		}
 		if (inputAmountBN.gt(balance ?? 0)) {
-			return 'insufficient-balance';
+			return t('exchange.summary-info.button.insufficient-balance');
 		}
 		if (isSubmitting) {
-			return 'submitting-order';
+			return t('exchange.summary-info.button.submitting-order');
 		}
 		if (isApproving) {
-			return 'approving';
+			return t('exchange.summary-info.button.approving');
+		}
+		if (needsApproval && !isApproved) {
+			return t('exchange.summary-info.button.approve');
 		}
 		return null;
-	}, [isApproving, balance, isSubmitting, inputAmountBN, isWalletConnected]);
+	}, [
+		isApproving,
+		balance,
+		isSubmitting,
+		inputAmountBN,
+		isWalletConnected,
+		t,
+		needsApproval,
+		isApproved,
+	]);
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		try {
@@ -405,7 +415,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		</SummaryItems>
 	);
 
-	// TODO: refactor closeTab to its own component
+	// TODO: refactor closeTab to its own
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -477,7 +487,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								transactionFee={transactionFee}
 								feeCost={feeCost}
 								showFee={true}
-								isApproved={needsApproval ? isApproved : true}
 							/>
 							{txApproveModalOpen && (
 								<TxApproveModal
