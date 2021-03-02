@@ -102,8 +102,6 @@ const useCollateralShortPositionQuery = (
 			}
 
 			if (txHash != null && provider != null) {
-				const x = await provider.getTransaction(txHash);
-				console.log(txHash, x);
 				const tx = await provider.getTransaction(txHash);
 				if (tx != null) {
 					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
