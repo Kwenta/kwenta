@@ -2,7 +2,6 @@ import { FC, useMemo, useState, useEffect, useCallback, ReactNode } from 'react'
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
 import { ethers } from 'ethers';
 
 import Notify from 'containers/Notify';
@@ -13,8 +12,6 @@ import Button from 'components/Button';
 import { normalizeGasLimit, getTransactionPrice, gasPriceInWei } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-
-import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
 import { GridDivCentered } from 'styles/common';
 import media from 'styles/media';
@@ -48,7 +45,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
@@ -105,6 +102,11 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 	const gasPrice = ethGasPriceQuery?.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
+	const currencyPriceRate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, currencyKey, selectedPriceCurrency.name),
+		[exchangeRates, currencyKey, selectedPriceCurrency.name]
+	);
+
 	const ethPriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
@@ -157,6 +159,18 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 		}
 	};
 
+	const totalTradePrice = useMemo(() => {
+		if (shortingRewards != null) {
+			let tradePrice = shortingRewards.multipliedBy(currencyPriceRate);
+			if (selectPriceCurrencyRate) {
+				tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+			}
+
+			return tradePrice;
+		}
+		return 0;
+	}, [shortingRewards, currencyPriceRate, selectPriceCurrencyRate]);
+
 	return (
 		<>
 			<MessageContainer attached={false} className="footer-card">
@@ -180,22 +194,17 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 					{isSubmissionDisabled ? submissionDisabledReason : t('shorting.rewards.button.claim')}
 				</Button>
 			</MessageContainer>
-			{/* TODO: check that this behaves as it should */}
 			{txConfirmationModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxConfirmationModalOpen(false)}
 					txError={txError}
 					attemptRetry={onSubmit}
 					baseCurrencyAmount={(shortingRewards ?? 0).toString()}
-					quoteCurrencyAmount={'0'}
 					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={currencyKey}
-					quoteCurrencyKey={currencyKey}
-					totalTradePrice={'0'}
+					totalTradePrice={totalTradePrice.toString()}
 					txProvider="synthetix"
-					quoteCurrencyLabel={t('shorting.common.posting')}
-					baseCurrencyLabel={t('shorting.common.shorting')}
-					icon={<Svg src={ArrowRightIcon} />}
+					baseCurrencyLabel={t('shorting.rewards.tx-confirm.claiming')}
 				/>
 			)}
 		</>

@@ -329,6 +329,9 @@
 			"button": {
 				"claim": "claim",
 				"claiming": "claiming..."
+			},
+			"tx-confirm": {
+				"claiming": "claiming"
 			}
 		},
 		"history": {
