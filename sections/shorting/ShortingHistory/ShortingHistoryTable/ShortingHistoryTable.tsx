@@ -90,7 +90,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					},
 					{
 						Header: (
-							<StyledTableHeader>{t('shorting.history.table.liquidationPrice')}</StyledTableHeader>
+							<StyledTableHeader>{t('shorting.history.table.liquidation-price')}</StyledTableHeader>
 						),
 						accessor: 'liquidationPrice',
 						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
@@ -101,7 +101,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					},
 					{
 						Header: (
-							<StyledTableHeader>{t('shorting.history.table.accruedInterest')}</StyledTableHeader>
+							<StyledTableHeader>{t('shorting.history.table.accrued-interest')}</StyledTableHeader>
 						),
 						accessor: 'accruedInterest',
 						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
@@ -111,7 +111,9 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						sortable: true,
 					},
 					{
-						Header: <StyledTableHeader>{t('shorting.history.table.cRatio')}</StyledTableHeader>,
+						Header: (
+							<StyledTableHeader>{t('shorting.history.table.collateral-ratio')}</StyledTableHeader>
+						),
 						accessor: 'cRatio',
 						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 							<CRatioCol cellProps={cellProps} />
@@ -120,7 +122,9 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						sortable: true,
 					},
 					{
-						Header: <StyledTableHeader>{t('shorting.history.table.profitLoss')}</StyledTableHeader>,
+						Header: (
+							<StyledTableHeader>{t('shorting.history.table.profit-loss')}</StyledTableHeader>
+						),
 						accessor: 'profitLoss',
 						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 							<ProfitLossCol cellProps={cellProps} />
@@ -143,7 +147,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					isLoaded && shortHistory.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
-							{t('shorting.history.table.noResults')}
+							{t('shorting.history.table.no-results')}
 						</TableNoResults>
 					) : undefined
 				}

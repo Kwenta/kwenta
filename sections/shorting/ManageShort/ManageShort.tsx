@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { Svg } from 'react-optimized-image';
@@ -137,20 +137,24 @@ const ManageShort: FC = () => {
 		return false;
 	}, [nextInteractionDate]);
 
+	useEffect(() => {
+		if (short == null && shortPositionQuery.isError) {
+			router.push(ROUTES.Shorting.Home);
+		}
+	}, [short, shortPositionQuery, router]);
+
 	return (
 		<Container>
 			{short == null ? (
-				shortPositionQuery.isLoading ? (
-					<Loader />
-				) : (
-					<NoResultsFound>{t('shorting.history.manage-short.noResults')}</NoResultsFound>
-				)
+				shortPositionQuery.isLoading && <Loader />
 			) : (
 				<>
 					<IconButton onClick={() => router.push(ROUTES.Shorting.Home)}>
 						<StyledBackIcon src={BackIcon} viewBox={`0 0 ${BackIcon.width} ${BackIcon.height}`} />
 					</IconButton>
-					<ManageShortTitle>{t('shorting.history.manage-short.title')}</ManageShortTitle>
+					<ManageShortTitle>
+						{t('shorting.history.manage-short.title', { loanId: short.id })}
+					</ManageShortTitle>
 					<YourPositionCard short={short} />
 					<FlexDivRow>
 						<StyledTabList>
@@ -217,14 +221,6 @@ const StyledTabButton = styled(TabButton)``;
 const CloseTabButton = styled(TabButton)<{ active: boolean }>`
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.red)};
 	margin-left: auto;
-`;
-
-const NoResultsFound = styled.div`
-	background-color: ${(props) => props.theme.colors.elderberry};
-	width: 100%;
-	height: 400px;
-	text-align: center;
-	padding-top: 200px;
 `;
 
 const ManageShortTitle = styled(CardTitle)`

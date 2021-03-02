@@ -98,7 +98,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manage-short.fields.liquidationPrice')}
+							{t('shorting.history.manage-short.fields.liquidation-price')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(
@@ -115,7 +115,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manage-short.fields.interestRate', {
+							{t('shorting.history.manage-short.fields.interest-rate', {
 								asset: short.synthBorrowed,
 							})}
 						</LightFieldText>
@@ -123,7 +123,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manage-short.fields.profitLoss', {
+							{t('shorting.history.manage-short.fields.profit-loss', {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
@@ -147,7 +147,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manage-short.fields.collateralRatio')}
+							{t('shorting.history.manage-short.fields.collateral-ratio')}
 						</LightFieldText>
 						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
 							{formatPercent(short.collateralRatio)}
@@ -155,7 +155,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manage-short.fields.accruedInterest')}
+							{t('shorting.history.manage-short.fields.accrued-interest')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.accruedInterest ?? 0, {

@@ -232,6 +232,25 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		if (needsApproval && !isApproved) {
 			return t('exchange.summary-info.button.approve');
 		}
+		if (tab === ShortingTab.DecreasePosition) {
+			if (inputAmountBN.gt(short.synthBorrowedAmount)) {
+				return t(
+					'shorting.history.manage-short.sections.decrease-position.button.amount-greater-than-debt'
+				);
+			}
+			if (inputAmountBN.eq(short.synthBorrowedAmount)) {
+				return t(
+					'shorting.history.manage-short.sections.decrease-position.button.close-position-instead'
+				);
+			}
+		}
+		if (tab === ShortingTab.RemoveCollateral) {
+			if (inputAmountBN.gt(short.collateralLockedAmount)) {
+				return t(
+					'shorting.history.manage-short.sections.remove-collateral.button.amount-greater-than-collateral'
+				);
+			}
+		}
 		return null;
 	}, [
 		isApproving,
@@ -242,6 +261,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		t,
 		needsApproval,
 		isApproved,
+		tab,
+		short,
 	]);
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
