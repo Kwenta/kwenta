@@ -335,19 +335,19 @@
 			}
 		},
 		"history": {
-			"assetsSort": {
+			"assets-sort": {
 				"allAssets": "All Assets"
 			},
-			"datesSort": {
-				"allDates": "All Dates",
-				"pastWeek": "Past Week",
-				"pastMonth": "Past Month",
-				"pastYear": "Past Year"
+			"dates-sort": {
+				"all-dates": "All Dates",
+				"past-week": "Past Week",
+				"past-month": "Past Month",
+				"past-year": "Past Year"
 			},
-			"sizesSort": {
-				"allSizes": "All Sizes"
+			"sizes-sort": {
+				"all-sizes": "All Sizes"
 			},
-			"manageShort": {
+			"manage-short": {
 				"noResults": "Short not found",
 				"title": "Manage Position",
 				"close": "Close",

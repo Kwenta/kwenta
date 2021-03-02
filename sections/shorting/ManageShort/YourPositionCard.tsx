@@ -79,7 +79,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 	return (
 		<StyledCard>
 			<StyledCardHeader>
-				{t('shorting.history.manageShort.subtitle')}
+				{t('shorting.history.manage-short.subtitle')}
 				{etherscanInstance != null && short.txHash && (
 					<StyledExternalLink href={etherscanInstance.txLink(short.txHash)}>
 						<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
@@ -89,7 +89,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 			<StyledCardBody>
 				<LeftCol>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.collateral')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.collateral')}</LightFieldText>
 						<DataField>
 							{formatCurrency(short.collateralLocked, short.collateralLockedAmount, {
 								currencyKey: short.collateralLocked,
@@ -98,7 +98,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.liquidationPrice')}
+							{t('shorting.history.manage-short.fields.liquidationPrice')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(
@@ -115,7 +115,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.interestRate', {
+							{t('shorting.history.manage-short.fields.interestRate', {
 								asset: short.synthBorrowed,
 							})}
 						</LightFieldText>
@@ -123,7 +123,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.profitLoss', {
+							{t('shorting.history.manage-short.fields.profitLoss', {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
@@ -138,7 +138,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 				</LeftCol>
 				<RightCol>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.shorting')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.shorting')}</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
 								currencyKey: short.synthBorrowed,
@@ -147,7 +147,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.collateralRatio')}
+							{t('shorting.history.manage-short.fields.collateralRatio')}
 						</LightFieldText>
 						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
 							{formatPercent(short.collateralRatio)}
@@ -155,7 +155,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.accruedInterest')}
+							{t('shorting.history.manage-short.fields.accruedInterest')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.accruedInterest ?? 0, {
@@ -164,7 +164,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						</DataField>
 					</Row>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.date')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.date')}</LightFieldText>
 						<DataField>
 							{short.createdAt != null ? formatDateWithTime(short.createdAt) : NO_VALUE}
 						</DataField>

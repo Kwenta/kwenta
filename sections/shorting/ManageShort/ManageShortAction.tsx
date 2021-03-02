@@ -403,7 +403,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
 			<SummaryItem>
 				<SummaryItemLabel>
-					{t('shorting.history.manageShort.sections.close-position.total-to-replay-label')}
+					{t('shorting.history.manage-short.sections.close-position.total-to-replay-label')}
 				</SummaryItemLabel>
 				<SummaryItemValue>
 					{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
@@ -432,7 +432,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 							<MessageContainer attached={false} className="footer-card">
 								<DesktopOnlyView>{closeTabSummaryItems}</DesktopOnlyView>
 								<Button variant="danger" isRounded={true} onClick={handleSubmit} size="lg">
-									{t('shorting.history.manageShort.sections.close-position.close-button-label')}
+									{t('shorting.history.manage-short.sections.close-position.close-button-label')}
 								</Button>
 							</MessageContainer>
 							{txConfirmationModalOpen && (
@@ -448,10 +448,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 									totalTradePrice={totalTradePrice}
 									txProvider="synthetix"
 									baseCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.base-currency-label`
+										`shorting.history.manage-short.sections.${tab}.tx-confirm.base-currency-label`
 									)}
 									quoteCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.quote-currency-label`
+										`shorting.history.manage-short.sections.${tab}.tx-confirm.quote-currency-label`
 									)}
 								/>
 							)}
@@ -468,8 +468,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								priceRate={assetPriceRate}
 								label={
 									isCollateralChange
-										? t('shorting.history.manageShort.sections.panel.collateral')
-										: t('shorting.history.manageShort.sections.panel.shorting')
+										? t('shorting.history.manage-short.sections.panel.collateral')
+										: t('shorting.history.manage-short.sections.panel.shorting')
 								}
 							/>
 							<TradeSummaryCard
@@ -508,10 +508,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 									totalTradePrice={totalTradePrice}
 									txProvider="synthetix"
 									baseCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.base-currency-label`
+										`shorting.history.manage-short.sections.${tab}.tx-confirm.base-currency-label`
 									)}
 									quoteCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.quote-currency-label`
+										`shorting.history.manage-short.sections.${tab}.tx-confirm.quote-currency-label`
 									)}
 								/>
 							)}

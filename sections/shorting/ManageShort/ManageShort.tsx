@@ -77,7 +77,7 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.AddCollateral,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.AddCollateral}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.AddCollateral}.nav-title`
 						),
 						active: activeTab === ShortingTab.AddCollateral,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortAddCollateral(short.id)),
@@ -85,7 +85,7 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.RemoveCollateral,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.RemoveCollateral}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.RemoveCollateral}.nav-title`
 						),
 						active: activeTab === ShortingTab.RemoveCollateral,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortRemoveCollateral(short.id)),
@@ -93,7 +93,7 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.DecreasePosition,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.DecreasePosition}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.DecreasePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.DecreasePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
@@ -101,7 +101,7 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.IncreasePosition,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.IncreasePosition}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.IncreasePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.IncreasePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortIncreasePosition(short.id)),
@@ -110,7 +110,7 @@ const ManageShort: FC = () => {
 						isClosePosition: true,
 						name: ShortingTab.ClosePosition,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.ClosePosition}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.ClosePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.ClosePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortClosePosition(short.id)),
@@ -143,14 +143,14 @@ const ManageShort: FC = () => {
 				shortPositionQuery.isLoading ? (
 					<Loader />
 				) : (
-					<NoResultsFound>{t('shorting.history.manageShort.noResults')}</NoResultsFound>
+					<NoResultsFound>{t('shorting.history.manage-short.noResults')}</NoResultsFound>
 				)
 			) : (
 				<>
 					<IconButton onClick={() => router.push(ROUTES.Shorting.Home)}>
 						<StyledBackIcon src={BackIcon} viewBox={`0 0 ${BackIcon.width} ${BackIcon.height}`} />
 					</IconButton>
-					<ManageShortTitle>{t('shorting.history.manageShort.title')}</ManageShortTitle>
+					<ManageShortTitle>{t('shorting.history.manage-short.title')}</ManageShortTitle>
 					<YourPositionCard short={short} />
 					<FlexDivRow>
 						<StyledTabList>
@@ -185,9 +185,9 @@ const ManageShort: FC = () => {
 						</TabPanelsContainer>
 						{interactionDisabled && nextInteractionDate != null && (
 							<CenteredMessage>
-								<div>{t('shorting.history.manageShort.interaction-disabled.title')}</div>
+								<div>{t('shorting.history.manage-short.interaction-disabled.title')}</div>
 								<div>
-									{t('shorting.history.manageShort.interaction-disabled.message.part1')}{' '}
+									{t('shorting.history.manage-short.interaction-disabled.message.part1')}{' '}
 									<Countdown
 										date={nextInteractionDate}
 										renderer={({ minutes, seconds }) => {
@@ -199,7 +199,7 @@ const ManageShort: FC = () => {
 											return <span>{duration.join(':')}</span>;
 										}}
 									/>{' '}
-									{t('shorting.history.manageShort.interaction-disabled.message.part2')}
+									{t('shorting.history.manage-short.interaction-disabled.message.part2')}
 								</div>
 							</CenteredMessage>
 						)}
