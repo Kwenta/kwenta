@@ -62,6 +62,7 @@ export const SYNTHS = [
 	'sUSD',
 	'sAUD',
 	'sGBP',
+	'sKRW',
 	'sCHF',
 	'sCEX',
 	'sDEFI',
