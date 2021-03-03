@@ -104,6 +104,7 @@ import sUSDIcon from '@synthetixio/assets/synths/sUSD.svg';
 import sAUDIcon from '@synthetixio/assets/synths/sAUD.svg';
 import sGBPIcon from '@synthetixio/assets/synths/sGBP.svg';
 import sCHFIcon from '@synthetixio/assets/synths/sCHF.svg';
+import sKRWIcon from '@synthetixio/assets/synths/sKRW.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
@@ -254,6 +255,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 		}
 		case SYNTHS_MAP.sCHF: {
 			return <Img src={sCHFIcon} {...props} />;
+		}
+		case SYNTHS_MAP.sKRW: {
+			return <Img src={sKRWIcon} {...props} />;
 		}
 		case SYNTHS_MAP.sXAU: {
 			return <Img src={sXAUIcon} {...props} />;
