@@ -8,14 +8,12 @@ import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-
 import synthetix from 'lib/synthetix';
 
 import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -32,8 +30,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
-import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -46,19 +42,11 @@ import {
 import { NoTextTransform } from 'styles/common';
 import media from 'styles/media';
 
-import Button from 'components/Button';
-
-import {
-	SummaryItems,
-	SummaryItem,
-	SummaryItemLabel,
-	SummaryItemValue,
-	MessageContainer,
-} from 'sections/exchange/FooterCard/common';
-
 import { ShortingTab } from './ManageShort';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import Card from 'components/Card';
+
+import ClosePosition from './ClosePosition';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -329,7 +317,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		}
 	};
 
-	const approve = async () => {
+	const handleApprove = async () => {
 		if (currencyKey != null && gasPrice != null) {
 			setTxError(null);
 			setTxApproveModalOpen(true);
@@ -419,24 +407,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		}
 	}, [checkAllowance, needsApproval]);
 
-	const closeTabSummaryItems = (
-		<SummaryItems attached={false}>
-			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
-			<SummaryItem>
-				<SummaryItemLabel>
-					{t('shorting.history.manage-short.sections.close-position.total-to-replay-label')}
-				</SummaryItemLabel>
-				<SummaryItemValue>
-					{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
-						currencyKey: short.synthBorrowed,
-					})}
-				</SummaryItemValue>
-			</SummaryItem>
-			<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
-		</SummaryItems>
-	);
-
-	// TODO: refactor closeTab to its own
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -444,39 +414,14 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			) : (
 				<>
 					{isCloseTab ? (
-						<>
-							<MobileOrTabletView>
-								<MobileCard className="trade-summary-card">
-									<Card.Body>{closeTabSummaryItems}</Card.Body>
-								</MobileCard>
-							</MobileOrTabletView>
-							<MessageContainer attached={false} className="footer-card">
-								<DesktopOnlyView>{closeTabSummaryItems}</DesktopOnlyView>
-								<Button variant="danger" isRounded={true} onClick={handleSubmit} size="lg">
-									{t('shorting.history.manage-short.sections.close-position.close-button-label')}
-								</Button>
-							</MessageContainer>
-							{txConfirmationModalOpen && (
-								<TxConfirmationModal
-									onDismiss={() => setTxConfirmationModalOpen(false)}
-									txError={txError}
-									attemptRetry={handleSubmit}
-									baseCurrencyAmount={`${short.collateralLockedAmount}`}
-									quoteCurrencyAmount={`${short.synthBorrowedAmount}`}
-									feeAmountInBaseCurrency={null}
-									baseCurrencyKey={short.collateralLocked}
-									quoteCurrencyKey={short.synthBorrowed}
-									totalTradePrice={totalTradePrice}
-									txProvider="synthetix"
-									baseCurrencyLabel={t(
-										`shorting.history.manage-short.sections.${tab}.tx-confirm.base-currency-label`
-									)}
-									quoteCurrencyLabel={t(
-										`shorting.history.manage-short.sections.${tab}.tx-confirm.quote-currency-label`
-									)}
-								/>
-							)}
-						</>
+						<ClosePosition
+							gasPrices={gasPrices}
+							synthCollateralPriceRate={synthCollateralPriceRate}
+							transactionFee={transactionFee}
+							short={short}
+							handleSubmit={handleSubmit}
+							txError={txError}
+						/>
 					) : (
 						<>
 							<CurrencyCard
@@ -496,7 +441,9 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 							<TradeSummaryCard
 								attached={true}
 								submissionDisabledReason={submissionDisabledReason}
-								onSubmit={needsApproval ? (isApproved ? handleSubmit : approve) : handleSubmit}
+								onSubmit={
+									needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit
+								}
 								totalTradePrice={totalTradePrice}
 								baseCurrencyAmount={inputAmount}
 								basePriceRate={assetPriceRate}
@@ -513,7 +460,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								<TxApproveModal
 									onDismiss={() => setTxApproveModalOpen(false)}
 									txError={txError}
-									attemptRetry={approve}
+									attemptRetry={handleApprove}
 									currencyKey={currencyKey!}
 									currencyLabel={<NoTextTransform>{currencyKey}</NoTextTransform>}
 								/>
