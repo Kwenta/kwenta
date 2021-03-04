@@ -7,13 +7,15 @@ import Etherscan from 'containers/Etherscan';
 
 import Card from 'components/Card';
 
+import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatDateWithTime } from 'utils/formatters/date';
 
-import { FlexDivRow, ExternalLink } from 'styles/common';
+import { FlexDivRow, ExternalLink, FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
 
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -27,17 +29,45 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import { NO_VALUE } from 'constants/placeholder';
 
+import { ShortingTab } from './constants';
+
 type YourPositionCardProps = {
 	short: ShortPosition;
+	inputAmount: string;
+	activeTab: string;
 };
 
-const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
+const arrowIcon = (
+	<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
+);
+
+const YourPositionCard: FC<YourPositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
+
+	const isAddCollateralTab = useMemo(() => activeTab === ShortingTab.AddCollateral, [activeTab]);
+	const isRemoveCollateralTab = useMemo(() => activeTab === ShortingTab.RemoveCollateral, [
+		activeTab,
+	]);
+	const isCollateralTab = useMemo(() => isAddCollateralTab || isRemoveCollateralTab, [
+		isAddCollateralTab,
+		isRemoveCollateralTab,
+	]);
+
+	const isIncreasePositionTab = useMemo(() => activeTab === ShortingTab.IncreasePosition, [
+		activeTab,
+	]);
+	const isDecreasePositionTab = useMemo(() => activeTab === ShortingTab.DecreasePosition, [
+		activeTab,
+	]);
+	const isPositionTab = useMemo(() => isIncreasePositionTab || isDecreasePositionTab, [
+		isIncreasePositionTab,
+		isDecreasePositionTab,
+	]);
 
 	const collateralShortInfo = useMemo(
 		() =>
@@ -76,6 +106,51 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
+	const inputChangePreview = useMemo(() => {
+		if (inputAmount !== '') {
+			let collateralLockedAmount = short.collateralLockedAmount;
+			let synthBorrowedAmount = short.synthBorrowedAmount;
+
+			if (isCollateralTab) {
+				collateralLockedAmount = isAddCollateralTab
+					? collateralLockedAmount.plus(inputAmount)
+					: collateralLockedAmount.minus(inputAmount);
+			}
+
+			if (isPositionTab) {
+				synthBorrowedAmount = isIncreasePositionTab
+					? synthBorrowedAmount.plus(inputAmount)
+					: synthBorrowedAmount.minus(inputAmount);
+			}
+
+			const collateralValue = collateralLockedAmount.multipliedBy(collateralLockedPrice);
+
+			const liquidationPrice = collateralValue.dividedBy(
+				synthBorrowedAmount.multipliedBy(minCollateralRatio)
+			);
+
+			return {
+				collateralLockedAmount: collateralLockedAmount.isNegative()
+					? zeroBN
+					: collateralLockedAmount,
+				collateralValue: collateralValue.isNegative() ? zeroBN : collateralValue,
+				liquidationPrice: liquidationPrice.isNegative() ? zeroBN : liquidationPrice,
+				synthBorrowedAmount: synthBorrowedAmount.isNegative() ? zeroBN : synthBorrowedAmount,
+			};
+		}
+		return null;
+	}, [
+		inputAmount,
+		collateralLockedPrice,
+		isAddCollateralTab,
+		isIncreasePositionTab,
+		minCollateralRatio,
+		short.collateralLockedAmount,
+		short.synthBorrowedAmount,
+		isCollateralTab,
+		isPositionTab,
+	]);
+
 	return (
 		<StyledCard>
 			<StyledCardHeader>
@@ -94,6 +169,18 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 							{formatCurrency(short.collateralLocked, short.collateralLockedAmount, {
 								currencyKey: short.collateralLocked,
 							})}
+							{isCollateralTab && inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(
+										short.collateralLocked,
+										inputChangePreview.collateralLockedAmount,
+										{
+											currencyKey: short.collateralLocked,
+										}
+									)}
+								</>
+							)}
 						</DataField>
 					</Row>
 					<Row>
@@ -110,6 +197,21 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 									currencyKey: short.synthBorrowed,
 									sign: selectedPriceCurrency.sign,
 								}
+							)}
+							{inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(
+										short.collateralLocked,
+										selectPriceCurrencyRate != null
+											? inputChangePreview.liquidationPrice.dividedBy(selectPriceCurrencyRate)
+											: inputChangePreview.liquidationPrice,
+										{
+											currencyKey: short.synthBorrowed,
+											sign: selectedPriceCurrency.sign,
+										}
+									)}
+								</>
 							)}
 						</DataField>
 					</Row>
@@ -143,6 +245,14 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 							{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
 								currencyKey: short.synthBorrowed,
 							})}
+							{isPositionTab && inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(short.synthBorrowed, inputChangePreview.synthBorrowedAmount, {
+										currencyKey: short.synthBorrowed,
+									})}
+								</>
+							)}
 						</DataField>
 					</Row>
 					<Row>
@@ -188,10 +298,11 @@ const StyledCardBody = styled(Card.Body)`
 	padding: 0;
 	display: grid;
 	grid-gap: 20px;
-	grid-auto-flow: column;
+	grid-template-columns: 1fr 1fr;
 
 	${media.lessThan('md')`
-		grid-auto-flow: row;
+		grid-template-columns: unset;
+		grid-template-rows: 1fr 1fr;
 		grid-gap: unset;
 	`}
 `;
@@ -217,7 +328,7 @@ const LightFieldText = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
-const DataField = styled.div<{ isPositive?: boolean | null }>`
+const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) =>
 		props.isPositive != null
@@ -225,6 +336,10 @@ const DataField = styled.div<{ isPositive?: boolean | null }>`
 				? props.theme.colors.green
 				: props.theme.colors.red
 			: props.theme.colors.white};
+
+	svg {
+		margin: 0 10px;
+	}
 `;
 
 const StyledLinkIcon = styled(Svg)`

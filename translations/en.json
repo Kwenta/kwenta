@@ -553,6 +553,7 @@
 			"1M": "1M"
 		},
 		"transaction": {
+			"revert-reason": "Error: {{reason}}",
 			"error": "An unexpected error occurred.",
 			"reattempt": "Try again"
 		},

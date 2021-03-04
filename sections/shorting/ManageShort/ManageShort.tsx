@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { Svg } from 'react-optimized-image';
@@ -24,20 +24,12 @@ import { FlexDivRow, IconButton, CenteredMessage } from 'styles/common';
 
 import ManageShortAction from './ManageShortAction';
 import YourPositionCard from './YourPositionCard';
-
-export enum ShortingTab {
-	AddCollateral = 'add-collateral',
-	RemoveCollateral = 'remove-collateral',
-	DecreasePosition = 'decrease-position',
-	IncreasePosition = 'increase-position',
-	ClosePosition = 'close-position',
-}
-
-const ShortingTabs = Object.values(ShortingTab);
+import { ShortingTab, ShortingTabs } from './constants';
 
 const ManageShort: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const [inputAmount, setInputAmount] = useState<string>('');
 
 	const [tabQuery, loanId] = useMemo(() => {
 		if (router.query.tab) {
@@ -91,20 +83,20 @@ const ManageShort: FC = () => {
 						onClick: () => router.push(ROUTES.Shorting.ManageShortRemoveCollateral(short.id)),
 					},
 					{
-						name: ShortingTab.DecreasePosition,
-						label: t(
-							`shorting.history.manage-short.sections.${ShortingTab.DecreasePosition}.nav-title`
-						),
-						active: activeTab === ShortingTab.DecreasePosition,
-						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
-					},
-					{
 						name: ShortingTab.IncreasePosition,
 						label: t(
 							`shorting.history.manage-short.sections.${ShortingTab.IncreasePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.IncreasePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortIncreasePosition(short.id)),
+					},
+					{
+						name: ShortingTab.DecreasePosition,
+						label: t(
+							`shorting.history.manage-short.sections.${ShortingTab.DecreasePosition}.nav-title`
+						),
+						active: activeTab === ShortingTab.DecreasePosition,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
 					},
 					{
 						isClosePosition: true,
@@ -143,6 +135,10 @@ const ManageShort: FC = () => {
 		}
 	}, [short, shortPositionQuery, router]);
 
+	useEffect(() => {
+		setInputAmount('');
+	}, [activeTab]);
+
 	return (
 		<Container>
 			{short == null ? (
@@ -155,7 +151,7 @@ const ManageShort: FC = () => {
 					<ManageShortTitle>
 						{t('shorting.history.manage-short.title', { loanId: short.id })}
 					</ManageShortTitle>
-					<YourPositionCard short={short} />
+					<YourPositionCard short={short} inputAmount={inputAmount} activeTab={activeTab} />
 					<FlexDivRow>
 						<StyledTabList>
 							{leftTabs.map(({ name, label, active, onClick }) => (
@@ -183,6 +179,8 @@ const ManageShort: FC = () => {
 										isActive={name === activeTab}
 										short={short}
 										refetchShortPosition={() => shortPositionQuery.refetch()}
+										setInputAmount={setInputAmount}
+										inputAmount={inputAmount}
 									/>
 								</TabPanel>
 							))}

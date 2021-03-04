@@ -1,4 +1,13 @@
-import { FC, useState, useMemo, useEffect, useCallback, ReactNode } from 'react';
+import {
+	FC,
+	useState,
+	useMemo,
+	useEffect,
+	useCallback,
+	ReactNode,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +23,7 @@ import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { hexToAsciiV2 } from 'utils/formatters/string';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -42,17 +52,19 @@ import {
 import { NoTextTransform } from 'styles/common';
 import media from 'styles/media';
 
-import { ShortingTab } from './ManageShort';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import Card from 'components/Card';
 
 import ClosePosition from './ClosePosition';
+import { ShortingTab } from './constants';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
 	tab: ShortingTab;
 	isActive: boolean;
 	refetchShortPosition: () => void;
+	inputAmount: string;
+	setInputAmount: Dispatch<SetStateAction<string>>;
 };
 
 const ManageShortAction: FC<ManageShortActionProps> = ({
@@ -60,6 +72,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	tab,
 	isActive,
 	refetchShortPosition,
+	inputAmount,
+	setInputAmount,
 }) => {
 	const { t } = useTranslation();
 	const [isApproving, setIsApproving] = useState<boolean>(false);
@@ -68,7 +82,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-	const [inputAmount, setInputAmount] = useState<string>('');
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const { notify } = Connector.useContainer();
@@ -103,48 +116,41 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const redirectToShortingHome = useCallback(() => router.push(ROUTES.Shorting.Home), [router]);
 
-	const getMethodAndParams = useCallback(
-		({ isEstimate }: { isEstimate: boolean }) => {
-			const idParam = `${short.id}`;
-			const amountParam = ethers.utils.parseUnits(inputAmountBN.toString(), DEFAULT_TOKEN_DECIMALS);
+	const getMethodAndParams = useCallback(() => {
+		const idParam = `${short.id}`;
+		const amountParam = ethers.utils.parseUnits(inputAmountBN.toString(), DEFAULT_TOKEN_DECIMALS);
 
-			let params: Array<ethers.BigNumber | string>;
-			let contractFunc: ethers.ContractFunction;
-			let onSuccess: Function | null = null;
+		let params: Array<ethers.BigNumber | string>;
+		let method: string = '';
+		let onSuccess: Function | null = null;
 
-			const { CollateralShort } = synthetix.js!.contracts;
-
-			switch (tab) {
-				case ShortingTab.AddCollateral:
-					params = [walletAddress!, idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.deposit : CollateralShort.deposit;
-					break;
-				case ShortingTab.RemoveCollateral:
-					params = [idParam, amountParam];
-					contractFunc = isEstimate
-						? CollateralShort.estimateGas.withdraw
-						: CollateralShort.withdraw;
-					break;
-				case ShortingTab.DecreasePosition:
-					params = [walletAddress!, idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.repay : CollateralShort.repay;
-					break;
-				case ShortingTab.IncreasePosition:
-					params = [idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.draw : CollateralShort.draw;
-					break;
-				case ShortingTab.ClosePosition:
-					params = [idParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.close : CollateralShort.close;
-					onSuccess = () => redirectToShortingHome();
-					break;
-				default:
-					throw new Error('unrecognized tab');
-			}
-			return { contractFunc, params, onSuccess };
-		},
-		[inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]
-	);
+		switch (tab) {
+			case ShortingTab.AddCollateral:
+				params = [walletAddress!, idParam, amountParam];
+				method = 'deposit';
+				break;
+			case ShortingTab.RemoveCollateral:
+				params = [idParam, amountParam];
+				method = 'withdraw';
+				break;
+			case ShortingTab.DecreasePosition:
+				params = [walletAddress!, idParam, amountParam];
+				method = 'repay';
+				break;
+			case ShortingTab.IncreasePosition:
+				params = [idParam, amountParam];
+				method = 'draw';
+				break;
+			case ShortingTab.ClosePosition:
+				params = [idParam];
+				method = 'close';
+				onSuccess = () => redirectToShortingHome();
+				break;
+			default:
+				throw new Error('unrecognized tab');
+		}
+		return { method, params, onSuccess };
+	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]);
 
 	const gasPrice = useMemo(
 		() =>
@@ -255,8 +261,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		try {
-			const { contractFunc, params } = getMethodAndParams({ isEstimate: true });
-			const gasEstimate = await contractFunc(...params);
+			const { CollateralShort } = synthetix.js!.contracts;
+
+			const { method, params } = getMethodAndParams();
+			const gasEstimate = await CollateralShort.estimateGas[method](...params);
 			return normalizeGasLimit(Number(gasEstimate));
 		} catch (e) {
 			return null;
@@ -280,6 +288,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
+			const { CollateralShort } = synthetix.js!.contracts;
+
+			const { method, params, onSuccess } = getMethodAndParams();
+
 			try {
 				setIsSubmitting(true);
 
@@ -289,9 +301,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 				const gasLimitEstimate = await getGasLimitEstimate();
 
-				const { contractFunc, params, onSuccess } = getMethodAndParams({ isEstimate: false });
-
-				transaction = (await contractFunc(...params, {
+				transaction = (await CollateralShort[method](...params, {
 					gasPrice: gasPriceWei,
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
@@ -302,6 +312,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					});
 
 					await transaction.wait();
+					setInputAmount('');
 					if (onSuccess != null) {
 						onSuccess();
 					}
@@ -309,8 +320,17 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				}
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
-				console.log(e);
-				setTxError(e.message);
+				try {
+					await CollateralShort.callStatic[method](...params);
+					throw e;
+				} catch (e) {
+					console.log(e);
+					setTxError(
+						e.data
+							? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
+							: e.message
+					);
+				}
 			} finally {
 				setIsSubmitting(false);
 			}

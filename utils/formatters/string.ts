@@ -21,3 +21,13 @@ export const hexToAscii = (str: string): string => {
 	}
 	return out;
 };
+
+export const hexToAsciiV2 = (S: string) => {
+	// https://gist.github.com/gluk64/fdea559472d957f1138ed93bcbc6f78a#file-reason-js
+	const hex = S.substr(147).toString();
+	let str = '';
+	for (var n = 0; n < hex.length; n += 2) {
+		str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
+	}
+	return str;
+};
