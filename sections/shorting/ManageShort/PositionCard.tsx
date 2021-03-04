@@ -44,10 +44,6 @@ type PositionCardProps = {
 	activeTab: string;
 };
 
-const arrowIcon = (
-	<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
-);
-
 const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
@@ -157,6 +153,12 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		isCollateralTab,
 		isPositionTab,
 	]);
+
+	const arrowIcon = (
+		<ArrowIcon>
+			<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
+		</ArrowIcon>
+	);
 
 	return (
 		<StyledCard>
@@ -369,6 +371,11 @@ const StyledLinkIcon = styled(Svg)`
 	&:hover {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
+`;
+
+const ArrowIcon = styled.span`
+	display: inline-flex;
+	margin: 0 10px;
 `;
 
 export default PositionCard;
