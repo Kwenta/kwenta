@@ -60,9 +60,13 @@ const ManagePosition: FC<ManagePositionProps> = ({
 					{t('shorting.history.manage-short.sections.close-position.total-to-replay-label')}
 				</SummaryItemLabel>
 				<SummaryItemValue>
-					{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
-						currencyKey: short.synthBorrowed,
-					})}
+					{formatCurrency(
+						short.synthBorrowed,
+						short.synthBorrowedAmount.plus(short.accruedInterest),
+						{
+							currencyKey: short.synthBorrowed,
+						}
+					)}
 				</SummaryItemValue>
 			</SummaryItem>
 			<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
