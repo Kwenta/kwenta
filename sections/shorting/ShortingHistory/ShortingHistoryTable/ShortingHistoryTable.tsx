@@ -159,7 +159,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 };
 
 const Container = styled.div`
-	margin-top: 16px;
+	margin: 16px 0;
 	${media.lessThan('md')`
 		margin-bottom: 86px;
 	`}
