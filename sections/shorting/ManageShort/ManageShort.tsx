@@ -23,7 +23,7 @@ import BackIcon from 'assets/svg/app/go-back.svg';
 import { FlexDivRow, IconButton, CenteredMessage } from 'styles/common';
 
 import ManageShortAction from './ManageShortAction';
-import YourPositionCard from './YourPositionCard';
+import PositionCard from './PositionCard';
 import { ShortingTab, ShortingTabs } from './constants';
 
 const ManageShort: FC = () => {
@@ -151,7 +151,7 @@ const ManageShort: FC = () => {
 					<ManageShortTitle>
 						{t('shorting.history.manage-short.title', { loanId: short.id })}
 					</ManageShortTitle>
-					<YourPositionCard short={short} inputAmount={inputAmount} activeTab={activeTab} />
+					<PositionCard short={short} inputAmount={inputAmount} activeTab={activeTab} />
 					<FlexDivRow>
 						<StyledTabList>
 							{leftTabs.map(({ name, label, active, onClick }) => (

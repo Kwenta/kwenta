@@ -8,6 +8,7 @@ import Etherscan from 'containers/Etherscan';
 import Card from 'components/Card';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+import InfoIcon from 'assets/svg/app/info.svg';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
@@ -15,7 +16,13 @@ import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuer
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatDateWithTime } from 'utils/formatters/date';
 
-import { FlexDivRow, ExternalLink, FlexDivRowCentered } from 'styles/common';
+import {
+	FlexDivRow,
+	ExternalLink,
+	FlexDivRowCentered,
+	InfoTooltip,
+	InfoTooltipContent,
+} from 'styles/common';
 import media from 'styles/media';
 
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -31,7 +38,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { ShortingTab } from './constants';
 
-type YourPositionCardProps = {
+type PositionCardProps = {
 	short: ShortPosition;
 	inputAmount: string;
 	activeTab: string;
@@ -41,7 +48,7 @@ const arrowIcon = (
 	<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
 );
 
-const YourPositionCard: FC<YourPositionCardProps> = ({ short, inputAmount, activeTab }) => {
+const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
@@ -260,7 +267,24 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short, inputAmount, activ
 							{t('shorting.history.manage-short.fields.collateral-ratio')}
 						</LightFieldText>
 						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
-							{formatPercent(short.collateralRatio)}
+							{formatPercent(short.collateralRatio)}{' '}
+							<InfoTooltip
+								content={
+									<div>
+										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
+										<div>
+											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
+												percent: formatPercent(minCollateralRatio),
+											})}
+										</div>
+									</div>
+								}
+								arrow={false}
+							>
+								<InfoTooltipContent>
+									<Svg src={InfoIcon} />
+								</InfoTooltipContent>
+							</InfoTooltip>
 						</DataField>
 					</Row>
 					<Row>
@@ -336,10 +360,6 @@ const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 				? props.theme.colors.green
 				: props.theme.colors.red
 			: props.theme.colors.white};
-
-	svg {
-		margin: 0 10px;
-	}
 `;
 
 const StyledLinkIcon = styled(Svg)`
@@ -351,4 +371,4 @@ const StyledLinkIcon = styled(Svg)`
 	}
 `;
 
-export default YourPositionCard;
+export default PositionCard;
