@@ -6,9 +6,10 @@ import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
 import useCollateralShortPositionQuery from 'queries/collateral/useCollateralShortPositionQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
-import { formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import { PriceChangeText } from './common';
+import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
 
 type CRatioColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
@@ -34,9 +35,10 @@ const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio ?? zeroBN, [
-		collateralShortInfo?.minCollateralRatio,
-	]);
+	const minCollateralRatio = useMemo(
+		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
+		[collateralShortInfo?.minCollateralRatio]
+	);
 
 	return (
 		<>

@@ -1,4 +1,13 @@
-import { FC, useState, useMemo, useEffect, useCallback, ReactNode } from 'react';
+import {
+	FC,
+	useState,
+	useMemo,
+	useEffect,
+	useCallback,
+	ReactNode,
+	Dispatch,
+	SetStateAction,
+} from 'react';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -8,19 +17,20 @@ import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-
 import synthetix from 'lib/synthetix';
 
-import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { SYNTHS_MAP } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { hexToAsciiV2 } from 'utils/formatters/string';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 
@@ -32,8 +42,6 @@ import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
-import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -45,7 +53,9 @@ import {
 } from 'store/wallet';
 import { NoTextTransform } from 'styles/common';
 import media from 'styles/media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
+import Card from 'components/Card';
 import Button from 'components/Button';
 
 import {
@@ -56,15 +66,19 @@ import {
 	MessageContainer,
 } from 'sections/exchange/FooterCard/common';
 
-import { ShortingTab } from './ManageShort';
-import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
-import Card from 'components/Card';
+import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
+
+import { ShortingTab } from './constants';
+import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
 	tab: ShortingTab;
 	isActive: boolean;
 	refetchShortPosition: () => void;
+	inputAmount: string;
+	setInputAmount: Dispatch<SetStateAction<string>>;
 };
 
 const ManageShortAction: FC<ManageShortActionProps> = ({
@@ -72,6 +86,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	tab,
 	isActive,
 	refetchShortPosition,
+	inputAmount,
+	setInputAmount,
 }) => {
 	const { t } = useTranslation();
 	const [isApproving, setIsApproving] = useState<boolean>(false);
@@ -80,7 +96,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-	const [inputAmount, setInputAmount] = useState<string>('');
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const { notify } = Connector.useContainer();
@@ -98,16 +113,30 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		: null;
 
 	const router = useRouter();
-	const needsApproval = useMemo(() => tab === ShortingTab.AddCollateral, [tab]);
 
-	const isCollateralChange = useMemo(
-		() => [ShortingTab.AddCollateral, ShortingTab.RemoveCollateral].includes(tab),
-		[tab]
-	);
+	const isAddCollateralTab = useMemo(() => tab === ShortingTab.AddCollateral, [tab]);
+	const isRemoveCollateralTab = useMemo(() => tab === ShortingTab.RemoveCollateral, [tab]);
+	const isCollateralTab = useMemo(() => isAddCollateralTab || isRemoveCollateralTab, [
+		isAddCollateralTab,
+		isRemoveCollateralTab,
+	]);
+
+	const isDecreasePositionTab = useMemo(() => tab === ShortingTab.DecreasePosition, [tab]);
+
+	const needsApproval = useMemo(() => isAddCollateralTab, [isAddCollateralTab]);
 
 	const isCloseTab = useMemo(() => tab === ShortingTab.ClosePosition, [tab]);
 
-	const currencyKey = isCollateralChange ? short.collateralLocked : short.synthBorrowed;
+	const currencyKey = useMemo(
+		() => (isCollateralTab ? short.collateralLocked : short.synthBorrowed),
+		[isCollateralTab, short.collateralLocked, short.synthBorrowed]
+	);
+
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(currencyKey);
+
+	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
+		? feeReclaimPeriodQuery.data ?? 0
+		: 0;
 
 	const balance = synthsWalletBalancesQuery.data?.balancesMap[currencyKey]?.balance ?? null;
 
@@ -115,48 +144,44 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const redirectToShortingHome = useCallback(() => router.push(ROUTES.Shorting.Home), [router]);
 
-	const getMethodAndParams = useCallback(
-		({ isEstimate }: { isEstimate: boolean }) => {
-			const idParam = `${short.id}`;
-			const amountParam = ethers.utils.parseUnits(inputAmountBN.toString(), DEFAULT_TOKEN_DECIMALS);
+	const getMethodAndParams = useCallback(() => {
+		const idParam = `${short.id}`;
+		const amountParam = ethers.utils.parseUnits(
+			inputAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
+			DEFAULT_TOKEN_DECIMALS
+		);
 
-			let params: Array<ethers.BigNumber | string>;
-			let contractFunc: ethers.ContractFunction;
-			let onSuccess: Function | null = null;
+		let params: Array<ethers.BigNumber | string>;
+		let method: string = '';
+		let onSuccess: Function | null = null;
 
-			const { CollateralShort } = synthetix.js!.contracts;
-
-			switch (tab) {
-				case ShortingTab.AddCollateral:
-					params = [walletAddress!, idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.deposit : CollateralShort.deposit;
-					break;
-				case ShortingTab.RemoveCollateral:
-					params = [idParam, amountParam];
-					contractFunc = isEstimate
-						? CollateralShort.estimateGas.withdraw
-						: CollateralShort.withdraw;
-					break;
-				case ShortingTab.DecreasePosition:
-					params = [walletAddress!, idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.repay : CollateralShort.repay;
-					break;
-				case ShortingTab.IncreasePosition:
-					params = [idParam, amountParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.draw : CollateralShort.draw;
-					break;
-				case ShortingTab.ClosePosition:
-					params = [idParam];
-					contractFunc = isEstimate ? CollateralShort.estimateGas.close : CollateralShort.close;
-					onSuccess = () => redirectToShortingHome();
-					break;
-				default:
-					throw new Error('unrecognized tab');
-			}
-			return { contractFunc, params, onSuccess };
-		},
-		[inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]
-	);
+		switch (tab) {
+			case ShortingTab.AddCollateral:
+				params = [walletAddress!, idParam, amountParam];
+				method = 'deposit';
+				break;
+			case ShortingTab.RemoveCollateral:
+				params = [idParam, amountParam];
+				method = 'withdraw';
+				break;
+			case ShortingTab.DecreasePosition:
+				params = [walletAddress!, idParam, amountParam];
+				method = 'repay';
+				break;
+			case ShortingTab.IncreasePosition:
+				params = [idParam, amountParam];
+				method = 'draw';
+				break;
+			case ShortingTab.ClosePosition:
+				params = [idParam];
+				method = 'close';
+				onSuccess = () => redirectToShortingHome();
+				break;
+			default:
+				throw new Error('unrecognized tab');
+		}
+		return { method, params, onSuccess };
+	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]);
 
 	const gasPrice = useMemo(
 		() =>
@@ -216,24 +241,60 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		synthCollateralPriceRate,
 	]);
 
+	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
+		short.accruedInterest,
+		short.synthBorrowedAmount,
+	]);
+
 	const submissionDisabledReason: ReactNode = useMemo(() => {
-		if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
-			return t('exchange.summary-info.button.enter-amount');
-		}
-		if (inputAmountBN.gt(balance ?? 0)) {
-			return t('exchange.summary-info.button.insufficient-balance');
-		}
-		if (isSubmitting) {
-			return t('exchange.summary-info.button.submitting-order');
-		}
-		if (isApproving) {
-			return t('exchange.summary-info.button.approving');
-		}
-		if (needsApproval && !isApproved) {
-			return t('exchange.summary-info.button.approve');
+		if (isCloseTab) {
+			if (feeReclaimPeriodInSeconds > 0) {
+				return t('exchange.summary-info.button.fee-reclaim-period');
+			}
+			if (balance != null && totalToRepay.gt(balance)) {
+				return t(
+					'shorting.history.manage-short.sections.close-position.button.insufficient-balance-to-repay'
+				);
+			}
+		} else {
+			if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
+				return t('exchange.summary-info.button.enter-amount');
+			}
+			if (inputAmountBN.gt(balance ?? 0)) {
+				return t('exchange.summary-info.button.insufficient-balance');
+			}
+			if (isSubmitting) {
+				return t('exchange.summary-info.button.submitting-order');
+			}
+			if (isApproving) {
+				return t('exchange.summary-info.button.approving');
+			}
+			if (needsApproval && !isApproved) {
+				return t('exchange.summary-info.button.approve');
+			}
+			if (isDecreasePositionTab) {
+				if (inputAmountBN.gt(short.synthBorrowedAmount)) {
+					return t(
+						'shorting.history.manage-short.sections.decrease-position.button.amount-greater-than-debt'
+					);
+				}
+				if (inputAmountBN.eq(short.synthBorrowedAmount)) {
+					return t(
+						'shorting.history.manage-short.sections.decrease-position.button.close-position-instead'
+					);
+				}
+			}
+			if (isRemoveCollateralTab) {
+				if (inputAmountBN.gt(short.collateralLockedAmount)) {
+					return t(
+						'shorting.history.manage-short.sections.remove-collateral.button.amount-greater-than-collateral'
+					);
+				}
+			}
 		}
 		return null;
 	}, [
+		feeReclaimPeriodInSeconds,
 		isApproving,
 		balance,
 		isSubmitting,
@@ -242,12 +303,23 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		t,
 		needsApproval,
 		isApproved,
+		isRemoveCollateralTab,
+		isDecreasePositionTab,
+		short,
+		isCloseTab,
+		totalToRepay,
+	]);
+
+	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
+		submissionDisabledReason,
 	]);
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		try {
-			const { contractFunc, params } = getMethodAndParams({ isEstimate: true });
-			const gasEstimate = await contractFunc(...params);
+			const { CollateralShort } = synthetix.js!.contracts;
+
+			const { method, params } = getMethodAndParams();
+			const gasEstimate = await CollateralShort.estimateGas[method](...params);
 			return normalizeGasLimit(Number(gasEstimate));
 		} catch (e) {
 			return null;
@@ -271,6 +343,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
+			const { CollateralShort } = synthetix.js!.contracts;
+
+			const { method, params, onSuccess } = getMethodAndParams();
+
 			try {
 				setIsSubmitting(true);
 
@@ -280,9 +356,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 				const gasLimitEstimate = await getGasLimitEstimate();
 
-				const { contractFunc, params, onSuccess } = getMethodAndParams({ isEstimate: false });
-
-				transaction = (await contractFunc(...params, {
+				transaction = (await CollateralShort[method](...params, {
 					gasPrice: gasPriceWei,
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
@@ -293,6 +367,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					});
 
 					await transaction.wait();
+					setInputAmount('');
 					if (onSuccess != null) {
 						onSuccess();
 					}
@@ -300,15 +375,24 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				}
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
-				console.log(e);
-				setTxError(e.message);
+				try {
+					await CollateralShort.callStatic[method](...params);
+					throw e;
+				} catch (e) {
+					console.log(e);
+					setTxError(
+						e.data
+							? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
+							: e.message
+					);
+				}
 			} finally {
 				setIsSubmitting(false);
 			}
 		}
 	};
 
-	const approve = async () => {
+	const handleApprove = async () => {
 		if (currencyKey != null && gasPrice != null) {
 			setTxError(null);
 			setTxApproveModalOpen(true);
@@ -403,10 +487,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
 			<SummaryItem>
 				<SummaryItemLabel>
-					{t('shorting.history.manageShort.sections.close-position.total-to-replay-label')}
+					{t('shorting.history.manage-short.sections.close-position.total-to-replay-label')}
 				</SummaryItemLabel>
 				<SummaryItemValue>
-					{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
+					{formatCurrency(short.synthBorrowed, totalToRepay, {
 						currencyKey: short.synthBorrowed,
 					})}
 				</SummaryItemValue>
@@ -415,7 +499,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		</SummaryItems>
 	);
 
-	// TODO: refactor closeTab to its own
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -431,30 +514,18 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 							</MobileOrTabletView>
 							<MessageContainer attached={false} className="footer-card">
 								<DesktopOnlyView>{closeTabSummaryItems}</DesktopOnlyView>
-								<Button variant="danger" isRounded={true} onClick={handleSubmit} size="lg">
-									{t('shorting.history.manageShort.sections.close-position.close-button-label')}
+								<Button
+									variant="danger"
+									isRounded={true}
+									onClick={handleSubmit}
+									size="lg"
+									disabled={isSubmissionDisabled}
+								>
+									{isSubmissionDisabled
+										? submissionDisabledReason
+										: t('shorting.history.manage-short.sections.close-position.close-button-label')}
 								</Button>
 							</MessageContainer>
-							{txConfirmationModalOpen && (
-								<TxConfirmationModal
-									onDismiss={() => setTxConfirmationModalOpen(false)}
-									txError={txError}
-									attemptRetry={handleSubmit}
-									baseCurrencyAmount={`${short.collateralLockedAmount}`}
-									quoteCurrencyAmount={`${short.synthBorrowedAmount}`}
-									feeAmountInBaseCurrency={null}
-									baseCurrencyKey={short.collateralLocked}
-									quoteCurrencyKey={short.synthBorrowed}
-									totalTradePrice={totalTradePrice}
-									txProvider="synthetix"
-									baseCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.base-currency-label`
-									)}
-									quoteCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.quote-currency-label`
-									)}
-								/>
-							)}
 						</>
 					) : (
 						<>
@@ -467,15 +538,17 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								onBalanceClick={() => (balance != null ? setInputAmount(balance.toString()) : null)}
 								priceRate={assetPriceRate}
 								label={
-									isCollateralChange
-										? t('shorting.history.manageShort.sections.panel.collateral')
-										: t('shorting.history.manageShort.sections.panel.shorting')
+									isCollateralTab
+										? t('shorting.history.manage-short.sections.panel.collateral')
+										: t('shorting.history.manage-short.sections.panel.shorting')
 								}
 							/>
 							<TradeSummaryCard
 								attached={true}
 								submissionDisabledReason={submissionDisabledReason}
-								onSubmit={needsApproval ? (isApproved ? handleSubmit : approve) : handleSubmit}
+								onSubmit={
+									needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit
+								}
 								totalTradePrice={totalTradePrice}
 								baseCurrencyAmount={inputAmount}
 								basePriceRate={assetPriceRate}
@@ -492,30 +565,34 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								<TxApproveModal
 									onDismiss={() => setTxApproveModalOpen(false)}
 									txError={txError}
-									attemptRetry={approve}
+									attemptRetry={handleApprove}
 									currencyKey={currencyKey!}
 									currencyLabel={<NoTextTransform>{currencyKey}</NoTextTransform>}
 								/>
 							)}
-							{txConfirmationModalOpen && (
-								<TxConfirmationModal
-									onDismiss={() => setTxConfirmationModalOpen(false)}
-									txError={txError}
-									attemptRetry={handleSubmit}
-									baseCurrencyAmount={inputAmountBN.toString()}
-									feeAmountInBaseCurrency={null}
-									baseCurrencyKey={currencyKey}
-									totalTradePrice={totalTradePrice}
-									txProvider="synthetix"
-									baseCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.base-currency-label`
-									)}
-									quoteCurrencyLabel={t(
-										`shorting.history.manageShort.sections.${tab}.tx-confirm.quote-currency-label`
-									)}
-								/>
-							)}
 						</>
+					)}
+					{txConfirmationModalOpen && (
+						<TxConfirmationModal
+							onDismiss={() => setTxConfirmationModalOpen(false)}
+							txError={txError}
+							attemptRetry={handleSubmit}
+							baseCurrencyAmount={
+								isCloseTab ? short.collateralLockedAmount.toString() : inputAmountBN.toString()
+							}
+							quoteCurrencyAmount={isCloseTab ? totalToRepay.toString() : undefined}
+							feeAmountInBaseCurrency={null}
+							baseCurrencyKey={isCloseTab ? short.collateralLocked : currencyKey}
+							quoteCurrencyKey={isCloseTab ? short.synthBorrowed : undefined}
+							totalTradePrice={totalTradePrice}
+							txProvider="synthetix"
+							baseCurrencyLabel={t(
+								`shorting.history.manage-short.sections.${tab}.tx-confirm.base-currency-label`
+							)}
+							quoteCurrencyLabel={t(
+								`shorting.history.manage-short.sections.${tab}.tx-confirm.quote-currency-label`
+							)}
+						/>
 					)}
 				</>
 			)}

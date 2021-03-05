@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { Svg } from 'react-optimized-image';
@@ -23,21 +23,13 @@ import BackIcon from 'assets/svg/app/go-back.svg';
 import { FlexDivRow, IconButton, CenteredMessage } from 'styles/common';
 
 import ManageShortAction from './ManageShortAction';
-import YourPositionCard from './YourPositionCard';
-
-export enum ShortingTab {
-	AddCollateral = 'add-collateral',
-	RemoveCollateral = 'remove-collateral',
-	DecreasePosition = 'decrease-position',
-	IncreasePosition = 'increase-position',
-	ClosePosition = 'close-position',
-}
-
-const ShortingTabs = Object.values(ShortingTab);
+import PositionCard from './PositionCard';
+import { ShortingTab, ShortingTabs } from './constants';
 
 const ManageShort: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const [inputAmount, setInputAmount] = useState<string>('');
 
 	const [tabQuery, loanId] = useMemo(() => {
 		if (router.query.tab) {
@@ -77,7 +69,7 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.AddCollateral,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.AddCollateral}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.AddCollateral}.nav-title`
 						),
 						active: activeTab === ShortingTab.AddCollateral,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortAddCollateral(short.id)),
@@ -85,32 +77,32 @@ const ManageShort: FC = () => {
 					{
 						name: ShortingTab.RemoveCollateral,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.RemoveCollateral}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.RemoveCollateral}.nav-title`
 						),
 						active: activeTab === ShortingTab.RemoveCollateral,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortRemoveCollateral(short.id)),
 					},
 					{
-						name: ShortingTab.DecreasePosition,
-						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.DecreasePosition}.nav-title`
-						),
-						active: activeTab === ShortingTab.DecreasePosition,
-						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
-					},
-					{
 						name: ShortingTab.IncreasePosition,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.IncreasePosition}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.IncreasePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.IncreasePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortIncreasePosition(short.id)),
 					},
 					{
+						name: ShortingTab.DecreasePosition,
+						label: t(
+							`shorting.history.manage-short.sections.${ShortingTab.DecreasePosition}.nav-title`
+						),
+						active: activeTab === ShortingTab.DecreasePosition,
+						onClick: () => router.push(ROUTES.Shorting.ManageShortDecreasePosition(short.id)),
+					},
+					{
 						isClosePosition: true,
 						name: ShortingTab.ClosePosition,
 						label: t(
-							`shorting.history.manageShort.sections.${ShortingTab.ClosePosition}.nav-title`
+							`shorting.history.manage-short.sections.${ShortingTab.ClosePosition}.nav-title`
 						),
 						active: activeTab === ShortingTab.ClosePosition,
 						onClick: () => router.push(ROUTES.Shorting.ManageShortClosePosition(short.id)),
@@ -137,21 +129,29 @@ const ManageShort: FC = () => {
 		return false;
 	}, [nextInteractionDate]);
 
+	useEffect(() => {
+		if (short == null && shortPositionQuery.isError) {
+			router.push(ROUTES.Shorting.Home);
+		}
+	}, [short, shortPositionQuery, router]);
+
+	useEffect(() => {
+		setInputAmount('');
+	}, [activeTab]);
+
 	return (
 		<Container>
 			{short == null ? (
-				shortPositionQuery.isLoading ? (
-					<Loader />
-				) : (
-					<NoResultsFound>{t('shorting.history.manageShort.noResults')}</NoResultsFound>
-				)
+				shortPositionQuery.isLoading && <Loader />
 			) : (
 				<>
 					<IconButton onClick={() => router.push(ROUTES.Shorting.Home)}>
 						<StyledBackIcon src={BackIcon} viewBox={`0 0 ${BackIcon.width} ${BackIcon.height}`} />
 					</IconButton>
-					<ManageShortTitle>{t('shorting.history.manageShort.title')}</ManageShortTitle>
-					<YourPositionCard short={short} />
+					<ManageShortTitle>
+						{t('shorting.history.manage-short.title', { loanId: short.id })}
+					</ManageShortTitle>
+					<PositionCard short={short} inputAmount={inputAmount} activeTab={activeTab} />
 					<FlexDivRow>
 						<StyledTabList>
 							{leftTabs.map(({ name, label, active, onClick }) => (
@@ -179,15 +179,17 @@ const ManageShort: FC = () => {
 										isActive={name === activeTab}
 										short={short}
 										refetchShortPosition={() => shortPositionQuery.refetch()}
+										setInputAmount={setInputAmount}
+										inputAmount={inputAmount}
 									/>
 								</TabPanel>
 							))}
 						</TabPanelsContainer>
 						{interactionDisabled && nextInteractionDate != null && (
 							<CenteredMessage>
-								<div>{t('shorting.history.manageShort.interaction-disabled.title')}</div>
+								<div>{t('shorting.history.manage-short.interaction-disabled.title')}</div>
 								<div>
-									{t('shorting.history.manageShort.interaction-disabled.message.part1')}{' '}
+									{t('shorting.history.manage-short.interaction-disabled.message.part1')}{' '}
 									<Countdown
 										date={nextInteractionDate}
 										renderer={({ minutes, seconds }) => {
@@ -199,7 +201,7 @@ const ManageShort: FC = () => {
 											return <span>{duration.join(':')}</span>;
 										}}
 									/>{' '}
-									{t('shorting.history.manageShort.interaction-disabled.message.part2')}
+									{t('shorting.history.manage-short.interaction-disabled.message.part2')}
 								</div>
 							</CenteredMessage>
 						)}
@@ -217,14 +219,6 @@ const StyledTabButton = styled(TabButton)``;
 const CloseTabButton = styled(TabButton)<{ active: boolean }>`
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.red)};
 	margin-left: auto;
-`;
-
-const NoResultsFound = styled.div`
-	background-color: ${(props) => props.theme.colors.elderberry};
-	width: 100%;
-	height: 400px;
-	text-align: center;
-	padding-top: 200px;
 `;
 
 const ManageShortTitle = styled(CardTitle)`

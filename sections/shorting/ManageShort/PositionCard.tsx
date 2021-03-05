@@ -7,13 +7,22 @@ import Etherscan from 'containers/Etherscan';
 
 import Card from 'components/Card';
 
+import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+import InfoIcon from 'assets/svg/app/info.svg';
+
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatDateWithTime } from 'utils/formatters/date';
 
-import { FlexDivRow, ExternalLink } from 'styles/common';
+import {
+	FlexDivRow,
+	ExternalLink,
+	FlexDivRowCentered,
+	InfoTooltip,
+	InfoTooltipContent,
+} from 'styles/common';
 import media from 'styles/media';
 
 import LinkIcon from 'assets/svg/app/link.svg';
@@ -27,17 +36,42 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import { NO_VALUE } from 'constants/placeholder';
 
-type YourPositionCardProps = {
+import { ShortingTab } from './constants';
+import { MIN_COLLATERAL_RATIO } from '../constants';
+
+type PositionCardProps = {
 	short: ShortPosition;
+	inputAmount: string;
+	activeTab: string;
 };
 
-const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
+const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
+
+	const isAddCollateralTab = useMemo(() => activeTab === ShortingTab.AddCollateral, [activeTab]);
+	const isRemoveCollateralTab = useMemo(() => activeTab === ShortingTab.RemoveCollateral, [
+		activeTab,
+	]);
+	const isCollateralTab = useMemo(() => isAddCollateralTab || isRemoveCollateralTab, [
+		isAddCollateralTab,
+		isRemoveCollateralTab,
+	]);
+
+	const isIncreasePositionTab = useMemo(() => activeTab === ShortingTab.IncreasePosition, [
+		activeTab,
+	]);
+	const isDecreasePositionTab = useMemo(() => activeTab === ShortingTab.DecreasePosition, [
+		activeTab,
+	]);
+	const isPositionTab = useMemo(() => isIncreasePositionTab || isDecreasePositionTab, [
+		isIncreasePositionTab,
+		isDecreasePositionTab,
+	]);
 
 	const collateralShortInfo = useMemo(
 		() =>
@@ -47,9 +81,10 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio ?? zeroBN, [
-		collateralShortInfo?.minCollateralRatio,
-	]);
+	const minCollateralRatio = useMemo(
+		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
+		[collateralShortInfo?.minCollateralRatio]
+	);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -76,10 +111,61 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
+	const inputChangePreview = useMemo(() => {
+		if (inputAmount !== '') {
+			let collateralLockedAmount = short.collateralLockedAmount;
+			let synthBorrowedAmount = short.synthBorrowedAmount;
+
+			if (isCollateralTab) {
+				collateralLockedAmount = isAddCollateralTab
+					? collateralLockedAmount.plus(inputAmount)
+					: collateralLockedAmount.minus(inputAmount);
+			}
+
+			if (isPositionTab) {
+				synthBorrowedAmount = isIncreasePositionTab
+					? synthBorrowedAmount.plus(inputAmount)
+					: synthBorrowedAmount.minus(inputAmount);
+			}
+
+			const collateralValue = collateralLockedAmount.multipliedBy(collateralLockedPrice);
+
+			const liquidationPrice = collateralValue.dividedBy(
+				synthBorrowedAmount.multipliedBy(minCollateralRatio)
+			);
+
+			return {
+				collateralLockedAmount: collateralLockedAmount.isNegative()
+					? zeroBN
+					: collateralLockedAmount,
+				collateralValue: collateralValue.isNegative() ? zeroBN : collateralValue,
+				liquidationPrice: liquidationPrice.isNegative() ? zeroBN : liquidationPrice,
+				synthBorrowedAmount: synthBorrowedAmount.isNegative() ? zeroBN : synthBorrowedAmount,
+			};
+		}
+		return null;
+	}, [
+		inputAmount,
+		collateralLockedPrice,
+		isAddCollateralTab,
+		isIncreasePositionTab,
+		minCollateralRatio,
+		short.collateralLockedAmount,
+		short.synthBorrowedAmount,
+		isCollateralTab,
+		isPositionTab,
+	]);
+
+	const arrowIcon = (
+		<ArrowIcon>
+			<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
+		</ArrowIcon>
+	);
+
 	return (
 		<StyledCard>
 			<StyledCardHeader>
-				{t('shorting.history.manageShort.subtitle')}
+				{t('shorting.history.manage-short.subtitle')}
 				{etherscanInstance != null && short.txHash && (
 					<StyledExternalLink href={etherscanInstance.txLink(short.txHash)}>
 						<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
@@ -89,16 +175,28 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 			<StyledCardBody>
 				<LeftCol>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.collateral')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.collateral')}</LightFieldText>
 						<DataField>
 							{formatCurrency(short.collateralLocked, short.collateralLockedAmount, {
 								currencyKey: short.collateralLocked,
 							})}
+							{isCollateralTab && inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(
+										short.collateralLocked,
+										inputChangePreview.collateralLockedAmount,
+										{
+											currencyKey: short.collateralLocked,
+										}
+									)}
+								</>
+							)}
 						</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.liquidationPrice')}
+							{t('shorting.history.manage-short.fields.liquidation-price')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(
@@ -111,11 +209,26 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 									sign: selectedPriceCurrency.sign,
 								}
 							)}
+							{inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(
+										short.collateralLocked,
+										selectPriceCurrencyRate != null
+											? inputChangePreview.liquidationPrice.dividedBy(selectPriceCurrencyRate)
+											: inputChangePreview.liquidationPrice,
+										{
+											currencyKey: short.synthBorrowed,
+											sign: selectedPriceCurrency.sign,
+										}
+									)}
+								</>
+							)}
 						</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.interestRate', {
+							{t('shorting.history.manage-short.fields.interest-rate', {
 								asset: short.synthBorrowed,
 							})}
 						</LightFieldText>
@@ -123,7 +236,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.profitLoss', {
+							{t('shorting.history.manage-short.fields.profit-loss', {
 								asset: short.collateralLocked,
 							})}
 						</LightFieldText>
@@ -138,24 +251,49 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 				</LeftCol>
 				<RightCol>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.shorting')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.shorting')}</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.synthBorrowedAmount, {
 								currencyKey: short.synthBorrowed,
 							})}
+							{isPositionTab && inputChangePreview != null && (
+								<>
+									{arrowIcon}
+									{formatCurrency(short.synthBorrowed, inputChangePreview.synthBorrowedAmount, {
+										currencyKey: short.synthBorrowed,
+									})}
+								</>
+							)}
 						</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.collateralRatio')}
+							{t('shorting.history.manage-short.fields.collateral-ratio')}
 						</LightFieldText>
 						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
-							{formatPercent(short.collateralRatio)}
+							{formatPercent(short.collateralRatio)}{' '}
+							<InfoTooltip
+								content={
+									<div>
+										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
+										<div>
+											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
+												percent: formatPercent(minCollateralRatio),
+											})}
+										</div>
+									</div>
+								}
+								arrow={false}
+							>
+								<InfoTooltipContent>
+									<Svg src={InfoIcon} />
+								</InfoTooltipContent>
+							</InfoTooltip>
 						</DataField>
 					</Row>
 					<Row>
 						<LightFieldText>
-							{t('shorting.history.manageShort.fields.accruedInterest')}
+							{t('shorting.history.manage-short.fields.accrued-interest')}
 						</LightFieldText>
 						<DataField>
 							{formatCurrency(short.synthBorrowed, short.accruedInterest ?? 0, {
@@ -164,7 +302,7 @@ const YourPositionCard: FC<YourPositionCardProps> = ({ short }) => {
 						</DataField>
 					</Row>
 					<Row>
-						<LightFieldText>{t('shorting.history.manageShort.fields.date')}</LightFieldText>
+						<LightFieldText>{t('shorting.history.manage-short.fields.date')}</LightFieldText>
 						<DataField>
 							{short.createdAt != null ? formatDateWithTime(short.createdAt) : NO_VALUE}
 						</DataField>
@@ -188,10 +326,11 @@ const StyledCardBody = styled(Card.Body)`
 	padding: 0;
 	display: grid;
 	grid-gap: 20px;
-	grid-auto-flow: column;
+	grid-template-columns: 1fr 1fr;
 
 	${media.lessThan('md')`
-		grid-auto-flow: row;
+		grid-template-columns: unset;
+		grid-template-rows: 1fr 1fr;
 		grid-gap: unset;
 	`}
 `;
@@ -217,7 +356,7 @@ const LightFieldText = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
-const DataField = styled.div<{ isPositive?: boolean | null }>`
+const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) =>
 		props.isPositive != null
@@ -236,4 +375,8 @@ const StyledLinkIcon = styled(Svg)`
 	}
 `;
 
-export default YourPositionCard;
+const ArrowIcon = styled.span`
+	margin: 0 10px;
+`;
+
+export default PositionCard;

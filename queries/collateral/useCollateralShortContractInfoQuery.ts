@@ -3,7 +3,7 @@ import { ethers, utils } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import BigNumber from 'bignumber.js';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';

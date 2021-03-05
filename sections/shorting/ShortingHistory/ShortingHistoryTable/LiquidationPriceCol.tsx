@@ -3,13 +3,16 @@ import { CellProps } from 'react-table';
 
 import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
+
+import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
 
 import { StyledCurrencyKey, StyledPrice } from './common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency } from 'utils/formatters/number';
-import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 type LiquidationPriceColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
@@ -43,16 +46,17 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 		? collateralShortContractInfoQuery?.data ?? null
 		: null;
 
-	const minCratio = useMemo(() => collateralShortContractInfo?.minCollateralRatio ?? 0, [
-		collateralShortContractInfo?.minCollateralRatio,
-	]);
+	const minCollateralRatio = useMemo(
+		() => collateralShortContractInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
+		[collateralShortContractInfo?.minCollateralRatio]
+	);
 
 	const liquidationPrice = useMemo(
 		() =>
 			collateralLockedAmount
 				.multipliedBy(collateralLockedPrice)
-				.dividedBy(synthBorrowedAmount.multipliedBy(minCratio)),
-		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCratio]
+				.dividedBy(synthBorrowedAmount.multipliedBy(minCollateralRatio)),
+		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCollateralRatio]
 	);
 
 	return (

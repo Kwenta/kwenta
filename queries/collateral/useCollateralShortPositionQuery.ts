@@ -8,7 +8,8 @@ import { appReadyState } from 'store/app';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
@@ -102,8 +103,6 @@ const useCollateralShortPositionQuery = (
 			}
 
 			if (txHash != null && provider != null) {
-				const x = await provider.getTransaction(txHash);
-				console.log(txHash, x);
 				const tx = await provider.getTransaction(txHash);
 				if (tx != null) {
 					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([

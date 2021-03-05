@@ -6,7 +6,7 @@ import { toBigNumber } from 'utils/formatters/number';
 // Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
 
 export const SHORT_GRAPH_ENDPOINT =
-	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
+	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
 
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
 	id: response.id,

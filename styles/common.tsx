@@ -205,6 +205,19 @@ export const Tooltip = styled(Tippy)`
 	border-radius: 4px;
 `;
 
+export const InfoTooltip = styled(Tooltip)`
+	font-size: 12px;
+	.tippy-content {
+		padding: 5px;
+	}
+`;
+
+export const InfoTooltipContent = styled.span`
+	display: inline-flex;
+	cursor: pointer;
+	margin-left: 5px;
+`;
+
 export const SolidTooltip = styled(Tooltip).attrs({
 	trigger: 'click',
 	arrow: false,

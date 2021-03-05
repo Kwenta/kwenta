@@ -25,7 +25,7 @@ const ShortingHistory: FC = () => {
 
 	const synthFilterList = useMemo(
 		() => [
-			{ label: t('shorting.history.assetsSort.allAssets'), key: 'ALL_SYNTHS' },
+			{ label: t('shorting.history.assets-sort.allAssets'), key: 'ALL_SYNTHS' },
 			...SYNTHS_TO_SHORT.map((synth) => ({ label: synth, key: synth })),
 		],
 		[t]
@@ -33,17 +33,17 @@ const ShortingHistory: FC = () => {
 
 	const datesFilterList = useMemo(
 		() => [
-			{ label: t('shorting.history.datesSort.allDates'), key: 'ALL_DATES' },
-			{ label: t('shorting.history.datesSort.pastWeek'), key: 'PAST_WEEK' },
-			{ label: t('shorting.history.datesSort.pastMonth'), key: 'PAST_MONTH' },
-			{ label: t('shorting.history.datesSort.pastYear'), key: 'PAST_YEAR' },
+			{ label: t('shorting.history.dates-sort.all-dates'), key: 'ALL_DATES' },
+			{ label: t('shorting.history.dates-sort.past-week'), key: 'PAST_WEEK' },
+			{ label: t('shorting.history.dates-sort.past-month'), key: 'PAST_MONTH' },
+			{ label: t('shorting.history.dates-sort.past-year'), key: 'PAST_YEAR' },
 		],
 		[t]
 	);
 
 	const shortSizeFilterList = useMemo(
 		() => [
-			{ label: t('shorting.history.sizesSort.allSizes'), key: 'ALL_SIZES' },
+			{ label: t('shorting.history.sizes-sort.all-sizes'), key: 'ALL_SIZES' },
 			{ label: '< 1000', key: 'LTET1000' },
 			{ label: '1000 < x < 10,000', key: 'GT1000LTET10000' },
 			{ label: '10,000 < x < 100,000', key: 'GT10000LTET100000' },
