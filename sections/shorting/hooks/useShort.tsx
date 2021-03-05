@@ -10,7 +10,8 @@ import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
 import BigNumber from 'bignumber.js';
 
-import { CurrencyKey, DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import Connector from 'containers/Connector';
 
@@ -341,8 +342,14 @@ const useShort = ({
 
 	const getShortParams = () => {
 		return [
-			ethers.utils.parseUnits(quoteCurrencyAmount, DEFAULT_TOKEN_DECIMALS),
-			ethers.utils.parseUnits(baseCurrencyAmount, DEFAULT_TOKEN_DECIMALS),
+			ethers.utils.parseUnits(
+				quoteCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
+				DEFAULT_TOKEN_DECIMALS
+			),
+			ethers.utils.parseUnits(
+				baseCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
+				DEFAULT_TOKEN_DECIMALS
+			),
 			ethers.utils.formatBytes32String(baseCurrencyKey!),
 		];
 	};
@@ -512,7 +519,11 @@ const useShort = ({
 				} else {
 					setQuoteCurrencyAmount(value);
 					setBaseCurrencyAmount(
-						toBigNumber(value).multipliedBy(rate).dividedBy(shortCRatio).toString()
+						toBigNumber(value)
+							.multipliedBy(rate)
+							.dividedBy(shortCRatio)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
 					);
 				}
 			}}
@@ -520,7 +531,9 @@ const useShort = ({
 			onBalanceClick={() => {
 				if (quoteCurrencyBalance != null) {
 					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
-					setBaseCurrencyAmount(quoteCurrencyBalance.multipliedBy(rate).toString());
+					setBaseCurrencyAmount(
+						quoteCurrencyBalance.multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+					);
 				}
 			}}
 			priceRate={quotePriceRate}
@@ -540,7 +553,11 @@ const useShort = ({
 				} else {
 					setBaseCurrencyAmount(value);
 					setQuoteCurrencyAmount(
-						toBigNumber(value).multipliedBy(inverseRate).multipliedBy(shortCRatio).toString()
+						toBigNumber(value)
+							.multipliedBy(inverseRate)
+							.multipliedBy(shortCRatio)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
 					);
 				}
 			}}
@@ -549,7 +566,10 @@ const useShort = ({
 				if (baseCurrencyBalance != null) {
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 					setQuoteCurrencyAmount(
-						toBigNumber(baseCurrencyBalance).multipliedBy(inverseRate).toString()
+						toBigNumber(baseCurrencyBalance)
+							.multipliedBy(inverseRate)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
 					);
 				}
 			}}

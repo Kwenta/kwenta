@@ -12,12 +12,8 @@ import { Svg } from 'react-optimized-image';
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import ROUTES from 'constants/routes';
-import {
-	CRYPTO_CURRENCY_MAP,
-	CurrencyKey,
-	DEFAULT_TOKEN_DECIMALS,
-	SYNTHS_MAP,
-} from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -329,7 +325,10 @@ const useExchange = ({
 	const getExchangeParams = () => {
 		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = ethers.utils.parseUnits(quoteCurrencyAmount, DEFAULT_TOKEN_DECIMALS);
+		const amountToExchange = ethers.utils.parseUnits(
+			quoteCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
+			DEFAULT_TOKEN_DECIMALS
+		);
 		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
 		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
@@ -460,14 +459,18 @@ const useExchange = ({
 					setBaseCurrencyAmount('');
 				} else {
 					setQuoteCurrencyAmount(value);
-					setBaseCurrencyAmount(toBigNumber(value).multipliedBy(rate).toString());
+					setBaseCurrencyAmount(
+						toBigNumber(value).multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+					);
 				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
 				if (quoteCurrencyBalance != null) {
 					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
-					setBaseCurrencyAmount(quoteCurrencyBalance.multipliedBy(rate).toString());
+					setBaseCurrencyAmount(
+						quoteCurrencyBalance.multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+					);
 				}
 			}}
 			onCurrencySelect={
@@ -501,7 +504,12 @@ const useExchange = ({
 					setQuoteCurrencyAmount('');
 				} else {
 					setBaseCurrencyAmount(value);
-					setQuoteCurrencyAmount(toBigNumber(value).multipliedBy(inverseRate).toString());
+					setQuoteCurrencyAmount(
+						toBigNumber(value)
+							.multipliedBy(inverseRate)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
+					);
 				}
 			}}
 			walletBalance={baseCurrencyBalance}
@@ -509,7 +517,10 @@ const useExchange = ({
 				if (baseCurrencyBalance != null) {
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 					setQuoteCurrencyAmount(
-						toBigNumber(baseCurrencyBalance).multipliedBy(inverseRate).toString()
+						toBigNumber(baseCurrencyBalance)
+							.multipliedBy(inverseRate)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
 					);
 				}
 			}}

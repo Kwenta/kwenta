@@ -8,7 +8,8 @@ import { appReadyState } from 'store/app';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 

@@ -19,7 +19,8 @@ import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
-import { DEFAULT_TOKEN_DECIMALS, SYNTHS_MAP } from 'constants/currency';
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { SYNTHS_MAP } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
