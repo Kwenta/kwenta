@@ -37,6 +37,7 @@ import useCollateralShortContractInfoQuery from 'queries/collateral/useCollatera
 import { NO_VALUE } from 'constants/placeholder';
 
 import { ShortingTab } from './constants';
+import { MIN_COLLATERAL_RATIO } from '../constants';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -80,9 +81,10 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio ?? zeroBN, [
-		collateralShortInfo?.minCollateralRatio,
-	]);
+	const minCollateralRatio = useMemo(
+		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
+		[collateralShortInfo?.minCollateralRatio]
+	);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -374,7 +376,6 @@ const StyledLinkIcon = styled(Svg)`
 `;
 
 const ArrowIcon = styled.span`
-	display: inline-flex;
 	margin: 0 10px;
 `;
 
