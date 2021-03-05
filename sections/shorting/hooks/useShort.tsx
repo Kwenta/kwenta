@@ -330,9 +330,13 @@ const useShort = ({
 		setGasLimit(null);
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
-	useEffect(() => {
+	function resetCurrencies() {
 		setQuoteCurrencyAmount('');
 		setBaseCurrencyAmount('');
+	}
+
+	useEffect(() => {
+		resetCurrencies();
 	}, [shortCRatio]);
 
 	const getShortParams = () => {
@@ -617,6 +621,7 @@ const useShort = ({
 				<SelectShortCurrencyModal
 					onDismiss={() => setSelectShortCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
+						resetCurrencies();
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
