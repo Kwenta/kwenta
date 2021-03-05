@@ -146,7 +146,10 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const getMethodAndParams = useCallback(() => {
 		const idParam = `${short.id}`;
-		const amountParam = ethers.utils.parseUnits(inputAmountBN.toString(), DEFAULT_TOKEN_DECIMALS);
+		const amountParam = ethers.utils.parseUnits(
+			inputAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
+			DEFAULT_TOKEN_DECIMALS
+		);
 
 		let params: Array<ethers.BigNumber | string>;
 		let method: string = '';
