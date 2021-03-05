@@ -413,7 +413,10 @@
 							"base-currency-label": "receiving"
 						},
 						"close-button-label": "Close position",
-						"total-to-replay-label": "Total to repay"
+						"total-to-replay-label": "Total to repay",
+						"button": {
+							"insufficient-balance-to-repay": "Insufficient balance to repay"
+						}
 					},
 					"panel": {
 						"collateral": "Collateral",
