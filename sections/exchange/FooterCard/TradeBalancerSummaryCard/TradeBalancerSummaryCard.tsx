@@ -26,6 +26,7 @@ type TradeBalancerSummaryCardProps = {
 	estimatedSlippage: BigNumber;
 	setMaxSlippageTolerance: (num: string) => void;
 	maxSlippageTolerance: string;
+	isApproved?: boolean;
 };
 
 const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
@@ -35,6 +36,7 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 	estimatedSlippage,
 	maxSlippageTolerance,
 	setMaxSlippageTolerance,
+	isApproved = true,
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
@@ -173,6 +175,8 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 			>
 				{isSubmissionDisabled
 					? submissionDisabledReason
+					: !isApproved
+					? t('exchange.summary-info.button.approve-balancer')
 					: t('exchange.summary-info.button.submit-order')}
 			</StyledButton>
 		</SummaryItems>

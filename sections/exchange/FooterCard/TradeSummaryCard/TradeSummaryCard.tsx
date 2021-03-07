@@ -43,6 +43,7 @@ type TradeSummaryCardProps = {
 	feeRate: BigNumber | null;
 	transactionFee?: number | null;
 	feeCost: BigNumber | null;
+	isApproved?: boolean;
 	isCreateShort?: boolean;
 	shortInterestRate?: BigNumber | null;
 };
@@ -62,6 +63,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	feeRate,
 	transactionFee,
 	feeCost,
+	isApproved = true,
 	isCreateShort = false,
 	shortInterestRate = null,
 	...rest
@@ -128,6 +130,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 						>
 							{isSubmissionDisabled
 								? submissionDisabledReason
+								: !isApproved
+								? t('exchange.summary-info.button.approve')
 								: t('exchange.summary-info.button.submit-order')}
 						</Button>
 					</span>

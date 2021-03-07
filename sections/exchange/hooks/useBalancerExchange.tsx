@@ -162,9 +162,11 @@ const useBalancerExchange = ({
 
 	const isApproved = useMemo(
 		() =>
-			baseAllowance == null ||
-			baseAllowance === '0' ||
-			scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance),
+			!(
+				baseAllowance == null ||
+				baseAllowance === '0' ||
+				scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance)
+			),
 		[baseAllowance, quoteCurrencyAmountBN]
 	);
 
@@ -187,9 +189,6 @@ const useBalancerExchange = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.submitting-approval');
 		}
-		if (!isApproved) {
-			return t('exchange.summary-info.button.approve-balancer');
-		}
 		if (
 			!isWalletConnected ||
 			baseCurrencyAmountBN.isNaN() ||
@@ -210,7 +209,6 @@ const useBalancerExchange = ({
 		isWalletConnected,
 		isApproving,
 		t,
-		isApproved,
 	]);
 
 	const noSynths =
@@ -636,6 +634,7 @@ const useBalancerExchange = ({
 					estimatedSlippage={estimatedSlippage}
 					maxSlippageTolerance={maxSlippageTolerance}
 					setMaxSlippageTolerance={setMaxSlippageTolerance}
+					isApproved={isApproved}
 				/>
 			)}
 			{txConfirmationModalOpen && (

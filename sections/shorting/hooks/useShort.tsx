@@ -216,9 +216,6 @@ const useShort = ({
 		) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
-		if (!isApproved) {
-			return t('exchange.summary-info.button.approve');
-		}
 		if (shortCRatioTooLow) {
 			return t('shorting.shorting-card.summary-info.button.c-ratio-too-low');
 		}
@@ -246,7 +243,6 @@ const useShort = ({
 		quoteCurrencyAmountBN,
 		isWalletConnected,
 		minCollateral,
-		isApproved,
 		t,
 	]);
 
@@ -607,6 +603,7 @@ const useShort = ({
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					showFee={true}
+					isApproved={isApproved}
 					isCreateShort={true}
 					shortInterestRate={shortRate}
 				/>

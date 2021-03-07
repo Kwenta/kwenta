@@ -269,9 +269,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			if (isApproving) {
 				return t('exchange.summary-info.button.approving');
 			}
-			if (needsApproval && !isApproved) {
-				return t('exchange.summary-info.button.approve');
-			}
 			if (isDecreasePositionTab) {
 				if (inputAmountBN.gt(short.synthBorrowedAmount)) {
 					return t(
@@ -301,8 +298,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		inputAmountBN,
 		isWalletConnected,
 		t,
-		needsApproval,
-		isApproved,
 		isRemoveCollateralTab,
 		isDecreasePositionTab,
 		short,
@@ -560,6 +555,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								transactionFee={transactionFee}
 								feeCost={feeCost}
 								showFee={true}
+								isApproved={needsApproval ? isApproved : true}
 							/>
 							{txApproveModalOpen && (
 								<TxApproveModal
