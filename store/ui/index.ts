@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 import { DEFAULT_SORT_OPTION } from 'sections/dashboard/TrendingSynths/constants';
-import { SHORT_C_RATIO } from 'sections/shorting/ShortingCard/components/CRatioSelector/CRatioSelector';
+import { SHORT_C_RATIO } from 'sections/shorting/ShortingCard/components/CRatioSelector/constants';
 
 import { getUIKey } from '../utils';
 
