@@ -23,7 +23,7 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { CurrencyKey } from 'constants/currency';
 
 import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
@@ -178,7 +178,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 					<SummaryItem>
 						<StyledSummaryItemLabel>{t('shorting.rewards.available')}</StyledSummaryItemLabel>
 						<BoldSummaryItemValue>
-							{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey })}
+							{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey: CRYPTO_CURRENCY_MAP.SNX })}
 						</BoldSummaryItemValue>
 					</SummaryItem>
 					<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
