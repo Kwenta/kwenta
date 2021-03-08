@@ -26,9 +26,14 @@ import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;
 	transactionFee?: number | null;
+	className?: string;
 };
 
-const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({ gasPrices, transactionFee }) => {
+const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
+	gasPrices,
+	transactionFee,
+	...rest
+}) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
@@ -46,7 +51,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({ gasPrices, transact
 	);
 
 	return (
-		<SummaryItem>
+		<SummaryItem {...rest}>
 			<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
 			<SummaryItemValue>
 				{gasPrice != null ? (

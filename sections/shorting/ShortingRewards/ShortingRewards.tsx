@@ -1,6 +1,6 @@
 import { FC, useMemo, useState, useEffect, useCallback, ReactNode } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
@@ -13,7 +13,7 @@ import { normalizeGasLimit, getTransactionPrice, gasPriceInWei } from 'utils/net
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 
-import { GridDivCentered } from 'styles/common';
+import { GridDivCentered, NoTextTransform } from 'styles/common';
 import media from 'styles/media';
 
 import { gasSpeedState, walletAddressState } from 'store/wallet';
@@ -175,13 +175,20 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 		<>
 			<MessageContainer attached={false} className="footer-card">
 				<SummaryItems attached={false}>
-					<SummaryItem>
-						<StyledSummaryItemLabel>{t('shorting.rewards.available')}</StyledSummaryItemLabel>
+					<StyledSummaryItem>
+						<StyledSummaryItemLabel>
+							<Trans
+								t={t}
+								i18nKey="shorting.rewards.title"
+								values={{ currencyKey }}
+								components={[<NoTextTransform />]}
+							/>
+						</StyledSummaryItemLabel>
 						<BoldSummaryItemValue>
 							{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey: CRYPTO_CURRENCY_MAP.SNX })}
 						</BoldSummaryItemValue>
-					</SummaryItem>
-					<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
+					</StyledSummaryItem>
+					<StyledGasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
 				</SummaryItems>
 				<Button
 					variant="primary"
@@ -219,6 +226,7 @@ export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
 	${media.lessThan('md')`
 		grid-template-columns: unset;
 		grid-template-rows: 1fr auto;
+		padding: 16px;
 	`}
 `;
 
@@ -228,6 +236,14 @@ const StyledSummaryItemLabel = styled(SummaryItemLabel)`
 
 const BoldSummaryItemValue = styled(SummaryItemValue)`
 	font-family: ${(props) => props.theme.fonts.bold};
+`;
+
+const StyledSummaryItem = styled(SummaryItem)`
+	width: 125px;
+`;
+
+const StyledGasPriceSummaryItem = styled(GasPriceSummaryItem)`
+	width: 125px;
 `;
 
 export default ShortingRewards;
