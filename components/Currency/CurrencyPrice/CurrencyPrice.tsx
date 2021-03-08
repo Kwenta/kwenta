@@ -11,6 +11,7 @@ import { ContainerRowMixin } from '../common';
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;
+	showCurrencyKey?: boolean;
 	price: NumericValue;
 	sign?: string;
 	change?: number;
@@ -23,6 +24,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	sign,
 	change,
 	conversionRate,
+	showCurrencyKey,
 	...rest
 }) => {
 	return (
@@ -33,6 +35,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 					conversionRate != null ? toBigNumber(price).dividedBy(conversionRate) : price,
 					{
 						sign,
+						currencyKey: showCurrencyKey != null ? currencyKey : undefined,
 					}
 				)}
 			</Price>

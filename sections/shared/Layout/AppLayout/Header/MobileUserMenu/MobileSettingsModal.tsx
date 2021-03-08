@@ -5,13 +5,7 @@ import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import {
-	ConnectionDot,
-	FixedFooterMixin,
-	FlexDivCentered,
-	FlexDivRowCentered,
-	TextButton,
-} from 'styles/common';
+import { FixedFooterMixin, FlexDivCentered, FlexDivRowCentered, TextButton } from 'styles/common';
 
 import Connector from 'containers/Connector';
 
@@ -22,6 +16,7 @@ import FullScreenModal from 'components/FullScreenModal';
 import Button from 'components/Button';
 
 import { MENU_LINKS } from '../constants';
+import ConnectionDot from '../ConnectionDot';
 
 type MobileSettingsModalProps = {
 	onDismiss: () => void;

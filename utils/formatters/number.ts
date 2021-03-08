@@ -4,9 +4,12 @@ import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
+	DEFAULT_TOKEN_DECIMALS,
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
+
+BigNumber.config({ DECIMAL_PLACES: DEFAULT_TOKEN_DECIMALS });
 
 export type NumericValue = BigNumber | string | number;
 

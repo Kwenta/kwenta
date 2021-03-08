@@ -13,7 +13,8 @@
 	"header": {
 		"nav": {
 			"exchange": "exchange",
-			"dashboard": "dashboard"
+			"dashboard": "dashboard",
+			"shorting": "shorting"
 		}
 	},
 	"homepage": {
@@ -186,6 +187,9 @@
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
+				"approve": "approve",
+				"approving": "approving",
+				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
@@ -193,7 +197,8 @@
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
-				"approve-balancer": "approve balancer contract"
+				"approve-balancer": "approve balancer contract",
+				"add-more-collateral": "add more collateral"
 			}
 		},
 		"onboard": {
@@ -296,6 +301,143 @@
 			}
 		}
 	},
+	"shorting": {
+		"page-title": "Shorting | Kwenta",
+		"common": {
+			"collateral": "collateral",
+			"posting": "posting",
+			"shorting": "shorting",
+			"interestRate": "Interest Rate",
+			"cRatio": "C-Ratio"
+		},
+		"shorting-card": {
+			"summary-info": {
+				"button": {
+					"c-ratio-too-low": "c-ratio is too low",
+					"add-more-collateral": "add more collateral",
+					"min-collateral": "min. collateral is <0>{{amount}}</0> <1>{{currencyKey}}</1>"
+				}
+			}
+		},
+		"c-ratio": {
+			"safe": "safe",
+			"safeMax": "safe max",
+			"highRisk": "high risk"
+		},
+		"rewards": {
+			"title": "Short <0>{{currencyKey}}</0> Rewards",
+			"button": {
+				"claim": "claim",
+				"claiming": "claiming..."
+			},
+			"tx-confirm": {
+				"claiming": "claiming"
+			}
+		},
+		"history": {
+			"assets-sort": {
+				"allAssets": "All Assets"
+			},
+			"dates-sort": {
+				"all-dates": "All Dates",
+				"past-week": "Past Week",
+				"past-month": "Past Month",
+				"past-year": "Past Year"
+			},
+			"sizes-sort": {
+				"all-sizes": "All Sizes"
+			},
+			"manage-short": {
+				"page-title": "Shorting | Kwenta",
+				"no-results": "Short not found",
+				"title": "Manage Position #{{loanId}}",
+				"close": "Close",
+				"subtitle": "Position Details",
+				"fields": {
+					"collateral": "Collateral",
+					"liquidation-price": "Liquidation Price",
+					"profit-loss": "Profit / Loss",
+					"shorting": "Shorting",
+					"collateral-ratio": "Collateral Ratio",
+					"date": "Date Opened",
+					"interest-rate": "Interest Rate",
+					"accrued-interest": "Accrued Interest"
+				},
+				"collateral-ratio-tooltip": {
+					"line1": "Position will be at risk of liquidation",
+					"line2": "if collateral ratio falls below the minimum of {{percent}}"
+				},
+				"interaction-disabled": {
+					"title": "There is a waiting period after interacting with a loan.",
+					"message": {
+						"part1": "Please wait approximately",
+						"part2": "before reinteracting with it."
+					}
+				},
+				"sections": {
+					"add-collateral": {
+						"nav-title": "Add Collateral",
+						"tx-confirm": {
+							"base-currency-label": "posting"
+						}
+					},
+					"remove-collateral": {
+						"nav-title": "Remove Collateral",
+						"tx-confirm": {
+							"base-currency-label": "withdrawing"
+						},
+						"button": {
+							"amount-greater-than-collateral": "Amount greater than collateral"
+						}
+					},
+					"decrease-position": {
+						"nav-title": "Decrease Position",
+						"tx-confirm": {
+							"base-currency-label": "decreasing position"
+						},
+						"button": {
+							"amount-greater-than-debt": "Amount greater than debt",
+							"close-position-instead": "Close position instead of repayment"
+						}
+					},
+					"increase-position": {
+						"nav-title": "Increase Position",
+						"tx-confirm": {
+							"base-currency-label": "increasing position"
+						}
+					},
+					"close-position": {
+						"nav-title": "Close Position",
+						"tx-confirm": {
+							"quote-currency-label": "returning",
+							"base-currency-label": "receiving"
+						},
+						"close-button-label": "Close position",
+						"total-to-replay-label": "Total to repay",
+						"button": {
+							"insufficient-balance-to-repay": "Insufficient balance to repay"
+						}
+					},
+					"panel": {
+						"collateral": "Collateral",
+						"shorting": "Shorting",
+						"wallet-balance": "Wallet Balance"
+					}
+				}
+			},
+			"table": {
+				"id": "ID",
+				"date": "Date",
+				"shorting": "Shorting",
+				"collateral": "Collateral",
+				"liquidation-price": "Liquidation Price",
+				"collateral-ratio": "C-Ratio",
+				"profit-loss": "Profit / Loss",
+				"no-results": "No shorts found",
+				"accrued-interest": "Accrued Interest"
+			}
+		}
+	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
 		"title": "404",
@@ -327,8 +469,18 @@
 				"non-synths": "non-synths"
 			}
 		},
+		"select-short-currency": {
+			"title": "select short asset",
+			"header": {
+				"your-synths": "your <0>{{currencyKey}}</0> balance"
+			}
+		},
 		"confirm-transaction": {
 			"title": "confirm transaction",
+			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"approve-transaction": {
+			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
 		"afterHours": {
@@ -408,10 +560,12 @@
 			"1M": "1M"
 		},
 		"transaction": {
+			"revert-reason": "Error: {{reason}}",
 			"error": "An unexpected error occurred.",
 			"reattempt": "Try again"
 		},
 		"price": "price",
+		"asset": "asset",
 		"cancel": "cancel",
 		"order-types": {
 			"market": "market order",
@@ -457,11 +611,21 @@
 			}
 		},
 		"totals": {
-			"total-synth-value": "total synth value"
+			"total-synth-value": "total synth value",
+			"your-currencyKey-balance": "your <0>{{currencyKey}}</0> balance"
 		},
 		"pagination": {
 			"page": "Page",
 			"page-of-total-pages": "{{page}} of {{totalPages}}"
-		}
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
+		},
+		"min": "min"
 	}
 }

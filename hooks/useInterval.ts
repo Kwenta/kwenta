@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import noop from 'lodash/noop';
 
-function useInterval(callback: () => void, delay: number | null, deps: Array<any>) {
+function useInterval(callback: () => void, delay: number | null, deps: Array<any> = []) {
 	const savedCallback = useRef(noop);
 
 	// Remember the latest callback.
@@ -18,6 +18,7 @@ function useInterval(callback: () => void, delay: number | null, deps: Array<any
 			const id = setInterval(tick, delay);
 			return () => clearInterval(id);
 		}
+		// eslint-disable-next-line
 	}, [delay, ...deps]);
 }
 

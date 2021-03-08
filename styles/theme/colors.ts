@@ -21,4 +21,11 @@ export default {
 	goldColors,
 	gold: `linear-gradient(180deg, ${goldColors.color1} 0%, ${goldColors.color2} 100%)`,
 	goldHover: `linear-gradient(180deg, ${goldColors.color3} 0%, ${goldColors.color4} 100%)`,
+	// network colors
+	mainnet: '#29B6AF',
+	ropsten: '#FF4A8D',
+	kovan: '#7057FF',
+	rinkeby: '#F6C343',
+	goerli: 'rgb(48, 153, 242)',
+	noNetwork: 'rgb(155, 155, 155)',
 };

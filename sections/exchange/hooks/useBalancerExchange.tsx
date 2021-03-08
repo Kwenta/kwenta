@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import styled from 'styled-components';
 import { ethers } from 'ethers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -7,6 +7,10 @@ import produce from 'immer';
 import { SOR } from '@balancer-labs/sor';
 import { BigNumber } from 'bignumber.js';
 import { NetworkId } from '@synthetixio/js';
+import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+
+import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import { CurrencyKey, SYNTHS_MAP, sUSD_EXCHANGE_RATE, SYNTH_DECIMALS } from 'constants/currency';
 import useInterval from 'hooks/useInterval';
@@ -19,7 +23,6 @@ import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeBalancerSummaryCard from 'sections/exchange/FooterCard/TradeBalancerSummaryCard';
-import { SubmissionDisabledReason } from 'sections/exchange/FooterCard/common';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -54,8 +57,6 @@ type ExchangeCardProps = {
 	showNoSynthsCard?: boolean;
 };
 
-const TX_PROVIDER = 'balancer';
-
 const BALANCER_LINKS = {
 	[NetworkId.Mainnet]: {
 		poolsUrl:
@@ -76,6 +77,7 @@ const useBalancerExchange = ({
 	persistSelectedCurrencies = false,
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
+	const { t } = useTranslation();
 	const { notify, provider, signer } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const network = useRecoilValue(networkState);
@@ -105,7 +107,7 @@ const useBalancerExchange = ({
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
-	const [txError, setTxError] = useState<boolean>(false);
+	const [txError, setTxError] = useState<string | null>(null);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -158,31 +160,34 @@ const useBalancerExchange = ({
 		totalTradePrice = totalTradePrice.dividedBy(selectPriceCurrencyRate);
 	}
 
-	const submissionDisabledReason: SubmissionDisabledReason | null = useMemo(() => {
+	const isApproved = useMemo(
+		() =>
+			!(
+				baseAllowance == null ||
+				baseAllowance === '0' ||
+				scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance)
+			),
+		[baseAllowance, quoteCurrencyAmountBN]
+	);
+
+	const submissionDisabledReason: ReactNode = useMemo(() => {
 		const insufficientBalance =
 			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
 
-		if (
-			baseAllowance == null ||
-			baseAllowance === '0' ||
-			scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).gte(baseAllowance)
-		) {
-			return 'approve-balancer';
-		}
 		if (feeReclaimPeriodInSeconds > 0) {
-			return 'fee-reclaim-period';
+			return t('exchange.summary-info.button.fee-reclaim-period');
 		}
 		if (!selectedBothSides) {
-			return 'select-synth';
+			return t('exchange.summary-info.button.select-synth');
 		}
 		if (insufficientBalance) {
-			return 'insufficient-balance';
+			return t('exchange.summary-info.button.insufficient-balance');
 		}
 		if (isSubmitting) {
-			return 'submitting-order';
+			return t('exchange.summary-info.button.submitting-order');
 		}
 		if (isApproving) {
-			return 'submitting-approval';
+			return t('exchange.summary-info.button.submitting-approval');
 		}
 		if (
 			!isWalletConnected ||
@@ -191,7 +196,7 @@ const useBalancerExchange = ({
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
-			return 'enter-amount';
+			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
 	}, [
@@ -202,8 +207,8 @@ const useBalancerExchange = ({
 		baseCurrencyAmountBN,
 		quoteCurrencyAmountBN,
 		isWalletConnected,
-		baseAllowance,
 		isApproving,
+		t,
 	]);
 
 	const noSynths =
@@ -380,7 +385,7 @@ const useBalancerExchange = ({
 					: setBaseCurrencyAmount(formattedResult.toString());
 			}
 		},
-		[smartOrderRouter, quoteCurrencyAddress, baseCurrencyAddress, hasSetCostOutputTokenCalled]
+		[smartOrderRouter, quoteCurrencyAddress, baseCurrencyAddress]
 	);
 
 	const handleApprove = useCallback(async () => {
@@ -448,7 +453,7 @@ const useBalancerExchange = ({
 			balancerProxyContract?.address != null &&
 			provider != null
 		) {
-			setTxError(false);
+			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
 			try {
@@ -491,7 +496,7 @@ const useBalancerExchange = ({
 					if (notify) {
 						const { emitter } = notify.hash(tx.hash);
 						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
-
+						// TODO: replace with monitorHash
 						emitter.on('txConfirmed', () => {
 							setOrders((orders) =>
 								produce(orders, (draftState) => {
@@ -518,7 +523,7 @@ const useBalancerExchange = ({
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
 				console.log(e);
-				setTxError(true);
+				setTxError(e.message);
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -597,6 +602,7 @@ const useBalancerExchange = ({
 			onBalanceClick={handleAmountChangeQuoteMaxClick}
 			onCurrencySelect={undefined}
 			priceRate={quoteCurrencyKey === SYNTHS_MAP.sUSD ? quotePriceRate : null}
+			label={t('exchange.common.from')}
 		/>
 	);
 
@@ -610,6 +616,7 @@ const useBalancerExchange = ({
 			onBalanceClick={handleAmountChangeBaseMaxClick}
 			onCurrencySelect={undefined}
 			priceRate={baseCurrencyKey === SYNTHS_MAP.sUSD ? basePriceRate : null}
+			label={t('exchange.common.into')}
 		/>
 	);
 
@@ -622,11 +629,12 @@ const useBalancerExchange = ({
 			) : (
 				<TradeBalancerSummaryCard
 					submissionDisabledReason={submissionDisabledReason}
-					onSubmit={submissionDisabledReason === 'approve-balancer' ? handleApprove : handleSubmit}
+					onSubmit={isApproved ? handleSubmit : handleApprove}
 					gasPrices={ethGasPriceQuery.data}
 					estimatedSlippage={estimatedSlippage}
 					maxSlippageTolerance={maxSlippageTolerance}
 					setMaxSlippageTolerance={setMaxSlippageTolerance}
+					isApproved={isApproved}
 				/>
 			)}
 			{txConfirmationModalOpen && (
@@ -640,7 +648,10 @@ const useBalancerExchange = ({
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
-					txProvider={TX_PROVIDER}
+					txProvider="balancer"
+					quoteCurrencyLabel={t('exchange.common.from')}
+					baseCurrencyLabel={t('exchange.common.into')}
+					icon={<Svg src={ArrowsIcon} />}
 				/>
 			)}
 			{approveModalOpen && (

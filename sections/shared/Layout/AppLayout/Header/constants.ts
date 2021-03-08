@@ -16,6 +16,10 @@ export const MENU_LINKS: MenuLinks = [
 		i18nLabel: 'header.nav.exchange',
 		link: ROUTES.Exchange.Home,
 	},
+	{
+		i18nLabel: 'header.nav.shorting',
+		link: ROUTES.Shorting.Home,
+	},
 ];
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

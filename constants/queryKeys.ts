@@ -49,6 +49,14 @@ export const QUERY_KEYS = {
 			baseCurrencyKey,
 		],
 	},
+	Collateral: {
+		ShortHistory: (walletAddress: string) => ['collateral', 'short', 'history', walletAddress],
+		ShortContractInfo: ['collateral', 'short', 'contractInfo'],
+		ShortPosition: (loanId: string) => ['collateral', 'short', 'position', loanId],
+		ShortPositionPnL: (loanId: string) => ['collateral', 'short', 'position', 'pnl', loanId],
+		ShortRewards: (currencyKey: string) => ['collateral', 'short', 'rewards', currencyKey],
+		ShortRate: (currencyKey: string) => ['collateral', 'short', 'rate', currencyKey],
+	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
 		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],

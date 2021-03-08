@@ -1,4 +1,6 @@
 import Tippy from '@tippyjs/react';
+import Button from 'components/Button';
+import NumericInput from 'components/Input/NumericInput';
 import { zIndex } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
@@ -146,14 +148,6 @@ export const PageContent = styled.section`
 	${(props) => props.theme.animations.show};
 `;
 
-export const ConnectionDot = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background-color: ${(props) => props.theme.colors.green};
-`;
-
 export const FixedFooterMixin = `
 	position: fixed;
 	bottom: 0;
@@ -209,4 +203,68 @@ export const Tooltip = styled(Tippy)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
+`;
+
+export const InfoTooltip = styled(Tooltip)`
+	font-size: 12px;
+	.tippy-content {
+		padding: 5px;
+	}
+`;
+
+export const InfoTooltipContent = styled.span`
+	display: inline-flex;
+	cursor: pointer;
+	margin-left: 5px;
+`;
+
+export const SolidTooltip = styled(Tooltip).attrs({
+	trigger: 'click',
+	arrow: false,
+	interactive: true,
+})`
+	width: 150px;
+	.tippy-content {
+		padding: 0;
+	}
+`;
+
+export const SolidTooltipContent = styled.div`
+	padding: 16px 0 8px 0;
+`;
+
+export const SolidTooltipCustomValueContainer = styled.div`
+	margin: 0 10px 5px 10px;
+`;
+
+export const SolidTooltipCustomValue = styled(NumericInput)`
+	width: 100%;
+	border: 0;
+	font-size: 12px;
+	::placeholder {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
+`;
+
+export const SolidTooltipItemButton = styled(Button)`
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-left: 10px;
+	padding-right: 10px;
+`;
+
+export const IconButton = styled.button`
+	${resetButtonCSS};
+`;
+
+export const CenteredMessage = styled.div`
+	${absoluteCenteredCSS};
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	text-align: center;
+	display: grid;
+	grid-gap: 10px;
 `;

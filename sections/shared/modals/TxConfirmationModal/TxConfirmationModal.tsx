@@ -1,7 +1,7 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
+import Img from 'react-optimized-image';
 import BigNumber from 'bignumber.js';
 import {
 	FlexDivRowCentered,
@@ -15,8 +15,6 @@ import { CurrencyKey } from 'constants/currency';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-
-import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BalancerImage from 'assets/svg/providers/balancer.svg';
@@ -32,15 +30,18 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
-	txError: boolean;
+	txError: string | null;
 	attemptRetry: () => void;
 	baseCurrencyKey: CurrencyKey;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey: CurrencyKey;
-	quoteCurrencyAmount: string;
+	quoteCurrencyKey?: CurrencyKey;
+	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
 	feeAmountInBaseCurrency: BigNumber | null;
 	txProvider: 'synthetix' | '1inch' | 'balancer';
+	quoteCurrencyLabel?: ReactNode;
+	baseCurrencyLabel: ReactNode;
+	icon?: ReactNode;
 };
 
 export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
@@ -54,6 +55,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	totalTradePrice,
 	feeAmountInBaseCurrency,
 	txProvider,
+	quoteCurrencyLabel,
+	baseCurrencyLabel,
+	icon,
 }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -76,20 +80,20 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			title={t('modals.confirm-transaction.title')}
 		>
 			<Currencies>
+				{quoteCurrencyKey && (
+					<CurrencyItem>
+						<CurrencyItemTitle>{quoteCurrencyLabel}</CurrencyItemTitle>
+						<Currency.Icon
+							currencyKey={quoteCurrencyKey}
+							width="40px"
+							height="40px"
+							data-testid="quote-currency-img"
+						/>
+					</CurrencyItem>
+				)}
+				{icon && <ArrowsIconContainer>{icon}</ArrowsIconContainer>}
 				<CurrencyItem>
-					<CurrencyItemTitle>{t('exchange.common.from')}</CurrencyItemTitle>
-					<Currency.Icon
-						currencyKey={quoteCurrencyKey}
-						width="40px"
-						height="40px"
-						data-testid="quote-currency-img"
-					/>
-				</CurrencyItem>
-				<ArrowsIconContainer>
-					<Svg src={ArrowsIcon} />
-				</ArrowsIconContainer>
-				<CurrencyItem>
-					<CurrencyItemTitle>{t('exchange.common.into')}</CurrencyItemTitle>
+					<CurrencyItemTitle>{baseCurrencyLabel}</CurrencyItemTitle>
 					<Currency.Icon
 						currencyKey={baseCurrencyKey}
 						width="40px"
@@ -100,18 +104,20 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			</Currencies>
 			<Subtitle>{t('modals.confirm-transaction.confirm-with-provider')}</Subtitle>
 			<Summary>
-				<SummaryItem>
-					<SummaryItemLabel data-testid="quote-currency-label">
-						<Trans
-							i18nKey="common.currency.currency-amount"
-							values={{ currencyKey: quoteCurrencyKey }}
-							components={[<NoTextTransform />]}
-						/>
-					</SummaryItemLabel>
-					<SummaryItemValue data-testid="quote-currency-value">
-						{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
-					</SummaryItemValue>
-				</SummaryItem>
+				{quoteCurrencyKey != null && quoteCurrencyAmount != null && (
+					<SummaryItem>
+						<SummaryItemLabel data-testid="quote-currency-label">
+							<Trans
+								i18nKey="common.currency.currency-amount"
+								values={{ currencyKey: quoteCurrencyKey }}
+								components={[<NoTextTransform />]}
+							/>
+						</SummaryItemLabel>
+						<SummaryItemValue data-testid="quote-currency-value">
+							{formatCurrency(quoteCurrencyKey, quoteCurrencyAmount)}
+						</SummaryItemValue>
+					</SummaryItem>
+				)}
 				<SummaryItem>
 					<SummaryItemLabel data-testid="base-currency-label">
 						<Trans
@@ -169,9 +175,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 					/>
 				</TxProvider>
 			)}
-			{txError && (
+			{txError != null && (
 				<Actions>
-					<Message>{t('common.transaction.error')}</Message>
+					<Message>{txError}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>

@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
@@ -17,16 +17,16 @@ import NumericInput from 'components/Input/NumericInput';
 
 import { numericValueCSS, NumericValue, FlexDivRowCentered, FlexDivCol } from 'styles/common';
 
-import { SubmissionDisabledReason } from '../common';
 import { formatPercent } from 'utils/formatters/number';
 
 type TradeBalancerSummaryCardProps = {
-	submissionDisabledReason: SubmissionDisabledReason | null;
+	submissionDisabledReason: ReactNode;
 	onSubmit: () => void;
 	gasPrices: GasPrices | undefined;
 	estimatedSlippage: BigNumber;
 	setMaxSlippageTolerance: (num: string) => void;
 	maxSlippageTolerance: string;
+	isApproved?: boolean;
 };
 
 const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
@@ -36,6 +36,7 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 	estimatedSlippage,
 	maxSlippageTolerance,
 	setMaxSlippageTolerance,
+	isApproved = true,
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
@@ -167,13 +168,15 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 			<StyledButton
 				variant="primary"
 				isRounded={true}
-				disabled={isSubmissionDisabled && submissionDisabledReason !== 'approve-balancer'}
+				disabled={isSubmissionDisabled}
 				onClick={onSubmit}
 				size="lg"
 				data-testid="submit-order"
 			>
 				{isSubmissionDisabled
-					? t(`exchange.summary-info.button.${submissionDisabledReason}`)
+					? submissionDisabledReason
+					: !isApproved
+					? t('exchange.summary-info.button.approve-balancer')
 					: t('exchange.summary-info.button.submit-order')}
 			</StyledButton>
 		</SummaryItems>
