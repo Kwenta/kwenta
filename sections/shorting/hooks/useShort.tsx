@@ -528,7 +528,11 @@ const useShort = ({
 				if (quoteCurrencyBalance != null) {
 					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
 					setBaseCurrencyAmount(
-						quoteCurrencyBalance.multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+						quoteCurrencyBalance
+							.multipliedBy(rate)
+							.dividedBy(shortCRatio)
+							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
+							.toString()
 					);
 				}
 			}}
@@ -564,6 +568,7 @@ const useShort = ({
 					setQuoteCurrencyAmount(
 						toBigNumber(baseCurrencyBalance)
 							.multipliedBy(inverseRate)
+							.multipliedBy(shortCRatio)
 							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
 							.toString()
 					);
