@@ -16,7 +16,7 @@ import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 // import TRXIcon from 'assets/svg/currencies/crypto/TRX.svg';
 // import DASHIcon from 'assets/svg/currencies/crypto/DASH.svg';
 // import ETCIcon from 'assets/svg/currencies/crypto/ETC.svg';
-// import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
+import SNXIcon from '@synthetixio/assets/snx/SNX.svg';
 // import COMPIcon from 'assets/svg/currencies/crypto/COMP.svg';
 // import RENIcon from 'assets/svg/currencies/crypto/REN.svg';
 // import LENDIcon from 'assets/svg/currencies/crypto/LEND.svg';
@@ -130,6 +130,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type = 'synth
 	switch (currencyKey) {
 		case CRYPTO_CURRENCY_MAP.ETH: {
 			return <Img src={ETHIcon} {...props} />;
+		}
+		case CRYPTO_CURRENCY_MAP.SNX: {
+			return <Img src={SNXIcon} {...props} />;
 		}
 
 		case SYNTHS_MAP.sBTC: {

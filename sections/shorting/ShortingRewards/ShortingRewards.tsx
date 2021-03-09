@@ -102,9 +102,14 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 	const gasPrice = ethGasPriceQuery?.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const currencyPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, currencyKey, selectedPriceCurrency.name),
-		[exchangeRates, currencyKey, selectedPriceCurrency.name]
+	const snxPriceRate = useMemo(
+		() =>
+			getExchangeRatesForCurrencies(
+				exchangeRates,
+				CRYPTO_CURRENCY_MAP.SNX,
+				selectedPriceCurrency.name
+			),
+		[exchangeRates, selectedPriceCurrency.name]
 	);
 
 	const ethPriceRate = useMemo(
@@ -161,7 +166,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 
 	const totalTradePrice = useMemo(() => {
 		if (shortingRewards != null) {
-			let tradePrice = shortingRewards.multipliedBy(currencyPriceRate);
+			let tradePrice = shortingRewards.multipliedBy(snxPriceRate);
 			if (selectPriceCurrencyRate) {
 				tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
 			}
@@ -169,7 +174,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 			return tradePrice;
 		}
 		return 0;
-	}, [shortingRewards, currencyPriceRate, selectPriceCurrencyRate]);
+	}, [shortingRewards, snxPriceRate, selectPriceCurrencyRate]);
 
 	return (
 		<>
@@ -208,7 +213,7 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 					attemptRetry={onSubmit}
 					baseCurrencyAmount={(shortingRewards ?? 0).toString()}
 					feeAmountInBaseCurrency={null}
-					baseCurrencyKey={currencyKey}
+					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider="synthetix"
 					baseCurrencyLabel={t('shorting.rewards.tx-confirm.claiming')}
