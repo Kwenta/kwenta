@@ -22,6 +22,7 @@ import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
+import NetworksSwitcher from '../NetworksSwitcher';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -71,6 +72,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						>
 							<Svg src={MenuIcon} />
 						</MenuButton>
+						<NetworksSwitcher />
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton

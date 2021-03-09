@@ -15,6 +15,10 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"shorting": "shorting"
+		},
+		"networks-switcher": {
+			"l1": "L1",
+			"l2": "L2"
 		}
 	},
 	"homepage": {
