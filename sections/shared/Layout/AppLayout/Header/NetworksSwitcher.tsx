@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -8,15 +8,6 @@ type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { t } = useTranslation();
-	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	// const { connectWallet } = Connector.useContainer();
-	// const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
-	// const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	// const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
-	// const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	// const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
-	// 	hasOrdersNotificationState
-	// );
 
 	const activeNetwork = 'l1';
 	const onToggleNetwork = async () => {};
