@@ -137,10 +137,10 @@ jobs:
           if [ ${{ github.event_name }} == pull_request ]
           then
             export BRANCH_NAME=$(echo ${GITHUB_HEAD_REF#refs/heads/} | sed -e 's/\//-/g')
-            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME.${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
+            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
           else
             export BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed -e 's/\//-/g')
-            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME.${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
+            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
           fi
 
       - name: Download build
