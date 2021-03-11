@@ -37,3 +37,5 @@ export const getTransactionPrice = (
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
 
 export const gasPriceInWei = (gasPrice: number) => gasPrice * GWEI_UNIT;
+
+export const getIsOVM = (networkId: number): boolean => !!~[10, 69].indexOf(networkId);

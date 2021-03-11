@@ -61,6 +61,7 @@ type ContractSettings = {
 	networkId: NetworkId;
 	provider?: ethers.providers.Provider;
 	signer?: Signer;
+	useOvm?: boolean;
 };
 
 type Synthetix = {
@@ -79,8 +80,8 @@ const synthetix: Synthetix = {
 	tokensMap: null,
 	chainIdToNetwork: null,
 
-	setContractSettings({ networkId, provider, signer }: ContractSettings) {
-		this.js = initSynthetixJS({ networkId, provider, signer });
+	setContractSettings({ networkId, provider, signer, useOvm = false }: ContractSettings) {
+		this.js = initSynthetixJS({ networkId, provider, signer, useOvm });
 		if (HIDDEN_SYNTHS.length) {
 			this.js.synths = this.js.synths.filter((synth) => !HIDDEN_SYNTHS.includes(synth.name));
 		}

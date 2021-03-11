@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
+import { loadProvider } from '@synthetixio/providers';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
 
-import { getDefaultNetworkId } from 'utils/network';
+import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
@@ -41,19 +42,21 @@ const useConnector = () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
-			// @ts-ignore
-			const provider = new ethers.providers.InfuraProvider(
+			const provider = loadProvider({
 				networkId,
-				process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			);
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				provider: window.ethereum,
+			});
+			const useOvm = getIsOVM(networkId);
 
 			synthetix.setContractSettings({
-				networkId,
+				networkId: useOvm ? 1 : networkId,
 				provider,
+				useOvm,
 			});
 
 			// @ts-ignore
-			setNetwork(synthetix.js?.network);
+			setNetwork({ ...synthetix.js?.network, useOvm });
 			setProvider(provider);
 			setAppReady(true);
 		};
@@ -73,13 +76,17 @@ const useConnector = () => {
 							: false;
 
 					if (isSupportedNetwork) {
-						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
+						const provider = loadProvider({
+							provider: onboard.getState().wallet.provider,
+						});
 						const signer = provider.getSigner();
+						const useOvm = getIsOVM(networkId);
 
 						synthetix.setContractSettings({
-							networkId,
+							networkId: useOvm ? 1 : networkId,
 							provider,
 							signer,
+							useOvm,
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
@@ -90,26 +97,30 @@ const useConnector = () => {
 							id: networkId,
 							// @ts-ignore
 							name: synthetix.chainIdToNetwork[networkId],
+							useOvm,
 						});
 					}
 				},
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
-						const provider = new ethers.providers.Web3Provider(wallet.provider);
+						const provider = loadProvider({ provider: wallet.provider });
 						const signer = provider.getSigner();
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
+						const useOvm = getIsOVM(networkId);
 
 						synthetix.setContractSettings({
-							networkId,
+							networkId: useOvm ? 1 : networkId,
 							provider,
 							signer,
+							useOvm,
 						});
 						setProvider(provider);
 						setSigner(provider.getSigner());
 						setNetwork({
 							id: networkId,
 							name: network.name as NetworkName,
+							useOvm,
 						});
 						setSelectedWallet(wallet.name);
 					} else {
