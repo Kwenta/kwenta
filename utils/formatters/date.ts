@@ -1,4 +1,5 @@
 import format from 'date-fns/format';
+import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
 
 import { strPadLeft } from './string';
 
@@ -18,3 +19,5 @@ export const secondsToTime = (seconds: number) => {
 
 	return `${strPadLeft(minutes, '0', 2)}:${strPadLeft(secondsLeft, '0', 2)}`;
 };
+
+export const WEEKS_IN_YEAR = getISOWeeksInYear(new Date());
