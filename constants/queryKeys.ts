@@ -56,6 +56,7 @@ export const QUERY_KEYS = {
 		ShortPositionPnL: (loanId: string) => ['collateral', 'short', 'position', 'pnl', loanId],
 		ShortRewards: (currencyKey: string) => ['collateral', 'short', 'rewards', currencyKey],
 		ShortRate: (currencyKey: string) => ['collateral', 'short', 'rate', currencyKey],
+		ShortStats: (currencyKey: string) => ['collateral', 'short', 'stats', currencyKey],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],

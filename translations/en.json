@@ -324,6 +324,15 @@
 			"safeMax": "safe max",
 			"highRisk": "high risk"
 		},
+		"stats": {
+			"title": "Shorting statistics",
+			"table": {
+				"asset": "asset",
+				"apr": "APR",
+				"open-interest": "open interest",
+				"total": "total"
+			}
+		},
 		"rewards": {
 			"title": "Short <0>{{currencyKey}}</0> Rewards",
 			"button": {
