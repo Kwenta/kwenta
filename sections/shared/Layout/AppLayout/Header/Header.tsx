@@ -12,9 +12,14 @@ import Logo from '../../Logo';
 import Nav from './Nav';
 import UserMenu from './UserMenu';
 import MobileUserMenu from './MobileUserMenu';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 const Header: FC = () => {
-	const logo = <Logo />;
+	const network = useRecoilValue(networkState);
+	const isL2 = network?.useOvm ?? false;
+
+	const logo = <Logo isL2={isL2} />;
 
 	return (
 		<Container>
