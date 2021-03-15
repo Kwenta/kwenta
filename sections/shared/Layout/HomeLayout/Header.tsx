@@ -19,13 +19,12 @@ import { GridDivCenteredCol, TextButton } from 'styles/common';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
-	const network = useRecoilValue(networkState);
-	const isL2 = network?.useOvm ?? false;
+	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
 		() => [

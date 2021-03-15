@@ -47,3 +47,10 @@ export const customGasPriceState = atom<string>({
 	key: getWalletKey('customGasPrice'),
 	default: '',
 });
+
+export const isL2State = selector<boolean>({
+	key: getWalletKey('isL2'),
+	get: ({ get }) => {
+		return get(networkState)?.useOvm ?? false;
+	},
+});

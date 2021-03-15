@@ -25,7 +25,7 @@ import GithubIcon from 'assets/svg/social/github.svg';
 
 import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -53,8 +53,7 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const isL2 = network?.useOvm ?? false;
+	const isL2 = useRecoilValue(isL2State);
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
 	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({
