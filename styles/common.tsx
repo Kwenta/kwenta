@@ -1,7 +1,7 @@
 import Tippy from '@tippyjs/react';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
-import { zIndex } from 'constants/ui';
+import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
 import styled, { css, keyframes } from 'styled-components';
 
 export const FlexDiv = styled.div`
@@ -267,4 +267,40 @@ export const CenteredMessage = styled.div`
 	text-align: center;
 	display: grid;
 	grid-gap: 10px;
+`;
+
+export const FullHeightContainer = styled(FlexDiv)`
+	justify-content: space-between;
+	width: 100%;
+	flex-grow: 1;
+	height: 100vh;
+	position: relative;
+`;
+
+export const MainContent = styled(FlexDivCol)`
+	flex-grow: 1;
+	max-width: 1000px;
+	position: relative;
+	overflow: auto;
+	margin: ${SPACING_FROM_HEADER} auto 0 auto;
+`;
+
+export const RightSideContent = styled(FlexDivCol)`
+	width: 340px;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	padding: ${SPACING_FROM_HEADER} 0 5px 0;
+	margin-right: -20px;
+	flex-shrink: 0;
+	position: relative;
+	margin-left: 20px;
+	height: 100%;
+`;
+
+export const Table = styled.table.attrs({
+	cellSpacing: 0,
+	cellPadding: 0,
+})`
+	width: 100%;
+	border-collapse: collapse;
+	border: 0;
 `;
