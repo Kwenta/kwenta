@@ -441,7 +441,8 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		}
+		},
+		"not-available-on-l2": "Shorting is not available on L2"
 	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",

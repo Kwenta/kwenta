@@ -14,11 +14,12 @@ import media from 'styles/media';
 
 import { SYNTHS_MAP } from 'constants/currency';
 
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
 	return (
 		<>
@@ -27,12 +28,18 @@ const Shorting: FC = () => {
 			</Head>
 			<AppLayout>
 				<StyledPageContent>
-					<ShortingCard />
-					<ShortingRewardsContainer>
-						<ShortingRewards currencyKey={SYNTHS_MAP.sETH} />
-						<ShortingRewards currencyKey={SYNTHS_MAP.sBTC} />
-					</ShortingRewardsContainer>
-					{isWalletConnected && <ShortingHistory />}
+					{isL2 ? (
+						<h1>{t('shorting.not-available-on-l2')}</h1>
+					) : (
+						<>
+							<ShortingCard />
+							<ShortingRewardsContainer>
+								<ShortingRewards currencyKey={SYNTHS_MAP.sETH} />
+								<ShortingRewards currencyKey={SYNTHS_MAP.sBTC} />
+							</ShortingRewardsContainer>
+							{isWalletConnected && <ShortingHistory />}
+						</>
+					)}
 				</StyledPageContent>
 			</AppLayout>
 		</>
