@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State, isMainnetNetworkState } from 'store/wallet';
-import { getDefaultNetworkId } from 'utils/network';
 import Tippy from '@tippyjs/react';
 // import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 // import { NetworkId } from '@synthetixio/js';
