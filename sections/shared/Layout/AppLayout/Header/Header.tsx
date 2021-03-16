@@ -12,9 +12,13 @@ import Logo from '../../Logo';
 import Nav from './Nav';
 import UserMenu from './UserMenu';
 import MobileUserMenu from './MobileUserMenu';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
-	const logo = <Logo />;
+	const isL2 = useRecoilValue(isL2State);
+
+	const logo = <Logo isL2={isL2} />;
 
 	return (
 		<Container>
