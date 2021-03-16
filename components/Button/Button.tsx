@@ -30,12 +30,14 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'sm' &&
 		css`
 			height: 24px;
+			line-height: 24px;
 		`}
 
 	${(props) =>
 		props.size === 'md' &&
 		css`
 			height: 32px;
+			line-height: 32px;
 		`}
 
 	${(props) =>
@@ -43,6 +45,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			padding: 0 40px;
 			height: 40px;
+			line-height: 40px;
 		`}		
 
 
@@ -50,6 +53,7 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'xl' &&
 		css`
 			height: 48px;
+			line-height: 48px;
 		`}				
 
 	${(props) =>

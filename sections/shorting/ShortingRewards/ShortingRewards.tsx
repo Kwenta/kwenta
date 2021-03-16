@@ -1,106 +1,56 @@
-import { FC, useMemo, useState, useEffect, useCallback, ReactNode } from 'react';
+import { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { Trans, useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { ethers } from 'ethers';
 
-import Notify from 'containers/Notify';
-import Connector from 'containers/Connector';
+import { gasSpeedState } from 'store/wallet';
 
-import synthetix from 'lib/synthetix';
-import Button from 'components/Button';
-import { normalizeGasLimit, getTransactionPrice, gasPriceInWei } from 'utils/network';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-
-import { GridDivCentered, NoTextTransform } from 'styles/common';
-import media from 'styles/media';
-
-import { gasSpeedState, walletAddressState } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
-import { CurrencyKey } from 'constants/currency';
+import { SYNTHS_TO_SHORT } from '../constants';
+
+import ShortingReward from './ShortingRewardRow';
+
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getTransactionPrice } from 'utils/network';
 
 import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
 
-import {
-	SummaryItems,
-	SummaryItem,
-	SummaryItemLabel,
-	SummaryItemValue,
-} from 'sections/exchange/FooterCard/common';
+import { Title } from '../common';
 
-import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewards';
-
-type ShortingRewardsProps = {
-	currencyKey: CurrencyKey;
-};
-
-const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
+const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
-	const [gasSpeed] = useRecoilState(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-	const [txError, setTxError] = useState<string | null>(null);
-	const { notify } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const collateralShortRewardsQuery = useCollateralShortRewards(currencyKey);
-	const shortingRewards = collateralShortRewardsQuery.isSuccess
-		? collateralShortRewardsQuery?.data ?? null
-		: null;
+
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
+	const [gasSpeed] = useRecoilState(gasSpeedState);
 
-	const submissionDisabledReason: ReactNode = useMemo(() => {
-		if (isSubmitting) {
-			return t('shorting.rewards.button.claiming');
-		}
-		if (shortingRewards == null || shortingRewards.lte(0)) {
-			return t('shorting.rewards.button.claim');
-		}
-		return null;
-	}, [shortingRewards, isSubmitting, t]);
+	const ethGasPriceQuery = useEthGasPriceQuery();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
-		submissionDisabledReason,
-	]);
+	const gasPrices = useMemo(
+		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
+		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	);
 
-	const getGasEstimate = useCallback(async () => {
-		if (synthetix.js != null && walletAddress != null) {
-			try {
-				const gasLimitEstimate = await synthetix.js.contracts.CollateralShort.estimateGas.getReward(
-					ethers.utils.formatBytes32String(currencyKey),
-					walletAddress
-				);
-				return normalizeGasLimit(Number(gasLimitEstimate));
-			} catch (e) {
-				console.log('gas limit error:', e);
-				return null;
-			}
-		}
-		return null;
-	}, [walletAddress, currencyKey]);
+	const gasPrice = useMemo(
+		() =>
+			ethGasPriceQuery.isSuccess
+				? ethGasPriceQuery?.data != null
+					? ethGasPriceQuery.data[gasSpeed]
+					: null
+				: null,
+		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]
+	);
 
-	useEffect(() => {
-		async function getGasEstimateCall() {
-			const newGasLimit = await getGasEstimate();
-			setGasLimit(newGasLimit);
-		}
-		getGasEstimateCall();
-	}, [getGasEstimate]);
-
-	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
-
-	const gasPrice = ethGasPriceQuery?.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const exchangeRates = useMemo(
+		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
+		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
+	);
 
 	const snxPriceRate = useMemo(
 		() =>
@@ -123,132 +73,26 @@ const ShortingRewards: FC<ShortingRewardsProps> = ({ currencyKey }) => {
 		ethPriceRate,
 	]);
 
-	const onSubmit = async () => {
-		if (synthetix.js != null && gasPrice != null) {
-			setTxError(null);
-			setTxConfirmationModalOpen(true);
-
-			try {
-				setIsSubmitting(true);
-
-				let tx: ethers.ContractTransaction | null = null;
-
-				const gasLimitEstimate = await getGasEstimate();
-
-				setGasLimit(gasLimitEstimate);
-
-				tx = (await synthetix.js.contracts.CollateralShort.getReward(
-					ethers.utils.formatBytes32String(currencyKey),
-					walletAddress,
-					{
-						gasPrice: gasPriceInWei(gasPrice),
-						gasLimit: gasLimitEstimate,
-					}
-				)) as ethers.ContractTransaction;
-
-				if (tx != null && notify != null) {
-					monitorHash({
-						txHash: tx.hash,
-						onTxConfirmed: () => {
-							collateralShortRewardsQuery.refetch();
-						},
-					});
-				}
-				setTxConfirmationModalOpen(false);
-			} catch (e) {
-				console.log(e);
-				setTxError(e.message);
-			} finally {
-				setIsSubmitting(false);
-			}
-		}
-	};
-
-	const totalTradePrice = useMemo(() => {
-		if (shortingRewards != null) {
-			let tradePrice = shortingRewards.multipliedBy(snxPriceRate);
-			if (selectPriceCurrencyRate) {
-				tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
-			}
-
-			return tradePrice;
-		}
-		return 0;
-	}, [shortingRewards, snxPriceRate, selectPriceCurrencyRate]);
-
 	return (
-		<>
-			<MessageContainer attached={false} className="footer-card">
-				<SummaryItems attached={false}>
-					<StyledSummaryItem>
-						<StyledSummaryItemLabel>
-							<Trans
-								t={t}
-								i18nKey="shorting.rewards.title"
-								values={{ currencyKey }}
-								components={[<NoTextTransform />]}
-							/>
-						</StyledSummaryItemLabel>
-						<BoldSummaryItemValue>
-							{formatCryptoCurrency(shortingRewards ?? 0, { currencyKey: CRYPTO_CURRENCY_MAP.SNX })}
-						</BoldSummaryItemValue>
-					</StyledSummaryItem>
-					<StyledGasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
-				</SummaryItems>
-				<Button
-					variant="primary"
-					isRounded={true}
-					disabled={isSubmissionDisabled}
-					onClick={onSubmit}
-					size="lg"
-					data-testid="claim-rewards"
-				>
-					{isSubmissionDisabled ? submissionDisabledReason : t('shorting.rewards.button.claim')}
-				</Button>
-			</MessageContainer>
-			{txConfirmationModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxConfirmationModalOpen(false)}
-					txError={txError}
-					attemptRetry={onSubmit}
-					baseCurrencyAmount={(shortingRewards ?? 0).toString()}
-					feeAmountInBaseCurrency={null}
-					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
-					totalTradePrice={totalTradePrice.toString()}
-					txProvider="synthetix"
-					baseCurrencyLabel={t('shorting.rewards.tx-confirm.claiming')}
+		<div>
+			<Title>{t('shorting.rewards.title')}</Title>
+			{SYNTHS_TO_SHORT.map((currencyKey) => (
+				<ShortingReward
+					key={currencyKey}
+					{...{ gasPrice, setGasLimit, currencyKey, snxPriceRate }}
 				/>
-			)}
-		</>
+			))}
+			<StyledGasPriceSummaryItem {...{ gasPrices, transactionFee }} />
+		</div>
 	);
 };
 
-export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
-	border-radius: 4px;
-	grid-template-columns: 1fr auto;
-	background-color: ${(props) => props.theme.colors.navy};
-	padding: 16px 32px;
-	${media.lessThan('md')`
-		grid-template-columns: unset;
-		grid-template-rows: 1fr auto;
-		padding: 16px;
-	`}
-`;
-
-const StyledSummaryItemLabel = styled(SummaryItemLabel)`
-	color: ${(props) => props.theme.colors.silver};
-`;
-
-const BoldSummaryItemValue = styled(SummaryItemValue)`
-	font-family: ${(props) => props.theme.fonts.bold};
-`;
-
-const StyledSummaryItem = styled(SummaryItem)`
-	width: 125px;
-`;
-
 const StyledGasPriceSummaryItem = styled(GasPriceSummaryItem)`
-	width: 125px;
+	padding: 5px 0;
+	display: flex;
+	justify-content: space-between;
+	width: auto;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 `;
 
 export default ShortingRewards;
