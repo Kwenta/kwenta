@@ -18,7 +18,8 @@
 		},
 		"networks-switcher": {
 			"l1": "L1",
-			"l2": "L2"
+			"l2": "L2",
+			"tip": "To switch back to mainnet, please use the MetaMask networks menu."
 		}
 	},
 	"homepage": {

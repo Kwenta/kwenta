@@ -50,7 +50,7 @@ const useConnector = () => {
 			const useOvm = getIsOVM(networkId);
 
 			synthetix.setContractSettings({
-				networkId: useOvm ? 1 : networkId,
+				networkId,
 				provider,
 				useOvm,
 			});
@@ -83,7 +83,7 @@ const useConnector = () => {
 						const useOvm = getIsOVM(networkId);
 
 						synthetix.setContractSettings({
-							networkId: useOvm ? 1 : networkId,
+							networkId,
 							provider,
 							signer,
 							useOvm,
@@ -110,7 +110,7 @@ const useConnector = () => {
 						const useOvm = getIsOVM(networkId);
 
 						synthetix.setContractSettings({
-							networkId: useOvm ? 1 : networkId,
+							networkId,
 							provider,
 							signer,
 							useOvm,

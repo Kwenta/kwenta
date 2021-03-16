@@ -2,30 +2,50 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
-import { NetworkId } from '@synthetixio/js';
+import { isL2State, isMainnetNetworkState } from 'store/wallet';
+import { getDefaultNetworkId } from 'utils/network';
+import Tippy from '@tippyjs/react';
+// import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+// import { NetworkId } from '@synthetixio/js';
 
 type NetworksSwitcherProps = {};
+
+const OVM_NETWORKS: Map<number, any> = new Map([
+	[
+		10,
+		{
+			chainId: '0xA',
+			chainName: 'Optimism Mainnet',
+			rpcUrls: ['https://mainnet.optimism.io'],
+			blockExplorerUrls: ['https://mainnet-l2-explorer.surge.sh'],
+		},
+	],
+	[
+		69,
+		{
+			chainId: '0x45',
+			chainName: 'Optimism Kovan',
+			rpcUrls: ['https://kovan.optimism.io'],
+			blockExplorerUrls: ['https://kovan-l2-explorer.surge.sh'],
+		},
+	],
+]);
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const [networkError, setNetworkError] = useState<string | null>(null);
 
 	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
-	const isL1 = !network?.useOvm ?? false;
-	const isL2 = !isL1;
-	console.log(network?.useOvm);
+	const isMainnetNetwork = useRecoilValue(isMainnetNetworkState);
+	const isL2 = useRecoilValue(isL2State);
 
-	const onToggleNetwork = async () => (isL1 ? switchToL2() : switchToL1());
+	const onToggleNetwork = async () => (isL2 ? switchToL1() : switchToL2());
 
 	const switchToL1 = async () => {
-		// const l2NetworkIsKovan = false;
 		// await window.ethereum.request({
 		// 	method: 'wallet_switchEthereumChain',
 		// 	params: [
 		// 		{
-		// 			chainId: `0x${(l2NetworkIsKovan ? NetworkId.Kovan : NetworkId.Mainnet).toString(16)}`,
+		// 			chainId: `0x${(isMainnetNetwork ? NetworkId.Mainnet : NetworkId.Kovan).toString(16)}`,
 		// 		},
 		// 	],
 		// });
@@ -33,20 +53,34 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	const switchToL2 = async () => {
 		try {
-			setNetworkError(null);
 			if (!window.ethereum || !window.ethereum.isMetaMask) {
-				setNetworkError(t('user-menu.error.please-install-metamask'));
-			} else addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+				return setNetworkError(t('user-menu.error.please-install-metamask'));
+			}
+
+			setNetworkError(null);
+			// addOptimismNetworkToMetamask({ ethereum: window.ethereum });
+
+			await (window.ethereum as any).request({
+				method: 'wallet_addEthereumChain',
+				params: [OVM_NETWORKS.get(isMainnetNetwork ? 10 : 69)], // todo
+			});
 		} catch (e) {
 			setNetworkError(e.message);
 		}
 	};
 
 	return (
-		<Container onClick={onToggleNetwork}>
-			<L1Button isActive={isL1}>{t('header.networks-switcher.l1')}</L1Button>
-			<L2Button isActive={isL2}>{t('header.networks-switcher.l2')}</L2Button>
-		</Container>
+		<Tooltip
+			disabled={!isL2}
+			arrow={false}
+			content={t('header.networks-switcher.tip')}
+			interactive={true}
+		>
+			<Container onClick={onToggleNetwork}>
+				<L1Button isActive={!isL2}>{t('header.networks-switcher.l1')}</L1Button>
+				<L2Button isActive={isL2}>{t('header.networks-switcher.l2')}</L2Button>
+			</Container>
+		</Tooltip>
 	);
 };
 
@@ -96,5 +130,15 @@ const L2Button = styled(Button)<{ isActive: boolean }>`
 	&:hover {
 		color: ${(props) =>
 			props.isActive ? 'rgba(255, 255, 255, 0.8)' : props.theme.colors.goldColors.color1};
+	}
+`;
+
+const Tooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 0.5px solid ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
+	width: 180px;
+	.tippy-content {
+		text-align: center;
 	}
 `;

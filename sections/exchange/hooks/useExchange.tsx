@@ -39,6 +39,7 @@ import {
 	gasSpeedState,
 	isWalletConnectedState,
 	walletAddressState,
+	isL2State,
 } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
@@ -48,7 +49,7 @@ import synthetix from 'lib/synthetix';
 
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, normalizeGas } from 'utils/network';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
@@ -99,6 +100,7 @@ const useExchange = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isL2 = useRecoilValue(isL2State);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [selectBaseCurrencyModal, setSelectBaseCurrencyModal] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
@@ -370,10 +372,12 @@ const useExchange = ({
 
 					setGasLimit(gasLimitEstimate);
 
-					tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...exchangeParams, {
+					const gas = normalizeGas({
 						gasPrice: gasPriceWei,
 						gasLimit: gasLimitEstimate,
+						isL2,
 					});
+					tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 				}
 
 				if (tx) {
