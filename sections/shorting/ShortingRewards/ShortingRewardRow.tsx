@@ -110,7 +110,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		getGasEstimateCall();
 	}, [getGasEstimate, setGasLimit]);
 
-	const handleSubmit = async () => {
+	const handleSubmit = useCallback(async () => {
 		if (synthetix.js != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
@@ -150,7 +150,16 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				setIsSubmitting(false);
 			}
 		}
-	};
+	}, [
+		collateralShortRewardsQuery,
+		currencyKey,
+		gasPrice,
+		getGasEstimate,
+		monitorHash,
+		notify,
+		setGasLimit,
+		walletAddress,
+	]);
 
 	return (
 		<StyledCard>
