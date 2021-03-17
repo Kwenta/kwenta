@@ -2,7 +2,8 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isL2State, isMainnetNetworkState } from 'store/wallet';
+import { isL2State, isMainnetNetworkState, isWalletConnectedState } from 'store/wallet';
+import Connector from 'containers/Connector';
 import Tippy from '@tippyjs/react';
 // import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 // import { NetworkId } from '@synthetixio/js';
@@ -43,8 +44,13 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { t } = useTranslation();
 	const isMainnetNetwork = useRecoilValue(isMainnetNetworkState);
 	const isL2 = useRecoilValue(isL2State);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet } = Connector.useContainer();
 
-	const onToggleNetwork = async () => (isL2 ? switchToL1() : switchToL2());
+	const onToggleNetwork = async () => {
+		if (!isWalletConnected) await connectWallet();
+		isL2 ? switchToL1() : switchToL2();
+	};
 
 	const switchToL1 = async () => {
 		// await window.ethereum.request({
