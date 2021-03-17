@@ -18,7 +18,8 @@
 		},
 		"networks-switcher": {
 			"l1": "L1",
-			"l2": "L2"
+			"l2": "L2",
+			"tip": "To switch back to mainnet, please use the MetaMask networks menu."
 		}
 	},
 	"homepage": {
@@ -440,7 +441,8 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		}
+		},
+		"not-available-on-l2": "Shorting is not available on L2"
 	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",

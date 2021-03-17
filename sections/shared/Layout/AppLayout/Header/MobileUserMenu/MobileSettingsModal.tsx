@@ -15,7 +15,7 @@ import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
 import FullScreenModal from 'components/FullScreenModal';
 import Button from 'components/Button';
 
-import { MENU_LINKS } from '../constants';
+import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
 
 type MobileSettingsModalProps = {
@@ -27,13 +27,14 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const { asPath } = useRouter();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	const menuLinks = useRecoilValue(menuLinksState);
 
 	const { connectWallet, disconnectWallet } = Connector.useContainer();
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
 			<Container>
-				{MENU_LINKS.map(({ i18nLabel, link }) => (
+				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						<Link href={link}>
 							<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
