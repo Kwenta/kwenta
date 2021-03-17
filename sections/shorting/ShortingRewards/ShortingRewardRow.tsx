@@ -110,7 +110,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		getGasEstimateCall();
 	}, [getGasEstimate, setGasLimit]);
 
-	const onSubmit = async () => {
+	const handleSubmit = async () => {
 		if (synthetix.js != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
@@ -168,7 +168,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 						variant="primary"
 						isRounded={true}
 						disabled={isSubmissionDisabled}
-						onClick={onSubmit}
+						onClick={handleSubmit}
 						size="sm"
 						data-testid="claim-rewards"
 					>
@@ -180,7 +180,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				<TxConfirmationModal
 					onDismiss={() => setTxConfirmationModalOpen(false)}
 					txError={txError}
-					attemptRetry={onSubmit}
+					attemptRetry={handleSubmit}
 					baseCurrencyAmount={(ShortingRewardRow ?? 0).toString()}
 					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
