@@ -7,9 +7,16 @@ import Tippy from '@tippyjs/react';
 // import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 // import { NetworkId } from '@synthetixio/js';
 
+type MetamaskAddNetworkConfig = {
+	chainId: string;
+	chainName: string;
+	rpcUrls: string[];
+	blockExplorerUrls: string[];
+};
+
 type NetworksSwitcherProps = {};
 
-const OVM_NETWORKS: Map<number, any> = new Map([
+const OVM_NETWORKS: Map<number, MetamaskAddNetworkConfig> = new Map([
 	[
 		10,
 		{
