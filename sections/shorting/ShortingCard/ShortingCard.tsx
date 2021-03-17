@@ -34,6 +34,10 @@ const ShortingCard: FC = () => {
 const Container = styled.div`
 	position: relative;
 	margin-bottom: 30px;
+	${media.lessThan('md')`
+		// TODO: this is needed to cancel the content "push" that comes content from "TradeSummaryCard" (on tablet/mobile)
+		margin-bottom: -50px;
+	`}
 `;
 
 const ConvertContainer = styled.div``;

@@ -16,6 +16,8 @@ import useShortHistoryQuery from 'queries/collateral/subgraph/useShortHistoryQue
 
 import ShortingHistoryTable from './ShortingHistoryTable';
 
+import { Title } from '../common';
+
 import { SYNTHS_TO_SHORT } from '../constants';
 
 const ShortingHistory: FC = () => {
@@ -131,6 +133,7 @@ const ShortingHistory: FC = () => {
 
 	return (
 		<>
+			<Title>{t('shorting.history.title')}</Title>
 			<Filters>
 				<Select
 					inputId="synth-filter-list"
@@ -178,7 +181,8 @@ const ShortingHistory: FC = () => {
 const Filters = styled(GridDiv)`
 	grid-template-columns: repeat(3, 1fr);
 	grid-gap: 18px;
-	margin-top: 30px;
+	border-top: 1px solid ${(props) => props.theme.colors.navy};
+	padding-top: 15px;
 `;
 
 export default ShortingHistory;

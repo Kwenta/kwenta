@@ -325,7 +325,7 @@
 			"highRisk": "high risk"
 		},
 		"stats": {
-			"title": "Shorting statistics",
+			"title": "shorting statistics",
 			"table": {
 				"asset": "asset",
 				"apr": "APR",
@@ -334,7 +334,7 @@
 			}
 		},
 		"rewards": {
-			"title": "Short <0>{{currencyKey}}</0> Rewards",
+			"title": "available rewards",
 			"button": {
 				"claim": "claim",
 				"claiming": "claiming..."
@@ -344,6 +344,7 @@
 			}
 		},
 		"history": {
+			"title": "your positions",
 			"assets-sort": {
 				"allAssets": "All Assets"
 			},
