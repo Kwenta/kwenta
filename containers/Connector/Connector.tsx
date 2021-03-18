@@ -20,6 +20,10 @@ import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import {
+	TransactionNotifier,
+	TransactionNotifierInterface,
+} from '@synthetixio/transaction-notifier';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -36,6 +40,10 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
+	const [
+		transactionNotifier,
+		setTransactionNotifier,
+	] = useState<TransactionNotifierInterface | null>(null);
 
 	useEffect(() => {
 		const init = async () => {
@@ -90,6 +98,11 @@ const useConnector = () => {
 						});
 						onboard.config({ networkId });
 						notify.config({ networkId });
+						if (transactionNotifier) {
+							transactionNotifier.setProvider(provider);
+						} else {
+							setTransactionNotifier(new TransactionNotifier(provider));
+						}
 						setProvider(provider);
 						setSigner(signer);
 
@@ -123,6 +136,7 @@ const useConnector = () => {
 							useOvm,
 						});
 						setSelectedWallet(wallet.name);
+						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
 						// setProvider(null);
@@ -218,6 +232,7 @@ const useConnector = () => {
 		disconnectWallet,
 		switchAccounts,
 		isHardwareWallet,
+		transactionNotifier,
 	};
 };
 
