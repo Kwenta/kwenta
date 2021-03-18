@@ -27,7 +27,7 @@
 		"@synthetixio/assets": "2.0.8",
 		"@synthetixio/contracts-interface": "^0.0.1",
 		"@synthetixio/js": "github:Synthetixio/js#fix/networks-config-type-temp",
-		"@synthetixio/optimism-networks": "^0.0.2",
+		"@synthetixio/optimism-networks": "0.0.8",
 		"@synthetixio/providers": "^0.0.6",
 		"@synthetixio/transaction-notifier": "^0.0.8",
 		"@tippyjs/react": "4.1.0",
