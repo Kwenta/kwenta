@@ -19,6 +19,8 @@ import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
+import { synthToContractName } from 'utils/currencies';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -198,6 +200,14 @@ const useConnector = () => {
 		return false;
 	};
 
+	const getTokenAddress = (currencyKey: CurrencyKey) => {
+		const { contracts } = synthetix.js!;
+
+		return currencyKey === CRYPTO_CURRENCY_MAP.ETH
+			? ETH_ADDRESS
+			: contracts[synthToContractName(currencyKey!)].address;
+	};
+
 	return {
 		provider,
 		signer,
@@ -207,6 +217,7 @@ const useConnector = () => {
 		disconnectWallet,
 		switchAccounts,
 		isHardwareWallet,
+		getTokenAddress,
 	};
 };
 

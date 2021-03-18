@@ -9,7 +9,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
@@ -30,18 +30,22 @@ type CurrencyCardProps = {
 	priceRate: number | null;
 	className?: string;
 	label: ReactNode;
+	interactive?: boolean;
+	slippagePercent?: BigNumber | null;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
 	side,
 	currencyKey,
 	amount,
+	slippagePercent,
 	onAmountChange,
 	walletBalance,
 	onBalanceClick,
 	onCurrencySelect,
 	priceRate,
 	label,
+	interactive = true,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -70,7 +74,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
-		<Card className={`currency-card currency-card-${side}`} {...rest}>
+		<StyledCard
+			className={`currency-card currency-card-${side}`}
+			interactive={interactive}
+			{...rest}
+		>
 			<StyledCardBody className="currency-card-body">
 				<LabelContainer data-testid="destination">{label}</LabelContainer>
 				<CurrencyWalletBalanceContainer className="currency-wallet-container">
@@ -102,6 +110,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 												sign: selectedPriceCurrency.sign,
 										  })
 										: null}
+									{slippagePercent != null && ` (${formatPercent(slippagePercent)})`}
 								</CurrencyAmountValue>
 							</CurrencyAmountContainer>
 						)}
@@ -119,9 +128,17 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</WalletBalanceContainer>
 				</CurrencyWalletBalanceContainer>
 			</StyledCardBody>
-		</Card>
+		</StyledCard>
 	);
 };
+
+const StyledCard = styled(Card)<{ interactive?: boolean }>`
+	${(props) =>
+		!props.interactive &&
+		css`
+			pointer-events: none;
+		`}
+`;
 
 const StyledCardBody = styled(Card.Body)`
 	padding-top: 11px;
@@ -142,6 +159,7 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 const CurrencySelector = styled.div<{
 	currencyKeySelected: boolean;
 	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
+	interactive?: boolean;
 }>`
 	display: grid;
 	align-items: center;

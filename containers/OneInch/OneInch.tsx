@@ -1,65 +1,126 @@
-import { useEffect, useState } from 'react';
 import { createContainer } from 'unstated-next';
-import oneSplitAuditContract from 'lib/contracts/oneSplitAuditContract';
-import Connector from 'containers/Connector';
-import ethers, { Contract } from 'ethers';
+import axios from 'axios';
+import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import { appReadyState } from 'store/app';
-import { NetworkId } from '@synthetixio/js';
 
-const sUSDTokenAddress = '0x57ab1ec28d129707052df4df418d58a2d46d5f51';
-const ethTokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+import Connector from 'containers/Connector';
+
+import { toBigNumber } from 'utils/formatters/number';
+
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { CurrencyKey } from 'constants/currency';
+
+import { walletAddressState } from 'store/wallet';
+
+type Token = {
+	symbol: CurrencyKey;
+	name: string;
+	address: string;
+	decimals: string;
+	logoURI: string;
+};
+
+type OneInchQuoteResponse = {
+	fromToken: Token;
+	toToken: Token;
+	toTokenAmount: string;
+	fromTokenAmount: string;
+};
+
+type OneInchSwapResponse = OneInchQuoteResponse & {
+	tx: {
+		from: string;
+		to: string;
+		data: string;
+		value: string;
+		gasPrice: string;
+		gas: number;
+	};
+};
 
 const useOneInch = () => {
-	const [oneInchContract, setOneInchContract] = useState<Contract | null>(null);
-	const isAppReady = useRecoilValue(appReadyState);
-	const { signer } = Connector.useContainer();
+	const { getTokenAddress, signer } = Connector.useContainer();
+	const walletAddress = useRecoilValue(walletAddressState);
 
-	useEffect(() => {
-		if (isAppReady && signer) {
-			const contract = new ethers.Contract(
-				oneSplitAuditContract.addresses[NetworkId.Mainnet],
-				oneSplitAuditContract.abi,
-				signer
-			);
-			setOneInchContract(contract);
-		}
-	}, [isAppReady, signer]);
+	const getQuoteSwapParams = (
+		quoteCurrencyKey: CurrencyKey,
+		baseCurrencyKey: CurrencyKey,
+		amount: string
+	) => ({
+		fromTokenAddress: getTokenAddress(quoteCurrencyKey),
+		toTokenAddress: getTokenAddress(baseCurrencyKey),
+		amount: toBigNumber(amount)
+			.multipliedBy(toBigNumber(10).exponentiatedBy(DEFAULT_TOKEN_DECIMALS))
+			.toString(),
+	});
 
-	const swap = async (amount: string, gasPrice: number) => {
+	const quote = async (
+		quoteCurrencyKey: CurrencyKey,
+		baseCurrencyKey: CurrencyKey,
+		amount: string
+	) => {
 		try {
-			if (oneInchContract != null) {
-				const amountBN = ethers.utils.parseEther(amount);
-				const swapRates = await oneInchContract.functions.getExpectedReturn(
-					ethTokenAddress,
-					sUSDTokenAddress,
-					amountBN,
-					100,
-					0
-				);
+			const params = getQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
 
-				const swapParams = [
-					ethTokenAddress,
-					sUSDTokenAddress,
-					amountBN,
-					swapRates.returnAmount,
-					swapRates.distribution,
-					0,
-				];
+			const response = await axios.get<OneInchQuoteResponse>(
+				'https://api.1inch.exchange/v3.0/1/quote',
+				{
+					params: {
+						fromTokenAddress: params.fromTokenAddress,
+						toTokenAddress: params.toTokenAddress,
+						amount: params.amount,
+					},
+				}
+			);
 
-				const tx = oneInchContract.functions.swap(...swapParams, {
-					value: amountBN,
-					gasPrice,
-				});
-				return tx;
-			}
+			return toBigNumber(response.data.toTokenAmount).dividedBy(1e18).toString();
 		} catch (e) {
 			console.log(e);
+			return null;
+		}
+	};
+
+	const swap = async (
+		quoteCurrencyKey: CurrencyKey,
+		baseCurrencyKey: CurrencyKey,
+		amount: string,
+		slippage: number = 1
+	) => {
+		try {
+			const params = getQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
+
+			const response = await axios.get<OneInchSwapResponse>(
+				'https://api.1inch.exchange/v3.0/1/swap',
+				{
+					params: {
+						fromTokenAddress: params.fromTokenAddress,
+						toTokenAddress: params.toTokenAddress,
+						amount: params.amount,
+						fromAddress: walletAddress,
+						slippage,
+					},
+				}
+			);
+
+			const { from, to, data, value } = response.data.tx;
+
+			const tx = await signer!.sendTransaction({
+				from,
+				to,
+				data,
+				value: ethers.BigNumber.from(value),
+			});
+
+			return tx;
+		} catch (e) {
+			console.log(e);
+			return null;
 		}
 	};
 
 	return {
 		swap,
+		quote,
 	};
 };
 
