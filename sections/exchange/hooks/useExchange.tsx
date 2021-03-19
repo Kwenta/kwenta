@@ -82,8 +82,7 @@ const useExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	//const { monitorHash } = Notify.useContainer();
-	const { monitorTransaction: monitorHash } = TransactionNotifier.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { swap } = OneInch.useContainer();
 	const router = useRouter();
 
@@ -400,7 +399,7 @@ const useExchange = ({
 					);
 					setHasOrdersNotification(true);
 
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setOrders((orders) =>
