@@ -9,6 +9,8 @@ import CRatioSelector from './components/CRatioSelector';
 
 import useShort from '../hooks/useShort';
 
+import { CurrencyCardsSelector } from 'styles/common';
+
 const ShortingCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useShort({
 		defaultBaseCurrencyKey: SYNTHS_MAP.sETH,
@@ -21,9 +23,9 @@ const ShortingCard: FC = () => {
 				<ExchangeCards>
 					{quoteCurrencyCard}
 					{baseCurrencyCard}
-					<CRatioSelectorContainer>
+					<StyledCurrencyCardsSelector>
 						<CRatioSelector />
-					</CRatioSelectorContainer>
+					</StyledCurrencyCardsSelector>
 				</ExchangeCards>
 				<ExchangeFooter>{footerCard}</ExchangeFooter>
 			</ConvertContainer>
@@ -42,20 +44,9 @@ const Container = styled.div`
 
 const ConvertContainer = styled.div``;
 
-const CRatioSelectorContainer = styled.div`
-	position: absolute;
-	padding: 6px;
-	border-radius: 4px;
-	background: ${(props) => props.theme.colors.elderberry};
-	border: 2px solid ${(props) => props.theme.colors.black};
-	left: 50%;
-	transform: translate(-50%, -50%);
-	margin-left: -14px;
+const StyledCurrencyCardsSelector = styled(CurrencyCardsSelector)`
 	width: 70px;
-	top: 50%;
-	margin-top: -3px;
 	${media.lessThan('md')`
-		margin-left: 0;
 		margin-top: -14px;
 	`}
 `;
@@ -69,7 +60,7 @@ export const ExchangeFooter = styled.div`
 export const ExchangeCards = styled.div`
 	position: relative;
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: 1fr 1fr;
 	grid-gap: 2px;
 	padding-bottom: 2px;
 	width: 100%;

@@ -1,8 +1,12 @@
+import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
+
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
+
 import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
-import styled, { css, keyframes } from 'styled-components';
+
+import media from 'styles/media';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -303,4 +307,15 @@ export const Table = styled.table.attrs({
 	width: 100%;
 	border-collapse: collapse;
 	border: 0;
+`;
+
+export const CurrencyCardsSelector = styled.div`
+	position: absolute;
+	padding: 6px;
+	border-radius: 4px;
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 2px solid ${(props) => props.theme.colors.black};
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 `;

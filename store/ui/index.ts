@@ -15,6 +15,11 @@ export const trendingSynthsOptionState = atom<typeof DEFAULT_SORT_OPTION>({
 	default: DEFAULT_SORT_OPTION,
 });
 
+export const slippageState = atom<number>({
+	key: getUIKey('slippage'),
+	default: 1,
+});
+
 export const shortCRatioState = atom<number>({
 	key: getUIKey('shortCRatio'),
 	default: SHORT_C_RATIO.safe,

@@ -7,6 +7,8 @@ import media from 'styles/media';
 
 import useExchange from 'sections/exchange/hooks/useExchange';
 
+import { CurrencyCardsSelector } from 'styles/common';
+
 const CurrencyConvertCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
 		defaultBaseCurrencyKey: SYNTHS_MAP.sUSD,
@@ -23,6 +25,7 @@ const CurrencyConvertCard: FC = () => {
 			<ExchangeCards>
 				{quoteCurrencyCard}
 				{baseCurrencyCard}
+				<StyledCurrencyCardsSelector>Hello World Hello World</StyledCurrencyCardsSelector>
 			</ExchangeCards>
 			<ExchangeFooter>{footerCard}</ExchangeFooter>
 		</Container>
@@ -33,6 +36,10 @@ const Container = styled.div`
 	position: relative;
 `;
 
+const StyledCurrencyCardsSelector = styled(CurrencyCardsSelector)`
+	width: 120px;
+`;
+
 export const ExchangeFooter = styled.div`
 	.footer-card {
 		max-width: 1000px;
@@ -40,8 +47,9 @@ export const ExchangeFooter = styled.div`
 `;
 
 export const ExchangeCards = styled.div`
+	position: relative;
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: 1fr 1fr;
 	grid-gap: 2px;
 	padding-bottom: 2px;
 	width: 100%;
