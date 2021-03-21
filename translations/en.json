@@ -267,9 +267,8 @@
 				"title": "How it works"
 			},
 			"convert-card": {
-				"disabled-message": {
-					"title": "On-ramp Coming Soon.",
-					"body": "Swap from any token into sUSD with 1inch to get started."
+				"slippage-selector": {
+					"title": "Slippage"
 				}
 			}
 		},

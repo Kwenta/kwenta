@@ -319,3 +319,66 @@ export const CurrencyCardsSelector = styled.div`
 	top: 50%;
 	transform: translate(-50%, -50%);
 `;
+
+export const DropdownSelection = styled.span.attrs({
+	role: 'button',
+})<{
+	tooltipOpened: boolean;
+}>`
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	font-family: ${(props) => props.theme.fonts.bold};
+	padding-left: 5px;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.white};
+	text-transform: uppercase;
+	svg {
+		color: ${(props) => props.theme.colors.goldColors.color3};
+		width: 10px;
+		margin-left: 5px;
+		transition: transform 0.2s ease-in-out;
+		${(props) =>
+			props.tooltipOpened &&
+			css`
+				transform: rotate(-180deg);
+			`};
+	}
+`;
+
+export const ExchangeCardsWithSelector = styled.div`
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	margin: 0 auto;
+	${media.lessThan('md')`
+		grid-template-columns: unset;
+		grid-template-rows: auto auto;
+		padding-bottom: 24px;
+	`}
+
+	.currency-card {
+		padding: 0 14px;
+		${media.lessThan('md')`
+			padding: unset;
+		`}
+		.currency-wallet-container {
+			width: 90%;
+			${media.lessThan('md')`
+				width: 100%;
+			`}
+		}
+	}
+	.currency-card-base {
+		.currency-card-body {
+			position: relative;
+			left: 30px;
+			${media.lessThan('md')`
+				left: unset;
+			`}
+		}
+	}
+`;

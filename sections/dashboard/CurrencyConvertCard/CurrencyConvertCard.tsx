@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 
-import media from 'styles/media';
-
 import useExchange from 'sections/exchange/hooks/useExchange';
 
-import { CurrencyCardsSelector } from 'styles/common';
+import { CurrencyCardsSelector, ExchangeCardsWithSelector } from 'styles/common';
+
+import SlippageSelector from './SlippageSelector';
 
 const CurrencyConvertCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
@@ -22,11 +22,13 @@ const CurrencyConvertCard: FC = () => {
 
 	return (
 		<Container>
-			<ExchangeCards>
+			<ExchangeCardsWithSelector>
 				{quoteCurrencyCard}
 				{baseCurrencyCard}
-				<StyledCurrencyCardsSelector>Hello World Hello World</StyledCurrencyCardsSelector>
-			</ExchangeCards>
+				<StyledCurrencyCardsSelector>
+					<SlippageSelector />
+				</StyledCurrencyCardsSelector>
+			</ExchangeCardsWithSelector>
 			<ExchangeFooter>{footerCard}</ExchangeFooter>
 		</Container>
 	);
@@ -37,32 +39,12 @@ const Container = styled.div`
 `;
 
 const StyledCurrencyCardsSelector = styled(CurrencyCardsSelector)`
-	width: 120px;
+	width: 80px;
 `;
 
 export const ExchangeFooter = styled.div`
 	.footer-card {
 		max-width: 1000px;
-	}
-`;
-
-export const ExchangeCards = styled.div`
-	position: relative;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 2px;
-	padding-bottom: 2px;
-	width: 100%;
-	margin: 0 auto;
-	${media.lessThan('md')`
-		grid-template-columns: unset;
-		grid-template-rows: auto auto;
-		padding-bottom: 24px;
-	`}
-
-	.currency-card {
-		padding: 0 14px;
-		width: 100%;
 	}
 `;
 

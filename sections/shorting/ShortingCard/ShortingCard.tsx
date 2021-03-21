@@ -9,7 +9,7 @@ import CRatioSelector from './components/CRatioSelector';
 
 import useShort from '../hooks/useShort';
 
-import { CurrencyCardsSelector } from 'styles/common';
+import { CurrencyCardsSelector, ExchangeCardsWithSelector } from 'styles/common';
 
 const ShortingCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useShort({
@@ -20,13 +20,13 @@ const ShortingCard: FC = () => {
 	return (
 		<Container>
 			<ConvertContainer>
-				<ExchangeCards>
+				<ExchangeCardsWithSelector>
 					{quoteCurrencyCard}
 					{baseCurrencyCard}
 					<StyledCurrencyCardsSelector>
 						<CRatioSelector />
 					</StyledCurrencyCardsSelector>
-				</ExchangeCards>
+				</ExchangeCardsWithSelector>
 				<ExchangeFooter>{footerCard}</ExchangeFooter>
 			</ConvertContainer>
 		</Container>
@@ -54,43 +54,6 @@ const StyledCurrencyCardsSelector = styled(CurrencyCardsSelector)`
 export const ExchangeFooter = styled.div`
 	.footer-card {
 		max-width: 1000px;
-	}
-`;
-
-export const ExchangeCards = styled.div`
-	position: relative;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 2px;
-	padding-bottom: 2px;
-	width: 100%;
-	margin: 0 auto;
-	${media.lessThan('md')`
-		grid-template-columns: unset;
-		grid-template-rows: auto auto;
-		padding-bottom: 24px;
-	`}
-
-	.currency-card {
-		padding: 0 14px;
-		${media.lessThan('md')`
-			padding: unset;
-		`}
-		.currency-wallet-container {
-			width: 90%;
-			${media.lessThan('md')`
-				width: 100%;
-			`}
-		}
-	}
-	.currency-card-base {
-		.currency-card-body {
-			position: relative;
-			left: 30px;
-			${media.lessThan('md')`
-				left: unset;
-			`}
-		}
 	}
 `;
 

@@ -41,7 +41,7 @@ import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 
-import { hasOrdersNotificationState } from 'store/ui';
+import { hasOrdersNotificationState, slippageState } from 'store/ui';
 import {
 	customGasPriceState,
 	gasSpeedState,
@@ -114,6 +114,7 @@ const useExchange = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const slippage = useRecoilValue(slippageState);
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
@@ -420,7 +421,7 @@ const useExchange = ({
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				if (txProvider === '1inch') {
-					tx = await swap(quoteCurrencyKey!, baseCurrencyKey!, quoteCurrencyAmount);
+					tx = await swap(quoteCurrencyKey!, baseCurrencyKey!, quoteCurrencyAmount, slippage);
 				} else {
 					const gasLimitEstimate = await getGasLimitEstimateForExchange();
 
@@ -487,6 +488,7 @@ const useExchange = ({
 		swap,
 		synthsWalletBalancesQuery,
 		txProvider,
+		slippage,
 	]);
 
 	useEffect(() => {
