@@ -6,7 +6,7 @@ import get from 'lodash/get';
 import produce from 'immer';
 import { SOR } from '@balancer-labs/sor';
 import { BigNumber } from 'bignumber.js';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 

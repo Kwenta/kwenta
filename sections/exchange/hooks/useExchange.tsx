@@ -14,6 +14,7 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { L2_GAS_LIMIT } from 'constants/network';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -49,13 +50,12 @@ import synthetix from 'lib/synthetix';
 
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, normalizeGas } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
 import useCurrencyPair from './useCurrencyPair';
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
-import Notify from 'containers/Notify';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 type ExchangeCardProps = {
@@ -280,12 +280,14 @@ const useExchange = ({
 
 	const gasPrice = useMemo(
 		() =>
-			customGasPrice !== ''
+			isL2
+				? ethGasPriceQuery.data!?.fast
+				: customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasPriceQuery.data != null
 				? ethGasPriceQuery.data[gasSpeed]
 				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
+		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
 	);
 
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
@@ -339,6 +341,7 @@ const useExchange = ({
 
 	const getGasLimitEstimateForExchange = async () => {
 		try {
+			if (isL2) return L2_GAS_LIMIT;
 			if (synthetix.js != null) {
 				const exchangeParams = getExchangeParams();
 				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
@@ -373,11 +376,10 @@ const useExchange = ({
 
 					setGasLimit(gasLimitEstimate);
 
-					const gas = normalizeGas({
+					const gas = {
 						gasPrice: gasPriceWei,
 						gasLimit: gasLimitEstimate,
-						isL2,
-					});
+					};
 					tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 				}
 

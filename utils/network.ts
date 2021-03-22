@@ -1,5 +1,5 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { GWEI_UNIT } from 'constants/network';
@@ -39,22 +39,3 @@ export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BU
 export const gasPriceInWei = (gasPrice: number) => gasPrice * GWEI_UNIT;
 
 export const getIsOVM = (networkId: number): boolean => !!~[10, 69].indexOf(networkId);
-
-export const normalizeGas = ({
-	gasPrice,
-	gasLimit,
-	isL2,
-}: {
-	gasPrice: number | null;
-	gasLimit: number | null;
-	isL2: boolean;
-}): {
-	gasPrice: number | null;
-	gasLimit: number | null;
-} => {
-	if (isL2) {
-		gasPrice = 0;
-		gasLimit = 9 * 1e6 - 1;
-	}
-	return { gasPrice, gasLimit };
-};
