@@ -46,9 +46,6 @@ const ConvertContainer = styled.div``;
 
 const StyledCurrencyCardsSelector = styled(CurrencyCardsSelector)`
 	width: 70px;
-	${media.lessThan('md')`
-		margin-top: -14px;
-	`}
 `;
 
 export const ExchangeFooter = styled.div`

@@ -318,6 +318,10 @@ export const CurrencyCardsSelector = styled.div`
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+
+	${media.lessThan('md')`
+		margin-top: -14px;
+	`}
 `;
 
 export const DropdownSelection = styled.span.attrs({
