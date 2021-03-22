@@ -24,7 +24,7 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 - Blocknative Onboard - for ethereum wallet connectivity.
 - Blocknative Notify - for tx notifications.
 - [synthetix-data](https://github.com/Synthetixio/synthetix-data) - for historical data (powered by [TheGraph](https://thegraph.com/)).
-- [@synthetixio/js](https://github.com/Synthetixio/js) - for interactions with the Synthetix protocol.
+- [@synthetixio/js-monorepo](https://github.com/Synthetixio/js-monorepo) - for interactions with the Synthetix protocol.
 
 ## Development
 

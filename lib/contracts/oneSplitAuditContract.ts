@@ -1,4 +1,4 @@
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 export default {
 	addresses: {

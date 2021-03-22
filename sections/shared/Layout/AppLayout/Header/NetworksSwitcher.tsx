@@ -2,47 +2,23 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isL2State, isMainnetNetworkState, isWalletConnectedState } from 'store/wallet';
+import {
+	isL2State,
+	isWalletConnectedState,
+	//  isMainnetNetworkState,
+} from 'store/wallet';
 import Connector from 'containers/Connector';
 import Tippy from '@tippyjs/react';
-// import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 // import { NetworkId } from '@synthetixio/js';
-
-type MetamaskAddNetworkConfig = {
-	chainId: string;
-	chainName: string;
-	rpcUrls: string[];
-	blockExplorerUrls: string[];
-};
 
 type NetworksSwitcherProps = {};
 
-const OVM_NETWORKS: Map<number, MetamaskAddNetworkConfig> = new Map([
-	[
-		10,
-		{
-			chainId: '0xA',
-			chainName: 'Optimism Mainnet',
-			rpcUrls: ['https://mainnet.optimism.io'],
-			blockExplorerUrls: ['https://mainnet-l2-explorer.surge.sh'],
-		},
-	],
-	[
-		69,
-		{
-			chainId: '0x45',
-			chainName: 'Optimism Kovan',
-			rpcUrls: ['https://kovan.optimism.io'],
-			blockExplorerUrls: ['https://kovan-l2-explorer.surge.sh'],
-		},
-	],
-]);
-
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const [networkError, setNetworkError] = useState<string | null>(null);
+	const [, setNetworkError] = useState<string | null>(null);
 
 	const { t } = useTranslation();
-	const isMainnetNetwork = useRecoilValue(isMainnetNetworkState);
+	// const isMainnetNetwork = useRecoilValue(isMainnetNetworkState);
 	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
@@ -53,14 +29,22 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	};
 
 	const switchToL1 = async () => {
-		// await window.ethereum.request({
-		// 	method: 'wallet_switchEthereumChain',
-		// 	params: [
-		// 		{
-		// 			chainId: `0x${(isMainnetNetwork ? NetworkId.Mainnet : NetworkId.Kovan).toString(16)}`,
-		// 		},
-		// 	],
-		// });
+		try {
+			if (!window.ethereum || !window.ethereum.isMetaMask) {
+				return setNetworkError(t('user-menu.error.please-install-metamask'));
+			}
+			setNetworkError(null);
+			// await window.ethereum.request({
+			// 	method: 'wallet_switchEthereumChain',
+			// 	params: [
+			// 		{
+			// 			chainId: `0x${(isMainnetNetwork ? NetworkId.Mainnet : NetworkId.Kovan).toString(16)}`,
+			// 		},
+			// 	],
+			// });
+		} catch (e) {
+			setNetworkError(e.message);
+		}
 	};
 
 	const switchToL2 = async () => {
@@ -68,14 +52,8 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 			if (!window.ethereum || !window.ethereum.isMetaMask) {
 				return setNetworkError(t('user-menu.error.please-install-metamask'));
 			}
-
 			setNetworkError(null);
-			// addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-
-			await (window.ethereum as any).request({
-				method: 'wallet_addEthereumChain',
-				params: [OVM_NETWORKS.get(isMainnetNetwork ? 10 : 69)], // todo
-			});
+			addOptimismNetworkToMetamask({ ethereum: window.ethereum });
 		} catch (e) {
 			setNetworkError(e.message);
 		}

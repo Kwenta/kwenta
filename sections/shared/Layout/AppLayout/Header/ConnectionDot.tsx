@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { networkState, isWalletConnectedState } from 'store/wallet';
-import { NetworkId } from '@synthetixio/js';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 type ConnectionDotProps = {
 	className?: string;

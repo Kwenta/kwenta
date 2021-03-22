@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, Network as NetworkName } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import { loadProvider } from '@synthetixio/providers';
 import { ethers } from 'ethers';
 

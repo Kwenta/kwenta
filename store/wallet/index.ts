@@ -1,4 +1,4 @@
-import { NetworkId, Network as NetworkName } from '@synthetixio/js';
+import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import { GasSpeed } from 'queries/network/useEthGasPriceQuery';
 import { atom, selector } from 'recoil';
 
