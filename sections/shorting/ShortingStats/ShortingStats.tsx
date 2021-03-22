@@ -21,6 +21,8 @@ import { WEEKS_IN_YEAR } from 'utils/formatters/date';
 
 import { SYNTHS_TO_SHORT } from '../constants';
 
+import { Title } from '../common';
+
 const WEEKLY_SNX_REWARDS = toBigNumber(8000);
 
 const ShortingStats = () => {
@@ -69,7 +71,7 @@ const ShortingStats = () => {
 
 	return (
 		<div>
-			<Title>{t('shorting.stats.title')}</Title>
+			<StyledTitle>{t('shorting.stats.title')}</StyledTitle>
 			<Table>
 				<thead>
 					<TableRowHead>
@@ -126,12 +128,8 @@ const ShortingStats = () => {
 	);
 };
 
-const Title = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	text-transform: capitalize;
-	padding-bottom: 5px;
+const StyledTitle = styled(Title)`
+	padding-bottom: 0;
 `;
 
 const TableRow = styled.tr`

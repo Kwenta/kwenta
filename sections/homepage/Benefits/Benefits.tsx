@@ -92,7 +92,7 @@ const ExchangeCards = styled.div`
 	width: 100%;
 	display: grid;
 	justify-content: center;
-	grid-template-columns: auto auto;
+	grid-template-columns: 1fr 1fr;
 	grid-gap: 2px;
 	padding-bottom: 2px;
 
