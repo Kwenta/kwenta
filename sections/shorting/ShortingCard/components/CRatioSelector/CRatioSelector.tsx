@@ -15,6 +15,7 @@ import {
 	SolidTooltipCustomValue,
 	SolidTooltipCustomValueContainer,
 	SolidTooltipItemButton,
+	DropdownSelection,
 } from 'styles/common';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
@@ -83,14 +84,13 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 					</SolidTooltipContent>
 				}
 			>
-				<DropdownSelection
-					role="button"
+				<StyledDropdownSelection
 					tooltipOpened={tooltipOpened}
 					shortCRatioTooLow={shortCRatioTooLow}
 				>
 					{formatPercent(shortCRatio, { minDecimals: 0 })}{' '}
 					<Svg src={CaretDownIcon} viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`} />
-				</DropdownSelection>
+				</StyledDropdownSelection>
 			</StyledSolidTooltip>
 		</Container>
 	);
@@ -110,29 +110,9 @@ const Label = styled.div`
 	color: ${(props) => props.theme.colors.silver};
 `;
 
-export const DropdownSelection = styled.span<{
-	tooltipOpened: boolean;
+export const StyledDropdownSelection = styled(DropdownSelection)<{
 	shortCRatioTooLow: boolean;
 }>`
-	user-select: none;
-	display: inline-flex;
-	align-items: center;
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding-left: 5px;
-	cursor: pointer;
-	color: ${(props) => props.theme.colors.white};
-	text-transform: uppercase;
-	svg {
-		color: ${(props) => props.theme.colors.goldColors.color3};
-		width: 10px;
-		margin-left: 5px;
-		transition: transform 0.2s ease-in-out;
-		${(props) =>
-			props.tooltipOpened &&
-			css`
-				transform: rotate(-180deg);
-			`};
-	}
 	${(props) =>
 		props.shortCRatioTooLow &&
 		css`

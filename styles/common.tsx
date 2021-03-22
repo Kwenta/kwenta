@@ -1,8 +1,12 @@
+import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
+
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
+
 import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
-import styled, { css, keyframes } from 'styled-components';
+
+import media from 'styles/media';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -303,4 +307,82 @@ export const Table = styled.table.attrs({
 	width: 100%;
 	border-collapse: collapse;
 	border: 0;
+`;
+
+export const CurrencyCardsSelector = styled.div`
+	position: absolute;
+	padding: 6px;
+	border-radius: 4px;
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 2px solid ${(props) => props.theme.colors.black};
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	${media.lessThan('md')`
+		margin-top: -14px;
+	`}
+`;
+
+export const DropdownSelection = styled.span.attrs({
+	role: 'button',
+})<{
+	tooltipOpened: boolean;
+}>`
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	font-family: ${(props) => props.theme.fonts.bold};
+	padding-left: 5px;
+	cursor: pointer;
+	color: ${(props) => props.theme.colors.white};
+	text-transform: uppercase;
+	svg {
+		color: ${(props) => props.theme.colors.goldColors.color3};
+		width: 10px;
+		margin-left: 5px;
+		transition: transform 0.2s ease-in-out;
+		${(props) =>
+			props.tooltipOpened &&
+			css`
+				transform: rotate(-180deg);
+			`};
+	}
+`;
+
+export const ExchangeCardsWithSelector = styled.div`
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	margin: 0 auto;
+	${media.lessThan('md')`
+		grid-template-columns: unset;
+		grid-template-rows: auto auto;
+		padding-bottom: 24px;
+	`}
+
+	.currency-card {
+		padding: 0 14px;
+		${media.lessThan('md')`
+			padding: unset;
+		`}
+		.currency-wallet-container {
+			width: 90%;
+			${media.lessThan('md')`
+				width: 100%;
+			`}
+		}
+	}
+	.currency-card-base {
+		.currency-card-body {
+			position: relative;
+			left: 30px;
+			${media.lessThan('md')`
+				left: unset;
+			`}
+		}
+	}
 `;
