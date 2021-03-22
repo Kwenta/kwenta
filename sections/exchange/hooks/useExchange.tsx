@@ -11,7 +11,7 @@ import { Svg } from 'react-optimized-image';
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import Notify from 'containers/Notify';
-import OneInch from 'containers/OneInch';
+import Convert from 'containers/Convert';
 
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
@@ -23,6 +23,7 @@ import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
+import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
@@ -58,6 +59,9 @@ import synthetix from 'lib/synthetix';
 import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
+
+const SHOW_SLIPPAGE_PERCENT = false;
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -86,7 +90,7 @@ const useExchange = ({
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
-	const { swap, quote } = OneInch.useContainer();
+	const { swap1Inch } = Convert.useContainer();
 	const router = useRouter();
 
 	const marketQuery = useMemo(
@@ -125,6 +129,26 @@ const useExchange = ({
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
+
+	const quoteCurrencyAmountDebounced = useDebouncedMemo(
+		() => quoteCurrencyAmount,
+		[quoteCurrencyAmount],
+		300
+	);
+
+	const oneInchQuoteQuery = use1InchQuoteQuery(
+		quoteCurrencyKey,
+		baseCurrencyKey,
+		quoteCurrencyAmountDebounced,
+		{
+			enabled:
+				txProvider === '1inch' &&
+				quoteCurrencyKey != null &&
+				quoteCurrencyAmount != null &&
+				quoteCurrencyAmountDebounced !== '',
+		}
+	);
+
 	const isBaseCurrencyETH = useMemo(() => baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH, [
 		baseCurrencyKey,
 	]);
@@ -379,6 +403,14 @@ const useExchange = ({
 		setGasLimit(null);
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
+	useEffect(() => {
+		if (txProvider === '1inch') {
+			if (oneInchQuoteQuery.isSuccess && oneInchQuoteQuery.data != null) {
+				setBaseCurrencyAmount(oneInchQuoteQuery.data);
+			}
+		}
+	}, [baseCurrencyAmount, txProvider, oneInchQuoteQuery.data, oneInchQuoteQuery.isSuccess]);
+
 	const getExchangeParams = useCallback(() => {
 		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
@@ -421,7 +453,7 @@ const useExchange = ({
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				if (txProvider === '1inch') {
-					tx = await swap(quoteCurrencyKey!, baseCurrencyKey!, quoteCurrencyAmount, slippage);
+					tx = await swap1Inch(quoteCurrencyKey!, baseCurrencyKey!, quoteCurrencyAmount, slippage);
 				} else {
 					const gasLimitEstimate = await getGasLimitEstimateForExchange();
 
@@ -485,7 +517,7 @@ const useExchange = ({
 		quoteCurrencyKey,
 		setHasOrdersNotification,
 		setOrders,
-		swap,
+		swap1Inch,
 		synthsWalletBalancesQuery,
 		txProvider,
 		slippage,
@@ -535,11 +567,6 @@ const useExchange = ({
 						setBaseCurrencyAmount(
 							toBigNumber(value).multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
 						);
-					} else if (txProvider === '1inch') {
-						const amount = await quote(quoteCurrencyKey!, baseCurrencyKey!, value);
-						if (amount != null) {
-							setBaseCurrencyAmount(amount);
-						}
 					}
 				}
 			}}
@@ -554,15 +581,6 @@ const useExchange = ({
 								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
 								.toString()
 						);
-					} else if (txProvider === '1inch') {
-						const amount = await quote(
-							quoteCurrencyKey!,
-							baseCurrencyKey!,
-							quoteCurrencyBalance.toString()
-						);
-						if (amount != null) {
-							setBaseCurrencyAmount(amount);
-						}
 					}
 				}
 			}}
@@ -587,7 +605,7 @@ const useExchange = ({
 	) : null;
 
 	const slippagePercent = useMemo(() => {
-		if (txProvider === '1inch') {
+		if (txProvider === '1inch' && SHOW_SLIPPAGE_PERCENT) {
 			if (!totalTradePrice.isNaN() && !estimatedBaseTradePrice.isNaN()) {
 				return totalTradePrice.minus(estimatedBaseTradePrice).dividedBy(totalTradePrice).negated();
 			}
@@ -636,6 +654,7 @@ const useExchange = ({
 			label={t('exchange.common.into')}
 			interactive={txProvider === 'synthetix'}
 			slippagePercent={slippagePercent}
+			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
 		/>
 	);
 

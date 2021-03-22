@@ -38,11 +38,11 @@ type OneInchSwapResponse = OneInchQuoteResponse & {
 	};
 };
 
-const useOneInch = () => {
+const useConvert = () => {
 	const { getTokenAddress, signer } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const getQuoteSwapParams = (
+	const get1InchQuoteSwapParams = (
 		quoteCurrencyKey: CurrencyKey,
 		baseCurrencyKey: CurrencyKey,
 		amount: string
@@ -54,13 +54,13 @@ const useOneInch = () => {
 			.toString(),
 	});
 
-	const quote = async (
+	const quote1Inch = async (
 		quoteCurrencyKey: CurrencyKey,
 		baseCurrencyKey: CurrencyKey,
 		amount: string
 	) => {
 		try {
-			const params = getQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
+			const params = get1InchQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
 
 			const response = await axios.get<OneInchQuoteResponse>(
 				'https://api.1inch.exchange/v3.0/1/quote',
@@ -80,14 +80,14 @@ const useOneInch = () => {
 		}
 	};
 
-	const swap = async (
+	const swap1Inch = async (
 		quoteCurrencyKey: CurrencyKey,
 		baseCurrencyKey: CurrencyKey,
 		amount: string,
 		slippage: number = 1
 	) => {
 		try {
-			const params = getQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
+			const params = get1InchQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
 
 			const response = await axios.get<OneInchSwapResponse>(
 				'https://api.1inch.exchange/v3.0/1/swap',
@@ -119,11 +119,11 @@ const useOneInch = () => {
 	};
 
 	return {
-		swap,
-		quote,
+		swap1Inch,
+		quote1Inch,
 	};
 };
 
-const OneInch = createContainer(useOneInch);
+const OneInch = createContainer(useConvert);
 
 export default OneInch;

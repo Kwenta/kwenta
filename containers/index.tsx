@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import Connector from './Connector';
 import Etherscan from './Etherscan';
 import Notify from './Notify';
-import OneInch from './OneInch';
+import Convert from './Convert';
 
 type WithAppContainersProps = {
 	children: React.ReactNode;
@@ -12,9 +12,9 @@ type WithAppContainersProps = {
 export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
 		<Etherscan.Provider>
-			<OneInch.Provider>
+			<Convert.Provider>
 				<Notify.Provider>{children}</Notify.Provider>
-			</OneInch.Provider>
+			</Convert.Provider>
 		</Etherscan.Provider>
 	</Connector.Provider>
 );

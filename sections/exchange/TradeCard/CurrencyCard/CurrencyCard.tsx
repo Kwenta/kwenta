@@ -13,6 +13,7 @@ import { formatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/format
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
+import Loader from 'components/Loader';
 
 import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
 
@@ -32,6 +33,7 @@ type CurrencyCardProps = {
 	label: ReactNode;
 	interactive?: boolean;
 	slippagePercent?: BigNumber | null;
+	isLoading?: boolean;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
@@ -46,6 +48,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	priceRate,
 	label,
 	interactive = true,
+	isLoading = false,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -104,14 +107,22 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									placeholder="0"
 									data-testid="currency-amount"
 								/>
-								<CurrencyAmountValue data-testid="amount-value">
-									{tradeAmount != null
-										? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
-												sign: selectedPriceCurrency.sign,
-										  })
-										: null}
-									{slippagePercent != null && ` (${formatPercent(slippagePercent)})`}
-								</CurrencyAmountValue>
+								<FlexDivRowCentered>
+									<CurrencyAmountValue data-testid="amount-value">
+										{tradeAmount != null
+											? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+													sign: selectedPriceCurrency.sign,
+											  })
+											: null}
+									</CurrencyAmountValue>
+									<Slippage>
+										{!isLoading &&
+											slippagePercent != null &&
+											slippagePercent.isNegative() &&
+											formatPercent(slippagePercent)}
+									</Slippage>
+								</FlexDivRowCentered>
+								{isLoading && <StyledLoader width="24px" height="24px" />}
 							</CurrencyAmountContainer>
 						)}
 					</CurrencyContainer>
@@ -196,6 +207,7 @@ const CurrencyAmountContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.black};
 	border-radius: 4px;
 	width: 100%;
+	position: relative;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
@@ -213,6 +225,13 @@ const CurrencyAmountValue = styled.div`
 	text-overflow: ellipsis;
 `;
 
+const Slippage = styled.div`
+	${numericValueCSS};
+	padding: 0px 8px 2px 8px;
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.yellow};
+`;
+
 const WalletBalanceContainer = styled(FlexDivRowCentered)``;
 
 const WalletBalanceLabel = styled.div`
@@ -228,6 +247,10 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.red};
 		`}
+`;
+
+const StyledLoader = styled(Loader)`
+	left: 90%;
 `;
 
 export default CurrencyCard;
