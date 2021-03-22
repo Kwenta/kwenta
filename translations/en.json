@@ -568,7 +568,10 @@
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",
 			"error": "An unexpected error occurred.",
-			"reattempt": "Try again"
+			"reattempt": "Try again",
+			"transaction-sent": "Your transaction has been sent to the network.",
+			"transaction-failed": "Your transaction has failed",
+			"transaction-confirmed": "Your transaction has succeeded!"
 		},
 		"price": "price",
 		"asset": "asset",

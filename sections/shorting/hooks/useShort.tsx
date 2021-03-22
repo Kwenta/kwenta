@@ -13,8 +13,6 @@ import BigNumber from 'bignumber.js';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
-import Connector from 'containers/Connector';
-
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -51,12 +49,11 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 
 import { toBigNumber, zeroBN, formatNumber } from 'utils/formatters/number';
 
-import Notify from 'containers/Notify';
-
 import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -68,8 +65,7 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
 		persistSelectedCurrencies: false,
@@ -391,7 +387,7 @@ const useShort = ({
 					}
 				);
 				if (tx != null) {
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setIsApproving(false);
@@ -469,8 +465,8 @@ const useShort = ({
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
 
-				if (tx != null && notify != null) {
-					monitorHash({
+				if (tx != null) {
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							synthsWalletBalancesQuery.refetch();

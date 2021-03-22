@@ -56,7 +56,7 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import OneInch from 'containers/OneInch';
 import useCurrencyPair from './useCurrencyPair';
 import { toBigNumber, zeroBN } from 'utils/formatters/number';
-import Notify from 'containers/Notify';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -82,7 +82,7 @@ const useExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { swap } = OneInch.useContainer();
 	const router = useRouter();
 
@@ -401,7 +401,7 @@ const useExchange = ({
 					);
 					setHasOrdersNotification(true);
 
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setOrders((orders) =>

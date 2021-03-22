@@ -63,11 +63,6 @@ const GlobalStyle = createGlobalStyle`
 		color: ${(props) => props.theme.colors.white};
 	}
 
-	.bn-notify-custom {
- 	   && {
-			font-family: ${(props) => props.theme.fonts.regular};
-		}
-	}
 	/* blocknative onboard style overrides */
 	.bn-onboard-custom {
 		&&& {
