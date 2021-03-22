@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 
 import Connector from './Connector';
 import Etherscan from './Etherscan';
-import Notify from './Notify';
 import OneInch from './OneInch';
 import BlockExplorer from './BlockExplorer';
 import TransactionNotifier from './TransactionNotifier';
@@ -16,9 +15,7 @@ export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 		<Etherscan.Provider>
 			<OneInch.Provider>
 				<BlockExplorer.Provider>
-					<TransactionNotifier.Provider>
-						<Notify.Provider>{children}</Notify.Provider>
-					</TransactionNotifier.Provider>
+					<TransactionNotifier.Provider>{children}</TransactionNotifier.Provider>
 				</BlockExplorer.Provider>
 			</OneInch.Provider>
 		</Etherscan.Provider>

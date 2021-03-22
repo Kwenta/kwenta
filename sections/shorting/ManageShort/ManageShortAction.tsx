@@ -14,9 +14,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
-import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
-
 import synthetix from 'lib/synthetix';
 
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
@@ -71,6 +68,7 @@ import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummar
 
 import { ShortingTab } from './constants';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -98,8 +96,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-	const { notify } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -356,8 +353,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
 
-				if (transaction != null && notify != null) {
-					monitorHash({
+				if (transaction != null) {
+					monitorTransaction({
 						txHash: transaction.hash,
 					});
 
@@ -414,7 +411,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					}
 				);
 				if (tx != null) {
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setIsApproving(false);
