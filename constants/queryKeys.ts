@@ -73,6 +73,9 @@ export const QUERY_KEYS = {
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
 	},
+	TokenLists: {
+		Synthetix: ['tokenLists', 'synthetix'],
+	},
 };
 
 export default QUERY_KEYS;

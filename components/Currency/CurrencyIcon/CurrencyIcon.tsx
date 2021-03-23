@@ -1,11 +1,13 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import Img from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+
 import { FlexDivCentered } from 'styles/common';
+import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 
 type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
@@ -23,6 +25,12 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, ...rest }) => {
 	const [isError, setIsError] = useState<boolean>(false);
+
+	const synthetixTokenListQuery = useSynthetixTokenList();
+	const synthetixTokenList = useMemo(
+		() => (synthetixTokenListQuery.isSuccess ? synthetixTokenListQuery.data ?? null : null),
+		[synthetixTokenListQuery.isSuccess, synthetixTokenListQuery.data]
+	);
 
 	const props = {
 		width: '24px',
@@ -46,8 +54,18 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, ...rest }) =>
 			return <img src={SNXIcon} {...props} />;
 		}
 		default:
-			// eslint-disable-next-line
-			return <img src={getSynthIcon(currencyKey)} onError={() => setIsError(true)} {...props} />;
+			return (
+				// eslint-disable-next-line
+				<img
+					src={
+						synthetixTokenList != null
+							? synthetixTokenList[currencyKey].logoURI
+							: getSynthIcon(currencyKey)
+					}
+					onError={() => setIsError(true)}
+					{...props}
+				/>
+			);
 	}
 };
 
