@@ -76,6 +76,9 @@ export const QUERY_KEYS = {
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
 	},
+	CMC: {
+		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],
+	},
 };
 
 export default QUERY_KEYS;
