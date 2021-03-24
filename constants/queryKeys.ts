@@ -73,6 +73,9 @@ export const QUERY_KEYS = {
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
 	},
+	CMC: {
+		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],
+	},
 };
 
 export default QUERY_KEYS;
