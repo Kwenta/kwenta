@@ -34,6 +34,9 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 				background = theme.colors.goerli;
 				break;
 			default:
+				if (network.useOvm) {
+					background = theme.colors.ovm;
+				}
 		}
 	}
 	return <Dot {...props} background={background} />;

@@ -27,5 +27,6 @@ export default {
 	kovan: '#7057FF',
 	rinkeby: '#F6C343',
 	goerli: 'rgb(48, 153, 242)',
+	ovm: '#CC152C', // optimism red
 	noNetwork: 'rgb(155, 155, 155)',
 };
