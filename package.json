@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "2.40.1-alpha",
+	"version": "2.41.0",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
@@ -25,7 +25,7 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.8",
-		"@synthetixio/js": "2.39.3",
+		"@synthetixio/js": "2.41.0",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
