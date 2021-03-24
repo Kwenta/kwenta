@@ -35,7 +35,7 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 				break;
 			default:
 				if (network.useOvm) {
-					background = theme.colors.ovm;
+					background = theme.colors.connectedDefault;
 				}
 		}
 	}
