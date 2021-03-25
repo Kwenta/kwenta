@@ -25,7 +25,6 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.8",
-		"@synthetixio/js": "github:Synthetixio/js#fix/networks-config-type-temp",
 		"@synthetixio/transaction-notifier": "^0.0.8",
 		"@synthetixio/contracts-interface": "2.40.1-alpha",
 		"@synthetixio/optimism-networks": "0.0.8",
