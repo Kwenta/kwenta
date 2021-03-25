@@ -113,7 +113,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 const Container = styled.div``;
 
 const Menu = styled.div`
-	padding-right: 26px;
+	padding-right: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
