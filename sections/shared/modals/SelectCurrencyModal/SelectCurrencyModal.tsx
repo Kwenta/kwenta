@@ -4,9 +4,10 @@ import styled from 'styled-components';
 
 import synthetix from 'lib/synthetix';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import Button from 'components/Button';
+import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
@@ -19,6 +20,7 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import SynthRow from './SynthRow';
+import { orderBy } from 'lodash';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -27,25 +29,25 @@ export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.commodity,
 ];
 
-type SelectBaseCurrencyModalProps = {
+type SelectCurrencyModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
 };
 
-export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
-	onDismiss,
-	onSelect,
-}) => {
+export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, onSelect }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
-	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const filteredSynths = useMemo(
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthBalances = synthsWalletBalancesQuery.isSuccess
+		? synthsWalletBalancesQuery.data ?? null
+		: null;
+
+	const categoryFilteredSynths = useMemo(
 		() =>
 			synthCategory != null ? synths.filter((synth) => synth.category === synthCategory) : synths,
 		[synths, synthCategory]
@@ -54,7 +56,7 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 	const searchFilteredSynths = useDebouncedMemo(
 		() =>
 			assetSearch
-				? filteredSynths.filter(({ name, description }) => {
+				? categoryFilteredSynths.filter(({ name, description }) => {
 						const assetSearchLC = assetSearch.toLowerCase();
 
 						return (
@@ -62,13 +64,31 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 							description.toLowerCase().includes(assetSearchLC)
 						);
 				  })
-				: filteredSynths,
-		[filteredSynths, assetSearch],
+				: categoryFilteredSynths,
+		[categoryFilteredSynths, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
-	const synthsResults = assetSearch ? searchFilteredSynths : filteredSynths;
-	const totalSynths = synthsResults.length;
+	const synthsResults = useMemo(() => {
+		const synthsList = assetSearch ? searchFilteredSynths : categoryFilteredSynths;
+		if (synthsWalletBalancesQuery.isSuccess) {
+			return orderBy(
+				synthsList,
+				(synth) => {
+					const synthBalance = synthBalances?.balancesMap[synth.name];
+					return synthBalance != null ? synthBalance.usdBalance.toNumber() : 0;
+				},
+				'desc'
+			);
+		}
+		return synthsList;
+	}, [
+		assetSearch,
+		searchFilteredSynths,
+		categoryFilteredSynths,
+		synthsWalletBalancesQuery.isSuccess,
+		synthBalances,
+	]);
 
 	return (
 		<StyledCenteredModal
@@ -107,39 +127,35 @@ export const SelectBaseCurrencyModal: FC<SelectBaseCurrencyModalProps> = ({
 				})}
 			</CategoryFilters>
 			<RowsHeader>
-				{assetSearch ? (
-					<>
+				<span>
+					{assetSearch ? (
 						<span>{t('modals.select-base-currency.header.search-results')}</span>
-						<span>{t('common.total-results', { total: totalSynths })}</span>
-					</>
-				) : (
-					<>
-						<span>
-							{synthCategory != null
-								? t('modals.select-base-currency.header.category-synths', {
-										category: synthCategory,
-								  })
-								: t('modals.select-base-currency.header.all-synths')}
-						</span>
-						<span>{t('common.total-assets', { total: totalSynths })}</span>
-					</>
-				)}
+					) : synthCategory != null ? (
+						t('modals.select-base-currency.header.category-synths', {
+							category: synthCategory,
+						})
+					) : (
+						t('modals.select-base-currency.header.all-synths')
+					)}
+				</span>
+				<span>{t('modals.select-base-currency.header.holdings')}</span>
 			</RowsHeader>
 			<RowsContainer>
-				{synthsResults.length > 0 ? (
+				{synthsWalletBalancesQuery.isLoading ? (
+					<Loader />
+				) : synthsResults.length > 0 ? (
 					synthsResults.map((synth) => {
-						const price = exchangeRates && exchangeRates[synth.name];
 						const currencyKey = synth.name;
 
 						return (
 							<SynthRow
 								key={currencyKey}
-								synth={synth}
-								price={price}
 								onClick={() => {
 									onSelect(currencyKey);
 									onDismiss();
 								}}
+								synthBalance={synthBalances?.balancesMap[currencyKey]}
+								{...{ synth }}
 							/>
 						);
 					})
@@ -204,4 +220,4 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-export default SelectBaseCurrencyModal;
+export default SelectCurrencyModal;
