@@ -463,7 +463,9 @@
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "all synths"
+				"all-synths": "all synths",
+				"your-synths": "your synths",
+				"holdings": "holdings"
 			},
 			"search": {
 				"placeholder": "search synths",

@@ -5,17 +5,19 @@ import styled from 'styled-components';
 import { Synth } from 'lib/synthetix';
 
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { BottomShadow, NoTextTransform } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
 
+import { formatCurrency } from 'utils/formatters/number';
+
 import { RowsContainer, CenteredModal, RowsHeader } from '../common';
 
-import SynthRow from '../SelectBaseCurrencyModal/SynthRow';
-import { formatCurrency } from 'utils/formatters/number';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import SynthRow from './SynthRow';
 
 type SelectShortCurrencyModalProps = {
 	onDismiss: () => void;

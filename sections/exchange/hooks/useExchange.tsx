@@ -35,8 +35,7 @@ import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerF
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import SelectBaseCurrencyModal from 'sections/shared/modals/SelectBaseCurrencyModal';
-import SelectQuoteCurrencyModal from 'sections/shared/modals/SelectQuoteCurrencyModal';
+import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -762,7 +761,7 @@ const useExchange = ({
 				/>
 			)}
 			{selectBaseCurrencyModal && (
-				<SelectBaseCurrencyModal
+				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModal(false)}
 					onSelect={(currencyKey) => {
 						resetCurrencies();
@@ -783,7 +782,7 @@ const useExchange = ({
 				/>
 			)}
 			{selectQuoteCurrencyModalOpen && (
-				<SelectQuoteCurrencyModal
+				<SelectCurrencyModal
 					onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
 						resetCurrencies();
