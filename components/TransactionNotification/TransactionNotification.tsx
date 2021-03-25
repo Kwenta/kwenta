@@ -52,6 +52,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 const NotificationContainer = styled(FlexDivCentered)``;
 const IconContainer = styled(FlexDivRowCentered)`
 	width: 35px;
+	margin-right: 12px;
 `;
 
 const TransactionInfo = styled(FlexDivCol)``;
