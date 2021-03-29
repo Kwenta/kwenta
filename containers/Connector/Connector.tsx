@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
+import {
+	TransactionNotifier,
+	TransactionNotifierInterface,
+} from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 import { ethers } from 'ethers';
 
@@ -20,10 +24,6 @@ import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import {
-	TransactionNotifier,
-	TransactionNotifierInterface,
-} from '@synthetixio/transaction-notifier';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -102,7 +102,6 @@ const useConnector = () => {
 						}
 						setProvider(provider);
 						setSigner(signer);
-
 						setNetwork({
 							id: networkId,
 							// @ts-ignore
@@ -114,7 +113,6 @@ const useConnector = () => {
 				wallet: async (wallet: OnboardWallet) => {
 					if (wallet.provider) {
 						const provider = loadProvider({ provider: wallet.provider });
-						const signer = provider.getSigner();
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
 						const useOvm = getIsOVM(networkId);
@@ -122,7 +120,7 @@ const useConnector = () => {
 						synthetix.setContractSettings({
 							networkId,
 							provider,
-							signer,
+							signer: provider.getSigner(),
 							useOvm,
 						});
 						setProvider(provider);
@@ -133,6 +131,7 @@ const useConnector = () => {
 							useOvm,
 						});
 						setSelectedWallet(wallet.name);
+						setTransactionNotifier(new TransactionNotifier(provider));
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
