@@ -458,7 +458,7 @@
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	},
 	"modals": {
-		"select-base-currency": {
+		"select-currency": {
 			"title": "select synth",
 			"header": {
 				"search-results": "search results",
@@ -472,12 +472,16 @@
 				"empty-results": "No results found. Please try again."
 			}
 		},
-		"select-quote-currency": {
-			"title": "select synth",
+		"select-token": {
+			"title": "select token",
 			"header": {
-				"your-synths": "your synths",
-				"holdings": "holdings",
-				"non-synths": "non-synths"
+				"search-results": "search results",
+				"all-tokens": "all tokens",
+				"holdings": "holdings"
+			},
+			"search": {
+				"placeholder": "search tokens",
+				"empty-results": "No results found. Please try again."
 			}
 		},
 		"select-short-currency": {

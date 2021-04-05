@@ -38,89 +38,95 @@ type OneInchSwapResponse = OneInchQuoteResponse & {
 	};
 };
 
+type OneInchApproveSpenderResponse = {
+	address: string;
+};
+
 const useConvert = () => {
-	const { getTokenAddress, signer } = Connector.useContainer();
+	const { signer } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const get1InchQuoteSwapParams = (
-		quoteCurrencyKey: CurrencyKey,
-		baseCurrencyKey: CurrencyKey,
-		amount: string
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		decimals?: number
 	) => ({
-		fromTokenAddress: getTokenAddress(quoteCurrencyKey),
-		toTokenAddress: getTokenAddress(baseCurrencyKey),
+		fromTokenAddress: quoteTokenAddress,
+		toTokenAddress: baseTokenAddress,
 		amount: toBigNumber(amount)
-			.multipliedBy(toBigNumber(10).exponentiatedBy(DEFAULT_TOKEN_DECIMALS))
+			.multipliedBy(toBigNumber(10).exponentiatedBy(decimals ?? DEFAULT_TOKEN_DECIMALS))
 			.toString(),
 	});
 
 	const quote1Inch = async (
-		quoteCurrencyKey: CurrencyKey,
-		baseCurrencyKey: CurrencyKey,
-		amount: string
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		decimals?: number
 	) => {
-		try {
-			const params = get1InchQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
+		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
 
-			const response = await axios.get<OneInchQuoteResponse>(
-				'https://api.1inch.exchange/v3.0/1/quote',
-				{
-					params: {
-						fromTokenAddress: params.fromTokenAddress,
-						toTokenAddress: params.toTokenAddress,
-						amount: params.amount,
-					},
-				}
-			);
+		const response = await axios.get<OneInchQuoteResponse>(
+			'https://api.1inch.exchange/v3.0/1/quote',
+			{
+				params: {
+					fromTokenAddress: params.fromTokenAddress,
+					toTokenAddress: params.toTokenAddress,
+					amount: params.amount,
+				},
+			}
+		);
 
-			return toBigNumber(response.data.toTokenAmount).dividedBy(1e18).toString();
-		} catch (e) {
-			console.log(e);
-			return null;
-		}
+		return toBigNumber(response.data.toTokenAmount).dividedBy(1e18).toString();
 	};
 
 	const swap1Inch = async (
-		quoteCurrencyKey: CurrencyKey,
-		baseCurrencyKey: CurrencyKey,
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
 		amount: string,
-		slippage: number = 1
+		slippage: number = 1,
+		decimals?: number
 	) => {
-		try {
-			const params = get1InchQuoteSwapParams(quoteCurrencyKey, baseCurrencyKey, amount);
+		const params = get1InchQuoteSwapParams(quoteTokenAddress, baseTokenAddress, amount, decimals);
 
-			const response = await axios.get<OneInchSwapResponse>(
-				'https://api.1inch.exchange/v3.0/1/swap',
-				{
-					params: {
-						fromTokenAddress: params.fromTokenAddress,
-						toTokenAddress: params.toTokenAddress,
-						amount: params.amount,
-						fromAddress: walletAddress,
-						slippage,
-					},
-				}
-			);
+		const response = await axios.get<OneInchSwapResponse>(
+			'https://api.1inch.exchange/v3.0/1/swap',
+			{
+				params: {
+					fromTokenAddress: params.fromTokenAddress,
+					toTokenAddress: params.toTokenAddress,
+					amount: params.amount,
+					fromAddress: walletAddress,
+					slippage,
+				},
+			}
+		);
 
-			const { from, to, data, value } = response.data.tx;
+		const { from, to, data, value } = response.data.tx;
 
-			const tx = await signer!.sendTransaction({
-				from,
-				to,
-				data,
-				value: ethers.BigNumber.from(value),
-			});
+		const tx = await signer!.sendTransaction({
+			from,
+			to,
+			data,
+			value: ethers.BigNumber.from(value),
+		});
 
-			return tx;
-		} catch (e) {
-			console.log(e);
-			return null;
-		}
+		return tx;
+	};
+
+	const get1InchApproveAddress = async () => {
+		const response = await axios.get<OneInchApproveSpenderResponse>(
+			'https://api.1inch.exchange/v3.0/1/approve/spender'
+		);
+
+		return response.data.address;
 	};
 
 	return {
 		swap1Inch,
 		quote1Inch,
+		get1InchApproveAddress,
 	};
 };
 

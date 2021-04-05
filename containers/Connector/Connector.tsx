@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/js';
 import { ethers } from 'ethers';
+import erc20Abi from 'lib/abis/ERC20.json';
 
 import synthetix from 'lib/synthetix';
 
@@ -208,6 +209,12 @@ const useConnector = () => {
 			: contracts[synthToContractName(currencyKey!)].address;
 	};
 
+	const makeErc20Contract = useCallback(
+		(tokenAddress: string) =>
+			signer != null ? new ethers.Contract(tokenAddress, erc20Abi, signer) : null,
+		[signer]
+	);
+
 	return {
 		provider,
 		signer,
@@ -218,6 +225,7 @@ const useConnector = () => {
 		switchAccounts,
 		isHardwareWallet,
 		getTokenAddress,
+		makeErc20Contract,
 	};
 };
 

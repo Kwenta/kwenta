@@ -6,11 +6,11 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { TokenListQueryResponse, TokenListResponse } from './types';
 
-const useSynthetixTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
-		QUERY_KEYS.TokenLists.Synthetix,
+		QUERY_KEYS.TokenLists.OneInch,
 		async () => {
-			const response = await axios.get<TokenListResponse>('https://synths.snx.eth.link');
+			const response = await axios.get<TokenListResponse>('https://tokens.1inch.eth.link');
 
 			return {
 				tokens: response.data.tokens,
@@ -26,4 +26,4 @@ const useSynthetixTokenList = (options?: QueryConfig<TokenListQueryResponse>) =>
 	);
 };
 
-export default useSynthetixTokenList;
+export default use1InchTokenList;
