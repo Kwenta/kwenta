@@ -1,5 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
-import snxData from 'synthetix-data';
+import synthetixData from '@synthetixio/data';
 import BigNumber from 'bignumber.js';
 
 import { zeroBN } from 'utils/formatters/number';
@@ -10,23 +10,26 @@ import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import { calculateTimestampForPeriod } from './utils';
 import { SynthExchanges } from './types';
+import { isL2State } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 type HistoricalVolume = Record<CurrencyKey, BigNumber>;
 
 const useHistoricalVolumeQuery = (
 	period: Period = Period.ONE_DAY,
-	options?: QueryConfig<HistoricalVolume>
+	options?: QueryConfig<HistoricalVolume | null>
 ) => {
+	const isL2 = useRecoilValue(isL2State);
 	const periodInHours = PERIOD_IN_HOURS[period];
 
-	return useQuery<HistoricalVolume>(
-		QUERY_KEYS.Rates.HistoricalVolume(period),
+	return useQuery<HistoricalVolume | null>(
+		QUERY_KEYS.Rates.HistoricalVolume(period, isL2),
 		async () => {
-			const exchanges = (await snxData.exchanges.since({
+			const exchanges = (await synthetixData({ useOvm: isL2 }).synthExchanges({
 				minTimestamp: calculateTimestampForPeriod(periodInHours),
 			})) as SynthExchanges;
 
-			return exchanges.reduce((totalVol, { fromCurrencyKey, toCurrencyKey, fromAmountInUSD }) => {
+			return exchanges?.reduce((totalVol, { fromCurrencyKey, toCurrencyKey, fromAmountInUSD }) => {
 				if (totalVol[fromCurrencyKey] != null) {
 					totalVol[fromCurrencyKey] = totalVol[fromCurrencyKey].plus(fromAmountInUSD);
 				} else {

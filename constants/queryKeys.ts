@@ -4,12 +4,18 @@ import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {
-		HistoricalVolume: (period: Period) => ['rates', 'historicalVolume', period],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
+		HistoricalVolume: (period: Period, isL2: boolean) => [
+			'rates',
+			'historicalVolume',
+			period,
+			isL2,
+		],
+		HistoricalRates: (currencyKey: CurrencyKey, period: Period, isL2: boolean) => [
 			'rates',
 			'historicalRates',
 			currencyKey,
 			period,
+			isL2,
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
@@ -60,7 +66,12 @@ export const QUERY_KEYS = {
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
-		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],
+		WalletTrades: (walletAddress: string, isL2: boolean) => [
+			'trades',
+			'walletTrades',
+			walletAddress,
+			isL2,
+		],
 	},
 	SystemStatus: {
 		IsUpgrading: ['systemStatus', 'isUpgrading'],

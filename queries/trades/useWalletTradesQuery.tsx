@@ -1,26 +1,36 @@
 import { useQuery, QueryConfig } from 'react-query';
-import snxData from 'synthetix-data';
+import synthetixData from '@synthetixio/data';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalTrades } from './types';
+import { isL2State } from 'store/wallet';
 
 export const useWalletTradesQuery = (
 	max: number = 100,
-	options?: QueryConfig<HistoricalTrades>
+	options?: QueryConfig<HistoricalTrades | null>
 ) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isL2 = useRecoilValue(isL2State);
 
-	return useQuery<HistoricalTrades>(
-		QUERY_KEYS.Trades.WalletTrades(walletAddress || ''),
-		() =>
-			snxData.exchanges.since({
-				fromAddress: walletAddress,
-				maxBlock: Number.MAX_SAFE_INTEGER,
+	return useQuery<HistoricalTrades | null>(
+		QUERY_KEYS.Trades.WalletTrades(walletAddress || '', isL2),
+		async () => {
+			const walletTrades = await synthetixData({ useOvm: isL2 }).synthExchanges({
+				fromAddress: walletAddress ?? undefined,
 				max,
-			}),
+			});
+
+			//TODO: move to parsing library
+			const walletTradesWithHash = walletTrades?.map((trade) => ({
+				...trade,
+				hash: trade.id.split('-')[0],
+			}));
+
+			return walletTradesWithHash ?? null;
+		},
 		{
 			enabled: isWalletConnected,
 			...options,
