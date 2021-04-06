@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
-import Connector from 'containers/Connector';
 
 import synthetix from 'lib/synthetix';
 import Button from 'components/Button';

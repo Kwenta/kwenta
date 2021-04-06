@@ -480,7 +480,7 @@ const useExchange = ({
 			console.log(e);
 		}
 		return null;
-	}, [getExchangeParams]);
+	}, [getExchangeParams, isL2]);
 
 	const handleSubmit = useCallback(async () => {
 		if (synthetix.js != null && gasPrice != null) {
@@ -563,6 +563,7 @@ const useExchange = ({
 		swap1Inch,
 		synthsWalletBalancesQuery,
 		txProvider,
+		monitorTransaction,
 	]);
 
 	useEffect(() => {
