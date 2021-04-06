@@ -9,6 +9,8 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
+import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -19,13 +21,12 @@ import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
 import { FlexDivCentered, BottomShadow } from 'styles/common';
 
-import { CurrencyKey } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
-import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -58,22 +59,30 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const tokenBalancesAddresses = useMemo(
 		() =>
 			tokenBalances != null
-				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address)
-				: [],
+				? [
+						ETH_ADDRESS,
+						...Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address),
+				  ]
+				: [ETH_ADDRESS],
 		[tokenBalances]
 	);
 
-	const coinGeckoPricesQuery = useCoinGeckoPricesQuery(tokenBalancesAddresses);
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(tokenBalancesAddresses);
+	const coinGeckoTokenPrices = coinGeckoTokenPricesQuery.isSuccess
+		? coinGeckoTokenPricesQuery.data ?? null
+		: null;
 
+	const coinGeckoPricesQuery = useCoinGeckoPricesQuery(['ethereum']);
 	const coinGeckoPrices = coinGeckoPricesQuery.isSuccess ? coinGeckoPricesQuery.data ?? null : null;
-
-	console.log(coinGeckoPrices);
 
 	const tokenBalancesWithPrices = useMemo(
 		() =>
 			tokenBalances != null
 				? mapValues(tokenBalances, ({ balance, token: { address } }, symbol) => {
-						const price = get(coinGeckoPrices, [address.toLowerCase(), 'usd'], null);
+						const price =
+							symbol === CRYPTO_CURRENCY_MAP.ETH
+								? get(coinGeckoPrices, ['ethereum', 'usd'], null)
+								: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
 
 						return {
 							currencyKey: symbol,
@@ -82,7 +91,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 						};
 				  })
 				: tokenBalances,
-		[coinGeckoPrices, tokenBalances]
+		[coinGeckoPrices, coinGeckoTokenPrices, tokenBalances]
 	);
 
 	const searchFilteredTokens = useDebouncedMemo(

@@ -12,7 +12,7 @@ import { ethers } from 'ethers';
 import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
 import { Token } from 'queries/tokenLists/types';
 
@@ -48,14 +48,19 @@ const useTokensBalancesQuery = (tokens: Token[], options?: QueryConfig<Balances>
 			await ethcallProvider.init(provider!);
 
 			const calls = [];
-			for (const { address } of tokens) {
-				const tokenContract = new Contract(address, erc20Abi);
-				calls.push(tokenContract.balanceOf(walletAddress));
+			for (const { address, symbol } of tokens) {
+				if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
+					calls.push(ethcallProvider.getEthBalance(walletAddress!));
+				} else {
+					const tokenContract = new Contract(address, erc20Abi);
+					calls.push(tokenContract.balanceOf(walletAddress));
+				}
 			}
 
 			const data = (await ethcallProvider.all(calls, {})) as ethers.BigNumber[];
 
 			const balancesMap = zipObject(symbols, data);
+
 			const positiveBalances = omitBy(balancesMap, (entry) => entry.lte(0));
 
 			return mapValues(positiveBalances, (balance, symbol) => {

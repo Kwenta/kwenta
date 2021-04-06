@@ -17,7 +17,7 @@ import Convert from 'containers/Convert';
 
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS, SYNTHS_MAP } from 'constants/currency';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -29,7 +29,7 @@ import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
-import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/PriceChartCard';
@@ -139,13 +139,22 @@ const useExchange = ({
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 	const ETHBalanceQuery = useETHBalanceQuery();
+	const ETHBalance = ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
+
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalance = synthsWalletBalancesQuery.isSuccess
+		? synthsWalletBalancesQuery.data
+		: null;
+
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
 
-	const needsApproval = txProvider === '1inch';
+	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
+	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
+
+	const needsApproval = txProvider === '1inch' && !isQuoteCurrencyETH;
 
 	const quoteCurrencyAmountDebounced = useDebouncedMemo(
 		() => quoteCurrencyAmount,
@@ -166,16 +175,26 @@ const useExchange = ({
 	const tokensMap = tokenListQuery.isSuccess ? tokenListQuery.data?.tokensMap ?? null : null;
 
 	const quoteCurrencyTokenAddress = useMemo(
-		() => (quoteCurrencyKey != null ? get(tokensMap, [quoteCurrencyKey, 'address'], null) : null),
-		[tokensMap, quoteCurrencyKey]
+		() =>
+			quoteCurrencyKey != null
+				? isQuoteCurrencyETH
+					? ETH_ADDRESS
+					: get(tokensMap, [quoteCurrencyKey, 'address'], null)
+				: null,
+		[tokensMap, quoteCurrencyKey, isQuoteCurrencyETH]
 	);
 
 	const baseCurrencyTokenAddress = useMemo(
-		() => (baseCurrencyKey != null ? get(tokensMap, [baseCurrencyKey, 'address'], null) : null),
-		[tokensMap, baseCurrencyKey]
+		() =>
+			baseCurrencyKey != null
+				? isBaseCurrencyETH
+					? ETH_ADDRESS
+					: get(tokensMap, [baseCurrencyKey, 'address'], null)
+				: null,
+		[tokensMap, baseCurrencyKey, isBaseCurrencyETH]
 	);
 
-	const coinGeckoPricesQuery = useCoinGeckoPricesQuery(
+	const coinGeckoTokenPricesQuery = useCoinGeckoTokenPricesQuery(
 		quoteCurrencyTokenAddress != null && baseCurrencyTokenAddress != null
 			? [quoteCurrencyTokenAddress, baseCurrencyTokenAddress]
 			: [],
@@ -184,7 +203,9 @@ const useExchange = ({
 		}
 	);
 
-	const coinGeckoPrices = coinGeckoPricesQuery.isSuccess ? coinGeckoPricesQuery.data ?? null : null;
+	const coinGeckoPrices = coinGeckoTokenPricesQuery.isSuccess
+		? coinGeckoTokenPricesQuery.data ?? null
+		: null;
 
 	const oneInchQuoteQuery = use1InchQuoteQuery(
 		quoteCurrencyTokenAddress,
@@ -209,9 +230,6 @@ const useExchange = ({
 		? oneInchApproveAddressQuery.data ?? null
 		: null;
 
-	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
-	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
-
 	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
@@ -233,28 +251,22 @@ const useExchange = ({
 
 	const quoteCurrencyBalance = useMemo(() => {
 		if (quoteCurrencyKey != null) {
-			if (txProvider === '1inch') {
+			if (isQuoteCurrencyETH) {
+				return ETHBalance;
+			} else if (txProvider === '1inch') {
 				return tokenBalances?.[quoteCurrencyKey]?.balance ?? zeroBN;
-			} else if (isQuoteCurrencyETH) {
-				return ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
 			} else {
-				return synthsWalletBalancesQuery.isSuccess
-					? get(
-							synthsWalletBalancesQuery.data,
-							['balancesMap', quoteCurrencyKey, 'balance'],
-							zeroBN
-					  )
+				return synthsWalletBalance != null
+					? get(synthsWalletBalance, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
 					: null;
 			}
 		}
 		return null;
 	}, [
-		ETHBalanceQuery.data,
-		ETHBalanceQuery.isSuccess,
+		ETHBalance,
 		isQuoteCurrencyETH,
 		quoteCurrencyKey,
-		synthsWalletBalancesQuery.data,
-		synthsWalletBalancesQuery.isSuccess,
+		synthsWalletBalance,
 		txProvider,
 		tokenBalances,
 	]);
@@ -262,26 +274,19 @@ const useExchange = ({
 	const baseCurrencyBalance = useMemo(() => {
 		if (baseCurrencyKey != null) {
 			if (isBaseCurrencyETH) {
-				return ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
+				return ETHBalance;
 			} else {
-				return synthsWalletBalancesQuery.isSuccess
-					? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
+				return synthsWalletBalance != null
+					? get(synthsWalletBalance, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
 					: null;
 			}
 		}
 		return null;
-	}, [
-		ETHBalanceQuery.data,
-		ETHBalanceQuery.isSuccess,
-		isBaseCurrencyETH,
-		baseCurrencyKey,
-		synthsWalletBalancesQuery.data,
-		synthsWalletBalancesQuery.isSuccess,
-	]);
+	}, [ETHBalance, isBaseCurrencyETH, baseCurrencyKey, synthsWalletBalance]);
 
 	const quotePriceRate = useMemo(
 		() =>
-			txProvider === '1inch'
+			txProvider === '1inch' && !isQuoteCurrencyETH
 				? coinGeckoPrices != null &&
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -301,11 +306,12 @@ const useExchange = ({
 			selectPriceCurrencyRate,
 			coinGeckoPrices,
 			quoteCurrencyTokenAddress,
+			isQuoteCurrencyETH,
 		]
 	);
 	const basePriceRate = useMemo(
 		() =>
-			txProvider === '1inch'
+			txProvider === '1inch' && !isBaseCurrencyETH
 				? coinGeckoPrices != null &&
 				  baseCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
@@ -321,6 +327,7 @@ const useExchange = ({
 			selectPriceCurrencyRate,
 			baseCurrencyTokenAddress,
 			coinGeckoPrices,
+			isBaseCurrencyETH,
 		]
 	);
 
@@ -481,9 +488,11 @@ const useExchange = ({
 				setGasLimit(gasLimitEstimate);
 			}
 		};
-		getGasLimitEstimate();
+		if (txProvider === 'synthetix') {
+			getGasLimitEstimate();
+		}
 		// eslint-disable-next-line
-	}, [submissionDisabledReason, gasLimit]);
+	}, [submissionDisabledReason, gasLimit, txProvider]);
 
 	// reset estimated gas limit when currencies are changed.
 	useEffect(() => {
@@ -560,10 +569,10 @@ const useExchange = ({
 	]);
 
 	useEffect(() => {
-		if (txProvider === '1inch') {
+		if (needsApproval) {
 			checkAllowance();
 		}
-	}, [checkAllowance, txProvider]);
+	}, [checkAllowance, needsApproval]);
 
 	const handleApprove = async () => {
 		if (quoteCurrencyKey != null && gasPrice != null && tokensMap != null) {

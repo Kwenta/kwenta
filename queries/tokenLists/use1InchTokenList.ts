@@ -3,8 +3,20 @@ import axios from 'axios';
 import keyBy from 'lodash/keyBy';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
 
 import { TokenListQueryResponse, TokenListResponse } from './types';
+
+const ether = {
+	address: ETH_ADDRESS,
+	chainId: 1,
+	decimals: 18,
+	logoURI:
+		'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+	name: 'Ethereum',
+	symbol: CRYPTO_CURRENCY_MAP.ETH,
+	tags: [],
+};
 
 const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
@@ -12,10 +24,12 @@ const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 		async () => {
 			const response = await axios.get<TokenListResponse>('https://tokens.1inch.eth.link');
 
+			const tokens = [ether, ...response.data.tokens];
+
 			return {
-				tokens: response.data.tokens,
-				tokensMap: keyBy(response.data.tokens, 'symbol'),
-				symbols: response.data.tokens.map((token) => token.symbol),
+				tokens,
+				tokensMap: keyBy(tokens, 'symbol'),
+				symbols: tokens.map((token) => token.symbol),
 			};
 		},
 		{
