@@ -28,6 +28,8 @@ import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
 
+export type TxProvider = 'synthetix' | '1inch' | 'balancer';
+
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
@@ -38,7 +40,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
 	feeAmountInBaseCurrency: BigNumber | null;
-	txProvider: 'synthetix' | '1inch' | 'balancer';
+	txProvider: TxProvider;
 	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;
 	icon?: ReactNode;
@@ -154,7 +156,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				</SummaryItem>
 			</Summary>
 			{txProvider === '1inch' && (
-				<TxProvider>
+				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
 					<Img
 						src={OneInchImage}
@@ -162,10 +164,10 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						height="40"
 						alt={t('common.dex-aggregators.1inch.title')}
 					/>
-				</TxProvider>
+				</TxProviderContainer>
 			)}
 			{txProvider === 'balancer' && (
-				<TxProvider>
+				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
 					<Img
 						src={BalancerImage}
@@ -173,7 +175,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						height="40"
 						alt={t('common.dex-aggregators.balancer.title')}
 					/>
-				</TxProvider>
+				</TxProviderContainer>
 			)}
 			{txError != null && (
 				<Actions>
@@ -254,7 +256,7 @@ const Message = styled.div`
 	margin: 16px 0px;
 `;
 
-const TxProvider = styled.div`
+const TxProviderContainer = styled.div`
 	padding-top: 32px;
 	text-align: center;
 	img {

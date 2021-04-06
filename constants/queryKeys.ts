@@ -56,6 +56,7 @@ export const QUERY_KEYS = {
 		ShortPositionPnL: (loanId: string) => ['collateral', 'short', 'position', 'pnl', loanId],
 		ShortRewards: (currencyKey: string) => ['collateral', 'short', 'rewards', currencyKey],
 		ShortRate: (currencyKey: string) => ['collateral', 'short', 'rate', currencyKey],
+		ShortStats: (currencyKey: string) => ['collateral', 'short', 'stats', currencyKey],
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
@@ -63,6 +64,20 @@ export const QUERY_KEYS = {
 	},
 	SystemStatus: {
 		IsUpgrading: ['systemStatus', 'isUpgrading'],
+	},
+	Convert: {
+		quote1Inch: (
+			quoteCurrencyKey: CurrencyKey,
+			baseCurrencyKey: CurrencyKey,
+			amount: string,
+			networkId: NetworkId
+		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
+	},
+	TokenLists: {
+		Synthetix: ['tokenLists', 'synthetix'],
+	},
+	CMC: {
+		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],
 	},
 };
 

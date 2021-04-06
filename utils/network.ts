@@ -13,7 +13,7 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		if (window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
-			if (provider) {
+			if (provider && provider.networkVersion != null) {
 				return Number(provider.networkVersion);
 			}
 		}

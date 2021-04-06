@@ -273,9 +273,8 @@
 				"title": "How it works"
 			},
 			"convert-card": {
-				"disabled-message": {
-					"title": "On-ramp Coming Soon.",
-					"body": "Swap from any token into sUSD with 1inch to get started."
+				"slippage-selector": {
+					"title": "Slippage"
 				}
 			}
 		},
@@ -330,8 +329,17 @@
 			"safeMax": "safe max",
 			"highRisk": "high risk"
 		},
+		"stats": {
+			"title": "shorting statistics",
+			"table": {
+				"asset": "asset",
+				"apr": "APR",
+				"open-interest": "open interest",
+				"total": "total"
+			}
+		},
 		"rewards": {
-			"title": "Short <0>{{currencyKey}}</0> Rewards",
+			"title": "available rewards",
 			"button": {
 				"claim": "claim",
 				"claiming": "claiming..."
@@ -341,6 +349,7 @@
 			}
 		},
 		"history": {
+			"title": "your positions",
 			"assets-sort": {
 				"allAssets": "All Assets"
 			},
@@ -461,7 +470,9 @@
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "all synths"
+				"all-synths": "all synths",
+				"your-synths": "your synths",
+				"holdings": "holdings"
 			},
 			"search": {
 				"placeholder": "search synths",

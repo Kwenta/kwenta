@@ -7,12 +7,13 @@ import { useRecoilValue } from 'recoil';
 import ShortingCard from 'sections/shorting/ShortingCard';
 import ShortingHistory from 'sections/shorting/ShortingHistory';
 import ShortingRewards from 'sections/shorting/ShortingRewards';
+import ShortingStats from 'sections/shorting/ShortingStats';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { GridDiv, PageContent } from 'styles/common';
-import media from 'styles/media';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
+
+import { DesktopOnlyView } from 'components/Media';
 
 import { isWalletConnectedState, isL2State } from 'store/wallet';
 
@@ -27,40 +28,35 @@ const Shorting: FC = () => {
 				<title>{t('shorting.page-title')}</title>
 			</Head>
 			<AppLayout>
-				<StyledPageContent>
+				<PageContent>
 					{isL2 ? (
 						<h1>{t('shorting.not-available-on-l2')}</h1>
 					) : (
-						<>
-							<ShortingCard />
-							<ShortingRewardsContainer>
-								<ShortingRewards currencyKey={SYNTHS_MAP.sETH} />
-								<ShortingRewards currencyKey={SYNTHS_MAP.sBTC} />
-							</ShortingRewardsContainer>
-							{isWalletConnected && <ShortingHistory />}
-						</>
+						<FullHeightContainer>
+							<MainContent>
+								<ShortingCard />
+								{isWalletConnected && <ShortingHistory />}
+							</MainContent>
+							<DesktopOnlyView>
+								<StyledRightSideContent>
+									<ShortingRewards />
+									<ShortingStats />
+								</StyledRightSideContent>
+							</DesktopOnlyView>
+						</FullHeightContainer>
 					)}
-				</StyledPageContent>
+				</PageContent>
 			</AppLayout>
 		</>
 	);
 };
 
-const StyledPageContent = styled(PageContent)`
-	padding-top: 55px;
-	${media.greaterThan('md')`
-		max-width: 1000px;
-	`}
-`;
-
-const ShortingRewardsContainer = styled(GridDiv)`
-	grid-gap: 24px;
-	grid-auto-flow: column;
-	${media.lessThan('md')`
-		grid-auto-flow: row;
-		/* TODO: this is kinda ugly, and basically undoing the spacing that comes from the TradeSummaryCard */
-		margin-top: -62px;
-	`}
+const StyledRightSideContent = styled(RightSideContent)`
+	padding-left: 32px;
+	padding-right: 32px;
+	> * + * {
+		margin-top: 50px;
+	}
 `;
 
 export default Shorting;

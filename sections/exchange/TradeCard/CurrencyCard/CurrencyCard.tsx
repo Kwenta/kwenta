@@ -9,10 +9,11 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
+import Loader from 'components/Loader';
 
 import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
 
@@ -30,18 +31,24 @@ type CurrencyCardProps = {
 	priceRate: number | null;
 	className?: string;
 	label: ReactNode;
+	interactive?: boolean;
+	slippagePercent?: BigNumber | null;
+	isLoading?: boolean;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
 	side,
 	currencyKey,
 	amount,
+	slippagePercent,
 	onAmountChange,
 	walletBalance,
 	onBalanceClick,
 	onCurrencySelect,
 	priceRate,
 	label,
+	interactive = true,
+	isLoading = false,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -70,7 +77,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 
 	return (
-		<Card className={`currency-card currency-card-${side}`} {...rest}>
+		<StyledCard
+			className={`currency-card currency-card-${side}`}
+			interactive={interactive}
+			{...rest}
+		>
 			<StyledCardBody className="currency-card-body">
 				<LabelContainer data-testid="destination">{label}</LabelContainer>
 				<CurrencyWalletBalanceContainer className="currency-wallet-container">
@@ -96,13 +107,22 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									placeholder="0"
 									data-testid="currency-amount"
 								/>
-								<CurrencyAmountValue data-testid="amount-value">
-									{tradeAmount != null
-										? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
-												sign: selectedPriceCurrency.sign,
-										  })
-										: null}
-								</CurrencyAmountValue>
+								<FlexDivRowCentered>
+									<CurrencyAmountValue data-testid="amount-value">
+										{tradeAmount != null
+											? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+													sign: selectedPriceCurrency.sign,
+											  })
+											: null}
+									</CurrencyAmountValue>
+									<Slippage>
+										{!isLoading &&
+											slippagePercent != null &&
+											slippagePercent.isNegative() &&
+											formatPercent(slippagePercent)}
+									</Slippage>
+								</FlexDivRowCentered>
+								{isLoading && <StyledLoader width="24px" height="24px" />}
 							</CurrencyAmountContainer>
 						)}
 					</CurrencyContainer>
@@ -119,9 +139,17 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</WalletBalanceContainer>
 				</CurrencyWalletBalanceContainer>
 			</StyledCardBody>
-		</Card>
+		</StyledCard>
 	);
 };
+
+const StyledCard = styled(Card)<{ interactive?: boolean }>`
+	${(props) =>
+		!props.interactive &&
+		css`
+			pointer-events: none;
+		`}
+`;
 
 const StyledCardBody = styled(Card.Body)`
 	padding-top: 11px;
@@ -142,6 +170,7 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 const CurrencySelector = styled.div<{
 	currencyKeySelected: boolean;
 	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
+	interactive?: boolean;
 }>`
 	display: grid;
 	align-items: center;
@@ -178,6 +207,7 @@ const CurrencyAmountContainer = styled.div`
 	background-color: ${(props) => props.theme.colors.black};
 	border-radius: 4px;
 	width: 100%;
+	position: relative;
 `;
 
 const CurrencyAmount = styled(NumericInput)`
@@ -195,6 +225,13 @@ const CurrencyAmountValue = styled.div`
 	text-overflow: ellipsis;
 `;
 
+const Slippage = styled.div`
+	${numericValueCSS};
+	padding: 0px 8px 2px 8px;
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.yellow};
+`;
+
 const WalletBalanceContainer = styled(FlexDivRowCentered)``;
 
 const WalletBalanceLabel = styled.div`
@@ -210,6 +247,10 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.red};
 		`}
+`;
+
+const StyledLoader = styled(Loader)`
+	left: 90%;
 `;
 
 export default CurrencyCard;
