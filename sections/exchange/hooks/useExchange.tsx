@@ -35,8 +35,7 @@ import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerF
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import SelectBaseCurrencyModal from 'sections/shared/modals/SelectBaseCurrencyModal';
-import SelectQuoteCurrencyModal from 'sections/shared/modals/SelectQuoteCurrencyModal';
+import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -60,8 +59,7 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 
 import useCurrencyPair from './useCurrencyPair';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
-
-const SHOW_SLIPPAGE_PERCENT = false;
+import useCMCQuotesQuery from 'queries/cmc/useCMCQuotesQuery';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -119,6 +117,9 @@ const useExchange = ({
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const slippage = useRecoilValue(slippageState);
+	const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
+		enabled: txProvider === '1inch',
+	});
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
@@ -179,6 +180,11 @@ const useExchange = ({
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
 	);
 
+	const cmcQuotes = useMemo(() => (cmcQuotesQuery.isSuccess ? cmcQuotesQuery.data ?? null : null), [
+		cmcQuotesQuery.isSuccess,
+		cmcQuotesQuery.data,
+	]);
+
 	const rate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
@@ -230,13 +236,41 @@ const useExchange = ({
 	]);
 
 	const basePriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
-		[exchangeRates, baseCurrencyKey, selectedPriceCurrency.name]
+		() =>
+			txProvider === '1inch'
+				? cmcQuotes != null && baseCurrencyKey != null && selectPriceCurrencyRate != null
+					? cmcQuotes[baseCurrencyKey].price / selectPriceCurrencyRate
+					: 0
+				: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
+		[
+			exchangeRates,
+			baseCurrencyKey,
+			selectedPriceCurrency.name,
+			txProvider,
+			cmcQuotes,
+			selectPriceCurrencyRate,
+		]
 	);
+
 	const quotePriceRate = useMemo(
 		() =>
-			getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name),
-		[exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name]
+			txProvider === '1inch'
+				? cmcQuotes != null && quoteCurrencyKey != null && selectPriceCurrencyRate != null
+					? cmcQuotes[quoteCurrencyKey].price / selectPriceCurrencyRate
+					: 0
+				: getExchangeRatesForCurrencies(
+						exchangeRates,
+						quoteCurrencyKey,
+						selectedPriceCurrency.name
+				  ),
+		[
+			exchangeRates,
+			quoteCurrencyKey,
+			selectedPriceCurrency.name,
+			txProvider,
+			cmcQuotes,
+			selectPriceCurrencyRate,
+		]
 	);
 	const ethPriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
@@ -605,7 +639,7 @@ const useExchange = ({
 	) : null;
 
 	const slippagePercent = useMemo(() => {
-		if (txProvider === '1inch' && SHOW_SLIPPAGE_PERCENT) {
+		if (txProvider === '1inch') {
 			if (!totalTradePrice.isNaN() && !estimatedBaseTradePrice.isNaN()) {
 				return totalTradePrice.minus(estimatedBaseTradePrice).dividedBy(totalTradePrice).negated();
 			}
@@ -727,7 +761,7 @@ const useExchange = ({
 				/>
 			)}
 			{selectBaseCurrencyModal && (
-				<SelectBaseCurrencyModal
+				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModal(false)}
 					onSelect={(currencyKey) => {
 						resetCurrencies();
@@ -748,7 +782,7 @@ const useExchange = ({
 				/>
 			)}
 			{selectQuoteCurrencyModalOpen && (
-				<SelectQuoteCurrencyModal
+				<SelectCurrencyModal
 					onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
 						resetCurrencies();

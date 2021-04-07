@@ -16,14 +16,12 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import { formatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/formatters/number';
-import { WEEKS_IN_YEAR } from 'utils/formatters/date';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { SYNTHS_TO_SHORT } from '../constants';
-
 import { Title } from '../common';
 
-const WEEKLY_SNX_REWARDS = toBigNumber(8000);
+const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 const ShortingStats = () => {
 	const { t } = useTranslation();
@@ -40,17 +38,19 @@ const ShortingStats = () => {
 		() => (collateralShortStatsQuery.isSuccess ? collateralShortStatsQuery.data ?? null : null),
 		[collateralShortStatsQuery.isSuccess, collateralShortStatsQuery.data]
 	);
-
 	const shortStatsMap = useMemo(() => {
 		if (shortStats != null && exchangeRates != null && selectPriceCurrencyRate != null) {
-			return mapValues(shortStats, (shortStat, currencyKey) => {
-				const openInterest = shortStat
-					.multipliedBy(exchangeRates[currencyKey])
-					.dividedBy(selectPriceCurrencyRate);
+			return mapValues(shortStats, ({ shorts, rewardsRate, rewardsTotalSupply }, currencyKey) => {
+				const snxUSDPrice = exchangeRates[CRYPTO_CURRENCY_MAP.SNX];
+				const assetUSDPrice = exchangeRates[currencyKey];
 
-				const apr = WEEKLY_SNX_REWARDS.multipliedBy(exchangeRates[CRYPTO_CURRENCY_MAP.SNX])
-					.multipliedBy(WEEKS_IN_YEAR)
-					.dividedBy(openInterest);
+				const openInterest = shorts.multipliedBy(assetUSDPrice).dividedBy(selectPriceCurrencyRate);
+
+				const apr = rewardsRate
+					.times(SECONDS_IN_A_YR)
+					.times(snxUSDPrice)
+					.div(rewardsTotalSupply)
+					.div(assetUSDPrice);
 
 				return {
 					openInterest,
