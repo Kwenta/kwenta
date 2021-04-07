@@ -26,6 +26,7 @@ const useCoinGeckoCoinListQuery = (options?: QueryConfig<CoinListMap>) => {
 		{
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);
