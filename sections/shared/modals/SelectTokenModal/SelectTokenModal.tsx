@@ -35,6 +35,8 @@ type SelectTokenModalProps = {
 	tokensToOmit?: CurrencyKey[];
 };
 
+const ROW_HEIGHT = 43;
+
 export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	onDismiss,
 	onSelect,
@@ -196,7 +198,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 							<FixedSizeList
 								height={height}
 								itemCount={tokensResults.length}
-								itemSize={48}
+								itemSize={ROW_HEIGHT}
 								width={width}
 							>
 								{renderRow}
