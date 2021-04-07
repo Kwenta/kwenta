@@ -27,6 +27,7 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
+import { CoinGeckoPriceIds } from 'queries/coingecko/types';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -69,7 +70,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 		? coinGeckoTokenPricesQuery.data ?? null
 		: null;
 
-	const coinGeckoPricesQuery = useCoinGeckoPricesQuery(['ethereum']);
+	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([CoinGeckoPriceIds.ETH]);
 	const coinGeckoPrices = coinGeckoPricesQuery.isSuccess ? coinGeckoPricesQuery.data ?? null : null;
 
 	const tokenBalancesWithPrices = useMemo(
@@ -78,7 +79,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 				? mapValues(tokenBalances, ({ balance, token: { address } }, symbol) => {
 						const price =
 							symbol === CRYPTO_CURRENCY_MAP.ETH
-								? get(coinGeckoPrices, ['ethereum', 'usd'], null)
+								? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
 								: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
 
 						return {
