@@ -11,6 +11,7 @@ import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuer
 import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
+import { CoinGeckoPriceIds } from 'queries/coingecko/types';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -27,7 +28,6 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
-import { CoinGeckoPriceIds } from 'queries/coingecko/types';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
