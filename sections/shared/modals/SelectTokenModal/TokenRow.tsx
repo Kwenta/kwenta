@@ -40,7 +40,7 @@ const TokenRow: FC<TokenRowProps> = ({
 		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable={true}>
 			<Currency.Name
 				name={startCase(token.name)}
-				showIcon={false}
+				showIcon={true}
 				iconProps={{ type: 'token' }}
 				{...{ currencyKey }}
 			/>

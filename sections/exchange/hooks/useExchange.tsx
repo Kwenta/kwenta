@@ -98,7 +98,7 @@ const useExchange = ({
 	txProvider = 'synthetix',
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { makeErc20Contract } = Connector.useContainer();
+	const { createERC20Contract } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const { swap1Inch } = Convert.useContainer();
 	const router = useRouter();
@@ -230,6 +230,14 @@ const useExchange = ({
 		? oneInchApproveAddressQuery.data ?? null
 		: null;
 
+	const quoteCurrencyContract = useMemo(
+		() =>
+			needsApproval && tokensMap != null && quoteCurrencyKey != null
+				? createERC20Contract(tokensMap[quoteCurrencyKey].address)
+				: null,
+		[tokensMap, quoteCurrencyKey, createERC20Contract, needsApproval]
+	);
+
 	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
@@ -336,10 +344,14 @@ const useExchange = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const quoteCurrencyAmountBN = useMemo(() => toBigNumber(quoteCurrencyAmount), [
-		quoteCurrencyAmount,
-	]);
-	const baseCurrencyAmountBN = useMemo(() => toBigNumber(baseCurrencyAmount), [baseCurrencyAmount]);
+	const quoteCurrencyAmountBN = useMemo(
+		() => (quoteCurrencyAmount === '' ? zeroBN : toBigNumber(quoteCurrencyAmount)),
+		[quoteCurrencyAmount]
+	);
+	const baseCurrencyAmountBN = useMemo(
+		() => (baseCurrencyAmount === '' ? zeroBN : toBigNumber(baseCurrencyAmount)),
+		[baseCurrencyAmount]
+	);
 
 	const totalTradePrice = useMemo(() => {
 		let tradePrice = quoteCurrencyAmountBN.multipliedBy(quotePriceRate);
@@ -500,12 +512,18 @@ const useExchange = ({
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	useEffect(() => {
-		if (txProvider === '1inch') {
+		if (txProvider === '1inch' && quoteCurrencyAmount !== '') {
 			if (oneInchQuoteQuery.isSuccess && oneInchQuoteQuery.data != null) {
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
-	}, [baseCurrencyAmount, txProvider, oneInchQuoteQuery.data, oneInchQuoteQuery.isSuccess]);
+	}, [
+		quoteCurrencyAmount,
+		baseCurrencyAmount,
+		txProvider,
+		oneInchQuoteQuery.data,
+		oneInchQuoteQuery.isSuccess,
+	]);
 
 	const getExchangeParams = useCallback(() => {
 		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
@@ -545,9 +563,8 @@ const useExchange = ({
 			oneInchApproveAddress != null
 		) {
 			try {
-				const contract = makeErc20Contract(tokensMap[quoteCurrencyKey].address);
-				if (contract != null) {
-					const allowance = (await contract.allowance(
+				if (quoteCurrencyContract != null) {
+					const allowance = (await quoteCurrencyContract.allowance(
 						walletAddress,
 						oneInchApproveAddress
 					)) as ethers.BigNumber;
@@ -563,7 +580,7 @@ const useExchange = ({
 		isWalletConnected,
 		quoteCurrencyKey,
 		walletAddress,
-		makeErc20Contract,
+		quoteCurrencyContract,
 		tokensMap,
 		oneInchApproveAddress,
 	]);
@@ -580,7 +597,7 @@ const useExchange = ({
 			setTxApproveModalOpen(true);
 
 			try {
-				const contract = makeErc20Contract(tokensMap[quoteCurrencyKey].address);
+				const contract = createERC20Contract(tokensMap[quoteCurrencyKey].address);
 				if (contract != null) {
 					const gasEstimate = await contract.estimateGas.approve(
 						oneInchApproveAddress,
@@ -740,8 +757,7 @@ const useExchange = ({
 			amount={quoteCurrencyAmount}
 			onAmountChange={async (value) => {
 				if (value === '') {
-					setQuoteCurrencyAmount('');
-					setBaseCurrencyAmount('');
+					resetCurrencies();
 				} else {
 					setQuoteCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
@@ -806,8 +822,7 @@ const useExchange = ({
 			amount={baseCurrencyAmount}
 			onAmountChange={async (value) => {
 				if (value === '') {
-					setBaseCurrencyAmount('');
-					setQuoteCurrencyAmount('');
+					resetCurrencies();
 				} else {
 					setBaseCurrencyAmount(value);
 					if (txProvider === 'synthetix') {

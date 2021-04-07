@@ -209,7 +209,7 @@ const useConnector = () => {
 			: contracts[synthToContractName(currencyKey!)].address;
 	};
 
-	const makeErc20Contract = useCallback(
+	const createERC20Contract = useCallback(
 		(tokenAddress: string) =>
 			signer != null ? new ethers.Contract(tokenAddress, erc20Abi, signer) : null,
 		[signer]
@@ -225,7 +225,7 @@ const useConnector = () => {
 		switchAccounts,
 		isHardwareWallet,
 		getTokenAddress,
-		makeErc20Contract,
+		createERC20Contract,
 	};
 };
 

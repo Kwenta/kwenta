@@ -35,6 +35,7 @@ const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 		{
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);

@@ -28,12 +28,12 @@ export const getSynthIcon = (currencyKey: CurrencyKey) =>
 export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
 	const [isError, setIsError] = useState<boolean>(false);
 
-	const synthetixTokenListQuery = useSynthetixTokenList({ enabled: false });
+	const synthetixTokenListQuery = useSynthetixTokenList();
 	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
 		? synthetixTokenListQuery.data?.tokensMap ?? null
 		: null;
 
-	const OneInchTokenListQuery = use1InchTokenList({ enabled: false });
+	const OneInchTokenListQuery = use1InchTokenList();
 	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
 		? OneInchTokenListQuery.data?.tokensMap ?? null
 		: null;
