@@ -21,7 +21,7 @@ import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
 import { FlexDivCentered, BottomShadow } from 'styles/common';
 
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
@@ -59,11 +59,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const tokenBalancesAddresses = useMemo(
 		() =>
 			tokenBalances != null
-				? [
-						ETH_ADDRESS,
-						...Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address),
-				  ]
-				: [ETH_ADDRESS],
+				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address)
+				: [],
 		[tokenBalances]
 	);
 
