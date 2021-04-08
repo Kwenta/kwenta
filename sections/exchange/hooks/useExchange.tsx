@@ -384,7 +384,9 @@ const useExchange = ({
 			return t('exchange.summary-info.button.fee-reclaim-period');
 		}
 		if (!selectedBothSides) {
-			return t('exchange.summary-info.button.select-synth');
+			return txProvider === '1inch'
+				? t('exchange.summary-info.button.select-token')
+				: t('exchange.summary-info.button.select-synth');
 		}
 		if (insufficientBalance) {
 			return t('exchange.summary-info.button.insufficient-balance');
@@ -415,6 +417,7 @@ const useExchange = ({
 		isWalletConnected,
 		isApproving,
 		t,
+		txProvider,
 	]);
 
 	const noSynths =
@@ -791,6 +794,7 @@ const useExchange = ({
 			}
 			priceRate={quotePriceRate}
 			label={t('exchange.common.from')}
+			txProvider={txProvider}
 		/>
 	);
 	const quotePriceChartCard = showPriceCard ? (
@@ -863,6 +867,7 @@ const useExchange = ({
 			interactive={txProvider === 'synthetix'}
 			slippagePercent={slippagePercent}
 			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
+			txProvider={txProvider}
 		/>
 	);
 

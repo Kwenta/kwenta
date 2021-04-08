@@ -139,7 +139,8 @@
 		"currency-card": {
 			"wallet-balance": "wallet balance",
 			"currency-selector": {
-				"no-value": "select synth"
+				"select-synth": "select synth",
+				"select-token": "select token"
 			}
 		},
 		"market-details-card": {
@@ -194,6 +195,7 @@
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
+				"select-token": "select token",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",

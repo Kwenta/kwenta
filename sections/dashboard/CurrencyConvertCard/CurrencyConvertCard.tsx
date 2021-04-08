@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
+import { SYNTHS_MAP } from 'constants/currency';
 
 import useExchange from 'sections/exchange/hooks/useExchange';
 
@@ -12,7 +12,6 @@ import SlippageSelector from './SlippageSelector';
 const CurrencyConvertCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
 		defaultBaseCurrencyKey: SYNTHS_MAP.sUSD,
-		defaultQuoteCurrencyKey: CRYPTO_CURRENCY_MAP.ETH,
 		footerCardAttached: true,
 		persistSelectedCurrencies: false,
 		allowQuoteCurrencySelection: true,
