@@ -7,9 +7,12 @@ import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
 import { GridDiv, Paragraph } from 'styles/common';
-import { StackSection } from '../common';
+import { FlexSection, StackSection } from '../common';
 
 import media from 'styles/media';
+import Link from 'next/link';
+import Button from 'components/Button';
+import ROUTES from 'constants/routes';
 
 const Hero = () => {
 	const { t } = useTranslation();
@@ -18,6 +21,13 @@ const Hero = () => {
 		<StackSection>
 			<Svg src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
+			<CTAContainer>
+				<Link href={ROUTES.Dashboard.Home}>
+					<Button variant="primary" isRounded={false} size="lg">
+						{t('homepage.nav.start-trading')}
+					</Button>
+				</Link>
+			</CTAContainer>
 			<HeroImageContainer>
 				<HeroImage src={MarketOrderPreview} alt="" webp={true} />
 			</HeroImageContainer>
@@ -59,6 +69,10 @@ const HeroImage = styled(Img)`
 	${media.lessThan('sm')`
 		width: 560px;
 	`}
+`;
+
+const CTAContainer = styled.div`
+	margin: 50px 0px 0px 0;
 `;
 
 export default Hero;
