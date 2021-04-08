@@ -78,26 +78,31 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const tokenBalancesWithPrices = useMemo(
 		() =>
 			tokenBalances != null
-				? mapValues(tokenBalances, ({ balance, token: { address } }, symbol) => {
-						const price =
-							symbol === CRYPTO_CURRENCY_MAP.ETH
-								? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
-								: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
+				? Object.values(
+						mapValues(tokenBalances, ({ balance, token }, symbol) => {
+							const { address } = token;
 
-						return {
-							currencyKey: symbol,
-							balance,
-							usdBalance: price != null ? balance.multipliedBy(price) : null,
-						};
-				  })
-				: tokenBalances,
+							const price =
+								symbol === CRYPTO_CURRENCY_MAP.ETH
+									? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
+									: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
+
+							return {
+								currencyKey: symbol,
+								balance,
+								usdBalance: price != null ? balance.multipliedBy(price) : null,
+								token,
+							};
+						})
+				  )
+				: [],
 		[coinGeckoPrices, coinGeckoTokenPrices, tokenBalances]
 	);
 
 	const searchFilteredTokens = useDebouncedMemo(
 		() =>
 			assetSearch
-				? tokenList.filter(({ name, symbol, address }) => {
+				? tokenBalancesWithPrices.filter(({ token: { name, symbol, address } }) => {
 						const assetSearchQueryLC = assetSearch.toLowerCase();
 
 						return (
@@ -106,44 +111,27 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 							address.toLowerCase() === assetSearchQueryLC
 						);
 				  })
-				: tokenList,
-		[tokenList, assetSearch],
+				: tokenBalancesWithPrices,
+		[tokenBalancesWithPrices, assetSearch],
 		DEFAULT_SEARCH_DEBOUNCE_MS
 	);
 
 	const tokensResults = useMemo(() => {
-		let tokens = assetSearch ? searchFilteredTokens : tokenList;
-		if (tokensWalletBalancesQuery.isSuccess && tokenBalancesWithPrices != null) {
-			tokens = orderBy(
-				tokens,
-				(token) => {
-					const tokenBalance = tokenBalancesWithPrices[token.symbol];
-					if (tokenBalance != null) {
-						return tokenBalance.usdBalance != null
-							? tokenBalance.usdBalance.toNumber()
-							: tokenBalance.balance.toNumber();
-					}
-					return 0;
-				},
-				'desc'
-			);
-		}
+		const tokens = orderBy(
+			assetSearch ? searchFilteredTokens : tokenBalancesWithPrices,
+			(token) =>
+				token.usdBalance != null ? token.usdBalance.toNumber() : token.balance.toNumber(),
+			'desc'
+		);
+
 		return tokensToOmit?.length
-			? tokens.filter((token) => !tokensToOmit.includes(token.symbol))
+			? tokens.filter(({ currencyKey }) => !tokensToOmit.includes(currencyKey))
 			: tokens;
-	}, [
-		assetSearch,
-		searchFilteredTokens,
-		tokensWalletBalancesQuery.isSuccess,
-		tokenBalancesWithPrices,
-		tokenList,
-		tokensToOmit,
-	]);
+	}, [assetSearch, searchFilteredTokens, tokenBalancesWithPrices, tokensToOmit]);
+
 	const renderRow: ComponentType<ListChildComponentProps> = ({ index, style }) => {
-		const token = tokensResults[index];
-		const currencyKey = token.symbol;
-		const tokenBalance =
-			tokenBalancesWithPrices != null ? tokenBalancesWithPrices[token.symbol] : null;
+		const tokenResult = tokensResults[index];
+		const { currencyKey, token, balance, usdBalance } = tokenResult;
 
 		return (
 			<div key={currencyKey} style={style}>
@@ -153,15 +141,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 						onSelect(currencyKey);
 						onDismiss();
 					}}
-					balance={tokenBalance != null ? tokenBalance.balance : undefined}
-					totalValue={
-						tokenBalance != null && tokenBalance.usdBalance != null
-							? tokenBalance.usdBalance
-							: undefined
-					}
-					token={token}
-					selectPriceCurrencyRate={selectPriceCurrencyRate}
-					selectedPriceCurrency={selectedPriceCurrency}
+					totalValue={usdBalance ?? undefined}
+					{...{ balance, token, selectedPriceCurrency, selectPriceCurrencyRate }}
 				/>
 			</div>
 		);

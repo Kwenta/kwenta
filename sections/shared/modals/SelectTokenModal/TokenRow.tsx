@@ -50,6 +50,9 @@ const TokenRow: FC<TokenRowProps> = ({
 					totalValue={totalValue ?? 0}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
+					formatAmountOptions={{
+						minDecimals: 4,
+					}}
 					{...{ currencyKey }}
 				/>
 			) : (
