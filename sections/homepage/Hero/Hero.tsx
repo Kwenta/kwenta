@@ -7,12 +7,13 @@ import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
 import { GridDiv, Paragraph } from 'styles/common';
-import { FlexSection, StackSection } from '../common';
+import { StackSection } from '../common';
 
 import media from 'styles/media';
 import Link from 'next/link';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
+import PoweredBySynthetix from 'components/PoweredBySynthetix';
 
 const Hero = () => {
 	const { t } = useTranslation();
@@ -21,6 +22,9 @@ const Hero = () => {
 		<StackSection>
 			<Svg src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
+			<SynthetixContainer>
+				<PoweredBySynthetix />
+			</SynthetixContainer>
 			<CTAContainer>
 				<Link href={ROUTES.Dashboard.Home}>
 					<Button variant="primary" isRounded={false} size="lg">
@@ -71,8 +75,22 @@ const HeroImage = styled(Img)`
 	`}
 `;
 
+const SynthetixContainer = styled.div`
+	margin: 25px 0px 0px 0;
+`;
+
 const CTAContainer = styled.div`
 	margin: 50px 0px 0px 0;
+`;
+
+const Container = styled.div`
+	display: grid;
+	grid-auto-flow: column;
+	${media.lessThan('sm')`
+		grid-auto-flow: row;
+		text-align: center;
+		grid-gap: 15px;
+	`}
 `;
 
 export default Hero;
