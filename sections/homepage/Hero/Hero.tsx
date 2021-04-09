@@ -81,16 +81,7 @@ const SynthetixContainer = styled.div`
 
 const CTAContainer = styled.div`
 	margin: 50px 0px 0px 0;
-`;
-
-const Container = styled.div`
-	display: grid;
-	grid-auto-flow: column;
-	${media.lessThan('sm')`
-		grid-auto-flow: row;
-		text-align: center;
-		grid-gap: 15px;
-	`}
+	z-index: 1;
 `;
 
 export default Hero;
