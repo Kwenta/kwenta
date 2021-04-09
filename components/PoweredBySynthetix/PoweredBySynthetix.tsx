@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { ExternalLink, Paragraph } from 'styles/common';
 import media from 'styles/media';
 import { useTranslation } from 'react-i18next';
-import { Svg, Img } from 'react-optimized-image';
+import { Img } from 'react-optimized-image';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
 import { FlexDivCentered, ExternalLink } from 'styles/common';
@@ -14,8 +13,6 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 
 const Footer: React.FC = () => {
-	const { t } = useTranslation();
-
 	return (
 		<FooterContainer>
 			<PoweredBySynthetix />
