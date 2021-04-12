@@ -1,6 +1,7 @@
 import { atom, selector } from 'recoil';
 import { CurrencyKey } from 'constants/currency';
-import { orderBy, groupBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
+import groupBy from 'lodash/groupBy';
 import { Transaction } from 'ethers';
 
 import { getOrdersKey } from '../utils';

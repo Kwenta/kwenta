@@ -3,21 +3,25 @@ import axios from 'axios';
 import keyBy from 'lodash/keyBy';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey } from 'constants/currency';
 
-import { Token, TokenListResponse } from './types';
+import { TokenListQueryResponse, TokenListResponse } from './types';
 
-const useSynthetixTokenList = (options?: QueryConfig<Record<CurrencyKey, Token>>) => {
-	return useQuery<Record<CurrencyKey, Token>>(
+const useSynthetixTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.Synthetix,
 		async () => {
 			const response = await axios.get<TokenListResponse>('https://synths.snx.eth.link');
 
-			return keyBy(response.data.tokens, 'symbol');
+			return {
+				tokens: response.data.tokens,
+				tokensMap: keyBy(response.data.tokens, 'symbol'),
+				symbols: response.data.tokens.map((token) => token.symbol),
+			};
 		},
 		{
 			refetchInterval: false,
 			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 			...options,
 		}
 	);

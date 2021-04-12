@@ -19,6 +19,7 @@ import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/com
 
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -34,6 +35,7 @@ type CurrencyCardProps = {
 	interactive?: boolean;
 	slippagePercent?: BigNumber | null;
 	isLoading?: boolean;
+	txProvider?: TxProvider;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
@@ -49,6 +51,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	label,
 	interactive = true,
 	isLoading = false,
+	txProvider = 'synthetix',
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -94,7 +97,9 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						>
 							{currencyKey ?? (
 								<CapitalizedText>
-									{t('exchange.currency-card.currency-selector.no-value')}
+									{txProvider === '1inch'
+										? t('exchange.currency-card.currency-selector.select-token')
+										: t('exchange.currency-card.currency-selector.select-synth')}
 								</CapitalizedText>
 							)}{' '}
 							{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}

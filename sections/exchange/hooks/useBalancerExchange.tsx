@@ -53,7 +53,6 @@ type ExchangeCardProps = {
 	defaultQuoteCurrencyKey?: CurrencyKey | null;
 	footerCardAttached?: boolean;
 	persistSelectedCurrencies?: boolean;
-	allowCurrencySelection?: boolean;
 	showNoSynthsCard?: boolean;
 };
 

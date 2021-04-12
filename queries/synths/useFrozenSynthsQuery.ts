@@ -1,5 +1,5 @@
 import { QueryConfig, useQuery } from 'react-query';
-import { compact } from 'lodash';
+import compact from 'lodash/compact';
 import { ethers } from 'ethers';
 
 import QUERY_KEYS from 'constants/queryKeys';

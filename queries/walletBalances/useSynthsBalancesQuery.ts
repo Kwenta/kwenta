@@ -1,7 +1,7 @@
 import { useQuery, QueryConfig } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import { orderBy } from 'lodash';
+import orderBy from 'lodash/orderBy';
 import BigNumber from 'bignumber.js';
 
 import synthetix from 'lib/synthetix';
