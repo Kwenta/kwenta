@@ -2,6 +2,9 @@ import { createContainer } from 'unstated-next';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
+
+import erc20Abi from 'lib/abis/ERC20.json';
 
 import Connector from 'containers/Connector';
 
@@ -78,7 +81,7 @@ const useConvert = () => {
 			}
 		);
 
-		return toBigNumber(response.data.toTokenAmount).dividedBy(1e18).toString();
+		return ethers.utils.formatEther(response.data.toTokenAmount).toString();
 	};
 
 	const swap1Inch = async (
@@ -123,10 +126,17 @@ const useConvert = () => {
 		return response.data.address;
 	};
 
+	const createERC20Contract = useCallback(
+		(tokenAddress: string) =>
+			signer != null ? new ethers.Contract(tokenAddress, erc20Abi, signer) : null,
+		[signer]
+	);
+
 	return {
 		swap1Inch,
 		quote1Inch,
 		get1InchApproveAddress,
+		createERC20Contract,
 	};
 };
 

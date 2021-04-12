@@ -8,8 +8,6 @@ import castArray from 'lodash/castArray';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import Connector from 'containers/Connector';
-
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import Notify from 'containers/Notify';
@@ -98,9 +96,8 @@ const useExchange = ({
 	txProvider = 'synthetix',
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { createERC20Contract } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
-	const { swap1Inch } = Convert.useContainer();
+	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 	const router = useRouter();
 
 	const marketQuery = useMemo(

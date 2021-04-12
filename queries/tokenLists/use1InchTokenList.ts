@@ -5,14 +5,15 @@ import keyBy from 'lodash/keyBy';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
 
+import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+
 import { TokenListQueryResponse, TokenListResponse } from './types';
 
 const ether = {
 	address: ETH_ADDRESS,
 	chainId: 1,
 	decimals: 18,
-	logoURI:
-		'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+	logoURI: ETHIcon.src,
 	name: 'Ethereum',
 	symbol: CRYPTO_CURRENCY_MAP.ETH,
 	tags: [],
