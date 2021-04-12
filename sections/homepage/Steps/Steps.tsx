@@ -77,6 +77,11 @@ const StyledFlexSection = styled(FlexSection)`
 `;
 
 const StyledLeftSubHeader = styled(LeftSubHeader)`
+	${media.greaterThan('lg')`
+		position: sticky;
+		top: 140px;
+		align-self: flex-start;
+	`}
 	${media.lessThan('lg')`
 		padding-top: 0;
 		padding-bottom: 56px;
