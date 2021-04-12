@@ -1,11 +1,9 @@
-import { ComponentType, FC, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
@@ -34,8 +32,6 @@ type SelectTokenModalProps = {
 	onSelect: (currencyKey: CurrencyKey) => void;
 	tokensToOmit?: CurrencyKey[];
 };
-
-const ROW_HEIGHT = 43;
 
 export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	onDismiss,
@@ -129,25 +125,6 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 			: tokens;
 	}, [assetSearch, searchFilteredTokens, tokenBalancesWithPrices, tokensToOmit]);
 
-	const renderRow: ComponentType<ListChildComponentProps> = ({ index, style }) => {
-		const tokenResult = tokensResults[index];
-		const { currencyKey, token, balance, usdBalance } = tokenResult;
-
-		return (
-			<div key={currencyKey} style={style}>
-				<TokenRow
-					key={currencyKey}
-					onClick={() => {
-						onSelect(currencyKey);
-						onDismiss();
-					}}
-					totalValue={usdBalance ?? undefined}
-					{...{ balance, token, selectedPriceCurrency, selectPriceCurrencyRate }}
-				/>
-			</div>
-		);
-	};
-
 	return (
 		<StyledCenteredModal onDismiss={onDismiss} isOpen={true} title={t('modals.select-token.title')}>
 			<SearchContainer>
@@ -174,18 +151,21 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 				{isLoading ? (
 					<Loader />
 				) : tokensResults.length > 0 ? (
-					<AutoSizer>
-						{({ height, width }) => (
-							<FixedSizeList
-								height={height}
-								itemCount={tokensResults.length}
-								itemSize={ROW_HEIGHT}
-								width={width}
-							>
-								{renderRow}
-							</FixedSizeList>
-						)}
-					</AutoSizer>
+					tokensResults.map((tokenResult) => {
+						const { currencyKey, token, balance, usdBalance } = tokenResult;
+
+						return (
+							<TokenRow
+								key={currencyKey}
+								onClick={() => {
+									onSelect(currencyKey);
+									onDismiss();
+								}}
+								totalValue={usdBalance ?? undefined}
+								{...{ balance, token, selectedPriceCurrency, selectPriceCurrencyRate }}
+							/>
+						);
+					})
 				) : (
 					<EmptyDisplay>{t('modals.select-token.search.empty-results')}</EmptyDisplay>
 				)}
