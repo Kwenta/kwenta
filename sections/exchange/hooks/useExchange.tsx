@@ -1019,6 +1019,7 @@ const useExchange = ({
 					attemptRetry={handleApprove}
 					currencyKey={quoteCurrencyKey!}
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
+					txProvider={txProvider}
 				/>
 			)}
 			{selectBalancerTradeModal && (
