@@ -75,7 +75,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 				return (
 					<img
 						src={
-							synthetixTokenListMap != null
+							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
 								? synthetixTokenListMap[currencyKey].logoURI
 								: getSynthIcon(currencyKey)
 						}
