@@ -15,7 +15,6 @@ import Convert from 'containers/Convert';
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
-import { L2_GAS_LIMIT } from 'constants/network';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -467,7 +466,6 @@ const useExchange = ({
 
 	const getGasLimitEstimateForExchange = useCallback(async () => {
 		try {
-			if (isL2) return L2_GAS_LIMIT;
 			if (synthetix.js != null) {
 				const exchangeParams = getExchangeParams();
 				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
@@ -480,7 +478,7 @@ const useExchange = ({
 			console.log(e);
 		}
 		return null;
-	}, [getExchangeParams, isL2]);
+	}, [getExchangeParams]);
 
 	const handleSubmit = useCallback(async () => {
 		if (synthetix.js != null && gasPrice != null) {

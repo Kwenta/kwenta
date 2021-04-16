@@ -34,7 +34,8 @@ export const getTransactionPrice = (
 	return (gasPrice * ethPrice * gasLimit) / GWEI_UNIT;
 };
 
-export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
+export const normalizeGasLimit = (gasLimit: number) =>
+	Math.max(gasLimit + DEFAULT_GAS_BUFFER, 21000);
 
 export const gasPriceInWei = (gasPrice: number) => gasPrice * GWEI_UNIT;
 
