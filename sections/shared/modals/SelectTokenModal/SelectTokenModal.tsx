@@ -4,6 +4,9 @@ import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
+import { useRecoilValue } from 'recoil';
+
+import { isWalletConnectedState } from 'store/wallet';
 
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
@@ -13,15 +16,18 @@ import { CoinGeckoPriceIds } from 'queries/coingecko/types';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
+import Button from 'components/Button';
 import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { FlexDivCentered, BottomShadow } from 'styles/common';
+import { FlexDivCentered, BottomShadow, FlexDivColCentered } from 'styles/common';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
+
+import Connector from 'containers/Connector';
 
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
@@ -40,6 +46,9 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
+	const { connectWallet } = Connector.useContainer();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const tokenListQuery = use1InchTokenList();
@@ -134,7 +143,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 						setAssetSearch(e.target.value);
 					}}
 					value={assetSearch}
-					autoFocus={true}
+					autoFocus={isWalletConnected}
 				/>
 			</SearchContainer>
 			<RowsHeader>
@@ -166,6 +175,18 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 							/>
 						);
 					})
+				) : !isWalletConnected ? (
+					<ContainerEmptyState>
+						<Message>{t('exchange.connect-wallet-card.message')}</Message>
+						<MessageButton
+							onClick={() => {
+								onDismiss();
+								connectWallet();
+							}}
+						>
+							{t('common.wallet.connect-wallet')}
+						</MessageButton>
+					</ContainerEmptyState>
 				) : (
 					<EmptyDisplay>{t('modals.select-token.search.empty-results')}</EmptyDisplay>
 				)}
@@ -198,6 +219,26 @@ const AssetSearchInput = styled(SearchInput)`
 		text-transform: capitalize;
 		color: ${(props) => props.theme.colors.silver};
 	}
+`;
+
+const ContainerEmptyState = styled(FlexDivColCentered)`
+	margin: 8px 0px;
+	padding: 0 30px;
+	button {
+		width: 200px;
+	}
+`;
+
+const Message = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	padding: 24px 32px;
+	text-align: center;
+`;
+
+const MessageButton = styled(Button).attrs({ variant: 'primary', size: 'lg', isRounded: true })`
+	width: 200px;
 `;
 
 const EmptyDisplay = styled(FlexDivCentered)`
