@@ -15,7 +15,13 @@ import Convert from 'containers/Convert';
 
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS, SYNTHS_MAP } from 'constants/currency';
+import {
+	CRYPTO_CURRENCY_MAP,
+	CurrencyKey,
+	ETH_ADDRESS,
+	SYNTHS,
+	SYNTHS_MAP,
+} from 'constants/currency';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
@@ -988,7 +994,7 @@ const useExchange = ({
 							routeToMarketPair(currencyPair.base, currencyKey);
 						}
 					}}
-					tokensToOmit={[SYNTHS_MAP.sUSD]}
+					tokensToOmit={SYNTHS}
 				/>
 			)}
 			{selectBaseTokenModalOpen && (
