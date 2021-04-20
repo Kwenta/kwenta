@@ -5,6 +5,7 @@ import { networkState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import Convert from 'containers/Convert';
+import { toBigNumber } from 'utils/formatters/number';
 
 const use1InchQuoteQuery = (
 	quoteCurrencyAddress: string | null,
@@ -24,7 +25,7 @@ const use1InchQuoteQuery = (
 			network?.id!
 		),
 		async () => {
-			if (Number(amount) === 0) {
+			if (toBigNumber(amount).isZero()) {
 				return '';
 			}
 
