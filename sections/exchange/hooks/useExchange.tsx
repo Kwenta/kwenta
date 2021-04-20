@@ -814,7 +814,7 @@ const useExchange = ({
 			}
 		}
 		return null;
-	}, [totalTradePrice, estimatedBaseTradePrice, txProvider]);
+	}, [estimatedBaseTradePrice, txProvider]);
 
 	const baseCurrencyCard = (
 		<CurrencyCard

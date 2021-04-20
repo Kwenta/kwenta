@@ -24,6 +24,10 @@ const use1InchQuoteQuery = (
 			network?.id!
 		),
 		async () => {
+			if (Number(amount) === 0) {
+				return '';
+			}
+
 			const estimatedAmount = await quote1Inch(
 				quoteCurrencyAddress!,
 				baseCurrencyAddress!,
