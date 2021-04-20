@@ -814,6 +814,7 @@ const useExchange = ({
 			}
 		}
 		return null;
+		// eslint-disable-next-line
 	}, [estimatedBaseTradePrice, txProvider]);
 
 	const baseCurrencyCard = (
