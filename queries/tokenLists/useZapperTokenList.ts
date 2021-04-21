@@ -8,6 +8,7 @@ import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 
 import { TokenListQueryResponse, TokenListResponse } from './types';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const ether = {
 	address: ETH_ADDRESS,
@@ -23,7 +24,7 @@ const useZapperTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.Zapper,
 		async () => {
-			const response = await axios.get<TokenListResponse>('https://zapper.fi/api/token-list');
+			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.Zapper);
 
 			const tokens = [ether, ...response.data.tokens];
 
