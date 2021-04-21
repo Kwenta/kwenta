@@ -5,7 +5,7 @@ export const EXTERNAL_LINKS = {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
-		OptimismTokenBridge: 'https://60773f456093c00007c8c7b6--optimism-gateway.netlify.app/',
+		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
