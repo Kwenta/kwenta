@@ -820,7 +820,8 @@ const useExchange = ({
 			}
 		}
 		return null;
-	}, [totalTradePrice, estimatedBaseTradePrice, txProvider]);
+		// eslint-disable-next-line
+	}, [estimatedBaseTradePrice, txProvider]);
 
 	const baseCurrencyCard = (
 		<CurrencyCard
