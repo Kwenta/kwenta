@@ -3,7 +3,7 @@ import Img from 'react-optimized-image';
 import styled from 'styled-components';
 
 import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
-import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 
@@ -33,9 +33,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		? synthetixTokenListQuery.data?.tokensMap ?? null
 		: null;
 
-	const OneInchTokenListQuery = use1InchTokenList();
-	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
-		? OneInchTokenListQuery.data?.tokensMap ?? null
+	const ZapperTokenListQuery = useZapperTokenList();
+	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
+		? ZapperTokenListQuery.data?.tokensMap ?? null
 		: null;
 
 	const props = {
@@ -54,9 +54,9 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 	}
 
 	if (type === 'token') {
-		return OneInchTokenListMap != null && OneInchTokenListMap[currencyKey] != null ? (
-			<img
-				src={OneInchTokenListMap[currencyKey].logoURI}
+		return ZapperTokenListMap != null && ZapperTokenListMap[currencyKey] != null ? (
+			<ZapperTokenIcon
+				src={ZapperTokenListMap[currencyKey].logoURI}
 				onError={() => setIsError(true)}
 				{...props}
 			/>
@@ -95,6 +95,10 @@ const Placeholder = styled(FlexDivCentered)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin: 0 auto;
+`;
+
+const ZapperTokenIcon = styled.img`
+	border-radius: 100%;
 `;
 
 export default CurrencyIcon;

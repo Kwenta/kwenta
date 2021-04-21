@@ -19,11 +19,11 @@ const ether = {
 	tags: [],
 };
 
-const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+const useZapperTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
-		QUERY_KEYS.TokenLists.OneInch,
+		QUERY_KEYS.TokenLists.Zapper,
 		async () => {
-			const response = await axios.get<TokenListResponse>('https://tokens.1inch.eth.link');
+			const response = await axios.get<TokenListResponse>('https://zapper.fi/api/token-list');
 
 			const tokens = [ether, ...response.data.tokens];
 
@@ -42,4 +42,4 @@ const use1InchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
 	);
 };
 
-export default use1InchTokenList;
+export default useZapperTokenList;

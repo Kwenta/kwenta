@@ -77,7 +77,7 @@ export const QUERY_KEYS = {
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
-		OneInch: ['tokenLists', '1inch'],
+		Zapper: ['tokenLists', 'zapper'],
 	},
 	CMC: {
 		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],

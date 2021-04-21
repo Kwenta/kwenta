@@ -32,7 +32,6 @@ import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
-import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
@@ -73,6 +72,7 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 import useCurrencyPair from './useCurrencyPair';
 
 import { NoTextTransform } from 'styles/common';
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -165,7 +165,7 @@ const useExchange = ({
 		300
 	);
 
-	const tokenListQuery = use1InchTokenList({
+	const tokenListQuery = useZapperTokenList({
 		enabled: txProvider === '1inch',
 	});
 	const tokenList = tokenListQuery.isSuccess ? tokenListQuery.data?.tokens ?? [] : [];
@@ -651,8 +651,8 @@ const useExchange = ({
 
 				if (txProvider === '1inch' && tokensMap != null) {
 					tx = await swap1Inch(
-						tokensMap[quoteCurrencyKey!].address,
-						tokensMap[baseCurrencyKey!].address,
+						quoteCurrencyTokenAddress!,
+						baseCurrencyTokenAddress!,
 						quoteCurrencyAmount,
 						slippage,
 						tokensMap[quoteCurrencyKey!].decimals
@@ -712,12 +712,14 @@ const useExchange = ({
 	}, [
 		baseCurrencyAmount,
 		baseCurrencyKey,
+		baseCurrencyTokenAddress,
 		gasPrice,
 		getExchangeParams,
 		getGasLimitEstimateForExchange,
 		monitorHash,
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
+		quoteCurrencyTokenAddress,
 		setHasOrdersNotification,
 		setOrders,
 		swap1Inch,

@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState } from 'store/wallet';
 
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
-import use1InchTokenList from 'queries/tokenLists/use1InchTokenList';
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 import { CoinGeckoPriceIds } from 'queries/coingecko/types';
@@ -51,7 +51,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const tokenListQuery = use1InchTokenList();
+	const tokenListQuery = useZapperTokenList();
 	const tokenList = useMemo(
 		() => (tokenListQuery.isSuccess ? tokenListQuery.data?.tokens ?? [] : []),
 		[tokenListQuery.isSuccess, tokenListQuery.data]
