@@ -26,7 +26,7 @@
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.8",
 		"@synthetixio/contracts-interface": "2.41.0-1",
-		"@synthetixio/data": "0.0.12",
+		"@synthetixio/data": "0.0.13",
 		"@synthetixio/optimism-networks": "0.0.11",
 		"@synthetixio/providers": "0.0.10",
 		"@synthetixio/transaction-notifier": "0.0.8",

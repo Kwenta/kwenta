@@ -12,7 +12,7 @@ import {
 	mockHistoricalRates,
 } from './utils';
 import { HistoricalRatesUpdates } from './types';
-import { isL2State } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
 const useHistoricalRatesQuery = (
@@ -20,11 +20,11 @@ const useHistoricalRatesQuery = (
 	period: Period = Period.ONE_DAY,
 	options?: QueryConfig<HistoricalRatesUpdates>
 ) => {
-	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const periodInHours = PERIOD_IN_HOURS[period];
 
 	return useQuery<HistoricalRatesUpdates>(
-		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period, isL2),
+		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period, network?.id!),
 		async () => {
 			if (currencyKey === SYNTHS_MAP.sUSD) {
 				return {
@@ -35,7 +35,7 @@ const useHistoricalRatesQuery = (
 				};
 			} else {
 				const rates =
-					(await synthetixData({ useOvm: isL2 }).rateUpdates({
+					(await synthetixData({ networkId: network?.id! }).rateUpdates({
 						synth: currencyKey ?? undefined,
 						minTimestamp: calculateTimestampForPeriod(periodInHours),
 						max: 1000,
