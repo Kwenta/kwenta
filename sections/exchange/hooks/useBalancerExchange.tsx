@@ -58,8 +58,7 @@ type ExchangeCardProps = {
 
 const BALANCER_LINKS = {
 	[NetworkId.Mainnet]: {
-		poolsUrl:
-			'https://ipfs.fleek.co/ipns/balancer-team-bucket.storage.fleek.co/balancer-exchange/pools',
+		poolsUrl: 'https://storageapi.fleek.co/balancer-bucket/balancer-exchange/pools',
 		proxyAddr: '0x3E66B66Fd1d0b02fDa6C811Da9E0547970DB2f21', // Balancer Mainnet proxy
 	},
 	[NetworkId.Kovan]: {
@@ -253,7 +252,7 @@ const useBalancerExchange = ({
 			network?.id != null &&
 			(network.id === NetworkId.Mainnet || network.id === NetworkId.Kovan)
 		) {
-			const maxNoPools = 1;
+			const maxNoPools = 2;
 			const sor = new SOR(
 				provider as ethers.providers.BaseProvider,
 				new BigNumber(gasPrice),
