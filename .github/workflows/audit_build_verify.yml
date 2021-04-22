@@ -87,7 +87,7 @@ jobs:
 
     - name: Archive build
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+      uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
       with:
         name: build
         path: build.tar.gz
@@ -144,7 +144,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@4a7a711286f30c025902c28b541c10e147a9b843 # pin@v2
+        uses: actions/download-artifact@158ca71f7c614ae705e79f25522ef4658df18253 # pin@v2
         with:
           name: build
 
@@ -162,7 +162,7 @@ jobs:
             CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Archive e2e artifacts
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
         if: always()
         with:
           name: e2e-artifacts

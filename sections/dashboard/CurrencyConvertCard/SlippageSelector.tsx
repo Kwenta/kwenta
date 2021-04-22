@@ -6,6 +6,8 @@ import { useRecoilState } from 'recoil';
 import { slippageState } from 'store/ui';
 import { formatPercent } from 'utils/formatters/number';
 
+import clamp from 'lodash/clamp';
+
 import { Svg } from 'react-optimized-image';
 
 import {
@@ -22,6 +24,9 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import { DEFAULT_SLIPPAGE } from 'constants/defaults';
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1, 3];
+
+const MIN_SLIPPAGE = 0.01;
+const MAX_SLIPPAGE = 50;
 
 type SlippageSelectorProps = {};
 
@@ -45,11 +50,19 @@ export const SlippageSelector: FC<SlippageSelectorProps> = () => {
 							<SolidTooltipCustomValue
 								value={customSlippage}
 								onChange={(_, value) => {
-									if (value !== '') {
-										const numValue = Number(value);
-										setSlippage(numValue >= 0 ? numValue : DEFAULT_SLIPPAGE);
+									const numValue = Number(value);
+
+									if (value === '') {
+										setCustomSlippage('');
+										setSlippage(DEFAULT_SLIPPAGE);
+									} else if (numValue === 0) {
+										setCustomSlippage(value);
+										setSlippage(MIN_SLIPPAGE);
+									} else {
+										const clampedNum = clamp(numValue, MIN_SLIPPAGE, MAX_SLIPPAGE);
+										setSlippage(clampedNum);
+										setCustomSlippage(`${clampedNum}`);
 									}
-									setCustomSlippage(value);
 								}}
 								placeholder={t('common.custom')}
 							/>

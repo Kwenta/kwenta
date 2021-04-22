@@ -9,6 +9,8 @@ import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import CurrencyIcon from '../CurrencyIcon';
 
+import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';
+
 import { ContainerRowMixin } from '../common';
 
 type CurrencyNameProps = {
@@ -16,7 +18,7 @@ type CurrencyNameProps = {
 	symbol?: string;
 	name?: string | null;
 	showIcon?: boolean;
-	iconProps?: object;
+	iconProps?: Partial<CurrencyIconProps>;
 	marketClosureReason?: MarketClosureReason;
 };
 

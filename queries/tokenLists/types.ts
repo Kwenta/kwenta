@@ -1,3 +1,5 @@
+import { CurrencyKey } from 'constants/currency';
+
 export type Token = {
 	address: string;
 	chainId: number;
@@ -16,4 +18,10 @@ export type TokenListResponse = {
 	timestamp: string;
 	tokens: Token[];
 	version: { major: number; minor: number; patch: number };
+};
+
+export type TokenListQueryResponse = {
+	tokens: Token[];
+	tokensMap: Record<CurrencyKey, Token>;
+	symbols: CurrencyKey[];
 };

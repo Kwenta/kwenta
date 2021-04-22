@@ -27,10 +27,10 @@
 			"faq": "FAQ"
 		},
 		"hero": {
-			"title": "Derivatives trading with infinite liquidity"
+			"title": "Derivatives trading with zero slippage"
 		},
 		"assets": {
-			"title": "Trade a vast range of assets unique to Ethereum",
+			"title": "Trade real world assets and derivatives on Ethereum",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
@@ -139,7 +139,8 @@
 		"currency-card": {
 			"wallet-balance": "wallet balance",
 			"currency-selector": {
-				"no-value": "select synth"
+				"select-synth": "select synth",
+				"select-token": "select token"
 			}
 		},
 		"market-details-card": {
@@ -194,6 +195,7 @@
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
+				"select-token": "select token",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
@@ -458,7 +460,7 @@
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	},
 	"modals": {
-		"select-base-currency": {
+		"select-currency": {
 			"title": "select synth",
 			"header": {
 				"search-results": "search results",
@@ -472,12 +474,16 @@
 				"empty-results": "No results found. Please try again."
 			}
 		},
-		"select-quote-currency": {
-			"title": "select synth",
+		"select-token": {
+			"title": "select token",
 			"header": {
-				"your-synths": "your synths",
-				"holdings": "holdings",
-				"non-synths": "non-synths"
+				"search-results": "search results",
+				"all-tokens": "all tokens",
+				"holdings": "holdings"
+			},
+			"search": {
+				"placeholder": "search tokens",
+				"empty-results": "No results found. Please try again."
 			}
 		},
 		"select-short-currency": {

@@ -1,7 +1,13 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatCurrency, formatNumber, NumericValue, toBigNumber } from 'utils/formatters/number';
+import {
+	formatCurrency,
+	FormatCurrencyOptions,
+	formatNumber,
+	NumericValue,
+	toBigNumber,
+} from 'utils/formatters/number';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -13,6 +19,8 @@ type CurrencyAmountProps = {
 	totalValue: NumericValue;
 	sign?: string;
 	conversionRate?: NumericValue | null;
+	formatAmountOptions?: FormatCurrencyOptions;
+	formatTotalValueOptions?: FormatCurrencyOptions;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -21,10 +29,12 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	totalValue,
 	sign,
 	conversionRate,
+	formatAmountOptions = {},
+	formatTotalValueOptions = {},
 	...rest
 }) => (
 	<Container {...rest}>
-		<Amount className="amount">{formatNumber(amount)}</Amount>
+		<Amount className="amount">{formatNumber(amount, formatAmountOptions)}</Amount>
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
