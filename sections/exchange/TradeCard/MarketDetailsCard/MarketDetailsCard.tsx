@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -92,6 +92,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24High != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
+							minDecimals:
+								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -143,6 +145,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24Low != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
 							sign: selectedPriceCurrency.sign,
+							minDecimals:
+								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>

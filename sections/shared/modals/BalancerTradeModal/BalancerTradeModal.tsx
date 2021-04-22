@@ -8,7 +8,6 @@ import ArrowsIcon from 'assets/svg/app/arrows.svg';
 import useBalancerExchange from 'sections/exchange/hooks/useBalancerExchange';
 import { SwapCurrenciesButton, FlexDivRowCentered } from 'styles/common';
 import media from 'styles/media';
-import { SYNTHS_MAP } from 'constants/currency';
 
 import { CenteredModal } from '../common';
 
@@ -25,8 +24,6 @@ const BalancerTradeModal: FC<BalancerTradeModalProps> = ({ onDismiss }) => {
 		handleCurrencySwap,
 		footerCard,
 	} = useBalancerExchange({
-		defaultBaseCurrencyKey: SYNTHS_MAP.sTSLA,
-		defaultQuoteCurrencyKey: SYNTHS_MAP.sUSD,
 		footerCardAttached: true,
 		persistSelectedCurrencies: true,
 		showNoSynthsCard: true,
@@ -36,10 +33,10 @@ const BalancerTradeModal: FC<BalancerTradeModalProps> = ({ onDismiss }) => {
 		<StyledCenteredModal
 			onDismiss={onDismiss}
 			isOpen={true}
-			title={t('modals.afterHours.title', { synth: SYNTHS_MAP.sTSLA })}
+			title={t('modals.afterHours.title')}
 			lowercase={true}
 		>
-			<NoticeText>{t('modals.afterHours.notice-text', { synth: SYNTHS_MAP.sTSLA })}</NoticeText>
+			<NoticeText>{t('modals.afterHours.notice-text')}</NoticeText>
 			{quoteCurrencyCard}
 			<VerticalSpacer>
 				<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">

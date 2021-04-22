@@ -16,6 +16,7 @@ import Convert from 'containers/Convert';
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import {
+	AFTER_HOURS_SYNTHS,
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
@@ -902,10 +903,13 @@ const useExchange = ({
 		<>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={footerCardAttached} />
-			) : (baseCurrencyMarketClosed.isMarketClosed && baseCurrencyKey === SYNTHS_MAP.sTSLA) ||
-			  (quoteCurrencyMarketClosed.isMarketClosed && quoteCurrencyKey === SYNTHS_MAP.sTSLA) ? (
+			) : (baseCurrencyMarketClosed.isMarketClosed &&
+					baseCurrencyKey &&
+					AFTER_HOURS_SYNTHS.has(baseCurrencyKey)) ||
+			  (quoteCurrencyMarketClosed.isMarketClosed &&
+					quoteCurrencyKey &&
+					AFTER_HOURS_SYNTHS.has(quoteCurrencyKey)) ? (
 				<TradeBalancerFooterCard
-					synth={SYNTHS_MAP.sTSLA}
 					attached={footerCardAttached}
 					onClick={() => setSelectBalancerTradeModal(true)}
 				/>
