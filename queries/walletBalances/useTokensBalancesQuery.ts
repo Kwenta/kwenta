@@ -67,7 +67,7 @@ const useTokensBalancesQuery = (tokens: Token[], options?: QueryConfig<Balances>
 				const token = tokensMap[symbol];
 
 				return {
-					balance: toBigNumber(Number(balance) / Math.pow(10, token.decimals)),
+					balance: toBigNumber(balance.toString()).div(toBigNumber(10).pow(token.decimals)),
 					token,
 				};
 			});
