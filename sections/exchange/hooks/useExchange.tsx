@@ -778,7 +778,15 @@ const useExchange = ({
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={async () => {
 				if (quoteCurrencyBalance != null) {
-					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
+					if (quoteCurrencyKey === 'ETH') {
+						const ETH_TX_BUFFER = 0.1;
+						const balanceWithBuffer = quoteCurrencyBalance.minus(toBigNumber(ETH_TX_BUFFER));
+						setQuoteCurrencyAmount(
+							balanceWithBuffer.isNegative() ? '0' : balanceWithBuffer.toString()
+						);
+					} else {
+						setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
+					}
 					if (txProvider === 'synthetix') {
 						setBaseCurrencyAmount(
 							quoteCurrencyBalance
