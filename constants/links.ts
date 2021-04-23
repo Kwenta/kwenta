@@ -5,7 +5,7 @@ export const EXTERNAL_LINKS = {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
-		OptimismTokenBridge: 'https://optimism.io/',
+		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',
