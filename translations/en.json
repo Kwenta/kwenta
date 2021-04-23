@@ -205,7 +205,9 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:"
+			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
+			"l2-message": "Your wallet has no Synths. Mint <0>{{currencyKey}}</0> on Staking to trade Synths:",
+			"mint-button": "Visit Staking"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
