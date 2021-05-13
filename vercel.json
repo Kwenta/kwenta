@@ -1,6 +1,43 @@
 {
 	"headers": [
 		{
+			"source": "/(.*)",
+			"headers": [
+				{
+					"key": "X-Content-Type-Options",
+					"value": "nosniff"
+				},
+				{
+					"key": "X-Frame-Options",
+					"value": "SAMEORIGIN"
+				},
+				{
+					"key": "X-XSS-Protection",
+					"value": "1; mode=block"
+				},
+				{
+					"key": "Access-Control-Allow-Credentials",
+					"value": "false"
+				},
+				{
+					"key": "Access-Control-Allow-Origin",
+					"value": "*"
+				},
+				{
+					"key": "Access-Control-Allow-Methods",
+					"value": "GET,POST,OPTIONS"
+				},
+				{
+					"key": "Access-Control-Allow-Headers",
+					"value": "*"
+				},
+				{
+					"key": "Vary",
+					"value": "Accept-Encoding"
+				}
+			]
+		},
+		{
 			"source": "/_next/static/(.*)",
 			"headers": [
 				{
@@ -33,57 +70,6 @@
 				{
 					"key": "Cache-Control",
 					"value": "public, max-age=31536000, immutable"
-				}
-			]
-		},
-		{
-			"source": "/(.*).(js|css|xml|gz|html|svg)",
-			"headers": [
-				{
-					"key": "Vary",
-					"value": "Accept-Encoding"
-				}
-			]
-		},
-		{
-			"source": "/",
-			"headers": [
-				{
-					"key": "Vary",
-					"value": "Accept-Encoding"
-				}
-			]
-		},
-		{
-			"source": "/(.*)",
-			"headers": [
-				{
-					"key": "X-Content-Type-Options",
-					"value": "nosniff"
-				},
-				{
-					"key": "X-Frame-Options",
-					"value": "DENY"
-				},
-				{
-					"key": "X-XSS-Protection",
-					"value": "1; mode=block"
-				},
-				{
-					"key": "Access-Control-Allow-Credentials",
-					"value": "false"
-				},
-				{
-					"key": "Access-Control-Allow-Origin",
-					"value": "*"
-				},
-				{
-					"key": "Access-Control-Allow-Methods",
-					"value": "GET,POST,OPTIONS"
-				},
-				{
-					"key": "Access-Control-Allow-Headers",
-					"value": "*"
 				}
 			]
 		}
