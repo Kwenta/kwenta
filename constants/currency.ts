@@ -118,13 +118,9 @@ export const FIAT_SYNTHS = new Set([
 	SYNTHS_MAP.sCHF,
 ]);
 
-export const LSE_SYNTHS = new Set([
-	SYNTHS_MAP.sFTSE,
-])
+export const LSE_SYNTHS = new Set([SYNTHS_MAP.sFTSE]);
 
-export const TSE_SYNTHS = new Set([
-	SYNTHS_MAP.sNIKKEI,
-])
+export const TSE_SYNTHS = new Set([SYNTHS_MAP.sNIKKEI]);
 
 export const AFTER_HOURS_SYNTHS = new Set([
 	SYNTHS_MAP.sTSLA,

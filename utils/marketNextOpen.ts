@@ -1,4 +1,10 @@
-import { AFTER_HOURS_SYNTHS, CurrencyKey, FIAT_SYNTHS, LSE_SYNTHS, TSE_SYNTHS } from 'constants/currency';
+import {
+	AFTER_HOURS_SYNTHS,
+	CurrencyKey,
+	FIAT_SYNTHS,
+	LSE_SYNTHS,
+	TSE_SYNTHS,
+} from 'constants/currency';
 import { addHours, nextMonday, startOfDay, subDays } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import moment from 'moment-business-time';
@@ -76,17 +82,17 @@ export const tseNextOpen = () => {
 };
 
 const marketNextOpen = (currencyKey: CurrencyKey) => {
-    if (AFTER_HOURS_SYNTHS.has(currencyKey)) {
-        return usNextOpen();
-    } else if (LSE_SYNTHS.has(currencyKey)) {
-        return lseNextOpen();
-    } else if (TSE_SYNTHS.has(currencyKey)) {
-        return tseNextOpen();
-    } else if (FIAT_SYNTHS.has(currencyKey)) {
-        return forexNextOpen();
-    } else {
-        return null;
-    }
-}
+	if (AFTER_HOURS_SYNTHS.has(currencyKey)) {
+		return usNextOpen();
+	} else if (LSE_SYNTHS.has(currencyKey)) {
+		return lseNextOpen();
+	} else if (TSE_SYNTHS.has(currencyKey)) {
+		return tseNextOpen();
+	} else if (FIAT_SYNTHS.has(currencyKey)) {
+		return forexNextOpen();
+	} else {
+		return null;
+	}
+};
 
 export default marketNextOpen;
