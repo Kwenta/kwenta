@@ -13,7 +13,7 @@ describe('Wallet tests', () => {
 	});
 	context('Connect metamask wallet', () => {
 		it(`should login with success`, () => {
-			exchange.connectMetamaskWallet();
+			exchange.connectBrowserWallet();
 			exchange.acceptMetamaskAccessRequest();
 			exchange.waitUntilLoggedIn();
 			exchange.getLoggedInWalletAddress().then((exchangeWalletAddress) => {
