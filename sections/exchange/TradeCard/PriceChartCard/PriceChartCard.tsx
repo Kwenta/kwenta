@@ -15,7 +15,9 @@ import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import {
 	AFTER_HOURS_SYNTHS,
+	COMMODITY_SYNTHS,
 	CurrencyKey,
+	FIAT_SYNTHS,
 	LSE_SYNTHS,
 	SYNTHS_MAP,
 	TSE_SYNTHS,
@@ -290,7 +292,9 @@ const ChartCard: FC<ChartCardProps> = ({
 							{marketClosureReason === 'market-closure' &&
 							(AFTER_HOURS_SYNTHS.has(currencyKey ?? '') ||
 								TSE_SYNTHS.has(currencyKey ?? '') ||
-								LSE_SYNTHS.has(currencyKey ?? '')) ? (
+								LSE_SYNTHS.has(currencyKey ?? '') ||
+								FIAT_SYNTHS.has(currencyKey ?? '') ||
+								COMMODITY_SYNTHS.has(currencyKey ?? '')) ? (
 								<>
 									<OverlayMessageSubtitle>Market reopens in: </OverlayMessageSubtitle>
 									<OverlayTimer>{timer}</OverlayTimer>

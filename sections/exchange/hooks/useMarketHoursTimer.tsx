@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
-import { differenceInMilliseconds } from 'date-fns';
+import { differenceInSeconds } from 'date-fns';
 
-const getHHMMSS = (milliseconds: number) => new Date(milliseconds).toISOString().substr(11, 8);
+function secondsToHHMMSS(seconds: number) {
+	return (
+		Math.floor(seconds / 3600) +
+		':' +
+		('0' + (Math.floor(seconds / 60) % 60)).slice(-2) +
+		':' +
+		('0' + (seconds % 60)).slice(-2)
+	);
+}
 
 const useMarketHoursTimer = (nextOpen: Date | null) => {
 	const [now, setNow] = useState(new Date());
@@ -12,8 +20,8 @@ const useMarketHoursTimer = (nextOpen: Date | null) => {
 		};
 	}, []);
 
-	if (nextOpen == null) return getHHMMSS(0);
-	return getHHMMSS(differenceInMilliseconds(nextOpen, now));
+	if (nextOpen == null) return secondsToHHMMSS(0);
+	return secondsToHHMMSS(differenceInSeconds(nextOpen, now));
 };
 
 export default useMarketHoursTimer;

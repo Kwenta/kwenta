@@ -1,5 +1,6 @@
 import {
 	AFTER_HOURS_SYNTHS,
+	COMMODITY_SYNTHS,
 	CurrencyKey,
 	FIAT_SYNTHS,
 	LSE_SYNTHS,
@@ -192,6 +193,8 @@ const marketNextOpen = (currencyKey: CurrencyKey) => {
 	} else if (TSE_SYNTHS.has(currencyKey)) {
 		return tseNextOpen();
 	} else if (FIAT_SYNTHS.has(currencyKey)) {
+		return forexNextOpen();
+	} else if (COMMODITY_SYNTHS.has(currencyKey)) {
 		return forexNextOpen();
 	} else {
 		return null;
