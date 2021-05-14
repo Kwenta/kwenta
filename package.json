@@ -1,6 +1,6 @@
 {
 	"name": "kwenta",
-	"version": "2.45.0",
+	"version": "2.45.1",
 	"scripts": {
 		"dev": "next",
 		"build": "next build",
