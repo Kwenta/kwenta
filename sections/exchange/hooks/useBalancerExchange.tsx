@@ -19,7 +19,6 @@ import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeBalancerSummaryCard from 'sections/exchange/FooterCard/TradeBalancerSummaryCard';
@@ -47,6 +46,7 @@ import useCurrencyPair from './useCurrencyPair';
 import { toBigNumber, zeroBN, scale } from 'utils/formatters/number';
 
 import balancerExchangeProxyABI from './balancerExchangeProxyABI';
+import { GasPrices } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -76,7 +76,7 @@ const useBalancerExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { notify, provider, signer } = Connector.useContainer();
+	const { notify, provider, signer, queries } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const network = useRecoilValue(networkState);
 
@@ -108,7 +108,7 @@ const useBalancerExchange = ({
 	const [txError, setTxError] = useState<string | null>(null);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
+	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	// TODO get from pool
 	const exchangeFeeRate = 0.001;
@@ -116,7 +116,7 @@ const useBalancerExchange = ({
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
-	const ethGasPriceQuery = useEthGasPriceQuery();
+	const ethGasPriceQuery = queries!.useEthGasPriceQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 

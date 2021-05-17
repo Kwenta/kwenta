@@ -8,7 +8,6 @@ import { Svg } from 'react-optimized-image';
 import BigNumber from 'bignumber.js';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
@@ -18,6 +17,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { numericValueCSS, NumericValue, FlexDivRowCentered, FlexDivCol } from 'styles/common';
 
 import { formatPercent } from 'utils/formatters/number';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
 
 type TradeBalancerSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
@@ -39,7 +39,7 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 	isApproved = true,
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 
 	const SLIPPAGE_VALUES = useMemo(

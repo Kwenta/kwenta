@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
+import synthetixQueries from '@synthetixio/queries';
 import { ethers } from 'ethers';
 
 import synthetix from 'lib/synthetix';
@@ -22,6 +23,11 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 
+type AsyncReturnType<T extends (...args: any) => any> =
+	T extends (...args: any) => Promise<infer U> ? U :
+	T extends (...args: any) => infer U ? U :
+	any
+
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const language = useRecoilValue(languageState);
@@ -29,6 +35,7 @@ const useConnector = () => {
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
+	const [queries, setQueries] = useState<AsyncReturnType<typeof synthetixQueries> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const setWalletAddress = useSetRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
@@ -148,6 +155,12 @@ const useConnector = () => {
 		}
 	}, [language, notify]);
 
+	useEffect(() => {
+		if(provider) {
+			synthetixQueries({ provider }).then(setQueries);
+		}
+	}, [provider]);
+
 	const resetCachedUI = () => {
 		// TODO: since orders are not persisted, we need to reset them.
 		setOrders([]);
@@ -213,6 +226,7 @@ const useConnector = () => {
 		signer,
 		onboard,
 		notify,
+		queries,
 		connectWallet,
 		disconnectWallet,
 		switchAccounts,

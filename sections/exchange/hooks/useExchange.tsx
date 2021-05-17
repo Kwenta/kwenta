@@ -26,7 +26,6 @@ import {
 
 import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
@@ -74,6 +73,8 @@ import useCurrencyPair from './useCurrencyPair';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
+import Connector from 'containers/Connector';
+import { GasPrices } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -105,6 +106,7 @@ const useExchange = ({
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
+	const { queries } = Connector.useContainer();
 	const router = useRouter();
 
 	const marketQuery = useMemo(
@@ -134,7 +136,7 @@ const useExchange = ({
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
+	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const slippage = useRecoilValue(slippageState);
@@ -150,7 +152,7 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
+	const ethGasPriceQuery = queries!.useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
 	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);

@@ -6,8 +6,6 @@ import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
-import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
-
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
@@ -22,6 +20,7 @@ import { NumericValue } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;
@@ -35,7 +34,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 

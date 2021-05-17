@@ -28,6 +28,7 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
+import Connector from 'containers/Connector';
 
 const queryCache = new QueryCache({
 	defaultConfig: {
