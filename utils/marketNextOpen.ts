@@ -67,7 +67,12 @@ export const usNextOpen = () => {
 	});
 
 	const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	const nextOpenET = moment(new Date()).nextWorkingTime().toDate();
+	const currentTimeInET = utcToZonedTime(
+		zonedTimeToUtc(new Date(), currentTimezone),
+		'America/New_York'
+	);
+	if (moment(currentTimeInET).isWorkingTime()) return null; //ensure timer is 0 if during session
+	const nextOpenET = moment(currentTimeInET).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenET, 'America/New_York');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
 	return nextOpenLocal;
@@ -117,7 +122,12 @@ export const lseNextOpen = () => {
 	});
 
 	const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	const nextOpenBT = moment(new Date()).nextWorkingTime().toDate();
+	const currentTimeInBT = utcToZonedTime(
+		zonedTimeToUtc(new Date(), currentTimezone),
+		'Europe/London'
+	);
+	if (moment(currentTimeInBT).isWorkingTime()) return null; //ensure timer is 0 if during session
+	const nextOpenBT = moment(currentTimeInBT).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenBT, 'Europe/London');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
 	return nextOpenLocal;
@@ -179,7 +189,12 @@ export const tseNextOpen = () => {
 	});
 
 	const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	const nextOpenJST = moment(new Date()).nextWorkingTime().toDate();
+	const currentTimeInJST = utcToZonedTime(
+		zonedTimeToUtc(new Date(), currentTimezone),
+		'Asia/Tokyo'
+	);
+	if (moment(currentTimeInJST).isWorkingTime()) return null; //ensure timer is 0 if during session
+	const nextOpenJST = moment(currentTimeInJST).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenJST, 'Asia/Tokyo');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
 	return nextOpenLocal;
