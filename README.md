@@ -22,8 +22,8 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 
 - ethers.js v5 - Ethereum wallet implementation.
 - Blocknative Onboard - for ethereum wallet connectivity.
-- [@synthetixio/js-monorepo](https://github.com/Synthetixio/js-monorepo) - for interactions with the Synthetix protocol.
-  - [@synthetixio/data](https://github.com/Synthetixio/js-monorepo/tree/master/packages/data) - for historical data (powered by [TheGraph](https://thegraph.com/))
+- [@synthetixio/contracts-interface](https://github.com/Synthetixio/js-monorepo) - for interactions with the Synthetix protocol.
+- [@synthetixio/data](https://github.com/Synthetixio/js-monorepo/tree/master/packages/data) - for historical data (powered by [TheGraph](https://thegraph.com/))
 
 ## Development
 

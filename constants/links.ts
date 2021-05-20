@@ -17,4 +17,10 @@ export const EXTERNAL_LINKS = {
 		Discord: 'https://discordapp.com/invite/AEdUHzt',
 		GitHub: 'https://github.com/synthetixio/kwenta',
 	},
+	TokenLists: {
+		Synthetix:
+			'https://bafybeidkpj743vthl5chzdxibjxfbf2hv3y4mmtcbciu4kdh4d6xqfezpa.ipfs.dweb.link/',
+		//Synthetix: 'https://synths.snx.eth.link',
+		Zapper: 'https://zapper.fi/api/token-list',
+	},
 };

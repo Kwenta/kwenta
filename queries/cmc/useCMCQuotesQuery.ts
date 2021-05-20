@@ -69,7 +69,10 @@ const useCMCQuotesQuery = (
 				currencyKeys.map((currencyKey) => response.data.data[currencyKey.toUpperCase()].quote.USD)
 			);
 		},
-		options
+		{
+			enabled: currencyKeys.length > 0,
+			...options,
+		}
 	);
 };
 

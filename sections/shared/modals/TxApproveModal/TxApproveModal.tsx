@@ -8,6 +8,8 @@ import { CurrencyKey } from 'constants/currency';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 
+import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
+
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 
 type TxApproveModalProps = {
@@ -16,6 +18,7 @@ type TxApproveModalProps = {
 	attemptRetry: () => void;
 	currencyKey: CurrencyKey;
 	currencyLabel: ReactNode;
+	txProvider?: TxProvider;
 };
 
 export const TxApproveModal: FC<TxApproveModalProps> = ({
@@ -24,6 +27,7 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 	attemptRetry,
 	currencyKey,
 	currencyLabel,
+	txProvider,
 }) => {
 	const { t } = useTranslation();
 
@@ -41,6 +45,7 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 						width="40px"
 						height="40px"
 						data-testid="currency-img"
+						type={txProvider === '1inch' ? 'token' : 'synth'}
 					/>
 				</CurrencyItem>
 			</Currencies>

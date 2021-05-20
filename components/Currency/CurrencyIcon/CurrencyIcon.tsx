@@ -1,17 +1,19 @@
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import Img from 'react-optimized-image';
 import styled from 'styled-components';
+
+import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
 import { FlexDivCentered } from 'styles/common';
-import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 
-type CurrencyIconProps = {
+export type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
-	type?: 'synth' | 'asset';
+	type?: 'synth' | 'asset' | 'token';
 	className?: string;
 	width?: string;
 	height?: string;
@@ -23,14 +25,18 @@ export const SNXIcon =
 export const getSynthIcon = (currencyKey: CurrencyKey) =>
 	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
 
-export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, ...rest }) => {
+export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest }) => {
 	const [isError, setIsError] = useState<boolean>(false);
 
 	const synthetixTokenListQuery = useSynthetixTokenList();
-	const synthetixTokenList = useMemo(
-		() => (synthetixTokenListQuery.isSuccess ? synthetixTokenListQuery.data ?? null : null),
-		[synthetixTokenListQuery.isSuccess, synthetixTokenListQuery.data]
-	);
+	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
+		? synthetixTokenListQuery.data?.tokensMap ?? null
+		: null;
+
+	const ZapperTokenListQuery = useZapperTokenList();
+	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
+		? ZapperTokenListQuery.data?.tokensMap ?? null
+		: null;
 
 	const props = {
 		width: '24px',
@@ -39,33 +45,45 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, ...rest }) =>
 		...rest,
 	};
 
+	const defaultIcon = (
+		<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
+	);
+
 	if (isError) {
-		return (
-			<Placeholder style={{ width: props.width, height: props.height }}>{currencyKey}</Placeholder>
-		);
+		return defaultIcon;
 	}
 
-	switch (currencyKey) {
-		case CRYPTO_CURRENCY_MAP.ETH: {
-			return <Img src={ETHIcon} {...props} />;
+	if (type === 'token') {
+		return ZapperTokenListMap != null && ZapperTokenListMap[currencyKey] != null ? (
+			<ZapperTokenIcon
+				src={ZapperTokenListMap[currencyKey].logoURI}
+				onError={() => setIsError(true)}
+				{...props}
+			/>
+		) : (
+			defaultIcon
+		);
+	} else {
+		switch (currencyKey) {
+			case CRYPTO_CURRENCY_MAP.ETH: {
+				return <Img src={ETHIcon} {...props} />;
+			}
+			case CRYPTO_CURRENCY_MAP.SNX: {
+				return <img src={SNXIcon} {...props} />;
+			}
+			default:
+				return (
+					<img
+						src={
+							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
+								? synthetixTokenListMap[currencyKey].logoURI
+								: getSynthIcon(currencyKey)
+						}
+						onError={() => setIsError(true)}
+						{...props}
+					/>
+				);
 		}
-		case CRYPTO_CURRENCY_MAP.SNX: {
-			// eslint-disable-next-line
-			return <img src={SNXIcon} {...props} />;
-		}
-		default:
-			return (
-				// eslint-disable-next-line
-				<img
-					src={
-						synthetixTokenList != null
-							? synthetixTokenList[currencyKey].logoURI
-							: getSynthIcon(currencyKey)
-					}
-					onError={() => setIsError(true)}
-					{...props}
-				/>
-			);
 	}
 };
 
@@ -77,6 +95,10 @@ const Placeholder = styled(FlexDivCentered)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin: 0 auto;
+`;
+
+const ZapperTokenIcon = styled.img`
+	border-radius: 100%;
 `;
 
 export default CurrencyIcon;

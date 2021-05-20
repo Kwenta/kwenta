@@ -377,11 +377,14 @@ export const ExchangeCardsWithSelector = styled.div`
 		}
 	}
 	.currency-card-base {
+		.currency-wallet-container {
+			width: 100%;
+		}
 		.currency-card-body {
 			position: relative;
-			left: 30px;
+			padding-left: 61px;
 			${media.lessThan('md')`
-				left: unset;
+				padding-left: 18px;
 			`}
 		}
 	}

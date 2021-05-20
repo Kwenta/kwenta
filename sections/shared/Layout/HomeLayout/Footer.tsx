@@ -1,29 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import { FlexDivCentered, Paragraph, ExternalLink } from 'styles/common';
+import { FlexDivCentered, ExternalLink } from 'styles/common';
 
-import TextLogo from 'assets/svg/brand/text-logo-white.svg';
 import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 
 import media from 'styles/media';
 
 import { EXTERNAL_LINKS } from 'constants/links';
+import PoweredBySynthetix from 'components/PoweredBySynthetix';
 
 const Footer: React.FC = () => {
-	const { t } = useTranslation();
-
 	return (
 		<FooterContainer>
-			<Container>
-				<Subtext>{t('common.powered-by')}</Subtext>
-				<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
-					<Svg src={TextLogo} />
-				</ExternalLink>
-			</Container>
+			<PoweredBySynthetix />
 			<SocialIcons>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
 					<Svg src={TwitterLogo} />
@@ -47,25 +39,6 @@ const FooterContainer = styled.footer`
 		grid-auto-flow: row;
 		justify-content: center;
 	    grid-gap: 35px;
-	`}
-`;
-
-const Subtext = styled(Paragraph)`
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
-	padding-right: 30px;
-	${media.lessThan('sm')`
-		padding-right: 0;
-	`}
-`;
-
-const Container = styled.div`
-	display: grid;
-	grid-auto-flow: column;
-	${media.lessThan('sm')`
-		grid-auto-flow: row;
-		text-align: center;
-		grid-gap: 15px;
 	`}
 `;
 
