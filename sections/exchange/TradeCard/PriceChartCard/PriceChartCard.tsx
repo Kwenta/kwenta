@@ -13,7 +13,15 @@ import LoaderIcon from 'assets/svg/app/loader.svg';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import MarketClosureIcon from 'components/MarketClosureIcon';
 
-import { AFTER_HOURS_SYNTHS, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import {
+	AFTER_HOURS_SYNTHS,
+	COMMODITY_SYNTHS,
+	CurrencyKey,
+	FIAT_SYNTHS,
+	LSE_SYNTHS,
+	SYNTHS_MAP,
+	TSE_SYNTHS,
+} from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
 import ChangePercent from 'components/ChangePercent';
@@ -35,6 +43,8 @@ import media from 'styles/media';
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import marketNextOpen from 'utils/marketNextOpen';
 
 type ChartCardProps = {
 	side: Side;
@@ -55,6 +65,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
+	const timer = useMarketHoursTimer(marketNextOpen(currencyKey ?? '') ?? null);
 
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
@@ -262,21 +273,37 @@ const ChartCard: FC<ChartCardProps> = ({
 								{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.title`)}
 							</OverlayMessageTitle>
 							<OverlayMessageSubtitle>
-								{openAfterHoursModalCallback != null &&
-								AFTER_HOURS_SYNTHS.has(currencyKey ?? '') ? (
-									<Trans
-										i18nKey="exchange.price-chart-card.overlay-messages.market-closure.after-hours"
-										values={{
-											linkText: t('exchange.price-chart-card.overlay-messages.market-closure.here'),
-										}}
-										components={{
-											linkTag: <LinkTag onClick={openAfterHoursModalCallback} />,
-										}}
-									/>
-								) : (
-									t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.subtitle`)
+								{openAfterHoursModalCallback != null && AFTER_HOURS_SYNTHS.has(currencyKey ?? '') && (
+									<>
+										<Trans
+											i18nKey="exchange.price-chart-card.overlay-messages.market-closure.after-hours"
+											values={{
+												linkText: t(
+													'exchange.price-chart-card.overlay-messages.market-closure.here'
+												),
+											}}
+											components={{
+												linkTag: <LinkTag onClick={openAfterHoursModalCallback} />,
+											}}
+										/>
+									</>
 								)}
 							</OverlayMessageSubtitle>
+							{marketClosureReason === 'market-closure' &&
+							(AFTER_HOURS_SYNTHS.has(currencyKey ?? '') ||
+								TSE_SYNTHS.has(currencyKey ?? '') ||
+								LSE_SYNTHS.has(currencyKey ?? '') ||
+								FIAT_SYNTHS.has(currencyKey ?? '') ||
+								COMMODITY_SYNTHS.has(currencyKey ?? '')) ? (
+								<>
+									<OverlayMessageSubtitle>Market reopens in: </OverlayMessageSubtitle>
+									<OverlayTimer>{timer}</OverlayTimer>
+								</>
+							) : (
+								<OverlayMessageSubtitle>
+									{t(`exchange.price-chart-card.overlay-messages.${marketClosureReason}.subtitle`)}
+								</OverlayMessageSubtitle>
+							)}
 						</OverlayMessage>
 					) : showLoader ? (
 						<Svg src={LoaderIcon} />
@@ -388,6 +415,11 @@ const OverlayMessageTitle = styled.div`
 
 const OverlayMessageSubtitle = styled.div`
 	color: ${(props) => props.theme.colors.silver};
+	padding-bottom: 5px;
+`;
+
+const OverlayTimer = styled.div`
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const NoData = styled.div`
