@@ -4,21 +4,20 @@ import styled from 'styled-components';
 import {
 	formatCurrency,
 	FormatCurrencyOptions,
-	formatNumber,
-	NumericValue,
-	toBigNumber,
+	formatNumber
 } from 'utils/formatters/number';
 
 import { CurrencyKey } from 'constants/currency';
 
 import { ContainerRowMixin } from '../common';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 type CurrencyAmountProps = {
 	currencyKey: CurrencyKey;
-	amount: NumericValue;
-	totalValue: NumericValue;
+	amount: WeiSource;
+	totalValue: WeiSource;
 	sign?: string;
-	conversionRate?: NumericValue | null;
+	conversionRate?: WeiSource | null;
 	formatAmountOptions?: FormatCurrencyOptions;
 	formatTotalValueOptions?: FormatCurrencyOptions;
 };
@@ -38,7 +37,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
-				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
+				conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
 				{ sign }
 			)}
 		</TotalValue>

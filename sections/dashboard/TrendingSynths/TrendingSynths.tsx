@@ -2,14 +2,10 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
-import { useQueryCache } from 'react-query';
 
 import synthetix, { Synth } from 'lib/synthetix';
 
 import Select from 'components/Select';
-
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
 import { CardTitle } from 'sections/dashboard/common';
 
@@ -19,15 +15,25 @@ import SynthRow from './SynthRow';
 import { numericSort, toCurrencyKeyMap } from './utils';
 import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
+import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const queryCache = useQueryCache();
+	const { network, provider } = Connector.useContainer();
 
-	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
+	const {
+		useExchangeRatesQuery,
+		useHistoricalVolumeQuery
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
+
+	// TODO: reimplement querycache here
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();

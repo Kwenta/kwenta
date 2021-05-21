@@ -22,8 +22,8 @@ import SystemDownIcon from 'assets/svg/app/system-down.svg';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
-
-import useIsSystemOnMaintenance from 'queries/systemStatus/useIsSystemOnMaintenance';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -51,6 +51,12 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
+
+	const { network, provider } = Connector.useContainer();
+	const { useIsSystemOnMaintenance } = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
 	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({

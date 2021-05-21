@@ -10,9 +10,6 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
 import Loader from 'components/Loader';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
 import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
@@ -23,6 +20,10 @@ import { CardTitle, ConvertContainer } from '../common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { zeroBN } from 'utils/formatters/number';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
@@ -36,6 +37,16 @@ const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
+	const { network, provider } = Connector.useContainer();
+
+	const {
+		useExchangeRatesQuery,
+		useSynthsBalancesQuery,
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as Tab;
@@ -46,9 +57,11 @@ const DashboardCard: FC = () => {
 		return null;
 	}, [router.query]);
 
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const synthBalances =

@@ -20,7 +20,7 @@ import { NumericValue } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;

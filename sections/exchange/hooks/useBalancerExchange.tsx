@@ -18,8 +18,6 @@ import useInterval from 'hooks/useInterval';
 import Connector from 'containers/Connector';
 import Etherscan from 'containers/Etherscan';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeBalancerSummaryCard from 'sections/exchange/FooterCard/TradeBalancerSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
@@ -40,13 +38,14 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import synthetix from 'lib/synthetix';
 
-import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
 import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 import useCurrencyPair from './useCurrencyPair';
-import { toBigNumber, zeroBN, scale } from 'utils/formatters/number';
+import { zeroBN, scale } from 'utils/formatters/number';
 
 import balancerExchangeProxyABI from './balancerExchangeProxyABI';
-import { GasPrices } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
+import { GasPrices } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -76,9 +75,13 @@ const useBalancerExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { notify, provider, signer, queries } = Connector.useContainer();
+	const { notify, provider, signer, network } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const network = useRecoilValue(networkState);
+
+	const { useEthGasPriceQuery, useSynthsBalancesQuery, useFeeReclaimPeriodQuery } = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
 		persistSelectedCurrencies,
@@ -97,7 +100,7 @@ const useBalancerExchange = ({
 	const [baseAllowance, setBaseAllowance] = useState<string | null>(null);
 	const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0');
-	const [estimatedSlippage, setEstimatedSlippage] = useState<BigNumber>(new BigNumber(0));
+	const [estimatedSlippage, setEstimatedSlippage] = useState<Wei>(wei(0));
 
 	const [swaps, setSwaps] = useState<Array<any> | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -115,9 +118,9 @@ const useBalancerExchange = ({
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
-	const ethGasPriceQuery = queries!.useEthGasPriceQuery();
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress || '');
+	const ethGasPriceQuery = useEthGasPriceQuery();
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, walletAddress);
 	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
@@ -129,15 +132,15 @@ const useBalancerExchange = ({
 			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
 			: null;
 
-	let quoteCurrencyBalance: BigNumber | null = null;
+	let quoteCurrencyBalance: Wei | null = null;
 	if (quoteCurrencyKey != null) {
 		quoteCurrencyBalance = synthsWalletBalancesQuery.isSuccess
 			? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
 			: null;
 	}
 
-	const baseCurrencyAmountBN = toBigNumber(baseCurrencyAmount !== '' ? baseCurrencyAmount : 0);
-	const quoteCurrencyAmountBN = toBigNumber(quoteCurrencyAmount !== '' ? quoteCurrencyAmount : 0);
+	const baseCurrencyAmountBN = wei(baseCurrencyAmount !== '' ? baseCurrencyAmount : 0);
+	const quoteCurrencyAmountBN = wei(quoteCurrencyAmount !== '' ? quoteCurrencyAmount : 0);
 
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
@@ -152,10 +155,10 @@ const useBalancerExchange = ({
 
 	let totalTradePrice =
 		baseCurrencyKey === SYNTHS_MAP.sUSD
-			? baseCurrencyAmountBN.multipliedBy(basePriceRate)
-			: quoteCurrencyAmountBN.multipliedBy(quotePriceRate);
+			? baseCurrencyAmountBN.mul(basePriceRate)
+			: quoteCurrencyAmountBN.mul(quotePriceRate);
 	if (selectPriceCurrencyRate) {
-		totalTradePrice = totalTradePrice.dividedBy(selectPriceCurrencyRate);
+		totalTradePrice = totalTradePrice.div(selectPriceCurrencyRate);
 	}
 
 	const isApproved = useMemo(
@@ -189,8 +192,6 @@ const useBalancerExchange = ({
 		}
 		if (
 			!isWalletConnected ||
-			baseCurrencyAmountBN.isNaN() ||
-			quoteCurrencyAmountBN.isNaN() ||
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
@@ -239,7 +240,7 @@ const useBalancerExchange = ({
 
 	const feeAmountInBaseCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return toBigNumber(baseCurrencyAmount).multipliedBy(exchangeFeeRate);
+			return wei(baseCurrencyAmount).mul(exchangeFeeRate);
 		}
 		return null;
 	}, [baseCurrencyAmount, exchangeFeeRate]);
@@ -348,34 +349,33 @@ const useBalancerExchange = ({
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	const calculateExchangeRate = useCallback(
-		async ({ value, isBase }: { value: BigNumber; isBase: boolean }) => {
+		async ({ value, isBase }: { value: Wei; isBase: boolean }) => {
 			if (smartOrderRouter != null && quoteCurrencyAddress != null && baseCurrencyAddress != null) {
 				const swapType = isBase ? 'swapExactOut' : 'swapExactIn';
-				const amount = scale(value, SYNTH_DECIMALS);
-				const smallBN = new BigNumber(0.001);
-				const smallAmount = scale(new BigNumber(0.001), SYNTH_DECIMALS);
+				const amount = wei(value);
+				const smallAmount = wei(0.001)
 				const [tradeSwaps, resultingAmount] = await smartOrderRouter.getSwaps(
 					quoteCurrencyAddress,
 					baseCurrencyAddress,
 					swapType,
-					amount
+					new BigNumber(amount.toString())
 				);
 
 				const [, smallTradeResult] = await smartOrderRouter.getSwaps(
 					quoteCurrencyAddress,
 					baseCurrencyAddress,
 					swapType,
-					smallAmount
+					new BigNumber(smallAmount.toString())
 				);
 
-				const formattedResult = scale(resultingAmount, SYNTH_DECIMALS, true);
-				const formattedSmallTradeResult = scale(smallTradeResult, SYNTH_DECIMALS, true);
+				const formattedResult = wei(resultingAmount.toString());
+				const formattedSmallTradeResult = wei(smallTradeResult.toString());
 
-				const slippage = new BigNumber(1)
-					.minus(formattedSmallTradeResult.div(smallBN).div(formattedResult.div(value)))
+				const slippage = wei(1)
+					.sub(formattedSmallTradeResult.div(smallAmount).div(formattedResult.div(value)))
 					.abs();
 
-				setEstimatedSlippage(slippage.isNaN() ? new BigNumber(0) : slippage);
+				setEstimatedSlippage(slippage);
 				setSwaps(tradeSwaps);
 
 				isBase
@@ -458,15 +458,15 @@ const useBalancerExchange = ({
 				setIsSubmitting(true);
 
 				const gasPriceWei = gasPriceInWei(gasPrice);
-				const slippageTolerance = new BigNumber(maxSlippageTolerance);
+				const slippageTolerance = wei(maxSlippageTolerance);
 
 				const tx = await balancerProxyContract.multihopBatchSwapExactIn(
 					swaps,
 					quoteCurrencyAddress,
 					baseCurrencyAddress,
-					scale(quoteCurrencyAmountBN, SYNTH_DECIMALS).toString(),
-					scale(baseCurrencyAmountBN, SYNTH_DECIMALS)
-						.times(new BigNumber(1).minus(slippageTolerance))
+					quoteCurrencyAmountBN.toString(),
+					baseCurrencyAmountBN
+						.mul(wei(1).sub(slippageTolerance))
 						.toString(),
 					{
 						gasPrice: gasPriceWei.toString(),
@@ -563,11 +563,11 @@ const useBalancerExchange = ({
 			} else if (isBase) {
 				const baseAmount = isMaxClick ? (baseCurrencyBalance ?? 0).toString() : value;
 				setBaseCurrencyAmount(baseAmount);
-				calculateExchangeRate({ value: new BigNumber(baseAmount), isBase });
+				calculateExchangeRate({ value: wei(baseAmount), isBase });
 			} else {
 				const quoteAmount = isMaxClick ? (quoteCurrencyBalance ?? 0).toString() : value;
 				setQuoteCurrencyAmount(quoteAmount);
-				calculateExchangeRate({ value: new BigNumber(quoteAmount), isBase });
+				calculateExchangeRate({ value: wei(quoteAmount), isBase });
 			}
 		},
 		[baseCurrencyBalance, quoteCurrencyBalance, calculateExchangeRate]

@@ -5,8 +5,6 @@ import orderBy from 'lodash/orderBy';
 
 import synthetix from 'lib/synthetix';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
@@ -21,6 +19,10 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import SynthRow from './SynthRow';
+import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -39,10 +41,15 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, o
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 
+	const { provider, network } = Connector.useContainer();
+	const { useSynthsBalancesQuery } = useSynthetixQueries({ networkId: network?.id ?? null, provider });
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	// eslint-disable-next-line
 	const synths = synthetix.js?.synths ?? [];
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data ?? null
 		: null;

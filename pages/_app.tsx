@@ -3,17 +3,15 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { ReactQueryCacheProvider, QueryCache } from 'react-query';
+import { QueryClientProvider, QueryClient } from 'react-query';
 
 import { ThemeProvider } from 'styled-components';
 import { MediaContextProvider } from 'styles/media';
 
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
-
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
 
-import { ReactQueryDevtools } from 'react-query-devtools';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
@@ -28,15 +26,6 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
-import Connector from 'containers/Connector';
-
-const queryCache = new QueryCache({
-	defaultConfig: {
-		queries: {
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
-		},
-	},
-});
 
 // release - 12 Nov 2020!
 
@@ -69,14 +58,14 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 				<RecoilRoot>
 					<WithAppContainers>
 						<MediaContextProvider>
-							<ReactQueryCacheProvider queryCache={queryCache}>
+							<QueryClientProvider client={new QueryClient()}>
 								<Layout>
 									<SystemStatus>
 										<Component {...pageProps} />
 									</SystemStatus>
 								</Layout>
 								<ReactQueryDevtools />
-							</ReactQueryCacheProvider>
+							</QueryClientProvider>
 						</MediaContextProvider>
 					</WithAppContainers>
 				</RecoilRoot>

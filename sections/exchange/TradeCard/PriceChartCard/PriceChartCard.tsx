@@ -29,12 +29,14 @@ import {
 
 import { formatCurrency } from 'utils/formatters/number';
 
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import media from 'styles/media';
 
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useSynthetixQueries from '@synthetixio/queries';
+import { BaseRateUpdate } from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type ChartCardProps = {
 	side: Side;
@@ -52,6 +54,13 @@ const ChartCard: FC<ChartCardProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
+	
+	const { network, provider } = Connector.useContainer();
+	const { useHistoricalRatesQuery } = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
+	
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
@@ -90,7 +99,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const computedRates = useMemo(() => {
 		if (selectPriceCurrencyRate != null) {
-			return rates.map((rateData) => ({
+			return rates.map((rateData: BaseRateUpdate) => ({
 				...rateData,
 				rate: rateData.rate / selectPriceCurrencyRate,
 			}));

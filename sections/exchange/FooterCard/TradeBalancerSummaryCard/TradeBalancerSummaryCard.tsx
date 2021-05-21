@@ -5,7 +5,6 @@ import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
@@ -17,13 +16,14 @@ import NumericInput from 'components/Input/NumericInput';
 import { numericValueCSS, NumericValue, FlexDivRowCentered, FlexDivCol } from 'styles/common';
 
 import { formatPercent } from 'utils/formatters/number';
-import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
 
 type TradeBalancerSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
 	onSubmit: () => void;
 	gasPrices: GasPrices | undefined;
-	estimatedSlippage: BigNumber;
+	estimatedSlippage: Wei;
 	setMaxSlippageTolerance: (num: string) => void;
 	maxSlippageTolerance: string;
 	isApproved?: boolean;

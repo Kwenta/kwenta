@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+
+import Wei from '@synthetixio/wei';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -11,7 +12,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
 type FeeRateSummaryItemProps = {
-	feeCost: BigNumber | null;
+	feeCost: Wei | null;
 };
 
 const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {

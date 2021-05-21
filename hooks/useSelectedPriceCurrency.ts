@@ -1,17 +1,25 @@
-import BigNumber from 'bignumber.js';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 import { useRecoilValue } from 'recoil';
 import { priceCurrencyState } from 'store/app';
 
 const useSelectedPriceCurrency = () => {
+	
+	const { network, provider } = Connector.useContainer();
+	const { useExchangeRatesQuery } = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const selectPriceCurrencyRate = exchangeRates && exchangeRates[selectedPriceCurrency.name];
 
-	const getPriceAtCurrentRate = (price: BigNumber) =>
-		selectPriceCurrencyRate != null ? price.dividedBy(selectPriceCurrencyRate) : price;
+	const getPriceAtCurrentRate = (price: Wei) =>
+		selectPriceCurrencyRate != null ? price.div(selectPriceCurrencyRate) : price;
 
 	return {
 		selectPriceCurrencyRate,

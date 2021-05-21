@@ -22,11 +22,11 @@ import BalancerImage from 'assets/svg/providers/balancer.svg';
 import {
 	formatCurrency,
 	LONG_CRYPTO_CURRENCY_DECIMALS,
-	toBigNumber,
 } from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
@@ -39,7 +39,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyKey?: CurrencyKey;
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
-	feeAmountInBaseCurrency: BigNumber | null;
+	feeAmountInBaseCurrency: Wei | null;
 	txProvider: TxProvider;
 	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;
@@ -68,7 +68,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		formatCurrency(
 			baseCurrencyKey,
 			feeAmountInBaseCurrency != null
-				? toBigNumber(baseCurrencyAmount).minus(feeAmountInBaseCurrency)
+				? wei(baseCurrencyAmount).mul(feeAmountInBaseCurrency)
 				: baseCurrencyAmount,
 			{
 				minDecimals: decimals,

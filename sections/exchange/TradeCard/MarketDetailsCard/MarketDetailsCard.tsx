@@ -16,12 +16,10 @@ import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common
 import { truncateAddress } from 'utils/formatters/string';
 import { formatCurrency } from 'utils/formatters/number';
 
-import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
-
 import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -32,6 +30,12 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { network, provider } = Connector.useContainer();
+	const { useHistoricalVolumeQuery, useHistoricalRatesQuery, useSynthMarketCapQuery } = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
 	const {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,

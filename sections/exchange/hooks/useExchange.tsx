@@ -24,13 +24,7 @@ import {
 	SYNTHS_MAP,
 } from 'constants/currency';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useETHBalanceQuery from 'queries/walletBalances/useETHBalanceQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
-import useExchangeFeeRate from 'queries/synths/useExchangeFeeRate';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
-import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 
@@ -63,7 +57,7 @@ import {
 import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 
 import synthetix from 'lib/synthetix';
 
@@ -74,7 +68,10 @@ import useCurrencyPair from './useCurrencyPair';
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import Connector from 'containers/Connector';
-import { GasPrices } from '@synthetixio/queries/build/node/queries/network/useEthGasPriceQuery';
+import { GasPrices } from '@synthetixio/queries';
+
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -106,7 +103,22 @@ const useExchange = ({
 	const { t } = useTranslation();
 	const { monitorHash } = Notify.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
-	const { queries } = Connector.useContainer();
+
+	const { network, provider } = Connector.useContainer();
+
+	const {
+		useEthGasPriceQuery,
+		useETHBalanceQuery,
+		useSynthsBalancesQuery,
+		useExchangeRatesQuery,
+		useFeeReclaimPeriodQuery,
+		useExchangeFeeRateQuery,
+		useTokensBalancesQuery
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
 	const router = useRouter();
 
 	const marketQuery = useMemo(
@@ -144,18 +156,18 @@ const useExchange = ({
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
-	const ETHBalanceQuery = useETHBalanceQuery();
+	const ETHBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ETHBalance = ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthsWalletBalance = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = queries!.useEthGasPriceQuery();
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey);
-	const exchangeFeeRateQuery = useExchangeFeeRate(quoteCurrencyKey, baseCurrencyKey);
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, walletAddress);
+	const exchangeFeeRateQuery = useExchangeFeeRateQuery(quoteCurrencyKey, baseCurrencyKey);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -173,7 +185,7 @@ const useExchange = ({
 	});
 	const tokenList = tokenListQuery.isSuccess ? tokenListQuery.data?.tokens ?? [] : [];
 
-	const tokensWalletBalancesQuery = useTokensBalancesQuery(tokenList);
+	const tokensWalletBalancesQuery = useTokensBalancesQuery(tokenList, walletAddress || '');
 	const tokenBalances = tokensWalletBalancesQuery.isSuccess
 		? tokensWalletBalancesQuery.data ?? null
 		: null;
@@ -351,27 +363,27 @@ const useExchange = ({
 	);
 
 	const quoteCurrencyAmountBN = useMemo(
-		() => (quoteCurrencyAmount === '' ? zeroBN : toBigNumber(quoteCurrencyAmount)),
+		() => (quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount)),
 		[quoteCurrencyAmount]
 	);
 	const baseCurrencyAmountBN = useMemo(
-		() => (baseCurrencyAmount === '' ? zeroBN : toBigNumber(baseCurrencyAmount)),
+		() => (baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount)),
 		[baseCurrencyAmount]
 	);
 
 	const totalTradePrice = useMemo(() => {
-		let tradePrice = quoteCurrencyAmountBN.multipliedBy(quotePriceRate);
+		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate);
 		if (selectPriceCurrencyRate) {
-			tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice;
 	}, [quoteCurrencyAmountBN, quotePriceRate, selectPriceCurrencyRate]);
 
 	const estimatedBaseTradePrice = useMemo(() => {
-		let tradePrice = baseCurrencyAmountBN.multipliedBy(basePriceRate);
+		let tradePrice = baseCurrencyAmountBN.mul(basePriceRate);
 		if (selectPriceCurrencyRate) {
-			tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice;
@@ -405,8 +417,6 @@ const useExchange = ({
 		}
 		if (
 			!isWalletConnected ||
-			baseCurrencyAmountBN.isNaN() ||
-			quoteCurrencyAmountBN.isNaN() ||
 			baseCurrencyAmountBN.lte(0) ||
 			quoteCurrencyAmountBN.lte(0)
 		) {
@@ -489,14 +499,14 @@ const useExchange = ({
 
 	const feeAmountInBaseCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return toBigNumber(baseCurrencyAmount).multipliedBy(exchangeFeeRate);
+			return wei(baseCurrencyAmount).mul(exchangeFeeRate);
 		}
 		return null;
 	}, [baseCurrencyAmount, exchangeFeeRate]);
 
 	const feeCost = useMemo(() => {
 		if (feeAmountInBaseCurrency != null) {
-			return feeAmountInBaseCurrency.multipliedBy(basePriceRate);
+			return feeAmountInBaseCurrency.mul(basePriceRate);
 		}
 		return null;
 	}, [feeAmountInBaseCurrency, basePriceRate]);
@@ -537,10 +547,7 @@ const useExchange = ({
 	const getExchangeParams = useCallback(() => {
 		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = ethers.utils.parseUnits(
-			quoteCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
-			DEFAULT_TOKEN_DECIMALS
-		);
+		const amountToExchange = quoteCurrencyAmountBN.toBN();
 		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
 		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
@@ -578,7 +585,7 @@ const useExchange = ({
 						oneInchApproveAddress
 					)) as ethers.BigNumber;
 
-					setIsApproved(toBigNumber(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
+					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
 				}
 			} catch (e) {
 				console.log(e);
@@ -773,7 +780,7 @@ const useExchange = ({
 					setQuoteCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
 						setBaseCurrencyAmount(
-							toBigNumber(value).multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+							wei(value).mul(rate).toString(DEFAULT_TOKEN_DECIMALS)
 						);
 					}
 				}
@@ -783,9 +790,9 @@ const useExchange = ({
 				if (quoteCurrencyBalance != null) {
 					if (quoteCurrencyKey === 'ETH') {
 						const ETH_TX_BUFFER = 0.1;
-						const balanceWithBuffer = quoteCurrencyBalance.minus(toBigNumber(ETH_TX_BUFFER));
+						const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
 						setQuoteCurrencyAmount(
-							balanceWithBuffer.isNegative() ? '0' : balanceWithBuffer.toString()
+							balanceWithBuffer.lt(0) ? '0' : balanceWithBuffer.toString()
 						);
 					} else {
 						setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
@@ -793,9 +800,8 @@ const useExchange = ({
 					if (txProvider === 'synthetix') {
 						setBaseCurrencyAmount(
 							quoteCurrencyBalance
-								.multipliedBy(rate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+								.mul(rate)
+								.toString(DEFAULT_TOKEN_DECIMALS)
 						);
 					}
 				}
@@ -828,9 +834,7 @@ const useExchange = ({
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch') {
-			if (!totalTradePrice.isNaN() && !estimatedBaseTradePrice.isNaN()) {
-				return totalTradePrice.minus(estimatedBaseTradePrice).dividedBy(totalTradePrice).negated();
-			}
+			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
 		}
 		return null;
 		// eslint-disable-next-line
@@ -848,10 +852,9 @@ const useExchange = ({
 					setBaseCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
 						setQuoteCurrencyAmount(
-							toBigNumber(value)
-								.multipliedBy(inverseRate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+							wei(value)
+								.mul(inverseRate)
+								.toString(DEFAULT_TOKEN_DECIMALS)
 						);
 					}
 				}
@@ -863,10 +866,9 @@ const useExchange = ({
 
 					if (txProvider === 'synthetix') {
 						setQuoteCurrencyAmount(
-							toBigNumber(baseCurrencyBalance)
-								.multipliedBy(inverseRate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+							wei(baseCurrencyBalance)
+								.mul(inverseRate)
+								.toString(DEFAULT_TOKEN_DECIMALS)
 						);
 					}
 				}

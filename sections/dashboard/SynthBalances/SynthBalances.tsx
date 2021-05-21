@@ -8,12 +8,11 @@ import { SYNTHS_MAP } from 'constants/currency';
 
 import Button from 'components/Button';
 
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import media from 'styles/media';
 import { GridDivCentered, NoTextTransform } from 'styles/common';
 
 import SynthBalanceRow, { SynthBalanceRowProps } from './SynthBalanceRow';
+import { SynthBalance } from '@synthetixio/queries';
 
 type SynthBalancesProps = Omit<SynthBalanceRowProps, 'synth'> & {
 	balances: SynthBalance[];

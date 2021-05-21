@@ -2,35 +2,43 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
 import { Period } from 'constants/period';
 
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
+import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
 
 import { formatPercent } from 'utils/formatters/number';
 
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import Connector from 'containers/Connector';
+import Wei from '@synthetixio/wei';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
 	synth: SynthBalance;
-	totalUSDBalance: BigNumber;
+	totalUSDBalance: Wei;
 };
 
 const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, totalUSDBalance }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
+	const { network, provider } = Connector.useContainer();
+
+	const {
+		useHistoricalRatesQuery,
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
 	const currencyKey = synth.currencyKey;
-	const percent = synth.usdBalance.dividedBy(totalUSDBalance).toNumber();
+	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();
 
 	const synthDesc =
 		synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
