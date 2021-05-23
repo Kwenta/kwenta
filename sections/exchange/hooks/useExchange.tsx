@@ -14,7 +14,6 @@ import Notify from 'containers/Notify';
 import Convert from 'containers/Convert';
 
 import ROUTES from 'constants/routes';
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import {
 	AFTER_HOURS_SYNTHS,
 	CRYPTO_CURRENCY_MAP,
@@ -780,7 +779,7 @@ const useExchange = ({
 					setQuoteCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
 						setBaseCurrencyAmount(
-							wei(value).mul(rate).toString(DEFAULT_TOKEN_DECIMALS)
+							wei(value).mul(rate).toString()
 						);
 					}
 				}
@@ -801,7 +800,7 @@ const useExchange = ({
 						setBaseCurrencyAmount(
 							quoteCurrencyBalance
 								.mul(rate)
-								.toString(DEFAULT_TOKEN_DECIMALS)
+								.toString()
 						);
 					}
 				}
@@ -833,7 +832,7 @@ const useExchange = ({
 	) : null;
 
 	const slippagePercent = useMemo(() => {
-		if (txProvider === '1inch') {
+		if (txProvider === '1inch' && totalTradePrice.gt(0)) {
 			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
 		}
 		return null;
@@ -854,7 +853,7 @@ const useExchange = ({
 						setQuoteCurrencyAmount(
 							wei(value)
 								.mul(inverseRate)
-								.toString(DEFAULT_TOKEN_DECIMALS)
+								.toString()
 						);
 					}
 				}
@@ -868,7 +867,7 @@ const useExchange = ({
 						setQuoteCurrencyAmount(
 							wei(baseCurrencyBalance)
 								.mul(inverseRate)
-								.toString(DEFAULT_TOKEN_DECIMALS)
+								.toString()
 						);
 					}
 				}

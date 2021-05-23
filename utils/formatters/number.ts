@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
@@ -8,9 +8,6 @@ import {
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
-import Wei, { wei, WeiSource } from '@synthetixio/wei';
-
-BigNumber.config({ DECIMAL_PLACES: DEFAULT_TOKEN_DECIMALS });
 
 export type FormatNumberOptions = {
 	minDecimals?: number;
@@ -40,12 +37,17 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 
+	let weiValue = wei(0);
+	try {
+		weiValue = wei(value);
+	} catch {}
+
 	const formattedValue = [];
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(wei(value).toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
+	formattedValue.push(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}

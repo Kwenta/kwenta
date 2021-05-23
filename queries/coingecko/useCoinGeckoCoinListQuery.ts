@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryConfig, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from 'react-query';
 import keyBy from 'lodash/keyBy';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -15,7 +15,7 @@ type CoinListItem = {
 
 type CoinListMap = Record<CurrencyKey, CoinListItem>;
 
-const useCoinGeckoCoinListQuery = (options?: QueryConfig<CoinListMap>) => {
+const useCoinGeckoCoinListQuery = (options?: UseQueryOptions<CoinListMap>) => {
 	return useQuery<CoinListMap>(
 		QUERY_KEYS.CoinGecko.CoinList,
 		async () => {

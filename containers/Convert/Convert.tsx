@@ -8,7 +8,6 @@ import erc20Abi from 'lib/abis/ERC20.json';
 
 import Connector from 'containers/Connector';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 
 import { walletAddressState } from 'store/wallet';

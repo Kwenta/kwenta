@@ -1,26 +1,24 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers, utils } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import synthetix from 'lib/synthetix';
-import { toBigNumber } from 'utils/formatters/number';
 
 export type CollateralContractInfo = {
-	issueFeeRate: BigNumber;
-	minCollateralRatio: BigNumber;
-	minCollateral: BigNumber;
+	issueFeeRate: Wei;
+	minCollateralRatio: Wei;
+	minCollateral: Wei;
 	interactionDelay: number;
 	canOpenLoans: boolean;
 	maxLoansPerAccount: number;
 };
 
-const useCollateralShortContractInfoQuery = (options?: QueryConfig<CollateralContractInfo>) => {
+const useCollateralShortContractInfoQuery = (options?: UseQueryOptions<CollateralContractInfo>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
 	return useQuery<CollateralContractInfo>(
@@ -52,9 +50,9 @@ const useCollateralShortContractInfoQuery = (options?: QueryConfig<CollateralCon
 			];
 
 			return {
-				issueFeeRate: toBigNumber(utils.formatUnits(issueFeeRate, DEFAULT_TOKEN_DECIMALS)),
-				minCollateralRatio: toBigNumber(utils.formatUnits(minCratio, DEFAULT_TOKEN_DECIMALS)),
-				minCollateral: toBigNumber(utils.formatUnits(minCollateral, DEFAULT_TOKEN_DECIMALS)),
+				issueFeeRate: wei(issueFeeRate),
+				minCollateralRatio: wei(minCratio),
+				minCollateral: wei(minCollateral),
 				interactionDelay: interactionDelay.toNumber(),
 				canOpenLoans,
 				maxLoansPerAccount: maxLoansPerAccount.toNumber(),

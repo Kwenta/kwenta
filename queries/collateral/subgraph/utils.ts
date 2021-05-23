@@ -1,6 +1,5 @@
 import { HistoricalShortPosition, ShortLiquidation } from './types';
 import { hexToAscii } from 'utils/formatters/string';
-import { toBigNumber } from 'utils/formatters/number';
 
 // MainNet - 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 // Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
@@ -12,9 +11,9 @@ export const formatShort = (response: any): Partial<HistoricalShortPosition> => 
 	id: response.id,
 	txHash: response.txHash,
 	collateralLocked: hexToAscii(response.collateralLocked),
-	collateralLockedAmount: toBigNumber(response.collateralLockedAmount / 1e18),
+	collateralLockedAmount: response.collateralLockedAmount,
 	synthBorrowed: hexToAscii(response.synthBorrowed),
-	synthBorrowedAmount: toBigNumber(response.synthBorrowedAmount / 1e18),
+	synthBorrowedAmount: response.synthBorrowedAmount,
 	createdAt: new Date(Number(response.createdAt) * 1000),
 	closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
 	isOpen: Boolean(response.isOpen),
@@ -26,14 +25,14 @@ export const formatShort = (response: any): Partial<HistoricalShortPosition> => 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({
 	id: response.id,
 	isClosed: Boolean(response.isClosed),
-	liquidatedAmount: response.liquidatedAmount / 1e18,
-	liquidatedCollateral: response.liquidatedCollateral / 1e18,
+	liquidatedAmount: response.liquidatedAmount,
+	liquidatedCollateral: response.liquidatedCollateral,
 	liquidator: response.liquidator,
 	timestamp: Number(response.timestamp) * 1000,
 });
 
 export const formatShortCollateralChanges = (response: any) => ({
-	amount: response.amount / 1e18,
+	amount: response.amount,
 	collateralAfter: response.collateralAfter,
 	id: response.id,
 	isDeposit: Boolean(response.isDeposit),
@@ -41,9 +40,9 @@ export const formatShortCollateralChanges = (response: any) => ({
 });
 
 export const formatShortLoanChanges = (response: any) => ({
-	amount: response.amount / 1e18,
+	amount: response.amount,
 	id: response.id,
 	isRepayment: Boolean(response.isRepayment),
-	loanAfter: response.loanAfter / 1e18,
+	loanAfter: response.loanAfter,
 	timestamp: Number(response.timestamp) * 1000,
 });

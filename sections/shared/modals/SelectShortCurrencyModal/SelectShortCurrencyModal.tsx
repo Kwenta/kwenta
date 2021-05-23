@@ -4,9 +4,6 @@ import styled from 'styled-components';
 
 import { Synth } from 'lib/synthetix';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { BottomShadow, NoTextTransform } from 'styles/common';
@@ -18,6 +15,10 @@ import { formatCurrency } from 'utils/formatters/number';
 import { RowsContainer, CenteredModal, RowsHeader } from '../common';
 
 import SynthRow from './SynthRow';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 type SelectShortCurrencyModalProps = {
 	onDismiss: () => void;
@@ -33,9 +34,22 @@ export const SelectShortCurrencyModal: FC<SelectShortCurrencyModalProps> = ({
 	collateralCurrencyKey,
 }) => {
 	const { t } = useTranslation();
+
+	const { network, provider } = Connector.useContainer();
+
+	const {
+		useSynthsBalancesQuery,
+		useExchangeRatesQuery,
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	})
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,

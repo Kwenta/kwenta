@@ -97,7 +97,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 							return {
 								currencyKey: symbol,
 								balance,
-								usdBalance: price != null ? balance.multipliedBy(price) : null,
+								usdBalance: price != null ? balance.mul(price) : null,
 								token,
 							};
 						})

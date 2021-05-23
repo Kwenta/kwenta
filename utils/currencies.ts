@@ -1,5 +1,5 @@
 import { CurrencyKey, SYNTHS_MAP, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import { Rates } from '@synthetixio/queries';
 
 export const isSynth = (currencyKey: CurrencyKey) => !!SYNTHS_MAP[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];

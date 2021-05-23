@@ -73,9 +73,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 
 	const totalTradePrice = useMemo(() => {
 		if (ShortingRewardRow != null) {
-			let tradePrice = ShortingRewardRow.multipliedBy(snxPriceRate);
+			let tradePrice = ShortingRewardRow.mul(snxPriceRate);
 			if (selectPriceCurrencyRate) {
-				tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+				tradePrice = tradePrice.div(selectPriceCurrencyRate);
 			}
 
 			return tradePrice;

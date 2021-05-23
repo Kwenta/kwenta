@@ -5,7 +5,6 @@ import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
 
 import useCollateralShortStats from 'queries/collateral/useCollateralShortStats';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import { NumericValue, Table } from 'styles/common';
 
@@ -20,12 +19,23 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
+import Connector from 'containers/Connector';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 const ShortingStats = () => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { provider, network } = Connector.useContainer();
+
+	const {
+		useExchangeRatesQuery
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = useMemo(
@@ -44,13 +54,13 @@ const ShortingStats = () => {
 				const snxUSDPrice = exchangeRates[CRYPTO_CURRENCY_MAP.SNX];
 				const assetUSDPrice = exchangeRates[currencyKey];
 
-				const openInterest = shorts.multipliedBy(assetUSDPrice).dividedBy(selectPriceCurrencyRate);
+				const openInterest = shorts.mul(assetUSDPrice).div(selectPriceCurrencyRate);
 
-				const apr = rewardsRate
-					.times(SECONDS_IN_A_YR)
-					.times(snxUSDPrice)
+				const apr = rewardsTotalSupply.gt(0) && assetUSDPrice != 0 ? rewardsRate
+					.mul(SECONDS_IN_A_YR)
+					.mul(snxUSDPrice)
 					.div(rewardsTotalSupply)
-					.div(assetUSDPrice);
+					.div(assetUSDPrice) : wei(0);
 
 				return {
 					openInterest,
@@ -64,7 +74,7 @@ const ShortingStats = () => {
 
 	const total = useMemo(() => {
 		if (shortStatsMap != null) {
-			return reduce(shortStatsMap, (sum, short) => sum.plus(short.openInterest), zeroBN);
+			return reduce(shortStatsMap, (sum, short) => sum.add(short.openInterest), zeroBN);
 		}
 		return null;
 	}, [shortStatsMap]);

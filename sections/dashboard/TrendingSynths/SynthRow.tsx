@@ -15,6 +15,7 @@ import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type SynthRowProps = {
 	price: number | null;

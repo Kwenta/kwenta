@@ -7,9 +7,6 @@ import { gasSpeedState } from 'store/wallet';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
 import { CRYPTO_CURRENCY_MAP, SYNTHS_MAP } from 'constants/currency';
 import { SYNTHS_TO_SHORT } from '../constants';
 
@@ -21,12 +18,24 @@ import { getTransactionPrice } from 'utils/network';
 import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
 
 import { Title } from '../common';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
+
+	const { provider, network } = Connector.useContainer();
+
+	const {
+		useEthGasPriceQuery,
+		useExchangeRatesQuery
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

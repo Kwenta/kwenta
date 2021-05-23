@@ -1,5 +1,5 @@
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
-import { GasSpeed } from 'queries/network/useEthGasPriceQuery';
+import { GasSpeed } from '@synthetixio/queries';
 import { atom, selector } from 'recoil';
 
 import { truncateAddress } from 'utils/formatters/string';

@@ -9,10 +9,11 @@ import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import { SelectableCurrencyRow } from 'styles/common';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import { Period } from 'constants/period';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type SynthRowProps = {
 	price: number | null;
@@ -22,6 +23,15 @@ type SynthRowProps = {
 const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const { provider, network } = Connector.useContainer();
+
+	const {
+		useHistoricalRatesQuery
+	} = useSynthetixQueries({
+		networkId: network?.id ?? null,
+		provider
+	});
 
 	const currencyKey = synth.name;
 

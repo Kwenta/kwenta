@@ -1,44 +1,42 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ethers, utils } from 'ethers';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import fromUnixTime from 'date-fns/fromUnixTime';
 
 import { appReadyState } from 'store/app';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
-import { toBigNumber } from 'utils/formatters/number';
 import request, { gql } from 'graphql-request';
 import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
 import Connector from 'containers/Connector';
 
 export type ShortPosition = {
 	id: string;
-	accruedInterest: BigNumber;
+	accruedInterest: Wei;
 	lastInteraction: Date;
 	synthBorrowed: CurrencyKey;
-	synthBorrowedAmount: BigNumber;
+	synthBorrowedAmount: Wei;
 	collateralLocked: CurrencyKey;
-	collateralLockedAmount: BigNumber;
-	collateralRatio: BigNumber;
+	collateralLockedAmount: Wei;
+	collateralRatio: Wei;
 	txHash: string | null;
 	createdAt: Date | null;
 	isOpen: boolean | null;
 	closedAt: Date | null;
-	profitLoss: BigNumber | null;
+	profitLoss: Wei | null;
 };
 
 const useCollateralShortPositionQuery = (
 	loanId: string | null,
 	loanTxHash?: string | null,
 	skipSubgraph?: boolean,
-	options?: QueryConfig<ShortPosition>
+	options?: UseQueryOptions<ShortPosition>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -112,32 +110,24 @@ const useCollateralShortPositionQuery = (
 						ExchangeRates.rateForCurrency(loan.currency),
 					])) as [ethers.BigNumber, ethers.BigNumber];
 
-					const loanAmount = toBigNumber(utils.formatUnits(loan.amount, DEFAULT_TOKEN_DECIMALS));
-					const initialUSDPrice = toBigNumber(
-						utils.formatUnits(initialCollateralPrice, DEFAULT_TOKEN_DECIMALS)
-					);
-					const latestUSDPrice = toBigNumber(
-						utils.formatUnits(latestCollateralPrice, DEFAULT_TOKEN_DECIMALS)
-					);
+					const loanAmount = wei(loan.amount);
+					const initialUSDPrice = wei(initialCollateralPrice);
+					const latestUSDPrice = wei(latestCollateralPrice);
 
-					const pnlPercentage = initialUSDPrice.minus(latestUSDPrice).dividedBy(initialUSDPrice);
-					profitLoss = pnlPercentage.multipliedBy(loanAmount).multipliedBy(initialUSDPrice);
+					const pnlPercentage = initialUSDPrice.sub(latestUSDPrice).div(initialUSDPrice);
+					profitLoss = pnlPercentage.mul(loanAmount).mul(initialUSDPrice);
 				}
 			}
 
 			return {
 				id: loanId as string,
-				accruedInterest: toBigNumber(
-					utils.formatUnits(loan.accruedInterest, DEFAULT_TOKEN_DECIMALS)
-				),
+				accruedInterest: wei(loan.accruedInterest),
 				lastInteraction: fromUnixTime(loan.lastInteraction.toNumber()),
 				synthBorrowed: utils.parseBytes32String(loan.currency),
-				synthBorrowedAmount: toBigNumber(utils.formatUnits(loan.amount, DEFAULT_TOKEN_DECIMALS)),
+				synthBorrowedAmount: wei(loan.amount),
 				collateralLocked: SYNTHS_MAP.sUSD,
-				collateralLockedAmount: toBigNumber(
-					utils.formatUnits(loan.collateral, DEFAULT_TOKEN_DECIMALS)
-				),
-				collateralRatio: toBigNumber(utils.formatUnits(collateralRatio, DEFAULT_TOKEN_DECIMALS)),
+				collateralLockedAmount: wei(loan.collateral),
+				collateralRatio: wei(collateralRatio),
 				txHash,
 				isOpen,
 				createdAt,

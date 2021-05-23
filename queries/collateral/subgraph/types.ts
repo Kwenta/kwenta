@@ -1,21 +1,21 @@
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 
 export type HistoricalShortPosition = {
 	id: string;
 	txHash: string;
 	collateralLocked: CurrencyKey;
-	collateralLockedAmount: BigNumber;
+	collateralLockedAmount: Wei;
 	synthBorrowed: CurrencyKey;
-	synthBorrowedAmount: BigNumber;
+	synthBorrowedAmount: Wei;
 	createdAt: Date;
 	closedAt: Date | null;
 	isOpen: boolean;
-	accruedInterest: BigNumber;
+	accruedInterest: Wei;
 	collateralChanges?: ShortCollateralChange[];
 	liquidations?: ShortLiquidation[];
 	loanChanges?: ShortLoanChange[];
-	profitLoss: BigNumber | null;
+	profitLoss: Wei | null;
 };
 
 export type ShortCollateralChange = {

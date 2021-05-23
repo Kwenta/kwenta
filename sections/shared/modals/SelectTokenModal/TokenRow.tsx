@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import startCase from 'lodash/startCase';
 
 import { Synth } from 'lib/synthetix';
@@ -19,8 +19,8 @@ import { isWalletConnectedState } from 'store/wallet';
 type TokenRowProps = {
 	token: Token;
 	onClick: () => void;
-	balance?: BigNumber;
-	totalValue?: BigNumber;
+	balance?: Wei;
+	totalValue?: Wei;
 	selectedPriceCurrency: Synth;
 	selectPriceCurrencyRate: number | null;
 };

@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -26,7 +26,6 @@ import {
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import Wei, { wei } from '@synthetixio/wei';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
