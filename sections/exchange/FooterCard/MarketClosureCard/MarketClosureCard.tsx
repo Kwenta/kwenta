@@ -1,21 +1,25 @@
 import { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-
-import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 import { MarketClosure } from 'hooks/useMarketClosed';
+import { CurrencyKey } from 'constants/currency';
+import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
 type MarketClosureCardProps = {
 	attached?: boolean;
 	baseCurrencyMarketClosed: MarketClosure;
 	quoteCurrencyMarketClosed: MarketClosure;
+	baseCurrencyKey: CurrencyKey | null;
+	quoteCurrencyKey: CurrencyKey | null;
 };
 
 const MarketClosureCard: FC<MarketClosureCardProps> = ({
 	attached,
 	baseCurrencyMarketClosed,
 	quoteCurrencyMarketClosed,
+	baseCurrencyKey,
+	quoteCurrencyKey,
 }) => {
 	const { t } = useTranslation();
 
@@ -36,7 +40,14 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({
 			<MessageContainer attached={attached} className="footer-card">
 				<DesktopOnlyView>
 					<Message>
-						{t(`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`)}
+						<Trans
+							i18nKey={`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`}
+							values={{
+								currencyKey: baseCurrencyMarketClosed.isMarketClosed
+									? baseCurrencyKey
+									: quoteCurrencyKey,
+							}}
+						/>
 					</Message>
 				</DesktopOnlyView>
 				<MessageButton disabled={true}>

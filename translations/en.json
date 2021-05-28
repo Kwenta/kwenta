@@ -156,25 +156,25 @@
 			"ratio": "ratio",
 			"overlay-messages": {
 				"frozen": {
-					"title": "This Synth has been frozen",
+					"title": "{currencyKey}} synth has been frozen",
 					"subtitle": "Reset in progress."
 				},
 				"market-closure": {
-					"title": "This market has been closed",
+					"title": "{{currencyKey}} market has been closed",
 					"subtitle": "Reset in progress.",
 					"after-hours": "Aftermarket trading pool available <linkTag>{{linkText}}</linkTag>",
 					"here": "here"
 				},
 				"system-upgrade": {
-					"title": "Synth paused",
+					"title": "{{currencyKey}} synth paused",
 					"subtitle": "Please check the Synthetix Discord for details."
 				},
 				"circuit-breaker": {
-					"title": "Circuit breaker triggered",
+					"title": "Circuit breaker triggered for {{currencyKey}}",
 					"subtitle": "Reset in progress"
 				},
 				"emergency": {
-					"title": "Emergency shutdown activated",
+					"title": "Emergency shutdown activated for {{currencyKey}}",
 					"subtitle": "Reset in progress"
 				}
 			},
@@ -214,19 +214,19 @@
 				"button-label": "market closed",
 				"reasons": {
 					"frozen": {
-						"message": "This Synth has been frozen - reset in progress."
+						"message": "{{currencyKey}} synth has been frozen - reset in progress."
 					},
 					"market-closure": {
-						"message": "This market has been closed - reset in progress."
+						"message": "{{currencyKey}} market has been closed - reset in progress."
 					},
 					"system-upgrade": {
-						"message": "Synth paused. Please check the Synthetix Discord for details."
+						"message": "{{currencyKey}} synth paused. Please check the Synthetix Discord for details."
 					},
 					"circuit-breaker": {
-						"message": "Circuit breaker triggered - reset in progress."
+						"message": "Circuit breaker triggered for {{currencyKey}} - reset in progress."
 					},
 					"emergency": {
-						"message": "Emergency shutdown activated - reset in progress."
+						"message": "Emergency shutdown activated for {{currencyKey}} - reset in progress."
 					},
 					"both-synths-suspended": {
 						"message": "Synths selected are currently paused - reset in progress."
@@ -244,6 +244,10 @@
 		},
 		"errors": {
 			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}"
+		},
+		"charts": {
+			"single": "single",
+			"double": "double"
 		}
 	},
 	"dashboard": {

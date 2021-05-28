@@ -159,8 +159,7 @@ const StyledCard = styled(Card)<{ interactive?: boolean }>`
 `;
 
 const StyledCardBody = styled(Card.Body)`
-	padding-top: 11px;
-	padding-bottom: 11px;
+	padding: 11px 30px;
 `;
 
 const LabelContainer = styled.div`
@@ -196,7 +195,7 @@ const CurrencySelector = styled.div<{
 	${(props) =>
 		!props.currencyKeySelected &&
 		css`
-			margin: 12px 0 12px -10px;
+			margin: 12px 6px 12px -10px;
 		`};
 
 	${(props) =>

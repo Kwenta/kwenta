@@ -196,11 +196,12 @@ export const SwapCurrenciesButton = styled.button`
 	color: ${(props) => props.theme.colors.white};
 	height: 32px;
 	width: 32px;
-	border-radius: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: ${zIndex.BASE};
+	border: 2px solid ${(props) => props.theme.colors.black};
+	border-radius: 50%;
 `;
 
 export const Tooltip = styled(Tippy)`
