@@ -10,6 +10,7 @@ import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
 import { FlexDivCentered } from 'styles/common';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
 export type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
@@ -38,6 +39,11 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 		? ZapperTokenListQuery.data?.tokensMap ?? null
 		: null;
 
+	const OneInchTokenListQuery = useOneInchTokenList();
+	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
+		? OneInchTokenListQuery.data?.tokensMap ?? null
+		: null;
+
 	const props = {
 		width: '24px',
 		height: '24px',
@@ -54,15 +60,25 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 	}
 
 	if (type === 'token') {
-		return ZapperTokenListMap != null && ZapperTokenListMap[currencyKey] != null ? (
-			<ZapperTokenIcon
-				src={ZapperTokenListMap[currencyKey].logoURI}
-				onError={() => setIsError(true)}
-				{...props}
-			/>
-		) : (
-			defaultIcon
-		);
+		if (ZapperTokenListMap != null && ZapperTokenListMap[currencyKey] != null) {
+			return (
+				<TokenIcon
+					src={ZapperTokenListMap[currencyKey].logoURI}
+					onError={() => setIsError(true)}
+					{...props}
+				/>
+			);
+		} else if (OneInchTokenListMap != null && OneInchTokenListMap[currencyKey] != null) {
+			return (
+				<TokenIcon
+					src={OneInchTokenListMap[currencyKey].logoURI}
+					onError={() => setIsError(true)}
+					{...props}
+				/>
+			);
+		} else {
+			return defaultIcon;
+		}
 	} else {
 		switch (currencyKey) {
 			case CRYPTO_CURRENCY_MAP.ETH: {
@@ -97,7 +113,7 @@ const Placeholder = styled(FlexDivCentered)`
 	margin: 0 auto;
 `;
 
-const ZapperTokenIcon = styled.img`
+const TokenIcon = styled.img`
 	border-radius: 100%;
 `;
 
