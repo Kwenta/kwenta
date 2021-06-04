@@ -563,7 +563,7 @@ const useExchange = ({
 				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
 					...exchangeParams
 				);
-				return normalizeGasLimit(Number(gasEstimate));
+				return isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate));
 			}
 		} catch (e) {
 			console.log(e);
@@ -624,7 +624,7 @@ const useExchange = ({
 					const gasPriceWei = gasPriceInWei(gasPrice);
 
 					const tx = await contract.approve(oneInchApproveAddress, ethers.constants.MaxUint256, {
-						gasLimit: normalizeGasLimit(Number(gasEstimate)),
+						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
 						gasPrice: gasPriceWei,
 					});
 
