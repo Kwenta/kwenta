@@ -471,7 +471,6 @@ const useExchange = ({
 				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
 					...exchangeParams
 				);
-				console.log('GAS ESTIMATE', gasEstimate);
 				return normalizeGasLimit(Number(gasEstimate));
 			}
 		} catch (e) {
