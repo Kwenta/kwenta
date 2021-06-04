@@ -33,7 +33,7 @@ jobs:
         continue-on-error: true
 
       - name: Archive lighthouse artifacts
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
         # run on lighthouse fail
         if: always()
         with:

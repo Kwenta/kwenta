@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import {
 	TransactionNotifier,
@@ -33,7 +33,7 @@ const useConnector = () => {
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
-	const setWalletAddress = useSetRecoilState(walletAddressState);
+	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -152,10 +152,10 @@ const useConnector = () => {
 
 	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet) {
+		if (onboard && selectedWallet && !walletAddress) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet]);
+	}, [onboard, selectedWallet, walletAddress]);
 
 	const resetCachedUI = () => {
 		// TODO: since orders are not persisted, we need to reset them.

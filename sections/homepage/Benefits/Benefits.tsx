@@ -89,7 +89,6 @@ const ExchangeFooter = styled.div`
 `;
 
 const ExchangeCards = styled.div`
-	width: 100%;
 	display: grid;
 	justify-content: center;
 	grid-template-columns: 1fr 1fr;
@@ -100,6 +99,7 @@ const ExchangeCards = styled.div`
 		width: 400px;
 	}
 	${media.lessThan('md')`
+		width: 100%;
 		justify-content: unset;
 		grid-template-columns: unset;
 		grid-template-rows: auto auto;

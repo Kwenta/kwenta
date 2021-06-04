@@ -5,7 +5,7 @@ import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { HistoricalTrades } from './types';
-import { isL2State } from 'store/wallet';
+import { networkState } from 'store/wallet';
 
 export const useWalletTradesQuery = (
 	max: number = 100,
@@ -13,12 +13,12 @@ export const useWalletTradesQuery = (
 ) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 
 	return useQuery<HistoricalTrades | null>(
-		QUERY_KEYS.Trades.WalletTrades(walletAddress || '', isL2),
+		QUERY_KEYS.Trades.WalletTrades(walletAddress || '', network?.id!),
 		async () => {
-			const walletTrades = await synthetixData({ useOvm: isL2 }).synthExchanges({
+			const walletTrades = await synthetixData({ networkId: network?.id! }).synthExchanges({
 				fromAddress: walletAddress ?? undefined,
 				max,
 			});

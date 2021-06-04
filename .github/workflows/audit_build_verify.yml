@@ -25,7 +25,7 @@ jobs:
       run: npm audit --audit-level=critical
 
     - name: Lockfile lint
-      run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:"
+      run: lockfile-lint -p package-lock.json --type npm --allowed-hosts npm github.com --allowed-schemes "https:" "git+https:" "git+ssh:"
 
   build:
     needs: audit
@@ -87,10 +87,23 @@ jobs:
 
     - name: Archive build
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+      uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
       with:
         name: build
         path: build.tar.gz
+
+    - name: Configure AWS Credentials
+      if: github.ref == 'refs/heads/master'
+      uses: aws-actions/configure-aws-credentials@cefc5912bc61e2b5a3b049c839fc283c7712d4e0 # pin@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Invalidate CloudFront cache
+      if: github.ref == 'refs/heads/master'
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths "/*"
 
   e2e:
       needs: build
@@ -144,7 +157,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@4a7a711286f30c025902c28b541c10e147a9b843 # pin@v2
+        uses: actions/download-artifact@158ca71f7c614ae705e79f25522ef4658df18253 # pin@v2
         with:
           name: build
 
@@ -162,7 +175,7 @@ jobs:
             CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Archive e2e artifacts
-        uses: actions/upload-artifact@e448a9b857ee2131e752b06002bf0e093c65e571 # pin@v2
+        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
         if: always()
         with:
           name: e2e-artifacts

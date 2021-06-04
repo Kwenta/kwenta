@@ -30,10 +30,10 @@
 			"faq": "FAQ"
 		},
 		"hero": {
-			"title": "Derivatives trading with infinite liquidity"
+			"title": "Derivatives trading with zero slippage"
 		},
 		"assets": {
-			"title": "Trade a vast range of assets unique to Ethereum",
+			"title": "Trade real world assets and derivatives on Ethereum",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
@@ -142,7 +142,8 @@
 		"currency-card": {
 			"wallet-balance": "wallet balance",
 			"currency-selector": {
-				"no-value": "select synth"
+				"select-synth": "select synth",
+				"select-token": "select token"
 			}
 		},
 		"market-details-card": {
@@ -197,6 +198,7 @@
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
+				"select-token": "select token",
 				"submit-order": "submit order",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
@@ -205,7 +207,9 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:"
+			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
+			"l2-message": "Your wallet has no Synths. Mint <0>{{currencyKey}}</0> on Staking to trade Synths:",
+			"mint-button": "Visit Staking"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
@@ -233,13 +237,13 @@
 						"message": "Synths selected are currently paused - reset in progress."
 					},
 					"after-hours": {
-						"message": "{{asset}} stock exchange is closed - trade on Balancer in the meantime",
+						"message": "Stock exchange is closed. Trade after-hours on Balancer",
 						"button-label": "Open Balancer Pool"
 					}
 				}
 			},
 			"get-l2-gas": {
-				"message": "Not enough ETH for transaction fees. Get some via Optimism:"
+				"message": "Not enough L2 wETH for transaction fees. Get some via Optimism Bridge:"
 			}
 		},
 		"common": {
@@ -465,7 +469,7 @@
 		"subtitle": "We apologise for any inconvenience caused, it will be back shortly."
 	},
 	"modals": {
-		"select-base-currency": {
+		"select-currency": {
 			"title": "select synth",
 			"header": {
 				"search-results": "search results",
@@ -479,12 +483,16 @@
 				"empty-results": "No results found. Please try again."
 			}
 		},
-		"select-quote-currency": {
-			"title": "select synth",
+		"select-token": {
+			"title": "select token",
 			"header": {
-				"your-synths": "your synths",
-				"holdings": "holdings",
-				"non-synths": "non-synths"
+				"search-results": "search results",
+				"all-tokens": "all tokens",
+				"holdings": "holdings"
+			},
+			"search": {
+				"placeholder": "search tokens",
+				"empty-results": "No results found. Please try again."
 			}
 		},
 		"select-short-currency": {
@@ -502,8 +510,8 @@
 			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
 		"afterHours": {
-			"title": "Aftermarket {{synth}} Trading Pool",
-			"approve": "Approve {{synth}}",
+			"title": "Aftermarket Trading Pool",
+			"approve": "Approve",
 			"balancer-pool": "Balancer Pool",
 			"slippage-levels": {
 				"low": "Low",
@@ -514,7 +522,7 @@
 			"max-slippage-tolerance": "Max Slippage Tolerance",
 			"estimated-slippage": "Estimated Slippage",
 			"confirm-text": "Confirm your transaction with your web3 provider",
-			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade {{synth}} at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
+			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
 		},
 		"settings": {
 			"title": "settings",
@@ -557,6 +565,7 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
+			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>"
 		},

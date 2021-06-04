@@ -53,6 +53,13 @@ export const SYNTHS = [
 	'sFTSE',
 	'sNIKKEI',
 	'sTSLA',
+	'sMSFT',
+	'sFB',
+	'sAMZN',
+	'sAAPL',
+	'sNFLX',
+	'sGOOG',
+	'sCOIN',
 	'sXAU',
 	'sXAG',
 	'sOIL',
@@ -110,6 +117,23 @@ export const FIAT_SYNTHS = new Set([
 	SYNTHS_MAP.sGBP,
 	SYNTHS_MAP.sCHF,
 ]);
+
+export const LSE_SYNTHS = new Set([SYNTHS_MAP.sFTSE]);
+
+export const TSE_SYNTHS = new Set([SYNTHS_MAP.sNIKKEI]);
+
+export const AFTER_HOURS_SYNTHS = new Set([
+	SYNTHS_MAP.sTSLA,
+	SYNTHS_MAP.sMSFT,
+	SYNTHS_MAP.sFB,
+	SYNTHS_MAP.sAMZN,
+	SYNTHS_MAP.sAAPL,
+	SYNTHS_MAP.sNFLX,
+	SYNTHS_MAP.sGOOG,
+	SYNTHS_MAP.sCOIN,
+]);
+
+export const COMMODITY_SYNTHS = new Set([SYNTHS_MAP.sXAU, SYNTHS_MAP.sXAG, SYNTHS_MAP.sOIL]);
 
 export const sUSD_EXCHANGE_RATE = 1;
 export const SYNTH_DECIMALS = 18;

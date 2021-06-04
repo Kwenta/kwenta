@@ -29,11 +29,11 @@ export default class ExchangePage extends Page {
 		}
 	}
 
-	connectMetamaskWallet() {
+	connectBrowserWallet() {
 		const connectWalletButton = this.header.getConnectWalletBtn();
 		connectWalletButton.click();
-		const onboardMetamaskButton = this.onboard.getMetamaskBtn();
-		onboardMetamaskButton.click();
+		const onboardBrowserWalletButton = this.onboard.getBrowserWalletBtn();
+		onboardBrowserWalletButton.click();
 	}
 
 	waitUntilLoggedIn() {

@@ -15,7 +15,8 @@ const CurrencyConvertCard: FC = () => {
 		defaultQuoteCurrencyKey: CRYPTO_CURRENCY_MAP.ETH,
 		footerCardAttached: true,
 		persistSelectedCurrencies: false,
-		allowCurrencySelection: false,
+		allowQuoteCurrencySelection: true,
+		allowBaseCurrencySelection: false,
 		showNoSynthsCard: false,
 		txProvider: '1inch',
 	});
