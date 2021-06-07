@@ -14,7 +14,6 @@ import Convert from 'containers/Convert';
 
 import ROUTES from 'constants/routes';
 import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { L2_GAS_LIMIT } from 'constants/network';
 import {
 	AFTER_HOURS_SYNTHS,
 	CRYPTO_CURRENCY_MAP,
@@ -559,20 +558,18 @@ const useExchange = ({
 
 	const getGasLimitEstimateForExchange = useCallback(async () => {
 		try {
-			if (isL2) return L2_GAS_LIMIT;
 			if (synthetix.js != null) {
 				const exchangeParams = getExchangeParams();
 				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
 					...exchangeParams
 				);
-
-				return normalizeGasLimit(Number(gasEstimate));
+				return isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate));
 			}
 		} catch (e) {
 			console.log(e);
 		}
 		return null;
-	}, [getExchangeParams, isL2]);
+	}, [getExchangeParams]);
 
 	const checkAllowance = useCallback(async () => {
 		if (
@@ -627,7 +624,7 @@ const useExchange = ({
 					const gasPriceWei = gasPriceInWei(gasPrice);
 
 					const tx = await contract.approve(oneInchApproveAddress, ethers.constants.MaxUint256, {
-						gasLimit: normalizeGasLimit(Number(gasEstimate)),
+						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
 						gasPrice: gasPriceWei,
 					});
 
