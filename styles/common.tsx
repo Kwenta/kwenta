@@ -113,6 +113,10 @@ export const TextButton = styled.button`
 	background: transparent;
 `;
 
+export const ResetButton = styled.button`
+	${resetButtonCSS};
+`;
+
 export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: boolean }>`
 	padding: 5px 0;
 	${(props) =>

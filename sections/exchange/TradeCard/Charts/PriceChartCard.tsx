@@ -9,8 +9,11 @@ import { Svg } from 'react-optimized-image';
 
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
-import { PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
+
 import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { PERIOD_LABELS, PERIOD_IN_HOURS, Period } from 'constants/period';
+import { ChartType } from 'constants/chartType';
+
 import ChangePercent from 'components/ChangePercent';
 import { chartPeriodState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
@@ -19,6 +22,9 @@ import { formatCurrency } from 'utils/formatters/number';
 import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
+import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
+import CandlestickChart from './CandlesticksChart';
+import ChartTypeToggle from './ChartTypeToggle';
 
 import CustomTooltip from './common/CustomTooltip';
 import OverlayMessageContainer from './common/OverlayMessage';
@@ -52,6 +58,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
+	const [selectedChartType, setSelectedChartType] = useState(ChartType.AREA);
 	const [selectedPeriod, setSelectedPeriod] = usePersistedRecoilState(chartPeriodState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
@@ -60,12 +67,15 @@ const ChartCard: FC<ChartCardProps> = ({
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, selectedPeriod.period);
+	const candlesticksQuery = useCandlesticksQuery(currencyKey, selectedPeriod.period);
 
 	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
 
 	const change = historicalRates.data?.change ?? null;
 	// eslint-disable-next-line
 	const rates = historicalRates.data?.rates ?? [];
+	const candlesticksData =
+		candlesticksQuery.isSuccess && candlesticksQuery.data ? candlesticksQuery.data : [];
 
 	const isChangePositive = change != null && change >= 0;
 	const chartColor = isChangePositive || isSUSD ? theme.colors.green : theme.colors.red;
@@ -73,10 +83,18 @@ const ChartCard: FC<ChartCardProps> = ({
 	const price = currentPrice || priceRate;
 
 	const showOverlayMessage = isMarketClosed;
-	const showLoader = historicalRates.isLoading;
+	const showLoader = historicalRates.isLoading || candlesticksQuery.isLoading;
 	const disabledInteraction = showLoader || showOverlayMessage;
+	const noCandlesticksData =
+		selectedChartType === ChartType.CANDLESTICK &&
+		candlesticksQuery.isSuccess &&
+		candlesticksQuery.data &&
+		candlesticksData.length === 0;
 	const noData =
-		historicalRates.isSuccess && historicalRates.data && historicalRates.data.rates.length === 0;
+		(historicalRates.isSuccess &&
+			historicalRates.data &&
+			historicalRates.data.rates.length === 0) ||
+		noCandlesticksData;
 
 	// const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 
@@ -137,7 +155,12 @@ const ChartCard: FC<ChartCardProps> = ({
 							<StyledTextButton
 								key={period.value}
 								isActive={period.value === selectedPeriod.value}
-								onClick={() => setSelectedPeriod(period)}
+								onClick={(event) => {
+									setSelectedPeriod(period);
+									if (period.period !== Period.ONE_MONTH) {
+										setSelectedChartType(ChartType.AREA);
+									}
+								}}
 							>
 								{t(period.i18nLabel)}
 							</StyledTextButton>
@@ -145,97 +168,113 @@ const ChartCard: FC<ChartCardProps> = ({
 					</Actions>
 				)}
 			</ChartHeader>
+			{selectedPeriod.period === Period.ONE_MONTH && (
+				<ChartTypeToggle
+					chartTypes={[ChartType.AREA, ChartType.CANDLESTICK]}
+					selectedChartType={selectedChartType}
+					setSelectedChartType={setSelectedChartType}
+					alignRight={alignRight}
+				/>
+			)}
 			<ChartBody>
 				<ChartData disabledInteraction={disabledInteraction}>
-					<RechartsResponsiveContainer
-						width="100%"
-						height="100%"
-						id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
-					>
-						<AreaChart
-							data={computedRates}
-							margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
-							onMouseMove={(e: any) => {
-								const currentRate = get(e, 'activePayload[0].payload.rate', null);
-								if (currentRate) {
-									setCurrentPrice(currentRate);
-								} else {
-									setCurrentPrice(null);
-								}
-							}}
-							onMouseLeave={(e: any) => {
-								setCurrentPrice(null);
-							}}
+					{selectedChartType === ChartType.AREA ? (
+						<RechartsResponsiveContainer
+							width="100%"
+							height="100%"
+							id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
 						>
-							<defs>
-								<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
-									<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
-									<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
-								</linearGradient>
-							</defs>
-							<XAxis
-								// @ts-ignore
-								dx={-1}
-								dy={10}
-								minTickGap={20}
-								dataKey="timestamp"
-								allowDataOverflow={true}
-								tick={fontStyle}
-								axisLine={false}
-								tickLine={false}
-								tickFormatter={(val) => {
-									if (!isNumber(val)) {
-										return '';
+							<AreaChart
+								data={computedRates}
+								margin={{ right: 0, bottom: 0, left: 0, top: 0 }}
+								onMouseMove={(e: any) => {
+									const currentRate = get(e, 'activePayload[0].payload.rate', null);
+									if (currentRate) {
+										setCurrentPrice(currentRate);
+									} else {
+										setCurrentPrice(null);
 									}
-									const periodOverOneDay =
-										selectedPeriod != null && selectedPeriod.value > PERIOD_IN_HOURS.ONE_DAY;
-
-									return format(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
 								}}
-							/>
-							<YAxis
-								// TODO: might need to adjust the width to make sure we do not trim the values...
-								type="number"
-								allowDataOverflow={true}
-								domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
-								tick={fontStyle}
-								orientation="right"
-								axisLine={false}
-								tickLine={false}
-								tickFormatter={(val) =>
-									formatCurrency(selectedPriceCurrency.name, val, {
-										sign: selectedPriceCurrency.sign,
-									})
-								}
-							/>
-							<Area
-								dataKey="rate"
-								stroke={chartColor}
-								dot={false}
-								strokeWidth={2}
-								fill={`url(#${linearGradientId})`}
-								isAnimationActive={false}
-							/>
-							{currencyKey != null && !noData && (
-								<Tooltip
-									isAnimationActive={false}
-									position={{
-										y: 0,
+								onMouseLeave={(e: any) => {
+									setCurrentPrice(null);
+								}}
+							>
+								<defs>
+									<linearGradient id={linearGradientId} x1="0" y1="0" x2="0" y2="1">
+										<stop offset="0%" stopColor={chartColor} stopOpacity={0.5} />
+										<stop offset="100%" stopColor={chartColor} stopOpacity={0} />
+									</linearGradient>
+								</defs>
+								<XAxis
+									// @ts-ignore
+									dx={-1}
+									dy={10}
+									minTickGap={20}
+									dataKey="timestamp"
+									allowDataOverflow={true}
+									tick={fontStyle}
+									axisLine={false}
+									tickLine={false}
+									tickFormatter={(val) => {
+										if (!isNumber(val)) {
+											return '';
+										}
+										const periodOverOneDay =
+											selectedPeriod != null && selectedPeriod.value > PERIOD_IN_HOURS.ONE_DAY;
+
+										return format(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
 									}}
-									content={
-										// @ts-ignore
-										<CustomTooltip
-											formatCurrentPrice={(n: number) =>
-												formatCurrency(selectedPriceCurrency.name, n, {
-													sign: selectedPriceCurrency.sign,
-												})
-											}
-										/>
+								/>
+								<YAxis
+									// TODO: might need to adjust the width to make sure we do not trim the values...
+									type="number"
+									allowDataOverflow={true}
+									domain={isSUSD ? ['dataMax', 'dataMax'] : ['auto', 'auto']}
+									tick={fontStyle}
+									orientation="right"
+									axisLine={false}
+									tickLine={false}
+									tickFormatter={(val) =>
+										formatCurrency(selectedPriceCurrency.name, val, {
+											sign: selectedPriceCurrency.sign,
+										})
 									}
 								/>
-							)}
-						</AreaChart>
-					</RechartsResponsiveContainer>
+								<Area
+									dataKey="rate"
+									stroke={chartColor}
+									dot={false}
+									strokeWidth={2}
+									fill={`url(#${linearGradientId})`}
+									isAnimationActive={false}
+								/>
+								{currencyKey != null && !noData && (
+									<Tooltip
+										isAnimationActive={false}
+										position={{
+											y: 0,
+										}}
+										content={
+											// @ts-ignore
+											<CustomTooltip
+												formatCurrentPrice={(n: number) =>
+													formatCurrency(selectedPriceCurrency.name, n, {
+														sign: selectedPriceCurrency.sign,
+													})
+												}
+											/>
+										}
+									/>
+								)}
+							</AreaChart>
+						</RechartsResponsiveContainer>
+					) : (
+						<CandlestickChart
+							candlesticksData={candlesticksData}
+							selectedPeriod={selectedPeriod}
+							selectedPriceCurrency={selectedPriceCurrency}
+						/>
+					)}
 				</ChartData>
 				<AbsoluteCenteredDiv>
 					{showOverlayMessage ? (

@@ -15,6 +15,12 @@ export const QUERY_KEYS = {
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
 		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
+		Candlesticks: (currencyKey: CurrencyKey, period: Period) => [
+			'rates',
+			'candlesticks',
+			currencyKey,
+			period,
+		],
 		PeriodStartSynthRate: (currencyKey: CurrencyKey, period: Period) => [
 			'rates',
 			'latestSynthRate',
