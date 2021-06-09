@@ -1,4 +1,4 @@
-import { useContext, FC, useState, useMemo } from 'react';
+import { useContext, FC, useState, useMemo, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { AreaChart, XAxis, YAxis, Area, Tooltip } from 'recharts';
 import isNumber from 'lodash/isNumber';
@@ -116,6 +116,13 @@ const ChartCard: FC<ChartCardProps> = ({
 		return rates;
 	}, [rates, selectPriceCurrencyRate]);
 
+	// Reset to area chart if selected period is not 1M
+	useEffect(() => {
+		if (selectedPeriod.period !== Period.ONE_MONTH) {
+			setSelectedChartType(ChartType.AREA);
+		}
+	}, [selectedPeriod]);
+
 	return (
 		<Container {...rest}>
 			<ChartHeader>
@@ -155,7 +162,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							<StyledTextButton
 								key={period.value}
 								isActive={period.value === selectedPeriod.value}
-								onClick={(event) => {
+								onClick={() => {
 									setSelectedPeriod(period);
 									if (period.period !== Period.ONE_MONTH) {
 										setSelectedChartType(ChartType.AREA);
@@ -168,14 +175,13 @@ const ChartCard: FC<ChartCardProps> = ({
 					</Actions>
 				)}
 			</ChartHeader>
-			{selectedPeriod.period === Period.ONE_MONTH && (
-				<ChartTypeToggle
-					chartTypes={[ChartType.AREA, ChartType.CANDLESTICK]}
-					selectedChartType={selectedChartType}
-					setSelectedChartType={setSelectedChartType}
-					alignRight={alignRight}
-				/>
-			)}
+			<ChartTypeToggle
+				chartTypes={[ChartType.AREA, ChartType.CANDLESTICK]}
+				selectedChartType={selectedChartType}
+				setSelectedChartType={setSelectedChartType}
+				setSelectedPeriod={setSelectedPeriod}
+				alignRight={alignRight}
+			/>
 			<ChartBody>
 				<ChartData disabledInteraction={disabledInteraction}>
 					{selectedChartType === ChartType.AREA ? (
@@ -305,7 +311,7 @@ const Container = styled.div`
 
 const ChartHeader = styled.div`
 	display: block;
-	padding-bottom: 5px;
+	padding-bottom: 12px;
 	position: relative;
 	top: 6px;
 `;
