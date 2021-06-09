@@ -55,7 +55,7 @@ const ExchangePage = () => {
 		showNoSynthsCard: true,
 	});
 
-	const [isShowingSingleChart, setIsShowingSingleChart] = useState(true);
+	const [isShowingSingleChart, setIsShowingSingleChart] = useState(false);
 	const toggleIsShowingSingleChart = () => setIsShowingSingleChart((bool) => !bool);
 	const wideWidth = useChartWideWidth();
 
