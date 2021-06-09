@@ -585,6 +585,8 @@ const useShort = ({
 					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
 					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
 					attached={true}
+					quoteCurrencyKey={quoteCurrencyKey}
+					baseCurrencyKey={baseCurrencyKey}
 				/>
 			) : noSynths ? (
 				<NoSynthsCard attached={true} />
