@@ -49,6 +49,17 @@ export const SummaryItemValue = styled.div`
 `;
 
 export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
+	display: grid;
+	-webkit-box-align: center;
+	align-items: center;
+	width: 100%;
+	border-radius: 4px;
+	grid-template-columns: 1fr auto;
+	background-color: ${(props) => props.theme.colors.elderberry};
+	padding: 16px 32px;
+	margin: 0 0 20px;
+
+	/*
 	width: 100%;
 	border-radius: 1000px;
 	grid-template-columns: 1fr auto;
@@ -56,6 +67,7 @@ export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
 	padding: 16px 32px;
 	max-width: 750px;
 	margin: 0 auto;
+	*/
 	${(props) =>
 		props.attached &&
 		css`

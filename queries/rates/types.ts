@@ -44,6 +44,16 @@ export type HistoricalRatesUpdates = {
 	change: number;
 };
 
+export type Candle = {
+	id: string;
+	synth: string;
+	open: BigInt;
+	high: BigInt;
+	low: BigInt;
+	close: BigInt;
+	timestamp: BigInt;
+};
+
 export type MarketCap = {
 	marketCap: number;
 };

@@ -113,6 +113,10 @@ export const TextButton = styled.button`
 	background: transparent;
 `;
 
+export const ResetButton = styled.button`
+	${resetButtonCSS};
+`;
+
 export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: boolean }>`
 	padding: 5px 0;
 	${(props) =>
@@ -196,11 +200,12 @@ export const SwapCurrenciesButton = styled.button`
 	color: ${(props) => props.theme.colors.white};
 	height: 32px;
 	width: 32px;
-	border-radius: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: ${zIndex.BASE};
+	border: 2px solid ${(props) => props.theme.colors.black};
+	border-radius: 50%;
 `;
 
 export const Tooltip = styled(Tippy)`
