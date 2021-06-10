@@ -15,11 +15,12 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 
 import { DesktopOnlyView } from 'components/Media';
 
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
 	return (
 		<>
@@ -28,18 +29,22 @@ const Shorting: FC = () => {
 			</Head>
 			<AppLayout>
 				<PageContent>
-					<FullHeightContainer>
-						<MainContent>
-							<ShortingCard />
-							{isWalletConnected && <ShortingHistory />}
-						</MainContent>
-						<DesktopOnlyView>
-							<StyledRightSideContent>
-								<ShortingRewards />
-								<ShortingStats />
-							</StyledRightSideContent>
-						</DesktopOnlyView>
-					</FullHeightContainer>
+					{isL2 ? (
+						<h1>{t('shorting.not-available-on-l2')}</h1>
+					) : (
+						<FullHeightContainer>
+							<MainContent>
+								<ShortingCard />
+								{isWalletConnected && <ShortingHistory />}
+							</MainContent>
+							<DesktopOnlyView>
+								<StyledRightSideContent>
+									<ShortingRewards />
+									<ShortingStats />
+								</StyledRightSideContent>
+							</DesktopOnlyView>
+						</FullHeightContainer>
+					)}
 				</PageContent>
 			</AppLayout>
 		</>

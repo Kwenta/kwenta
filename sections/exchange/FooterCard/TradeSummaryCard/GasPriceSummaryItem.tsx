@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
-import { useRecoilState } from 'recoil';
+import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
 import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
@@ -38,6 +38,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const isL2 = useRecoilValue(isL2State);
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
@@ -75,38 +76,40 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 						) : (
 							gasPriceItem
 						)}
-						<GasPriceTooltip
-							trigger="click"
-							arrow={false}
-							content={
-								<GasSelectContainer>
-									<CustomGasPriceContainer>
-										<CustomGasPrice
-											value={customGasPrice}
-											onChange={(_, value) => setCustomGasPrice(value)}
-											placeholder={t('common.custom')}
-										/>
-									</CustomGasPriceContainer>
-									{GAS_SPEEDS.map((speed) => (
-										<StyledGasButton
-											key={speed}
-											variant="select"
-											onClick={() => {
-												setCustomGasPrice('');
-												setGasSpeed(speed);
-											}}
-											isActive={hasCustomGasPrice ? false : gasSpeed === speed}
-										>
-											<span>{t(`common.gas-prices.${speed}`)}</span>
-											<NumericValue>{gasPrices![speed]}</NumericValue>
-										</StyledGasButton>
-									))}
-								</GasSelectContainer>
-							}
-							interactive={true}
-						>
-							<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
-						</GasPriceTooltip>
+						{isL2 ? null : (
+							<GasPriceTooltip
+								trigger="click"
+								arrow={false}
+								content={
+									<GasSelectContainer>
+										<CustomGasPriceContainer>
+											<CustomGasPrice
+												value={customGasPrice}
+												onChange={(_, value) => setCustomGasPrice(value)}
+												placeholder={t('common.custom')}
+											/>
+										</CustomGasPriceContainer>
+										{GAS_SPEEDS.map((speed) => (
+											<StyledGasButton
+												key={speed}
+												variant="select"
+												onClick={() => {
+													setCustomGasPrice('');
+													setGasSpeed(speed);
+												}}
+												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+											>
+												<span>{t(`common.gas-prices.${speed}`)}</span>
+												<NumericValue>{gasPrices![speed]}</NumericValue>
+											</StyledGasButton>
+										))}
+									</GasSelectContainer>
+								}
+								interactive={true}
+							>
+								<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
+							</GasPriceTooltip>
+						)}
 					</>
 				) : (
 					NO_VALUE

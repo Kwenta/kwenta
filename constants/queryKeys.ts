@@ -1,16 +1,21 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
 export const QUERY_KEYS = {
 	Rates: {
-		HistoricalVolume: (period: Period) => ['rates', 'historicalVolume', period],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
+		HistoricalVolume: (period: Period, networkId: NetworkId) => [
+			'rates',
+			'historicalVolume',
+			period,
+			networkId,
+		],
+		HistoricalRates: (currencyKey: CurrencyKey, period: Period, networkId: NetworkId) => [
 			'rates',
 			'historicalRates',
 			currencyKey,
 			period,
+			networkId,
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
@@ -73,7 +78,12 @@ export const QUERY_KEYS = {
 	},
 	Trades: {
 		AllTrades: ['trades', 'allTrades'],
-		WalletTrades: (walletAddress: string) => ['trades', 'walletTrades', walletAddress],
+		WalletTrades: (walletAddress: string, networkId: NetworkId) => [
+			'trades',
+			'walletTrades',
+			walletAddress,
+			networkId,
+		],
 	},
 	SystemStatus: {
 		IsUpgrading: ['systemStatus', 'isUpgrading'],

@@ -15,6 +15,9 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"shorting": "shorting"
+		},
+		"networks-switcher": {
+			"l2": "Switch to L2"
 		}
 	},
 	"homepage": {
@@ -204,7 +207,9 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:"
+			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
+			"l2-message": "Your wallet has no Synths. Mint <0>{{currencyKey}}</0> on Staking to trade Synths:",
+			"mint-button": "Visit Staking"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
@@ -236,6 +241,9 @@
 						"button-label": "Open Balancer Pool"
 					}
 				}
+			},
+			"get-l2-gas": {
+				"message": "Not enough L2 wETH for transaction fees. Get some via Optimism Bridge:"
 			}
 		},
 		"common": {
@@ -451,7 +459,8 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		}
+		},
+		"not-available-on-l2": "Shorting is not available on L2"
 	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
@@ -560,6 +569,7 @@
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
+			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>"
 		},
@@ -582,7 +592,10 @@
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",
 			"error": "An unexpected error occurred.",
-			"reattempt": "Try again"
+			"reattempt": "Try again",
+			"transaction-sent": "Your transaction has been sent to the network.",
+			"transaction-failed": "Your transaction has failed",
+			"transaction-confirmed": "Your transaction has succeeded!"
 		},
 		"price": "price",
 		"asset": "asset",

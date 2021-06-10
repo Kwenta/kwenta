@@ -295,7 +295,7 @@ export const MainContent = styled(FlexDivCol)`
 `;
 
 export const RightSideContent = styled(FlexDivCol)`
-	width: 340px;
+	width: 380px;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	margin-right: -20px;

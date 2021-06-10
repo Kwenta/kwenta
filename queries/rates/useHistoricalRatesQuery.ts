@@ -1,5 +1,5 @@
 import { useQuery, QueryConfig } from 'react-query';
-import snxData from 'synthetix-data';
+import synthetixData from '@synthetixio/data';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, SYNTHS_MAP, sUSD_EXCHANGE_RATE } from 'constants/currency';
@@ -12,16 +12,19 @@ import {
 	mockHistoricalRates,
 } from './utils';
 import { HistoricalRatesUpdates } from './types';
+import { networkState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 const useHistoricalRatesQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
 	options?: QueryConfig<HistoricalRatesUpdates>
 ) => {
+	const network = useRecoilValue(networkState);
 	const periodInHours = PERIOD_IN_HOURS[period];
 
 	return useQuery<HistoricalRatesUpdates>(
-		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period),
+		QUERY_KEYS.Rates.HistoricalRates(currencyKey as string, period, network?.id!),
 		async () => {
 			if (currencyKey === SYNTHS_MAP.sUSD) {
 				return {
@@ -31,12 +34,12 @@ const useHistoricalRatesQuery = (
 					change: 0,
 				};
 			} else {
-				const rates = await snxData.rate.updates({
-					synth: currencyKey,
-					// maxTimestamp: Math.trunc(now / 1000),
-					minTimestamp: calculateTimestampForPeriod(periodInHours),
-					max: 6000,
-				});
+				const rates =
+					(await synthetixData({ networkId: network?.id! }).rateUpdates({
+						synth: currencyKey ?? undefined,
+						minTimestamp: calculateTimestampForPeriod(periodInHours),
+						max: 1000,
+					})) ?? [];
 
 				const [low, high] = getMinAndMaxRate(rates);
 				const change = calculateRateChange(rates);

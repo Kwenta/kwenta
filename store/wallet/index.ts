@@ -9,11 +9,20 @@ import { getWalletKey } from '../utils';
 export type Network = {
 	id: NetworkId;
 	name: NetworkName;
+	useOvm?: boolean;
 };
 
 export const networkState = atom<Network | null>({
 	key: getWalletKey('network'),
 	default: null,
+});
+
+export const isMainnetNetworkState = selector<boolean>({
+	key: 'isMainnetNetwork',
+	get: ({ get }) => {
+		const network = get(networkState)!;
+		return network?.name === NetworkName.Mainnet;
+	},
 });
 
 export const walletAddressState = atom<string | null>({
@@ -45,4 +54,11 @@ export const gasSpeedState = atom<GasSpeed>({
 export const customGasPriceState = atom<string>({
 	key: getWalletKey('customGasPrice'),
 	default: '',
+});
+
+export const isL2State = selector<boolean>({
+	key: getWalletKey('isL2'),
+	get: ({ get }) => {
+		return get(networkState)?.useOvm ?? false;
+	},
 });

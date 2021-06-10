@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { gasSpeedState } from 'store/wallet';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
@@ -27,7 +26,6 @@ const ShortingRewards: FC = () => {
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
-
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();

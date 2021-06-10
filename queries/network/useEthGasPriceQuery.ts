@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useQuery, QueryConfig } from 'react-query';
-
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 
 const ETH_GAS_STATION_API_URL = 'https://ethgasstation.info/json/ethgasAPI.json';
 const GAS_NOW_API_URL = 'https://www.gasnow.org/api/v3/gas/price?utm_source=kwenta';
@@ -43,9 +45,20 @@ export type GasSpeed = keyof GasPrices;
 export const GAS_SPEEDS: GasSpeed[] = ['average', 'fast', 'fastest'];
 
 const useEthGasPriceQuery = (options?: QueryConfig<GasPrices>) => {
+	const isL2 = useRecoilValue(isL2State);
+	const { provider } = Connector.useContainer();
+
 	return useQuery<GasPrices>(
 		QUERY_KEYS.Network.EthGasPrice,
 		async () => {
+			if (isL2) {
+				const gasPrice = (await provider!?.getGasPrice()).toNumber() / 1e9 ?? 0;
+				return {
+					fastest: gasPrice,
+					fast: gasPrice,
+					average: gasPrice,
+				};
+			}
 			try {
 				const result = await axios.get<GasNowResponse>(GAS_NOW_API_URL);
 				const { standard, fast, rapid: fastest } = result.data.data;
