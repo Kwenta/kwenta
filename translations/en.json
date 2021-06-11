@@ -156,7 +156,7 @@
 			"ratio": "ratio",
 			"overlay-messages": {
 				"frozen": {
-					"title": "{currencyKey}} synth has been frozen",
+					"title": "{{currencyKey}} synth has been frozen",
 					"subtitle": "Reset in progress."
 				},
 				"market-closure": {
