@@ -9,6 +9,13 @@ export const Title = styled.div`
 	padding-bottom: 15px;
 `;
 
+export const Subheader = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	text-transform: capitalize;
+`;
+
 export const Subtitle = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 	font-family: ${(props) => props.theme.fonts.bold};

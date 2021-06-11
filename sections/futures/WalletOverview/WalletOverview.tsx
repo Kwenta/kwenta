@@ -5,6 +5,7 @@ import { SYNTHS_MAP } from 'constants/currency';
 import { Title } from '../common';
 import OverviewRow from './OverviewRow';
 import PerformanceChart from './PerformanceChart';
+import Positions from './Positions';
 
 type WalletOverviewProps = {};
 
@@ -26,6 +27,7 @@ const WalletOverview: React.FC<WalletOverviewProps> = ({}) => {
 				sign={`$`}
 			/>
 			<PerformanceChart changeNumber={2000} changePercent={8} />
+			<Positions />
 		</div>
 	);
 };

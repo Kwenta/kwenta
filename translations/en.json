@@ -470,7 +470,18 @@
 			"title": "wallet overview",
 			"balance": "available balance",
 			"margin-deployed": "total margin deployed",
-			"performance": "wallet performance"
+			"performance": "wallet performance",
+			"positions": {
+				"title": "your positions",
+				"position": {
+					"title": "position",
+					"long": "long",
+					"short": "short"
+				},
+				"price": "price",
+				"liquidation": "liquidation price",
+				"pnl": "Margin/PNL"
+			}
 		}
 	},
 	"not-found": {
