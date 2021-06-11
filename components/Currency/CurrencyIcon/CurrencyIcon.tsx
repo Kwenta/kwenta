@@ -12,15 +12,9 @@ import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
 import { FlexDivCentered } from 'styles/common';
 
-export enum CurrencyIconType {
-	SYNTH = 'synth',
-	ASSET = 'asset',
-	TOKEN = 'token',
-}
-
-type CurrencyIconProps = {
+export type CurrencyIconProps = {
 	currencyKey: CurrencyKey;
-	type?: CurrencyIconType;
+	type?: 'synth' | 'asset' | 'token';
 	className?: string;
 	width?: string;
 	height?: string;
