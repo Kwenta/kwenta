@@ -14,7 +14,8 @@
 		"nav": {
 			"exchange": "exchange",
 			"dashboard": "dashboard",
-			"shorting": "shorting"
+			"shorting": "shorting",
+			"futures": "futures"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2"
