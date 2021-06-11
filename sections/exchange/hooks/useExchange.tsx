@@ -929,10 +929,7 @@ const useExchange = ({
 					attached={footerCardAttached}
 					onClick={() => setSelectBalancerTradeModal(true)}
 				/>
-			) : baseCurrencyMarketClosed.isMarketClosed ||
-			  quoteCurrencyMarketClosed.isMarketClosed ||
-			  baseCurrencyKey === 'sREN' ||
-			  quoteCurrencyKey === 'sREN' ? (
+			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
 				<MarketClosureCard
 					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
 					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}

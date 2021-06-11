@@ -40,25 +40,14 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({
 			<MessageContainer attached={attached} className="footer-card">
 				<DesktopOnlyView>
 					<Message>
-						{getSuspensionReason !== null ? (
-							<Trans
-								i18nKey={`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`}
-								values={{
-									currencyKey: baseCurrencyMarketClosed.isMarketClosed
-										? baseCurrencyKey
-										: quoteCurrencyKey,
-								}}
-							/>
-						) : (
-							<Trans
-								i18nKey={`Market closed for maintenance.`}
-								values={{
-									currencyKey: baseCurrencyMarketClosed.isMarketClosed
-										? baseCurrencyKey
-										: quoteCurrencyKey,
-								}}
-							/>
-						)}
+						<Trans
+							i18nKey={`exchange.footer-card.market-closure.reasons.${getSuspensionReason}.message`}
+							values={{
+								currencyKey: baseCurrencyMarketClosed.isMarketClosed
+									? baseCurrencyKey
+									: quoteCurrencyKey,
+							}}
+						/>
 					</Message>
 				</DesktopOnlyView>
 				<MessageButton disabled={true}>
