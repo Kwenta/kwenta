@@ -463,6 +463,16 @@
 		},
 		"not-available-on-l2": "Shorting is not available on L2"
 	},
+	"futures": {
+		"page-title": "Futures | Kwenta",
+		"not-available-on-l1": "Futures is not available on L1",
+		"wallet-overview": {
+			"title": "wallet overview",
+			"balance": "available balance",
+			"margin-deployed": "total margin deployed",
+			"performance": "wallet performance"
+		}
+	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
 		"title": "404",
