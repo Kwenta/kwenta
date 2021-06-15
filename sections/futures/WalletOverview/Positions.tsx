@@ -1,3 +1,4 @@
+import { SYNTHS_MAP } from 'constants/currency';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -16,11 +17,25 @@ const Positions: React.FC<PositionsProps> = ({}) => {
 			position: {
 				side: PositionSide.LONG,
 				amount: 1000,
+				currency: SYNTHS_MAP.sBTC,
 			},
 			price: 2500,
 			liquidationPrice: 2000,
 			margin: 10000,
-			marginChange: -8,
+			marginChange: 0.2,
+			riskOfLiquidation: false,
+		},
+		{
+			position: {
+				side: PositionSide.SHORT,
+				amount: 1500,
+				currency: SYNTHS_MAP.sETH,
+			},
+			price: 2500,
+			liquidationPrice: 3000,
+			margin: 5321,
+			marginChange: -0.33,
+			riskOfLiquidation: true,
 		},
 	];
 
