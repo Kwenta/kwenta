@@ -254,6 +254,7 @@ const useBalancerExchange = ({
 		) {
 			const maxNoPools = 2;
 			const sor = new SOR(
+				// @ts-ignore
 				provider as ethers.providers.BaseProvider,
 				new BigNumber(gasPrice),
 				maxNoPools,
