@@ -21,7 +21,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 			wallets: [
 				{
 					name: 'Browser Wallet',
-					iconSrc: '/images/wallet-icons/browserWallet.png',
+					iconSrc: '/images/wallet-icons/browserWallet.svg',
 					type: 'injected',
 					link: 'https://metamask.io',
 					wallet: async (helpers) => {
@@ -51,26 +51,24 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					appUrl: 'https://www.synthetix.io',
 					email: 'info@synthetix.io',
 					rpcUrl: infuraRpc,
+					preferred: true,
 				},
 				{
 					walletName: 'walletConnect',
 					rpc: { [network.id]: infuraRpc },
 					preferred: true,
 				},
-				{ walletName: 'coinbase', preferred: true },
+				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
 				{
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-					preferred: true,
 				},
+				{ walletName: 'gnosis' },
 				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'dapper' },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc },
+				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
-				// { walletName: 'unilogin' },
 				{ walletName: 'authereum' },
-				{ walletName: 'imToken' },
 			],
 		},
 		walletCheck: [
