@@ -482,6 +482,27 @@
 				"liquidation": "liquidation price",
 				"pnl": "Margin/PNL"
 			}
+		},
+		"hero": {
+			"welcome": {
+				"title": "welcome to futures on layer 2",
+				"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ante neque et odio dolor faucibus urna risus. Quis donec et ipsum quis cursus. At ac malesuada mi, nibh turpis fermentum. Scelerisque sit in in non proin tellus eget. Ante neque et odio dolor faucibus urna.",
+				"button": "learn more"
+			},
+			"refer": {
+				"title": "refer a friend for rewards",
+				"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ante neque et odio dolor faucibus.",
+				"button": "refer"
+			}
+		},
+		"markets": {
+			"title": "markets",
+			"table": {
+				"market": "market",
+				"price": "price",
+				"change": "24 HR change",
+				"funding": "24 HR funding rate"
+			}
 		}
 	},
 	"not-found": {

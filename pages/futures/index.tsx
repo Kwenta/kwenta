@@ -12,6 +12,8 @@ import { DesktopOnlyView } from 'components/Media';
 
 import { isWalletConnectedState, isL2State } from 'store/wallet';
 import WalletOverview from 'sections/futures/WalletOverview';
+import Markets from 'sections/futures/Markets';
+import Hero from 'sections/futures/Hero';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
@@ -30,7 +32,8 @@ const Futures: FC = () => {
 					) : (
 						<FullHeightContainer>
 							<MainContent>
-								<></>
+								<Hero />
+								<Markets />
 							</MainContent>
 							<DesktopOnlyView>
 								<StyledRightSideContent>
