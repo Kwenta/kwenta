@@ -21,7 +21,7 @@ const OverviewRow: React.FC<OverviewRowProps> = ({ subtitle, data, currencyKey, 
 		<StyledDataRow>
 			<Subtitle>{subtitle}</Subtitle>
 			<FlexDivRowCentered>
-				<CurrencyIcon width={`15px`} currencyKey={currencyKey} />
+				<StyledCurrencyIcon currencyKey={currencyKey} />
 				<StyledData>
 					{formatCurrency(currencyKey, data, {
 						sign: sign,
@@ -41,4 +41,8 @@ const StyledDataRow = styled(DataRow)`
 
 const StyledData = styled(Data)`
 	margin-left: 4px;
+`;
+
+const StyledCurrencyIcon = styled(CurrencyIcon)`
+	width: 20px;
 `;

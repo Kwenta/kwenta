@@ -51,9 +51,6 @@ const Futures: FC = () => {
 const StyledRightSideContent = styled(RightSideContent)`
 	padding-left: 32px;
 	padding-right: 32px;
-	> * + * {
-		margin-top: 50px;
-	}
 `;
 
 export default Futures;

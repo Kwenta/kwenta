@@ -41,7 +41,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 		<StyledCard>
 			<StyledCardBody>
 				<StyledFlexDivRowCentered>
-					<StyledSubtitle>{t('futures.wallet-overview.positions.position.title')}</StyledSubtitle>
+					<Subtitle>{t('futures.wallet-overview.positions.position.title')}</Subtitle>
 					<StyledFlexDivRow>
 						<StyledCurrencyIcon currencyKey={position.position.currency} />
 						<StyledData>
@@ -53,18 +53,18 @@ const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
-					<StyledSubtitle>{t('futures.wallet-overview.positions.price')}</StyledSubtitle>
+					<Subtitle>{t('futures.wallet-overview.positions.price')}</Subtitle>
 					<Data>{formatCurrency(SYNTHS_MAP.sUSD, position.price, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<StyledFlexDivRow>
-						<StyledSubtitle>{t('futures.wallet-overview.positions.liquidation')}</StyledSubtitle>
+						<Subtitle>{t('futures.wallet-overview.positions.liquidation')}</Subtitle>
 						{position.riskOfLiquidation && <StyledSvg src={WarningIcon} />}
 					</StyledFlexDivRow>
 					<Data>{formatCurrency(SYNTHS_MAP.sUSD, position.liquidationPrice, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
-					<StyledSubtitle>{t('futures.wallet-overview.positions.pnl')}</StyledSubtitle>
+					<Subtitle>{t('futures.wallet-overview.positions.pnl')}</Subtitle>
 					<StyledFlexDivRow>
 						<StyledData>
 							{formatCurrency(SYNTHS_MAP.sUSD, position.margin, { sign: '$' })}
@@ -96,8 +96,6 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	justify-content: flex-start;
 	align-items: center;
 `;
-
-const StyledSubtitle = styled(Subtitle)``;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 4px;
