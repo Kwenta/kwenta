@@ -35,6 +35,9 @@ export const ROUTES = {
 		ManageShortClosePosition: (id: string) =>
 			normalizeRoute(`/shorting/manage/close-position`, id, 'id'),
 	},
+	Futures: {
+		Home: '/futures',
+	},
 };
 
 export default ROUTES;
