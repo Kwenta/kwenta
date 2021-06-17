@@ -505,7 +505,8 @@
 			}
 		},
 		"market": {
-			"page-title": "{{pair}} Futures | Kwenta"
+			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
+			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta"
 		}
 	},
 	"not-found": {
