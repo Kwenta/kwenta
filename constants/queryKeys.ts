@@ -9,8 +9,8 @@ export const QUERY_KEYS = {
 		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
 			'rates',
 			'historicalRates',
-			currencyKey,
 			period,
+			currencyKey,
 		],
 		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
