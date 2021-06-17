@@ -259,13 +259,13 @@
 		"tabs": {
 			"nav": {
 				"synth-balances": "Synth Balances",
-				"convert": "Convert",
+				"convert": "Synth Onramp",
 				"crypto-balances": "Crypto Balances",
 				"transactions": "Transactions"
 			}
 		},
 		"onboard": {
-			"convert": "Convert",
+			"convert": "Synth Onramp",
 			"title": "Learn How it Works",
 			"subtitle": "Get up and running on Kwenta and exchange everything.",
 			"learn-more": "Learn More",

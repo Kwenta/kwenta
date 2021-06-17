@@ -4,6 +4,7 @@ export const EXTERNAL_LINKS = {
 	Trading: {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
+		OneInch: `https://1inch.exchange/`,
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 	},
 	Synthetix: {

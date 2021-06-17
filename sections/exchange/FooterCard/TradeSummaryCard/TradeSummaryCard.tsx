@@ -26,6 +26,7 @@ import GasPriceSummaryItem from './GasPriceSummaryItem';
 import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
 import FeeRateSummaryItem from './FeeRateSummaryItem';
 import FeeCostSummaryItem from './FeeCostSummaryItem';
+import PoweredBy1Inch from 'components/PoweredBy1Inch';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
@@ -46,6 +47,7 @@ type TradeSummaryCardProps = {
 	isApproved?: boolean;
 	isCreateShort?: boolean;
 	shortInterestRate?: BigNumber | null;
+	show1InchProvider?: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -66,6 +68,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	isApproved = true,
 	isCreateShort = false,
 	shortInterestRate = null,
+	show1InchProvider = false,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -105,7 +108,13 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
-			<MessageContainer attached={attached} className="footer-card" {...rest}>
+			<MessageContainer
+				attached={attached}
+				className="footer-card"
+				showProvider={show1InchProvider}
+				{...rest}
+			>
+				{show1InchProvider && <PoweredBy1Inch />}
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}
