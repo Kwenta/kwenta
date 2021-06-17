@@ -503,6 +503,9 @@
 				"change": "24 HR change",
 				"funding": "24 HR funding rate"
 			}
+		},
+		"market": {
+			"page-title": "{{pair}} Futures | Kwenta"
 		}
 	},
 	"not-found": {

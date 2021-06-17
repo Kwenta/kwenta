@@ -37,6 +37,8 @@ export const ROUTES = {
 	},
 	Futures: {
 		Home: '/futures',
+		MarketPair: (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
+			normalizeRoute('/futures/market', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
 	},
 };
 
