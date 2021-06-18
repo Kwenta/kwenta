@@ -9,8 +9,8 @@ export const toCurrencyKeyMap = (
 	dataField?: string
 ): Record<CurrencyKey, number> =>
 	query.reduce((acc, query) => {
-		// the third item is the currencyKey (according to the queryKeys.ts file)
-		const currencyKey = query.queryKey[2] as string;
+		// the fourth item is the currencyKey (according to the queryKeys.ts file)
+		const currencyKey = query.queryKey[3] as string;
 
 		if (query.state.data != null) {
 			// @ts-ignore

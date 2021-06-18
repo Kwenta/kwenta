@@ -893,7 +893,7 @@ const useExchange = ({
 			}
 			priceRate={basePriceRate}
 			label={t('exchange.common.into')}
-			interactive={txProvider === 'synthetix'}
+			disableInput={txProvider === '1inch'}
 			slippagePercent={slippagePercent}
 			isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
 			txProvider={txProvider}
@@ -971,6 +971,7 @@ const useExchange = ({
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix' ? true : false}
 					isApproved={needsApproval ? isApproved : undefined}
+					show1InchProvider={txProvider === '1inch'}
 				/>
 			)}
 			{txConfirmationModalOpen && (
@@ -1045,7 +1046,7 @@ const useExchange = ({
 				/>
 			)}
 			{selectBaseTokenModalOpen && (
-				<SelectTokenModal
+				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
 						resetCurrencies();
@@ -1063,6 +1064,7 @@ const useExchange = ({
 							routeToBaseCurrency(currencyKey);
 						}
 					}}
+					synthsOverride={[SYNTHS_MAP.sETH, SYNTHS_MAP.sUSD]}
 				/>
 			)}
 			{txApproveModalOpen && (

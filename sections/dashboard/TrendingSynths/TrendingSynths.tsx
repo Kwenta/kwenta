@@ -7,7 +7,7 @@ import { useQueryCache } from 'react-query';
 import synthetix, { Synth } from 'lib/synthetix';
 
 import Select from 'components/Select';
-
+import { Period } from 'constants/period';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
 
@@ -27,7 +27,7 @@ const TrendingSynths: FC = () => {
 
 	const queryCache = useQueryCache();
 
-	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates']);
+	const historicalRatesCache = queryCache.getQueries(['rates', 'historicalRates', Period.ONE_DAY]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();

@@ -19,7 +19,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
     - name: Audit dependencies
       run: npm audit --audit-level=critical
@@ -41,10 +41,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+      uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
     - name: Cache node modules
-      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+      uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
       with:
         path: |
           .npm
@@ -65,13 +65,13 @@ jobs:
     - name: Upload lint results
       # run if lint failed and only on master/dev branch and pull requests
       if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
-      uses: github/codeql-action/upload-sarif@b1e2c9b8bd0550a90e66c967d9795316f9f21910 # pin@codeql-bundle-20201008
+      uses: github/codeql-action/upload-sarif@21830ef0c1f0f06f2d82ba3f1f07cb3ffe543ed7 # pin@codeql-bundle-20210517
       with:
         sarif_file: lint-results.sarif
       continue-on-error: true
 
     - name: Cache next.js build cache
-      uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+      uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
       with:
         path: .next/cache
         key: ${{ runner.os }}-next.js-${{ hashFiles('**/package-lock.json') }}
@@ -87,23 +87,10 @@ jobs:
 
     - name: Archive build
       if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-      uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
+      uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074 # pin@v2
       with:
         name: build
         path: build.tar.gz
-
-    - name: Configure AWS Credentials
-      if: github.ref == 'refs/heads/master'
-      uses: aws-actions/configure-aws-credentials@cefc5912bc61e2b5a3b049c839fc283c7712d4e0 # pin@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-    - name: Invalidate CloudFront cache
-      if: github.ref == 'refs/heads/master'
-      run: |
-        aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DISTRIBUTION_ID }} --paths "/*"
 
   e2e:
       needs: build
@@ -126,10 +113,10 @@ jobs:
 
       steps:
       - name: Checkout
-        uses: actions/checkout@ee5a9d1395988d7c82c67c69571871f5994b94df # pin@v2
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
 
       - name: Cache node modules
-        uses: actions/cache@3b70782066bd817837b6bd8c518d45b54d91bf76 # pin@v2
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
         with:
           path: |
             .npm
@@ -157,7 +144,7 @@ jobs:
           fi
 
       - name: Download build
-        uses: actions/download-artifact@158ca71f7c614ae705e79f25522ef4658df18253 # pin@v2
+        uses: actions/download-artifact@3be87be14a055c47b01d3bd88f8fe02320a9bb60 # pin@v2
         with:
           name: build
 
@@ -175,7 +162,7 @@ jobs:
             CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
 
       - name: Archive e2e artifacts
-        uses: actions/upload-artifact@ee69f02b3dfdecd58bb31b4d133da38ba6fe3700 # pin@v2
+        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074 # pin@v2
         if: always()
         with:
           name: e2e-artifacts

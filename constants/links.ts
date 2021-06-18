@@ -4,6 +4,7 @@ export const EXTERNAL_LINKS = {
 	Trading: {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
+		OneInch: `https://1inch.exchange/`,
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
@@ -20,7 +21,7 @@ export const EXTERNAL_LINKS = {
 	TokenLists: {
 		Synthetix:
 			'https://bafybeidkpj743vthl5chzdxibjxfbf2hv3y4mmtcbciu4kdh4d6xqfezpa.ipfs.dweb.link/',
-		//Synthetix: 'https://synths.snx.eth.link',
 		Zapper: 'https://zapper.fi/api/token-list',
+		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 	},
 };

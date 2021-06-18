@@ -16,7 +16,7 @@ const CurrencyConvertCard: FC = () => {
 		footerCardAttached: true,
 		persistSelectedCurrencies: false,
 		allowQuoteCurrencySelection: true,
-		allowBaseCurrencySelection: false,
+		allowBaseCurrencySelection: true,
 		showNoSynthsCard: false,
 		txProvider: '1inch',
 	});
