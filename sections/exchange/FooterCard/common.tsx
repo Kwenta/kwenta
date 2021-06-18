@@ -48,13 +48,16 @@ export const SummaryItemValue = styled.div`
 	text-overflow: ellipsis;
 `;
 
-export const MessageContainer = styled(GridDivCentered)<{ attached?: boolean }>`
+export const MessageContainer = styled(GridDivCentered)<{
+	attached?: boolean;
+	showProvider?: boolean;
+}>`
 	display: grid;
 	-webkit-box-align: center;
 	align-items: center;
 	width: 100%;
 	border-radius: 4px;
-	grid-template-columns: 1fr auto;
+	grid-template-columns: ${(props) => props.showProvider && '.5fr'} 1fr auto;
 	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 16px 32px;
 	margin: 0 0 20px;
