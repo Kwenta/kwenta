@@ -12,7 +12,7 @@ import { Svg } from 'react-optimized-image';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
-import { CurrencyKey, SYNTHS_MAP, sUSD_EXCHANGE_RATE, SYNTH_DECIMALS } from 'constants/currency';
+import { CurrencyKey, Synths, sUSD_EXCHANGE_RATE, SYNTH_DECIMALS } from 'constants/currency';
 import useInterval from 'hooks/useInterval';
 
 import Connector from 'containers/Connector';
@@ -78,9 +78,12 @@ const useBalancerExchange = ({
 	const { notify, provider, signer, network } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const { useEthGasPriceQuery, useSynthsBalancesQuery, useFeeReclaimPeriodQuery } = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+	const { 
+		useSynthsBalancesQuery,
+		useEthGasPriceQuery,
+		useFeeReclaimPeriodQuery
+	} = useSynthetixQueries({
+		networkId: network.id,
 	})
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
@@ -145,16 +148,16 @@ const useBalancerExchange = ({
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
 	const basePriceRate =
-		baseCurrencyKey === SYNTHS_MAP.sUSD
+		baseCurrencyKey === Synths.sUSD
 			? sUSD_EXCHANGE_RATE
 			: baseCurrencyAmountBN.div(quoteCurrencyAmountBN).toNumber();
 	const quotePriceRate =
-		quoteCurrencyKey === SYNTHS_MAP.sUSD
+		quoteCurrencyKey === Synths.sUSD
 			? sUSD_EXCHANGE_RATE
 			: quoteCurrencyAmountBN.div(baseCurrencyAmountBN).toNumber();
 
 	let totalTradePrice =
-		baseCurrencyKey === SYNTHS_MAP.sUSD
+		baseCurrencyKey === Synths.sUSD
 			? baseCurrencyAmountBN.mul(basePriceRate)
 			: quoteCurrencyAmountBN.mul(quotePriceRate);
 	if (selectPriceCurrencyRate) {
@@ -255,7 +258,7 @@ const useBalancerExchange = ({
 		) {
 			const maxNoPools = 2;
 			const sor = new SOR(
-				provider as ethers.providers.BaseProvider,
+				provider as any,
 				new BigNumber(gasPrice),
 				maxNoPools,
 				network?.id,
@@ -599,7 +602,7 @@ const useBalancerExchange = ({
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={handleAmountChangeQuoteMaxClick}
 			onCurrencySelect={undefined}
-			priceRate={quoteCurrencyKey === SYNTHS_MAP.sUSD ? quotePriceRate : null}
+			priceRate={quoteCurrencyKey === Synths.sUSD ? quotePriceRate : null}
 			label={t('exchange.common.from')}
 		/>
 	);
@@ -613,7 +616,7 @@ const useBalancerExchange = ({
 			walletBalance={baseCurrencyBalance}
 			onBalanceClick={handleAmountChangeBaseMaxClick}
 			onCurrencySelect={undefined}
-			priceRate={baseCurrencyKey === SYNTHS_MAP.sUSD ? basePriceRate : null}
+			priceRate={baseCurrencyKey === Synths.sUSD ? basePriceRate : null}
 			label={t('exchange.common.into')}
 		/>
 	);

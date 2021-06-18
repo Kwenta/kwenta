@@ -32,6 +32,7 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
 import useSynthetixQueries from '@synthetixio/queries';
+import _ from 'lodash';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -46,8 +47,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
-	const { connectWallet, provider, network } = Connector.useContainer();
-	const { useTokensBalancesQuery } = useSynthetixQueries({ networkId: network?.id ?? null, provider });
+	const { connectWallet, network } = Connector.useContainer();
+	const { useTokensBalancesQuery } = useSynthetixQueries({ networkId: network.id });
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
@@ -69,7 +70,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const tokenBalancesAddresses = useMemo(
 		() =>
 			tokenBalances != null
-				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address)
+				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance?.token.address)
 				: [],
 		[tokenBalances]
 	);
@@ -86,7 +87,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 		() =>
 			tokenBalances != null
 				? Object.values(
-						mapValues(tokenBalances, ({ balance, token }, symbol) => {
+						mapValues((tokenBalances as any).filter(_.isPlainObject), ({ balance, token }, symbol) => {
+
 							const { address } = token;
 
 							const price =
@@ -95,7 +97,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 									: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
 
 							return {
-								currencyKey: symbol,
+								currencyKey: symbol as CurrencyKey,
 								balance,
 								usdBalance: price != null ? balance.mul(price) : null,
 								token,

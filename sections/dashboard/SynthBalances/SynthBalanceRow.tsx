@@ -15,8 +15,9 @@ import { formatPercent } from 'utils/formatters/number';
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import Connector from 'containers/Connector';
 import Wei from '@synthetixio/wei';
+import { networkState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
@@ -28,13 +29,11 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const { network, provider } = Connector.useContainer();
-
-	const {
-		useHistoricalRatesQuery,
+	const network = useRecoilValue(networkState);
+	const { 
+		useHistoricalRatesQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id,
 	})
 
 	const currencyKey = synth.currencyKey;

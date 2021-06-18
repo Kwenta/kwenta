@@ -23,7 +23,7 @@ import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyCardProps = {
 	side: Side;
-	currencyKey: CurrencyKey | null;
+	currencyKey: string | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
 	walletBalance: Wei | null;
@@ -115,7 +115,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								<FlexDivRowCentered>
 									<CurrencyAmountValue data-testid="amount-value">
 										{tradeAmount != null
-											? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+											? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
 													sign: selectedPriceCurrency.sign,
 											  })
 											: null}

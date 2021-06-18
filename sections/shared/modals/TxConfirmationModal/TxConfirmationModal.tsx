@@ -33,9 +33,9 @@ type TxConfirmationModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	baseCurrencyKey: CurrencyKey;
+	baseCurrencyKey: string;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey?: CurrencyKey;
+	quoteCurrencyKey?: string;
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
 	feeAmountInBaseCurrency: Wei | null;

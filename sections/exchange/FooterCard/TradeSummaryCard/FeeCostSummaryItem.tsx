@@ -10,6 +10,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { CurrencyKey } from 'constants/currency';
 
 type FeeRateSummaryItemProps = {
 	feeCost: Wei | null;
@@ -24,7 +25,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {
 			<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-cost">
 				{feeCost != null
-					? formatCurrency(selectedPriceCurrency.name, feeCost, {
+					? formatCurrency(selectedPriceCurrency.name as CurrencyKey, feeCost, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals: feeCost.lt(0.01) ? 4 : 2,
 					  })

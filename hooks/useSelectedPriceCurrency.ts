@@ -1,16 +1,15 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
-import Connector from 'containers/Connector';
 
 import { useRecoilValue } from 'recoil';
 import { priceCurrencyState } from 'store/app';
+import { networkState } from 'store/wallet';
 
 const useSelectedPriceCurrency = () => {
 	
-	const { network, provider } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
 	const { useExchangeRatesQuery } = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id,
 	})
 
 	const selectedPriceCurrency = useRecoilValue(priceCurrencyState);

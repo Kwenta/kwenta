@@ -1,18 +1,18 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
 
 import { SynthSuspensionReason } from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useMarketClosed>;
 
 const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 
-	const { network, provider } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
 	const { useFrozenSynthsQuery, useSynthSuspensionQuery } = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id,
 	})
 
 	const frozenSynthsQuery = useFrozenSynthsQuery();

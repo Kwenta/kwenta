@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -20,6 +20,8 @@ import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -30,10 +32,10 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const { network, provider } = Connector.useContainer();
+
+	const network = useRecoilValue(networkState);
 	const { useHistoricalVolumeQuery, useHistoricalRatesQuery, useSynthMarketCapQuery } = useSynthetixQueries({
 		networkId: network?.id ?? null,
-		provider
 	})
 
 	const {
@@ -97,7 +99,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+								/*currencyKey === Synths.sKRW || */currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -150,7 +152,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+								/*currencyKey === SYNTHS_MAP.sKRW || */currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>

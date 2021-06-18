@@ -21,9 +21,9 @@ import { CardTitle, ConvertContainer } from '../common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { zeroBN } from 'utils/formatters/number';
 import useSynthetixQueries from '@synthetixio/queries';
-import Connector from 'containers/Connector';
-import { walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
+import { CurrencyKey } from 'constants/currency';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
@@ -37,14 +37,12 @@ const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const { network, provider } = Connector.useContainer();
-
-	const {
+	const network = useRecoilValue(networkState);
+	const { 
 		useExchangeRatesQuery,
-		useSynthsBalancesQuery,
+		useSynthsBalancesQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id,
 	})
 
 	const tabQuery = useMemo(() => {
@@ -106,7 +104,7 @@ const DashboardCard: FC = () => {
 				<PortfolioCardTitle>{t('dashboard.your-portfolio.title')}</PortfolioCardTitle>
 				<PortfolioCard>
 					<StyledCurrencyPrice
-						currencyKey={selectedPriceCurrency.name}
+						currencyKey={selectedPriceCurrency.name as CurrencyKey}
 						price={synthBalances?.totalUSDBalance ?? 0}
 						conversionRate={selectPriceCurrencyRate}
 						sign={selectedPriceCurrency.sign}

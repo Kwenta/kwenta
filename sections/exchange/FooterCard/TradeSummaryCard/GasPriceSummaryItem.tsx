@@ -21,6 +21,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import { CurrencyKey } from 'constants/currency';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;
@@ -59,7 +60,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 							<GasPriceCostTooltip
 								content={
 									<span>
-										{formatCurrency(selectedPriceCurrency.name, transactionFee, {
+										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
 											sign: selectedPriceCurrency.sign,
 										})}
 									</span>

@@ -8,7 +8,7 @@ import { appReadyState } from 'store/app';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import synthetix from 'lib/synthetix';
 
@@ -123,9 +123,9 @@ const useCollateralShortPositionQuery = (
 				id: loanId as string,
 				accruedInterest: wei(loan.accruedInterest),
 				lastInteraction: fromUnixTime(loan.lastInteraction.toNumber()),
-				synthBorrowed: utils.parseBytes32String(loan.currency),
+				synthBorrowed: utils.parseBytes32String(loan.currency) as CurrencyKey,
 				synthBorrowedAmount: wei(loan.amount),
-				collateralLocked: SYNTHS_MAP.sUSD,
+				collateralLocked: Synths.sUSD,
 				collateralLockedAmount: wei(loan.collateral),
 				collateralRatio: wei(collateralRatio),
 				txHash,

@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
 import startCase from 'lodash/startCase';
 
-import { Synth } from 'lib/synthetix';
+import { Synth } from '@synthetixio/contracts-interface';
 
 import { NO_VALUE } from 'constants/placeholder';
 

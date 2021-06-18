@@ -11,9 +11,9 @@ export type Network = {
 	name: NetworkName;
 };
 
-export const networkState = atom<Network | null>({
+export const networkState = atom<Network>({
 	key: getWalletKey('network'),
-	default: null,
+	default: { id: NetworkId.Mainnet, name: NetworkName.Mainnet },
 });
 
 export const walletAddressState = atom<string | null>({

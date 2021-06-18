@@ -16,7 +16,7 @@ type TxApproveModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	currencyLabel: ReactNode;
 	txProvider?: TxProvider;
 };

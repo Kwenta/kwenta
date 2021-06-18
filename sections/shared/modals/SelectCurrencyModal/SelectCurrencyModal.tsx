@@ -19,9 +19,8 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import SynthRow from './SynthRow';
-import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
 export const CATEGORY_FILTERS = [
@@ -41,8 +40,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, o
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 
-	const { provider, network } = Connector.useContainer();
-	const { useSynthsBalancesQuery } = useSynthetixQueries({ networkId: network?.id ?? null, provider });
+	const network = useRecoilValue(networkState);
+	const { useSynthsBalancesQuery } = useSynthetixQueries({ networkId: network.id });
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -82,7 +81,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, o
 			return orderBy(
 				synthsList,
 				(synth) => {
-					const synthBalance = synthBalances?.balancesMap[synth.name];
+					const synthBalance = synthBalances?.balancesMap[synth.name as CurrencyKey];
 					return synthBalance != null ? synthBalance.usdBalance.toNumber() : 0;
 				},
 				'desc'
@@ -151,17 +150,17 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, o
 				{synthsWalletBalancesQuery.isLoading ? (
 					<Loader />
 				) : synthsResults.length > 0 ? (
-					synthsResults.map((synth) => {
+					synthsResults.map((synth: any) => {
 						const currencyKey = synth.name;
 
 						return (
 							<SynthRow
 								key={currencyKey}
 								onClick={() => {
-									onSelect(currencyKey);
+									onSelect(currencyKey as CurrencyKey);
 									onDismiss();
 								}}
-								synthBalance={synthBalances?.balancesMap[currencyKey]}
+								synthBalance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
 								{...{ synth }}
 							/>
 						);

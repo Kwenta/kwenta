@@ -37,7 +37,7 @@ export type Feed = {
 };
 
 export type Synth = {
-	name: string;
+	name: CurrencyKey;
 	asset: string;
 	category: string;
 	sign: string;
@@ -53,7 +53,7 @@ export type Synth = {
 
 export type Synths = Synth[];
 
-export type SynthsMap = Record<string, Synth>;
+export type SynthsMap = Partial<Record<CurrencyKey, Synth>>;
 
 export type TokensMap = Record<string, Token>;
 
@@ -82,7 +82,7 @@ const synthetix: Synthetix = {
 	setContractSettings({ networkId, provider, signer }: ContractSettings) {
 		this.js = initSynthetixJS({ networkId, provider, signer });
 		if (HIDDEN_SYNTHS.length) {
-			this.js.synths = this.js.synths.filter((synth) => !HIDDEN_SYNTHS.includes(synth.name));
+			this.js.synths = this.js.synths.filter((synth) => !HIDDEN_SYNTHS.includes(synth.name as CurrencyKey));
 		}
 
 		this.synthsMap = keyBy(this.js.synths, 'name');

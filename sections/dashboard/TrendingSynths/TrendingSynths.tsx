@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import synthetix, { Synth } from '@synthetixio/contracts-interface';
 
@@ -12,29 +12,27 @@ import { CardTitle } from 'sections/dashboard/common';
 import { FlexDivRowCentered } from 'styles/common';
 
 import SynthRow from './SynthRow';
-import { numericSort, toCurrencyKeyMap } from './utils';
+import { numericSort } from './utils';
 import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
-import Connector from 'containers/Connector';
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import _ from 'lodash';
+import { networkState } from 'store/wallet';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const { network, provider } = Connector.useContainer();
-
-	const {
+	const network = useRecoilValue(networkState);
+	const { 
 		useExchangeRatesQuery,
-		useHistoricalVolumeQuery,
-		useHistoricalRatesQuery
+		useHistoricalRatesQuery,
+		useHistoricalVolumeQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
-	});
+		networkId: network.id,
+	})
 
 	// eslint-disable-next-line
 	const synths = synthetix({ networkId: 1 }).synths;
@@ -43,12 +41,12 @@ const TrendingSynths: FC = () => {
 	const historicalVolumeQuery = useHistoricalVolumeQuery();
 
 	// ok for rules of hooks since `synths` is static for execution of the site
-	const historicalRates: Record<CurrencyKey, number> = {};
+	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = {};
 	for(const synth of synths) {
-		const historicalRateQuery = useHistoricalRatesQuery(synth.name);
+		const historicalRateQuery = useHistoricalRatesQuery(synth.name as CurrencyKey);
 
 		if (historicalRateQuery.isSuccess) {
-			historicalRates[synth.name] = historicalRates.data!;
+			historicalRates[synth.name as CurrencyKey] = historicalRateQuery.data!;
 		}
 	}
 
@@ -65,7 +63,7 @@ const TrendingSynths: FC = () => {
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
 			return synths.sort((a: Synth, b: Synth) => numericSort(historicalVolume, a, b));
 		}
-		if (historicalRates != null && historicalRates.length > 0) {
+		if (historicalRates != null) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
 				return synths.sort((a: Synth, b: Synth) =>
 					numericSort(_.mapValues(historicalRates, 'high'), a, b)

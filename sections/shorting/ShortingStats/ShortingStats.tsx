@@ -12,29 +12,29 @@ import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
-import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 const ShortingStats = () => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { provider, network } = Connector.useContainer();
 
+	const network = useRecoilValue(networkState);
 	const {
 		useExchangeRatesQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id
 	});
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -65,7 +65,7 @@ const ShortingStats = () => {
 				return {
 					openInterest,
 					apr,
-					currencyKey,
+					currencyKey: currencyKey as CurrencyKey,
 				};
 			});
 		}

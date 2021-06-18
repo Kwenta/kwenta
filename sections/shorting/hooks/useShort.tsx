@@ -10,7 +10,7 @@ import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
 import Wei, { wei } from '@synthetixio/wei';
 
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import Connector from 'containers/Connector';
 
@@ -68,7 +68,7 @@ const useShort = ({
 	const { notify, network, provider } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
-	const [currencyPair, setCurrencyPair] = useCurrencyPair({
+	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
 		persistSelectedCurrencies: false,
 		defaultBaseCurrencyKey,
 		defaultQuoteCurrencyKey,
@@ -79,8 +79,7 @@ const useShort = ({
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id
 	})
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
@@ -168,7 +167,7 @@ const useShort = ({
 		[exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name]
 	);
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -253,7 +252,7 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) => SYNTHS_TO_SHORT.includes(synth.name));
+			return synthetix.js!.synths.filter((synth) => SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey));
 		}
 		return [];
 	}, [isAppReady]);
@@ -420,9 +419,9 @@ const useShort = ({
 						draftState.push({
 							id: loanId.toString(),
 							accruedInterest: wei(0),
-							synthBorrowed: utils.parseBytes32String(currency),
+							synthBorrowed: utils.parseBytes32String(currency) as CurrencyKey,
 							synthBorrowedAmount: wei(amount),
-							collateralLocked: SYNTHS_MAP.sUSD,
+							collateralLocked: Synths.sUSD,
 							collateralLockedAmount: wei(collateral),
 							txHash: tx.transactionHash,
 							isOpen: true,
@@ -587,7 +586,7 @@ const useShort = ({
 					totalTradePrice={totalTradePrice.toString()}
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
+					baseCurrency={baseCurrency || null}
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}

@@ -19,8 +19,8 @@ import {
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
+	Synths,
 	SYNTHS,
-	SYNTHS_MAP,
 } from 'constants/currency';
 
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
@@ -73,8 +73,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
 type ExchangeCardProps = {
-	defaultBaseCurrencyKey?: CurrencyKey | null;
-	defaultQuoteCurrencyKey?: CurrencyKey | null;
+	defaultBaseCurrencyKey?: string | null;
+	defaultQuoteCurrencyKey?: string | null;
 	showPriceCard?: boolean;
 	showMarketDetailsCard?: boolean;
 	footerCardAttached?: boolean;
@@ -103,7 +103,7 @@ const useExchange = ({
 	const { monitorHash } = Notify.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
-	const { network, provider } = Connector.useContainer();
+	const { network } = Connector.useContainer();
 
 	const {
 		useEthGasPriceQuery,
@@ -114,8 +114,7 @@ const useExchange = ({
 		useExchangeFeeRateQuery,
 		useTokensBalancesQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id
 	})
 
 	const router = useRouter();
@@ -125,7 +124,7 @@ const useExchange = ({
 		[router.query]
 	);
 
-	const [currencyPair, setCurrencyPair] = useCurrencyPair({
+	const [currencyPair, setCurrencyPair] = useCurrencyPair<string>({
 		persistSelectedCurrencies,
 		defaultBaseCurrencyKey,
 		defaultQuoteCurrencyKey,
@@ -165,8 +164,11 @@ const useExchange = ({
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, walletAddress);
-	const exchangeFeeRateQuery = useExchangeFeeRateQuery(quoteCurrencyKey, baseCurrencyKey);
+
+	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
+	// however, condition would break rule of hooks here
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey as CurrencyKey, walletAddress);
+	const exchangeFeeRateQuery = useExchangeFeeRateQuery(quoteCurrencyKey as CurrencyKey, baseCurrencyKey as CurrencyKey);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -263,7 +265,7 @@ const useExchange = ({
 
 	const baseCurrency =
 		baseCurrencyKey != null && synthetix.synthsMap != null
-			? synthetix.synthsMap[baseCurrencyKey]
+			? synthetix.synthsMap[baseCurrencyKey as CurrencyKey]!
 			: null;
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
@@ -320,7 +322,7 @@ const useExchange = ({
 					: 0
 				: getExchangeRatesForCurrencies(
 						exchangeRates,
-						quoteCurrencyKey,
+						quoteCurrencyKey as CurrencyKey,
 						selectedPriceCurrency.name
 				  ),
 		[
@@ -343,7 +345,7 @@ const useExchange = ({
 				  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
 					? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd / selectPriceCurrencyRate
 					: 0
-				: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
+				: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey as CurrencyKey, selectedPriceCurrency.name),
 		[
 			exchangeRates,
 			baseCurrencyKey,
@@ -357,7 +359,7 @@ const useExchange = ({
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -390,8 +392,9 @@ const useExchange = ({
 
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
-	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
-	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
+	// TODO: again, this fails when provider is not `synthetix`
+	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey as CurrencyKey);
+	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey as CurrencyKey);
 
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =
@@ -440,7 +443,7 @@ const useExchange = ({
 			? synthsWalletBalancesQuery.data.balances.length === 0
 			: false;
 
-	const routeToMarketPair = (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
+	const routeToMarketPair = (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 		routingEnabled
 			? router.replace(
 					`/exchange/[[...market]]`,
@@ -818,17 +821,17 @@ const useExchange = ({
 			txProvider={txProvider}
 		/>
 	);
-	const quotePriceChartCard = showPriceCard ? (
+	const quotePriceChartCard = txProvider === 'synthetix' && showPriceCard ? (
 		<PriceChartCard
 			side="quote"
-			currencyKey={quoteCurrencyKey}
+			currencyKey={quoteCurrencyKey as CurrencyKey}
 			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
 			priceRate={quotePriceRate}
 		/>
 	) : null;
 
-	const quoteMarketDetailsCard = showMarketDetailsCard ? (
-		<MarketDetailsCard currencyKey={quoteCurrencyKey} priceRate={quotePriceRate} />
+	const quoteMarketDetailsCard = txProvider === 'synthetix' && showMarketDetailsCard ? (
+		<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} priceRate={quotePriceRate} />
 	) : null;
 
 	const slippagePercent = useMemo(() => {
@@ -889,17 +892,17 @@ const useExchange = ({
 		/>
 	);
 
-	const basePriceChartCard = showPriceCard ? (
+	const basePriceChartCard = txProvider === 'synthetix' && showPriceCard ? (
 		<PriceChartCard
 			side="base"
-			currencyKey={baseCurrencyKey}
+			currencyKey={baseCurrencyKey as CurrencyKey}
 			priceRate={basePriceRate}
 			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
 		/>
 	) : null;
 
-	const baseMarketDetailsCard = showMarketDetailsCard ? (
-		<MarketDetailsCard currencyKey={baseCurrencyKey} priceRate={basePriceRate} />
+	const baseMarketDetailsCard = txProvider === 'synthetix' && showMarketDetailsCard ? (
+		<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} priceRate={basePriceRate} />
 	) : null;
 
 	const footerCard = (
@@ -908,10 +911,10 @@ const useExchange = ({
 				<ConnectWalletCard attached={footerCardAttached} />
 			) : (baseCurrencyMarketClosed.isMarketClosed &&
 					baseCurrencyKey &&
-					AFTER_HOURS_SYNTHS.has(baseCurrencyKey)) ||
+					AFTER_HOURS_SYNTHS.has(baseCurrencyKey as CurrencyKey)) ||
 			  (quoteCurrencyMarketClosed.isMarketClosed &&
 					quoteCurrencyKey &&
-					AFTER_HOURS_SYNTHS.has(quoteCurrencyKey)) ? (
+					AFTER_HOURS_SYNTHS.has(quoteCurrencyKey as CurrencyKey)) ? (
 				<TradeBalancerFooterCard
 					attached={footerCardAttached}
 					onClick={() => setSelectBalancerTradeModal(true)}
@@ -935,7 +938,7 @@ const useExchange = ({
 					baseCurrency={baseCurrency}
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-					quoteCurrencyKey={quoteCurrencyKey}
+					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					feeRate={exchangeFeeRate}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
@@ -952,8 +955,8 @@ const useExchange = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
 					feeAmountInBaseCurrency={txProvider === 'synthetix' ? feeAmountInBaseCurrency : null}
-					baseCurrencyKey={baseCurrencyKey!}
-					quoteCurrencyKey={quoteCurrencyKey!}
+					baseCurrencyKey={baseCurrencyKey as CurrencyKey}
+					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}

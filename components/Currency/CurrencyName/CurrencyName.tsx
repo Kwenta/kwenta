@@ -14,7 +14,7 @@ import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';
 import { ContainerRowMixin } from '../common';
 
 type CurrencyNameProps = {
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	symbol?: string;
 	name?: string | null;
 	showIcon?: boolean;

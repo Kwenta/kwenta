@@ -1,6 +1,11 @@
+import { CurrencyKey } from '@synthetixio/queries/build/node/currency';
 import keyBy from 'lodash/keyBy';
 
-export type CurrencyKey = string;
+export type { CurrencyKey } from '@synthetixio/queries/build/node/currency';
+
+import { Synths } from '@synthetixio/queries/build/node/currency';
+export { Synths } from '@synthetixio/queries/build/node/currency';
+
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
@@ -15,75 +20,7 @@ export const CATEGORY: Category[] = [
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
 
-export const SYNTHS = [
-	'sBTC',
-	'sETH',
-	'sXRP',
-	'sBCH',
-	'sLTC',
-	'sEOS',
-	'sBNB',
-	'sXTZ',
-	'sXMR',
-	'sADA',
-	'sLINK',
-	'sTRX',
-	'sDASH',
-	'sAAVE',
-	'sUNI',
-	'sYFI',
-	'sDOT',
-	'sREN',
-	'sCOMP',
-	'sETC',
-	'iBTC',
-	'iETH',
-	'iXRP',
-	'iBCH',
-	'iLTC',
-	'iEOS',
-	'iBNB',
-	'iXTZ',
-	'iXMR',
-	'iADA',
-	'iLINK',
-	'iTRX',
-	'iDASH',
-	'iETC',
-	'sFTSE',
-	'sNIKKEI',
-	'sTSLA',
-	'sMSFT',
-	'sFB',
-	'sAMZN',
-	'sAAPL',
-	'sNFLX',
-	'sGOOG',
-	'sCOIN',
-	'sXAU',
-	'sXAG',
-	'sOIL',
-	'iOIL',
-	'sEUR',
-	'sJPY',
-	'sUSD',
-	'sAUD',
-	'sGBP',
-	'sKRW',
-	'sCHF',
-	'sCEX',
-	'sDEFI',
-	'iCEX',
-	'iDEFI',
-	'iAAVE',
-	'iUNI',
-	'iYFI',
-	'iDOT',
-	'iREN',
-	'iCOMP',
-];
-
-export const SYNTHS_MAP = keyBy(SYNTHS);
+export const SYNTHS = Object.keys(Synths) as CurrencyKey[]
 
 export const CRYPTO_CURRENCY = [
 	'KNC',
@@ -109,24 +46,24 @@ export const CRYPTO_CURRENCY = [
 
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 
-export const FIAT_SYNTHS = new Set([
-	SYNTHS_MAP.sEUR,
-	SYNTHS_MAP.sJPY,
-	SYNTHS_MAP.sUSD,
-	SYNTHS_MAP.sAUD,
-	SYNTHS_MAP.sGBP,
-	SYNTHS_MAP.sCHF,
+export const FIAT_SYNTHS: Set<CurrencyKey> = new Set([
+	Synths.sEUR,
+	Synths.sJPY,
+	Synths.sUSD,
+	Synths.sAUD,
+	Synths.sGBP,
+	Synths.sCHF,
 ]);
 
-export const AFTER_HOURS_SYNTHS = new Set([
-	SYNTHS_MAP.sTSLA,
-	SYNTHS_MAP.sMSFT,
-	SYNTHS_MAP.sFB,
-	SYNTHS_MAP.sAMZN,
-	SYNTHS_MAP.sAAPL,
-	SYNTHS_MAP.sNFLX,
-	SYNTHS_MAP.sGOOG,
-	SYNTHS_MAP.sCOIN,
+export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
+	Synths.sTSLA,
+	Synths.sMSFT,
+	Synths.sFB,
+	Synths.sAMZN,
+	Synths.sAAPL,
+	Synths.sNFLX,
+	Synths.sGOOG,
+	Synths.sCOIN,
 ]);
 
 export const sUSD_EXCHANGE_RATE = 1;

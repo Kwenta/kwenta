@@ -13,7 +13,7 @@ import LoaderIcon from 'assets/svg/app/loader.svg';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import MarketClosureIcon from 'components/MarketClosureIcon';
 
-import { AFTER_HOURS_SYNTHS, CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { AFTER_HOURS_SYNTHS, CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel, PERIOD_LABELS_MAP, PERIOD_LABELS, PERIOD_IN_HOURS } from 'constants/period';
 
 import ChangePercent from 'components/ChangePercent';
@@ -36,7 +36,8 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSynthetixQueries from '@synthetixio/queries';
 import { BaseRateUpdate } from '@synthetixio/queries';
-import Connector from 'containers/Connector';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type ChartCardProps = {
 	side: Side;
@@ -55,10 +56,9 @@ const ChartCard: FC<ChartCardProps> = ({
 }) => {
 	const { t } = useTranslation();
 	
-	const { network, provider } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
 	const { useHistoricalRatesQuery } = useSynthetixQueries({
 		networkId: network?.id ?? null,
-		provider
 	});
 	
 	const [selectedPeriod, setSelectedPeriod] = useState<PeriodLabel>(PERIOD_LABELS_MAP.ONE_DAY);
@@ -70,7 +70,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, selectedPeriod.period);
 
-	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
+	const isSUSD = currencyKey === Synths.sUSD;
 
 	const change = historicalRates.data?.change ?? null;
 	// eslint-disable-next-line
@@ -153,7 +153,7 @@ const ChartCard: FC<ChartCardProps> = ({
 										sign: selectedPriceCurrency.sign,
 										// @TODO: each currency key should specify how many decimals to show
 										minDecimals:
-											currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+											/*currencyKey === Synths.sKRW ||*/ currencyKey === Synths.sJPY ? 4 : 2,
 									})}
 								</CurrencyPrice>
 							)}
@@ -272,7 +272,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							</OverlayMessageTitle>
 							<OverlayMessageSubtitle>
 								{openAfterHoursModalCallback != null &&
-								AFTER_HOURS_SYNTHS.has(currencyKey ?? '') ? (
+								AFTER_HOURS_SYNTHS.has(currencyKey!) ? (
 									<Trans
 										i18nKey="exchange.price-chart-card.overlay-messages.market-closure.after-hours"
 										values={{

@@ -68,8 +68,8 @@ export const QUERY_KEYS = {
 	},
 	Convert: {
 		quote1Inch: (
-			quoteCurrencyKey: CurrencyKey,
-			baseCurrencyKey: CurrencyKey,
+			quoteCurrencyKey: string,
+			baseCurrencyKey: string,
 			amount: string,
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],

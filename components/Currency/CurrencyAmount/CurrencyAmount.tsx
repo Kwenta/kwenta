@@ -13,7 +13,7 @@ import { ContainerRowMixin } from '../common';
 import { wei, WeiSource } from '@synthetixio/wei';
 
 type CurrencyAmountProps = {
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	amount: WeiSource;
 	totalValue: WeiSource;
 	sign?: string;

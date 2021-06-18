@@ -20,7 +20,7 @@ export type FormatCurrencyOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	sign?: string;
-	currencyKey?: CurrencyKey;
+	currencyKey?: string;
 };
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
@@ -72,11 +72,11 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 	});
 
 export const formatCurrency = (
-	currencyKey: CurrencyKey,
+	currencyKey: string,
 	value: WeiSource,
 	options?: FormatCurrencyOptions
 ) =>
-	isFiatCurrency(currencyKey)
+	isFiatCurrency(currencyKey as CurrencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
 

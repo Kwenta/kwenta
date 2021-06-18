@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { Synth } from 'lib/synthetix';
-
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -15,7 +13,10 @@ import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
-import Connector from 'containers/Connector';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
+import { Synth } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from 'constants/currency';
 
 type SynthRowProps = {
 	price: number | null;
@@ -26,15 +27,14 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const router = useRouter();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const currencyKey = synth.name;
+	const currencyKey = synth.name as CurrencyKey;
 
-	const { network, provider } = Connector.useContainer();
-	const {
+	const network = useRecoilValue(networkState);
+	const { 
 		useHistoricalRatesQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
-	});
+		networkId: network.id,
+	})
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
 		refetchInterval: false,
@@ -56,7 +56,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 			/>
 			{price != null ? (
 				<Currency.Price
-					currencyKey={selectedPriceCurrency.name}
+					currencyKey={selectedPriceCurrency.name as CurrencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}

@@ -19,7 +19,7 @@ import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { formatCurrency } from 'utils/formatters/number';
@@ -95,7 +95,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-	const { notify, provider, network } = Connector.useContainer();
+	const { notify, network } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const {
@@ -104,8 +104,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery
 	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-		provider
+		networkId: network.id
 	});
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -154,7 +153,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const getMethodAndParams = useCallback(() => {
 		const idParam = `${short.id}`;
-		const amountParam = inputAmountBN.toBN();
+		const amountParam = inputAmountBN.toBN() as ethers.BigNumber;
 
 		let params: Array<ethers.BigNumber | string>;
 		let method: string = '';
@@ -206,7 +205,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -549,7 +548,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								totalTradePrice={totalTradePrice}
 								baseCurrencyAmount={inputAmount}
 								basePriceRate={assetPriceRate}
-								baseCurrency={currency}
+								baseCurrency={currency || null}
 								gasPrices={gasPrices}
 								feeReclaimPeriodInSeconds={0}
 								quoteCurrencyKey={null}

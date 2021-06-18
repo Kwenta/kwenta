@@ -1,5 +1,6 @@
 import { HistoricalShortPosition, ShortLiquidation } from './types';
 import { hexToAscii } from 'utils/formatters/string';
+import { CurrencyKey } from 'constants/currency';
 
 // MainNet - 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 // Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
@@ -10,9 +11,9 @@ export const SHORT_GRAPH_ENDPOINT =
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
 	id: response.id,
 	txHash: response.txHash,
-	collateralLocked: hexToAscii(response.collateralLocked),
+	collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
 	collateralLockedAmount: response.collateralLockedAmount,
-	synthBorrowed: hexToAscii(response.synthBorrowed),
+	synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
 	synthBorrowedAmount: response.synthBorrowedAmount,
 	createdAt: new Date(Number(response.createdAt) * 1000),
 	closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
