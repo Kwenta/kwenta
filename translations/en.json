@@ -506,7 +506,15 @@
 		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
-			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta"
+			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
+			"info": {
+				"asset": "asset",
+				"size": "market size",
+				"volume": "24 HR volume",
+				"skew": "market skew",
+				"debt": "market debt",
+				"rate": "funding rate"
+			}
 		}
 	},
 	"not-found": {
