@@ -514,6 +514,17 @@
 				"skew": "market skew",
 				"debt": "market debt",
 				"rate": "funding rate"
+			},
+			"user": {
+				"position": {
+					"tab": "Your Position"
+				},
+				"orders": {
+					"tab": "Orders"
+				},
+				"trades": {
+					"tab": "Trades"
+				}
 			}
 		}
 	},

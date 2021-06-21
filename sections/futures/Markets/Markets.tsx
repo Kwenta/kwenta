@@ -81,7 +81,7 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 					const {
 						original: { baseKey, quoteKey },
 					} = row;
-					router.push(ROUTES.Futures.MarketPair(baseKey, quoteKey));
+					router.push(ROUTES.Futures.Market.MarketPair(quoteKey));
 				}}
 				columns={[
 					{

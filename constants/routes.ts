@@ -37,8 +37,16 @@ export const ROUTES = {
 	},
 	Futures: {
 		Home: '/futures',
-		MarketPair: (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
-			normalizeRoute('/futures/market', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
+		Market: {
+			MarketPair: (baseCurrencyKey: CurrencyKey) =>
+				normalizeRoute('/futures/market', `${baseCurrencyKey}`, 'market'),
+			Position: (baseCurrencyKey: CurrencyKey) =>
+				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'position', 'tab'),
+			Orders: (baseCurrencyKey: CurrencyKey) =>
+				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'orders', 'tab'),
+			Trades: (baseCurrencyKey: CurrencyKey) =>
+				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'trades', 'tab'),
+		},
 	},
 };
 
