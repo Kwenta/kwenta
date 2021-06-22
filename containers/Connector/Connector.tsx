@@ -43,12 +43,27 @@ const useConnector = () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
-			// @ts-ignore
-			const provider = new ethers.providers.InfuraProvider(
-				networkId,
-				process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			);
+			let provider
 
+			// The InfuraProvider is used as a base provider to connect to web3,
+			// before/if a user unlocks their wallet. 
+			// In order to support local chain environments, we special case for 
+			// their network ID's.
+			switch(networkId) {
+				case NetworkId['Local-Ovm']:
+				case NetworkId['Local']:
+					provider = new ethers.providers.JsonRpcProvider(
+						'http://localhost:8545'
+					);
+					break;
+				default:
+					// @ts-ignore
+					provider = new ethers.providers.InfuraProvider(
+						networkId,
+						process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+					);
+			}
+			
 			synthetix.setContractSettings({
 				networkId,
 				provider,
