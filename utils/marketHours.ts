@@ -10,19 +10,32 @@ import { addHours, nextMonday, startOfDay, subDays } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import moment from 'moment-business-time';
 
-export const forexNextOpen = () => {
+export const forexHours = () => {
 	const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 	const currentTimeInAET = utcToZonedTime(
 		zonedTimeToUtc(new Date(), currentTimezone),
 		'Australia/Sydney'
 	);
+
 	const forexMarketOpenAET = addHours(startOfDay(nextMonday(subDays(currentTimeInAET, 1))), 9); //9am
 	const forexMarketOpenUTC = zonedTimeToUtc(forexMarketOpenAET, 'Australia/Sydney');
 	const forexMarketOpenLocal = utcToZonedTime(forexMarketOpenUTC, currentTimezone);
-	return forexMarketOpenLocal;
+
+	const forexMarketTransitionAET = addHours(
+		startOfDay(nextMonday(subDays(currentTimeInAET, 1))),
+		9
+	); //9am
+	const forexMarketTransitionUTC = zonedTimeToUtc(forexMarketTransitionAET, 'Australia/Sydney');
+	const forexMarketTransitionLocal = utcToZonedTime(forexMarketTransitionUTC, currentTimezone);
+
+	return {
+		nextOpen: forexMarketOpenLocal,
+		nextTransition: forexMarketTransitionLocal,
+		isWorkingTime: true,
+	};
 };
 
-export const usNextOpen = () => {
+export const usHours = () => {
 	moment.locale('en', {
 		workinghours: {
 			0: null,
@@ -71,14 +84,23 @@ export const usNextOpen = () => {
 		zonedTimeToUtc(new Date(), currentTimezone),
 		'America/New_York'
 	);
-	if (moment(currentTimeInET).isWorkingTime()) return null; //ensure timer is 0 if during session
+
 	const nextOpenET = moment(currentTimeInET).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenET, 'America/New_York');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
-	return nextOpenLocal;
+
+	const nextTransitionET = moment(currentTimeInET).nextTransitionTime().moment.toDate();
+	const nextTransitionUTC = zonedTimeToUtc(nextTransitionET, 'America/New_York');
+	const nextTransitionLocal = utcToZonedTime(nextTransitionUTC, currentTimezone);
+
+	return {
+		nextOpen: nextOpenLocal,
+		nextTransition: nextTransitionLocal,
+		isWorkingTime: moment(currentTimeInET).isWorkingTime(),
+	};
 };
 
-export const lseNextOpen = () => {
+export const lseHours = () => {
 	moment.locale('gb', {
 		workinghours: {
 			0: null,
@@ -126,14 +148,23 @@ export const lseNextOpen = () => {
 		zonedTimeToUtc(new Date(), currentTimezone),
 		'Europe/London'
 	);
-	if (moment(currentTimeInBT).isWorkingTime()) return null; //ensure timer is 0 if during session
+
 	const nextOpenBT = moment(currentTimeInBT).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenBT, 'Europe/London');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
-	return nextOpenLocal;
+
+	const nextTransitionBT = moment(currentTimeInBT).nextTransitionTime().moment.toDate();
+	const nextTransitionUTC = zonedTimeToUtc(nextTransitionBT, 'Europe/London');
+	const nextTransitionLocal = utcToZonedTime(nextTransitionUTC, currentTimezone);
+
+	return {
+		nextOpen: nextOpenLocal,
+		nextTransition: nextTransitionLocal,
+		isWorkingTime: moment(currentTimeInBT).isWorkingTime(),
+	};
 };
 
-export const tseNextOpen = () => {
+export const tseHours = () => {
 	moment.locale('jp', {
 		workinghours: {
 			0: null,
@@ -193,27 +224,66 @@ export const tseNextOpen = () => {
 		zonedTimeToUtc(new Date(), currentTimezone),
 		'Asia/Tokyo'
 	);
-	if (moment(currentTimeInJST).isWorkingTime()) return null; //ensure timer is 0 if during session
+
 	const nextOpenJST = moment(currentTimeInJST).nextWorkingTime().toDate();
 	const nextOpenUTC = zonedTimeToUtc(nextOpenJST, 'Asia/Tokyo');
 	const nextOpenLocal = utcToZonedTime(nextOpenUTC, currentTimezone);
-	return nextOpenLocal;
+
+	const nextTransitionJST = moment(currentTimeInJST).nextTransitionTime().moment.toDate();
+	const nextTransitionUTC = zonedTimeToUtc(nextTransitionJST, 'Asia/Tokyo');
+	const nextTransitionLocal = utcToZonedTime(nextTransitionUTC, currentTimezone);
+
+	return {
+		nextOpen: nextOpenLocal,
+		nextTransition: nextTransitionLocal,
+		isWorkingTime: moment(currentTimeInJST).isWorkingTime(),
+	};
 };
 
-const marketNextOpen = (currencyKey: CurrencyKey) => {
+export const marketNextOpen = (currencyKey: CurrencyKey) => {
 	if (AFTER_HOURS_SYNTHS.has(currencyKey)) {
-		return usNextOpen();
+		return usHours().nextOpen;
 	} else if (LSE_SYNTHS.has(currencyKey)) {
-		return lseNextOpen();
+		return lseHours().nextOpen;
 	} else if (TSE_SYNTHS.has(currencyKey)) {
-		return tseNextOpen();
+		return tseHours().nextOpen;
 	} else if (FIAT_SYNTHS.has(currencyKey)) {
-		return forexNextOpen();
+		return forexHours().nextOpen;
 	} else if (COMMODITY_SYNTHS.has(currencyKey)) {
-		return forexNextOpen();
+		return forexHours().nextOpen;
 	} else {
 		return null;
 	}
 };
 
-export default marketNextOpen;
+export const marketNextTransition = (currencyKey: CurrencyKey) => {
+	if (AFTER_HOURS_SYNTHS.has(currencyKey)) {
+		return usHours().nextTransition;
+	} else if (LSE_SYNTHS.has(currencyKey)) {
+		return lseHours().nextTransition;
+	} else if (TSE_SYNTHS.has(currencyKey)) {
+		return tseHours().nextTransition;
+	} else if (FIAT_SYNTHS.has(currencyKey)) {
+		return forexHours().nextTransition;
+	} else if (COMMODITY_SYNTHS.has(currencyKey)) {
+		return forexHours().nextTransition;
+	} else {
+		return null;
+	}
+};
+
+export const marketIsOpen = (currencyKey: CurrencyKey) => {
+	if (AFTER_HOURS_SYNTHS.has(currencyKey)) {
+		return usHours().isWorkingTime;
+	} else if (LSE_SYNTHS.has(currencyKey)) {
+		return lseHours().isWorkingTime;
+	} else if (TSE_SYNTHS.has(currencyKey)) {
+		return tseHours().isWorkingTime;
+	} else if (FIAT_SYNTHS.has(currencyKey)) {
+		return forexHours().isWorkingTime;
+	} else if (COMMODITY_SYNTHS.has(currencyKey)) {
+		return forexHours().isWorkingTime;
+	} else {
+		return null;
+	}
+};

@@ -12,7 +12,7 @@ import {
 	TSE_SYNTHS,
 } from 'constants/currency';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
-import marketNextOpen from 'utils/marketNextOpen';
+import { marketNextOpen } from 'utils/marketHours';
 
 import { OverlayMessageTitle, OverlayMessageSubtitle, OverlayTimer, LinkTag } from './styles';
 

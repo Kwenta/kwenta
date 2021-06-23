@@ -10,6 +10,8 @@ import { formatCurrency } from 'utils/formatters/number';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 import useCombinedRates from 'sections/exchange/hooks/useCombinedRates';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketNextTransition, marketIsOpen } from 'utils/marketHours';
 
 type MarketDetailsCardProps = {
 	baseCurrencyKey: CurrencyKey | null;
@@ -34,6 +36,16 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 		quoteCurrencyKey,
 		selectedPeriod: PERIOD_LABELS_MAP.ONE_DAY,
 	});
+
+	const quoteCurrencyMarketTimer = useMarketHoursTimer(
+		marketNextTransition(quoteCurrencyKey ?? '') ?? null
+	);
+	const quoteCurrencyMarketIsOpen = marketIsOpen(quoteCurrencyKey ?? '');
+
+	const baseCurrencyMarketTimer = useMarketHoursTimer(
+		marketNextTransition(baseCurrencyKey ?? '') ?? null
+	);
+	const baseCurrencyMarketIsOpen = marketIsOpen(baseCurrencyKey ?? '');
 
 	const rates24HighItem = (
 		<Item>
@@ -63,7 +75,33 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	return (
 		<Card className="market-details-card" {...rest}>
-			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
+			<StyledCardHeader lowercase>
+				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
+				<CardHeaderItems>
+					{quoteCurrencyKey && quoteCurrencyKey !== 'sUSD' && (
+						<span>
+							{quoteCurrencyKey}{' '}
+							{t(
+								`exchange.market-details-card.${
+									quoteCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+								}`
+							)}{' '}
+							{quoteCurrencyMarketTimer}
+						</span>
+					)}
+					{baseCurrencyKey && baseCurrencyKey !== 'sUSD' && (
+						<span>
+							{baseCurrencyKey}{' '}
+							{t(
+								`exchange.market-details-card.${
+									baseCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+								}`
+							)}{' '}
+							{baseCurrencyMarketTimer}
+						</span>
+					)}
+				</CardHeaderItems>
+			</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>{rates24HighItem}</Column>
@@ -91,6 +129,15 @@ const StyledCardBody = styled(Card.Body)`
 
 const StyledCardHeader = styled(Card.Header)`
 	height: 40px;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CardHeaderItems = styled.div`
+	line-height: 0.8;
+	width: 40%;
+	display: flex;
+	justify-content: space-between;
 `;
 
 const Item = styled(FlexDivRowCentered)`

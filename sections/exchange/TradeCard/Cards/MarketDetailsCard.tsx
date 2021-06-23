@@ -22,6 +22,8 @@ import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
 
 import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -71,6 +73,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 
 	const token =
 		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
+
+	const timer = useMarketHoursTimer(marketNextTransition(currencyKey ?? '') ?? null);
+	const isOpen = marketIsOpen(currencyKey ?? '');
 
 	const volume24HItem = (
 		<Item>
@@ -170,7 +175,12 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 
 	return (
 		<Card className="market-details-card" {...rest}>
-			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
+			<StyledCardHeader lowercase={true}>
+				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
+				<CardHeaderItems>
+					{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)} {timer}
+				</CardHeaderItems>
+			</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>
@@ -207,6 +217,12 @@ const StyledCardBody = styled(Card.Body)`
 
 const StyledCardHeader = styled(Card.Header)`
 	height: 40px;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CardHeaderItems = styled.div`
+	line-height: 0.8;
 `;
 
 const Item = styled(FlexDivRowCentered)`
