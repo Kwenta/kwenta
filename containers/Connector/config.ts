@@ -56,6 +56,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{
 					walletName: 'walletConnect',
 					rpc: { [network.id]: infuraRpc },
+					bridge: 'https://synthetix.bridge.walletconnect.org',
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
