@@ -33,12 +33,6 @@ jobs:
     if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
 
-    container:
-      image: ghcr.io/synthetixio/docker-node/alpine:14.17
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-
     steps:
       - name: Checkout
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
@@ -52,9 +46,13 @@ jobs:
             ${{ runner.os }}-build-cache-
         continue-on-error: true
 
-      # workaround for npm 7 permission issues on GH actions
-      - name: Chown
-        run: chown -R 1001:121 "$GITHUB_WORKSPACE"
+      - name: Building on Node.js ${{ matrix.node-version }} 🛠️
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.1'
+
+      - name: npm update
+        run: npm install -g npm@7.18.1
 
       - name: Install dependencies
         run: npm ci --no-audit --legacy-peer-deps
