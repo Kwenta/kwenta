@@ -9,6 +9,7 @@ import {
 	NoTextTransform,
 	FlexDivColCentered,
 	Tooltip,
+	ExternalLink,
 } from 'styles/common';
 
 import { CurrencyKey } from 'constants/currency';
@@ -27,6 +28,8 @@ import {
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { Svg } from 'react-optimized-image';
+import InfoIcon from 'assets/svg/app/info.svg';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
@@ -65,15 +68,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
-		formatCurrency(
-			baseCurrencyKey,
-			feeAmountInBaseCurrency != null
-				? toBigNumber(baseCurrencyAmount).minus(feeAmountInBaseCurrency)
-				: baseCurrencyAmount,
-			{
-				minDecimals: decimals,
-			}
-		);
+		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
+			minDecimals: decimals,
+		});
 
 	return (
 		<StyledBaseModal
@@ -138,6 +135,39 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								{ESTIMATE_VALUE} {getBaseCurrencyAmount()}
 							</span>
 						</StyledTooltip>
+					</SummaryItemValue>
+				</SummaryItem>
+				<SummaryItem>
+					<SummaryItemLabel data-testid="base-currency-label">
+						<Trans
+							i18nKey="common.currency.exchange-fee"
+							values={{ currencyKey: baseCurrencyKey }}
+							components={[<NoTextTransform />]}
+						/>
+						<StyledTooltip
+							placement="top"
+							content={
+								<Trans
+									i18nKey="modals.confirm-transaction.exchange-fee-hint"
+									values={{ currencyKey: baseCurrencyKey }}
+									components={[
+										<NoTextTransform />,
+										<ExternalLink href="https://synthetix.io/synths" />,
+									]}
+								/>
+							}
+							arrow={false}
+							interactive={true}
+						>
+							<TooltipItem>
+								<Svg src={InfoIcon} />
+							</TooltipItem>
+						</StyledTooltip>
+					</SummaryItemLabel>
+					<SummaryItemValue data-testid="base-currency-value">
+						<span>
+							{formatCurrency(baseCurrencyKey, feeAmountInBaseCurrency ?? 0)} {baseCurrencyKey}
+						</span>
 					</SummaryItemValue>
 				</SummaryItem>
 				<SummaryItem>
@@ -270,6 +300,16 @@ const StyledTooltip = styled(Tooltip)`
 		padding: 5px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
+	}
+`;
+
+export const TooltipItem = styled.span`
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	svg {
+		margin-left: 5px;
+		transform: translateY(2px);
 	}
 `;
 

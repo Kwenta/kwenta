@@ -807,8 +807,10 @@ const useExchange = ({
 				} else {
 					setQuoteCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
+						const baseCurrencyAmountNoFee = toBigNumber(value).multipliedBy(rate);
+						const fee = baseCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
 						setBaseCurrencyAmount(
-							toBigNumber(value).multipliedBy(rate).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
+							baseCurrencyAmountNoFee.minus(fee).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
 						);
 					}
 				}
@@ -826,11 +828,10 @@ const useExchange = ({
 						setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
 					}
 					if (txProvider === 'synthetix') {
+						const baseCurrencyAmountNoFee = toBigNumber(quoteCurrencyBalance).multipliedBy(rate);
+						const fee = baseCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
 						setBaseCurrencyAmount(
-							quoteCurrencyBalance
-								.multipliedBy(rate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+							baseCurrencyAmountNoFee.minus(fee).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
 						);
 					}
 				}
@@ -886,11 +887,10 @@ const useExchange = ({
 				} else {
 					setBaseCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
+						const quoteCurrencyAmountNoFee = toBigNumber(value).multipliedBy(inverseRate);
+						const fee = quoteCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
 						setQuoteCurrencyAmount(
-							toBigNumber(value)
-								.multipliedBy(inverseRate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+							quoteCurrencyAmountNoFee.plus(fee).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
 						);
 					}
 				}
@@ -901,11 +901,12 @@ const useExchange = ({
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 
 					if (txProvider === 'synthetix') {
+						const baseCurrencyAmountNoFee = toBigNumber(baseCurrencyBalance).multipliedBy(
+							inverseRate
+						);
+						const fee = baseCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
 						setQuoteCurrencyAmount(
-							toBigNumber(baseCurrencyBalance)
-								.multipliedBy(inverseRate)
-								.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-								.toString()
+							baseCurrencyAmountNoFee.plus(fee).decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString()
 						);
 					}
 				}
