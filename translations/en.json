@@ -579,6 +579,11 @@
 			"1W": "1W",
 			"1M": "1M"
 		},
+		"chart-types": {
+			"compare": "compare",
+			"ratio": "ratio",
+			"candlesticks": "candlesticks"
+		},
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",
 			"error": "An unexpected error occurred.",
