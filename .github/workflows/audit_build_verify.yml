@@ -54,9 +54,7 @@ jobs:
 
       # workaround for npm 7 permission issues on GH actions
       - name: Chown
-        run: |
-          chown -R 1001:121 "/github/home/.npm"
-          chown -R 1001:121 "$GITHUB_WORKSPACE"
+        run: chown -R 1001:121 "$GITHUB_WORKSPACE"
 
       - name: Install dependencies
         run: npm ci --no-audit --legacy-peer-deps
@@ -130,9 +128,7 @@ jobs:
 
       # workaround for npm 7 permission issues on GH actions
       - name: Chown
-        run: |
-          chown -R 1001:121 "/github/home/.npm"
-          chown -R 1001:121 "$GITHUB_WORKSPACE"
+        run: chown -R 1001:121 "$GITHUB_WORKSPACE"
 
       - name: Install dependencies
         run: npm ci --no-audit --legacy-peer-deps
