@@ -1020,10 +1020,10 @@ const useExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={txProvider === 'synthetix' ? feeAmountInBaseCurrency : null}
+					feeCost={txProvider === 'synthetix' ? feeCost : null}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
-					totalTradePrice={totalTradePrice.toString()}
+					totalTradePrice={estimatedBaseTradePrice.toString()}
 					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
