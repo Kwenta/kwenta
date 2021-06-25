@@ -191,7 +191,6 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 					txError={txError}
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={(ShortingRewardRow ?? 0).toString()}
-					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider="synthetix"

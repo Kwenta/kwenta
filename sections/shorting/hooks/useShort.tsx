@@ -622,7 +622,6 @@ const useShort = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}

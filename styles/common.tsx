@@ -108,9 +108,10 @@ export const NoTextTransform = styled.span`
 	text-transform: none;
 `;
 
-export const TextButton = styled.button`
+export const TextButton = styled.button<{ disabled?: boolean }>`
 	${resetButtonCSS};
 	background: transparent;
+	cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 `;
 
 export const ResetButton = styled.button`

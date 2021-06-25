@@ -1,17 +1,18 @@
-import format from 'date-fns/format';
+import formatDate from 'date-fns/format';
 import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
 
 import { strPadLeft } from './string';
 
 export const formatTxTimestamp = (timestamp: number | Date) =>
-	format(timestamp, 'MMM d, yy | HH:mm');
+	formatDate(timestamp, 'MMM d, yy | HH:mm');
 
 export const toJSTimestamp = (timestamp: number) => timestamp * 1000;
 
-export const formatShortDate = (date: Date | number) => format(date, 'MMM d, yyyy');
+export const formatShortDate = (date: Date | number) => formatDate(date, 'MMM d, yyyy');
 
-export const formatShortDateWithTime = (date: Date | number) => format(date, 'MMM d, yyyy H:mma');
-export const formatDateWithTime = (date: Date | number) => format(date, 'd MMM yyyy H:mm');
+export const formatShortDateWithTime = (date: Date | number) =>
+	formatDate(date, 'MMM d, yyyy H:mma');
+export const formatDateWithTime = (date: Date | number) => formatDate(date, 'd MMM yyyy H:mm');
 
 export const secondsToTime = (seconds: number) => {
 	const minutes = Math.floor(seconds / 60);
