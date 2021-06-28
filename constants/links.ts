@@ -14,7 +14,7 @@ export const EXTERNAL_LINKS = {
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
 		Medium: 'https://blog.synthetix.io/',
-		Discord: 'https://discordapp.com/invite/AEdUHzt',
+		Discord: 'https://discord.gg/SwNfgV4w6C',
 		GitHub: 'https://github.com/synthetixio/kwenta',
 	},
 	TokenLists: {
