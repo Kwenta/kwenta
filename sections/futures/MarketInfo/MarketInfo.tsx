@@ -16,7 +16,7 @@ import PriceChartCard from 'sections/futures/Charts/PriceChartCard';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Card from 'components/Card';
-import UserPositions from '../UserPositions';
+import UserInfo from '../UserInfo';
 
 type MarketInfoProps = {};
 
@@ -101,7 +101,7 @@ const MarketInfo: React.FC<MarketInfoProps> = ({}) => {
 					</InfoBox>
 				</StyledFlexDiv>
 			</MarketInfoContainer>
-			<UserPositions baseCurrencyKey={baseCurrencyKey} />
+			<UserInfo baseCurrencyKey={baseCurrencyKey} />
 		</>
 	);
 };

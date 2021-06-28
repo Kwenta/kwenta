@@ -517,7 +517,13 @@
 			},
 			"user": {
 				"position": {
-					"tab": "Your Position"
+					"tab": "Your Position",
+					"roi": "ROI:",
+					"entry": "entry price",
+					"liquidation": "liquidation price",
+					"margin": "remaining margin",
+					"ratio": "margin ratio",
+					"close": "close"
 				},
 				"orders": {
 					"tab": "Orders"

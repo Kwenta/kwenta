@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 
+import PositionCard from '../PositionCard';
+
 import ROUTES from 'constants/routes';
 import { CurrencyKey } from 'constants/currency';
 
@@ -17,11 +19,11 @@ enum FuturesTab {
 
 const FutureTabs = Object.values(FuturesTab);
 
-type UserPositionsProps = {
+type UserInfoProps = {
 	baseCurrencyKey: CurrencyKey;
 };
 
-const UserPositions: React.FC<UserPositionsProps> = ({ baseCurrencyKey }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -70,13 +72,15 @@ const UserPositions: React.FC<UserPositionsProps> = ({ baseCurrencyKey }) => {
 					</TabButton>
 				))}
 			</StyledTabList>
-			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}></TabPanel>
+			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
+				<PositionCard currencyKey={baseCurrencyKey} />
+			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}></TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}></TabPanel>
 		</>
 	);
 };
-export default UserPositions;
+export default UserInfo;
 
 const StyledTabList = styled(TabList)`
 	margin-bottom: 12px;
