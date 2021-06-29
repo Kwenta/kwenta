@@ -21,6 +21,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
 import FailureIcon from 'assets/svg/app/circle-error.svg';
 import SuccessIcon from 'assets/svg/app/circle-tick.svg';
+import { formatCurrency } from 'utils/formatters/number';
 
 type TradesProps = {};
 
@@ -44,7 +45,41 @@ const Trades: React.FC<TradesProps> = ({}) => {
 			entryPrice: 1000,
 			finalPrice: 2000,
 			pnl: 100,
-			status: TradeStatus.PENDING,
+			status: TradeStatus.OPEN,
+			txHash: '123',
+		},
+		{
+			id: '2',
+			position: {
+				side: PositionSide.SHORT,
+				amount: 1000,
+				currency: SYNTHS_MAP.sBTC,
+			},
+			leverage: {
+				amount: 5,
+				side: PositionSide.SHORT,
+			},
+			entryPrice: 1000,
+			finalPrice: 2000,
+			pnl: -100,
+			status: TradeStatus.LIQUIDATED,
+			txHash: '123',
+		},
+		{
+			id: '3',
+			position: {
+				side: PositionSide.LONG,
+				amount: 1000,
+				currency: SYNTHS_MAP.sBTC,
+			},
+			leverage: {
+				amount: 5,
+				side: PositionSide.LONG,
+			},
+			entryPrice: 1000,
+			finalPrice: 2000,
+			pnl: 200,
+			status: TradeStatus.CLOSED,
 			txHash: '123',
 		},
 	] as Trade[];
@@ -56,11 +91,11 @@ const Trades: React.FC<TradesProps> = ({}) => {
 
 	const returnStatusSVG = (status: TradeStatus) => {
 		switch (status) {
-			case TradeStatus.PENDING:
+			case TradeStatus.OPEN:
 				return <StatusIcon status={status} src={PendingIcon} />;
-			case TradeStatus.CONFIRMED:
+			case TradeStatus.CLOSED:
 				return <StatusIcon status={status} src={SuccessIcon} />;
-			case TradeStatus.FAILED:
+			case TradeStatus.LIQUIDATED:
 				return <StatusIcon status={status} src={FailureIcon} />;
 		}
 	};
@@ -125,9 +160,12 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						accessor: 'entryPrice',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
-							<Fee>
-								{cellProps.row.original.entryPrice} {selectedPriceCurrency.asset}
-							</Fee>
+							<Price>
+								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.entryPrice, {
+									sign: '$',
+								})}{' '}
+								{selectedPriceCurrency.asset}
+							</Price>
 						),
 						width: 100,
 						sortable: true,
@@ -139,9 +177,12 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						accessor: 'finalPrice',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
-							<Fee>
-								{cellProps.row.original.finalPrice} {selectedPriceCurrency.asset}
-							</Fee>
+							<Price>
+								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.finalPrice, {
+									sign: '$',
+								})}{' '}
+								{selectedPriceCurrency.asset}
+							</Price>
 						),
 						width: 100,
 						sortable: true,
@@ -153,9 +194,12 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						accessor: 'pnl]',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
-							<Fee>
-								{cellProps.row.original.pnl} {selectedPriceCurrency.asset}
-							</Fee>
+							<PNL negative={cellProps.row.original.pnl < 0}>
+								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.pnl, {
+									sign: '$',
+								})}{' '}
+								{selectedPriceCurrency.asset}
+							</PNL>
 						),
 						width: 100,
 						sortable: true,
@@ -248,8 +292,13 @@ ${BoldTableText}
 	text-transform: uppercase;
 `;
 
-const Fee = styled.div`
+const Price = styled.div`
 	${BoldTableText};
+`;
+
+const PNL = styled.div<{ negative: boolean }>`
+	${BoldTableText};
+	color: ${(props) => (props.negative ? props.theme.colors.red : props.theme.colors.white)};
 `;
 
 const StatusText = styled.div`
@@ -259,9 +308,9 @@ const StatusText = styled.div`
 
 const StatusIcon = styled(Svg)<{ status: TradeStatus }>`
 	color: ${(props) =>
-		props.status === TradeStatus.PENDING
+		props.status === TradeStatus.OPEN
 			? props.theme.colors.yellow
-			: props.status === TradeStatus.CONFIRMED
+			: props.status === TradeStatus.CLOSED
 			? props.theme.colors.green
 			: props.theme.colors.red};
 `;

@@ -21,6 +21,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
 import FailureIcon from 'assets/svg/app/circle-error.svg';
 import SuccessIcon from 'assets/svg/app/circle-tick.svg';
+import { formatCurrency } from 'utils/formatters/number';
 
 type OrdersProps = {};
 
@@ -124,7 +125,10 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Order>) => (
 							<Fee>
-								{cellProps.row.original.fee} {selectedPriceCurrency.asset}
+								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.fee, {
+									sign: '$',
+								})}{' '}
+								{selectedPriceCurrency.asset}
 							</Fee>
 						),
 						width: 100,

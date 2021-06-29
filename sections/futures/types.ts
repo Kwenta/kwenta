@@ -13,9 +13,8 @@ export enum OrderStatus {
 
 export enum TradeStatus {
 	LIQUIDATED = 'liquidated',
-	PENDING = 'pending',
-	CONFIRMED = 'confirmed',
-	FAILED = 'failed',
+	OPEN = 'Open',
+	CLOSED = 'Closed',
 }
 
 export type Position = {
