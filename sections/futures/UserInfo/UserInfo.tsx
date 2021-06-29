@@ -8,7 +8,7 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 
 import PositionCard from '../PositionCard';
 import Orders from '../Orders';
-import History from '../History';
+import Trades from '../Trades';
 
 import ROUTES from 'constants/routes';
 import { CurrencyKey } from 'constants/currency';
@@ -81,7 +81,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 				<Orders />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
-				<History />
+				<Trades />
 			</TabPanel>
 		</>
 	);

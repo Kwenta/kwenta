@@ -537,7 +537,16 @@
 					}
 				},
 				"trades": {
-					"tab": "Trades"
+					"tab": "Trades",
+					"table": {
+						"id": "ID",
+						"position": "position",
+						"leverage": "leverage",
+						"entry": "entry price",
+						"final": "final price",
+						"pnl": "PNL",
+						"status": "status"
+					}
 				}
 			}
 		}
