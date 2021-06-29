@@ -11,24 +11,7 @@ import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import WarningIcon from 'assets/svg/app/liquidation-warning.svg';
-
-export type Position = {
-	position: {
-		side: PositionSide;
-		amount: number;
-		currency: CurrencyKey;
-	};
-	price: number;
-	liquidationPrice: number;
-	margin: number;
-	marginChange: number;
-	riskOfLiquidation: boolean;
-};
-
-export enum PositionSide {
-	LONG = 'long',
-	SHORT = 'short',
-}
+import { Position, PositionSide } from '../types';
 
 type PositionCardProps = {
 	position: Position;

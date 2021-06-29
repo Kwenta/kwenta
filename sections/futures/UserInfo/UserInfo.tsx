@@ -7,6 +7,8 @@ import { useRouter } from 'next/router';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 
 import PositionCard from '../PositionCard';
+import Orders from '../Orders';
+import History from '../History';
 
 import ROUTES from 'constants/routes';
 import { CurrencyKey } from 'constants/currency';
@@ -28,14 +30,14 @@ const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
-		if (router.query.tab) {
-			const tab = castArray(router.query.tab)[0] as FuturesTab;
+		if (router.query.market) {
+			const tab = castArray(router.query.market)[1] as FuturesTab;
 			if (FutureTabs.includes(tab)) {
 				return tab;
 			}
 		}
 		return null;
-	}, [router.query]);
+	}, [router]);
 
 	const activeTab = tabQuery != null ? tabQuery : FuturesTab.POSITION;
 
@@ -75,8 +77,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard currencyKey={baseCurrencyKey} />
 			</TabPanel>
-			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}></TabPanel>
-			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}></TabPanel>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+				<Orders />
+			</TabPanel>
+			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+				<History />
+			</TabPanel>
 		</>
 	);
 };

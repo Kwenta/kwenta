@@ -28,7 +28,6 @@ import ChartTypeToggle from './ChartTypeToggle';
 
 import CustomTooltip from './common/CustomTooltip';
 import OverlayMessageContainer from './common/OverlayMessage';
-import { Side } from '../types';
 import {
 	ChartData,
 	CurrencyLabel,
@@ -41,7 +40,6 @@ import {
 } from './common/styles';
 
 type ChartCardProps = {
-	side: Side;
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
 	className?: string;
@@ -50,7 +48,6 @@ type ChartCardProps = {
 };
 
 const ChartCard: FC<ChartCardProps> = ({
-	side,
 	currencyKey,
 	priceRate,
 	openAfterHoursModalCallback,
@@ -98,7 +95,7 @@ const ChartCard: FC<ChartCardProps> = ({
 
 	// const isMobile = useMediaQuery({ query: `(max-width: ${breakpoints.sm})` });
 
-	let linearGradientId = `priceChartCardArea-${side}`;
+	let linearGradientId = `priceChartCardArea`;
 
 	const fontStyle = {
 		fontSize: '12px',
@@ -189,7 +186,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<RechartsResponsiveContainer
 							width="100%"
 							height="100%"
-							id={`rechartsResponsiveContainer-${side}-${currencyKey}`}
+							id={`rechartsResponsiveContainer-${currencyKey}`}
 						>
 							<AreaChart
 								data={computedRates}

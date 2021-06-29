@@ -48,12 +48,7 @@ const MarketInfo: React.FC<MarketInfoProps> = ({}) => {
 						: t('futures.market.page-title')}
 				</title>
 			</Head>
-			<PriceChartCard
-				side="base"
-				currencyKey={baseCurrencyKey}
-				priceRate={basePriceRate}
-				alignRight={false}
-			/>
+			<PriceChartCard currencyKey={baseCurrencyKey} priceRate={basePriceRate} alignRight={false} />
 			<MarketInfoContainer>
 				<StyledFlexDiv>
 					<InfoBox>
