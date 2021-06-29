@@ -1,4 +1,4 @@
-name: Publish Library
+name: Update dependency
 
 on:
   repository_dispatch:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   update_version:
-    name: Update synthetix in contracts-interface
+    name: Update contracts-interface version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,5 +20,5 @@ jobs:
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
-          git commit -am 'synthetix@${{ github.event.client_payload.version }}'
+          git commit -am 'contracts-interface update'
           git push origin dev
