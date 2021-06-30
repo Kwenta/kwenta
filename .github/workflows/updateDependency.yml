@@ -16,9 +16,9 @@ jobs:
       - name: Update @synthetixio/contracts-interface dependency
         run: |
           git checkout dev
-          npm install @synthetixio/contracts-interface
+          npm install synthetix@${{ github.event.client_payload.version }} --save-exact
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
-          git commit -am 'contracts-interface update'
+          git commit -am 'contracts-interface@${{ github.event.client_payload.version }}'
           git push origin dev
