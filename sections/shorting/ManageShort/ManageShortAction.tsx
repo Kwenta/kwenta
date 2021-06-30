@@ -260,14 +260,16 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
 				return t('exchange.summary-info.button.enter-amount');
 			}
-			if (inputAmountBN.gt(balance ?? 0)) {
-				return t('exchange.summary-info.button.insufficient-balance');
-			}
 			if (isSubmitting) {
 				return t('exchange.summary-info.button.submitting-order');
 			}
 			if (isApproving) {
 				return t('exchange.summary-info.button.approving');
+			}
+			if (isAddCollateralTab) {
+				if (inputAmountBN.gt(balance ?? 0)) {
+					return t('exchange.summary-info.button.insufficient-balance');
+				}
 			}
 			if (isDecreasePositionTab) {
 				if (inputAmountBN.gt(short.synthBorrowedAmount)) {
@@ -529,7 +531,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								currencyKey={currencyKey}
 								amount={inputAmount}
 								onAmountChange={setInputAmount}
-								walletBalance={balance}
+								walletBalance={null}
 								onBalanceClick={() => (balance != null ? setInputAmount(balance.toString()) : null)}
 								priceRate={assetPriceRate}
 								label={
