@@ -16,7 +16,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
@@ -75,23 +75,15 @@ const ShortingStats = () => {
 			<Table>
 				<thead>
 					<TableRowHead>
-						<TableCellHead>{t('shorting.stats.table.asset')}</TableCellHead>
-						<TableCellHead>{t('shorting.stats.table.apr')}</TableCellHead>
+						<TableCellHead colSpan={2}>{t('shorting.stats.table.asset')}</TableCellHead>
 						<TableCellHead>{t('shorting.stats.table.open-interest')}</TableCellHead>
 					</TableRowHead>
 				</thead>
 				<tbody>
 					{SYNTHS_TO_SHORT.map((currencyKey) => (
 						<TableRow key={currencyKey}>
-							<TableCell>
+							<TableCell colSpan={2}>
 								<StyledCurrencyName currencyKey={currencyKey} showIcon={true} />
-							</TableCell>
-							<TableCell>
-								<NumericValue>
-									{shortStatsMap != null && shortStatsMap[currencyKey] != null
-										? formatPercent(shortStatsMap[currencyKey].apr)
-										: NO_VALUE}
-								</NumericValue>
 							</TableCell>
 							<TableCell>
 								<NumericValue>
