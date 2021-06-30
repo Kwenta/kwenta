@@ -112,8 +112,6 @@ const useBalancerExchange = ({
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	// TODO get from pool
-	const exchangeFeeRate = 0.001;
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -238,13 +236,6 @@ const useBalancerExchange = ({
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
-
-	const feeAmountInBaseCurrency = useMemo(() => {
-		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return toBigNumber(baseCurrencyAmount).multipliedBy(exchangeFeeRate);
-		}
-		return null;
-	}, [baseCurrencyAmount, exchangeFeeRate]);
 
 	useEffect(() => {
 		if (
@@ -657,7 +648,6 @@ const useBalancerExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={feeAmountInBaseCurrency}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}

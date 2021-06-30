@@ -574,7 +574,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								isCloseTab ? short.collateralLockedAmount.toString() : inputAmountBN.toString()
 							}
 							quoteCurrencyAmount={isCloseTab ? totalToRepay.toString() : undefined}
-							feeAmountInBaseCurrency={null}
 							baseCurrencyKey={isCloseTab ? short.collateralLocked : currencyKey}
 							quoteCurrencyKey={isCloseTab ? short.synthBorrowed : undefined}
 							totalTradePrice={totalTradePrice}

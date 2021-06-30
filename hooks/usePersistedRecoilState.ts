@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { RecoilState, useRecoilState } from 'recoil';
 import localStore from 'utils/localStore';
 
@@ -9,6 +10,13 @@ export function usePersistedRecoilState<T>(recoilState: RecoilState<T>) {
 		setStoredValue(valueToStore);
 		localStore.set(recoilState.key, valueToStore);
 	};
+
+	useEffect(() => {
+		const item = localStore.get<T>(recoilState.key);
+		if (item) {
+			setStoredValue(item);
+		}
+	}, [recoilState.key, setStoredValue]);
 
 	return [storedValue, setValue] as const;
 }

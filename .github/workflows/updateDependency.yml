@@ -1,0 +1,24 @@
+name: Update dependency
+
+on:
+  repository_dispatch:
+    types: update-dependency
+
+jobs:
+  update_version:
+    name: Update contracts-interface version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Update @synthetixio/contracts-interface dependency
+        run: |
+          git checkout dev
+          npm install @synthetixio/contracts-interface --save-exact
+      - name: Commit changes
+        run: |
+          git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
+          git commit -am 'contracts-interface update'
+          git push origin dev
