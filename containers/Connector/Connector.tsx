@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import {
 	TransactionNotifier,

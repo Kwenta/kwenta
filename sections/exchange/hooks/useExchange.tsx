@@ -88,7 +88,7 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import L2Gas from 'containers/L2Gas';
-import useCMCQuotesQuery from 'queries/cmc/useCMCQuotesQuery';
+// import useCMCQuotesQuery from 'queries/cmc/useCMCQuotesQuery';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
@@ -158,9 +158,9 @@ const useExchange = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
-		enabled: txProvider === '1inch',
-	});
+	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
+	// 	enabled: txProvider === '1inch',
+	// });
 	const slippage = useRecoilValue(slippageState);
 
 	const [selectedBaseChartPeriod, setSelectedBaseChartPeriod] = usePersistedRecoilState<Period>(
@@ -606,7 +606,7 @@ const useExchange = ({
 			console.log(e);
 		}
 		return null;
-	}, [getExchangeParams]);
+	}, [getExchangeParams, isL2]);
 
 	const checkAllowance = useCallback(async () => {
 		if (
