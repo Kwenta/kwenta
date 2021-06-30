@@ -503,6 +503,52 @@
 				"change": "24 HR change",
 				"funding": "24 HR funding rate"
 			}
+		},
+		"market": {
+			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
+			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
+			"info": {
+				"asset": "asset",
+				"size": "market size",
+				"volume": "24 HR volume",
+				"skew": "market skew",
+				"debt": "market debt",
+				"rate": "funding rate"
+			},
+			"user": {
+				"position": {
+					"tab": "Your Position",
+					"roi": "ROI:",
+					"entry": "entry price",
+					"liquidation": "liquidation price",
+					"margin": "remaining margin",
+					"ratio": "margin ratio",
+					"close": "close"
+				},
+				"orders": {
+					"tab": "Orders",
+					"table": {
+						"id": "ID",
+						"position": "position",
+						"leverage": "leverage",
+						"fee": "fee",
+						"status": "status",
+						"cancel": "cancel"
+					}
+				},
+				"trades": {
+					"tab": "Trades",
+					"table": {
+						"id": "ID",
+						"position": "position",
+						"leverage": "leverage",
+						"entry": "entry price",
+						"final": "final price",
+						"pnl": "PNL",
+						"status": "status"
+					}
+				}
+			}
 		}
 	},
 	"not-found": {

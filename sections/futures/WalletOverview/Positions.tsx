@@ -5,7 +5,8 @@ import styled from 'styled-components';
 
 import { FlexDivCol } from 'styles/common';
 import { Subheader } from '../common';
-import PositionCard, { PositionSide } from './PositionCard';
+import { PositionSide } from '../types';
+import PositionCard from './PositionCard';
 
 type PositionsProps = {};
 

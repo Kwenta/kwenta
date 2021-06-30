@@ -1,29 +1,31 @@
-import { FC } from 'react';
-import Head from 'next/head';
+import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
-
-import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
-
 import { DesktopOnlyView } from 'components/Media';
 
+import { PageContent, FullHeightContainer, MainContent, RightSideContent } from 'styles/common';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, isL2State } from 'store/wallet';
-import WalletOverview from 'sections/futures/WalletOverview';
-import Markets from 'sections/futures/Markets';
-import Hero from 'sections/futures/Hero';
 
-const Futures: FC = () => {
+import MarketInfo from 'sections/futures/MarketInfo';
+import Trade from 'sections/futures/Trade';
+
+type MarketProps = {};
+
+const Market: React.FC<MarketProps> = ({}) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+	const router = useRouter();
 
 	return (
 		<>
 			<Head>
-				<title>{t('futures.page-title')}</title>
+				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
 			<AppLayout>
 				<PageContent>
@@ -32,12 +34,11 @@ const Futures: FC = () => {
 					) : ( */}
 					<FullHeightContainer>
 						<MainContent>
-							<Hero />
-							<Markets />
+							<MarketInfo />
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<WalletOverview />
+								<Trade />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>
@@ -47,10 +48,9 @@ const Futures: FC = () => {
 		</>
 	);
 };
+export default Market;
 
 const StyledRightSideContent = styled(RightSideContent)`
 	padding-left: 32px;
 	padding-right: 32px;
 `;
-
-export default Futures;

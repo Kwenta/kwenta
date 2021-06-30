@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
+import { useRouter } from 'next/router';
 
 import ChangePercent from 'components/ChangePercent';
 import Table from 'components/Table';
@@ -21,6 +22,7 @@ import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import SearchIcon from 'assets/svg/app/search.svg';
+import ROUTES from 'constants/routes';
 
 type MarketsProps = {};
 
@@ -28,6 +30,7 @@ type MarketsProps = {};
 type FutureMarkets = {
 	name: string;
 	baseKey: string;
+	quoteKey: string;
 	price: number;
 	changeAmount: number;
 	changePercent: number;
@@ -36,11 +39,13 @@ type FutureMarkets = {
 
 const Markets: React.FC<MarketsProps> = ({}) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 
 	const markets = [
 		{
 			name: 'sBTC-sUSD',
-			baseKey: SYNTHS_MAP.sBTC,
+			baseKey: SYNTHS_MAP.sUSD,
+			quoteKey: SYNTHS_MAP.sBTC,
 			price: 10000,
 			changeAmount: 250,
 			changePercent: 0.52,
@@ -48,7 +53,8 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 		},
 		{
 			name: 'sETH-sUSD',
-			baseKey: SYNTHS_MAP.sETH,
+			baseKey: SYNTHS_MAP.sUSD,
+			quoteKey: SYNTHS_MAP.sETH,
 			price: 2000,
 			changeAmount: 250,
 			changePercent: 0.22,
@@ -71,13 +77,19 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 			</HeaderRow>
 			<StyledTable
 				palette="primary"
+				onTableRowClick={(row) => {
+					const {
+						original: { baseKey, quoteKey },
+					} = row;
+					router.push(ROUTES.Futures.Market.MarketPair(quoteKey));
+				}}
 				columns={[
 					{
 						Header: <StyledTableHeader>{t('futures.markets.table.market')}</StyledTableHeader>,
 						accessor: 'marketName',
 						Cell: (cellProps: CellProps<FutureMarkets>) => (
 							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.baseKey} />
+								<CurrencyIcon currencyKey={cellProps.row.original.quoteKey} />
 								<StyledMarketName>{cellProps.row.original.name}</StyledMarketName>
 							</FlexDivCentered>
 						),
