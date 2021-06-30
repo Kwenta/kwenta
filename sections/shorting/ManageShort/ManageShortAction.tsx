@@ -302,6 +302,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		t,
 		isRemoveCollateralTab,
 		isDecreasePositionTab,
+		isAddCollateralTab,
 		short,
 		isCloseTab,
 		totalToRepay,
