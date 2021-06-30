@@ -205,23 +205,16 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const synthCollateralPriceRate = useMemo(
-		() =>
-			getExchangeRatesForCurrencies(
-				exchangeRates,
-				short.collateralLocked,
-				selectedPriceCurrency.name
-			),
-		[exchangeRates, short.collateralLocked, selectedPriceCurrency.name]
-	);
-
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
+
+	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
+		short.accruedInterest,
+		short.synthBorrowedAmount,
+	]);
 
 	const totalTradePrice = useMemo(() => {
 		if (isCloseTab) {
-			return toBigNumber(synthCollateralPriceRate)
-				.multipliedBy(short.collateralLockedAmount)
-				.toString();
+			return toBigNumber(totalToRepay).multipliedBy(assetPriceRate).toString();
 		}
 		if (inputAmountBN.isNaN()) {
 			return zeroBN.toString();
@@ -232,19 +225,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		}
 
 		return tradePrice.toString();
-	}, [
-		inputAmountBN,
-		assetPriceRate,
-		selectPriceCurrencyRate,
-		isCloseTab,
-		short.collateralLockedAmount,
-		synthCollateralPriceRate,
-	]);
-
-	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
-		short.accruedInterest,
-		short.synthBorrowedAmount,
-	]);
+	}, [inputAmountBN, assetPriceRate, selectPriceCurrencyRate, isCloseTab, totalToRepay]);
 
 	const submissionDisabledReason: ReactNode = useMemo(() => {
 		if (isCloseTab) {
