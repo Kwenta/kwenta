@@ -6,6 +6,7 @@ import isNumber from 'lodash/isNumber';
 
 import { CurrencyKey } from 'constants/currency';
 import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCompareChartData from 'sections/exchange/TradeCard/Charts/hooks/useCompareChartData';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import { formatCurrency } from 'utils/formatters/number';
@@ -121,16 +122,25 @@ const CustomTooltip: FC<{
 	baseCurrencyKey: CurrencyKey | null;
 	quoteCurrencyKey: CurrencyKey | null;
 }> = ({ active, label, payload, baseCurrencyKey, quoteCurrencyKey }) => {
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
 	if (!(active && payload && payload.length === 2)) return null;
 
 	const [{ value: baseRate }, { value: quoteRate }] = payload;
+
 	return (
 		<TooltipContentStyle>
 			<LabelStyle>{baseCurrencyKey}</LabelStyle>
-			<ValueStyle>{formatCurrency(baseCurrencyKey!, baseRate, { sign: '$' })}</ValueStyle>
+			<ValueStyle>
+				{formatCurrency(selectedPriceCurrency.name, baseRate, { sign: selectedPriceCurrency.sign })}
+			</ValueStyle>
 			<br />
 			<LabelStyle>{quoteCurrencyKey}</LabelStyle>
-			<ValueStyle>{formatCurrency(quoteCurrencyKey!, quoteRate, { sign: '$' })}</ValueStyle>
+			<ValueStyle>
+				{formatCurrency(selectedPriceCurrency.name, quoteRate, {
+					sign: selectedPriceCurrency.sign,
+				})}
+			</ValueStyle>
 		</TooltipContentStyle>
 	);
 };
