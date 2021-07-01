@@ -73,7 +73,12 @@ const useTokensBalancesQuery = (tokens: Token[], options?: QueryConfig<Balances>
 			});
 		},
 		{
-			enabled: isAppReady && isWalletConnected && provider != null && tokens.length > 0,
+			enabled:
+				isAppReady &&
+				isWalletConnected &&
+				provider != null &&
+				tokens.length > 0 &&
+				network?.id === 1,
 			...options,
 		}
 	);
