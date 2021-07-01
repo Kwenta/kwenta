@@ -132,12 +132,14 @@ const CustomTooltip: FC<{
 		<TooltipContentStyle>
 			<LabelStyle>{baseCurrencyKey}</LabelStyle>
 			<ValueStyle>
-				{formatCurrency(baseCurrencyKey!, baseRate, { sign: selectedPriceCurrency.name })}
+				{formatCurrency(selectedPriceCurrency.name, baseRate, { sign: selectedPriceCurrency.sign })}
 			</ValueStyle>
 			<br />
 			<LabelStyle>{quoteCurrencyKey}</LabelStyle>
 			<ValueStyle>
-				{formatCurrency(quoteCurrencyKey!, quoteRate, { sign: selectedPriceCurrency.name })}
+				{formatCurrency(selectedPriceCurrency.name, quoteRate, {
+					sign: selectedPriceCurrency.sign,
+				})}
 			</ValueStyle>
 		</TooltipContentStyle>
 	);
