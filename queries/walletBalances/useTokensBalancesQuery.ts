@@ -16,7 +16,12 @@ import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
 import { Token } from 'queries/tokenLists/types';
 
-import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	walletAddressState,
+	isWalletConnectedState,
+	networkState,
+	isMainnetState,
+} from 'store/wallet';
 import { appReadyState } from 'store/app';
 
 import { toBigNumber } from 'utils/formatters/number';
@@ -37,6 +42,7 @@ const useTokensBalancesQuery = (tokens: Token[], options?: QueryConfig<Balances>
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	const symbols = tokens.map((token) => token.symbol);
 	const tokensMap = keyBy(tokens, 'symbol');
@@ -74,11 +80,7 @@ const useTokensBalancesQuery = (tokens: Token[], options?: QueryConfig<Balances>
 		},
 		{
 			enabled:
-				isAppReady &&
-				isWalletConnected &&
-				provider != null &&
-				tokens.length > 0 &&
-				network?.id === 1,
+				isAppReady && isWalletConnected && provider != null && tokens.length > 0 && isMainnet,
 			...options,
 		}
 	);
