@@ -73,7 +73,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
 
-	let tradeAmount = priceRate != null ? amountBN.mul(priceRate) : null;
+	let tradeAmount = priceRate ? amountBN.mul(priceRate) : null;
 	if (selectPriceCurrencyRate != null && tradeAmount != null) {
 		tradeAmount = getPriceAtCurrentRate(tradeAmount);
 	}

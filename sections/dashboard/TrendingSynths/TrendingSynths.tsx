@@ -20,6 +20,8 @@ import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/querie
 import { CurrencyKey } from 'constants/currency';
 import _ from 'lodash';
 import { networkState } from 'store/wallet';
+import { ethers } from 'ethers';
+import Wei from '@synthetixio/wei';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
@@ -53,8 +55,9 @@ const TrendingSynths: FC = () => {
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
+	// bug in queries lib: should return already parsed with `parseBytes32String`
 	const historicalVolume = historicalVolumeQuery.isSuccess
-		? historicalVolumeQuery.data ?? null
+		? _.mapKeys(historicalVolumeQuery.data, (v, k) => ethers.utils.parseBytes32String(k)) ?? null
 		: null;
 
 	const sortedSynths = useMemo(() => {
