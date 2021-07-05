@@ -6,15 +6,27 @@ import { Period } from './period';
 export const QUERY_KEYS = {
 	Rates: {
 		HistoricalVolume: (period: Period) => ['rates', 'historicalVolume', period],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period) => [
+		HistoricalRates: (currencyKey: string, period: Period) => [
 			'rates',
 			'historicalRates',
+			period,
+			currencyKey,
+		],
+		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
+		ExchangeRates: ['rates', 'exchangeRates'],
+		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
+		Candlesticks: (currencyKey: string, period: Period) => [
+			'rates',
+			'candlesticks',
 			currencyKey,
 			period,
 		],
-		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
-		ExchangeRates: ['rates', 'exchangeRates'],
-		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
+		PeriodStartSynthRate: (currencyKey: CurrencyKey, period: Period) => [
+			'rates',
+			'latestSynthRate',
+			currencyKey,
+			period,
+		],
 	},
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],
@@ -78,9 +90,10 @@ export const QUERY_KEYS = {
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
 		Zapper: ['tokenLists', 'zapper'],
+		OneInch: ['tokenLists', 'oneInch'],
 	},
 	CMC: {
-		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],
+		Quotes: (currencyKeys: string[]) => ['cmc', 'quotes', currencyKeys.join('|')],
 	},
 	CoinGecko: {
 		CoinList: ['cg', 'coinList'],

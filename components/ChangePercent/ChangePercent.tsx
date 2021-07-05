@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { Svg } from 'react-optimized-image';
-
-import { formatPercent } from 'utils/formatters/number';
 import styled from 'styled-components';
 
+import media from 'styles/media';
+import { formatPercent } from 'utils/formatters/number';
 import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 
@@ -43,6 +43,10 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 		width: 12px;
 		height: 12px;
 	}
+
+	${media.lessThan('md')`
+		margin-right: 5px;
+	`}
 `;
 
 export default ChangePercent;

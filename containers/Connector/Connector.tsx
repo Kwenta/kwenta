@@ -30,7 +30,7 @@ const useConnector = () => {
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
-	const setWalletAddress = useSetRecoilState(walletAddressState);
+	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -135,10 +135,10 @@ const useConnector = () => {
 
 	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet) {
+		if (onboard && selectedWallet && !walletAddress) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet]);
+	}, [onboard, selectedWallet, walletAddress]);
 
 	useEffect(() => {
 		if (notify) {

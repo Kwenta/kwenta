@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import synthetix, { Synth } from '@synthetixio/contracts-interface';
 
 import Select from 'components/Select';
+import { Period } from 'constants/period';
 
 import { CardTitle } from 'sections/dashboard/common';
 

@@ -73,7 +73,6 @@ const ExchangeFooter = styled.div`
 	width: 100%;
 	.footer-card {
 		padding: 16px 18px;
-		width: 800px;
 		max-width: unset;
 	}
 	${media.lessThan('md')`

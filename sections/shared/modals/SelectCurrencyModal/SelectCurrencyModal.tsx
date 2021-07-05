@@ -33,9 +33,14 @@ export const CATEGORY_FILTERS = [
 type SelectCurrencyModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
+	synthsOverride?: Array<CurrencyKey>;
 };
 
-export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, onSelect }) => {
+export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
+	onDismiss,
+	onSelect,
+	synthsOverride,
+}) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
@@ -46,7 +51,11 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({ onDismiss, o
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	// eslint-disable-next-line
-	const synths = synthetix.js?.synths ?? [];
+	const allSynths = synthetix.js?.synths ?? [];
+	const synths =
+		synthsOverride != null
+			? allSynths.filter((synth) => synthsOverride.includes(synth.name as CurrencyKey))
+			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances = synthsWalletBalancesQuery.isSuccess

@@ -3,13 +3,14 @@ import { atom } from 'recoil';
 import { Language } from 'translations/constants';
 
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
+import { PeriodLabel, PERIOD_LABELS_MAP } from 'constants/period';
 import { Synths } from 'constants/currency';
 
 import { Synth } from '@synthetixio/contracts-interface';
 
 import { getAppKey } from '../utils';
 
-import { languageStateKey, priceCurrencyStateKey } from './constants';
+import { languageStateKey, priceCurrencyStateKey, chartPeriodStateKey } from './constants';
 
 export const PRICE_CURRENCIES = [
 	Synths.sUSD,
@@ -35,4 +36,9 @@ export const languageState = atom<Language>({
 export const priceCurrencyState = atom<Synth>({
 	key: priceCurrencyStateKey,
 	default: DEFAULT_PRICE_CURRENCY,
+});
+
+export const chartPeriodState = atom<PeriodLabel>({
+	key: chartPeriodStateKey,
+	default: PERIOD_LABELS_MAP.ONE_DAY,
 });

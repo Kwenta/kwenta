@@ -19,7 +19,23 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 		darkMode: true,
 		walletSelect: {
 			wallets: [
-				{ walletName: 'metamask', preferred: true },
+				{
+					name: 'Browser Wallet',
+					iconSrc: '/images/wallet-icons/browserWallet.svg',
+					type: 'injected',
+					link: 'https://metamask.io',
+					wallet: async (helpers) => {
+						const { createModernProviderInterface } = helpers;
+						const provider = window.ethereum;
+						return {
+							provider,
+							interface: provider ? createModernProviderInterface(provider) : null,
+						};
+					},
+					preferred: true,
+					desktop: true,
+					mobile: true,
+				},
 				{
 					walletName: 'ledger',
 					rpcUrl: infuraRpc,
@@ -35,26 +51,24 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					appUrl: 'https://www.synthetix.io',
 					email: 'info@synthetix.io',
 					rpcUrl: infuraRpc,
+					preferred: true,
 				},
 				{
 					walletName: 'walletConnect',
 					rpc: { [network.id]: infuraRpc },
 					preferred: true,
 				},
-				{ walletName: 'coinbase', preferred: true },
+				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
 				{
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-					preferred: true,
 				},
+				{ walletName: 'gnosis' },
 				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'dapper' },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc },
+				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
-				// { walletName: 'unilogin' },
 				{ walletName: 'authereum' },
-				{ walletName: 'imToken' },
 			],
 		},
 		walletCheck: [
