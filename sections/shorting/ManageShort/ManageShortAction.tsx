@@ -63,7 +63,7 @@ import {
 	MessageContainer,
 } from 'sections/exchange/FooterCard/common';
 
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import GasPriceSummaryItem from 'sections/shared/components/GasPriceSummaryItem';
 import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import { ShortingTab } from './constants';

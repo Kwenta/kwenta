@@ -21,7 +21,11 @@ import { NumericValue } from 'styles/common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import {
+	SummaryItem,
+	SummaryItemValue,
+	SummaryItemLabel,
+} from 'sections/exchange/FooterCard/common';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;

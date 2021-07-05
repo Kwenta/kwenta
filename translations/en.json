@@ -515,6 +515,38 @@
 				"debt": "market debt",
 				"rate": "funding rate"
 			},
+			"trade": {
+				"title": "trade",
+				"input": {
+					"buy": "buy",
+					"sell": "sell",
+					"balance": "balance",
+					"max": "max",
+					"leverage": {
+						"title": "leverage",
+						"long": "long",
+						"short": "short"
+					}
+				},
+				"summary": {
+					"gas-price": "gas price (gwei)",
+					"usd-value": "usd value",
+					"fee-percent": "fee",
+					"fee-cost": "fee cost"
+				},
+				"button": {
+					"enter-amount": "enter amount",
+					"deposit-margin": "deposit margin",
+					"deposit": "deposit",
+					"open-trade": "submit {{side}} order",
+					"warning": "WARNING: this will close your {{side}} position"
+				},
+				"margin": {
+					"available-margin": "available margin",
+					"helper": "deposit your sUSD to start trading",
+					"available-balance": "available balance"
+				}
+			},
 			"user": {
 				"position": {
 					"tab": "Your Position",

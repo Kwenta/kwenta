@@ -17,7 +17,7 @@ import ShortingReward from './ShortingRewardRow';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getTransactionPrice } from 'utils/network';
 
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import GasPriceSummaryItem from 'sections/shared/components/GasPriceSummaryItem';
 
 import { Title } from '../common';
 

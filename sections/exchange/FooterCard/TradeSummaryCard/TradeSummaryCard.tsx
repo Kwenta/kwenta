@@ -22,7 +22,7 @@ import { MessageContainer } from '../common';
 
 import { SummaryItems, SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
-import GasPriceSummaryItem from './GasPriceSummaryItem';
+import GasPriceSummaryItem from 'sections/shared/components/GasPriceSummaryItem';
 import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
 import FeeRateSummaryItem from './FeeRateSummaryItem';
 import FeeCostSummaryItem from './FeeCostSummaryItem';
