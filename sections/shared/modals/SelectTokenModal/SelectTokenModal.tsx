@@ -87,22 +87,24 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 		() =>
 			tokenBalances != null
 				? Object.values(
-						mapValues((tokenBalances as any).filter(_.isPlainObject), ({ balance, token }, symbol) => {
+						mapValues(
+							(tokenBalances as any).filter(_.isPlainObject),
+							({ balance, token }, symbol) => {
+								const { address } = token;
 
-							const { address } = token;
+								const price =
+									symbol === CRYPTO_CURRENCY_MAP.ETH
+										? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
+										: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
 
-							const price =
-								symbol === CRYPTO_CURRENCY_MAP.ETH
-									? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
-									: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
-
-							return {
-								currencyKey: symbol as CurrencyKey,
-								balance,
-								usdBalance: price != null ? balance.mul(price) : null,
-								token,
-							};
-						})
+								return {
+									currencyKey: symbol as CurrencyKey,
+									balance,
+									usdBalance: price != null ? balance.mul(price) : null,
+									token,
+								};
+							}
+						)
 				  )
 				: [],
 		[coinGeckoPrices, coinGeckoTokenPrices, tokenBalances]

@@ -35,12 +35,9 @@ export const SelectShortCurrencyModal: FC<SelectShortCurrencyModalProps> = ({
 	const { t } = useTranslation();
 
 	const network = useRecoilValue(networkState);
-	const {
-		useSynthsBalancesQuery,
-		useExchangeRatesQuery,
-	} = useSynthetixQueries({
-		networkId: network.id
-	})
+	const { useSynthsBalancesQuery, useExchangeRatesQuery } = useSynthetixQueries({
+		networkId: network.id,
+	});
 
 	const walletAddress = useRecoilValue(walletAddressState);
 

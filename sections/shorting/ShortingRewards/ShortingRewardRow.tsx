@@ -24,6 +24,7 @@ import { CurrencyKey } from 'constants/currency';
 import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewards';
 import Card from 'components/Card';
 import Currency from 'components/Currency';
+import { wei } from '@synthetixio/wei';
 
 type ShortingRewardRowProps = {
 	currencyKey: CurrencyKey;
@@ -191,9 +192,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 					txError={txError}
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={(ShortingRewardRow ?? 0).toString()}
-					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
 					totalTradePrice={totalTradePrice.toString()}
+					feeCost={wei(0)}
 					txProvider="synthetix"
 					baseCurrencyLabel={t('shorting.rewards.tx-confirm.claiming')}
 				/>

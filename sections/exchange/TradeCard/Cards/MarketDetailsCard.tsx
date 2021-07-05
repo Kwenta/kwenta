@@ -18,7 +18,6 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import Connector from 'containers/Connector';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
@@ -34,9 +33,13 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const network = useRecoilValue(networkState);
-	const { useHistoricalVolumeQuery, useHistoricalRatesQuery, useSynthMarketCapQuery } = useSynthetixQueries({
+	const {
+		useHistoricalVolumeQuery,
+		useHistoricalRatesQuery,
+		useSynthMarketCapQuery,
+	} = useSynthetixQueries({
 		networkId: network?.id ?? null,
-	})
+	});
 
 	const {
 		selectPriceCurrencyRate,
@@ -98,8 +101,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24High != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
-							minDecimals:
-								/*currencyKey === Synths.sKRW || */currencyKey === Synths.sJPY ? 4 : 2,
+							minDecimals: /*currencyKey === Synths.sKRW || */ currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -152,7 +154,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals:
-								/*currencyKey === SYNTHS_MAP.sKRW || */currencyKey === Synths.sJPY ? 4 : 2,
+								/*currencyKey === SYNTHS_MAP.sKRW || */ currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>

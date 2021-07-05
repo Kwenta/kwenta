@@ -10,7 +10,7 @@ type CurrencyPairProps<T> = {
 	defaultQuoteCurrencyKey: T | null;
 };
 
-const useCurrencyPair = function<T>({
+const useCurrencyPair = function <T>({
 	persistSelectedCurrencies = false,
 	defaultBaseCurrencyKey = null,
 	defaultQuoteCurrencyKey = null,

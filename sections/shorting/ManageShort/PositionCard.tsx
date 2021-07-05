@@ -53,10 +53,8 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const network = useRecoilValue(networkState);
-	const {
-		useExchangeRatesQuery
-	} = useSynthetixQueries({
-		networkId: network.id
+	const { useExchangeRatesQuery } = useSynthetixQueries({
+		networkId: network.id,
 	});
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -111,10 +109,10 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[exchangeRates, selectedPriceCurrency.name, short.collateralLocked]
 	);
 
-	const collateralValue = useMemo(
-		() => short.collateralLockedAmount.mul(collateralLockedPrice),
-		[short.collateralLockedAmount, collateralLockedPrice]
-	);
+	const collateralValue = useMemo(() => short.collateralLockedAmount.mul(collateralLockedPrice), [
+		short.collateralLockedAmount,
+		collateralLockedPrice,
+	]);
 
 	const liquidationPrice = useMemo(
 		() => collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio)),
@@ -140,13 +138,12 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 			const collateralValue = collateralLockedAmount.mul(collateralLockedPrice);
 
-			const liquidationPrice = synthBorrowedAmount.gt(0) ? collateralValue.div(
-				synthBorrowedAmount.mul(minCollateralRatio)) : wei(0);
+			const liquidationPrice = synthBorrowedAmount.gt(0)
+				? collateralValue.div(synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0);
 
 			return {
-				collateralLockedAmount: collateralLockedAmount.lt(0)
-					? zeroBN
-					: collateralLockedAmount,
+				collateralLockedAmount: collateralLockedAmount.lt(0) ? zeroBN : collateralLockedAmount,
 				collateralValue: collateralValue.lt(0) ? zeroBN : collateralValue,
 				liquidationPrice: liquidationPrice.lt(0) ? zeroBN : liquidationPrice,
 				synthBorrowedAmount: synthBorrowedAmount.lt(0) ? zeroBN : synthBorrowedAmount,

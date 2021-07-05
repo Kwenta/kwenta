@@ -16,6 +16,11 @@ export const networkState = atom<Network>({
 	default: { id: NetworkId.Mainnet, name: NetworkName.Mainnet },
 });
 
+export const isMainnetState = selector<boolean>({
+	key: getWalletKey('isMainnet'),
+	get: ({ get }) => get(networkState)?.id === NetworkId.Mainnet,
+});
+
 export const walletAddressState = atom<string | null>({
 	key: getWalletKey('walletAddress'),
 	default: null,

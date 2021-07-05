@@ -1,13 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import {
-	formatCurrency,
-	FormatCurrencyOptions,
-	formatNumber
-} from 'utils/formatters/number';
-
-import { CurrencyKey } from 'constants/currency';
+import { formatCurrency, FormatCurrencyOptions, formatNumber } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 import { wei, WeiSource } from '@synthetixio/wei';

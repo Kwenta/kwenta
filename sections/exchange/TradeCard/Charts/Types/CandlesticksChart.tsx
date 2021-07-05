@@ -1,28 +1,30 @@
+import { FC, useContext } from 'react';
+import { ThemeContext } from 'styled-components';
 import { formatEther } from '@ethersproject/units';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
-import { format } from 'date-fns';
+import formatDate from 'date-fns/format';
 import { Synth } from '@synthetixio/contracts-interface';
 import { isNumber } from 'lodash';
 import { Candle } from 'queries/rates/types';
-import React, { FC } from 'react';
 import { BarChart, XAxis, YAxis, Bar, Cell } from 'recharts';
 import { Tooltip } from 'styles/common';
-import theme from 'styles/theme';
 import { formatCurrency } from 'utils/formatters/number';
 
-type CandlestickChartProps = {
-	candlesticksData: Candle[];
-	selectedPeriod: PeriodLabel;
+type CandlesticksChartProps = {
+	data: Candle[];
+	selectedChartPeriodLabel: PeriodLabel;
 	selectedPriceCurrency: Synth;
 };
 
-const CandlestickChart: FC<CandlestickChartProps> = ({
-	candlesticksData,
-	selectedPeriod,
+const CandlesticksChart: FC<CandlesticksChartProps> = ({
+	data,
+	selectedChartPeriodLabel,
 	selectedPriceCurrency,
 }) => {
-	const data = candlesticksData?.map((candle: any) => ({
+	const theme = useContext(ThemeContext);
+
+	const chartData = data.map((candle: any) => ({
 		timestamp: Number(candle.timestamp) * 1000,
 		uv: [Number(formatEther(candle.open)), Number(formatEther(candle.close))],
 		pv: [Number(formatEther(candle.high)), Number(formatEther(candle.low))],
@@ -36,7 +38,7 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 
 	return (
 		<RechartsResponsiveContainer width="100%" height="100%">
-			<BarChart barGap={-4.5} data={data} margin={{ right: 0, bottom: 0, left: 0, top: 0 }}>
+			<BarChart barGap={-4.5} data={chartData} margin={{ right: 0, bottom: 0, left: 0, top: 0 }}>
 				<XAxis
 					// @ts-ignore
 					dx={-1}
@@ -52,11 +54,12 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 							return '';
 						}
 						const periodOverOneDay =
-							selectedPeriod != null && selectedPeriod.value > PERIOD_IN_HOURS.ONE_DAY;
+							selectedChartPeriodLabel != null &&
+							selectedChartPeriodLabel.value > PERIOD_IN_HOURS.ONE_DAY;
 
-						return format(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
+						return formatDate(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
 					}}
-					hide={data.length === 0}
+					hide={chartData.length === 0}
 				/>
 				<YAxis
 					type="number"
@@ -74,7 +77,7 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 				/>
 				<Tooltip />
 				<Bar dataKey="pv" barSize={1}>
-					{data.map((datum: { uv: number[] }, index: number) => (
+					{chartData.map((datum: { uv: number[] }, index: number) => (
 						<Cell
 							key={`cell-${index}`}
 							fill={datum.uv[1] - datum.uv[0] > 0 ? '#6DDA78' : '#E0306B'}
@@ -82,7 +85,7 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 					))}
 				</Bar>
 				<Bar dataKey="uv" barSize={8} minPointSize={1}>
-					{data.map((datum: { uv: number[] }, index: number) => (
+					{chartData.map((datum: { uv: number[] }, index: number) => (
 						<Cell
 							key={`cell-${index}`}
 							fill={datum.uv[1] - datum.uv[0] > 0 ? '#6DDA78' : '#E0306B'}
@@ -94,4 +97,4 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 	);
 };
 
-export default CandlestickChart;
+export default CandlesticksChart;

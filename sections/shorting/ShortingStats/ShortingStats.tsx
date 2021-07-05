@@ -15,7 +15,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
@@ -31,10 +31,8 @@ const ShortingStats = () => {
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const network = useRecoilValue(networkState);
-	const {
-		useExchangeRatesQuery
-	} = useSynthetixQueries({
-		networkId: network.id
+	const { useExchangeRatesQuery } = useSynthetixQueries({
+		networkId: network.id,
 	});
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -56,11 +54,14 @@ const ShortingStats = () => {
 
 				const openInterest = shorts.mul(assetUSDPrice).div(selectPriceCurrencyRate);
 
-				const apr = rewardsTotalSupply.gt(0) && assetUSDPrice != 0 ? rewardsRate
-					.mul(SECONDS_IN_A_YR)
-					.mul(snxUSDPrice)
-					.div(rewardsTotalSupply)
-					.div(assetUSDPrice) : wei(0);
+				const apr =
+					rewardsTotalSupply.gt(0) && assetUSDPrice !== 0
+						? rewardsRate
+								.mul(SECONDS_IN_A_YR)
+								.mul(snxUSDPrice)
+								.div(rewardsTotalSupply)
+								.div(assetUSDPrice)
+						: wei(0);
 
 				return {
 					openInterest,
@@ -85,23 +86,15 @@ const ShortingStats = () => {
 			<Table>
 				<thead>
 					<TableRowHead>
-						<TableCellHead>{t('shorting.stats.table.asset')}</TableCellHead>
-						<TableCellHead>{t('shorting.stats.table.apr')}</TableCellHead>
+						<TableCellHead colSpan={2}>{t('shorting.stats.table.asset')}</TableCellHead>
 						<TableCellHead>{t('shorting.stats.table.open-interest')}</TableCellHead>
 					</TableRowHead>
 				</thead>
 				<tbody>
 					{SYNTHS_TO_SHORT.map((currencyKey) => (
 						<TableRow key={currencyKey}>
-							<TableCell>
+							<TableCell colSpan={2}>
 								<StyledCurrencyName currencyKey={currencyKey} showIcon={true} />
-							</TableCell>
-							<TableCell>
-								<NumericValue>
-									{shortStatsMap != null && shortStatsMap[currencyKey] != null
-										? formatPercent(shortStatsMap[currencyKey].apr)
-										: NO_VALUE}
-								</NumericValue>
 							</TableCell>
 							<TableCell>
 								<NumericValue>

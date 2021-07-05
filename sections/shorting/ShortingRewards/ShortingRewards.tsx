@@ -27,11 +27,8 @@ const ShortingRewards: FC = () => {
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 
 	const network = useRecoilValue(networkState);
-	const {
-		useEthGasPriceQuery,
-		useExchangeRatesQuery
-	} = useSynthetixQueries({
-		networkId: network.id
+	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries({
+		networkId: network.id,
 	});
 
 	const ethGasPriceQuery = useEthGasPriceQuery();

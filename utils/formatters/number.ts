@@ -4,7 +4,6 @@ import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
-	DEFAULT_TOKEN_DECIMALS,
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
@@ -27,8 +26,7 @@ const DEFAULT_CURRENCY_DECIMALS = 2;
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
 export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 
-export const getDecimalPlaces = (value: WeiSource) =>
-	(value.toString().split('.')[1] || '').length;
+export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
 
 export const zeroBN = wei(0);
 
@@ -110,9 +108,6 @@ export const formatCurrencyWithKey = (
 	decimals?: number
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
 
-export function scale(
-	input: Wei,
-	decimalPlaces: number
-): Wei {
+export function scale(input: Wei, decimalPlaces: number): Wei {
 	return input.mul(wei(10).pow(decimalPlaces));
 }

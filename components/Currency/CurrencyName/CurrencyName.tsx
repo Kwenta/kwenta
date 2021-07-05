@@ -3,8 +3,6 @@ import styled, { css } from 'styled-components';
 
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
-import { CurrencyKey } from 'constants/currency';
-
 import MarketClosureIcon from 'components/MarketClosureIcon';
 
 import CurrencyIcon from '../CurrencyIcon';

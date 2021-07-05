@@ -1,11 +1,10 @@
 import { CurrencyKey } from '@synthetixio/queries/build/node/currency';
 import keyBy from 'lodash/keyBy';
 
-export type { CurrencyKey } from '@synthetixio/queries/build/node/currency';
-
 import { Synths } from '@synthetixio/queries/build/node/currency';
-export { Synths } from '@synthetixio/queries/build/node/currency';
 
+export type { CurrencyKey } from '@synthetixio/queries/build/node/currency';
+export { Synths } from '@synthetixio/queries/build/node/currency';
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
@@ -20,7 +19,7 @@ export const CATEGORY: Category[] = [
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
 
-export const SYNTHS = Object.keys(Synths) as CurrencyKey[]
+export const SYNTHS = Object.keys(Synths) as CurrencyKey[];
 
 export const CRYPTO_CURRENCY = [
 	'KNC',

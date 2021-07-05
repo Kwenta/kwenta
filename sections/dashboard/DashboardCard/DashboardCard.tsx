@@ -38,12 +38,9 @@ const DashboardCard: FC = () => {
 	const router = useRouter();
 
 	const network = useRecoilValue(networkState);
-	const { 
-		useExchangeRatesQuery,
-		useSynthsBalancesQuery
-	} = useSynthetixQueries({
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries({
 		networkId: network.id,
-	})
+	});
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {

@@ -3,7 +3,6 @@ import { UseQueryOptions, useQuery } from 'react-query';
 import keyBy from 'lodash/keyBy';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey } from 'constants/currency';
 
 import { CG_BASE_API_URL } from './constants';
 

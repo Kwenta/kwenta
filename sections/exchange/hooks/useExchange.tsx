@@ -22,6 +22,8 @@ import {
 	Synths,
 	SYNTHS,
 } from 'constants/currency';
+import { Period } from 'constants/period';
+import { ChartType } from 'constants/chartType';
 
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
@@ -44,11 +46,21 @@ import SelectTokenModal from 'sections/shared/modals/SelectTokenModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
+import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
+import {
+	singleChartPeriodState,
+	baseChartPeriodState,
+	quoteChartPeriodState,
+	singleChartTypeState,
+	baseChartTypeState,
+	quoteChartTypeState,
+} from 'store/app';
 import {
 	customGasPriceState,
 	gasSpeedState,
@@ -114,10 +126,10 @@ const useExchange = ({
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
 		useExchangeFeeRateQuery,
-		useTokensBalancesQuery
+		useTokensBalancesQuery,
 	} = useSynthetixQueries({
-		networkId: network.id
-	})
+		networkId: network.id,
+	});
 
 	const router = useRouter();
 
@@ -153,6 +165,29 @@ const useExchange = ({
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const slippage = useRecoilValue(slippageState);
 
+	const [selectedBaseChartPeriod, setSelectedBaseChartPeriod] = usePersistedRecoilState<Period>(
+		baseChartPeriodState
+	);
+	const [selectedQuoteChartPeriod, setSelectedQuoteChartPeriod] = usePersistedRecoilState<Period>(
+		quoteChartPeriodState
+	);
+	const [selectedSingleChartPeriod, setSelectedSingleChartPeriod] = usePersistedRecoilState<Period>(
+		singleChartPeriodState
+	);
+	const [selectedBaseChartType, setSelectedBaseChartType] = usePersistedRecoilState<ChartType>(
+		baseChartTypeState
+	);
+	const [selectedQuoteChartType, setSelectedQuoteChartType] = usePersistedRecoilState<ChartType>(
+		quoteChartTypeState
+	);
+	const [selectedSingleChartType, setSelectedSingleChartType] = usePersistedRecoilState<ChartType>(
+		singleChartTypeState
+	);
+
+	const [isShowingSingleChart, setIsShowingSingleChart] = useState(true);
+	const toggleIsShowingSingleChart = () => setIsShowingSingleChart((bool) => !bool);
+	const wideWidth = useChartWideWidth();
+
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
@@ -169,8 +204,14 @@ const useExchange = ({
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey as CurrencyKey, walletAddress);
-	const exchangeFeeRateQuery = useExchangeFeeRateQuery(quoteCurrencyKey as CurrencyKey, baseCurrencyKey as CurrencyKey);
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(
+		quoteCurrencyKey as CurrencyKey,
+		walletAddress
+	);
+	const exchangeFeeRateQuery = useExchangeFeeRateQuery(
+		quoteCurrencyKey as CurrencyKey,
+		baseCurrencyKey as CurrencyKey
+	);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -347,7 +388,11 @@ const useExchange = ({
 				  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
 					? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd / selectPriceCurrencyRate
 					: 0
-				: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey as CurrencyKey, selectedPriceCurrency.name),
+				: getExchangeRatesForCurrencies(
+						exchangeRates,
+						baseCurrencyKey as CurrencyKey,
+						selectedPriceCurrency.name
+				  ),
 		[
 			exchangeRates,
 			baseCurrencyKey,
@@ -419,11 +464,7 @@ const useExchange = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.approving');
 		}
-		if (
-			!isWalletConnected ||
-			baseCurrencyAmountBN.lte(0) ||
-			quoteCurrencyAmountBN.lte(0)
-		) {
+		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
@@ -783,9 +824,9 @@ const useExchange = ({
 				} else {
 					setQuoteCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
-						setBaseCurrencyAmount(
-							wei(value).mul(rate).toString()
-						);
+						const baseCurrencyAmountNoFee = wei(value).mul(rate);
+						const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+						setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
 					}
 				}
 			}}
@@ -795,18 +836,14 @@ const useExchange = ({
 					if (quoteCurrencyKey === 'ETH') {
 						const ETH_TX_BUFFER = 0.1;
 						const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
-						setQuoteCurrencyAmount(
-							balanceWithBuffer.lt(0) ? '0' : balanceWithBuffer.toString()
-						);
+						setQuoteCurrencyAmount(balanceWithBuffer.lt(0) ? '0' : balanceWithBuffer.toString());
 					} else {
 						setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
 					}
 					if (txProvider === 'synthetix') {
-						setBaseCurrencyAmount(
-							quoteCurrencyBalance
-								.mul(rate)
-								.toString()
-						);
+						const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
+						const fee = baseCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
+						setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
 					}
 				}
 			}}
@@ -823,18 +860,24 @@ const useExchange = ({
 			txProvider={txProvider}
 		/>
 	);
-	const quotePriceChartCard = txProvider === 'synthetix' && showPriceCard ? (
-		<PriceChartCard
-			side="quote"
-			currencyKey={quoteCurrencyKey as CurrencyKey}
-			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
-			priceRate={quotePriceRate}
-		/>
-	) : null;
+	const quotePriceChartCard =
+		txProvider === 'synthetix' && showPriceCard ? (
+			<PriceChartCard
+				side="quote"
+				currencyKey={quoteCurrencyKey as CurrencyKey}
+				openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
+				priceRate={quotePriceRate}
+				selectedChartType={selectedQuoteChartType}
+				setSelectedChartType={setSelectedQuoteChartType}
+				selectedChartPeriod={selectedQuoteChartPeriod}
+				setSelectedChartPeriod={setSelectedQuoteChartPeriod}
+			/>
+		) : null;
 
-	const quoteMarketDetailsCard = txProvider === 'synthetix' && showMarketDetailsCard ? (
-		<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} priceRate={quotePriceRate} />
-	) : null;
+	const quoteMarketDetailsCard =
+		txProvider === 'synthetix' && showMarketDetailsCard ? (
+			<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} priceRate={quotePriceRate} />
+		) : null;
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0)) {
@@ -855,11 +898,9 @@ const useExchange = ({
 				} else {
 					setBaseCurrencyAmount(value);
 					if (txProvider === 'synthetix') {
-						setQuoteCurrencyAmount(
-							wei(value)
-								.mul(inverseRate)
-								.toString()
-						);
+						const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
+						const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+						setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.mul(fee).toString());
 					}
 				}
 			}}
@@ -869,11 +910,9 @@ const useExchange = ({
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 
 					if (txProvider === 'synthetix') {
-						setQuoteCurrencyAmount(
-							wei(baseCurrencyBalance)
-								.mul(inverseRate)
-								.toString()
-						);
+						const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
+						const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+						setQuoteCurrencyAmount(baseCurrencyAmountNoFee.add(fee).toString());
 					}
 				}
 			}}
@@ -894,30 +933,50 @@ const useExchange = ({
 		/>
 	);
 
-	const basePriceChartCard = txProvider === 'synthetix' && showPriceCard ? (
-		<PriceChartCard
-			side="base"
-			currencyKey={baseCurrencyKey as CurrencyKey}
-			priceRate={basePriceRate}
-			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
-			alignRight
-		/>
-	) : null;
+	const basePriceChartCard =
+		txProvider === 'synthetix' && showPriceCard ? (
+			<PriceChartCard
+				side="base"
+				currencyKey={baseCurrencyKey as CurrencyKey}
+				priceRate={basePriceRate}
+				openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
+				alignRight
+				selectedChartType={selectedBaseChartType}
+				setSelectedChartType={setSelectedBaseChartType}
+				selectedChartPeriod={selectedBaseChartPeriod}
+				setSelectedChartPeriod={setSelectedBaseChartPeriod}
+			/>
+		) : null;
 
-	const baseMarketDetailsCard = txProvider === 'synthetix' && showMarketDetailsCard ? (
-		<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} priceRate={basePriceRate} />
-	) : null;
+	const baseMarketDetailsCard =
+		txProvider === 'synthetix' && showMarketDetailsCard ? (
+			<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} priceRate={basePriceRate} />
+		) : null;
 
 	const combinedPriceChartCard = showPriceCard ? (
 		<CombinedPriceChartCard
-			{...{ baseCurrencyKey: baseCurrencyKey as CurrencyKey, basePriceRate, quoteCurrencyKey: quoteCurrencyKey as CurrencyKey, quotePriceRate }}
+			{...{
+				baseCurrencyKey: baseCurrencyKey as CurrencyKey,
+				basePriceRate,
+				quoteCurrencyKey: quoteCurrencyKey as CurrencyKey,
+				quotePriceRate,
+			}}
+			selectedChartType={selectedSingleChartType}
+			setSelectedChartType={setSelectedSingleChartType}
 			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
+			selectedChartPeriod={selectedSingleChartPeriod}
+			setSelectedChartPeriod={setSelectedSingleChartPeriod}
 		/>
 	) : null;
 
 	const combinedMarketDetailsCard = showMarketDetailsCard ? (
 		<CombinedMarketDetailsCard
-			{...{ baseCurrencyKey: baseCurrencyKey as CurrencyKey, basePriceRate, quoteCurrencyKey: quoteCurrencyKey as CurrencyKey, quotePriceRate }}
+			{...{
+				baseCurrencyKey: baseCurrencyKey as CurrencyKey,
+				basePriceRate,
+				quoteCurrencyKey: quoteCurrencyKey as CurrencyKey,
+				quotePriceRate,
+			}}
 		/>
 	) : null;
 
@@ -973,10 +1032,10 @@ const useExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={txProvider === 'synthetix' ? feeAmountInBaseCurrency : null}
-					baseCurrencyKey={baseCurrencyKey as CurrencyKey}
-					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					totalTradePrice={totalTradePrice.toString()}
+					feeCost={txProvider === 'synthetix' ? feeCost : null}
+					baseCurrencyKey={baseCurrencyKey!}
+					quoteCurrencyKey={quoteCurrencyKey!}
+					totalTradePrice={estimatedBaseTradePrice.toString()}
 					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
@@ -1089,6 +1148,9 @@ const useExchange = ({
 		combinedMarketDetailsCard,
 		footerCard,
 		handleCurrencySwap,
+		toggleIsShowingSingleChart,
+		isShowingSingleChart,
+		wideWidth,
 	};
 };
 

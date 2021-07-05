@@ -6,7 +6,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import synthetix, { Synth } from '@synthetixio/contracts-interface';
 
 import Select from 'components/Select';
-import { Period } from 'constants/period';
 
 import { CardTitle } from 'sections/dashboard/common';
 
@@ -21,7 +20,6 @@ import { CurrencyKey } from 'constants/currency';
 import _ from 'lodash';
 import { networkState } from 'store/wallet';
 import { ethers } from 'ethers';
-import Wei from '@synthetixio/wei';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
@@ -29,13 +27,13 @@ const TrendingSynths: FC = () => {
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
 	const network = useRecoilValue(networkState);
-	const { 
+	const {
 		useExchangeRatesQuery,
 		useHistoricalRatesQuery,
-		useHistoricalVolumeQuery
+		useHistoricalVolumeQuery,
 	} = useSynthetixQueries({
 		networkId: network.id,
-	})
+	});
 
 	// eslint-disable-next-line
 	const synths = synthetix({ networkId: 1 }).synths;
@@ -45,8 +43,8 @@ const TrendingSynths: FC = () => {
 
 	// ok for rules of hooks since `synths` is static for execution of the site
 	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = {};
-	for(const synth of synths) {
-		const historicalRateQuery = useHistoricalRatesQuery(synth.name as CurrencyKey);
+	for (const synth of synths) {
+		const historicalRateQuery = useHistoricalRatesQuery(synth.name as CurrencyKey); // eslint-disable-line react-hooks/rules-of-hooks
 
 		if (historicalRateQuery.isSuccess) {
 			historicalRates[synth.name as CurrencyKey] = historicalRateQuery.data!;

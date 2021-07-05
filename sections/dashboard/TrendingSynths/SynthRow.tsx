@@ -30,11 +30,9 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const currencyKey = synth.name as CurrencyKey;
 
 	const network = useRecoilValue(networkState);
-	const { 
-		useHistoricalRatesQuery
-	} = useSynthetixQueries({
+	const { useHistoricalRatesQuery } = useSynthetixQueries({
 		networkId: network.id,
-	})
+	});
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
 		refetchInterval: false,

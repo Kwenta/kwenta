@@ -30,11 +30,9 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const network = useRecoilValue(networkState);
-	const { 
-		useHistoricalRatesQuery
-	} = useSynthetixQueries({
+	const { useHistoricalRatesQuery } = useSynthetixQueries({
 		networkId: network.id,
-	})
+	});
 
 	const currencyKey = synth.currencyKey;
 	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();

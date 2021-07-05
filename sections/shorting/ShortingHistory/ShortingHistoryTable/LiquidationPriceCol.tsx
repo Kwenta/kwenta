@@ -13,7 +13,6 @@ import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
 
 import { StyledCurrencyKey, StyledPrice } from './common';
 import useSynthetixQueries from '@synthetixio/queries';
-import Connector from 'containers/Connector';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
@@ -23,11 +22,8 @@ type LiquidationPriceColType = {
 };
 
 const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
-
 	const network = useRecoilValue(networkState);
-	const {
-		useExchangeRatesQuery
-	} = useSynthetixQueries({
+	const { useExchangeRatesQuery } = useSynthetixQueries({
 		networkId: network.id,
 	});
 
@@ -65,9 +61,11 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 
 	const liquidationPrice = useMemo(
 		() =>
-			synthBorrowedAmount.gt(0) ? collateralLockedAmount
-				.mul(collateralLockedPrice)
-				.div(synthBorrowedAmount.mul(minCollateralRatio)) : wei(0),
+			synthBorrowedAmount.gt(0)
+				? collateralLockedAmount
+						.mul(collateralLockedPrice)
+						.div(synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0),
 		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCollateralRatio]
 	);
 

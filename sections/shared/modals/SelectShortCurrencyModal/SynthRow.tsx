@@ -27,10 +27,8 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const network = useRecoilValue(networkState);
-	const {
-		useHistoricalRatesQuery
-	} = useSynthetixQueries({
-		networkId: network.id
+	const { useHistoricalRatesQuery } = useSynthetixQueries({
+		networkId: network.id,
 	});
 
 	const currencyKey = synth.name as CurrencyKey;

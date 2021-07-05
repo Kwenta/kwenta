@@ -65,7 +65,7 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify, network, provider } = Connector.useContainer();
+	const { notify, network } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
@@ -79,8 +79,8 @@ const useShort = ({
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
 	} = useSynthetixQueries({
-		networkId: network.id
-	})
+		networkId: network.id,
+	});
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -176,7 +176,7 @@ const useShort = ({
 
 	const totalTradePrice = useMemo(() => {
 		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate);
-		if (selectPriceCurrencyRate && selectPriceCurrencyRate != 0) {
+		if (selectPriceCurrencyRate && selectPriceCurrencyRate !== 0) {
 			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
@@ -207,11 +207,7 @@ const useShort = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.approving');
 		}
-		if (
-			!isWalletConnected ||
-			baseCurrencyAmountBN.lte(0) ||
-			quoteCurrencyAmountBN.lte(0)
-		) {
+		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		if (shortCRatioTooLow) {
@@ -252,7 +248,9 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) => SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey));
+			return synthetix.js!.synths.filter((synth) =>
+				SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey)
+			);
 		}
 		return [];
 	}, [isAppReady]);
@@ -504,24 +502,14 @@ const useShort = ({
 					setBaseCurrencyAmount('');
 				} else {
 					setQuoteCurrencyAmount(value);
-					setBaseCurrencyAmount(
-						wei(value)
-							.mul(rate)
-							.div(shortCRatio)
-							.toString()
-					);
+					setBaseCurrencyAmount(wei(value).mul(rate).div(shortCRatio).toString());
 				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
 				if (quoteCurrencyBalance != null) {
 					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
-					setBaseCurrencyAmount(
-						quoteCurrencyBalance
-							.mul(rate)
-							.div(shortCRatio)
-							.toString()
-					);
+					setBaseCurrencyAmount(quoteCurrencyBalance.mul(rate).div(shortCRatio).toString());
 				}
 			}}
 			priceRate={quotePriceRate}
@@ -540,12 +528,7 @@ const useShort = ({
 					setQuoteCurrencyAmount('');
 				} else {
 					setBaseCurrencyAmount(value);
-					setQuoteCurrencyAmount(
-						wei(value)
-							.mul(inverseRate)
-							.mul(shortCRatio)
-							.toString()
-					);
+					setQuoteCurrencyAmount(wei(value).mul(inverseRate).mul(shortCRatio).toString());
 				}
 			}}
 			walletBalance={baseCurrencyBalance}
@@ -553,10 +536,7 @@ const useShort = ({
 				if (baseCurrencyBalance != null) {
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 					setQuoteCurrencyAmount(
-						wei(baseCurrencyBalance)
-							.mul(inverseRate)
-							.mul(shortCRatio)
-							.toString()
+						wei(baseCurrencyBalance).mul(inverseRate).mul(shortCRatio).toString()
 					);
 				}
 			}}
@@ -608,11 +588,11 @@ const useShort = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider="synthetix"
+					feeCost={feeCost}
 					quoteCurrencyLabel={t('shorting.common.posting')}
 					baseCurrencyLabel={t('shorting.common.shorting')}
 					icon={<Svg src={ArrowRightIcon} />}

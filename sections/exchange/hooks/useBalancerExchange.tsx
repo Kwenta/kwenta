@@ -31,7 +31,6 @@ import {
 	gasSpeedState,
 	isWalletConnectedState,
 	walletAddressState,
-	networkState,
 } from 'store/wallet';
 import { ordersState } from 'store/orders';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -78,13 +77,13 @@ const useBalancerExchange = ({
 	const { notify, provider, signer, network } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const { 
+	const {
 		useSynthsBalancesQuery,
 		useEthGasPriceQuery,
-		useFeeReclaimPeriodQuery
+		useFeeReclaimPeriodQuery,
 	} = useSynthetixQueries({
 		networkId: network.id,
-	})
+	});
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
 		persistSelectedCurrencies,
@@ -116,8 +115,6 @@ const useBalancerExchange = ({
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	// TODO get from pool
-	const exchangeFeeRate = 0.001;
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -193,11 +190,7 @@ const useBalancerExchange = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.submitting-approval');
 		}
-		if (
-			!isWalletConnected ||
-			baseCurrencyAmountBN.lte(0) ||
-			quoteCurrencyAmountBN.lte(0)
-		) {
+		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
@@ -241,12 +234,13 @@ const useBalancerExchange = ({
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
-	const feeAmountInBaseCurrency = useMemo(() => {
+	const feeAmountInBaseCurrency = wei(0);
+	/*const feeAmountInBaseCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && baseCurrencyAmount) {
 			return wei(baseCurrencyAmount).mul(exchangeFeeRate);
 		}
 		return null;
-	}, [baseCurrencyAmount, exchangeFeeRate]);
+	}, [baseCurrencyAmount, exchangeFeeRate]);*/
 
 	useEffect(() => {
 		if (
@@ -258,7 +252,8 @@ const useBalancerExchange = ({
 		) {
 			const maxNoPools = 2;
 			const sor = new SOR(
-				provider as any,
+				// @ts-ignore
+				provider as ethers.providers.BaseProvider,
 				new BigNumber(gasPrice),
 				maxNoPools,
 				network?.id,
@@ -356,7 +351,7 @@ const useBalancerExchange = ({
 			if (smartOrderRouter != null && quoteCurrencyAddress != null && baseCurrencyAddress != null) {
 				const swapType = isBase ? 'swapExactOut' : 'swapExactIn';
 				const amount = wei(value);
-				const smallAmount = wei(0.001)
+				const smallAmount = wei(0.001);
 				const [tradeSwaps, resultingAmount] = await smartOrderRouter.getSwaps(
 					quoteCurrencyAddress,
 					baseCurrencyAddress,
@@ -468,9 +463,7 @@ const useBalancerExchange = ({
 					quoteCurrencyAddress,
 					baseCurrencyAddress,
 					quoteCurrencyAmountBN.toString(),
-					baseCurrencyAmountBN
-						.mul(wei(1).sub(slippageTolerance))
-						.toString(),
+					baseCurrencyAmountBN.mul(wei(1).sub(slippageTolerance)).toString(),
 					{
 						gasPrice: gasPriceWei.toString(),
 					}
@@ -645,13 +638,13 @@ const useBalancerExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={feeAmountInBaseCurrency}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider="balancer"
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
+					feeCost={feeAmountInBaseCurrency}
 					icon={<Svg src={ArrowsIcon} />}
 				/>
 			)}
