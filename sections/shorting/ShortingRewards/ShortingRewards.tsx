@@ -17,7 +17,7 @@ import ShortingReward from './ShortingRewardRow';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getTransactionPrice } from 'utils/network';
 
-import GasPriceSummaryItem from 'sections/shared/components/GasPriceSummaryItem';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 
 import { Title } from '../common';
 
@@ -80,12 +80,12 @@ const ShortingRewards: FC = () => {
 					{...{ gasPrice, setGasLimit, currencyKey, snxPriceRate }}
 				/>
 			))}
-			<StyledGasPriceSummaryItem {...{ gasPrices, transactionFee }} />
+			<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 		</div>
 	);
 };
 
-const StyledGasPriceSummaryItem = styled(GasPriceSummaryItem)`
+const StyledGasPriceSelect = styled(GasPriceSelect)`
 	padding: 5px 0;
 	display: flex;
 	justify-content: space-between;

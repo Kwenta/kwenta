@@ -10,16 +10,16 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
-type FeeRateSummaryItemProps = {
+type FeeCostSummaryProps = {
 	feeCost: BigNumber | null;
 };
 
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {
+const FeeCostSummary: FC<FeeCostSummaryProps> = ({ feeCost, ...rest }) => {
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	return (
-		<SummaryItem>
+		<SummaryItem {...rest}>
 			<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-cost">
 				{feeCost != null
@@ -33,4 +33,4 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {
 	);
 };
 
-export default FeeRateSummaryItem;
+export default FeeCostSummary;

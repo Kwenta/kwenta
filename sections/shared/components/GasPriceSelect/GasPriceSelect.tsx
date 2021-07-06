@@ -27,17 +27,13 @@ import {
 	SummaryItemLabel,
 } from 'sections/exchange/FooterCard/common';
 
-type GasPriceSummaryItemProps = {
+type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
 	transactionFee?: number | null;
 	className?: string;
 };
 
-const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
-	gasPrices,
-	transactionFee,
-	...rest
-}) => {
+const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
@@ -123,7 +119,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	);
 };
 
-export const GasPriceTooltip = styled(Tippy)`
+const GasPriceTooltip = styled(Tippy)`
 	background: ${(props) => props.theme.colors.elderberry};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
@@ -133,7 +129,7 @@ export const GasPriceTooltip = styled(Tippy)`
 	}
 `;
 
-export const GasPriceCostTooltip = styled(GasPriceTooltip)`
+const GasPriceCostTooltip = styled(GasPriceTooltip)`
 	width: auto;
 	font-size: 12px;
 	.tippy-content {
@@ -142,15 +138,15 @@ export const GasPriceCostTooltip = styled(GasPriceTooltip)`
 	}
 `;
 
-export const GasSelectContainer = styled.div`
+const GasSelectContainer = styled.div`
 	padding: 16px 0 8px 0;
 `;
 
-export const CustomGasPriceContainer = styled.div`
+const CustomGasPriceContainer = styled.div`
 	margin: 0 10px 5px 10px;
 `;
 
-export const CustomGasPrice = styled(NumericInput)`
+const CustomGasPrice = styled(NumericInput)`
 	width: 100%;
 	border: 0;
 	font-size: 12px;
@@ -159,7 +155,7 @@ export const CustomGasPrice = styled(NumericInput)`
 	}
 `;
 
-export const StyledGasButton = styled(Button)`
+const StyledGasButton = styled(Button)`
 	width: 100%;
 	display: flex;
 	align-items: center;
@@ -168,7 +164,7 @@ export const StyledGasButton = styled(Button)`
 	padding-right: 10px;
 `;
 
-export const GasPriceItem = styled.span`
+const GasPriceItem = styled.span`
 	display: inline-flex;
 	align-items: center;
 	cursor: pointer;
@@ -177,7 +173,7 @@ export const GasPriceItem = styled.span`
 	}
 `;
 
-export const StyledGasEditButton = styled.span`
+const StyledGasEditButton = styled.span`
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
@@ -185,13 +181,4 @@ export const StyledGasEditButton = styled.span`
 	text-transform: uppercase;
 `;
 
-export const ErrorTooltip = styled(Tippy)`
-	font-size: 12px;
-	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.white};
-	.tippy-arrow {
-		color: ${(props) => props.theme.colors.red};
-	}
-`;
-
-export default GasPriceSummaryItem;
+export default GasPriceSelect;
