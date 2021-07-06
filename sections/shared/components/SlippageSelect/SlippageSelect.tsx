@@ -13,6 +13,7 @@ import { Tooltip, NumericValue, FlexDivRowCentered } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
 import Tippy from '@tippyjs/react';
+import { useState } from 'react';
 
 type SlippageSelectProps = {
 	setMaxSlippageTolerance: (num: string) => void;
@@ -25,6 +26,8 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
+
+	const [customSlippageTolerance, setCustomSlippageTolerance] = useState<string>('');
 
 	const SLIPPAGE_VALUES = useMemo(
 		() => [
@@ -44,18 +47,29 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 		[t]
 	);
 
+	const hasCustomSlippage = customSlippageTolerance !== '';
+
+	const slippageItem = hasCustomSlippage ? (
+		<span data-testid="gas-price">{formatPercent(customSlippageTolerance)}</span>
+	) : (
+		<span data-testid="gas-price">{formatPercent(maxSlippageTolerance)}</span>
+	);
+
 	return (
 		<SummaryItem {...rest}>
 			<FlexDivRowCentered>
 				<SummaryItemLabel>{t('common.summary.max-slippage-tolerance.title')}</SummaryItemLabel>
-				<SlippageHelperTooltip content={<span>{t('')}</span>} arrow={false}>
+				<SlippageHelperTooltip
+					content={<span>{t('common.summary.max-slippage-tolerance.helper')}</span>}
+					arrow={false}
+				>
 					<InfoIconWrapper>
 						<Svg src={InfoIcon} />
 					</InfoIconWrapper>
 				</SlippageHelperTooltip>
 			</FlexDivRowCentered>
 			<SummaryItemValue>
-				<span>{formatPercent(maxSlippageTolerance)}</span>
+				{slippageItem}
 				<Tooltip
 					trigger="click"
 					arrow={false}
@@ -63,8 +77,8 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 						<SlippageSelectContainer>
 							<CustomSlippageContainer>
 								<CustomSlippage
-									value={maxSlippageTolerance}
-									onChange={(_, value) => setMaxSlippageTolerance(value)}
+									value={customSlippageTolerance}
+									onChange={(_, value) => setCustomSlippageTolerance(value)}
 									placeholder={t('common.custom')}
 								/>
 							</CustomSlippageContainer>
@@ -72,8 +86,11 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 								<StyedSlippageButton
 									key={text}
 									variant="select"
-									onClick={() => setMaxSlippageTolerance(value)}
-									isActive={maxSlippageTolerance === value}
+									onClick={() => {
+										setCustomSlippageTolerance('');
+										setMaxSlippageTolerance(value);
+									}}
+									isActive={hasCustomSlippage ? false : maxSlippageTolerance === value}
 								>
 									<span>{text}</span>
 									<NumericValue>{formatPercent(value)}</NumericValue>

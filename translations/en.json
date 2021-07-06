@@ -744,6 +744,7 @@
 			"fee-cost": "fee cost",
 			"max-slippage-tolerance": {
 				"title": "Max Slippage Tolerance",
+				"helper": "Choose the maximum amount of slippage you are willing to accept",
 				"low": "Low",
 				"medium": "Medium",
 				"high": "High"

@@ -47,7 +47,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
-	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0');
+	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
