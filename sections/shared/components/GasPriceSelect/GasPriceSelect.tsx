@@ -53,7 +53,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
+			<SummaryItemLabel>{t('common.summary.gas-prices.title')}</SummaryItemLabel>
 			<SummaryItemValue>
 				{gasPrice != null ? (
 					<>
@@ -99,7 +99,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 												}}
 												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
 											>
-												<span>{t(`common.gas-prices.${speed}`)}</span>
+												<span>{t(`common.summary.gas-prices.${speed}`)}</span>
 												<NumericValue>{gasPrices![speed]}</NumericValue>
 											</StyledGasButton>
 										))}

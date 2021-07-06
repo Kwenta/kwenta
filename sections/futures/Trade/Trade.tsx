@@ -9,10 +9,9 @@ import { SYNTHS_MAP } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import Slider from 'components/Slider';
-import GasPriceSummaryItem from 'sections/shared/components/GasPriceSummaryItem';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
@@ -20,8 +19,11 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import FeeRateSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/FeeRateSummaryItem';
-import { BigNumber } from 'ethers';
+
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
+import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
+import SlippageSelect from 'sections/shared/components/SlippageSelect';
 
 type TradeProps = {};
 
@@ -45,6 +47,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
+	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -176,19 +179,13 @@ const Trade: React.FC<TradeProps> = ({}) => {
 			</FlexDivRow>
 
 			<FlexDivCol>
-				<StyledGasPriceSummaryItem {...{ gasPrices, transactionFee }} />
-				<SummaryRow>
-					<SummaryLabel>{t('futures.market.trade.summary.usd-value')}</SummaryLabel>
-					<SummaryValue>{formatCurrency(SYNTHS_MAP.sUSD, 1500, { sign: '$' })}</SummaryValue>
-				</SummaryRow>
-				<SummaryRow>
-					<SummaryLabel>{t('futures.market.trade.summary.fee-percent')}</SummaryLabel>
-					<SummaryValue>{formatPercent(0.0005)}</SummaryValue>
-				</SummaryRow>
-				<SummaryRow>
-					<SummaryLabel>{t('futures.market.trade.summary.fee-cost')}</SummaryLabel>
-					<SummaryValue>{formatCurrency(SYNTHS_MAP.sUSD, 5.95, { sign: '$' })}</SummaryValue>
-				</SummaryRow>
+				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
+				<StyledFeeRateSummary feeRate={null} />
+				<StyledFeeCostSummary feeCost={null} />
+				<StyledSlippageSelcet
+					maxSlippageTolerance={maxSlippageTolerance}
+					setMaxSlippageTolerance={setMaxSlippageTolerance}
+				/>
 			</FlexDivCol>
 		</>
 	);
@@ -289,25 +286,43 @@ const LeverageSide = styled.div<{ side: PositionSide; isActive: boolean }>`
 	text-align: center;
 `;
 
-const SummaryRow = styled(FlexDivRow)`
+const StyledGasPriceSelect = styled(GasPriceSelect)`
+	padding: 5px 0;
+	display: flex;
+	justify-content: space-between;
+	width: auto;
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	margin-bottom: 5px;
-`;
-const SummaryLabel = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
 `;
 
-const SummaryValue = styled.div`
-	color: ${(props) => props.theme.colors.white};
+const StyledFeeRateSummary = styled(FeeRateSummary)`
+	padding: 5px 0;
+	display: flex;
+	justify-content: space-between;
+	width: auto;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	color: ${(props) => props.theme.colors.blueberry};
 	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
 `;
 
-const StyledGasPriceSummaryItem = styled(GasPriceSummaryItem)`
+const StyledFeeCostSummary = styled(FeeCostSummary)`
+	padding: 5px 0;
+	display: flex;
+	justify-content: space-between;
+	width: auto;
+	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	color: ${(props) => props.theme.colors.blueberry};
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	text-transform: capitalize;
+`;
+
+const StyledSlippageSelcet = styled(SlippageSelect)`
 	padding: 5px 0;
 	display: flex;
 	justify-content: space-between;

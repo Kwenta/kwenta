@@ -1,14 +1,18 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+
+import InfoIcon from 'assets/svg/app/info.svg';
 
 import Button from 'components/Button';
 
 import { SummaryItem, SummaryItemLabel, SummaryItemValue } from '../common';
-import { Tooltip, NumericValue } from 'styles/common';
+import { Tooltip, NumericValue, FlexDivRowCentered } from 'styles/common';
 
 import { formatPercent } from 'utils/formatters/number';
 import NumericInput from 'components/Input/NumericInput';
+import Tippy from '@tippyjs/react';
 
 type SlippageSelectProps = {
 	setMaxSlippageTolerance: (num: string) => void;
@@ -25,15 +29,15 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 	const SLIPPAGE_VALUES = useMemo(
 		() => [
 			{
-				text: t('modals.afterHours.slippage-levels.low'),
+				text: t('common.summary.max-slippage-tolerance.low'),
 				value: '0.001',
 			},
 			{
-				text: t('modals.afterHours.slippage-levels.medium'),
+				text: t('common.summary.max-slippage-tolerance.medium'),
 				value: '0.005',
 			},
 			{
-				text: t('modals.afterHours.slippage-levels.high'),
+				text: t('common.summary.max-slippage-tolerance.high'),
 				value: '0.01',
 			},
 		],
@@ -42,7 +46,14 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('modals.afterHours.max-slippage-tolerance')}</SummaryItemLabel>
+			<FlexDivRowCentered>
+				<SummaryItemLabel>{t('common.summary.max-slippage-tolerance.title')}</SummaryItemLabel>
+				<SlippageHelperTooltip content={<span>{t('')}</span>} arrow={false}>
+					<InfoIconWrapper>
+						<Svg src={InfoIcon} />
+					</InfoIconWrapper>
+				</SlippageHelperTooltip>
+			</FlexDivRowCentered>
 			<SummaryItemValue>
 				<span>{formatPercent(maxSlippageTolerance)}</span>
 				<Tooltip
@@ -88,6 +99,16 @@ const CustomSlippageContainer = styled.div`
 	margin: 0 10px 5px 10px;
 `;
 
+const SlippageHelperTooltip = styled(Tippy)`
+	background: ${(props) => props.theme.colors.elderberry};
+	border: 0.5px solid ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
+	width: 120px;
+	.tippy-content {
+		padding: 0;
+	}
+`;
+
 const CustomSlippage = styled(NumericInput)`
 	width: 100%;
 	border: 0;
@@ -104,6 +125,15 @@ const StyedSlippageButton = styled(Button)`
 	justify-content: space-between;
 	padding-left: 10px;
 	padding-right: 10px;
+`;
+
+const InfoIconWrapper = styled.span`
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	svg {
+		margin-left: 5px;
+	}
 `;
 
 const StyledSlippageEditButton = styled.span`

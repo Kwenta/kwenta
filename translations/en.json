@@ -188,9 +188,6 @@
 			"no-data": "No data"
 		},
 		"summary-info": {
-			"gas-price-gwei": "gas price (GWEI)",
-			"fee": "fee",
-			"fee-cost": "fee cost",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
@@ -528,12 +525,6 @@
 						"short": "short"
 					}
 				},
-				"summary": {
-					"gas-price": "gas price (gwei)",
-					"usd-value": "usd value",
-					"fee-percent": "fee",
-					"fee-cost": "fee cost"
-				},
 				"button": {
 					"enter-amount": "enter amount",
 					"deposit-margin": "deposit margin",
@@ -638,13 +629,7 @@
 			"title": "Aftermarket Trading Pool",
 			"approve": "Approve",
 			"balancer-pool": "Balancer Pool",
-			"slippage-levels": {
-				"low": "Low",
-				"medium": "Medium",
-				"high": "High"
-			},
 			"powered-by-balancer": "Powered by Balancer",
-			"max-slippage-tolerance": "Max Slippage Tolerance",
 			"estimated-slippage": "Estimated Slippage",
 			"confirm-text": "Confirm your transaction with your web3 provider",
 			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
@@ -748,10 +733,21 @@
 			"failed": "failed"
 		},
 		"switch": "switch",
-		"gas-prices": {
-			"average": "Average",
-			"fast": "Fast",
-			"fastest": "Fastest"
+		"summary": {
+			"gas-prices": {
+				"title": "gas price (GWEI)",
+				"average": "Average",
+				"fast": "Fast",
+				"fastest": "Fastest"
+			},
+			"fee": "fee",
+			"fee-cost": "fee cost",
+			"max-slippage-tolerance": {
+				"title": "Max Slippage Tolerance",
+				"low": "Low",
+				"medium": "Medium",
+				"high": "High"
+			}
 		},
 		"custom": "Custom",
 		"edit": "edit",

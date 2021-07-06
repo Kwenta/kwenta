@@ -17,7 +17,7 @@ const FeeRateSummaryItem: FC<FeeRateSummary> = ({ feeRate, ...rest }) => {
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+			<SummaryItemLabel>{t('common.summary.fee')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-rate">
 				{feeRate != null ? formatPercent(feeRate) : NO_VALUE}
 			</SummaryItemValue>

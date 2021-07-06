@@ -20,7 +20,7 @@ const FeeCostSummary: FC<FeeCostSummaryProps> = ({ feeCost, ...rest }) => {
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
+			<SummaryItemLabel>{t('common.summary.fee-cost')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-cost">
 				{feeCost != null
 					? formatCurrency(selectedPriceCurrency.name, feeCost, {
