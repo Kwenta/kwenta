@@ -24,6 +24,7 @@ import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 import SlippageSelect from 'sections/shared/components/SlippageSelect';
+import Card from 'components/Card';
 
 type TradeProps = {};
 
@@ -48,10 +49,16 @@ const Trade: React.FC<TradeProps> = ({}) => {
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
+	const [availableMargin, setAvailableMargin] = useState<string>('20000');
+	const [availableBalance, setAvailableBalance] = useState<string>('150000');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+
+	const isSubmitOrderDisabled = useMemo(() => Number(tradeSize) === 0 || tradeSize.length === 0, [
+		tradeSize,
+	]);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -187,6 +194,36 @@ const Trade: React.FC<TradeProps> = ({}) => {
 					setMaxSlippageTolerance={setMaxSlippageTolerance}
 				/>
 			</FlexDivCol>
+
+			<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
+				{isSubmitOrderDisabled
+					? t('futures.market.trade.button.enter-amount')
+					: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
+			</Button>
+
+			<Divider />
+
+			<StyledCard>
+				<FlexDivRowCentered>
+					<FlexDivCol>
+						<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
+						<MarginBalance>
+							{formatCurrency(SYNTHS_MAP.sUSD, availableMargin, { sign: '$' })}
+						</MarginBalance>
+					</FlexDivCol>
+					<Button variant="primary" size="sm" isRounded>
+						{t('futures.market.trade.button.edit')}
+					</Button>
+				</FlexDivRowCentered>
+			</StyledCard>
+			<FlexDivRow>
+				<AvailableBalanceLabel>
+					{t('futures.market.trade.margin.available-balance')}
+				</AvailableBalanceLabel>
+				<AvailableBalanceValue>
+					{formatCurrency(SYNTHS_MAP.sUSD, availableBalance, { sign: '$' })}
+				</AvailableBalanceValue>
+			</FlexDivRow>
 		</>
 	);
 };
@@ -331,5 +368,42 @@ const StyledSlippageSelcet = styled(SlippageSelect)`
 	color: ${(props) => props.theme.colors.blueberry};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
+	text-transform: capitalize;
+`;
+
+const Divider = styled.hr`
+	border: 1px solid ${(props) => props.theme.colors.vampire};
+	margin: 0px -32px;
+`;
+
+const StyledCard = styled(Card)`
+	background: ${(props) => props.theme.colors.navy};
+	padding: 20px;
+`;
+
+const AvailableMargin = styled.div`
+	color: ${(props) => props.theme.colors.silver};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	text-transform: capitalize;
+`;
+
+const MarginBalance = styled.div`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 16px;
+`;
+
+const AvailableBalanceLabel = styled.div`
+	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	text-transform: capitalize;
+`;
+
+const AvailableBalanceValue = styled.div`
+	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 12px;
 	text-transform: capitalize;
 `;

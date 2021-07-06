@@ -529,6 +529,7 @@
 					"enter-amount": "enter amount",
 					"deposit-margin": "deposit margin",
 					"deposit": "deposit",
+					"edit": "edit",
 					"open-trade": "submit {{side}} order",
 					"warning": "WARNING: this will close your {{side}} position"
 				},
