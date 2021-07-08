@@ -83,7 +83,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 								/>
 							</CustomSlippageContainer>
 							{SLIPPAGE_VALUES.map(({ text, value }) => (
-								<StyedSlippageButton
+								<StyledSlippageButton
 									key={text}
 									variant="select"
 									onClick={() => {
@@ -94,7 +94,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 								>
 									<span>{text}</span>
 									<NumericValue>{formatPercent(value)}</NumericValue>
-								</StyedSlippageButton>
+								</StyledSlippageButton>
 							))}
 						</SlippageSelectContainer>
 					}
@@ -135,7 +135,7 @@ const CustomSlippage = styled(NumericInput)`
 	}
 `;
 
-const StyedSlippageButton = styled(Button)`
+const StyledSlippageButton = styled(Button)`
 	width: 100%;
 	display: flex;
 	align-items: center;
