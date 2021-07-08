@@ -66,10 +66,10 @@ const StyledSlider = styled(Slider)`
 
 const StartingLabel = styled.div`
 	${FontStyle}
-	margin-right: 4px;
+	margin-right: 8px;
 `;
 
 const EndingLabel = styled.div`
 	${FontStyle}
-	margin-left: 4px;
+	margin-left: 8px;
 `;

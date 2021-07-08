@@ -40,7 +40,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 	const { t } = useTranslation();
 
 	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
-	const [tradeSize, setTradeSize] = useState<string>('0');
+	const [tradeSize, setTradeSize] = useState<string>('');
 	const [tradeValue, setTradeValue] = useState<string>('0');
 	const [userTradeBalance, setUserTradeBalance] = useState<string>('0');
 	const [leverage, setLeverage] = useState<number>(1);
@@ -115,116 +115,125 @@ const Trade: React.FC<TradeProps> = ({}) => {
 	};
 
 	return (
-		<>
-			<FlexDivRow>
-				<Title>{t('futures.market.trade.title')}</Title>
-				<StyledTabList>
-					{TABS.map(({ name, label, active, onClick }) => (
-						<StyledTabButton key={name} name={name} active={active} onClick={onClick}>
-							{label}
-						</StyledTabButton>
-					))}
-				</StyledTabList>
-			</FlexDivRow>
+		<Panel>
+			<TopRow>
+				<FlexDivRow>
+					<Title>{t('futures.market.trade.title')}</Title>
+					<StyledTabList>
+						{TABS.map(({ name, label, active, onClick }) => (
+							<StyledTabButton key={name} name={name} active={active} onClick={onClick}>
+								{label}
+							</StyledTabButton>
+						))}
+					</StyledTabList>
+				</FlexDivRow>
 
-			<FlexDivCentered>
-				<FlexDivCentered>
-					{/* @TODO make dynamic */}
-					<CurrencyIcon currencyKey={SYNTHS_MAP.sBTC} />
-					<CurrencyLabel>{SYNTHS_MAP.sBTC}</CurrencyLabel>
-				</FlexDivCentered>
-				<FlexDivCol>
-					<InputContainer>
-						<FlexDivCol>
-							<TradeAmount
-								value={tradeSize}
-								onChange={(_, value) => onTradeAmountChange(value)}
-								placeholder="0"
-								data-testid="trade-amount"
-							/>
-							<ValueAmount>
-								{formatCurrency(SYNTHS_MAP.sUSD, tradeValue, { sign: '$' })}
-							</ValueAmount>
-						</FlexDivCol>
-						<MaxButton variant="text">{t('futures.market.trade.input.max')}</MaxButton>
-					</InputContainer>
-					<FlexDivRow>
-						<BalanceSubtitle>{t('futures.market.trade.input.balance')}</BalanceSubtitle>
-						<BalanceValue>{userTradeBalance}</BalanceValue>
-					</FlexDivRow>
-				</FlexDivCol>
-			</FlexDivCentered>
-
-			<FlexDivRow>
-				<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
-				<FlexDivCol>
-					<InputContainer>
-						<LeverageAmount>{leverage}x</LeverageAmount>
-						<FlexDivRow>
-							<LeverageSide side={PositionSide.LONG} isActive={leverageSide === PositionSide.LONG}>
-								{t('futures.market.trade.input.leverage.long')}
-							</LeverageSide>
-							<LeverageSide
-								side={PositionSide.SHORT}
-								isActive={leverageSide === PositionSide.SHORT}
-							>
-								{t('futures.market.trade.input.leverage.short')}
-							</LeverageSide>
-						</FlexDivRow>
-					</InputContainer>
-					<FlexDivRow>
-						<Slider
-							minValue={MIN_LEVERAGE}
-							maxValue={MAX_LEVERAGE}
-							startingLabel={`${MIN_LEVERAGE}x`}
-							endingLabel={`${MAX_LEVERAGE}x`}
-							value={leverage}
-							onChange={(newValue) => setLeverage(newValue)}
-						/>
-					</FlexDivRow>
-				</FlexDivCol>
-			</FlexDivRow>
-
-			<FlexDivCol>
-				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-				<StyledFeeRateSummary feeRate={null} />
-				<StyledFeeCostSummary feeCost={null} />
-				<StyledSlippageSelcet
-					maxSlippageTolerance={maxSlippageTolerance}
-					setMaxSlippageTolerance={setMaxSlippageTolerance}
-				/>
-			</FlexDivCol>
-
-			<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
-				{isSubmitOrderDisabled
-					? t('futures.market.trade.button.enter-amount')
-					: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
-			</Button>
-
-			<Divider />
-
-			<StyledCard>
-				<FlexDivRowCentered>
+				<InputRow>
+					<FlexDivRowCentered>
+						{/* @TODO make dynamic */}
+						<CurrencyIcon currencyKey={SYNTHS_MAP.sBTC} />
+						<CurrencyLabel>{SYNTHS_MAP.sBTC}</CurrencyLabel>
+					</FlexDivRowCentered>
 					<FlexDivCol>
-						<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
-						<MarginBalance>
-							{formatCurrency(SYNTHS_MAP.sUSD, availableMargin, { sign: '$' })}
-						</MarginBalance>
+						<InputContainer>
+							<FlexDivCol>
+								<TradeAmount
+									value={tradeSize}
+									onChange={(_, value) => onTradeAmountChange(value)}
+									placeholder="0"
+									data-testid="trade-amount"
+								/>
+								<ValueAmount>
+									{formatCurrency(SYNTHS_MAP.sUSD, tradeValue, { sign: '$' })}
+								</ValueAmount>
+							</FlexDivCol>
+							<MaxButton variant="text">{t('futures.market.trade.input.max')}</MaxButton>
+						</InputContainer>
+						<FlexDivRow>
+							<BalanceSubtitle>{t('futures.market.trade.input.balance')}</BalanceSubtitle>
+							<BalanceValue>{userTradeBalance}</BalanceValue>
+						</FlexDivRow>
 					</FlexDivCol>
-					<Button variant="primary" size="sm" isRounded>
-						{t('futures.market.trade.button.edit')}
+				</InputRow>
+
+				<LeverageRow>
+					<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
+					<FlexDivCol>
+						<InputContainer>
+							<LeverageAmount>{leverage}x</LeverageAmount>
+							<LeverageSideContainer>
+								<LeverageSide
+									variant="outline"
+									side={PositionSide.LONG}
+									isActive={leverageSide === PositionSide.LONG}
+									onClick={() => setLeverageSide(PositionSide.LONG)}
+								>
+									{t('futures.market.trade.input.leverage.long')}
+								</LeverageSide>
+								<LeverageSide
+									variant="outline"
+									side={PositionSide.SHORT}
+									isActive={leverageSide === PositionSide.SHORT}
+									onClick={() => setLeverageSide(PositionSide.SHORT)}
+								>
+									{t('futures.market.trade.input.leverage.short')}
+								</LeverageSide>
+							</LeverageSideContainer>
+						</InputContainer>
+						<SliderRow>
+							<Slider
+								minValue={MIN_LEVERAGE}
+								maxValue={MAX_LEVERAGE}
+								startingLabel={`${MIN_LEVERAGE}x`}
+								endingLabel={`${MAX_LEVERAGE}x`}
+								value={leverage}
+								onChange={(newValue) => setLeverage(newValue)}
+							/>
+						</SliderRow>
+					</FlexDivCol>
+				</LeverageRow>
+
+				<FlexDivCol>
+					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
+					<StyledFeeRateSummary feeRate={null} />
+					<StyledFeeCostSummary feeCost={null} />
+					<StyledSlippageSelcet
+						maxSlippageTolerance={maxSlippageTolerance}
+						setMaxSlippageTolerance={setMaxSlippageTolerance}
+					/>
+					<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
+						{isSubmitOrderDisabled
+							? t('futures.market.trade.button.enter-amount')
+							: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
 					</Button>
-				</FlexDivRowCentered>
-			</StyledCard>
-			<FlexDivRow>
-				<AvailableBalanceLabel>
-					{t('futures.market.trade.margin.available-balance')}
-				</AvailableBalanceLabel>
-				<AvailableBalanceValue>
-					{formatCurrency(SYNTHS_MAP.sUSD, availableBalance, { sign: '$' })}
-				</AvailableBalanceValue>
-			</FlexDivRow>
-		</>
+				</FlexDivCol>
+			</TopRow>
+
+			<BottomRow>
+				<Divider />
+				<StyledCard>
+					<FlexDivRowCentered>
+						<FlexDivCol>
+							<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
+							<MarginBalance>
+								{formatCurrency(SYNTHS_MAP.sUSD, availableMargin, { sign: '$' })}
+							</MarginBalance>
+						</FlexDivCol>
+						<Button variant="primary" isRounded>
+							{t('futures.market.trade.button.edit')}
+						</Button>
+					</FlexDivRowCentered>
+				</StyledCard>
+				<FlexDivRow>
+					<AvailableBalanceLabel>
+						{t('futures.market.trade.margin.available-balance')}
+					</AvailableBalanceLabel>
+					<AvailableBalanceValue>
+						{formatCurrency(SYNTHS_MAP.sUSD, availableBalance, { sign: '$' })}
+					</AvailableBalanceValue>
+				</FlexDivRow>
+			</BottomRow>
+		</Panel>
 	);
 };
 export default Trade;
@@ -245,6 +254,11 @@ const StyledTabButton = styled(TabButton)`
 	background: ${(props) => props.theme.colors.elderberry};
 `;
 
+const InputRow = styled(FlexDivRow)`
+	width: 100%;
+	margin-bottom: 24px;
+`;
+
 const CurrencyLabel = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-size: 14px;
@@ -254,6 +268,9 @@ const CurrencyLabel = styled.div`
 
 const InputContainer = styled(FlexDivRowCentered)`
 	background: ${(props) => props.theme.colors.black};
+	border-radius: 4px;
+	padding: 4px;
+	width: 225px;
 `;
 
 const TradeAmount = styled(NumericInput)`
@@ -274,6 +291,7 @@ const MaxButton = styled(Button)`
 	color: ${(props) => props.theme.colors.goldColors.color2};
 	font-size: 12px;
 	text-transform: uppercase;
+	margin-right: 4px;
 `;
 
 const BalanceSubtitle = styled.div`
@@ -281,12 +299,19 @@ const BalanceSubtitle = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 	font-size: 12px;
 	text-transform: capitalize;
+	margin-top: 6px;
 `;
 
 const BalanceValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.blueberry};
 	font-size: 12px;
+	margin-top: 6px;
+`;
+
+const LeverageRow = styled(FlexDivRow)`
+	width: 100%;
+	margin-bottom: 24px;
 `;
 
 const LeverageTitle = styled.div`
@@ -294,15 +319,22 @@ const LeverageTitle = styled.div`
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
+	margin-top: 24px;
 `;
 
 const LeverageAmount = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	color: ${(props) => props.theme.colors.silver};
+	margin-left: 8px;
 `;
 
-const LeverageSide = styled.div<{ side: PositionSide; isActive: boolean }>`
+const LeverageSideContainer = styled(FlexDivRow)`
+	padding: 4px 0px;
+	margin-right: 4px;
+`;
+
+const LeverageSide = styled(Button)<{ side: PositionSide; isActive: boolean }>`
 	${(props) =>
 		props.isActive
 			? css`
@@ -318,9 +350,15 @@ const LeverageSide = styled.div<{ side: PositionSide; isActive: boolean }>`
 					border-left-width: ${props.side === PositionSide.SHORT ? '0px' : '1px'};
 					color: ${props.theme.colors.blueberry};
 			  `}
+	border-radius: ${(props) =>
+		props.side === PositionSide.LONG ? `2px 0px 0px 2px` : `0px 2px 2px 0px`};
 	text-transform: uppercase;
-	padding: 4px 8px;
 	text-align: center;
+	width: 75px;
+`;
+
+const SliderRow = styled(FlexDivRow)`
+	margin-top: 8px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`
@@ -333,6 +371,7 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
+	margin-bottom: 8px;
 `;
 
 const StyledFeeRateSummary = styled(FeeRateSummary)`
@@ -345,6 +384,7 @@ const StyledFeeRateSummary = styled(FeeRateSummary)`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
+	margin-bottom: 8px;
 `;
 
 const StyledFeeCostSummary = styled(FeeCostSummary)`
@@ -357,6 +397,7 @@ const StyledFeeCostSummary = styled(FeeCostSummary)`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
+	margin-bottom: 8px;
 `;
 
 const StyledSlippageSelcet = styled(SlippageSelect)`
@@ -369,16 +410,18 @@ const StyledSlippageSelcet = styled(SlippageSelect)`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
+	margin-bottom: 24px;
 `;
 
 const Divider = styled.hr`
 	border: 1px solid ${(props) => props.theme.colors.vampire};
-	margin: 0px -32px;
+	margin: 24px -32px;
 `;
 
 const StyledCard = styled(Card)`
 	background: ${(props) => props.theme.colors.navy};
 	padding: 20px;
+	margin-bottom: 24px;
 `;
 
 const AvailableMargin = styled.div`
@@ -406,4 +449,14 @@ const AvailableBalanceValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 12px;
 	text-transform: capitalize;
+`;
+
+const TopRow = styled(FlexDivCol)``;
+
+const BottomRow = styled(FlexDivCol)``;
+
+const Panel = styled(FlexDivCol)`
+	height: 100%;
+	justify-content: space-between;
+	padding-bottom: 48px;
 `;
