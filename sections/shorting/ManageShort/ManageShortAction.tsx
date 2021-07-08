@@ -63,7 +63,7 @@ import {
 	MessageContainer,
 } from 'sections/exchange/FooterCard/common';
 
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import { ShortingTab } from './constants';
@@ -476,7 +476,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const closeTabSummaryItems = (
 		<SummaryItems attached={false}>
-			<GasPriceSummaryItem gasPrices={gasPrices} transactionFee={transactionFee} />
+			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
 			<SummaryItem>
 				<SummaryItemLabel>
 					{t('shorting.history.manage-short.sections.close-position.total-to-replay-label')}

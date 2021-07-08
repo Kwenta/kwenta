@@ -8,16 +8,16 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
-type FeeRateSummaryItemProps = {
+type FeeRateSummary = {
 	feeRate: BigNumber | null;
 };
 
-const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeRate }) => {
+const FeeRateSummaryItem: FC<FeeRateSummary> = ({ feeRate, ...rest }) => {
 	const { t } = useTranslation();
 
 	return (
-		<SummaryItem>
-			<SummaryItemLabel>{t('exchange.summary-info.fee')}</SummaryItemLabel>
+		<SummaryItem {...rest}>
+			<SummaryItemLabel>{t('common.summary.fee')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-rate">
 				{feeRate != null ? formatPercent(feeRate) : NO_VALUE}
 			</SummaryItemValue>
