@@ -899,7 +899,7 @@ const useExchange = ({
 					if (txProvider === 'synthetix') {
 						const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
 						const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-						setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.mul(fee).toString());
+						setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.add(fee).toString());
 					}
 				}
 			}}
