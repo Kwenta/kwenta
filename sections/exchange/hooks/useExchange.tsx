@@ -20,7 +20,6 @@ import {
 	CurrencyKey,
 	ETH_ADDRESS,
 	Synths,
-	SYNTHS,
 } from 'constants/currency';
 import { Period } from 'constants/period';
 import { ChartType } from 'constants/chartType';
@@ -1093,7 +1092,7 @@ const useExchange = ({
 							routeToMarketPair(currencyPair.base, currencyKey);
 						}
 					}}
-					tokensToOmit={SYNTHS}
+					tokensToOmit={Object.keys(Synths)}
 				/>
 			)}
 			{selectBaseTokenModalOpen && (

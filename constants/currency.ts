@@ -19,8 +19,6 @@ export const CATEGORY: Category[] = [
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
 
-export const SYNTHS = Object.keys(Synths) as CurrencyKey[];
-
 export const CRYPTO_CURRENCY = [
 	'KNC',
 	'COMP',

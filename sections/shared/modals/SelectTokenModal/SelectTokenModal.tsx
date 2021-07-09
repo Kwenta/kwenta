@@ -37,7 +37,7 @@ import _ from 'lodash';
 type SelectTokenModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	tokensToOmit?: CurrencyKey[];
+	tokensToOmit?: string[];
 };
 
 export const SelectTokenModal: FC<SelectTokenModalProps> = ({
