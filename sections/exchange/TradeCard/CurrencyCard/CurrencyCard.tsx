@@ -128,7 +128,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									<Slippage>
 										{!isLoading &&
 											slippagePercent != null &&
-											slippagePercent.gt(10000) &&
 											slippagePercent.lt(0) &&
 											formatPercent(slippagePercent)}
 									</Slippage>
