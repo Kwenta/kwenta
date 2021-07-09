@@ -101,7 +101,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24High != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
-							minDecimals: /*currencyKey === Synths.sKRW || */ currencyKey === Synths.sJPY ? 4 : 2,
+							// TODO: use Synths.sKRW after Synths are corrected
+							minDecimals:
+								currencyKey === ('sKRW' as CurrencyKey) || currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
