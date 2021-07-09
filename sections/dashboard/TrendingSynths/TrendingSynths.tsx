@@ -17,7 +17,8 @@ import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
 import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import _ from 'lodash';
+import mapKeys from 'lodash/mapKeys';
+import mapValues from 'lodash/mapValues';
 import { networkState } from 'store/wallet';
 import { ethers } from 'ethers';
 
@@ -55,7 +56,7 @@ const TrendingSynths: FC = () => {
 
 	// bug in queries lib: should return already parsed with `parseBytes32String`
 	const historicalVolume = historicalVolumeQuery.isSuccess
-		? _.mapKeys(historicalVolumeQuery.data, (v, k) => ethers.utils.parseBytes32String(k)) ?? null
+		? mapKeys(historicalVolumeQuery.data, (v, k) => ethers.utils.parseBytes32String(k)) ?? null
 		: null;
 
 	const sortedSynths = useMemo(() => {
@@ -68,17 +69,17 @@ const TrendingSynths: FC = () => {
 		if (historicalRates != null) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(_.mapValues(historicalRates, 'high'), a, b)
+					numericSort(mapValues(historicalRates, 'high'), a, b)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Rates24HLow) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(_.mapValues(historicalRates, 'low'), a, b)
+					numericSort(mapValues(historicalRates, 'low'), a, b)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Change) {
 				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(_.mapValues(historicalRates, 'change'), a, b)
+					numericSort(mapValues(historicalRates, 'change'), a, b)
 				);
 			}
 		}

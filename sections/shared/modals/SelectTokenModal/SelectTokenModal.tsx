@@ -32,7 +32,7 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
 import useSynthetixQueries from '@synthetixio/queries';
-import _ from 'lodash';
+import isPlainObject from 'lodash/isPlainObject';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -88,7 +88,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 			tokenBalances != null
 				? Object.values(
 						mapValues(
-							(tokenBalances as any).filter(_.isPlainObject),
+							// TODO: type should be `Balances` object from (I believe) contracts-interface when it works
+							(tokenBalances as any).filter(isPlainObject),
 							({ balance, token }, symbol) => {
 								const { address } = token;
 

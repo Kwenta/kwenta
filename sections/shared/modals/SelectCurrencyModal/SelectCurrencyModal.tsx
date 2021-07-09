@@ -159,6 +159,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 				{synthsWalletBalancesQuery.isLoading ? (
 					<Loader />
 				) : synthsResults.length > 0 ? (
+					// TODO: use `Synth` type from contracts-interface
 					synthsResults.map((synth: any) => {
 						const currencyKey = synth.name;
 
