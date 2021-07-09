@@ -2,6 +2,7 @@ import { CurrencyKey } from '@synthetixio/queries/build/node/currency';
 import keyBy from 'lodash/keyBy';
 
 import { Synths } from '@synthetixio/queries/build/node/currency';
+import { wei } from '@synthetixio/wei';
 
 export type { CurrencyKey } from '@synthetixio/queries/build/node/currency';
 export { Synths } from '@synthetixio/queries/build/node/currency';
@@ -69,7 +70,7 @@ export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
 
 export const COMMODITY_SYNTHS = new Set<CurrencyKey>([Synths.sXAU, Synths.sXAG, Synths.sOIL]);
 
-export const sUSD_EXCHANGE_RATE = 1;
+export const sUSD_EXCHANGE_RATE = wei(1);
 export const SYNTH_DECIMALS = 18;
 
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
