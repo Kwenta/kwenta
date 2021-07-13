@@ -202,23 +202,16 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const synthCollateralPriceRate = useMemo(
-		() =>
-			getExchangeRatesForCurrencies(
-				exchangeRates,
-				short.collateralLocked,
-				selectedPriceCurrency.name
-			),
-		[exchangeRates, short.collateralLocked, selectedPriceCurrency.name]
-	);
-
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
+
+	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
+		short.accruedInterest,
+		short.synthBorrowedAmount,
+	]);
 
 	const totalTradePrice = useMemo(() => {
 		if (isCloseTab) {
-			return toBigNumber(synthCollateralPriceRate)
-				.multipliedBy(short.collateralLockedAmount)
-				.toString();
+			return toBigNumber(totalToRepay).multipliedBy(assetPriceRate).toString();
 		}
 		if (inputAmountBN.isNaN()) {
 			return zeroBN.toString();
@@ -229,19 +222,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		}
 
 		return tradePrice.toString();
-	}, [
-		inputAmountBN,
-		assetPriceRate,
-		selectPriceCurrencyRate,
-		isCloseTab,
-		short.collateralLockedAmount,
-		synthCollateralPriceRate,
-	]);
-
-	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
-		short.accruedInterest,
-		short.synthBorrowedAmount,
-	]);
+	}, [inputAmountBN, assetPriceRate, selectPriceCurrencyRate, isCloseTab, totalToRepay]);
 
 	const submissionDisabledReason: ReactNode = useMemo(() => {
 		if (isCloseTab) {
@@ -257,14 +238,16 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
 				return t('exchange.summary-info.button.enter-amount');
 			}
-			if (inputAmountBN.gt(balance ?? 0)) {
-				return t('exchange.summary-info.button.insufficient-balance');
-			}
 			if (isSubmitting) {
 				return t('exchange.summary-info.button.submitting-order');
 			}
 			if (isApproving) {
 				return t('exchange.summary-info.button.approving');
+			}
+			if (isAddCollateralTab) {
+				if (inputAmountBN.gt(balance ?? 0)) {
+					return t('exchange.summary-info.button.insufficient-balance');
+				}
 			}
 			if (isDecreasePositionTab) {
 				if (inputAmountBN.gt(short.synthBorrowedAmount)) {
@@ -297,6 +280,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		t,
 		isRemoveCollateralTab,
 		isDecreasePositionTab,
+		isAddCollateralTab,
 		short,
 		isCloseTab,
 		totalToRepay,
@@ -526,7 +510,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								currencyKey={currencyKey}
 								amount={inputAmount}
 								onAmountChange={setInputAmount}
-								walletBalance={balance}
+								walletBalance={null}
 								onBalanceClick={() => (balance != null ? setInputAmount(balance.toString()) : null)}
 								priceRate={assetPriceRate}
 								label={
