@@ -178,7 +178,11 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 			<StyledCardHeader lowercase={true}>
 				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
 				<CardHeaderItems>
-					{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)} {timer}
+					{currencyKey && currencyKey !== 'sUSD' && (
+						<>
+							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)} {timer}
+						</>
+					)}
 				</CardHeaderItems>
 			</StyledCardHeader>
 			<DesktopOnlyView>

@@ -79,26 +79,26 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
 				<CardHeaderItems>
 					{quoteCurrencyKey && quoteCurrencyKey !== 'sUSD' && (
-						<span>
+						<MarketHoursStatus>
 							{quoteCurrencyKey}{' '}
 							{t(
 								`exchange.market-details-card.${
 									quoteCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
 								}`
 							)}{' '}
-							{quoteCurrencyMarketTimer}
-						</span>
+							<CountdownTimer>{quoteCurrencyMarketTimer}</CountdownTimer>
+						</MarketHoursStatus>
 					)}
 					{baseCurrencyKey && baseCurrencyKey !== 'sUSD' && (
-						<span>
+						<MarketHoursStatus>
 							{baseCurrencyKey}{' '}
 							{t(
 								`exchange.market-details-card.${
 									baseCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
 								}`
 							)}{' '}
-							{baseCurrencyMarketTimer}
-						</span>
+							<CountdownTimer>{baseCurrencyMarketTimer}</CountdownTimer>
+						</MarketHoursStatus>
 					)}
 				</CardHeaderItems>
 			</StyledCardHeader>
@@ -135,9 +135,16 @@ const StyledCardHeader = styled(Card.Header)`
 
 const CardHeaderItems = styled.div`
 	line-height: 0.8;
-	width: 40%;
 	display: flex;
 	justify-content: space-between;
+`;
+
+const MarketHoursStatus = styled.div`
+	margin-left: 16px;
+`;
+
+const CountdownTimer = styled.span`
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const Item = styled(FlexDivRowCentered)`
