@@ -110,8 +110,6 @@ const useBalancerExchange = ({
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
-	// TODO get from pool
-	const exchangeFeeRate = 0.001;
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -237,13 +235,6 @@ const useBalancerExchange = ({
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
-	const feeAmountInBaseCurrency = useMemo(() => {
-		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return toBigNumber(baseCurrencyAmount).multipliedBy(exchangeFeeRate);
-		}
-		return null;
-	}, [baseCurrencyAmount, exchangeFeeRate]);
-
 	useEffect(() => {
 		if (
 			synthetix?.js != null &&
@@ -254,6 +245,7 @@ const useBalancerExchange = ({
 		) {
 			const maxNoPools = 2;
 			const sor = new SOR(
+				// @ts-ignore
 				provider as ethers.providers.BaseProvider,
 				new BigNumber(gasPrice),
 				maxNoPools,
@@ -642,7 +634,6 @@ const useBalancerExchange = ({
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={baseCurrencyAmount}
 					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeAmountInBaseCurrency={feeAmountInBaseCurrency}
 					baseCurrencyKey={baseCurrencyKey!}
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}

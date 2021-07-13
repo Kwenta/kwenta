@@ -1,0 +1,26 @@
+name: Update dependency
+
+on:
+  repository_dispatch:
+    types: update-dependency
+
+jobs:
+  update_version:
+    name: Update contracts-interface version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.17.1'
+      - name: npm update
+        run: npm install -g npm@7.19.0
+      - name: Update @synthetixio/contracts-interface dependency
+        run: |
+          npm install --legacy-peer-deps
+          npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }} --save-exact
+      - name: Commit changes
+        run: |
+          git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
+          git commit -am 'contracts-interface@${{ github.event.client_payload.version }}'
+          git push origin dev

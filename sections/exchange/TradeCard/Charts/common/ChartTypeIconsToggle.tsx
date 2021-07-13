@@ -1,35 +1,46 @@
-import { ChartType } from 'constants/chartType';
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { ResetButton } from 'styles/common';
 import { Svg } from 'react-optimized-image';
+
 import AreaIcon from 'assets/svg/app/area.svg';
 import CandlesticksIcon from 'assets/svg/app/candlesticks.svg';
-import { PERIOD_LABELS_MAP } from 'constants/period';
+
+import { ResetButton } from 'styles/common';
+
+import { ChartType } from 'constants/chartType';
+import { Period } from 'constants/period';
 
 type ChartTypeToggleProps = {
 	chartTypes: Array<ChartType>;
-	selectedChartType: string;
+
+	selectedChartType: ChartType;
 	setSelectedChartType: Function;
-	setSelectedPeriod: Function;
-	alignRight?: boolean;
+
+	selectedChartPeriod: Period;
+	setSelectedChartPeriod: Function;
+
+	itemIsDisabled?: (c: ChartType) => boolean;
 };
 
 const ChartTypeToggle: FC<ChartTypeToggleProps> = ({
 	chartTypes,
+
 	selectedChartType,
 	setSelectedChartType,
-	setSelectedPeriod,
-	alignRight,
+
+	selectedChartPeriod,
+	setSelectedChartPeriod,
+
+	itemIsDisabled,
 }) => {
 	return (
-		<Segment alignRight={!alignRight}>
+		<Segment>
 			{chartTypes.map((chartType) => (
 				<Button
 					key={chartType}
 					onClick={() => {
 						if (chartType === ChartType.CANDLESTICK) {
-							setSelectedPeriod(PERIOD_LABELS_MAP.ONE_MONTH);
+							setSelectedChartPeriod(Period.ONE_MONTH);
 						}
 						setSelectedChartType(chartType);
 					}}
@@ -45,10 +56,7 @@ const ChartTypeToggle: FC<ChartTypeToggleProps> = ({
 	);
 };
 
-const Segment = styled.div<{ alignRight?: boolean }>`
-	position: absolute;
-	top: 34px;
-	${(props) => (props.alignRight ? `right: 2px;` : 'left: 2px;')}
+const Segment = styled.div`
 	z-index: 1;
 	background: ${(props) => props.theme.colors.navy};
 	border-radius: 50px;

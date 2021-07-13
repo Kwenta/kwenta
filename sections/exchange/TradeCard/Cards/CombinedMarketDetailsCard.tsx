@@ -9,9 +9,9 @@ import { FlexDivRowCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
-import useCombinedRates from 'sections/exchange/hooks/useCombinedRates';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketNextTransition, marketIsOpen } from 'utils/marketHours';
+import useCombinedRates from 'sections/exchange/TradeCard/Charts/hooks/useCombinedRates';
 
 type MarketDetailsCardProps = {
 	baseCurrencyKey: CurrencyKey | null;
@@ -34,7 +34,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	const { low: rates24Low, high: rates24High } = useCombinedRates({
 		baseCurrencyKey,
 		quoteCurrencyKey,
-		selectedPeriod: PERIOD_LABELS_MAP.ONE_DAY,
+		selectedChartPeriodLabel: PERIOD_LABELS_MAP.ONE_DAY,
 	});
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(

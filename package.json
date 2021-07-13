@@ -25,7 +25,7 @@
 		"@reach/dialog": "0.11.0",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "2.45.3-1",
+		"@synthetixio/contracts-interface": "2.46.0-ovm",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
@@ -35,7 +35,7 @@
 		"date-fns-tz": "1.1.4",
 		"ethcall": "3.2.0",
 		"ethers": "5.3.0",
-		"framer-motion": "^4.1.17",
+		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"immer": "8.0.1",
@@ -108,5 +108,9 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"engines": {
+		"node": ">=14",
+		"npm": ">=7"
 	}
 }
