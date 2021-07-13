@@ -24,12 +24,13 @@ const Futures: FC = () => {
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const markets = futuresMarketsQuery?.data ?? null;
+	console.log(markets);
 	const market = markets?.[0] ?? null;
 	const futuresPositionQuery = useGetFuturesPosition(
 		market?.asset ?? null,
 		markets?.[0].market ?? null
 	);
-	console.log(futuresPositionQuery);
+	// console.log(futuresPositionQuery);
 
 	return (
 		<>

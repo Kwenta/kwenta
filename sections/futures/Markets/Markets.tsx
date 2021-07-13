@@ -17,55 +17,23 @@ import {
 } from 'styles/common';
 import { Subheader } from '../common';
 import { SYNTHS_MAP } from 'constants/currency';
-import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, formatNumberFromBN } from 'utils/formatters/number';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import SearchIcon from 'assets/svg/app/search.svg';
 import ROUTES from 'constants/routes';
 
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { FuturesMarket } from 'queries/futures/useGetFuturesMarkets';
+
 type MarketsProps = {};
 
-// @TODO: extract to types
-type FutureMarkets = {
-	name: string;
-	baseKey: string;
-	quoteKey: string;
-	price: number;
-	changeAmount: number;
-	changePercent: number;
-	fundingRate: number;
-};
-
-const Markets: React.FC<MarketsProps> = ({}) => {
+const Markets: React.FC<MarketsProps> = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-
-	const markets = [
-		{
-			name: 'sBTC-sUSD',
-			baseKey: SYNTHS_MAP.sUSD,
-			quoteKey: SYNTHS_MAP.sBTC,
-			price: 10000,
-			changeAmount: 250,
-			changePercent: 0.52,
-			fundingRate: 0.005,
-		},
-		{
-			name: 'sETH-sUSD',
-			baseKey: SYNTHS_MAP.sUSD,
-			quoteKey: SYNTHS_MAP.sETH,
-			price: 2000,
-			changeAmount: 250,
-			changePercent: 0.22,
-			fundingRate: 0.005,
-		},
-	];
-
-	const [isLoaded] = useState<boolean>(true);
-	const [isLoading] = useState<boolean>(false);
-
-	const columnsDeps = useMemo(() => [], []);
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const markets = futuresMarketsQuery?.data ?? [];
 
 	return (
 		<StyledGridDiv>
@@ -79,18 +47,18 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 				palette="primary"
 				onTableRowClick={(row) => {
 					const {
-						original: { baseKey, quoteKey },
+						original: { asset },
 					} = row;
-					router.push(ROUTES.Futures.Market.MarketPair(quoteKey));
+					router.push(ROUTES.Futures.Market.MarketPair(asset));
 				}}
 				columns={[
 					{
 						Header: <StyledTableHeader>{t('futures.markets.table.market')}</StyledTableHeader>,
-						accessor: 'marketName',
-						Cell: (cellProps: CellProps<FutureMarkets>) => (
+						accessor: 'asset',
+						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.quoteKey} />
-								<StyledMarketName>{cellProps.row.original.name}</StyledMarketName>
+								<CurrencyIcon currencyKey={cellProps.value} />
+								<StyledMarketName>{`${cellProps.value}/${SYNTHS_MAP.sUSD}`}</StyledMarketName>
 							</FlexDivCentered>
 						),
 						sortable: true,
@@ -100,11 +68,13 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 						Header: <StyledTableHeader>{t('futures.markets.table.price')}</StyledTableHeader>,
 						accessor: 'price',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FutureMarkets>) => (
+						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
-								<StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>
-									{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.price, { sign: '$' })}
+									{formatCurrency(SYNTHS_MAP.sUSD, formatNumberFromBN(cellProps.value), {
+										sign: '$',
+										currencyKey: SYNTHS_MAP.sUSD,
+									})}
 								</StyledCurrency>
 							</span>
 						),
@@ -115,13 +85,15 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 						Header: <StyledTableHeader>{t('futures.markets.table.change')}</StyledTableHeader>,
 						accessor: 'change',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FutureMarkets>) => (
+						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
-								<StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
+								{' '}
+								--
+								{/* <StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>
 									{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.changeAmount)}
 								</StyledCurrency>
-								<ChangePercent value={cellProps.row.original.changePercent} />
+								<ChangePercent value={cellProps.row.original.changePercent} /> */}
 							</span>
 						),
 						width: 200,
@@ -129,20 +101,22 @@ const Markets: React.FC<MarketsProps> = ({}) => {
 					},
 					{
 						Header: <StyledTableHeader>{t('futures.markets.table.funding')}</StyledTableHeader>,
-						accessor: 'funding',
+						accessor: 'currentFundingRate',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FutureMarkets>) => (
-							<StyledPercent>{formatPercent(cellProps.row.original.fundingRate)}</StyledPercent>
+						Cell: (cellProps: CellProps<FuturesMarket>) => (
+							<StyledPercent>
+								{formatPercent(formatNumberFromBN(cellProps.value.toString()))}
+							</StyledPercent>
 						),
 						width: 200,
 						sortable: true,
 					},
 				]}
-				columnsDeps={columnsDeps}
+				columnsDeps={[markets]}
 				data={markets}
-				isLoading={isLoading && !isLoaded}
+				isLoading={futuresMarketsQuery?.isLoading && markets.length > 0}
 				noResultsMessage={
-					isLoaded && markets.length === 0 ? (
+					futuresMarketsQuery?.isFetched && markets.length === 0 ? (
 						<TableNoResults>
 							<Svg src={NoNotificationIcon} />
 							{t('dashboard.transactions.table.no-results')}
