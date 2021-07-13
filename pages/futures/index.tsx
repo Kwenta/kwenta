@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPosition from 'queries/futures/useGetFuturesPosition';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
 
 import { DesktopOnlyView } from 'components/Media';
@@ -19,6 +21,15 @@ const Futures: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const markets = futuresMarketsQuery?.data ?? null;
+	const market = markets?.[0] ?? null;
+	const futuresPositionQuery = useGetFuturesPosition(
+		market?.asset ?? null,
+		markets?.[0].market ?? null
+	);
+	console.log(futuresPositionQuery);
 
 	return (
 		<>

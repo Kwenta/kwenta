@@ -110,6 +110,15 @@ export const QUERY_KEYS = {
 		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
 	},
+	Futures: {
+		Markets: ['futures', 'marketsSummaries'],
+		Position: (market: string | null, walletAddress: string) => [
+			'futures',
+			'position',
+			market,
+			walletAddress,
+		],
+	},
 };
 
 export default QUERY_KEYS;
