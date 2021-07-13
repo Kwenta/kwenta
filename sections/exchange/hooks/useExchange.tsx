@@ -79,7 +79,6 @@ import useCurrencyPair from './useCurrencyPair';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
-import Connector from 'containers/Connector';
 import { GasPrices } from '@synthetixio/queries';
 
 import useSynthetixQueries from '@synthetixio/queries';
@@ -116,8 +115,6 @@ const useExchange = ({
 	const { monitorHash } = Notify.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
-	const { network } = Connector.useContainer();
-
 	const {
 		useEthGasPriceQuery,
 		useETHBalanceQuery,
@@ -126,9 +123,7 @@ const useExchange = ({
 		useFeeReclaimPeriodQuery,
 		useExchangeFeeRateQuery,
 		useTokensBalancesQuery,
-	} = useSynthetixQueries({
-		networkId: network.id,
-	});
+	} = useSynthetixQueries();
 
 	const router = useRouter();
 

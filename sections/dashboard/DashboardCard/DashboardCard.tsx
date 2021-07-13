@@ -21,7 +21,7 @@ import { CardTitle, ConvertContainer } from '../common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { zeroBN } from 'utils/formatters/number';
 import useSynthetixQueries from '@synthetixio/queries';
-import { networkState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 import { CurrencyKey } from 'constants/currency';
 
@@ -37,10 +37,7 @@ const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const network = useRecoilValue(networkState);
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {

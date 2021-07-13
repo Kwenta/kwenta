@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import synthetix, { Synth } from '@synthetixio/contracts-interface';
 
@@ -19,7 +19,6 @@ import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/querie
 import { CurrencyKey } from 'constants/currency';
 import mapKeys from 'lodash/mapKeys';
 import mapValues from 'lodash/mapValues';
-import { networkState } from 'store/wallet';
 import { ethers } from 'ethers';
 
 const TrendingSynths: FC = () => {
@@ -27,14 +26,11 @@ const TrendingSynths: FC = () => {
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const network = useRecoilValue(networkState);
 	const {
 		useExchangeRatesQuery,
 		useHistoricalRatesQuery,
 		useHistoricalVolumeQuery,
-	} = useSynthetixQueries({
-		networkId: network.id,
-	});
+	} = useSynthetixQueries();
 
 	// eslint-disable-next-line
 	const synths = synthetix({ networkId: 1 }).synths;
@@ -55,9 +51,7 @@ const TrendingSynths: FC = () => {
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	// bug in queries lib: should return already parsed with `parseBytes32String`
-	const historicalVolume = historicalVolumeQuery.isSuccess
-		? mapKeys(historicalVolumeQuery.data, (v, k) => ethers.utils.parseBytes32String(k)) ?? null
-		: null;
+	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data : null;
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {

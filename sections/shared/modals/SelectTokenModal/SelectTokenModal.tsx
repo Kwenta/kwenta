@@ -47,8 +47,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
-	const { connectWallet, network } = Connector.useContainer();
-	const { useTokensBalancesQuery } = useSynthetixQueries({ networkId: network.id });
+	const { connectWallet } = Connector.useContainer();
+	const { useTokensBalancesQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 

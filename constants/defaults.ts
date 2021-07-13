@@ -3,7 +3,7 @@ import { Language } from 'translations/constants';
 import localStore from 'utils/localStore';
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
 
-import { NetworkId, Synth } from '@synthetixio/contracts-interface';
+import { CurrencyCategory, NetworkId, Synth } from '@synthetixio/contracts-interface';
 
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
@@ -11,7 +11,7 @@ export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKe
 	name: 'sUSD',
 	asset: 'USD',
 	sign: '$',
-	category: 'crypto',
+	category: 'crypto' as CurrencyCategory,
 	description: '',
 };
 

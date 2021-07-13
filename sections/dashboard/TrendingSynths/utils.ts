@@ -1,5 +1,5 @@
 import { Synth } from '@synthetixio/contracts-interface';
-import { wei, WeiSource } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import { Query } from 'react-query';
 
@@ -21,7 +21,7 @@ export const toCurrencyKeyMap = (
 	}, {});
 
 export const numericSort = (
-	comparatorMap: Partial<Record<CurrencyKey, WeiSource>>,
+	comparatorMap: Partial<Record<CurrencyKey, Wei | number | string>>,
 	a: Synth,
 	b: Synth
 ) => {

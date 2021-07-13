@@ -14,8 +14,6 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type SynthRowProps = {
 	price: number | null;
@@ -26,10 +24,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const network = useRecoilValue(networkState);
-	const { useHistoricalRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.name as CurrencyKey;
 

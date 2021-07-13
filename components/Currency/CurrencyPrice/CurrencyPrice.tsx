@@ -8,7 +8,10 @@ import { CurrencyKey } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { wei, WeiSource } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+import Wei, { wei } from '@synthetixio/wei';
+
+type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type CurrencyPriceProps = {
 	currencyKey: CurrencyKey;

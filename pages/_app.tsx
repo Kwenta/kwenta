@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
@@ -26,10 +26,31 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
+import { networkState } from 'store/wallet';
 
-// release - 12 Nov 2020!
+const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
+	const network = useRecoilValue(networkState);
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+	return (
+		<>
+			<WithAppContainers>
+				<MediaContextProvider>
+					<SynthetixQueryContextProvider value={createQueryContext({ networkId: network!.id })}>
+						<Layout>
+							<SystemStatus>
+								<Component {...pageProps} />
+							</SystemStatus>
+						</Layout>
+						<ReactQueryDevtools />
+					</SynthetixQueryContextProvider>
+				</MediaContextProvider>
+			</WithAppContainers>
+		</>
+	);
+};
+
+const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
 
 	return (
@@ -56,18 +77,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<WithAppContainers>
-						<MediaContextProvider>
-							<QueryClientProvider client={new QueryClient()}>
-								<Layout>
-									<SystemStatus>
-										<Component {...pageProps} />
-									</SystemStatus>
-								</Layout>
-								<ReactQueryDevtools />
-							</QueryClientProvider>
-						</MediaContextProvider>
-					</WithAppContainers>
+					<QueryClientProvider client={new QueryClient()}>
+						<InnerApp {...props} />
+					</QueryClientProvider>
 				</RecoilRoot>
 			</ThemeProvider>
 		</>

@@ -32,14 +32,11 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const network = useRecoilValue(networkState);
 	const {
 		useHistoricalVolumeQuery,
 		useHistoricalRatesQuery,
 		useSynthMarketCapQuery,
-	} = useSynthetixQueries({
-		networkId: network?.id ?? null,
-	});
+	} = useSynthetixQueries();
 
 	const {
 		selectPriceCurrencyRate,

@@ -1,9 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import { gasSpeedState, networkState } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -26,10 +26,7 @@ const ShortingRewards: FC = () => {
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 
-	const network = useRecoilValue(networkState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

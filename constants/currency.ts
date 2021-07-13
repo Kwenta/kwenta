@@ -1,11 +1,11 @@
-import { CurrencyKey } from '@synthetixio/queries/build/node/currency';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import keyBy from 'lodash/keyBy';
 
-import { Synths } from '@synthetixio/queries/build/node/currency';
-import { wei } from '@synthetixio/wei';
+import { Synths } from '@synthetixio/contracts-interface';
+import Wei from '@synthetixio/wei';
 
-export type { CurrencyKey } from '@synthetixio/queries/build/node/currency';
-export { Synths } from '@synthetixio/queries/build/node/currency';
+export type { CurrencyKey } from '@synthetixio/contracts-interface';
+export { Synths } from '@synthetixio/contracts-interface';
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
@@ -70,7 +70,7 @@ export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
 
 export const COMMODITY_SYNTHS = new Set<CurrencyKey>([Synths.sXAU, Synths.sXAG, Synths.sOIL]);
 
-export const sUSD_EXCHANGE_RATE = wei(1);
+export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';

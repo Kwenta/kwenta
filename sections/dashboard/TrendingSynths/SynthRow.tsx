@@ -13,8 +13,6 @@ import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 import { Synth } from '@synthetixio/contracts-interface';
 import { CurrencyKey } from 'constants/currency';
 
@@ -29,10 +27,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 
 	const currencyKey = synth.name as CurrencyKey;
 
-	const network = useRecoilValue(networkState);
-	const { useHistoricalRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
 		refetchInterval: false,

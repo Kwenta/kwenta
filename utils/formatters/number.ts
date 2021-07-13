@@ -1,4 +1,5 @@
-import Wei, { wei, WeiSource } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
@@ -7,6 +8,8 @@ import {
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
+
+type WeiSource = Wei | number | string | ethers.BigNumber;
 
 export type FormatNumberOptions = {
 	minDecimals?: number;

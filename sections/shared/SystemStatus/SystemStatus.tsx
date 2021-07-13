@@ -23,8 +23,6 @@ import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type SystemStatusProps = {
 	children: React.ReactNode;
@@ -53,10 +51,7 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
 
-	const network = useRecoilValue(networkState);
-	const { useIsSystemOnMaintenance } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useIsSystemOnMaintenance } = useSynthetixQueries();
 
 	// current onchain state ( no interval for now, should be added when we are close to a release to save requests )
 	const isSystemOnMaintenanceQuery = useIsSystemOnMaintenance({

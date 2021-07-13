@@ -20,7 +20,7 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import SynthRow from './SynthRow';
 import useSynthetixQueries from '@synthetixio/queries';
-import { networkState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
 export const CATEGORY_FILTERS = [
@@ -45,8 +45,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 
-	const network = useRecoilValue(networkState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries({ networkId: network.id });
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 

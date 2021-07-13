@@ -4,7 +4,10 @@ import styled from 'styled-components';
 import { formatCurrency, FormatCurrencyOptions, formatNumber } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { wei, WeiSource } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+import Wei, { wei } from '@synthetixio/wei';
+
+type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type CurrencyAmountProps = {
 	currencyKey: string;

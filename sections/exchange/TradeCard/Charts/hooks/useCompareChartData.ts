@@ -4,8 +4,6 @@ import orderBy from 'lodash/orderBy';
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 
 const useCombinedRates = ({
@@ -17,11 +15,7 @@ const useCombinedRates = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const network = useRecoilValue(networkState);
-
-	const { useHistoricalRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const baseHistoricalRates = useHistoricalRatesQuery(
 		baseCurrencyKey,

@@ -21,8 +21,6 @@ import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
@@ -30,10 +28,7 @@ const ShortingStats = () => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const network = useRecoilValue(networkState);
-	const { useExchangeRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = useMemo(

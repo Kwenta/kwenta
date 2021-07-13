@@ -81,9 +81,7 @@ const useBalancerExchange = ({
 		useSynthsBalancesQuery,
 		useEthGasPriceQuery,
 		useFeeReclaimPeriodQuery,
-	} = useSynthetixQueries({
-		networkId: network.id,
-	});
+	} = useSynthetixQueries();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair({
 		persistSelectedCurrencies,

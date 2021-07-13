@@ -65,7 +65,7 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify, network } = Connector.useContainer();
+	const { notify } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
@@ -78,9 +78,7 @@ const useShort = ({
 		useEthGasPriceQuery,
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
-	} = useSynthetixQueries({
-		networkId: network.id,
-	});
+	} = useSynthetixQueries();
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 

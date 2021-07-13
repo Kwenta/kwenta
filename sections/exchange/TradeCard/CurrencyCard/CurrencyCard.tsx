@@ -19,7 +19,7 @@ import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/com
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import Wei, { wei, WeiSource } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -29,7 +29,7 @@ type CurrencyCardProps = {
 	walletBalance: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: WeiSource | null;
+	priceRate: Wei | number | string | null;
 	className?: string;
 	label: ReactNode;
 	interactive?: boolean;

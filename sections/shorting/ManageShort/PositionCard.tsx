@@ -39,8 +39,6 @@ import { ShortingTab } from './constants';
 import { MIN_COLLATERAL_RATIO } from '../constants';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -52,10 +50,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
 
-	const network = useRecoilValue(networkState);
-	const { useExchangeRatesQuery } = useSynthetixQueries({
-		networkId: network.id,
-	});
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();

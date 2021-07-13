@@ -95,7 +95,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-	const { notify, network } = Connector.useContainer();
+	const { notify } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const {
@@ -103,9 +103,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
-	} = useSynthetixQueries({
-		networkId: network.id,
-	});
+	} = useSynthetixQueries();
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
