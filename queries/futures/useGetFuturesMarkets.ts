@@ -7,6 +7,7 @@ import { appReadyState } from 'store/app';
 import { isL2State, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { toBigNumber } from 'utils/formatters/number';
 
 export type FuturesMarket = {
 	market: string;
@@ -50,15 +51,15 @@ const useGetFuturesMarkets = (options?: QueryConfig<[FuturesMarket]>) => {
 					market: market,
 					asset: utils.parseBytes32String(asset),
 					assetHex: asset,
-					currentFundingRate,
+					currentFundingRate: toBigNumber(currentFundingRate.toString()),
 					feeRates: {
-						makerFee: feeRates.makerFee,
-						takerFee: feeRates.takerFee,
+						makerFee: toBigNumber(feeRates.makerFee.toString()),
+						takerFee: toBigNumber(feeRates.takerFee.toString()),
 					},
-					marketDebt,
-					marketSkew,
-					maxLeverage,
-					price,
+					marketDebt: toBigNumber(marketDebt.toString()),
+					marketSkew: toBigNumber(marketSkew.toString()),
+					maxLeverage: toBigNumber(maxLeverage.toString()),
+					price: toBigNumber(price.toString()),
 				})
 			);
 		},
