@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, MARKET_HOURS_SYNTHS, SYNTHS_MAP } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -178,9 +178,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 			<StyledCardHeader lowercase={true}>
 				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
 				<CardHeaderItems>
-					{currencyKey && currencyKey !== 'sUSD' && (
+					{currencyKey && MARKET_HOURS_SYNTHS.has(currencyKey) && currencyKey !== 'sUSD' && (
 						<>
-							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)} {timer}
+							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)}{' '}
+							<CountdownTimer>{timer}</CountdownTimer>
 						</>
 					)}
 				</CardHeaderItems>
@@ -246,6 +247,10 @@ const Label = styled.div`
 
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const CountdownTimer = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 

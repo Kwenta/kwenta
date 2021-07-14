@@ -133,6 +133,13 @@ export const AFTER_HOURS_SYNTHS = new Set([
 	SYNTHS_MAP.sCOIN,
 ]);
 
+export const MARKET_HOURS_SYNTHS = new Set([
+	...FIAT_SYNTHS,
+	...LSE_SYNTHS,
+	...TSE_SYNTHS,
+	...AFTER_HOURS_SYNTHS,
+]);
+
 export const COMMODITY_SYNTHS = new Set([SYNTHS_MAP.sXAU, SYNTHS_MAP.sXAG, SYNTHS_MAP.sOIL]);
 
 export const sUSD_EXCHANGE_RATE = 1;

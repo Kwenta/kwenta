@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import { PERIOD_LABELS_MAP } from 'constants/period';
 import { FlexDivRowCentered } from 'styles/common';
@@ -78,28 +78,32 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 			<StyledCardHeader lowercase>
 				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
 				<CardHeaderItems>
-					{quoteCurrencyKey && quoteCurrencyKey !== 'sUSD' && (
-						<MarketHoursStatus>
-							{quoteCurrencyKey}{' '}
-							{t(
-								`exchange.market-details-card.${
-									quoteCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
-								}`
-							)}{' '}
-							<CountdownTimer>{quoteCurrencyMarketTimer}</CountdownTimer>
-						</MarketHoursStatus>
-					)}
-					{baseCurrencyKey && baseCurrencyKey !== 'sUSD' && (
-						<MarketHoursStatus>
-							{baseCurrencyKey}{' '}
-							{t(
-								`exchange.market-details-card.${
-									baseCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
-								}`
-							)}{' '}
-							<CountdownTimer>{baseCurrencyMarketTimer}</CountdownTimer>
-						</MarketHoursStatus>
-					)}
+					{quoteCurrencyKey &&
+						MARKET_HOURS_SYNTHS.has(quoteCurrencyKey) &&
+						quoteCurrencyKey !== 'sUSD' && (
+							<MarketHoursStatus>
+								{quoteCurrencyKey}{' '}
+								{t(
+									`exchange.market-details-card.${
+										quoteCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+									}`
+								)}{' '}
+								<CountdownTimer>{quoteCurrencyMarketTimer}</CountdownTimer>
+							</MarketHoursStatus>
+						)}
+					{baseCurrencyKey &&
+						MARKET_HOURS_SYNTHS.has(baseCurrencyKey) &&
+						baseCurrencyKey !== 'sUSD' && (
+							<MarketHoursStatus>
+								{baseCurrencyKey}{' '}
+								{t(
+									`exchange.market-details-card.${
+										baseCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+									}`
+								)}{' '}
+								<CountdownTimer>{baseCurrencyMarketTimer}</CountdownTimer>
+							</MarketHoursStatus>
+						)}
 				</CardHeaderItems>
 			</StyledCardHeader>
 			<DesktopOnlyView>
