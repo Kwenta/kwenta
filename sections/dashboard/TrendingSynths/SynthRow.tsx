@@ -41,9 +41,13 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 		>
 			<Currency.Name
 				currencyKey={currencyKey}
-				name={t('common.currency.synthetic-currency-name', {
-					currencyName: synth.description,
-				})}
+				name={
+					synth.description
+						? t('common.currency.synthetic-currency-name', {
+								currencyName: synth.description,
+						  })
+						: ''
+				}
 				showIcon={true}
 				marketClosureReason={marketClosureReason}
 			/>
