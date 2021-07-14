@@ -2,7 +2,7 @@ import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -11,8 +11,6 @@ import {
 	Tooltip,
 	ExternalLink,
 } from 'styles/common';
-
-import { CurrencyKey } from 'constants/currency';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
@@ -33,12 +31,12 @@ type TxConfirmationModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	baseCurrencyKey: CurrencyKey;
+	baseCurrencyKey: string;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey?: CurrencyKey;
+	quoteCurrencyKey?: string;
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
-	feeCost?: BigNumber | null;
+	feeCost: Wei | null;
 	txProvider: TxProvider;
 	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;

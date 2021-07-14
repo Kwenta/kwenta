@@ -3,14 +3,13 @@ import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 import { ChartType } from 'constants/chartType';
 
 import ChangePercent from 'components/ChangePercent';
 import { FlexDivRowCentered, NoTextTransform, AbsoluteCenteredDiv } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import LoaderIcon from 'assets/svg/app/loader.svg';
@@ -92,7 +91,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const showOverlayMessage = isMarketClosed;
 	const showLoader = isLoadingAreaChartData || isLoadingCandleSticksChartData;
 	const disabledInteraction = showLoader || showOverlayMessage;
-	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
+	const isSUSD = currencyKey === Synths.sUSD;
 
 	const isAreaChart = useMemo(() => selectedChartType === ChartType.AREA, [selectedChartType]);
 	const isCandleStickChart = useMemo(() => selectedChartType === ChartType.CANDLESTICK, [
@@ -104,7 +103,7 @@ const ChartCard: FC<ChartCardProps> = ({
 		(isCandleStickChart && noCandleSticksChartData && !isSUSD);
 
 	const computedRates = useMemo(() => {
-		return rates.map(({ timestamp, rate }) => ({
+		return rates.map(({ timestamp, rate }: { timestamp: number; rate: number }) => ({
 			timestamp,
 			value: !selectPriceCurrencyRate ? rate : rate / selectPriceCurrencyRate,
 		}));
@@ -147,7 +146,9 @@ const ChartCard: FC<ChartCardProps> = ({
 										sign: selectedPriceCurrency.sign,
 										// @TODO: each currency key should specify how many decimals to show
 										minDecimals:
-											currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+											currencyKey === ('sKRW' as CurrencyKey) || currencyKey === Synths.sJPY
+												? 4
+												: 2,
 									})}
 								</CurrencyPrice>
 							)}

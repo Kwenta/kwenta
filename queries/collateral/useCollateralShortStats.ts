@@ -1,7 +1,7 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 import { appReadyState } from 'store/app';
@@ -9,20 +9,19 @@ import { appReadyState } from 'store/app';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import synthetix from 'lib/synthetix';
-import { toBigNumber } from 'utils/formatters/number';
 
 type ReturnValueType = Record<
 	CurrencyKey,
 	{
-		shorts: BigNumber;
-		rewardsRate: BigNumber;
-		rewardsTotalSupply: BigNumber;
+		shorts: Wei;
+		rewardsRate: Wei;
+		rewardsTotalSupply: Wei;
 	}
 >;
 
 const useCollateralShortStats = (
 	currencyKeys: CurrencyKey[],
-	options?: QueryConfig<ReturnValueType>
+	options?: UseQueryOptions<ReturnValueType>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
@@ -49,9 +48,9 @@ const useCollateralShortStats = (
 
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
-					shorts: toBigNumber(ethers.utils.formatEther(shorts[i])),
-					rewardsRate: toBigNumber(rewardsRates[i].toString()),
-					rewardsTotalSupply: toBigNumber(rewardsTotalSupplies[i].toString()),
+					shorts: wei(shorts[i]),
+					rewardsRate: wei(rewardsRates[i]),
+					rewardsTotalSupply: wei(rewardsTotalSupplies[i]),
 				};
 				return ret;
 			}, {} as ReturnValueType);

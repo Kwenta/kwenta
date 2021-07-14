@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 // import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
 // import SwapPreviewMd from 'assets/svg/marketing/swap-preview-md.svg';
@@ -44,8 +44,8 @@ const Benefits = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
 		footerCardAttached: true,
 		persistSelectedCurrencies: false,
-		defaultQuoteCurrencyKey: SYNTHS_MAP.sBTC,
-		defaultBaseCurrencyKey: SYNTHS_MAP.sETH,
+		defaultQuoteCurrencyKey: Synths.sBTC,
+		defaultBaseCurrencyKey: Synths.sETH,
 	});
 
 	return (

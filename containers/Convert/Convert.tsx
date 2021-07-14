@@ -8,12 +8,10 @@ import erc20Abi from 'lib/abis/ERC20.json';
 
 import Connector from 'containers/Connector';
 
-import { toBigNumber } from 'utils/formatters/number';
-
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 
 import { walletAddressState } from 'store/wallet';
+import { wei } from '@synthetixio/wei';
 
 type Token = {
 	symbol: CurrencyKey;
@@ -57,9 +55,7 @@ const useConvert = () => {
 	) => ({
 		fromTokenAddress: quoteTokenAddress,
 		toTokenAddress: baseTokenAddress,
-		amount: toBigNumber(amount)
-			.multipliedBy(toBigNumber(10).exponentiatedBy(decimals ?? DEFAULT_TOKEN_DECIMALS))
-			.toString(),
+		amount: wei(amount).toString(0, true),
 	});
 
 	const quote1Inch = async (

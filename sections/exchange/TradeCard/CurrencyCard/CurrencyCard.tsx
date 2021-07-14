@@ -2,14 +2,13 @@ import { FC, MouseEvent, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
-import { formatCurrency, formatPercent, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
@@ -20,21 +19,22 @@ import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/com
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
+import Wei, { wei } from '@synthetixio/wei';
 
 type CurrencyCardProps = {
 	side: Side;
-	currencyKey: CurrencyKey | null;
+	currencyKey: string | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	walletBalance: BigNumber | null;
+	walletBalance: Wei | null;
 	onBalanceClick: () => void;
 	onCurrencySelect?: () => void;
-	priceRate: number | null;
+	priceRate: Wei | number | string | null;
 	className?: string;
 	label: ReactNode;
 	interactive?: boolean;
 	disableInput?: boolean;
-	slippagePercent?: BigNumber | null;
+	slippagePercent?: Wei | null;
 	isLoading?: boolean;
 	txProvider?: TxProvider;
 };
@@ -69,11 +69,11 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 		walletBalance,
 		currencyKey,
 	]);
-	const amountBN = useMemo(() => (amount === '' ? zeroBN : toBigNumber(amount)), [amount]);
+	const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
 
 	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
 
-	let tradeAmount = priceRate != null ? amountBN.multipliedBy(priceRate) : null;
+	let tradeAmount = priceRate ? amountBN.mul(priceRate) : null;
 	if (selectPriceCurrencyRate != null && tradeAmount != null) {
 		tradeAmount = getPriceAtCurrentRate(tradeAmount);
 	}
@@ -120,7 +120,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								<FlexDivRowCentered>
 									<CurrencyAmountValue data-testid="amount-value">
 										{tradeAmount != null
-											? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+											? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
 													sign: selectedPriceCurrency.sign,
 											  })
 											: null}
@@ -128,9 +128,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									<Slippage>
 										{!isLoading &&
 											slippagePercent != null &&
-											!slippagePercent.isNaN() &&
-											slippagePercent.isFinite() &&
-											slippagePercent.isNegative() &&
+											slippagePercent.lt(0) &&
 											formatPercent(slippagePercent)}
 									</Slippage>
 								</FlexDivRowCentered>

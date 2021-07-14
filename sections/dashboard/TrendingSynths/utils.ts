@@ -1,13 +1,13 @@
+import { Synth } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
-import { Synth } from 'lib/synthetix';
 import { Query } from 'react-query';
-import { NumericValue, toBigNumber } from 'utils/formatters/number';
 
 // The function turns react query cached queries into a map (with the currencyKey) as the key to be used in the sorting.
 export const toCurrencyKeyMap = (
 	query: Query<unknown, unknown>[],
 	dataField?: string
-): Record<CurrencyKey, number> =>
+): Partial<Record<CurrencyKey, number>> =>
 	query.reduce((acc, query) => {
 		// the fourth item is the currencyKey (according to the queryKeys.ts file)
 		const currencyKey = query.queryKey[3] as string;
@@ -21,12 +21,12 @@ export const toCurrencyKeyMap = (
 	}, {});
 
 export const numericSort = (
-	comparatorMap: Record<CurrencyKey, NumericValue>,
+	comparatorMap: Partial<Record<CurrencyKey, Wei | number | string>>,
 	a: Synth,
 	b: Synth
 ) => {
-	const valA = toBigNumber(comparatorMap[a.name] ?? 0);
-	const valB = toBigNumber(comparatorMap[b.name] ?? 0);
+	const valA = wei(comparatorMap[a.name as CurrencyKey] ?? 0);
+	const valB = wei(comparatorMap[b.name as CurrencyKey] ?? 0);
 
 	return valA.gt(valB) ? -1 : 1;
 };

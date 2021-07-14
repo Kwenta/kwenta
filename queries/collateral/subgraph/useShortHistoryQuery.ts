@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { gql, request } from 'graphql-request';
 import produce from 'immer';
@@ -11,7 +11,7 @@ import { HistoricalShortPosition } from './types';
 import { formatShort, SHORT_GRAPH_ENDPOINT_KOVAN, SHORT_GRAPH_ENDPOINT } from './utils';
 import { historicalShortsPositionState } from 'store/shorts';
 
-const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) => {
+const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -68,7 +68,7 @@ const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) 
 			return shorts;
 		},
 		{
-			enabled: isAppReady && isWalletConnected && network,
+			enabled: isAppReady && isWalletConnected && !!network,
 			...options,
 		}
 	);

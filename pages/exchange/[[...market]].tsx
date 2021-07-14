@@ -25,6 +25,7 @@ import {
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useExchange from 'sections/exchange/hooks/useExchange';
+import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_WIDTH } from 'sections/exchange/TradeCard/constants';
 
 const ExchangePage = () => {
@@ -79,8 +80,8 @@ const ExchangePage = () => {
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
-								rate: formatCurrency(quoteCurrencyKey, inverseRate, {
-									currencyKey: quoteCurrencyKey,
+								rate: formatCurrency(quoteCurrencyKey as CurrencyKey, inverseRate, {
+									currencyKey: quoteCurrencyKey as CurrencyKey,
 								}),
 						  })
 						: t('exchange.page-title')}

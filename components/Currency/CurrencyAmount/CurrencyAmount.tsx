@@ -1,24 +1,20 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import {
-	formatCurrency,
-	FormatCurrencyOptions,
-	formatNumber,
-	NumericValue,
-	toBigNumber,
-} from 'utils/formatters/number';
-
-import { CurrencyKey } from 'constants/currency';
+import { formatCurrency, FormatCurrencyOptions, formatNumber } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
+import { ethers } from 'ethers';
+import Wei, { wei } from '@synthetixio/wei';
+
+type WeiSource = Wei | number | string | ethers.BigNumber;
 
 type CurrencyAmountProps = {
-	currencyKey: CurrencyKey;
-	amount: NumericValue;
-	totalValue: NumericValue;
+	currencyKey: string;
+	amount: WeiSource;
+	totalValue: WeiSource;
 	sign?: string;
-	conversionRate?: NumericValue | null;
+	conversionRate?: WeiSource | null;
 	formatAmountOptions?: FormatCurrencyOptions;
 	formatTotalValueOptions?: FormatCurrencyOptions;
 };
@@ -38,7 +34,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 		<TotalValue className="total-value">
 			{formatCurrency(
 				currencyKey,
-				conversionRate != null ? toBigNumber(totalValue).dividedBy(conversionRate) : totalValue,
+				conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
 				{ sign }
 			)}
 		</TotalValue>

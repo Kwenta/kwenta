@@ -1,10 +1,10 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import Convert from 'containers/Convert';
 
-const use1InchApproveAddressQuery = (options?: QueryConfig<string | null>) => {
+const use1InchApproveAddressQuery = (options?: UseQueryOptions<string | null>) => {
 	const { get1InchApproveAddress } = Convert.useContainer();
 
 	return useQuery<string | null>(

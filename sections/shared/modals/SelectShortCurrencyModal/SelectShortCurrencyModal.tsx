@@ -2,10 +2,7 @@ import { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Synth } from 'lib/synthetix';
-
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import { Synth } from '@synthetixio/contracts-interface';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -18,6 +15,9 @@ import { formatCurrency } from 'utils/formatters/number';
 import { RowsContainer, CenteredModal, RowsHeader } from '../common';
 
 import SynthRow from './SynthRow';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 type SelectShortCurrencyModalProps = {
 	onDismiss: () => void;
@@ -33,9 +33,14 @@ export const SelectShortCurrencyModal: FC<SelectShortCurrencyModalProps> = ({
 	collateralCurrencyKey,
 }) => {
 	const { t } = useTranslation();
+
+	const { useSynthsBalancesQuery, useExchangeRatesQuery } = useSynthetixQueries();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,
@@ -85,7 +90,7 @@ export const SelectShortCurrencyModal: FC<SelectShortCurrencyModalProps> = ({
 			<RowsContainer>
 				{synths.map((synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
-					const currencyKey = synth.name;
+					const currencyKey = synth.name as CurrencyKey;
 
 					return (
 						<SynthRow

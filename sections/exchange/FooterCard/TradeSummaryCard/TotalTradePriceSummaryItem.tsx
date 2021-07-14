@@ -8,6 +8,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { formatCurrency } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
+import { CurrencyKey } from 'constants/currency';
 
 type TotalTradePriceSummaryItemProps = {
 	totalTradePrice: string | null;
@@ -27,7 +28,7 @@ const TotalTradePriceSummaryItem: FC<TotalTradePriceSummaryItemProps> = ({ total
 			</SummaryItemLabel>
 			<SummaryItemValue data-testid="total-trade-price">
 				{totalTradePrice
-					? formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+					? formatCurrency(selectedPriceCurrency.name as CurrencyKey, totalTradePrice, {
 							sign: selectedPriceCurrency.sign,
 					  })
 					: NO_VALUE}
