@@ -16,7 +16,7 @@ import { RowsContainer, CenteredModal, RowsHeader } from '../common';
 
 import SynthRow from './SynthRow';
 import useSynthetixQueries from '@synthetixio/queries';
-import { networkState, walletAddressState } from 'store/wallet';
+import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
 type SelectShortCurrencyModalProps = {
@@ -34,7 +34,6 @@ export const SelectShortCurrencyModal: FC<SelectShortCurrencyModalProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const network = useRecoilValue(networkState);
 	const { useSynthsBalancesQuery, useExchangeRatesQuery } = useSynthetixQueries();
 
 	const walletAddress = useRecoilValue(walletAddressState);

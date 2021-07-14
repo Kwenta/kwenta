@@ -17,9 +17,7 @@ import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
 import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import mapKeys from 'lodash/mapKeys';
 import mapValues from 'lodash/mapValues';
-import { ethers } from 'ethers';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();

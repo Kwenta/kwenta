@@ -19,8 +19,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
