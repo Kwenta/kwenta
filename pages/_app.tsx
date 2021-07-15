@@ -39,8 +39,8 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 					value={
 						provider && network
 							? createQueryContext({
-									provider: provider || undefined,
-									networkId: provider && network ? network!.id : null,
+									provider: provider,
+									networkId: network!.id,
 							  })
 							: createQueryContext({ networkId: null })
 					}

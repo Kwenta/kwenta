@@ -45,7 +45,7 @@ const useConnector = () => {
 	);
 
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
-		if (!synthetixjs) {
+		if (synthetixjs == null) {
 			return [{}, {}, {}];
 		}
 
@@ -165,9 +165,6 @@ const useConnector = () => {
 	};
 
 	const connectWallet = async () => {
-		console.log('connect wallet called');
-		console.log('onboard', onboard);
-
 		try {
 			if (onboard) {
 				onboard.walletReset();
@@ -214,7 +211,7 @@ const useConnector = () => {
 	};
 
 	const getTokenAddress = (currencyKey: CurrencyKey) => {
-		if (!synthetixjs) {
+		if (synthetixjs == null) {
 			return null;
 		}
 
