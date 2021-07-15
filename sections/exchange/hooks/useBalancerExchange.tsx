@@ -268,7 +268,7 @@ const useBalancerExchange = ({
 			sor.fetchPools();
 			setSmartOrderRouter(sor);
 		}
-	}, [provider, gasPrice, network?.id]);
+	}, [provider, gasPrice, network?.id, synthetixjs]);
 
 	useInterval(
 		async () => {
@@ -314,7 +314,7 @@ const useBalancerExchange = ({
 				setBaseAllowance(allowance.toString());
 			}
 		},
-		[signer]
+		[signer, synthetixjs]
 	);
 
 	useEffect(() => {
@@ -350,7 +350,7 @@ const useBalancerExchange = ({
 			setBaseCurrencyAddress(synthetixjs.contracts[`Synth${baseCurrencyKey}`].address);
 			setQuoteCurrencyAddress(synthetixjs.contracts[`Synth${quoteCurrencyKey}`].address);
 		}
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, synthetixjs]);
 
 	const calculateExchangeRate = useCallback(
 		async ({ value, isBase }: { value: Wei; isBase: boolean }) => {
@@ -459,6 +459,7 @@ const useBalancerExchange = ({
 		getAllowanceAndInitProxyContract,
 		notify,
 		quoteCurrencyKey,
+		synthetixjs,
 	]);
 
 	const handleSubmit = useCallback(async () => {
@@ -559,6 +560,7 @@ const useBalancerExchange = ({
 		setOrders,
 		setHasOrdersNotification,
 		maxSlippageTolerance,
+		synthetixjs,
 	]);
 
 	const handleAmountChange = useCallback(

@@ -246,7 +246,7 @@ const useShort = ({
 			);
 		}
 		return [];
-	}, [isAppReady]);
+	}, [isAppReady, synthetixjs]);
 
 	const gasPrice = useMemo(
 		() =>
@@ -293,7 +293,7 @@ const useShort = ({
 				console.log(e);
 			}
 		}
-	}, [quoteCurrencyAmount, isWalletConnected, quoteCurrencyKey, walletAddress]);
+	}, [quoteCurrencyAmount, isWalletConnected, quoteCurrencyKey, walletAddress, synthetixjs]);
 
 	useEffect(() => {
 		checkAllowance();
@@ -424,7 +424,7 @@ const useShort = ({
 				);
 			}
 		},
-		[setHistoricalShortPositions]
+		[setHistoricalShortPositions, synthetixjs]
 	);
 
 	const handleSubmit = async () => {
@@ -482,7 +482,7 @@ const useShort = ({
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [isAppReady, walletAddress, onLoanCreated]);
+	}, [isAppReady, walletAddress, onLoanCreated, synthetixjs]);
 
 	const quoteCurrencyCard = (
 		<CurrencyCard

@@ -54,7 +54,7 @@ const Transactions: FC = () => {
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
-	const synths = synthetixjs!.synths || [];
+	const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 
 	const createSynthTypeFilter = useCallback(
 		(synths: Synth[], synthFilter: string) => (trade: HistoricalTrade) =>

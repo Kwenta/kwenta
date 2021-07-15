@@ -25,7 +25,7 @@ export const PriceCurrencySelect: FC = () => {
 			);
 		}
 		return [];
-	}, [network]);
+	}, [network, synthsMap]);
 
 	return (
 		<Select

@@ -300,7 +300,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		} catch (e) {
 			return null;
 		}
-	}, [getMethodAndParams]);
+	}, [getMethodAndParams, synthetixjs]);
 
 	useEffect(() => {
 		async function updateGasLimit() {
@@ -449,7 +449,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				console.log(e);
 			}
 		}
-	}, [inputAmount, isWalletConnected, currencyKey, walletAddress]);
+	}, [inputAmount, isWalletConnected, currencyKey, walletAddress, synthetixjs]);
 
 	useEffect(() => {
 		if (needsApproval) {

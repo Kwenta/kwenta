@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState } from 'recoil';
 
-import { Synth, Synths } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 
 import Select from 'components/Select';
 
@@ -34,7 +34,7 @@ const TrendingSynths: FC = () => {
 		useHistoricalVolumeQuery,
 	} = useSynthetixQueries();
 
-	const synths = values(synthsMap) || [];
+	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();
@@ -102,8 +102,6 @@ const TrendingSynths: FC = () => {
 			<Rows>
 				{sortedSynths.map((synth: Synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
-					const currencyKey = synth;
-
 					return <SynthRow key={synth.name} synth={synth} price={price} />;
 				})}
 			</Rows>

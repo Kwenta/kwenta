@@ -100,7 +100,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 			}
 		}
 		return null;
-	}, [walletAddress, currencyKey]);
+	}, [walletAddress, currencyKey, synthetixjs]);
 
 	useEffect(() => {
 		async function getGasEstimateCall() {
@@ -159,6 +159,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		notify,
 		setGasLimit,
 		walletAddress,
+		synthetixjs,
 	]);
 
 	return (

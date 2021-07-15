@@ -603,7 +603,7 @@ const useExchange = ({
 			console.log(e);
 		}
 		return null;
-	}, [getExchangeParams]);
+	}, [getExchangeParams, synthetixjs]);
 
 	const checkAllowance = useCallback(async () => {
 		if (
@@ -773,6 +773,7 @@ const useExchange = ({
 		txProvider,
 		slippage,
 		tokensMap,
+		synthetixjs,
 	]);
 
 	useEffect(() => {
