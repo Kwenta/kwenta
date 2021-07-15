@@ -1,18 +1,18 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
 import Convert from 'containers/Convert';
-import { toBigNumber } from 'utils/formatters/number';
+import { wei } from '@synthetixio/wei';
 
 const use1InchQuoteQuery = (
 	quoteCurrencyAddress: string | null,
 	baseCurrencyAddress: string | null,
 	amount: string,
 	decimals?: number,
-	options?: QueryConfig<string | null>
+	options?: UseQueryOptions<string | null>
 ) => {
 	const { quote1Inch } = Convert.useContainer();
 	const network = useRecoilValue(networkState);
@@ -25,7 +25,7 @@ const use1InchQuoteQuery = (
 			network?.id!
 		),
 		async () => {
-			if (toBigNumber(amount).isZero()) {
+			if (wei(amount).eq(0)) {
 				return '';
 			}
 

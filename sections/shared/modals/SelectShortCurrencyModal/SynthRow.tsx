@@ -2,17 +2,18 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { Synth } from 'lib/synthetix';
+import { Synth } from '@synthetixio/contracts-interface';
 
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
 
 import { SelectableCurrencyRow } from 'styles/common';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import { Period } from 'constants/period';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useSynthetixQueries from '@synthetixio/queries';
+import { CurrencyKey } from 'constants/currency';
 
 type SynthRowProps = {
 	price: number | null;
@@ -23,7 +24,9 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const currencyKey = synth.name;
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
+
+	const currencyKey = synth.name as CurrencyKey;
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 	const { marketClosureReason } = useMarketClosed(currencyKey);

@@ -39,14 +39,14 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	});
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(
-		marketNextTransition(quoteCurrencyKey ?? '') ?? null
+		marketNextTransition((quoteCurrencyKey as CurrencyKey) ?? '') ?? null
 	);
-	const quoteCurrencyMarketIsOpen = marketIsOpen(quoteCurrencyKey ?? '');
+	const quoteCurrencyMarketIsOpen = marketIsOpen((quoteCurrencyKey as CurrencyKey) ?? '');
 
 	const baseCurrencyMarketTimer = useMarketHoursTimer(
-		marketNextTransition(baseCurrencyKey ?? '') ?? null
+		marketNextTransition((baseCurrencyKey as CurrencyKey) ?? '') ?? null
 	);
-	const baseCurrencyMarketIsOpen = marketIsOpen(baseCurrencyKey ?? '');
+	const baseCurrencyMarketIsOpen = marketIsOpen((baseCurrencyKey as CurrencyKey) ?? '');
 
 	const rates24HighItem = (
 		<Item>

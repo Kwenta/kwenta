@@ -209,6 +209,7 @@ const useConnector = () => {
 	};
 
 	return {
+		network,
 		provider,
 		signer,
 		onboard,

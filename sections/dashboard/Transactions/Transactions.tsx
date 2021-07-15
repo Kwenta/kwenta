@@ -1,6 +1,6 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import synthetix, { Synth } from 'lib/synthetix';
+import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
 
@@ -11,6 +11,7 @@ import { CapitalizedText, GridDiv } from 'styles/common';
 import TradeHistory from './TradeHistory';
 import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
 import { HistoricalTrade } from 'queries/trades/types';
+import { Synth } from '@synthetixio/contracts-interface';
 
 const Transactions: FC = () => {
 	const { t } = useTranslation();

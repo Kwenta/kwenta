@@ -2,6 +2,9 @@
 
 module.exports = {
 	webpack: (config, options) => {
+
+		config.resolve.mainFields = ['module', 'browser', 'main'];
+
 		config.module.rules.push({
 			test: /\.(png|jp(e*)g|svg|gif|webp)$/,
 			use: [

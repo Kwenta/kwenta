@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
+import { SynthBalance } from '@synthetixio/queries';
 
 import { NO_VALUE } from 'constants/placeholder';
 

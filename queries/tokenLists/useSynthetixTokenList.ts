@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
 
@@ -7,7 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { TokenListQueryResponse, TokenListResponse } from './types';
 import { EXTERNAL_LINKS } from 'constants/links';
 
-const useSynthetixTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+const useSynthetixTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.Synthetix,
 		async () => {

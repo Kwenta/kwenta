@@ -1,15 +1,15 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
 
 import { formatPercent } from 'utils/formatters/number';
 
 import { NO_VALUE } from 'constants/placeholder';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import Wei from '@synthetixio/wei';
 
 type FeeRateSummaryItemProps = {
-	feeRate: BigNumber | null;
+	feeRate: Wei | null;
 };
 
 const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeRate }) => {

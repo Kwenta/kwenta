@@ -13,7 +13,7 @@ import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type CurrencyIconProps = {
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	type?: 'synth' | 'asset' | 'token';
 	className?: string;
 	width?: string;
@@ -91,7 +91,7 @@ export const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, ...rest
 						src={
 							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
 								? synthetixTokenListMap[currencyKey].logoURI
-								: getSynthIcon(currencyKey)
+								: getSynthIcon(currencyKey as CurrencyKey)
 						}
 						onError={() => setThirdFallbackError(true)}
 						{...props}

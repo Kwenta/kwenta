@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
 import styled, { useTheme } from 'styled-components';
-import { CurrencyKey, MARKET_HOURS_SYNTHS, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -16,14 +16,11 @@ import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common
 import { truncateAddress } from 'utils/formatters/string';
 import { formatCurrency } from 'utils/formatters/number';
 
-import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
-
 import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -34,6 +31,13 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+
+	const {
+		useHistoricalVolumeQuery,
+		useHistoricalRatesQuery,
+		useSynthMarketCapQuery,
+	} = useSynthetixQueries();
+
 	const {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,
@@ -75,8 +79,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	const token =
 		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
 
-	const timer = useMarketHoursTimer(marketNextTransition(currencyKey ?? '') ?? null);
-	const isOpen = marketIsOpen(currencyKey ?? '');
+	const timer = useMarketHoursTimer(
+		marketNextTransition((currencyKey as CurrencyKey) ?? '') ?? null
+	);
+	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? '');
 
 	const volume24HItem = (
 		<Item>
@@ -98,8 +104,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24High != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
+							// TODO: use Synths.sKRW after Synths are corrected
 							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+								currencyKey === ('sKRW' as CurrencyKey) || currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -152,7 +159,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+								/*currencyKey === SYNTHS_MAP.sKRW || */ currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
