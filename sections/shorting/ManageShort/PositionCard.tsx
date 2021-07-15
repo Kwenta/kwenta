@@ -10,7 +10,6 @@ import Card from 'components/Card';
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
 import InfoIcon from 'assets/svg/app/info.svg';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -38,6 +37,8 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { ShortingTab } from './constants';
 import { MIN_COLLATERAL_RATIO } from '../constants';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -48,6 +49,8 @@ type PositionCardProps = {
 const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
@@ -101,13 +104,13 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[exchangeRates, selectedPriceCurrency.name, short.collateralLocked]
 	);
 
-	const collateralValue = useMemo(
-		() => short.collateralLockedAmount.multipliedBy(collateralLockedPrice),
-		[short.collateralLockedAmount, collateralLockedPrice]
-	);
+	const collateralValue = useMemo(() => short.collateralLockedAmount.mul(collateralLockedPrice), [
+		short.collateralLockedAmount,
+		collateralLockedPrice,
+	]);
 
 	const liquidationPrice = useMemo(
-		() => collateralValue.dividedBy(short.synthBorrowedAmount.multipliedBy(minCollateralRatio)),
+		() => collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio)),
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
@@ -118,29 +121,27 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 			if (isCollateralTab) {
 				collateralLockedAmount = isAddCollateralTab
-					? collateralLockedAmount.plus(inputAmount)
-					: collateralLockedAmount.minus(inputAmount);
+					? collateralLockedAmount.add(inputAmount)
+					: collateralLockedAmount.sub(inputAmount);
 			}
 
 			if (isPositionTab) {
 				synthBorrowedAmount = isIncreasePositionTab
-					? synthBorrowedAmount.plus(inputAmount)
-					: synthBorrowedAmount.minus(inputAmount);
+					? synthBorrowedAmount.add(inputAmount)
+					: synthBorrowedAmount.sub(inputAmount);
 			}
 
-			const collateralValue = collateralLockedAmount.multipliedBy(collateralLockedPrice);
+			const collateralValue = collateralLockedAmount.mul(collateralLockedPrice);
 
-			const liquidationPrice = collateralValue.dividedBy(
-				synthBorrowedAmount.multipliedBy(minCollateralRatio)
-			);
+			const liquidationPrice = synthBorrowedAmount.gt(0)
+				? collateralValue.div(synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0);
 
 			return {
-				collateralLockedAmount: collateralLockedAmount.isNegative()
-					? zeroBN
-					: collateralLockedAmount,
-				collateralValue: collateralValue.isNegative() ? zeroBN : collateralValue,
-				liquidationPrice: liquidationPrice.isNegative() ? zeroBN : liquidationPrice,
-				synthBorrowedAmount: synthBorrowedAmount.isNegative() ? zeroBN : synthBorrowedAmount,
+				collateralLockedAmount: collateralLockedAmount.lt(0) ? zeroBN : collateralLockedAmount,
+				collateralValue: collateralValue.lt(0) ? zeroBN : collateralValue,
+				liquidationPrice: liquidationPrice.lt(0) ? zeroBN : liquidationPrice,
+				synthBorrowedAmount: synthBorrowedAmount.lt(0) ? zeroBN : synthBorrowedAmount,
 			};
 		}
 		return null;
@@ -202,7 +203,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 							{formatCurrency(
 								short.collateralLocked,
 								selectPriceCurrencyRate != null
-									? liquidationPrice.dividedBy(selectPriceCurrencyRate)
+									? liquidationPrice.div(selectPriceCurrencyRate)
 									: liquidationPrice,
 								{
 									currencyKey: short.synthBorrowed,
@@ -215,7 +216,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 									{formatCurrency(
 										short.collateralLocked,
 										selectPriceCurrencyRate != null
-											? inputChangePreview.liquidationPrice.dividedBy(selectPriceCurrencyRate)
+											? inputChangePreview.liquidationPrice.div(selectPriceCurrencyRate)
 											: inputChangePreview.liquidationPrice,
 										{
 											currencyKey: short.synthBorrowed,
@@ -243,7 +244,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 						<ProfitLoss
 							value={
 								selectPriceCurrencyRate != null
-									? short.profitLoss?.dividedBy(selectPriceCurrencyRate)
+									? short.profitLoss?.div(selectPriceCurrencyRate)
 									: short.profitLoss
 							}
 						/>

@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivColCentered } from 'styles/common';
 
-import { CurrencyKey } from 'constants/currency';
-
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 
@@ -16,7 +14,7 @@ type TxApproveModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	currencyLabel: ReactNode;
 	txProvider?: TxProvider;
 };

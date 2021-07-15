@@ -6,9 +6,8 @@ import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import { useRecoilValue } from 'recoil';
 
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
-import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
@@ -32,11 +31,13 @@ import Connector from 'containers/Connector';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
+import useSynthetixQueries from '@synthetixio/queries';
+import isPlainObject from 'lodash/isPlainObject';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
 	onSelect: (currencyKey: CurrencyKey) => void;
-	tokensToOmit?: CurrencyKey[];
+	tokensToOmit?: string[];
 };
 
 export const SelectTokenModal: FC<SelectTokenModalProps> = ({
@@ -47,6 +48,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const { connectWallet } = Connector.useContainer();
+	const { useTokensBalancesQuery } = useSynthetixQueries();
+	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -57,7 +60,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 		[tokenListQuery.isSuccess, tokenListQuery.data]
 	);
 
-	const tokensWalletBalancesQuery = useTokensBalancesQuery(tokenList);
+	const tokensWalletBalancesQuery = useTokensBalancesQuery(tokenList, walletAddress);
 	const tokenBalances = tokensWalletBalancesQuery.isSuccess
 		? tokensWalletBalancesQuery.data ?? null
 		: null;
@@ -67,7 +70,7 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const tokenBalancesAddresses = useMemo(
 		() =>
 			tokenBalances != null
-				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance.token.address)
+				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance?.token.address)
 				: [],
 		[tokenBalances]
 	);
@@ -84,21 +87,25 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 		() =>
 			tokenBalances != null
 				? Object.values(
-						mapValues(tokenBalances, ({ balance, token }, symbol) => {
-							const { address } = token;
+						mapValues(
+							// TODO: type should be `Balances` object from (I believe) contracts-interface when it works
+							(tokenBalances as any).filter(isPlainObject),
+							({ balance, token }, symbol) => {
+								const { address } = token;
 
-							const price =
-								symbol === CRYPTO_CURRENCY_MAP.ETH
-									? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
-									: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
+								const price =
+									symbol === CRYPTO_CURRENCY_MAP.ETH
+										? get(coinGeckoPrices, [CoinGeckoPriceIds.ETH, 'usd'], null)
+										: get(coinGeckoTokenPrices, [address.toLowerCase(), 'usd'], null);
 
-							return {
-								currencyKey: symbol,
-								balance,
-								usdBalance: price != null ? balance.multipliedBy(price) : null,
-								token,
-							};
-						})
+								return {
+									currencyKey: symbol as CurrencyKey,
+									balance,
+									usdBalance: price != null ? balance.mul(price) : null,
+									token,
+								};
+							}
+						)
 				  )
 				: [],
 		[coinGeckoPrices, coinGeckoTokenPrices, tokenBalances]

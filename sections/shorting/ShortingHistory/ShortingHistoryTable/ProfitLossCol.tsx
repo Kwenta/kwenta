@@ -26,7 +26,7 @@ const ProfitLossCol: FC<ProfitLossColType> = ({ cellProps }) => {
 	let value = collateralShortPosition?.profitLoss;
 
 	if (selectPriceCurrencyRate != null && value != null) {
-		value = value.dividedBy(selectPriceCurrencyRate);
+		value = value.div(selectPriceCurrencyRate);
 	}
 
 	return <ProfitLoss value={value} />;

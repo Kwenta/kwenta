@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import Link from 'next/link';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import { NoTextTransform } from 'styles/common';
 
@@ -11,7 +11,7 @@ import ROUTES from 'constants/routes';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
-const { sUSD } = SYNTHS_MAP;
+const { sUSD } = Synths;
 
 type NoSynthsCardProps = {
 	attached?: boolean;

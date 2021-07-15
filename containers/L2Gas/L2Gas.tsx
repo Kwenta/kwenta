@@ -5,7 +5,7 @@ import Connector from 'containers/Connector';
 import { networkState, isL2State, walletAddressState } from 'store/wallet';
 import { Network } from '@synthetixio/contracts-interface';
 import { makeContract as makeL2WETHContract } from 'contracts/L2WETH';
-import { toBigNumber } from 'utils/formatters/number';
+import { wei } from '@synthetixio/wei';
 
 const MakeContainer = () => {
 	const { provider } = Connector.useContainer();
@@ -13,7 +13,7 @@ const MakeContainer = () => {
 	const address = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 
-	const [balance, setBalance] = useState(toBigNumber(0));
+	const [balance, setBalance] = useState(wei(0));
 
 	const wETHContract = useMemo(() => {
 		const networkName = network!?.name;
@@ -23,7 +23,7 @@ const MakeContainer = () => {
 		return makeL2WETHContract(networkName, provider)!;
 	}, [isL2, network, provider]);
 
-	const hasNoBalance = useMemo(() => !!wETHContract && balance.isZero(), [wETHContract, balance]);
+	const hasNoBalance = useMemo(() => !!wETHContract && balance.eq(0), [wETHContract, balance]);
 
 	useEffect(() => {
 		if (!(wETHContract && address)) return;
@@ -38,7 +38,7 @@ const MakeContainer = () => {
 		const loadBalance = async () => {
 			try {
 				const balance = await wETHContract.balanceOf(address);
-				if (isMounted) setBalance(toBigNumber(balance.toString()).div(1e18));
+				if (isMounted) setBalance(wei(balance.toString()).div(1e18));
 			} catch (e) {
 				console.error(e);
 			}

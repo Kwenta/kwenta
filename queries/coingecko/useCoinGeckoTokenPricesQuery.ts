@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryConfig, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from 'react-query';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
@@ -8,7 +8,7 @@ import { PriceResponse } from './types';
 
 const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],
-	options?: QueryConfig<PriceResponse>
+	options?: UseQueryOptions<PriceResponse>
 ) => {
 	return useQuery<PriceResponse>(
 		QUERY_KEYS.CoinGecko.TokenPrices(tokenAddresses),
@@ -22,7 +22,7 @@ const useCoinGeckoTokenPricesQuery = (
 			return response.data;
 		},
 		{
-			enabled: tokenAddresses.length,
+			enabled: tokenAddresses.length > 0,
 			...options,
 		}
 	);

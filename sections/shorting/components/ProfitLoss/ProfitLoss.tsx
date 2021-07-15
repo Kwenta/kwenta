@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
-import { BigNumber } from 'bignumber.js';
 import { NO_VALUE } from 'constants/placeholder';
 import styled from 'styled-components';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { formatCurrency } from 'utils/formatters/number';
+import Wei from '@synthetixio/wei';
 
 type ProfitLossType = {
-	value?: BigNumber | null;
+	value?: Wei | null;
 };
 
 const ProfitLoss = ({ value }: ProfitLossType) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const isPositive = useMemo(() => (value != null ? (value.isZero() ? null : value.gt(0)) : null), [
+	const isPositive = useMemo(() => (value != null ? (value.eq(0) ? null : value.gt(0)) : null), [
 		value,
 	]);
 

@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { useTranslation, Trans } from 'react-i18next';
 
 import ROUTES from 'constants/routes';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import Button from 'components/Button';
-
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
 
 import media from 'styles/media';
 import { GridDivCentered, NoTextTransform } from 'styles/common';
@@ -16,12 +14,13 @@ import { GridDivCentered, NoTextTransform } from 'styles/common';
 import SynthBalanceRow, { SynthBalanceRowProps } from './SynthBalanceRow';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
+import { SynthBalance } from '@synthetixio/queries';
 
 type SynthBalancesProps = Omit<SynthBalanceRowProps, 'synth'> & {
 	balances: SynthBalance[];
 };
 
-const { sUSD } = SYNTHS_MAP;
+const { sUSD } = Synths;
 
 const SynthBalances: FC<SynthBalancesProps> = ({ exchangeRates, balances, totalUSDBalance }) => {
 	const { t } = useTranslation();

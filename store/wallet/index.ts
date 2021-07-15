@@ -1,5 +1,5 @@
 import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
-import { GasSpeed } from 'queries/network/useEthGasPriceQuery';
+import { GasSpeed } from '@synthetixio/queries';
 import { atom, selector } from 'recoil';
 
 import { truncateAddress } from 'utils/formatters/string';
@@ -12,9 +12,9 @@ export type Network = {
 	useOvm?: boolean;
 };
 
-export const networkState = atom<Network | null>({
+export const networkState = atom<Network>({
 	key: getWalletKey('network'),
-	default: null,
+	default: { id: NetworkId.Mainnet, name: NetworkName.Mainnet },
 });
 
 export const isMainnetState = selector<boolean>({

@@ -4,7 +4,7 @@ import { formatEther } from '@ethersproject/units';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
 import formatDate from 'date-fns/format';
-import { Synth } from 'lib/synthetix';
+import { Synth } from '@synthetixio/contracts-interface';
 import { isNumber } from 'lodash';
 import { Candle } from 'queries/rates/types';
 import { BarChart, XAxis, YAxis, Bar, Cell } from 'recharts';

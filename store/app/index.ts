@@ -3,9 +3,9 @@ import { Language } from 'translations/constants';
 
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 import { Period } from 'constants/period';
-import { SYNTHS_MAP } from 'constants/currency';
-import { ChartType } from 'constants/chartType';
-import { Synth } from 'lib/synthetix';
+import { Synths } from 'constants/currency';
+
+import { Synth } from '@synthetixio/contracts-interface';
 
 import { getAppKey } from '../utils';
 
@@ -19,16 +19,17 @@ import {
 	baseChartTypeStateKey,
 	quoteChartTypeStateKey,
 } from './constants';
+import { ChartType } from 'constants/chartType';
 
 export const PRICE_CURRENCIES = [
-	SYNTHS_MAP.sUSD,
-	SYNTHS_MAP.sEUR,
-	SYNTHS_MAP.sCHF,
-	SYNTHS_MAP.sAUD,
-	SYNTHS_MAP.sJPY,
-	SYNTHS_MAP.sGBP,
-	SYNTHS_MAP.sBTC,
-	SYNTHS_MAP.sETH,
+	Synths.sUSD,
+	Synths.sEUR,
+	Synths.sCHF,
+	Synths.sAUD,
+	Synths.sJPY,
+	Synths.sGBP,
+	Synths.sBTC,
+	Synths.sETH,
 ];
 
 export const appReadyState = atom<boolean>({
