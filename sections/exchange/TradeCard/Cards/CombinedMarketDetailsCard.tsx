@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -30,6 +30,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const pairCurrencyName = `${quoteCurrencyKey}/${baseCurrencyKey}`;
+	const theme = useTheme();
 
 	const { low: rates24Low, high: rates24High } = useCombinedRates({
 		baseCurrencyKey,
@@ -82,6 +83,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						MARKET_HOURS_SYNTHS.has(quoteCurrencyKey) &&
 						quoteCurrencyKey !== 'sUSD' && (
 							<MarketHoursStatus>
+								<Dot
+									background={quoteCurrencyMarketIsOpen ? theme.colors.green : theme.colors.red}
+								/>
 								{quoteCurrencyKey}{' '}
 								{t(
 									`exchange.market-details-card.${
@@ -95,6 +99,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 						MARKET_HOURS_SYNTHS.has(baseCurrencyKey) &&
 						baseCurrencyKey !== 'sUSD' && (
 							<MarketHoursStatus>
+								<Dot
+									background={baseCurrencyMarketIsOpen ? theme.colors.green : theme.colors.red}
+								/>
 								{baseCurrencyKey}{' '}
 								{t(
 									`exchange.market-details-card.${
@@ -143,9 +150,7 @@ const CardHeaderItems = styled.div`
 	justify-content: space-between;
 `;
 
-const MarketHoursStatus = styled.div`
-	margin-left: 16px;
-`;
+const MarketHoursStatus = styled.div``;
 
 const CountdownTimer = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -169,6 +174,16 @@ const Label = styled.div`
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Dot = styled.span<{ background: string }>`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.background};
+	margin-left: 16px;
+	margin-right: 6px;
 `;
 
 export default MarketDetailsCard;

@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { CurrencyKey, MARKET_HOURS_SYNTHS, SYNTHS_MAP } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
@@ -39,6 +39,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		selectedPriceCurrency,
 		getPriceAtCurrentRate,
 	} = useSelectedPriceCurrency();
+	const theme = useTheme();
 
 	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
 	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
@@ -180,6 +181,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				<CardHeaderItems>
 					{currencyKey && MARKET_HOURS_SYNTHS.has(currencyKey) && currencyKey !== 'sUSD' && (
 						<>
+							<Dot background={isOpen ? theme.colors.green : theme.colors.red} />
 							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)}{' '}
 							<CountdownTimer>{timer}</CountdownTimer>
 						</>
@@ -252,6 +254,15 @@ const Value = styled.div`
 
 const CountdownTimer = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Dot = styled.span<{ background: string }>`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.background};
+	margin-right: 6px;
 `;
 
 export default MarketDetailsCard;
