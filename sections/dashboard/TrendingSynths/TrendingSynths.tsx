@@ -19,11 +19,12 @@ import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/querie
 import { CurrencyKey } from 'constants/currency';
 import mapValues from 'lodash/mapValues';
 import Connector from 'containers/Connector';
+import values from 'lodash/values';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 
-	const { synthetixjs } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
@@ -33,7 +34,7 @@ const TrendingSynths: FC = () => {
 		useHistoricalVolumeQuery,
 	} = useSynthetixQueries();
 
-	const synths = synthetixjs?.synths || [];
+	const synths = values(synthsMap) || [];
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();
