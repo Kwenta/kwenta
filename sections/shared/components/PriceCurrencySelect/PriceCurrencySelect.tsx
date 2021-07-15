@@ -19,7 +19,7 @@ export const PriceCurrencySelect: FC = () => {
 		if (network != null && synthetix.synthsMap != null) {
 			return PRICE_CURRENCIES.filter((currencyKey) => synthetix.synthsMap![currencyKey]).map(
 				(currencyKey) => {
-					const synth = synthetix.synthsMap![currencyKey];
+					const synth = synthetix.synthsMap![currencyKey]!;
 					return {
 						label: synth.asset,
 						value: synth,

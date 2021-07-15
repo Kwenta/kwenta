@@ -8,16 +8,12 @@ import produce from 'immer';
 
 import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
 
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import Connector from 'containers/Connector';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import useCollateralShortRate from 'queries/collateral/useCollateralShortRate';
 
@@ -49,7 +45,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
 
-import { toBigNumber, zeroBN, formatNumber } from 'utils/formatters/number';
+import { zeroBN, formatNumber } from 'utils/formatters/number';
 
 import Notify from 'containers/Notify';
 
@@ -57,6 +53,7 @@ import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -71,11 +68,17 @@ const useShort = ({
 	const { notify } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
-	const [currencyPair, setCurrencyPair] = useCurrencyPair({
+	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
 		persistSelectedCurrencies: false,
 		defaultBaseCurrencyKey,
 		defaultQuoteCurrencyKey,
 	});
+
+	const {
+		useEthGasPriceQuery,
+		useSynthsBalancesQuery,
+		useExchangeRatesQuery,
+	} = useSynthetixQueries();
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -105,7 +108,7 @@ const useShort = ({
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
@@ -124,7 +127,7 @@ const useShort = ({
 		: null;
 
 	const shortCRatioTooLow = useMemo(
-		() => (minCratio != null ? toBigNumber(shortCRatio).lt(minCratio) : false),
+		() => (minCratio != null ? wei(shortCRatio).lt(minCratio) : false),
 		[shortCRatio, minCratio]
 	);
 
@@ -145,7 +148,7 @@ const useShort = ({
 			? get(synthsWalletBalancesQuery.data, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
 			: null;
 
-	let quoteCurrencyBalance: BigNumber | null = null;
+	let quoteCurrencyBalance: Wei | null = null;
 	if (quoteCurrencyKey != null) {
 		quoteCurrencyBalance = synthsWalletBalancesQuery.isSuccess
 			? get(synthsWalletBalancesQuery.data, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
@@ -162,22 +165,17 @@ const useShort = ({
 		[exchangeRates, quoteCurrencyKey, selectedPriceCurrency.name]
 	);
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const baseCurrencyAmountBN = useMemo(() => toBigNumber(baseCurrencyAmount), [baseCurrencyAmount]);
-	const quoteCurrencyAmountBN = useMemo(() => toBigNumber(quoteCurrencyAmount), [
-		quoteCurrencyAmount,
-	]);
+	const baseCurrencyAmountBN = baseCurrencyAmount ? wei(baseCurrencyAmount) : wei(0);
+	const quoteCurrencyAmountBN = quoteCurrencyAmount ? wei(quoteCurrencyAmount) : wei(0);
 
 	const totalTradePrice = useMemo(() => {
-		if (quoteCurrencyAmountBN.isNaN()) {
-			return zeroBN;
-		}
-		let tradePrice = quoteCurrencyAmountBN.multipliedBy(quotePriceRate);
-		if (selectPriceCurrencyRate) {
-			tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate);
+		if (selectPriceCurrencyRate && selectPriceCurrencyRate !== 0) {
+			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice;
@@ -207,13 +205,7 @@ const useShort = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.approving');
 		}
-		if (
-			!isWalletConnected ||
-			baseCurrencyAmountBN.isNaN() ||
-			quoteCurrencyAmountBN.isNaN() ||
-			baseCurrencyAmountBN.lte(0) ||
-			quoteCurrencyAmountBN.lte(0)
-		) {
+		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		if (shortCRatioTooLow) {
@@ -254,7 +246,9 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) => SYNTHS_TO_SHORT.includes(synth.name));
+			return synthetix.js!.synths.filter((synth) =>
+				SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey)
+			);
 		}
 		return [];
 	}, [isAppReady]);
@@ -277,14 +271,14 @@ const useShort = ({
 
 	const feeAmountInBaseCurrency = useMemo(() => {
 		if (issueFeeRate != null && baseCurrencyAmount) {
-			return toBigNumber(baseCurrencyAmount).multipliedBy(issueFeeRate);
+			return wei(baseCurrencyAmount).mul(issueFeeRate);
 		}
 		return null;
 	}, [baseCurrencyAmount, issueFeeRate]);
 
 	const feeCost = useMemo(() => {
 		if (feeAmountInBaseCurrency != null) {
-			return feeAmountInBaseCurrency.multipliedBy(basePriceRate);
+			return feeAmountInBaseCurrency.mul(basePriceRate);
 		}
 		return null;
 	}, [feeAmountInBaseCurrency, basePriceRate]);
@@ -299,7 +293,7 @@ const useShort = ({
 					contracts.CollateralShort.address
 				)) as ethers.BigNumber;
 
-				setIsApproved(toBigNumber(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
+				setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
 			} catch (e) {
 				console.log(e);
 			}
@@ -338,14 +332,8 @@ const useShort = ({
 
 	const getShortParams = () => {
 		return [
-			ethers.utils.parseUnits(
-				quoteCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
-				DEFAULT_TOKEN_DECIMALS
-			),
-			ethers.utils.parseUnits(
-				baseCurrencyAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
-				DEFAULT_TOKEN_DECIMALS
-			),
+			quoteCurrencyAmountBN.toBN(),
+			baseCurrencyAmountBN.toBN(),
 			ethers.utils.formatBytes32String(baseCurrencyKey!),
 		];
 	};
@@ -426,13 +414,11 @@ const useShort = ({
 					produce(orders, (draftState) => {
 						draftState.push({
 							id: loanId.toString(),
-							accruedInterest: toBigNumber(0),
-							synthBorrowed: utils.parseBytes32String(currency),
-							synthBorrowedAmount: toBigNumber(utils.formatUnits(amount, DEFAULT_TOKEN_DECIMALS)),
-							collateralLocked: SYNTHS_MAP.sUSD,
-							collateralLockedAmount: toBigNumber(
-								utils.formatUnits(collateral, DEFAULT_TOKEN_DECIMALS)
-							),
+							accruedInterest: wei(0),
+							synthBorrowed: utils.parseBytes32String(currency) as CurrencyKey,
+							synthBorrowedAmount: wei(amount),
+							collateralLocked: Synths.sUSD,
+							collateralLockedAmount: wei(collateral),
 							txHash: tx.transactionHash,
 							isOpen: true,
 							createdAt: new Date(),
@@ -514,26 +500,14 @@ const useShort = ({
 					setBaseCurrencyAmount('');
 				} else {
 					setQuoteCurrencyAmount(value);
-					setBaseCurrencyAmount(
-						toBigNumber(value)
-							.multipliedBy(rate)
-							.dividedBy(shortCRatio)
-							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-							.toString()
-					);
+					setBaseCurrencyAmount(wei(value).mul(rate).div(shortCRatio).toString());
 				}
 			}}
 			walletBalance={quoteCurrencyBalance}
 			onBalanceClick={() => {
 				if (quoteCurrencyBalance != null) {
 					setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
-					setBaseCurrencyAmount(
-						quoteCurrencyBalance
-							.multipliedBy(rate)
-							.dividedBy(shortCRatio)
-							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-							.toString()
-					);
+					setBaseCurrencyAmount(quoteCurrencyBalance.mul(rate).div(shortCRatio).toString());
 				}
 			}}
 			priceRate={quotePriceRate}
@@ -552,13 +526,7 @@ const useShort = ({
 					setQuoteCurrencyAmount('');
 				} else {
 					setBaseCurrencyAmount(value);
-					setQuoteCurrencyAmount(
-						toBigNumber(value)
-							.multipliedBy(inverseRate)
-							.multipliedBy(shortCRatio)
-							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-							.toString()
-					);
+					setQuoteCurrencyAmount(wei(value).mul(inverseRate).mul(shortCRatio).toString());
 				}
 			}}
 			walletBalance={baseCurrencyBalance}
@@ -566,11 +534,7 @@ const useShort = ({
 				if (baseCurrencyBalance != null) {
 					setBaseCurrencyAmount(baseCurrencyBalance.toString());
 					setQuoteCurrencyAmount(
-						toBigNumber(baseCurrencyBalance)
-							.multipliedBy(inverseRate)
-							.multipliedBy(shortCRatio)
-							.decimalPlaces(DEFAULT_TOKEN_DECIMALS)
-							.toString()
+						wei(baseCurrencyBalance).mul(inverseRate).mul(shortCRatio).toString()
 					);
 				}
 			}}
@@ -602,7 +566,7 @@ const useShort = ({
 					totalTradePrice={totalTradePrice.toString()}
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
+					baseCurrency={baseCurrency || null}
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}
@@ -626,6 +590,7 @@ const useShort = ({
 					quoteCurrencyKey={quoteCurrencyKey!}
 					totalTradePrice={totalTradePrice.toString()}
 					txProvider="synthetix"
+					feeCost={feeCost}
 					quoteCurrencyLabel={t('shorting.common.posting')}
 					baseCurrencyLabel={t('shorting.common.shorting')}
 					icon={<Svg src={ArrowRightIcon} />}

@@ -5,10 +5,8 @@ import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
@@ -18,12 +16,14 @@ import NumericInput from 'components/Input/NumericInput';
 import { numericValueCSS, NumericValue, FlexDivRowCentered, FlexDivCol } from 'styles/common';
 
 import { formatPercent } from 'utils/formatters/number';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
 
 type TradeBalancerSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
 	onSubmit: () => void;
 	gasPrices: GasPrices | undefined;
-	estimatedSlippage: BigNumber;
+	estimatedSlippage: Wei;
 	setMaxSlippageTolerance: (num: string) => void;
 	maxSlippageTolerance: string;
 	isApproved?: boolean;
@@ -39,7 +39,7 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 	isApproved = true,
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 
 	const SLIPPAGE_VALUES = useMemo(

@@ -1,5 +1,4 @@
 import { atom, selector } from 'recoil';
-import { CurrencyKey } from 'constants/currency';
 import orderBy from 'lodash/orderBy';
 import groupBy from 'lodash/groupBy';
 import { Transaction } from 'ethers';
@@ -11,9 +10,9 @@ export type OrderStatus = 'pending' | 'confirmed' | 'cancelled';
 
 export type Order = {
 	hash: string;
-	baseCurrencyKey: CurrencyKey;
+	baseCurrencyKey: string;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey: CurrencyKey;
+	quoteCurrencyKey: string;
 	quoteCurrencyAmount: string;
 	orderType: 'market' | 'limit';
 	status: OrderStatus;

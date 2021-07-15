@@ -1,6 +1,6 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 
 const useAreaChartData = ({
 	currencyKey,
@@ -9,6 +9,8 @@ const useAreaChartData = ({
 	currencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
+
 	const data = useHistoricalRatesQuery(currencyKey, selectedChartPeriodLabel.period);
 
 	const change = data.data?.change ?? null;

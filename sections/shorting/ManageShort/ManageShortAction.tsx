@@ -19,16 +19,12 @@ import Notify from 'containers/Notify';
 
 import synthetix from 'lib/synthetix';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
-import { formatCurrency, toBigNumber, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
@@ -70,7 +66,8 @@ import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/G
 import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import { ShortingTab } from './constants';
-import useFeeReclaimPeriodQuery from 'queries/synths/useFeeReclaimPeriodQuery';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -100,13 +97,21 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [txError, setTxError] = useState<string | null>(null);
 	const { notify } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
+
+	const {
+		useEthGasPriceQuery,
+		useSynthsBalancesQuery,
+		useExchangeRatesQuery,
+		useFeeReclaimPeriodQuery,
+	} = useSynthetixQueries();
+
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const collateralShortDataQuery = useCollateralShortContractInfoQuery();
 	const issueFeeRate = collateralShortDataQuery.isSuccess
 		? collateralShortDataQuery?.data?.issueFeeRate ?? null
@@ -132,7 +137,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		[isCollateralTab, short.collateralLocked, short.synthBorrowed]
 	);
 
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(currencyKey);
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(currencyKey, walletAddress);
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
@@ -140,16 +145,13 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const balance = synthsWalletBalancesQuery.data?.balancesMap[currencyKey]?.balance ?? null;
 
-	const inputAmountBN = useMemo(() => toBigNumber(inputAmount || 0), [inputAmount]);
+	const inputAmountBN = wei(inputAmount || 0);
 
 	const redirectToShortingHome = useCallback(() => router.push(ROUTES.Shorting.Home), [router]);
 
 	const getMethodAndParams = useCallback(() => {
 		const idParam = `${short.id}`;
-		const amountParam = ethers.utils.parseUnits(
-			inputAmountBN.decimalPlaces(DEFAULT_TOKEN_DECIMALS).toString(),
-			DEFAULT_TOKEN_DECIMALS
-		);
+		const amountParam = inputAmountBN.toBN() as ethers.BigNumber;
 
 		let params: Array<ethers.BigNumber | string>;
 		let method: string = '';
@@ -201,27 +203,24 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
 
-	const totalToRepay = useMemo(() => short.synthBorrowedAmount.plus(short.accruedInterest), [
+	const totalToRepay = useMemo(() => short.synthBorrowedAmount.add(short.accruedInterest), [
 		short.accruedInterest,
 		short.synthBorrowedAmount,
 	]);
 
 	const totalTradePrice = useMemo(() => {
 		if (isCloseTab) {
-			return toBigNumber(totalToRepay).multipliedBy(assetPriceRate).toString();
+			return wei(totalToRepay).mul(assetPriceRate).toString();
 		}
-		if (inputAmountBN.isNaN()) {
-			return zeroBN.toString();
-		}
-		let tradePrice = inputAmountBN.multipliedBy(assetPriceRate);
+		let tradePrice = inputAmountBN.mul(assetPriceRate);
 		if (selectPriceCurrencyRate) {
-			tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice.toString();
@@ -238,7 +237,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				);
 			}
 		} else {
-			if (!isWalletConnected || inputAmountBN.isNaN() || inputAmountBN.lte(0)) {
+			if (!isWalletConnected || inputAmountBN.lte(0)) {
 				return t('exchange.summary-info.button.enter-amount');
 			}
 			if (isSubmitting) {
@@ -423,14 +422,14 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const issuanceFee = useMemo(() => {
 		if (issueFeeRate != null && inputAmountBN.gt(0)) {
-			return inputAmountBN.multipliedBy(issueFeeRate);
+			return inputAmountBN.mul(issueFeeRate);
 		}
 		return null;
 	}, [inputAmountBN, issueFeeRate]);
 
 	const feeCost = useMemo(() => {
 		if (issuanceFee != null) {
-			return issuanceFee.multipliedBy(assetPriceRate);
+			return issuanceFee.mul(assetPriceRate);
 		}
 		return null;
 	}, [issuanceFee, assetPriceRate]);
@@ -448,7 +447,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					contracts.CollateralShort.address
 				)) as ethers.BigNumber;
 
-				setIsApproved(toBigNumber(ethers.utils.formatEther(allowance)).gte(inputAmount));
+				setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(inputAmount));
 			} catch (e) {
 				console.log(e);
 			}
@@ -531,7 +530,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								totalTradePrice={totalTradePrice}
 								baseCurrencyAmount={inputAmount}
 								basePriceRate={assetPriceRate}
-								baseCurrency={currency}
+								baseCurrency={currency || null}
 								gasPrices={gasPrices}
 								feeReclaimPeriodInSeconds={0}
 								quoteCurrencyKey={null}
@@ -565,6 +564,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 							quoteCurrencyKey={isCloseTab ? short.synthBorrowed : undefined}
 							totalTradePrice={totalTradePrice}
 							txProvider="synthetix"
+							feeCost={feeCost}
 							baseCurrencyLabel={t(
 								`shorting.history.manage-short.sections.${tab}.tx-confirm.base-currency-label`
 							)}

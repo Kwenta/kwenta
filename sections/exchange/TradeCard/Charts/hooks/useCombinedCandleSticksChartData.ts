@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
-import BigNumber from 'bignumber.js';
 
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
 import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
 import { Candle } from 'queries/rates/types';
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
+import Wei, { wei } from '@synthetixio/wei';
 
 export type TempCandle = {
 	id: string;
 	synth: string;
-	open: BigNumber;
-	high: BigNumber;
-	low: BigNumber;
-	close: BigNumber;
+	open: Wei;
+	high: Wei;
+	low: Wei;
+	close: Wei;
 	timestamp: BigInt;
 
 	isBase?: boolean;
@@ -29,8 +29,8 @@ const useCombinedCandleSticksChartData = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const baseCurrencyIsSUSD = baseCurrencyKey === SYNTHS_MAP.sUSD;
-	const quoteCurrencyIsSUSD = quoteCurrencyKey === SYNTHS_MAP.sUSD;
+	const baseCurrencyIsSUSD = baseCurrencyKey === Synths.sUSD;
+	const quoteCurrencyIsSUSD = quoteCurrencyKey === Synths.sUSD;
 
 	const base = useData(baseCurrencyKey, selectedChartPeriodLabel);
 	const quote = useData(quoteCurrencyKey, selectedChartPeriodLabel);
@@ -104,10 +104,10 @@ const toTempCandle = (n: Candle): TempCandle => {
 	return {
 		id: n.id,
 		synth: n.synth,
-		open: toBigNumber(n.open.toLocaleString()),
-		high: toBigNumber(n.high.toLocaleString()),
-		low: toBigNumber(n.low.toLocaleString()),
-		close: toBigNumber(n.close.toLocaleString()),
+		open: wei(n.open.toLocaleString()),
+		high: wei(n.high.toLocaleString()),
+		low: wei(n.low.toLocaleString()),
+		close: wei(n.close.toLocaleString()),
 		timestamp: n.timestamp,
 	};
 };
@@ -116,16 +116,16 @@ const fromTempCandle = (n: TempCandle): Candle => {
 	return {
 		id: n.id,
 		synth: n.synth,
-		open: bigNumberToBigInt(n.open),
-		high: bigNumberToBigInt(n.high),
-		low: bigNumberToBigInt(n.low),
-		close: bigNumberToBigInt(n.close),
+		open: weiToBigInt(n.open),
+		high: weiToBigInt(n.high),
+		low: weiToBigInt(n.low),
+		close: weiToBigInt(n.close),
 		timestamp: n.timestamp,
 	};
 };
 
-export const bigNumberToBigInt = (n: BigNumber): BigInt => {
-	return BigInt(Math.ceil(n.times(1e18).toNumber()));
+const weiToBigInt = (n: Wei): BigInt => {
+	return BigInt(Math.ceil(n.mul(1e18).toNumber()));
 };
 
 export default useCombinedCandleSticksChartData;

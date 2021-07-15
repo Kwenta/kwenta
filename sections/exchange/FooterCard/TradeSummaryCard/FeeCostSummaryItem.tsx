@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import BigNumber from 'bignumber.js';
+
+import Wei from '@synthetixio/wei';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -9,9 +10,10 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { CurrencyKey } from 'constants/currency';
 
 type FeeRateSummaryItemProps = {
-	feeCost: BigNumber | null;
+	feeCost: Wei | null;
 };
 
 const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {
@@ -23,7 +25,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ feeCost }) => {
 			<SummaryItemLabel>{t('exchange.summary-info.fee-cost')}</SummaryItemLabel>
 			<SummaryItemValue data-testid="exchange-fee-cost">
 				{feeCost != null
-					? formatCurrency(selectedPriceCurrency.name, feeCost, {
+					? formatCurrency(selectedPriceCurrency.name as CurrencyKey, feeCost, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals: feeCost.lt(0.01) ? 4 : 2,
 					  })

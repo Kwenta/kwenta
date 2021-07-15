@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
 import LoaderIcon from 'assets/svg/app/loader.svg';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 import { ChartType } from 'constants/chartType';
 import ChangePercent from 'components/ChangePercent';
@@ -107,7 +107,7 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 	const price = currentPrice || (basePriceRate ?? 1) / (quotePriceRate! || 1);
 
 	const eitherCurrencyIsSUSD = useMemo(
-		() => baseCurrencyKey === SYNTHS_MAP.sUSD || quoteCurrencyKey === SYNTHS_MAP.sUSD,
+		() => baseCurrencyKey === Synths.sUSD || quoteCurrencyKey === Synths.sUSD,
 		[baseCurrencyKey, quoteCurrencyKey]
 	);
 

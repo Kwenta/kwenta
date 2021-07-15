@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryConfig, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from 'react-query';
 import zipObject from 'lodash/zipObject';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -52,14 +52,14 @@ export type CMCPricesResponse = {
 		notice: string | null;
 		timestamp: string;
 	};
-	data: Record<CurrencyKey, CMCSymbol>;
+	data: Record<string, CMCSymbol>;
 };
 
 const useCMCQuotesQuery = (
 	currencyKeys: CurrencyKey[],
-	options?: QueryConfig<Record<CurrencyKey, CMCSymbolQuote>>
+	options?: UseQueryOptions<Record<string, CMCSymbolQuote>>
 ) => {
-	return useQuery<Record<CurrencyKey, CMCSymbolQuote>>(
+	return useQuery<Record<string, CMCSymbolQuote>>(
 		QUERY_KEYS.CMC.Quotes(currencyKeys),
 		async () => {
 			const response = await axios.get<CMCPricesResponse>(CMC_PRICES_API + currencyKeys.join(','));

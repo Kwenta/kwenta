@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import media from 'styles/media';
 
@@ -13,8 +13,8 @@ import { CurrencyCardsSelector, ExchangeCardsWithSelector } from 'styles/common'
 
 const ShortingCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useShort({
-		defaultBaseCurrencyKey: SYNTHS_MAP.sETH,
-		defaultQuoteCurrencyKey: SYNTHS_MAP.sUSD,
+		defaultBaseCurrencyKey: Synths.sETH,
+		defaultQuoteCurrencyKey: Synths.sUSD,
 	});
 
 	return (
