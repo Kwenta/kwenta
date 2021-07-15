@@ -1,6 +1,5 @@
 import { UseQueryOptions, useQuery } from 'react-query';
 import { ethers } from 'ethers';
-import synthetix from 'lib/synthetix';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
@@ -10,6 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 
 import { synthToContractName } from 'utils/currencies';
 import Wei, { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 const useSynthMarketCapQuery = (
 	currencyKey: CurrencyKey | null,
@@ -17,13 +17,15 @@ const useSynthMarketCapQuery = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const { synthetixjs } = Connector.useContainer();
+
 	return useQuery<Wei>(
 		QUERY_KEYS.Rates.MarketCap(currencyKey as string),
 		async () => {
 			const data = await Promise.all([
-				synthetix.js!.contracts[synthToContractName(currencyKey!)].totalSupply(),
-				synthetix.js!.contracts.ExchangeRates.rateForCurrency(
-					synthetix.js!.toBytes32(currencyKey as string)
+				synthetixjs!.contracts[synthToContractName(currencyKey!)].totalSupply(),
+				synthetixjs!.contracts.ExchangeRates.rateForCurrency(
+					synthetixjs!.toBytes32(currencyKey as string)
 				),
 			]);
 

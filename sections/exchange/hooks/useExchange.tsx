@@ -71,8 +71,6 @@ import { ordersState } from 'store/orders';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 
-import synthetix from 'lib/synthetix';
-
 import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
@@ -83,6 +81,7 @@ import { GasPrices } from '@synthetixio/queries';
 
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -112,6 +111,7 @@ const useExchange = ({
 	txProvider = 'synthetix',
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
+	const { synthsMap, synthetixjs } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
@@ -300,10 +300,7 @@ const useExchange = ({
 		? feeReclaimPeriodQuery.data ?? 0
 		: 0;
 
-	const baseCurrency =
-		baseCurrencyKey != null && synthetix.synthsMap != null
-			? synthetix.synthsMap[baseCurrencyKey as CurrencyKey]!
-			: null;
+	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey as CurrencyKey]! : null;
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
@@ -594,9 +591,9 @@ const useExchange = ({
 
 	const getGasLimitEstimateForExchange = useCallback(async () => {
 		try {
-			if (synthetix.js != null) {
+			if (synthetixjs != null) {
 				const exchangeParams = getExchangeParams();
-				const gasEstimate = await synthetix.js.contracts.Synthetix.estimateGas.exchangeWithTracking(
+				const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
 					...exchangeParams
 				);
 
@@ -686,7 +683,7 @@ const useExchange = ({
 	};
 
 	const handleSubmit = useCallback(async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 			const exchangeParams = getExchangeParams();
@@ -711,7 +708,7 @@ const useExchange = ({
 
 					setGasLimit(gasLimitEstimate);
 
-					tx = await synthetix.js.contracts.Synthetix.exchangeWithTracking(...exchangeParams, {
+					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, {
 						gasPrice: gasPriceWei,
 						gasLimit: gasLimitEstimate,
 					});
@@ -780,28 +777,26 @@ const useExchange = ({
 
 	useEffect(() => {
 		if (routingEnabled && marketQuery != null) {
-			if (synthetix.synthsMap != null) {
-				const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketQuery.split('-') as [
-					CurrencyKey,
-					CurrencyKey
-				];
+			const [baseCurrencyFromQuery, quoteCurrencyFromQuery] = marketQuery.split('-') as [
+				CurrencyKey,
+				CurrencyKey
+			];
 
-				const validBaseCurrency =
-					baseCurrencyFromQuery != null && synthetix.synthsMap[baseCurrencyFromQuery] != null;
-				const validQuoteCurrency =
-					quoteCurrencyFromQuery != null && synthetix.synthsMap[quoteCurrencyFromQuery] != null;
+			const validBaseCurrency =
+				baseCurrencyFromQuery != null && synthsMap[baseCurrencyFromQuery] != null;
+			const validQuoteCurrency =
+				quoteCurrencyFromQuery != null && synthsMap[quoteCurrencyFromQuery] != null;
 
-				if (validBaseCurrency && validQuoteCurrency) {
-					setCurrencyPair({
-						base: baseCurrencyFromQuery,
-						quote: quoteCurrencyFromQuery,
-					});
-				} else if (validBaseCurrency) {
-					setCurrencyPair({
-						base: baseCurrencyFromQuery,
-						quote: null,
-					});
-				}
+			if (validBaseCurrency && validQuoteCurrency) {
+				setCurrencyPair({
+					base: baseCurrencyFromQuery,
+					quote: quoteCurrencyFromQuery,
+				});
+			} else if (validBaseCurrency) {
+				setCurrencyPair({
+					base: baseCurrencyFromQuery,
+					quote: null,
+				});
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

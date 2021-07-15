@@ -18,9 +18,12 @@ import { trendingSynthsOptionState } from 'store/ui';
 import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import mapValues from 'lodash/mapValues';
+import Connector from 'containers/Connector';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
+
+	const { synthetixjs } = Connector.useContainer();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
@@ -30,7 +33,7 @@ const TrendingSynths: FC = () => {
 		useHistoricalVolumeQuery,
 	} = useSynthetixQueries();
 
-	const synths = Object.keys(Synths) as CurrencyKey[];
+	const synths = synthetixjs?.synths || [];
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();
@@ -38,10 +41,10 @@ const TrendingSynths: FC = () => {
 	// ok for rules of hooks since `synths` is static for execution of the site
 	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = {};
 	for (const synth of synths) {
-		const historicalRateQuery = useHistoricalRatesQuery(synth); // eslint-disable-line react-hooks/rules-of-hooks
+		const historicalRateQuery = useHistoricalRatesQuery(synth.name); // eslint-disable-line react-hooks/rules-of-hooks
 
 		if (historicalRateQuery.isSuccess) {
-			historicalRates[synth] = historicalRateQuery.data!;
+			historicalRates[synth.name] = historicalRateQuery.data!;
 		}
 	}
 
@@ -52,25 +55,25 @@ const TrendingSynths: FC = () => {
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
-			return synths.sort((a: CurrencyKey, b: CurrencyKey) => numericSort(exchangeRates, a, b));
+			return synths.sort((a: Synth, b: Synth) => numericSort(exchangeRates, a.name, b.name));
 		}
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
-			return synths.sort((a: CurrencyKey, b: CurrencyKey) => numericSort(historicalVolume, a, b));
+			return synths.sort((a: Synth, b: Synth) => numericSort(historicalVolume, a.name, b.name));
 		}
 		if (historicalRates != null) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
-				return synths.sort((a: CurrencyKey, b: CurrencyKey) =>
-					numericSort(mapValues(historicalRates, 'high'), a, b)
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'high'), a.name, b.name)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Rates24HLow) {
-				return synths.sort((a: CurrencyKey, b: CurrencyKey) =>
-					numericSort(mapValues(historicalRates, 'low'), a, b)
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'low'), a.name, b.name)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Change) {
-				return synths.sort((a: CurrencyKey, b: CurrencyKey) =>
-					numericSort(mapValues(historicalRates, 'change'), a, b)
+				return synths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'change'), a.name, b.name)
 				);
 			}
 		}
@@ -96,17 +99,11 @@ const TrendingSynths: FC = () => {
 				</TitleSortContainer>
 			</Container>
 			<Rows>
-				{sortedSynths.map((synth: CurrencyKey) => {
-					const price = exchangeRates && exchangeRates[synth];
+				{sortedSynths.map((synth: Synth) => {
+					const price = exchangeRates && exchangeRates[synth.name];
 					const currencyKey = synth;
 
-					return (
-						<SynthRow
-							key={currencyKey}
-							synth={{ name: synth, description: '' } as Synth}
-							price={price}
-						/>
-					);
+					return <SynthRow key={synth.name} synth={synth} price={price} />;
 				})}
 			</Rows>
 		</>

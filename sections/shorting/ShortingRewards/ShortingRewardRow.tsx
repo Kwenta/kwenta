@@ -7,7 +7,6 @@ import { ethers } from 'ethers';
 import Notify from 'containers/Notify';
 import Connector from 'containers/Connector';
 
-import synthetix from 'lib/synthetix';
 import Button from 'components/Button';
 import { normalizeGasLimit, gasPriceInWei } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -41,7 +40,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const { notify } = Connector.useContainer();
+	const { notify, synthetixjs } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -85,9 +84,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	}, [ShortingRewardRow, snxPriceRate, selectPriceCurrencyRate]);
 
 	const getGasEstimate = useCallback(async () => {
-		if (synthetix.js != null && walletAddress != null) {
+		if (synthetixjs != null && walletAddress != null) {
 			try {
-				const { CollateralShort } = synthetix.js.contracts;
+				const { CollateralShort } = synthetixjs.contracts;
 
 				const gasLimitEstimate = await CollateralShort.estimateGas.getReward(
 					ethers.utils.formatBytes32String(currencyKey),
@@ -112,7 +111,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	}, [getGasEstimate, setGasLimit]);
 
 	const handleSubmit = useCallback(async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
@@ -120,7 +119,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				setIsSubmitting(true);
 
 				let tx: ethers.ContractTransaction | null = null;
-				const { CollateralShort } = synthetix.js.contracts;
+				const { CollateralShort } = synthetixjs!.contracts;
 
 				const gasLimitEstimate = await getGasEstimate();
 

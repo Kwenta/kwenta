@@ -38,8 +38,6 @@ import { customShortCRatioState, shortCRatioState } from 'store/ui';
 
 import { getExchangeRatesForCurrencies, synthToContractName } from 'utils/currencies';
 
-import synthetix from 'lib/synthetix';
-
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -65,7 +63,7 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify } = Connector.useContainer();
+	const { notify, synthsMap, synthetixjs } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
@@ -131,10 +129,7 @@ const useShort = ({
 		[shortCRatio, minCratio]
 	);
 
-	const baseCurrency =
-		baseCurrencyKey != null && synthetix.synthsMap != null
-			? synthetix.synthsMap[baseCurrencyKey]
-			: null;
+	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey] : null;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const rate = useMemo(
@@ -246,7 +241,7 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) =>
+			return synthetixjs!.synths.filter((synth) =>
 				SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey)
 			);
 		}
@@ -286,7 +281,7 @@ const useShort = ({
 	const checkAllowance = useCallback(async () => {
 		if (isWalletConnected && quoteCurrencyKey != null && quoteCurrencyAmount) {
 			try {
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const allowance = (await contracts[synthToContractName(quoteCurrencyKey)].allowance(
 					walletAddress,
@@ -340,7 +335,7 @@ const useShort = ({
 
 	const getGasLimitEstimateForShort = async () => {
 		try {
-			const gasEstimate = await synthetix.js!.contracts.CollateralShort.estimateGas.open(
+			const gasEstimate = await synthetixjs!.contracts.CollateralShort.estimateGas.open(
 				...getShortParams()
 			);
 
@@ -360,7 +355,7 @@ const useShort = ({
 				setIsApproving(true);
 				// open approve modal
 
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const collateralContract = contracts[synthToContractName(quoteCurrencyKey)];
 
@@ -407,7 +402,7 @@ const useShort = ({
 			_issueFee: ethers.BigNumber,
 			tx: ethers.Event
 		) => {
-			if (synthetix.js != null) {
+			if (synthetixjs != null) {
 				// const { CollateralShort } = synthetix.js.contracts;
 
 				setHistoricalShortPositions((orders) =>
@@ -433,11 +428,11 @@ const useShort = ({
 	);
 
 	const handleSubmit = async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const { CollateralShort } = synthetix.js.contracts;
+			const { CollateralShort } = synthetixjs.contracts;
 
 			try {
 				setIsSubmitting(true);
@@ -477,7 +472,7 @@ const useShort = ({
 		const unsubs: Function[] = [];
 
 		if (isAppReady && walletAddress != null) {
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const loanCreatedEvent = CollateralShort.filters.LoanCreated(walletAddress);
 

@@ -17,8 +17,6 @@ import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import Notify from 'containers/Notify';
 
-import synthetix from 'lib/synthetix';
-
 import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
@@ -95,7 +93,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-	const { notify } = Connector.useContainer();
+	const { notify, synthsMap, synthetixjs } = Connector.useContainer();
 	const { monitorHash } = Notify.useContainer();
 
 	const {
@@ -294,7 +292,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		try {
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const { method, params } = getMethodAndParams();
 			const gasEstimate = await CollateralShort.estimateGas[method](...params);
@@ -317,11 +315,11 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	}, [submissionDisabledReason, gasLimit, isActive, getGasLimitEstimate]);
 
 	const handleSubmit = async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const { method, params, onSuccess } = getMethodAndParams();
 
@@ -378,7 +376,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			try {
 				setIsApproving(true);
 
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const collateralContract = contracts[synthToContractName(currencyKey)];
 
@@ -434,13 +432,12 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		return null;
 	}, [issuanceFee, assetPriceRate]);
 
-	const currency =
-		currencyKey != null && synthetix.synthsMap != null ? synthetix.synthsMap[currencyKey] : null;
+	const currency = currencyKey != null && synthsMap != null ? synthsMap[currencyKey] : null;
 
 	const checkAllowance = useCallback(async () => {
 		if (isWalletConnected && currencyKey != null && inputAmount) {
 			try {
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const allowance = (await contracts[synthToContractName(currencyKey)].allowance(
 					walletAddress,

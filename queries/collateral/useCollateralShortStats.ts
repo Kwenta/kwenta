@@ -7,8 +7,7 @@ import { CurrencyKey } from 'constants/currency';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
-
-import synthetix from 'lib/synthetix';
+import Connector from 'containers/Connector';
 
 type ReturnValueType = Record<
 	CurrencyKey,
@@ -25,20 +24,22 @@ const useCollateralShortStats = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const { synthetixjs } = Connector.useContainer();
+
 	return useQuery<ReturnValueType>(
 		QUERY_KEYS.Collateral.ShortStats(currencyKeys.join('|')),
 		async () => {
 			const stats = (await Promise.all([
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts.CollateralManager.short(
+					synthetixjs!.contracts.CollateralManager.short(
 						ethers.utils.formatBytes32String(currencyKey)
 					)
 				),
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
+					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
 				),
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
+					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
 				),
 			])) as ethers.BigNumber[];
 
