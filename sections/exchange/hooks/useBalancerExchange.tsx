@@ -35,8 +35,6 @@ import {
 import { ordersState } from 'store/orders';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import synthetix from 'lib/synthetix';
-
 import { normalizeGasLimit } from 'utils/network';
 import useCurrencyPair from './useCurrencyPair';
 import { zeroBN, scale } from 'utils/formatters/number';
@@ -74,7 +72,7 @@ const useBalancerExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { notify, provider, signer, network } = Connector.useContainer();
+	const { notify, provider, signer, network, synthetixjs } = Connector.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const {
@@ -252,7 +250,7 @@ const useBalancerExchange = ({
 
 	useEffect(() => {
 		if (
-			synthetix?.js != null &&
+			synthetixjs != null &&
 			provider != null &&
 			gasPrice != null &&
 			network?.id != null &&
@@ -270,7 +268,7 @@ const useBalancerExchange = ({
 			sor.fetchPools();
 			setSmartOrderRouter(sor);
 		}
-	}, [provider, gasPrice, network?.id]);
+	}, [provider, gasPrice, network?.id, synthetixjs]);
 
 	useInterval(
 		async () => {
@@ -296,7 +294,7 @@ const useBalancerExchange = ({
 			if (
 				address != null &&
 				key != null &&
-				synthetix?.js != null &&
+				synthetixjs != null &&
 				signer != null &&
 				id != null &&
 				(id === NetworkId.Mainnet || id === NetworkId.Kovan)
@@ -309,14 +307,14 @@ const useBalancerExchange = ({
 					);
 					setBalancerProxyContract(proxyContract);
 				}
-				const allowance = await synthetix.js.contracts[`Synth${key}`].allowance(
+				const allowance = await synthetixjs!.contracts[`Synth${key}`].allowance(
 					address,
 					BALANCER_LINKS[id].proxyAddr
 				);
 				setBaseAllowance(allowance.toString());
 			}
 		},
-		[signer]
+		[signer, synthetixjs]
 	);
 
 	useEffect(() => {
@@ -348,11 +346,11 @@ const useBalancerExchange = ({
 	]);
 
 	useEffect(() => {
-		if (synthetix?.js && baseCurrencyKey != null && quoteCurrencyKey != null) {
-			setBaseCurrencyAddress(synthetix.js.contracts[`Synth${baseCurrencyKey}`].address);
-			setQuoteCurrencyAddress(synthetix.js.contracts[`Synth${quoteCurrencyKey}`].address);
+		if (synthetixjs && baseCurrencyKey != null && quoteCurrencyKey != null) {
+			setBaseCurrencyAddress(synthetixjs.contracts[`Synth${baseCurrencyKey}`].address);
+			setQuoteCurrencyAddress(synthetixjs.contracts[`Synth${quoteCurrencyKey}`].address);
 		}
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, synthetixjs]);
 
 	const calculateExchangeRate = useCallback(
 		async ({ value, isBase }: { value: Wei; isBase: boolean }) => {
@@ -408,7 +406,7 @@ const useBalancerExchange = ({
 	const handleApprove = useCallback(async () => {
 		if (gasPrice != null && balancerProxyContract != null) {
 			try {
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 				setIsApproving(true);
 				setApproveError(null);
 				setApproveModalOpen(true);
@@ -461,11 +459,12 @@ const useBalancerExchange = ({
 		getAllowanceAndInitProxyContract,
 		notify,
 		quoteCurrencyKey,
+		synthetixjs,
 	]);
 
 	const handleSubmit = useCallback(async () => {
 		if (
-			synthetix.js != null &&
+			synthetixjs != null &&
 			gasPrice != null &&
 			balancerProxyContract?.address != null &&
 			provider != null
@@ -561,6 +560,7 @@ const useBalancerExchange = ({
 		setOrders,
 		setHasOrdersNotification,
 		maxSlippageTolerance,
+		synthetixjs,
 	]);
 
 	const handleAmountChange = useCallback(

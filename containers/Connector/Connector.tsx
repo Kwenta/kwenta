@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
+import {
+	NetworkId,
+	Network as NetworkName,
+	SynthetixJS,
+	synthetix,
+} from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
-
-import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId } from 'utils/network';
 
@@ -21,12 +24,15 @@ import { initOnboard, initNotify } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
+import { invert, keyBy } from 'lodash';
+import { useMemo } from 'react';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const language = useRecoilValue(languageState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
+	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [notify, setNotify] = useState<ReturnType<typeof initNotify> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
@@ -37,6 +43,18 @@ const useConnector = () => {
 		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
 		''
 	);
+
+	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
+		if (synthetixjs == null) {
+			return [{}, {}, {}];
+		}
+
+		return [
+			keyBy(synthetixjs.synths, 'name'),
+			keyBy(synthetixjs.tokens, 'symbol'),
+			invert(synthetixjs.networkToChainId),
+		];
+	}, [synthetixjs]);
 
 	useEffect(() => {
 		const init = async () => {
@@ -49,13 +67,11 @@ const useConnector = () => {
 				process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
 			);
 
-			synthetix.setContractSettings({
-				networkId,
-				provider,
-			});
+			const snxjs = synthetix({ provider, networkId });
 
 			// @ts-ignore
-			setNetwork(synthetix.js?.network);
+			setNetwork(snxjs.network);
+			setSynthetixjs(snxjs);
 			setProvider(provider);
 			setAppReady(true);
 		};
@@ -70,28 +86,24 @@ const useConnector = () => {
 				address: setWalletAddress,
 				network: (networkId: number) => {
 					const isSupportedNetwork =
-						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
-							? true
-							: false;
+						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
 
 					if (isSupportedNetwork) {
 						const provider = new ethers.providers.Web3Provider(onboard.getState().wallet.provider);
 						const signer = provider.getSigner();
 
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer,
-						});
+						const snxjs = synthetix({ provider, networkId, signer });
+
 						onboard.config({ networkId });
 						notify.config({ networkId });
 						setProvider(provider);
+						setSynthetixjs(snxjs);
 						setSigner(signer);
 
 						setNetwork({
-							id: networkId,
+							id: networkId as NetworkId,
 							// @ts-ignore
-							name: synthetix.chainIdToNetwork[networkId],
+							name: chainIdToNetwork[networkId] as NetworkName,
 						});
 					}
 				},
@@ -102,13 +114,11 @@ const useConnector = () => {
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
 
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer,
-						});
+						const snxjs = synthetix({ provider, networkId, signer });
+
 						setProvider(provider);
 						setSigner(provider.getSigner());
+						setSynthetixjs(snxjs);
 						setNetwork({
 							id: networkId,
 							name: network.name as NetworkName,
@@ -201,17 +211,22 @@ const useConnector = () => {
 	};
 
 	const getTokenAddress = (currencyKey: CurrencyKey) => {
-		const { contracts } = synthetix.js!;
+		if (synthetixjs == null) {
+			return null;
+		}
 
 		return currencyKey === CRYPTO_CURRENCY_MAP.ETH
 			? ETH_ADDRESS
-			: contracts[synthToContractName(currencyKey!)].address;
+			: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
 	};
 
 	return {
 		network,
 		provider,
 		signer,
+		synthetixjs,
+		synthsMap,
+		tokensMap,
 		onboard,
 		notify,
 		connectWallet,

@@ -6,8 +6,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
-
-import synthetix from 'lib/synthetix';
+import Connector from 'containers/Connector';
 
 export type CollateralContractInfo = {
 	issueFeeRate: Wei;
@@ -21,10 +20,12 @@ export type CollateralContractInfo = {
 const useCollateralShortContractInfoQuery = (options?: UseQueryOptions<CollateralContractInfo>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 
+	const { synthetixjs } = Connector.useContainer();
+
 	return useQuery<CollateralContractInfo>(
 		QUERY_KEYS.Collateral.ShortContractInfo,
 		async () => {
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const [
 				issueFeeRate,

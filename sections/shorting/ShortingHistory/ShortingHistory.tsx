@@ -1,6 +1,5 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import synthetix from 'lib/synthetix';
 import { Synth } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
 import isAfter from 'date-fns/isAfter';
@@ -20,9 +19,13 @@ import ShortingHistoryTable from './ShortingHistoryTable';
 import { Title } from '../common';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import Connector from 'containers/Connector';
 
 const ShortingHistory: FC = () => {
 	const { t } = useTranslation();
+
+	const { synthetixjs } = Connector.useContainer();
+
 	const shortHistoryQuery = useShortHistoryQuery();
 	const historicalShortsPosition = useRecoilValue(historicalShortsPositionState);
 
@@ -60,7 +63,7 @@ const ShortingHistory: FC = () => {
 	const [shortSize, setShortSize] = useState(shortSizeFilterList[0]);
 
 	// eslint-disable-next-line
-	const synths = synthetix.js?.synths || [];
+	const synths = synthetixjs?.synths || [];
 
 	const createSynthTypeFilter = useCallback(
 		(synths: Synth[], synthFilter: string) => (short: HistoricalShortPosition) =>

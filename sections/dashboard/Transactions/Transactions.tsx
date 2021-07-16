@@ -1,6 +1,5 @@
 import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
 
@@ -12,10 +11,13 @@ import TradeHistory from './TradeHistory';
 import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
 import { HistoricalTrade } from 'queries/trades/types';
 import { Synth } from '@synthetixio/contracts-interface';
+import Connector from 'containers/Connector';
 
 const Transactions: FC = () => {
 	const { t } = useTranslation();
 	const walletTradesQuery = useWalletTradesQuery();
+
+	const { synthetixjs } = Connector.useContainer();
 
 	const synthFilterList = useMemo(
 		() => [
@@ -52,8 +54,7 @@ const Transactions: FC = () => {
 	const [orderType, setOrderType] = useState(orderTypeList[0]);
 	const [orderSize, setOrderSize] = useState(orderSizeList[0]);
 
-	// eslint-disable-next-line
-	const synths = synthetix.js?.synths || [];
+	const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 
 	const createSynthTypeFilter = useCallback(
 		(synths: Synth[], synthFilter: string) => (trade: HistoricalTrade) =>
