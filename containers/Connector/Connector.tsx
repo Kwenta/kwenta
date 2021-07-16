@@ -134,7 +134,6 @@ const useConnector = () => {
 						});
 						setSelectedWallet(wallet.name);
 						setTransactionNotifier(new TransactionNotifier(provider));
-						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
 						// setProvider(null);
