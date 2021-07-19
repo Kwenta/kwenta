@@ -36,7 +36,14 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 		<>
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
-					value={createQueryContext({ networkId: network!.id, provider: provider ?? undefined })}
+					value={
+						provider && network
+							? createQueryContext({
+									provider: provider,
+									networkId: network!.id,
+							  })
+							: createQueryContext({ networkId: null })
+					}
 				>
 					<Layout>
 						<SystemStatus>
