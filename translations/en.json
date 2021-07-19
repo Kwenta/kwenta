@@ -147,12 +147,14 @@
 			}
 		},
 		"market-details-card": {
-			"title": "market details",
+			"title": "Market Details",
 			"24h-vol": "24H Volume",
 			"24h-high": "24H High",
 			"24h-low": "24H Low",
 			"market-cap": "Market cap",
-			"price-feed": "Price Feed"
+			"price-feed": "Price Feed",
+			"opens-in": "Opens in",
+			"closes-in": "Closes in"
 		},
 		"price-chart-card": {
 			"compare": "compare",

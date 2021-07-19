@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
-import synthetix from 'lib/synthetix';
+import Connector from 'containers/Connector';
 
 import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
@@ -94,6 +94,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthsMap, synthetixjs } = Connector.useContainer();
 
 	const {
 		useEthGasPriceQuery,
@@ -291,7 +292,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		try {
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const { method, params } = getMethodAndParams();
 			const gasEstimate = await CollateralShort.estimateGas[method](...params);
@@ -299,7 +300,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		} catch (e) {
 			return null;
 		}
-	}, [getMethodAndParams]);
+	}, [getMethodAndParams, synthetixjs]);
 
 	useEffect(() => {
 		async function updateGasLimit() {
@@ -314,11 +315,11 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	}, [submissionDisabledReason, gasLimit, isActive, getGasLimitEstimate]);
 
 	const handleSubmit = async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const { method, params, onSuccess } = getMethodAndParams();
 
@@ -375,7 +376,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			try {
 				setIsApproving(true);
 
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const collateralContract = contracts[synthToContractName(currencyKey)];
 
@@ -431,13 +432,12 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		return null;
 	}, [issuanceFee, assetPriceRate]);
 
-	const currency =
-		currencyKey != null && synthetix.synthsMap != null ? synthetix.synthsMap[currencyKey] : null;
+	const currency = currencyKey != null && synthsMap != null ? synthsMap[currencyKey] : null;
 
 	const checkAllowance = useCallback(async () => {
 		if (isWalletConnected && currencyKey != null && inputAmount) {
 			try {
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const allowance = (await contracts[synthToContractName(currencyKey)].allowance(
 					walletAddress,
@@ -449,7 +449,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				console.log(e);
 			}
 		}
-	}, [inputAmount, isWalletConnected, currencyKey, walletAddress]);
+	}, [inputAmount, isWalletConnected, currencyKey, walletAddress, synthetixjs]);
 
 	useEffect(() => {
 		if (needsApproval) {

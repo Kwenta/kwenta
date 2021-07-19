@@ -1,14 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
-import { CurrencyKey } from 'constants/currency';
+import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import { PERIOD_LABELS_MAP } from 'constants/period';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketNextTransition, marketIsOpen } from 'utils/marketHours';
 import useCombinedRates from 'sections/exchange/TradeCard/Charts/hooks/useCombinedRates';
 
 type MarketDetailsCardProps = {
@@ -28,12 +30,23 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const pairCurrencyName = `${quoteCurrencyKey}/${baseCurrencyKey}`;
+	const theme = useTheme();
 
 	const { low: rates24Low, high: rates24High } = useCombinedRates({
 		baseCurrencyKey,
 		quoteCurrencyKey,
 		selectedChartPeriodLabel: PERIOD_LABELS_MAP.ONE_DAY,
 	});
+
+	const quoteCurrencyMarketTimer = useMarketHoursTimer(
+		marketNextTransition((quoteCurrencyKey as CurrencyKey) ?? '') ?? null
+	);
+	const quoteCurrencyMarketIsOpen = marketIsOpen((quoteCurrencyKey as CurrencyKey) ?? '');
+
+	const baseCurrencyMarketTimer = useMarketHoursTimer(
+		marketNextTransition((baseCurrencyKey as CurrencyKey) ?? '') ?? null
+	);
+	const baseCurrencyMarketIsOpen = marketIsOpen((baseCurrencyKey as CurrencyKey) ?? '');
 
 	const rates24HighItem = (
 		<Item>
@@ -63,7 +76,43 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 
 	return (
 		<Card className="market-details-card" {...rest}>
-			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
+			<StyledCardHeader lowercase>
+				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
+				<CardHeaderItems>
+					{quoteCurrencyKey &&
+						MARKET_HOURS_SYNTHS.has(quoteCurrencyKey) &&
+						quoteCurrencyKey !== 'sUSD' && (
+							<MarketHoursStatus>
+								<Dot
+									background={quoteCurrencyMarketIsOpen ? theme.colors.green : theme.colors.red}
+								/>
+								{quoteCurrencyKey}{' '}
+								{t(
+									`exchange.market-details-card.${
+										quoteCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+									}`
+								)}{' '}
+								<CountdownTimer>{quoteCurrencyMarketTimer}</CountdownTimer>
+							</MarketHoursStatus>
+						)}
+					{baseCurrencyKey &&
+						MARKET_HOURS_SYNTHS.has(baseCurrencyKey) &&
+						baseCurrencyKey !== 'sUSD' && (
+							<MarketHoursStatus>
+								<Dot
+									background={baseCurrencyMarketIsOpen ? theme.colors.green : theme.colors.red}
+								/>
+								{baseCurrencyKey}{' '}
+								{t(
+									`exchange.market-details-card.${
+										baseCurrencyMarketIsOpen ? 'closes-in' : 'opens-in'
+									}`
+								)}{' '}
+								<CountdownTimer>{baseCurrencyMarketTimer}</CountdownTimer>
+							</MarketHoursStatus>
+						)}
+				</CardHeaderItems>
+			</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>{rates24HighItem}</Column>
@@ -91,6 +140,20 @@ const StyledCardBody = styled(Card.Body)`
 
 const StyledCardHeader = styled(Card.Header)`
 	height: 40px;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CardHeaderItems = styled.div`
+	line-height: 0.8;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const MarketHoursStatus = styled.div``;
+
+const CountdownTimer = styled.span`
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const Item = styled(FlexDivRowCentered)`
@@ -111,6 +174,16 @@ const Label = styled.div`
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Dot = styled.span<{ background: string }>`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.background};
+	margin-left: 16px;
+	margin-right: 6px;
 `;
 
 export default MarketDetailsCard;

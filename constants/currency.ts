@@ -68,6 +68,13 @@ export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
 	Synths.sCOIN,
 ]);
 
+export const MARKET_HOURS_SYNTHS = new Set([
+	...FIAT_SYNTHS,
+	...LSE_SYNTHS,
+	...TSE_SYNTHS,
+	...AFTER_HOURS_SYNTHS,
+]);
+
 export const COMMODITY_SYNTHS = new Set<CurrencyKey>([Synths.sXAU, Synths.sXAG, Synths.sOIL]);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);

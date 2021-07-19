@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
-import styled from 'styled-components';
-import { CurrencyKey, Synths } from 'constants/currency';
+import styled, { useTheme } from 'styled-components';
+import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -16,9 +16,11 @@ import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common
 import { truncateAddress } from 'utils/formatters/string';
 import { formatCurrency } from 'utils/formatters/number';
 
-import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -29,6 +31,7 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { tokensMap } = Connector.useContainer();
 
 	const {
 		useHistoricalVolumeQuery,
@@ -41,6 +44,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		selectedPriceCurrency,
 		getPriceAtCurrentRate,
 	} = useSelectedPriceCurrency();
+	const theme = useTheme();
 
 	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
 	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
@@ -73,8 +77,12 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		}
 	}
 
-	const token =
-		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
+	const token = tokensMap != null && currencyKey != null ? tokensMap[currencyKey] : null;
+
+	const timer = useMarketHoursTimer(
+		marketNextTransition((currencyKey as CurrencyKey) ?? '') ?? null
+	);
+	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? '');
 
 	const volume24HItem = (
 		<Item>
@@ -175,7 +183,18 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 
 	return (
 		<Card className="market-details-card" {...rest}>
-			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
+			<StyledCardHeader lowercase={true}>
+				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
+				<CardHeaderItems>
+					{currencyKey && MARKET_HOURS_SYNTHS.has(currencyKey) && currencyKey !== 'sUSD' && (
+						<>
+							<Dot background={isOpen ? theme.colors.green : theme.colors.red} />
+							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)}{' '}
+							<CountdownTimer>{timer}</CountdownTimer>
+						</>
+					)}
+				</CardHeaderItems>
+			</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>
@@ -212,6 +231,12 @@ const StyledCardBody = styled(Card.Body)`
 
 const StyledCardHeader = styled(Card.Header)`
 	height: 40px;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CardHeaderItems = styled.div`
+	line-height: 0.8;
 `;
 
 const Item = styled(FlexDivRowCentered)`
@@ -232,6 +257,19 @@ const Label = styled.div`
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const CountdownTimer = styled.span`
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Dot = styled.span<{ background: string }>`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.background};
+	margin-right: 6px;
 `;
 
 export default MarketDetailsCard;

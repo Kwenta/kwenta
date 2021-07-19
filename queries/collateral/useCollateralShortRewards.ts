@@ -8,8 +8,8 @@ import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import synthetix from 'lib/synthetix';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const useCollateralShortRewards = (
 	currencyKey: CurrencyKey | null,
@@ -19,11 +19,13 @@ const useCollateralShortRewards = (
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
+	const { synthetixjs } = Connector.useContainer();
+
 	return useQuery<Wei>(
 		QUERY_KEYS.Collateral.ShortRewards(currencyKey as string),
 		async () => {
 			try {
-				const earned = (await synthetix.js!.contracts[`ShortingRewards${currencyKey}`].earned(
+				const earned = (await synthetixjs!.contracts[`ShortingRewards${currencyKey}`].earned(
 					walletAddress
 				)) as ethers.BigNumber;
 

@@ -1,25 +1,22 @@
 import { useMemo, FC } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
 
 import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
-import { networkState } from 'store/wallet';
 
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-
-import synthetix from 'lib/synthetix';
+import Connector from 'containers/Connector';
 
 export const PriceCurrencySelect: FC = () => {
 	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
 
-	const network = useRecoilValue(networkState);
+	const { synthsMap, network } = Connector.useContainer();
 
 	const currencyOptions = useMemo(() => {
-		if (network != null && synthetix.synthsMap != null) {
-			return PRICE_CURRENCIES.filter((currencyKey) => synthetix.synthsMap![currencyKey]).map(
+		if (network != null && synthsMap != null) {
+			return PRICE_CURRENCIES.filter((currencyKey) => synthsMap![currencyKey]).map(
 				(currencyKey) => {
-					const synth = synthetix.synthsMap![currencyKey]!;
+					const synth = synthsMap![currencyKey]!;
 					return {
 						label: synth.asset,
 						value: synth,
@@ -28,7 +25,7 @@ export const PriceCurrencySelect: FC = () => {
 			);
 		}
 		return [];
-	}, [network]);
+	}, [network, synthsMap]);
 
 	return (
 		<Select
