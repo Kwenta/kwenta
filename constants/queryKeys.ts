@@ -118,6 +118,12 @@ export const QUERY_KEYS = {
 			market,
 			walletAddress,
 		],
+		Positions: (markets: string[] | [], walletAddress: string) => [
+			'futures',
+			'positions',
+			markets,
+			walletAddress,
+		],
 	},
 };
 

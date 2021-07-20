@@ -27,13 +27,14 @@ import ROUTES from 'constants/routes';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { FuturesMarket } from 'queries/futures/useGetFuturesMarkets';
 
-type MarketsProps = {};
+type MarketsProps = {
+	markets: [FuturesMarket] | [];
+};
 
-const Markets: React.FC<MarketsProps> = () => {
+const Markets: React.FC<MarketsProps> = ({ markets }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const markets = futuresMarketsQuery?.data ?? [];
 
 	return (
 		<StyledGridDiv>
@@ -70,10 +71,10 @@ const Markets: React.FC<MarketsProps> = () => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
+								<StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>
 									{formatCurrency(SYNTHS_MAP.sUSD, formatNumberFromBN(cellProps.value), {
 										sign: '$',
-										currencyKey: SYNTHS_MAP.sUSD,
 									})}
 								</StyledCurrency>
 							</span>
@@ -87,7 +88,6 @@ const Markets: React.FC<MarketsProps> = () => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
-								{' '}
 								--
 								{/* <StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>

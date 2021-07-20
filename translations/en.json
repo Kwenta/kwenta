@@ -465,6 +465,7 @@
 		"not-available-on-l1": "Futures is not available on L1",
 		"wallet-overview": {
 			"title": "wallet overview",
+			"open-position": "Open a position",
 			"balance": "available balance",
 			"margin-deployed": "total margin deployed",
 			"performance": "wallet performance",

@@ -8,21 +8,7 @@ import { isL2State, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { toBigNumber } from 'utils/formatters/number';
-
-export type FuturesMarket = {
-	market: string;
-	asset: string;
-	assetHex: string;
-	currentFundingRate: BigNumber;
-	feeRates: {
-		makerFee: BigNumber;
-		takerFee: BigNumber;
-	};
-	marketDebt: BigNumber;
-	marketSkew: BigNumber;
-	maxLeverage: BigNumber;
-	price: BigNumber;
-};
+import { FuturesMarket } from './types';
 
 const useGetFuturesMarkets = (options?: QueryConfig<[FuturesMarket]>) => {
 	const isAppReady = useRecoilValue(appReadyState);

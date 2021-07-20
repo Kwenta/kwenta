@@ -15,13 +15,14 @@ import { Position, PositionSide } from '../types';
 
 type PositionCardProps = {
 	position: Position;
+	isCTA: boolean;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
+const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) => {
 	const { t } = useTranslation();
 
 	return (
-		<StyledCard>
+		<StyledCard isCTA={isCTA}>
 			<StyledCardBody>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.position.title')}</Subtitle>
@@ -61,12 +62,12 @@ const PositionCard: React.FC<PositionCardProps> = ({ position }) => {
 };
 export default PositionCard;
 
-const StyledCard = styled(Card)`
-	margin-bottom: 16px;
+const StyledCard = styled(Card)<{ isCTA: boolean }>`
+	margin-bottom: ${(props) => (props.isCTA ? 0 : '16px')};
+	width: 100%;
 `;
 
 const StyledCardBody = styled(Card.Body)`
-	padding: 4px ​12px;
 	background: ${(props) => props.theme.colors.navy};
 `;
 
