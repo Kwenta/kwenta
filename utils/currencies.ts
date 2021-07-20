@@ -17,7 +17,14 @@ export const getExchangeRatesForCurrencies = (
 	rates: Rates | null,
 	base: string | null,
 	quote: string | null
-) => (rates == null || base == null || quote == null ? 0 : rates[base] * (1 / rates[quote]));
+) =>
+	rates == null ||
+	base == null ||
+	quote == null ||
+	rates[base] === undefined ||
+	rates[quote] === undefined
+		? 0
+		: rates[base] * (1 / rates[quote]);
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
