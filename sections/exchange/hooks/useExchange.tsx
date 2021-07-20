@@ -203,7 +203,7 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
+	const ethGasPriceQuery = useEthGasPriceQuery(isL2);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
@@ -844,7 +844,7 @@ const useExchange = ({
 					}
 					if (txProvider === 'synthetix') {
 						const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
-						const fee = baseCurrencyAmountNoFee.multipliedBy(exchangeFeeRate ?? 1);
+						const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
 						setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
 					}
 				}
