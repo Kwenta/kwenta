@@ -27,5 +27,6 @@ export default {
 	kovan: '#7057FF',
 	rinkeby: '#F6C343',
 	goerli: 'rgb(48, 153, 242)',
+	connectedDefault: goldColors.color1,
 	noNetwork: 'rgb(155, 155, 155)',
 };

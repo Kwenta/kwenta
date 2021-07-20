@@ -9,6 +9,7 @@ import { getWalletKey } from '../utils';
 export type Network = {
 	id: NetworkId;
 	name: NetworkName;
+	useOvm?: boolean;
 };
 
 export const networkState = atom<Network>({
@@ -50,4 +51,11 @@ export const gasSpeedState = atom<GasSpeed>({
 export const customGasPriceState = atom<string>({
 	key: getWalletKey('customGasPrice'),
 	default: '',
+});
+
+export const isL2State = selector<boolean>({
+	key: getWalletKey('isL2'),
+	get: ({ get }) => {
+		return get(networkState)?.useOvm ?? false;
+	},
 });

@@ -12,8 +12,6 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey, Synths } from 'constants/currency';
 
-import Connector from 'containers/Connector';
-
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import useCollateralShortRate from 'queries/collateral/useCollateralShortRate';
 
@@ -45,13 +43,13 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 
 import { zeroBN, formatNumber } from 'utils/formatters/number';
 
-import Notify from 'containers/Notify';
-
 import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -63,8 +61,8 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify, synthsMap, synthetixjs } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthsMap, synthetixjs } = Connector.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
 		persistSelectedCurrencies: false,
@@ -374,7 +372,7 @@ const useShort = ({
 					}
 				);
 				if (tx != null) {
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setIsApproving(false);
@@ -450,8 +448,8 @@ const useShort = ({
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
 
-				if (tx != null && notify != null) {
-					monitorHash({
+				if (tx != null) {
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							synthsWalletBalancesQuery.refetch();

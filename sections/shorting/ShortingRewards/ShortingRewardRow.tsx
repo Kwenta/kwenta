@@ -4,8 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 
-import Notify from 'containers/Notify';
-import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 import Button from 'components/Button';
 import { normalizeGasLimit, gasPriceInWei } from 'utils/network';
@@ -24,6 +23,7 @@ import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewa
 import Card from 'components/Card';
 import Currency from 'components/Currency';
 import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 type ShortingRewardRowProps = {
 	currencyKey: CurrencyKey;
@@ -40,8 +40,8 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 }) => {
 	const { t } = useTranslation();
 
-	const { notify, synthetixjs } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
@@ -134,8 +134,8 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 					}
 				)) as ethers.ContractTransaction;
 
-				if (tx != null && notify != null) {
-					monitorHash({
+				if (tx != null) {
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							collateralShortRewardsQuery.refetch();
@@ -155,8 +155,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		currencyKey,
 		gasPrice,
 		getGasEstimate,
-		monitorHash,
-		notify,
+		monitorTransaction,
 		setGasLimit,
 		walletAddress,
 		synthetixjs,

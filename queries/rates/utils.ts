@@ -1,6 +1,6 @@
 import subHours from 'date-fns/subHours';
 
-import { RateUpdates, BaseRateUpdate } from './types';
+import { RateUpdates } from './types';
 
 export const getMinAndMaxRate = (rates: RateUpdates) => {
 	if (rates.length === 0) return [0, 0];
@@ -30,11 +30,7 @@ export const calculateRateChange = (rates: RateUpdates) => {
 export const calculateTimestampForPeriod = (periodInHours: number) =>
 	Math.trunc(subHours(new Date().getTime(), periodInHours).getTime() / 1000);
 
-export const mockHistoricalRates = (
-	periodInHours: number,
-	rate = 1,
-	points = 100
-): BaseRateUpdate[] => {
+export const mockHistoricalRates = (periodInHours: number, rate = 1, points = 100): RateUpdates => {
 	let now = Date.now();
 
 	const rates = [];

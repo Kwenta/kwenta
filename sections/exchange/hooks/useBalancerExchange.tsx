@@ -40,6 +40,7 @@ import useCurrencyPair from './useCurrencyPair';
 import { zeroBN, scale } from 'utils/formatters/number';
 
 import balancerExchangeProxyABI from './balancerExchangeProxyABI';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { GasPrices } from '@synthetixio/queries';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
@@ -72,7 +73,8 @@ const useBalancerExchange = ({
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
-	const { notify, provider, signer, network, synthetixjs } = Connector.useContainer();
+	const { transactionNotifier, provider, signer, network, synthetixjs } = Connector.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { etherscanInstance } = Etherscan.useContainer();
 
 	const {
@@ -420,28 +422,34 @@ const useBalancerExchange = ({
 					gasPrice: gasPrice.toString(0, true),
 					gasLimit: normalizeGasLimit(gasLimitEstimate.toNumber()),
 				});
-				if (allowanceTx && notify) {
-					const { emitter } = notify.hash(allowanceTx.hash);
+				if (allowanceTx && transactionNotifier) {
 					const link =
 						etherscanInstance != null ? etherscanInstance.txLink(allowanceTx.hash) : undefined;
 
-					emitter.on('txConfirmed', () => {
-						getAllowanceAndInitProxyContract({
-							address: walletAddress,
-							key: quoteCurrencyKey,
-							id: network?.id ?? null,
-							contractNeedsInit: false,
-						});
-						return {
-							autoDismiss: 0,
-							link,
-						};
-					});
-
-					emitter.on('all', () => {
-						return {
-							link,
-						};
+					monitorTransaction({
+						txHash: allowanceTx.hash,
+						onTxConfirmed: () => {
+							getAllowanceAndInitProxyContract({
+								address: walletAddress,
+								key: quoteCurrencyKey,
+								id: network?.id ?? null,
+								contractNeedsInit: false,
+							});
+							return {
+								autoDismiss: 0,
+								link,
+							};
+						},
+						onTxSent: () => {
+							return {
+								link,
+							};
+						},
+						onTxFailed: () => {
+							return {
+								link,
+							};
+						},
 					});
 				}
 			} catch (e) {
@@ -457,7 +465,8 @@ const useBalancerExchange = ({
 		walletAddress,
 		network?.id,
 		getAllowanceAndInitProxyContract,
-		notify,
+		transactionNotifier,
+		monitorTransaction,
 		quoteCurrencyKey,
 		synthetixjs,
 	]);
@@ -506,30 +515,35 @@ const useBalancerExchange = ({
 					);
 					setHasOrdersNotification(true);
 
-					if (notify) {
-						const { emitter } = notify.hash(tx.hash);
+					if (transactionNotifier) {
 						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
-						// TODO: replace with monitorHash
-						emitter.on('txConfirmed', () => {
-							setOrders((orders) =>
-								produce(orders, (draftState) => {
-									const orderIndex = orders.findIndex((order) => order.hash === tx.hash);
-									if (draftState[orderIndex]) {
-										draftState[orderIndex].status = 'confirmed';
-									}
-								})
-							);
-							synthsWalletBalancesQuery.refetch();
-							return {
-								autoDismiss: 0,
-								link,
-							};
-						});
-
-						emitter.on('all', () => {
-							return {
-								link,
-							};
+						monitorTransaction({
+							txHash: tx.hash,
+							onTxConfirmed: () => {
+								setOrders((orders) =>
+									produce(orders, (draftState) => {
+										const orderIndex = orders.findIndex((order) => order.hash === tx.hash);
+										if (draftState[orderIndex]) {
+											draftState[orderIndex].status = 'confirmed';
+										}
+									})
+								);
+								synthsWalletBalancesQuery.refetch();
+								return {
+									autoDismiss: 0,
+									link,
+								};
+							},
+							onTxSent: () => {
+								return {
+									link,
+								};
+							},
+							onTxFailed: () => {
+								return {
+									link,
+								};
+							},
 						});
 					}
 				}
@@ -554,7 +568,8 @@ const useBalancerExchange = ({
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
 		provider,
-		notify,
+		transactionNotifier,
+		monitorTransaction,
 		etherscanInstance,
 		synthsWalletBalancesQuery,
 		setOrders,

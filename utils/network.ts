@@ -6,15 +6,15 @@ import { GWEI_UNIT } from 'constants/network';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
-	networkVersion: string;
+	chainId: string;
 };
 
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		if (window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
-			if (provider && provider.networkVersion != null) {
-				return Number(provider.networkVersion);
+			if (provider && provider.chainId) {
+				return Number(provider.chainId);
 			}
 		}
 		return DEFAULT_NETWORK_ID;
@@ -37,3 +37,5 @@ export const getTransactionPrice = (
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;
 
 export const gasPriceInWei = (gasPrice: number) => gasPrice * GWEI_UNIT;
+
+export const getIsOVM = (networkId: number): boolean => !!~[10, 69].indexOf(networkId);

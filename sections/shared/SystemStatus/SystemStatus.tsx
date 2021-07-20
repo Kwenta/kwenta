@@ -22,6 +22,9 @@ import SystemDownIcon from 'assets/svg/app/system-down.svg';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
+
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 
 type SystemStatusProps = {
@@ -50,6 +53,7 @@ export const REFRESH_INTERVAL = 2 * 60 * 1000; // 2 min
 
 const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 
 	const { useIsSystemOnMaintenance } = useSynthetixQueries();
 
@@ -70,7 +74,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			<FullScreenContainer>
 				<StyledPageContent>
 					<Header>
-						<Logo />
+						<Logo isL2={isL2} />
 					</Header>
 					<Container>
 						<StyledSystemDownIcon src={SystemDownIcon} />

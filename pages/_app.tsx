@@ -84,11 +84,11 @@ const App: FC<AppProps> = (props) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<WithAppContainers>
-						<QueryClientProvider client={new QueryClient()}>
+					<QueryClientProvider client={new QueryClient()}>
+						<WithAppContainers>
 							<InnerApp {...props} />
-						</QueryClientProvider>
-					</WithAppContainers>
+						</WithAppContainers>
+					</QueryClientProvider>
 				</RecoilRoot>
 			</ThemeProvider>
 		</>

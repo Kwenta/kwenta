@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
-import Notify from 'containers/Notify';
 
 import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
@@ -64,6 +63,7 @@ import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/G
 import TotalTradePriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/TotalTradePriceSummaryItem';
 
 import { ShortingTab } from './constants';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
@@ -93,8 +93,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-	const { notify, synthsMap, synthetixjs } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthsMap, synthetixjs } = Connector.useContainer();
 
 	const {
 		useEthGasPriceQuery,
@@ -337,8 +337,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
 
-				if (transaction != null && notify != null) {
-					monitorHash({
+				if (transaction != null) {
+					monitorTransaction({
 						txHash: transaction.hash,
 					});
 
@@ -395,7 +395,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					}
 				);
 				if (tx != null) {
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setIsApproving(false);
