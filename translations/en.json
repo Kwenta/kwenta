@@ -17,7 +17,11 @@
 			"shorting": "shorting"
 		},
 		"networks-switcher": {
-			"l2": "Switch to L2"
+			"l2": "Switch to L2",
+			"l1": "Switch to Ethereum (Mainnet)",
+			"optimistic-gateway": "Optimistic L2 Gateway",
+			"optimistic-etherscan": "Optimistic Etherscan",
+			"learn-more": "Learn more"
 		}
 	},
 	"homepage": {

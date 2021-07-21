@@ -76,7 +76,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
-							size="sm"
+							size="md"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
@@ -127,6 +127,7 @@ const WalletButton = styled(Button)`
 	border: 1px solid ${(props) => props.theme.colors.navy};
 	color: ${(props) => props.theme.colors.white};
 	border-radius: 4px;
+	height: 28px;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`
