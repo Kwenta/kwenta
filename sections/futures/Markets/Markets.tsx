@@ -25,7 +25,7 @@ import SearchIcon from 'assets/svg/app/search.svg';
 import ROUTES from 'constants/routes';
 
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { FuturesMarket } from 'queries/futures/useGetFuturesMarkets';
+import { FuturesMarket } from 'queries/futures/types';
 
 type MarketsProps = {
 	markets: [FuturesMarket] | [];

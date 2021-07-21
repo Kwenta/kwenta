@@ -2,29 +2,31 @@ import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { FlexDivCentered, FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList } from 'components/Tab';
 import { useState } from 'react';
 import { SYNTHS_MAP } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import Slider from 'components/Slider';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
+import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
+
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 import SlippageSelect from 'sections/shared/components/SlippageSelect';
-import Card from 'components/Card';
+import MarginSection from './MarginSection';
 
 type TradeProps = {};
 
@@ -38,6 +40,10 @@ const MAX_LEVERAGE = 10;
 
 const Trade: React.FC<TradeProps> = ({}) => {
 	const { t } = useTranslation();
+	const balancesQuery = useSynthsBalancesQuery();
+	const sUSDBalance = balancesQuery?.data?.totalUSDBalance ?? zeroBN;
+
+	console.log('fddfd', sUSDBalance.toString());
 
 	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
 	const [tradeSize, setTradeSize] = useState<string>('');
@@ -201,38 +207,24 @@ const Trade: React.FC<TradeProps> = ({}) => {
 						maxSlippageTolerance={maxSlippageTolerance}
 						setMaxSlippageTolerance={setMaxSlippageTolerance}
 					/>
-					<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
+					<FlexDivColCentered>
+						<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
+						<DepositMarginButton variant="primary" isRounded size="lg">
+							{t('futures.market.trade.button.deposit-margin')}
+						</DepositMarginButton>
+					</FlexDivColCentered>
+					{/* <Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
 						{isSubmitOrderDisabled
 							? t('futures.market.trade.button.enter-amount')
 							: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
-					</Button>
+					</Button> */}
 				</FlexDivCol>
 			</TopRow>
-
-			<BottomRow>
-				<Divider />
-				<StyledCard>
-					<FlexDivRowCentered>
-						<FlexDivCol>
-							<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
-							<MarginBalance>
-								{formatCurrency(SYNTHS_MAP.sUSD, availableMargin, { sign: '$' })}
-							</MarginBalance>
-						</FlexDivCol>
-						<Button variant="primary" isRounded>
-							{t('futures.market.trade.button.edit')}
-						</Button>
-					</FlexDivRowCentered>
-				</StyledCard>
-				<FlexDivRow>
-					<AvailableBalanceLabel>
-						{t('futures.market.trade.margin.available-balance')}
-					</AvailableBalanceLabel>
-					<AvailableBalanceValue>
-						{formatCurrency(SYNTHS_MAP.sUSD, availableBalance, { sign: '$' })}
-					</AvailableBalanceValue>
-				</FlexDivRow>
-			</BottomRow>
+			<MarginSection
+				availableMargin={null}
+				sUSDBalance={null}
+				onDeposit={() => console.log('deposit')}
+			/>
 		</Panel>
 	);
 };
@@ -413,44 +405,6 @@ const StyledSlippageSelcet = styled(SlippageSelect)`
 	margin-bottom: 24px;
 `;
 
-const Divider = styled.hr`
-	border: 1px solid ${(props) => props.theme.colors.vampire};
-	margin: 24px -32px;
-`;
-
-const StyledCard = styled(Card)`
-	background: ${(props) => props.theme.colors.navy};
-	padding: 20px;
-	margin-bottom: 24px;
-`;
-
-const AvailableMargin = styled.div`
-	color: ${(props) => props.theme.colors.silver};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	text-transform: capitalize;
-`;
-
-const MarginBalance = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-`;
-
-const AvailableBalanceLabel = styled.div`
-	color: ${(props) => props.theme.colors.blueberry};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	text-transform: capitalize;
-`;
-
-const AvailableBalanceValue = styled.div`
-	color: ${(props) => props.theme.colors.blueberry};
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 12px;
-	text-transform: capitalize;
-`;
-
 const TopRow = styled(FlexDivCol)``;
 
 const BottomRow = styled(FlexDivCol)``;
@@ -459,4 +413,14 @@ const Panel = styled(FlexDivCol)`
 	height: 100%;
 	justify-content: space-between;
 	padding-bottom: 48px;
+`;
+
+const MarginTitle = styled.h3`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+`;
+
+const DepositMarginButton = styled(Button)`
+	width: 100%;
 `;
