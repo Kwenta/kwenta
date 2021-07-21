@@ -20,7 +20,7 @@ function Select<T>(props: Props<T>) {
 				fontSize: '12px',
 				border: 'none',
 			}),
-			control: (provided) => ({
+			control: (provided, state) => ({
 				...provided,
 				fontFamily: fonts.bold,
 				color: colors.white,
@@ -30,7 +30,7 @@ function Select<T>(props: Props<T>) {
 				borderRadius: '4px',
 				outline: 'none',
 				minHeight: 'unset',
-				height: 'unset',
+				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
 					border: `1px solid rgba(255, 255, 255, 0.1)`,
 				},

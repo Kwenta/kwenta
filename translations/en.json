@@ -18,7 +18,7 @@
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
-			"l1": "Switch to Ethereum (Mainnet)",
+			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
 			"learn-more": "Learn more"
