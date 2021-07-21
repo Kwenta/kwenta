@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
 
 import { DesktopOnlyView } from 'components/Media';
@@ -14,11 +16,16 @@ import { isWalletConnectedState, isL2State } from 'store/wallet';
 import WalletOverview from 'sections/futures/WalletOverview';
 import Markets from 'sections/futures/Markets';
 import Hero from 'sections/futures/Hero';
+import { FuturesMarket } from 'queries/futures/types';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarkets: [FuturesMarket] | [] = futuresMarketsQuery?.data ?? [];
+	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
+		(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
+	);
+	const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
 
 	return (
 		<>
@@ -27,21 +34,17 @@ const Futures: FC = () => {
 			</Head>
 			<AppLayout>
 				<PageContent>
-					{/* {!isL2 ? (
-						<h1>{t('futures.not-available-on-l1')}</h1>
-					) : ( */}
 					<FullHeightContainer>
 						<MainContent>
 							<Hero />
-							<Markets />
+							<Markets markets={futuresMarkets} />
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<WalletOverview />
+								<WalletOverview positions={futuresMarketsPositions} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>
-					{/* )} */}
 				</PageContent>
 			</AppLayout>
 		</>

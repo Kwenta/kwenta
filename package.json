@@ -26,7 +26,7 @@
 		"@reach/slider": "^0.15.2",
 		"@reach/tabs": "0.11.2",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "2.45.3",
+		"@synthetixio/contracts-interface": "github:clementbalestrat/contracts-interface",
 		"@synthetixio/data": "0.0.13",
 		"@synthetixio/optimism-networks": "0.0.11",
 		"@synthetixio/providers": "0.0.10",

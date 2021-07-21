@@ -8,6 +8,7 @@ import {
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
+import { ethers } from 'ethers';
 
 BigNumber.config({ DECIMAL_PLACES: DEFAULT_TOKEN_DECIMALS });
 
@@ -55,6 +56,9 @@ export const formatNumber = (value: NumericValue, options?: FormatNumberOptions)
 
 	return formattedValue.join('');
 };
+
+export const formatNumberFromBN = (value: BigNumber, options?: FormatNumberOptions) =>
+	formatNumber(ethers.utils.formatEther(value.toString()), options);
 
 export const formatCryptoCurrency = (value: NumericValue, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
