@@ -2,16 +2,15 @@ import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
 	NoTextTransform,
 	FlexDivColCentered,
 	Tooltip,
+	ExternalLink,
 } from 'styles/common';
-
-import { CurrencyKey } from 'constants/currency';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
@@ -19,14 +18,12 @@ import Currency from 'components/Currency';
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 import BalancerImage from 'assets/svg/providers/balancer.svg';
 
-import {
-	formatCurrency,
-	LONG_CRYPTO_CURRENCY_DECIMALS,
-	toBigNumber,
-} from 'utils/formatters/number';
+import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
+import { Svg } from 'react-optimized-image';
+import InfoIcon from 'assets/svg/app/info.svg';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
@@ -34,12 +31,12 @@ type TxConfirmationModalProps = {
 	onDismiss: () => void;
 	txError: string | null;
 	attemptRetry: () => void;
-	baseCurrencyKey: CurrencyKey;
+	baseCurrencyKey: string;
 	baseCurrencyAmount: string;
-	quoteCurrencyKey?: CurrencyKey;
+	quoteCurrencyKey?: string;
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
-	feeAmountInBaseCurrency: BigNumber | null;
+	feeCost: Wei | null;
 	txProvider: TxProvider;
 	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;
@@ -55,7 +52,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	baseCurrencyAmount,
 	quoteCurrencyAmount,
 	totalTradePrice,
-	feeAmountInBaseCurrency,
+	feeCost,
 	txProvider,
 	quoteCurrencyLabel,
 	baseCurrencyLabel,
@@ -65,15 +62,9 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const getBaseCurrencyAmount = (decimals?: number) =>
-		formatCurrency(
-			baseCurrencyKey,
-			feeAmountInBaseCurrency != null
-				? toBigNumber(baseCurrencyAmount).minus(feeAmountInBaseCurrency)
-				: baseCurrencyAmount,
-			{
-				minDecimals: decimals,
-			}
-		);
+		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
+			minDecimals: decimals,
+		});
 
 	return (
 		<StyledBaseModal
@@ -140,6 +131,43 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						</StyledTooltip>
 					</SummaryItemValue>
 				</SummaryItem>
+				{feeCost && (
+					<SummaryItem>
+						<SummaryItemLabel data-testid="base-currency-label">
+							<Trans
+								i18nKey="common.currency.exchange-fee"
+								values={{ currencyKey: baseCurrencyKey }}
+								components={[<NoTextTransform />]}
+							/>
+							<StyledTooltip
+								placement="top"
+								content={
+									<Trans
+										i18nKey="modals.confirm-transaction.exchange-fee-hint"
+										values={{ currencyKey: baseCurrencyKey }}
+										components={[
+											<NoTextTransform />,
+											<ExternalLink href="https://synthetix.io/synths" />,
+										]}
+									/>
+								}
+								arrow={false}
+								interactive={true}
+							>
+								<TooltipItem>
+									<Svg src={InfoIcon} />
+								</TooltipItem>
+							</StyledTooltip>
+						</SummaryItemLabel>
+						<SummaryItemValue data-testid="base-currency-value">
+							<span>
+								{formatCurrency(selectedPriceCurrency.name, feeCost, {
+									sign: selectedPriceCurrency.sign,
+								})}
+							</span>
+						</SummaryItemValue>
+					</SummaryItem>
+				)}
 				<SummaryItem>
 					<SummaryItemLabel data-testid="total-trade-price-label">
 						<Trans
@@ -149,9 +177,12 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						/>
 					</SummaryItemLabel>
 					<SummaryItemValue data-testid="total-trade-price-value">
-						{formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
-							sign: selectedPriceCurrency.sign,
-						})}
+						<span>
+							{ESTIMATE_VALUE}{' '}
+							{formatCurrency(selectedPriceCurrency.name, totalTradePrice, {
+								sign: selectedPriceCurrency.sign,
+							})}
+						</span>
 					</SummaryItemValue>
 				</SummaryItem>
 			</Summary>
@@ -270,6 +301,16 @@ const StyledTooltip = styled(Tooltip)`
 		padding: 5px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
+	}
+`;
+
+export const TooltipItem = styled.span`
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	svg {
+		margin-left: 5px;
+		transform: translateY(2px);
 	}
 `;
 

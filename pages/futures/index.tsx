@@ -21,7 +21,7 @@ import { FuturesMarket } from 'queries/futures/types';
 const Futures: FC = () => {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets: [FuturesMarket] | [] = futuresMarketsQuery?.data ?? [];
+	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
 		(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
 	);

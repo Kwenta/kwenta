@@ -10,9 +10,6 @@ import { TabList, TabPanel, TabButton } from 'components/Tab';
 import Currency from 'components/Currency';
 import Loader from 'components/Loader';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
 import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
@@ -23,8 +20,11 @@ import { CardTitle, ConvertContainer } from '../common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { zeroBN } from 'utils/formatters/number';
-import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
+import { CurrencyKey } from 'constants/currency';
 
 enum Tab {
 	SynthBalances = 'synth-balances',
@@ -39,6 +39,8 @@ const DashboardCard: FC = () => {
 	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
 
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as Tab;
@@ -49,9 +51,11 @@ const DashboardCard: FC = () => {
 		return null;
 	}, [router.query]);
 
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const synthsBalancesQuery = useSynthsBalancesQuery();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const synthBalances =
@@ -104,7 +108,7 @@ const DashboardCard: FC = () => {
 				<PortfolioCardTitle>{t('dashboard.your-portfolio.title')}</PortfolioCardTitle>
 				<PortfolioCard>
 					<StyledCurrencyPrice
-						currencyKey={selectedPriceCurrency.name}
+						currencyKey={selectedPriceCurrency.name as CurrencyKey}
 						price={synthBalances?.totalUSDBalance ?? 0}
 						conversionRate={selectPriceCurrencyRate}
 						sign={selectedPriceCurrency.sign}

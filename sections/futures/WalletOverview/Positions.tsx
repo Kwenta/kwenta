@@ -1,4 +1,4 @@
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -29,7 +29,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 		position: {
 			side: PositionSide.LONG,
 			amount: 1000,
-			currency: SYNTHS_MAP.sBTC,
+			currency: Synths.sBTC,
 		},
 		price: 2500,
 		liquidationPrice: 2000,
@@ -53,9 +53,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 					>
 						{t('futures.wallet-overview.open-position')}
 					</CTAButton>
-					<Background>
-						<PositionCard position={defaultPosition} isCTA={true} />
-					</Background>
+					<Background>{/* <PositionCard position={defaultPosition} isCTA={true} /> */}</Background>
 				</CTA>
 			)}
 		</FlexDivCol>

@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import orderBy from 'lodash/orderBy';
 
-import synthetix from 'lib/synthetix';
-
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
@@ -21,6 +17,10 @@ import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import SynthRow from './SynthRow';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
+import Connector from 'containers/Connector';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -41,17 +41,24 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	synthsOverride,
 }) => {
 	const { t } = useTranslation();
+
+	const { synthetixjs } = Connector.useContainer();
+
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+
+	const walletAddress = useRecoilValue(walletAddressState);
+
 	// eslint-disable-next-line
-	const allSynths = synthetix.js?.synths ?? [];
+	const allSynths = synthetixjs?.synths ?? [];
 	const synths =
 		synthsOverride != null
-			? allSynths.filter((synth) => synthsOverride.includes(synth.name))
+			? allSynths.filter((synth) => synthsOverride.includes(synth.name as CurrencyKey))
 			: allSynths;
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery();
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const synthBalances = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data ?? null
 		: null;
@@ -84,7 +91,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			return orderBy(
 				synthsList,
 				(synth) => {
-					const synthBalance = synthBalances?.balancesMap[synth.name];
+					const synthBalance = synthBalances?.balancesMap[synth.name as CurrencyKey];
 					return synthBalance != null ? synthBalance.usdBalance.toNumber() : 0;
 				},
 				'desc'
@@ -153,17 +160,18 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 				{synthsWalletBalancesQuery.isLoading ? (
 					<Loader />
 				) : synthsResults.length > 0 ? (
-					synthsResults.map((synth) => {
+					// TODO: use `Synth` type from contracts-interface
+					synthsResults.map((synth: any) => {
 						const currencyKey = synth.name;
 
 						return (
 							<SynthRow
 								key={currencyKey}
 								onClick={() => {
-									onSelect(currencyKey);
+									onSelect(currencyKey as CurrencyKey);
 									onDismiss();
 								}}
-								synthBalance={synthBalances?.balancesMap[currencyKey]}
+								synthBalance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
 								{...{ synth }}
 							/>
 						);

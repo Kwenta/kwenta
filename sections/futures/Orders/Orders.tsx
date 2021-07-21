@@ -15,7 +15,7 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
 import { Order, OrderStatus, PositionSide } from '../types';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
@@ -36,7 +36,7 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 			position: {
 				side: PositionSide.LONG,
 				amount: 1000,
-				currency: SYNTHS_MAP.sBTC,
+				currency: Synths.sBTC,
 			},
 			leverage: {
 				amount: 5,
@@ -125,7 +125,7 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Order>) => (
 							<Fee>
-								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.fee, {
+								{formatCurrency(Synths.sUSD, cellProps.row.original.fee, {
 									sign: '$',
 								})}{' '}
 								{selectedPriceCurrency.asset}

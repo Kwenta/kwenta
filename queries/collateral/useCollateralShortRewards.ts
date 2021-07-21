@@ -1,37 +1,38 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
 
-import synthetix from 'lib/synthetix';
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const useCollateralShortRewards = (
 	currencyKey: CurrencyKey | null,
-	options?: QueryConfig<BigNumber>
+	options?: UseQueryOptions<Wei>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	return useQuery<BigNumber>(
+	const { synthetixjs } = Connector.useContainer();
+
+	return useQuery<Wei>(
 		QUERY_KEYS.Collateral.ShortRewards(currencyKey as string),
 		async () => {
 			try {
-				const earned = (await synthetix.js!.contracts[`ShortingRewards${currencyKey}`].earned(
+				const earned = (await synthetixjs!.contracts[`ShortingRewards${currencyKey}`].earned(
 					walletAddress
 				)) as ethers.BigNumber;
 
-				return toBigNumber(ethers.utils.formatEther(earned));
+				return wei(ethers.utils.formatEther(earned));
 			} catch (e) {
 				console.log(e);
-				return zeroBN;
+				return wei(0);
 			}
 		},
 		{

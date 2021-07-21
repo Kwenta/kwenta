@@ -39,9 +39,11 @@ const DashboardPage = () => {
 					<DesktopOnlyView>
 						<FullHeightContainer>
 							<MainContent>{activeView}</MainContent>
-							<RightSideContent>
-								<TrendingSynths />
-							</RightSideContent>
+							{isWalletConnected && (
+								<RightSideContent>
+									<TrendingSynths />
+								</RightSideContent>
+							)}
 							<BottomShadow />
 						</FullHeightContainer>
 					</DesktopOnlyView>

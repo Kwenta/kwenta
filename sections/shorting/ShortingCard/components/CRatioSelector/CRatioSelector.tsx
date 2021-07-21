@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import { customShortCRatioState, shortCRatioState } from 'store/ui';
-import { formatPercent, toBigNumber } from 'utils/formatters/number';
+import { formatPercent } from 'utils/formatters/number';
 
 import { Svg } from 'react-optimized-image';
 
@@ -22,6 +22,7 @@ import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 import { shortCRatios } from './constants';
+import { wei } from '@synthetixio/wei';
 
 type CRatioSelectorProps = {};
 
@@ -48,7 +49,7 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 	);
 
 	const shortCRatioTooLow = useMemo(
-		() => (minCratio != null ? toBigNumber(shortCRatio).lt(minCratio) : false),
+		() => (minCratio != null ? wei(shortCRatio).lt(minCratio) : false),
 		[shortCRatio, minCratio]
 	);
 	return (

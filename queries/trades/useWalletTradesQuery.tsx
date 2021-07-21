@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import synthetixData from '@synthetixio/data';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
@@ -9,7 +9,7 @@ import { networkState } from 'store/wallet';
 
 export const useWalletTradesQuery = (
 	max: number = 100,
-	options?: QueryConfig<HistoricalTrades | null>
+	options?: UseQueryOptions<HistoricalTrades | null>
 ) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);

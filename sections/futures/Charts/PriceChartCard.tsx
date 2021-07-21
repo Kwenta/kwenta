@@ -6,20 +6,18 @@ import get from 'lodash/get';
 import styled, { ThemeContext } from 'styled-components';
 import format from 'date-fns/format';
 import { Svg } from 'react-optimized-image';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import LoaderIcon from 'assets/svg/app/loader.svg';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
-import { PERIOD_LABELS, PERIOD_IN_HOURS, Period } from 'constants/period';
+import { CurrencyKey, Synths } from 'constants/currency';
+import { PERIOD_LABELS, PERIOD_IN_HOURS, Period, PERIOD_LABELS_MAP } from 'constants/period';
 import { ChartType } from 'constants/chartType';
 
 import ChangePercent from 'components/ChangePercent';
-import { chartPeriodState } from 'store/app';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { FlexDivRowCentered, NoTextTransform, AbsoluteCenteredDiv } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
@@ -56,17 +54,18 @@ const ChartCard: FC<ChartCardProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [selectedChartType, setSelectedChartType] = useState(ChartType.AREA);
-	const [selectedPeriod, setSelectedPeriod] = usePersistedRecoilState(chartPeriodState);
+	const [selectedPeriod, setSelectedPeriod] = useState(PERIOD_LABELS_MAP.FOUR_HOURS);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
 
 	const theme = useContext(ThemeContext);
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
 	const historicalRates = useHistoricalRatesQuery(currencyKey, selectedPeriod.period);
 	const candlesticksQuery = useCandlesticksQuery(currencyKey, selectedPeriod.period);
 
-	const isSUSD = currencyKey === SYNTHS_MAP.sUSD;
+	const isSUSD = currencyKey === Synths.sUSD;
 
 	const change = historicalRates.data?.change ?? null;
 	// eslint-disable-next-line
@@ -144,7 +143,7 @@ const ChartCard: FC<ChartCardProps> = ({
 											sign: selectedPriceCurrency.sign,
 											// @TODO: each currency key should specify how many decimals to show
 											minDecimals:
-												currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+												currencyKey === Synths.sKRW || currencyKey === Synths.sJPY ? 4 : 2,
 										})}
 									</CurrencyPrice>
 								)}
@@ -219,7 +218,7 @@ const ChartCard: FC<ChartCardProps> = ({
 									tick={fontStyle}
 									axisLine={false}
 									tickLine={false}
-									tickFormatter={(val) => {
+									tickFormatter={(val: number) => {
 										if (!isNumber(val)) {
 											return '';
 										}
@@ -238,7 +237,7 @@ const ChartCard: FC<ChartCardProps> = ({
 									orientation="right"
 									axisLine={false}
 									tickLine={false}
-									tickFormatter={(val) =>
+									tickFormatter={(val: number) =>
 										formatCurrency(selectedPriceCurrency.name, val, {
 											sign: selectedPriceCurrency.sign,
 										})

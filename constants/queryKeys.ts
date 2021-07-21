@@ -10,17 +10,17 @@ export const QUERY_KEYS = {
 			period,
 			networkId,
 		],
-		HistoricalRates: (currencyKey: CurrencyKey, period: Period, networkId: NetworkId) => [
+		HistoricalRates: (currencyKey: string, period: Period, networkId: NetworkId) => [
 			'rates',
 			'historicalRates',
 			currencyKey,
 			period,
 			networkId,
 		],
-		MarketCap: (currencyKey: CurrencyKey) => ['marketCap', currencyKey],
+		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
 		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
-		Candlesticks: (currencyKey: CurrencyKey, period: Period) => [
+		Candlesticks: (currencyKey: string, period: Period) => [
 			'rates',
 			'candlesticks',
 			currencyKey,
@@ -68,7 +68,13 @@ export const QUERY_KEYS = {
 		],
 	},
 	Collateral: {
-		ShortHistory: (walletAddress: string) => ['collateral', 'short', 'history', walletAddress],
+		ShortHistory: (walletAddress: string, networkId: NetworkId) => [
+			'collateral',
+			'short',
+			'history',
+			walletAddress,
+			networkId,
+		],
 		ShortContractInfo: ['collateral', 'short', 'contractInfo'],
 		ShortPosition: (loanId: string) => ['collateral', 'short', 'position', loanId],
 		ShortPositionPnL: (loanId: string) => ['collateral', 'short', 'position', 'pnl', loanId],
@@ -90,8 +96,8 @@ export const QUERY_KEYS = {
 	},
 	Convert: {
 		quote1Inch: (
-			quoteCurrencyKey: CurrencyKey,
-			baseCurrencyKey: CurrencyKey,
+			quoteCurrencyKey: string,
+			baseCurrencyKey: string,
 			amount: string,
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
@@ -103,7 +109,7 @@ export const QUERY_KEYS = {
 		OneInch: ['tokenLists', 'oneInch'],
 	},
 	CMC: {
-		Quotes: (currencyKeys: CurrencyKey[]) => ['cmc', 'quotes', currencyKeys.join('|')],
+		Quotes: (currencyKeys: string[]) => ['cmc', 'quotes', currencyKeys.join('|')],
 	},
 	CoinGecko: {
 		CoinList: ['cg', 'coinList'],

@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import BigNumber from 'bignumber.js';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 import { formatCurrency } from 'utils/formatters/number';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { useTranslation } from 'react-i18next';
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
@@ -10,8 +10,8 @@ import Card from 'components/Card';
 import Button from 'components/Button';
 
 type MarginSectionProps = {
-	availableMargin: BigNumber;
-	sUSDBalance: BigNumber;
+	availableMargin: Wei;
+	sUSDBalance: Wei;
 	onDeposit: () => void;
 };
 
@@ -25,7 +25,7 @@ const MarginSection: FC<MarginSectionProps> = ({ availableMargin, sUSDBalance, o
 					<FlexDivCol>
 						<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
 						<MarginBalance>
-							{formatCurrency(SYNTHS_MAP.sUSD, availableMargin, { sign: '$' })}
+							{formatCurrency(Synths.sUSD, availableMargin, { sign: '$' })}
 						</MarginBalance>
 					</FlexDivCol>
 					<Button variant="primary" isRounded size="sm">
@@ -38,7 +38,7 @@ const MarginSection: FC<MarginSectionProps> = ({ availableMargin, sUSDBalance, o
 					{t('futures.market.trade.margin.available-balance')}
 				</AvailableBalanceLabel>
 				<AvailableBalanceValue>
-					{formatCurrency(SYNTHS_MAP.sUSD, sUSDBalance, { sign: '$' })}
+					{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}
 				</AvailableBalanceValue>
 			</FlexDivRow>
 		</FlexDivCol>

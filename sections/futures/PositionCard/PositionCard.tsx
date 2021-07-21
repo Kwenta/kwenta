@@ -10,7 +10,7 @@ import { FlexDivRow, FlexDivCol, FlexDivRowCentered, ExternalLink } from 'styles
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from 'utils/formatters/number';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
 import Etherscan from 'containers/Etherscan';
@@ -34,14 +34,14 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey }) => {
 								<PositionSizeCol>
 									<StyledPositionSize>5.00 {currencyKey}</StyledPositionSize>
 									<StyledPositionSizeUSD>
-										{formatCurrency(SYNTHS_MAP.sUSD, 190000, { sign: '$' })}
+										{formatCurrency(Synths.sUSD, 190000, { sign: '$' })}
 									</StyledPositionSizeUSD>
 								</PositionSizeCol>
 							</PositionSizeRow>
 							<ROIContainer>
 								<StyledROIValue>
 									<span>{t('futures.market.user.position.roi')}</span>
-									<p>{formatCurrency(SYNTHS_MAP.sUSD, 520, { sign: '$' })}</p>
+									<p>{formatCurrency(Synths.sUSD, 520, { sign: '$' })}</p>
 								</StyledROIValue>
 								<ChangePercent value={0.05} />
 							</ROIContainer>
@@ -56,21 +56,21 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey }) => {
 					<DataCol>
 						<InfoCol>
 							<StyledSubtitle>{t('futures.market.user.position.entry')}</StyledSubtitle>
-							<StyledValue>{formatCurrency(SYNTHS_MAP.sUSD, 10000, { sign: '$' })}</StyledValue>
+							<StyledValue>{formatCurrency(Synths.sUSD, 10000, { sign: '$' })}</StyledValue>
 						</InfoCol>
 						<InfoCol>
 							<StyledSubtitle>{t('futures.market.user.position.margin')}</StyledSubtitle>
-							<StyledValue>{formatCurrency(SYNTHS_MAP.sUSD, 10000, { sign: '$' })}</StyledValue>
+							<StyledValue>{formatCurrency(Synths.sUSD, 10000, { sign: '$' })}</StyledValue>
 						</InfoCol>
 					</DataCol>
 					<DataCol>
 						<InfoCol>
 							<StyledSubtitle>{t('futures.market.user.position.liquidation')}</StyledSubtitle>
-							<StyledValue>{formatCurrency(SYNTHS_MAP.sUSD, 10000, { sign: '$' })}</StyledValue>
+							<StyledValue>{formatCurrency(Synths.sUSD, 10000, { sign: '$' })}</StyledValue>
 						</InfoCol>
 						<InfoCol>
 							<StyledSubtitle>{t('futures.market.user.position.ratio')}</StyledSubtitle>
-							<StyledValue>{formatCurrency(SYNTHS_MAP.sUSD, 10000, { sign: '$' })}</StyledValue>
+							<StyledValue>{formatCurrency(Synths.sUSD, 10000, { sign: '$' })}</StyledValue>
 						</InfoCol>
 					</DataCol>
 					<DataCol>

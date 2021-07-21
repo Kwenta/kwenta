@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
 
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList } from 'components/Tab';
 import { useState } from 'react';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
@@ -16,11 +18,8 @@ import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
-import useEthGasPriceQuery from 'queries/network/useEthGasPriceQuery';
+import { walletAddressState } from 'store/wallet';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
@@ -38,12 +37,18 @@ enum TradeTab {
 const MIN_LEVERAGE = 1;
 const MAX_LEVERAGE = 10;
 
-const Trade: React.FC<TradeProps> = ({}) => {
+const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
-	const balancesQuery = useSynthsBalancesQuery();
-	const sUSDBalance = balancesQuery?.data?.totalUSDBalance ?? zeroBN;
-
-	console.log('fddfd', sUSDBalance.toString());
+	const walletAddress = useRecoilValue(walletAddressState);
+	const {
+		useExchangeRatesQuery,
+		useSynthsBalancesQuery,
+		useEthGasPriceQuery,
+	} = useSynthetixQueries();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const sUSDBalance = synthsBalancesQuery?.data?.totalUSDBalance ?? zeroBN;
+	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
 	const [tradeSize, setTradeSize] = useState<string>('');
@@ -58,9 +63,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 	const [availableMargin, setAvailableMargin] = useState<string>('20000');
 	const [availableBalance, setAvailableBalance] = useState<string>('150000');
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const isSubmitOrderDisabled = useMemo(() => Number(tradeSize) === 0 || tradeSize.length === 0, [
 		tradeSize,
@@ -87,7 +90,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, SYNTHS_MAP.sETH, selectedPriceCurrency.name),
+		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -137,8 +140,8 @@ const Trade: React.FC<TradeProps> = ({}) => {
 				<InputRow>
 					<FlexDivRowCentered>
 						{/* @TODO make dynamic */}
-						<CurrencyIcon currencyKey={SYNTHS_MAP.sBTC} />
-						<CurrencyLabel>{SYNTHS_MAP.sBTC}</CurrencyLabel>
+						<CurrencyIcon currencyKey={Synths.sBTC} />
+						<CurrencyLabel>{Synths.sBTC}</CurrencyLabel>
 					</FlexDivRowCentered>
 					<FlexDivCol>
 						<InputContainer>
@@ -149,9 +152,7 @@ const Trade: React.FC<TradeProps> = ({}) => {
 									placeholder="0"
 									data-testid="trade-amount"
 								/>
-								<ValueAmount>
-									{formatCurrency(SYNTHS_MAP.sUSD, tradeValue, { sign: '$' })}
-								</ValueAmount>
+								<ValueAmount>{formatCurrency(Synths.sUSD, tradeValue, { sign: '$' })}</ValueAmount>
 							</FlexDivCol>
 							<MaxButton variant="text">{t('futures.market.trade.input.max')}</MaxButton>
 						</InputContainer>
@@ -221,8 +222,8 @@ const Trade: React.FC<TradeProps> = ({}) => {
 				</FlexDivCol>
 			</TopRow>
 			<MarginSection
-				availableMargin={null}
-				sUSDBalance={null}
+				availableMargin={zeroBN}
+				sUSDBalance={zeroBN}
 				onDeposit={() => console.log('deposit')}
 			/>
 		</Panel>

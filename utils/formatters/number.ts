@@ -1,18 +1,15 @@
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
-	DEFAULT_TOKEN_DECIMALS,
 } from 'constants/defaults';
 import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
-import { ethers } from 'ethers';
 
-BigNumber.config({ DECIMAL_PLACES: DEFAULT_TOKEN_DECIMALS });
-
-export type NumericValue = BigNumber | string | number;
+type WeiSource = Wei | number | string | ethers.BigNumber;
 
 export type FormatNumberOptions = {
 	minDecimals?: number;
@@ -25,31 +22,33 @@ export type FormatCurrencyOptions = {
 	minDecimals?: number;
 	maxDecimals?: number;
 	sign?: string;
-	currencyKey?: CurrencyKey;
+	currencyKey?: string;
 };
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
 export const SHORT_CRYPTO_CURRENCY_DECIMALS = 4;
 export const LONG_CRYPTO_CURRENCY_DECIMALS = 8;
 
-export const getDecimalPlaces = (value: NumericValue) =>
-	(value.toString().split('.')[1] || '').length;
+export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.')[1] || '').length;
 
-export const toBigNumber = (value: NumericValue) => new BigNumber(value);
-
-export const zeroBN = toBigNumber(0);
+export const zeroBN = wei(0);
 
 // TODO: implement max decimals
-export const formatNumber = (value: NumericValue, options?: FormatNumberOptions) => {
+export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
+
+	let weiValue = wei(0);
+	try {
+		weiValue = wei(value);
+	} catch {}
 
 	const formattedValue = [];
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(toBigNumber(value).toFormat(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
+	formattedValue.push(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}
@@ -57,10 +56,7 @@ export const formatNumber = (value: NumericValue, options?: FormatNumberOptions)
 	return formattedValue.join('');
 };
 
-export const formatNumberFromBN = (value: BigNumber, options?: FormatNumberOptions) =>
-	formatNumber(ethers.utils.formatEther(value.toString()), options);
-
-export const formatCryptoCurrency = (value: NumericValue, options?: FormatCurrencyOptions) =>
+export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
@@ -68,7 +64,7 @@ export const formatCryptoCurrency = (value: NumericValue, options?: FormatCurren
 		maxDecimals: options?.maxDecimals,
 	});
 
-export const formatFiatCurrency = (value: NumericValue, options?: FormatCurrencyOptions) =>
+export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
 		prefix: options?.sign,
 		suffix: options?.currencyKey,
@@ -77,22 +73,22 @@ export const formatFiatCurrency = (value: NumericValue, options?: FormatCurrency
 	});
 
 export const formatCurrency = (
-	currencyKey: CurrencyKey,
-	value: NumericValue,
+	currencyKey: string,
+	value: WeiSource,
 	options?: FormatCurrencyOptions
 ) =>
-	isFiatCurrency(currencyKey)
+	isFiatCurrency(currencyKey as CurrencyKey)
 		? formatFiatCurrency(value, options)
 		: formatCryptoCurrency(value, options);
 
-export const formatPercent = (value: NumericValue, options?: { minDecimals: number }) => {
+export const formatPercent = (value: WeiSource, options?: { minDecimals: number }) => {
 	const decimals = options?.minDecimals ?? 2;
 
-	return `${toBigNumber(value).multipliedBy(100).toFixed(decimals)}%`;
+	return `${wei(value).mul(100).toString(decimals)}%`;
 };
 
 // TODO: figure out a robust way to get the correct precision.
-const getPrecision = (amount: NumericValue) => {
+const getPrecision = (amount: WeiSource) => {
 	if (amount >= 1) {
 		return DEFAULT_CURRENCY_DECIMALS;
 	}
@@ -105,22 +101,16 @@ const getPrecision = (amount: NumericValue) => {
 // TODO: use a library for this, because the sign does not always appear on the left. (perhaps something like number.toLocaleString)
 export const formatCurrencyWithSign = (
 	sign: string | null | undefined,
-	value: NumericValue,
+	value: WeiSource,
 	decimals?: number
 ) => `${sign}${formatCurrency(String(value), decimals || getPrecision(value))}`;
 
 export const formatCurrencyWithKey = (
 	currencyKey: CurrencyKey,
-	value: NumericValue,
+	value: WeiSource,
 	decimals?: number
 ) => `${formatCurrency(String(value), decimals || getPrecision(value))} ${currencyKey}`;
 
-export function scale(
-	input: BigNumber,
-	decimalPlaces: number,
-	isDivision: boolean = false
-): BigNumber {
-	const scalePow = new BigNumber(decimalPlaces.toString());
-	const scaleMul = new BigNumber(10).pow(scalePow);
-	return isDivision ? input.div(scaleMul) : input.times(scaleMul);
+export function scale(input: Wei, decimalPlaces: number): Wei {
+	return input.mul(wei(10).pow(decimalPlaces));
 }

@@ -3,11 +3,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 
-import { SynthBalance } from 'queries/walletBalances/useSynthsBalancesQuery';
+import { SynthBalance } from '@synthetixio/queries';
 
 import { NO_VALUE } from 'constants/placeholder';
-
-import { Synth } from 'lib/synthetix';
 
 import Currency from 'components/Currency';
 
@@ -17,6 +15,7 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { isWalletConnectedState } from 'store/wallet';
+import { Synth } from '@synthetixio/contracts-interface';
 
 type SynthRowProps = {
 	synth: Synth;

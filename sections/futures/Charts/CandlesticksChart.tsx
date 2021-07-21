@@ -2,7 +2,7 @@ import { formatEther } from '@ethersproject/units';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
 import { format } from 'date-fns';
-import { Synth } from 'lib/synthetix';
+import { Synth } from '@synthetixio/contracts-interface';
 import { isNumber } from 'lodash';
 import { Candle } from 'queries/rates/types';
 import React, { FC } from 'react';
@@ -47,7 +47,7 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 					axisLine={false}
 					tickLine={false}
 					tick={fontStyle}
-					tickFormatter={(val) => {
+					tickFormatter={(val: any) => {
 						if (!isNumber(val)) {
 							return '';
 						}
@@ -66,7 +66,7 @@ const CandlestickChart: FC<CandlestickChartProps> = ({
 					axisLine={false}
 					tickLine={false}
 					tick={fontStyle}
-					tickFormatter={(val) =>
+					tickFormatter={(val: any) =>
 						formatCurrency(selectedPriceCurrency.name, val, {
 							sign: selectedPriceCurrency.sign,
 						})

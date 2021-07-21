@@ -1,14 +1,14 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 
-import useFrozenSynthsQuery from 'queries/synths/useFrozenSynthsQuery';
-import useSynthSuspensionQuery, {
-	SynthSuspensionReason,
-} from 'queries/synths/useSynthSuspensionQuery';
+import { SynthSuspensionReason } from '@synthetixio/queries';
 
 export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useMarketClosed>;
 
 const useMarketClosed = (currencyKey: CurrencyKey | null) => {
+	const { useFrozenSynthsQuery, useSynthSuspensionQuery } = useSynthetixQueries();
+
 	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const currencySuspendedQuery = useSynthSuspensionQuery(currencyKey);
 

@@ -148,12 +148,14 @@
 			}
 		},
 		"market-details-card": {
-			"title": "market details",
+			"title": "Market Details",
 			"24h-vol": "24H Volume",
 			"24h-high": "24H High",
 			"24h-low": "24H Low",
 			"market-cap": "Market cap",
-			"price-feed": "Price Feed"
+			"price-feed": "Price Feed",
+			"opens-in": "Opens in",
+			"closes-in": "Closes in"
 		},
 		"price-chart-card": {
 			"compare": "compare",
@@ -621,7 +623,8 @@
 		},
 		"confirm-transaction": {
 			"title": "confirm transaction",
-			"confirm-with-provider": "Confirm your transaction through your wallet."
+			"confirm-with-provider": "Confirm your transaction through your wallet.",
+			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>"
 		},
 		"approve-transaction": {
 			"title": "approve transaction",
@@ -670,8 +673,9 @@
 		},
 		"currency": {
 			"currency-amount": "<0>{{currencyKey}}</0> Amount",
+			"exchange-fee": "Exchange Fee",
 			"currency-value": "<0>{{currencyKey}}</0> Value",
-			"estimated-currency-value": "Estimated <0>{{currencyKey}}</0> Value",
+			"estimated-currency-value": "<0>{{currencyKey}}</0> Trade Value",
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
@@ -696,6 +700,11 @@
 			"1D": "1D",
 			"1W": "1W",
 			"1M": "1M"
+		},
+		"chart-types": {
+			"compare": "compare",
+			"ratio": "ratio",
+			"candlesticks": "candlesticks"
 		},
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",

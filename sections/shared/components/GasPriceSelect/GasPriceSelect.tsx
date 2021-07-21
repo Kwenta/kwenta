@@ -6,8 +6,6 @@ import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
-import { GasPrices, GAS_SPEEDS } from 'queries/network/useEthGasPriceQuery';
-
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
@@ -21,11 +19,9 @@ import { NumericValue } from 'styles/common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import {
-	SummaryItem,
-	SummaryItemValue,
-	SummaryItemLabel,
-} from 'sections/exchange/FooterCard/common';
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
+import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import { CurrencyKey } from 'constants/currency';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
@@ -35,7 +31,7 @@ type GasPriceSelectProps = {
 
 const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState(gasSpeedState);
+	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
@@ -61,7 +57,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 							<GasPriceCostTooltip
 								content={
 									<span>
-										{formatCurrency(selectedPriceCurrency.name, transactionFee, {
+										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
 											sign: selectedPriceCurrency.sign,
 										})}
 									</span>

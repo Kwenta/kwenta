@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { formatCurrency } from 'utils/formatters/number';
 import { Data, Subtitle } from '../common';
 
@@ -20,7 +20,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ changeNumber, chang
 		<FlexDivCol>
 			<Subtitle>{t('futures.wallet-overview.performance')}</Subtitle>
 			<StyledValueRow>
-				<StyledData>{formatCurrency(SYNTHS_MAP.sUSD, changeNumber, { sign: '$' })}</StyledData>
+				<StyledData>{formatCurrency(Synths.sUSD, changeNumber, { sign: '$' })}</StyledData>
 				<ChangePercent value={changePercent} />
 			</StyledValueRow>
 		</FlexDivCol>

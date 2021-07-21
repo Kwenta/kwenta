@@ -1,6 +1,11 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import keyBy from 'lodash/keyBy';
 
-export type CurrencyKey = string;
+import { Synths } from '@synthetixio/contracts-interface';
+import Wei from '@synthetixio/wei';
+
+export type { CurrencyKey } from '@synthetixio/contracts-interface';
+export { Synths } from '@synthetixio/contracts-interface';
 
 // TODO: standardize this
 export type Category = 'crypto' | 'forex' | 'equities' | 'index' | 'commodity' | 'inverse';
@@ -14,76 +19,6 @@ export const CATEGORY: Category[] = [
 	'inverse',
 ];
 export const CATEGORY_MAP = keyBy(CATEGORY);
-
-export const SYNTHS = [
-	'sBTC',
-	'sETH',
-	'sXRP',
-	'sBCH',
-	'sLTC',
-	'sEOS',
-	'sBNB',
-	'sXTZ',
-	'sXMR',
-	'sADA',
-	'sLINK',
-	'sTRX',
-	'sDASH',
-	'sAAVE',
-	'sUNI',
-	'sYFI',
-	'sDOT',
-	'sREN',
-	'sCOMP',
-	'sETC',
-	'iBTC',
-	'iETH',
-	'iXRP',
-	'iBCH',
-	'iLTC',
-	'iEOS',
-	'iBNB',
-	'iXTZ',
-	'iXMR',
-	'iADA',
-	'iLINK',
-	'iTRX',
-	'iDASH',
-	'iETC',
-	'sFTSE',
-	'sNIKKEI',
-	'sTSLA',
-	'sMSFT',
-	'sFB',
-	'sAMZN',
-	'sAAPL',
-	'sNFLX',
-	'sGOOG',
-	'sCOIN',
-	'sXAU',
-	'sXAG',
-	'sOIL',
-	'iOIL',
-	'sEUR',
-	'sJPY',
-	'sUSD',
-	'sAUD',
-	'sGBP',
-	'sKRW',
-	'sCHF',
-	'sCEX',
-	'sDEFI',
-	'iCEX',
-	'iDEFI',
-	'iAAVE',
-	'iUNI',
-	'iYFI',
-	'iDOT',
-	'iREN',
-	'iCOMP',
-];
-
-export const SYNTHS_MAP = keyBy(SYNTHS);
 
 export const CRYPTO_CURRENCY = [
 	'KNC',
@@ -109,33 +44,40 @@ export const CRYPTO_CURRENCY = [
 
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 
-export const FIAT_SYNTHS = new Set([
-	SYNTHS_MAP.sEUR,
-	SYNTHS_MAP.sJPY,
-	SYNTHS_MAP.sUSD,
-	SYNTHS_MAP.sAUD,
-	SYNTHS_MAP.sGBP,
-	SYNTHS_MAP.sCHF,
+export const FIAT_SYNTHS: Set<CurrencyKey> = new Set([
+	Synths.sEUR,
+	Synths.sJPY,
+	Synths.sUSD,
+	Synths.sAUD,
+	Synths.sGBP,
+	Synths.sCHF,
 ]);
 
-export const LSE_SYNTHS = new Set([SYNTHS_MAP.sFTSE]);
+export const LSE_SYNTHS = new Set<CurrencyKey>([Synths.sFTSE]);
 
-export const TSE_SYNTHS = new Set([SYNTHS_MAP.sNIKKEI]);
+export const TSE_SYNTHS = new Set<CurrencyKey>([Synths.sNIKKEI]);
 
-export const AFTER_HOURS_SYNTHS = new Set([
-	SYNTHS_MAP.sTSLA,
-	SYNTHS_MAP.sMSFT,
-	SYNTHS_MAP.sFB,
-	SYNTHS_MAP.sAMZN,
-	SYNTHS_MAP.sAAPL,
-	SYNTHS_MAP.sNFLX,
-	SYNTHS_MAP.sGOOG,
-	SYNTHS_MAP.sCOIN,
+export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
+	Synths.sTSLA,
+	Synths.sMSFT,
+	Synths.sFB,
+	Synths.sAMZN,
+	Synths.sAAPL,
+	Synths.sNFLX,
+	Synths.sGOOG,
+	Synths.sCOIN,
 ]);
 
-export const COMMODITY_SYNTHS = new Set([SYNTHS_MAP.sXAU, SYNTHS_MAP.sXAG, SYNTHS_MAP.sOIL]);
+export const MARKET_HOURS_SYNTHS = new Set([
+	...FIAT_SYNTHS,
+	...LSE_SYNTHS,
+	...TSE_SYNTHS,
+	...AFTER_HOURS_SYNTHS,
+]);
 
-export const sUSD_EXCHANGE_RATE = 1;
+export const COMMODITY_SYNTHS = new Set<CurrencyKey>([Synths.sXAU, Synths.sXAG, Synths.sOIL]);
+
+export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';

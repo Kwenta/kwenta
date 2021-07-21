@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { FC } from 'react';
-import styled from 'styled-components';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import styled, { useTheme } from 'styled-components';
+import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 
 import Etherscan from 'containers/Etherscan';
 
@@ -16,12 +16,11 @@ import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common
 import { truncateAddress } from 'utils/formatters/string';
 import { formatCurrency } from 'utils/formatters/number';
 
-import useHistoricalVolumeQuery from 'queries/rates/useHistoricalVolumeQuery';
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-import useSynthMarketCapQuery from 'queries/rates/useSynthMarketCapQuery';
-
-import synthetix from 'lib/synthetix';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
+import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -32,11 +31,20 @@ type MarketDetailsCardProps = {
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { tokensMap } = Connector.useContainer();
+
+	const {
+		useHistoricalVolumeQuery,
+		useHistoricalRatesQuery,
+		useSynthMarketCapQuery,
+	} = useSynthetixQueries();
+
 	const {
 		selectPriceCurrencyRate,
 		selectedPriceCurrency,
 		getPriceAtCurrentRate,
 	} = useSelectedPriceCurrency();
+	const theme = useTheme();
 
 	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
 	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
@@ -69,8 +77,12 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		}
 	}
 
-	const token =
-		synthetix.tokensMap != null && currencyKey != null ? synthetix.tokensMap[currencyKey] : null;
+	const token = tokensMap != null && currencyKey != null ? tokensMap[currencyKey] : null;
+
+	const timer = useMarketHoursTimer(
+		marketNextTransition((currencyKey as CurrencyKey) ?? '') ?? null
+	);
+	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? '');
 
 	const volume24HItem = (
 		<Item>
@@ -92,8 +104,9 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24High != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24High, {
 							sign: selectedPriceCurrency.sign,
+							// TODO: use Synths.sKRW after Synths are corrected
 							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+								currencyKey === ('sKRW' as CurrencyKey) || currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -145,8 +158,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				{rates24Low != null
 					? `${formatCurrency(selectedPriceCurrency.name, rates24Low, {
 							sign: selectedPriceCurrency.sign,
-							minDecimals:
-								currencyKey === SYNTHS_MAP.sKRW || currencyKey === SYNTHS_MAP.sJPY ? 4 : 2,
+							minDecimals: /*currencyKey === Synths.sKRW || */ currencyKey === Synths.sJPY ? 4 : 2,
 					  })}`
 					: NO_VALUE}
 			</Value>
@@ -170,7 +182,18 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 
 	return (
 		<Card className="market-details-card" {...rest}>
-			<StyledCardHeader>{t('exchange.market-details-card.title')}</StyledCardHeader>
+			<StyledCardHeader lowercase={true}>
+				<CardHeaderItems>{t('exchange.market-details-card.title')}</CardHeaderItems>
+				<CardHeaderItems>
+					{currencyKey && MARKET_HOURS_SYNTHS.has(currencyKey) && currencyKey !== 'sUSD' && (
+						<>
+							<Dot background={isOpen ? theme.colors.green : theme.colors.red} />
+							{t(`exchange.market-details-card.${isOpen ? 'closes-in' : 'opens-in'}`)}{' '}
+							<CountdownTimer>{timer}</CountdownTimer>
+						</>
+					)}
+				</CardHeaderItems>
+			</StyledCardHeader>
 			<DesktopOnlyView>
 				<StyledCardBody>
 					<Column>
@@ -207,6 +230,12 @@ const StyledCardBody = styled(Card.Body)`
 
 const StyledCardHeader = styled(Card.Header)`
 	height: 40px;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const CardHeaderItems = styled.div`
+	line-height: 0.8;
 `;
 
 const Item = styled(FlexDivRowCentered)`
@@ -227,6 +256,19 @@ const Label = styled.div`
 const Value = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const CountdownTimer = styled.span`
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+
+const Dot = styled.span<{ background: string }>`
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 100%;
+	background-color: ${(props) => props.background};
+	margin-right: 6px;
 `;
 
 export default MarketDetailsCard;

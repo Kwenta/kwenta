@@ -1,21 +1,20 @@
 import axios from 'axios';
-import { QueryConfig, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery } from 'react-query';
 import keyBy from 'lodash/keyBy';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey } from 'constants/currency';
 
 import { CG_BASE_API_URL } from './constants';
 
 type CoinListItem = {
 	id: string;
-	symbol: CurrencyKey;
+	symbol: string;
 	name: string;
 };
 
-type CoinListMap = Record<CurrencyKey, CoinListItem>;
+type CoinListMap = Record<string, CoinListItem>;
 
-const useCoinGeckoCoinListQuery = (options?: QueryConfig<CoinListMap>) => {
+const useCoinGeckoCoinListQuery = (options?: UseQueryOptions<CoinListMap>) => {
 	return useQuery<CoinListMap>(
 		QUERY_KEYS.CoinGecko.CoinList,
 		async () => {

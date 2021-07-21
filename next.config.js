@@ -2,16 +2,21 @@
 
 module.exports = {
 	webpack: (config, options) => {
+
+		config.resolve.mainFields = ['module', 'browser', 'main'];
+
 		config.module.rules.push({
-        test: /\.(png|jp(e*)g|svg|gif)$/,
-        use: [
-          {
-            loader: 'optimized-images-loader',
-            options: {
-							includeStrategy: 'react'
-						},
-          },
-        ],
+			test: /\.(png|jp(e*)g|svg|gif|webp)$/,
+			use: [
+				{
+					loader: 'optimized-images-loader',
+					options: {
+						includeStrategy: 'react',
+						publicPath: `/_next/static/images/`,
+						outputPath: 'static/images',
+					},
+				},
+			],
 		});
 		return config;
 	},

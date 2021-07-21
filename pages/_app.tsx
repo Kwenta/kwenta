@@ -3,17 +3,15 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { ReactQueryCacheProvider, QueryCache } from 'react-query';
+import { QueryClientProvider, QueryClient } from 'react-query';
 
 import { ThemeProvider } from 'styled-components';
 import { MediaContextProvider } from 'styles/media';
 
-import { DEFAULT_REQUEST_REFRESH_INTERVAL } from 'constants/defaults';
-
 import WithAppContainers from 'containers';
 import theme from 'styles/theme';
 
-import { ReactQueryDevtools } from 'react-query-devtools';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import SystemStatus from 'sections/shared/SystemStatus';
 
@@ -29,18 +27,38 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
-const queryCache = new QueryCache({
-	defaultConfig: {
-		queries: {
-			refetchInterval: DEFAULT_REQUEST_REFRESH_INTERVAL,
-		},
-	},
-});
+const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
+	const { provider, network } = Connector.useContainer();
 
-// release - 12 Nov 2020!
+	return (
+		<>
+			<MediaContextProvider>
+				<SynthetixQueryContextProvider
+					value={
+						provider && network
+							? createQueryContext({
+									provider: provider,
+									networkId: network!.id,
+							  })
+							: createQueryContext({ networkId: null })
+					}
+				>
+					<Layout>
+						<SystemStatus>
+							<Component {...pageProps} />
+						</SystemStatus>
+					</Layout>
+					<ReactQueryDevtools />
+				</SynthetixQueryContextProvider>
+			</MediaContextProvider>
+		</>
+	);
+};
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
 
 	return (
@@ -67,18 +85,11 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
-					<WithAppContainers>
-						<MediaContextProvider>
-							<ReactQueryCacheProvider queryCache={queryCache}>
-								<Layout>
-									<SystemStatus>
-										<Component {...pageProps} />
-									</SystemStatus>
-								</Layout>
-								<ReactQueryDevtools />
-							</ReactQueryCacheProvider>
-						</MediaContextProvider>
-					</WithAppContainers>
+					<QueryClientProvider client={new QueryClient()}>
+						<WithAppContainers>
+							<InnerApp {...props} />
+						</WithAppContainers>
+					</QueryClientProvider>
 				</RecoilRoot>
 			</ThemeProvider>
 		</>

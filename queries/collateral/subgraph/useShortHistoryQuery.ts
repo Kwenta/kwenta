@@ -1,29 +1,30 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { gql, request } from 'graphql-request';
 import produce from 'immer';
 
 import { appReadyState } from 'store/app';
-import { walletAddressState, isWalletConnectedState } from 'store/wallet';
+import { walletAddressState, isWalletConnectedState, networkState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { HistoricalShortPosition } from './types';
-import { formatShort, SHORT_GRAPH_ENDPOINT } from './utils';
+import { formatShort, SHORT_GRAPH_ENDPOINT_KOVAN, SHORT_GRAPH_ENDPOINT } from './utils';
 import { historicalShortsPositionState } from 'store/shorts';
 
-const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) => {
+const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
 	const [historicalShortPositions, setHistoricalShortPositions] = useRecoilState(
 		historicalShortsPositionState
 	);
 
 	return useQuery<HistoricalShortPosition[]>(
-		QUERY_KEYS.Collateral.ShortHistory(walletAddress ?? ''),
+		QUERY_KEYS.Collateral.ShortHistory(walletAddress ?? '', network?.id!),
 		async () => {
 			const response = await request(
-				SHORT_GRAPH_ENDPOINT,
+				network && network.name === 'kovan' ? SHORT_GRAPH_ENDPOINT_KOVAN : SHORT_GRAPH_ENDPOINT,
 				gql`
 					query shorts($account: String!) {
 						shorts(where: { account: $account, isOpen: true }, orderBy: id, orderDirection: desc) {
@@ -67,7 +68,7 @@ const useShortHistoryQuery = (options?: QueryConfig<HistoricalShortPosition[]>) 
 			return shorts;
 		},
 		{
-			enabled: isAppReady && isWalletConnected,
+			enabled: isAppReady && isWalletConnected && !!network,
 			...options,
 		}
 	);

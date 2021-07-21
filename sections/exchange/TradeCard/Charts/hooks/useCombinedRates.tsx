@@ -1,30 +1,38 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
 
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
+import useSynthetixQueries from '@synthetixio/queries';
 
 const useCombinedRates = ({
 	baseCurrencyKey,
 	quoteCurrencyKey,
-	selectedPeriod,
+	selectedChartPeriodLabel,
 }: {
 	baseCurrencyKey: CurrencyKey | null;
 	quoteCurrencyKey: CurrencyKey | null;
-	selectedPeriod: PeriodLabel;
+	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const baseHistoricalRates = useHistoricalRatesQuery(baseCurrencyKey, selectedPeriod.period);
-	const quoteHistoricalRates = useHistoricalRatesQuery(quoteCurrencyKey, selectedPeriod.period);
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
+
+	const baseHistoricalRates = useHistoricalRatesQuery(
+		baseCurrencyKey,
+		selectedChartPeriodLabel.period
+	);
+	const quoteHistoricalRates = useHistoricalRatesQuery(
+		quoteCurrencyKey,
+		selectedChartPeriodLabel.period
+	);
 
 	const { data: baseInitialRate } = usePeriodStartSynthRateQuery(
 		baseCurrencyKey,
-		selectedPeriod.period
+		selectedChartPeriodLabel.period
 	);
 	const { data: quoteInitialRate } = usePeriodStartSynthRateQuery(
 		quoteCurrencyKey,
-		selectedPeriod.period
+		selectedChartPeriodLabel.period
 	);
 
 	const baseChange = useMemo(() => baseHistoricalRates.data?.change ?? null, [baseHistoricalRates]);
@@ -53,10 +61,10 @@ const useCombinedRates = ({
 			timestamp: number;
 			rate: number;
 		}[] = [];
-		if (baseCurrencyKey !== SYNTHS_MAP.sUSD) {
+		if (baseCurrencyKey !== Synths.sUSD) {
 			allRates = allRates.concat(baseRates.map((r) => ({ ...r, isBaseRate: true })));
 		}
-		if (quoteCurrencyKey !== SYNTHS_MAP.sUSD) {
+		if (quoteCurrencyKey !== Synths.sUSD) {
 			allRates = allRates.concat(quoteRates);
 		}
 		allRates = orderBy(allRates, 'timestamp');
@@ -73,18 +81,18 @@ const useCombinedRates = ({
 				change = prevBaseRate / rate;
 				prevQuoteRate = rate;
 			}
-			return changes.concat({ timestamp, change });
-		}, [] as { timestamp: number; change: number }[]);
+			return changes.concat({ timestamp, value: change });
+		}, [] as { timestamp: number; value: number }[]);
 	}, [baseRates, quoteRates, baseInitialRate, quoteInitialRate, baseCurrencyKey, quoteCurrencyKey]);
 
 	const [low, high] = useMemo(() => {
 		if (changes.length < 2) return [0, 0];
-		const sortedChanges = orderBy(changes, 'change');
-		return [0, sortedChanges.length - 1].map((index) => sortedChanges[index].change);
+		const sortedChanges = orderBy(changes, 'value');
+		return [0, sortedChanges.length - 1].map((index) => sortedChanges[index].value);
 	}, [changes]);
 
 	return {
-		changes,
+		data: changes,
 		change,
 		noData,
 		isLoadingRates: baseHistoricalRates.isLoading || quoteHistoricalRates.isLoading,

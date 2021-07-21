@@ -1,8 +1,8 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import snxData from 'synthetix-data';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CurrencyKey, SYNTHS_MAP } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
 import { calculateTimestampForPeriod } from './utils';
@@ -16,15 +16,15 @@ interface Rate {
 const usePeriodStartSynthRateQuery = (
 	currencyKey: CurrencyKey | null,
 	period: Period = Period.ONE_DAY,
-	options?: QueryConfig<Rate>
+	options?: UseQueryOptions<Rate>
 ) => {
 	const periodInHours = PERIOD_IN_HOURS[period];
 
 	return useQuery<Rate>(
-		QUERY_KEYS.Rates.PeriodStartSynthRate(currencyKey as string, period),
+		QUERY_KEYS.Rates.PeriodStartSynthRate(currencyKey!, period),
 		async () => {
 			const maxTimestamp = calculateTimestampForPeriod(periodInHours);
-			if (currencyKey === SYNTHS_MAP.sUSD) {
+			if (currencyKey === Synths.sUSD) {
 				return { rate: 1, timestamp: maxTimestamp };
 			} else {
 				const rates = await snxData.rate.updates({
@@ -36,7 +36,7 @@ const usePeriodStartSynthRateQuery = (
 			}
 		},
 		{
-			enabled: currencyKey,
+			enabled: !!currencyKey,
 			...options,
 		}
 	);

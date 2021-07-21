@@ -1,4 +1,4 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
 
@@ -20,7 +20,7 @@ const ether = {
 	tags: [],
 };
 
-const useOneInchTokenList = (options?: QueryConfig<TokenListQueryResponse>) => {
+const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.OneInch,
 		async () => {

@@ -1,9 +1,11 @@
 import { useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import useSynthetixQueries from '@synthetixio/queries';
 
-import useSynthsBalancesQuery from 'queries/walletBalances/useSynthsBalancesQuery';
+import { walletAddressState } from 'store/wallet';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { Title } from '../common';
 import OverviewRow from './OverviewRow';
 import PerformanceChart from './PerformanceChart';
@@ -17,7 +19,10 @@ type WalletOverviewProps = {
 
 const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 	const { t } = useTranslation();
-	const balancesQuery = useSynthsBalancesQuery();
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const walletPosition = useMemo(() => {
 		if (!positions) return null;
@@ -25,7 +30,7 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		let totalMargin = zeroBN;
 
 		positions.forEach(({ margin, position, order }) => {
-			totalMargin = totalMargin.plus(margin);
+			totalMargin = totalMargin.add(margin);
 			if (position) {
 				futuresPositions.push(position as Partial<FuturesPosition>);
 			}
@@ -36,20 +41,20 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		};
 	}, [positions]);
 
-	const sUSDBalance = balancesQuery?.data?.totalUSDBalance ?? zeroBN;
+	const sUSDBalance = synthsWalletBalancesQuery?.data?.totalUSDBalance ?? zeroBN;
 
 	const overviewRows = useMemo(
 		() => [
 			{
 				label: t('futures.wallet-overview.balance'),
 				value: formatNumber(sUSDBalance),
-				currencyKey: SYNTHS_MAP.sUSD,
+				currencyKey: Synths.sUSD,
 				sign: '$',
 			},
 			{
 				label: t('futures.wallet-overview.margin-deployed'),
 				value: formatNumber(walletPosition ? walletPosition.totalMargin : zeroBN),
-				currencyKey: SYNTHS_MAP.sUSD,
+				currencyKey: Synths.sUSD,
 				sign: '$',
 			},
 		],

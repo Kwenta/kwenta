@@ -1,19 +1,19 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import BigNumber from 'bignumber.js';
+import { wei } from '@synthetixio/wei';
 
-import synthetix from 'lib/synthetix';
 import { appReadyState } from 'store/app';
 import { isL2State, walletAddressState } from 'store/wallet';
 
+import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { toBigNumber } from 'utils/formatters/number';
 import { FuturesMarket } from './types';
 
-const useGetFuturesMarkets = (options?: QueryConfig<[FuturesMarket]>) => {
+const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<[FuturesMarket]>(
 		QUERY_KEYS.Futures.Markets,
@@ -21,7 +21,7 @@ const useGetFuturesMarkets = (options?: QueryConfig<[FuturesMarket]>) => {
 			const {
 				contracts: { FuturesMarketData },
 				utils,
-			} = synthetix.js!;
+			} = synthetixjs!;
 			const markets = await FuturesMarketData.allMarketSummaries();
 			return markets.map(
 				({
@@ -37,20 +37,20 @@ const useGetFuturesMarkets = (options?: QueryConfig<[FuturesMarket]>) => {
 					market: market,
 					asset: utils.parseBytes32String(asset),
 					assetHex: asset,
-					currentFundingRate: toBigNumber(currentFundingRate.toString()),
+					currentFundingRate: wei(currentFundingRate),
 					feeRates: {
-						makerFee: toBigNumber(feeRates.makerFee.toString()),
-						takerFee: toBigNumber(feeRates.takerFee.toString()),
+						makerFee: wei(feeRates.makerFee),
+						takerFee: wei(feeRates.takerFee),
 					},
-					marketDebt: toBigNumber(marketDebt.toString()),
-					marketSkew: toBigNumber(marketSkew.toString()),
-					maxLeverage: toBigNumber(maxLeverage.toString()),
-					price: toBigNumber(price.toString()),
+					marketDebt: wei(marketDebt),
+					marketSkew: wei(marketSkew),
+					maxLeverage: wei(maxLeverage),
+					price: wei(price),
 				})
 			);
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress,
+			enabled: isAppReady && isL2 && !!walletAddress && !!synthetixjs,
 			...options,
 		}
 	);

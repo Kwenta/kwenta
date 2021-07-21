@@ -1,45 +1,45 @@
-import { useQuery, QueryConfig } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 import { appReadyState } from 'store/app';
 
 import QUERY_KEYS from 'constants/queryKeys';
-
-import synthetix from 'lib/synthetix';
-import { toBigNumber } from 'utils/formatters/number';
+import Connector from 'containers/Connector';
 
 type ReturnValueType = Record<
 	CurrencyKey,
 	{
-		shorts: BigNumber;
-		rewardsRate: BigNumber;
-		rewardsTotalSupply: BigNumber;
+		shorts: Wei;
+		rewardsRate: Wei;
+		rewardsTotalSupply: Wei;
 	}
 >;
 
 const useCollateralShortStats = (
 	currencyKeys: CurrencyKey[],
-	options?: QueryConfig<ReturnValueType>
+	options?: UseQueryOptions<ReturnValueType>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
+
+	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<ReturnValueType>(
 		QUERY_KEYS.Collateral.ShortStats(currencyKeys.join('|')),
 		async () => {
 			const stats = (await Promise.all([
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts.CollateralManager.short(
+					synthetixjs!.contracts.CollateralManager.short(
 						ethers.utils.formatBytes32String(currencyKey)
 					)
 				),
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
+					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
 				),
 				...currencyKeys.map((currencyKey) =>
-					synthetix.js!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
+					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
 				),
 			])) as ethers.BigNumber[];
 
@@ -49,9 +49,9 @@ const useCollateralShortStats = (
 
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
-					shorts: toBigNumber(ethers.utils.formatEther(shorts[i])),
-					rewardsRate: toBigNumber(rewardsRates[i].toString()),
-					rewardsTotalSupply: toBigNumber(rewardsTotalSupplies[i].toString()),
+					shorts: wei(shorts[i]),
+					rewardsRate: wei(rewardsRates[i]),
+					rewardsTotalSupply: wei(rewardsTotalSupplies[i]),
 				};
 				return ret;
 			}, {} as ReturnValueType);

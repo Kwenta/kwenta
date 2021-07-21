@@ -18,7 +18,7 @@ export const ROUTES = {
 	},
 	Exchange: {
 		Home: '/exchange',
-		MarketPair: (baseCurrencyKey: CurrencyKey, quoteCurrencyKey: CurrencyKey) =>
+		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
 		Into: (currencyKey: CurrencyKey) => normalizeRoute(`/exchange`, currencyKey, 'market'),
 	},

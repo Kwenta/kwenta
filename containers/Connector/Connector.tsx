@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, Network as NetworkName } from '@synthetixio/contracts-interface';
 import {
 	TransactionNotifier,
 	TransactionNotifierInterface,
 } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
-import { ethers } from 'ethers';
-
-import synthetix from 'lib/synthetix';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
+import { useSetRecoilState, useRecoilState } from 'recoil';
+import {
+	NetworkId,
+	Network as NetworkName,
+	SynthetixJS,
+	synthetix,
+} from '@synthetixio/contracts-interface';
+import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
@@ -26,11 +29,14 @@ import { initOnboard } from './config';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
+import { invert, keyBy } from 'lodash';
+import { useMemo } from 'react';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
+	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
@@ -45,6 +51,18 @@ const useConnector = () => {
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
 
+	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
+		if (synthetixjs == null) {
+			return [{}, {}, {}];
+		}
+
+		return [
+			keyBy(synthetixjs.synths, 'name'),
+			keyBy(synthetixjs.tokens, 'symbol'),
+			invert(synthetixjs.networkToChainId),
+		];
+	}, [synthetixjs]);
+
 	useEffect(() => {
 		const init = async () => {
 			// TODO: need to verify we support the network
@@ -57,14 +75,11 @@ const useConnector = () => {
 			});
 			const useOvm = getIsOVM(networkId);
 
-			synthetix.setContractSettings({
-				networkId,
-				provider,
-				useOvm,
-			});
+			const snxjs = synthetix({ provider, networkId, useOvm });
 
 			// @ts-ignore
-			setNetwork({ ...synthetix.js?.network, useOvm });
+			setNetwork(snxjs.network, useOvm);
+			setSynthetixjs(snxjs);
 			setProvider(provider);
 			setAppReady(true);
 		};
@@ -79,9 +94,7 @@ const useConnector = () => {
 				address: setWalletAddress,
 				network: (networkId: number) => {
 					const isSupportedNetwork =
-						synthetix.chainIdToNetwork != null && synthetix.chainIdToNetwork[networkId as NetworkId]
-							? true
-							: false;
+						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
 
 					if (isSupportedNetwork) {
 						const provider = loadProvider({
@@ -90,12 +103,8 @@ const useConnector = () => {
 						const signer = provider.getSigner();
 						const useOvm = getIsOVM(networkId);
 
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer,
-							useOvm,
-						});
+						const snxjs = synthetix({ provider, networkId, signer, useOvm });
+
 						onboard.config({ networkId });
 						if (transactionNotifier) {
 							transactionNotifier.setProvider(provider);
@@ -103,11 +112,12 @@ const useConnector = () => {
 							setTransactionNotifier(new TransactionNotifier(provider));
 						}
 						setProvider(provider);
+						setSynthetixjs(snxjs);
 						setSigner(signer);
 						setNetwork({
-							id: networkId,
+							id: networkId as NetworkId,
 							// @ts-ignore
-							name: synthetix.chainIdToNetwork[networkId],
+							name: chainIdToNetwork[networkId] as NetworkName,
 							useOvm,
 						});
 					}
@@ -119,21 +129,17 @@ const useConnector = () => {
 						const networkId = network.chainId as NetworkId;
 						const useOvm = getIsOVM(networkId);
 
-						synthetix.setContractSettings({
-							networkId,
-							provider,
-							signer: provider.getSigner(),
-							useOvm,
-						});
+						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
+
 						setProvider(provider);
 						setSigner(provider.getSigner());
+						setSynthetixjs(snxjs);
 						setNetwork({
 							id: networkId,
 							name: network.name as NetworkName,
 							useOvm,
 						});
 						setSelectedWallet(wallet.name);
-						setTransactionNotifier(new TransactionNotifier(provider));
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
@@ -210,16 +216,22 @@ const useConnector = () => {
 	};
 
 	const getTokenAddress = (currencyKey: CurrencyKey) => {
-		const { contracts } = synthetix.js!;
+		if (synthetixjs == null) {
+			return null;
+		}
 
 		return currencyKey === CRYPTO_CURRENCY_MAP.ETH
 			? ETH_ADDRESS
-			: contracts[synthToContractName(currencyKey!)].address;
+			: synthetixjs!.contracts[synthToContractName(currencyKey!)].address;
 	};
 
 	return {
+		network,
 		provider,
 		signer,
+		synthetixjs,
+		synthsMap,
+		tokensMap,
 		onboard,
 		connectWallet,
 		disconnectWallet,

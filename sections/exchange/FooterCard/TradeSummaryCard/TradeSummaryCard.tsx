@@ -2,11 +2,8 @@ import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import BigNumber from 'bignumber.js';
 
-import { Synth } from 'lib/synthetix';
-
-import { GasPrices } from 'queries/network/useEthGasPriceQuery';
+import Wei from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 
@@ -27,7 +24,9 @@ import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 
 import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
+import { GasPrices } from '@synthetixio/queries';
 import PoweredBy1Inch from 'components/PoweredBy1Inch';
+import { Synth } from '@synthetixio/contracts-interface';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
@@ -42,12 +41,12 @@ type TradeSummaryCardProps = {
 	showFee?: boolean;
 	attached?: boolean;
 	className?: string;
-	feeRate: BigNumber | null;
+	feeRate: Wei | null;
 	transactionFee?: number | null;
-	feeCost: BigNumber | null;
+	feeCost: Wei | null;
 	isApproved?: boolean;
 	isCreateShort?: boolean;
-	shortInterestRate?: BigNumber | null;
+	shortInterestRate?: Wei | null;
 	show1InchProvider?: boolean;
 };
 

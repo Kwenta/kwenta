@@ -16,8 +16,8 @@ import {
 	FlexDivCentered,
 } from 'styles/common';
 import { Subheader } from '../common';
-import { SYNTHS_MAP } from 'constants/currency';
-import { formatCurrency, formatPercent, formatNumberFromBN } from 'utils/formatters/number';
+import { Synths } from 'constants/currency';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -28,7 +28,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { FuturesMarket } from 'queries/futures/types';
 
 type MarketsProps = {
-	markets: [FuturesMarket] | [];
+	markets: FuturesMarket[] | [];
 };
 
 const Markets: React.FC<MarketsProps> = ({ markets }) => {
@@ -59,7 +59,7 @@ const Markets: React.FC<MarketsProps> = ({ markets }) => {
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<FlexDivCentered>
 								<CurrencyIcon currencyKey={cellProps.value} />
-								<StyledMarketName>{`${cellProps.value}/${SYNTHS_MAP.sUSD}`}</StyledMarketName>
+								<StyledMarketName>{`${cellProps.value}/${Synths.sUSD}`}</StyledMarketName>
 							</FlexDivCentered>
 						),
 						sortable: true,
@@ -71,9 +71,9 @@ const Markets: React.FC<MarketsProps> = ({ markets }) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
-								<StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
+								<StyledCurrencyKey>{Synths.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>
-									{formatCurrency(SYNTHS_MAP.sUSD, formatNumberFromBN(cellProps.value), {
+									{formatCurrency(Synths.sUSD, cellProps.value, {
 										sign: '$',
 									})}
 								</StyledCurrency>
@@ -89,9 +89,9 @@ const Markets: React.FC<MarketsProps> = ({ markets }) => {
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
 							<span>
 								--
-								{/* <StyledCurrencyKey>{SYNTHS_MAP.sUSD}</StyledCurrencyKey>
+								{/* <StyledCurrencyKey>{Synths.sUSD}</StyledCurrencyKey>
 								<StyledCurrency>
-									{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.changeAmount)}
+									{formatCurrency(Synths.sUSD, cellProps.row.original.changeAmount)}
 								</StyledCurrency>
 								<ChangePercent value={cellProps.row.original.changePercent} /> */}
 							</span>
@@ -104,9 +104,7 @@ const Markets: React.FC<MarketsProps> = ({ markets }) => {
 						accessor: 'currentFundingRate',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesMarket>) => (
-							<StyledPercent>
-								{formatPercent(formatNumberFromBN(cellProps.value.toString()))}
-							</StyledPercent>
+							<StyledPercent>{formatPercent(cellProps.value)}</StyledPercent>
 						),
 						width: 200,
 						sortable: true,

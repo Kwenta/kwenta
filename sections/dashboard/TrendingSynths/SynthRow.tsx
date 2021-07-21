@@ -3,19 +3,18 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 
-import { Synth } from 'lib/synthetix';
-
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
 import { Period } from 'constants/period';
 import ROUTES from 'constants/routes';
 
-import useHistoricalRatesQuery from 'queries/rates/useHistoricalRatesQuery';
-
 import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useSynthetixQueries from '@synthetixio/queries';
+import { Synth } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from 'constants/currency';
 
 type SynthRowProps = {
 	price: number | null;
@@ -26,7 +25,9 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const router = useRouter();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const currencyKey = synth.name;
+	const currencyKey = synth.name as CurrencyKey;
+
+	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
 		refetchInterval: false,
@@ -40,15 +41,19 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 		>
 			<Currency.Name
 				currencyKey={currencyKey}
-				name={t('common.currency.synthetic-currency-name', {
-					currencyName: synth.description,
-				})}
+				name={
+					synth.description
+						? t('common.currency.synthetic-currency-name', {
+								currencyName: synth.description,
+						  })
+						: ''
+				}
 				showIcon={true}
 				marketClosureReason={marketClosureReason}
 			/>
 			{price != null ? (
 				<Currency.Price
-					currencyKey={selectedPriceCurrency.name}
+					currencyKey={selectedPriceCurrency.name as CurrencyKey}
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}

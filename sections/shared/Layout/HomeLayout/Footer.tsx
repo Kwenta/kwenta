@@ -4,6 +4,7 @@ import { Svg } from 'react-optimized-image';
 
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 
+import DiscordLogo from 'assets/svg/social/discord.svg';
 import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 
@@ -17,6 +18,9 @@ const Footer: React.FC = () => {
 		<FooterContainer>
 			<PoweredBySynthetix />
 			<SocialIcons>
+				<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
+					<Svg src={DiscordLogo} />
+				</ExternalLink>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
 					<Svg src={TwitterLogo} />
 				</ExternalLink>

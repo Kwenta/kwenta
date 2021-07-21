@@ -15,7 +15,7 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { NO_VALUE } from 'constants/placeholder';
 import { Trade, TradeStatus, PositionSide } from '../types';
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
@@ -36,7 +36,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 			position: {
 				side: PositionSide.LONG,
 				amount: 1000,
-				currency: SYNTHS_MAP.sBTC,
+				currency: Synths.sBTC,
 			},
 			leverage: {
 				amount: 5,
@@ -53,7 +53,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 			position: {
 				side: PositionSide.SHORT,
 				amount: 1000,
-				currency: SYNTHS_MAP.sBTC,
+				currency: Synths.sBTC,
 			},
 			leverage: {
 				amount: 5,
@@ -70,7 +70,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 			position: {
 				side: PositionSide.LONG,
 				amount: 1000,
-				currency: SYNTHS_MAP.sBTC,
+				currency: Synths.sBTC,
 			},
 			leverage: {
 				amount: 5,
@@ -161,7 +161,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
 							<Price>
-								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.entryPrice, {
+								{formatCurrency(Synths.sUSD, cellProps.row.original.entryPrice, {
 									sign: '$',
 								})}{' '}
 								{selectedPriceCurrency.asset}
@@ -178,7 +178,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
 							<Price>
-								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.finalPrice, {
+								{formatCurrency(Synths.sUSD, cellProps.row.original.finalPrice, {
 									sign: '$',
 								})}{' '}
 								{selectedPriceCurrency.asset}
@@ -195,7 +195,7 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<Trade>) => (
 							<PNL negative={cellProps.row.original.pnl < 0}>
-								{formatCurrency(SYNTHS_MAP.sUSD, cellProps.row.original.pnl, {
+								{formatCurrency(Synths.sUSD, cellProps.row.original.pnl, {
 									sign: '$',
 								})}{' '}
 								{selectedPriceCurrency.asset}

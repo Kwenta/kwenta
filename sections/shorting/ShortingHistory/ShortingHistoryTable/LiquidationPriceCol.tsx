@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import { CellProps } from 'react-table';
 
 import { HistoricalShortPosition } from 'queries/collateral/subgraph/types';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -13,12 +12,16 @@ import { formatCurrency } from 'utils/formatters/number';
 import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
 
 import { StyledCurrencyKey, StyledPrice } from './common';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 type LiquidationPriceColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
 };
 
 const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
@@ -53,9 +56,11 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 
 	const liquidationPrice = useMemo(
 		() =>
-			collateralLockedAmount
-				.multipliedBy(collateralLockedPrice)
-				.dividedBy(synthBorrowedAmount.multipliedBy(minCollateralRatio)),
+			synthBorrowedAmount && synthBorrowedAmount.gt(0)
+				? collateralLockedAmount
+						.mul(collateralLockedPrice)
+						.div(synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0),
 		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCollateralRatio]
 	);
 
@@ -65,7 +70,7 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 				{formatCurrency(
 					collateralLocked,
 					selectPriceCurrencyRate != null
-						? liquidationPrice.dividedBy(selectPriceCurrencyRate)
+						? liquidationPrice.div(selectPriceCurrencyRate)
 						: liquidationPrice,
 					{
 						sign: selectedPriceCurrency.sign,

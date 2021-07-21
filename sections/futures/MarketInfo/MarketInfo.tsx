@@ -2,14 +2,14 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
-import { SYNTHS_MAP } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import PriceChartCard from 'sections/futures/Charts/PriceChartCard';
 
@@ -22,12 +22,14 @@ type MarketInfoProps = {};
 
 const MarketInfo: React.FC<MarketInfoProps> = ({}) => {
 	const { t } = useTranslation();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	// @TODO: change to be variable
-	const baseCurrencyKey = SYNTHS_MAP.sBTC;
+	const baseCurrencyKey = Synths.sBTC;
 
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),

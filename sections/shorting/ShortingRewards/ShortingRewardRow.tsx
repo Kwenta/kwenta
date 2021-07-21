@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
 
-import synthetix from 'lib/synthetix';
 import Button from 'components/Button';
 import { normalizeGasLimit, gasPriceInWei } from 'utils/network';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -23,6 +22,8 @@ import { CurrencyKey } from 'constants/currency';
 import useCollateralShortRewards from 'queries/collateral/useCollateralShortRewards';
 import Card from 'components/Card';
 import Currency from 'components/Currency';
+import { wei } from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 type ShortingRewardRowProps = {
 	currencyKey: CurrencyKey;
@@ -40,6 +41,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	const { t } = useTranslation();
 
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
@@ -71,9 +73,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 
 	const totalTradePrice = useMemo(() => {
 		if (ShortingRewardRow != null) {
-			let tradePrice = ShortingRewardRow.multipliedBy(snxPriceRate);
+			let tradePrice = ShortingRewardRow.mul(snxPriceRate);
 			if (selectPriceCurrencyRate) {
-				tradePrice = tradePrice.dividedBy(selectPriceCurrencyRate);
+				tradePrice = tradePrice.div(selectPriceCurrencyRate);
 			}
 
 			return tradePrice;
@@ -82,9 +84,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	}, [ShortingRewardRow, snxPriceRate, selectPriceCurrencyRate]);
 
 	const getGasEstimate = useCallback(async () => {
-		if (synthetix.js != null && walletAddress != null) {
+		if (synthetixjs != null && walletAddress != null) {
 			try {
-				const { CollateralShort } = synthetix.js.contracts;
+				const { CollateralShort } = synthetixjs.contracts;
 
 				const gasLimitEstimate = await CollateralShort.estimateGas.getReward(
 					ethers.utils.formatBytes32String(currencyKey),
@@ -98,7 +100,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 			}
 		}
 		return null;
-	}, [walletAddress, currencyKey]);
+	}, [walletAddress, currencyKey, synthetixjs]);
 
 	useEffect(() => {
 		async function getGasEstimateCall() {
@@ -109,7 +111,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	}, [getGasEstimate, setGasLimit]);
 
 	const handleSubmit = useCallback(async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
@@ -117,7 +119,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				setIsSubmitting(true);
 
 				let tx: ethers.ContractTransaction | null = null;
-				const { CollateralShort } = synthetix.js.contracts;
+				const { CollateralShort } = synthetixjs!.contracts;
 
 				const gasLimitEstimate = await getGasEstimate();
 
@@ -156,6 +158,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		monitorTransaction,
 		setGasLimit,
 		walletAddress,
+		synthetixjs,
 	]);
 
 	return (
@@ -188,9 +191,9 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 					txError={txError}
 					attemptRetry={handleSubmit}
 					baseCurrencyAmount={(ShortingRewardRow ?? 0).toString()}
-					feeAmountInBaseCurrency={null}
 					baseCurrencyKey={CRYPTO_CURRENCY_MAP.SNX}
 					totalTradePrice={totalTradePrice.toString()}
+					feeCost={wei(0)}
 					txProvider="synthetix"
 					baseCurrencyLabel={t('shorting.rewards.tx-confirm.claiming')}
 				/>

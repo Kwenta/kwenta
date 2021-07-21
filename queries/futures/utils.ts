@@ -1,4 +1,6 @@
-import { toBigNumber, zeroBN } from 'utils/formatters/number';
+import { wei } from '@synthetixio/wei';
+
+import { zeroBN } from 'utils/formatters/number';
 import { PositionDetail, FuturesPosition } from './types';
 
 export const mapFuturesPosition = (
@@ -21,29 +23,27 @@ export const mapFuturesPosition = (
 		order: !!orderPending
 			? {
 					pending: !!orderPending,
-					fee: toBigNumber(order.fee.toString()),
-					leverage: toBigNumber(order.leverage.toString()),
+					fee: wei(order.fee),
+					leverage: wei(order.leverage),
 			  }
 			: null,
-		margin: toBigNumber(margin.toString()),
-		position: toBigNumber(size.toString()).isZero()
+		margin: wei(margin),
+		position: wei(size).eq(zeroBN)
 			? null
 			: {
 					canLiquidatePosition: !!canLiquidatePosition,
-					isLong: toBigNumber(size.toString()).isGreaterThan(zeroBN),
-					notionalValue: toBigNumber(notionalValue.toString()),
-					accruedFunding: toBigNumber(accruedFunding.toString()),
-					remainingMargin: toBigNumber(remainingMargin.toString()),
-					profitLoss: toBigNumber(profitLoss.toString()),
-					fundingIndex: Number(fundingIndex.toString()),
-					lastPrice: toBigNumber(lastPrice.toString()),
-					size: toBigNumber(size.toString()),
-					liquidationPrice: toBigNumber(liquidationPrice.toString()),
-					leverage: toBigNumber(remainingMargin.toString()).isZero()
+					isLong: wei(size).gt(zeroBN),
+					notionalValue: wei(notionalValue),
+					accruedFunding: wei(accruedFunding),
+					remainingMargin: wei(remainingMargin),
+					profitLoss: wei(profitLoss),
+					fundingIndex: Number(fundingIndex),
+					lastPrice: wei(lastPrice),
+					size: wei(size),
+					liquidationPrice: wei(liquidationPrice),
+					leverage: wei(remainingMargin).eq(zeroBN)
 						? zeroBN
-						: toBigNumber(notionalValue.toString()).dividedBy(
-								toBigNumber(remainingMargin.toString())
-						  ),
+						: wei(notionalValue).div(wei(remainingMargin)),
 			  },
 	};
 };

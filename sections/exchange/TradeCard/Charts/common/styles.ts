@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import media from 'styles/media';
-import { GridDivCenteredCol, GridDivCenteredRow, TextButton } from 'styles/common';
+import { FlexDiv, GridDivCenteredCol, GridDivCenteredRow, TextButton } from 'styles/common';
 
 export const ChartData = styled.div<{ disabledInteraction: boolean }>`
 	width: 100%;
@@ -22,29 +22,35 @@ export const LinkTag = styled.span`
 	}
 `;
 
-export const CurrencyLabel = styled.span`
-	padding-right: 20px;
+export const CurrencyLabel = styled.div`
 	font-size: 14px;
 	text-transform: capitalize;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
+	display: flex;
+	align-items: center;
+	grid-gap: 5px;
 `;
 
 export const CurrencyPrice = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
 	color: ${(props) => props.theme.colors.white};
-	padding-right: 20px;
 `;
 
-export const Actions = styled(GridDivCenteredCol)<{ alignRight?: boolean }>`
+export const Actions = styled(FlexDiv)<{ reverseChildren?: boolean }>`
 	margin-top: 5px;
-	grid-gap: 8px;
-	justify-content: ${(props) => (props.alignRight ? 'flex-end' : 'flex-start')};
+	flex-direction: ${(props) => (props.reverseChildren ? 'row-reverse' : 'row')};
+	justify-content: space-between;
+	grid-gap: 15px;
 
 	${media.lessThan('sm')`
 		overflow: auto;
 		width: 70px;
 	`}
+`;
+
+export const PeriodSelector = styled(GridDivCenteredCol)`
+	grid-gap: 8px;
 `;
 
 export const ChartBody = styled.div`
@@ -104,4 +110,17 @@ export const OverlayTimer = styled.div`
 export const NoData = styled.div`
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
+`;
+
+export const CurrencyLabelWithDot = styled(CurrencyLabel)`
+	display: flex;
+	grid-gap: 5px;
+	align-items: center;
+`;
+
+export const PriceDot = styled.div<{ color: string }>`
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: ${(props) => props.color};
 `;

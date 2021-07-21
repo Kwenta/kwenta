@@ -1,7 +1,7 @@
-import { CurrencyKey, SYNTHS_MAP, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
-import { Rates } from 'queries/rates/useExchangeRatesQuery';
+import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
+import { Rates } from '@synthetixio/queries';
 
-export const isSynth = (currencyKey: CurrencyKey) => !!SYNTHS_MAP[currencyKey];
+export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];
 export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(currencyKey);
 
@@ -15,9 +15,16 @@ export const synthToContractName = (currencyKey: CurrencyKey) => `Synth${currenc
 
 export const getExchangeRatesForCurrencies = (
 	rates: Rates | null,
-	base: CurrencyKey | null,
-	quote: CurrencyKey | null
-) => (rates == null || base == null || quote == null ? 0 : rates[base] * (1 / rates[quote]));
+	base: string | null,
+	quote: string | null
+) =>
+	rates == null ||
+	base == null ||
+	quote == null ||
+	rates[base] === undefined ||
+	rates[quote] === undefined
+		? 0
+		: rates[base] * (1 / rates[quote]);
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
