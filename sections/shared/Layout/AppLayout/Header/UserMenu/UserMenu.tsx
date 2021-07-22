@@ -45,6 +45,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 			<Container>
 				<FlexDivCentered>
 					<Menu>
+						<NetworksSwitcher />
 						{isWalletConnected && (
 							<MenuButton
 								onClick={() => {
@@ -72,7 +73,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						>
 							<Svg src={MenuIcon} />
 						</MenuButton>
-						<NetworksSwitcher />
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
