@@ -88,7 +88,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		{
 			label: 'header.networks-switcher.learn-more',
 			postfixIcon: 'Link',
-			link: 'https://blog.kwenta.io/',
+			link: 'https://blog.kwenta.io/hello-optimism-kwenta-is-live-on-l2/',
 		},
 	];
 
