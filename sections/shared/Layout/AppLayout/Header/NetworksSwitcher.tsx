@@ -160,6 +160,7 @@ const Button = styled.div`
 	border: 1px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	height: 28px;
+	width: 110px;
 	padding: 0px 16px;
 	background: ${(props) => props.theme.colors.elderberry};
 	color: ${(props) => props.theme.colors.goldColors.color4};
