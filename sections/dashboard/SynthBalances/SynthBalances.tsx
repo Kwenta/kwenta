@@ -12,6 +12,8 @@ import media from 'styles/media';
 import { GridDivCentered, NoTextTransform } from 'styles/common';
 
 import SynthBalanceRow, { SynthBalanceRowProps } from './SynthBalanceRow';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 import { SynthBalance } from '@synthetixio/queries';
 
 type SynthBalancesProps = Omit<SynthBalanceRowProps, 'synth'> & {
@@ -22,6 +24,7 @@ const { sUSD } = Synths;
 
 const SynthBalances: FC<SynthBalancesProps> = ({ exchangeRates, balances, totalUSDBalance }) => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 
 	if (balances.length === 0) {
 		return (
@@ -29,21 +32,34 @@ const SynthBalances: FC<SynthBalancesProps> = ({ exchangeRates, balances, totalU
 				<Message>
 					<Trans
 						t={t}
-						i18nKey="exchange.onboard.message"
+						i18nKey={isL2 ? 'exchange.onboard.l2-message' : 'exchange.onboard.message'}
 						values={{ currencyKey: sUSD }}
 						components={[<NoTextTransform />]}
 					/>
 				</Message>
-				<Link href={ROUTES.Dashboard.Convert}>
-					<Button size="lg" variant="primary" isRounded={true}>
-						<Trans
-							t={t}
-							i18nKey="common.currency.buy-currency"
-							values={{ currencyKey: sUSD }}
-							components={[<NoTextTransform />]}
-						/>
-					</Button>
-				</Link>
+				{isL2 ? (
+					<Link href={'https://staking.synthetix.io/staking'}>
+						<Button size="lg" variant="primary" isRounded={true}>
+							<Trans
+								t={t}
+								i18nKey="exchange.onboard.mint-button"
+								values={{ currencyKey: sUSD }}
+								components={[<NoTextTransform />]}
+							/>
+						</Button>
+					</Link>
+				) : (
+					<Link href={ROUTES.Dashboard.Convert}>
+						<Button size="lg" variant="primary" isRounded={true}>
+							<Trans
+								t={t}
+								i18nKey="common.currency.buy-currency"
+								values={{ currencyKey: sUSD }}
+								components={[<NoTextTransform />]}
+							/>
+						</Button>
+					</Link>
+				)}
 			</NoBalancesContainer>
 		);
 	}

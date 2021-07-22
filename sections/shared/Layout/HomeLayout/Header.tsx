@@ -18,10 +18,13 @@ import Logo from '../Logo';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
+	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
 		() => [
@@ -48,7 +51,7 @@ const Header: FC = () => {
 		<>
 			<MobileHiddenView>
 				<Container>
-					<Logo />
+					<Logo isL2={isL2} />
 					<Links>
 						{links.map(({ id, label, ref }) => (
 							<StyledTextButton

@@ -19,14 +19,15 @@ import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
 
-import { isWalletConnectedState } from 'store/wallet';
+import { isL2State, isWalletConnectedState } from 'store/wallet';
 
 const DashboardPage = () => {
 	const { t } = useTranslation();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
-	const activeView = isWalletConnected ? <DashboardCard /> : <Onboard />;
+	const activeView = isWalletConnected || isL2 ? <DashboardCard /> : <Onboard />;
 
 	return (
 		<>
@@ -38,9 +39,11 @@ const DashboardPage = () => {
 					<DesktopOnlyView>
 						<FullHeightContainer>
 							<MainContent>{activeView}</MainContent>
-							<RightSideContent>
-								<TrendingSynths />
-							</RightSideContent>
+							{isWalletConnected && (
+								<RightSideContent>
+									<TrendingSynths />
+								</RightSideContent>
+							)}
 							<BottomShadow />
 						</FullHeightContainer>
 					</DesktopOnlyView>

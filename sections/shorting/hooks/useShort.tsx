@@ -12,8 +12,6 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey, Synths } from 'constants/currency';
 
-import Connector from 'containers/Connector';
-
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import useCollateralShortRate from 'queries/collateral/useCollateralShortRate';
 
@@ -38,8 +36,6 @@ import { customShortCRatioState, shortCRatioState } from 'store/ui';
 
 import { getExchangeRatesForCurrencies, synthToContractName } from 'utils/currencies';
 
-import synthetix from 'lib/synthetix';
-
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -47,13 +43,13 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/net
 
 import { zeroBN, formatNumber } from 'utils/formatters/number';
 
-import Notify from 'containers/Notify';
-
 import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
+import Connector from 'containers/Connector';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -65,8 +61,8 @@ const useShort = ({
 	defaultQuoteCurrencyKey = null,
 }: ShortCardProps) => {
 	const { t } = useTranslation();
-	const { notify } = Connector.useContainer();
-	const { monitorHash } = Notify.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthsMap, synthetixjs } = Connector.useContainer();
 
 	const [currencyPair, setCurrencyPair] = useCurrencyPair<CurrencyKey>({
 		persistSelectedCurrencies: false,
@@ -131,10 +127,7 @@ const useShort = ({
 		[shortCRatio, minCratio]
 	);
 
-	const baseCurrency =
-		baseCurrencyKey != null && synthetix.synthsMap != null
-			? synthetix.synthsMap[baseCurrencyKey]
-			: null;
+	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey] : null;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const rate = useMemo(
@@ -246,12 +239,12 @@ const useShort = ({
 	// TODO: grab these from the smart contract
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			return synthetix.js!.synths.filter((synth) =>
+			return synthetixjs!.synths.filter((synth) =>
 				SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey)
 			);
 		}
 		return [];
-	}, [isAppReady]);
+	}, [isAppReady, synthetixjs]);
 
 	const gasPrice = useMemo(
 		() =>
@@ -286,7 +279,7 @@ const useShort = ({
 	const checkAllowance = useCallback(async () => {
 		if (isWalletConnected && quoteCurrencyKey != null && quoteCurrencyAmount) {
 			try {
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const allowance = (await contracts[synthToContractName(quoteCurrencyKey)].allowance(
 					walletAddress,
@@ -298,7 +291,7 @@ const useShort = ({
 				console.log(e);
 			}
 		}
-	}, [quoteCurrencyAmount, isWalletConnected, quoteCurrencyKey, walletAddress]);
+	}, [quoteCurrencyAmount, isWalletConnected, quoteCurrencyKey, walletAddress, synthetixjs]);
 
 	useEffect(() => {
 		checkAllowance();
@@ -340,7 +333,7 @@ const useShort = ({
 
 	const getGasLimitEstimateForShort = async () => {
 		try {
-			const gasEstimate = await synthetix.js!.contracts.CollateralShort.estimateGas.open(
+			const gasEstimate = await synthetixjs!.contracts.CollateralShort.estimateGas.open(
 				...getShortParams()
 			);
 
@@ -360,7 +353,7 @@ const useShort = ({
 				setIsApproving(true);
 				// open approve modal
 
-				const { contracts } = synthetix.js!;
+				const { contracts } = synthetixjs!;
 
 				const collateralContract = contracts[synthToContractName(quoteCurrencyKey)];
 
@@ -379,7 +372,7 @@ const useShort = ({
 					}
 				);
 				if (tx != null) {
-					monitorHash({
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							setIsApproving(false);
@@ -407,7 +400,7 @@ const useShort = ({
 			_issueFee: ethers.BigNumber,
 			tx: ethers.Event
 		) => {
-			if (synthetix.js != null) {
+			if (synthetixjs != null) {
 				// const { CollateralShort } = synthetix.js.contracts;
 
 				setHistoricalShortPositions((orders) =>
@@ -429,15 +422,15 @@ const useShort = ({
 				);
 			}
 		},
-		[setHistoricalShortPositions]
+		[setHistoricalShortPositions, synthetixjs]
 	);
 
 	const handleSubmit = async () => {
-		if (synthetix.js != null && gasPrice != null) {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const { CollateralShort } = synthetix.js.contracts;
+			const { CollateralShort } = synthetixjs.contracts;
 
 			try {
 				setIsSubmitting(true);
@@ -455,8 +448,8 @@ const useShort = ({
 					gasLimit: gasLimitEstimate,
 				})) as ethers.ContractTransaction;
 
-				if (tx != null && notify != null) {
-					monitorHash({
+				if (tx != null) {
+					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
 							synthsWalletBalancesQuery.refetch();
@@ -477,7 +470,7 @@ const useShort = ({
 		const unsubs: Function[] = [];
 
 		if (isAppReady && walletAddress != null) {
-			const { CollateralShort } = synthetix.js!.contracts;
+			const { CollateralShort } = synthetixjs!.contracts;
 
 			const loanCreatedEvent = CollateralShort.filters.LoanCreated(walletAddress);
 
@@ -487,7 +480,7 @@ const useShort = ({
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [isAppReady, walletAddress, onLoanCreated]);
+	}, [isAppReady, walletAddress, onLoanCreated, synthetixjs]);
 
 	const quoteCurrencyCard = (
 		<CurrencyCard

@@ -10,8 +10,6 @@ import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
 
-import synthetix from 'lib/synthetix';
-
 import request, { gql } from 'graphql-request';
 import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
 import Connector from 'containers/Connector';
@@ -41,12 +39,12 @@ const useCollateralShortPositionQuery = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { provider } = Connector.useContainer();
+	const { provider, synthetixjs } = Connector.useContainer();
 
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			const { CollateralShort, CollateralStateShort, ExchangeRates } = synthetix.js!.contracts;
+			const { CollateralShort, CollateralStateShort, ExchangeRates } = synthetixjs!.contracts;
 
 			const loan = (await CollateralStateShort.getLoan(walletAddress, loanId as string)) as {
 				accruedInterest: ethers.BigNumber;

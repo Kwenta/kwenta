@@ -4,7 +4,6 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { gasSpeedState } from 'store/wallet';
-
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';

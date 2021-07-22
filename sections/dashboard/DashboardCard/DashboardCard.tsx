@@ -20,6 +20,7 @@ import { CardTitle, ConvertContainer } from '../common';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { zeroBN } from 'utils/formatters/number';
+import { isL2State } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
@@ -36,6 +37,7 @@ const Tabs = Object.values(Tab);
 const DashboardCard: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const isL2 = useRecoilValue(isL2State);
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
@@ -62,7 +64,11 @@ const DashboardCard: FC = () => {
 			: null;
 
 	const activeTab =
-		tabQuery != null ? tabQuery : synthBalances?.balances.length ? Tab.SynthBalances : Tab.Convert;
+		tabQuery != null
+			? tabQuery
+			: synthBalances?.balances.length || isL2
+			? Tab.SynthBalances
+			: Tab.Convert;
 
 	const TABS = useMemo(
 		() => [
@@ -72,12 +78,16 @@ const DashboardCard: FC = () => {
 				active: activeTab === Tab.SynthBalances,
 				onClick: () => router.push(ROUTES.Dashboard.SynthBalances),
 			},
-			{
-				name: Tab.Convert,
-				label: t('dashboard.tabs.nav.convert'),
-				active: activeTab === Tab.Convert,
-				onClick: () => router.push(ROUTES.Dashboard.Convert),
-			},
+			...(!isL2
+				? [
+						{
+							name: Tab.Convert,
+							label: t('dashboard.tabs.nav.convert'),
+							active: activeTab === Tab.Convert,
+							onClick: () => router.push(ROUTES.Dashboard.Convert),
+						},
+				  ]
+				: []),
 			{
 				name: Tab.Transactions,
 				label: t('dashboard.tabs.nav.transactions'),
@@ -85,7 +95,7 @@ const DashboardCard: FC = () => {
 				onClick: () => router.push(ROUTES.Dashboard.Transactions),
 			},
 		],
-		[t, activeTab, router]
+		[t, activeTab, router, isL2]
 	);
 
 	if (synthsBalancesQuery.isLoading) {

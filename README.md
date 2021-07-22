@@ -22,9 +22,8 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 
 - ethers.js v5 - Ethereum wallet implementation.
 - Blocknative Onboard - for ethereum wallet connectivity.
-- Blocknative Notify - for tx notifications.
-- [synthetix-data](https://github.com/Synthetixio/synthetix-data) - for historical data (powered by [TheGraph](https://thegraph.com/)).
 - [@synthetixio/contracts-interface](https://github.com/Synthetixio/js-monorepo) - for interactions with the Synthetix protocol.
+- [@synthetixio/data](https://github.com/Synthetixio/js-monorepo/tree/master/packages/data) - for historical data (powered by [TheGraph](https://thegraph.com/))
 
 ## Development
 
@@ -45,7 +44,6 @@ cp .env.local.example .env.local
 Then, open `.env.local` and add the missing environment variables:
 
 - `NEXT_PUBLIC_PORTIS_APP_ID` - Portis app id (get it from [portis.io](https://www.portis.io/))
-- `NEXT_PUBLIC_BN_NOTIFY_API_KEY` - Blocknative Notify API key (get it from [blocknative.com](https://blocknative.com/))
 - `NEXT_PUBLIC_BN_ONBOARD_API_KEY` - Blocknative Onboard API key (get it from [blocknative.com](https://blocknative.com/))
 - `NEXT_PUBLIC_INFURA_PROJECT_ID` - Infura project id (get it from [infura.io](https://infura.io/))
 

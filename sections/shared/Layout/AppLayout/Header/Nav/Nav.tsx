@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { FC } from 'react';
+import { useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
@@ -7,16 +8,17 @@ import { useTranslation } from 'react-i18next';
 
 import { linkCSS } from 'styles/common';
 
-import { MENU_LINKS } from '../constants';
+import { menuLinksState } from '../states';
 
 const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
+	const menuLinks = useRecoilValue(menuLinksState);
 
 	return (
 		<nav>
 			<MenuLinks>
-				{MENU_LINKS.map(({ i18nLabel, link }) => (
+				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuLinkItem key={link} isActive={asPath.includes(link)}>
 						<Link href={link}>
 							<a>{t(i18nLabel)}</a>

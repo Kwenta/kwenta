@@ -6,6 +6,7 @@ export const EXTERNAL_LINKS = {
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
+		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
 	Synthetix: {
 		Home: 'https://www.synthetix.io',

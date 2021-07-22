@@ -1,9 +1,9 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import synthetix, { Synth } from '@synthetixio/contracts-interface';
+import { Synth } from '@synthetixio/contracts-interface';
 
 import Select from 'components/Select';
 
@@ -18,31 +18,54 @@ import { trendingSynthsOptionState } from 'store/ui';
 import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import mapValues from 'lodash/mapValues';
+import Connector from 'containers/Connector';
+import values from 'lodash/values';
+
+import { useQueryClient, Query } from 'react-query';
+import { networkState } from 'store/wallet';
+import { Period } from 'constants/period';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
+	const network = useRecoilValue(networkState);
+
+	const { synthsMap } = Connector.useContainer();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const {
-		useExchangeRatesQuery,
-		useHistoricalRatesQuery,
-		useHistoricalVolumeQuery,
-	} = useSynthetixQueries();
+	const { useExchangeRatesQuery, useHistoricalVolumeQuery } = useSynthetixQueries();
 
-	// eslint-disable-next-line
-	const synths = synthetix({ networkId: 1 }).synths;
+	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const historicalVolumeQuery = useHistoricalVolumeQuery();
 
-	// ok for rules of hooks since `synths` is static for execution of the site
-	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = {};
-	for (const synth of synths) {
-		const historicalRateQuery = useHistoricalRatesQuery(synth.name as CurrencyKey); // eslint-disable-line react-hooks/rules-of-hooks
+	const queryCache = useQueryClient().getQueryCache();
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
 
-		if (historicalRateQuery.isSuccess) {
-			historicalRates[synth.name as CurrencyKey] = historicalRateQuery.data!;
+	const unfrozenSynths =
+		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
+			? synths.filter(
+					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
+			  )
+			: synths;
+
+	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = useMemo(
+		() => ({}),
+		[]
+	);
+
+	for (const synth of unfrozenSynths) {
+		const historicalRateQuery = queryCache.find([
+			'rates',
+			'historicalRates',
+			network.id,
+			synth.name,
+			Period.ONE_DAY,
+		]);
+
+		if (historicalRateQuery && (historicalRateQuery as Query).state.status === 'success') {
+			historicalRates[synth.name] = historicalRateQuery.state.data as HistoricalRatesUpdates;
 		}
 	}
 
@@ -53,30 +76,35 @@ const TrendingSynths: FC = () => {
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
-			return synths.sort((a: Synth, b: Synth) => numericSort(exchangeRates, a, b));
+			return unfrozenSynths.sort((a: Synth, b: Synth) =>
+				numericSort(exchangeRates, a.name, b.name)
+			);
 		}
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
-			return synths.sort((a: Synth, b: Synth) => numericSort(historicalVolume, a, b));
+			return unfrozenSynths.sort((a: Synth, b: Synth) =>
+				numericSort(historicalVolume, a.name, b.name)
+			);
 		}
 		if (historicalRates != null) {
 			if (currentSynthSort.value === SynthSort.Rates24HHigh) {
-				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(mapValues(historicalRates, 'high'), a, b)
+				return unfrozenSynths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'high'), a.name, b.name)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Rates24HLow) {
-				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(mapValues(historicalRates, 'low'), a, b)
+				return unfrozenSynths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'low'), a.name, b.name)
 				);
 			}
 			if (currentSynthSort.value === SynthSort.Change) {
-				return synths.sort((a: Synth, b: Synth) =>
-					numericSort(mapValues(historicalRates, 'change'), a, b)
+				return unfrozenSynths.sort((a: Synth, b: Synth) =>
+					numericSort(mapValues(historicalRates, 'change'), a.name, b.name)
 				);
 			}
 		}
-		return synths;
-	}, [synths, currentSynthSort, exchangeRates, historicalVolume, historicalRates]);
+
+		return unfrozenSynths;
+	}, [unfrozenSynths, currentSynthSort, exchangeRates, historicalVolume, historicalRates]);
 
 	return (
 		<>
@@ -99,9 +127,7 @@ const TrendingSynths: FC = () => {
 			<Rows>
 				{sortedSynths.map((synth: Synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
-					const currencyKey = synth.name;
-
-					return <SynthRow key={currencyKey} synth={synth} price={price} />;
+					return <SynthRow key={synth.name} synth={synth} price={price} />;
 				})}
 			</Rows>
 		</>

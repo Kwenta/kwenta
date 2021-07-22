@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import synthetix from 'lib/synthetix';
 import { useTranslation } from 'react-i18next';
 
 import Currency from 'components/Currency';
@@ -16,6 +15,7 @@ import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Wei from '@synthetixio/wei';
+import Connector from 'containers/Connector';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
@@ -27,13 +27,14 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
+	const { synthsMap } = Connector.useContainer();
+
 	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.currencyKey;
 	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();
 
-	const synthDesc =
-		synthetix.synthsMap != null ? synthetix.synthsMap[synth.currencyKey]?.description : '';
+	const synthDesc = synthsMap != null ? synthsMap[synth.currencyKey]?.description : '';
 
 	const totalValue = synth.usdBalance;
 	const price = exchangeRates && exchangeRates[synth.currencyKey];

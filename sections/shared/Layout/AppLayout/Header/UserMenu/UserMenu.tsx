@@ -15,13 +15,13 @@ import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 import NotificationIcon from 'assets/svg/app/notification.svg';
 import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
+import NetworksSwitcher from '../NetworksSwitcher';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -44,6 +44,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 			<Container>
 				<FlexDivCentered>
 					<Menu>
+						<NetworksSwitcher />
 						{isWalletConnected && (
 							<MenuButton
 								onClick={() => {
@@ -74,17 +75,13 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
-							size="sm"
+							size="md"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
 						>
 							<StyledConnectionDot />
 							{truncatedWalletAddress}
-							<StyledCaretDownIcon
-								src={CaretDownIcon}
-								viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
-							/>
 						</WalletButton>
 					) : (
 						<Button
@@ -111,7 +108,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 const Container = styled.div``;
 
 const Menu = styled.div`
-	padding-right: 26px;
+	padding-right: 16px;
 	display: grid;
 	grid-gap: 10px;
 	grid-auto-flow: column;
@@ -125,6 +122,7 @@ const WalletButton = styled(Button)`
 	border: 1px solid ${(props) => props.theme.colors.navy};
 	color: ${(props) => props.theme.colors.white};
 	border-radius: 4px;
+	height: 28px;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`
@@ -139,12 +137,6 @@ const MenuButton = styled.button<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 	padding: 5px;
-`;
-
-const StyledCaretDownIcon = styled(Svg)`
-	width: 8px;
-	color: ${(props) => props.theme.colors.blueberry};
-	margin-left: 7px;
 `;
 
 export default UserMenu;

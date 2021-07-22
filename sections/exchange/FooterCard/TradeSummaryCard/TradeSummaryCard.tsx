@@ -5,8 +5,6 @@ import Tippy from '@tippyjs/react';
 
 import Wei from '@synthetixio/wei';
 
-import { Synth } from 'lib/synthetix';
-
 import { CurrencyKey } from 'constants/currency';
 
 import { secondsToTime } from 'utils/formatters/date';
@@ -27,6 +25,7 @@ import FeeRateSummaryItem from './FeeRateSummaryItem';
 import FeeCostSummaryItem from './FeeCostSummaryItem';
 import { GasPrices } from '@synthetixio/queries';
 import PoweredBy1Inch from 'components/PoweredBy1Inch';
+import { Synth } from '@synthetixio/contracts-interface';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;

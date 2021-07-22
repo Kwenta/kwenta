@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
@@ -27,25 +27,32 @@ import '../i18n';
 
 import Layout from 'sections/shared/Layout';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
-import { networkState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const network = useRecoilValue(networkState);
+	const { provider, network } = Connector.useContainer();
 
 	return (
 		<>
-			<WithAppContainers>
-				<MediaContextProvider>
-					<SynthetixQueryContextProvider value={createQueryContext({ networkId: network!.id })}>
-						<Layout>
-							<SystemStatus>
-								<Component {...pageProps} />
-							</SystemStatus>
-						</Layout>
-						<ReactQueryDevtools />
-					</SynthetixQueryContextProvider>
-				</MediaContextProvider>
-			</WithAppContainers>
+			<MediaContextProvider>
+				<SynthetixQueryContextProvider
+					value={
+						provider && network
+							? createQueryContext({
+									provider: provider,
+									networkId: network!.id,
+							  })
+							: createQueryContext({ networkId: null })
+					}
+				>
+					<Layout>
+						<SystemStatus>
+							<Component {...pageProps} />
+						</SystemStatus>
+					</Layout>
+					<ReactQueryDevtools />
+				</SynthetixQueryContextProvider>
+			</MediaContextProvider>
 		</>
 	);
 };
@@ -78,7 +85,9 @@ const App: FC<AppProps> = (props) => {
 			<ThemeProvider theme={theme}>
 				<RecoilRoot>
 					<QueryClientProvider client={new QueryClient()}>
-						<InnerApp {...props} />
+						<WithAppContainers>
+							<InnerApp {...props} />
+						</WithAppContainers>
 					</QueryClientProvider>
 				</RecoilRoot>
 			</ThemeProvider>
