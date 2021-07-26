@@ -16,7 +16,7 @@ type OverviewRowProps = {
 
 const OverviewRow: React.FC<OverviewRowProps> = ({ subtitle, data, currencyKey, sign }) => (
 	<StyledDataRow>
-		<Subtitle>{subtitle}</Subtitle>
+		<Subtitle style={{ textTransform: 'none' }}>{subtitle}</Subtitle>
 		<FlexDivRowCentered>
 			<StyledCurrencyIcon currencyKey={currencyKey} />
 			<StyledData>

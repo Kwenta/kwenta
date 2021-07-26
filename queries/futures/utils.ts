@@ -1,7 +1,19 @@
 import { wei } from '@synthetixio/wei';
+import { Contract } from 'ethers';
 
 import { zeroBN } from 'utils/formatters/number';
 import { PositionDetail, FuturesPosition } from './types';
+
+export const getFuturesMarketContract = (
+	asset: string | null,
+	contracts: Record<string, Contract>
+) => {
+	if (!asset) throw new Error(`Asset needs to be specified`);
+	const contractName = `FuturesMarket${asset.substring(1)}`;
+	const contract = contracts[contractName];
+	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
+	return contract;
+};
 
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,

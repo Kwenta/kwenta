@@ -26,6 +26,9 @@ import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 import SlippageSelect from 'sections/shared/components/SlippageSelect';
 import MarginSection from './MarginSection';
+import DepositMarginModal from './DepositMarginModal';
+import { useRouter } from 'next/router';
+import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 
 type TradeProps = {};
 
@@ -47,7 +50,14 @@ const Trade: React.FC<TradeProps> = () => {
 	} = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const sUSDBalance = synthsBalancesQuery?.data?.totalUSDBalance ?? zeroBN;
+	const router = useRouter();
+
+	const marketAsset = router.query.market?.[0] ?? null;
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
+
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
@@ -62,6 +72,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
 	const [availableMargin, setAvailableMargin] = useState<string>('20000');
 	const [availableBalance, setAvailableBalance] = useState<string>('150000');
+	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -208,24 +219,40 @@ const Trade: React.FC<TradeProps> = () => {
 						maxSlippageTolerance={maxSlippageTolerance}
 						setMaxSlippageTolerance={setMaxSlippageTolerance}
 					/>
-					<FlexDivColCentered>
-						<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
-						<DepositMarginButton variant="primary" isRounded size="lg">
-							{t('futures.market.trade.button.deposit-margin')}
-						</DepositMarginButton>
-					</FlexDivColCentered>
-					{/* <Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
-						{isSubmitOrderDisabled
-							? t('futures.market.trade.button.enter-amount')
-							: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
-					</Button> */}
+					{futuresMarketsPosition && futuresMarketsPosition.margin.gte(zeroBN) ? (
+						<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
+							{isSubmitOrderDisabled
+								? t('futures.market.trade.button.enter-amount')
+								: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
+						</Button>
+					) : (
+						<FlexDivColCentered>
+							<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
+							<DepositMarginButton
+								variant="primary"
+								isRounded
+								size="lg"
+								onClick={() => setIsDepositMarginModalOpen(true)}
+							>
+								{t('futures.market.trade.button.deposit-margin')}
+							</DepositMarginButton>
+						</FlexDivColCentered>
+					)}
 				</FlexDivCol>
 			</TopRow>
 			<MarginSection
-				availableMargin={zeroBN}
-				sUSDBalance={zeroBN}
-				onDeposit={() => console.log('deposit')}
+				availableMargin={futuresMarketsPosition?.margin ?? zeroBN}
+				sUSDBalance={sUSDBalance}
+				onDeposit={() => setIsDepositMarginModalOpen(true)}
 			/>
+			{isDepositMarginModalOpen && (
+				<DepositMarginModal
+					sUSDBalance={sUSDBalance}
+					onTxConfirmed={() => console.log('here')}
+					market={marketAsset}
+					onDismiss={() => setIsDepositMarginModalOpen(false)}
+				/>
+			)}
 		</Panel>
 	);
 };

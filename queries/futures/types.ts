@@ -50,6 +50,7 @@ export type FuturesMarket = {
 	};
 	marketDebt: Wei;
 	marketSkew: Wei;
+	marketSize: Wei;
 	maxLeverage: Wei;
 	price: Wei;
 };

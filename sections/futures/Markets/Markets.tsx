@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
@@ -27,14 +27,11 @@ import ROUTES from 'constants/routes';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { FuturesMarket } from 'queries/futures/types';
 
-type MarketsProps = {
-	markets: FuturesMarket[] | [];
-};
-
-const Markets: React.FC<MarketsProps> = ({ markets }) => {
+const Markets: React.FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const markets = futuresMarketsQuery?.data ?? [];
 
 	return (
 		<StyledGridDiv>
@@ -86,16 +83,7 @@ const Markets: React.FC<MarketsProps> = ({ markets }) => {
 						Header: <StyledTableHeader>{t('futures.markets.table.change')}</StyledTableHeader>,
 						accessor: 'change',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesMarket>) => (
-							<span>
-								--
-								{/* <StyledCurrencyKey>{Synths.sUSD}</StyledCurrencyKey>
-								<StyledCurrency>
-									{formatCurrency(Synths.sUSD, cellProps.row.original.changeAmount)}
-								</StyledCurrency>
-								<ChangePercent value={cellProps.row.original.changePercent} /> */}
-							</span>
-						),
+						Cell: (cellProps: CellProps<FuturesMarket>) => <ChangePercent value={0} />,
 						width: 200,
 						sortable: true,
 					},

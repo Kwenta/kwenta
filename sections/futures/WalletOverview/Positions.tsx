@@ -13,6 +13,7 @@ import { PositionSide } from '../types';
 import PositionCard from './PositionCard';
 
 import Button from 'components/Button';
+import { wei } from '@synthetixio/wei';
 
 type PositionsProps = {
 	positions: Partial<FuturesPosition>[] | null;
@@ -25,17 +26,16 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 	const router = useRouter();
 	console.log(positions);
 
-	const defaultPosition = {
+	const defaultPosition: Partial<FuturesPosition> = {
+		asset: Synths.sBTC,
+		order: null,
 		position: {
-			side: PositionSide.LONG,
-			amount: 1000,
-			currency: Synths.sBTC,
+			isLong: true,
+			size: wei('1000'),
+			remainingMargin: wei('500'),
+			liquidationPrice: wei('800'),
+			canLiquidatePosition: true,
 		},
-		price: 2500,
-		liquidationPrice: 2000,
-		margin: 10000,
-		marginChange: 0.2,
-		riskOfLiquidation: false,
 	};
 
 	return (
@@ -53,7 +53,9 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 					>
 						{t('futures.wallet-overview.open-position')}
 					</CTAButton>
-					<Background>{/* <PositionCard position={defaultPosition} isCTA={true} /> */}</Background>
+					<Background>
+						<PositionCard position={defaultPosition} isCTA={true} />
+					</Background>
 				</CTA>
 			)}
 		</FlexDivCol>

@@ -2,7 +2,6 @@ import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
@@ -12,7 +11,6 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 
 import { DesktopOnlyView } from 'components/Media';
 
-import { isWalletConnectedState, isL2State } from 'store/wallet';
 import WalletOverview from 'sections/futures/WalletOverview';
 import Markets from 'sections/futures/Markets';
 import Hero from 'sections/futures/Hero';
@@ -22,6 +20,7 @@ const Futures: FC = () => {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+
 	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
 		(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
 	);
@@ -37,7 +36,7 @@ const Futures: FC = () => {
 					<FullHeightContainer>
 						<MainContent>
 							<Hero />
-							<Markets markets={futuresMarkets} />
+							<Markets />
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>

@@ -28,7 +28,7 @@ const MarginSection: FC<MarginSectionProps> = ({ availableMargin, sUSDBalance, o
 							{formatCurrency(Synths.sUSD, availableMargin, { sign: '$' })}
 						</MarginBalance>
 					</FlexDivCol>
-					<Button variant="primary" isRounded size="sm">
+					<Button variant="primary" isRounded size="sm" onClick={onDeposit}>
 						{t('futures.market.trade.button.deposit')}
 					</Button>
 				</FlexDivRowCentered>

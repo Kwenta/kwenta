@@ -1,22 +1,24 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
 
 import Card from 'components/Card';
 import Button from 'components/Button';
 
 import { FlexDivRow, FlexDivRowCentered, GridDiv } from 'styles/common';
 
-type HeroProps = {};
+import Layer2Icon from 'assets/svg/app/layer-2.svg';
 
-const Hero: React.FC<HeroProps> = ({}) => {
+const Hero: FC = () => {
 	const { t } = useTranslation();
 
 	return (
 		<StyledGrid>
-			<StyledCard>
-				<Card.Header>
-					<StyledHeaderText>{t('futures.hero.welcome.title')}</StyledHeaderText>
+			<StyledCard style={{ position: 'relative' }}>
+				<BackgroundImage src={Layer2Icon} />
+				<Card.Header noBorder={true}>
+					<StyledHeaderText small={false}>{t('futures.hero.welcome.title')}</StyledHeaderText>
 				</Card.Header>
 				<Card.Body>
 					<StyledBodyText>{t('futures.hero.welcome.body')}</StyledBodyText>
@@ -29,8 +31,8 @@ const Hero: React.FC<HeroProps> = ({}) => {
 			</StyledCard>
 
 			<StyledCard>
-				<Card.Header>
-					<StyledHeaderText>{t('futures.hero.refer.title')}</StyledHeaderText>
+				<Card.Header noBorder={true}>
+					<StyledHeaderText small={true}>{t('futures.hero.refer.title')}</StyledHeaderText>
 				</Card.Header>
 				<Card.Body>
 					<StyledCardRow>
@@ -46,6 +48,12 @@ const Hero: React.FC<HeroProps> = ({}) => {
 };
 export default Hero;
 
+const BackgroundImage = styled(Svg)`
+	position: absolute;
+	right: 18px;
+	top: 28px;
+`;
+
 const StyledCard = styled(Card)`
 	padding: 20px 0px;
 `;
@@ -54,9 +62,9 @@ const StyledGrid = styled(GridDiv)`
 	row-gap: 16px;
 `;
 
-const StyledHeaderText = styled.div`
+const StyledHeaderText = styled.div<{ small: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
+	font-size: ${(props) => (props.small ? '14px' : '16px')};
 	color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
 `;

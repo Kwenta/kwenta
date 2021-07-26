@@ -7,18 +7,24 @@ export type CardHeaderProps = {
 	children: React.ReactNode;
 	className?: string;
 	lowercase?: boolean;
+	noBorder?: boolean;
 };
 
-const CardHeader: FC<CardHeaderProps> = ({ children, lowercase = false, ...rest }) => (
-	<Container lowercase={lowercase} {...rest}>
+const CardHeader: FC<CardHeaderProps> = ({
+	children,
+	lowercase = false,
+	noBorder = false,
+	...rest
+}) => (
+	<Container lowercase={lowercase} noBorder={noBorder} {...rest}>
 		{children}
 	</Container>
 );
 
-const Container = styled(FlexDivCentered)<{ lowercase: boolean }>`
+const Container = styled(FlexDivCentered)<{ lowercase: boolean; noBorder: boolean }>`
 	position: relative;
 	color: ${(props) => props.theme.colors.white};
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+	border-bottom: ${(props) => (props.noBorder ? 'none' : `1px solid ${props.theme.colors.navy}`)};
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;

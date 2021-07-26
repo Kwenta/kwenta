@@ -22,40 +22,41 @@ type PositionCardProps = {
 const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) => {
 	const { t } = useTranslation();
 
+	const positionSide = position.position.isLong ? PositionSide.LONG : PositionSide.SHORT;
 	return (
 		<StyledCard isCTA={isCTA}>
-			{/* <StyledCardBody>
+			<StyledCardBody>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.position.title')}</Subtitle>
 					<StyledFlexDivRow>
-						<StyledCurrencyIcon currencyKey={position.position.currency} />
+						<StyledCurrencyIcon currencyKey={position.asset} />
 						<StyledData>
-							{formatCurrency(position.position.currency, position.position.amount, { sign: '$' })}
+							{formatCurrency(position.asset, position.position.size, { sign: '$' })}
 						</StyledData>
-						<PositionSideTag side={position.position.side}>
-							{position.position.side}
-						</PositionSideTag>
+						<PositionSideTag side={positionSide}>{positionSide}</PositionSideTag>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.price')}</Subtitle>
-					<Data>{formatCurrency(Synths.sUSD, position.price, { sign: '$' })}</Data>
+					<Data>{formatCurrency(Synths.sUSD, position.position.size, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<StyledFlexDivRow>
 						<Subtitle>{t('futures.wallet-overview.positions.liquidation')}</Subtitle>
-						{position.riskOfLiquidation && <StyledSvg src={WarningIcon} />}
+						{position.canLiquidatePosition && <StyledSvg src={WarningIcon} />}
 					</StyledFlexDivRow>
-					<Data>{formatCurrency(Synths.sUSD, position.liquidationPrice, { sign: '$' })}</Data>
+					{/* <Data>{formatCurrency(Synths.sUSD, position.liquidationPrice, { sign: '$' })}</Data> */}
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.pnl')}</Subtitle>
 					<StyledFlexDivRow>
-						<StyledData>{formatCurrency(Synths.sUSD, position.margin, { sign: '$' })}</StyledData>
-						<ChangePercent value={position.marginChange} />
+						<StyledData>
+							{formatCurrency(Synths.sUSD, position.position?.remainingMargin, { sign: '$' })}
+						</StyledData>
+						{/* <ChangePercent value={position.marginChange} /> */}
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
-			</StyledCardBody> */}
+			</StyledCardBody>
 		</StyledCard>
 	);
 };

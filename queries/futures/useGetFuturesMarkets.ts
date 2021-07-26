@@ -22,6 +22,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 				contracts: { FuturesMarketData },
 				utils,
 			} = synthetixjs!;
+
 			const markets = await FuturesMarketData.allMarketSummaries();
 			return markets.map(
 				({
@@ -32,6 +33,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 					marketDebt,
 					marketSkew,
 					maxLeverage,
+					marketSize,
 					price,
 				}: FuturesMarket) => ({
 					market: market,
@@ -45,6 +47,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),
 					maxLeverage: wei(maxLeverage),
+					marketSize: wei(marketSize),
 					price: wei(price),
 				})
 			);

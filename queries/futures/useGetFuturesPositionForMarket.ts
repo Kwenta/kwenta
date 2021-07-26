@@ -1,16 +1,16 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
 import { isL2State, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { mapFuturesPosition } from './utils';
+import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
 
 const useGetFuturesPositionForMarket = (
-	asset: string | null,
 	market: string | null,
 	options?: UseQueryOptions<FuturesPosition | null>
 ) => {
@@ -26,17 +26,13 @@ const useGetFuturesPositionForMarket = (
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
 			if (!market) return null;
-			const getFuturesMarketContract = (asset: string | null) => {
-				if (!asset) throw new Error(`Asset needs to be specified`);
-				const contractName = `FuturesMarket${asset.substring(1)}`;
-				const contract = synthetixjs!.contracts[contractName];
-				if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
-				return contract;
-			};
 
 			const [futuresPosition, canLiquidatePosition] = await Promise.all([
-				FuturesMarketData.positionDetails(market, walletAddress),
-				getFuturesMarketContract(asset).canLiquidate(walletAddress),
+				FuturesMarketData.positionDetailsForAsset(
+					ethersUtils.formatBytes32String(market),
+					walletAddress
+				),
+				getFuturesMarketContract(market, synthetixjs!.contracts).canLiquidate(walletAddress),
 			]);
 
 			return mapFuturesPosition(futuresPosition, canLiquidatePosition, market);

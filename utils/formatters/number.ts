@@ -33,6 +33,10 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
+function numberWithCommas(value: string) {
+	return value.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+}
+
 // TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -48,7 +52,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	formattedValue.push(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS));
+	formattedValue.push(
+		numberWithCommas(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS))
+	);
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}

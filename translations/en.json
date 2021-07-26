@@ -468,8 +468,8 @@
 		"wallet-overview": {
 			"title": "wallet overview",
 			"open-position": "Open a position",
-			"balance": "available balance",
-			"margin-deployed": "total margin deployed",
+			"balance": "sUSD balance",
+			"margin-deployed": "Margin deployed",
 			"performance": "wallet performance",
 			"positions": {
 				"title": "your positions",
@@ -539,7 +539,10 @@
 					"deposit-susd": "Deposit your sUSD to start trading",
 					"available-margin": "available margin",
 					"helper": "deposit your sUSD to start trading",
-					"available-balance": "sUSD balance"
+					"available-balance": "sUSD balance",
+					"modal": {
+						"title": "Deposit margin"
+					}
 				}
 			},
 			"user": {

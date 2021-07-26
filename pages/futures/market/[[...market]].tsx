@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -8,18 +8,12 @@ import { DesktopOnlyView } from 'components/Media';
 
 import { PageContent, FullHeightContainer, MainContent, RightSideContent } from 'styles/common';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
 
-type MarketProps = {};
-
-const Market: React.FC<MarketProps> = ({}) => {
+const Market: FC = () => {
 	const { t } = useTranslation();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
 	const router = useRouter();
 
 	return (
@@ -29,12 +23,9 @@ const Market: React.FC<MarketProps> = ({}) => {
 			</Head>
 			<AppLayout>
 				<PageContent>
-					{/* {!isL2 ? (
-						<h1>{t('futures.not-available-on-l1')}</h1>
-					) : ( */}
 					<FullHeightContainer>
 						<MainContent>
-							<MarketInfo />
+							<MarketInfo market={router.query.market?.[0] ?? null} />
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
@@ -42,7 +33,6 @@ const Market: React.FC<MarketProps> = ({}) => {
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>
-					{/* )} */}
 				</PageContent>
 			</AppLayout>
 		</>

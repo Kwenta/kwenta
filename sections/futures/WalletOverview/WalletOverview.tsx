@@ -2,13 +2,13 @@ import { useMemo, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
+import styled from 'styled-components';
 
 import { walletAddressState } from 'store/wallet';
 
 import { Synths } from 'constants/currency';
 import { Title } from '../common';
 import OverviewRow from './OverviewRow';
-import PerformanceChart from './PerformanceChart';
 import Positions from './Positions';
 import { zeroBN, formatNumber } from 'utils/formatters/number';
 import { FuturesPosition } from 'queries/futures/types';
@@ -29,7 +29,7 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		let futuresPositions: Partial<FuturesPosition>[] = [];
 		let totalMargin = zeroBN;
 
-		positions.forEach(({ margin, position, order }) => {
+		positions.forEach(({ margin, position }) => {
 			totalMargin = totalMargin.add(margin);
 			if (position) {
 				futuresPositions.push(position as Partial<FuturesPosition>);
@@ -62,13 +62,18 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 	);
 	return (
 		<div>
-			<Title>{t('futures.wallet-overview.title')}</Title>
-			{overviewRows.map(({ label, value, currencyKey, sign }) => (
-				<OverviewRow subtitle={label} data={value} currencyKey={currencyKey} sign={sign} />
-			))}
-			<PerformanceChart changeNumber={2000} changePercent={8} />
+			<Balances>
+				<Title>{t('futures.wallet-overview.title')}</Title>
+				{overviewRows.map(({ label, value, currencyKey, sign }) => (
+					<OverviewRow subtitle={label} data={value} currencyKey={currencyKey} sign={sign} />
+				))}
+			</Balances>
 			<Positions positions={walletPosition?.positions ?? null} />
 		</div>
 	);
 };
+
+const Balances = styled.div`
+	margin-bottom: 28px;
+`;
 export default WalletOverview;
