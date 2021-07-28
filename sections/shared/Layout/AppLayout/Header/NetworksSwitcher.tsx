@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isL2State, isMainnetState, isWalletConnectedState, networkState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
 import Select from 'components/Select';
@@ -33,7 +33,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const isMainnet = useRecoilValue(isMainnetState);
 	const network = useRecoilValue(networkState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
@@ -123,7 +122,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			{!isMainnet && <Button>{t('header.networks-switcher.l2')}</Button>}
+			<Button>{t('header.networks-switcher.l2')}</Button>
 		</Container>
 	) : (
 		<Container>
