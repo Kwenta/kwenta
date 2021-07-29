@@ -38,10 +38,6 @@ const Header: FC = () => {
 };
 
 const Container = styled.header<{ isL2: boolean }>`
-	border-top: ${(props) => (props.isL2 ? `2px solid transparent` : 'none')};
-	border-image: ${(props) => props.theme.colors.gold};
-	border-image-width: 2 100%;
-	box-sizing: border-box;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -53,6 +49,9 @@ const Container = styled.header<{ isL2: boolean }>`
 		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
 	`};
 	> div {
+		border-top: ${(props) =>
+			`2px solid ${props.isL2 ? props.theme.colors.goldColors.color2 : 'transparent'}`};
+		box-sizing: border-box;
 		height: ${HEADER_HEIGHT};
 		line-height: ${HEADER_HEIGHT};
 		padding: 0 20px;

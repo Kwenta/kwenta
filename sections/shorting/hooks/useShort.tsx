@@ -472,10 +472,10 @@ const useShort = ({
 		if (isAppReady && walletAddress != null) {
 			const { CollateralShort } = synthetixjs!.contracts;
 
-			const loanCreatedEvent = CollateralShort.filters.LoanCreated(walletAddress);
+			const loanCreatedEvent = CollateralShort?.filters.LoanCreated(walletAddress);
 
-			CollateralShort.on(loanCreatedEvent, onLoanCreated);
-			unsubs.push(() => CollateralShort.off(loanCreatedEvent, onLoanCreated));
+			CollateralShort?.on(loanCreatedEvent, onLoanCreated);
+			unsubs.push(() => CollateralShort?.off(loanCreatedEvent, onLoanCreated));
 		}
 		return () => {
 			unsubs.forEach((unsub) => unsub());

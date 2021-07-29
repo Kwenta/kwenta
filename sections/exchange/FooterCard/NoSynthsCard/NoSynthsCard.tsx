@@ -10,6 +10,8 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ROUTES from 'constants/routes';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 
 const { sUSD } = Synths;
 
@@ -19,6 +21,7 @@ type NoSynthsCardProps = {
 
 const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 
 	return (
 		<>
@@ -30,22 +33,35 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					<Message>
 						<Trans
 							t={t}
-							i18nKey="exchange.onboard.message"
+							i18nKey={isL2 ? 'exchange.onboard.l2-message' : 'exchange.onboard.message'}
 							values={{ currencyKey: sUSD }}
 							components={[<NoTextTransform />]}
 						/>
 					</Message>
 				</DesktopOnlyView>
-				<Link href={ROUTES.Dashboard.Convert}>
-					<MessageButton>
-						<Trans
-							t={t}
-							i18nKey="common.currency.buy-currency"
-							values={{ currencyKey: sUSD }}
-							components={[<NoTextTransform />]}
-						/>
-					</MessageButton>
-				</Link>
+				{isL2 ? (
+					<Link href={'https://staking.synthetix.io/staking'}>
+						<MessageButton size="lg" variant="primary" isRounded={true}>
+							<Trans
+								t={t}
+								i18nKey="exchange.onboard.mint-button"
+								values={{ currencyKey: sUSD }}
+								components={[<NoTextTransform />]}
+							/>
+						</MessageButton>
+					</Link>
+				) : (
+					<Link href={ROUTES.Dashboard.Convert}>
+						<MessageButton>
+							<Trans
+								t={t}
+								i18nKey="common.currency.buy-currency"
+								values={{ currencyKey: sUSD }}
+								components={[<NoTextTransform />]}
+							/>
+						</MessageButton>
+					</Link>
+				)}
 			</MessageContainer>
 		</>
 	);

@@ -57,6 +57,8 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 						totalValue={totalValue}
 						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
+						formatAmountOptions={{ minDecimals: 4 }}
+						formatTotalValueOptions={{ minDecimals: 2 }}
 					/>
 				</AmountCol>
 				<ExchangeRateCol>
