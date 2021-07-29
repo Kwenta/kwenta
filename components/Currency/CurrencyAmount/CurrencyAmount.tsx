@@ -35,7 +35,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 			{formatCurrency(
 				currencyKey,
 				conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
-				{ sign }
+				{ sign, ...formatTotalValueOptions }
 			)}
 		</TotalValue>
 	</Container>

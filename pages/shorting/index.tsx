@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -16,11 +16,22 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 import { DesktopOnlyView } from 'components/Media';
 
 import { isWalletConnectedState, isL2State } from 'store/wallet';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+	const router = useRouter();
+
+	const redirectToHome = useCallback(() => router.push(ROUTES.Dashboard.Home), [router]);
+
+	useEffect(() => {
+		if (isL2) {
+			redirectToHome();
+		}
+	}, [isL2, redirectToHome]);
 
 	return (
 		<>
@@ -29,9 +40,7 @@ const Shorting: FC = () => {
 			</Head>
 			<AppLayout>
 				<PageContent>
-					{isL2 ? (
-						<h1>{t('shorting.not-available-on-l2')}</h1>
-					) : (
+					{!isL2 && (
 						<FullHeightContainer>
 							<MainContent>
 								<ShortingCard />

@@ -1,7 +1,6 @@
 {
 	"languages": {
-		"en": "English",
-		"kr": "한국어"
+		"en": "English"
 	},
 	"meta": {
 		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
@@ -465,8 +464,7 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		},
-		"not-available-on-l2": "Shorting is not available on L2"
+		}
 	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
