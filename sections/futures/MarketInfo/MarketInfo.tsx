@@ -102,7 +102,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 					))}
 				</StyledFlexDiv>
 			</MarketInfoContainer>
-			<UserInfo baseCurrencyKey={baseCurrencyKey} />
+			<UserInfo marketAsset={baseCurrencyKey} />
 		</>
 	);
 };

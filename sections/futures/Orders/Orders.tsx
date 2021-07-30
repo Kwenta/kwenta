@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import Wei, { wei } from '@synthetixio/wei';
+import { Contract } from 'ethers';
 
 import Card from 'components/Card';
 import Table from 'components/Table';
@@ -21,46 +23,93 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
 import FailureIcon from 'assets/svg/app/circle-error.svg';
 import SuccessIcon from 'assets/svg/app/circle-tick.svg';
-import { formatCurrency } from 'utils/formatters/number';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import { formatCurrency, formatCryptoCurrency, zeroBN } from 'utils/formatters/number';
+import { FuturesPosition } from 'queries/futures/types';
+import { formatNumber } from 'utils/formatters/number';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
-type OrdersProps = {};
+type OrdersProps = {
+	position: FuturesPosition | null;
+	currencyKey: string;
+	isLoading: boolean;
+	isLoaded: boolean;
+	currencyKeyRate: number;
+	refetchMarketQuery: () => void;
+};
 
-const Orders: React.FC<OrdersProps> = ({}) => {
+type TableOrder = {
+	side: PositionSide;
+	currencyKey: string;
+	leverage: Wei;
+	size: Wei;
+	fee: Wei;
+	isStatusPending: boolean;
+};
+
+const Orders: React.FC<OrdersProps> = ({
+	position,
+	isLoading,
+	isLoaded,
+	currencyKey,
+	currencyKeyRate,
+	refetchMarketQuery,
+}) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	console.log('PPPP', position);
 
-	const orders = [
-		{
-			id: '1',
-			position: {
-				side: PositionSide.LONG,
-				amount: 1000,
-				currency: Synths.sBTC,
-			},
-			leverage: {
-				amount: 5,
-				side: PositionSide.LONG,
-			},
-			fee: 100,
-			status: OrderStatus.PENDING,
-			txHash: '123',
-		},
-	] as Order[];
-
-	const isLoading = false;
-	const isLoaded = true;
+	const orders: TableOrder[] = useMemo(
+		() =>
+			position && position.order
+				? [position].map((futuresPosition) => ({
+						side: futuresPosition.order?.leverage.gte(zeroBN)
+							? PositionSide.LONG
+							: PositionSide.SHORT ?? PositionSide.LONG,
+						currencyKey,
+						leverage: futuresPosition.order?.leverage ?? zeroBN,
+						size:
+							currencyKeyRate && currencyKeyRate > 0
+								? position.remainingMargin
+										.mul(position.order?.leverage ?? zeroBN)
+										.div(wei(currencyKeyRate))
+								: zeroBN,
+						fee: futuresPosition.order?.fee ?? zeroBN,
+						isStatusPending: !!futuresPosition.order?.pending ?? false,
+				  }))
+				: [],
+		[position, currencyKey, currencyKeyRate]
+	);
 
 	const columnsDeps = useMemo(() => [orders], [orders]);
 
-	const returnStatusSVG = (status: OrderStatus) => {
-		switch (status) {
-			case OrderStatus.PENDING:
-				return <StatusIcon status={status} src={PendingIcon} />;
-			case OrderStatus.CONFIRMED:
-				return <StatusIcon status={status} src={SuccessIcon} />;
-			case OrderStatus.FAILED:
-				return <StatusIcon status={status} src={FailureIcon} />;
+	const returnStatusSVG = (isStatusPending: boolean) => {
+		if (isStatusPending) {
+			return <StatusIcon status={OrderStatus.PENDING} src={PendingIcon} />;
+		} else {
+			return <StatusIcon status={OrderStatus.CONFIRMED} src={SuccessIcon} />;
+		}
+	};
+
+	const handleCancelOrder = async () => {
+		try {
+			const FuturesMarketContract: Contract = getFuturesMarketContract(
+				currencyKey,
+				synthetixjs!.contracts
+			);
+			const gasEstimate = await FuturesMarketContract.estimateGas.cancelOrder();
+			const tx = await FuturesMarketContract.cancelOrder({
+				gasLimit: Number(gasEstimate),
+			});
+			if (tx) {
+				monitorTransaction({ txHash: tx.hash, onTxConfirmed: refetchMarketQuery });
+			}
+		} catch (e) {
+			console.log(e);
 		}
 	};
 
@@ -71,27 +120,19 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 				columns={[
 					{
 						Header: (
-							<StyledTableHeader>{t('futures.market.user.orders.table.id')}</StyledTableHeader>
-						),
-						accessor: 'id',
-						Cell: (cellProps: CellProps<Order>) => <StyledId>{cellProps.row.original.id}</StyledId>,
-						sortable: true,
-						width: 100,
-					},
-					{
-						Header: (
 							<StyledTableHeader>
 								{t('futures.market.user.orders.table.position')}
 							</StyledTableHeader>
 						),
-						accessor: 'position',
+						accessor: 'size',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Order>) => (
+						Cell: (cellProps: CellProps<TableOrder>) => (
 							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.position.currency} />
+								<CurrencyIcon currencyKey={cellProps.row.original.currencyKey} />
 								<StyledPositionSize>
-									{cellProps.row.original.position.amount}{' '}
-									{cellProps.row.original.position.currency}
+									{formatCryptoCurrency(cellProps.value, {
+										currencyKey: cellProps.row.original.currencyKey,
+									})}
 								</StyledPositionSize>
 							</FlexDivCentered>
 						),
@@ -106,11 +147,11 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 						),
 						accessor: 'leverage',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Order>) => (
+						Cell: (cellProps: CellProps<TableOrder>) => (
 							<FlexDivCentered>
-								<LeverageSize>{cellProps.row.original.leverage.amount}x |</LeverageSize>
-								<LeverageSide side={cellProps.row.original.leverage.side}>
-									{cellProps.row.original.leverage.side}
+								<LeverageSize>{formatNumber(cellProps.value)}x |</LeverageSize>
+								<LeverageSide side={cellProps.row.original.side}>
+									{cellProps.row.original.side}
 								</LeverageSide>
 							</FlexDivCentered>
 						),
@@ -123,9 +164,9 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 						),
 						accessor: 'fee',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Order>) => (
+						Cell: (cellProps: CellProps<TableOrder>) => (
 							<Fee>
-								{formatCurrency(Synths.sUSD, cellProps.row.original.fee, {
+								{formatCurrency(Synths.sUSD, cellProps.value, {
 									sign: '$',
 								})}{' '}
 								{selectedPriceCurrency.asset}
@@ -138,12 +179,14 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.orders.table.status')}</StyledTableHeader>
 						),
-						accessor: 'status',
+						accessor: 'isStatusPending',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Order>) => (
+						Cell: (cellProps: CellProps<TableOrder>) => (
 							<FlexDivCentered>
-								{returnStatusSVG(cellProps.row.original.status)}
-								<StatusText>{cellProps.row.original.status}</StatusText>
+								{returnStatusSVG(cellProps.value)}
+								<StatusText>
+									{cellProps.value ? OrderStatus.PENDING : OrderStatus.CONFIRMED}
+								</StatusText>
 							</FlexDivCentered>
 						),
 						width: 100,
@@ -151,33 +194,40 @@ const Orders: React.FC<OrdersProps> = ({}) => {
 					},
 					{
 						id: 'cancel',
-						Cell: () => (
-							<Button onClick={() => {}} isRounded variant="danger" size="md">
+						accessor: 'isStatusPending',
+						Cell: (cellProps: CellProps<TableOrder>) => (
+							<CancelButton
+								onClick={handleCancelOrder}
+								isRounded
+								variant="danger"
+								size="md"
+								disabled={!cellProps.value}
+							>
 								{t('futures.market.user.orders.table.cancel')}
-							</Button>
+							</CancelButton>
 						),
 						sortable: false,
 						width: 50,
 					},
-					{
-						id: 'link',
-						Cell: (cellProps: CellProps<Order>) =>
-							etherscanInstance != null && cellProps.row.original.txHash ? (
-								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
-									<StyledLinkIcon
-										src={LinkIcon}
-										viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-									/>
-								</StyledExternalLink>
-							) : (
-								NO_VALUE
-							),
-						sortable: false,
-						width: 50,
-					},
+					// {
+					// 	id: 'link',
+					// 	Cell: (cellProps: CellProps<Order>) =>
+					// 		etherscanInstance != null && cellProps.row.original.txHash ? (
+					// 			<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
+					// 				<StyledLinkIcon
+					// 					src={LinkIcon}
+					// 					viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+					// 				/>
+					// 			</StyledExternalLink>
+					// 		) : (
+					// 			NO_VALUE
+					// 		),
+					// 	sortable: false,
+					// 	width: 50,
+					// },
 				]}
-				columnsDeps={columnsDeps}
 				data={orders}
+				columnsDeps={columnsDeps}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
 					isLoaded && orders.length === 0 ? (
@@ -218,6 +268,7 @@ const StyledId = styled.div`
 const StyledPositionSize = styled.div`
 	margin-left: 4px;
 	${BoldTableText}
+	text-transform: none;
 `;
 
 const LeverageSize = styled.div`
@@ -270,4 +321,9 @@ const StyledLinkIcon = styled(Svg)`
 	&:hover {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
+`;
+
+const CancelButton = styled(Button)`
+	height: 24px;
+	line-height: 24px;
 `;

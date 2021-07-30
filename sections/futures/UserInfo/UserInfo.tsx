@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 
@@ -11,7 +12,9 @@ import Orders from '../Orders';
 import Trades from '../Trades';
 
 import ROUTES from 'constants/routes';
-import { CurrencyKey } from 'constants/currency';
+import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
+import { CurrencyKey, Synths } from 'constants/currency';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -22,12 +25,28 @@ enum FuturesTab {
 const FutureTabs = Object.values(FuturesTab);
 
 type UserInfoProps = {
-	baseCurrencyKey: CurrencyKey;
+	marketAsset: CurrencyKey;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	const exchangeRates = useMemo(
+		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
+		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
+	);
+
+	const marketAssetRate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
+		[exchangeRates, marketAsset]
+	);
+
+	console.log('POSITION', futuresMarketsPosition);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.market) {
@@ -47,22 +66,22 @@ const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 				name: FuturesTab.POSITION,
 				label: t('futures.market.user.position.tab'),
 				active: activeTab === FuturesTab.POSITION,
-				onClick: () => router.push(ROUTES.Futures.Market.Position(baseCurrencyKey)),
+				onClick: () => router.push(ROUTES.Futures.Market.Position(marketAsset)),
 			},
 			{
 				name: FuturesTab.ORDERS,
 				label: t('futures.market.user.orders.tab'),
 				active: activeTab === FuturesTab.ORDERS,
-				onClick: () => router.push(ROUTES.Futures.Market.Orders(baseCurrencyKey)),
+				onClick: () => router.push(ROUTES.Futures.Market.Orders(marketAsset)),
 			},
-			{
-				name: FuturesTab.TRADES,
-				label: t('futures.market.user.trades.tab'),
-				active: activeTab === FuturesTab.TRADES,
-				onClick: () => router.push(ROUTES.Futures.Market.Trades(baseCurrencyKey)),
-			},
+			// {
+			// 	name: FuturesTab.TRADES,
+			// 	label: t('futures.market.user.trades.tab'),
+			// 	active: activeTab === FuturesTab.TRADES,
+			// 	onClick: () => router.push(ROUTES.Futures.Market.Trades(marketAsset)),
+			// },
 		],
-		[t, activeTab, router]
+		[t, activeTab, router, marketAsset]
 	);
 
 	return (
@@ -75,14 +94,25 @@ const UserInfo: React.FC<UserInfoProps> = ({ baseCurrencyKey }) => {
 				))}
 			</StyledTabList>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard currencyKey={baseCurrencyKey} />
+				<PositionCard
+					position={futuresMarketsPosition ?? null}
+					currencyKey={marketAsset}
+					currencyKeyRate={marketAssetRate}
+				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<Orders />
+				<Orders
+					position={futuresMarketsPosition ?? null}
+					isLoading={futuresMarketPositionQuery.isLoading}
+					isLoaded={futuresMarketPositionQuery.isFetched}
+					currencyKey={marketAsset}
+					currencyKeyRate={marketAssetRate}
+					refetchMarketQuery={() => futuresMarketPositionQuery.refetch()}
+				/>
 			</TabPanel>
-			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+			{/* <TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades />
-			</TabPanel>
+			</TabPanel> */}
 		</>
 	);
 };

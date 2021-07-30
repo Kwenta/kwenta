@@ -1,26 +1,30 @@
-import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useMemo, useEffect } from 'react';
+import { Contract } from 'ethers';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
+import { wei } from '@synthetixio/wei';
 
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivColCentered } from 'styles/common';
+import { FlexDivCol, FlexDivRow, FlexDivColCentered } from 'styles/common';
 import { TabButton, TabList } from 'components/Tab';
 import { useState } from 'react';
 import { Synths } from 'constants/currency';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import NumericInput from 'components/Input/NumericInput';
+
 import Button from 'components/Button';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
-import Slider from 'components/Slider';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
+import TradeSizeInput from '../TradeSizeInput';
+import LeverageInput from '../LeverageInput';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
@@ -29,6 +33,8 @@ import MarginSection from './MarginSection';
 import DepositMarginModal from './DepositMarginModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { getFuturesMarketContract } from 'queries/futures/utils';
 
 type TradeProps = {};
 
@@ -36,9 +42,6 @@ enum TradeTab {
 	BUY = 'BUY',
 	SELL = 'SELL',
 }
-
-const MIN_LEVERAGE = 1;
-const MAX_LEVERAGE = 10;
 
 const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
@@ -51,34 +54,35 @@ const Trade: React.FC<TradeProps> = () => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 
 	const marketAsset = router.query.market?.[0] ?? null;
+	const marketQuery = useGetFuturesMarkets();
+	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	// console.log('POSITION', futuresMarketsPosition);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
-	const [tradeSize, setTradeSize] = useState<string>('');
-	const [tradeValue, setTradeValue] = useState<string>('0');
-	const [userTradeBalance, setUserTradeBalance] = useState<string>('0');
+	const [error, setError] = useState<string | null>(null);
 	const [leverage, setLeverage] = useState<number>(1);
+	const [tradeSize, setTradeSize] = useState<string>('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
-	const [availableMargin, setAvailableMargin] = useState<string>('20000');
-	const [availableBalance, setAvailableBalance] = useState<string>('150000');
+
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const isSubmitOrderDisabled = useMemo(() => Number(tradeSize) === 0 || tradeSize.length === 0, [
-		tradeSize,
-	]);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -105,33 +109,96 @@ const Trade: React.FC<TradeProps> = () => {
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
+	const marketAssetRate = useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
+		[exchangeRates, marketAsset]
+	);
+
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
 		gasPrice,
 		gasLimit,
 		ethPriceRate,
 	]);
 
-	const TABS = useMemo(
-		() => [
-			{
-				name: TradeTab.BUY,
-				label: t('futures.market.trade.input.buy'),
-				active: activeTab === TradeTab.BUY,
-				onClick: () => setActiveTab(TradeTab.BUY),
-			},
-			{
-				name: TradeTab.SELL,
-				label: t('futures.market.trade.input.sell'),
-				active: activeTab === TradeTab.SELL,
-				onClick: () => setActiveTab(TradeTab.SELL),
-			},
-		],
-		[t, activeTab]
-	);
+	const TABS = [
+		{
+			name: TradeTab.BUY,
+			label: t('futures.market.trade.input.buy'),
+			active: activeTab === TradeTab.BUY,
+			onClick: () => setActiveTab(TradeTab.BUY),
+		},
+		{
+			name: TradeTab.SELL,
+			label: t('futures.market.trade.input.sell'),
+			active: activeTab === TradeTab.SELL,
+			onClick: () => setActiveTab(TradeTab.SELL),
+		},
+	];
 
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
-		setTradeValue(value.length > 0 ? value : '0');
+		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
+		setLeverage(
+			(Number(value) * marketAssetRate) / Number(futuresMarketsPosition?.remainingMargin.toString())
+		);
+	};
+
+	const onLeverageChange = (value: number) => {
+		setLeverage(value);
+		const newTradeSize =
+			marketAssetRate === 0
+				? 0
+				: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
+				  marketAssetRate;
+
+		setTradeSize(newTradeSize.toString());
+	};
+
+	useEffect(() => {
+		const getGasLimit = async () => {
+			if (!synthetixjs || !marketAsset) return;
+			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
+			try {
+				setError(null);
+				setGasLimit(null);
+				const FuturesMarketContract: Contract = getFuturesMarketContract(
+					marketAsset,
+					synthetixjs!.contracts
+				);
+				const gasEstimate = await FuturesMarketContract.estimateGas.submitOrder(
+					wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
+				);
+				setGasLimit(Number(gasEstimate));
+			} catch (e) {
+				console.log(e);
+				setError(e?.data?.message ?? e.message);
+			}
+		};
+		getGasLimit();
+	}, [leverage, synthetixjs, marketAsset, futuresMarketsPosition, leverageSide]);
+
+	const handleCreateOrder = async () => {
+		if (!gasLimit || !leverage) return;
+		try {
+			const FuturesMarketContract: Contract = getFuturesMarketContract(
+				marketAsset,
+				synthetixjs!.contracts
+			);
+			console.log(FuturesMarketContract.address);
+			const tx = await FuturesMarketContract.submitOrder(
+				wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
+			);
+			if (tx) {
+				monitorTransaction({
+					txHash: tx.hash,
+					onTxConfirmed: () => {
+						futuresMarketPositionQuery.refetch();
+					},
+				});
+			}
+		} catch (e) {
+			setError(e?.data?.message ?? e.message);
+		}
 	};
 
 	return (
@@ -147,69 +214,23 @@ const Trade: React.FC<TradeProps> = () => {
 						))}
 					</StyledTabList>
 				</FlexDivRow>
+				<TradeSizeInput
+					amount={tradeSize}
+					assetRate={marketAssetRate}
+					onAmountChange={(value) => onTradeAmountChange(value)}
+					balance={futuresMarketsPosition?.remainingMargin ?? zeroBN}
+					asset={marketAsset || Synths.sUSD}
+					onLeverageChange={() => onLeverageChange(Number(market?.maxLeverage.toString() ?? 1))}
+					balanceLabel={t('futures.market.trade.input.remaining-margin')}
+				/>
 
-				<InputRow>
-					<FlexDivRowCentered>
-						{/* @TODO make dynamic */}
-						<CurrencyIcon currencyKey={Synths.sBTC} />
-						<CurrencyLabel>{Synths.sBTC}</CurrencyLabel>
-					</FlexDivRowCentered>
-					<FlexDivCol>
-						<InputContainer>
-							<FlexDivCol>
-								<TradeAmount
-									value={tradeSize}
-									onChange={(_, value) => onTradeAmountChange(value)}
-									placeholder="0"
-									data-testid="trade-amount"
-								/>
-								<ValueAmount>{formatCurrency(Synths.sUSD, tradeValue, { sign: '$' })}</ValueAmount>
-							</FlexDivCol>
-							<MaxButton variant="text">{t('futures.market.trade.input.max')}</MaxButton>
-						</InputContainer>
-						<FlexDivRow>
-							<BalanceSubtitle>{t('futures.market.trade.input.balance')}</BalanceSubtitle>
-							<BalanceValue>{userTradeBalance}</BalanceValue>
-						</FlexDivRow>
-					</FlexDivCol>
-				</InputRow>
-
-				<LeverageRow>
-					<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
-					<FlexDivCol>
-						<InputContainer>
-							<LeverageAmount>{leverage}x</LeverageAmount>
-							<LeverageSideContainer>
-								<LeverageSide
-									variant="outline"
-									side={PositionSide.LONG}
-									isActive={leverageSide === PositionSide.LONG}
-									onClick={() => setLeverageSide(PositionSide.LONG)}
-								>
-									{t('futures.market.trade.input.leverage.long')}
-								</LeverageSide>
-								<LeverageSide
-									variant="outline"
-									side={PositionSide.SHORT}
-									isActive={leverageSide === PositionSide.SHORT}
-									onClick={() => setLeverageSide(PositionSide.SHORT)}
-								>
-									{t('futures.market.trade.input.leverage.short')}
-								</LeverageSide>
-							</LeverageSideContainer>
-						</InputContainer>
-						<SliderRow>
-							<Slider
-								minValue={MIN_LEVERAGE}
-								maxValue={MAX_LEVERAGE}
-								startingLabel={`${MIN_LEVERAGE}x`}
-								endingLabel={`${MAX_LEVERAGE}x`}
-								value={leverage}
-								onChange={(newValue) => setLeverage(newValue)}
-							/>
-						</SliderRow>
-					</FlexDivCol>
-				</LeverageRow>
+				<LeverageInput
+					currentLeverage={leverage}
+					maxLeverage={Number(market?.maxLeverage.toString() ?? 1)}
+					onSideChange={(side) => setLeverageSide(side)}
+					onLeverageChange={(value) => onLeverageChange(value)}
+					side={leverageSide}
+				/>
 
 				<FlexDivCol>
 					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
@@ -219,11 +240,19 @@ const Trade: React.FC<TradeProps> = () => {
 						maxSlippageTolerance={maxSlippageTolerance}
 						setMaxSlippageTolerance={setMaxSlippageTolerance}
 					/>
-					{futuresMarketsPosition && futuresMarketsPosition.margin.gte(zeroBN) ? (
-						<Button variant="primary" disabled={isSubmitOrderDisabled} isRounded size="lg">
-							{isSubmitOrderDisabled
-								? t('futures.market.trade.button.enter-amount')
-								: t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })}
+					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gte(zeroBN) ? (
+						<Button
+							variant="primary"
+							disabled={!gasLimit || !!error || !tradeSize}
+							isRounded
+							size="lg"
+							onClick={handleCreateOrder}
+						>
+							{error
+								? error
+								: tradeSize
+								? t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })
+								: t('futures.market.trade.button.enter-amount')}
 						</Button>
 					) : (
 						<FlexDivColCentered>
@@ -241,7 +270,7 @@ const Trade: React.FC<TradeProps> = () => {
 				</FlexDivCol>
 			</TopRow>
 			<MarginSection
-				availableMargin={futuresMarketsPosition?.margin ?? zeroBN}
+				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				sUSDBalance={sUSDBalance}
 				onDeposit={() => setIsDepositMarginModalOpen(true)}
 			/>
@@ -272,113 +301,6 @@ const StyledTabList = styled(TabList)`
 const StyledTabButton = styled(TabButton)`
 	text-transform: capitalize;
 	background: ${(props) => props.theme.colors.elderberry};
-`;
-
-const InputRow = styled(FlexDivRow)`
-	width: 100%;
-	margin-bottom: 24px;
-`;
-
-const CurrencyLabel = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-left: 4px;
-`;
-
-const InputContainer = styled(FlexDivRowCentered)`
-	background: ${(props) => props.theme.colors.black};
-	border-radius: 4px;
-	padding: 4px;
-	width: 225px;
-`;
-
-const TradeAmount = styled(NumericInput)`
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.silver};
-`;
-
-const ValueAmount = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 10px;
-	color: ${(props) => props.theme.colors.blueberry};
-	margin-left: 8px;
-`;
-
-const MaxButton = styled(Button)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.goldColors.color2};
-	font-size: 12px;
-	text-transform: uppercase;
-	margin-right: 4px;
-`;
-
-const BalanceSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	text-transform: capitalize;
-	margin-top: 6px;
-`;
-
-const BalanceValue = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	margin-top: 6px;
-`;
-
-const LeverageRow = styled(FlexDivRow)`
-	width: 100%;
-	margin-bottom: 24px;
-`;
-
-const LeverageTitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
-	text-transform: capitalize;
-	margin-top: 24px;
-`;
-
-const LeverageAmount = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.silver};
-	margin-left: 8px;
-`;
-
-const LeverageSideContainer = styled(FlexDivRow)`
-	padding: 4px 0px;
-	margin-right: 4px;
-`;
-
-const LeverageSide = styled(Button)<{ side: PositionSide; isActive: boolean }>`
-	${(props) =>
-		props.isActive
-			? css`
-					border: 1px solid
-						${props.side === PositionSide.LONG ? props.theme.colors.green : props.theme.colors.red};
-					color: ${props.side === PositionSide.LONG
-						? props.theme.colors.green
-						: props.theme.colors.red};
-			  `
-			: css`
-					border: 1px solid ${props.theme.colors.blueberry};
-					border-right-width: ${props.side === PositionSide.LONG ? '0px' : '1px'};
-					border-left-width: ${props.side === PositionSide.SHORT ? '0px' : '1px'};
-					color: ${props.theme.colors.blueberry};
-			  `}
-	border-radius: ${(props) =>
-		props.side === PositionSide.LONG ? `2px 0px 0px 2px` : `0px 2px 2px 0px`};
-	text-transform: uppercase;
-	text-align: center;
-	width: 75px;
-`;
-
-const SliderRow = styled(FlexDivRow)`
-	margin-top: 8px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`
@@ -434,8 +356,6 @@ const StyledSlippageSelcet = styled(SlippageSelect)`
 `;
 
 const TopRow = styled(FlexDivCol)``;
-
-const BottomRow = styled(FlexDivCol)``;
 
 const Panel = styled(FlexDivCol)`
 	height: 100%;

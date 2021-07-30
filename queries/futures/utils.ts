@@ -2,7 +2,7 @@ import { wei } from '@synthetixio/wei';
 import { Contract } from 'ethers';
 
 import { zeroBN } from 'utils/formatters/number';
-import { PositionDetail, FuturesPosition } from './types';
+import { PositionDetail, FuturesPosition, PositionSide } from './types';
 
 export const getFuturesMarketContract = (
 	asset: string | null,
@@ -39,15 +39,15 @@ export const mapFuturesPosition = (
 					leverage: wei(order.leverage),
 			  }
 			: null,
-		margin: wei(margin),
+		remainingMargin: wei(remainingMargin),
 		position: wei(size).eq(zeroBN)
 			? null
 			: {
 					canLiquidatePosition: !!canLiquidatePosition,
-					isLong: wei(size).gt(zeroBN),
+					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
 					notionalValue: wei(notionalValue),
 					accruedFunding: wei(accruedFunding),
-					remainingMargin: wei(remainingMargin),
+					margin: wei(margin),
 					profitLoss: wei(profitLoss),
 					fundingIndex: Number(fundingIndex),
 					lastPrice: wei(lastPrice),

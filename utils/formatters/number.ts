@@ -53,7 +53,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	}
 
 	formattedValue.push(
-		numberWithCommas(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS))
+		numberWithCommas(
+			weiValue.eq(zeroBN) ? '0' : weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
+		)
 	);
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);

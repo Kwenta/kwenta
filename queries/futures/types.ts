@@ -20,23 +20,31 @@ export type PositionDetail = {
 	profitLoss: Wei;
 };
 
+export type FuturesOrder = {
+	pending: boolean;
+	fee: Wei;
+	leverage: Wei;
+};
+
+export type FuturesFilledPosition = {
+	canLiquidatePosition: boolean;
+	side: PositionSide;
+	notionalValue: Wei;
+	accruedFunding: Wei;
+	margin: Wei;
+	profitLoss: Wei;
+	fundingIndex: number;
+	lastPrice: Wei;
+	size: Wei;
+	liquidationPrice: Wei;
+	leverage: Wei;
+};
+
 export type FuturesPosition = {
 	asset: string;
-	order: { pending: boolean; fee: Wei; leverage: Wei } | null;
-	margin: Wei;
-	position: {
-		canLiquidatePosition: boolean;
-		isLong: boolean;
-		notionalValue: Wei;
-		accruedFunding: Wei;
-		remainingMargin: Wei;
-		profitLoss: Wei;
-		fundingIndex: number;
-		lastPrice: Wei;
-		size: Wei;
-		liquidationPrice: Wei;
-		leverage: Wei;
-	} | null;
+	order: FuturesOrder | null;
+	remainingMargin: Wei;
+	position: FuturesFilledPosition | null;
 };
 
 export type FuturesMarket = {
@@ -54,3 +62,8 @@ export type FuturesMarket = {
 	maxLeverage: Wei;
 	price: Wei;
 };
+
+export enum PositionSide {
+	LONG = 'long',
+	SHORT = 'short',
+}

@@ -1,4 +1,4 @@
-import { FC, useState, ChangeEvent, useMemo, useEffect } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
@@ -11,16 +11,17 @@ import { normalizeGasLimit } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
 import { gasSpeedState } from 'store/wallet';
-import NumericInput from 'components/Input/NumericInput';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivCentered } from 'styles/common';
+
+import { FlexDivCol } from 'styles/common';
 import Button from 'components/Button';
 import { getTransactionPrice } from 'utils/network';
+import { getFuturesMarketContract } from 'queries/futures/utils';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths } from 'constants/currency';
-import { formatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
+import MarginInput from '../TradeSizeInput';
 
 type DepositMarginModalProps = {
 	onDismiss: () => void;
@@ -77,13 +78,6 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 		ethPriceRate,
 	]);
 
-	const getFuturesMarketContract = (asset: string, contracts: Record<string, ethers.Contract>) => {
-		const contractName = `FuturesMarket${asset.substring(1)}`;
-		const contract = contracts[contractName];
-		if (!contract) throw new Error(`${contractName} contract does not exist`);
-		return contract;
-	};
-
 	useEffect(() => {
 		const getGasLimit = async () => {
 			if (!amount || !market || !synthetixjs) return;
@@ -110,7 +104,10 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 				market,
 				synthetixjs!.contracts
 			);
-			const tx = await FuturesMarketContract.modifyMargin(wei(amount).toBN());
+			const tx = await FuturesMarketContract.modifyMargin(wei(amount).toBN(), {
+				gasLimit,
+				gasPrice,
+			});
 			if (tx != null) {
 				monitorTransaction({
 					txHash: tx.hash,
@@ -132,29 +129,13 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 			isOpen={true}
 			title={t('futures.market.trade.margin.modal.title')}
 		>
-			<InputRow>
-				<StyledFlexDivCentered>
-					<CurrencyLabel>{Synths.sUSD}</CurrencyLabel>
-					<InputContainer>
-						<FlexDivCol>
-							<TradeAmount
-								value={amount}
-								onChange={(_: ChangeEvent<HTMLInputElement>, value: string) => setAmount(value)}
-								placeholder="0"
-								data-testid="margin-amount"
-							/>
-							<ValueAmount>{formatCurrency(Synths.sUSD, amount, { sign: '$' })}</ValueAmount>
-						</FlexDivCol>
-						<MaxButton onClick={() => setAmount(sUSDBalance.toString())} variant="text">
-							{t('futures.market.trade.input.max')}
-						</MaxButton>
-					</InputContainer>
-				</StyledFlexDivCentered>
-				<FlexDivRow>
-					<BalanceSubtitle>{t('futures.market.trade.input.balance')}</BalanceSubtitle>
-					<BalanceValue>{formatCryptoCurrency(sUSDBalance.toString())}</BalanceValue>
-				</FlexDivRow>
-			</InputRow>
+			<MarginInput
+				amount={amount}
+				onAmountChange={(value) => setAmount(value)}
+				balance={sUSDBalance}
+				asset={Synths.sUSD}
+				balanceLabel={t('futures.market.trade.margin.balance')}
+			/>
 			<FlexDivCol>
 				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 			</FlexDivCol>
@@ -178,66 +159,6 @@ const StyledBaseModal = styled(BaseModal)`
 	.card-body {
 		padding: 28px;
 	}
-`;
-
-const InputRow = styled(FlexDivCol)`
-	width: 100%;
-	margin-bottom: 24px;
-`;
-
-const StyledFlexDivCentered = styled(FlexDivCentered)`
-	width: 100%;
-`;
-
-const CurrencyLabel = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-right: 12px;
-`;
-
-const InputContainer = styled(FlexDivRowCentered)`
-	background: ${(props) => props.theme.colors.black};
-	border-radius: 4px;
-	padding: 4px;
-	height: 48px;
-	width: 100%;
-`;
-
-const TradeAmount = styled(NumericInput)`
-	font-size: 16px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.silver};
-`;
-
-const ValueAmount = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 10px;
-	color: ${(props) => props.theme.colors.blueberry};
-	margin-left: 8px;
-`;
-
-const MaxButton = styled(Button)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.goldColors.color2};
-	font-size: 12px;
-	text-transform: uppercase;
-	margin-right: 4px;
-`;
-
-const BalanceSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	text-transform: capitalize;
-	margin-top: 6px;
-`;
-
-const BalanceValue = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	margin-top: 6px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`
