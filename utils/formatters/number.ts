@@ -34,7 +34,8 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 export const zeroBN = wei(0);
 
 export function numberWithCommas(value: string) {
-	return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+	return value;
+	// return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 }
 
 // TODO: implement max decimals
