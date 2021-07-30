@@ -1,5 +1,5 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 
 import {
 	DEFAULT_CRYPTO_DECIMALS,
@@ -33,11 +33,6 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
-export function numberWithCommas(value: string) {
-	return value;
-	// return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
-}
-
 // TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -52,10 +47,11 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
-
-	formattedValue.push(
-		numberWithCommas(weiValue.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS))
+	const weiAsStringWithDecimals = weiValue.toString(
+		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
+	const withCommas = utils.commify(weiAsStringWithDecimals);
+	formattedValue.push(withCommas);
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
