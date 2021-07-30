@@ -9,7 +9,7 @@ import Link from 'assets/svg/app/link.svg';
 
 import { CapitalizedText, ExternalLink, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { Order } from 'store/orders';
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 import { formatCurrency } from 'utils/formatters/number';
 
 type CurrencyExchangeProps = {
@@ -18,7 +18,7 @@ type CurrencyExchangeProps = {
 
 export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const isConfirmed = order.status === 'confirmed';
 	const isPending = order.status === 'pending';
@@ -60,8 +60,8 @@ export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 					</PendingIcon>
 				)}
 			</FlexDivRowCentered>
-			{isConfirmed && etherscanInstance != null && (
-				<StyledExternalLink href={etherscanInstance.txLink(order.hash)}>
+			{isConfirmed && blockExplorerInstance != null && (
+				<StyledExternalLink href={blockExplorerInstance.txLink(order.hash)}>
 					<Svg src={Link} viewBox={`0 0 ${Link.width} ${Link.height}`} />
 				</StyledExternalLink>
 			)}

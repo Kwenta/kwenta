@@ -9,6 +9,7 @@ import { Network } from 'store/wallet';
 import { networkState } from 'store/wallet';
 
 type BlockExplorerInstance = {
+	baseLink: string;
 	txLink: (txId: string) => string;
 	addressLink: (address: string) => string;
 	tokenLink: (address: string) => string;
@@ -26,6 +27,7 @@ const getBaseUrl = (network: Network) => {
 
 const generateExplorerFunctions = (baseUrl: string) => {
 	return {
+		baseLink: baseUrl,
 		txLink: (txId: string) => `${baseUrl}/tx/${txId}`,
 		addressLink: (address: string) => `${baseUrl}/address/${address}`,
 		tokenLink: (address: string) => `${baseUrl}/token/${address}`,

@@ -1,7 +1,6 @@
 {
 	"languages": {
-		"en": "English",
-		"kr": "한국어"
+		"en": "English"
 	},
 	"meta": {
 		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
@@ -18,7 +17,11 @@
 			"futures": "futures"
 		},
 		"networks-switcher": {
-			"l2": "Switch to L2"
+			"l2": "Switch to L2",
+			"l1": "Switch to Layer 1",
+			"optimistic-gateway": "Optimistic L2 Gateway",
+			"optimistic-etherscan": "Optimistic Etherscan",
+			"learn-more": "Learn more"
 		}
 	},
 	"homepage": {
@@ -459,8 +462,7 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		},
-		"not-available-on-l2": "Shorting is not available on L2"
+		}
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",

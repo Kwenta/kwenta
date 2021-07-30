@@ -66,6 +66,7 @@ import {
 	isWalletConnectedState,
 	walletAddressState,
 	isL2State,
+	networkState,
 } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
@@ -164,7 +165,8 @@ const useExchange = ({
 	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
 	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	// const cmcQuotesQuery = useCMCQuotesQuery([Synths.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
+	const network = useRecoilValue(networkState);
+	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
 	// 	enabled: txProvider === '1inch',
 	// });
 	const slippage = useRecoilValue(slippageState);
@@ -558,6 +560,13 @@ const useExchange = ({
 		}
 		return null;
 	}, [feeAmountInBaseCurrency, basePriceRate]);
+
+	useEffect(() => {
+		setCurrencyPair({
+			base: null,
+			quote: null,
+		});
+	}, [network.id, setCurrencyPair]);
 
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
