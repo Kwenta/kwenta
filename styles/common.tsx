@@ -162,7 +162,7 @@ export const FixedFooterMixin = `
 	bottom: 0;
 	left: 0;
 	right: 0;
-	border-radius: 0;	
+	border-radius: 0;
 `;
 
 export const MobileContainerMixin = `
@@ -383,6 +383,18 @@ export const ExchangeCardsWithSelector = styled.div`
 		}
 	}
 	.currency-card-base {
+		.currency-wallet-container {
+			width: 100%;
+		}
+		.currency-card-body {
+			position: relative;
+			padding-left: 61px;
+			${media.lessThan('md')`
+				padding-left: 18px;
+			`}
+		}
+	}
+	.currency-card-quote {
 		.currency-wallet-container {
 			width: 100%;
 		}

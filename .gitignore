@@ -19,6 +19,7 @@ lint-results.sarif
 
 # misc
 .DS_Store
+notes.md
 
 # debug
 npm-debug.log*
