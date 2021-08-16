@@ -28,7 +28,7 @@
 		"@synthetixio/contracts-interface": "2.47.0-ovm",
 		"@synthetixio/data": "2.47.0-ovm.3",
 		"@synthetixio/optimism-networks": "2.46.3",
-		"@synthetixio/providers": "0.0.10",
+		"@synthetixio/providers": "v2.47.0-ovm.5",
 		"@synthetixio/queries": "2.47.0-ovm.3",
 		"@synthetixio/transaction-notifier": "0.0.8",
 		"@synthetixio/wei": "2.46.4",
