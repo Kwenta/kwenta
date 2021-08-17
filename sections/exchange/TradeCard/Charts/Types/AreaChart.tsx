@@ -1,15 +1,14 @@
 import { useContext, FC } from 'react';
 import { AreaChart as BaseAreaChart, XAxis, YAxis, Area, Tooltip } from 'recharts';
 import { AxisDomain } from 'recharts/types/util/types';
-import isNumber from 'lodash/isNumber';
 import get from 'lodash/get';
 import { ThemeContext } from 'styled-components';
-import formatDate from 'date-fns/format';
 
-import { PERIOD_IN_HOURS, PeriodLabel } from 'constants/period';
+import { PeriodLabel } from 'constants/period';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
 import CustomTooltip from '../common/CustomTooltip';
+import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
 const AreaChart: FC<{
 	data: {
@@ -59,7 +58,7 @@ const AreaChart: FC<{
 						setCurrentPrice(null);
 					}
 				}}
-				onMouseLeave={(e: any) => {
+				onMouseLeave={() => {
 					setCurrentPrice(null);
 				}}
 			>
@@ -71,24 +70,16 @@ const AreaChart: FC<{
 				</defs>
 				<XAxis
 					// @ts-ignore
+					allowDataOverflow={true}
+					axisLine={false}
+					dataKey="timestamp"
 					dx={-1}
 					dy={10}
-					minTickGap={20}
-					dataKey="timestamp"
-					allowDataOverflow={true}
-					tick={fontStyle}
-					axisLine={false}
+					height={60}
+					hide={!data.length}
+					interval="preserveStart"
+					tick={<CustomizedXAxisTick selectedChartPeriodLabel={selectedChartPeriodLabel} />}
 					tickLine={false}
-					tickFormatter={(val) => {
-						if (!isNumber(val)) {
-							return '';
-						}
-						const periodOverOneDay =
-							selectedChartPeriodLabel != null &&
-							selectedChartPeriodLabel.value > PERIOD_IN_HOURS.ONE_DAY;
-
-						return formatDate(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
-					}}
 				/>
 				<YAxis
 					// TODO: might need to adjust the width to make sure we do not trim the values...

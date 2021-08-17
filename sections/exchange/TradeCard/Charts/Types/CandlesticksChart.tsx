@@ -2,14 +2,14 @@ import { FC, useContext } from 'react';
 import { ThemeContext } from 'styled-components';
 import { formatEther } from '@ethersproject/units';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
-import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
-import formatDate from 'date-fns/format';
+import { PeriodLabel } from 'constants/period';
 import { Synth } from '@synthetixio/contracts-interface';
-import { isNumber } from 'lodash';
 import { Candle } from 'queries/rates/types';
 import { BarChart, XAxis, YAxis, Bar, Cell } from 'recharts';
 import { Tooltip } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
+
+import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
 type CandlesticksChartProps = {
 	data: Candle[];
@@ -41,25 +41,16 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 			<BarChart barGap={-4.5} data={chartData} margin={{ right: 0, bottom: 0, left: 0, top: 0 }}>
 				<XAxis
 					// @ts-ignore
-					dx={-1}
-					dy={10}
-					minTickGap={20}
-					dataKey="timestamp"
 					allowDataOverflow={true}
 					axisLine={false}
+					dataKey="timestamp"
+					dx={-1}
+					dy={10}
+					height={60}
+					hide={!chartData.length}
+					interval="preserveStart"
+					tick={<CustomizedXAxisTick selectedChartPeriodLabel={selectedChartPeriodLabel} />}
 					tickLine={false}
-					tick={fontStyle}
-					tickFormatter={(val) => {
-						if (!isNumber(val)) {
-							return '';
-						}
-						const periodOverOneDay =
-							selectedChartPeriodLabel != null &&
-							selectedChartPeriodLabel.value > PERIOD_IN_HOURS.ONE_DAY;
-
-						return formatDate(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
-					}}
-					hide={chartData.length === 0}
 				/>
 				<YAxis
 					type="number"
