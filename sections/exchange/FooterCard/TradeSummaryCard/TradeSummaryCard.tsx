@@ -159,7 +159,7 @@ export const ErrorTooltip = styled(Tippy)`
 `;
 
 export const MobileCard = styled(Card)`
-	margin: 0 auto 86px auto;
+	margin: 2px auto 20px auto;
 `;
 
 export default TradeSummaryCard;
