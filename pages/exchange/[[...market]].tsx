@@ -292,6 +292,7 @@ const RightCardContainer = styled.div`
 
 const MobileContainer = styled(FlexDivColCentered)`
 	${MobileContainerMixin};
+	margin-bottom: 110px;
 `;
 
 const VerticalSpacer = styled.div`
