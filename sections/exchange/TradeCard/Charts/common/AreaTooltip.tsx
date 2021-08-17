@@ -20,7 +20,8 @@ const CustomTooltip: FC<{
 		<TooltipContentStyle>
 			<LabelStyle>{formatDate(label, 'do MMM yy | HH:mm')}</LabelStyle>
 			<LabelStyle>
-				{t('exchange.price-chart-card.tooltip.price')}{' '}
+				{t('exchange.price-chart-card.tooltip.price')}
+				{': '}
 				<CurrencyPrice>{formatCurrentPrice(payload[0].value)}</CurrencyPrice>
 			</LabelStyle>
 		</TooltipContentStyle>

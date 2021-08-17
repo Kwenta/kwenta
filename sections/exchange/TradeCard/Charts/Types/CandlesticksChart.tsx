@@ -5,22 +5,26 @@ import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer'
 import { PeriodLabel } from 'constants/period';
 import { Synth } from '@synthetixio/contracts-interface';
 import { Candle } from 'queries/rates/types';
-import { BarChart, XAxis, YAxis, Bar, Cell } from 'recharts';
-import { Tooltip } from 'styles/common';
+import { BarChart, XAxis, YAxis, Bar, Cell, Tooltip } from 'recharts';
+import CandlesticksTooltip from '../common/CandlesticksTooltip';
 import { formatCurrency } from 'utils/formatters/number';
 
 import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
 type CandlesticksChartProps = {
 	data: Candle[];
+	noData: Boolean;
 	selectedChartPeriodLabel: PeriodLabel;
 	selectedPriceCurrency: Synth;
+	tooltipPriceFormatter: (n: number) => string;
 };
 
 const CandlesticksChart: FC<CandlesticksChartProps> = ({
 	data,
+	noData,
 	selectedChartPeriodLabel,
 	selectedPriceCurrency,
+	tooltipPriceFormatter,
 }) => {
 	const theme = useContext(ThemeContext);
 
@@ -66,7 +70,19 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 						})
 					}
 				/>
-				<Tooltip />
+				{!noData && (
+					<Tooltip
+						cursor={{ fill: 'grey' }}
+						isAnimationActive={false}
+						position={{
+							y: 0,
+						}}
+						content={
+							// @ts-ignore
+							<CandlesticksTooltip formatCurrentPrice={tooltipPriceFormatter} />
+						}
+					/>
+				)}
 				<Bar dataKey="pv" barSize={1}>
 					{chartData.map((datum: { uv: number[] }, index: number) => (
 						<Cell
