@@ -11,6 +11,8 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
+import CandlesticksCursor from '../common/CandlesticksCursor';
+
 type CandlesticksChartProps = {
 	data: Candle[];
 	noData: Boolean;
@@ -72,7 +74,8 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 				/>
 				{!noData && (
 					<Tooltip
-						cursor={{ fill: 'grey' }}
+						// @ts-ignore - req'd props passed in by recharts
+						cursor={<CandlesticksCursor />}
 						isAnimationActive={false}
 						position={{
 							y: 0,
@@ -83,7 +86,13 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 						}
 					/>
 				)}
-				<Bar dataKey="pv" barSize={1}>
+				<Bar
+					dataKey="pv"
+					barSize={1}
+					onMouseOver={(props) => {
+						console.log('pv mouse props', props);
+					}}
+				>
 					{chartData.map((datum: { uv: number[] }, index: number) => (
 						<Cell
 							key={`cell-${index}`}
