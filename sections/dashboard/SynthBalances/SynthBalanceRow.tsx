@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Wei from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
@@ -14,7 +15,6 @@ import { formatPercent } from 'utils/formatters/number';
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import Wei from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 
 export type SynthBalanceRowProps = {

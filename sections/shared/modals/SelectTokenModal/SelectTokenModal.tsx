@@ -5,6 +5,7 @@ import orderBy from 'lodash/orderBy';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import { useRecoilValue } from 'recoil';
+import Wei from '@synthetixio/wei';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
@@ -33,7 +34,6 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 import TokenRow from './TokenRow';
 import useSynthetixQueries from '@synthetixio/queries';
 import { omitBy } from 'lodash';
-import Wei from '@synthetixio/wei';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -179,7 +179,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 									onDismiss();
 								}}
 								totalValue={usdBalance ?? undefined}
-								{...{ balance, token, selectedPriceCurrency, selectPriceCurrencyRate }}
+								selectPriceCurrencyRate={selectPriceCurrencyRate?.toNumber() ?? null}
+								{...{ balance, token, selectedPriceCurrency }}
 							/>
 						);
 					})

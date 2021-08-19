@@ -46,7 +46,3 @@ export type Candle = {
 	close: BigInt;
 	timestamp: BigInt;
 };
-
-export type MarketCap = {
-	marketCap: number;
-};

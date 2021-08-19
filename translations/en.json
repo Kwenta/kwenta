@@ -315,8 +315,23 @@
 				"from": "From",
 				"to": "To",
 				"value": "Value",
-				"no-results": "No transactions found"
+				"fee-reclaim": "Fee Rebate/Reclaim",
+				"no-results": "No transactions found",
+				"tx-reclaim-fee-hint": "Trransaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
+				"price-adjustment-hint": "Price adjustment currently in progress"
 			}
+		},
+		"fee-reclaiming-synths": {
+			"title": "In Progress",
+			"row": {
+				"main-col-subtitle": "Price adjustment in progress",
+				"main-col-complete-subtitle": "Price adjustment complete",
+				"col-trades": "Trades",
+				"col-debt-surplus": "Debt/Surplus",
+				"col-remaining": "Remaining"
+			},
+			"settling-fee": "Settling...",
+			"settle-fee": "Settle fee"
 		}
 	},
 	"shorting": {
@@ -512,7 +527,8 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
-			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>"
+			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
 		},
 		"approve-transaction": {
 			"title": "approve transaction",
@@ -545,6 +561,9 @@
 		},
 		"notifications": {
 			"title": "notifications",
+			"fee-reclaiming-synths": {
+				"title": "Fee reclaiming currencies"
+			},
 			"open-orders": {
 				"title": "open orders",
 				"no-results": "No open orders"
@@ -577,7 +596,9 @@
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
-			"swap-currency": "Swap for <0>{{currencyKey}}</0>"
+			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
+			"trade-into": "Trade into <0>{{currencyKey}}</0>",
+			"price-adjustment": "Price Adjustment"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",

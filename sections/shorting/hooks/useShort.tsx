@@ -167,7 +167,7 @@ const useShort = ({
 
 	const totalTradePrice = useMemo(() => {
 		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate);
-		if (selectPriceCurrencyRate && selectPriceCurrencyRate !== 0) {
+		if (selectPriceCurrencyRate && selectPriceCurrencyRate.gt(0)) {
 			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 

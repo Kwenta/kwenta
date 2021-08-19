@@ -1,7 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import useSynthetixQueries from '@synthetixio/queries';
 
+import { walletAddressState } from 'store/wallet';
 import { ordersByStatusState } from 'store/orders';
 
 import FullScreen from './FullScreen';
@@ -15,6 +17,16 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	const { t } = useTranslation();
 	const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 	const ordersByStatus = useRecoilValue(ordersByStatusState);
+	const walletAddress = useRecoilValue(walletAddressState);
+
+	const { useFeeReclaimPeriodsQuery } = useSynthetixQueries();
+	const feeWaitingPeriodsQuery = useFeeReclaimPeriodsQuery(walletAddress ?? '');
+	const feeWaitingPeriods = useMemo(() => feeWaitingPeriodsQuery.data ?? [], [
+		feeWaitingPeriodsQuery.data,
+	]);
+	const hasWaitingPeriod = useMemo(() => !!feeWaitingPeriods.find((fw) => fw.waitingPeriod !== 0), [
+		feeWaitingPeriods,
+	]);
 
 	const orderGroups = useMemo(
 		() => [
@@ -37,13 +49,17 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	);
 
 	return isFullScreen ? (
-		<FullScreen onDismiss={onDismiss} orderGroups={orderGroups} />
+		<FullScreen {...{ onDismiss, feeWaitingPeriods, hasWaitingPeriod, orderGroups }} />
 	) : (
 		<Popup
-			onDismiss={onDismiss}
-			orderGroups={orderGroups}
-			setIsFullScreen={setIsFullScreen}
-			ordersByStatus={ordersByStatus}
+			{...{
+				onDismiss,
+				feeWaitingPeriods,
+				hasWaitingPeriod,
+				orderGroups,
+				setIsFullScreen,
+				ordersByStatus,
+			}}
 		/>
 	);
 };
