@@ -86,13 +86,7 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 						}
 					/>
 				)}
-				<Bar
-					dataKey="pv"
-					barSize={1}
-					onMouseOver={(props) => {
-						console.log('pv mouse props', props);
-					}}
-				>
+				<Bar dataKey="pv" barSize={1}>
 					{chartData.map((datum: { uv: number[] }, index: number) => (
 						<Cell
 							key={`cell-${index}`}

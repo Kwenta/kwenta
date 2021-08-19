@@ -13,7 +13,7 @@ const CandlesticksCursor: FC<Props> = ({ height, width, x, y }) => {
 		<path
 			stroke="none"
 			pointerEvents="none"
-			fill="#ccc"
+			fill="grey"
 			className="recharts-rectangle recharts-tooltip-cursor"
 			radius="0"
 			d={`M ${x + halfWidth / 3},${y} h ${halfWidth} v ${height} h -${halfWidth} Z`}
