@@ -59,6 +59,21 @@
 				"copy": "Once futures is built on the Synthetix protocol, it will soon be supported on Kwenta, offering perpetual future contracts on a non-custodial, permissionless platform."
 			}
 		},
+		"l2": {
+			"title": "Now on Optimism layer 2",
+			"copy": "Kwenta can now be used on Optimism's layer 2 solution for <0>low gas fees</0> and <0>fast transactions</0>. Trade like an elite.",
+			"transaction-cost": "Lower gas fees*",
+			"transaction-speed": "Transactions speed*",
+			"disclaimer": "* These statistics are approximations. User experience will vary.",
+			"cta-buttons": {
+				"learn-more": "Learn more",
+				"switch-l2": "Switch to L2"
+			},
+			"markets": {
+				"title": "Live markets",
+				"copy": "Start trading now on Optimism layer 2"
+			}
+		},
 		"benefits": {
 			"title": "Without the limits of a centralised exchange",
 			"peer-to-contract": {

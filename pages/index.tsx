@@ -13,6 +13,7 @@ import Steps from 'sections/homepage/Steps';
 import FAQ from 'sections/homepage/FAQ';
 import ChartBanner from 'sections/homepage/ChartBanner';
 import WithHomepageContainers from 'sections/homepage/containers';
+import L2 from 'sections/homepage/L2';
 
 const HomePage = () => {
 	const { t } = useTranslation();
@@ -29,6 +30,7 @@ const HomePage = () => {
 							<Hero />
 							<Assets />
 							<Features />
+							<L2 />
 							<Benefits />
 						</Container>
 					</DarkContainer>
