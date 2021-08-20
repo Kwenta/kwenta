@@ -364,7 +364,8 @@ const useExchange = ({
 				  quoteCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
 				  coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()] != null
-					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd / selectPriceCurrencyRate
+					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
+					  selectPriceCurrencyRate.toNumber()
 					: 0
 				: getExchangeRatesForCurrencies(
 						exchangeRates,
@@ -389,7 +390,8 @@ const useExchange = ({
 				  baseCurrencyTokenAddress != null &&
 				  selectPriceCurrencyRate != null &&
 				  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
-					? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd / selectPriceCurrencyRate
+					? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd /
+					  selectPriceCurrencyRate.toNumber()
 					: 0
 				: getExchangeRatesForCurrencies(
 						exchangeRates,

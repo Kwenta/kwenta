@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
-
-import { HistoricalTrade, HistoricalTrades } from 'queries/trades/types';
+import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -21,8 +20,11 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
+import SynthFeeReclaimStatus from './SynthFeeReclaimStatus';
+import TxReclaimFee from './TxReclaimFee';
+
 type TradeHistoryProps = {
-	trades: HistoricalTrades;
+	trades: SynthExchangeExpanded[];
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -43,17 +45,20 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 						<StyledTableHeader>{t('dashboard.transactions.table.orderType')}</StyledTableHeader>
 					),
 					accessor: 'orderType',
-					Cell: () => (
-						<StyledOrderType>{t('dashboard.transactions.order-type-sort.market')}</StyledOrderType>
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+						<StyledOrderType>
+							{t('dashboard.transactions.order-type-sort.market')}
+							<SynthFeeReclaimStatus trade={cellProps.row.original} />
+						</StyledOrderType>
 					),
 					sortable: true,
-					width: 200,
+					width: 125,
 				},
 				{
 					Header: <StyledTableHeader>{t('dashboard.transactions.table.from')}</StyledTableHeader>,
 					accessor: 'fromAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.fromCurrencyKey}</StyledCurrencyKey>
 							<StyledPrice>
@@ -64,14 +69,14 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 							</StyledPrice>
 						</span>
 					),
-					width: 200,
+					width: 175,
 					sortable: true,
 				},
 				{
 					Header: <StyledTableHeader>{t('dashboard.transactions.table.to')}</StyledTableHeader>,
 					accessor: 'toAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
 						<span>
 							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
 							<StyledPrice>
@@ -82,7 +87,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 							</StyledPrice>
 						</span>
 					),
-					width: 200,
+					width: 175,
 					sortable: true,
 				},
 				{
@@ -97,7 +102,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					),
 					accessor: 'amount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<HistoricalTrade>) => (
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
 						<Currency.Price
 							currencyKey={cellProps.row.original.toCurrencyKey}
 							price={cellProps.row.original.toAmountInUSD}
@@ -105,12 +110,24 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 							conversionRate={selectPriceCurrencyRate}
 						/>
 					),
-					width: 200,
+					width: 175,
+					sortable: true,
+				},
+				{
+					Header: (
+						<StyledTableHeader>{t('dashboard.transactions.table.fee-reclaim')}</StyledTableHeader>
+					),
+					accessor: 'timestamp',
+					sortType: 'basic',
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+						<TxReclaimFee trade={cellProps.row.original} />
+					),
+					width: 175,
 					sortable: true,
 				},
 				{
 					id: 'link',
-					Cell: (cellProps: CellProps<HistoricalTrade>) =>
+					Cell: (cellProps: CellProps<SynthExchangeExpanded>) =>
 						blockExplorerInstance != null && cellProps.row.original.hash ? (
 							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
 								<StyledLinkIcon
@@ -121,6 +138,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 						) : (
 							NO_VALUE
 						),
+					width: 50,
 					sortable: false,
 				},
 			]}
@@ -164,6 +182,8 @@ const StyledTableHeader = styled.div`
 
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
+	display: flex;
+	align-items: center;
 `;
 
 const StyledCurrencyKey = styled.span`

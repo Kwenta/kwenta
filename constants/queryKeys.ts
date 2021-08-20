@@ -19,7 +19,6 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
-		SynthExchanges: (period: Period) => ['rates', 'synthExchanges', period],
 		Candlesticks: (currencyKey: string, period: Period) => [
 			'rates',
 			'candlesticks',
@@ -59,7 +58,6 @@ export const QUERY_KEYS = {
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
-		FeeReclaimPeriod: (currencyKey: CurrencyKey) => ['synths', 'feeReclaimPeriod', currencyKey],
 		ExchangeFeeRate: (quoteCurrencyKey: CurrencyKey, baseCurrencyKey: CurrencyKey) => [
 			'synths',
 			'exchangeFeeRate',

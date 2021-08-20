@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
+import Wei, { wei } from '@synthetixio/wei';
 
 import ChangePercent from 'components/ChangePercent';
 
@@ -9,7 +10,6 @@ import { formatCurrency } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 import { ethers } from 'ethers';
-import Wei, { wei } from '@synthetixio/wei';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
@@ -36,7 +36,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
-					conversionRate != null ? wei(price).div(conversionRate) : price,
+					conversionRate && wei(conversionRate).gt(0) ? wei(price).div(conversionRate) : price,
 					{
 						sign,
 						currencyKey: showCurrencyKey != null ? currencyKey : undefined,

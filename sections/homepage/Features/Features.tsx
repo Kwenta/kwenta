@@ -68,9 +68,9 @@ const StyledGridContainer = styled(GridContainer)`
 `;
 
 const Container = styled.div`
-	padding-bottom: 240px;
+	margin-bottom: 150px;
 	${media.lessThan('lg')`
-		padding-bottom: 140px;
+		margin-bottom: 75px;
 	`}
 `;
 

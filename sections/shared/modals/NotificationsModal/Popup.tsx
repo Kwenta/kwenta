@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
+
 import { TextButton } from 'styles/common';
 
 import { MenuModal } from '../common';
@@ -14,6 +16,7 @@ import {
 	OrdersGroupListItem,
 	NoResults,
 } from './common';
+import CurrencyFeeReclaim from './CurrencyFeeReclaim';
 
 import { OrderGroup } from './types';
 import { OrderByStatus } from 'store/orders';
@@ -23,6 +26,8 @@ type PopupProps = {
 	setIsFullScreen: (flag: boolean) => void;
 	orderGroups: OrderGroup[];
 	ordersByStatus: OrderByStatus;
+	feeWaitingPeriods: SynthFeeAndWaitingPeriod[];
+	hasWaitingPeriod: boolean;
 };
 
 export const Popup: FC<PopupProps> = ({
@@ -30,6 +35,8 @@ export const Popup: FC<PopupProps> = ({
 	orderGroups,
 	setIsFullScreen,
 	ordersByStatus,
+	feeWaitingPeriods,
+	hasWaitingPeriod,
 }) => {
 	const { t } = useTranslation();
 
@@ -41,7 +48,24 @@ export const Popup: FC<PopupProps> = ({
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.notifications.title')}>
-			{hasOrders ? (
+			{!(hasOrders || hasWaitingPeriod) ? (
+				<StyledNoResults>
+					{t('modals.notifications.recent-notifications.no-results')}
+				</StyledNoResults>
+			) : hasWaitingPeriod ? (
+				<OrdersGroup>
+					<OrdersGroupTitle>
+						{t('modals.notifications.fee-reclaiming-synths.title')}
+					</OrdersGroupTitle>
+					<OrdersGroupList>
+						{feeWaitingPeriods.map(({ waitingPeriod, currencyKey }) => {
+							return waitingPeriod === 0 ? null : (
+								<CurrencyFeeReclaim key={currencyKey} {...{ currencyKey, waitingPeriod }} />
+							);
+						})}
+					</OrdersGroupList>
+				</OrdersGroup>
+			) : hasOrders ? (
 				<>
 					{orderGroups.map((group) => (
 						<OrdersGroup key={group.id}>
@@ -69,11 +93,7 @@ export const Popup: FC<PopupProps> = ({
 						</ViewAllButtonContainer>
 					)}
 				</>
-			) : (
-				<StyledNoResults>
-					{t('modals.notifications.recent-notifications.no-results')}
-				</StyledNoResults>
-			)}
+			) : null}
 		</StyledMenuModal>
 	);
 };

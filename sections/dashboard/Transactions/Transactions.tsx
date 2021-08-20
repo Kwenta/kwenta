@@ -2,22 +2,24 @@ import { FC, useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
+import useSynthetixQueries from '@synthetixio/queries';
+import { Synth } from '@synthetixio/contracts-interface';
+import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
+import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
-
+import { walletAddressState } from 'store/wallet';
 import { CapitalizedText, GridDiv } from 'styles/common';
+import Connector from 'containers/Connector';
 
 import TradeHistory from './TradeHistory';
-import { useWalletTradesQuery } from 'queries/trades/useWalletTradesQuery';
-import { HistoricalTrade } from 'queries/trades/types';
-import { Synth } from '@synthetixio/contracts-interface';
-import Connector from 'containers/Connector';
 
 const Transactions: FC = () => {
 	const { t } = useTranslation();
-	const walletTradesQuery = useWalletTradesQuery();
-
 	const { synthetixjs } = Connector.useContainer();
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useWalletTradesQuery } = useSynthetixQueries();
+	const walletTradesQuery = useWalletTradesQuery(walletAddress ?? '');
 
 	const synthFilterList = useMemo(
 		() => [
@@ -57,7 +59,7 @@ const Transactions: FC = () => {
 	const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 
 	const createSynthTypeFilter = useCallback(
-		(synths: Synth[], synthFilter: string) => (trade: HistoricalTrade) =>
+		(synths: Synth[], synthFilter: string) => (trade: SynthExchangeExpanded) =>
 			synths
 				.filter((synth) => synth.category === synthFilter || synthFilter === 'ALL_SYNTHS')
 				.map((synth) => synth.name)
@@ -67,12 +69,12 @@ const Transactions: FC = () => {
 
 	// This will always return true until we add limit orders back in.
 	const createOrderTypeFilter = useCallback(
-		(orderType: string) => (trade: HistoricalTrade) => true,
+		(orderType: string) => (trade: SynthExchangeExpanded) => true,
 		[]
 	);
 
 	const createOrderSizeFilter = useCallback(
-		(orderSize: string) => (trade: HistoricalTrade) => {
+		(orderSize: string) => (trade: SynthExchangeExpanded) => {
 			switch (orderSize) {
 				case orderSizeList[1].key:
 					return trade.fromAmount <= 1000;
@@ -89,7 +91,15 @@ const Transactions: FC = () => {
 		[orderSizeList]
 	);
 
-	const trades = useMemo(() => walletTradesQuery.data || [], [walletTradesQuery.data]);
+	const trades = useMemo(() => {
+		const t = walletTradesQuery.data || [];
+
+		//TODO: move to parsing library
+		return t.map((trade) => ({
+			...trade,
+			hash: trade.id.split('-')[0],
+		}));
+	}, [walletTradesQuery.data]);
 	const filteredHistoricalTrades = useMemo(
 		() =>
 			trades

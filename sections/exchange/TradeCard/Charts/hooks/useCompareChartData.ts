@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import useSynthetixQueries from '@synthetixio/queries';
 
 const useCombinedRates = ({
 	baseCurrencyKey,
@@ -72,6 +72,7 @@ const useCombinedRates = ({
 		return allRates.reduce((chartData, { isBaseRate, rate, timestamp }) => {
 			let baseRate: number = 0;
 			let quoteRate: number = 0;
+
 			if (isBaseRate) {
 				baseRate = prevBaseRate = rate;
 				quoteRate = prevQuoteRate;

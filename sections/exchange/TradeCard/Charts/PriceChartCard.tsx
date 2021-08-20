@@ -105,7 +105,7 @@ const ChartCard: FC<ChartCardProps> = ({
 	const computedRates = useMemo(() => {
 		return rates.map(({ timestamp, rate }: { timestamp: number; rate: number }) => ({
 			timestamp,
-			value: !selectPriceCurrencyRate ? rate : rate / selectPriceCurrencyRate,
+			value: !selectPriceCurrencyRate ? rate : rate / selectPriceCurrencyRate.toNumber(),
 		}));
 	}, [rates, selectPriceCurrencyRate]);
 

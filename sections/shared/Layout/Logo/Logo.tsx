@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Svg } from 'react-optimized-image';
+import { Svg, Img } from 'react-optimized-image';
 import ROUTES from 'constants/routes';
 
 import LogoSvg from 'assets/svg/brand/logo.svg';
@@ -14,7 +14,7 @@ type LogoProps = {
 const Logo: FC<LogoProps> = ({ isL2 }) => (
 	<LogoContainer>
 		<Link href={ROUTES.Homepage.Home}>
-			<a>{isL2 ? <Svg src={LogoSvgL2} /> : <Svg src={LogoSvg} />}</a>
+			<a>{isL2 ? <Img src={LogoSvgL2} /> : <Svg src={LogoSvg} />}</a>
 		</Link>
 	</LogoContainer>
 );
