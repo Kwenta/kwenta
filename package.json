@@ -65,7 +65,7 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"synthetix": "^2.40.1-alpha",
-		"synthetix-data": "2.1.42",
+		"synthetix-data": "2.1.43",
 		"unstated-next": "1.1.0",
 		"use-immer": "0.4.2"
 	},
