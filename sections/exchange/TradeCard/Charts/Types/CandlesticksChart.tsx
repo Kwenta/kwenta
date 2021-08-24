@@ -45,30 +45,6 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 		fontFamily: theme.fonts.mono,
 	};
 
-	function determineFillColor(
-		focusCandleIdx: number | null,
-		currentCandleIdx: number,
-		isCandleGreen: boolean
-	) {
-		const regularGreen = '#6DDA78';
-		const lighterGreen = '#248f2e';
-
-		const regularRed = '#E0306B';
-		const lighterRed = '#9b1743';
-
-		// if focusCandleIndex === null, leave everything as is
-		if (isNull(focusCandleIndex)) {
-			return isCandleGreen ? regularGreen : regularRed;
-		}
-
-		// if focusCandleIndex === currentCandle
-		if (focusCandleIdx === currentCandleIdx) {
-			return isCandleGreen ? regularGreen : regularRed;
-		} else {
-			return isCandleGreen ? lighterGreen : lighterRed;
-		}
-	}
-
 	return (
 		<RechartsResponsiveContainer width="100%" height="100%">
 			<BarChart
@@ -154,5 +130,29 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 		</RechartsResponsiveContainer>
 	);
 };
+
+function determineFillColor(
+	focusCandleIdx: number | null,
+	currentCandleIdx: number,
+	isCandleGreen: boolean
+) {
+	const regularGreen = '#6DDA78';
+	const lighterGreen = '#248f2e';
+
+	const regularRed = '#E0306B';
+	const lighterRed = '#9b1743';
+
+	// if focusCandleIndex === null, leave everything as is
+	if (isNull(focusCandleIdx)) {
+		return isCandleGreen ? regularGreen : regularRed;
+	}
+
+	// if focusCandleIndex === currentCandle
+	if (focusCandleIdx === currentCandleIdx) {
+		return isCandleGreen ? regularGreen : regularRed;
+	} else {
+		return isCandleGreen ? lighterGreen : lighterRed;
+	}
+}
 
 export default CandlesticksChart;
