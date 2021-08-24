@@ -24,6 +24,7 @@ export type FuturesOrder = {
 	pending: boolean;
 	fee: Wei;
 	leverage: Wei;
+	side: PositionSide;
 };
 
 export type FuturesFilledPosition = {
@@ -31,13 +32,17 @@ export type FuturesFilledPosition = {
 	side: PositionSide;
 	notionalValue: Wei;
 	accruedFunding: Wei;
-	margin: Wei;
+	initialMargin: Wei;
 	profitLoss: Wei;
 	fundingIndex: number;
 	lastPrice: Wei;
 	size: Wei;
 	liquidationPrice: Wei;
+	initialLeverage: Wei;
 	leverage: Wei;
+	roi: Wei;
+	roiChange: Wei;
+	marginRatio: Wei;
 };
 
 export type FuturesPosition = {
@@ -61,6 +66,22 @@ export type FuturesMarket = {
 	marketSize: Wei;
 	maxLeverage: Wei;
 	price: Wei;
+};
+
+export type PositionHistory = {
+	id: number;
+	transactionHash: string;
+	timestamp: number;
+	isOpen: boolean;
+	isLiquidated: boolean;
+	entryPrice: Wei;
+	exitPrice: Wei;
+	size: Wei;
+	asset: string;
+	margin: Wei;
+	leverage: Wei;
+	side: PositionSide;
+	pnl: Wei;
 };
 
 export enum PositionSide {

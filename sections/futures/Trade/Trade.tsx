@@ -4,10 +4,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow, FlexDivColCentered } from 'styles/common';
-import { TabButton, TabList } from 'components/Tab';
 import { useState } from 'react';
 import { Synths } from 'constants/currency';
 
@@ -26,7 +25,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import TradeSizeInput from '../TradeSizeInput';
 import LeverageInput from '../LeverageInput';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 import SlippageSelect from 'sections/shared/components/SlippageSelect';
 import MarginSection from './MarginSection';
@@ -35,13 +33,9 @@ import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { getFuturesMarketContract } from 'queries/futures/utils';
+import { gasPriceInWei } from 'utils/network';
 
 type TradeProps = {};
-
-enum TradeTab {
-	BUY = 'BUY',
-	SELL = 'SELL',
-}
 
 const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
@@ -64,13 +58,10 @@ const Trade: React.FC<TradeProps> = () => {
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
-	// console.log('POSITION', futuresMarketsPosition);
-
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
+	const ethGasPriceQuery = useEthGasPriceQuery(true);
 
-	const [activeTab, setActiveTab] = useState<TradeTab>(TradeTab.BUY);
 	const [error, setError] = useState<string | null>(null);
 	const [leverage, setLeverage] = useState<number>(1);
 	const [tradeSize, setTradeSize] = useState<string>('');
@@ -79,6 +70,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
+	const [feeCost, setFeeCost] = useState<Wei | null>(null);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
 
@@ -120,21 +112,6 @@ const Trade: React.FC<TradeProps> = () => {
 		ethPriceRate,
 	]);
 
-	const TABS = [
-		{
-			name: TradeTab.BUY,
-			label: t('futures.market.trade.input.buy'),
-			active: activeTab === TradeTab.BUY,
-			onClick: () => setActiveTab(TradeTab.BUY),
-		},
-		{
-			name: TradeTab.SELL,
-			label: t('futures.market.trade.input.sell'),
-			active: activeTab === TradeTab.SELL,
-			onClick: () => setActiveTab(TradeTab.SELL),
-		},
-	];
-
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
@@ -156,7 +133,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 	useEffect(() => {
 		const getGasLimit = async () => {
-			if (!synthetixjs || !marketAsset) return;
+			if (!synthetixjs || !marketAsset || !walletAddress) return;
 			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
 			try {
 				setError(null);
@@ -165,20 +142,24 @@ const Trade: React.FC<TradeProps> = () => {
 					marketAsset,
 					synthetixjs!.contracts
 				);
-				const gasEstimate = await FuturesMarketContract.estimateGas.submitOrder(
-					wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
-				);
+				const [gasEstimate, orderFee] = await Promise.all([
+					FuturesMarketContract.estimateGas.submitOrder(
+						wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
+					),
+					FuturesMarketContract.orderFee(walletAddress, wei(leverage).toBN()),
+				]);
 				setGasLimit(Number(gasEstimate));
+				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
 				setError(e?.data?.message ?? e.message);
 			}
 		};
 		getGasLimit();
-	}, [leverage, synthetixjs, marketAsset, futuresMarketsPosition, leverageSide]);
+	}, [leverage, synthetixjs, marketAsset, futuresMarketsPosition, leverageSide, walletAddress]);
 
 	const handleCreateOrder = async () => {
-		if (!gasLimit || !leverage) return;
+		if (!gasLimit || !leverage || !gasPrice) return;
 		try {
 			const FuturesMarketContract: Contract = getFuturesMarketContract(
 				marketAsset,
@@ -186,13 +167,14 @@ const Trade: React.FC<TradeProps> = () => {
 			);
 			console.log(FuturesMarketContract.address);
 			const tx = await FuturesMarketContract.submitOrder(
-				wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
+				wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN(),
+				{ gasLimit, gasPrice: gasPriceInWei(gasPrice) }
 			);
 			if (tx) {
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: () => {
-						futuresMarketPositionQuery.refetch();
+						setTimeout(futuresMarketPositionQuery.refetch, 5 * 1000);
 					},
 				});
 			}
@@ -206,13 +188,6 @@ const Trade: React.FC<TradeProps> = () => {
 			<TopRow>
 				<FlexDivRow>
 					<Title>{t('futures.market.trade.title')}</Title>
-					<StyledTabList>
-						{TABS.map(({ name, label, active, onClick }) => (
-							<StyledTabButton key={name} name={name} active={active} onClick={onClick}>
-								{label}
-							</StyledTabButton>
-						))}
-					</StyledTabList>
 				</FlexDivRow>
 				<TradeSizeInput
 					amount={tradeSize}
@@ -220,7 +195,7 @@ const Trade: React.FC<TradeProps> = () => {
 					onAmountChange={(value) => onTradeAmountChange(value)}
 					balance={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 					asset={marketAsset || Synths.sUSD}
-					onLeverageChange={() => onLeverageChange(Number(market?.maxLeverage.toString() ?? 1))}
+					handleOnMax={() => onLeverageChange(Number(market?.maxLeverage.toString() ?? 1))}
 					balanceLabel={t('futures.market.trade.input.remaining-margin')}
 				/>
 
@@ -234,12 +209,11 @@ const Trade: React.FC<TradeProps> = () => {
 
 				<FlexDivCol>
 					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-					<StyledFeeRateSummary feeRate={null} />
-					<StyledFeeCostSummary feeCost={null} />
-					<StyledSlippageSelcet
+					<StyledFeeCostSummary feeCost={feeCost} />
+					{/* <StyledSlippageSelect
 						maxSlippageTolerance={maxSlippageTolerance}
 						setMaxSlippageTolerance={setMaxSlippageTolerance}
-					/>
+					/> */}
 					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gte(zeroBN) ? (
 						<Button
 							variant="primary"
@@ -251,7 +225,7 @@ const Trade: React.FC<TradeProps> = () => {
 							{error
 								? error
 								: tradeSize
-								? t('futures.market.trade.button.open-trade', { side: activeTab.toLowerCase() })
+								? t('futures.market.trade.button.open-trade')
 								: t('futures.market.trade.button.enter-amount')}
 						</Button>
 					) : (
@@ -277,7 +251,7 @@ const Trade: React.FC<TradeProps> = () => {
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
-					onTxConfirmed={() => console.log('here')}
+					onTxConfirmed={() => futuresMarketPositionQuery.refetch()}
 					market={marketAsset}
 					onDismiss={() => setIsDepositMarginModalOpen(false)}
 				/>
@@ -294,29 +268,7 @@ const Title = styled.div`
 	text-transform: capitalize;
 `;
 
-const StyledTabList = styled(TabList)`
-	margin-bottom: 12px;
-`;
-
-const StyledTabButton = styled(TabButton)`
-	text-transform: capitalize;
-	background: ${(props) => props.theme.colors.elderberry};
-`;
-
 const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	margin-bottom: 8px;
-`;
-
-const StyledFeeRateSummary = styled(FeeRateSummary)`
 	padding: 5px 0;
 	display: flex;
 	justify-content: space-between;
@@ -342,7 +294,7 @@ const StyledFeeCostSummary = styled(FeeCostSummary)`
 	margin-bottom: 8px;
 `;
 
-const StyledSlippageSelcet = styled(SlippageSelect)`
+const StyledSlippageSelect = styled(SlippageSelect)`
 	padding: 5px 0;
 	display: flex;
 	justify-content: space-between;
@@ -355,7 +307,9 @@ const StyledSlippageSelcet = styled(SlippageSelect)`
 	margin-bottom: 24px;
 `;
 
-const TopRow = styled(FlexDivCol)``;
+const TopRow = styled(FlexDivCol)`
+	margin-top: 12px;
+`;
 
 const Panel = styled(FlexDivCol)`
 	height: 100%;

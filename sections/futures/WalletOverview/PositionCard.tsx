@@ -15,14 +15,15 @@ import { Position, PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 
 type PositionCardProps = {
-	position: Partial<FuturesPosition>;
+	position: FuturesPosition;
 	isCTA?: boolean;
 };
 
 const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) => {
 	const { t } = useTranslation();
-
-	const positionSide = position.position.isLong ? PositionSide.LONG : PositionSide.SHORT;
+	if (!position || !position.position) return null;
+	const { position: filledPosition } = position;
+	const positionSide = filledPosition.side;
 	return (
 		<StyledCard isCTA={isCTA}>
 			<StyledCardBody>
@@ -31,27 +32,28 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 					<StyledFlexDivRow>
 						<StyledCurrencyIcon currencyKey={position.asset} />
 						<StyledData>
-							{formatCurrency(position.asset, position.position.size, { sign: '$' })}
+							{formatCurrency(position.asset, filledPosition.size, { sign: '$' })}
 						</StyledData>
 						<PositionSideTag side={positionSide}>{positionSide}</PositionSideTag>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.price')}</Subtitle>
-					<Data>{formatCurrency(Synths.sUSD, position.position.size, { sign: '$' })}</Data>
+					<Data>{formatCurrency(Synths.sUSD, filledPosition.lastPrice, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<StyledFlexDivRow>
 						<Subtitle>{t('futures.wallet-overview.positions.liquidation')}</Subtitle>
-						{position.canLiquidatePosition && <StyledSvg src={WarningIcon} />}
+						{filledPosition.canLiquidatePosition && <StyledSvg src={WarningIcon} />}
 					</StyledFlexDivRow>
-					{/* <Data>{formatCurrency(Synths.sUSD, position.liquidationPrice, { sign: '$' })}</Data> */}
+					<Data>{formatCurrency(Synths.sUSD, filledPosition.liquidationPrice, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.pnl')}</Subtitle>
 					<StyledFlexDivRow>
 						<StyledData>
-							{formatCurrency(Synths.sUSD, position.position?.remainingMargin, { sign: '$' })}
+							TBD
+							{/* {formatCurrency(Synths.sUSD, filledPosition.remainingMargin, { sign: '$' })} */}
 						</StyledData>
 						{/* <ChangePercent value={position.marginChange} /> */}
 					</StyledFlexDivRow>

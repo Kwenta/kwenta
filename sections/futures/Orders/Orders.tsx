@@ -5,6 +5,8 @@ import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import { Contract } from 'ethers';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
 
 import Card from 'components/Card';
 import Table from 'components/Table';
@@ -19,6 +21,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import { Order, OrderStatus, PositionSide } from '../types';
 import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { gasSpeedState } from 'store/wallet';
 
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
 import FailureIcon from 'assets/svg/app/circle-error.svg';
@@ -29,6 +32,7 @@ import { FuturesPosition } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { gasPriceInWei } from 'utils/network';
 
 type OrdersProps = {
 	position: FuturesPosition | null;
@@ -57,19 +61,22 @@ const Orders: React.FC<OrdersProps> = ({
 	refetchMarketQuery,
 }) => {
 	const { t } = useTranslation();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const { etherscanInstance } = Etherscan.useContainer();
 	const { synthetixjs } = Connector.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const gasSpeed = useRecoilValue(gasSpeedState);
 	console.log('PPPP', position);
+
+	const ethGasPriceQuery = useEthGasPriceQuery(true);
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
 
 	const orders: TableOrder[] = useMemo(
 		() =>
 			position && position.order
 				? [position].map((futuresPosition) => ({
-						side: futuresPosition.order?.leverage.gte(zeroBN)
-							? PositionSide.LONG
-							: PositionSide.SHORT ?? PositionSide.LONG,
+						side: futuresPosition.order?.side ?? PositionSide.LONG,
 						currencyKey,
 						leverage: futuresPosition.order?.leverage ?? zeroBN,
 						size:
@@ -96,6 +103,7 @@ const Orders: React.FC<OrdersProps> = ({
 	};
 
 	const handleCancelOrder = async () => {
+		if (!gasPrice) return;
 		try {
 			const FuturesMarketContract: Contract = getFuturesMarketContract(
 				currencyKey,
@@ -104,6 +112,7 @@ const Orders: React.FC<OrdersProps> = ({
 			const gasEstimate = await FuturesMarketContract.estimateGas.cancelOrder();
 			const tx = await FuturesMarketContract.cancelOrder({
 				gasLimit: Number(gasEstimate),
+				gasPrice: gasPriceInWei(gasPrice),
 			});
 			if (tx) {
 				monitorTransaction({ txHash: tx.hash, onTxConfirmed: refetchMarketQuery });

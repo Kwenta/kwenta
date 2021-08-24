@@ -534,8 +534,8 @@
 					"enter-amount": "enter amount",
 					"deposit-margin": "deposit margin",
 					"deposit": "deposit",
-					"open-trade": "submit {{side}} order",
-					"warning": "WARNING: this will close your {{side}} position"
+					"open-trade": "submit order",
+					"warning": "WARNING: this will close your position"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -544,7 +544,11 @@
 					"available-balance": "sUSD balance",
 					"balance": "Balance",
 					"modal": {
-						"title": "Deposit margin"
+						"title": "Deposit margin",
+						"actions": {
+							"withdraw": "Withdraw",
+							"deposit": "Deposit"
+						}
 					}
 				}
 			},
@@ -556,7 +560,14 @@
 					"liquidation": "liquidation price",
 					"margin": "remaining margin",
 					"ratio": "margin ratio",
-					"close": "close"
+					"close": "close",
+					"modal-close": {
+						"title": "Close position",
+						"size": "Size",
+						"side": "Side",
+						"leverage": "Leverage",
+						"ROI": "ROI"
+					}
 				},
 				"orders": {
 					"tab": "Orders",

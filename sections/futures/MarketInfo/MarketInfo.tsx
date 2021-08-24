@@ -17,6 +17,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Card from 'components/Card';
 import UserInfo from '../UserInfo';
 import { FuturesMarket } from 'queries/futures/types';
+import { wei } from '@synthetixio/wei';
 
 type MarketInfoProps = {
 	market: string;
@@ -53,28 +54,37 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			},
 			{
 				title: t('futures.market.info.size'),
-				data: formatCurrency(selectedPriceCurrency.name, marketSummary?.marketSize ?? zeroBN, {
-					currencyKey: selectedPriceCurrency.name,
-				}),
+				data: formatCurrency(
+					selectedPriceCurrency.name,
+					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+					{
+						sign: '$',
+					}
+				),
 			},
 			{
 				title: t('futures.market.info.volume'),
-				data: formatCurrency(selectedPriceCurrency.name, 200000, {
-					currencyKey: selectedPriceCurrency.name,
-				}),
+				// data: formatCurrency(selectedPriceCurrency.name, 200000, {
+				// 	currencyKey: selectedPriceCurrency.name,
+				// }),
+				data: 'TBD',
 			},
 			{
 				title: t('futures.market.info.skew'),
-				data: formatCurrency(selectedPriceCurrency.name, marketSummary?.marketSkew ?? zeroBN, {
-					currencyKey: selectedPriceCurrency.name,
-				}),
+				data: formatCurrency(
+					selectedPriceCurrency.name,
+					marketSummary?.marketSkew?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+					{
+						sign: '$',
+					}
+				),
 			},
 			{
 				title: t('futures.market.info.rate'),
 				data: formatPercent(marketSummary?.currentFundingRate ?? zeroBN),
 			},
 		],
-		[marketSummary, baseCurrencyKey, t, selectedPriceCurrency.name]
+		[marketSummary, baseCurrencyKey, t, selectedPriceCurrency.name, basePriceRate]
 	);
 
 	return (
@@ -102,7 +112,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 					))}
 				</StyledFlexDiv>
 			</MarketInfoContainer>
-			<UserInfo marketAsset={baseCurrencyKey} />
+			<UserInfo marketAsset={baseCurrencyKey} marketAddress={marketSummary?.market ?? null} />
 		</>
 	);
 };

@@ -3,91 +3,37 @@ import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei';
 
 import Card from 'components/Card';
 import Table from 'components/Table';
-import Button from 'components/Button';
 import Etherscan from 'containers/Etherscan';
 import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { NO_VALUE } from 'constants/placeholder';
-import { Trade, TradeStatus, PositionSide } from '../types';
+import { TradeStatus, PositionSide } from '../types';
 import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
 import FailureIcon from 'assets/svg/app/circle-error.svg';
 import SuccessIcon from 'assets/svg/app/circle-tick.svg';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
+import { PositionHistory } from 'queries/futures/types';
 
-type TradesProps = {};
+type TradesProps = {
+	history: PositionHistory[];
+	currencyKeyRate: number;
+	isLoading: boolean;
+	isLoaded: boolean;
+};
 
-const Trades: React.FC<TradesProps> = ({}) => {
+const Trades: React.FC<TradesProps> = ({ history, currencyKeyRate, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const { etherscanInstance } = Etherscan.useContainer();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const Trades = [
-		{
-			id: '1',
-			position: {
-				side: PositionSide.LONG,
-				amount: 1000,
-				currency: Synths.sBTC,
-			},
-			leverage: {
-				amount: 5,
-				side: PositionSide.LONG,
-			},
-			entryPrice: 1000,
-			finalPrice: 2000,
-			pnl: 100,
-			status: TradeStatus.OPEN,
-			txHash: '123',
-		},
-		{
-			id: '2',
-			position: {
-				side: PositionSide.SHORT,
-				amount: 1000,
-				currency: Synths.sBTC,
-			},
-			leverage: {
-				amount: 5,
-				side: PositionSide.SHORT,
-			},
-			entryPrice: 1000,
-			finalPrice: 2000,
-			pnl: -100,
-			status: TradeStatus.LIQUIDATED,
-			txHash: '123',
-		},
-		{
-			id: '3',
-			position: {
-				side: PositionSide.LONG,
-				amount: 1000,
-				currency: Synths.sBTC,
-			},
-			leverage: {
-				amount: 5,
-				side: PositionSide.LONG,
-			},
-			entryPrice: 1000,
-			finalPrice: 2000,
-			pnl: 200,
-			status: TradeStatus.CLOSED,
-			txHash: '123',
-		},
-	] as Trade[];
-
-	const isLoading = false;
-	const isLoaded = true;
-
-	const columnsDeps = useMemo(() => [Trades], [Trades]);
+	const columnsDeps = useMemo(() => [history], [history]);
 
 	const returnStatusSVG = (status: TradeStatus) => {
 		switch (status) {
@@ -110,9 +56,9 @@ const Trades: React.FC<TradesProps> = ({}) => {
 							<StyledTableHeader>{t('futures.market.user.trades.table.id')}</StyledTableHeader>
 						),
 						accessor: 'id',
-						Cell: (cellProps: CellProps<Trade>) => <StyledId>{cellProps.row.original.id}</StyledId>,
+						Cell: (cellProps: CellProps<PositionHistory>) => <StyledId>{cellProps.value}</StyledId>,
 						sortable: true,
-						width: 100,
+						width: 50,
 					},
 					{
 						Header: (
@@ -120,18 +66,19 @@ const Trades: React.FC<TradesProps> = ({}) => {
 								{t('futures.market.user.trades.table.position')}
 							</StyledTableHeader>
 						),
-						accessor: 'position',
+						accessor: 'size',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
+						Cell: (cellProps: CellProps<PositionHistory>) => (
 							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.position.currency} />
+								<CurrencyIcon currencyKey={cellProps.row.original.asset} />
 								<StyledPositionSize>
-									{cellProps.row.original.position.amount}{' '}
-									{cellProps.row.original.position.currency}
+									{formatCryptoCurrency(cellProps.value, {
+										currencyKey: cellProps.row.original.asset,
+									})}
 								</StyledPositionSize>
 							</FlexDivCentered>
 						),
-						width: 200,
+						width: 100,
 						sortable: true,
 					},
 					{
@@ -142,11 +89,11 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						),
 						accessor: 'leverage',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
+						Cell: (cellProps: CellProps<PositionHistory>) => (
 							<FlexDivCentered>
-								<LeverageSize>{cellProps.row.original.leverage.amount}x |</LeverageSize>
-								<LeverageSide side={cellProps.row.original.leverage.side}>
-									{cellProps.row.original.leverage.side}
+								<LeverageSize>{formatNumber(cellProps.value)}x |</LeverageSize>
+								<LeverageSide side={cellProps.row.original.side}>
+									{cellProps.row.original.side}
 								</LeverageSide>
 							</FlexDivCentered>
 						),
@@ -159,12 +106,11 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						),
 						accessor: 'entryPrice',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
+						Cell: (cellProps: CellProps<PositionHistory>) => (
 							<Price>
-								{formatCurrency(Synths.sUSD, cellProps.row.original.entryPrice, {
+								{formatCurrency(Synths.sUSD, cellProps.value, {
 									sign: '$',
-								})}{' '}
-								{selectedPriceCurrency.asset}
+								})}
 							</Price>
 						),
 						width: 100,
@@ -174,14 +120,15 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.final')}</StyledTableHeader>
 						),
-						accessor: 'finalPrice',
+						accessor: 'exitPrice',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
+						Cell: (cellProps: CellProps<PositionHistory>) => (
 							<Price>
-								{formatCurrency(Synths.sUSD, cellProps.row.original.finalPrice, {
-									sign: '$',
-								})}{' '}
-								{selectedPriceCurrency.asset}
+								{cellProps.row.original.isOpen
+									? '--'
+									: formatCurrency(Synths.sUSD, cellProps.value, {
+											sign: '$',
+									  })}
 							</Price>
 						),
 						width: 100,
@@ -191,14 +138,17 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.pnl')}</StyledTableHeader>
 						),
-						accessor: 'pnl]',
+						accessor: 'pnl',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
-							<PNL negative={cellProps.row.original.pnl < 0}>
-								{formatCurrency(Synths.sUSD, cellProps.row.original.pnl, {
-									sign: '$',
-								})}{' '}
-								{selectedPriceCurrency.asset}
+						Cell: (cellProps: CellProps<PositionHistory>) => (
+							<PNL
+								negative={cellProps.row.original.exitPrice.gt(wei(0)) && cellProps.value.lt(wei(0))}
+							>
+								{cellProps.row.original.exitPrice.gt(wei(0))
+									? formatCurrency(Synths.sUSD, cellProps.value, {
+											sign: '$',
+									  })
+									: '--'}
 							</PNL>
 						),
 						width: 100,
@@ -208,36 +158,41 @@ const Trades: React.FC<TradesProps> = ({}) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
 						),
-						accessor: 'status',
+						id: 'status',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<Trade>) => (
-							<FlexDivCentered>
-								{returnStatusSVG(cellProps.row.original.status)}
-								<StatusText>{cellProps.row.original.status}</StatusText>
-							</FlexDivCentered>
-						),
+						Cell: (cellProps: CellProps<PositionHistory>) => {
+							const { isOpen, isLiquidated } = cellProps.row.original;
+							const status = isLiquidated
+								? TradeStatus.LIQUIDATED
+								: isOpen
+								? TradeStatus.OPEN
+								: TradeStatus.CLOSED;
+							return (
+								<FlexDivCentered>
+									{returnStatusSVG(status)}
+									<StatusText>{status}</StatusText>
+								</FlexDivCentered>
+							);
+						},
 						width: 100,
 						sortable: true,
 					},
 					{
-						id: 'link',
-						Cell: (cellProps: CellProps<Trade>) =>
-							etherscanInstance != null && cellProps.row.original.txHash ? (
-								<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
-									<StyledLinkIcon
-										src={LinkIcon}
-										viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-									/>
-								</StyledExternalLink>
-							) : (
-								NO_VALUE
-							),
+						accessor: 'transactionHash',
+						Cell: (cellProps: CellProps<PositionHistory>) => (
+							<StyledExternalLink href={etherscanInstance.txLink(cellProps.value)}>
+								<StyledLinkIcon
+									src={LinkIcon}
+									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+								/>
+							</StyledExternalLink>
+						),
 						sortable: false,
 						width: 50,
 					},
 				]}
 				columnsDeps={columnsDeps}
-				data={Trades}
+				data={history || []}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
 					isLoaded && Trades.length === 0 ? (
@@ -278,6 +233,7 @@ const StyledId = styled.div`
 const StyledPositionSize = styled.div`
 	margin-left: 4px;
 	${BoldTableText}
+	text-transform: none;
 `;
 
 const LeverageSize = styled.div`

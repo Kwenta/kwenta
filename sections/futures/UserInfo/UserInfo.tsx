@@ -8,11 +8,12 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { TabList, TabPanel, TabButton } from 'components/Tab';
 
 import PositionCard from '../PositionCard';
-import Orders from '../Orders';
+// import Orders from '../Orders';
 import Trades from '../Trades';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
@@ -34,6 +35,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
 	const exchangeRates = useMemo(
@@ -46,7 +48,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		[exchangeRates, marketAsset]
 	);
 
-	console.log('POSITION', futuresMarketsPosition);
+	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
+	console.log('shshs', positionHistory);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.market) {
@@ -68,18 +71,18 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				active: activeTab === FuturesTab.POSITION,
 				onClick: () => router.push(ROUTES.Futures.Market.Position(marketAsset)),
 			},
-			{
-				name: FuturesTab.ORDERS,
-				label: t('futures.market.user.orders.tab'),
-				active: activeTab === FuturesTab.ORDERS,
-				onClick: () => router.push(ROUTES.Futures.Market.Orders(marketAsset)),
-			},
 			// {
-			// 	name: FuturesTab.TRADES,
-			// 	label: t('futures.market.user.trades.tab'),
-			// 	active: activeTab === FuturesTab.TRADES,
-			// 	onClick: () => router.push(ROUTES.Futures.Market.Trades(marketAsset)),
+			// 	name: FuturesTab.ORDERS,
+			// 	label: t('futures.market.user.orders.tab'),
+			// 	active: activeTab === FuturesTab.ORDERS,
+			// 	onClick: () => router.push(ROUTES.Futures.Market.Orders(marketAsset)),
 			// },
+			{
+				name: FuturesTab.TRADES,
+				label: t('futures.market.user.trades.tab'),
+				active: activeTab === FuturesTab.TRADES,
+				onClick: () => router.push(ROUTES.Futures.Market.Trades(marketAsset)),
+			},
 		],
 		[t, activeTab, router, marketAsset]
 	);
@@ -100,7 +103,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					currencyKeyRate={marketAssetRate}
 				/>
 			</TabPanel>
-			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+			{/* <TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
 				<Orders
 					position={futuresMarketsPosition ?? null}
 					isLoading={futuresMarketPositionQuery.isLoading}
@@ -109,10 +112,15 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					currencyKeyRate={marketAssetRate}
 					refetchMarketQuery={() => futuresMarketPositionQuery.refetch()}
 				/>
-			</TabPanel>
-			{/* <TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
-				<Trades />
 			</TabPanel> */}
+			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
+				<Trades
+					history={positionHistory}
+					currencyKeyRate={marketAssetRate}
+					isLoading={futuresPositionHistoryQuery.isLoading}
+					isLoaded={futuresPositionHistoryQuery.isFetched}
+				/>
+			</TabPanel>
 		</>
 	);
 };

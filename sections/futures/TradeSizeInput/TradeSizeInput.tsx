@@ -15,7 +15,7 @@ type TradeSizeInputProps = {
 	assetRate: number;
 	amount: string;
 	onAmountChange: (value: string) => void;
-	onLeverageChange: () => void;
+	handleOnMax: () => void;
 	asset: string;
 	balanceLabel: string;
 };
@@ -27,7 +27,7 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 	asset,
 	balanceLabel,
 	assetRate,
-	onLeverageChange,
+	handleOnMax,
 }) => {
 	const { t } = useTranslation();
 	const amountValue = Number(amount) * assetRate;
@@ -46,7 +46,7 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 						/>
 						<ValueAmount>{formatCurrency(Synths.sUSD, amountValue, { sign: '$' })}</ValueAmount>
 					</FlexDivCol>
-					<MaxButton onClick={onLeverageChange} variant="text">
+					<MaxButton onClick={handleOnMax} variant="text">
 						{t('futures.market.trade.input.max')}
 					</MaxButton>
 				</InputContainer>

@@ -22,17 +22,17 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const walletPosition = useMemo(() => {
 		if (!positions) return null;
 		let futuresPositions: Partial<FuturesPosition>[] = [];
 		let totalMargin = zeroBN;
 
-		positions.forEach(({ margin, position }) => {
-			totalMargin = totalMargin.add(margin);
-			if (position) {
-				futuresPositions.push(position as Partial<FuturesPosition>);
+		positions.forEach((position) => {
+			totalMargin = totalMargin.add(position.remainingMargin);
+			if (position.position) {
+				futuresPositions.push(position as FuturesPosition);
 			}
 		});
 		return {
@@ -41,7 +41,7 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		};
 	}, [positions]);
 
-	const sUSDBalance = synthsWalletBalancesQuery?.data?.totalUSDBalance ?? zeroBN;
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const overviewRows = useMemo(
 		() => [

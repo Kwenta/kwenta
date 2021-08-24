@@ -1,21 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { wei } from '@synthetixio/wei';
 
 import SpiralLines from 'assets/svg/app/future-position-background.svg';
-import LinkIcon from 'assets/svg/app/link.svg';
 
 import Card from 'components/Card';
-import { FlexDivRow, FlexDivCol, FlexDivRowCentered, ExternalLink } from 'styles/common';
+import { FlexDivRow, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
-import Etherscan from 'containers/Etherscan';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
+import { formatNumber } from 'utils/formatters/number';
+import ClosePositionModal from './ClosePositionModal';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -25,89 +24,104 @@ type PositionCardProps = {
 
 const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
 	const positionDetails = position?.position ?? null;
+	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+
 	return (
-		<Card>
-			<FlexDivRow>
-				<GraphicPosition>
-					<StyledGraphicRow>
-						<FlexDivCol>
-							<PositionSizeRow>
-								<StyledCurrencyIcon currencyKey={currencyKey} />
-								<PositionSizeCol>
-									<StyledPositionSize>
-										{formatCurrency(currencyKey, positionDetails?.size ?? zeroBN, { currencyKey })}
-									</StyledPositionSize>
-									<StyledPositionSizeUSD>
-										{formatCurrency(
-											Synths.sUSD,
-											positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
-											{ sign: '$' }
-										)}
-									</StyledPositionSizeUSD>
-								</PositionSizeCol>
-							</PositionSizeRow>
-							{/* <ROIContainer>
-								<StyledROIValue>
-									<span>{t('futures.market.user.position.roi')}</span>
-									<p>{formatCurrency(Synths.sUSD, 520, { sign: '$' })}</p>
-								</StyledROIValue>
-								<ChangePercent value={0.05} />
-							</ROIContainer> */}
-						</FlexDivCol>
-						<PositionLeverageContainer>
-							<div>{positionDetails?.leverage ?? 1}x |</div>
-							<span>{positionDetails?.side ?? PositionSide.LONG}</span>
-						</PositionLeverageContainer>
-					</StyledGraphicRow>
-				</GraphicPosition>
-				<RightHand>
-					<DataCol>
-						<InfoCol>
-							<StyledSubtitle>{t('futures.market.user.position.entry')}</StyledSubtitle>
-							<StyledValue>
-								{positionDetails && positionDetails.lastPrice
-									? formatCurrency(Synths.sUSD, positionDetails?.lastPrice, { sign: '$' })
-									: '--'}
-							</StyledValue>
-						</InfoCol>
-						<InfoCol>
-							<StyledSubtitle>{t('futures.market.user.position.margin')}</StyledSubtitle>
-							<StyledValue>
-								{formatCurrency(Synths.sUSD, position?.remainingMargin ?? zeroBN, { sign: '$' })}
-							</StyledValue>
-						</InfoCol>
-					</DataCol>
-					<DataCol>
-						<InfoCol>
-							<StyledSubtitle>{t('futures.market.user.position.liquidation')}</StyledSubtitle>
-							<StyledValue>
-								{positionDetails && positionDetails.liquidationPrice
-									? formatCurrency(Synths.sUSD, positionDetails.liquidationPrice, { sign: '$' })
-									: '--'}
-							</StyledValue>
-						</InfoCol>
-						<InfoCol>
-							<StyledSubtitle>{t('futures.market.user.position.ratio')}</StyledSubtitle>
-							<StyledValue>
-								{positionDetails && positionDetails.liquidationPrice
-									? formatCurrency(Synths.sUSD, 10000, { sign: '$' })
-									: '--'}
-							</StyledValue>
-						</InfoCol>
-					</DataCol>
-					<DataCol style={{ justifyContent: 'flex-end' }}>
-						{/* <StyledExternalLink href={etherscanInstance ? etherscanInstance.txLink('') : ''}>
-							<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
-						</StyledExternalLink> */}
-						<CloseButton variant="text" onClick={() => {}} disabled={!positionDetails}>
-							{t('futures.market.user.position.close')}
-						</CloseButton>
-					</DataCol>
-				</RightHand>
-			</FlexDivRow>
-		</Card>
+		<>
+			<Card>
+				<FlexDivRow>
+					<GraphicPosition>
+						<StyledGraphicRow>
+							<FlexDivCol>
+								<PositionSizeRow>
+									<StyledCurrencyIcon currencyKey={currencyKey} />
+									<PositionSizeCol>
+										<StyledPositionSize>
+											{formatCurrency(currencyKey, positionDetails?.size ?? zeroBN, {
+												currencyKey,
+											})}
+										</StyledPositionSize>
+										<StyledPositionSizeUSD>
+											{formatCurrency(
+												Synths.sUSD,
+												positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
+												{ sign: '$' }
+											)}
+										</StyledPositionSizeUSD>
+									</PositionSizeCol>
+								</PositionSizeRow>
+								<ROIContainer>
+									<StyledROIValue>
+										<span>{t('futures.market.user.position.roi')}</span>
+										<p>
+											{formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' })}
+										</p>
+									</StyledROIValue>
+									<ChangePercent value={Number(positionDetails?.roiChange?.toString() ?? 0)} />
+								</ROIContainer>
+							</FlexDivCol>
+							<FlexDivRow>
+								<Leverage>{`${formatNumber(positionDetails?.initialLeverage ?? 1)}x |`}</Leverage>
+								<Side isLong={positionDetails?.side === PositionSide.LONG ?? true}>
+									{positionDetails?.side ?? PositionSide.LONG}
+								</Side>
+							</FlexDivRow>
+						</StyledGraphicRow>
+					</GraphicPosition>
+					<RightHand>
+						<DataCol>
+							<InfoCol>
+								<StyledSubtitle>{t('futures.market.user.position.entry')}</StyledSubtitle>
+								<StyledValue>
+									{positionDetails && positionDetails.lastPrice
+										? formatCurrency(Synths.sUSD, positionDetails?.lastPrice, { sign: '$' })
+										: '--'}
+								</StyledValue>
+							</InfoCol>
+							<InfoCol>
+								<StyledSubtitle>{t('futures.market.user.position.margin')}</StyledSubtitle>
+								<StyledValue>
+									{formatCurrency(Synths.sUSD, position?.remainingMargin ?? zeroBN, { sign: '$' })}
+								</StyledValue>
+							</InfoCol>
+						</DataCol>
+						<DataCol>
+							<InfoCol>
+								<StyledSubtitle>{t('futures.market.user.position.liquidation')}</StyledSubtitle>
+								<StyledValue>
+									{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+										sign: '$',
+									})}
+								</StyledValue>
+							</InfoCol>
+							<InfoCol>
+								<StyledSubtitle>{t('futures.market.user.position.ratio')}</StyledSubtitle>
+								<StyledValue>
+									{formatCurrency(Synths.sUSD, positionDetails?.marginRatio ?? zeroBN)}
+								</StyledValue>
+							</InfoCol>
+						</DataCol>
+						<DataCol style={{ justifyContent: 'flex-end' }}>
+							<CloseButton
+								variant="text"
+								onClick={() => setClosePositionModalIsVisible(true)}
+								disabled={!positionDetails}
+							>
+								{t('futures.market.user.position.close')}
+							</CloseButton>
+						</DataCol>
+					</RightHand>
+				</FlexDivRow>
+			</Card>
+			{closePositionModalIsVisible && (
+				<ClosePositionModal
+					position={positionDetails}
+					currencyKey={currencyKey}
+					onDismiss={() => setClosePositionModalIsVisible(false)}
+				/>
+			)}
+		</>
 	);
 };
 export default PositionCard;
@@ -153,23 +167,23 @@ const StyledPositionSizeUSD = styled.div`
 	text-transform: capitalize;
 `;
 
-const PositionLeverageContainer = styled(FlexDivRow)`
-	div {
-		font-family: ${(props) => props.theme.fonts.bold};
-		font-size: 14px;
-		color: ${(props) => props.theme.colors.white};
-	}
-	span {
-		font-family: ${(props) => props.theme.fonts.bold};
-		font-size: 14px;
-		color: ${(props) => props.theme.colors.green};
-		margin-left: 4px;
-		text-transform: uppercase;
-	}
+const Leverage = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+	color: ${(props) => props.theme.colors.white};
+`;
+
+const Side = styled.div<{ isLong: boolean }>`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+	color: ${(props) => (props.isLong ? props.theme.colors.green : props.theme.colors.red)};
+	margin-left: 4px;
+	text-transform: uppercase;
 `;
 
 const ROIContainer = styled(FlexDivRow)`
 	margin-top: 16px;
+	justify-content: flex-start;
 `;
 
 const StyledROIValue = styled(FlexDivRowCentered)`
@@ -184,7 +198,7 @@ const StyledROIValue = styled(FlexDivRowCentered)`
 		font-family: ${(props) => props.theme.fonts.bold};
 		font-size: 16px;
 		color: ${(props) => props.theme.colors.white};
-		margin-right: 4px;
+		margin-right: 6px;
 	}
 `;
 
@@ -214,20 +228,6 @@ const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
-`;
-
-const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
-	cursor: pointer;
-`;
-
-const StyledLinkIcon = styled(Svg)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
-	}
 `;
 
 const CloseButton = styled(Button)`

@@ -118,6 +118,12 @@ export const QUERY_KEYS = {
 	},
 	Futures: {
 		Markets: ['futures', 'marketsSummaries'],
+		PositionHistory: (market: string | null, walletAddress: string) => [
+			'futures',
+			'positionHistory',
+			market,
+			walletAddress,
+		],
 		Position: (market: string | null, walletAddress: string) => [
 			'futures',
 			'position',

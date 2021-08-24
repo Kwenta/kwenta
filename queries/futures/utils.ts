@@ -30,6 +30,7 @@ export const mapFuturesPosition = (
 		liquidationPrice,
 		profitLoss,
 	} = positionDetail;
+	const roi = wei(profitLoss).add(wei(accruedFunding));
 	return {
 		asset,
 		order: !!orderPending
@@ -37,6 +38,7 @@ export const mapFuturesPosition = (
 					pending: !!orderPending,
 					fee: wei(order.fee),
 					leverage: wei(order.leverage),
+					side: wei(order.leverage).gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
 			  }
 			: null,
 		remainingMargin: wei(remainingMargin),
@@ -47,15 +49,21 @@ export const mapFuturesPosition = (
 					side: wei(size).gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
 					notionalValue: wei(notionalValue),
 					accruedFunding: wei(accruedFunding),
-					margin: wei(margin),
+					initialMargin: wei(margin),
 					profitLoss: wei(profitLoss),
 					fundingIndex: Number(fundingIndex),
 					lastPrice: wei(lastPrice),
-					size: wei(size),
+					size: wei(size).abs(),
 					liquidationPrice: wei(liquidationPrice),
+					initialLeverage: wei(size).mul(wei(lastPrice)).div(wei(margin)).abs(),
+					roi,
+					roiChange: wei(margin).eq(zeroBN) ? zeroBN : roi.div(wei(margin)),
+					marginRatio: wei(notionalValue).eq(zeroBN)
+						? zeroBN
+						: wei(remainingMargin).div(wei(notionalValue).abs()),
 					leverage: wei(remainingMargin).eq(zeroBN)
 						? zeroBN
-						: wei(notionalValue).div(wei(remainingMargin)),
+						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	};
 };
