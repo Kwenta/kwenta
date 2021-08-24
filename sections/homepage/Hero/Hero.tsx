@@ -41,7 +41,7 @@ const Hero = () => {
 
 const Header = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 48px;
+	font-size: 68px;
 	line-height: 120%;
 	text-align: center;
 	letter-spacing: 0.2px;
