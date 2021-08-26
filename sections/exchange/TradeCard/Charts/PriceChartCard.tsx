@@ -163,7 +163,7 @@ const ChartCard: FC<ChartCardProps> = ({
 								<StyledTextButton
 									key={period.period}
 									isActive={period.period === selectedChartPeriod}
-									onClick={(event) => {
+									onClick={() => {
 										if (isCandleStickChart && period.period !== Period.ONE_MONTH) {
 											setSelectedChartType(ChartType.AREA);
 										}
@@ -216,6 +216,12 @@ const ChartCard: FC<ChartCardProps> = ({
 					) : (
 						<CandlesticksChart
 							data={candleSticksChartData}
+							noData={noCandleSticksChartData}
+							tooltipPriceFormatter={(n: number) =>
+								formatCurrency(selectedPriceCurrency.name, n, {
+									sign: selectedPriceCurrency.sign,
+								})
+							}
 							{...{ selectedChartPeriodLabel, selectedPriceCurrency }}
 						/>
 					)}

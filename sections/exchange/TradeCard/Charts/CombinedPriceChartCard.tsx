@@ -194,7 +194,7 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 								<StyledTextButton
 									key={period.period}
 									isActive={period.period === selectedChartPeriod}
-									onClick={(event) => {
+									onClick={() => {
 										if (isCandleStickChart && period.period !== Period.ONE_MONTH) {
 											setSelectedChartType(ChartType.AREA);
 										}
@@ -214,8 +214,14 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 						<CompareChart {...{ baseCurrencyKey, quoteCurrencyKey, selectedChartPeriodLabel }} />
 					) : isCandleStickChart ? (
 						<CandlesticksChart
-							data={candleSticksChartData}
 							{...{ selectedChartPeriodLabel, selectedPriceCurrency }}
+							data={candleSticksChartData}
+							noData={noCandleSticksChartData}
+							tooltipPriceFormatter={(n: number) =>
+								formatNumber(n, {
+									minDecimals: getMinNoOfDecimals(n),
+								})
+							}
 						/>
 					) : (
 						<AreaChart

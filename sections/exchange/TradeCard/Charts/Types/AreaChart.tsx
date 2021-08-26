@@ -7,7 +7,7 @@ import { ThemeContext } from 'styled-components';
 import { PeriodLabel } from 'constants/period';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 
-import CustomTooltip from '../common/CustomTooltip';
+import AreaTooltip from '../common/AreaTooltip';
 import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
 const AreaChart: FC<{
@@ -108,7 +108,7 @@ const AreaChart: FC<{
 						}}
 						content={
 							// @ts-ignore
-							<CustomTooltip formatCurrentPrice={tooltipPriceFormatter} />
+							<AreaTooltip formatCurrentPrice={tooltipPriceFormatter} />
 						}
 					/>
 				)}
