@@ -22,11 +22,13 @@ import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import MarginInput from '../TradeSizeInput';
 import { gasPriceInWei } from 'utils/network';
+import { zeroBN } from 'utils/formatters/number';
 
 type DepositMarginModalProps = {
 	onDismiss: () => void;
 	onTxConfirmed: () => void;
 	sUSDBalance: Wei;
+	remainingMargin: Wei;
 	market: string | null;
 };
 
@@ -40,6 +42,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 	onTxConfirmed,
+	remainingMargin,
 }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
@@ -81,6 +84,8 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 		ethPriceRate,
 	]);
 
+	const isDeposit = actionTab === ACTIONS.DEPOSIT;
+
 	useEffect(() => {
 		const getGasLimit = async () => {
 			if (!amount || !market || !synthetixjs) return;
@@ -90,7 +95,10 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 					market,
 					synthetixjs!.contracts
 				);
-				const estimate = await FuturesMarketContract.estimateGas.transferMargin(wei(amount).toBN());
+				const marginAmount = isDeposit ? amount : -amount;
+				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
+					wei(marginAmount).toBN()
+				);
 				setGasLimit(Number(estimate));
 			} catch (e) {
 				console.log(e.message);
@@ -98,7 +106,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 			}
 		};
 		getGasLimit();
-	}, [amount, market, synthetixjs]);
+	}, [amount, market, synthetixjs, isDeposit]);
 
 	const handleDeposit = async () => {
 		if (!amount || !gasLimit || !market || !gasPrice) return;
@@ -107,7 +115,8 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 				market,
 				synthetixjs!.contracts
 			);
-			const tx = await FuturesMarketContract.transferMargin(wei(amount).toBN(), {
+			const marginAmount = isDeposit ? amount : -amount;
+			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
 				gasLimit,
 				gasPrice: gasPriceInWei(gasPrice),
 			});
@@ -134,7 +143,14 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 		>
 			<ActionTabsRow>
 				{[ACTIONS.DEPOSIT, ACTIONS.WITHDRAW].map((tab) => (
-					<ActionTab onClick={() => setActionTab(tab)} isSelected={tab === actionTab}>
+					<ActionTab
+						onClick={() => {
+							setAmount('');
+							setActionTab(tab);
+						}}
+						isSelected={tab === actionTab}
+						disabled={tab === ACTIONS.WITHDRAW && remainingMargin.eq(zeroBN)}
+					>
 						{t(`futures.market.trade.margin.modal.actions.${tab}`)}
 					</ActionTab>
 				))}
@@ -143,9 +159,11 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 				amount={amount}
 				assetRate={sUSDPriceRate}
 				onAmountChange={(value) => setAmount(value)}
-				balance={sUSDBalance}
+				balance={isDeposit ? sUSDBalance : remainingMargin}
 				asset={Synths.sUSD}
-				handleOnMax={() => setAmount(sUSDBalance.toString())}
+				handleOnMax={() =>
+					setAmount(isDeposit ? sUSDBalance.toString() : remainingMargin.toString())
+				}
 				balanceLabel={t('futures.market.trade.margin.balance')}
 			/>
 			<FlexDivCol>
@@ -158,7 +176,13 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 				onClick={handleDeposit}
 				disabled={!gasLimit || !!error}
 			>
-				{error ? error : t('futures.market.trade.button.deposit-margin')}
+				{error
+					? error
+					: t(
+							isDeposit
+								? 'futures.market.trade.button.deposit-margin'
+								: 'futures.market.trade.button.withdraw-margin'
+					  )}
 			</DepositMarginButton>
 		</StyledBaseModal>
 	);
@@ -184,6 +208,9 @@ const ActionTab = styled(TextButton)<{ isSelected: boolean }>`
 	padding: 0 2px 2px 2px;
 	color: ${(props) => props.theme.colors.blueberry};
 	font-family: ${(props) => props.theme.fonts.regular};
+	&:disabled {
+		opacity: 0.2;
+	}
 	cursor: pointer;
 	${(props) =>
 		props.isSelected &&

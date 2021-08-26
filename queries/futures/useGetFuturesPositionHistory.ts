@@ -90,7 +90,7 @@ const useGetFuturesPositionHistory = (
 								size: sizeWei,
 								asset: currencyKey,
 								margin: marginWei,
-								leverage: sizeWei.mul(entryPriceWei).div(marginWei),
+								leverage: marginWei.eq(wei(0)) ? wei(0) : sizeWei.mul(entryPriceWei).div(marginWei),
 								side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
 								pnl: sizeWei.mul(exitPriceWei.sub(entryPriceWei)),
 							};

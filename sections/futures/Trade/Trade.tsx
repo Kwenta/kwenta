@@ -244,13 +244,14 @@ const Trade: React.FC<TradeProps> = () => {
 				</FlexDivCol>
 			</TopRow>
 			<MarginSection
-				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
+				remainingMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				sUSDBalance={sUSDBalance}
 				onDeposit={() => setIsDepositMarginModalOpen(true)}
 			/>
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
+					remainingMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 					onTxConfirmed={() => futuresMarketPositionQuery.refetch()}
 					market={marketAsset}
 					onDismiss={() => setIsDepositMarginModalOpen(false)}

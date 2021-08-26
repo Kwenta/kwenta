@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import styled from 'styled-components';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
@@ -10,12 +10,12 @@ import Card from 'components/Card';
 import Button from 'components/Button';
 
 type MarginSectionProps = {
-	availableMargin: Wei;
+	remainingMargin: Wei;
 	sUSDBalance: Wei;
 	onDeposit: () => void;
 };
 
-const MarginSection: FC<MarginSectionProps> = ({ availableMargin, sUSDBalance, onDeposit }) => {
+const MarginSection: FC<MarginSectionProps> = ({ remainingMargin, sUSDBalance, onDeposit }) => {
 	const { t } = useTranslation();
 	return (
 		<FlexDivCol>
@@ -25,11 +25,15 @@ const MarginSection: FC<MarginSectionProps> = ({ availableMargin, sUSDBalance, o
 					<FlexDivCol>
 						<AvailableMargin>{t('futures.market.trade.margin.available-margin')}</AvailableMargin>
 						<MarginBalance>
-							{formatCurrency(Synths.sUSD, availableMargin, { sign: '$' })}
+							{formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' })}
 						</MarginBalance>
 					</FlexDivCol>
 					<Button variant="primary" isRounded size="sm" onClick={onDeposit}>
-						{t('futures.market.trade.button.deposit')}
+						{t(
+							remainingMargin.eq(wei(0))
+								? 'futures.market.trade.button.deposit'
+								: 'futures.market.trade.button.edit'
+						)}
 					</Button>
 				</FlexDivRowCentered>
 			</StyledCard>

@@ -531,10 +531,12 @@
 					}
 				},
 				"button": {
-					"enter-amount": "enter amount",
-					"deposit-margin": "deposit margin",
-					"deposit": "deposit",
-					"open-trade": "submit order",
+					"enter-amount": "Enter amount",
+					"deposit-margin": "Deposit margin",
+					"withdraw-margin": "Withdraw margin",
+					"deposit": "Deposit",
+					"edit": "Edit",
+					"open-trade": "Submit order",
 					"warning": "WARNING: this will close your position"
 				},
 				"margin": {
