@@ -3,7 +3,7 @@ import { FC } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
@@ -30,7 +30,7 @@ type MarketDetailsCardProps = {
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { tokensMap } = Connector.useContainer();
 
 	const {
@@ -127,8 +127,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 				)}
 			</Label>
 			<Value>
-				{token?.address && etherscanInstance != null ? (
-					<ExternalLink href={etherscanInstance.tokenLink(token.address)}>
+				{token?.address && blockExplorerInstance != null ? (
+					<ExternalLink href={blockExplorerInstance.tokenLink(token.address)}>
 						{truncateAddress(token.address, 6, 4)}
 					</ExternalLink>
 				) : (
@@ -170,8 +170,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		<Item>
 			<Label>{t('exchange.market-details-card.price-feed')}</Label>
 			<Value>
-				{token?.feed != null && etherscanInstance != null ? (
-					<ExternalLink href={etherscanInstance.tokenLink(token.feed)}>
+				{token?.feed != null && blockExplorerInstance != null ? (
+					<ExternalLink href={blockExplorerInstance.tokenLink(token.feed)}>
 						{truncateAddress(token.feed, 6, 4)}
 					</ExternalLink>
 				) : (

@@ -16,7 +16,7 @@ import { CurrencyKey, Synths, sUSD_EXCHANGE_RATE, SYNTH_DECIMALS } from 'constan
 import useInterval from 'hooks/useInterval';
 
 import Connector from 'containers/Connector';
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import TradeBalancerSummaryCard from 'sections/exchange/FooterCard/TradeBalancerSummaryCard';
@@ -75,7 +75,7 @@ const useBalancerExchange = ({
 	const { t } = useTranslation();
 	const { transactionNotifier, provider, signer, network, synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const {
 		useSynthsBalancesQuery,
@@ -424,7 +424,9 @@ const useBalancerExchange = ({
 				});
 				if (allowanceTx && transactionNotifier) {
 					const link =
-						etherscanInstance != null ? etherscanInstance.txLink(allowanceTx.hash) : undefined;
+						blockExplorerInstance != null
+							? blockExplorerInstance.txLink(allowanceTx.hash)
+							: undefined;
 
 					monitorTransaction({
 						txHash: allowanceTx.hash,
@@ -461,7 +463,7 @@ const useBalancerExchange = ({
 	}, [
 		gasPrice,
 		balancerProxyContract,
-		etherscanInstance,
+		blockExplorerInstance,
 		walletAddress,
 		network?.id,
 		getAllowanceAndInitProxyContract,
@@ -516,7 +518,8 @@ const useBalancerExchange = ({
 					setHasOrdersNotification(true);
 
 					if (transactionNotifier) {
-						const link = etherscanInstance != null ? etherscanInstance.txLink(tx.hash) : undefined;
+						const link =
+							blockExplorerInstance != null ? blockExplorerInstance.txLink(tx.hash) : undefined;
 						monitorTransaction({
 							txHash: tx.hash,
 							onTxConfirmed: () => {
@@ -570,7 +573,7 @@ const useBalancerExchange = ({
 		provider,
 		transactionNotifier,
 		monitorTransaction,
-		etherscanInstance,
+		blockExplorerInstance,
 		synthsWalletBalancesQuery,
 		setOrders,
 		setHasOrdersNotification,
