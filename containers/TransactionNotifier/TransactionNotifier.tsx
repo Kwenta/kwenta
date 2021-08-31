@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { TransactionStatusData } from '@synthetixio/transaction-notifier';
 
 import Connector from 'containers/Connector';
-import Etherscan from 'containers/BlockExplorer';
+import BlockExplorer from 'containers/BlockExplorer';
 
 import {
 	NotificationSuccess,
@@ -13,7 +13,7 @@ import {
 
 const useTransactionNotifier = () => {
 	const { transactionNotifier } = Connector.useContainer();
-	const { blockExplorerInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const monitorTransaction = ({
 		txHash,

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 
 import Card from 'components/Card';
 
@@ -48,7 +48,7 @@ type PositionCardProps = {
 
 const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 
@@ -167,8 +167,8 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		<StyledCard>
 			<StyledCardHeader>
 				{t('shorting.history.manage-short.subtitle')}
-				{etherscanInstance != null && short.txHash && (
-					<StyledExternalLink href={etherscanInstance.txLink(short.txHash)}>
+				{blockExplorerInstance != null && short.txHash && (
+					<StyledExternalLink href={blockExplorerInstance.txLink(short.txHash)}>
 						<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
 					</StyledExternalLink>
 				)}
