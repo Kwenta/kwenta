@@ -6,65 +6,135 @@ import Slider from 'components/Slider';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { PositionSide } from '../types';
+import { FuturesFilledPosition, FuturesPosition } from 'queries/futures/types';
 
 type LeverageInputProps = {
 	currentLeverage: number;
+	currentTradeSize: number;
 	maxLeverage: number;
+	initialLeverage: number;
 	side: PositionSide;
+	closePositionDelta: number;
+	leverageDelta: number;
+	legend: string;
+	assetRate: number;
 	onLeverageChange: (value: number) => void;
 	onSideChange: (value: PositionSide) => void;
+	setIsLeverageValueCommitted: (value: boolean) => void;
+	currentPosition: FuturesPosition;
 };
 
-const MIN_LEVERAGE = 1;
+const MIN_LEVERAGE = 0;
+const DEFAULT_STEPS = 0.01;
 
 const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
 	maxLeverage,
+	currentTradeSize,
+	initialLeverage,
 	side,
+	closePositionDelta = 10,
 	onLeverageChange,
 	onSideChange,
+	setIsLeverageValueCommitted,
+	currentPosition,
+	assetRate,
 }) => {
 	const { t } = useTranslation();
 
+	const currentPositionLeverage = currentPosition?.position?.leverage?.toNumber() ?? 0;
+	const currentPositionSide = currentPosition?.position?.side ?? null;
+	const currentPositionSize = currentPosition?.position?.size?.toNumber() ?? 0;
+	const currentPositionMargin = currentPosition?.remainingMargin?.toNumber() ?? 0;
+
+	const legend = useMemo(() => {
+		if (!currentPositionLeverage) return null;
+		if (currentPositionSide === side) {
+			return t('futures.market.trade.input.leverage.total-leverage', {
+				totalLeverage: (currentPositionLeverage + currentLeverage).toFixed(2),
+			});
+		} else {
+			const sizeDelta = currentTradeSize - currentPositionSize;
+			return sizeDelta > 0
+				? t('futures.market.trade.input.leverage.close-position', {
+						leverageDelta: (Math.abs(sizeDelta) * assetRate) / currentPositionMargin,
+				  })
+				: t('futures.market.trade.input.leverage.partial-close-position', {
+						closePositionDelta: (100 * currentTradeSize) / currentPositionSize,
+				  });
+		}
+	}, [
+		currentPositionLeverage,
+		currentLeverage,
+		t,
+		side,
+		currentPositionSide,
+		assetRate,
+		currentPositionMargin,
+		currentPositionSize,
+		currentTradeSize,
+	]);
+
 	return (
-		<LeverageRow>
-			<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
-			<FlexDivCol>
-				<InputContainer>
-					<LeverageAmount>{Math.round(currentLeverage * 100) / 100}x</LeverageAmount>
-					<LeverageSideContainer>
-						<LeverageSide
-							variant="outline"
-							side={PositionSide.LONG}
-							isActive={side === PositionSide.LONG}
-							onClick={() => onSideChange(PositionSide.LONG)}
-						>
-							{t('futures.market.trade.input.leverage.long')}
-						</LeverageSide>
-						<LeverageSide
-							variant="outline"
-							side={PositionSide.SHORT}
-							isActive={side === PositionSide.SHORT}
-							onClick={() => onSideChange(PositionSide.SHORT)}
-						>
-							{t('futures.market.trade.input.leverage.short')}
-						</LeverageSide>
-					</LeverageSideContainer>
-				</InputContainer>
-				<SliderRow>
-					<Slider
-						minValue={MIN_LEVERAGE}
-						maxValue={maxLeverage}
-						startingLabel={`${MIN_LEVERAGE}x`}
-						endingLabel={`${maxLeverage}x`}
-						value={currentLeverage}
-						onChange={(newValue) => onLeverageChange(newValue)}
-					/>
-				</SliderRow>
-			</FlexDivCol>
-		</LeverageRow>
+		<LeverageInputWrapper>
+			<LeverageRow>
+				<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
+				<FlexDivCol>
+					<InputContainer>
+						<LeverageAmount>{Math.round(currentLeverage * 100) / 100}x</LeverageAmount>
+						<LeverageSideContainer>
+							<LeverageSide
+								variant="outline"
+								side={PositionSide.LONG}
+								isActive={side === PositionSide.LONG}
+								onClick={() => onSideChange(PositionSide.LONG)}
+							>
+								{t('futures.market.trade.input.leverage.long')}
+							</LeverageSide>
+							<LeverageSide
+								variant="outline"
+								side={PositionSide.SHORT}
+								isActive={side === PositionSide.SHORT}
+								onClick={() => onSideChange(PositionSide.SHORT)}
+							>
+								{t('futures.market.trade.input.leverage.short')}
+							</LeverageSide>
+						</LeverageSideContainer>
+					</InputContainer>
+				</FlexDivCol>
+			</LeverageRow>
+			<SliderRow>
+				<Slider
+					steps={DEFAULT_STEPS}
+					minValue={MIN_LEVERAGE}
+					maxValue={maxLeverage - initialLeverage}
+					value={currentLeverage}
+					onChange={(_, newValue) => {
+						setIsLeverageValueCommitted(false);
+						onLeverageChange(newValue as number);
+					}}
+					onChangeCommitted={() => setIsLeverageValueCommitted(true)}
+				/>
+				{legend && (
+					<SliderLegend>
+						{legend}
+						{/* {t('futures.market.trade.input.leverage.total-leverage', {
+							totalLeverage: (initialLeverage + currentLeverage).toFixed(2),
+						})} */}
+						{/* {t('futures.market.trade.input.leverage.close-position', {
+							closePositionDelta,
+							leverageDelta,
+						})} */}
+					</SliderLegend>
+				)}
+			</SliderRow>
+		</LeverageInputWrapper>
 	);
 };
+
+const LeverageInputWrapper = styled(FlexDivCol)`
+	margin-bottom: 24px;
+`;
 
 const InputContainer = styled(FlexDivRowCentered)`
 	background: ${(props) => props.theme.colors.black};
@@ -75,7 +145,6 @@ const InputContainer = styled(FlexDivRowCentered)`
 
 const LeverageRow = styled(FlexDivRow)`
 	width: 100%;
-	margin-bottom: 24px;
 `;
 
 const LeverageTitle = styled.div`
@@ -88,7 +157,7 @@ const LeverageTitle = styled.div`
 
 const LeverageAmount = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
+	font-size: 14px;
 	color: ${(props) => props.theme.colors.silver};
 	margin-left: 8px;
 	max-width: 46px;
@@ -127,6 +196,15 @@ const LeverageSide = styled(Button)<{ side: PositionSide; isActive: boolean }>`
 
 const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;
+	position: relative;
+`;
+
+const SliderLegend = styled(FlexDivRow)`
+	position: absolute;
+	top: 100%;
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 10px;
+	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 export default LeverageInput;

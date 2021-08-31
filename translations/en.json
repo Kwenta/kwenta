@@ -527,7 +527,10 @@
 					"leverage": {
 						"title": "leverage",
 						"long": "long",
-						"short": "short"
+						"short": "short",
+						"total-leverage": "Total leverage ≈ {{totalLeverage}}x",
+						"close-position": "100% close position + {{leverageDelta}}x leverage",
+						"partial-close-position": "{{closePositionDelta}}% close position"
 					}
 				},
 				"button": {

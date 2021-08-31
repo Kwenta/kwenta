@@ -1,35 +1,35 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { Slider } from '@reach/slider';
+import styled from 'styled-components';
+import Slider from '@material-ui/core/Slider';
 import { FlexDivRowCentered } from 'styles/common';
 
 type SliderProps = {
 	minValue: number;
 	maxValue: number;
 	steps?: number;
-	startingLabel: string;
-	endingLabel: string;
 	value: number;
-	onChange: (
-		newValue: number,
-		props?: { min?: number; max?: number; handlePosition?: string }
-	) => void;
+	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
+	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 };
 
 const SliderComponent: React.FC<SliderProps> = ({
 	minValue,
 	maxValue,
 	steps,
-	startingLabel,
-	endingLabel,
 	value,
 	onChange,
+	onChangeCommitted,
 }) => {
 	return (
 		<SliderContainer>
-			<StartingLabel>{startingLabel}</StartingLabel>
-			<StyledSlider min={minValue} max={maxValue} step={steps} value={value} onChange={onChange} />
-			<EndingLabel>{endingLabel}</EndingLabel>
+			<StyledSlider
+				min={minValue}
+				max={maxValue}
+				step={steps}
+				value={value}
+				onChange={onChange}
+				onChangeCommitted={onChangeCommitted}
+			/>
 		</SliderContainer>
 	);
 };
@@ -39,37 +39,25 @@ const SliderContainer = styled(FlexDivRowCentered)`
 	width: 100%;
 `;
 
-const FontStyle = css`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 10px;
-	color: ${(props) => props.theme.colors.blueberry};
-`;
-
 const StyledSlider = styled(Slider)`
 	width: 100%;
-	height: 0.2rem !important;
 
-	[data-reach-slider-track] {
+	.MuiSlider-root {
 		background: ${(props) => props.theme.colors.goldColors.color2};
-		border-radius: 0px;
 	}
-	[data-reach-slider-range] {
+	.MuiSlider-rail {
 		background: ${(props) => props.theme.colors.goldColors.color2};
-		border-radius: 0px;
+		border-radius: 4px;
+		height: 6px;
 	}
-	[data-reach-slider-handle] {
-		background: ${(props) => props.theme.colors.white};
-		width: 8px;
-		height: 8px;
+	.MuiSlider-track {
+		background: ${(props) => props.theme.colors.goldColors.color2};
+		border-radius: 4px;
+		height: 6px;
 	}
-`;
-
-const StartingLabel = styled.div`
-	${FontStyle}
-	margin-right: 8px;
-`;
-
-const EndingLabel = styled.div`
-	${FontStyle}
-	margin-left: 8px;
+	.MuiSlider-thumb {
+		background-color: ${(props) => props.theme.colors.goldColors.color2};
+		width: 16px;
+		height: 16px;
+	}
 `;

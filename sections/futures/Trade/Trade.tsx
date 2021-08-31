@@ -57,13 +57,19 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+	const initialPositionLeverage = futuresMarketsPosition?.position?.leverage?.toNumber() ?? 0;
+	const initialPositionSize = futuresMarketsPosition?.position?.size?.toNumber() ?? 0;
+	const initialPositionSide = futuresMarketsPosition?.position?.side ?? null;
+
+	console.log('ddd', initialPositionSize, initialPositionSide);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const ethGasPriceQuery = useEthGasPriceQuery(true);
 
 	const [error, setError] = useState<string | null>(null);
-	const [leverage, setLeverage] = useState<number>(1);
+	const [leverage, setLeverage] = useState<number>(0);
+
 	const [tradeSize, setTradeSize] = useState<string>('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
@@ -71,6 +77,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
+	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(false);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
 
@@ -112,6 +119,11 @@ const Trade: React.FC<TradeProps> = () => {
 		ethPriceRate,
 	]);
 
+	const sizeDelta = useMemo(() => {
+		if (!initialPositionSide) return 0;
+		return leverageSide !== initialPositionSide ? Number(tradeSize) - initialPositionSize : 0;
+	}, [initialPositionSide, leverageSide, tradeSize, initialPositionSize]);
+
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
@@ -133,7 +145,15 @@ const Trade: React.FC<TradeProps> = () => {
 
 	useEffect(() => {
 		const getGasLimit = async () => {
-			if (!synthetixjs || !marketAsset || !walletAddress) return;
+			if (
+				!synthetixjs ||
+				!marketAsset ||
+				!walletAddress ||
+				!tradeSize ||
+				Number(tradeSize) === 0 ||
+				!isLeverageValueCommitted
+			)
+				return;
 			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
 			try {
 				setError(null);
@@ -142,11 +162,10 @@ const Trade: React.FC<TradeProps> = () => {
 					marketAsset,
 					synthetixjs!.contracts
 				);
+				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
 				const [gasEstimate, orderFee] = await Promise.all([
-					FuturesMarketContract.estimateGas.submitOrder(
-						wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN()
-					),
-					FuturesMarketContract.orderFee(walletAddress, wei(leverage).toBN()),
+					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
+					FuturesMarketContract.orderFee(walletAddress, sizeDelta.toBN()),
 				]);
 				setGasLimit(Number(gasEstimate));
 				setFeeCost(wei(orderFee.fee));
@@ -156,25 +175,35 @@ const Trade: React.FC<TradeProps> = () => {
 			}
 		};
 		getGasLimit();
-	}, [leverage, synthetixjs, marketAsset, futuresMarketsPosition, leverageSide, walletAddress]);
+	}, [
+		tradeSize,
+		synthetixjs,
+		marketAsset,
+		futuresMarketsPosition,
+		leverageSide,
+		walletAddress,
+		isLeverageValueCommitted,
+	]);
 
 	const handleCreateOrder = async () => {
-		if (!gasLimit || !leverage || !gasPrice) return;
+		if (!gasLimit || !tradeSize || !gasPrice) return;
 		try {
 			const FuturesMarketContract: Contract = getFuturesMarketContract(
 				marketAsset,
 				synthetixjs!.contracts
 			);
-			console.log(FuturesMarketContract.address);
-			const tx = await FuturesMarketContract.submitOrder(
-				wei(leverageSide === PositionSide.LONG ? leverage : -leverage).toBN(),
-				{ gasLimit, gasPrice: gasPriceInWei(gasPrice) }
-			);
+			const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
+			const tx = await FuturesMarketContract.modifyPosition(sizeDelta.toBN(), {
+				gasLimit,
+				gasPrice: gasPriceInWei(gasPrice),
+			});
 			if (tx) {
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: () => {
-						setTimeout(futuresMarketPositionQuery.refetch, 5 * 1000);
+						setTimeout(() => {
+							futuresMarketPositionQuery.refetch();
+						}, 5 * 1000);
 					},
 				});
 			}
@@ -202,9 +231,13 @@ const Trade: React.FC<TradeProps> = () => {
 				<LeverageInput
 					currentLeverage={leverage}
 					maxLeverage={Number(market?.maxLeverage.toString() ?? 1)}
+					initialLeverage={initialPositionLeverage}
 					onSideChange={(side) => setLeverageSide(side)}
 					onLeverageChange={(value) => onLeverageChange(value)}
 					side={leverageSide}
+					setIsLeverageValueCommitted={setIsLeverageValueCommitted}
+					currentPosition={futuresMarketsPosition}
+					assetRate={marketAssetRate}
 				/>
 
 				<FlexDivCol>
