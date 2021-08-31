@@ -9,8 +9,7 @@ import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { PositionHistory, PositionSide } from './types';
-
-const FUTURES_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/clementbalestrat/futures';
+import { FUTURES_ENDPOINT } from './constants';
 
 const useGetFuturesPositionHistory = (
 	currencyKey: string | null,

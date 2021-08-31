@@ -6,6 +6,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -28,9 +29,11 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(market);
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === market) ?? null;
 
@@ -64,10 +67,9 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			},
 			{
 				title: t('futures.market.info.volume'),
-				// data: formatCurrency(selectedPriceCurrency.name, 200000, {
-				// 	currencyKey: selectedPriceCurrency.name,
-				// }),
-				data: 'TBD',
+				data: formatCurrency(market, futuresTradingVolume ?? zeroBN, {
+					currencyKey: market,
+				}),
 			},
 			{
 				title: t('futures.market.info.skew'),

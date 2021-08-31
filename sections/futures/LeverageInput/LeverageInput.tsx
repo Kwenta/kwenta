@@ -125,7 +125,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 };
 
 const LeverageInputWrapper = styled(FlexDivCol)`
-	margin-bottom: 24px;
+	margin-bottom: 48px;
 `;
 
 const InputContainer = styled(FlexDivRowCentered)`
