@@ -49,7 +49,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	);
 
 	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
-	console.log('shshs', positionHistory);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.market) {

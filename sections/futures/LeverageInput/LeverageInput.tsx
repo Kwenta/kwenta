@@ -6,22 +6,18 @@ import Slider from 'components/Slider';
 import Button from 'components/Button';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { PositionSide } from '../types';
-import { FuturesFilledPosition, FuturesPosition } from 'queries/futures/types';
+import { FuturesPosition } from 'queries/futures/types';
 
 type LeverageInputProps = {
 	currentLeverage: number;
 	currentTradeSize: number;
 	maxLeverage: number;
-	initialLeverage: number;
 	side: PositionSide;
-	closePositionDelta: number;
-	leverageDelta: number;
-	legend: string;
 	assetRate: number;
 	onLeverageChange: (value: number) => void;
 	onSideChange: (value: PositionSide) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
-	currentPosition: FuturesPosition;
+	currentPosition: FuturesPosition | null;
 };
 
 const MIN_LEVERAGE = 0;
@@ -31,9 +27,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
 	maxLeverage,
 	currentTradeSize,
-	initialLeverage,
 	side,
-	closePositionDelta = 10,
 	onLeverageChange,
 	onSideChange,
 	setIsLeverageValueCommitted,
@@ -57,10 +51,10 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			const sizeDelta = currentTradeSize - currentPositionSize;
 			return sizeDelta > 0
 				? t('futures.market.trade.input.leverage.close-position', {
-						leverageDelta: (Math.abs(sizeDelta) * assetRate) / currentPositionMargin,
+						leverageDelta: ((Math.abs(sizeDelta) * assetRate) / currentPositionMargin).toFixed(2),
 				  })
 				: t('futures.market.trade.input.leverage.partial-close-position', {
-						closePositionDelta: (100 * currentTradeSize) / currentPositionSize,
+						closePositionDelta: ((100 * currentTradeSize) / currentPositionSize).toFixed(2),
 				  });
 		}
 	}, [
@@ -74,6 +68,15 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		currentPositionSize,
 		currentTradeSize,
 	]);
+
+	const maxLeverageValue = useMemo(() => {
+		if (currentPositionLeverage === 0) return maxLeverage;
+		if (currentPositionSide === side) {
+			return maxLeverage - currentPositionLeverage;
+		} else {
+			return currentPositionLeverage + maxLeverage;
+		}
+	}, [maxLeverage, currentPositionSide, side, currentPositionLeverage]);
 
 	return (
 		<LeverageInputWrapper>
@@ -107,7 +110,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				<Slider
 					steps={DEFAULT_STEPS}
 					minValue={MIN_LEVERAGE}
-					maxValue={maxLeverage - initialLeverage}
+					maxValue={maxLeverageValue}
 					value={currentLeverage}
 					onChange={(_, newValue) => {
 						setIsLeverageValueCommitted(false);
@@ -115,18 +118,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 					}}
 					onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 				/>
-				{legend && (
-					<SliderLegend>
-						{legend}
-						{/* {t('futures.market.trade.input.leverage.total-leverage', {
-							totalLeverage: (initialLeverage + currentLeverage).toFixed(2),
-						})} */}
-						{/* {t('futures.market.trade.input.leverage.close-position', {
-							closePositionDelta,
-							leverageDelta,
-						})} */}
-					</SliderLegend>
-				)}
+				{legend && <SliderLegend>{legend}</SliderLegend>}
 			</SliderRow>
 		</LeverageInputWrapper>
 	);
@@ -145,6 +137,7 @@ const InputContainer = styled(FlexDivRowCentered)`
 
 const LeverageRow = styled(FlexDivRow)`
 	width: 100%;
+	align-items: center;
 `;
 
 const LeverageTitle = styled.div`
@@ -152,7 +145,6 @@ const LeverageTitle = styled.div`
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.white};
 	text-transform: capitalize;
-	margin-top: 24px;
 `;
 
 const LeverageAmount = styled.div`

@@ -49,6 +49,7 @@ export type FuturesPosition = {
 	asset: string;
 	order: FuturesOrder | null;
 	remainingMargin: Wei;
+	accessibleMargin: Wei;
 	position: FuturesFilledPosition | null;
 };
 

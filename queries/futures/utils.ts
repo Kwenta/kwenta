@@ -22,6 +22,7 @@ export const mapFuturesPosition = (
 ): FuturesPosition => {
 	const {
 		remainingMargin,
+		accessibleMargin,
 		orderPending,
 		order,
 		position: { fundingIndex, lastPrice, size, margin },
@@ -42,6 +43,7 @@ export const mapFuturesPosition = (
 			  }
 			: null,
 		remainingMargin: wei(remainingMargin),
+		accessibleMargin: wei(accessibleMargin),
 		position: wei(size).eq(zeroBN)
 			? null
 			: {

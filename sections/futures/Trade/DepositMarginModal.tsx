@@ -28,7 +28,7 @@ type DepositMarginModalProps = {
 	onDismiss: () => void;
 	onTxConfirmed: () => void;
 	sUSDBalance: Wei;
-	remainingMargin: Wei;
+	accessibleMargin: Wei;
 	market: string | null;
 };
 
@@ -42,7 +42,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 	onTxConfirmed,
-	remainingMargin,
+	accessibleMargin,
 }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
@@ -149,7 +149,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 							setActionTab(tab);
 						}}
 						isSelected={tab === actionTab}
-						disabled={tab === ACTIONS.WITHDRAW && remainingMargin.eq(zeroBN)}
+						disabled={tab === ACTIONS.WITHDRAW && accessibleMargin.eq(zeroBN)}
 					>
 						{t(`futures.market.trade.margin.modal.actions.${tab}`)}
 					</ActionTab>
@@ -159,10 +159,10 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 				amount={amount}
 				assetRate={sUSDPriceRate}
 				onAmountChange={(value) => setAmount(value)}
-				balance={isDeposit ? sUSDBalance : remainingMargin}
+				balance={isDeposit ? sUSDBalance : accessibleMargin}
 				asset={Synths.sUSD}
 				handleOnMax={() =>
-					setAmount(isDeposit ? sUSDBalance.toString() : remainingMargin.toString())
+					setAmount(isDeposit ? sUSDBalance.toString() : accessibleMargin.toString())
 				}
 				balanceLabel={t('futures.market.trade.margin.balance')}
 			/>

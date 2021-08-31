@@ -57,11 +57,6 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
-	const initialPositionLeverage = futuresMarketsPosition?.position?.leverage?.toNumber() ?? 0;
-	const initialPositionSize = futuresMarketsPosition?.position?.size?.toNumber() ?? 0;
-	const initialPositionSide = futuresMarketsPosition?.position?.side ?? null;
-
-	console.log('ddd', initialPositionSize, initialPositionSide);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
@@ -77,7 +72,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
-	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(false);
+	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
 
@@ -118,11 +113,6 @@ const Trade: React.FC<TradeProps> = () => {
 		gasLimit,
 		ethPriceRate,
 	]);
-
-	const sizeDelta = useMemo(() => {
-		if (!initialPositionSide) return 0;
-		return leverageSide !== initialPositionSide ? Number(tradeSize) - initialPositionSize : 0;
-	}, [initialPositionSide, leverageSide, tradeSize, initialPositionSize]);
 
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
@@ -201,6 +191,7 @@ const Trade: React.FC<TradeProps> = () => {
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: () => {
+						onLeverageChange(0);
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
 						}, 5 * 1000);
@@ -231,13 +222,16 @@ const Trade: React.FC<TradeProps> = () => {
 				<LeverageInput
 					currentLeverage={leverage}
 					maxLeverage={Number(market?.maxLeverage.toString() ?? 1)}
-					initialLeverage={initialPositionLeverage}
-					onSideChange={(side) => setLeverageSide(side)}
+					onSideChange={(side) => {
+						onLeverageChange(0);
+						setLeverageSide(side);
+					}}
 					onLeverageChange={(value) => onLeverageChange(value)}
 					side={leverageSide}
 					setIsLeverageValueCommitted={setIsLeverageValueCommitted}
 					currentPosition={futuresMarketsPosition}
 					assetRate={marketAssetRate}
+					currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 				/>
 
 				<FlexDivCol>
@@ -284,7 +278,7 @@ const Trade: React.FC<TradeProps> = () => {
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
-					remainingMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
+					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => futuresMarketPositionQuery.refetch()}
 					market={marketAsset}
 					onDismiss={() => setIsDepositMarginModalOpen(false)}
