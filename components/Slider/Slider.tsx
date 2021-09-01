@@ -8,6 +8,7 @@ type SliderProps = {
 	maxValue: number;
 	steps?: number;
 	value: number;
+	disabled?: boolean;
 	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 };
@@ -19,6 +20,7 @@ const SliderComponent: React.FC<SliderProps> = ({
 	value,
 	onChange,
 	onChangeCommitted,
+	disabled,
 }) => {
 	return (
 		<SliderContainer>
@@ -29,6 +31,7 @@ const SliderComponent: React.FC<SliderProps> = ({
 				value={value}
 				onChange={onChange}
 				onChangeCommitted={onChangeCommitted}
+				disabled={disabled}
 			/>
 		</SliderContainer>
 	);
@@ -55,9 +58,14 @@ const StyledSlider = styled(Slider)`
 		border-radius: 4px;
 		height: 6px;
 	}
-	.MuiSlider-thumb {
+	.MuiSlider-thumb,
+	.MuiSlider-thumb.Mui-disabled {
 		background-color: ${(props) => props.theme.colors.goldColors.color2};
 		width: 16px;
 		height: 16px;
+	}
+	.MuiSlider-thumb.Mui-disabled {
+		margin-top: -5px;
+		margin-left: -6px;
 	}
 `;

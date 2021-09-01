@@ -62,7 +62,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 								</ROIContainer>
 							</FlexDivCol>
 							<FlexDivRow>
-								<Leverage>{`${formatNumber(positionDetails?.initialLeverage ?? 1)}x |`}</Leverage>
+								<Leverage>{`${formatNumber(positionDetails?.leverage ?? 0)}x |`}</Leverage>
 								<Side isLong={positionDetails?.side === PositionSide.LONG ?? true}>
 									{positionDetails?.side ?? PositionSide.LONG}
 								</Side>

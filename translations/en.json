@@ -586,7 +586,7 @@
 					}
 				},
 				"trades": {
-					"tab": "Trades",
+					"tab": "History",
 					"table": {
 						"id": "ID",
 						"position": "position",

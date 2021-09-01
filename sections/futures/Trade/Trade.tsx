@@ -242,7 +242,7 @@ const Trade: React.FC<TradeProps> = () => {
 						setMaxSlippageTolerance={setMaxSlippageTolerance}
 					/> */}
 					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gte(zeroBN) ? (
-						<Button
+						<StyledButton
 							variant="primary"
 							disabled={!gasLimit || !!error || !tradeSize}
 							isRounded
@@ -254,7 +254,7 @@ const Trade: React.FC<TradeProps> = () => {
 								: tradeSize
 								? t('futures.market.trade.button.open-trade')
 								: t('futures.market.trade.button.enter-amount')}
-						</Button>
+						</StyledButton>
 					) : (
 						<FlexDivColCentered>
 							<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
@@ -320,6 +320,12 @@ const StyledFeeCostSummary = styled(FeeCostSummary)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
 	margin-bottom: 8px;
+`;
+
+const StyledButton = styled(Button)`
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 `;
 
 const StyledSlippageSelect = styled(SlippageSelect)`

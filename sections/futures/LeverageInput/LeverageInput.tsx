@@ -108,6 +108,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			</LeverageRow>
 			<SliderRow>
 				<Slider
+					disabled={maxLeverageValue <= 0}
 					steps={DEFAULT_STEPS}
 					minValue={MIN_LEVERAGE}
 					maxValue={maxLeverageValue}
