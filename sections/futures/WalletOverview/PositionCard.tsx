@@ -32,9 +32,15 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 					<StyledFlexDivRow>
 						<StyledCurrencyIcon currencyKey={position.asset} />
 						<StyledData>
-							{formatCurrency(position.asset, filledPosition.size, { sign: '$' })}
+							{formatCurrency(position.asset, filledPosition.size, { minDecimals: 2 })}
 						</StyledData>
 						<PositionSideTag side={positionSide}>{positionSide}</PositionSideTag>
+					</StyledFlexDivRow>
+				</StyledFlexDivRowCentered>
+				<StyledFlexDivRowCentered>
+					<Subtitle>{t('futures.wallet-overview.positions.margin')}</Subtitle>
+					<StyledFlexDivRow>
+						<Data>{formatCurrency(Synths.sUSD, position.remainingMargin, { sign: '$' })}</Data>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
@@ -49,13 +55,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 					<Data>{formatCurrency(Synths.sUSD, filledPosition.liquidationPrice, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
 				<StyledFlexDivRowCentered>
-					<Subtitle>{t('futures.wallet-overview.positions.pnl')}</Subtitle>
+					<Subtitle>{t('futures.wallet-overview.positions.roi')}</Subtitle>
 					<StyledFlexDivRow>
-						<StyledData>
-							TBD
-							{/* {formatCurrency(Synths.sUSD, filledPosition.remainingMargin, { sign: '$' })} */}
-						</StyledData>
-						{/* <ChangePercent value={position.marginChange} /> */}
+						<Data>{formatCurrency(Synths.sUSD, filledPosition.roi, { sign: '$' })}</Data>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 			</StyledCardBody>
@@ -71,6 +73,7 @@ const StyledCard = styled(Card)<{ isCTA: boolean }>`
 
 const StyledCardBody = styled(Card.Body)`
 	background: ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
 `;
 
 const StyledFlexDivRowCentered = styled(FlexDivRowCentered)`
@@ -102,4 +105,5 @@ const PositionSideTag = styled.div<{ side: PositionSide }>`
 		props.side === PositionSide.LONG ? props.theme.colors.green : props.theme.colors.red};
 	text-transform: uppercase;
 	padding: 2px 4px;
+	border-radius: 2px;
 `;

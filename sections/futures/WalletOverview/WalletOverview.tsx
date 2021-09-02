@@ -10,7 +10,7 @@ import { Synths } from 'constants/currency';
 import { Title } from '../common';
 import OverviewRow from './OverviewRow';
 import Positions from './Positions';
-import { zeroBN, formatNumber } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 import { FuturesPosition } from 'queries/futures/types';
 
 type WalletOverviewProps = {
@@ -47,13 +47,13 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		() => [
 			{
 				label: t('futures.wallet-overview.balance'),
-				value: formatNumber(sUSDBalance),
+				value: sUSDBalance,
 				currencyKey: Synths.sUSD,
 				sign: '$',
 			},
 			{
 				label: t('futures.wallet-overview.margin-deployed'),
-				value: formatNumber(walletPosition ? walletPosition.totalMargin : zeroBN),
+				value: walletPosition?.totalMargin ?? zeroBN,
 				currencyKey: Synths.sUSD,
 				sign: '$',
 			},

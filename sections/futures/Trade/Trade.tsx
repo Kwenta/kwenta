@@ -26,9 +26,9 @@ import TradeSizeInput from '../TradeSizeInput';
 import LeverageInput from '../LeverageInput';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
-import SlippageSelect from 'sections/shared/components/SlippageSelect';
 import MarginSection from './MarginSection';
 import DepositMarginModal from './DepositMarginModal';
+import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -70,11 +70,11 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
-	const [maxSlippageTolerance, setMaxSlippageTolerance] = useState<string>('0.005');
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
+	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState<boolean>(false);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -199,6 +199,7 @@ const Trade: React.FC<TradeProps> = () => {
 				});
 			}
 		} catch (e) {
+			console.log(e);
 			setError(e?.data?.message ?? e.message);
 		}
 	};
@@ -235,19 +236,15 @@ const Trade: React.FC<TradeProps> = () => {
 				/>
 
 				<FlexDivCol>
-					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 					<StyledFeeCostSummary feeCost={feeCost} />
-					{/* <StyledSlippageSelect
-						maxSlippageTolerance={maxSlippageTolerance}
-						setMaxSlippageTolerance={setMaxSlippageTolerance}
-					/> */}
+					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gte(zeroBN) ? (
 						<StyledButton
 							variant="primary"
 							disabled={!gasLimit || !!error || !tradeSize}
 							isRounded
 							size="lg"
-							onClick={handleCreateOrder}
+							onClick={() => setIsTradeConfirmationModalOpen(true)}
 						>
 							{error
 								? error
@@ -282,6 +279,16 @@ const Trade: React.FC<TradeProps> = () => {
 					onTxConfirmed={() => futuresMarketPositionQuery.refetch()}
 					market={marketAsset}
 					onDismiss={() => setIsDepositMarginModalOpen(false)}
+				/>
+			)}
+			{isTradeConfirmationModalOpen && (
+				<TradeConfirmationModal
+					tradeSize={tradeSize}
+					onConfirmOrder={handleCreateOrder}
+					gasLimit={gasLimit}
+					market={marketAsset}
+					side={leverageSide}
+					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
 				/>
 			)}
 		</Panel>
@@ -326,19 +333,6 @@ const StyledButton = styled(Button)`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-`;
-
-const StyledSlippageSelect = styled(SlippageSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	margin-bottom: 24px;
 `;
 
 const TopRow = styled(FlexDivCol)`

@@ -11,7 +11,8 @@ import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolu
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
-import PriceChartCard from 'sections/futures/Charts/PriceChartCard';
+// import PriceChartCard from 'sections/futures/Charts/PriceChartCard';
+import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -103,7 +104,16 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 						: t('futures.market.page-title')}
 				</title>
 			</Head>
-			<PriceChartCard currencyKey={baseCurrencyKey} priceRate={basePriceRate} alignRight={false} />
+			<PriceChartCard
+				side="base"
+				currencyKey={baseCurrencyKey}
+				priceRate={basePriceRate}
+				alignRight={false}
+				selectedChartType={'AREA'}
+				setSelectedChartType={() => null}
+				selectedChartPeriod={'ONE_MONTH'}
+				setSelectedChartPeriod={() => null}
+			/>
 			<MarketInfoContainer>
 				<StyledFlexDiv>
 					{marketInfoCols.map(({ title, data }) => (

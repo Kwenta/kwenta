@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import Wei from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import { Data, DataRow, Subtitle } from '../common';
 import { FlexDivRowCentered } from 'styles/common';
@@ -9,7 +9,7 @@ import { formatCurrency } from 'utils/formatters/number';
 
 type OverviewRowProps = {
 	subtitle: string;
-	data: string;
+	data: Wei;
 	currencyKey: CurrencyKey;
 	sign: string;
 };

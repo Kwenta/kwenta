@@ -480,9 +480,10 @@
 					"long": "long",
 					"short": "short"
 				},
-				"price": "price",
+				"price": "Entry price",
+				"margin": "Remaining margin",
 				"liquidation": "liquidation price",
-				"pnl": "Margin/PNL"
+				"roi": "ROI"
 			}
 		},
 		"hero": {
@@ -554,6 +555,11 @@
 							"withdraw": "Withdraw",
 							"deposit": "Deposit"
 						}
+					}
+				},
+				"confirmation": {
+					"modal": {
+						"confirm-order": "Confirm order"
 					}
 				}
 			},

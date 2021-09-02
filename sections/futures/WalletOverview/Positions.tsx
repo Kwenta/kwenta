@@ -19,22 +19,23 @@ type PositionsProps = {
 	positions: Partial<FuturesPosition>[] | null;
 };
 
-const DEFAULT_ASSET = 'sBTC';
+const DEFAULT_ASSET = Synths.sBTC;
 
 const Positions: React.FC<PositionsProps> = ({ positions }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	console.log(positions);
 
 	const defaultPosition: Partial<FuturesPosition> = {
 		asset: Synths.sBTC,
 		order: null,
+		remainingMargin: wei('500'),
 		position: {
-			isLong: true,
-			size: wei('1000'),
-			remainingMargin: wei('500'),
-			liquidationPrice: wei('800'),
+			side: PositionSide.LONG,
+			lastPrice: wei('40000'),
+			size: wei('1'),
+			liquidationPrice: wei('35000'),
 			canLiquidatePosition: true,
+			roi: wei('100'),
 		},
 	};
 
@@ -42,7 +43,11 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 		<FlexDivCol>
 			<StyledSubheader>{t('futures.wallet-overview.positions.title')}</StyledSubheader>
 			{positions && positions.length > 0 ? (
-				positions.map((position, i) => <PositionCard key={i} position={position} />)
+				positions.map((position, i) => (
+					<a href={ROUTES.Futures.Market.MarketPair(position.asset)}>
+						<PositionCard key={i} position={position} />
+					</a>
+				))
 			) : (
 				<CTA>
 					<CTAButton
