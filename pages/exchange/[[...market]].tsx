@@ -188,9 +188,8 @@ const ExchangePage = () => {
 								</SwapCurrenciesButton>
 							</VerticalSpacer>
 							{baseCurrencyCard}
-
+							<FooterContainer>{footerCard}</FooterContainer>
 							{chartsToggler}
-
 							{isShowingSingleChart ? (
 								<>
 									{combinedPriceChartCard}
@@ -252,6 +251,10 @@ const PageWidthContainer = styled.div`
 	margin: 0 auto;
 `;
 
+const FooterContainer = styled.div`
+	width: 100%;
+`;
+
 const DesktopContainer = styled(FlexDivCol)``;
 
 const DesktopCardsContainer = styled.div`
@@ -289,6 +292,7 @@ const RightCardContainer = styled.div`
 
 const MobileContainer = styled(FlexDivColCentered)`
 	${MobileContainerMixin};
+	margin-bottom: 110px;
 `;
 
 const VerticalSpacer = styled.div`

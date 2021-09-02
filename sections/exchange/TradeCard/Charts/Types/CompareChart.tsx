@@ -1,16 +1,15 @@
 import { FC, useContext } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 import styled, { ThemeContext } from 'styled-components';
-import formatDate from 'date-fns/format';
-import isNumber from 'lodash/isNumber';
-
 import { CurrencyKey } from 'constants/currency';
-import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
+import { PeriodLabel } from 'constants/period';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCompareChartData from 'sections/exchange/TradeCard/Charts/hooks/useCompareChartData';
 import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer';
 import { formatCurrency } from 'utils/formatters/number';
 import { TooltipContentStyle as BaseTooltipContentStyle } from 'sections/exchange/TradeCard/Charts/common/styles';
+
+import CustomizedXAxisTick from '../common/CustomizedXAxisTick';
 
 const CompareChart: FC<{
 	baseCurrencyKey: CurrencyKey | null;
@@ -39,24 +38,16 @@ const CompareChart: FC<{
 			<LineChart {...{ data }} margin={{ right: 15, bottom: 0, left: 0, top: 0 }}>
 				<XAxis
 					// @ts-ignore
+					allowDataOverflow={true}
+					axisLine={false}
+					dataKey="timestamp"
 					dx={-1}
 					dy={10}
+					hide={!data.length}
+					interval="preserveStart"
 					minTickGap={20}
-					dataKey="timestamp"
-					allowDataOverflow={true}
-					tick={fontStyle}
-					axisLine={false}
+					tick={<CustomizedXAxisTick selectedChartPeriodLabel={selectedChartPeriodLabel} />}
 					tickLine={false}
-					tickFormatter={(val) => {
-						if (!isNumber(val)) {
-							return '';
-						}
-						const periodOverOneDay =
-							selectedChartPeriodLabel != null &&
-							selectedChartPeriodLabel.value > PERIOD_IN_HOURS.ONE_DAY;
-
-						return formatDate(val, periodOverOneDay ? 'dd MMM' : 'h:mma');
-					}}
 				/>
 				<YAxis
 					// TODO: might need to adjust the width to make sure we do not trim the values...
@@ -121,7 +112,7 @@ const CustomTooltip: FC<{
 	label: Date;
 	baseCurrencyKey: CurrencyKey | null;
 	quoteCurrencyKey: CurrencyKey | null;
-}> = ({ active, label, payload, baseCurrencyKey, quoteCurrencyKey }) => {
+}> = ({ active, payload, baseCurrencyKey, quoteCurrencyKey }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	if (!(active && payload && payload.length === 2)) return null;

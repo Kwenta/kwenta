@@ -5,6 +5,7 @@ import orderBy from 'lodash/orderBy';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import { useRecoilValue } from 'recoil';
+import Wei from '@synthetixio/wei';
 
 import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
@@ -32,7 +33,7 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
 import useSynthetixQueries from '@synthetixio/queries';
-import isPlainObject from 'lodash/isPlainObject';
+import { omitBy } from 'lodash';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -88,9 +89,9 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 			tokenBalances != null
 				? Object.values(
 						mapValues(
-							// TODO: type should be `Balances` object from (I believe) contracts-interface when it works
-							(tokenBalances as any).filter(isPlainObject),
-							({ balance, token }, symbol) => {
+							omitBy(tokenBalances, (v) => v == null),
+							(tokenBalance, symbol) => {
+								const { balance, token } = tokenBalance as { balance: Wei; token: any };
 								const { address } = token;
 
 								const price =
@@ -178,7 +179,8 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 									onDismiss();
 								}}
 								totalValue={usdBalance ?? undefined}
-								{...{ balance, token, selectedPriceCurrency, selectPriceCurrencyRate }}
+								selectPriceCurrencyRate={selectPriceCurrencyRate?.toNumber() ?? null}
+								{...{ balance, token, selectedPriceCurrency }}
 							/>
 						);
 					})

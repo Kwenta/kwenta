@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
 import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
 import { Candle } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
-import Wei, { wei } from '@synthetixio/wei';
 
 export type TempCandle = {
 	id: string;

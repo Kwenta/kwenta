@@ -9,7 +9,11 @@ export function get<T>(key: string): T | null {
 		const item = window.localStorage.getItem(key);
 		try {
 			if (item != null) {
-				return JSON.parse(item);
+				try {
+					return JSON.parse(item);
+				} catch (e) {
+					return null;
+				}
 			}
 		} catch (e) {
 			console.error(e);

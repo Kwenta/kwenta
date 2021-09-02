@@ -64,10 +64,10 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 
 	if (selectPriceCurrencyRate != null) {
 		if (rates24High) {
-			rates24High /= selectPriceCurrencyRate;
+			rates24High /= selectPriceCurrencyRate.toNumber();
 		}
 		if (rates24Low) {
-			rates24Low /= selectPriceCurrencyRate;
+			rates24Low /= selectPriceCurrencyRate.toNumber();
 		}
 		if (volume24H) {
 			volume24H = getPriceAtCurrentRate(volume24H);

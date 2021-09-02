@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import useSynthetixQueries from '@synthetixio/queries';
 
 const useCombinedRates = ({
 	baseCurrencyKey,

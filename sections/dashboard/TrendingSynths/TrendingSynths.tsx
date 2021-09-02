@@ -59,7 +59,7 @@ const TrendingSynths: FC = () => {
 		const historicalRateQuery = queryCache.find([
 			'rates',
 			'historicalRates',
-			network.id,
+			network!.id,
 			synth.name,
 			Period.ONE_DAY,
 		]);
@@ -127,7 +127,7 @@ const TrendingSynths: FC = () => {
 			<Rows>
 				{sortedSynths.map((synth: Synth) => {
 					const price = exchangeRates && exchangeRates[synth.name];
-					return <SynthRow key={synth.name} synth={synth} price={price} />;
+					return <SynthRow key={synth.name} synth={synth} price={price?.toNumber() ?? 0} />;
 				})}
 			</Rows>
 		</>
