@@ -24,10 +24,16 @@ import { FuturesFilledPosition } from 'queries/futures/types';
 type ClosePositionModalProps = {
 	onDismiss: () => void;
 	position: FuturesFilledPosition | null;
+	onPositionClose: () => void;
 	currencyKey: string;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, position, currencyKey }) => {
+const ClosePositionModal: FC<ClosePositionModalProps> = ({
+	onDismiss,
+	position,
+	currencyKey,
+	onPositionClose,
+}) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
@@ -119,6 +125,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, position, 
 					txHash: tx.hash,
 					onTxConfirmed: () => {
 						onDismiss();
+						onPositionClose();
 					},
 				});
 			}

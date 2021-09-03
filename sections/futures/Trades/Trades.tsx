@@ -7,7 +7,7 @@ import { wei } from '@synthetixio/wei';
 
 import Card from 'components/Card';
 import Table from 'components/Table';
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
@@ -31,7 +31,7 @@ type TradesProps = {
 
 const Trades: React.FC<TradesProps> = ({ history, currencyKeyRate, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const columnsDeps = useMemo(() => [history], [history]);
 
@@ -180,7 +180,7 @@ const Trades: React.FC<TradesProps> = ({ history, currencyKeyRate, isLoading, is
 					{
 						accessor: 'transactionHash',
 						Cell: (cellProps: CellProps<PositionHistory>) => (
-							<StyledExternalLink href={etherscanInstance.txLink(cellProps.value)}>
+							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.value)}>
 								<StyledLinkIcon
 									src={LinkIcon}
 									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}

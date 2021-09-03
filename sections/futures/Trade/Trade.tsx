@@ -32,6 +32,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { gasPriceInWei } from 'utils/network';
 
@@ -55,6 +56,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
+	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
@@ -194,6 +196,7 @@ const Trade: React.FC<TradeProps> = () => {
 						onLeverageChange(0);
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
+							futuresPositionHistoryQuery.refetch();
 						}, 5 * 1000);
 					},
 				});
@@ -276,7 +279,12 @@ const Trade: React.FC<TradeProps> = () => {
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
 					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
-					onTxConfirmed={() => futuresMarketPositionQuery.refetch()}
+					onTxConfirmed={() => {
+						setTimeout(() => {
+							futuresMarketPositionQuery.refetch();
+							futuresPositionHistoryQuery.refetch();
+						}, 5 * 1000);
+					}}
 					market={marketAsset}
 					onDismiss={() => setIsDepositMarginModalOpen(false)}
 				/>

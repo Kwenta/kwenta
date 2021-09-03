@@ -20,9 +20,15 @@ type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
+	onPositionClose: () => void;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
+const PositionCard: React.FC<PositionCardProps> = ({
+	currencyKey,
+	position,
+	currencyKeyRate,
+	onPositionClose,
+}) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
@@ -118,6 +124,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				<ClosePositionModal
 					position={positionDetails}
 					currencyKey={currencyKey}
+					onPositionClose={onPositionClose}
 					onDismiss={() => setClosePositionModalIsVisible(false)}
 				/>
 			)}

@@ -94,6 +94,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					position={futuresMarketsPosition ?? null}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
+					onPositionClose={() =>
+						setTimeout(() => {
+							futuresPositionHistoryQuery.refetch();
+							futuresMarketPositionQuery.refetch();
+						}, 5 * 1000)
+					}
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
