@@ -518,13 +518,14 @@
 		},
 		"hero": {
 			"welcome": {
-				"title": "welcome to futures on layer 2",
-				"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ante neque et odio dolor faucibus urna risus. Quis donec et ipsum quis cursus. At ac malesuada mi, nibh turpis fermentum. Scelerisque sit in in non proin tellus eget. Ante neque et odio dolor faucibus urna.",
+				"title": "Welcome to Decentralized Futures on Layer 2",
+				"subtitle": "Trade with up to 10x more capital.",
+				"body": "Open long or short leveraged positions with low gas fees, fast transactions, and the deepest liquidity available on the market.",
 				"button": "learn more"
 			},
 			"refer": {
-				"title": "refer a friend for rewards",
-				"body": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ante neque et odio dolor faucibus.",
+				"title": "Refer a friend for rewards",
+				"body": "Share Kwenta’s Futures trading experience and receive rewards.",
 				"button": "refer"
 			}
 		},

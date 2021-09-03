@@ -21,6 +21,7 @@ const Hero: FC = () => {
 					<StyledHeaderText small={false}>{t('futures.hero.welcome.title')}</StyledHeaderText>
 				</Card.Header>
 				<Card.Body>
+					<StyledBodySubtitle>{t('futures.hero.welcome.subtitle')}</StyledBodySubtitle>
 					<StyledBodyText>{t('futures.hero.welcome.body')}</StyledBodyText>
 					<ButtonContainer>
 						<StyledTextButton variant="text" size="md" onClick={() => {}}>
@@ -66,14 +67,18 @@ const StyledHeaderText = styled.div<{ small: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: ${(props) => (props.small ? '14px' : '16px')};
 	color: ${(props) => props.theme.colors.white};
-	text-transform: capitalize;
+	text-transform: none;
 `;
 
 const StyledBodyText = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.silver};
-	text-transform: capitalize;
+	text-transform: none;
+`;
+
+const StyledBodySubtitle = styled(StyledBodyText)`
+	margin-bottom: 20px;
 `;
 
 const StyledCardRow = styled(FlexDivRowCentered)``;

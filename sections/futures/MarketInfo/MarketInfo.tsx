@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -11,7 +12,6 @@ import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolu
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
-// import PriceChartCard from 'sections/futures/Charts/PriceChartCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
@@ -19,7 +19,10 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Card from 'components/Card';
 import UserInfo from '../UserInfo';
 import { FuturesMarket } from 'queries/futures/types';
-import { wei } from '@synthetixio/wei';
+import { ChartType } from 'constants/chartType';
+import { Period } from 'constants/period';
+import { singleChartTypeState, singleChartPeriodState } from 'store/app';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 type MarketInfoProps = {
 	market: string;
@@ -39,6 +42,9 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === market) ?? null;
 
 	const baseCurrencyKey = market;
+
+	const [chartType, setChartType] = usePersistedRecoilState<ChartType>(singleChartTypeState);
+	const [chartPeriod, setChartPeriod] = usePersistedRecoilState<Period>(singleChartPeriodState);
 
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
@@ -108,11 +114,10 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				side="base"
 				currencyKey={baseCurrencyKey}
 				priceRate={basePriceRate}
-				alignRight={false}
-				selectedChartType={'AREA'}
-				setSelectedChartType={() => null}
-				selectedChartPeriod={'ONE_MONTH'}
-				setSelectedChartPeriod={() => null}
+				selectedChartType={chartType}
+				setSelectedChartType={setChartType}
+				selectedChartPeriod={chartPeriod}
+				setSelectedChartPeriod={setChartPeriod}
 			/>
 			<MarketInfoContainer>
 				<StyledFlexDiv>
