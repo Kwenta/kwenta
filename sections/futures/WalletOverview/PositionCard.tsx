@@ -7,11 +7,10 @@ import Card from 'components/Card';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { Data, Subtitle } from '../common';
 import { formatCurrency } from 'utils/formatters/number';
-import { CurrencyKey, Synths } from 'constants/currency';
-import ChangePercent from 'components/ChangePercent';
+import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import WarningIcon from 'assets/svg/app/liquidation-warning.svg';
-import { Position, PositionSide } from '../types';
+import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 
 type PositionCardProps = {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivRowCentered } from 'styles/common';
 
 export const Title = styled.div`
 	color: ${(props) => props.theme.colors.white};

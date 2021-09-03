@@ -11,20 +11,16 @@ import { useRecoilValue } from 'recoil';
 import Card from 'components/Card';
 import Table from 'components/Table';
 import Button from 'components/Button';
-import Etherscan from 'containers/Etherscan';
-import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
-import LinkIcon from 'assets/svg/app/link.svg';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { NO_VALUE } from 'constants/placeholder';
-import { Order, OrderStatus, PositionSide } from '../types';
+import { OrderStatus, PositionSide } from '../types';
 import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { gasSpeedState } from 'store/wallet';
 
 import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
-import FailureIcon from 'assets/svg/app/circle-error.svg';
 import SuccessIcon from 'assets/svg/app/circle-tick.svg';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { formatCurrency, formatCryptoCurrency, zeroBN } from 'utils/formatters/number';
@@ -62,12 +58,10 @@ const Orders: React.FC<OrdersProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
-	const { etherscanInstance } = Etherscan.useContainer();
 	const { synthetixjs } = Connector.useContainer();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	console.log('PPPP', position);
 
 	const ethGasPriceQuery = useEthGasPriceQuery(true);
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
@@ -218,22 +212,6 @@ const Orders: React.FC<OrdersProps> = ({
 						sortable: false,
 						width: 50,
 					},
-					// {
-					// 	id: 'link',
-					// 	Cell: (cellProps: CellProps<Order>) =>
-					// 		etherscanInstance != null && cellProps.row.original.txHash ? (
-					// 			<StyledExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
-					// 				<StyledLinkIcon
-					// 					src={LinkIcon}
-					// 					viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-					// 				/>
-					// 			</StyledExternalLink>
-					// 		) : (
-					// 			NO_VALUE
-					// 		),
-					// 	sortable: false,
-					// 	width: 50,
-					// },
 				]}
 				data={orders}
 				columnsDeps={columnsDeps}
@@ -268,10 +246,6 @@ const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.blueberry};
 	text-transform: capitalize;
-`;
-
-const StyledId = styled.div`
-	${BoldTableText}
 `;
 
 const StyledPositionSize = styled.div`
@@ -317,19 +291,6 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
-`;
-
-const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
-`;
-
-const StyledLinkIcon = styled(Svg)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
-	}
 `;
 
 const CancelButton = styled(Button)`

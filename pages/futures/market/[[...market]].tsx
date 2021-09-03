@@ -25,7 +25,7 @@ const Market: FC = () => {
 				<PageContent>
 					<FullHeightContainer>
 						<MainContent>
-							<MarketInfo market={router.query.market?.[0] ?? null} />
+							<MarketInfo market={router.query.market?.[0]!} />
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>

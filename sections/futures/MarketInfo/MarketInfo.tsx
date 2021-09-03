@@ -93,7 +93,15 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				data: formatPercent(marketSummary?.currentFundingRate ?? zeroBN),
 			},
 		],
-		[marketSummary, baseCurrencyKey, t, selectedPriceCurrency.name, basePriceRate]
+		[
+			marketSummary,
+			baseCurrencyKey,
+			t,
+			selectedPriceCurrency.name,
+			basePriceRate,
+			futuresTradingVolume,
+			market,
+		]
 	);
 
 	return (
@@ -129,7 +137,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 					))}
 				</StyledFlexDiv>
 			</MarketInfoContainer>
-			<UserInfo marketAsset={baseCurrencyKey} marketAddress={marketSummary?.market ?? null} />
+			<UserInfo marketAsset={baseCurrencyKey} />
 		</>
 	);
 };

@@ -2,6 +2,7 @@ import Wei from '@synthetixio/wei';
 
 export type PositionDetail = {
 	remainingMargin: Wei;
+	accessibleMargin: Wei;
 	orderPending: boolean;
 	order: {
 		pending: boolean;

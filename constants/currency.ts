@@ -1,10 +1,10 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface/build/node/src/types';
 import keyBy from 'lodash/keyBy';
 
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
-export type { CurrencyKey } from '@synthetixio/contracts-interface';
+export type { CurrencyKey } from '@synthetixio/contracts-interface/build/node/src/types';
 export { Synths } from '@synthetixio/contracts-interface';
 
 // TODO: standardize this

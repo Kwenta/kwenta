@@ -8,20 +8,16 @@ import { appReadyState } from 'store/app';
 import { isL2State, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { PositionHistory } from './types';
 import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'queries/rates/utils';
 
 const PERIOD = 24 * 3600;
 
-const useGetFuturesTradingVolume = (
-	currencyKey: string | null,
-	options?: UseQueryOptions<any | null>
-) => {
+const useGetFuturesTradingVolume = (currencyKey: string | null, options?: UseQueryOptions<Wei>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
-	return useQuery<PositionHistory[]>(
+	return useQuery<Wei>(
 		QUERY_KEYS.Futures.TradingVolume(currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
