@@ -203,7 +203,11 @@
 				}
 			},
 			"tooltip": {
-				"price": "price:"
+				"close": "close",
+				"high": "high",
+				"low": "low",
+				"open": "open",
+				"price": "price"
 			},
 			"no-data": "No data"
 		},

@@ -65,3 +65,11 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 npm run build
 npm start
 ```
+
+## Contributing
+
+Kwenta welcomes contributors. Regardless of the time you have available, everyone can provide meaningful contributions to the project by submitting bug reports, feature requests or even the smallest of fixes! To submit your contribution, please fork, fix, commit and create a pull-request describing your work in detail. For more details, please have a look at the [Contribution guidelines](CONTRIBUTING.md).
+
+## Contact
+
+Join the community on the [Kwenta Discord server](https://discord.gg/HUPyQ63TFF)!

@@ -4,7 +4,7 @@ import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 
-import Etherscan from 'containers/Etherscan';
+import BlockExplorer from 'containers/BlockExplorer';
 import { ExternalLink, GridDivCenteredCol, IconButton } from 'styles/common';
 import ROUTES from 'constants/routes';
 
@@ -18,7 +18,7 @@ type ActionsColType = {
 };
 
 const ActionsCol: FC<ActionsColType> = ({ cellProps }) => {
-	const { etherscanInstance } = Etherscan.useContainer();
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const router = useRouter();
 
@@ -31,8 +31,8 @@ const ActionsCol: FC<ActionsColType> = ({ cellProps }) => {
 			>
 				<StyledLinkIcon src={EditIcon} viewBox={`0 0 ${EditIcon.width} ${EditIcon.height}`} />
 			</IconButton>
-			{etherscanInstance != null && cellProps.row.original.txHash && (
-				<ExternalLink href={etherscanInstance.txLink(cellProps.row.original.txHash)}>
+			{blockExplorerInstance != null && cellProps.row.original.txHash && (
+				<ExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.txHash)}>
 					<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
 				</ExternalLink>
 			)}
