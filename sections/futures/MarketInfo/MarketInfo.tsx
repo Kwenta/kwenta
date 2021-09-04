@@ -130,8 +130,8 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			/>
 			<MarketInfoContainer>
 				<StyledFlexDiv>
-					{marketInfoCols.map(({ title, data }) => (
-						<InfoBox>
+					{marketInfoCols.map(({ title, data }, i) => (
+						<InfoBox key={`infobox-${i}`}>
 							<InfoTitle>{title}</InfoTitle>
 							<InfoData>{data}</InfoData>
 						</InfoBox>

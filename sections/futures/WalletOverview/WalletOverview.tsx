@@ -64,8 +64,14 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 		<div>
 			<Balances>
 				<Title>{t('futures.wallet-overview.title')}</Title>
-				{overviewRows.map(({ label, value, currencyKey, sign }) => (
-					<OverviewRow subtitle={label} data={value} currencyKey={currencyKey} sign={sign} />
+				{overviewRows.map(({ label, value, currencyKey, sign }, i) => (
+					<OverviewRow
+						key={`walletoverview-${i}`}
+						subtitle={label}
+						data={value}
+						currencyKey={currencyKey}
+						sign={sign}
+					/>
 				))}
 			</Balances>
 			<Positions positions={walletPosition?.positions ?? null} />
