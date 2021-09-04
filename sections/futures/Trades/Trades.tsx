@@ -23,13 +23,12 @@ import { formatCurrency, formatCryptoCurrency, formatNumber } from 'utils/format
 import { PositionHistory } from 'queries/futures/types';
 
 type TradesProps = {
-	history: PositionHistory[];
-	currencyKeyRate: number;
+	history: PositionHistory[] | null;
 	isLoading: boolean;
 	isLoaded: boolean;
 };
 
-const Trades: React.FC<TradesProps> = ({ history, currencyKeyRate, isLoading, isLoaded }) => {
+const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
@@ -180,7 +179,7 @@ const Trades: React.FC<TradesProps> = ({ history, currencyKeyRate, isLoading, is
 					{
 						accessor: 'transactionHash',
 						Cell: (cellProps: CellProps<PositionHistory>) => (
-							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.value)}>
+							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
 								<StyledLinkIcon
 									src={LinkIcon}
 									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}

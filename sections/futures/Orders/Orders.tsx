@@ -4,7 +4,6 @@ import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
-import { Contract } from 'ethers';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 
@@ -63,7 +62,7 @@ const Orders: React.FC<OrdersProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 
-	const ethGasPriceQuery = useEthGasPriceQuery(true);
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
 
 	const orders: TableOrder[] = useMemo(
@@ -99,10 +98,7 @@ const Orders: React.FC<OrdersProps> = ({
 	const handleCancelOrder = async () => {
 		if (!gasPrice) return;
 		try {
-			const FuturesMarketContract: Contract = getFuturesMarketContract(
-				currencyKey,
-				synthetixjs!.contracts
-			);
+			const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
 			const gasEstimate = await FuturesMarketContract.estimateGas.cancelOrder();
 			const tx = await FuturesMarketContract.cancelOrder({
 				gasLimit: Number(gasEstimate),

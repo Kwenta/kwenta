@@ -1,5 +1,4 @@
 import React, { useMemo, useEffect } from 'react';
-import { Contract } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -62,7 +61,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
-	const ethGasPriceQuery = useEthGasPriceQuery(true);
+	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [error, setError] = useState<string | null>(null);
 	const [leverage, setLeverage] = useState<number>(0);
@@ -150,10 +149,7 @@ const Trade: React.FC<TradeProps> = () => {
 			try {
 				setError(null);
 				setGasLimit(null);
-				const FuturesMarketContract: Contract = getFuturesMarketContract(
-					marketAsset,
-					synthetixjs!.contracts
-				);
+				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
 				const [gasEstimate, orderFee] = await Promise.all([
 					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
@@ -180,10 +176,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const handleCreateOrder = async () => {
 		if (!gasLimit || !tradeSize || !gasPrice) return;
 		try {
-			const FuturesMarketContract: Contract = getFuturesMarketContract(
-				marketAsset,
-				synthetixjs!.contracts
-			);
+			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 			const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
 			const tx = await FuturesMarketContract.modifyPosition(sizeDelta.toBN(), {
 				gasLimit,

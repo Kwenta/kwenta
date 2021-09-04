@@ -23,6 +23,7 @@ import { ChartType } from 'constants/chartType';
 import { Period } from 'constants/period';
 import { singleChartTypeState, singleChartPeriodState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { CurrencyKey } from 'constants/currency';
 
 type MarketInfoProps = {
 	market: string;
@@ -41,7 +42,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === market) ?? null;
 
-	const baseCurrencyKey = market;
+	const baseCurrencyKey = market as CurrencyKey;
 
 	const [chartType, setChartType] = usePersistedRecoilState<ChartType>(singleChartTypeState);
 	const [chartPeriod, setChartPeriod] = usePersistedRecoilState<Period>(singleChartPeriodState);

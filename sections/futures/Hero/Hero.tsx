@@ -15,7 +15,7 @@ const Hero: FC = () => {
 
 	return (
 		<StyledGrid>
-			<StyledCard style={{ position: 'relative' }}>
+			<StyledCard>
 				<BackgroundImage src={Layer2Icon} />
 				<Card.Header noBorder={true}>
 					<StyledHeaderText small={false}>{t('futures.hero.welcome.title')}</StyledHeaderText>

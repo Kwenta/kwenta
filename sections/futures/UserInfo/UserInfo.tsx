@@ -105,7 +105,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades
 					history={positionHistory}
-					currencyKeyRate={marketAssetRate}
 					isLoading={futuresPositionHistoryQuery.isLoading}
 					isLoaded={futuresPositionHistoryQuery.isFetched}
 				/>

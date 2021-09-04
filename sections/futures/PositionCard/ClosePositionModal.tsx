@@ -2,7 +2,6 @@ import { FC, useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
-import { ethers } from 'ethers';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -37,7 +36,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const ethGasPriceQuery = useEthGasPriceQuery(true);
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -73,10 +72,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			try {
 				if (!synthetixjs || !currencyKey) return;
 				setError(null);
-				const FuturesMarketContract: ethers.Contract = getFuturesMarketContract(
-					currencyKey,
-					synthetixjs!.contracts
-				);
+				const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
 				const estimate = await FuturesMarketContract.estimateGas.closePosition();
 				setGasLimit(Number(estimate));
 			} catch (e) {
@@ -112,10 +108,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const handleClosePosition = async () => {
 		if (!gasLimit || !gasPrice) return;
 		try {
-			const FuturesMarketContract: ethers.Contract = getFuturesMarketContract(
-				currencyKey,
-				synthetixjs!.contracts
-			);
+			const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
 			const tx = await FuturesMarketContract.closePosition({
 				gasLimit,
 				gasPrice: gasPriceInWei(gasPrice),

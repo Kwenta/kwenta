@@ -26,7 +26,7 @@ const WalletOverview: FC<WalletOverviewProps> = ({ positions }) => {
 
 	const walletPosition = useMemo(() => {
 		if (!positions) return null;
-		let futuresPositions: Partial<FuturesPosition>[] = [];
+		let futuresPositions: FuturesPosition[] = [];
 		let totalMargin = zeroBN;
 
 		positions.forEach((position) => {

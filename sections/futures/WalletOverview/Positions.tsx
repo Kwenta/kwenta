@@ -14,9 +14,10 @@ import PositionCard from './PositionCard';
 
 import Button from 'components/Button';
 import { wei } from '@synthetixio/wei';
+import { CurrencyKey } from 'constants/currency';
 
 type PositionsProps = {
-	positions: Partial<FuturesPosition>[] | null;
+	positions: FuturesPosition[] | null;
 };
 
 const DEFAULT_ASSET = Synths.sBTC;
@@ -25,7 +26,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const defaultPosition: Partial<FuturesPosition> = {
+	const defaultPosition = {
 		asset: Synths.sBTC,
 		order: null,
 		remainingMargin: wei('500'),
@@ -44,7 +45,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 			<StyledSubheader>{t('futures.wallet-overview.positions.title')}</StyledSubheader>
 			{positions && positions.length > 0 ? (
 				positions.map((position, i) => (
-					<a href={ROUTES.Futures.Market.MarketPair(position.asset)}>
+					<a href={ROUTES.Futures.Market.MarketPair(position.asset as CurrencyKey)}>
 						<PositionCard key={i} position={position} />
 					</a>
 				))
@@ -59,7 +60,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 						{t('futures.wallet-overview.open-position')}
 					</CTAButton>
 					<Background>
-						<PositionCard position={defaultPosition} isCTA={true} />
+						<PositionCard position={defaultPosition as FuturesPosition} isCTA={true} />
 					</Background>
 				</CTA>
 			)}

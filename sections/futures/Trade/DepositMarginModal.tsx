@@ -1,6 +1,5 @@
 import { FC, useState, useMemo, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ethers } from 'ethers';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
@@ -54,7 +53,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery(true);
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -91,10 +90,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 			if (!amount || !market || !synthetixjs) return;
 			try {
 				setError(null);
-				const FuturesMarketContract: ethers.Contract = getFuturesMarketContract(
-					market,
-					synthetixjs!.contracts
-				);
+				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 				const marginAmount = isDeposit ? amount : -amount;
 				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
 					wei(marginAmount).toBN()
@@ -111,10 +107,7 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 	const handleDeposit = async () => {
 		if (!amount || !gasLimit || !market || !gasPrice) return;
 		try {
-			const FuturesMarketContract: ethers.Contract = getFuturesMarketContract(
-				market,
-				synthetixjs!.contracts
-			);
+			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 			const marginAmount = isDeposit ? amount : -amount;
 			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
 				gasLimit,

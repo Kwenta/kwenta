@@ -1,21 +1,13 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
-import { useRecoilState } from 'recoil';
-import { Svg } from 'react-optimized-image';
-
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-
-import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
 
 import { numericValueCSS, FlexDivRowCentered, FlexDivCol } from 'styles/common';
 
 import { formatPercent } from 'utils/formatters/number';
-import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
+import { GasPrices } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
@@ -41,28 +33,6 @@ const TradeBalancerSummaryCard: FC<TradeBalancerSummaryCardProps> = ({
 	isApproved = true,
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
-
-	const SLIPPAGE_VALUES = useMemo(
-		() => [
-			{
-				text: t('modals.afterHours.slippage-levels.low'),
-				value: '0.001',
-			},
-			{
-				text: t('modals.afterHours.slippage-levels.medium'),
-				value: '0.005',
-			},
-			{
-				text: t('modals.afterHours.slippage-levels.high'),
-				value: '0.01',
-			},
-		],
-		[t]
-	);
-	const hasCustomGasPrice = customGasPrice !== '';
-	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
 
 	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
 		submissionDisabledReason,
