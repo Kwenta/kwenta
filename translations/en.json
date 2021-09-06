@@ -538,8 +538,8 @@
 			"table": {
 				"market": "market",
 				"price": "price",
-				"change": "24 HR change",
-				"funding": "24 HR funding rate"
+				"change": "24H change",
+				"funding": "24H funding rate"
 			}
 		},
 		"market": {
@@ -548,10 +548,10 @@
 			"info": {
 				"asset": "asset",
 				"size": "market size",
-				"volume": "24 HR volume",
+				"volume": "24H volume",
 				"skew": "market skew",
 				"debt": "market debt",
-				"rate": "funding rate"
+				"rate": "24H funding rate"
 			},
 			"trade": {
 				"title": "trade",
@@ -580,7 +580,7 @@
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
-					"available-margin": "available margin",
+					"available-margin": "Remaining margin",
 					"helper": "deposit your sUSD to start trading",
 					"available-balance": "sUSD balance",
 					"balance": "Balance",
@@ -612,7 +612,8 @@
 						"size": "Size",
 						"side": "Side",
 						"leverage": "Leverage",
-						"ROI": "ROI"
+						"ROI": "ROI",
+						"fee": "fee"
 					}
 				},
 				"orders": {

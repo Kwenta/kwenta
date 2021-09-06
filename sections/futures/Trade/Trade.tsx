@@ -37,6 +37,8 @@ import { gasPriceInWei } from 'utils/network';
 
 type TradeProps = {};
 
+const DEFAULT_MAX_LEVERAGE = wei(10);
+
 const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -115,6 +117,20 @@ const Trade: React.FC<TradeProps> = () => {
 		ethPriceRate,
 	]);
 
+	const positionLeverage = futuresMarketPositionQuery?.data?.position?.leverage ?? wei(0);
+	const positionSide = futuresMarketPositionQuery?.data?.position?.side;
+	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+
+	const maxLeverageValue = useMemo(() => {
+		if (!positionLeverage) return marketMaxLeverage;
+		if (positionLeverage.eq(wei(0))) return marketMaxLeverage;
+		if (positionSide === leverageSide) {
+			return marketMaxLeverage?.sub(positionLeverage);
+		} else {
+			return positionLeverage.add(marketMaxLeverage);
+		}
+	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
+
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
@@ -124,14 +140,19 @@ const Trade: React.FC<TradeProps> = () => {
 	};
 
 	const onLeverageChange = (value: number) => {
-		setLeverage(value);
-		const newTradeSize =
-			marketAssetRate === 0
-				? 0
-				: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
-				  marketAssetRate;
+		if (value < 0) {
+			setLeverage(0);
+			setTradeSize('');
+		} else {
+			setLeverage(value);
+			const newTradeSize =
+				marketAssetRate === 0
+					? 0
+					: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
+					  marketAssetRate;
 
-		setTradeSize(newTradeSize.toString());
+			setTradeSize(newTradeSize.toString());
+		}
 	};
 
 	useEffect(() => {
@@ -212,13 +233,13 @@ const Trade: React.FC<TradeProps> = () => {
 					onAmountChange={(value) => onTradeAmountChange(value)}
 					balance={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 					asset={marketAsset || Synths.sUSD}
-					handleOnMax={() => onLeverageChange(Number(market?.maxLeverage.toString() ?? 1))}
+					handleOnMax={() => onLeverageChange(maxLeverageValue.toNumber())}
 					balanceLabel={t('futures.market.trade.input.remaining-margin')}
 				/>
 
 				<LeverageInput
 					currentLeverage={leverage}
-					maxLeverage={Number(market?.maxLeverage.toString() ?? 1)}
+					maxLeverage={maxLeverageValue.toNumber()}
 					onSideChange={(side) => {
 						onLeverageChange(0);
 						setLeverageSide(side);

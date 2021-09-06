@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
 import BaseModal from 'components/BaseModal';
@@ -19,6 +20,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice, gasPriceInWei } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
+import { walletAddressState } from 'store/wallet';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -34,6 +36,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	onPositionClose,
 }) => {
 	const { t } = useTranslation();
+	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -42,6 +45,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const [error, setError] = useState<string | null>(null);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
+	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const exchangeRates = useMemo(
@@ -67,13 +71,20 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		ethPriceRate,
 	]);
 
+	const positionSize = position?.size ?? wei(0);
+
 	useEffect(() => {
 		const getGasLimit = async () => {
 			try {
-				if (!synthetixjs || !currencyKey) return;
+				if (!synthetixjs || !currencyKey || !walletAddress || !positionSize) return;
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
-				const estimate = await FuturesMarketContract.estimateGas.closePosition();
+				const size = wei(-positionSize);
+				const [estimate, orderFee] = await Promise.all([
+					FuturesMarketContract.estimateGas.closePosition(),
+					FuturesMarketContract.orderFee(walletAddress, size.toBN()),
+				]);
+				setOrderFee(wei(orderFee.fee));
 				setGasLimit(Number(estimate));
 			} catch (e) {
 				console.log(e.message);
@@ -81,7 +92,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			}
 		};
 		getGasLimit();
-	}, [synthetixjs, currencyKey]);
+	}, [synthetixjs, currencyKey, walletAddress, positionSize]);
 
 	const dataRows = useMemo(() => {
 		if (!position || !currencyKey) return [];
@@ -102,8 +113,12 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				label: t('futures.market.user.position.modal-close.ROI'),
 				value: formatCurrency(Synths.sUSD, position?.roi ?? zeroBN, { sign: '$' }),
 			},
+			{
+				label: t('futures.market.user.position.modal-close.fee'),
+				value: formatCurrency(Synths.sUSD, orderFee, { sign: '$' }),
+			},
 		];
-	}, [position, currencyKey, t]);
+	}, [position, currencyKey, t, orderFee]);
 
 	const handleClosePosition = async () => {
 		if (!gasLimit || !gasPrice) return;

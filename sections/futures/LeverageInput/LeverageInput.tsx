@@ -69,15 +69,6 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		currentTradeSize,
 	]);
 
-	const maxLeverageValue = useMemo(() => {
-		if (currentPositionLeverage === 0) return maxLeverage;
-		if (currentPositionSide === side) {
-			return maxLeverage - currentPositionLeverage;
-		} else {
-			return currentPositionLeverage + maxLeverage;
-		}
-	}, [maxLeverage, currentPositionSide, side, currentPositionLeverage]);
-
 	return (
 		<LeverageInputWrapper>
 			<LeverageRow>
@@ -108,10 +99,10 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			</LeverageRow>
 			<SliderRow>
 				<Slider
-					disabled={maxLeverageValue <= 0}
+					disabled={maxLeverage <= 0}
 					steps={DEFAULT_STEPS}
 					minValue={MIN_LEVERAGE}
-					maxValue={maxLeverageValue}
+					maxValue={maxLeverage}
 					value={currentLeverage}
 					onChange={(_, newValue) => {
 						setIsLeverageValueCommitted(false);

@@ -75,9 +75,13 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			},
 			{
 				title: t('futures.market.info.volume'),
-				data: formatCurrency(market, futuresTradingVolume ?? zeroBN, {
-					currencyKey: market,
-				}),
+				data: formatCurrency(
+					selectedPriceCurrency.name,
+					futuresTradingVolume?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+					{
+						sign: '$',
+					}
+				),
 			},
 			{
 				title: t('futures.market.info.skew'),
@@ -101,7 +105,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			selectedPriceCurrency.name,
 			basePriceRate,
 			futuresTradingVolume,
-			market,
 		]
 	);
 
