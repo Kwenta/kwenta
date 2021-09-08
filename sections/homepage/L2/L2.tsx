@@ -19,9 +19,16 @@ import Optimism from 'assets/svg/marketing/Optimism_Alpha.svg';
 import TransactionSpeedNumber from 'assets/svg/marketing/1-2s.svg';
 import TransactionCostNumber from 'assets/svg/marketing/50x.svg';
 import Currency from 'components/Currency';
+import Link from 'next/link';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
+import ROUTES from 'constants/routes';
 
 const L2 = () => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
+	const { switchToL2 } = useNetworkSwitcher();
 
 	const OptimismStats = (
 		<div>
@@ -65,12 +72,22 @@ const L2 = () => {
 						</L2Copy>
 						<Media lessThan="lg">{OptimismStats}</Media>
 						<CTARow>
-							<Button variant={'outline'} size={'lg'}>
-								{t('homepage.l2.cta-buttons.learn-more')}
-							</Button>
-							<Button variant={'primary'} size={'lg'}>
-								{t('homepage.l2.cta-buttons.switch-l2')}
-							</Button>
+							<Link href={'https://blog.kwenta.io/hello-optimism-kwenta-is-live-on-l2/'}>
+								<Button variant={'outline'} size={'lg'}>
+									{t('homepage.l2.cta-buttons.learn-more')}
+								</Button>
+							</Link>
+							{isL2 ? (
+								<Link href={ROUTES.Dashboard.Home}>
+									<Button variant="primary" isRounded={false} size="lg">
+										{t('homepage.nav.start-trading')}
+									</Button>
+								</Link>
+							) : (
+								<Button variant={'primary'} size={'lg'} onClick={switchToL2}>
+									{t('homepage.l2.cta-buttons.switch-l2')}
+								</Button>
+							)}
 						</CTARow>
 					</FlexDivCol>
 				</FlexSection>
