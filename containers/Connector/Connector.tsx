@@ -75,10 +75,10 @@ const useConnector = () => {
 			});
 			const useOvm = getIsOVM(networkId);
 
-			const networks = await snx.networks;
+			const supportedNetworks = await snx.networks;
 			const currentNetwork = await _provider.getNetwork()?.name;
 
-			if (!networks.includes(currentNetwork)) {
+			if (!supportedNetworks.includes(currentNetwork)) {
 				console.error('Network not supported');
 				// TODO: Show a warning dialog - needs design
 				return;
