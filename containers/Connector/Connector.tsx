@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createContainer } from 'unstated-next';
 import {
 	TransactionNotifier,
@@ -15,6 +15,8 @@ import {
 	synthetix,
 } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
+// @ts-ignore
+import snx from 'synthetix';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
@@ -30,7 +32,6 @@ import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { invert, keyBy } from 'lodash';
-import { useMemo } from 'react';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -65,22 +66,29 @@ const useConnector = () => {
 
 	useEffect(() => {
 		const init = async () => {
-			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
-			const provider = loadProvider({
+			const _provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum,
 			});
 			const useOvm = getIsOVM(networkId);
 
-			const snxjs = synthetix({ provider, networkId, useOvm });
+			const networks = await snx.networks;
+			const currentNetwork = await _provider.getNetwork()?.name;
 
+			if (!networks.includes(currentNetwork)) {
+				console.error('Network not supported');
+				// TODO: Show a warning dialog - needs design
+				return;
+			}
+
+			const snxjs = synthetix({ provider: _provider, networkId, useOvm });
 			// @ts-ignore
 			setNetwork(snxjs.network, useOvm);
 			setSynthetixjs(snxjs);
-			setProvider(provider);
+			setProvider(_provider);
 			setAppReady(true);
 		};
 
