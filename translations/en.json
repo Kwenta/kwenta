@@ -293,7 +293,8 @@
 				"synth-balances": "Synth Balances",
 				"convert": "Synth Onramp",
 				"crypto-balances": "Crypto Balances",
-				"transactions": "Transactions"
+				"transactions": "Transactions",
+				"deprecated": "Deprecated"
 			}
 		},
 		"onboard": {
@@ -351,6 +352,9 @@
 			},
 			"settling-fee": "Settling...",
 			"settle-fee": "Settle fee"
+		},
+		"deprecated": {
+			"info": "Deprecated synths must be purged for sUSD otherwise they cannot be traded."
 		}
 	},
 	"shorting": {
@@ -617,7 +621,8 @@
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
-			"price-adjustment": "Price Adjustment"
+			"price-adjustment": "Price Adjustment",
+			"deprecated": "Deprecated"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",
