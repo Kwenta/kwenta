@@ -354,7 +354,12 @@
 			"settle-fee": "Settle fee"
 		},
 		"deprecated": {
-			"info": "Deprecated synths must be purged for sUSD otherwise they cannot be traded."
+			"info": "Deprecated synths must be purged for sUSD otherwise they cannot be traded.",
+			"button": {
+				"default": "Redeem All",
+				"redeeming": "Pending"
+			},
+			"susd-total": "sUSD Total"
 		}
 	},
 	"shorting": {
