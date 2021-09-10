@@ -5,6 +5,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 
 import { walletAddressState } from 'store/wallet';
 import { ordersByStatusState } from 'store/orders';
+import useRedeemableDeprecatedSynthsQuery from 'sections/dashboard/DashboardCard/useRedeemableDeprecatedSynthsQuery';
 
 import FullScreen from './FullScreen';
 import Popup from './Popup';
@@ -28,6 +29,14 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 		feeWaitingPeriods,
 	]);
 
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery();
+	const redeemableDeprecatedSynths =
+		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
+			? redeemableDeprecatedSynthsQuery.data
+			: null;
+
+	const hasRedeemableDeprecatedSynths = !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0);
+
 	const orderGroups = useMemo(
 		() => [
 			{
@@ -49,7 +58,16 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	);
 
 	return isFullScreen ? (
-		<FullScreen {...{ onDismiss, feeWaitingPeriods, hasWaitingPeriod, orderGroups }} />
+		<FullScreen
+			{...{
+				onDismiss,
+				feeWaitingPeriods,
+				hasWaitingPeriod,
+				orderGroups,
+				hasRedeemableDeprecatedSynths,
+				redeemableDeprecatedSynthsQuery,
+			}}
+		/>
 	) : (
 		<Popup
 			{...{
@@ -59,6 +77,8 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 				orderGroups,
 				setIsFullScreen,
 				ordersByStatus,
+				hasRedeemableDeprecatedSynths,
+				redeemableDeprecatedSynthsQuery,
 			}}
 		/>
 	);

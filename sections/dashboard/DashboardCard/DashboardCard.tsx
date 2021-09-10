@@ -22,7 +22,7 @@ import { CardTitle, ConvertContainer } from '../common';
 import FeeReclaimingSynths from '../FeeReclaimingSynths';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useRedeemableDeprecatedSynthsQuery from './useRedeemableDeprecatedSynthsQuery';
+import useRedeemableDeprecatedSynthsQuery from 'sections/dashboard/DashboardCard/useRedeemableDeprecatedSynthsQuery';
 import { isL2State } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { walletAddressState } from 'store/wallet';
@@ -161,11 +161,7 @@ const DashboardCard: FC = () => {
 			</TabPanel>
 			{!redeemableDeprecatedSynths?.totalUSDBalance.gt(0) ? null : (
 				<TabPanel name={Tab.Deprecated} activeTab={activeTab}>
-					<Deprecated
-						balances={redeemableDeprecatedSynths?.balances ?? []}
-						totalUSDBalance={wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0)}
-						exchangeRates={exchangeRates}
-					/>
+					<Deprecated {...{ redeemableDeprecatedSynthsQuery, exchangeRates }} />
 				</TabPanel>
 			)}
 		</>

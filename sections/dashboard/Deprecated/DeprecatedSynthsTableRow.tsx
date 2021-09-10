@@ -17,7 +17,7 @@ import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
 
-export type DeprecatedSynthsTableRowProps = {
+type DeprecatedSynthsTableRowProps = {
 	exchangeRates: Rates | null;
 	synth: SynthBalance;
 	totalUSDBalance: Wei;

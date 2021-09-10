@@ -104,7 +104,7 @@ const useRedeemableDeprecatedSynthsQuery = (options?: UseQueryOptions<Balances>)
 			};
 		},
 		{
-			enabled: synthetixjs! && isWalletConnected,
+			enabled: !!synthetixjs! && isWalletConnected,
 			...options,
 		}
 	);
