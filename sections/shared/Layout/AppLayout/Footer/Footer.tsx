@@ -17,7 +17,6 @@ const GitIDFooter = styled.div`
     font-weight: normal;
     font-size: 10px;
     line-height: 140%;
-    /* identical to box height, or 14px */
     
     display: flex;
     justify-items: center;
