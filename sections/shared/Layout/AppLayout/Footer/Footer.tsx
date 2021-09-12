@@ -24,8 +24,7 @@ const GitIDFooter = styled.div`
     bottom: 0px;
     display: grid;
     width: 100%;
-    margin-bottom: 5px;
-    
+    margin-bottom: 5px;    
     color: #2B3035;
 `;
 
