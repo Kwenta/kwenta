@@ -18,7 +18,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
-import GitIDFooter from 'sections/shared/Layout/AppLayout/Footer'
+import GitIDFooter from 'sections/shared/Layout/AppLayout/Footer';
 
 import { isL2State, isWalletConnectedState } from 'store/wallet';
 
@@ -53,6 +53,7 @@ const DashboardPage = () => {
 					</DesktopOnlyView>
 					<MobileOrTabletView>
 						<MobileContainer>{activeView}</MobileContainer>
+						<GitIDFooter />
 					</MobileOrTabletView>
 				</PageContent>
 			</AppLayout>

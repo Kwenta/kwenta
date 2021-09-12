@@ -10,6 +10,7 @@ import ShortingRewards from 'sections/shorting/ShortingRewards';
 import ShortingStats from 'sections/shorting/ShortingStats';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import GitIDFooter from 'sections/shared/Layout/AppLayout/Footer';
 
 import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
 
@@ -45,6 +46,7 @@ const Shorting: FC = () => {
 							<MainContent>
 								<ShortingCard />
 								{isWalletConnected && <ShortingHistory />}
+								<GitIDFooter />
 							</MainContent>
 							<DesktopOnlyView>
 								<StyledRightSideContent>

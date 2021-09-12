@@ -27,6 +27,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_WIDTH } from 'sections/exchange/TradeCard/constants';
+import GitIDFooter from 'sections/shared/Layout/AppLayout/Footer';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -177,6 +178,7 @@ const ExchangePage = () => {
 									)}
 								</ChartsContainer>
 							</AnimateSharedLayout>
+							<GitIDFooter />
 						</DesktopContainer>
 					</DesktopOnlyView>
 					<MobileOrTabletView>
@@ -212,6 +214,7 @@ const ExchangePage = () => {
 									</Slider>
 								</SliderContainer>
 							)}
+							<GitIDFooter />
 						</MobileContainer>
 					</MobileOrTabletView>
 				</StyledPageContent>
