@@ -400,7 +400,6 @@ export const ExchangeCardsWithSelector = styled.div`
 		}
 		.currency-card-body {
 			position: relative;
-			padding-left: 61px;
 			${media.lessThan('md')`
 				padding-left: 18px;
 			`}
