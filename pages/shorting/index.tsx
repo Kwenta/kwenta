@@ -8,6 +8,7 @@ import ShortingCard from 'sections/shorting/ShortingCard';
 import ShortingHistory from 'sections/shorting/ShortingHistory';
 import ShortingRewards from 'sections/shorting/ShortingRewards';
 import ShortingStats from 'sections/shorting/ShortingStats';
+import GitIDFooter from 'sections/shared/Layout/AppLayout/GitID';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
@@ -45,6 +46,7 @@ const Shorting: FC = () => {
 							<MainContent>
 								<ShortingCard />
 								{isWalletConnected && <ShortingHistory />}
+								<GitIDFooter />
 							</MainContent>
 							<DesktopOnlyView>
 								<StyledRightSideContent>
