@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-const Footer: FC = () => {
+const GitID: FC = () => {
     const gitID = process.env.GIT_HASH_ID!.toString();
 
     return (
@@ -12,21 +12,15 @@ const Footer: FC = () => {
 };
 
 const GitIDFooter = styled.div`
-	font-family: Akkurat LL TT;
-    font-style: normal;
-    font-weight: normal;
+	font-family: ${props => props.theme.fonts.mono};
     font-size: 10px;
-    line-height: 140%;
     
-    display: flex;
-    justify-items: center;
+    left: 50%;
+    transform: translate(-50%, -50%);
     position: absolute;
-    bottom: 0px;
-    display: grid;
-    width: 100%;
-    margin-bottom: 5px;
+    bottom: 5px;
         
     color: #2B3035;
 `;
 
-export default Footer;
+export default GitID;

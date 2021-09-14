@@ -10,7 +10,7 @@ import SingleChartIcon from 'assets/svg/app/single-chart.svg';
 import DoubleChartIcon from 'assets/svg/app/double-chart.svg';
 import { zIndex } from 'constants/ui';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import GitIDFooter from 'sections/shared/Layout/AppLayout/Footer';
+import GitIDFooter from 'sections/shared/Layout/AppLayout/GitID';
 
 import { formatCurrency } from 'utils/formatters/number';
 
