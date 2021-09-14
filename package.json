@@ -31,7 +31,7 @@
 		"@synthetixio/providers": "2.47.0-ovm.5",
 		"@synthetixio/queries": "2.47.0-ovm.7",
 		"@synthetixio/transaction-notifier": "2.47.0-ovm.5",
-		"@synthetixio/wei": "2.47.0-ovm.5",
+		"@synthetixio/wei": "2.48.0",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
