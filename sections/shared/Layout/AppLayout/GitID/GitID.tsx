@@ -10,7 +10,6 @@ const GitID: FC = () => {
 const GitIDFooter = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 10px;
-
 	left: 50%;
 	transform: translate(-50%, -50%);
 	position: absolute;
