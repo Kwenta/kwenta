@@ -2,22 +2,21 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { UseQueryResult } from 'react-query';
-import { Balances, Rates, SynthBalance } from '@synthetixio/queries';
+import { DeprecatedSynthsBalances, DeprecatedSynthBalance, Rates } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
-
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
 
 import SynthBalanceRow from './DeprecatedSynthsTableRow';
 import DeprecatedSynthsFooter from './DeprecatedSynthsFooter';
 import RedeemTxModal from './RedeemTxModal';
-import { wei } from '@synthetixio/wei';
 
 type DeprecatedSynthsTableProps = {
 	exchangeRates: Rates | null;
-	redeemableDeprecatedSynthsQuery: UseQueryResult<Balances>;
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
 };
 
 const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
@@ -27,11 +26,11 @@ const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
 	const { t } = useTranslation();
 	const {
 		isRedeeming,
-		transactionFee,
 		redeemTxModalOpen,
 		txError,
 		handleRedeem,
 		handleDismiss,
+		transactionFee,
 	} = useRedeemDeprecatedSynths(redeemableDeprecatedSynthsQuery);
 
 	const redeemableDeprecatedSynths =
@@ -49,8 +48,8 @@ const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
 		<Container>
 			<Title>{t('dashboard.deprecated.info')}</Title>
 
-			{balances.map((synth: SynthBalance) => (
-				<SynthBalanceRow key={synth.currencyKey} {...{ synth, totalUSDBalance, exchangeRates }} />
+			{balances.map((synth: DeprecatedSynthBalance) => (
+				<SynthBalanceRow key={synth.currencyKey} {...{ synth, totalUSDBalance }} />
 			))}
 
 			<DeprecatedSynthsFooter
@@ -59,7 +58,7 @@ const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
 			/>
 			{!redeemTxModalOpen ? null : (
 				<RedeemTxModal
-					{...{ txError, transactionFee }}
+					{...{ txError, balances, totalUSDBalance }}
 					onDismiss={handleDismiss}
 					attemptRetry={handleRedeem}
 				/>

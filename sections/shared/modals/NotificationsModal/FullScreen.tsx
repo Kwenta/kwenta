@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
-import { Balances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
+import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 import Card from 'components/Card';
 
@@ -19,7 +19,7 @@ type FullScreenProps = {
 	feeWaitingPeriods: SynthFeeAndWaitingPeriod[];
 	hasWaitingPeriod: boolean;
 	hasRedeemableDeprecatedSynths: boolean;
-	redeemableDeprecatedSynthsQuery: UseQueryResult<Balances>;
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
 };
 
 export const FullScreen: FC<FullScreenProps> = ({

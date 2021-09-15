@@ -613,6 +613,10 @@
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		},
+		"deprecated-synths": {
+			"from": "From",
+			"to": "Into"
 		}
 	},
 	"common": {

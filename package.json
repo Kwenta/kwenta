@@ -29,7 +29,7 @@
 		"@synthetixio/data": "2.48.0-alpha",
 		"@synthetixio/optimism-networks": "2.48.0-alpha",
 		"@synthetixio/providers": "2.48.0-alpha",
-		"@synthetixio/queries": "2.48.0-alpha",
+		"@synthetixio/queries": "0.0.0-5d88d6d",
 		"@synthetixio/transaction-notifier": "2.48.0-alpha",
 		"@synthetixio/wei": "2.48.0-alpha",
 		"@tippyjs/react": "4.1.0",

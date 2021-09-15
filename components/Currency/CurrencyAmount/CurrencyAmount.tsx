@@ -17,6 +17,8 @@ type CurrencyAmountProps = {
 	conversionRate?: WeiSource | null;
 	formatAmountOptions?: FormatCurrencyOptions;
 	formatTotalValueOptions?: FormatCurrencyOptions;
+	showTotalValue?: boolean;
+	showValue?: boolean;
 };
 
 export const CurrencyAmount: FC<CurrencyAmountProps> = ({
@@ -27,17 +29,23 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 	conversionRate,
 	formatAmountOptions = {},
 	formatTotalValueOptions = {},
+	showTotalValue = true,
+	showValue = true,
 	...rest
 }) => (
 	<Container {...rest}>
-		<Amount className="amount">{formatNumber(amount, formatAmountOptions)}</Amount>
-		<TotalValue className="total-value">
-			{formatCurrency(
-				currencyKey,
-				conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
-				{ sign, ...formatTotalValueOptions }
-			)}
-		</TotalValue>
+		{!showValue ? null : (
+			<Amount className="amount">{formatNumber(amount, formatAmountOptions)}</Amount>
+		)}
+		{!showTotalValue ? null : (
+			<TotalValue className="total-value">
+				{formatCurrency(
+					currencyKey,
+					conversionRate != null ? wei(totalValue).div(conversionRate) : totalValue,
+					{ sign, ...formatTotalValueOptions }
+				)}
+			</TotalValue>
+		)}
 	</Container>
 );
 

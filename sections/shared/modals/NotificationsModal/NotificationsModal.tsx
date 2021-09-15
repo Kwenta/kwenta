@@ -5,7 +5,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 
 import { walletAddressState } from 'store/wallet';
 import { ordersByStatusState } from 'store/orders';
-import useRedeemableDeprecatedSynthsQuery from 'sections/dashboard/DashboardCard/useRedeemableDeprecatedSynthsQuery';
 
 import FullScreen from './FullScreen';
 import Popup from './Popup';
@@ -20,7 +19,8 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	const ordersByStatus = useRecoilValue(ordersByStatusState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useFeeReclaimPeriodsQuery } = useSynthetixQueries();
+	const { useFeeReclaimPeriodsQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
+
 	const feeWaitingPeriodsQuery = useFeeReclaimPeriodsQuery(walletAddress ?? '');
 	const feeWaitingPeriods = useMemo(() => feeWaitingPeriodsQuery.data ?? [], [
 		feeWaitingPeriodsQuery.data,
@@ -29,7 +29,7 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 		feeWaitingPeriods,
 	]);
 
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery();
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const redeemableDeprecatedSynths =
 		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
 			? redeemableDeprecatedSynthsQuery.data

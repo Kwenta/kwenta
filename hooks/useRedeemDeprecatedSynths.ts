@@ -1,16 +1,12 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries, { Balances } from '@synthetixio/queries';
+import { useTranslation } from 'react-i18next';
+import useSynthetixQueries, { DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { ethers } from 'ethers';
 
 import { Synths } from 'constants/currency';
 
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isWalletConnectedState,
-	walletAddressState,
-} from 'store/wallet';
+import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
@@ -21,12 +17,15 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { UseQueryResult } from 'react-query';
 
-const useRedeemDeprecatedSynths = (redeemableDeprecatedSynthsQuery: UseQueryResult<Balances>) => {
+const useRedeemDeprecatedSynths = (
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>
+) => {
+	const { t } = useTranslation();
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
@@ -53,7 +52,7 @@ const useRedeemDeprecatedSynths = (redeemableDeprecatedSynthsQuery: UseQueryResu
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
-	const Redeemer = useMemo(() => synthetixjs?.contracts.Redeemer ?? null, [synthetixjs]);
+	const Redeemer = useMemo(() => synthetixjs?.contracts.SynthRedeemer ?? null, [synthetixjs]);
 
 	const ethPriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
@@ -69,7 +68,7 @@ const useRedeemDeprecatedSynths = (redeemableDeprecatedSynthsQuery: UseQueryResu
 	const getMethodAndParams = useCallback(
 		() => ({
 			method: 'redeemAll',
-			params: [redeemableDeprecatedSynths?.balances.map((b) => b.currencyKey)],
+			params: [redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
 		}),
 		[redeemableDeprecatedSynths?.balances]
 	);
@@ -96,53 +95,51 @@ const useRedeemDeprecatedSynths = (redeemableDeprecatedSynthsQuery: UseQueryResu
 	}, [gasLimit, getGasLimitEstimate]);
 
 	const handleRedeem = async () => {
-		// if (!(Redeemer && gasPrice)) return;
+		if (!(Redeemer && gasPrice)) return;
 
 		setTxError(null);
 		setRedeemTxModalOpen(true);
 
-		// const { CollateralShort } = synthetixjs!.contracts;
+		const { method, params } = getMethodAndParams();
 
-		// const { method, params } = getMethodAndParams();
+		try {
+			setIsRedeeming(true);
 
-		// try {
-		setIsRedeeming(true);
+			let transaction: ethers.ContractTransaction | null = null;
 
-		// let transaction: ethers.ContractTransaction | null = null;
+			const gasPriceWei = gasPriceInWei(gasPrice);
 
-		// const gasPriceWei = gasPriceInWei(gasPrice);
+			const gasLimitEstimate = await getGasLimitEstimate();
 
-		// const gasLimitEstimate = await getGasLimitEstimate();
+			transaction = (await Redeemer[method](...params, {
+				gasPrice: gasPriceWei,
+				gasLimit: gasLimitEstimate,
+			})) as ethers.ContractTransaction;
 
-		// transaction = (await CollateralShort[method](...params, {
-		// 	gasPrice: gasPriceWei,
-		// 	gasLimit: gasLimitEstimate,
-		// })) as ethers.ContractTransaction;
+			if (transaction != null) {
+				monitorTransaction({
+					txHash: transaction.hash,
+				});
 
-		// if (transaction != null) {
-		// 	monitorTransaction({
-		// 		txHash: transaction.hash,
-		// 	});
-
-		// 	await transaction.wait();
-		// }
-		// setRedeemTxModalOpen(false);
-		// redeemableDeprecatedSynthsQuery.refetch();
-		// } catch (e) {
-		// 	try {
-		// 		await CollateralShort.callStatic[method](...params);
-		// 		throw e;
-		// 	} catch (e) {
-		// 		console.log(e);
-		// 		setTxError(
-		// 			e.data
-		// 				? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
-		// 				: e.message
-		// 		);
-		// 	}
-		// } finally {
-		// 	setIsRedeeming(false);
-		// }
+				await transaction.wait();
+			}
+			setRedeemTxModalOpen(false);
+			redeemableDeprecatedSynthsQuery.refetch();
+		} catch (e) {
+			try {
+				await Redeemer.callStatic[method](...params);
+				throw e;
+			} catch (e) {
+				console.log(e);
+				setTxError(
+					e.data
+						? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
+						: e.message
+				);
+			}
+		} finally {
+			setIsRedeeming(false);
+		}
 	};
 
 	const handleDismiss = () => {

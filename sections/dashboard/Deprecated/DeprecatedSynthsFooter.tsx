@@ -15,25 +15,27 @@ import {
 	SummaryItemValue,
 	SummaryItemLabel,
 } from 'sections/exchange/FooterCard/common';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
+import { Synths } from 'constants/currency';
 
 type DeprecatedSynthsFooterProps = {
 	totalUSDBalance: Wei;
 	onSubmit: () => void;
 	isRedeeming: boolean;
+	transactionFee: number | null;
 };
 
 const DeprecatedSynthsFooter: FC<DeprecatedSynthsFooterProps> = ({
 	totalUSDBalance,
 	onSubmit,
 	isRedeeming,
+	transactionFee,
 }) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
-	const transactionFee = null;
 
 	return (
 		<>
@@ -45,7 +47,7 @@ const DeprecatedSynthsFooter: FC<DeprecatedSynthsFooterProps> = ({
 				<Col>
 					<SummaryItem>
 						<SummaryItemLabel>{t('dashboard.deprecated.susd-total')}</SummaryItemLabel>
-						<SummaryItemValue>{formatCryptoCurrency(totalUSDBalance)}</SummaryItemValue>
+						<SummaryItemValue>{formatCurrency(Synths.sUSD, totalUSDBalance)}</SummaryItemValue>
 					</SummaryItem>
 				</Col>
 				<div>

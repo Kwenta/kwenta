@@ -22,7 +22,6 @@ import { CardTitle, ConvertContainer } from '../common';
 import FeeReclaimingSynths from '../FeeReclaimingSynths';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useRedeemableDeprecatedSynthsQuery from 'sections/dashboard/DashboardCard/useRedeemableDeprecatedSynthsQuery';
 import { isL2State } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import { walletAddressState } from 'store/wallet';
@@ -43,7 +42,11 @@ const DashboardCard: FC = () => {
 	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
 
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const {
+		useExchangeRatesQuery,
+		useSynthsBalancesQuery,
+		useRedeemableDeprecatedSynthsQuery,
+	} = useSynthetixQueries();
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -57,12 +60,14 @@ const DashboardCard: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
+
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data

@@ -6,8 +6,6 @@ import Wei from '@synthetixio/wei';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
-import { Period } from 'constants/period';
-
 import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
 
 import { formatPercent } from 'utils/formatters/number';
@@ -16,15 +14,14 @@ import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
+import { Synths } from 'constants/currency';
 
 type DeprecatedSynthsTableRowProps = {
-	exchangeRates: Rates | null;
 	synth: SynthBalance;
 	totalUSDBalance: Wei;
 };
 
 const DeprecatedSynthsTableRow: FC<DeprecatedSynthsTableRowProps> = ({
-	exchangeRates,
 	synth,
 	totalUSDBalance,
 }) => {
@@ -41,8 +38,6 @@ const DeprecatedSynthsTableRow: FC<DeprecatedSynthsTableRowProps> = ({
 	const synthDesc = synthsMap != null ? synthsMap[synth.currencyKey]?.description : '';
 
 	const totalValue = synth.usdBalance;
-	const price = exchangeRates && exchangeRates[synth.currencyKey];
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 
 	return (
 		<>
@@ -57,26 +52,16 @@ const DeprecatedSynthsTableRow: FC<DeprecatedSynthsTableRowProps> = ({
 				</div>
 				<AmountCol>
 					<Currency.Amount
-						currencyKey={currencyKey}
-						amount={synth.balance}
+						currencyKey={Synths.sUSD}
+						amount={synth.usdBalance}
 						totalValue={totalValue}
-						sign={selectedPriceCurrency.sign}
 						conversionRate={selectPriceCurrencyRate}
-						formatAmountOptions={{ minDecimals: 4 }}
+						formatAmountOptions={{ minDecimals: 2, currencyKey: Synths.sUSD }}
 						formatTotalValueOptions={{ minDecimals: 2 }}
-					/>
+						showTotalValue={false}
+					/>{' '}
+					{Synths.sUSD}
 				</AmountCol>
-				<ExchangeRateCol>
-					{price != null && (
-						<Currency.Price
-							currencyKey={currencyKey}
-							price={price}
-							sign={selectedPriceCurrency.sign}
-							conversionRate={selectPriceCurrencyRate}
-							change={historicalRates.data?.change}
-						/>
-					)}
-				</ExchangeRateCol>
 				<SynthBalancePercentRow>
 					<ProgressBar percentage={percent} />
 					<TypeDataSmall>{formatPercent(percent)}</TypeDataSmall>
