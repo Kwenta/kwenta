@@ -66,7 +66,7 @@ const Container = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 12px 24px;
+	padding: 12px 14px;
 `;
 
 export default RedeemableDeprecatedSynths;
