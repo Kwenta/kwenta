@@ -603,6 +603,7 @@
 			"deprecated-synths": {
 				"title": "Deprecated Synths",
 				"description": "Your balance includes deprecated synths which will remained frozen until redeemed.",
+				"short-description": "Redeem deprecated synths ({{amount}} {{asset}})",
 				"button": {
 					"default": "Redeem",
 					"redeeming": "Redeeming"

@@ -9,7 +9,6 @@ import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CurrencyKey, Synths } from 'constants/currency';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
@@ -30,7 +29,6 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 	totalUSDBalance,
 }) => {
 	const { t } = useTranslation();
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	return (
 		<StyledBaseModal
@@ -44,7 +42,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 					<BalanceItem
 						key={balance.currencyKey}
 						currencyKey={balance.currencyKey}
-						amount={balance.balance}
+						amount={balance.usdBalance}
 					/>
 				))}
 				<Title topPad>{t('modals.deprecated-synths.to')}</Title>
@@ -73,7 +71,9 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 			{currencyKey}
 		</BalanceItemTitle>
 
-		<BalanceItemAmount>{formatCryptoCurrency(amount ?? wei(0))}</BalanceItemAmount>
+		<BalanceItemAmount>
+			{formatCryptoCurrency(amount ?? wei(0), { maxDecimals: 2 })} {Synths.sUSD}
+		</BalanceItemAmount>
 	</StyledBalanceItem>
 );
 

@@ -5,9 +5,11 @@ import styled from 'styled-components';
 import { DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
+import { Synths } from 'constants/currency';
 import Button from 'components/Button';
 import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
+import { formatCurrency } from 'utils/formatters/number';
 
 const RedeemableDeprecatedSynths: FC<{
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
@@ -31,16 +33,21 @@ const RedeemableDeprecatedSynths: FC<{
 	return (
 		<>
 			<Container>
-				{t('modals.notifications.deprecated-synths.description')}
+				{t('modals.notifications.deprecated-synths.short-description', {
+					amount: formatCurrency(Synths.sUSD, totalUSDBalance, { maxDecimals: 2 }),
+					asset: Synths.sUSD,
+				})}
 
 				<Button
 					variant="primary"
 					isRounded={true}
-					size="lg"
+					size="sm"
 					disabled={isRedeeming}
 					onClick={handleRedeem}
 				>
-					{t(`dashboard.deprecated.button.${isRedeeming ? 'redeeming' : 'default'}`)}
+					{t(
+						`modals.notifications.deprecated-synths.button.${isRedeeming ? 'redeeming' : 'default'}`
+					)}
 				</Button>
 			</Container>
 
@@ -58,6 +65,8 @@ const RedeemableDeprecatedSynths: FC<{
 const Container = styled.div`
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+	padding: 12px 24px;
 `;
 
 export default RedeemableDeprecatedSynths;

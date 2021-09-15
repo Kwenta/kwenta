@@ -6,7 +6,7 @@ import Wei from '@synthetixio/wei';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
-import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
+import { SynthBalance } from '@synthetixio/queries';
 
 import { formatPercent } from 'utils/formatters/number';
 
@@ -26,11 +26,9 @@ const DeprecatedSynthsTableRow: FC<DeprecatedSynthsTableRowProps> = ({
 	totalUSDBalance,
 }) => {
 	const { t } = useTranslation();
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 
 	const { synthsMap } = Connector.useContainer();
-
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.currencyKey;
 	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();
@@ -90,13 +88,6 @@ const AmountCol = styled.div`
 `;
 
 const SynthBalancePercentRow = styled.div`
-	${media.lessThan('md')`
-		display: none;
-	`}
-`;
-
-const ExchangeRateCol = styled.div`
-	justify-self: flex-end;
 	${media.lessThan('md')`
 		display: none;
 	`}

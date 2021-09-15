@@ -110,9 +110,8 @@ const useRedeemDeprecatedSynths = (
 			const gasPriceWei = gasPriceInWei(gasPrice);
 
 			const gasLimitEstimate = await getGasLimitEstimate();
-
 			transaction = (await Redeemer[method](...params, {
-				gasPrice: gasPriceWei,
+				gasPrice: Math.ceil(gasPriceWei), // 🤔 sometimes a float on kovan
 				gasLimit: gasLimitEstimate,
 			})) as ethers.ContractTransaction;
 

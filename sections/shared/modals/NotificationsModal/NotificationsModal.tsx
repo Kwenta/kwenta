@@ -35,7 +35,10 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 			? redeemableDeprecatedSynthsQuery.data
 			: null;
 
-	const hasRedeemableDeprecatedSynths = !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0);
+	const hasRedeemableDeprecatedSynths = useMemo(
+		() => !!redeemableDeprecatedSynths?.balances.length,
+		[redeemableDeprecatedSynths?.balances.length]
+	);
 
 	const orderGroups = useMemo(
 		() => [

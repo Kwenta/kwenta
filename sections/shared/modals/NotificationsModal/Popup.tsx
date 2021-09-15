@@ -49,7 +49,8 @@ export const Popup: FC<PopupProps> = ({
 	const hasPendingOrders = ordersByStatus.pending.length > 0;
 	const hasCancelledOrders = ordersByStatus.cancelled.length > 0;
 
-	const hasOrders = hasConfirmedOrders || hasPendingOrders || hasCancelledOrders;
+	const hasOrders =
+		hasConfirmedOrders || hasPendingOrders || hasCancelledOrders || hasRedeemableDeprecatedSynths;
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.notifications.title')}>
