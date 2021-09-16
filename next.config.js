@@ -1,6 +1,10 @@
 // next.config.js
+const gitRevision = require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
 
 module.exports = {
+	env: {
+		GIT_HASH_ID: gitRevision,
+	},
 	webpack: (config, options) => {
 
 		config.resolve.mainFields = ['module', 'browser', 'main'];
