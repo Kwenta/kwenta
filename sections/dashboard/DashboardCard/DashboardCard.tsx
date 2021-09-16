@@ -166,7 +166,7 @@ const DashboardCard: FC = () => {
 			</TabPanel>
 			{!redeemableDeprecatedSynths?.totalUSDBalance.gt(0) ? null : (
 				<TabPanel name={Tab.Deprecated} activeTab={activeTab}>
-					<Deprecated {...{ redeemableDeprecatedSynthsQuery, exchangeRates }} />
+					<Deprecated {...{ redeemableDeprecatedSynthsQuery }} />
 				</TabPanel>
 			)}
 		</>

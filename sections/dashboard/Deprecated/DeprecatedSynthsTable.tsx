@@ -2,8 +2,9 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { UseQueryResult } from 'react-query';
-import { DeprecatedSynthsBalances, DeprecatedSynthBalance, Rates } from '@synthetixio/queries';
+import { DeprecatedSynthsBalances, DeprecatedSynthBalance } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { useRouter } from 'next/router';
 
 import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
@@ -13,17 +14,18 @@ import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
 import SynthBalanceRow from './DeprecatedSynthsTableRow';
 import DeprecatedSynthsFooter from './DeprecatedSynthsFooter';
 import RedeemTxModal from './RedeemTxModal';
+import ROUTES from 'constants/routes';
 
 type DeprecatedSynthsTableProps = {
-	exchangeRates: Rates | null;
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
 };
 
 const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
-	exchangeRates,
 	redeemableDeprecatedSynthsQuery,
 }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
+	const onSuccess = () => router.push(ROUTES.Dashboard.Home);
 	const {
 		isRedeeming,
 		redeemTxModalOpen,
@@ -31,7 +33,7 @@ const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
 		handleRedeem,
 		handleDismiss,
 		transactionFee,
-	} = useRedeemDeprecatedSynths(redeemableDeprecatedSynthsQuery);
+	} = useRedeemDeprecatedSynths(redeemableDeprecatedSynthsQuery, onSuccess);
 
 	const redeemableDeprecatedSynths =
 		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null

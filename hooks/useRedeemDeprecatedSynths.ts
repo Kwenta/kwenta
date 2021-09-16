@@ -18,7 +18,8 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { UseQueryResult } from 'react-query';
 
 const useRedeemDeprecatedSynths = (
-	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>,
+	onSuccess?: () => void
 ) => {
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
@@ -111,7 +112,7 @@ const useRedeemDeprecatedSynths = (
 
 			const gasLimitEstimate = await getGasLimitEstimate();
 			transaction = (await Redeemer[method](...params, {
-				gasPrice: Math.ceil(gasPriceWei), // 🤔 sometimes a float on kovan
+				gasPrice: gasPriceWei,
 				gasLimit: gasLimitEstimate,
 			})) as ethers.ContractTransaction;
 
@@ -124,6 +125,7 @@ const useRedeemDeprecatedSynths = (
 			}
 			setRedeemTxModalOpen(false);
 			redeemableDeprecatedSynthsQuery.refetch();
+			onSuccess?.();
 		} catch (e) {
 			try {
 				await Redeemer.callStatic[method](...params);
