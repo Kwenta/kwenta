@@ -40,7 +40,7 @@ const DeprecatedSynthsTable: FC<DeprecatedSynthsTableProps> = ({
 	const balances = redeemableDeprecatedSynths?.balances ?? [];
 	const totalUSDBalance = wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0);
 
-	if (balances.length === 0) {
+	if (balances.length === 0 && totalUSDBalance.eq(0)) {
 		return <NoSynthsCard />;
 	}
 

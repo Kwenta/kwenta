@@ -52,8 +52,8 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 			? redeemableDeprecatedSynthsQuery.data
 			: null;
 	const hasRedeemableDeprecatedSynths = useMemo(
-		() => !!redeemableDeprecatedSynths?.balances.length,
-		[redeemableDeprecatedSynths?.balances.length]
+		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
+		[redeemableDeprecatedSynths?.totalUSDBalance]
 	);
 
 	return (
