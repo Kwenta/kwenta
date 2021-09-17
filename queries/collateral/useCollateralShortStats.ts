@@ -13,8 +13,6 @@ type ReturnValueType = Record<
 	CurrencyKey,
 	{
 		shorts: Wei;
-		rewardsRate: Wei;
-		rewardsTotalSupply: Wei;
 	}
 >;
 
@@ -23,7 +21,6 @@ const useCollateralShortStats = (
 	options?: UseQueryOptions<ReturnValueType>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
-
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<ReturnValueType>(
@@ -35,24 +32,15 @@ const useCollateralShortStats = (
 						ethers.utils.formatBytes32String(currencyKey)
 					)
 				),
-				...currencyKeys.map((currencyKey) =>
-					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
-				),
-				...currencyKeys.map((currencyKey) =>
-					synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
-				),
 			])) as ethers.BigNumber[];
 
-			const rewardsTotalSupplies = stats;
 			const shorts = stats.splice(0, stats.length / 3);
-			const rewardsRates = stats.splice(0, stats.length / 2);
 
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
 					shorts: wei(shorts[i]),
-					rewardsRate: wei(rewardsRates[i]),
-					rewardsTotalSupply: wei(rewardsTotalSupplies[i]),
 				};
+
 				return ret;
 			}, {} as ReturnValueType);
 		},

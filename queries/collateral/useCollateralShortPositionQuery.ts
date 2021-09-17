@@ -5,7 +5,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import fromUnixTime from 'date-fns/fromUnixTime';
 
 import { appReadyState } from 'store/app';
-import { isWalletConnectedState, walletAddressState } from 'store/wallet';
+import { isWalletConnectedState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
@@ -38,15 +38,13 @@ const useCollateralShortPositionQuery = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { provider, synthetixjs } = Connector.useContainer();
 
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			const { CollateralShort, CollateralStateShort, ExchangeRates } = synthetixjs!.contracts;
-
-			const loan = (await CollateralStateShort.getLoan(walletAddress, loanId as string)) as {
+			const { CollateralShort, ExchangeRates } = synthetixjs!.contracts;
+			const loan = (await CollateralShort.loans(loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
 				lastInteraction: ethers.BigNumber;
 				currency: string;

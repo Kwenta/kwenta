@@ -12,20 +12,25 @@ export const SHORT_GRAPH_ENDPOINT =
 export const SHORT_GRAPH_ENDPOINT_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
 
-export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
-	id: response.id,
-	txHash: response.txHash,
-	collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
-	collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS, true),
-	synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
-	synthBorrowedAmount: wei(response.synthBorrowedAmount, SYNTH_DECIMALS, true),
-	createdAt: new Date(Number(response.createdAt) * 1000),
-	closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
-	isOpen: Boolean(response.isOpen),
-	collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
-	liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
-	loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
-});
+export const SHORT_GRAPH_ENDPOINT_OVM_KOVAN =
+	'https://api.thegraph.com/subgraphs/name/dbeal-eth/optimism-kovan-shorts2';
+
+export const formatShort = (response: any): Partial<HistoricalShortPosition> => {
+	return {
+		id: response.id,
+		txHash: response.txHash,
+		collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
+		collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS, true),
+		synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
+		synthBorrowedAmount: wei(response.synthBorrowedAmount, SYNTH_DECIMALS),
+		createdAt: new Date(Number(response.createdAt) * 1000),
+		closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
+		isOpen: Boolean(response.isOpen),
+		collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
+		liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
+		loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
+	};
+};
 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({
 	id: response.id,

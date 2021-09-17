@@ -36,7 +36,6 @@ import useCollateralShortContractInfoQuery from 'queries/collateral/useCollatera
 import { NO_VALUE } from 'constants/placeholder';
 
 import { ShortingTab } from './constants';
-import { MIN_COLLATERAL_RATIO } from '../constants';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
@@ -84,10 +83,9 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(
-		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
-		[collateralShortInfo?.minCollateralRatio]
-	);
+	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio, [
+		collateralShortInfo?.minCollateralRatio,
+	]);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -279,7 +277,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
 										<div>
 											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
-												percent: formatPercent(minCollateralRatio),
+												percent: minCollateralRatio ? formatPercent(minCollateralRatio) : '',
 											})}
 										</div>
 									</div>
