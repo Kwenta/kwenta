@@ -28,6 +28,7 @@ import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
 import {
 	customGasPriceState,
 	gasSpeedState,
+	isL2State,
 	isWalletConnectedState,
 	walletAddressState,
 } from 'store/wallet';
@@ -84,6 +85,7 @@ const useShort = ({
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const isL2 = useRecoilValue(isL2State);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
@@ -351,23 +353,23 @@ const useShort = ({
 
 			try {
 				setIsApproving(true);
-				// open approve modal
 
 				const { contracts } = synthetixjs!;
 
 				const collateralContract = contracts[synthToContractName(quoteCurrencyKey)];
 
-				const gasEstimate = await collateralContract.estimateGas.approve(
-					contracts.CollateralShort.address,
-					ethers.constants.MaxUint256
-				);
 				const gasPriceWei = gasPriceInWei(gasPrice);
-
+				const gasEstimate = !isL2
+					? await collateralContract.estimateGas.approve(
+							contracts.CollateralShort.address,
+							ethers.constants.MaxUint256
+					  )
+					: null;
 				const tx = await collateralContract.approve(
 					contracts.CollateralShort.address,
 					ethers.constants.MaxUint256,
 					{
-						gasLimit: normalizeGasLimit(Number(gasEstimate)),
+						...(!isL2 && { gasLimit: normalizeGasLimit(Number(gasEstimate)) }),
 						gasPrice: gasPriceWei,
 					}
 				);
@@ -439,13 +441,13 @@ const useShort = ({
 
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
-				const gasLimitEstimate = await getGasLimitEstimateForShort();
+				const gasLimitEstimate = !isL2 ? await getGasLimitEstimateForShort() : null;
 
 				setGasLimit(gasLimitEstimate);
 
 				tx = (await CollateralShort.open(...getShortParams(), {
 					gasPrice: gasPriceWei,
-					gasLimit: gasLimitEstimate,
+					...(!isL2 && { gasLimit: gasLimitEstimate }),
 				})) as ethers.ContractTransaction;
 
 				if (tx != null) {

@@ -12,7 +12,7 @@ import Currency from 'components/Currency';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -20,9 +20,6 @@ import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-
-const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
 const ShortingStats = () => {
 	const { t } = useTranslation();
@@ -43,24 +40,13 @@ const ShortingStats = () => {
 	);
 	const shortStatsMap = useMemo(() => {
 		if (shortStats != null && exchangeRates != null && selectPriceCurrencyRate != null) {
-			return mapValues(shortStats, ({ shorts, rewardsRate, rewardsTotalSupply }, currencyKey) => {
-				const snxUSDPrice = exchangeRates[CRYPTO_CURRENCY_MAP.SNX];
+			return mapValues(shortStats, ({ shorts }, currencyKey) => {
 				const assetUSDPrice = exchangeRates[currencyKey];
 
 				const openInterest = shorts.mul(assetUSDPrice).div(selectPriceCurrencyRate);
 
-				const apr =
-					rewardsTotalSupply.gt(0) && assetUSDPrice.gt(0)
-						? rewardsRate
-								.mul(SECONDS_IN_A_YR)
-								.mul(snxUSDPrice)
-								.div(rewardsTotalSupply)
-								.div(assetUSDPrice)
-						: wei(0);
-
 				return {
 					openInterest,
-					apr,
 					currencyKey: currencyKey as CurrencyKey,
 				};
 			});
