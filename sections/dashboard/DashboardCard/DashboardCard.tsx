@@ -14,6 +14,7 @@ import Loader from 'components/Loader';
 import SynthBalances from 'sections/dashboard/SynthBalances';
 import Transactions from 'sections/dashboard/Transactions';
 import CurrencyConvertCard from 'sections/dashboard/CurrencyConvertCard';
+import Deprecated from 'sections/dashboard/Deprecated';
 
 import { BoldText } from 'styles/common';
 
@@ -31,6 +32,7 @@ enum Tab {
 	SynthBalances = 'synth-balances',
 	Convert = 'convert',
 	Transactions = 'transactions',
+	Deprecated = 'deprecated',
 }
 
 const Tabs = Object.values(Tab);
@@ -40,7 +42,11 @@ const DashboardCard: FC = () => {
 	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
 
-	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+	const {
+		useExchangeRatesQuery,
+		useSynthsBalancesQuery,
+		useRedeemableDeprecatedSynthsQuery,
+	} = useSynthetixQueries();
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -54,14 +60,22 @@ const DashboardCard: FC = () => {
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
+
 	const synthBalances =
 		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
 			? synthsBalancesQuery.data
+			: null;
+
+	const redeemableDeprecatedSynths =
+		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
+			? redeemableDeprecatedSynthsQuery.data
 			: null;
 
 	const activeTab =
@@ -95,8 +109,18 @@ const DashboardCard: FC = () => {
 				active: activeTab === Tab.Transactions,
 				onClick: () => router.push(ROUTES.Dashboard.Transactions),
 			},
+			...(!isL2 && redeemableDeprecatedSynths?.totalUSDBalance.gt(0)
+				? [
+						{
+							name: Tab.Deprecated,
+							label: t('dashboard.tabs.nav.deprecated'),
+							active: activeTab === Tab.Deprecated,
+							onClick: () => router.push(ROUTES.Dashboard.Deprecated),
+						},
+				  ]
+				: []),
 		],
-		[t, activeTab, router, isL2]
+		[t, activeTab, router, isL2, redeemableDeprecatedSynths?.totalUSDBalance]
 	);
 
 	if (synthsBalancesQuery.isLoading) {
@@ -140,6 +164,11 @@ const DashboardCard: FC = () => {
 			<TabPanel name={Tab.Transactions} activeTab={activeTab}>
 				<Transactions />
 			</TabPanel>
+			{!redeemableDeprecatedSynths?.totalUSDBalance.gt(0) ? null : (
+				<TabPanel name={Tab.Deprecated} activeTab={activeTab}>
+					<Deprecated {...{ redeemableDeprecatedSynthsQuery }} />
+				</TabPanel>
+			)}
 		</>
 	);
 };

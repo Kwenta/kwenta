@@ -18,6 +18,7 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import DashboardCard from 'sections/dashboard/DashboardCard';
 import TrendingSynths from 'sections/dashboard/TrendingSynths';
 import Onboard from 'sections/dashboard/Onboard';
+import GitIDFooter from 'sections/shared/Layout/AppLayout/GitID';
 
 import { isL2State, isWalletConnectedState } from 'store/wallet';
 
@@ -38,7 +39,10 @@ const DashboardPage = () => {
 				<PageContent>
 					<DesktopOnlyView>
 						<FullHeightContainer>
-							<MainContent>{activeView}</MainContent>
+							<MainContent>
+								{activeView}
+								<GitIDFooter />
+							</MainContent>
 							{isWalletConnected && (
 								<RightSideContent>
 									<TrendingSynths />
@@ -49,6 +53,7 @@ const DashboardPage = () => {
 					</DesktopOnlyView>
 					<MobileOrTabletView>
 						<MobileContainer>{activeView}</MobileContainer>
+						<GitIDFooter />
 					</MobileOrTabletView>
 				</PageContent>
 			</AppLayout>

@@ -1,13 +1,14 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
-import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
+import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 import { TextButton } from 'styles/common';
 
 import { MenuModal } from '../common';
-
 import CurrencyExchange from './CurrencyExchange';
+import RedeemableDeprecatedSynths from './RedeemableDeprecatedSynths';
 
 import {
 	OrdersGroup,
@@ -28,6 +29,8 @@ type PopupProps = {
 	ordersByStatus: OrderByStatus;
 	feeWaitingPeriods: SynthFeeAndWaitingPeriod[];
 	hasWaitingPeriod: boolean;
+	hasRedeemableDeprecatedSynths: boolean;
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
 };
 
 export const Popup: FC<PopupProps> = ({
@@ -37,6 +40,8 @@ export const Popup: FC<PopupProps> = ({
 	ordersByStatus,
 	feeWaitingPeriods,
 	hasWaitingPeriod,
+	hasRedeemableDeprecatedSynths,
+	redeemableDeprecatedSynthsQuery,
 }) => {
 	const { t } = useTranslation();
 
@@ -44,7 +49,8 @@ export const Popup: FC<PopupProps> = ({
 	const hasPendingOrders = ordersByStatus.pending.length > 0;
 	const hasCancelledOrders = ordersByStatus.cancelled.length > 0;
 
-	const hasOrders = hasConfirmedOrders || hasPendingOrders || hasCancelledOrders;
+	const hasOrders =
+		hasConfirmedOrders || hasPendingOrders || hasCancelledOrders || hasRedeemableDeprecatedSynths;
 
 	return (
 		<StyledMenuModal onDismiss={onDismiss} isOpen={true} title={t('modals.notifications.title')}>
@@ -63,6 +69,17 @@ export const Popup: FC<PopupProps> = ({
 								<CurrencyFeeReclaim key={currencyKey} {...{ currencyKey, waitingPeriod }} />
 							);
 						})}
+					</OrdersGroupList>
+				</OrdersGroup>
+			) : hasRedeemableDeprecatedSynths ? (
+				<OrdersGroup>
+					<OrdersGroupTitle>{t('modals.notifications.deprecated-synths.title')}</OrdersGroupTitle>
+					<OrdersGroupList>
+						<RedeemableDeprecatedSynths
+							{...{
+								redeemableDeprecatedSynthsQuery,
+							}}
+						/>
 					</OrdersGroupList>
 				</OrdersGroup>
 			) : hasOrders ? (

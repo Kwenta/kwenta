@@ -205,7 +205,7 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery(isL2);
+	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.

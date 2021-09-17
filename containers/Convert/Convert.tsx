@@ -55,7 +55,7 @@ const useConvert = () => {
 	) => ({
 		fromTokenAddress: quoteTokenAddress,
 		toTokenAddress: baseTokenAddress,
-		amount: wei(amount).toString(0, true),
+		amount: wei(amount, decimals).toString(0, true),
 	});
 
 	const quote1Inch = async (
