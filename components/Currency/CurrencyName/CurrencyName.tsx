@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import styled, { css } from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
@@ -18,6 +19,7 @@ type CurrencyNameProps = {
 	showIcon?: boolean;
 	iconProps?: Partial<CurrencyIconProps>;
 	marketClosureReason?: MarketClosureReason;
+	isDeprecated?: boolean;
 };
 
 export const CurrencyName: FC<CurrencyNameProps> = ({
@@ -27,25 +29,36 @@ export const CurrencyName: FC<CurrencyNameProps> = ({
 	showIcon = false,
 	iconProps = {},
 	marketClosureReason,
+	isDeprecated = false,
 	...rest
-}) => (
-	<Container showIcon={showIcon} {...rest}>
-		{showIcon && (
-			<CurrencyIconContainer>
-				<CurrencyIcon className="icon" currencyKey={currencyKey} {...iconProps} />
-				{marketClosureReason != null ? (
-					<MarketClosureIconContainer>
-						<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
-					</MarketClosureIconContainer>
-				) : null}
-			</CurrencyIconContainer>
-		)}
-		<NameAndSymbol>
-			<Symbol className="symbol">{symbol || currencyKey}</Symbol>
-			{name && <Name className="name">{name}</Name>}
-		</NameAndSymbol>
-	</Container>
-);
+}) => {
+	const { t } = useTranslation();
+	return (
+		<Container showIcon={showIcon} {...rest}>
+			{showIcon && (
+				<CurrencyIconContainer>
+					<CurrencyIcon className="icon" {...{ currencyKey, isDeprecated }} {...iconProps} />
+					{marketClosureReason != null ? (
+						<MarketClosureIconContainer>
+							<MarketClosureIcon marketClosureReason={marketClosureReason} size="sm" />
+						</MarketClosureIconContainer>
+					) : null}
+				</CurrencyIconContainer>
+			)}
+			<NameAndSymbol>
+				<Symbol className="symbol">
+					<span>{symbol || currencyKey}</span>
+					{!isDeprecated ? null : (
+						<Deprecated>
+							<DeprecatedDot></DeprecatedDot> {t('common.currency.deprecated')}
+						</Deprecated>
+					)}
+				</Symbol>
+				{name && <Name className="name">{name}</Name>}
+			</NameAndSymbol>
+		</Container>
+	);
+};
 
 const Container = styled.span<{ showIcon?: boolean }>`
 	${(props) =>
@@ -63,10 +76,12 @@ const NameAndSymbol = styled.span`
 	${ContainerRowMixin};
 `;
 
-const Symbol = styled.span`
+const Symbol = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
+	display: flex;
+	align-items: center;
 `;
 
 const Name = styled.span`
@@ -82,6 +97,24 @@ const MarketClosureIconContainer = styled.span`
 	bottom: 0;
 	right: 0;
 	transform: translate(10%, 10%);
+`;
+
+const Deprecated = styled.div`
+	display: flex;
+	align-items: center;
+	color: ${(props) => props.theme.colors.red};
+	margin-left: 10px;
+	text-transform: uppercase;
+	font-size: 12px;
+`;
+
+const DeprecatedDot = styled.div`
+	width: 9px;
+	height: 9px;
+	background: ${(props) => props.theme.colors.red};
+	box-shadow: 0px 0px 10px ${(props) => props.theme.colors.red};
+	margin-right: 4px;
+	border-radius: 50%;
 `;
 
 export default CurrencyName;

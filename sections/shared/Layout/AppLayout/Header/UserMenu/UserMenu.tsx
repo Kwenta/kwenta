@@ -1,14 +1,19 @@
-import { FC, useState } from 'react';
+import { FC, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
+import useSynthetixQueries from '@synthetixio/queries';
 
 import Connector from 'containers/Connector';
 
 import Button from 'components/Button';
 
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	truncatedWalletAddressState,
+	walletAddressState,
+} from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 
@@ -38,6 +43,18 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
 		hasOrdersNotificationState
 	);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const { useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
+
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
+	const redeemableDeprecatedSynths =
+		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
+			? redeemableDeprecatedSynthsQuery.data
+			: null;
+	const hasRedeemableDeprecatedSynths = useMemo(
+		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
+		[redeemableDeprecatedSynths?.totalUSDBalance]
+	);
 
 	return (
 		<>
@@ -56,7 +73,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 								}}
 								isActive={notificationsModalOpened}
 							>
-								{hasOrdersNotification ? (
+								{hasOrdersNotification || hasRedeemableDeprecatedSynths ? (
 									<Svg src={NotificationAlertIcon} />
 								) : (
 									<Svg src={NotificationIcon} />

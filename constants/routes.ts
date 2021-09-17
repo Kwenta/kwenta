@@ -15,6 +15,7 @@ export const ROUTES = {
 		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
 		SynthBalances: normalizeRoute('/dashboard', 'synth-balances', 'tab'),
 		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
+		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
 	},
 	Exchange: {
 		Home: '/exchange',
