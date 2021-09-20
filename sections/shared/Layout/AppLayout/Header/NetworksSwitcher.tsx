@@ -29,6 +29,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
+	const networkLabel = useRecoilValue(networkState).id === 69 ? 'OΞ Kovan' : 'Optimism';
 	const theme = useTheme();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
@@ -78,15 +79,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 			</components.DropdownIndicator>
 		);
 	};
-	
-	const network = useRecoilValue(networkState);
-	
-	const getL2Network = () => {
-		if (network.id == 69) {
-			return `OΞ Kovan`;
-		} else return `Optimism`;
-	};
-	
+
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
 			<Button>{t('header.networks-switcher.l2')}</Button>
@@ -97,7 +90,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={28}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: getL2Network(), prefixIcon: 'Optimism' }}
+				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
