@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 import Select from 'components/Select';
 import Img, { Svg } from 'react-optimized-image';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
@@ -78,7 +78,15 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 			</components.DropdownIndicator>
 		);
 	};
-
+	
+	const network = useRecoilValue(networkState);
+	
+	const getL2Network = () => {
+		if (network.id == 69) {
+			return `OΞ Kovan`;
+		} else return `Optimism`;
+	};
+	
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
 			<Button>{t('header.networks-switcher.l2')}</Button>
@@ -89,7 +97,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={28}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: 'Optimism', prefixIcon: 'Optimism' }}
+				value={{ label: getL2Network(), prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
