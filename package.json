@@ -30,7 +30,7 @@
 		"@synthetixio/optimism-networks": "2.46.3",
 		"@synthetixio/providers": "2.48.4",
 		"@synthetixio/queries": "2.48.8",
-		"@synthetixio/transaction-notifier": "2.48.4",
+		"@synthetixio/transaction-notifier": "2.49.0",
 		"@synthetixio/wei": "2.48.4",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
