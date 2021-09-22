@@ -29,7 +29,8 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const networkLabel = useRecoilValue(networkState).id === 69 ? 'OΞ Kovan' : 'Optimism';
+	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
+	const networkLabel = 'header.networks-switcher.optimism-' + network;
 	const theme = useTheme();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
