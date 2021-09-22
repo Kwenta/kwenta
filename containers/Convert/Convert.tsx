@@ -12,6 +12,7 @@ import { CurrencyKey } from 'constants/currency';
 
 import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
+import { KWENTA_REFERRAL_ADDRESS } from 'constants/address';
 
 type Token = {
 	symbol: CurrencyKey;
@@ -98,6 +99,7 @@ const useConvert = () => {
 					amount: params.amount,
 					fromAddress: walletAddress,
 					slippage,
+					referrerAddress: KWENTA_REFERRAL_ADDRESS,
 				},
 			}
 		);
