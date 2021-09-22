@@ -37,6 +37,7 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 			liquidationPrice: wei('35000'),
 			canLiquidatePosition: true,
 			roiChange: wei('0.1'),
+			roi: wei('100'),
 		},
 	};
 

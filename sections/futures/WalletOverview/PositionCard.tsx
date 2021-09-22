@@ -56,8 +56,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.roi')}</Subtitle>
 					<StyledFlexDivRow>
+						<Data>{formatCurrency(Synths.sUSD, filledPosition?.roi ?? zeroBN, { sign: '$' })}</Data>
 						<DataPercent isPositive={filledPosition?.roiChange?.gte(zeroBN) ?? true}>
-							{formatPercent(filledPosition?.roiChange ?? zeroBN, { minDecimals: 4 })}
+							{`(${formatPercent(filledPosition?.roiChange ?? zeroBN, { minDecimals: 2 })})`}
 						</DataPercent>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
@@ -96,6 +97,7 @@ const StyledData = styled(Data)`
 `;
 
 const DataPercent = styled(Data)<{ isPositive: boolean }>`
+	margin-left: 4px;
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
 `;
 
