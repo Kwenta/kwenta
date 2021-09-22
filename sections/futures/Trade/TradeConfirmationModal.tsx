@@ -41,7 +41,7 @@ type PositionDetails = {
 	size: Wei;
 };
 
-const DepositMarginModal: FC<TradeConfirmationModalProps> = ({
+const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	onDismiss,
 	market,
 	tradeSize,
@@ -227,4 +227,4 @@ const ConfirmTradeButton = styled(Button)`
 	white-space: nowrap;
 `;
 
-export default DepositMarginModal;
+export default TradeConfirmationModal;

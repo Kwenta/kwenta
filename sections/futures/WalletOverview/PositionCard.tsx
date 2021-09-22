@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Card from 'components/Card';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { Data, Subtitle } from '../common';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import WarningIcon from 'assets/svg/app/liquidation-warning.svg';
@@ -31,7 +31,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 					<StyledFlexDivRow>
 						<StyledCurrencyIcon currencyKey={position.asset} />
 						<StyledData>
-							{formatCurrency(position.asset, filledPosition.size, { minDecimals: 2 })}
+							{formatCurrency(position.asset, filledPosition.size, { minDecimals: 4 })}
 						</StyledData>
 						<PositionSideTag side={positionSide}>{positionSide}</PositionSideTag>
 					</StyledFlexDivRow>
@@ -56,7 +56,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 				<StyledFlexDivRowCentered>
 					<Subtitle>{t('futures.wallet-overview.positions.roi')}</Subtitle>
 					<StyledFlexDivRow>
-						<Data>{formatCurrency(Synths.sUSD, filledPosition.roi, { sign: '$' })}</Data>
+						<DataPercent isPositive={filledPosition?.roiChange?.gte(zeroBN) ?? true}>
+							{formatPercent(filledPosition?.roiChange ?? zeroBN, { minDecimals: 4 })}
+						</DataPercent>
 					</StyledFlexDivRow>
 				</StyledFlexDivRowCentered>
 			</StyledCardBody>
@@ -91,6 +93,10 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 
 const StyledData = styled(Data)`
 	margin-right: 4px;
+`;
+
+const DataPercent = styled(Data)<{ isPositive: boolean }>`
+	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
 `;
 
 const StyledSvg = styled(Svg)`

@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { FC, useState, useMemo, useEffect, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +23,7 @@ import MarginInput from '../TradeSizeInput';
 import { gasPriceInWei } from 'utils/network';
 import { zeroBN } from 'utils/formatters/number';
 
-type DepositMarginModalProps = {
+type EditMarginModalProps = {
 	onDismiss: () => void;
 	onTxConfirmed: () => void;
 	sUSDBalance: Wei;
@@ -36,7 +36,7 @@ enum ACTIONS {
 	WITHDRAW = 'withdraw',
 }
 
-const DepositMarginModal: FC<DepositMarginModalProps> = ({
+const EditMarginModal: FC<EditMarginModalProps> = ({
 	onDismiss,
 	sUSDBalance,
 	market,
@@ -85,13 +85,25 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 
 	const isDeposit = actionTab === ACTIONS.DEPOSIT;
 
+	const computeAmount = useCallback(() => {
+		if (isDeposit) {
+			return wei(amount).toBN();
+		} else {
+			return amount === accessibleMargin.toString()
+				? accessibleMargin.mul(wei(-1)).toBN()
+				: wei(-amount).toBN();
+		}
+	}, [amount, isDeposit, accessibleMargin]);
+
 	useEffect(() => {
 		const getGasLimit = async () => {
-			if (!amount || !market || !synthetixjs) return;
+			if (!market || !synthetixjs) return;
 			try {
 				setError(null);
+				setGasLimit(null);
+				if (!amount || Number(amount) === 0) return;
 				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-				const marginAmount = isDeposit ? amount : -amount;
+				const marginAmount = computeAmount();
 				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
 					wei(marginAmount).toBN()
 				);
@@ -102,13 +114,13 @@ const DepositMarginModal: FC<DepositMarginModalProps> = ({
 			}
 		};
 		getGasLimit();
-	}, [amount, market, synthetixjs, isDeposit]);
+	}, [amount, market, synthetixjs, isDeposit, computeAmount]);
 
 	const handleDeposit = async () => {
 		if (!amount || !gasLimit || !market || !gasPrice) return;
 		try {
 			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-			const marginAmount = isDeposit ? amount : -amount;
+			const marginAmount = computeAmount();
 			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
 				gasLimit,
 				gasPrice: gasPriceInWei(gasPrice),
@@ -234,4 +246,4 @@ const DepositMarginButton = styled(Button)`
 	white-space: nowrap;
 `;
 
-export default DepositMarginModal;
+export default EditMarginModal;

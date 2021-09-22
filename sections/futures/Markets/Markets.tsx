@@ -7,20 +7,13 @@ import { useRouter } from 'next/router';
 import ChangePercent from 'components/ChangePercent';
 import Table from 'components/Table';
 
-import {
-	GridDiv,
-	FlexDivRow,
-	IconButton,
-	GridDivCenteredRow,
-	FlexDivCentered,
-} from 'styles/common';
+import { GridDiv, FlexDivRow, GridDivCenteredRow, FlexDivCentered } from 'styles/common';
 import { Subheader } from '../common';
 import { Synths } from 'constants/currency';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import SearchIcon from 'assets/svg/app/search.svg';
 import ROUTES from 'constants/routes';
 
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -36,9 +29,6 @@ const Markets: React.FC = () => {
 		<StyledGridDiv>
 			<HeaderRow>
 				<Subheader>{t('futures.markets.title')}</Subheader>
-				<IconButton>
-					<Svg src={SearchIcon} />
-				</IconButton>
 			</HeaderRow>
 			<StyledTable
 				palette="primary"

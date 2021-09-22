@@ -43,13 +43,17 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		weiValue = wei(value);
 	} catch {}
 
+	const isNegative = weiValue.lt(wei(0));
 	const formattedValue = [];
+	if (isNegative) {
+		formattedValue.push('-');
+	}
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
-	const weiAsStringWithDecimals = weiValue.toString(
-		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
-	);
+	const weiAsStringWithDecimals = weiValue
+		.abs()
+		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 	const withCommas = utils.commify(weiAsStringWithDecimals);
 	formattedValue.push(withCommas);
 

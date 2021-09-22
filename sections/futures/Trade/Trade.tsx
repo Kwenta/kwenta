@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { Synths } from 'constants/currency';
 
 import Button from 'components/Button';
-import { zeroBN } from 'utils/formatters/number';
+import { zeroBN, formatCurrency } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
@@ -26,7 +26,7 @@ import LeverageInput from '../LeverageInput';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
 import MarginSection from './MarginSection';
-import DepositMarginModal from './DepositMarginModal';
+import EditMarginModal from './EditMarginModal';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -76,7 +76,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
-	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState<boolean>(false);
+	const [isEditMarginModalOpen, setIsEditMarginModalOpen] = useState<boolean>(false);
 	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState<boolean>(false);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -164,8 +164,10 @@ const Trade: React.FC<TradeProps> = () => {
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted
-			)
+			) {
+				setGasLimit(null);
 				return;
+			}
 			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
 			try {
 				setError(null);
@@ -255,7 +257,7 @@ const Trade: React.FC<TradeProps> = () => {
 				<FlexDivCol>
 					<StyledFeeCostSummary feeCost={feeCost} />
 					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gte(zeroBN) ? (
+					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gt(zeroBN) ? (
 						<StyledButton
 							variant="primary"
 							disabled={!gasLimit || !!error || !tradeSize}
@@ -270,37 +272,46 @@ const Trade: React.FC<TradeProps> = () => {
 								: t('futures.market.trade.button.enter-amount')}
 						</StyledButton>
 					) : (
-						<FlexDivColCentered>
+						<CTAMargin>
 							<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
+							<MarginSubTitle>
+								{t('futures.market.trade.margin.min-initial-margin', {
+									minInitialMargin: formatCurrency(Synths.sUSD, market?.minInitialMargin ?? 0, {
+										currencyKey: Synths.sUSD,
+										minDecimals: 0,
+									}),
+								})}
+							</MarginSubTitle>
 							<DepositMarginButton
 								variant="primary"
 								isRounded
 								size="lg"
-								onClick={() => setIsDepositMarginModalOpen(true)}
+								onClick={() => setIsEditMarginModalOpen(true)}
 							>
 								{t('futures.market.trade.button.deposit-margin')}
 							</DepositMarginButton>
-						</FlexDivColCentered>
+						</CTAMargin>
 					)}
 				</FlexDivCol>
 			</TopRow>
 			<MarginSection
 				remainingMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				sUSDBalance={sUSDBalance}
-				onDeposit={() => setIsDepositMarginModalOpen(true)}
+				onDeposit={() => setIsEditMarginModalOpen(true)}
 			/>
-			{isDepositMarginModalOpen && (
-				<DepositMarginModal
+			{isEditMarginModalOpen && (
+				<EditMarginModal
 					sUSDBalance={sUSDBalance}
 					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
 							futuresPositionHistoryQuery.refetch();
+							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
 					}}
 					market={marketAsset}
-					onDismiss={() => setIsDepositMarginModalOpen(false)}
+					onDismiss={() => setIsEditMarginModalOpen(false)}
 				/>
 			)}
 			{isTradeConfirmationModalOpen && (
@@ -367,10 +378,22 @@ const Panel = styled(FlexDivCol)`
 	padding-bottom: 48px;
 `;
 
+const CTAMargin = styled(FlexDivColCentered)`
+	margin-top: 40px;
+`;
+
 const MarginTitle = styled.h3`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
+	margin: 0;
+`;
+
+const MarginSubTitle = styled.h4`
+	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 12px;
+	margin: 5px 0 10px 0;
 `;
 
 const DepositMarginButton = styled(Button)`

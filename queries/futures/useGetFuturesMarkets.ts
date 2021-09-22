@@ -23,7 +23,10 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 				utils,
 			} = synthetixjs!;
 
-			const markets = await FuturesMarketData.allMarketSummaries();
+			const [markets, globals] = await Promise.all([
+				FuturesMarketData.allMarketSummaries(),
+				FuturesMarketData.globals(),
+			]);
 			return markets.map(
 				({
 					market,
@@ -49,6 +52,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
 					maxLeverage: wei(maxLeverage),
 					marketSize: wei(marketSize),
 					price: wei(price),
+					minInitialMargin: wei(globals.minInitialMargin),
 				})
 			);
 		},

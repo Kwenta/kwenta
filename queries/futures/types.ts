@@ -68,6 +68,7 @@ export type FuturesMarket = {
 	marketSize: Wei;
 	maxLeverage: Wei;
 	price: Wei;
+	minInitialMargin: Wei;
 };
 
 export type PositionHistory = {
