@@ -20,7 +20,9 @@
 			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
-			"learn-more": "Learn more"
+			"learn-more": "Learn more",
+			"optimism-mainnet": "Optimism",
+			"optimism-testnet": "OΞ Kovan"
 		}
 	},
 	"homepage": {
