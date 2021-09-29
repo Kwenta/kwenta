@@ -48,6 +48,11 @@ export const ROUTES = {
 				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'trades', 'tab'),
 		},
 	},
+	Leaderboard: {
+		Home: '/leaderboard',
+		Leaderboard: normalizeRoute('/leaderboard', 'leaderboard', 'tab'),
+		Statistics: normalizeRoute('/leaderboard', 'statistics', 'tab'),
+	},
 };
 
 export default ROUTES;

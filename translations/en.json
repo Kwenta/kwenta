@@ -14,7 +14,8 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"shorting": "shorting",
-			"futures": "futures"
+			"futures": "futures",
+			"leaderboard": "leaderboard"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
@@ -640,6 +641,15 @@
 						"status": "status"
 					}
 				}
+			}
+		}
+	},
+	"leaderboard": {
+		"page-title": "Leaderboard | Kwenta",
+		"tabs": {
+			"nav": {
+				"leaderboard": "Leaderboard",
+				"statistics": "Statistics"
 			}
 		}
 	},

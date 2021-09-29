@@ -24,6 +24,10 @@ export const MENU_LINKS: MenuLinks = [
 		i18nLabel: 'header.nav.futures',
 		link: ROUTES.Futures.Home,
 	},
+	{
+		i18nLabel: 'header.nav.leaderboard',
+		link: ROUTES.Leaderboard.Home,
+	},
 ];
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];
