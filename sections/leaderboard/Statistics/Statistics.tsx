@@ -48,13 +48,13 @@ export default function Statistics() {
 				<OpenInterestContainer>
 					<Label>Open Interest</Label>
 					<OpenInterest>
-						<OpenInterestChart />
+						<OpenInterestChart data={MOCK_OPEN_INTEREST} />
 					</OpenInterest>
 				</OpenInterestContainer>
 				<RowSpacer2 />
 				<DistributionContainer>
 					<Label>Synths Distribution</Label>
-					<DistributionChart />
+					<DistributionChart data={MOCK_DISTRIBUTION_DATA} />
 				</DistributionContainer>
 			</Row>
 		</Container>
@@ -117,3 +117,40 @@ const DistributionContainer = styled(GridItem)`
 const OpenInterest = styled.div`
 	margin-top: 14px;
 `;
+
+const MOCK_OPEN_INTEREST = [
+	{
+		name: 'sBTC',
+		uv: 35,
+		pv: 65,
+	},
+	{
+		name: 'sETH',
+		uv: 60,
+		pv: 40,
+	},
+	{
+		name: 'sLINK',
+		uv: 55,
+		pv: 65,
+	},
+];
+
+const MOCK_DISTRIBUTION_DATA = [
+	{
+		name: 'sUSD',
+		value: 400,
+	},
+	{
+		name: 'sETH',
+		value: 300,
+	},
+	{
+		name: 'sBTC',
+		value: 300,
+	},
+	{
+		name: 'sLINK',
+		value: 200,
+	},
+];

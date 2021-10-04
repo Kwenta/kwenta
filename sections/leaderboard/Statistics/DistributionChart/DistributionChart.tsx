@@ -2,20 +2,33 @@ import React from 'react';
 import { PieChart, Pie, Cell } from 'recharts';
 import styled from 'styled-components';
 
-export default function DistributionChart() {
+type ChartDataItem = {
+	name: string;
+	value: number;
+};
+
+type Props = {
+	data: ChartDataItem[];
+};
+
+export default function DistributionChart({ data }: Props) {
 	return (
 		<>
 			<PieChart width={280} height={280}>
-				<Pie data={MOCK_DATA} dataKey={'value'}>
-					{MOCK_DATA.map((entry, index) => (
-						<Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.stroke} />
+				<Pie data={data} dataKey={'value'}>
+					{data.map((item, index) => (
+						<Cell
+							key={`cell-${index}`}
+							fill={fillColor(item.name)}
+							stroke={strokeColor(item.name)}
+						/>
 					))}
 				</Pie>
 			</PieChart>
 			<Row>
-				{MOCK_DATA.map((i) => (
+				{data.map((i) => (
 					<div>
-						<LegendBox stroke={i.stroke} background={i.fill} />
+						<LegendBox stroke={strokeColor(i.name)} background={fillColor(i.name)} />
 						<LegendLabel>{i.name}</LegendLabel>
 					</div>
 				))}
@@ -46,29 +59,32 @@ const LegendLabel = styled.div`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const MOCK_DATA = [
-	{
-		name: 'sUSD',
-		value: 400,
-		fill: '#3D3720',
-		stroke: '#675B27',
-	},
-	{
-		name: 'sETH',
-		value: 300,
-		fill: '#1F3447',
-		stroke: '#2E5870',
-	},
-	{
-		name: 'sBTC',
-		value: 300,
-		fill: '#292944',
-		stroke: '#43436B',
-	},
-	{
-		name: 'sLINK',
-		value: 200,
-		fill: '#1F1F44',
-		stroke: '#2E2E6B',
-	},
-];
+const strokeColor = (asset: string) => {
+	switch (asset) {
+		case 'sUSD':
+			return '#675B27';
+		case 'sETH':
+			return '#2E5870';
+		case 'sBTC':
+			return '#43436B';
+		case 'sLINK':
+			return '#2E2E6B';
+		default:
+			return '#675B27';
+	}
+};
+
+const fillColor = (asset: string) => {
+	switch (asset) {
+		case 'sUSD':
+			return '#3D3720';
+		case 'sETH':
+			return '#1F3447';
+		case 'sBTC':
+			return '#292944';
+		case 'sLINK':
+			return '#1F1F44';
+		default:
+			return '#3D3720';
+	}
+};
