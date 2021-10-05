@@ -1,18 +1,35 @@
+import Loader from 'components/Loader';
+import useGetFuturesOpenInterest from 'queries/futures/useGetFuturesOpenInterest';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { BarChart, XAxis, YAxis, CartesianGrid, Bar, ResponsiveContainer } from 'recharts';
+
 import colors from 'styles/theme/colors';
 
-type ChartDataItem = {
-	name: string;
-	uv: number;
-	pv: number;
-};
-
 type Props = {
-	data: ChartDataItem[];
+	currencyKeys: string[];
 };
 
-export default function OpenInterestChart({ data }: Props) {
+export default function OpenInterestChart({ currencyKeys }: Props) {
+	const { t } = useTranslation();
+	const openInterestQuery = useGetFuturesOpenInterest(currencyKeys);
+	const data =
+		openInterestQuery.data?.map((i) => {
+			return {
+				name: i.asset,
+				uv: i.ratio.short * 100,
+				pv: i.ratio.long * 100,
+			};
+		}) ?? [];
+
+	if (openInterestQuery.isLoading || openInterestQuery.isIdle) {
+		return <Loader inline />;
+	} else if (openInterestQuery.error) {
+		return <div>{t('leaderboard.statistics.failed-loading')}</div>;
+	} else if (!data.length) {
+		return <div>{t('leaderboard.statistics.empty-results')}</div>;
+	}
+
 	return (
 		<ResponsiveContainer width="95%" height={300}>
 			<BarChart data={data} barGap={6}>

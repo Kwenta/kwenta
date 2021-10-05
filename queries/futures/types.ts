@@ -71,6 +71,14 @@ export type FuturesMarket = {
 	minInitialMargin: Wei;
 };
 
+export type FuturesOpenInterest = {
+	asset: string;
+	ratio: {
+		short: number;
+		long: number;
+	};
+};
+
 export type PositionHistory = {
 	id: number;
 	transactionHash: string;

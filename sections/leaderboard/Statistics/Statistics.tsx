@@ -2,8 +2,22 @@ import styled from 'styled-components';
 
 import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import Loader from 'components/Loader';
+import { useTranslation } from 'react-i18next';
 
 export default function Statistics() {
+	const { t } = useTranslation();
+	const futuresMarketsQuery = useGetFuturesMarkets();
+
+	const distributionData =
+		futuresMarketsQuery.data?.map((m) => ({
+			name: m.asset,
+			value: m.marketSize.mul(m.price).toNumber(),
+		})) ?? [];
+
+	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
+
 	return (
 		<Container>
 			<Row bottomMargin="33px">
@@ -46,15 +60,21 @@ export default function Statistics() {
 			</Row>
 			<Row bottomMargin="30px">
 				<OpenInterestContainer>
-					<Label>Open Interest</Label>
+					<Label>{t('leaderboard.statistics.open-interest.title')}</Label>
 					<OpenInterest>
-						<OpenInterestChart data={MOCK_OPEN_INTEREST} />
+						{currencyKeys ? <OpenInterestChart currencyKeys={currencyKeys} /> : <Loader inline />}
 					</OpenInterest>
 				</OpenInterestContainer>
 				<RowSpacer2 />
 				<DistributionContainer>
-					<Label>Synths Distribution</Label>
-					<DistributionChart data={MOCK_DISTRIBUTION_DATA} />
+					<Label>{t('leaderboard.statistics.distribution.title')}</Label>
+					{futuresMarketsQuery.isLoading || futuresMarketsQuery.isIdle ? (
+						<Loader inline />
+					) : futuresMarketsQuery.isError ? (
+						<div>{t('leaderboard.statistics.failed-loading')}</div>
+					) : (
+						<DistributionChart data={distributionData} />
+					)}
 				</DistributionContainer>
 			</Row>
 		</Container>

@@ -651,6 +651,16 @@
 				"leaderboard": "Leaderboard",
 				"statistics": "Statistics"
 			}
+		},
+		"statistics": {
+			"failed-loading": "Failed to fetch results.",
+			"empty-results": "No results found.",
+			"open-interest": {
+				"title": "Open Interest"
+			},
+			"distribution": {
+				"title": "Synths Distribution"
+			}
 		}
 	},
 	"not-found": {

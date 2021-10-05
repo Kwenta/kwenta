@@ -1,5 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell } from 'recharts';
+
 import styled from 'styled-components';
 
 type ChartDataItem = {
@@ -12,6 +14,11 @@ type Props = {
 };
 
 export default function DistributionChart({ data }: Props) {
+	const { t } = useTranslation();
+
+	if (!data?.length) {
+		return <div>{t('leaderboard.statistics.empty-results')}</div>;
+	}
 	return (
 		<>
 			<PieChart width={280} height={280}>
@@ -27,7 +34,7 @@ export default function DistributionChart({ data }: Props) {
 			</PieChart>
 			<Row>
 				{data.map((i) => (
-					<div>
+					<div key={i.name}>
 						<LegendBox stroke={strokeColor(i.name)} background={fillColor(i.name)} />
 						<LegendLabel>{i.name}</LegendLabel>
 					</div>
