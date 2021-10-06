@@ -83,7 +83,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 								isActive={side === PositionSide.LONG}
 								onClick={() => onSideChange(PositionSide.LONG)}
 							>
-								{t('futures.market.trade.input.leverage.long')}
+								{t('futures.market.trade.input.leverage.buy')}
 							</LeverageSide>
 							<LeverageSide
 								variant="outline"
@@ -91,7 +91,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 								isActive={side === PositionSide.SHORT}
 								onClick={() => onSideChange(PositionSide.SHORT)}
 							>
-								{t('futures.market.trade.input.leverage.short')}
+								{t('futures.market.trade.input.leverage.sell')}
 							</LeverageSide>
 						</LeverageSideContainer>
 					</InputContainer>
