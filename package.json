@@ -25,7 +25,7 @@
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "2.50.1-ovm-alpha",
+		"@synthetixio/contracts-interface": "2.50.3-ovm-alpha",
 		"@synthetixio/data": "2.49.0",
 		"@synthetixio/optimism-networks": "2.46.3",
 		"@synthetixio/providers": "2.49.0",
