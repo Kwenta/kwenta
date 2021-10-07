@@ -82,8 +82,8 @@ const LeverageInput: FC<LeverageInputProps> = ({
 								max={maxLeverage}
 								step="any"
 								onChange={(e, value) => {
-									setIsLeverageValueCommitted(false);
 									onLeverageChange(value);
+									setIsLeverageValueCommitted(true);
 								}}
 								value={Math.round(currentLeverage * 100) / 100}
 							/>
