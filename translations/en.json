@@ -607,7 +607,8 @@
 					"liquidation": "liquidation price",
 					"remaining-margin-tooltip": "Remaining margin is calculated by xxxxx",
 					"remaining-margin": "remaining margin",
-					"ratio": "margin ratio",
+					"margin-ratio": "margin ratio",
+					"margin-ratio-tooltip": "Margin ratio is calculated by xxxx",
 					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",

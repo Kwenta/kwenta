@@ -109,7 +109,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								</StyledValue>
 							</InfoCol>
 							<InfoCol>
-								<StyledSubtitle>{t('futures.market.user.position.ratio')}</StyledSubtitle>
+								<InfoTooltip
+									placement="top"
+									content={<div>{t('futures.market.user.position.margin-ratio-tooltip')}</div>}
+								>
+									<StyledSubtitle>{t('futures.market.user.position.margin-ratio')}</StyledSubtitle>
+								</InfoTooltip>
+
 								<StyledValue>
 									{formatCurrency(Synths.sUSD, positionDetails?.marginRatio ?? zeroBN)}
 								</StyledValue>
