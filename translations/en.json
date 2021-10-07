@@ -607,7 +607,7 @@
 					"liquidation": "liquidation price",
 					"margin": "remaining margin",
 					"ratio": "margin ratio",
-					"close": "close",
+					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",
 						"size": "Size",
