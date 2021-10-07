@@ -95,7 +95,7 @@
 			"one": {
 				"title": "You’ll need a web3 wallet with ETH for gas",
 				"subtitle": "Step One",
-				"copy": "Kwenta is on the Etherem blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
+				"copy": "Kwenta is on the Ethereum blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
 			},
 			"two": {
 				"title": "Acquire sUSD (or any other Synth)",
@@ -334,7 +334,7 @@
 				"value": "Value",
 				"fee-reclaim": "Fee Rebate/Reclaim",
 				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Trransaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
+				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
 				"price-adjustment-hint": "Price adjustment currently in progress"
 			}
 		},
@@ -580,7 +580,7 @@
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
-					"min-initial-margin": "A minumum of {{minInitialMargin}} is required to open a position",
+					"min-initial-margin": "A minimum of {{minInitialMargin}} is required to open a position",
 					"available-margin": "Remaining margin",
 					"helper": "deposit your sUSD to start trading",
 					"available-balance": "sUSD balance",
