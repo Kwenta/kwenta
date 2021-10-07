@@ -114,7 +114,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								onClick={() => setClosePositionModalIsVisible(true)}
 								disabled={!positionDetails}
 							>
-								{t('futures.market.user.position.close')}
+								{t('futures.market.user.position.close-position')}
 							</CloseButton>
 						</DataCol>
 					</RightHand>
