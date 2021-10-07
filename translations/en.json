@@ -605,7 +605,8 @@
 					"roi": "ROI:",
 					"entry": "entry price",
 					"liquidation": "liquidation price",
-					"margin": "remaining margin",
+					"remaining-margin-tooltip": "Remaining margin is calculated by xxxxx",
+					"remaining-margin": "remaining margin",
 					"ratio": "margin ratio",
 					"close-position": "close position",
 					"modal-close": {

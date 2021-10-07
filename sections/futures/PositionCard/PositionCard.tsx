@@ -5,7 +5,7 @@ import { wei } from '@synthetixio/wei';
 import SpiralLines from 'assets/svg/app/future-position-background.svg';
 
 import Card from 'components/Card';
-import { FlexDivRow, FlexDivCol, FlexDivRowCentered } from 'styles/common';
+import { FlexDivRow, FlexDivCol, FlexDivRowCentered, Tooltip, InfoTooltip } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -86,7 +86,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								</StyledValue>
 							</InfoCol>
 							<InfoCol>
-								<StyledSubtitle>{t('futures.market.user.position.margin')}</StyledSubtitle>
+								<InfoTooltip
+									placement="top"
+									content={<div>{t('futures.market.user.position.remaining-margin-tooltip')}</div>}
+								>
+									<StyledSubtitle>
+										{t('futures.market.user.position.remaining-margin')}
+									</StyledSubtitle>
+								</InfoTooltip>
 								<StyledValue>
 									{formatCurrency(Synths.sUSD, position?.remainingMargin ?? zeroBN, { sign: '$' })}
 								</StyledValue>
