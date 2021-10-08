@@ -1,8 +1,9 @@
 import { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import { BigNumber } from '@ethersproject/bignumber';
 
 import { zeroBN } from 'utils/formatters/number';
-import { PositionDetail, FuturesPosition, PositionSide } from './types';
+import { PositionDetail, FuturesPosition, PositionSide, FuturesOpenInterest } from './types';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -65,4 +66,54 @@ export const mapFuturesPosition = (
 						: wei(notionalValue).div(wei(remainingMargin)).abs(),
 			  },
 	};
+};
+
+type MarketSizes = {
+	short: BigNumber;
+	long: BigNumber;
+};
+
+export const mapOpenInterest = async (
+	keys: string[],
+	contracts: ContractsMap
+): Promise<FuturesOpenInterest[]> => {
+	const openInterest: FuturesOpenInterest[] = [];
+	for (const key of keys) {
+		const contract = contracts[`FuturesMarket${key.substr(1)}`];
+		if (contract) {
+			const marketSizes: MarketSizes = await contract.marketSizes();
+			const shortSize = wei(marketSizes.short);
+			const longSize = wei(marketSizes.long);
+
+			if (shortSize.toNumber() === 0 && longSize.toNumber() === 0) {
+				openInterest.push({
+					asset: key,
+					ratio: {
+						long: 0.5,
+						short: 0.5,
+					},
+				});
+			} else if (shortSize.toNumber() === 0 || longSize.toNumber() === 0) {
+				openInterest.push({
+					asset: key,
+					ratio: {
+						long: shortSize.toNumber() === 0 ? 1 : 0,
+						short: longSize.toNumber() === 0 ? 1 : 0,
+					},
+				});
+			} else {
+				const longsBigger = longSize.gt(shortSize);
+				const combined = shortSize.add(longSize);
+
+				openInterest.push({
+					asset: key,
+					ratio: {
+						long: longSize.div(combined).toNumber(),
+						short: shortSize.div(combined).toNumber(),
+					},
+				});
+			}
+		}
+	}
+	return openInterest;
 };
