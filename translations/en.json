@@ -563,8 +563,8 @@
 					"max": "max",
 					"leverage": {
 						"title": "leverage",
-						"long": "long",
-						"short": "short",
+						"buy": "buy",
+						"sell": "sell",
 						"total-leverage": "Total leverage ≈ {{totalLeverage}}x",
 						"close-position": "100% close position + {{leverageDelta}}x leverage",
 						"partial-close-position": "{{closePositionDelta}}% close position"
@@ -608,7 +608,7 @@
 					"liquidation": "liquidation price",
 					"margin": "remaining margin",
 					"ratio": "margin ratio",
-					"close": "close",
+					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",
 						"size": "Size",

@@ -110,11 +110,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						</DataCol>
 						<DataCol style={{ justifyContent: 'flex-end' }}>
 							<CloseButton
+								isRounded={true}
 								variant="text"
 								onClick={() => setClosePositionModalIsVisible(true)}
 								disabled={!positionDetails}
 							>
-								{t('futures.market.user.position.close')}
+								{t('futures.market.user.position.close-position')}
 							</CloseButton>
 						</DataCol>
 					</RightHand>
@@ -239,8 +240,15 @@ const StyledValue = styled.div`
 
 const CloseButton = styled(Button)`
 	color: ${(props) => props.theme.colors.red};
+	background: ${(props) => props.theme.colors.navy};
+	padding: 0 10px;
 	&:disabled {
-		background: none;
+		color: ${(props) => props.theme.colors.silver};
+		background: ${(props) => props.theme.colors.navy};
 		opacity: 0.5;
+	}
+	&:hover:not(:disabled) {
+		color: ${(props) => props.theme.colors.red};
+		opacity: 0.9;
 	}
 `;
