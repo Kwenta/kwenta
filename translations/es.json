@@ -215,13 +215,13 @@
 		},
 		"summary-info": {
 			"gas-price-gwei": "precio del gas (GWEI)",
-			"fee": "tarifa (fee)",
-			"fee-cost": "coste de la tarifa",
+			"fee": "comisión (fee)",
+			"fee-cost": "coste de la comisión",
 			"button": {
 				"approve": "aprobar",
 				"approving": "aprobando",
-				"c-ratio-too-low": "c-ratio es demasiado bajo",
-				"fee-reclaim-period": "periodo de reclamación de tarifa",
+				"c-ratio-too-low": "el c-ratio es demasiado bajo",
+				"fee-reclaim-period": "periodo de reclamación de la comisión",
 				"insufficient-balance": "balance insuficiente",
 				"enter-amount": "introduzca la cantidad",
 				"select-synth": "seleccionar synth",
@@ -318,7 +318,7 @@
 			"title": "Tu Portfolio"
 		},
 		"synth-sort": {
-			"precio": "Precio",
+			"price": "Precio",
 			"24h-vol": "Volumen 24H ",
 			"24h-high": "Máximo 24H",
 			"24h-low": "Mínimo 24H",
@@ -338,14 +338,14 @@
 				"from": "De",
 				"to": "A",
 				"value": "Valor",
-				"fee-reclaim": "Reembolso/Reclamación de la tarifa (fee)",
+				"fee-reclaim": "Reembolso/Reclamación de la comisión (fee)",
 				"no-results": "No se han encontrado transacciones",
-				"tx-reclaim-fee-hint": "La transacción incurrió en un reembolso de tarifa (fee) si +ve. Sino, la fee tarifa reclmada.",
+				"tx-reclaim-fee-hint": "La transacción incurrió en un reembolso de comisión (fee) si +ve. Sino, la comisión (fee) fué reembolsada.",
 				"price-adjustment-hint": "Ajuste de precio actualmente en progreso"
 			}
 		},
 		"fee-reclaiming-synths": {
-			"title": " En Progreso",
+			"title": "En Progreso",
 			"row": {
 				"main-col-subtitle": "Ajuste de precio en progreso",
 				"main-col-complete-subtitle": "Ajuste de precio completado",
@@ -354,7 +354,7 @@
 				"col-remaining": "Restante"
 			},
 			"settling-fee": "Asentando (Settling)...",
-			"settle-fee": "Tarifa de asentamiento (Settle fee)"
+			"settle-fee": "Comisión de asentamiento (Settle fee)"
 		},
 		"deprecated": {
 			"info": "Synths deprecados pueden ser intercambiados por sUSD en cualquier momento a un tipo de redención fijo.",
@@ -494,7 +494,7 @@
 					},
 					"panel": {
 						"collateral": "Colateral",
-						"shorting": "Shorting",
+						"shorting": "Activo en corto",
 						"wallet-balance": "Balance en wallet"
 					}
 				}
@@ -502,7 +502,7 @@
 			"table": {
 				"id": "ID",
 				"date": "Fecha",
-				"shorting": "Shorting",
+				"shorting": "Activo en corto",
 				"collateral": "Colateral",
 				"liquidation-price": "Precio de liquidación",
 				"profit-loss": "Beneficios / Pérdidas",
@@ -559,7 +559,7 @@
 		"confirm-transaction": {
 			"title": "confirmar transacción",
 			"confirm-with-provider": "Confirma tu transacción a través de tu wallet.",
-			"exchange-fee-hint": "La tarifa (fee) del protocolo Synthetix por <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"exchange-fee-hint": "La comisión (fee) del protocolo Synthetix por <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
 			"price-adjustment-hint": "Esta transacción está sueja a un periodo de ajuste de precio. <0>Leer más.</0>"
 		},
 		"approve-transaction": {
@@ -631,8 +631,8 @@
 		},
 		"currency": {
 			"currency-amount": "Cantidad de <0>{{currencyKey}}</0> ",
-			"exchange-fee": "Tarifa (fee) por Exchange",
-			"currency-value": "Valor de <0>{{currencyKey}}</0>",
+			"exchange-fee": "Comisión (fee) por Exchange",
+			"currency-value": "Valor en <0>{{currencyKey}}</0>",
 			"estimated-currency-value": "<0>Valor del trade en {{currencyKey}}</0> ",
 			"currency-contract": "<0>Contrato de {{currencyKey}}</0>",
 			"currency-price": "<0>Precio de {{currencyKey}}</0> Price",
