@@ -1,14 +1,20 @@
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesDayTradeStats from 'queries/futures/useGetFuturesDayTradeStats';
 import Loader from 'components/Loader';
-import { useTranslation } from 'react-i18next';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { Synths } from 'constants/currency';
 
 export default function Statistics() {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const allVolumeQuery = useGetFuturesDayTradeStats();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const distributionData =
 		futuresMarketsQuery.data?.map((m) => ({
@@ -23,7 +29,12 @@ export default function Statistics() {
 			<Row bottomMargin="33px">
 				<GridItem>
 					<Label>Daily Volume ($USD)</Label>
-					<Value>$12,488,250.20</Value>
+					<Value>
+						{formatCurrency(Synths.sUSD, allVolumeQuery.data?.volume || zeroBN, {
+							sign: '$',
+							minDecimals: 2,
+						})}
+					</Value>
 				</GridItem>
 				<RowSpacer2 />
 				<GridItem>
@@ -34,12 +45,12 @@ export default function Statistics() {
 			<Row bottomMargin="40px">
 				<GridItem>
 					<Label>Total Wallets</Label>
-					<Value>178</Value>
+					<Value>200</Value>
 				</GridItem>
 				<RowSpacer3 />
 				<GridItem>
 					<Label>Daily Trades</Label>
-					<Value>538</Value>
+					<Value>{allVolumeQuery.data?.totalTrades || 0}</Value>
 				</GridItem>
 				<RowSpacer3 />
 				<GridItem>

@@ -1,9 +1,15 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import { zeroBN } from 'utils/formatters/number';
-import { PositionDetail, FuturesPosition, PositionSide, FuturesOpenInterest } from './types';
+import {
+	PositionDetail,
+	FuturesPosition,
+	PositionSide,
+	FuturesOpenInterest,
+	FuturesTrade,
+} from './types';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -116,4 +122,11 @@ export const mapOpenInterest = async (
 		}
 	}
 	return openInterest;
+};
+
+export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
+	return futuresTrades.reduce(
+		(acc: Wei, { size }: { size: string }) => acc.add(new Wei(size, 18, true).abs()),
+		wei(0)
+	);
 };

@@ -115,6 +115,7 @@ export const QUERY_KEYS = {
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
 	},
 	Futures: {
+		DayTradeStats: ['futures', 'dayTradeStats'],
 		Markets: ['futures', 'marketsSummaries'],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (currencyKey: string | null) => ['futures', 'tradingVolume', currencyKey],
