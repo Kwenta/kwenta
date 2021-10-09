@@ -1,6 +1,7 @@
 {
 	"languages": {
-		"en": "English"
+		"en": "English",
+		"es": "Spanish"
 	},
 	"meta": {
 		"description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage",
@@ -339,7 +340,7 @@
 				"value": "Value",
 				"fee-reclaim": "Fee Rebate/Reclaim",
 				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Trransaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
+				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
 				"price-adjustment-hint": "Price adjustment currently in progress"
 			}
 		},

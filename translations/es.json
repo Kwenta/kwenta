@@ -1,0 +1,742 @@
+{
+	"languages": {
+		"en": "Inglés",
+		"es": "Español"
+	},
+	"meta": {
+		"description": "Incrementa tu exposición a las criptomonedas, divisas, valores, indices, y materias primas en Ethereum con cero slippage (deslizamiento en el precio)",
+		"og": {
+			"title": "Kwenta",
+			"site-name": "Kwenta"
+		}
+	},
+	"header": {
+		"nav": {
+			"exchange": "exchange",
+			"dashboard": "dashboard",
+			"shorting": "cortos"
+		},
+		"networks-switcher": {
+			"l2": "Cambiar a L2",
+			"l1": "Cambiar a Layer 1",
+			"optimistic-gateway": "Optimistic L2 Gateway",
+			"optimistic-etherscan": "Optimistic Etherscan",
+			"learn-more": "Leer más",
+			"optimism-mainnet": "Optimism",
+			"optimism-testnet": "OΞ Kovan"
+		}
+	},
+	"homepage": {
+		"page-title": "Kwenta | trading de derivados con liquidez infinita",
+		"nav": {
+			"start-trading": "Comenzar Trading",
+			"wallet": "Conectar Wallet",
+			"why": "¿Por qué Kwenta?",
+			"how": "Como funciona",
+			"faq": "FAQ"
+		},
+		"hero": {
+			"title": "Mercado de derivados con cero slippage"
+		},
+		"assets": {
+			"title": "Invierte en activos reales y derivados en Ethereum",
+			"index": "Indices únicos",
+			"forex": "Divisas",
+			"equities": "Valores Tradicionales",
+			"crypto": "Criptomonedas",
+			"commodity": "Materias primas",
+			"short": "Posiciones en corto"
+		},
+		"features": {
+			"title": "características únicas de trading",
+			"infinite-liquidity": {
+				"title": "Liquidez infinita",
+				"copy": "Todo intercambio es peer-to-contract, utilizando la liquidez del protocolo Synthetix a través de su modelo modelo de pools. Esto es sin contraparte en el trade opuesto, y esencialmente liquidez infinita para los traders."
+			},
+			"zero-slippage": {
+				"title": "Cero slippage (deslizamiento en el precio)",
+				"copy": "Liquidez infinita significa que los traders nunca tendrán que preocuparse por cambiar las ordenes y ser afectados por el slippage (diferencia entre el precio aprobado y el precio finalmente ejecutado de la orden)."
+			},
+			"synthetic-futures": {
+				"title": "Synthetic futures",
+				"copy": "Una vez los futuros hayan sido terminados en el protocolo Synthetix, serán añadidos a Kwenta, ofreciendo contratos de futuros perpetuos sin necesidad de custodia o permiso previo para operar."
+			}
+		},
+		"l2": {
+			"title": "Ahora en Optimism capa 2",
+			"copy": "Kwenta puede ser utilizada en la solución de capa 2 de Optimism's para <0>bajas tarifas de gas</0> y <0> transacciones inmediatas</0>. Inverte como un trader de élite.",
+			"transaction-cost": "Tarifas de gas más bajas*",
+			"transaction-speed": "Velocidad de transacciones*",
+			"disclaimer": "* Estas estadísticas son aproximaciones. La experiencia del usuario puede diferir.",
+			"cta-buttons": {
+				"learn-more": "Leer más",
+				"switch-l2": "Cambiar a L2"
+			},
+			"markets": {
+				"title": "Mercados en tiempo real",
+				"copy": "Comenzar Trading ahora en Optimism (capa 2)"
+			}
+		},
+		"benefits": {
+			"title": "Sin las limitaciones de un exchange centralizado",
+			"peer-to-contract": {
+				"title": "Peer-to-contract (P2C) trading",
+				"copy": "Todas las órdenes de mercado son ejecutadas por los contratos inteligentes de Synthetix, por lo que los traders no tineen necesidad de preocuparse acerca de las limitaciones del modelo de intercambio P2P, tales como liquidez, slippage (deslizamiento en el precio), o libros de órdenes."
+			},
+			"trading-pair": {
+				"title": "Sin restricciones para operar en diferentes pares de activos",
+				"copy": "Cualquier Synth (activo sintético) puede ser cambiado instantáneamente a cualquier otro Synth, por lo que no estás limitado a un número de pares acotado por el exchange, lo cual es una restricción del modelo de exchange centralizado."
+			},
+			"permissionless": {
+				"title": "Sin permiso o custodia ",
+				"copy": "Kwenta es una dApp (aplicación descentralizada) que aprovecha el protocolo Synthetix, lo que significa que no hay necesidad de crear una cuenta, depositar o retirar, ni renunciar a la custodia de tus fondos."
+			}
+		},
+		"steps": {
+			"title": "Comenzar Trading en solo 3 pasos",
+			"one": {
+				"title": "Necesitarás una wallet web3 con ETH para el gas",
+				"subtitle": "Primer paso",
+				"copy": "Kwenta está en la blockchain Etherem, por lo que al igual que las demás dApps en Ethereum necesitarás una wallet web3 con ETH en ella para pagar el gas derivado de la ejecución de las transacciones. Entre las categorías más populares de wallets (billeteras) se incluyen hardware wallets, walllets de extensiones de navegador, y wallets del móvil."
+			},
+			"two": {
+				"title": "Adquiere sUSD (or cualquier otro Synth)",
+				"subtitle": "Segundo paso",
+				"copy": "Para empezar a hacer trading, necesitarás un activo derivado sintético soportado por Kwenta, llamados Synths. El Synth más accesible es el sUSD, el cual puede ser comprado en dApps tales como Uniswap, Curve, or 1inch."
+			},
+			"three": {
+				"title": "Utiliza Kwenta para hacer trading sobre la gama completa de Synths",
+				"subtitle": "Tercer paso",
+				"copy": "Una vez tengas sUSD o cualquier otro Synth, puedes hacer trades entre una amplia gama de Synths para elaborar un portfolio diverso de activos, todos en blockchain y sin renunciar la custodia de los mismos a un exchange centralizado!"
+			}
+		},
+		"faq": {
+			"title": "Preguntas Frecuentes",
+			"tabs": {
+				"explainer-video": "Video explicativo",
+				"getting-started": {
+					"title": "Primeros pasos",
+					"items": {
+						"qna1": {
+							"question": "¿Qué es Ethereum?",
+							"answer": "Ethereum permite la creacion de infraestructura that can exist entirely online, managed and run by a vast network of people, meaning that no-one controls it and it would be extremely difficult (if not impossible) to shut down. This puts it out of the reach of governments or other authorities.  Ethereum was created by a team of Bitcoin enthusiasts, who wanted to expand on its design of decentralized money to build out other decentralized use cases (‘decentralized’ means it’s not controlled by a central authority). There is a huge ecosystem of projects on the Ethereum blockchain, all of which can interact with each other."
+						},
+						"qna2": {
+							"question": "¿Qué es DeFi?",
+							"answer": "DeFi es una abreviatura de decentralised finance (finanzas descentralizadas), y representa un ecosistema de  herramientas financieras abiertas, productos, and protocolos en Ethereum. Ambos Kwenta y el protocolo Synthetix (sobre el cual está creado kwenta) son parte del ecosistema DeFi. DeFi se ejecuta sobre smart contracts (contratos inteligentes), los cuales son una característica clave de la blockchain Ethereum. Los smart contracts son programas o protocolos que ejecutan o controlan ciertos eventos y acciones acorde a como esté programados. Estos permiten la creación de una infraestructura que lleva a cabo ciertas tareas: por ejemplo, un smart contract que permite prestar y tomar prestado tendrá smart contracts que bloqueará los fondos depositados como collateral (garantía) y permitirá a sus usuarios pedir prestado otros activos contra su propio collateral."
+						},
+						"qna3": {
+							"question": "¿Qué es una dApp?",
+							"answer": "dApp es una abreviatura de decentralised application (aplicación descentralizada). Las dApps son interfaces de frontend que proveen acceso a protocolos de código abierto en la blockchain. Si el protocolo sobre el cual están desplegadas es públicamente accesible, entonces pueden haber multiples dApps suministrando diferentes interfaces de usuario para el/los mismo/s protocolo/s. Las dApps permiten a la gente utilizar wallets de criptomonedas para interactuar directamente con smart contracts, sin tener que crear una cuenta, depositar o retirar, dado que los usuarios nunca tendrán la necesidad de renunciar a la custodia de sus activos."
+						}
+					}
+				},
+				"trading-on-kwenta": {
+					"title": "Trading en Kwenta",
+					"items": {
+						"qna1": {
+							"question": "¿De dónde proviene la liquidez?",
+							"answer": "Kwenta está creada sobre el protocolo Synthetix, por lo que la liquidez a la que pueden acceder los traders de Synths (activos sintéticos) en Kwenta es en su totalidad creada por stakers de SNX en Synthetix."
+						},
+						"qna2": {
+							"question": "¿Cómo es posible el trading sin que hayan contrapartes?",
+							"answer": "No hay contrapartes directas para cada trade en el protocolo Synthetix, pero si se utiliza un modelo  de contrapartes similar en el cual  los stakers de SNX asumen parte del conjunto de deuda de Synthetix (debt pool) cuando crean sUSD. Para más detalles, consulte el <0>litepaper</0> de Synthetix."
+						},
+						"qna3": {
+							"question": "¿Cómo se calculan los costes en gas?",
+							"answer": "Las transacciones tienen un coste proporcional a la capacidad de procesamiento requerida para que los mineros de Ethereum la ejecuten. Kwenta utiliza el protocolo Synthetix , el cual es mucho más complejo que la mayoría de los otros proyectos en Ethereum, por lo que sus transacciones requieren más gas para ser ejecutadas."
+						}
+					}
+				}
+			}
+		},
+		"footer": {
+			"cta": {
+				"title": "Comenzar Trading hoy",
+				"button": "Ver Exchange"
+			}
+		}
+	},
+	"exchange": {
+		"page-title": "Exchange | Kwenta",
+		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"currency-card": {
+			"wallet-balance": "balance de la wallet",
+			"currency-selector": {
+				"select-synth": "selecciona synth",
+				"select-token": "selecciona token"
+			}
+		},
+		"market-details-card": {
+			"title": "Detalles del mercado",
+			"24h-vol": "Volumen 24H ",
+			"24h-high": "Máximo 24H",
+			"24h-low": "Mínimo 24H",
+			"market-cap": "Cap. de mercado",
+			"price-feed": "Indicador del Precio",
+			"opens-in": "Abre en",
+			"closes-in": "Cierra en"
+		},
+		"price-chart-card": {
+			"compare": "comparar",
+			"ratio": "ratio",
+			"overlay-messages": {
+				"frozen": {
+					"title": "El synth {{currencyKey}} ha sido congelado",
+					"subtitle": "Reajuste en progreso."
+				},
+				"market-closure": {
+					"title": "El mercado {{currencyKey}} ha sido cerrado",
+					"subtitle": "Reajuste en progreso.",
+					"after-hours": "Trading pool del mercado fuera de horario disponible <linkTag>{{linkText}}</linkTag>",
+					"here": "aquí"
+				},
+				"system-upgrade": {
+					"title": "Synth {{currencyKey}} pausado",
+					"subtitle": "Por favor consulte el Discord de Synthetix para más detalles."
+				},
+				"circuit-breaker": {
+					"title": "Cortacircuito activado para {{currencyKey}}",
+					"subtitle": "Reajuste en progreso"
+				},
+				"emergency": {
+					"title": "Apagado de emergencia activado para {{currencyKey}}",
+					"subtitle": "Reajuste en progreso"
+				}
+			},
+			"tooltip": {
+				"close": "cierre",
+				"high": "máximo",
+				"low": "mínimo",
+				"open": "apertura",
+				"price": "precio"
+			},
+			"no-data": "Sin datos"
+		},
+		"summary-info": {
+			"gas-price-gwei": "precio del gas (GWEI)",
+			"fee": "tarifa (fee)",
+			"fee-cost": "coste de la tarifa",
+			"button": {
+				"approve": "aprobar",
+				"approving": "aprobando",
+				"c-ratio-too-low": "c-ratio es demasiado bajo",
+				"fee-reclaim-period": "periodo de reclamación de tarifa",
+				"insufficient-balance": "balance insuficiente",
+				"enter-amount": "introduzca la cantidad",
+				"select-synth": "seleccionar synth",
+				"select-token": "seleccionar token",
+				"submit-order": "enviar orden",
+				"submitting-order": "enviando orden...",
+				"submitting-approval": "enviando approval...",
+				"approve-balancer": "aprobar contrato de balancer",
+				"add-more-collateral": "añadir más colateral"
+			}
+		},
+		"onboard": {
+			"message": "Tu wallet no tiene Synths. Compra <0>{{currencyKey}}</0> para hacer trading con Synths:",
+			"l2-message": "Tu wallet no tiene Synths. Crea <0>{{currencyKey}}</0> haciendo staking para hacer trading con Synths:",
+			"mint-button": "Ir a Staking"
+		},
+		"connect-wallet-card": {
+			"message": "Conecta tu wallet para empezar a hacer trading"
+		},
+		"footer-card": {
+			"market-closure": {
+				"button-label": "mercado cerrado",
+				"reasons": {
+					"frozen": {
+						"message": "El synth {{currencyKey}} ha sido congelado - reajuste en progreso."
+					},
+					"market-closure": {
+						"message": "El mercado {{currencyKey}} ha sido cerrado - reajuste en progreso."
+					},
+					"system-upgrade": {
+						"message": "Synth {{currencyKey}} pausado. Por favor consulte el Discord de Synthetix para más detalles."
+					},
+					"circuit-breaker": {
+						"message": "Cortacircuito activado para {{currencyKey}} - reajuste en progreso."
+					},
+					"emergency": {
+						"message": "Apagado de emergencia activado para {{currencyKey}} - reajuste en progreso."
+					},
+					"both-synths-suspended": {
+						"message": "Los Synths seleccionados están actualmente pausados - reajuste en progreso."
+					},
+					"after-hours": {
+						"message": "El mercado de valores está cerrado. Haz trading durante las horas de cierre en Balancer",
+						"button-label": "Abrir la pool de Balancer"
+					}
+				}
+			},
+			"get-l2-gas": {
+				"message": "No hay suficiente wETH de L2 para las tarifas (fees) de la transacción. Adquiere un poco vía Optimism Bridge:"
+			}
+		},
+		"common": {
+			"from": "de",
+			"into": "a"
+		},
+		"errors": {
+			"fee-reclamation": "Hay un periodo de prueba tras completar un trade. Por favor, espere aproximadamente {{waitingPeriod}} minutos antes de intentar intercambiar {{currencyKey}}"
+		},
+		"charts": {
+			"single": "simple",
+			"double": "doble"
+		}
+	},
+	"dashboard": {
+		"page-title": "Dashboard | Kwenta",
+		"trending": "Tendencia",
+		"watchlist": {
+			"title": "Watchlist"
+		},
+		"tabs": {
+			"nav": {
+				"synth-balances": "Balances de Synths",
+				"convert": "Conversor de Synths",
+				"crypto-balances": "Balances de criptomonedas",
+				"transactions": "Transacciones",
+				"deprecated": "Deprecado"
+			}
+		},
+		"onboard": {
+			"convert": "Synth Onramp",
+			"title": "Aprende como funciona",
+			"subtitle": "Empieza con Kwenta y haz trades sobre cualquier activo.",
+			"learn-more": "Leer más",
+			"how-it-works-modal": {
+				"title": "Como funciona"
+			},
+			"convert-card": {
+				"slippage-selector": {
+					"title": "Slippage"
+				}
+			}
+		},
+		"your-portfolio": {
+			"title": "Tu Portfolio"
+		},
+		"synth-sort": {
+			"precio": "Precio",
+			"24h-vol": "Volumen 24H ",
+			"24h-high": "Máximo 24H",
+			"24h-low": "Mínimo 24H",
+			"24h-change": "Cambio 24H"
+		},
+		"transactions": {
+			"synth-sort": {
+				"allSynths": "Todos los Synths"
+			},
+			"order-type-sort": {
+				"allOrderTypes": "Todos los tipos de órdenes",
+				"market": "Mercado",
+				"limit": "Límite"
+			},
+			"table": {
+				"orderType": "Tipo de órden",
+				"from": "De",
+				"to": "A",
+				"value": "Valor",
+				"fee-reclaim": "Reembolso/Reclamación de la tarifa (fee)",
+				"no-results": "No se han encontrado transacciones",
+				"tx-reclaim-fee-hint": "La transacción incurrió en un reembolso de tarifa (fee) si +ve. Sino, la fee tarifa reclmada.",
+				"price-adjustment-hint": "Ajuste de precio actualmente en progreso"
+			}
+		},
+		"fee-reclaiming-synths": {
+			"title": " En Progreso",
+			"row": {
+				"main-col-subtitle": "Ajuste de precio en progreso",
+				"main-col-complete-subtitle": "Ajuste de precio completado",
+				"col-trades": "Trades",
+				"col-debt-surplus": "Deuda/Superávit",
+				"col-remaining": "Restante"
+			},
+			"settling-fee": "Asentando (Settling)...",
+			"settle-fee": "Tarifa de asentamiento (Settle fee)"
+		},
+		"deprecated": {
+			"info": "Synths deprecados pueden ser intercambiados por sUSD en cualquier momento a un tipo de redención fijo.",
+			"button": {
+				"default": "Redimir Todo",
+				"redeeming": "Pendiente"
+			},
+			"susd-total": "Total sUSD"
+		}
+	},
+	"shorting": {
+		"page-title": "Shorting | Kwenta",
+		"common": {
+			"collateral": "colateral",
+			"posting": "posting",
+			"shorting": "shorting",
+			"interestRate": "Tipo de interés",
+			"cRatio": "C-Ratio"
+		},
+		"shorting-card": {
+			"summary-info": {
+				"button": {
+					"c-ratio-too-low": "El ratio de colateral (c-ration) es demasiado bajo",
+					"add-more-collateral": "añadir más colateral",
+					"min-collateral": "El colateral mín. es <0>{{amount}}</0> <1>{{currencyKey}}</1>"
+				}
+			}
+		},
+		"c-ratio": {
+			"safe": "seguro",
+			"safeMax": "máximo seguro",
+			"highRisk": "alto riesgo"
+		},
+		"stats": {
+			"title": "estadísticas de cortos",
+			"table": {
+				"asset": "activo",
+				"apr": "TAE",
+				"open-interest": "posiciones abiertas",
+				"total": "total"
+			}
+		},
+		"rewards": {
+			"title": "beneficios disponibles",
+			"button": {
+				"claim": "recoger",
+				"claiming": "recogiendo..."
+			},
+			"tx-confirm": {
+				"claiming": "recogiendo"
+			}
+		},
+		"history": {
+			"title": "tu posiciones",
+			"assets-sort": {
+				"allAssets": "Todos los activos"
+			},
+			"dates-sort": {
+				"all-dates": "Todas las fechas",
+				"past-week": "Última Semana",
+				"past-month": "Último mes",
+				"past-year": "Último año"
+			},
+			"sizes-sort": {
+				"all-sizes": "Todos los tamaños"
+			},
+			"manage-short": {
+				"page-title": "Shorting | Kwenta",
+				"no-results": "Posición en corto no encontrada",
+				"title": "Administrar posición #{{loanId}}",
+				"close": "Cerrar",
+				"subtitle": "Detalles de la posición",
+				"fields": {
+					"collateral": "Colateral",
+					"liquidation-price": "Precio de liquidación",
+					"profit-loss": "Beneficios / Pérdidas",
+					"shorting": "En corto (shorting)",
+					"collateral-ratio": "Ratio de colateral",
+					"date": "Fecha de apertura",
+					"interest-rate": "Tipo de interés",
+					"accrued-interest": "Intereses devengados"
+				},
+				"collateral-ratio-tooltip": {
+					"line1": "La posición estará en riesgo de liquidación",
+					"line2": "si el ratio de colateral cae por debajo de del mínimo de {{percent}}"
+				},
+				"interaction-disabled": {
+					"title": "Hay un periodo de espera tras interactuar con un préstamos.",
+					"message": {
+						"part1": "Por favor, espere aproximadamente",
+						"part2": "antes de volver a interactuar con él."
+					}
+				},
+				"sections": {
+					"add-collateral": {
+						"nav-title": "Añadir Collateral",
+						"tx-confirm": {
+							"base-currency-label": "posting"
+						}
+					},
+					"remove-collateral": {
+						"nav-title": "Retirar Colateral",
+						"tx-confirm": {
+							"base-currency-label": "retirando"
+						},
+						"button": {
+							"amount-greater-than-collateral": "La cantidad es mayor al colateral"
+						}
+					},
+					"decrease-position": {
+						"nav-title": "Reducir Posición",
+						"tx-confirm": {
+							"base-currency-label": "reduciendo posición"
+						},
+						"button": {
+							"amount-greater-than-debt": "Cantidad mayor que la deuda",
+							"close-position-instead": "Cerrar posición en lugar de reembolsar"
+						}
+					},
+					"increase-position": {
+						"nav-title": "Incrementar Posición",
+						"tx-confirm": {
+							"base-currency-label": "increasing posición"
+						}
+					},
+					"close-position": {
+						"nav-title": "Cerrar Posición",
+						"tx-confirm": {
+							"quote-currency-label": "volviendo",
+							"base-currency-label": "recibiendo"
+						},
+						"close-button-label": "Close posición",
+						"total-to-replay-label": "Total a reembolsar",
+						"button": {
+							"insufficient-balance-to-repay": "Balance insuficiente para reembolsar"
+						}
+					},
+					"panel": {
+						"collateral": "Colateral",
+						"shorting": "Shorting",
+						"wallet-balance": "Balance en wallet"
+					}
+				}
+			},
+			"table": {
+				"id": "ID",
+				"date": "Fecha",
+				"shorting": "Shorting",
+				"collateral": "Colateral",
+				"liquidation-price": "Precio de liquidación",
+				"profit-loss": "Beneficios / Pérdidas",
+				"shorting": "En corto (shorting)",
+				"collateral-ratio": "Ratio de colateral",
+				"no-results": "No sé encontraron posiciones en corto",
+				"accrued-interest": "Intereses devengados"
+			}
+		}
+	},
+	"not-found": {
+		"page-title": "No encontrado | Kwenta",
+		"title": "404",
+		"subtitle": "Página no encontrada."
+	},
+	"system-status": {
+		"page-title": "Mantenimiento | Kwenta",
+		"title": "Kwenta no está operativa ahora por razones de mantenimiento",
+		"subtitle": "Le pedimos disculpas por cualquier inconveniente causado, en breve estará operativa de vuelta."
+	},
+	"modals": {
+		"select-currency": {
+			"title": "seleccionar synth",
+			"header": {
+				"search-results": "buscar resultados",
+				"category-synths": "synths {{category}}",
+				"all-synths": "todos los synths",
+				"your-synths": "tus synths",
+				"holdings": "activos"
+			},
+			"search": {
+				"placeholder": "buscar synths",
+				"empty-results": "No se encontraron resultados. Por favor, inténtelo de nuevo."
+			}
+		},
+		"select-token": {
+			"title": "seleccionar token",
+			"header": {
+				"search-results": "buscar resultados",
+				"all-tokens": "todos los tokens",
+				"holdings": "activos"
+			},
+			"search": {
+				"placeholder": "buscar tokens",
+				"empty-results": "No se encontraron resultados. Por favor, inténtelo de nuevo."
+			}
+		},
+		"select-short-currency": {
+			"title": "seleccionar activo en corto",
+			"header": {
+				"your-synths": "tu balance en <0>{{currencyKey}}</0> "
+			}
+		},
+		"confirm-transaction": {
+			"title": "confirmar transacción",
+			"confirm-with-provider": "Confirma tu transacción a través de tu wallet.",
+			"exchange-fee-hint": "La tarifa (fee) del protocolo Synthetix por <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"price-adjustment-hint": "Esta transacción está sueja a un periodo de ajuste de precio. <0>Leer más.</0>"
+		},
+		"approve-transaction": {
+			"title": "aprobar transacción",
+			"confirm-with-provider": "Confirma tu transacción a través de tu wallet."
+		},
+		"afterHours": {
+			"title": "Trading Pool del mercado fuera de horario",
+			"approve": "Aprobar",
+			"balancer-pool": "Pool de Balancer",
+			"slippage-levels": {
+				"low": "Bajo",
+				"medium": "Medio",
+				"high": "Alto"
+			},
+			"powered-by-balancer": "Powered by Balancer",
+			"max-slippage-tolerance": "Tolerancia Max Slippage",
+			"estimated-slippage": "Slippage estimado",
+			"confirm-text": "Confirma tu transacción with tu web3 provider",
+			"notice-text": "Durante las horas de negociación te suministramos los precios exactos basados en los datos de Chainlink. Después del horario de negociación tienes la posibilidad de continuar haciéndolo al precio en Balancer. Por favor, tenga en cuenta las posibles desviaciones de precio así como slippage en grandes órdenes de mercado."
+		},
+		"settings": {
+			"title": "configuración",
+			"options": {
+				"currency": "moneda",
+				"language": "idioma"
+			}
+		},
+		"wallet": {
+			"title": "opciones de wallet"
+		},
+		"notifications": {
+			"title": "notificaciones",
+			"fee-reclaiming-synths": {
+				"title": "Fee reclaiming currencies"
+			},
+			"open-orders": {
+				"title": "órdenes pendientes",
+				"no-results": "No hay órdenes pendientes"
+			},
+			"recent-notifications": {
+				"title": "notificaciones recientes",
+				"no-results": "No hay transacciones recientes"
+			},
+			"deprecated-synths": {
+				"title": "Synths deprecados",
+				"description": "Tu balance incluye synths deprecados los cuales serán congelados hasta su redención.",
+				"short-description": "Redimir synths deprecados ({{amount}} {{asset}})",
+				"button": {
+					"default": "Redimir",
+					"redeeming": "Redimiendo"
+				}
+			},
+			"all-notifications": {
+				"title": "todas las notificaciones",
+				"no-results": "Nada"
+			},
+			"view-all": "ver todas"
+		},
+		"deprecated-synths": {
+			"from": "de",
+			"to": "a"
+		}
+	},
+	"common": {
+		"order-type": {
+			"market": "mercado",
+			"limit": "límite"
+		},
+		"currency": {
+			"currency-amount": "Cantidad de <0>{{currencyKey}}</0> ",
+			"exchange-fee": "Tarifa (fee) por Exchange",
+			"currency-value": "Valor de <0>{{currencyKey}}</0>",
+			"estimated-currency-value": "<0>Valor del trade en {{currencyKey}}</0> ",
+			"currency-contract": "<0>Contrato de {{currencyKey}}</0>",
+			"currency-price": "<0>Precio de {{currencyKey}}</0> Price",
+			"synthetic-currency-name": "{{currencyName}} sintético",
+			"trade-to-currency": "Convertir a <0>{{currencyKey}}</0>",
+			"buy-currency": "Comprar <0>{{currencyKey}}</0>",
+			"get-currency": "Conseguir <0>{{currencyKey}}</0>",
+			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> por <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
+			"swap-currency": "Cambiar por <0>{{currencyKey}}</0>",
+			"trade-into": "Convertir a <0>{{currencyKey}}</0>",
+			"price-adjustment": "Ajuste de precio",
+			"deprecated": "Deprecado"
+		},
+		"total-assets": "{{total}} activos",
+		"total-results": "{{total}} resultados",
+		"currency-category": {
+			"crypto": "cripto",
+			"forex": "divisas",
+			"commodity": "materias primas",
+			"equities": "valores"
+		},
+		"contract": "contrato",
+		"search-results": "buscar resultados",
+		"chart-periods": {
+			"4H": "4H",
+			"1D": "1D",
+			"1W": "1S",
+			"1M": "1M"
+		},
+		"chart-types": {
+			"compare": "comparar",
+			"ratio": "ratio",
+			"candlesticks": "velas"
+		},
+		"transaction": {
+			"revert-reason": "Error: {{reason}}",
+			"error": "Ocurrió un error inesperado.",
+			"reattempt": "Inténtelo de nuevo",
+			"transaction-sent": "Tu transacción ha sido enviada a la red.",
+			"transaction-failed": "Tu transacción ha fallado",
+			"transaction-confirmed": "Tu transacción ha sido confirmada!"
+		},
+		"price": "precio",
+		"asset": "activo",
+		"cancel": "cancelar",
+		"order-types": {
+			"market": "orden de mercado",
+			"limit": "orden límite"
+		},
+		"features": {
+			"coming-soon": "Próximamente"
+		},
+		"wallet": {
+			"connect-wallet": "conectar wallet",
+			"switch-wallet": "cambiar wallet",
+			"switch-accounts": "cambiar cuentas",
+			"disconnect-wallet": "desconectar wallet"
+		},
+		"tx-status": {
+			"waiting": "Esperando",
+			"open": "Abrir",
+			"closed": "Cerrar",
+			"closing": "Cerrando",
+			"in": "Recibida",
+			"out": "Enviada",
+			"complete": "Completada",
+			"pending": "Pendiente",
+			"confirmed": "Confirmada",
+			"cancelled": "Cancelada",
+			"failed": "fallida"
+		},
+		"switch": "cambiar",
+		"gas-prices": {
+			"average": "Medio",
+			"fast": "Rápido",
+			"fastest": "Más rápido"
+		},
+		"custom": "Personalizado",
+		"edit": "editar",
+		"powered-by": "Powered by",
+		"dex-aggregators": {
+			"1inch": {
+				"title": "Agregador DEX - 1inch.exchange"
+			},
+			"balancer": {
+				"title": "Balancer"
+			}
+		},
+		"totals": {
+			"total-synth-value": "valor total de synths",
+			"your-currencyKey-balance": "tu balance en <0>{{currencyKey}}</0>"
+		},
+		"pagination": {
+			"page": "Página",
+			"page-of-total-pages": "{{page}} de {{totalPages}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
+		},
+		"min": "min"
+	}
+}
