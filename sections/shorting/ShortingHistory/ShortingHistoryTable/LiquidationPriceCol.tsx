@@ -53,7 +53,7 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 
 	const liquidationPrice = useMemo(
 		() =>
-			synthBorrowedAmount && synthBorrowedAmount.gt(0)
+			synthBorrowedAmount && minCollateralRatio && synthBorrowedAmount.gt(0)
 				? collateralLockedAmount
 						.mul(collateralLockedPrice)
 						.div(synthBorrowedAmount.mul(minCollateralRatio))
