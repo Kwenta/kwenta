@@ -1,14 +1,18 @@
 import { FC, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
+import Wei from '@synthetixio/wei';
 
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { Synths } from 'constants/currency';
+import Select from 'components/Select';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivCentered } from 'styles/common';
 import { formatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
-import Wei from '@synthetixio/wei';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import ROUTES from 'constants/routes';
 
 type TradeSizeInputProps = {
 	balance: Wei;
@@ -20,6 +24,9 @@ type TradeSizeInputProps = {
 	balanceLabel: string;
 };
 
+const assetToCurrencyOption = (asset: string) =>
+	({ value: asset, label: asset } as { value: CurrencyKey; label: CurrencyKey });
+
 const TradeSizeInput: FC<TradeSizeInputProps> = ({
 	amount,
 	onAmountChange,
@@ -30,12 +37,31 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 	handleOnMax,
 }) => {
 	const { t } = useTranslation();
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const router = useRouter();
+	const markets = futuresMarketsQuery?.data ?? [];
 	const amountValue = Number(amount) * assetRate;
 	return (
 		<InputRow>
 			<StyledFlexDivCentered>
-				<CurrencyIcon currencyKey={asset} />
-				<CurrencyLabel>{asset}</CurrencyLabel>
+				<SelectContainer>
+					<Select
+						formatOptionLabel={(option) => (
+							<FlexDivRowCentered>
+								<CurrencyIcon currencyKey={option.value} />
+								<CurrencyLabel>{option.value}</CurrencyLabel>
+							</FlexDivRowCentered>
+						)}
+						onChange={(x) => {
+							// Types are not perfect from react-select, this should always be true (just helping typescript)
+							if (x && 'value' in x) {
+								router.push(ROUTES.Futures.Market.MarketPair(x.value));
+							}
+						}}
+						value={assetToCurrencyOption(asset)}
+						options={markets.map((x) => assetToCurrencyOption(x.asset))}
+					/>
+				</SelectContainer>
 				<InputContainer>
 					<FlexDivCol>
 						<InputAmount
@@ -58,6 +84,10 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 		</InputRow>
 	);
 };
+const SelectContainer = styled.div`
+	min-width: 120px;
+	margin-right: 10px;
+`;
 
 const InputRow = styled(FlexDivCol)`
 	width: 100%;
