@@ -554,7 +554,7 @@
 				"rate": "24H funding rate"
 			},
 			"trade": {
-				"market": "market",
+				"market": "isolated market",
 				"title": "trade",
 				"input": {
 					"buy": "buy",
