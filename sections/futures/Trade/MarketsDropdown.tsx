@@ -1,6 +1,6 @@
 import Select from 'components/Select';
 import React from 'react';
-import { FlexDivRowCentered } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useRouter } from 'next/router';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -21,12 +21,13 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	return (
 		<SelectContainer>
 			<Select
-				height={48}
+				controlHeight={48}
+				menuWidth={'100%'}
 				formatOptionLabel={(option) => (
-					<FlexDivRowCentered>
+					<FlexDivCentered>
 						<CurrencyIcon currencyKey={option.value} />
 						<CurrencyLabel>{option.value}</CurrencyLabel>
-					</FlexDivRowCentered>
+					</FlexDivCentered>
 				)}
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
@@ -49,8 +50,7 @@ const CurrencyLabel = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	margin-right: 12px;
-	margin-left: 2px;
+	margin-left: 5px;
 `;
 
 export default MarketsDropdown;
