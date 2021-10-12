@@ -29,8 +29,8 @@ function Select<T>(props: Props<T>) {
 				border: `1px solid ${colors.navy}`,
 				borderRadius: '4px',
 				outline: 'none',
-				minHeight: 'unset',
-				height: state.selectProps.controlHeight ?? 'unset',
+				minHeight: props.height ?? 'unset',
+				height: props.height ?? state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
 					border: `1px solid rgba(255, 255, 255, 0.1)`,
 				},
