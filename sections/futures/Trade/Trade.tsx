@@ -5,7 +5,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivCol, FlexDivRow, FlexDivColCentered } from 'styles/common';
+import { FlexDivCol, FlexDivRow, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import { useState } from 'react';
 import { Synths } from 'constants/currency';
 
@@ -34,6 +34,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { gasPriceInWei } from 'utils/network';
+import MarketsDropdown from './MarketsDropdown';
 
 type TradeProps = {};
 
@@ -226,6 +227,10 @@ const Trade: React.FC<TradeProps> = () => {
 	return (
 		<Panel>
 			<TopRow>
+				<FlexDivRow>
+					<Title>{t('futures.market.trade.market')}</Title>
+				</FlexDivRow>
+				<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 				<FlexDivRow>
 					<Title>{t('futures.market.trade.title')}</Title>
 				</FlexDivRow>
