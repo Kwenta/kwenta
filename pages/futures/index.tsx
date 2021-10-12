@@ -11,9 +11,10 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 
 import { DesktopOnlyView } from 'components/Media';
 
-import WalletOverview from 'sections/futures/WalletOverview';
-import Markets from 'sections/futures/Markets';
 import Hero from 'sections/futures/Hero';
+import Markets from 'sections/futures/Markets';
+import Splash from 'sections/futures/Splash';
+import WalletOverview from 'sections/futures/WalletOverview';
 import { FuturesMarket } from 'queries/futures/types';
 
 const Futures: FC = () => {
@@ -26,26 +27,32 @@ const Futures: FC = () => {
 	);
 	const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
 
+	const showSplash = true;
+
 	return (
 		<>
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<PageContent>
-					<FullHeightContainer>
-						<MainContent>
-							<Hero />
-							<Markets />
-						</MainContent>
-						<DesktopOnlyView>
-							<StyledRightSideContent>
-								<WalletOverview positions={futuresMarketsPositions} />
-							</StyledRightSideContent>
-						</DesktopOnlyView>
-					</FullHeightContainer>
-				</PageContent>
-			</AppLayout>
+			{showSplash ? (
+				<Splash />
+			) : (
+				<AppLayout>
+					<PageContent>
+						<FullHeightContainer>
+							<MainContent>
+								<Hero />
+								<Markets />
+							</MainContent>
+							<DesktopOnlyView>
+								<StyledRightSideContent>
+									<WalletOverview positions={futuresMarketsPositions} />
+								</StyledRightSideContent>
+							</DesktopOnlyView>
+						</FullHeightContainer>
+					</PageContent>
+				</AppLayout>
+			)}
 		</>
 	);
 };
