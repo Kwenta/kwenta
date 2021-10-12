@@ -16,7 +16,7 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 
 import { DesktopOnlyView } from 'components/Media';
 
-import { isWalletConnectedState, isL2State, isL2KovanState } from 'store/wallet';
+import { isWalletConnectedState, isL2State, isL2MainnetState } from 'store/wallet';
 import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 
@@ -25,17 +25,18 @@ const Shorting: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
 	const isL2 = useRecoilValue(isL2State);
-	const isL2Kovan = useRecoilValue(isL2KovanState);
 
 	const router = useRouter();
 
 	const redirectToHome = useCallback(() => router.push(ROUTES.Dashboard.Home), [router]);
 
+	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+
 	useEffect(() => {
-		if (!isL2Kovan) {
+		if (isL2Mainnet) {
 			redirectToHome();
 		}
-	}, [isL2Kovan, redirectToHome]);
+	}, [isL2Mainnet, redirectToHome]);
 
 	return (
 		<>
