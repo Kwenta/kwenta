@@ -605,10 +605,10 @@
 					"roi": "ROI:",
 					"entry": "entry price",
 					"liquidation": "liquidation price",
-					"remaining-margin-tooltip": "Remaining margin is calculated by xxxxx",
+					"remaining-margin-tooltip": "Remaining margin is your initial margin + your unrealized profit or loss + funding.",
 					"remaining-margin": "remaining margin",
 					"margin-ratio": "margin ratio",
-					"margin-ratio-tooltip": "Margin ratio is calculated by xxxx",
+					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
 					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",
