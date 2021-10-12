@@ -215,10 +215,12 @@ export const Tooltip = styled(Tippy)`
 	border-radius: 4px;
 `;
 
-export const InfoTooltip = styled(Tooltip)`
+export const InfoTooltip = styled(Tippy)`
 	font-size: 12px;
-	.tippy-content {
-		padding: 5px;
+	background-color: ${(props) => props.theme.colors.navy};
+	color: ${(props) => props.theme.colors.white};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.navy};
 	}
 `;
 
