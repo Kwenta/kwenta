@@ -26,7 +26,7 @@
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.10",
 		"@synthetixio/contracts-interface": "2.50.4-ovm",
-		"@synthetixio/data": "2.49.0",
+		"@synthetixio/data": "2.50.4-ovm",
 		"@synthetixio/optimism-networks": "2.46.3",
 		"@synthetixio/providers": "2.49.0",
 		"@synthetixio/queries": "2.50.4-ovm",
