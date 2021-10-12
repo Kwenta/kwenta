@@ -30,7 +30,7 @@ const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[
 			const response = await request(
 				network && network.name === 'kovan'
 					? SHORT_GRAPH_ENDPOINT_KOVAN
-					: network.id === 69 // OVM KOVAN - network.name === 'unknown'
+					: network.id === 69
 					? SHORT_GRAPH_ENDPOINT_OVM_KOVAN
 					: SHORT_GRAPH_ENDPOINT,
 				gql`
