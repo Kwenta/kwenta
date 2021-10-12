@@ -18,7 +18,7 @@ jobs:
       - name: Update @synthetixio/contracts-interface dependency
         run: |
           npm install --legacy-peer-deps
-          npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }} --save-exact
+          npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }}
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
