@@ -47,6 +47,7 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const [amount, setAmount] = useState<string>('');
+	const [maxAmountSelected, setMaxAmountSelected] = useState(false);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [actionTab, setActionTab] = useState<ACTIONS>(ACTIONS.DEPOSIT);
@@ -161,14 +162,18 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 				))}
 			</ActionTabsRow>
 			<MarginInput
-				amount={amount}
+				amount={maxAmountSelected ? wei(amount).toString(1) : amount}
 				assetRate={sUSDPriceRate}
-				onAmountChange={(value) => setAmount(value)}
+				onAmountChange={(value) => {
+					setMaxAmountSelected(false);
+					setAmount(value);
+				}}
 				balance={isDeposit ? sUSDBalance : accessibleMargin}
 				asset={Synths.sUSD}
-				handleOnMax={() =>
-					setAmount(isDeposit ? sUSDBalance.toString() : accessibleMargin.toString())
-				}
+				handleOnMax={() => {
+					setMaxAmountSelected(true);
+					setAmount(isDeposit ? sUSDBalance.toString() : accessibleMargin.toString());
+				}}
 				balanceLabel={t('futures.market.trade.margin.balance')}
 			/>
 			<FlexDivCol>

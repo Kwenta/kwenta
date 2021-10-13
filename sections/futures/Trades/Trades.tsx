@@ -69,7 +69,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded }) => {
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<PositionHistory>) => (
 							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.asset} />
+								<CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} />
 								<StyledPositionSize>
 									{formatCryptoCurrency(cellProps.value, {
 										currencyKey: cellProps.row.original.asset,

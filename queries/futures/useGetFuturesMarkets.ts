@@ -9,13 +9,13 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
 
-const useGetFuturesMarkets = (options?: UseQueryOptions<[FuturesMarket]>) => {
+const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
-	return useQuery<[FuturesMarket]>(
+	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets,
 		async () => {
 			const {
