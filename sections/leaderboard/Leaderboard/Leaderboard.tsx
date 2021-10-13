@@ -1,24 +1,21 @@
 import Table from 'components/Table';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
 import { wei } from '@synthetixio/wei';
 import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
-import useGetPnLs from 'queries/futures/useGetPnLs';
+import useGetStats from 'queries/futures/useGetStats';
 
 const Leaderboard: FC = () => {
 	const { t } = useTranslation();
 
 	const participantsQuery = useGetRegisteredParticpants();
-	const participants = participantsQuery.data ?? [];
-	console.log('PARTICIPANTS', participants, useGetRegisteredParticpants());
+	const participants = useMemo(() => participantsQuery.data ?? [], [participantsQuery]);
 
-	const pnlQueries = useGetPnLs(participants.map(({ address }) => address));
+	const pnlQueries = useGetStats(participants.map(({ address }) => address));
 	const pnls: any = pnlQueries.map((query) => query.data);
 	const pnlMap = Object.assign({}, ...pnls);
 
@@ -27,14 +24,13 @@ const Leaderboard: FC = () => {
 			.map((participant) => ({
 				//rank: 1,
 				trader: participant.username,
-				totalTrades: 24,
-				liquidations: 1,
+				totalTrades: (pnlMap[participant.address]?.totalTrades ?? wei(0)).toNumber(),
+				liquidations: (pnlMap[participant.address]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
-				pnl: (pnlMap[participant.address] ?? wei(0)).toNumber(),
+				pnl: (pnlMap[participant.address]?.pnl ?? wei(0)).toNumber(),
 			}))
 			.sort((a, b) => b.pnl - a.pnl);
 	}, [participants, pnlMap]);
-	console.log(data, data.length);
 
 	const getMedal = (position: number) => {
 		switch (position) {
@@ -84,21 +80,6 @@ const Leaderboard: FC = () => {
 						width: 175,
 						sortable: true,
 					},
-					/*{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.24h-pnl')}</TableHeader>,
-						accessor: '24h',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: 175,
-						sortable: true,
-					},*/
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
 						accessor: 'pnl',
@@ -134,19 +115,6 @@ const ColorCodedPrice = styled(Currency.Price)`
 			: props.theme.colors.white};
 `;
 
-const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
-`;
-
-const StyledLinkIcon = styled(Svg)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
-	}
-`;
-
 const StyledTable = styled(Table)`
 	margin-top: 16px;
 	background-color: black;
@@ -161,24 +129,6 @@ const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
 	align-items: center;
-`;
-
-const StyledCurrencyKey = styled.span`
-	color: ${(props) => props.theme.colors.white};
-	padding-right: 10px;
-`;
-
-const StyledPrice = styled.span`
-	color: ${(props) => props.theme.colors.silver};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
 `;
 
 export default Leaderboard;

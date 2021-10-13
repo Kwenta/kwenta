@@ -7,32 +7,35 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import request, { gql } from 'graphql-request';
 
-const useGetPnLs = (accounts: string[], options?: UseQueryOptions<any>) => {
+const useGetStats = (accounts: string[], options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 
 	return useQueries(
 		accounts.map((account) => {
 			return {
-				queryKey: QUERY_KEYS.Futures.PnLs(account),
+				queryKey: QUERY_KEYS.Futures.Stats(account),
 				queryFn: async () => {
 					const response = await request(
 						FUTURES_ENDPOINT,
 						gql`
-							query userPnL($account: String!) {
-								futuresPnLs(where: { account: $account }) {
+							query userStats($account: String!) {
+								futuresStats(where: { account: $account }) {
 									account
 									pnl
+									liquidations
+									totalTrades
 								}
 							}
 						`,
 						{ account: account }
 					);
-					0x460f0f944aa6736903cb591e89f9111ac0ca7e7b;
-					0x460f0f944aa6736903cb591e89f9111ac0ca7e7b;
-					console.log(response, account, 'RES');
 					return {
-						[account]: new Wei(response?.futuresPnLs[0]?.pnl ?? 0, 18, true),
+						[account]: {
+							pnl: new Wei(response?.futuresStats[0]?.pnl ?? 0, 18, true),
+							liquidations: new Wei(response?.futuresStats[0]?.liquidations ?? 0),
+							totalTrades: new Wei(response?.futuresStats[0]?.totalTrades ?? 0),
+						},
 					};
 				},
 				enabled: isAppReady && isL2 && !!accounts.length,
@@ -42,4 +45,4 @@ const useGetPnLs = (accounts: string[], options?: UseQueryOptions<any>) => {
 	);
 };
 
-export default useGetPnLs;
+export default useGetStats;
