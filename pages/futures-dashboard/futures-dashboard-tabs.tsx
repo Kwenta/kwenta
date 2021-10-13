@@ -13,7 +13,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from '@synthetixio/contracts-interface';
-// import Trades from 'sections/futures/Trades';
+import AllAssetsTradeHistory from './all-assets-trade-history';
 
 enum FuturesDashboardTab {
 	POSITION = 'position',
@@ -93,11 +93,7 @@ const FuturesDashboardTabs = () => {
 					})}
 			</TabPanel>
 			<TabPanel name={FuturesDashboardTab.TRADES} activeTab={activeTab}>
-				{/* <Trades
-					history={positionHistory}
-					isLoading={futuresPositionHistoryQuery.isLoading}
-					isLoaded={futuresPositionHistoryQuery.isFetched}
-				/> */}
+				<AllAssetsTradeHistory />
 			</TabPanel>
 		</Wrapper>
 	);
