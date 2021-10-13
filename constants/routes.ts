@@ -48,6 +48,11 @@ export const ROUTES = {
 				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'trades', 'tab'),
 		},
 	},
+	FuturesDashboard: {
+		Home: '/futures-dashboard',
+		Position: normalizeRoute(`/futures-dashboard`, 'position', 'tab'),
+		Trades: normalizeRoute(`/futures-dashboard`, 'trades', 'tab'),
+	},
 	Leaderboard: {
 		Home: '/leaderboard',
 		Leaderboard: normalizeRoute('/leaderboard', 'leaderboard', 'tab'),

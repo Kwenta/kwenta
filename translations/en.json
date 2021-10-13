@@ -15,7 +15,8 @@
 			"dashboard": "dashboard",
 			"shorting": "shorting",
 			"futures": "futures",
-			"leaderboard": "leaderboard"
+			"leaderboard": "leaderboard",
+			"futures-dashboard": "futures dashboard"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
@@ -753,6 +754,15 @@
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		}
+	},
+	"futures-dashboard": {
+		"page-title": "Futures Dashboard | Kwenta",
+		"position": {
+			"tab": "open positions"
+		},
+		"trades": {
+			"tab": "history"
 		}
 	},
 	"common": {
