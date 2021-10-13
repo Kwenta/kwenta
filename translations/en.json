@@ -652,6 +652,16 @@
 				"statistics": "Statistics"
 			}
 		},
+		"leaderboard": {
+			"table": {
+				"rank": "Rank",
+				"trader": "Trader",
+				"total-trades": "Total Trades",
+				"liquidations": "Liquidations",
+				"24h-pnl": "24H PnL",
+				"total-pnl": "Total PnL"
+			}
+		},
 		"statistics": {
 			"failed-loading": "Failed to fetch results.",
 			"empty-results": "No results found.",

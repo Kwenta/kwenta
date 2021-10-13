@@ -136,6 +136,8 @@ export const QUERY_KEYS = {
 			markets,
 			walletAddress,
 		],
+		Participants: () => ['futures', 'participants'],
+		Stats: (walletAddress: string) => ['futures', 'stats', walletAddress],
 	},
 };
 

@@ -223,6 +223,8 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 	height: 100%;
 	overflow-x: auto;
 	position: relative;
+	border: 1px solid ${(props) => props.theme.colors.navy};
+	border-radius: 4px;
 
 	${(props) =>
 		props.palette === 'primary' &&
@@ -234,17 +236,16 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				color: ${(props) => props.theme.colors.white};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
+				font-family: ${(props) => props.theme.fonts.mono};
 			}
 			${TableRow} {
-				background-color: ${(props) => props.theme.colors.elderberry};
 				margin-bottom: 2px;
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.white};
-				background-color: ${(props) => props.theme.colors.elderberry};
+				border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 			}
 			${TableBodyRow} {
-				background-color: ${(props) => props.theme.colors.elderberry};
 			}
 		`}
 `;
