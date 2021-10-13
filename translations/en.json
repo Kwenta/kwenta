@@ -16,7 +16,7 @@
 			"shorting": "shorting",
 			"futures": "futures",
 			"leaderboard": "leaderboard",
-			"futures-dashboard": "futures dashboard"
+			"futures-dashboard": "dashboard"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
