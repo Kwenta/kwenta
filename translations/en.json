@@ -602,13 +602,18 @@
 			"user": {
 				"position": {
 					"tab": "Your Position",
-					"roi": "ROI:",
+					"roi": "Unrealized P&L",
+					"roi-tooltip": "This is your profit & loss combined with paid (or received) funding.",
 					"entry": "entry price",
+					"entry-tooltip": "Price at the time of opening the position.",
 					"liquidation": "liquidation price",
-					"remaining-margin-tooltip": "Remaining margin is your initial margin + your unrealized profit or loss + funding.",
+					"liquidation-tooltip": "Price that the position will be liquidated at.",
 					"remaining-margin": "remaining margin",
+					"remaining-margin-tooltip": "Remaining margin is your initial margin + your unrealized profit & loss + funding.",
 					"margin-ratio": "margin ratio",
 					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
+					"accrued-funding": "accrued funding",
+					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",
