@@ -74,6 +74,7 @@ const FuturesDashboardTabs = () => {
 				))}
 			</StyledTabList>
 			<TabPanel name={FuturesDashboardTab.POSITION} activeTab={activeTab}>
+				{positions.length === 0 && <p>TODO: No position design</p>}
 				{positions
 					.filter(({ position }) => Boolean(position))
 					.map((pos) => {
