@@ -254,7 +254,7 @@ const StyledROIValue = styled(FlexDivRowCentered)`
 
 const RightHand = styled(FlexDivRow)`
 	width: 100%;
-	width: 50%;
+	width: 75%;
 	padding: 20px;
 `;
 
