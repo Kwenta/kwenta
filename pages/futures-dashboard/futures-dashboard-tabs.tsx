@@ -35,7 +35,9 @@ const FuturesDashboardTabs = () => {
 	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
 		(futuresMarkets as FuturesMarket[]).map(({ asset }: { asset: string }) => asset)
 	);
-	const positions = futuresMarketsPositionQuery?.data ?? [];
+	const positions = (futuresMarketsPositionQuery?.data ?? []).filter(({ position }) =>
+		Boolean(position)
+	);
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {
@@ -75,23 +77,21 @@ const FuturesDashboardTabs = () => {
 			</StyledTabList>
 			<TabPanel name={FuturesDashboardTab.POSITION} activeTab={activeTab}>
 				{positions.length === 0 && <p>TODO: No position design</p>}
-				{positions
-					.filter(({ position }) => Boolean(position))
-					.map((pos) => {
-						return (
-							<PositionCardWrapper>
-								<PositionCard
-									position={pos}
-									currencyKey={pos.asset}
-									currencyKeyRate={getExchangeRatesForCurrencies(
-										exchangeRates,
-										pos.asset,
-										Synths.sUSD
-									)}
-								/>
-							</PositionCardWrapper>
-						);
-					})}
+				{positions.map((pos) => {
+					return (
+						<PositionCardWrapper>
+							<PositionCard
+								position={pos}
+								currencyKey={pos.asset}
+								currencyKeyRate={getExchangeRatesForCurrencies(
+									exchangeRates,
+									pos.asset,
+									Synths.sUSD
+								)}
+							/>
+						</PositionCardWrapper>
+					);
+				})}
 			</TabPanel>
 			<TabPanel name={FuturesDashboardTab.TRADES} activeTab={activeTab}>
 				<AllAssetsTradeHistory />
