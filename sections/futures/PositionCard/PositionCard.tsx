@@ -20,7 +20,7 @@ type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
-	onPositionClose: () => void;
+	onPositionClose?: () => void;
 };
 
 const PositionCard: React.FC<PositionCardProps> = ({
@@ -108,20 +108,22 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								</StyledValue>
 							</InfoCol>
 						</DataCol>
-						<DataCol style={{ justifyContent: 'flex-end' }}>
-							<CloseButton
-								isRounded={true}
-								variant="text"
-								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails}
-							>
-								{t('futures.market.user.position.close-position')}
-							</CloseButton>
-						</DataCol>
+						{onPositionClose && (
+							<DataCol style={{ justifyContent: 'flex-end' }}>
+								<CloseButton
+									isRounded={true}
+									variant="text"
+									onClick={() => setClosePositionModalIsVisible(true)}
+									disabled={!positionDetails}
+								>
+									{t('futures.market.user.position.close-position')}
+								</CloseButton>
+							</DataCol>
+						)}
 					</RightHand>
 				</FlexDivRow>
 			</Card>
-			{closePositionModalIsVisible && (
+			{closePositionModalIsVisible && onPositionClose && (
 				<ClosePositionModal
 					position={positionDetails}
 					currencyKey={currencyKey}
