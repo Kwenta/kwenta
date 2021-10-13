@@ -96,7 +96,7 @@
 			"one": {
 				"title": "You’ll need a web3 wallet with ETH for gas",
 				"subtitle": "Step One",
-				"copy": "Kwenta is on the Etherem blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
+				"copy": "Kwenta is on the Ethereum blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
 			},
 			"two": {
 				"title": "Acquire sUSD (or any other Synth)",
@@ -335,7 +335,7 @@
 				"value": "Value",
 				"fee-reclaim": "Fee Rebate/Reclaim",
 				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Trransaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
+				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
 				"price-adjustment-hint": "Price adjustment currently in progress"
 			}
 		},
@@ -555,6 +555,7 @@
 				"rate": "24H funding rate"
 			},
 			"trade": {
+				"market": "isolated market",
 				"title": "trade",
 				"input": {
 					"buy": "buy",
@@ -581,7 +582,7 @@
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
-					"min-initial-margin": "A minumum of {{minInitialMargin}} is required to open a position",
+					"min-initial-margin": "A minimum of {{minInitialMargin}} is required to open a position",
 					"available-margin": "Remaining margin",
 					"helper": "deposit your sUSD to start trading",
 					"available-balance": "sUSD balance",
@@ -603,11 +604,18 @@
 			"user": {
 				"position": {
 					"tab": "Your Position",
-					"roi": "ROI:",
+					"roi": "Unrealized P&L",
+					"roi-tooltip": "This is your profit & loss combined with paid (or received) funding.",
 					"entry": "entry price",
+					"entry-tooltip": "Price at the time of opening the position.",
 					"liquidation": "liquidation price",
-					"margin": "remaining margin",
-					"ratio": "margin ratio",
+					"liquidation-tooltip": "Price that the position will be liquidated at.",
+					"remaining-margin": "remaining margin",
+					"remaining-margin-tooltip": "Remaining margin is your initial margin + your unrealized profit & loss + funding.",
+					"margin-ratio": "margin ratio",
+					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
+					"accrued-funding": "accrued funding",
+					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
 					"modal-close": {
 						"title": "Close position",

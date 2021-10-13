@@ -152,7 +152,7 @@ const MarketInfoContainer = styled(Card)`
 `;
 
 const StyledFlexDiv = styled(FlexDivRow)`
-	justify-content: space-evenly;
+	justify-content: space-between;
 	align-items: center;
 `;
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import Slider from 'components/Slider';
 import Button from 'components/Button';
+import NumericAutoGrowInput from 'components/Input/NumericAutoGrowInput';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
@@ -75,7 +76,19 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
 				<FlexDivCol>
 					<InputContainer>
-						<LeverageAmount>{Math.round(currentLeverage * 100) / 100}x</LeverageAmount>
+						<LeverageAmountContainer>
+							<NumericAutoGrowInput
+								min={MIN_LEVERAGE}
+								max={maxLeverage}
+								step="any"
+								onChange={(e, value) => {
+									onLeverageChange(value);
+									setIsLeverageValueCommitted(true);
+								}}
+								value={Math.round(currentLeverage * 100) / 100}
+							/>
+							x
+						</LeverageAmountContainer>
 						<LeverageSideContainer>
 							<LeverageSide
 								variant="outline"
@@ -139,15 +152,15 @@ const LeverageTitle = styled.div`
 	text-transform: capitalize;
 `;
 
-const LeverageAmount = styled.div`
+const LeverageAmountContainer = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	color: ${(props) => props.theme.colors.silver};
 	margin-left: 8px;
 	max-width: 46px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 `;
 
 const LeverageSideContainer = styled(FlexDivRow)`

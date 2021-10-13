@@ -1,14 +1,13 @@
 import { FC, ChangeEvent } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Wei from '@synthetixio/wei';
 
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { Synths } from 'constants/currency';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered, FlexDivCentered } from 'styles/common';
 import { formatCurrency, formatCryptoCurrency } from 'utils/formatters/number';
-import Wei from '@synthetixio/wei';
 
 type TradeSizeInputProps = {
 	balance: Wei;
@@ -24,18 +23,16 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 	amount,
 	onAmountChange,
 	balance,
-	asset,
 	balanceLabel,
 	assetRate,
 	handleOnMax,
 }) => {
 	const { t } = useTranslation();
+
 	const amountValue = Number(amount) * assetRate;
 	return (
 		<InputRow>
 			<StyledFlexDivCentered>
-				<CurrencyIcon currencyKey={asset} />
-				<CurrencyLabel>{asset}</CurrencyLabel>
 				<InputContainer>
 					<FlexDivCol>
 						<InputAmount
@@ -61,19 +58,12 @@ const TradeSizeInput: FC<TradeSizeInputProps> = ({
 
 const InputRow = styled(FlexDivCol)`
 	width: 100%;
+	margin-top: 5px;
 	margin-bottom: 24px;
 `;
 
 const StyledFlexDivCentered = styled(FlexDivCentered)`
 	width: 100%;
-`;
-
-const CurrencyLabel = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-right: 12px;
-	margin-left: 2px;
 `;
 
 const InputContainer = styled(FlexDivRowCentered)`
