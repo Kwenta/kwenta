@@ -88,7 +88,7 @@ export type PositionHistory = {
 	entryPrice: Wei;
 	exitPrice: Wei;
 	size: Wei;
-	asset: string;
+	asset?: string;
 	margin: Wei;
 	leverage: Wei;
 	side: PositionSide;
@@ -99,3 +99,8 @@ export enum PositionSide {
 	LONG = 'long',
 	SHORT = 'short',
 }
+
+export type Participant = {
+	username: string;
+	address: string;
+};
