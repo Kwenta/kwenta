@@ -54,8 +54,13 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	const weiAsStringWithDecimals = weiValue
 		.abs()
 		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
-	const withCommas = utils.commify(weiAsStringWithDecimals);
-	formattedValue.push(withCommas);
+
+	// commify removes trailing 0's on decimals
+	const [integer, preserveDecimals] = weiAsStringWithDecimals.split('.');
+	const integerWithCommas = utils.commify(integer);
+	formattedValue.push(
+		preserveDecimals ? integerWithCommas + '.' + preserveDecimals : integerWithCommas
+	);
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);

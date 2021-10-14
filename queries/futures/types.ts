@@ -104,3 +104,25 @@ export type Participant = {
 	username: string;
 	address: string;
 };
+
+export type FuturesTrade = {
+	size: string;
+};
+
+export type FuturesDayTradeStats = {
+	volume: Wei;
+	totalTrades: number;
+};
+
+export type FuturesTotalTrades = {
+	totalTrades: string;
+};
+
+export type FuturesLiquidations = {
+	liquidations: string;
+};
+
+export type FuturesTradeWithPrice = {
+	size: string;
+	price: string;
+};

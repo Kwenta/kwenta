@@ -1,9 +1,21 @@
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import { zeroBN } from 'utils/formatters/number';
-import { PositionDetail, FuturesPosition, PositionSide, FuturesOpenInterest } from './types';
+import {
+	FuturesPosition,
+	FuturesLiquidations,
+	FuturesOpenInterest,
+	FuturesTotalTrades,
+	FuturesTrade,
+	PositionDetail,
+	PositionSide,
+	FuturesTradeWithPrice,
+} from './types';
+import { Synths } from 'constants/currency';
+
+import { formatCurrency } from 'utils/formatters/number';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -116,4 +128,48 @@ export const mapOpenInterest = async (
 		}
 	}
 	return openInterest;
+};
+
+export const calculateCumulativeTrades = (futuresTrades: FuturesTotalTrades[]): number => {
+	return futuresTrades.reduce((acc, curr) => {
+		return acc + parseInt(curr.totalTrades);
+	}, 0);
+};
+
+export const calculateTotalLiquidations = (futuresTrades: FuturesLiquidations[]): number => {
+	return futuresTrades.reduce((acc, curr) => {
+		return acc + parseInt(curr.liquidations);
+	}, 0);
+};
+
+export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
+	return futuresTrades.reduce(
+		(acc: Wei, { size }: { size: string }) => acc.add(new Wei(size, 18, true).abs()),
+		wei(0)
+	);
+};
+
+export const calculateCumulativeVolume = (futuresTrades: FuturesTradeWithPrice[]): string =>
+	formatCurrency(
+		Synths.sUSD,
+		futuresTrades.reduce((acc, trade) => {
+			return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
+		}, wei(0)),
+		{
+			sign: '$',
+		}
+	);
+
+export const calculateAverageTradeSize = (futuresTrades: FuturesTradeWithPrice[]): string => {
+	return formatCurrency(
+		Synths.sUSD,
+		futuresTrades
+			.reduce((acc, trade) => {
+				return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
+			}, wei(0))
+			.div(wei(futuresTrades.length)),
+		{
+			sign: '$',
+		}
+	);
 };
