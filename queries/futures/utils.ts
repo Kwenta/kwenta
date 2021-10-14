@@ -153,5 +153,8 @@ export const calculateCumulativeVolume = (futuresTrades: FuturesTradeWithPrice[]
 		'sUSD',
 		futuresTrades.reduce((acc, trade) => {
 			return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
-		}, wei(0))
+		}, wei(0)),
+		{
+			sign: '$',
+		}
 	);
