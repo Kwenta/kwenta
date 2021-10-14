@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesCumulativeTrades from 'queries/futures/useGetFuturesCumulativeTrades'
+import useGetFuturesCumulativeTrades from 'queries/futures/useGetFuturesCumulativeTrades';
 import useGetFuturesDayTradeStats from 'queries/futures/useGetFuturesDayTradeStats';
+import useGetFuturesTotalLiquidations from 'queries/futures/useGetFuturesTotalLiquidations';
 import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
@@ -14,6 +15,7 @@ import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticp
 export default function Statistics() {
 	const { t } = useTranslation();
 	const futuresCumulativeTradesQuery = useGetFuturesCumulativeTrades();
+	const futuresTotalLiquidationsQuery = useGetFuturesTotalLiquidations();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const allVolumeQuery = useGetFuturesDayTradeStats();
 	const totalWalletsQuery = useGetRegisteredParticpants();
@@ -26,9 +28,8 @@ export default function Statistics() {
 
 	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
 	const totalWallets = totalWalletsQuery.data?.length ?? '-';
-	console.log('***totalWallets', totalWalletsQuery);
 	const cumulativeTrades = futuresCumulativeTradesQuery?.data ?? '-';
-	console.log('***cumulativeTrades', futuresCumulativeTradesQuery);
+	const totalLiquidations = futuresTotalLiquidationsQuery.data ?? '-';
 
 	return (
 		<Container>
@@ -72,7 +73,7 @@ export default function Statistics() {
 				<RowSpacer2 />
 				<GridItem>
 					<Label>Total Liquidations</Label>
-					<Value>98</Value>
+					<Value>{totalLiquidations}</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="30px">

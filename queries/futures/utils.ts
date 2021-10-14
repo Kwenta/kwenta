@@ -4,12 +4,13 @@ import { BigNumber } from '@ethersproject/bignumber';
 
 import { zeroBN } from 'utils/formatters/number';
 import {
-	PositionDetail,
 	FuturesPosition,
-	PositionSide,
+	FuturesLiquidations,
 	FuturesOpenInterest,
 	FuturesTotalTrades,
 	FuturesTrade,
+	PositionDetail,
+	PositionSide,
 } from './types';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
@@ -128,6 +129,12 @@ export const mapOpenInterest = async (
 export const calculateCumulativeTrades = (futuresTrades: FuturesTotalTrades[]): number => {
 	return futuresTrades.reduce((acc, curr) => {
 		return acc + parseInt(curr.totalTrades);
+	}, 0);
+};
+
+export const calculateTotalLiquidations = (futuresTrades: FuturesLiquidations[]): number => {
+	return futuresTrades.reduce((acc, curr) => {
+		return acc + parseInt(curr.liquidations);
 	}, 0);
 };
 
