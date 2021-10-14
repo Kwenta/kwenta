@@ -9,18 +9,21 @@ import { FlexDivRow, FlexDivCol, FlexDivRowCentered, InfoTooltip } from 'styles/
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
-	onPositionClose: () => void;
+	onPositionClose?: () => void;
+	dashboard?: boolean;
 };
 
 const PositionCard: React.FC<PositionCardProps> = ({
@@ -28,8 +31,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	position,
 	currencyKeyRate,
 	onPositionClose,
+	dashboard,
 }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 
@@ -154,19 +159,30 @@ const PositionCard: React.FC<PositionCardProps> = ({
 										: '--'}
 								</StyledValue>
 							</InfoCol>
-							<CloseButton
-								isRounded={true}
-								variant="text"
-								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails}
-							>
-								{t('futures.market.user.position.close-position')}
-							</CloseButton>
+							{onPositionClose && (
+								<CloseButton
+									isRounded={true}
+									variant="text"
+									onClick={() => setClosePositionModalIsVisible(true)}
+									disabled={!positionDetails}
+								>
+									{t('futures.market.user.position.close-position')}
+								</CloseButton>
+							)}
+							{dashboard && (
+								<ManageButton
+									isRounded={true}
+									variant="text"
+									onClick={() => router.push(ROUTES.Futures.Market.MarketPair(currencyKey))}
+								>
+									{t('futures.market.user.position.manage-position')}
+								</ManageButton>
+							)}
 						</DataCol>
 					</RightHand>
 				</FlexDivRow>
 			</Card>
-			{closePositionModalIsVisible && (
+			{closePositionModalIsVisible && onPositionClose && (
 				<ClosePositionModal
 					position={positionDetails}
 					currencyKey={currencyKey}
@@ -291,6 +307,21 @@ const CloseButton = styled(Button)`
 	}
 	&:hover:not(:disabled) {
 		color: ${(props) => props.theme.colors.red};
+		opacity: 0.9;
+	}
+`;
+
+const ManageButton = styled(Button)`
+	color: ${(props) => props.theme.colors.white};
+	background: ${(props) => props.theme.colors.navy};
+	padding: 0 10px;
+	&:disabled {
+		color: ${(props) => props.theme.colors.silver};
+		background: ${(props) => props.theme.colors.navy};
+		opacity: 0.5;
+	}
+	&:hover:not(:disabled) {
+		color: ${(props) => props.theme.colors.white};
 		opacity: 0.9;
 	}
 `;

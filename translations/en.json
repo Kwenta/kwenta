@@ -15,7 +15,8 @@
 			"dashboard": "dashboard",
 			"shorting": "shorting",
 			"futures": "futures",
-			"leaderboard": "leaderboard"
+			"leaderboard": "leaderboard",
+			"futures-dashboard": "dashboard"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
@@ -534,6 +535,9 @@
 				"button": "refer"
 			}
 		},
+		"leaderboard": {
+			"title": "leaderboard"
+		},
 		"markets": {
 			"title": "markets",
 			"table": {
@@ -617,6 +621,7 @@
 					"accrued-funding": "accrued funding",
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
+					"manage-position": "manage position",
 					"modal-close": {
 						"title": "Close position",
 						"size": "Size",
@@ -771,6 +776,15 @@
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		}
+	},
+	"futures-dashboard": {
+		"page-title": "Futures Dashboard | Kwenta",
+		"position": {
+			"tab": "open positions"
+		},
+		"trades": {
+			"tab": "history"
 		}
 	},
 	"common": {

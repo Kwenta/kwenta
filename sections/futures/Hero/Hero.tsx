@@ -10,7 +10,8 @@ import { FlexDivRow, FlexDivRowCentered, GridDiv } from 'styles/common';
 
 import Layer2Icon from 'assets/svg/app/layer-2.svg';
 
-const Hero: FC = () => {
+type Props = { displayReferBox?: boolean };
+const Hero: FC<Props> = ({ displayReferBox = true }) => {
 	const { t } = useTranslation();
 
 	return (
@@ -31,19 +32,21 @@ const Hero: FC = () => {
 				</Card.Body>
 			</StyledCard>
 
-			<StyledCard>
-				<Card.Header noBorder={true}>
-					<StyledHeaderText small={true}>{t('futures.hero.refer.title')}</StyledHeaderText>
-				</Card.Header>
-				<Card.Body>
-					<StyledCardRow>
-						<StyledBodyText>{t('futures.hero.refer.body')}</StyledBodyText>
-						<Button variant="primary" isRounded size="lg" onClick={() => {}}>
-							{t('futures.hero.refer.button')}
-						</Button>
-					</StyledCardRow>
-				</Card.Body>
-			</StyledCard>
+			{displayReferBox && (
+				<StyledCard>
+					<Card.Header noBorder={true}>
+						<StyledHeaderText small={true}>{t('futures.hero.refer.title')}</StyledHeaderText>
+					</Card.Header>
+					<Card.Body>
+						<StyledCardRow>
+							<StyledBodyText>{t('futures.hero.refer.body')}</StyledBodyText>
+							<Button variant="primary" isRounded size="lg" onClick={() => {}}>
+								{t('futures.hero.refer.button')}
+							</Button>
+						</StyledCardRow>
+					</Card.Body>
+				</StyledCard>
+			)}
 		</StyledGrid>
 	);
 };

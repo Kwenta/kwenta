@@ -38,7 +38,7 @@ export const ROUTES = {
 	Futures: {
 		Home: '/futures',
 		Market: {
-			MarketPair: (baseCurrencyKey: CurrencyKey) =>
+			MarketPair: (baseCurrencyKey: CurrencyKey | string) =>
 				normalizeRoute('/futures/market', `${baseCurrencyKey}`, 'market'),
 			Position: (baseCurrencyKey: CurrencyKey) =>
 				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'position', 'tab'),
@@ -47,6 +47,11 @@ export const ROUTES = {
 			Trades: (baseCurrencyKey: CurrencyKey) =>
 				normalizeRoute(`/futures/market/${baseCurrencyKey}`, 'trades', 'tab'),
 		},
+	},
+	FuturesDashboard: {
+		Home: '/futures-dashboard',
+		Position: normalizeRoute(`/futures-dashboard`, 'position', 'tab'),
+		Trades: normalizeRoute(`/futures-dashboard`, 'trades', 'tab'),
 	},
 	Leaderboard: {
 		Home: '/leaderboard',

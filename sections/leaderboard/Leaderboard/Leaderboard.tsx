@@ -9,7 +9,11 @@ import { wei } from '@synthetixio/wei';
 import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import useGetStats from 'queries/futures/useGetStats';
 
-const Leaderboard: FC = () => {
+type LeaderboardProps = {
+	compact?: boolean;
+};
+
+const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
 
 	const participantsQuery = useGetRegisteredParticpants();
@@ -19,11 +23,11 @@ const Leaderboard: FC = () => {
 	const pnls: any = pnlQueries.map((query) => query.data);
 	const pnlMap = Object.assign({}, ...pnls);
 
-	const data = useMemo(() => {
+	let data = useMemo(() => {
 		return participants
 			.map((participant) => ({
 				//rank: 1,
-				trader: participant.username,
+				trader: '@' + participant.username,
 				totalTrades: (pnlMap[participant.address]?.totalTrades ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[participant.address]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
@@ -31,6 +35,10 @@ const Leaderboard: FC = () => {
 			}))
 			.sort((a, b) => b.pnl - a.pnl);
 	}, [participants, pnlMap]);
+
+	if (compact) {
+		data = data.slice(0, 10);
+	}
 
 	const getMedal = (position: number) => {
 		switch (position) {
@@ -44,26 +52,36 @@ const Leaderboard: FC = () => {
 	};
 
 	return (
-		<>
+		<TableContainer>
 			<StyledTable
 				showPagination={true}
 				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
 				data={data}
+				hideHeaders={compact}
+				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
 				columns={[
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 						accessor: 'rank',
 						Cell: (cellProps: CellProps<any>) => (
+							<StyledOrderType>{cellProps.row.index + 1}</StyledOrderType>
+						),
+						width: compact ? 40 : 100,
+					},
+					{
+						Header: !compact ? (
+							<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+						) : (
+							<></>
+						),
+						accessor: 'trader',
+						Cell: (cellProps: CellProps<any>) => (
 							<StyledOrderType>
-								{cellProps.row.index + 1}
+								{compact && cellProps.row.index + 1 + '. '}
+								{cellProps.row.original.trader}
 								{getMedal(cellProps.row.index + 1)}
 							</StyledOrderType>
 						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-						accessor: 'trader',
 						width: 175,
 					},
 					{
@@ -92,12 +110,12 @@ const Leaderboard: FC = () => {
 								conversionRate={1}
 							/>
 						),
-						width: 175,
+						width: compact ? 'auto' : 175,
 						sortable: true,
 					},
 				]}
 			/>
-		</>
+		</TableContainer>
 	);
 };
 
@@ -107,6 +125,7 @@ const Medal = styled.span`
 `;
 
 const ColorCodedPrice = styled(Currency.Price)`
+	align-items: right;
 	color: ${(props) =>
 		props.price > 0
 			? props.theme.colors.green
@@ -115,9 +134,12 @@ const ColorCodedPrice = styled(Currency.Price)`
 			: props.theme.colors.white};
 `;
 
-const StyledTable = styled(Table)`
+const TableContainer = styled.div`
 	margin-top: 16px;
-	background-color: black;
+`;
+
+const StyledTable = styled(Table)`
+	//background-color: black;
 `;
 
 const TableHeader = styled.div`
@@ -128,7 +150,6 @@ const TableHeader = styled.div`
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
-	align-items: center;
 `;
 
 export default Leaderboard;
