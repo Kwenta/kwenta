@@ -5,7 +5,7 @@ import Connector from 'containers/Connector';
 import { Svg } from 'react-optimized-image';
 
 import SVGLogoWithName from 'assets/svg/futures/logoWithName.svg';
-import test from 'assets/svg/futures/test.svg';
+import SVGBackground from 'assets/svg/futures/background.svg';
 
 import * as Styled from './styles';
 import * as StyledOnboarding from '../styles';
@@ -20,7 +20,7 @@ const Splash: FC = () => {
 					<Svg src={SVGLogoWithName} />
 				</Styled.Logo>
 				<Styled.Background>
-					<Svg src={test} />
+					<Svg src={SVGBackground} />
 				</Styled.Background>
 				<Styled.Line1>Welcome to</Styled.Line1>
 				<Styled.Line2>Decentralized</Styled.Line2>

@@ -1,29 +1,25 @@
 import { FC, useEffect, useState } from 'react';
 import Head from 'next/head';
+import get from 'lodash/get';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
-
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
-
-import { DesktopOnlyView } from 'components/Media';
-
 import Hero from 'sections/futures/Hero';
+import Markets from 'sections/futures/Markets';
 import Splash from 'sections/futures/Onboarding/Splash';
 import Tweet from 'sections/futures/Onboarding/Tweet';
-import Markets from 'sections/futures/Markets';
 import WalletOverview from 'sections/futures/WalletOverview';
-import { FuturesMarket } from 'queries/futures/types';
-
-import { useRecoilValue } from 'recoil';
-
-import { isL2KovanState, isWalletConnectedState, walletAddressState } from 'store/wallet';
-import get from 'lodash/get';
-
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 import useSynthetixQueries from '@synthetixio/queries';
+import { FuturesMarket } from 'queries/futures/types';
+import { isL2KovanState, isWalletConnectedState, walletAddressState } from 'store/wallet';
+
+import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
+import { DesktopOnlyView } from 'components/Media';
+
 import { zeroBN } from 'utils/formatters/number';
 
 type CurrentPageState = 'splash' | 'tweet' | 'futures' | null;
