@@ -9,12 +9,14 @@ import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths } from 'constants/currency';
+import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 
 export default function Statistics() {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const allVolumeQuery = useGetFuturesDayTradeStats();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const totalWalletsQuery = useGetRegisteredParticpants();
 
 	const distributionData =
 		futuresMarketsQuery.data?.map((m) => ({
@@ -23,6 +25,7 @@ export default function Statistics() {
 		})) ?? [];
 
 	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
+	const totalWallets = totalWalletsQuery.data?.length ?? '';
 
 	return (
 		<Container>
@@ -45,7 +48,7 @@ export default function Statistics() {
 			<Row bottomMargin="40px">
 				<GridItem>
 					<Label>Total Wallets</Label>
-					<Value>200</Value>
+					<Value>{totalWalletsQuery.isLoading ? <Loader /> : totalWallets}</Value>
 				</GridItem>
 				<RowSpacer3 />
 				<GridItem>
