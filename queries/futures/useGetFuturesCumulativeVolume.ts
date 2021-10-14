@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
@@ -9,7 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import { calculateCumulativeVolume } from './utils';
 
-const useGetFuturesCumulativeVolume = (options?: UseQueryOptions<number | null>) => {
+const useGetFuturesCumulativeVolume = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	return useQuery<string | null>(
@@ -36,7 +36,6 @@ const useGetFuturesCumulativeVolume = (options?: UseQueryOptions<number | null>)
 		},
 		{
 			enabled: isAppReady && isL2,
-			...options
 		}
 	);
 };

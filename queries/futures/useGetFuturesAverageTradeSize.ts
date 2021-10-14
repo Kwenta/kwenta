@@ -1,16 +1,15 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
-import { Synths } from 'constants/currency';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import { calculateAverageTradeSize } from './utils';
 
-const useGetFuturesAverageTradeSize = (options?: UseQueryOptions) => {
+const useGetFuturesAverageTradeSize = () => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 
@@ -38,7 +37,6 @@ const useGetFuturesAverageTradeSize = (options?: UseQueryOptions) => {
 		},
 		{
 			enabled: isAppReady && isL2,
-			...options
 		}
 	);
 };
