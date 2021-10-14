@@ -8,6 +8,7 @@ import {
 	FuturesPosition,
 	PositionSide,
 	FuturesOpenInterest,
+	FuturesTotalTrades,
 	FuturesTrade,
 } from './types';
 
@@ -122,6 +123,12 @@ export const mapOpenInterest = async (
 		}
 	}
 	return openInterest;
+};
+
+export const calculateCumulativeTrades = (futuresTrades: FuturesTotalTrades[]): number => {
+	return futuresTrades.reduce((acc, curr) => {
+		return acc + curr.totalTrades;
+	}, 0);
 };
 
 export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {

@@ -113,3 +113,7 @@ export type FuturesDayTradeStats = {
 	volume: Wei;
 	totalTrades: number;
 };
+
+export type FuturesTotalTrades = {
+	totalTrades: number;
+};
