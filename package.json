@@ -99,7 +99,6 @@
 		"eslint-plugin-react": "7.21.5",
 		"eslint-plugin-react-hooks": "4.2.0",
 		"husky": "5.0.9",
-		"imagemin-mozjpeg": "9.0.0",
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
 		"lint-staged": "10.0.10",
