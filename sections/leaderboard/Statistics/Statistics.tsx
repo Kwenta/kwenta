@@ -9,6 +9,7 @@ import useGetFuturesCumulativeVolume from 'queries/futures/useGetFuturesCumulati
 
 import useGetFuturesDayTradeStats from 'queries/futures/useGetFuturesDayTradeStats';
 import useGetFuturesTotalLiquidations from 'queries/futures/useGetFuturesTotalLiquidations';
+import useGetFuturesAverageTradeSize from 'queries/futures/useGetFuturesAverageTradeSize';
 import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
@@ -19,6 +20,7 @@ export default function Statistics() {
 	const futuresCumulativeTradesQuery = useGetFuturesCumulativeTrades();
 	const futuresCumulativeVolumeQuery = useGetFuturesCumulativeVolume();
 	const futuresTotalLiquidationsQuery = useGetFuturesTotalLiquidations();
+	const futuresAverageTradeSizeQuery = useGetFuturesAverageTradeSize();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const allVolumeQuery = useGetFuturesDayTradeStats();
 	const totalWalletsQuery = useGetRegisteredParticpants();
@@ -34,6 +36,7 @@ export default function Statistics() {
 	const cumulativeTrades = futuresCumulativeTradesQuery?.data ?? '-';
 	const cumulativeVolume = futuresCumulativeVolumeQuery?.data ?? '-';
 	const totalLiquidations = futuresTotalLiquidationsQuery?.data ?? '-';
+	const averageTradeSize = futuresAverageTradeSizeQuery?.data ?? null;
 
 	return (
 		<Container>
@@ -77,8 +80,8 @@ export default function Statistics() {
 			</Row>
 			<Row bottomMargin="59px">
 				<GridItem>
-					<Label>Average Leverage</Label>
-					<Value>$12,488,250.20</Value>
+					<Label>Average Trade Size</Label>
+					<Value>{futuresAverageTradeSizeQuery.isLoading ? <Loader /> : averageTradeSize}</Value>
 				</GridItem>
 				<RowSpacer2 />
 				<GridItem>
