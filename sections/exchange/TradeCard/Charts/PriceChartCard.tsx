@@ -103,10 +103,12 @@ const ChartCard: FC<ChartCardProps> = ({
 		(isCandleStickChart && noCandleSticksChartData && !isSUSD);
 
 	const computedRates = useMemo(() => {
-		return rates.map(({ timestamp, rate }: { timestamp: number; rate: number }) => ({
-			timestamp,
-			value: !selectPriceCurrencyRate ? rate : rate / selectPriceCurrencyRate.toNumber(),
-		}));
+		return rates
+			.map(({ timestamp, rate }: { timestamp: number; rate: number }) => ({
+				timestamp,
+				value: !selectPriceCurrencyRate ? rate : rate / selectPriceCurrencyRate.toNumber(),
+			}))
+			.sort((a, b) => a.timestamp - b.timestamp);
 	}, [rates, selectPriceCurrencyRate]);
 
 	useEffect(() => {
