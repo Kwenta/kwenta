@@ -12,8 +12,8 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 import { DesktopOnlyView } from 'components/Media';
 
 import Hero from 'sections/futures/Hero';
+import Intro from 'sections/futures/Intro';
 import Markets from 'sections/futures/Markets';
-import Splash from 'sections/futures/Splash';
 import WalletOverview from 'sections/futures/WalletOverview';
 import { FuturesMarket } from 'queries/futures/types';
 
@@ -27,15 +27,15 @@ const Futures: FC = () => {
 	);
 	const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
 
-	const showSplash = true;
+	const showIntro = true;
 
 	return (
 		<>
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
-			{showSplash ? (
-				<Splash />
+			{showIntro ? (
+				<Intro />
 			) : (
 				<AppLayout>
 					<PageContent>
