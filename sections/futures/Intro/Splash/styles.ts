@@ -56,8 +56,21 @@ export const Line5 = styled.p`
 	font-size: 14px;
 	line-height: 1.3;
 	max-width: 80%;
-	margin: 24px auto 36px;
+	margin: 24px auto 8px;
 	text-align: center;
+`;
+
+export const Line6 = styled.p`
+	color: ${(props) => props.theme.colors.silver};
+	font-size: 14px;
+	line-height: 1.3;
+	max-width: 80%;
+	margin: 0 auto;
+	text-align: center;
+`;
+
+export const Link = styled.a`
+	text-decoration: underline;
 `;
 
 export const Logo = styled.div`
