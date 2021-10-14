@@ -48,6 +48,7 @@ const Futures: FC = () => {
 		(async () => {
 			// if network isnt l2 kovan, direct to splash screen
 			if (!isWalletConnected || !isL2Kovan) {
+				console.log('***fired');
 				setCurrentPage('splash');
 				return;
 			}

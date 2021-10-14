@@ -19,6 +19,7 @@ const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 	}
 	return isL2 ? <Svg src={LogoSvgL2} /> : <Svg src={LogoSvg} />;
 };
+
 const Logo: FC<LogoProps> = (props) => {
 	return (
 		<LogoContainer>
@@ -28,6 +29,13 @@ const Logo: FC<LogoProps> = (props) => {
 		</LogoContainer>
 	);
 };
+// const Logo: FC<LogoProps> = ({ isL2 }) => (
+// 	<LogoContainer>
+// 		<Link href={ROUTES.Home}>
+// 			<a>{isL2 ? <Img src={LogoSvgL2} /> : <Svg src={LogoSvg} />}</a>
+// 		</Link>
+// 	</LogoContainer>
+// );
 
 const LogoContainer = styled.span`
 	display: flex;
