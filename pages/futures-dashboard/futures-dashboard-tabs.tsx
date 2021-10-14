@@ -88,6 +88,7 @@ const FuturesDashboardTabs = () => {
 									pos.asset,
 									Synths.sUSD
 								)}
+								dashboard
 							/>
 						</PositionCardWrapper>
 					);

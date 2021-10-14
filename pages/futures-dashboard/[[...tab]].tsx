@@ -4,11 +4,19 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
+import {
+	PageContent,
+	MainContent,
+	RightSideContent,
+	FullHeightContainer,
+	FlexDivRow,
+} from 'styles/common';
 import { DesktopOnlyView } from 'components/Media';
 import Markets from 'sections/futures/Markets';
 import Hero from 'sections/futures/Hero';
 import FuturesDashboardTabs from './futures-dashboard-tabs';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
+import { Subheader } from 'sections/futures/common';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
@@ -27,6 +35,10 @@ const Futures: FC = () => {
 						</MainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
+								<HeaderRow>
+									<Subheader>{t('futures.leaderboard.title')}</Subheader>
+								</HeaderRow>
+								<Leaderboard compact />
 								<Markets />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
@@ -40,6 +52,10 @@ const Futures: FC = () => {
 const StyledRightSideContent = styled(RightSideContent)`
 	padding-left: 32px;
 	padding-right: 32px;
+`;
+
+const HeaderRow = styled(FlexDivRow)`
+	justify-content: space-between;
 `;
 
 export default Futures;

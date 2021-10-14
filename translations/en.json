@@ -535,6 +535,9 @@
 				"button": "refer"
 			}
 		},
+		"leaderboard": {
+			"title": "leaderboard"
+		},
 		"markets": {
 			"title": "markets",
 			"table": {
@@ -618,6 +621,7 @@
 					"accrued-funding": "accrued funding",
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
+					"manage-position": "manage position",
 					"modal-close": {
 						"title": "Close position",
 						"size": "Size",

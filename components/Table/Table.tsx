@@ -1,4 +1,4 @@
-import React, { FC, useMemo, DependencyList } from 'react';
+import React, { FC, useMemo, DependencyList, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 import { Svg } from 'react-optimized-image';
@@ -14,7 +14,7 @@ import Pagination from './Pagination';
 export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
-const MAX_PAGE_ROWS = 10;
+const MAX_PAGE_ROWS = 100;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -33,6 +33,8 @@ type TableProps = {
 	noResultsMessage?: React.ReactNode;
 	showPagination?: boolean;
 	pageSize?: number | null;
+	hiddenColumns?: string[];
+	hideHeaders?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -47,6 +49,8 @@ export const Table: FC<TableProps> = ({
 	className,
 	showPagination = false,
 	pageSize = null,
+	hiddenColumns = [],
+	hideHeaders,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -76,6 +80,7 @@ export const Table: FC<TableProps> = ({
 		previousPage,
 		// @ts-ignore
 		state: { pageIndex },
+		setHiddenColumns,
 	} = useTable(
 		{
 			columns: memoizedColumns,
@@ -90,6 +95,10 @@ export const Table: FC<TableProps> = ({
 		useFlexLayout
 	);
 
+	useEffect(() => {
+		setHiddenColumns(hiddenColumns);
+	}, []);
+
 	return (
 		<>
 			<TableContainer>
@@ -98,6 +107,7 @@ export const Table: FC<TableProps> = ({
 						<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
 							{headerGroup.headers.map((column: any) => (
 								<TableCellHead
+									hideHeaders={hideHeaders}
 									{...column.getHeaderProps(
 										column.sortable ? column.getSortByToggleProps() : undefined
 									)}
@@ -179,7 +189,9 @@ export const Table: FC<TableProps> = ({
 };
 
 const TableContainer = styled.div`
-	overflow: auto;
+	overflow-x: auto;
+	//display: block;
+	//width: 100%;
 `;
 
 const StyledSpinner = styled(Svg)`
@@ -187,14 +199,17 @@ const StyledSpinner = styled(Svg)`
 	margin: 30px auto;
 `;
 
-export const TableRow = styled.div``;
+export const TableRow = styled.div`
+	//display: none;
+`;
 
 const TableBody = styled.div`
+	//width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 `;
 
-const TableBodyRow = styled(TableRow)`
+const TableBodyRow = styled.div`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 `;
 
@@ -208,8 +223,9 @@ const TableCell = styled(FlexDivCentered)`
 	}
 `;
 
-const TableCellHead = styled(TableCell)`
+const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
+	${(props) => (props.hideHeaders ? `display: none` : '')}
 `;
 
 const SortIconContainer = styled.span`
