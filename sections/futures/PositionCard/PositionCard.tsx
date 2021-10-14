@@ -19,7 +19,7 @@ import { useRouter } from 'next/router';
 import ROUTES from 'constants/routes';
 
 type PositionCardProps = {
-	currencyKey: CurrencyKey;
+	currencyKey: string;
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
