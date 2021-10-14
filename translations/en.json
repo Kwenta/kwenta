@@ -15,7 +15,7 @@
 			"dashboard": "dashboard",
 			"shorting": "shorting",
 			"futures": "futures",
-			"leaderboard": "leaderboard",
+			"leaderboard": "leaderboard & statistics",
 			"futures-dashboard": "dashboard"
 		},
 		"networks-switcher": {
@@ -504,6 +504,7 @@
 		"page-title": "Futures | Kwenta",
 		"not-available-on-l1": "Futures is not available on L1",
 		"wallet-overview": {
+			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
 			"open-position": "Open a position",
 			"balance": "sUSD balance",

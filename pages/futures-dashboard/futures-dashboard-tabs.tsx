@@ -14,6 +14,7 @@ import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPos
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from '@synthetixio/contracts-interface';
 import AllAssetsTradeHistory from './all-assets-trade-history';
+import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 
 enum FuturesDashboardTab {
 	POSITION = 'position',
@@ -76,7 +77,7 @@ const FuturesDashboardTabs = () => {
 				))}
 			</StyledTabList>
 			<TabPanel name={FuturesDashboardTab.POSITION} activeTab={activeTab}>
-				{positions.length === 0 && <p>TODO: No position design</p>}
+				{positions.length === 0 && <NoSynthsCard />}
 				{positions.map((pos) => {
 					return (
 						<PositionCardWrapper>
@@ -115,4 +116,11 @@ const StyledTabList = styled(TabList)`
 const StyledTabButton = styled(TabButton)`
 	text-transform: capitalize;
 `;
+
+const NoPositions = styled.div`
+	text-align: center;
+	height: 200px;
+	line-height: 200px;
+`;
+
 export default FuturesDashboardTabs;

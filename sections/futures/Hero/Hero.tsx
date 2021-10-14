@@ -6,7 +6,7 @@ import { Svg } from 'react-optimized-image';
 import Card from 'components/Card';
 import Button from 'components/Button';
 
-import { FlexDivRow, FlexDivRowCentered, GridDiv } from 'styles/common';
+import { ExternalLink, FlexDivRow, FlexDivRowCentered, GridDiv } from 'styles/common';
 
 import Layer2Icon from 'assets/svg/app/layer-2.svg';
 
@@ -25,9 +25,11 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 					<StyledBodySubtitle>{t('futures.hero.welcome.subtitle')}</StyledBodySubtitle>
 					<StyledBodyText>{t('futures.hero.welcome.body')}</StyledBodyText>
 					<ButtonContainer>
-						<StyledTextButton variant="text" size="md" onClick={() => {}}>
-							{t('futures.hero.welcome.button')}
-						</StyledTextButton>
+						<ExternalLink href={'https://blog.kwenta.io/futures-dashboards/'}>
+							<StyledTextButton variant="text" size="md">
+								{t('futures.hero.welcome.button')}
+							</StyledTextButton>
+						</ExternalLink>
 					</ButtonContainer>
 				</Card.Body>
 			</StyledCard>
@@ -88,7 +90,8 @@ const StyledCardRow = styled(FlexDivRowCentered)``;
 
 const ButtonContainer = styled(FlexDivRow)`
 	width: 100%;
-	margin: 8px 0px;
+	margin-top: 16px;
+	margin-bottom: -18px;
 `;
 
 const StyledTextButton = styled(Button)`
