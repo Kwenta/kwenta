@@ -115,5 +115,5 @@ export type FuturesDayTradeStats = {
 };
 
 export type FuturesTotalTrades = {
-	totalTrades: number;
+	totalTrades: string;
 };

@@ -127,7 +127,7 @@ export const mapOpenInterest = async (
 
 export const calculateCumulativeTrades = (futuresTrades: FuturesTotalTrades[]): number => {
 	return futuresTrades.reduce((acc, curr) => {
-		return acc + curr.totalTrades;
+		return acc + parseInt(curr.totalTrades);
 	}, 0);
 };
 

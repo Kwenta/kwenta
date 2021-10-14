@@ -9,7 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import { calculateCumulativeTrades } from './utils';
 
-const useGetFuturesTradingVolume = (options?: UseQueryOptions<number | null>) => {
+const useGetFuturesCumulativeTrades = (options?: UseQueryOptions<number | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	return useQuery<number | null>(
@@ -19,15 +19,15 @@ const useGetFuturesTradingVolume = (options?: UseQueryOptions<number | null>) =>
 				const response = await request(
 					FUTURES_ENDPOINT,
 					gql`
-						query FuturesTotalTrades($currencyKey: String!, $minTimestamp: BigInt!) {
-							futuresTrades {
+						query FuturesTotalTrades {
+							futuresStats {
 								totalTrades
 							}
 						}
 					`
 				);
 
-				return response ? calculateCumulativeTrades(response.futuresTrades) : null;
+				return response ? calculateCumulativeTrades(response.futuresStats) : null;
 			} catch (e) {
 				console.log(e);
 				return null;
@@ -37,4 +37,4 @@ const useGetFuturesTradingVolume = (options?: UseQueryOptions<number | null>) =>
 	);
 };
 
-export default useGetFuturesTradingVolume;
+export default useGetFuturesCumulativeTrades;
