@@ -1,10 +1,10 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface/build/node/src/types';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import keyBy from 'lodash/keyBy';
 
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
-export type { CurrencyKey } from '@synthetixio/contracts-interface/build/node/src/types';
+export type { CurrencyKey } from '@synthetixio/contracts-interface';
 export { Synths } from '@synthetixio/contracts-interface';
 
 // TODO: standardize this
@@ -53,20 +53,11 @@ export const FIAT_SYNTHS: Set<CurrencyKey> = new Set([
 	Synths.sCHF,
 ]);
 
-export const LSE_SYNTHS = new Set<CurrencyKey>([Synths.sFTSE]);
+export const LSE_SYNTHS = new Set<CurrencyKey>([]);
 
-export const TSE_SYNTHS = new Set<CurrencyKey>([Synths.sNIKKEI]);
+export const TSE_SYNTHS = new Set<CurrencyKey>([]);
 
-export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([
-	Synths.sTSLA,
-	Synths.sMSFT,
-	Synths.sFB,
-	Synths.sAMZN,
-	Synths.sAAPL,
-	Synths.sNFLX,
-	Synths.sGOOG,
-	Synths.sCOIN,
-]);
+export const AFTER_HOURS_SYNTHS: Set<CurrencyKey> = new Set([]);
 
 export const MARKET_HOURS_SYNTHS = new Set([
 	...FIAT_SYNTHS,
@@ -75,7 +66,7 @@ export const MARKET_HOURS_SYNTHS = new Set([
 	...AFTER_HOURS_SYNTHS,
 ]);
 
-export const COMMODITY_SYNTHS = new Set<CurrencyKey>([Synths.sXAU, Synths.sXAG, Synths.sOIL]);
+export const COMMODITY_SYNTHS = new Set<CurrencyKey>([]);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
