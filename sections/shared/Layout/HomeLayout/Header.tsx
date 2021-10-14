@@ -2,6 +2,7 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import Img, { Svg } from 'react-optimized-image';
 
 import { HEADER_HEIGHT } from 'constants/ui';
 import ROUTES from 'constants/routes';
@@ -20,6 +21,8 @@ import { GridDivCenteredCol, TextButton } from 'styles/common';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
+import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
+import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -49,6 +52,19 @@ const Header: FC = () => {
 
 	return (
 		<>
+			<FuturesBannerContainer>
+				<FuturesBannerLinkWrapper>
+					<>
+						<FuturesLink href="https://futures.kwenta.io/futures-dashboard" target="_blank">
+							Decentralized Futures Trading Competition now live on Optimism Testnet
+						</FuturesLink>
+						<Img src={LinkWhiteIcon} />
+					</>
+				</FuturesBannerLinkWrapper>
+				<DivBorder />
+				<Svg src={FuturesBordersSvg} />
+				<DivBorder />
+			</FuturesBannerContainer>
 			<MobileHiddenView>
 				<Container>
 					<Logo isL2={isL2} />
@@ -92,6 +108,39 @@ const Container = styled.header`
 	${media.lessThan('md')`
 		grid-template-columns: auto auto;
 	`}
+`;
+const FuturesBannerContainer = styled.div`
+	height: 65px;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	background: linear-gradient(
+		180deg,
+		${(props) => props.theme.colors.goldColors.color1} 0%,
+		${(props) => props.theme.colors.goldColors.color2} 100%
+	);
+`;
+
+const FuturesBannerLinkWrapper = styled.div`
+	width: 100%;
+	text-align: center;
+	position: absolute;
+	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 16px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`;
+
+const DivBorder = styled.div`
+	height: 2px;
+	background: ${(props) => props.theme.colors.goldColors.color1};
+	flex-grow: 1;
+`;
+const FuturesLink = styled.a`
+	margin-right: 5px;
 `;
 
 const Links = styled.div`
