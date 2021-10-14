@@ -5,6 +5,8 @@ import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesCumulativeTrades from 'queries/futures/useGetFuturesCumulativeTrades';
+import useGetFuturesCumulativeVolume from 'queries/futures/useGetFuturesCumulativeVolume';
+
 import useGetFuturesDayTradeStats from 'queries/futures/useGetFuturesDayTradeStats';
 import useGetFuturesTotalLiquidations from 'queries/futures/useGetFuturesTotalLiquidations';
 import Loader from 'components/Loader';
@@ -15,6 +17,7 @@ import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticp
 export default function Statistics() {
 	const { t } = useTranslation();
 	const futuresCumulativeTradesQuery = useGetFuturesCumulativeTrades();
+	const futuresCumulativeVolumeQuery = useGetFuturesCumulativeVolume();
 	const futuresTotalLiquidationsQuery = useGetFuturesTotalLiquidations();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const allVolumeQuery = useGetFuturesDayTradeStats();
@@ -29,7 +32,8 @@ export default function Statistics() {
 	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
 	const totalWallets = totalWalletsQuery.data?.length ?? '-';
 	const cumulativeTrades = futuresCumulativeTradesQuery?.data ?? '-';
-	const totalLiquidations = futuresTotalLiquidationsQuery.data ?? '-';
+	const cumulativeVolume = futuresCumulativeVolumeQuery?.data ?? '-';
+	const totalLiquidations = futuresTotalLiquidationsQuery?.data ?? '-';
 
 	return (
 		<Container>
@@ -37,16 +41,20 @@ export default function Statistics() {
 				<GridItem>
 					<Label>Daily Volume ($USD)</Label>
 					<Value>
-						{formatCurrency(Synths.sUSD, allVolumeQuery.data?.volume || zeroBN, {
-							sign: '$',
-							minDecimals: 2,
-						})}
+						{allVolumeQuery.isLoading ? (
+							<Loader />
+						) : (
+							formatCurrency(Synths.sUSD, allVolumeQuery.data?.volume || zeroBN, {
+								sign: '$',
+								minDecimals: 2,
+							})
+						)}
 					</Value>
 				</GridItem>
 				<RowSpacer2 />
 				<GridItem>
 					<Label>Cumulative Volume ($USD)</Label>
-					<Value>$376,250,113.50</Value>
+					<Value>{futuresCumulativeVolumeQuery.isLoading ? <Loader /> : cumulativeVolume}</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="40px">
@@ -57,7 +65,9 @@ export default function Statistics() {
 				<RowSpacer3 />
 				<GridItem>
 					<Label>Daily Trades</Label>
-					<Value>{allVolumeQuery.data?.totalTrades || 0}</Value>
+					<Value>
+						{allVolumeQuery.isLoading ? <Loader /> : allVolumeQuery.data?.totalTrades ?? '-'}
+					</Value>
 				</GridItem>
 				<RowSpacer3 />
 				<GridItem>
@@ -73,7 +83,7 @@ export default function Statistics() {
 				<RowSpacer2 />
 				<GridItem>
 					<Label>Total Liquidations</Label>
-					<Value>{totalLiquidations}</Value>
+					<Value>{futuresTotalLiquidationsQuery.isLoading ? <Loader /> : totalLiquidations}</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="30px">

@@ -111,8 +111,8 @@ export const QUERY_KEYS = {
 	},
 	CoinGecko: {
 		CoinList: ['cg', 'coinList'],
-		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
+		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 	},
 	Futures: {
 		DayTradeStats: ['futures', 'dayTradeStats'],
@@ -140,6 +140,7 @@ export const QUERY_KEYS = {
 		Participants: () => ['futures', 'participants'],
 		Stats: (walletAddress: string) => ['futures', 'stats', walletAddress],
 		AverageLeverage: ['futures', 'averageLeverage'],
+		CumulativeVolume: ['futurs', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: ['futures', 'totalTrades'],
 	},

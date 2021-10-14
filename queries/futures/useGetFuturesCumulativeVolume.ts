@@ -7,34 +7,38 @@ import { isL2State } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
-import { calculateTotalLiquidations } from './utils';
+import { calculateCumulativeVolume } from './utils';
 
-const useGetFuturesTotalLiquidations = (options?: UseQueryOptions<number | null>) => {
+const useGetFuturesCumulativeVolume = (options?: UseQueryOptions<number | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	return useQuery<number | null>(
-		QUERY_KEYS.Futures.TotalLiquidations,
+	return useQuery<string | null>(
+		QUERY_KEYS.Futures.CumulativeVolume,
 		async () => {
 			try {
 				const response = await request(
 					FUTURES_ENDPOINT,
 					gql`
-						query FuturesTotalLiquidations {
-							futuresStats {
-								liquidations
+						query FuturesTradesVolume {
+							futuresTrades {
+								size
+								price
 							}
 						}
 					`
 				);
 
-				return response ? calculateTotalLiquidations(response.futuresStats) : null;
+				return response.futuresTrades ? calculateCumulativeVolume(response.futuresTrades) : null;
 			} catch (e) {
 				console.log(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{
+			enabled: isAppReady && isL2,
+			...options
+		}
 	);
 };
 
-export default useGetFuturesTotalLiquidations;
+export default useGetFuturesCumulativeVolume;

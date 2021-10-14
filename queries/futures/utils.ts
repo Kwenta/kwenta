@@ -11,7 +11,10 @@ import {
 	FuturesTrade,
 	PositionDetail,
 	PositionSide,
+	FuturesTradeWithPrice,
 } from './types';
+
+import { formatCurrency } from 'utils/formatters/number';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -144,3 +147,11 @@ export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 		wei(0)
 	);
 };
+
+export const calculateCumulativeVolume = (futuresTrades: FuturesTradeWithPrice[]): string =>
+	formatCurrency(
+		'sUSD',
+		futuresTrades.reduce((acc, trade) => {
+			return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
+		}, wei(0))
+	);

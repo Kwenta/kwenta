@@ -121,3 +121,8 @@ export type FuturesTotalTrades = {
 export type FuturesLiquidations = {
 	liquidations: string;
 };
+
+export type FuturesTradeWithPrice = {
+	size: string;
+	price: string;
+};
