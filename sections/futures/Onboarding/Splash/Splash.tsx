@@ -4,7 +4,7 @@ import Button from 'components/Button';
 import Connector from 'containers/Connector';
 import { Svg } from 'react-optimized-image';
 
-import SVGLogoWithName from 'assets/svg/futures/logoWithName.svg';
+import SVGLogoWithName from 'assets/svg/futures/logowithName.svg';
 import SVGBackground from 'assets/svg/futures/background.svg';
 
 import * as Styled from './styles';
