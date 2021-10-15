@@ -22,11 +22,11 @@ const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 
 const Logo: FC<LogoProps> = (props) => {
 	return (
-		<LogoContainer>
-			<Link href={ROUTES.Home}>
+		<Link href="/">
+			<LogoContainer>
 				<SvgLogo {...props} />
-			</Link>
-		</LogoContainer>
+			</LogoContainer>
+		</Link>
 	);
 };
 // const Logo: FC<LogoProps> = ({ isL2 }) => (
@@ -40,6 +40,7 @@ const Logo: FC<LogoProps> = (props) => {
 const LogoContainer = styled.span`
 	display: flex;
 	align-items: center;
+	cursor: pointer;
 `;
 
 export default Logo;
