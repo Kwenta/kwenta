@@ -23,7 +23,7 @@ const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 const Logo: FC<LogoProps> = (props) => {
 	return (
 		<LogoContainer>
-			<Link href={ROUTES.Homepage.Home}>
+			<Link href={ROUTES.Home}>
 				<SvgLogo {...props} />
 			</Link>
 		</LogoContainer>
