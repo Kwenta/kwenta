@@ -49,7 +49,6 @@ const Splash: FC = () => {
 					<Styled.Link href="https://blog.kwenta.io/futures-competition-onboarding" target="_blank">https://blog.kwenta.io/futures-competition-onboarding</Styled.Link>
 				</Styled.Line6>
 			</Styled.Root>
-
 		</StyledOnboarding.Root>
 	);
 };
