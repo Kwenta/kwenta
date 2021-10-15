@@ -22,11 +22,12 @@ import { DesktopOnlyView } from 'components/Media';
 
 import { zeroBN } from 'utils/formatters/number';
 
-type CurrentPageState = 'splash' | 'tweet' | 'futures' | null;
+import Loading from 'components/Loading';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
-	const [currentPage, setCurrentPage] = useState<CurrentPageState>(null);
+	const [loading, setLoading] = useState<boolean>(true);
+
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2Kovan = useRecoilValue(isL2KovanState);
@@ -43,41 +44,24 @@ const Futures: FC = () => {
 		(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
 	);
 	const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
+	const sUSDBalance = synthsWalletBalancesQuery.isSuccess
+		? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
+		: null;
 
 	useEffect(() => {
-		(async () => {
-			// if network isnt l2 kovan, direct to splash screen
-			if (!isWalletConnected || !isL2Kovan) {
-				console.log('***fired');
-				setCurrentPage('splash');
-				return;
-			}
-			const sUSDBalance = synthsWalletBalancesQuery.isSuccess
-				? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
-				: null;
-			// 	if network is l2 kovan but no susd, send them to tweet screen
-			if (!sUSDBalance?.toNumber()) {
-				setCurrentPage('tweet');
-				return;
-			}
-			// if network is l2 kovan and they have susd, send them to regular dashboard
-			setCurrentPage('futures');
-		})();
-	}, [
-		isL2Kovan,
-		isWalletConnected,
-		synthsWalletBalancesQuery.data,
-		synthsWalletBalancesQuery.isSuccess,
-	]);
+		setTimeout(() => setLoading(false), 1500);
+	}, []);
+
+	if (loading) return <Loading />;
 
 	return (
 		<>
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
-			{currentPage === 'splash' ? (
+			{!isWalletConnected || !isL2Kovan ? (
 				<Splash />
-			) : currentPage === 'tweet' ? (
+			) : !sUSDBalance?.toNumber() ? (
 				<Tweet />
 			) : (
 				<AppLayout>
