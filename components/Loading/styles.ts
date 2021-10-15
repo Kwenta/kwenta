@@ -16,6 +16,5 @@ export const Img = styled.img`
 		}
 	}
 	width: 40%;
-	margin-bottom: 25%;
 	animation: grow 1500ms ease-in-out forwards;
 `;
