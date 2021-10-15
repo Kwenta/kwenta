@@ -5,28 +5,48 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
-import Hero from 'sections/futures/Hero';
-import Markets from 'sections/futures/Markets';
+// import AppLayout from 'sections/shared/Layout/AppLayout';
+// import Hero from 'sections/futures/Hero';
+// import Markets from 'sections/futures/Markets';
 import Splash from 'sections/futures/Onboarding/Splash';
 import Tweet from 'sections/futures/Onboarding/Tweet';
-import WalletOverview from 'sections/futures/WalletOverview';
+// import WalletOverview from 'sections/futures/WalletOverview';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 import useSynthetixQueries from '@synthetixio/queries';
 import { FuturesMarket } from 'queries/futures/types';
 import { isL2KovanState, isWalletConnectedState, walletAddressState } from 'store/wallet';
 
-import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
-import { DesktopOnlyView } from 'components/Media';
+// import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
+// import { DesktopOnlyView } from 'components/Media';
 
 import { zeroBN } from 'utils/formatters/number';
 
 import Loading from 'components/Loading';
 
+import AppLayout from 'sections/shared/Layout/AppLayout';
+import {
+	PageContent,
+	MainContent,
+	RightSideContent,
+	FullHeightContainer,
+	FlexDivRow,
+} from 'styles/common';
+import { DesktopOnlyView } from 'components/Media';
+import Markets from 'sections/futures/Markets';
+import Hero from 'sections/futures/Hero';
+import FuturesDashboardTabs from './futures-dashboard/futures-dashboard-tabs';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
+import { Subheader } from 'sections/futures/common';
+
+type CurrentPageState = 'splash' | 'tweet' | 'futures' | null;
+
+
+
 const Futures: FC = () => {
 	const { t } = useTranslation();
 	const [loading, setLoading] = useState<boolean>(true);
+	const [currentPage, setCurrentPage] = useState<CurrentPageState>(null);
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
@@ -37,16 +57,40 @@ const Futures: FC = () => {
 		refetchInterval: 5000,
 	});
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	// const futuresMarketsQuery = useGetFuturesMarkets();
+	// const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
-		(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
-	);
-	const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
+	// const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
+	// 	(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
+	// );
+	// const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
 	const sUSDBalance = synthsWalletBalancesQuery.isSuccess
 		? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
 		: null;
+
+	useEffect(() => {
+		(async () => {
+			// if network isnt l2 kovan, direct to splash screen
+			if (!isWalletConnected || !isL2Kovan) {
+				setCurrentPage('splash');
+				return;
+			}
+
+			// 	if network is l2 kovan but no susd, send them to tweet screen
+			if (!sUSDBalance?.toNumber()) {
+				setCurrentPage('tweet');
+				return;
+			}
+			// if network is l2 kovan and they have susd, send them to regular dashboard
+			setCurrentPage('futures');
+		})();
+	}, [
+		isL2Kovan,
+		isWalletConnected,
+		synthsWalletBalancesQuery.data,
+		synthsWalletBalancesQuery.isSuccess,
+		sUSDBalance,
+	]);
 
 	useEffect(() => {
 		setTimeout(() => setLoading(false), 1500);
@@ -59,21 +103,25 @@ const Futures: FC = () => {
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
-			{!isWalletConnected || !isL2Kovan ? (
+			{currentPage === 'splash' ? (
 				<Splash />
-			) : !sUSDBalance?.toNumber() ? (
+			) : currentPage === 'tweet' ? (
 				<Tweet />
 			) : (
 				<AppLayout>
 					<PageContent>
 						<FullHeightContainer>
 							<MainContent>
-								<Hero />
-								<Markets />
+								<Hero displayReferBox={false} />
+								<FuturesDashboardTabs />
 							</MainContent>
 							<DesktopOnlyView>
 								<StyledRightSideContent>
-									<WalletOverview positions={futuresMarketsPositions} />
+									<HeaderRow>
+										<Subheader>{t('futures.leaderboard.title')}</Subheader>
+									</HeaderRow>
+									<Leaderboard compact />
+									<Markets />
 								</StyledRightSideContent>
 							</DesktopOnlyView>
 						</FullHeightContainer>
@@ -87,6 +135,10 @@ const Futures: FC = () => {
 const StyledRightSideContent = styled(RightSideContent)`
 	padding-left: 32px;
 	padding-right: 32px;
+`;
+
+const HeaderRow = styled(FlexDivRow)`
+	justify-content: space-between;
 `;
 
 export default Futures;
