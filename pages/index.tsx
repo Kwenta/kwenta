@@ -11,10 +11,7 @@ import { useTranslation } from 'react-i18next';
 import Splash from 'sections/futures/Onboarding/Splash';
 import Tweet from 'sections/futures/Onboarding/Tweet';
 // import WalletOverview from 'sections/futures/WalletOverview';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 import useSynthetixQueries from '@synthetixio/queries';
-import { FuturesMarket } from 'queries/futures/types';
 import { isL2KovanState, isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 // import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 'styles/common';
@@ -35,7 +32,7 @@ import {
 import { DesktopOnlyView } from 'components/Media';
 import Markets from 'sections/futures/Markets';
 import Hero from 'sections/futures/Hero';
-import FuturesDashboardTabs from './futures-dashboard/futures-dashboard-tabs';
+import FuturesDashboardTabs from './futures-dashboard-tabs';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
 import { Subheader } from 'sections/futures/common';
 
@@ -58,7 +55,6 @@ const Futures: FC = () => {
 	const sUSDBalance = synthsWalletBalancesQuery.isSuccess
 		? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
 		: null;
-
 
 	useEffect(() => {
 		(async () => {

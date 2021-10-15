@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabButton, TabList, TabPanel } from 'components/Tab';
-import ROUTES from 'constants/routes';
 import PositionCard from 'sections/futures/PositionCard';
 import { FuturesMarket } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -57,14 +56,14 @@ const FuturesDashboardTabs = () => {
 			name: FuturesDashboardTab.POSITION,
 			label: t('futures-dashboard.position.tab'),
 			active: activeTab === FuturesDashboardTab.POSITION,
-			onClick: () => router.push(ROUTES.FuturesDashboard.Position),
+			onClick: () => router.push({ query: { tab: 'position' } }),
 		},
 
 		{
 			name: FuturesDashboardTab.TRADES,
 			label: t('futures-dashboard.trades.tab'),
 			active: activeTab === FuturesDashboardTab.TRADES,
-			onClick: () => router.push(ROUTES.FuturesDashboard.Trades),
+			onClick: () => router.push({ query: { tab: 'trades' } }),
 		},
 	];
 	return (

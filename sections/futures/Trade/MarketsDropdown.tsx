@@ -32,7 +32,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
-						router.push(ROUTES.Futures.Market.MarketPair(x.value));
+						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
 				value={assetToCurrencyOption(asset)}
