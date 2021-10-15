@@ -10,7 +10,7 @@ export const ROUTES = {
 	Position: normalizeRoute(`/`, 'position', 'tab'),
 	Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Markets: {
-		Home: '/market',
+		Home: '/market/sBTC',
 		MarketPair: (baseCurrencyKey: CurrencyKey | string) =>
 			normalizeRoute('/market', `${baseCurrencyKey}`, 'market'),
 		Position: (baseCurrencyKey: CurrencyKey) =>
