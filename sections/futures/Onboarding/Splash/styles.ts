@@ -16,10 +16,14 @@ export const Background = styled.div`
 	z-index: -1;
 `;
 
+export const Blank = styled.div`
+	flex-basis: 35%;
+`;
+
 export const Line1 = styled.p`
+	align-self: center;
 	color: ${(props) => props.theme.colors.white};
 	font-size: 16px;
-	margin-top: 35%;
 	text-transform: uppercase;
 `;
 
@@ -42,10 +46,11 @@ export const Line3 = styled.p`
 
 export const Line4 = styled.p`
 	color: ${(props) => props.theme.colors.silver};
+	flex-basis: 80px;
 	font-size: 14px;
 	line-height: 1.3;
+	margin: 0 auto;
 	max-width: 80%;
-	margin: 0 auto 36px;
 	text-align: center;
 `;
 
@@ -55,10 +60,11 @@ export const Line4Strong = styled.strong`
 
 export const Line5 = styled.p`
 	color: ${(props) => props.theme.colors.silver};
+	flex-basis: 48px;
 	font-size: 14px;
 	line-height: 1.3;
+	margin: 0 auto;
 	max-width: 80%;
-	margin: 24px auto 8px;
 	text-align: center;
 `;
 
@@ -66,8 +72,8 @@ export const Line6 = styled.p`
 	color: ${(props) => props.theme.colors.silver};
 	font-size: 14px;
 	line-height: 1.3;
-	max-width: 80%;
 	margin: 0 auto;
+	max-width: 80%;
 	text-align: center;
 `;
 

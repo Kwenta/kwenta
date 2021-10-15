@@ -27,6 +27,7 @@ const Splash: FC = () => {
 				<Styled.Background>
 					<Svg src={SVGBackground} />
 				</Styled.Background>
+				<Styled.Blank />
 				<Styled.Line1>Welcome to</Styled.Line1>
 				<Styled.Line2>Decentralized</Styled.Line2>
 				<Styled.Line2>Futures on Layer 2</Styled.Line2>
