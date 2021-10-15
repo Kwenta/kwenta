@@ -41,11 +41,9 @@ import { Subheader } from 'sections/futures/common';
 
 type CurrentPageState = 'splash' | 'tweet' | 'futures' | null;
 
-
-
 const Futures: FC = () => {
 	const { t } = useTranslation();
-	const [loading, setLoading] = useState<boolean>(true);
+	const [isLoading, setLoading] = useState<boolean>(true);
 	const [currentPage, setCurrentPage] = useState<CurrentPageState>(null);
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -57,16 +55,10 @@ const Futures: FC = () => {
 		refetchInterval: 5000,
 	});
 
-	// const futuresMarketsQuery = useGetFuturesMarkets();
-	// const futuresMarkets = futuresMarketsQuery?.data ?? [];
-
-	// const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
-	// 	(futuresMarkets as [FuturesMarket]).map(({ asset }: { asset: string }) => asset)
-	// );
-	// const futuresMarketsPositions = futuresMarketsPositionQuery?.data ?? null;
 	const sUSDBalance = synthsWalletBalancesQuery.isSuccess
 		? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
 		: null;
+
 
 	useEffect(() => {
 		(async () => {
@@ -96,7 +88,7 @@ const Futures: FC = () => {
 		setTimeout(() => setLoading(false), 1500);
 	}, []);
 
-	if (loading) return <Loading />;
+	if (isLoading) return <Loading />;
 
 	return (
 		<>
