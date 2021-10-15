@@ -59,3 +59,10 @@ export const isL2State = selector<boolean>({
 		return get(networkState)?.useOvm ?? false;
 	},
 });
+
+export const isL2KovanState = selector<boolean>({
+	key: getWalletKey('isL2'),
+	get: ({ get }) => {
+		return get(networkState)?.id === 69;
+	},
+});

@@ -66,7 +66,7 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<UserMenu isTextButton={true} />
-						<Link href={ROUTES.Dashboard.Home}>
+						<Link href={ROUTES.Home}>
 							<Button variant="primary" isRounded={false} size="md">
 								{t('homepage.nav.start-trading')}
 							</Button>

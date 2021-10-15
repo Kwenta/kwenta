@@ -40,7 +40,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 						/>
 					</Message>
 				</DesktopOnlyView>
-				<Link href={ROUTES.Futures.Market.MarketPair(Synths.sBTC)}>
+				<Link href={ROUTES.Markets.MarketPair(Synths.sBTC)}>
 					<MessageButton>
 						<Trans t={t} i18nKey="homepage.nav.start-trading" />
 					</MessageButton>

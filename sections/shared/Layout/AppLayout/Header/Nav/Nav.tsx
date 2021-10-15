@@ -14,17 +14,22 @@ const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
-
 	return (
 		<nav>
 			<MenuLinks>
-				{menuLinks.map(({ i18nLabel, link }) => (
-					<MenuLinkItem key={link} isActive={asPath.includes(link)}>
-						<Link href={link}>
-							<a>{t(i18nLabel)}</a>
-						</Link>
-					</MenuLinkItem>
-				))}
+				{menuLinks.map(({ i18nLabel, link }) => {
+					const isActive =
+						asPath === link ||
+						(asPath.includes('market') && link.includes('market')) ||
+						(asPath.includes('leaderboard') && link.includes('leaderboard'));
+					return (
+						<MenuLinkItem key={link} isActive={isActive}>
+							<Link href={link}>
+								<a>{t(i18nLabel)}</a>
+							</Link>
+						</MenuLinkItem>
+					);
+				})}
 			</MenuLinks>
 		</nav>
 	);
