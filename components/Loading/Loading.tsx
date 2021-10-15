@@ -7,7 +7,7 @@ import * as Styled from './styles';
 const Loading: FC = () => {
 	return (
 		<Styled.Root>
-			<Styled.Img src={LogoLoading} />
+			<Styled.Img src={LogoLoading.src} height="150" width="668" />
 		</Styled.Root>
 	);
 };

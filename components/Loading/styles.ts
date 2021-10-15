@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Image from 'next/image';
 
 export const Root = styled.div`
 	position: absolute;
@@ -9,7 +10,7 @@ export const Root = styled.div`
 	width: 100%;
 `;
 
-export const Img = styled.img`
+export const Img = styled(Image)`
 	@keyframes grow {
 		to {
 			transform: scale(1.2);
