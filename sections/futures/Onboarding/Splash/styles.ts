@@ -4,13 +4,15 @@ export const Root = styled.div`
 	display: flex;
 	flex-direction: column;
 	text-align: center;
-	height: 100%;
+	height: 100vh;
 `;
 
 export const Background = styled.div`
 	position: absolute;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
+	top: 0;
+	left: 0;
 	z-index: -1;
 `;
 
@@ -26,7 +28,7 @@ export const Line2 = styled.div`
 	background-size: 100%;
 	font-size: 48px;
 	font-weight: 700;
-	line-height: 1;
+	line-height: 1.2;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 `;
