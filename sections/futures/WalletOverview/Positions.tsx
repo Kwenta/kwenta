@@ -46,14 +46,14 @@ const Positions: React.FC<PositionsProps> = ({ positions }) => {
 			<StyledSubheader>{t('futures.wallet-overview.positions.title')}</StyledSubheader>
 			{positions && positions.length > 0 ? (
 				positions.map((position, i) => (
-					<a href={ROUTES.Futures.Market.MarketPair(position.asset as CurrencyKey)}>
+					<a href={ROUTES.Markets.MarketPair(position.asset as CurrencyKey)}>
 						<PositionCard key={i} position={position} />
 					</a>
 				))
 			) : (
 				<CTA>
 					<CTAButton
-						onClick={() => router.push(ROUTES.Futures.Market.MarketPair(DEFAULT_ASSET))}
+						onClick={() => router.push(ROUTES.Markets.MarketPair(DEFAULT_ASSET))}
 						variant="primary"
 						isRounded
 						size="lg"

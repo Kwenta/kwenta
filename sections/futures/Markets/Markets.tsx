@@ -36,7 +36,7 @@ const Markets: React.FC = () => {
 						const {
 							original: { asset },
 						} = row;
-						router.push(ROUTES.Futures.Market.MarketPair(asset));
+						router.push(ROUTES.Markets.MarketPair(asset));
 					}}
 					columns={[
 						{

@@ -173,7 +173,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								<ManageButton
 									isRounded={true}
 									variant="text"
-									onClick={() => router.push(ROUTES.Futures.Market.MarketPair(currencyKey))}
+									onClick={() => router.push(ROUTES.Markets.MarketPair(currencyKey))}
 								>
 									{t('futures.market.user.position.manage-position')}
 								</ManageButton>
