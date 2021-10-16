@@ -17,8 +17,8 @@
 			"shorting": "cortos"
 		},
 		"networks-switcher": {
-			"l2": "Cambiar a L2",
-			"l1": "Cambiar a Layer 1",
+			"l2": "Cambiar a capa 2",
+			"l1": "Cambiar a capa 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
 			"learn-more": "Leer más",
@@ -51,7 +51,7 @@
 			"title": "características únicas de trading",
 			"infinite-liquidity": {
 				"title": "Liquidez infinita",
-				"copy": "Todo intercambio es peer-to-contract, utilizando la liquidez del protocolo Synthetix a través de su modelo modelo de pools. Esto es sin contraparte en el trade opuesto, y esencialmente liquidez infinita para los traders."
+				"copy": "Todo intercambio es peer-to-contract, utilizando la liquidez del protocolo Synthetix a través de su modelo de pools. Esto es sin contraparte en el trade opuesto, y esencialmente liquidez infinita para los traders."
 			},
 			"zero-slippage": {
 				"title": "Cero slippage (deslizamiento en el precio)",
@@ -64,40 +64,40 @@
 		},
 		"l2": {
 			"title": "Ahora en Optimism capa 2",
-			"copy": "Kwenta puede ser utilizada en la solución de capa 2 de Optimism's para <0>bajas tarifas de gas</0> y <0> transacciones inmediatas</0>. Inverte como un trader de élite.",
+			"copy": "Kwenta puede ser utilizada en la solución de capa 2 de Optimism para <0>bajas tarifas de gas</0> y <0> transacciones inmediatas</0>. Inverte como un trader de élite.",
 			"transaction-cost": "Tarifas de gas más bajas*",
 			"transaction-speed": "Velocidad de transacciones*",
 			"disclaimer": "* Estas estadísticas son aproximaciones. La experiencia del usuario puede diferir.",
 			"cta-buttons": {
 				"learn-more": "Leer más",
-				"switch-l2": "Cambiar a L2"
+				"switch-l2": "Cambiar a capa 2"
 			},
 			"markets": {
 				"title": "Mercados en tiempo real",
-				"copy": "Comenzar Trading ahora en Optimism (capa 2)"
+				"copy": "comenzar Trading ahora en Optimism capa 2"
 			}
 		},
 		"benefits": {
 			"title": "Sin las limitaciones de un exchange centralizado",
 			"peer-to-contract": {
 				"title": "Peer-to-contract (P2C) trading",
-				"copy": "Todas las órdenes de mercado son ejecutadas por los contratos inteligentes de Synthetix, por lo que los traders no tineen necesidad de preocuparse acerca de las limitaciones del modelo de intercambio P2P, tales como liquidez, slippage (deslizamiento en el precio), o libros de órdenes."
+				"copy": "Todas las órdenes de mercado son ejecutadas por los contratos inteligentes de Synthetix, por lo que los traders no tienen necesidad de preocuparse acerca de las limitaciones del modelo de intercambio P2P, tales como liquidez, slippage (deslizamiento en el precio), o libros de órdenes."
 			},
 			"trading-pair": {
 				"title": "Sin restricciones para operar en diferentes pares de activos",
 				"copy": "Cualquier Synth (activo sintético) puede ser cambiado instantáneamente a cualquier otro Synth, por lo que no estás limitado a un número de pares acotado por el exchange, lo cual es una restricción del modelo de exchange centralizado."
 			},
 			"permissionless": {
-				"title": "Sin permiso o custodia ",
+				"title": "Sin permiso o custodia",
 				"copy": "Kwenta es una dApp (aplicación descentralizada) que aprovecha el protocolo Synthetix, lo que significa que no hay necesidad de crear una cuenta, depositar o retirar, ni renunciar a la custodia de tus fondos."
 			}
 		},
 		"steps": {
-			"title": "Comenzar Trading en solo 3 pasos",
+			"title": "Comenzar trading en solo 3 pasos",
 			"one": {
 				"title": "Necesitarás una wallet web3 con ETH para el gas",
 				"subtitle": "Primer paso",
-				"copy": "Kwenta está en la blockchain Etherem, por lo que al igual que las demás dApps en Ethereum necesitarás una wallet web3 con ETH en ella para pagar el gas derivado de la ejecución de las transacciones. Entre las categorías más populares de wallets (billeteras) se incluyen hardware wallets, walllets de extensiones de navegador, y wallets del móvil."
+				"copy": "Kwenta está en la blockchain Ethereum, por lo que al igual que las demás dApps en Ethereum necesitarás una wallet web3 con ETH en ella para pagar el gas derivado de la ejecución de las transacciones. Entre las categorías más populares de wallets (billeteras) se incluyen hardware wallets, wallets de extensiones de navegador, y wallets del móvil."
 			},
 			"two": {
 				"title": "Adquiere sUSD (or cualquier otro Synth)",
@@ -119,11 +119,11 @@
 					"items": {
 						"qna1": {
 							"question": "¿Qué es Ethereum?",
-							"answer": "Ethereum permite la creacion de infraestructura that can exist entirely online, managed and run by a vast network of people, meaning that no-one controls it and it would be extremely difficult (if not impossible) to shut down. This puts it out of the reach of governments or other authorities.  Ethereum was created by a team of Bitcoin enthusiasts, who wanted to expand on its design of decentralized money to build out other decentralized use cases (‘decentralized’ means it’s not controlled by a central authority). There is a huge ecosystem of projects on the Ethereum blockchain, all of which can interact with each other."
+							"answer": "Ethereum permite la creacion de infraestructura la cual existe totalmente online, administrada y ejecutada por una enorme red de personas, lo cual significa que no es controlada por nadie y que sería extremadamente difícil (sino imposible) tumbarla. Esto la pone fuera del alcance de gobiernos u otras autoridades. Ethereum fué creada por un equipo de entusiastas de Bitcoin, quienes querían expandir su diseño de dinero descentralizado para crear otros casos de uso descentralizados (descentralizado significa que noe s controlado por por una autoridad central). Existe un enorme ecosistema de proyectos sobre la blockchain de Ethereum, pudiendo todos ellos interactuar entre sí."
 						},
 						"qna2": {
 							"question": "¿Qué es DeFi?",
-							"answer": "DeFi es una abreviatura de decentralised finance (finanzas descentralizadas), y representa un ecosistema de  herramientas financieras abiertas, productos, and protocolos en Ethereum. Ambos Kwenta y el protocolo Synthetix (sobre el cual está creado kwenta) son parte del ecosistema DeFi. DeFi se ejecuta sobre smart contracts (contratos inteligentes), los cuales son una característica clave de la blockchain Ethereum. Los smart contracts son programas o protocolos que ejecutan o controlan ciertos eventos y acciones acorde a como esté programados. Estos permiten la creación de una infraestructura que lleva a cabo ciertas tareas: por ejemplo, un smart contract que permite prestar y tomar prestado tendrá smart contracts que bloqueará los fondos depositados como collateral (garantía) y permitirá a sus usuarios pedir prestado otros activos contra su propio collateral."
+							"answer": "DeFi es una abreviatura de decentralised finance (finanzas descentralizadas), y representa un ecosistema de herramientas financieras abiertas, productos, y protocolos en Ethereum. Ambos Kwenta y el protocolo Synthetix (sobre el cual está creado Kwenta) son parte del ecosistema DeFi. DeFi se ejecuta sobre smart contracts (contratos inteligentes), los cuales son una característica clave de la blockchain Ethereum. Los smart contracts son programas o protocolos que ejecutan o controlan ciertos eventos y acciones acorde a como estén programados. Estos permiten la creación de una infraestructura que lleva a cabo ciertas tareas: por ejemplo, un smart contract que permite prestar y tomar prestado tendrá smart contracts que bloquearán los fondos depositados como colateral (garantía) y permitirán a sus usuarios pedir prestado otros activos contra su propio colateral."
 						},
 						"qna3": {
 							"question": "¿Qué es una dApp?",
@@ -140,11 +140,11 @@
 						},
 						"qna2": {
 							"question": "¿Cómo es posible el trading sin que hayan contrapartes?",
-							"answer": "No hay contrapartes directas para cada trade en el protocolo Synthetix, pero si se utiliza un modelo  de contrapartes similar en el cual  los stakers de SNX asumen parte del conjunto de deuda de Synthetix (debt pool) cuando crean sUSD. Para más detalles, consulte el <0>litepaper</0> de Synthetix."
+							"answer": "No hay contrapartes directas para cada trade en el protocolo Synthetix, pero si se utiliza un modelo de contrapartes similar en el cual los stakers de SNX asumen parte del conjunto de deuda de Synthetix (debt pool) cuando crean sUSD. Para más detalles, consulte el <0>litepaper</0> de Synthetix."
 						},
 						"qna3": {
 							"question": "¿Cómo se calculan los costes en gas?",
-							"answer": "Las transacciones tienen un coste proporcional a la capacidad de procesamiento requerida para que los mineros de Ethereum la ejecuten. Kwenta utiliza el protocolo Synthetix , el cual es mucho más complejo que la mayoría de los otros proyectos en Ethereum, por lo que sus transacciones requieren más gas para ser ejecutadas."
+							"answer": "Las transacciones tienen un coste proporcional a la capacidad de procesamiento requerida para que los mineros de Ethereum la ejecuten. Kwenta utiliza el protocolo Synthetix, el cual es mucho más complejo que la mayoría de los otros proyectos en Ethereum, por lo que sus transacciones requieren más gas para ser ejecutadas."
 						}
 					}
 				}
@@ -152,7 +152,7 @@
 		},
 		"footer": {
 			"cta": {
-				"title": "Comenzar Trading hoy",
+				"title": "Comenzar trading hoy",
 				"button": "Ver Exchange"
 			}
 		}
@@ -169,7 +169,7 @@
 		},
 		"market-details-card": {
 			"title": "Detalles del mercado",
-			"24h-vol": "Volumen 24H ",
+			"24h-vol": "Volumen 24H",
 			"24h-high": "Máximo 24H",
 			"24h-low": "Mínimo 24H",
 			"market-cap": "Cap. de mercado",
@@ -270,7 +270,7 @@
 				}
 			},
 			"get-l2-gas": {
-				"message": "No hay suficiente wETH de L2 para las tarifas (fees) de la transacción. Adquiere un poco vía Optimism Bridge:"
+				"message": "No hay suficiente wETH en la capa 2 para cubrir las tarifas de gas de la transacción. Adquiere un poco vía Optimism Bridge:"
 			}
 		},
 		"common": {
@@ -319,7 +319,7 @@
 		},
 		"synth-sort": {
 			"price": "Precio",
-			"24h-vol": "Volumen 24H ",
+			"24h-vol": "Volumen 24H",
 			"24h-high": "Máximo 24H",
 			"24h-low": "Mínimo 24H",
 			"24h-change": "Cambio 24H"
@@ -338,7 +338,7 @@
 				"from": "De",
 				"to": "A",
 				"value": "Valor",
-				"fee-reclaim": "Reembolso/Reclamación de la comisión (fee)",
+				"fee-reclaim": "Reembolso de la comisión (fee)",
 				"no-results": "No se han encontrado transacciones",
 				"tx-reclaim-fee-hint": "La transacción incurrió en un reembolso de comisión (fee) si +ve. Sino, la comisión (fee) fué reembolsada.",
 				"price-adjustment-hint": "Ajuste de precio actualmente en progreso"
@@ -377,7 +377,7 @@
 		"shorting-card": {
 			"summary-info": {
 				"button": {
-					"c-ratio-too-low": "El ratio de colateral (c-ration) es demasiado bajo",
+					"c-ratio-too-low": "El ratio de colateral (c-ratio) es demasiado bajo",
 					"add-more-collateral": "añadir más colateral",
 					"min-collateral": "El colateral mín. es <0>{{amount}}</0> <1>{{currencyKey}}</1>"
 				}
@@ -408,13 +408,13 @@
 			}
 		},
 		"history": {
-			"title": "tu posiciones",
+			"title": "tus posiciones",
 			"assets-sort": {
 				"allAssets": "Todos los activos"
 			},
 			"dates-sort": {
 				"all-dates": "Todas las fechas",
-				"past-week": "Última Semana",
+				"past-week": "Última semana",
 				"past-month": "Último mes",
 				"past-year": "Último año"
 			},
@@ -431,7 +431,7 @@
 					"collateral": "Colateral",
 					"liquidation-price": "Precio de liquidación",
 					"profit-loss": "Beneficios / Pérdidas",
-					"shorting": "En corto (shorting)",
+					"shorting": "En corto",
 					"collateral-ratio": "Ratio de colateral",
 					"date": "Fecha de apertura",
 					"interest-rate": "Tipo de interés",
@@ -439,10 +439,10 @@
 				},
 				"collateral-ratio-tooltip": {
 					"line1": "La posición estará en riesgo de liquidación",
-					"line2": "si el ratio de colateral cae por debajo de del mínimo de {{percent}}"
+					"line2": "si el ratio de colateral cae por debajo del mínimo de {{percent}}"
 				},
 				"interaction-disabled": {
-					"title": "Hay un periodo de espera tras interactuar con un préstamos.",
+					"title": "Hay un periodo de espera tras interactuar con un préstamo.",
 					"message": {
 						"part1": "Por favor, espere aproximadamente",
 						"part2": "antes de volver a interactuar con él."
@@ -450,7 +450,7 @@
 				},
 				"sections": {
 					"add-collateral": {
-						"nav-title": "Añadir Collateral",
+						"nav-title": "Añadir Colateral",
 						"tx-confirm": {
 							"base-currency-label": "posting"
 						}
@@ -477,7 +477,7 @@
 					"increase-position": {
 						"nav-title": "Incrementar Posición",
 						"tx-confirm": {
-							"base-currency-label": "increasing posición"
+							"base-currency-label": "incrementando posición"
 						}
 					},
 					"close-position": {
@@ -486,7 +486,7 @@
 							"quote-currency-label": "volviendo",
 							"base-currency-label": "recibiendo"
 						},
-						"close-button-label": "Close posición",
+						"close-button-label": "Cerrar posición",
 						"total-to-replay-label": "Total a reembolsar",
 						"button": {
 							"insufficient-balance-to-repay": "Balance insuficiente para reembolsar"
@@ -495,7 +495,7 @@
 					"panel": {
 						"collateral": "Colateral",
 						"shorting": "Activo en corto",
-						"wallet-balance": "Balance en wallet"
+						"wallet-balance": "Balance de la Wallet"
 					}
 				}
 			},
@@ -505,10 +505,9 @@
 				"shorting": "Activo en corto",
 				"collateral": "Colateral",
 				"liquidation-price": "Precio de liquidación",
-				"profit-loss": "Beneficios / Pérdidas",
-				"shorting": "En corto (shorting)",
 				"collateral-ratio": "Ratio de colateral",
-				"no-results": "No sé encontraron posiciones en corto",
+				"profit-loss": "Beneficios / Pérdidas",
+				"no-results": "No se encontraron posiciones en corto",
 				"accrued-interest": "Intereses devengados"
 			}
 		}
@@ -578,7 +577,7 @@
 			"powered-by-balancer": "Powered by Balancer",
 			"max-slippage-tolerance": "Tolerancia Max Slippage",
 			"estimated-slippage": "Slippage estimado",
-			"confirm-text": "Confirma tu transacción with tu web3 provider",
+			"confirm-text": "Confirma tu transacción con tu proveedor web3",
 			"notice-text": "Durante las horas de negociación te suministramos los precios exactos basados en los datos de Chainlink. Después del horario de negociación tienes la posibilidad de continuar haciéndolo al precio en Balancer. Por favor, tenga en cuenta las posibles desviaciones de precio así como slippage en grandes órdenes de mercado."
 		},
 		"settings": {
@@ -630,12 +629,12 @@
 			"limit": "límite"
 		},
 		"currency": {
-			"currency-amount": "Cantidad de <0>{{currencyKey}}</0> ",
+			"currency-amount": "Cantidad de <0>{{currencyKey}}</0>",
 			"exchange-fee": "Comisión (fee) por Exchange",
 			"currency-value": "Valor en <0>{{currencyKey}}</0>",
-			"estimated-currency-value": "<0>Valor del trade en {{currencyKey}}</0> ",
+			"estimated-currency-value": "<0>Valor del trade en {{currencyKey}}</0>",
 			"currency-contract": "<0>Contrato de {{currencyKey}}</0>",
-			"currency-price": "<0>Precio de {{currencyKey}}</0> Price",
+			"currency-price": "<0>Precio de {{currencyKey}}</0>",
 			"synthetic-currency-name": "{{currencyName}} sintético",
 			"trade-to-currency": "Convertir a <0>{{currencyKey}}</0>",
 			"buy-currency": "Comprar <0>{{currencyKey}}</0>",
@@ -702,7 +701,7 @@
 			"pending": "Pendiente",
 			"confirmed": "Confirmada",
 			"cancelled": "Cancelada",
-			"failed": "fallida"
+			"failed": "Fallida"
 		},
 		"switch": "cambiar",
 		"gas-prices": {
