@@ -593,7 +593,7 @@
 		"notifications": {
 			"title": "notificaciones",
 			"fee-reclaiming-synths": {
-				"title": "Fee reclaiming currencies"
+				"title": "Comisión de monedas reclamadas"
 			},
 			"open-orders": {
 				"title": "órdenes pendientes",
