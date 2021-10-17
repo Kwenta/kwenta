@@ -1,3 +1,4 @@
+import { onlyCapitalizeInEnglish } from 'i18n';
 import styled, { css } from 'styled-components';
 import media from 'styles/media';
 import { FlexDiv, GridDivCenteredCol, GridDivCenteredRow, TextButton } from 'styles/common';
@@ -24,7 +25,7 @@ export const LinkTag = styled.span`
 
 export const CurrencyLabel = styled.div`
 	font-size: 14px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	display: flex;
@@ -82,7 +83,7 @@ export const ItemStyle = styled.div`
 `;
 
 export const LabelStyle = styled(ItemStyle)`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 export const OverlayMessage = styled(GridDivCenteredRow)`

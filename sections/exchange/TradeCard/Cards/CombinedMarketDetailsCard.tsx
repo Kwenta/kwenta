@@ -12,6 +12,7 @@ import Card from 'components/Card';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketNextTransition, marketIsOpen } from 'utils/marketHours';
 import useCombinedRates from 'sections/exchange/TradeCard/Charts/hooks/useCombinedRates';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type MarketDetailsCardProps = {
 	baseCurrencyKey: CurrencyKey | null;
@@ -168,7 +169,7 @@ const Column = styled.div`
 `;
 
 const Label = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const Value = styled.div`

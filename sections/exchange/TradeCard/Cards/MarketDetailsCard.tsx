@@ -21,6 +21,7 @@ import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
@@ -251,7 +252,7 @@ const Column = styled.div`
 `;
 
 const Label = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const Value = styled.div`

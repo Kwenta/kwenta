@@ -6,6 +6,7 @@ import { FixedFooterMixin, GridDivCentered, numericValueCSS } from 'styles/commo
 import media from 'styles/media';
 
 import { zIndex } from 'constants/ui';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 export const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
@@ -37,7 +38,7 @@ export const SummaryItem = styled.div`
 `;
 
 export const SummaryItemLabel = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 export const SummaryItemValue = styled.div`

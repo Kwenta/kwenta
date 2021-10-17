@@ -18,6 +18,7 @@ import { numericValueCSS, NumericValue, FlexDivRowCentered, FlexDivCol } from 's
 import { formatPercent } from 'utils/formatters/number';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type TradeBalancerSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
@@ -194,7 +195,7 @@ const SummaryItem = styled(FlexDivRowCentered)`
 `;
 
 const SummaryItemLabel = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
