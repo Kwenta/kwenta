@@ -370,7 +370,7 @@
 		"common": {
 			"collateral": "Colateral",
 			"posting": "posting",
-			"shorting": "shorting",
+			"shorting": "En corto",
 			"interestRate": "Tipo de interés",
 			"cRatio": "C-Ratio"
 		},
@@ -391,24 +391,24 @@
 		"stats": {
 			"title": "Estadísticas de cortos",
 			"table": {
-				"asset": "activo",
+				"asset": "Activo",
 				"apr": "TAE",
-				"open-interest": "posiciones abiertas",
-				"total": "total"
+				"open-interest": "Posiciones abiertas",
+				"total": "Total"
 			}
 		},
 		"rewards": {
-			"title": "beneficios disponibles",
+			"title": "Beneficios disponibles",
 			"button": {
-				"claim": "recoger",
-				"claiming": "recogiendo..."
+				"claim": "Recoger",
+				"claiming": "Recogiendo..."
 			},
 			"tx-confirm": {
-				"claiming": "recogiendo"
+				"claiming": "Recogiendo"
 			}
 		},
 		"history": {
-			"title": "tus posiciones",
+			"title": "Tus posiciones",
 			"assets-sort": {
 				"allAssets": "Todos los activos"
 			},
@@ -432,7 +432,7 @@
 					"liquidation-price": "Precio de liquidación",
 					"profit-loss": "Beneficios / Pérdidas",
 					"shorting": "En corto",
-					"collateral-ratio": "Ratio de colateral",
+					"collateral-ratio": "Ratio de Colateralización",
 					"date": "Fecha de apertura",
 					"interest-rate": "Tipo de interés",
 					"accrued-interest": "Intereses devengados"
@@ -458,7 +458,7 @@
 					"remove-collateral": {
 						"nav-title": "Retirar Colateral",
 						"tx-confirm": {
-							"base-currency-label": "retirando"
+							"base-currency-label": "Retirando"
 						},
 						"button": {
 							"amount-greater-than-collateral": "La cantidad es mayor al colateral"
@@ -467,7 +467,7 @@
 					"decrease-position": {
 						"nav-title": "Reducir Posición",
 						"tx-confirm": {
-							"base-currency-label": "reduciendo posición"
+							"base-currency-label": "Reduciendo posición"
 						},
 						"button": {
 							"amount-greater-than-debt": "Cantidad mayor que la deuda",
@@ -483,8 +483,8 @@
 					"close-position": {
 						"nav-title": "Cerrar Posición",
 						"tx-confirm": {
-							"quote-currency-label": "volviendo",
-							"base-currency-label": "recibiendo"
+							"quote-currency-label": "Volviendo",
+							"base-currency-label": "Recibiendo"
 						},
 						"close-button-label": "Cerrar posición",
 						"total-to-replay-label": "Total a reembolsar",
@@ -542,7 +542,7 @@
 			"header": {
 				"search-results": "Buscar resultados",
 				"all-tokens": "Todos los tokens",
-				"holdings": "activos"
+				"holdings": "Activos"
 			},
 			"search": {
 				"placeholder": "Buscar tokens",
@@ -562,7 +562,7 @@
 			"price-adjustment-hint": "Esta transacción está sueja a un periodo de ajuste de precio. <0>Leer más.</0>"
 		},
 		"approve-transaction": {
-			"title": "aprobar transacción",
+			"title": "Aprobar transacción",
 			"confirm-with-provider": "Confirma tu transacción a través de tu wallet."
 		},
 		"afterHours": {
@@ -583,24 +583,24 @@
 		"settings": {
 			"title": "Configuración",
 			"options": {
-				"currency": "moneda",
-				"language": "idioma"
+				"currency": "Moneda",
+				"language": "Idioma"
 			}
 		},
 		"wallet": {
-			"title": "opciones de wallet"
+			"title": "Opciones de wallet"
 		},
 		"notifications": {
-			"title": "notificaciones",
+			"title": "Notificaciones",
 			"fee-reclaiming-synths": {
 				"title": "Comisión de monedas reclamadas"
 			},
 			"open-orders": {
-				"title": "órdenes pendientes",
+				"title": "Órdenes pendientes",
 				"no-results": "No hay órdenes pendientes"
 			},
 			"recent-notifications": {
-				"title": "notificaciones recientes",
+				"title": "Notificaciones recientes",
 				"no-results": "No hay transacciones recientes"
 			},
 			"deprecated-synths": {
@@ -613,10 +613,10 @@
 				}
 			},
 			"all-notifications": {
-				"title": "todas las notificaciones",
+				"title": "Todas las notificaciones",
 				"no-results": "Nada"
 			},
-			"view-all": "ver todas"
+			"view-all": "Ver todas"
 		},
 		"deprecated-synths": {
 			"from": "De",
@@ -721,8 +721,8 @@
 			}
 		},
 		"totals": {
-			"total-synth-value": "valor total de Synths",
-			"your-currencyKey-balance": "tu balance en <0>{{currencyKey}}</0>"
+			"total-synth-value": "Valor total de Synths",
+			"your-currencyKey-balance": "Tu balance en <0>{{currencyKey}}</0>"
 		},
 		"pagination": {
 			"page": "Página",
