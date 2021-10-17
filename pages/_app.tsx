@@ -23,7 +23,7 @@ import '@reach/tabs/styles.css';
 import '@reach/accordion/styles.css';
 import 'tippy.js/dist/tippy.css';
 
-import '../i18n';
+import 'i18n';
 
 import Layout from 'sections/shared/Layout';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';

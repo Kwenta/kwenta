@@ -17,6 +17,7 @@ import Button from 'components/Button';
 
 import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type MobileSettingsModalProps = {
 	onDismiss: () => void;
@@ -131,7 +132,7 @@ const CurrencySelectContainer = styled.div`
 
 const OptionLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	padding-bottom: 8px;
 `;
 

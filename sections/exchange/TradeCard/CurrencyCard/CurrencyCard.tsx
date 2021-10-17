@@ -20,6 +20,7 @@ import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -167,7 +168,7 @@ const StyledCardBody = styled(Card.Body)`
 
 const LabelContainer = styled.div`
 	padding-bottom: 2px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const CurrencyWalletBalanceContainer = styled.div``;
@@ -255,7 +256,7 @@ const WalletBalanceContainer = styled(FlexDivRowCentered)<{ disableInput?: boole
 `;
 
 const WalletBalanceLabel = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 

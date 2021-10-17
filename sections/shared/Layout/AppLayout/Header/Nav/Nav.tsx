@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { linkCSS } from 'styles/common';
 
 import { menuLinksState } from '../states';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 const Nav: FC = () => {
 	const { t } = useTranslation();
@@ -39,7 +40,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 	a {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.bold};
-		text-transform: capitalize;
+		text-transform: ${onlyCapitalizeInEnglish};
 		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.silver)};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};

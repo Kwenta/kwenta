@@ -1,3 +1,4 @@
+import { onlyCapitalizeInEnglish } from 'i18n';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
@@ -22,7 +23,7 @@ const Container = styled(FlexDivCentered)<{ lowercase: boolean }>`
 	height: 32px;
 	padding: 0 18px;
 	justify-content: flex-start;
-	text-transform: ${(props) => (props.lowercase ? 'none' : 'capitalize')};
+	text-transform: ${(props) => (props.lowercase ? 'none' : onlyCapitalizeInEnglish)};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	flex-shrink: 0;

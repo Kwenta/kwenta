@@ -12,6 +12,7 @@ import media, { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 import { GridContainer, SubHeader } from '../common';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 const ASSETS = [
 	{
@@ -127,7 +128,7 @@ const AssetCard = styled(FlexDivCentered)`
 const AssetCardText = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	color: ${(props) => props.theme.colors.white};
 	margin: 0px 0px 0px 16px;
 	text-align: center;

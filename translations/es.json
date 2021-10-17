@@ -48,7 +48,7 @@
 			"short": "Posiciones en corto"
 		},
 		"features": {
-			"title": "características únicas de trading",
+			"title": "Características únicas de trading",
 			"infinite-liquidity": {
 				"title": "Liquidez infinita",
 				"copy": "Todo intercambio es peer-to-contract, utilizando la liquidez del protocolo Synthetix a través de su modelo de pools. Esto es sin contraparte en el trade opuesto, y esencialmente liquidez infinita para los traders."

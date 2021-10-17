@@ -1,13 +1,12 @@
 import styled, { css } from 'styled-components';
 import { resetButtonCSS } from 'styles/common';
-
+import { onlyCapitalizeInEnglish } from 'i18n';
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
 	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
 };
-
 const Button = styled.button<ButtonProps>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	height: 32px;
@@ -19,8 +18,8 @@ const Button = styled.button<ButtonProps>`
 	cursor: pointer;
 	outline: none;
     color: ${(props) => props.theme.colors.white};
-	text-transform: capitalize;
-
+	text-transform: ${onlyCapitalizeInEnglish};
+	
     &:disabled {
         background: ${(props) => props.theme.colors.stormcloud};
 		cursor: default;

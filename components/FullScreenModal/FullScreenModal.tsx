@@ -2,6 +2,7 @@ import { FC, ReactNode, SyntheticEvent } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 import styled from 'styled-components';
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type FullScreenModalProps = {
 	title?: ReactNode;
@@ -38,7 +39,7 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const Title = styled.div`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
 	font-size: 24px;
