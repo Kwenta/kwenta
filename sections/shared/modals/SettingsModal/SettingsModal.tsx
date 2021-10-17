@@ -1,3 +1,4 @@
+import { onlyCapitalizeInEnglish } from 'i18n';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -45,7 +46,7 @@ const Options = styled.div``;
 const OptionLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.white};
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const OptionRow = styled(FlexDivRowCentered)`

@@ -1,3 +1,4 @@
+import { onlyCapitalizeInEnglish } from 'i18n';
 import styled from 'styled-components';
 
 export const OrdersGroup = styled.div`
@@ -5,7 +6,7 @@ export const OrdersGroup = styled.div`
 `;
 export const OrdersGroupTitle = styled.div`
 	padding: 8px 16px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	font-family: ${(props) => props.theme.fonts.bold};
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 `;

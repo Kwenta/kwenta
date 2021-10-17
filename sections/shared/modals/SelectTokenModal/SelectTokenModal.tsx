@@ -34,6 +34,7 @@ import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 import TokenRow from './TokenRow';
 import useSynthetixQueries from '@synthetixio/queries';
 import { omitBy } from 'lodash';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type SelectTokenModalProps = {
 	onDismiss: () => void;
@@ -225,7 +226,7 @@ const AssetSearchInput = styled(SearchInput)`
 	height: 40px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	::placeholder {
-		text-transform: capitalize;
+		text-transform: ${onlyCapitalizeInEnglish};
 		color: ${(props) => props.theme.colors.silver};
 	}
 `;

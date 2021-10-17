@@ -21,6 +21,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { walletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -210,7 +211,7 @@ const AssetSearchInput = styled(SearchInput)`
 	height: 40px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	::placeholder {
-		text-transform: capitalize;
+		text-transform: ${onlyCapitalizeInEnglish};
 		color: ${(props) => props.theme.colors.silver};
 	}
 `;

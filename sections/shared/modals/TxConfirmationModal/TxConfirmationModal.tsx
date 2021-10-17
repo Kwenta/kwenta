@@ -31,6 +31,7 @@ import { Svg } from 'react-optimized-image';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
@@ -309,7 +310,7 @@ const CurrencyItem = styled.div`
 
 const CurrencyItemTitle = styled.div`
 	padding-bottom: 8px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const ArrowsIconContainer = styled.div`

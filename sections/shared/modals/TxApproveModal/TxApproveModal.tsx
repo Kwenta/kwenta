@@ -9,6 +9,7 @@ import Currency from 'components/Currency';
 import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
 
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type TxApproveModalProps = {
 	onDismiss: () => void;
@@ -85,7 +86,7 @@ const CurrencyItem = styled.div`
 
 const CurrencyItemTitle = styled.div`
 	padding-bottom: 8px;
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 const Subtitle = styled.div`

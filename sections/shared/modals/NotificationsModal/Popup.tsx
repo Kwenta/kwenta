@@ -21,6 +21,7 @@ import CurrencyFeeReclaim from './CurrencyFeeReclaim';
 
 import { OrderGroup } from './types';
 import { OrderByStatus } from 'store/orders';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 type PopupProps = {
 	onDismiss: () => void;
@@ -128,7 +129,7 @@ const ViewAllButtonContainer = styled.div`
 	text-align: center;
 `;
 const ViewAllButton = styled(TextButton)`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
