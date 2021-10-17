@@ -12,9 +12,9 @@
 	},
 	"header": {
 		"nav": {
-			"exchange": "exchange",
-			"dashboard": "dashboard",
-			"shorting": "cortos"
+			"exchange": "Exchange",
+			"dashboard": "Dashboard",
+			"shorting": "Cortos"
 		},
 		"networks-switcher": {
 			"l2": "Cambiar a capa 2",
@@ -74,7 +74,7 @@
 			},
 			"markets": {
 				"title": "Mercados en tiempo real",
-				"copy": "comenzar Trading ahora en Optimism capa 2"
+				"copy": "Comenzar Trading ahora en Optimism capa 2"
 			}
 		},
 		"benefits": {
@@ -161,10 +161,10 @@
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
 		"currency-card": {
-			"wallet-balance": "balance de la wallet",
+			"wallet-balance": "Balance en la wallet",
 			"currency-selector": {
-				"select-synth": "selecciona synth",
-				"select-token": "selecciona token"
+				"select-synth": "Seleccionar Synth",
+				"select-token": "Seleccionar token"
 			}
 		},
 		"market-details-card": {
@@ -173,16 +173,16 @@
 			"24h-high": "Máximo 24H",
 			"24h-low": "Mínimo 24H",
 			"market-cap": "Cap. de mercado",
-			"price-feed": "Indicador del Precio",
+			"price-feed": "Indicador del precio",
 			"opens-in": "Abre en",
 			"closes-in": "Cierra en"
 		},
 		"price-chart-card": {
-			"compare": "comparar",
+			"compare": "Comparar",
 			"ratio": "ratio",
 			"overlay-messages": {
 				"frozen": {
-					"title": "El synth {{currencyKey}} ha sido congelado",
+					"title": "El Synth {{currencyKey}} ha sido congelado",
 					"subtitle": "Reajuste en progreso."
 				},
 				"market-closure": {
@@ -214,23 +214,23 @@
 			"no-data": "Sin datos"
 		},
 		"summary-info": {
-			"gas-price-gwei": "precio del gas (GWEI)",
-			"fee": "comisión (fee)",
-			"fee-cost": "coste de la comisión",
+			"gas-price-gwei": "Precio del gas (GWEI)",
+			"fee": "Comisión (fee)",
+			"fee-cost": "Coste de la comisión",
 			"button": {
-				"approve": "aprobar",
-				"approving": "aprobando",
-				"c-ratio-too-low": "el c-ratio es demasiado bajo",
-				"fee-reclaim-period": "periodo de reclamación de la comisión",
-				"insufficient-balance": "balance insuficiente",
-				"enter-amount": "introduzca la cantidad",
-				"select-synth": "seleccionar synth",
-				"select-token": "seleccionar token",
-				"submit-order": "enviar orden",
-				"submitting-order": "enviando orden...",
-				"submitting-approval": "enviando approval...",
-				"approve-balancer": "aprobar contrato de balancer",
-				"add-more-collateral": "añadir más colateral"
+				"approve": "Aprobar",
+				"approving": "Aprobando",
+				"c-ratio-too-low": "El c-ratio es demasiado bajo",
+				"fee-reclaim-period": "Periodo de reclamación de la comisión",
+				"insufficient-balance": "Balance insuficiente",
+				"enter-amount": "Introduzca la cantidad",
+				"select-synth": "Seleccionar Synth",
+				"select-token": "Seleccionar token",
+				"submit-order": "Enviar orden",
+				"submitting-order": "Enviando orden...",
+				"submitting-approval": "Enviando approval...",
+				"approve-balancer": "Aprobar contrato de balancer",
+				"add-more-collateral": "Añadir más colateral"
 			}
 		},
 		"onboard": {
@@ -243,10 +243,10 @@
 		},
 		"footer-card": {
 			"market-closure": {
-				"button-label": "mercado cerrado",
+				"button-label": "Mercado cerrado",
 				"reasons": {
 					"frozen": {
-						"message": "El synth {{currencyKey}} ha sido congelado - reajuste en progreso."
+						"message": "El Synth {{currencyKey}} ha sido congelado - reajuste en progreso."
 					},
 					"market-closure": {
 						"message": "El mercado {{currencyKey}} ha sido cerrado - reajuste en progreso."
@@ -274,8 +274,8 @@
 			}
 		},
 		"common": {
-			"from": "de",
-			"into": "a"
+			"from": "De",
+			"into": "A"
 		},
 		"errors": {
 			"fee-reclamation": "Hay un periodo de prueba tras completar un trade. Por favor, espere aproximadamente {{waitingPeriod}} minutos antes de intentar intercambiar {{currencyKey}}"
@@ -368,7 +368,7 @@
 	"shorting": {
 		"page-title": "Shorting | Kwenta",
 		"common": {
-			"collateral": "colateral",
+			"collateral": "Colateral",
 			"posting": "posting",
 			"shorting": "shorting",
 			"interestRate": "Tipo de interés",
@@ -384,12 +384,12 @@
 			}
 		},
 		"c-ratio": {
-			"safe": "seguro",
+			"safe": "Seguro",
 			"safeMax": "máximo seguro",
 			"highRisk": "alto riesgo"
 		},
 		"stats": {
-			"title": "estadísticas de cortos",
+			"title": "Estadísticas de cortos",
 			"table": {
 				"asset": "activo",
 				"apr": "TAE",
@@ -495,7 +495,7 @@
 					"panel": {
 						"collateral": "Colateral",
 						"shorting": "Activo en corto",
-						"wallet-balance": "Balance de la Wallet"
+						"wallet-balance": "Balance en la Wallet"
 					}
 				}
 			},
@@ -524,39 +524,39 @@
 	},
 	"modals": {
 		"select-currency": {
-			"title": "seleccionar synth",
+			"title": "Seleccionar Synth",
 			"header": {
-				"search-results": "buscar resultados",
-				"category-synths": "synths {{category}}",
-				"all-synths": "todos los synths",
-				"your-synths": "tus synths",
-				"holdings": "activos"
+				"search-results": "Buscar resultados",
+				"category-synths": "Synths {{category}}",
+				"all-synths": "Todos los Synths",
+				"your-synths": "Tus Synths",
+				"holdings": "Activos"
 			},
 			"search": {
-				"placeholder": "buscar synths",
+				"placeholder": "Buscar Synths",
 				"empty-results": "No se encontraron resultados. Por favor, inténtelo de nuevo."
 			}
 		},
 		"select-token": {
-			"title": "seleccionar token",
+			"title": "Seleccionar token",
 			"header": {
-				"search-results": "buscar resultados",
-				"all-tokens": "todos los tokens",
+				"search-results": "Buscar resultados",
+				"all-tokens": "Todos los tokens",
 				"holdings": "activos"
 			},
 			"search": {
-				"placeholder": "buscar tokens",
+				"placeholder": "Buscar tokens",
 				"empty-results": "No se encontraron resultados. Por favor, inténtelo de nuevo."
 			}
 		},
 		"select-short-currency": {
-			"title": "seleccionar activo en corto",
+			"title": "Seleccionar activo en corto",
 			"header": {
-				"your-synths": "tu balance en <0>{{currencyKey}}</0> "
+				"your-synths": "Tu balance en <0>{{currencyKey}}</0> "
 			}
 		},
 		"confirm-transaction": {
-			"title": "confirmar transacción",
+			"title": "Confirmar transacción",
 			"confirm-with-provider": "Confirma tu transacción a través de tu wallet.",
 			"exchange-fee-hint": "La comisión (fee) del protocolo Synthetix por <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
 			"price-adjustment-hint": "Esta transacción está sueja a un periodo de ajuste de precio. <0>Leer más.</0>"
@@ -581,7 +581,7 @@
 			"notice-text": "Durante las horas de negociación te suministramos los precios exactos basados en los datos de Chainlink. Después del horario de negociación tienes la posibilidad de continuar haciéndolo al precio en Balancer. Por favor, tenga en cuenta las posibles desviaciones de precio así como slippage en grandes órdenes de mercado."
 		},
 		"settings": {
-			"title": "configuración",
+			"title": "Configuración",
 			"options": {
 				"currency": "moneda",
 				"language": "idioma"
@@ -605,8 +605,8 @@
 			},
 			"deprecated-synths": {
 				"title": "Synths deprecados",
-				"description": "Tu balance incluye synths deprecados los cuales serán congelados hasta su redención.",
-				"short-description": "Redimir synths deprecados ({{amount}} {{asset}})",
+				"description": "Tu balance incluye Synths deprecados los cuales serán congelados hasta su redención.",
+				"short-description": "Redimir Synths deprecados ({{amount}} {{asset}})",
 				"button": {
 					"default": "Redimir",
 					"redeeming": "Redimiendo"
@@ -619,8 +619,8 @@
 			"view-all": "ver todas"
 		},
 		"deprecated-synths": {
-			"from": "de",
-			"to": "a"
+			"from": "De",
+			"to": "A"
 		}
 	},
 	"common": {
@@ -653,8 +653,8 @@
 			"commodity": "materias primas",
 			"equities": "valores"
 		},
-		"contract": "contrato",
-		"search-results": "buscar resultados",
+		"contract": "Contrato",
+		"search-results": "Buscar resultados",
 		"chart-periods": {
 			"4H": "4H",
 			"1D": "1D",
@@ -662,7 +662,7 @@
 			"1M": "1M"
 		},
 		"chart-types": {
-			"compare": "comparar",
+			"compare": "Comparar",
 			"ratio": "ratio",
 			"candlesticks": "velas"
 		},
@@ -685,10 +685,10 @@
 			"coming-soon": "Próximamente"
 		},
 		"wallet": {
-			"connect-wallet": "conectar wallet",
-			"switch-wallet": "cambiar wallet",
-			"switch-accounts": "cambiar cuentas",
-			"disconnect-wallet": "desconectar wallet"
+			"connect-wallet": "Conectar wallet",
+			"switch-wallet": "Cambiar de wallet",
+			"switch-accounts": "Cambiar cuentas",
+			"disconnect-wallet": "Desconectar wallet"
 		},
 		"tx-status": {
 			"waiting": "Esperando",
@@ -710,7 +710,7 @@
 			"fastest": "Más rápido"
 		},
 		"custom": "Personalizado",
-		"edit": "editar",
+		"edit": "Editar",
 		"powered-by": "Powered by",
 		"dex-aggregators": {
 			"1inch": {
@@ -721,7 +721,7 @@
 			}
 		},
 		"totals": {
-			"total-synth-value": "valor total de synths",
+			"total-synth-value": "valor total de Synths",
 			"your-currencyKey-balance": "tu balance en <0>{{currencyKey}}</0>"
 		},
 		"pagination": {
