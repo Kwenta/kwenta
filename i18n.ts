@@ -18,5 +18,5 @@ i18n.use(initReactI18next).init({
 		escapeValue: false, // react already safes from xss
 	},
 });
-
+export const onlyCapitalizeInEnglish = () => (i18n.language === 'en' ? 'capitalize' : 'unset');
 export default i18n;
