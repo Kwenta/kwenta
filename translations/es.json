@@ -505,8 +505,8 @@
 				"shorting": "Activo en corto",
 				"collateral": "Colateral",
 				"liquidation-price": "Precio de liquidación",
-				"collateral-ratio": "Ratio de colateral",
-				"profit-loss": "Beneficios / Pérdidas",
+				"collateral-ratio": "Ratio de col.",
+				"profit-loss": "Gan. / Pérd.",
 				"no-results": "No se encontraron posiciones en corto",
 				"accrued-interest": "Intereses devengados"
 			}
