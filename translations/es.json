@@ -172,7 +172,7 @@
 			"24h-vol": "Volumen 24H",
 			"24h-high": "Máximo 24H",
 			"24h-low": "Mínimo 24H",
-			"market-cap": "Cap. de mercado",
+			"market-cap": "Capitalización de mercado",
 			"price-feed": "Indicador del precio",
 			"opens-in": "Abre en",
 			"closes-in": "Cierra en"
@@ -378,18 +378,18 @@
 			"summary-info": {
 				"button": {
 					"c-ratio-too-low": "El ratio de colateral (c-ratio) es demasiado bajo",
-					"add-more-collateral": "añadir más colateral",
+					"add-more-collateral": "Añadir más colateral",
 					"min-collateral": "El colateral mín. es <0>{{amount}}</0> <1>{{currencyKey}}</1>"
 				}
 			}
 		},
 		"c-ratio": {
 			"safe": "Seguro",
-			"safeMax": "máximo seguro",
-			"highRisk": "alto riesgo"
+			"safeMax": "Máximo seguro",
+			"highRisk": "Alto riesgo"
 		},
 		"stats": {
-			"title": "Estadísticas de cortos",
+			"title": "Estadísticas de posiciones en corto",
 			"table": {
 				"asset": "Activo",
 				"apr": "TAE",

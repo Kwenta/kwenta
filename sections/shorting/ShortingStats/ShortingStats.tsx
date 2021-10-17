@@ -21,6 +21,7 @@ import { SYNTHS_TO_SHORT } from '../constants';
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 const SECONDS_IN_A_YR = 365 * 24 * 60 * 60;
 
@@ -149,7 +150,7 @@ const TableCell = styled.td`
 `;
 
 const TableCellHead = styled.th`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	font-family: ${(props) => props.theme.fonts.bold};
 	&:last-child {
 		text-align: right;
@@ -166,7 +167,7 @@ const StyledCurrencyName = styled(Currency.Name)`
 const TotalLabel = styled.span`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.blueberry};
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
