@@ -7,6 +7,7 @@ import NumericInput from 'components/Input/NumericInput';
 import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
 
 import media from 'styles/media';
+import { onlyCapitalizeInEnglish } from 'i18n';
 
 export const FlexDiv = styled.div`
 	display: flex;
@@ -134,7 +135,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 `;
 
 export const CapitalizedText = styled.span`
-	text-transform: capitalize;
+	text-transform: ${onlyCapitalizeInEnglish};
 `;
 
 export const absoluteCenteredCSS = css`
