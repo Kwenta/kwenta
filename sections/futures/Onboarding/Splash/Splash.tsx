@@ -24,9 +24,11 @@ const Splash: FC = () => {
 				<Styled.Logo>
 					<Svg src={SVGLogoWithName} />
 				</Styled.Logo>
-				<Styled.Background>
-					<Svg src={SVGBackground} />
-				</Styled.Background>
+				<Styled.BackgroundContainer>
+					<Styled.Background>
+						<Svg src={SVGBackground} />
+					</Styled.Background>
+				</Styled.BackgroundContainer>
 				<Styled.Blank />
 				<Styled.Line1>Welcome to</Styled.Line1>
 				<Styled.Line2>Decentralized</Styled.Line2>
@@ -60,14 +62,6 @@ const Splash: FC = () => {
 						Connect Wallet
 					</Button>
 				)}
-				<Styled.Line5>We recommend creating a new wallet to use for the competition.</Styled.Line5>
-				<Styled.Line6>
-					For help getting started, check out our blog post:
-					{` `}
-					<Styled.Link href="https://blog.kwenta.io/futures-competition-onboarding" target="_blank">
-						https://blog.kwenta.io/futures-competition-onboarding
-					</Styled.Link>
-				</Styled.Line6>
 			</Styled.Root>
 		</StyledOnboarding.Root>
 	);
