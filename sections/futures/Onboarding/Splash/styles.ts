@@ -7,7 +7,7 @@ export const Root = styled.div`
 	height: 100vh;
 `;
 
-export const Background = styled.div`
+export const BackgroundContainer = styled.div`
 	position: absolute;
 	width: 100%;
 	height: 100vh;
@@ -16,8 +16,15 @@ export const Background = styled.div`
 	z-index: -1;
 `;
 
+export const Background = styled.div`
+	width: 100%;
+	height: 100%;
+	margin: auto;
+	max-width: 1000px;
+`;
+
 export const Blank = styled.div`
-	flex-basis: 35%;
+	flex-basis: 37%;
 `;
 
 export const Line1 = styled.p`
