@@ -6,7 +6,6 @@ import { Svg } from 'react-optimized-image';
 
 import SVGLogoWithName from 'assets/svg/futures/logowithName.svg';
 import SVGBackground from 'assets/svg/futures/background.svg';
-import bg from 'assets/svg/futures/background.png';
 
 import * as Styled from './styles';
 import * as StyledOnboarding from '../styles';

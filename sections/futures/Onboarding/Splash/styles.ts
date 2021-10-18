@@ -5,7 +5,7 @@ import styled from 'styled-components';
 // import srs from 'assets/svg/futures/background.svg';
 
 export const Root = styled.div`
-	background: url('/images/background.svg');
+	// background: url('/images/background.svg');
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
