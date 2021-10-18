@@ -6,6 +6,7 @@ import { Svg } from 'react-optimized-image';
 
 import SVGLogoWithName from 'assets/svg/futures/logowithName.svg';
 import SVGBackground from 'assets/svg/futures/background.svg';
+import bg from 'assets/svg/futures/background.png';
 
 import * as Styled from './styles';
 import * as StyledOnboarding from '../styles';
@@ -18,15 +19,17 @@ const Splash: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const switchNetwork = useSwitchToOptimisticKovan();
 
+	const svg = (<Svg src={SVGBackground} />);
+
 	return (
 		<StyledOnboarding.Root>
-			<Styled.Root>
+			<Styled.Root style={{ background: svg }}>
 				<Styled.Logo>
 					<Svg src={SVGLogoWithName} />
 				</Styled.Logo>
-				<Styled.Background>
+				{/* <Styled.Background>
 					<Svg src={SVGBackground} />
-				</Styled.Background>
+				</Styled.Background> */}
 				<Styled.Blank />
 				<Styled.Line1>Welcome to</Styled.Line1>
 				<Styled.Line2>Decentralized</Styled.Line2>
