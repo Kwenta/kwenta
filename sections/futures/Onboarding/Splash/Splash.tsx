@@ -19,17 +19,12 @@ const Splash: FC = () => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const switchNetwork = useSwitchToOptimisticKovan();
 
-	const svg = (<Svg src={SVGBackground} />);
-
 	return (
 		<StyledOnboarding.Root>
-			<Styled.Root style={{ background: svg }}>
+			<Styled.Root style={{ backgroundImage: `url(${SVGBackground})` }}>
 				<Styled.Logo>
 					<Svg src={SVGLogoWithName} />
 				</Styled.Logo>
-				{/* <Styled.Background>
-					<Svg src={SVGBackground} />
-				</Styled.Background> */}
 				<Styled.Blank />
 				<Styled.Line1>Welcome to</Styled.Line1>
 				<Styled.Line2>Decentralized</Styled.Line2>
