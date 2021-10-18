@@ -14,6 +14,7 @@ import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
+import media from 'styles/media';
 
 export default function Statistics() {
 	const { t } = useTranslation();
@@ -112,6 +113,8 @@ export default function Statistics() {
 	);
 }
 
+const MOBILE_PADDING = '24px';
+
 const Container = styled.div`
 	margin-top: 20px;
 `;
@@ -122,14 +125,24 @@ const Row = styled.div<{ bottomMargin: string }>`
 	flex: 1;
 	width: 100%;
 	margin-bottom: ${(props) => props.bottomMargin};
+	${media.lessThan('md')`
+		display: block;
+		margin-bottom: ${MOBILE_PADDING};
+	`}
 `;
 
 const RowSpacer2 = styled.div`
 	width: 46px;
+	${media.lessThan('md')`
+		height: ${MOBILE_PADDING};
+	`}
 `;
 
 const RowSpacer3 = styled.div`
 	width: 40px;
+	${media.lessThan('md')`
+		height: ${MOBILE_PADDING};
+	`}
 `;
 
 const GridItem = styled.div`
@@ -153,6 +166,10 @@ const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 32px;
 	line-height: 38px;
+	${media.lessThan('sm')`
+		font-size: 24px;
+		line-height: 28px;
+	`}
 `;
 
 const OpenInterestContainer = styled(GridItem)`
