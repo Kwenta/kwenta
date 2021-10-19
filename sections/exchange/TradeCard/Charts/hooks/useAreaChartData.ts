@@ -11,7 +11,9 @@ const useAreaChartData = ({
 }) => {
 	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
-	const data = useHistoricalRatesQuery(currencyKey, selectedChartPeriodLabel.period);
+	const data = useHistoricalRatesQuery(currencyKey, selectedChartPeriodLabel.period, {
+		refetchInterval: 60000
+	});
 
 	const change = data.data?.change ?? null;
 	// eslint-disable-next-line

@@ -19,11 +19,17 @@ const useCombinedRates = ({
 
 	const baseHistoricalRates = useHistoricalRatesQuery(
 		baseCurrencyKey,
-		selectedChartPeriodLabel.period
+		selectedChartPeriodLabel.period,
+		{
+			refetchInterval: 60000,
+		}
 	);
 	const quoteHistoricalRates = useHistoricalRatesQuery(
 		quoteCurrencyKey,
-		selectedChartPeriodLabel.period
+		selectedChartPeriodLabel.period,
+		{
+			refetchInterval: 60000,
+		}
 	);
 
 	const { data: baseInitialRate } = usePeriodStartSynthRateQuery(
