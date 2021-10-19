@@ -23,7 +23,7 @@ const Tweet: FC = () => {
 	function tweet() {
 		setSubmitted(true);
 		window.open(
-			`https://twitter.com/intent/tweet?text=Hey%20%40kwenta_io%2C%20it%27s%20${walletAddress}.%20Let%20me%20in%20to%20the%20L2%20testnet%20trading%20competition!%20%40optimismPBC%20%40synthetix_io%20https%3A%2F%2Fkwenta.io%20%23futuresOnKwentaIsHere`
+			`https://twitter.com/intent/tweet?text=Hey%20%40kwenta_io%2C%20it%27s%20${walletAddress}.%20Let%20me%20in%20to%20the%20L2%20testnet%20trading%20competition!%20%40optimismPBC%20%40synthetix_io%20https%3A%2F%2Ffutures.kwenta.io%20%23futuresOnKwentaIsHere`
 		);
 	}
 

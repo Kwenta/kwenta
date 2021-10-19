@@ -78,7 +78,7 @@ const TweetBox: FC<TweetBoxProps> = ({ address }) => {
 				>
 					<p style={{ color: 'white', fontSize: '22px', lineHeight: 1.5, textAlign: 'center' }}>
 						{`Hey @kwenta_io, it's ${address}. Let me in to the L2
-						testnet trading competition! @optimismPBC @synthetix_io https://kwenta.io #futuresOnKwentaIsHere`}
+						testnet trading competition! @optimismPBC @synthetix_io https://futures.kwenta.io #futuresOnKwentaIsHere`}
 					</p>
 				</foreignObject>
 			</switch>
