@@ -76,7 +76,7 @@ const TweetBox: FC<TweetBoxProps> = ({ address }) => {
 					textAnchor="middle"
 					dominantBaseline="middle"
 				>
-					<p style={{ color: 'white', fontSize: '22px', lineHeight: 1.5, textAlign: 'center' }}>
+					<p style={{ color: 'white', fontSize: '22px', lineHeight: 1.45, textAlign: 'center' }}>
 						{`Hey @kwenta_io, it's ${address}. Let me in to the L2
 						testnet trading competition! @optimismPBC @synthetix_io https://futures.kwenta.io #FuturesOnKwentaIsHere`}
 					</p>
