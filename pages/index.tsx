@@ -35,6 +35,7 @@ import Hero from 'sections/futures/Hero';
 import FuturesDashboardTabs from './futures-dashboard-tabs';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
 import { Subheader } from 'sections/futures/common';
+import useGetRegisteredParticipant from 'queries/futures/useGetRegisteredParticipant';
 
 type CurrentPageState = 'splash' | 'tweet' | 'futures' | null;
 
@@ -52,6 +53,9 @@ const Futures: FC = () => {
 		refetchInterval: 5000,
 	});
 
+	const useGetRegisteredParticipantQuery = useGetRegisteredParticipant(walletAddress ?? '');
+	const isRegistered = useGetRegisteredParticipantQuery.data ?? false; // assume not registered
+
 	const sUSDBalance = synthsWalletBalancesQuery.isSuccess
 		? get(synthsWalletBalancesQuery.data, ['balancesMap', 'sUSD', 'balance'], zeroBN)
 		: null;
@@ -65,7 +69,7 @@ const Futures: FC = () => {
 			}
 
 			// 	if network is l2 kovan but no susd, send them to tweet screen
-			if (!sUSDBalance?.toNumber()) {
+			if (!sUSDBalance?.toNumber() && !isRegistered) {
 				setCurrentPage('tweet');
 				return;
 			}

@@ -138,6 +138,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 		],
 		Participants: () => ['futures', 'participants'],
+		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: (walletAddress: string) => ['futures', 'stats', walletAddress],
 		AverageLeverage: ['futures', 'averageLeverage'],
 		CumulativeVolume: ['futurs', 'cumulativeVolume'],
