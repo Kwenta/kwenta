@@ -55,7 +55,7 @@ const Header: FC = () => {
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
-						<FuturesLink href="https://futures.kwenta.io/futures-dashboard" target="_blank">
+						<FuturesLink href="https://futures.kwenta.io" target="_blank">
 							Decentralized Futures Trading Competition now live on Optimism Testnet
 						</FuturesLink>
 						<Img src={LinkWhiteIcon} />
