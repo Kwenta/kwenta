@@ -163,6 +163,7 @@ const ChartCard: FC<ChartCardProps> = ({
 						<PeriodSelector>
 							{PERIOD_LABELS.map((period) => (
 								<StyledTextButton
+									isDisabled={isCandleStickChart && period.period !== Period.ONE_MONTH}
 									key={period.period}
 									isActive={period.period === selectedChartPeriod}
 									onClick={() => {
