@@ -3,8 +3,10 @@ import styled from 'styled-components';
 export const Root = styled.div`
 	display: flex;
 	flex-direction: column;
-	text-align: center;
 	height: 100vh;
+	margin: 0 auto;
+	max-width: 90%;
+	text-align: center;
 `;
 
 export const BackgroundContainer = styled.div`
