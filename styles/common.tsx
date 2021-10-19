@@ -293,7 +293,7 @@ export const MainContent = styled(FlexDivCol)`
 	flex-grow: 1;
 	max-width: 1000px;
 	position: relative;
-	overflow: auto;
+	//overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 `;
 
