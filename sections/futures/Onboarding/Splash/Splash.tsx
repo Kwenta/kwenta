@@ -39,7 +39,7 @@ const Splash: FC = () => {
 				</Styled.Line3>
 				<Styled.Line4>
 					An L2 testnet trading competition powered by the OVM. Experience the speed of optimistic
-					rollups and compete to <Styled.Line4Strong>win 50k SNX.</Styled.Line4Strong>
+					rollups and compete to <Styled.Line4Strong>win $50k in SNX.</Styled.Line4Strong>
 				</Styled.Line4>
 				{isWalletConnected ? (
 					<Button
