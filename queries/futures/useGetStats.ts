@@ -1,4 +1,4 @@
-import { useQueries, UseQueryOptions } from 'react-query';
+import { useQueries, useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
 import { appReadyState } from 'store/app';
@@ -6,43 +6,45 @@ import { isL2State } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import request, { gql } from 'graphql-request';
+import { FuturesStat } from './types';
 
-const useGetStats = (accounts: string[], options?: UseQueryOptions<any>) => {
+const PAGE_SIZE = 100;
+
+const useGetStats = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 
-	return useQueries(
-		accounts.map((account) => {
-			return {
-				queryKey: QUERY_KEYS.Futures.Stats(account),
-				queryFn: async () => {
-					const response = await request(
-						FUTURES_ENDPOINT,
-						gql`
-							query userStats($account: String!) {
-								futuresStats(where: { account: $account }) {
-									account
-									pnl
-									liquidations
-									totalTrades
-								}
-							}
-						`,
-						{ account: account }
-					);
-					return {
-						[account]: {
-							pnl: new Wei(response?.futuresStats[0]?.pnl ?? 0, 18, true),
-							liquidations: new Wei(response?.futuresStats[0]?.liquidations ?? 0),
-							totalTrades: new Wei(response?.futuresStats[0]?.totalTrades ?? 0),
-						},
-					};
-				},
-				enabled: isAppReady && isL2 && !!accounts.length,
-				...options,
-			};
-		})
-	);
+	const query = async (existing: FuturesStat[], skip: number): Promise<FuturesStat[]> => {
+		const response = await request(
+			FUTURES_ENDPOINT,
+			gql`
+				query userStats($skip: Int!) {
+					futuresStats(skip: $skip) {
+						account
+						pnl
+						liquidations
+						totalTrades
+					}
+				}
+			`,
+			{ skip }
+		);
+		if (response) {
+			const combined = [...existing, ...response.futuresStats];
+			if (response.futuresStats?.length === PAGE_SIZE) {
+				return query(combined, skip + PAGE_SIZE);
+			}
+			return combined;
+		}
+		return [];
+	};
+
+	return useQuery({
+		queryKey: QUERY_KEYS.Futures.Stats,
+		queryFn: () => query([], 0),
+		enabled: isAppReady && isL2,
+		...options,
+	});
 };
 
 export default useGetStats;
