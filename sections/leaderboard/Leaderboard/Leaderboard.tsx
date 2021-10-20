@@ -95,7 +95,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	}
 
 	return (
-		<TableContainer>
+		<TableContainer compact={compact}>
 			{!compact ? <Search onChange={onChangeSearch} /> : null}
 			<StyledTable
 				showPagination={true}
@@ -178,8 +178,9 @@ const ColorCodedPrice = styled(Currency.Price)`
 			: props.theme.colors.white};
 `;
 
-const TableContainer = styled.div`
+const TableContainer = styled.div<{ compact: boolean | undefined }>`
 	margin-top: 16px;
+	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 
 const StyledTable = styled(Table)`
