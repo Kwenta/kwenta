@@ -58,9 +58,10 @@ export const ChartBody = styled.div`
 	height: 35vh;
 `;
 
-export const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
+export const StyledTextButton = styled(TextButton)<{ isActive: boolean; isDisabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
+	opacity: ${(props) => (props.isDisabled ? 0.2 : 1)};
 	border-bottom: 2px solid
 		${(props) => (props.isActive ? props.theme.colors.goldColors.color1 : 'transparent')};
 	&:hover {
