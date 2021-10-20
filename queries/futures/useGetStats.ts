@@ -8,7 +8,7 @@ import { FUTURES_ENDPOINT } from './constants';
 import request, { gql } from 'graphql-request';
 import { FuturesStat } from './types';
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 500;
 
 const useGetStats = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -19,7 +19,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 			FUTURES_ENDPOINT,
 			gql`
 				query userStats($skip: Int!) {
-					futuresStats(skip: $skip) {
+					futuresStats(skip: $skip, first: ${PAGE_SIZE}) {
 						account
 						pnl
 						liquidations
