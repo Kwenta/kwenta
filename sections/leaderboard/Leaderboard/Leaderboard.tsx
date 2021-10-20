@@ -3,15 +3,26 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
+
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import { wei } from '@synthetixio/wei';
 import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import useGetStats from 'queries/futures/useGetStats';
+import { walletAddressState } from 'store/wallet';
+import { FuturesStat } from 'queries/futures/types';
 import Search from 'components/Table/Search';
+import Loader from 'components/Loader';
 
 type LeaderboardProps = {
 	compact?: boolean;
+};
+
+type Stat = {
+	pnl: Wei;
+	liquidations: Wei;
+	totalTrades: Wei;
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
@@ -19,33 +30,53 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const [searchTerm, setSearchTerm] = useState<string | null>();
 
+	const walletAddress = useRecoilValue(walletAddressState);
 	const participantsQuery = useGetRegisteredParticpants();
 	const participants = useMemo(() => participantsQuery.data ?? [], [participantsQuery]);
 
-	const pnlQueries = useGetStats(participants.map(({ address }) => address));
-	const pnls: any = pnlQueries.map((query) => query.data);
-	const pnlMap = Object.assign({}, ...pnls);
+	const statsQuery = useGetStats();
+	const stats: any = statsQuery.data || [];
+
+	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
+		acc[stat.account] = {
+			pnl: new Wei(stat.pnl ?? 0, 18, true),
+			liquidations: new Wei(stat.liquidations ?? 0),
+			totalTrades: new Wei(stat.totalTrades ?? 0),
+		};
+		return acc;
+	}, {});
 
 	const onChangeSearch = (text: string) => {
-		setSearchTerm(text);
+		setSearchTerm(text?.toLowerCase());
 	};
 
 	let data = useMemo(() => {
 		return participants
-			.map((participant) => ({
-				//rank: 1,
+			.sort((a, b) => (pnlMap[b.address]?.pnl || 0) - (pnlMap[a.address]?.pnl || 0))
+			.map((participant, i) => ({
+				rank: i + 1,
+				address: participant.address,
 				trader: '@' + participant.username,
 				totalTrades: (pnlMap[participant.address]?.totalTrades ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[participant.address]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[participant.address]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.sort((a, b) => b.pnl - a.pnl)
-			.filter((i) => (searchTerm?.length ? i.trader.includes(searchTerm) : true));
+			.filter((i) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
 	}, [participants, pnlMap, searchTerm]);
 
 	if (compact) {
+		const ownPosition = data.findIndex((i) => {
+			return i.address.toLowerCase() === walletAddress?.toLowerCase();
+		});
+
+		const anchorPosition = ownPosition !== -1 && ownPosition > 10 ? data[ownPosition] : null;
+
 		data = data.slice(0, 10);
+
+		if (anchorPosition) {
+			data.push(anchorPosition);
+		}
 	}
 
 	const getMedal = (position: number) => {
@@ -59,9 +90,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		}
 	};
 
+	if (statsQuery.isLoading) {
+		return <Loader />;
+	}
+
 	return (
 		<TableContainer>
-			<Search onChange={onChangeSearch} />
+			{!compact ? <Search onChange={onChangeSearch} /> : null}
 			<StyledTable
 				showPagination={true}
 				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
@@ -86,7 +121,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						accessor: 'trader',
 						Cell: (cellProps: CellProps<any>) => (
 							<StyledOrderType>
-								{compact && cellProps.row.index + 1 + '. '}
+								{compact && cellProps.row.original.rank + '. '}
 								{cellProps.row.original.trader}
 								{getMedal(cellProps.row.index + 1)}
 							</StyledOrderType>
