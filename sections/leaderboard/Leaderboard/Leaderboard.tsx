@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ import { Synths } from 'constants/currency';
 import { wei } from '@synthetixio/wei';
 import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import useGetStats from 'queries/futures/useGetStats';
+import Search from 'components/Table/Search';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -16,12 +17,18 @@ type LeaderboardProps = {
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
 
+	const [searchTerm, setSearchTerm] = useState<string | null>();
+
 	const participantsQuery = useGetRegisteredParticpants();
 	const participants = useMemo(() => participantsQuery.data ?? [], [participantsQuery]);
 
 	const pnlQueries = useGetStats(participants.map(({ address }) => address));
 	const pnls: any = pnlQueries.map((query) => query.data);
 	const pnlMap = Object.assign({}, ...pnls);
+
+	const onChangeSearch = (text: string) => {
+		setSearchTerm(text);
+	};
 
 	let data = useMemo(() => {
 		return participants
@@ -33,8 +40,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				'24h': 80000,
 				pnl: (pnlMap[participant.address]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.sort((a, b) => b.pnl - a.pnl);
-	}, [participants, pnlMap]);
+			.sort((a, b) => b.pnl - a.pnl)
+			.filter((i) => (searchTerm?.length ? i.trader.includes(searchTerm) : true));
+	}, [participants, pnlMap, searchTerm]);
 
 	if (compact) {
 		data = data.slice(0, 10);
@@ -53,6 +61,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	return (
 		<TableContainer>
+			<Search onChange={onChangeSearch} />
 			<StyledTable
 				showPagination={true}
 				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
@@ -139,7 +148,7 @@ const TableContainer = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-	//background-color: black;
+	margin-top: 20px;
 `;
 
 const TableHeader = styled.div`
