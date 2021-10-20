@@ -108,7 +108,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 						accessor: 'rank',
 						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{cellProps.row.index + 1}</StyledOrderType>
+							<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 						),
 						width: compact ? 40 : 100,
 					},
