@@ -98,6 +98,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		<TableContainer compact={compact}>
 			{!compact ? <Search onChange={onChangeSearch} /> : null}
 			<StyledTable
+				compact={compact}
 				showPagination={true}
 				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
 				data={data}
@@ -183,8 +184,8 @@ const TableContainer = styled.div<{ compact: boolean | undefined }>`
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 
-const StyledTable = styled(Table)`
-	margin-top: 20px;
+const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
+	margin-top: ${({ compact }) => (compact ? '0' : '20px')};
 `;
 
 const TableHeader = styled.div`
