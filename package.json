@@ -73,7 +73,9 @@
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@svgr/core": "5.5.0",
 		"@synthetixio/synpress": "0.8.1",
+		"@testing-library/react-hooks": "7.0.2",
 		"@types/date-fns": "2.6.0",
+		"@types/jest": "27.0.2",
 		"@types/lodash": "4.14.159",
 		"@types/node": "14.0.13",
 		"@types/react": "16.9.46",
@@ -99,10 +101,12 @@
 		"imagemin-mozjpeg": "9.0.0",
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
+		"jest": "27.3.1",
 		"lint-staged": "10.0.10",
 		"optimized-images-loader": "github:clementbalestrat/optimized-images-loader",
 		"pinst": "2.1.4",
 		"prettier": "2.0.5",
+		"react-test-renderer": "17.0.1",
 		"typescript": "4.0.5",
 		"url-loader": "4.1.0",
 		"webp-loader": "0.6.0"
@@ -114,6 +118,18 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"jest": {
+		"roots": [
+			"<rootDir>"
+		],
+		"modulePaths": [
+			"<rootDir>"
+		],
+		"moduleDirectories": [
+			"node_modules"
+		],
+		"globalSetup": "./test-setup/global.js"
 	},
 	"engines": {
 		"node": ">=14",
