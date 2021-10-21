@@ -193,6 +193,7 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 							{PERIOD_LABELS.map((period) => (
 								<StyledTextButton
 									key={period.period}
+									isDisabled={isCandleStickChart && period.period !== Period.ONE_MONTH}
 									isActive={period.period === selectedChartPeriod}
 									onClick={() => {
 										if (isCandleStickChart && period.period !== Period.ONE_MONTH) {

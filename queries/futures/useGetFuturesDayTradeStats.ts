@@ -12,7 +12,7 @@ import { DAY_PERIOD } from './constants';
 import { calculateTradeVolume } from './utils';
 import { FuturesDayTradeStats, FuturesTrade } from './types';
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 500;
 
 const useGetFuturesDayTradeStats = (options?: UseQueryOptions<FuturesDayTradeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -28,6 +28,7 @@ const useGetFuturesDayTradeStats = (options?: UseQueryOptions<FuturesDayTradeSta
 					query tradingVolume($minTimestamp: BigInt!, $skip: Int!) {
 						futuresTrades(
 							skip: $skip
+							first: ${PAGE_SIZE}
 							where: { timestamp_gte: $minTimestamp }
 							orderBy: timestamp
 							orderDirection: desc
@@ -52,12 +53,10 @@ const useGetFuturesDayTradeStats = (options?: UseQueryOptions<FuturesDayTradeSta
 		}
 	};
 
-	let skip = 0;
-
 	return useQuery<FuturesDayTradeStats | null>(
 		QUERY_KEYS.Futures.DayTradeStats,
 		async () => {
-			const trades = await queryTrades(skip, []);
+			const trades = await queryTrades(0, []);
 
 			return {
 				volume: calculateTradeVolume(trades),
