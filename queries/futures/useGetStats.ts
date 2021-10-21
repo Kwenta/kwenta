@@ -22,7 +22,7 @@ const useGetStats = (accounts: string[], options?: UseQueryOptions<any>) => {
 							query userStats($account: String!) {
 								futuresStats(where: { account: $account }) {
 									account
-									pnl
+									pnlWithFeesPaid
 									liquidations
 									totalTrades
 								}
@@ -32,7 +32,7 @@ const useGetStats = (accounts: string[], options?: UseQueryOptions<any>) => {
 					);
 					return {
 						[account]: {
-							pnl: new Wei(response?.futuresStats[0]?.pnl ?? 0, 18, true),
+							pnl: new Wei(response?.futuresStats[0]?.pnlWithFeesPaid ?? 0, 18, true),
 							liquidations: new Wei(response?.futuresStats[0]?.liquidations ?? 0),
 							totalTrades: new Wei(response?.futuresStats[0]?.totalTrades ?? 0),
 						},
