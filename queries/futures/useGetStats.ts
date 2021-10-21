@@ -21,6 +21,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 					futuresStats(skip: $skip, first: ${PAGE_SIZE}) {
 						account
 						pnlWithFeesPaid
+						feesPaid
 						liquidations
 						totalTrades
 					}

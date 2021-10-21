@@ -130,6 +130,7 @@ export type FuturesTradeWithPrice = {
 export type FuturesStat = {
 	account: string;
 	pnlWithFeesPaid: string;
+	feesPaid: string;
 	liquidations: number;
 	totalTrades: number;
 };
