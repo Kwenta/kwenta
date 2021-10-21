@@ -31,7 +31,7 @@
 		"@synthetixio/optimism-networks": "2.46.3",
 		"@synthetixio/providers": "2.49.0",
 		"@synthetixio/queries": "2.51.0-next",
-		"@synthetixio/transaction-notifier": "2.49.0",
+		"@synthetixio/transaction-notifier": "2.51.1",
 		"@synthetixio/wei": "2.49.0",
 		"@testing-library/jest-dom": "5.14.1",
 		"@testing-library/react": "12.1.2",
