@@ -46,7 +46,7 @@
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
-		"immer": "8.0.1",
+		"immer": "9.0.6",
 		"lodash": "4.17.20",
 		"moment-business-time": "1.1.1",
 		"next": "10.0.0",
