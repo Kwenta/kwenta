@@ -32,6 +32,8 @@
 		"@synthetixio/queries": "2.51.0-next",
 		"@synthetixio/transaction-notifier": "2.49.0",
 		"@synthetixio/wei": "2.49.0",
+		"@testing-library/jest-dom": "5.14.1",
+		"@testing-library/react": "12.1.2",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
@@ -74,6 +76,7 @@
 		"@svgr/core": "5.5.0",
 		"@synthetixio/synpress": "0.8.1",
 		"@testing-library/react-hooks": "7.0.2",
+		"@testing-library/user-event": "13.5.0",
 		"@types/date-fns": "2.6.0",
 		"@types/jest": "27.0.2",
 		"@types/lodash": "4.14.159",
@@ -129,7 +132,11 @@
 		"moduleDirectories": [
 			"node_modules"
 		],
-		"globalSetup": "./test-setup/global.js"
+		"globalSetup": "./test-setup/global.js",
+		"setupFilesAfterEnv": [
+			"./test-setup/setup.js"
+		],
+		"testEnvironment": "jest-environment-jsdom"
 	},
 	"engines": {
 		"node": ">=14",
