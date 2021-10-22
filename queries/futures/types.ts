@@ -105,12 +105,13 @@ export type Participant = {
 	address: string;
 };
 
-export type FuturesTrade = {
-	size: string;
+export type FuturesOneMinuteStat = {
+	trades: string;
+	volume: string;
 };
 
-export type FuturesDayTradeStats = {
-	volume: Wei;
+export type FuturesDailyTradeStats = {
+	totalVolume: Wei;
 	totalTrades: number;
 };
 
@@ -127,9 +128,20 @@ export type FuturesTradeWithPrice = {
 	price: string;
 };
 
+export type FuturesTrade = {
+	size: string;
+};
+
 export type FuturesStat = {
 	account: string;
 	pnlWithFeesPaid: string;
 	liquidations: number;
 	totalTrades: number;
+};
+
+export type FuturesCumulativeStats = {
+	totalTrades: string;
+	totalVolume: string;
+	totalLiquidations: string;
+	averageTradeSize: string;
 };

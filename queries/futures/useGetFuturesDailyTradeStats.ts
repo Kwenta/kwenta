@@ -8,40 +8,41 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'queries/rates/utils';
-import { DAY_PERIOD } from './constants';
-import { calculateTradeVolume } from './utils';
-import { FuturesDayTradeStats, FuturesTrade } from './types';
+import { calculateDailyTradeStats } from './utils';
+import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 
 const PAGE_SIZE = 500;
 
-const useGetFuturesDayTradeStats = (options?: UseQueryOptions<FuturesDayTradeStats | null>) => {
+const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const queryTrades = async (skip: number, existing: FuturesTrade[]): Promise<FuturesTrade[]> => {
+	const queryTrades = async (
+		skip: number,
+		existing: FuturesOneMinuteStat[]
+	): Promise<FuturesOneMinuteStat[]> => {
 		try {
-			const minTimestamp = calculateTimestampForPeriod(DAY_PERIOD);
+			const minTimestamp = calculateTimestampForPeriod(24);
 			const response = await request(
 				FUTURES_ENDPOINT,
 				gql`
-					query tradingVolume($minTimestamp: BigInt!, $skip: Int!) {
-						futuresTrades(
+					query FutureOneMinStats($minTimestamp: BigInt!, $skip: Int!) {
+						futuresOneMinStats(
 							skip: $skip
 							first: ${PAGE_SIZE}
 							where: { timestamp_gte: $minTimestamp }
-							orderBy: timestamp
-							orderDirection: desc
 						) {
-							size
+							trades
+							volume
 						}
 					}
 				`,
 				{ minTimestamp, skip }
 			);
 			if (response) {
-				const combined = [...existing, ...response.futuresTrades];
-				if (response.futuresTrades?.length === PAGE_SIZE) {
+				const combined = [...existing, ...response.futuresOneMinStats];
+				if (response.futuresOneMinStats?.length === PAGE_SIZE) {
 					return queryTrades(skip + PAGE_SIZE, combined);
 				}
 				return combined;
@@ -53,18 +54,15 @@ const useGetFuturesDayTradeStats = (options?: UseQueryOptions<FuturesDayTradeSta
 		}
 	};
 
-	return useQuery<FuturesDayTradeStats | null>(
+	return useQuery<FuturesDailyTradeStats | null>(
 		QUERY_KEYS.Futures.DayTradeStats,
 		async () => {
 			const trades = await queryTrades(0, []);
 
-			return {
-				volume: calculateTradeVolume(trades),
-				totalTrades: trades.length,
-			};
+			return calculateDailyTradeStats(trades);
 		},
 		{ enabled: isAppReady && isL2 && !!walletAddress, ...options }
 	);
 };
 
-export default useGetFuturesDayTradeStats;
+export default useGetFuturesDailyTradeStats;

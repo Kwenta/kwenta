@@ -8,10 +8,11 @@ import {
 	FuturesLiquidations,
 	FuturesOpenInterest,
 	FuturesTotalTrades,
-	FuturesTrade,
+	FuturesOneMinuteStat,
 	PositionDetail,
 	PositionSide,
 	FuturesTradeWithPrice,
+	FuturesTrade,
 } from './types';
 import { Synths } from 'constants/currency';
 
@@ -130,18 +131,6 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateCumulativeTrades = (futuresTrades: FuturesTotalTrades[]): number => {
-	return futuresTrades.reduce((acc, curr) => {
-		return acc + parseInt(curr.totalTrades);
-	}, 0);
-};
-
-export const calculateTotalLiquidations = (futuresTrades: FuturesLiquidations[]): number => {
-	return futuresTrades.reduce((acc, curr) => {
-		return acc + parseInt(curr.liquidations);
-	}, 0);
-};
-
 export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 	return futuresTrades.reduce(
 		(acc: Wei, { size }: { size: string }) => acc.add(new Wei(size, 18, true).abs()),
@@ -149,27 +138,17 @@ export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 	);
 };
 
-export const calculateCumulativeVolume = (futuresTrades: FuturesTradeWithPrice[]): string =>
-	formatCurrency(
-		Synths.sUSD,
-		futuresTrades.reduce((acc, trade) => {
-			return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
-		}, wei(0)),
+export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) => {
+	return futuresTrades.reduce(
+		(acc, stat) => {
+			return {
+				totalVolume: acc.totalVolume.add(new Wei(stat.volume, 18, true).abs()),
+				totalTrades: acc.totalTrades + Number(stat.trades),
+			};
+		},
 		{
-			sign: '$',
-		}
-	);
-
-export const calculateAverageTradeSize = (futuresTrades: FuturesTradeWithPrice[]): string => {
-	return formatCurrency(
-		Synths.sUSD,
-		futuresTrades
-			.reduce((acc, trade) => {
-				return acc.add(wei(trade.size, 18, true).abs().mul(wei(trade.price, 18, true)));
-			}, wei(0))
-			.div(wei(futuresTrades.length)),
-		{
-			sign: '$',
+			totalTrades: 0,
+			totalVolume: wei(0),
 		}
 	);
 };
