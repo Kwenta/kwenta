@@ -39,7 +39,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
-			pnl: new Wei(stat.pnl ?? 0, 18, true),
+			pnl: new Wei(stat.pnlWithFeesPaid ?? 0, 18, true),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
 		};

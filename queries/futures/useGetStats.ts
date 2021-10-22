@@ -1,6 +1,5 @@
-import { useQueries, useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import Wei from '@synthetixio/wei';
 import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -21,7 +20,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 				query userStats($skip: Int!) {
 					futuresStats(skip: $skip, first: ${PAGE_SIZE}) {
 						account
-						pnl
+						pnlWithFeesPaid
 						liquidations
 						totalTrades
 					}
