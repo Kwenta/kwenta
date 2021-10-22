@@ -4,12 +4,9 @@ import { useTranslation } from 'react-i18next';
 import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesCumulativeTrades from 'queries/futures/useGetFuturesCumulativeTrades';
-import useGetFuturesCumulativeVolume from 'queries/futures/useGetFuturesCumulativeVolume';
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 
-import useGetFuturesDayTradeStats from 'queries/futures/useGetFuturesDayTradeStats';
-import useGetFuturesTotalLiquidations from 'queries/futures/useGetFuturesTotalLiquidations';
-import useGetFuturesAverageTradeSize from 'queries/futures/useGetFuturesAverageTradeSize';
+import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
@@ -18,12 +15,9 @@ import media from 'styles/media';
 
 export default function Statistics() {
 	const { t } = useTranslation();
-	const futuresCumulativeTradesQuery = useGetFuturesCumulativeTrades();
-	const futuresCumulativeVolumeQuery = useGetFuturesCumulativeVolume();
-	const futuresTotalLiquidationsQuery = useGetFuturesTotalLiquidations();
-	const futuresAverageTradeSizeQuery = useGetFuturesAverageTradeSize();
+	const futuresCumulativeStatsQuery = useGetFuturesCumulativeStats();
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const allVolumeQuery = useGetFuturesDayTradeStats();
+	const dailyTradeStats = useGetFuturesDailyTradeStats();
 	const totalWalletsQuery = useGetRegisteredParticpants();
 
 	const distributionData =
@@ -34,10 +28,8 @@ export default function Statistics() {
 
 	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
 	const totalWallets = totalWalletsQuery.data?.length ?? '-';
-	const cumulativeTrades = futuresCumulativeTradesQuery?.data ?? '-';
-	const cumulativeVolume = futuresCumulativeVolumeQuery?.data ?? '-';
-	const totalLiquidations = futuresTotalLiquidationsQuery?.data ?? '-';
-	const averageTradeSize = futuresAverageTradeSizeQuery?.data ?? null;
+	const cumulativeVolume = formatUsdValue(futuresCumulativeStatsQuery.data?.totalVolume);
+	const averageTradeSize = formatUsdValue(futuresCumulativeStatsQuery.data?.averageTradeSize);
 
 	return (
 		<Container>
@@ -45,10 +37,10 @@ export default function Statistics() {
 				<GridItem>
 					<Label>Daily Volume ($USD)</Label>
 					<Value>
-						{allVolumeQuery.isLoading ? (
+						{dailyTradeStats.isLoading ? (
 							<Loader />
 						) : (
-							formatCurrency(Synths.sUSD, allVolumeQuery.data?.volume || zeroBN, {
+							formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
 								sign: '$',
 								minDecimals: 2,
 							})
@@ -58,7 +50,7 @@ export default function Statistics() {
 				<RowSpacer2 />
 				<GridItem>
 					<Label>Cumulative Volume ($USD)</Label>
-					<Value>{futuresCumulativeVolumeQuery.isLoading ? <Loader /> : cumulativeVolume}</Value>
+					<Value>{futuresCumulativeStatsQuery.isLoading ? <Loader /> : cumulativeVolume}</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="40px">
@@ -70,24 +62,36 @@ export default function Statistics() {
 				<GridItem>
 					<Label>Daily Trades</Label>
 					<Value>
-						{allVolumeQuery.isLoading ? <Loader /> : allVolumeQuery.data?.totalTrades ?? '-'}
+						{dailyTradeStats.isLoading ? <Loader /> : dailyTradeStats.data?.totalTrades ?? '-'}
 					</Value>
 				</GridItem>
 				<RowSpacer3 />
 				<GridItem>
 					<Label>Cumulative Trades</Label>
-					<Value>{futuresCumulativeTradesQuery.isLoading ? <Loader /> : cumulativeTrades}</Value>
+					<Value>
+						{futuresCumulativeStatsQuery.isLoading ? (
+							<Loader />
+						) : (
+							futuresCumulativeStatsQuery.data?.totalTrades ?? '-'
+						)}
+					</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="59px">
 				<GridItem>
 					<Label>Average Trade Size</Label>
-					<Value>{futuresAverageTradeSizeQuery.isLoading ? <Loader /> : averageTradeSize}</Value>
+					<Value>{futuresCumulativeStatsQuery.isLoading ? <Loader /> : averageTradeSize}</Value>
 				</GridItem>
 				<RowSpacer2 />
 				<GridItem>
 					<Label>Total Liquidations</Label>
-					<Value>{futuresTotalLiquidationsQuery.isLoading ? <Loader /> : totalLiquidations}</Value>
+					<Value>
+						{futuresCumulativeStatsQuery.isLoading ? (
+							<Loader />
+						) : (
+							futuresCumulativeStatsQuery.data?.totalLiquidations ?? '-'
+						)}
+					</Value>
 				</GridItem>
 			</Row>
 			<Row bottomMargin="30px">
@@ -112,6 +116,15 @@ export default function Statistics() {
 		</Container>
 	);
 }
+
+const formatUsdValue = (value: string | undefined) => {
+	return value
+		? formatCurrency(Synths.sUSD, value, {
+				sign: '$',
+				maxDecimals: 2,
+		  })
+		: '-';
+};
 
 const MOBILE_PADDING = '24px';
 
