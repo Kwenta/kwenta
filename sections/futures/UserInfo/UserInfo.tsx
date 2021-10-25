@@ -12,7 +12,7 @@ import Trades from '../Trades';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 

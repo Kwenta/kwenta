@@ -1,9 +1,8 @@
 import Trades from 'sections/futures/Trades';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
+import useGetFuturesAllPositionHistory from 'queries/futures/useGetFuturesAllPositionHistory';
 
 const AllAssetsTradeHistory = () => {
-	//  TODO need some more work around our hooks if we want to support history for all assets
-	const futuresPositionHistoryQuery = useGetFuturesPositionHistory('sBTC');
+	const futuresPositionHistoryQuery = useGetFuturesAllPositionHistory();
 	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
 
 	return (
