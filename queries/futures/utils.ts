@@ -1,22 +1,18 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
+import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
 
 import { zeroBN } from 'utils/formatters/number';
 import {
 	FuturesPosition,
-	FuturesLiquidations,
 	FuturesOpenInterest,
-	FuturesTotalTrades,
 	FuturesOneMinuteStat,
 	PositionDetail,
 	PositionSide,
-	FuturesTradeWithPrice,
 	FuturesTrade,
+	PositionHistory,
 } from './types';
-import { Synths } from 'constants/currency';
-
-import { formatCurrency } from 'utils/formatters/number';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -150,5 +146,59 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 			totalTrades: 0,
 			totalVolume: wei(0),
 		}
+	);
+};
+
+export const mapTradeHistory = (futuresPositions: any[]): PositionHistory[] => {
+	return (
+		futuresPositions
+			?.map(
+				({
+					id,
+					lastTxHash,
+					timestamp,
+					isOpen,
+					isLiquidated,
+					entryPrice,
+					exitPrice,
+					size,
+					margin,
+					asset,
+				}: {
+					id: string;
+					lastTxHash: string;
+					timestamp: number;
+					isOpen: boolean;
+					isLiquidated: boolean;
+					entryPrice: string;
+					exitPrice: string;
+					size: string;
+					margin: string;
+					asset: string;
+				}) => {
+					const entryPriceWei = new Wei(entryPrice, 18, true);
+					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
+					const sizeWei = new Wei(size, 18, true);
+					const marginWei = new Wei(margin, 18, true);
+					return {
+						id: Number(id.split('-')[1].toString()),
+						transactionHash: lastTxHash,
+						timestamp: timestamp * 1000,
+						isOpen,
+						isLiquidated,
+						entryPrice: entryPriceWei,
+						exitPrice: exitPriceWei,
+						size: sizeWei.abs(),
+						asset: utils.parseBytes32String(asset),
+						margin: marginWei,
+						leverage: marginWei.eq(wei(0))
+							? wei(0)
+							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),
+						side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
+						pnl: sizeWei.mul(exitPriceWei.sub(entryPriceWei)),
+					};
+				}
+			)
+			.filter(({ id }: { id: number }) => id !== 0) ?? null
 	);
 };

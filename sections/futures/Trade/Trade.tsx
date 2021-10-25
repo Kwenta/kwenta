@@ -31,7 +31,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesPositionHistory';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { gasPriceInWei } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
