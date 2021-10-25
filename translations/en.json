@@ -525,11 +525,15 @@
 			}
 		},
 		"hero": {
+			"countdown": {
+				"title": "Countdown",
+				"endMessage": "Competition ends " 
+			},
 			"welcome": {
-				"title": "Welcome to Decentralized Futures on Layer 2",
+				"title": "Decentralized Perpetual Futures on Layer 2",
 				"subtitle": "Trade with up to 10x more capital.",
 				"body": "Open long or short leveraged positions with low gas fees, fast transactions, and the deepest liquidity available on the market.",
-				"button": "learn more"
+				"button": "Learn more"
 			},
 			"refer": {
 				"title": "Refer a friend for rewards",
