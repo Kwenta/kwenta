@@ -5,34 +5,44 @@ import { Svg } from 'react-optimized-image';
 
 import Card from 'components/Card';
 import Button from 'components/Button';
+import media from 'styles/media';
 
-import { ExternalLink, FlexDivRow, FlexDivRowCentered, GridDiv } from 'styles/common';
+import { FlexDivRowCentered, GridDiv } from 'styles/common';
 
 import Layer2Icon from 'assets/svg/app/layer-2.svg';
+import CountdownTimerTsx from '../CountdownTimer';
 
 type Props = { displayReferBox?: boolean };
 const Hero: FC<Props> = ({ displayReferBox = true }) => {
 	const { t } = useTranslation();
 
+	const endDate = Date.UTC(2021, 9, 26, 23, 59);
+
 	return (
 		<StyledGrid>
-			<StyledCard>
-				<BackgroundImage src={Layer2Icon} />
-				<Card.Header noBorder={true}>
+			<TopSection>
+				<HeroCard>
+					<BackgroundImageContainer>
+						<BackgroundImage src={Layer2Icon} />
+					</BackgroundImageContainer>
 					<StyledHeaderText small={false}>{t('futures.hero.welcome.title')}</StyledHeaderText>
-				</Card.Header>
-				<Card.Body>
-					<StyledBodySubtitle>{t('futures.hero.welcome.subtitle')}</StyledBodySubtitle>
-					<StyledBodyText>{t('futures.hero.welcome.body')}</StyledBodyText>
-					<ButtonContainer>
-						<ExternalLink href={'https://blog.kwenta.io/futures-dashboards/'}>
-							<StyledTextButton variant="text" size="md">
+					<Card.Body>
+						<StyledBodySubtitle>{t('futures.hero.welcome.subtitle')}</StyledBodySubtitle>
+						<StyledBodyText>
+							{t('futures.hero.welcome.body')}{' '}
+							<a href={'https://blog.kwenta.io/futures-dashboards/'} target="_blank">
 								{t('futures.hero.welcome.button')}
-							</StyledTextButton>
-						</ExternalLink>
-					</ButtonContainer>
-				</Card.Body>
-			</StyledCard>
+							</a>
+						</StyledBodyText>
+					</Card.Body>
+				</HeroCard>
+				<Spacer />
+				<CountdownCard>
+					<StyledHeaderText small={false}>{t('futures.hero.countdown.title')}</StyledHeaderText>
+
+					<CountdownTimerTsx endUtcTimestamp={endDate} />
+				</CountdownCard>
+			</TopSection>
 
 			{displayReferBox && (
 				<StyledCard>
@@ -54,14 +64,42 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 };
 export default Hero;
 
-const BackgroundImage = styled(Svg)`
+const TopSection = styled.div`
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+	${media.lessThan('md')`
+		flex-direction: column;
+	`}
+`;
+
+const BackgroundImageContainer = styled.div`
 	position: absolute;
-	right: 18px;
-	top: 28px;
+	left: 0;
+	top: 20px;
+	right: 0;
+	bottom: 0;
+	text-align: center;
+`;
+
+const BackgroundImage = styled(Svg)`
+	margin: 0 auto;
 `;
 
 const StyledCard = styled(Card)`
 	padding: 20px 0px;
+`;
+
+const HeroCard = styled(StyledCard)`
+	position: relative;
+	text-align: center;
+	padding: 26px 0;
+	flex: 1;
+`;
+
+const CountdownCard = styled(StyledCard)`
+	text-align: center;
+	padding: 26px 0;
 `;
 
 const StyledGrid = styled(GridDiv)`
@@ -71,36 +109,30 @@ const StyledGrid = styled(GridDiv)`
 const StyledHeaderText = styled.div<{ small: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: ${(props) => (props.small ? '14px' : '16px')};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.goldColors.color1};
 	text-transform: none;
+	text-align: center;
 `;
 
 const StyledBodyText = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.silver};
 	text-transform: none;
+	max-width: 500px;
+	margin: 0 auto;
 `;
 
 const StyledBodySubtitle = styled(StyledBodyText)`
+	font-family: ${(props) => props.theme.fonts.bold};
 	margin-bottom: 20px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 const StyledCardRow = styled(FlexDivRowCentered)``;
 
-const ButtonContainer = styled(FlexDivRow)`
-	width: 100%;
-	margin-top: 16px;
-	margin-bottom: -18px;
-`;
-
-const StyledTextButton = styled(Button)`
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	text-transform: uppercase;
-
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
-	}
+const Spacer = styled.div`
+	width: 16px;
+	${media.lessThan('md')`
+		height: 30px;
+	`}
 `;
