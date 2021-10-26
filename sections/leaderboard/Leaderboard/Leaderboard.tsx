@@ -14,6 +14,8 @@ import { walletAddressState } from 'store/wallet';
 import { FuturesStat } from 'queries/futures/types';
 import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
+import { ethers } from 'ethers';
+import pnls from './leaderboard.snapshot.json';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -39,7 +41,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
-			pnl: new Wei(stat.pnlWithFeesPaid ?? 0, 18, true),
+			pnl: pnls ? wei((pnls as any)[ethers.utils.getAddress(stat.account)] ?? 0) : wei(0),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
 		};
