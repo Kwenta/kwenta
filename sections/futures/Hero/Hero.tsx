@@ -10,13 +10,15 @@ import media from 'styles/media';
 import { FlexDivRowCentered, GridDiv } from 'styles/common';
 
 import Layer2Icon from 'assets/svg/app/layer-2.svg';
-import CountdownTimerTsx from '../CountdownTimer';
+import CountdownTimer from '../CountdownTimer';
 
 type Props = { displayReferBox?: boolean };
 const Hero: FC<Props> = ({ displayReferBox = true }) => {
 	const { t } = useTranslation();
 
 	const endDate = Date.UTC(2021, 9, 26, 23, 59);
+	const now = Date.now();
+	const showCountdown = endDate > now;
 
 	return (
 		<StyledGrid>
@@ -36,12 +38,15 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 						</StyledBodyText>
 					</Card.Body>
 				</HeroCard>
-				<Spacer />
-				<CountdownCard>
-					<StyledHeaderText small={false}>{t('futures.hero.countdown.title')}</StyledHeaderText>
-
-					<CountdownTimerTsx endUtcTimestamp={endDate} />
-				</CountdownCard>
+				{showCountdown && (
+					<>
+						<Spacer />
+						<CountdownCard>
+							<StyledHeaderText small={false}>{t('futures.hero.countdown.title')}</StyledHeaderText>
+							<CountdownTimer endUtcTimestamp={endDate} />
+						</CountdownCard>
+					</>
+				)}
 			</TopSection>
 
 			{displayReferBox && (
@@ -93,13 +98,13 @@ const StyledCard = styled(Card)`
 const HeroCard = styled(StyledCard)`
 	position: relative;
 	text-align: center;
-	padding: 26px 0;
+	padding: 35px 0 22px 0;
 	flex: 1;
 `;
 
 const CountdownCard = styled(StyledCard)`
 	text-align: center;
-	padding: 26px 0;
+	padding: 35px 0;
 `;
 
 const StyledGrid = styled(GridDiv)`

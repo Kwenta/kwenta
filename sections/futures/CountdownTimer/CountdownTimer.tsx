@@ -7,6 +7,10 @@ type Props = {
 	endUtcTimestamp: number;
 };
 
+const formatTimeUnit = (value: number) => {
+	return value < 10 ? '0' + value : String(value);
+};
+
 export default function CountdownTimer({ endUtcTimestamp }: Props) {
 	const { t } = useTranslation();
 
@@ -19,9 +23,9 @@ export default function CountdownTimer({ endUtcTimestamp }: Props) {
 		const seconds = Math.floor(remaining - (hours * 3600 + minutes * 60));
 
 		return {
-			hours: String(hours),
-			minutes: String(minutes),
-			seconds: String(seconds),
+			hours: formatTimeUnit(hours),
+			minutes: formatTimeUnit(minutes),
+			seconds: formatTimeUnit(seconds),
 		};
 	};
 
@@ -51,7 +55,7 @@ export default function CountdownTimer({ endUtcTimestamp }: Props) {
 }
 
 const Container = styled.div`
-	padding: 14px 20px;
+	padding: 14px 20px 0 20px;
 `;
 
 const CountdownTime = styled.div`
