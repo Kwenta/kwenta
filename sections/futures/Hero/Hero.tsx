@@ -17,8 +17,6 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 	const { t } = useTranslation();
 
 	const endDate = Date.UTC(2021, 9, 26, 23, 59);
-	const now = Date.now();
-	const showCountdown = endDate > now;
 
 	return (
 		<StyledGrid>
@@ -38,15 +36,11 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 						</StyledBodyText>
 					</Card.Body>
 				</HeroCard>
-				{showCountdown && (
-					<>
-						<Spacer />
-						<CountdownCard>
-							<StyledHeaderText small={false}>{t('futures.hero.countdown.title')}</StyledHeaderText>
-							<CountdownTimer endUtcTimestamp={endDate} />
-						</CountdownCard>
-					</>
-				)}
+				<Spacer />
+				<CountdownCard>
+					<StyledHeaderText small={false}>{t('futures.hero.countdown.title')}</StyledHeaderText>
+					<CountdownTimer endUtcTimestamp={endDate} />
+				</CountdownCard>
 			</TopSection>
 
 			{displayReferBox && (

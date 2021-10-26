@@ -14,6 +14,9 @@ const formatTimeUnit = (value: number) => {
 export default function CountdownTimer({ endUtcTimestamp }: Props) {
 	const { t } = useTranslation();
 
+	const nowUtc = Date.now();
+	const showCountdown = endUtcTimestamp > nowUtc;
+
 	const calcTime = () => {
 		const nowTime = new Date().getTime();
 		const nowSeconds = nowTime / 1000;
@@ -44,9 +47,14 @@ export default function CountdownTimer({ endUtcTimestamp }: Props) {
 
 	return (
 		<Container>
-			<CountdownTime>
-				{time.hours}:{time.minutes}:{time.seconds}
-			</CountdownTime>
+			{showCountdown ? (
+				<CountdownTime>
+					{time.hours}:{time.minutes}:{time.seconds}
+				</CountdownTime>
+			) : (
+				<ClosedLabel>{t('futures.hero.countdown.closed')}</ClosedLabel>
+			)}
+
 			<FinishTime>
 				{t('futures.hero.countdown.endMessage')} {endTimeLabel} UTC
 			</FinishTime>
@@ -69,4 +77,10 @@ const CountdownTime = styled.div`
 
 const FinishTime = styled.div`
 	color: ${(props) => props.theme.colors.silver};
+`;
+
+const ClosedLabel = styled(CountdownTime)`
+	color: ${(props) => props.theme.colors.white};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 30px;
 `;
