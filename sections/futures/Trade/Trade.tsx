@@ -67,6 +67,8 @@ const Trade: React.FC<TradeProps> = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [error, setError] = useState<string | null>(null);
+	const competitionClosed = true;
+
 	const [leverage, setLeverage] = useState<number>(0);
 
 	const [tradeSize, setTradeSize] = useState<string>('');
@@ -265,12 +267,14 @@ const Trade: React.FC<TradeProps> = () => {
 					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gt(zeroBN) ? (
 						<StyledButton
 							variant="primary"
-							disabled={!gasLimit || !!error || !tradeSize}
+							disabled={!gasLimit || !!error || !tradeSize || competitionClosed}
 							isRounded
 							size="lg"
 							onClick={() => setIsTradeConfirmationModalOpen(true)}
 						>
-							{error
+							{competitionClosed
+								? t('futures.market.trade.button.competition-closed')
+								: error
 								? error
 								: tradeSize
 								? t('futures.market.trade.button.open-trade')

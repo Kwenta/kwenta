@@ -589,7 +589,8 @@
 					"deposit": "Deposit",
 					"edit": "Edit",
 					"open-trade": "Submit order",
-					"warning": "WARNING: this will close your position"
+					"warning": "WARNING: this will close your position",
+					"competition-closed": "Competition Closed"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
