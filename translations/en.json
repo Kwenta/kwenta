@@ -527,7 +527,8 @@
 		"hero": {
 			"countdown": {
 				"title": "Countdown",
-				"endMessage": "Competition ends " 
+				"endMessage": "Competition ends " ,
+				"closed": "NOW CLOSED"
 			},
 			"welcome": {
 				"title": "Decentralized Perpetual Futures on Layer 2",
