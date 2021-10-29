@@ -171,7 +171,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 			<Label>{t('exchange.market-details-card.price-feed')}</Label>
 			<Value>
 				{token?.feed != null && blockExplorerInstance != null ? (
-					<ExternalLink href={blockExplorerInstance.tokenLink(token.feed)}>
+					<ExternalLink href={blockExplorerInstance.addressLink(token.feed)}>
 						{truncateAddress(token.feed, 6, 4)}
 					</ExternalLink>
 				) : (
@@ -180,7 +180,6 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 			</Value>
 		</Item>
 	);
-
 	return (
 		<Card className="market-details-card" {...rest}>
 			<StyledCardHeader lowercase={true}>
