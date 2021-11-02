@@ -19,8 +19,7 @@ export const EXTERNAL_LINKS = {
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {
-		Synthetix:
-			'https://bafybeidkpj743vthl5chzdxibjxfbf2hv3y4mmtcbciu4kdh4d6xqfezpa.ipfs.dweb.link/',
+		Synthetix: 'https://synths.snx.eth.link/',
 		Zapper: 'https://zapper.fi/api/token-list',
 		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 	},
