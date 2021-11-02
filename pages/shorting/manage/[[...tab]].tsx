@@ -11,20 +11,20 @@ import media from 'styles/media';
 import ROUTES from 'constants/routes';
 import { useRouter } from 'next/router';
 import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import { isL2MainnetState } from 'store/wallet';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 	const router = useRouter();
 
 	const redirectToHome = useCallback(() => router.push(ROUTES.Dashboard.Home), [router]);
 
 	useEffect(() => {
-		if (isL2) {
+		if (isL2Mainnet) {
 			redirectToHome();
 		}
-	}, [isL2, redirectToHome]);
+	}, [isL2Mainnet, redirectToHome]);
 
 	return (
 		<>
@@ -32,7 +32,7 @@ const Shorting: FC = () => {
 				<title>{t('shorting.page-title')}</title>
 			</Head>
 			<AppLayout>
-				<StyledPageContent>{!isL2 && <ManageShort />}</StyledPageContent>
+				<StyledPageContent>{!isL2Mainnet && <ManageShort />}</StyledPageContent>
 			</AppLayout>
 		</>
 	);

@@ -3,9 +3,6 @@ import { hexToAscii } from 'utils/formatters/string';
 import { CurrencyKey, SYNTH_DECIMALS } from 'constants/currency';
 import { wei } from '@synthetixio/wei';
 
-// MainNet - 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
-// Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
-
 export const SHORT_GRAPH_ENDPOINT =
 	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
 
@@ -13,7 +10,7 @@ export const SHORT_GRAPH_ENDPOINT_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
 
 export const SHORT_GRAPH_ENDPOINT_OVM_KOVAN =
-	'https://api.thegraph.com/subgraphs/name/dbeal-eth/optimism-kovan-shorts2';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-shorts';
 
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => {
 	return {
