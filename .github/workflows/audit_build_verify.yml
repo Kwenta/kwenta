@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Audit dependencies
         run: npm audit --audit-level=critical
@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Cache node modules
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
