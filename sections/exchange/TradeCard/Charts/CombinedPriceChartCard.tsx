@@ -40,6 +40,7 @@ import ChartTypeToggle from './common/ChartTypeTextsToggle';
 import AreaChart from './Types/AreaChart';
 import CompareChart from './Types/CompareChart';
 import CandlesticksChart from './Types/CandlesticksChart';
+import TVChart from 'components/TVChart';
 
 type CombinedPriceChartCardProps = {
 	baseCurrencyKey: CurrencyKey | null;
@@ -136,6 +137,12 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 			setSelectedChartPeriod(Period.ONE_MONTH);
 		} // eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [eitherCurrencyIsSUSD, isCompareChart, isCandleStickChart, selectedChartPeriod]);
+
+	return (
+		<Container {...rest}>
+			<TVChart />
+		</Container>
+	);
 
 	return (
 		<Container {...rest}>
