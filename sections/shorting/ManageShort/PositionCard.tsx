@@ -32,12 +32,15 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
-import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import { NO_VALUE } from 'constants/placeholder';
 
 import { ShortingTab } from './constants';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+
+import Connector from 'containers/Connector';
+
+import { BigNumber } from 'ethers';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -48,12 +51,13 @@ type PositionCardProps = {
 const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	const { synthetixjs } = Connector.useContainer();
+	const { CollateralShort } = synthetixjs!.contracts;
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const isAddCollateralTab = useMemo(() => activeTab === ShortingTab.AddCollateral, [activeTab]);
 	const isRemoveCollateralTab = useMemo(() => activeTab === ShortingTab.RemoveCollateral, [
@@ -75,16 +79,8 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		isDecreasePositionTab,
 	]);
 
-	const collateralShortInfo = useMemo(
-		() =>
-			collateralShortContractInfoQuery.isSuccess
-				? collateralShortContractInfoQuery.data ?? null
-				: null,
-		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
-	);
-
-	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio, [
-		collateralShortInfo?.minCollateralRatio,
+	const minCollateralRatio = useMemo(async () => await CollateralShort?.minCratio(), [
+		CollateralShort,
 	]);
 
 	const exchangeRates = useMemo(
@@ -106,9 +102,13 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		short.collateralLockedAmount,
 		collateralLockedPrice,
 	]);
+	// debugger;
 
 	const liquidationPrice = useMemo(
-		() => collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio)),
+		() =>
+			BigNumber.isBigNumber(minCollateralRatio)
+				? collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0),
 		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
 	);
 
@@ -269,7 +269,13 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 						<LightFieldText>
 							{t('shorting.history.manage-short.fields.collateral-ratio')}
 						</LightFieldText>
-						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
+						<DataField
+							isPositive={
+								BigNumber.isBigNumber(minCollateralRatio)
+									? short.collateralRatio.gt(minCollateralRatio)
+									: null
+							}
+						>
 							{formatPercent(short.collateralRatio)}{' '}
 							<InfoTooltip
 								content={
@@ -277,7 +283,9 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
 										<div>
 											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
-												percent: minCollateralRatio ? formatPercent(minCollateralRatio) : '',
+												percent: BigNumber.isBigNumber(minCollateralRatio)
+													? formatPercent(minCollateralRatio)
+													: '',
 											})}
 										</div>
 									</div>

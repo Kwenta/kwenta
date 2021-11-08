@@ -43,7 +43,7 @@ const useCollateralShortPositionQuery = (
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			const { CollateralShort, ExchangeRates } = synthetixjs!.contracts;
+			const { CollateralShort, CollateralUtil, ExchangeRates } = synthetixjs!.contracts;
 			const loan = (await CollateralShort.loans(loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
 				lastInteraction: ethers.BigNumber;
@@ -51,7 +51,11 @@ const useCollateralShortPositionQuery = (
 				amount: ethers.BigNumber;
 				collateral: string;
 			};
-			const collateralRatio = (await CollateralShort.collateralRatio(loan)) as ethers.BigNumber;
+
+			const collateralRatio = (await CollateralUtil.getCollateralRatio(
+				loan,
+				utils.formatBytes32String(Synths.sUSD)
+			)) as ethers.BigNumber;
 
 			let txHash = loanTxHash ?? null;
 			let isOpen = null;
@@ -62,7 +66,7 @@ const useCollateralShortPositionQuery = (
 			if (skipSubgraph == null) {
 				try {
 					const response = (await request(
-						SHORT_GRAPH_ENDPOINT,
+						SHORT_GRAPH_ENDPOINT, // fetching to l1 mainnet only
 						gql`
 							query shorts($id: String!) {
 								shorts(where: { id: $id }) {
