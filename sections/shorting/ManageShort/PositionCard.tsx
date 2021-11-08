@@ -2,6 +2,7 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
+import { BigNumber } from 'ethers';
 
 import BlockExplorer from 'containers/BlockExplorer';
 
@@ -39,8 +40,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
-
-import { BigNumber } from 'ethers';
 
 type PositionCardProps = {
 	short: ShortPosition;
