@@ -32,7 +32,8 @@
 			"wallet": "Connect Wallet",
 			"why": "Why Kwenta?",
 			"how": "How it Works",
-			"faq": "FAQ"
+			"faq": "FAQ",
+			"kips": "KIPs"
 		},
 		"hero": {
 			"title": "Derivatives trading with zero slippage"
