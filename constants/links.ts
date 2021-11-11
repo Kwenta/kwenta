@@ -1,5 +1,7 @@
 import { CurrencyKey } from './currency';
 
+export const PROD_HOSTNAME = 'kwenta.io';
+
 export const EXTERNAL_LINKS = {
 	Trading: {
 		DexAG: 'https://dex.ag/',

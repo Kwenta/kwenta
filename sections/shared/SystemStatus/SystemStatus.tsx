@@ -15,7 +15,7 @@ import {
 
 import Logo from 'sections/shared/Layout/Logo';
 
-import { EXTERNAL_LINKS } from 'constants/links';
+import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 
 import SystemDownIcon from 'assets/svg/app/system-down.svg';
@@ -62,9 +62,10 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 		refetchInterval: REFRESH_INTERVAL,
 	});
 
-	const appOnMaintenance = isSystemOnMaintenanceQuery.isSuccess
-		? isSystemOnMaintenanceQuery.data
-		: false;
+	const appOnMaintenance =
+		typeof window !== 'undefined' &&
+		window.location.hostname === PROD_HOSTNAME &&
+		(isSystemOnMaintenanceQuery.isSuccess ? isSystemOnMaintenanceQuery.data : false);
 
 	return appOnMaintenance ? (
 		<>
