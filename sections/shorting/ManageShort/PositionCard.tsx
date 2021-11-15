@@ -1,21 +1,20 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { BigNumber } from 'ethers';
-
-import BlockExplorer from 'containers/BlockExplorer';
-
-import Card from 'components/Card';
+import { wei } from '@synthetixio/wei';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+import BlockExplorer from 'containers/BlockExplorer';
+import Card from 'components/Card';
 import InfoIcon from 'assets/svg/app/info.svg';
-
-import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
-
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { formatDateWithTime } from 'utils/formatters/date';
-
+import LinkIcon from 'assets/svg/app/link.svg';
+import ProfitLoss from 'sections/shorting/components/ProfitLoss';
+import media from 'styles/media';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import {
 	FlexDivRow,
 	ExternalLink,
@@ -23,23 +22,12 @@ import {
 	InfoTooltip,
 	InfoTooltipContent,
 } from 'styles/common';
-import media from 'styles/media';
-
-import LinkIcon from 'assets/svg/app/link.svg';
-
-import ProfitLoss from 'sections/shorting/components/ProfitLoss';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-
 import { NO_VALUE } from 'constants/placeholder';
-
+import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 import { ShortingTab } from './constants';
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
-
-import Connector from 'containers/Connector';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDateWithTime } from 'utils/formatters/date';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -50,8 +38,6 @@ type PositionCardProps = {
 const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
-	const { synthetixjs } = Connector.useContainer();
-	const { CollateralShort } = synthetixjs!.contracts;
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 
@@ -77,11 +63,19 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		isIncreasePositionTab,
 		isDecreasePositionTab,
 	]);
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
-	const minCollateralRatio = useMemo(async () => await CollateralShort?.minCratio(), [
-		CollateralShort,
+	const collateralShortInfo = useMemo(
+		() =>
+			collateralShortContractInfoQuery.isSuccess
+				? collateralShortContractInfoQuery.data ?? null
+				: null,
+		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
+	);
+
+	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio, [
+		collateralShortInfo?.minCollateralRatio,
 	]);
-
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
@@ -101,7 +95,6 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		short.collateralLockedAmount,
 		collateralLockedPrice,
 	]);
-	// debugger;
 
 	const liquidationPrice = useMemo(
 		() =>
@@ -129,7 +122,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 			}
 
 			const collateralValue = collateralLockedAmount.mul(collateralLockedPrice);
-
+			debugger;
 			const liquidationPrice = synthBorrowedAmount.gt(0)
 				? collateralValue.div(synthBorrowedAmount.mul(minCollateralRatio))
 				: wei(0);
