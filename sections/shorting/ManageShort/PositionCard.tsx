@@ -122,7 +122,6 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 			}
 
 			const collateralValue = collateralLockedAmount.mul(collateralLockedPrice);
-			debugger;
 			const liquidationPrice = synthBorrowedAmount.gt(0)
 				? collateralValue.div(synthBorrowedAmount.mul(minCollateralRatio))
 				: wei(0);

@@ -355,12 +355,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					await CollateralShort.callStatic[method](...params);
 					throw e;
 				} catch (e) {
-					console.log(e);
-					setTxError(
-						e.data
-							? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
-							: e.message
-					);
+					console.error(e);
+					setTxError(e?.data?.message ?? 'Error');
 				}
 			} finally {
 				setIsSubmitting(false);
@@ -405,9 +401,9 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				}
 				setTxApproveModalOpen(false);
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 				setIsApproving(false);
-				setTxError(e.message);
+				setTxError(e?.data?.message ?? 'Error');
 			}
 		}
 	};
