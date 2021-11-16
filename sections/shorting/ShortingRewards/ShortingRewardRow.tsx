@@ -24,18 +24,24 @@ import Card from 'components/Card';
 import Currency from 'components/Currency';
 import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
+import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
+
+export type GasInfo = {
+	limit: number;
+	l1Fee: number;
+};
 
 type ShortingRewardRowProps = {
 	currencyKey: CurrencyKey;
 	gasPrice: number | null;
-	setGasLimit: Dispatch<SetStateAction<number | null>>;
+	setGasInfo: Dispatch<SetStateAction<GasInfo | null>>;
 	snxPriceRate: number;
 };
 
 const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	currencyKey,
 	gasPrice,
-	setGasLimit,
+	setGasInfo,
 	snxPriceRate,
 }) => {
 	const { t } = useTranslation();
@@ -50,6 +56,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 
 	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortRewardsQuery = useCollateralShortRewards(currencyKey);
+	const getL1SecurityFee = useGetL1SecurityFee();
 
 	const ShortingRewardRow = useMemo(
 		() =>
@@ -84,31 +91,40 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 	}, [ShortingRewardRow, snxPriceRate, selectPriceCurrencyRate]);
 
 	const getGasEstimate = useCallback(async () => {
-		if (synthetixjs != null && walletAddress != null) {
+		if (synthetixjs != null && walletAddress != null && gasPrice != null) {
 			try {
 				const { CollateralShort } = synthetixjs.contracts;
 
-				const gasLimitEstimate = await CollateralShort.estimateGas.getReward(
-					ethers.utils.formatBytes32String(currencyKey),
-					walletAddress
-				);
+				const params = [ethers.utils.formatBytes32String(currencyKey), walletAddress];
 
-				return normalizeGasLimit(Number(gasLimitEstimate));
+				const gasLimitEstimate = await CollateralShort.estimateGas.getReward(...params);
+				const limit = normalizeGasLimit(Number(gasLimitEstimate));
+
+				const metaTx = await CollateralShort.populateTransaction.getReward(...params);
+				const gasPriceWei = gasPriceInWei(gasPrice);
+
+				const l1Fee = await getL1SecurityFee({
+					...metaTx,
+					gasPrice: gasPriceWei,
+					gasLimit: limit,
+				});
+
+				return { limit, l1Fee };
 			} catch (e) {
 				console.log('gas limit error:', e);
 				return null;
 			}
 		}
 		return null;
-	}, [walletAddress, currencyKey, synthetixjs]);
+	}, [walletAddress, currencyKey, synthetixjs, gasPrice, getL1SecurityFee]);
 
 	useEffect(() => {
 		async function getGasEstimateCall() {
-			const newGasLimit = await getGasEstimate();
-			setGasLimit(newGasLimit);
+			const gasInfo = await getGasEstimate();
+			setGasInfo(gasInfo);
 		}
 		getGasEstimateCall();
-	}, [getGasEstimate, setGasLimit]);
+	}, [getGasEstimate, setGasInfo, gasPrice]);
 
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
@@ -121,16 +137,16 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				let tx: ethers.ContractTransaction | null = null;
 				const { CollateralShort } = synthetixjs!.contracts;
 
-				const gasLimitEstimate = await getGasEstimate();
+				const gasEstimate = await getGasEstimate();
 
-				setGasLimit(gasLimitEstimate);
+				setGasInfo(gasEstimate);
 
 				tx = (await CollateralShort.getReward(
 					ethers.utils.formatBytes32String(currencyKey),
 					walletAddress,
 					{
 						gasPrice: gasPriceInWei(gasPrice),
-						gasLimit: gasLimitEstimate,
+						gasLimit: gasEstimate?.limit,
 					}
 				)) as ethers.ContractTransaction;
 
@@ -156,7 +172,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		gasPrice,
 		getGasEstimate,
 		monitorTransaction,
-		setGasLimit,
+		setGasInfo,
 		walletAddress,
 		synthetixjs,
 	]);

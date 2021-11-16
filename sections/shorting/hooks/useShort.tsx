@@ -50,10 +50,16 @@ import { SYNTHS_TO_SHORT } from '../constants';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
 	defaultQuoteCurrencyKey?: CurrencyKey | null;
+};
+
+export type GasInfo = {
+	limit: number;
+	l1Fee: number;
 };
 
 const useShort = ({
@@ -96,13 +102,14 @@ const useShort = ({
 	const selectedShortCRatio = useRecoilValue(shortCRatioState);
 	const customShortCRatio = useRecoilValue(customShortCRatioState);
 	const setHistoricalShortPositions = useSetRecoilState(historicalShortsPositionState);
+	const getL1SecurityFee = useGetL1SecurityFee();
 
 	const shortCRatio = useMemo(
 		() => (customShortCRatio !== '' ? Number(customShortCRatio) / 100 : selectedShortCRatio),
 		[customShortCRatio, selectedShortCRatio]
 	);
 
-	const [gasLimit, setGasLimit] = useState<number | null>(null);
+	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -256,11 +263,10 @@ const useShort = ({
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
+	const transactionFee = useMemo(
+		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
+		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
+	);
 
 	const feeAmountInBaseCurrency = useMemo(() => {
 		if (issueFeeRate != null && baseCurrencyAmount) {
@@ -300,18 +306,18 @@ const useShort = ({
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasEstimate = async () => {
-			if (gasLimit == null && submissionDisabledReason == null) {
-				const gasLimitEstimate = await getGasLimitEstimateForShort();
-				setGasLimit(gasLimitEstimate);
+			if (gasInfo == null && submissionDisabledReason == null) {
+				const gasEstimate = await getGasEstimateForShort();
+				setGasInfo(gasEstimate);
 			}
 		};
 		getGasEstimate();
 		// eslint-disable-next-line
-	}, [submissionDisabledReason, gasLimit]);
+	}, [submissionDisabledReason, gasInfo]);
 
 	// reset estimated gas limit when currencies are changed.
 	useEffect(() => {
-		setGasLimit(null);
+		setGasInfo(null);
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	function resetCurrencies() {
@@ -331,16 +337,32 @@ const useShort = ({
 		];
 	};
 
-	const getGasLimitEstimateForShort = async () => {
-		try {
-			const gasEstimate = await synthetixjs!.contracts.CollateralShort.estimateGas.open(
-				...getShortParams()
-			);
+	const getGasEstimateForShort = async () => {
+		if (gasPrice && synthetixjs) {
+			try {
+				const params = getShortParams();
+				const gasEstimate = await synthetixjs!.contracts.CollateralShort.estimateGas.open(
+					...params
+				);
+				const limit = normalizeGasLimit(Number(gasEstimate));
 
-			return normalizeGasLimit(Number(gasEstimate));
-		} catch (e) {
-			console.log(e);
+				const metaTx = await synthetixjs!.contracts.CollateralShort.populateTransaction.open(
+					...params
+				);
+				const gasPriceWei = gasPriceInWei(gasPrice);
+
+				const l1Fee = await getL1SecurityFee({
+					...metaTx,
+					gasPrice: gasPriceWei,
+					gasLimit: limit,
+				});
+
+				return { limit, l1Fee };
+			} catch (e) {
+				console.log(e);
+			}
 		}
+
 		return null;
 	};
 
@@ -439,13 +461,13 @@ const useShort = ({
 
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
-				const gasLimitEstimate = await getGasLimitEstimateForShort();
+				const gasEstimate = await getGasEstimateForShort();
 
-				setGasLimit(gasLimitEstimate);
+				setGasInfo(gasEstimate);
 
 				tx = (await CollateralShort.open(...getShortParams(), {
 					gasPrice: gasPriceWei,
-					gasLimit: gasLimitEstimate,
+					gasLimit: gasEstimate?.limit,
 				})) as ethers.ContractTransaction;
 
 				if (tx != null) {

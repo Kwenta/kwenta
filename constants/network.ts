@@ -1,1 +1,2 @@
 export const GWEI_UNIT = 1000000000;
+export const ETH_UNIT = 1000000000000000000;
