@@ -20,7 +20,6 @@ import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { formatCurrency } from 'utils/formatters/number';
-import { hexToAsciiV2 } from 'utils/formatters/string';
 
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';

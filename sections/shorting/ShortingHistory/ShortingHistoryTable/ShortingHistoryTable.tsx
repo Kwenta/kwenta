@@ -24,6 +24,7 @@ import ActionsCol from './ActionsCol';
 import { StyledCurrencyKey, StyledPrice } from './common';
 import media from 'styles/media';
 
+
 type ShortingHistoryTableProps = {
 	shortHistory: HistoricalShortPosition[];
 	isLoading: boolean;
@@ -77,14 +78,16 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					{
 						Header: <StyledTableHeader>{t('shorting.history.table.collateral')}</StyledTableHeader>,
 						accessor: 'collateralLockedAmount',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<span>
-								<StyledPrice>
-									{formatNumber(cellProps.row.original.collateralLockedAmount)}
-								</StyledPrice>
-								<StyledCurrencyKey>{cellProps.row.original.collateralLocked}</StyledCurrencyKey>
-							</span>
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return (
+								<span>
+									<StyledPrice>
+										{formatNumber(cellProps.row.original.collateralLockedAmount)}
+									</StyledPrice>
+									<StyledCurrencyKey>{cellProps.row.original.collateralLocked}</StyledCurrencyKey>
+								</span>
+							);
+						},
 						width: 120,
 						sortable: true,
 					},

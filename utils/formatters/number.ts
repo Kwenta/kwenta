@@ -34,14 +34,17 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 export const zeroBN = wei(0);
 
 // TODO: implement max decimals
-export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
+export const formatNumber = (value: WeiSource, options?: FormatNumberOptions, dog?: boolean) => {
+	if (!dog) return;
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
 
 	let weiValue = wei(0);
 	try {
 		weiValue = wei(value);
-	} catch {}
+	} catch (e) {
+		console.error('***Error in formatNumber', e);
+	}
 
 	const formattedValue = [];
 	if (prefix) {
@@ -56,6 +59,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
 	}
+	console.log('***formattedValue', formattedValue);
 
 	return formattedValue.join('');
 };

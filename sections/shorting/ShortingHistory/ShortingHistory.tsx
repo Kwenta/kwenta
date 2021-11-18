@@ -135,6 +135,8 @@ const ShortingHistory: FC = () => {
 		]
 	);
 
+	const temp = filteredShortHistory.filter((short) => parseInt(short.id) !== 9);
+
 	return (
 		<>
 			<Title>{t('shorting.history.title')}</Title>
@@ -174,7 +176,7 @@ const ShortingHistory: FC = () => {
 				/>
 			</Filters>
 			<ShortingHistoryTable
-				shortHistory={filteredShortHistory}
+				shortHistory={temp}
 				isLoaded={shortHistoryQuery.isSuccess}
 				isLoading={shortHistoryQuery.isLoading}
 			/>

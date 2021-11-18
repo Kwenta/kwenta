@@ -17,7 +17,7 @@ export const formatShort = (response: any): Partial<HistoricalShortPosition> => 
 		id: response.id,
 		txHash: response.txHash,
 		collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
-		collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS, true),
+		collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS),
 		synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
 		synthBorrowedAmount: wei(response.synthBorrowedAmount, SYNTH_DECIMALS),
 		createdAt: new Date(Number(response.createdAt) * 1000),
