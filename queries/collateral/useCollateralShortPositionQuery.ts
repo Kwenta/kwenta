@@ -99,14 +99,11 @@ const useCollateralShortPositionQuery = (
 					console.error(e?.data?.message);
 				}
 			}
-
 			if (txHash != null && provider != null) {
 				const tx = await provider.getTransaction(txHash);
 				if (tx != null) {
 					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
-						ExchangeRates.rateForCurrency(loan.currency, {
-							blockTag: tx.blockNumber,
-						}),
+						ExchangeRates.rateForCurrency(loan.currency),
 						ExchangeRates.rateForCurrency(loan.currency),
 					])) as [ethers.BigNumber, ethers.BigNumber];
 
@@ -118,7 +115,6 @@ const useCollateralShortPositionQuery = (
 					profitLoss = pnlPercentage.mul(loanAmount).mul(initialUSDPrice);
 				}
 			}
-
 			return {
 				id: loanId as string,
 				accruedInterest: wei(loan.accruedInterest),
