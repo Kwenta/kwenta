@@ -66,7 +66,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
 							<span>
 								<StyledPrice>
-									{formatNumber(cellProps.row.original.synthBorrowedAmount)}
+									{formatNumber(cellProps.row.original.synthBorrowedAmount, { minDecimals: 4 })}
 								</StyledPrice>
 								<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
 							</span>
