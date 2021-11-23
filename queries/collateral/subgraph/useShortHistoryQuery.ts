@@ -13,6 +13,7 @@ import {
 	SHORT_GRAPH_ENDPOINT,
 	SHORT_GRAPH_ENDPOINT_KOVAN,
 	SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
+	SHORT_GRAPH_ENDPOINT_OVM,
 } from './utils';
 import { historicalShortsPositionState } from 'store/shorts';
 
@@ -32,6 +33,8 @@ const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[
 					? SHORT_GRAPH_ENDPOINT_KOVAN
 					: network.id === 69
 					? SHORT_GRAPH_ENDPOINT_OVM_KOVAN
+					: network.id === 10
+					? SHORT_GRAPH_ENDPOINT_OVM
 					: SHORT_GRAPH_ENDPOINT,
 				gql`
 					query shorts($account: String!) {
