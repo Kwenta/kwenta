@@ -24,7 +24,6 @@ import ActionsCol from './ActionsCol';
 import { StyledCurrencyKey, StyledPrice } from './common';
 import media from 'styles/media';
 
-
 type ShortingHistoryTableProps = {
 	shortHistory: HistoricalShortPosition[];
 	isLoading: boolean;

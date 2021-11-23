@@ -43,7 +43,6 @@ const useCollateralShortPositionQuery = (
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			console.log('***query fired');
 			const { CollateralShort, CollateralUtil, ExchangeRates } = synthetixjs!.contracts;
 			const loan = (await CollateralShort.loans(loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
@@ -52,13 +51,11 @@ const useCollateralShortPositionQuery = (
 				amount: ethers.BigNumber;
 				collateral: string;
 			};
-			console.log('***debug me1 - loan', loan);
 
 			const collateralRatio = (await CollateralUtil.getCollateralRatio(
 				loan,
 				utils.formatBytes32String(Synths.sUSD)
 			)) as ethers.BigNumber;
-			console.log('***debug me2');
 
 			let txHash = loanTxHash ?? null;
 			let isOpen = null;
@@ -104,7 +101,6 @@ const useCollateralShortPositionQuery = (
 			}
 
 			if (txHash != null && provider != null) {
-
 				const tx = await provider.getTransaction(txHash);
 				if (tx != null) {
 					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([

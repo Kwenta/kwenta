@@ -13,6 +13,8 @@ type ReturnValueType = Record<
 	CurrencyKey,
 	{
 		shorts: Wei;
+		rewardsRate: Wei;
+		rewardsTotalSupply: Wei;
 	}
 >;
 
@@ -27,17 +29,29 @@ const useCollateralShortStats = (
 		QUERY_KEYS.Collateral.ShortStats(currencyKeys.join('|')),
 		async () => {
 			const stats = (await Promise.all([
-				...currencyKeys.map((currencyKey) =>
-					synthetixjs!.contracts.CollateralManager.short(
-						ethers.utils.formatBytes32String(currencyKey)
+				...currencyKeys.map(
+					(currencyKey) =>
+						synthetixjs!.contracts.CollateralManager.short(
+							ethers.utils.formatBytes32String(currencyKey)
+						),
+					...currencyKeys.map((currencyKey) =>
+						synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
+					),
+					...currencyKeys.map((currencyKey) =>
+						synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
 					)
 				),
 			])) as ethers.BigNumber[];
 
+			const rewardsTotalSupplies = stats;
 			const shorts = stats.splice(0, stats.length / 3);
+			const rewardsRates = stats.splice(0, stats.length / 2);
+
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
 					shorts: shorts[i] === undefined ? wei(0) : wei(shorts[i]),
+					rewardsRate: wei(rewardsRates[i]),
+					rewardsTotalSupply: wei(rewardsTotalSupplies[i]),
 				};
 
 				return ret;

@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -16,27 +16,14 @@ import { PageContent, MainContent, RightSideContent, FullHeightContainer } from 
 
 import { DesktopOnlyView } from 'components/Media';
 
-import { isWalletConnectedState, isL2State, isL2MainnetState } from 'store/wallet';
-import { useRouter } from 'next/router';
-import ROUTES from 'constants/routes';
+import { isWalletConnectedState, isL2State } from 'store/wallet';
 
 const Shorting: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
+	// KM-NOTE: Confirm this works
 	const isL2 = useRecoilValue(isL2State);
-
-	const router = useRouter();
-
-	const redirectToHome = useCallback(() => router.push(ROUTES.Dashboard.Home), [router]);
-
-	const isL2Mainnet = useRecoilValue(isL2MainnetState);
-
-	useEffect(() => {
-		if (isL2Mainnet) {
-			redirectToHome();
-		}
-	}, [isL2Mainnet, redirectToHome]);
 
 	return (
 		<>
