@@ -15,7 +15,10 @@ import SynthRow from './SynthRow';
 import { numericSort } from './utils';
 import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
-import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
+import useSynthetixQueries, {
+	HistoricalRatesUpdates,
+	HistoricalVolume,
+} from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import mapValues from 'lodash/mapValues';
 import Connector from 'containers/Connector';
@@ -25,22 +28,55 @@ import { useQueryClient, Query } from 'react-query';
 import { networkState } from 'store/wallet';
 import { Period } from 'constants/period';
 
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
+import { PERIOD_IN_HOURS } from 'constants/period';
+import Wei from '@synthetixio/wei';
+
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 	const network = useRecoilValue(networkState);
+	const twentyFourHoursAgo = useMemo(
+		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
+		[]
+	);
 
 	const { synthsMap } = Connector.useContainer();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const { useExchangeRatesQuery, useHistoricalVolumeQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery, exchanges } = useSynthetixQueries();
+	const historicalVolumeQuery = exchanges.useGetSynthExchanges(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: twentyFourHoursAgo,
+			},
+		},
+		{
+			id: true,
+			account: true,
+			// from: true,
+			fromCurrencyKey: true,
+			fromAmount: true,
+			fromAmountInUSD: true,
+			toCurrencyKey: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			toAddress: true,
+			timestamp: true,
+			gasPrice: true,
+			block: true,
+		}
+	);
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const historicalVolumeQuery = useHistoricalVolumeQuery();
 
 	const queryCache = useQueryClient().getQueryCache();
+	// KM-NOTE: come back and delete
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
 
 	const unfrozenSynths =
@@ -105,6 +141,7 @@ const TrendingSynths: FC = () => {
 
 		return unfrozenSynths;
 	}, [unfrozenSynths, currentSynthSort, exchangeRates, historicalVolume, historicalRates]);
+	console.log('***sortedSynths', sortedSynths);
 
 	return (
 		<>

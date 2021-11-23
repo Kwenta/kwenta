@@ -3,7 +3,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import request, { gql } from 'graphql-request';
 import { UseQueryOptions, useQuery } from 'react-query';
 import { Candle } from './types';
-import { calculateTimestampForPeriod } from './utils';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 const RATES_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-rates';
 

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
@@ -6,7 +6,8 @@ import Wei from '@synthetixio/wei';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
-import { Period } from 'constants/period';
+import { Period, PERIOD_IN_HOURS } from 'constants/period';
+import { ethers } from 'ethers';
 
 import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
 
@@ -17,6 +18,10 @@ import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
 
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
+import { getMinAndMaxRate, calculateRateChange } from 'queries/rates/utils';
+
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
 	synth: SynthBalance;
@@ -26,10 +31,10 @@ export type SynthBalanceRowProps = {
 const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, totalUSDBalance }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
+	const { exchanges } = useSynthetixQueries();
 	const { synthsMap } = Connector.useContainer();
 
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	// const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.currencyKey;
 	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();
@@ -38,7 +43,41 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 
 	const totalValue = synth.usdBalance;
 	const price = exchangeRates && exchangeRates[synth.currencyKey];
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	// return <div>hi</div>;
+	// const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const twentyFourHoursAgo = useMemo(
+		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
+		[]
+	);
+
+	const historicalRatesQuery = exchanges.useGetRateUpdates(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: twentyFourHoursAgo,
+				synth: ethers.utils.formatBytes32String(currencyKey),
+			},
+		},
+		{
+			id: true,
+			currencyKey: true,
+			synth: true,
+			rate: true,
+			block: true,
+			timestamp: true,
+		}
+	);
+
+	const historicalRates = historicalRatesQuery.isSuccess ? historicalRatesQuery.data : [];
+
+	const [low, high] = getMinAndMaxRate(historicalRates);
+	const change = calculateRateChange(historicalRates);
+	const rates = {
+		rates: historicalRates.reverse(),
+		low,
+		high,
+		change,
+	};
 
 	return (
 		<>
@@ -68,7 +107,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 							price={price}
 							sign={selectedPriceCurrency.sign}
 							conversionRate={selectPriceCurrencyRate}
-							change={historicalRates.data?.change}
+							change={rates.change}
 						/>
 					)}
 				</ExchangeRateCol>
