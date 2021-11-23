@@ -24,7 +24,6 @@ const useCollateralShortStats = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { synthetixjs } = Connector.useContainer();
-
 	return useQuery<ReturnValueType>(
 		QUERY_KEYS.Collateral.ShortStats(currencyKeys.join('|')),
 		async () => {
@@ -34,26 +33,33 @@ const useCollateralShortStats = (
 						synthetixjs!.contracts.CollateralManager.short(
 							ethers.utils.formatBytes32String(currencyKey)
 						),
-					...currencyKeys.map((currencyKey) =>
-						synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate()
-					),
-					...currencyKeys.map((currencyKey) =>
-						synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply()
-					)
+					...currencyKeys.map((currencyKey) => {
+						try {
+							return synthetixjs!.contracts[`ShortingRewards${currencyKey}`].rewardRate();
+						} catch {
+							return [];
+						}
+					}),
+					...currencyKeys.map((currencyKey) => {
+						try {
+							return synthetixjs!.contracts[`ShortingRewards${currencyKey}`].totalSupply();
+						} catch {
+							return [];
+						}
+					})
 				),
 			])) as ethers.BigNumber[];
 
 			const rewardsTotalSupplies = stats;
 			const shorts = stats.splice(0, stats.length / 3);
 			const rewardsRates = stats.splice(0, stats.length / 2);
-
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
 					shorts: shorts[i] === undefined ? wei(0) : wei(shorts[i]),
-					rewardsRate: wei(rewardsRates[i]),
-					rewardsTotalSupply: wei(rewardsTotalSupplies[i]),
+					rewardsRate: rewardsRates[i] === undefined ? wei(0) : wei(rewardsRates[i]),
+					rewardsTotalSupply:
+						rewardsTotalSupplies[i] === undefined ? wei(0) : wei(rewardsTotalSupplies[i]),
 				};
-
 				return ret;
 			}, {} as ReturnValueType);
 		},
