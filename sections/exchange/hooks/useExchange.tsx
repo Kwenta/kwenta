@@ -73,7 +73,7 @@ import { ordersState } from 'store/orders';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -87,6 +87,7 @@ import { GasPrices } from '@synthetixio/queries';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
+import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -170,6 +171,7 @@ const useExchange = ({
 	// 	enabled: txProvider === '1inch',
 	// });
 	const slippage = useRecoilValue(slippageState);
+	const getL1SecurityFee = useGetL1SecurityFee();
 
 	const [selectedBaseChartPeriod, setSelectedBaseChartPeriod] = usePersistedRecoilState<Period>(
 		baseChartPeriodState
@@ -194,7 +196,7 @@ const useExchange = ({
 	const toggleIsShowingSingleChart = () => setIsShowingSingleChart((bool) => !bool);
 	const wideWidth = useChartWideWidth();
 
-	const [gasLimit, setGasLimit] = useState<number | null>(null);
+	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 	const ETHBalanceQuery = useETHBalanceQuery(walletAddress);
@@ -543,11 +545,10 @@ const useExchange = ({
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
 	);
 
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
+	const transactionFee = useMemo(
+		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
+		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
+	);
 
 	const feeAmountInBaseCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && baseCurrencyAmount) {
@@ -573,20 +574,21 @@ const useExchange = ({
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
-			if (gasLimit == null && submissionDisabledReason == null) {
-				const gasLimitEstimate = await getGasLimitEstimateForExchange();
-				setGasLimit(gasLimitEstimate);
+			if (gasInfo == null && submissionDisabledReason == null) {
+				const gasPriceWei = gasPrice ? gasPriceInWei(gasPrice) : null;
+				const gasEstimate = await getGasEstimateForExchange(gasPriceWei);
+				setGasInfo(gasEstimate);
 			}
 		};
 		if (txProvider === 'synthetix') {
 			getGasLimitEstimate();
 		}
 		// eslint-disable-next-line
-	}, [submissionDisabledReason, gasLimit, txProvider]);
+	}, [submissionDisabledReason, gasInfo, txProvider]);
 
 	// reset estimated gas limit when currencies are changed.
 	useEffect(() => {
-		setGasLimit(null);
+		setGasInfo(null);
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	useEffect(() => {
@@ -612,20 +614,34 @@ const useExchange = ({
 		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
 	}, [baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]);
 
-	const getGasLimitEstimateForExchange = useCallback(async () => {
-		try {
-			if (synthetixjs != null) {
-				const exchangeParams = getExchangeParams();
-				const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
-					...exchangeParams
-				);
-				return isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate));
+	const getGasEstimateForExchange = useCallback(
+		async (gasPriceInWei: number | null) => {
+			try {
+				if (isL2 && !gasPrice) return null;
+				if (synthetixjs != null) {
+					const exchangeParams = getExchangeParams();
+					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
+						...exchangeParams
+					);
+					let gasLimitNum = Number(gasEstimate);
+					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
+						...exchangeParams
+					);
+					const l1Fee = await getL1SecurityFee({
+						...metaTx,
+						gasPrice: gasPriceInWei!,
+						gasLimit: gasLimitNum,
+					});
+					const limit = isL2 ? gasLimitNum : normalizeGasLimit(gasLimitNum);
+					return { limit, l1Fee };
+				}
+			} catch (e) {
+				console.log(e);
 			}
-		} catch (e) {
-			console.log(e);
-		}
-		return null;
-	}, [getExchangeParams, isL2, synthetixjs]);
+			return null;
+		},
+		[getExchangeParams, isL2, synthetixjs, gasPrice, getL1SecurityFee]
+	);
 
 	const checkAllowance = useCallback(async () => {
 		if (
@@ -726,13 +742,13 @@ const useExchange = ({
 						tokensMap[quoteCurrencyKey!].decimals
 					);
 				} else {
-					const gasLimitEstimate = await getGasLimitEstimateForExchange();
+					const gasInfo = await getGasEstimateForExchange(gasPriceWei);
 
-					setGasLimit(gasLimitEstimate);
+					setGasInfo(gasInfo);
 
 					const gas = {
 						gasPrice: gasPriceWei,
-						gasLimit: gasLimitEstimate,
+						gasLimit: gasInfo?.limit,
 					};
 					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 				}
@@ -784,7 +800,7 @@ const useExchange = ({
 		baseCurrencyTokenAddress,
 		gasPrice,
 		getExchangeParams,
-		getGasLimitEstimateForExchange,
+		getGasEstimateForExchange,
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
 		quoteCurrencyTokenAddress,
