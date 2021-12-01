@@ -1,18 +1,18 @@
+import { ethers, utils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { ethers, utils } from 'ethers';
 import Wei, { wei } from '@synthetixio/wei';
 import fromUnixTime from 'date-fns/fromUnixTime';
+import request, { gql } from 'graphql-request';
 
-import { appReadyState } from 'store/app';
-import { isWalletConnectedState } from 'store/wallet';
-
+import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
-
-import request, { gql } from 'graphql-request';
 import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
-import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
+import { hexToAscii } from 'utils/formatters/string';
+import { isMainnetState } from 'store/wallet';
+import { isWalletConnectedState } from 'store/wallet';
 
 export type ShortPosition = {
 	id: string;
@@ -30,15 +30,22 @@ export type ShortPosition = {
 	profitLoss: Wei | null;
 };
 
+type InitialCollateralPrice = {
+	rate: String;
+	synth: String;
+};
+
 const useCollateralShortPositionQuery = (
 	loanId: string | null,
 	loanTxHash?: string | null,
-	skipSubgraph?: boolean,
+	loanCreatedAt?: Date | null,
+	skipSubgraph?: boolean | null,
 	options?: UseQueryOptions<ShortPosition>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { provider, synthetixjs } = Connector.useContainer();
+	const isMainnet = useRecoilValue(isMainnetState);
 
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
@@ -99,22 +106,52 @@ const useCollateralShortPositionQuery = (
 					console.error(e?.data?.message);
 				}
 			}
-			if (txHash != null && provider != null) {
-				const tx = await provider.getTransaction(txHash);
-				if (tx != null) {
-					let [initialCollateralPrice, latestCollateralPrice] = (await Promise.all([
-						ExchangeRates.rateForCurrency(loan.currency),
-						ExchangeRates.rateForCurrency(loan.currency),
-					])) as [ethers.BigNumber, ethers.BigNumber];
 
+			if (txHash != null && provider != null && createdAt != null) {
+				const tx = await provider.getTransaction(txHash);
+				if (tx != null && loanCreatedAt != null) {
+					const RATE_UPDATES_ENDPOINT = isMainnet
+						? 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges'
+						: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
+
+					let [initialCollateralPriceResponse, latestCollateralPrice] = (await Promise.all([
+						request(
+							RATE_UPDATES_ENDPOINT,
+							gql`
+								query getRateUpdateAtBlock($currencyKey: String!, $timestamp: Int!) {
+									rateUpdates(
+										first: 1
+										orderBy: timestamp
+										direction: desc
+										where: { synth: $currencyKey, timestamp_lte: $timestamp }
+									) {
+										id
+										rate
+										timestamp
+										synth
+									}
+								}
+							`,
+							{
+								currencyKey: hexToAscii(loan.currency),
+								timestamp: Date.parse(loanCreatedAt.toISOString()) / 1000,
+							}
+						),
+						ExchangeRates.rateForCurrency(loan.currency),
+					])) as [{ rateUpdates: Array<InitialCollateralPrice> }, ethers.BigNumber];
+
+					const initialCollateralPrice = initialCollateralPriceResponse?.rateUpdates[0]?.rate;
 					const loanAmount = wei(loan.amount);
 					const initialUSDPrice = wei(initialCollateralPrice);
 					const latestUSDPrice = wei(latestCollateralPrice);
 
 					const pnlPercentage = initialUSDPrice.sub(latestUSDPrice).div(initialUSDPrice);
+					createdAt = loanCreatedAt;
+
 					profitLoss = pnlPercentage.mul(loanAmount).mul(initialUSDPrice);
 				}
 			}
+
 			return {
 				id: loanId as string,
 				accruedInterest: wei(loan.accruedInterest),

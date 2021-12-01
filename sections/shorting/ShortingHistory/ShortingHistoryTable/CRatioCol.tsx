@@ -18,8 +18,10 @@ const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
 		cellProps.row.original.txHash,
+		cellProps.row.original.createdAt,
 		true
 	);
+
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),
 		[collateralShortPositionQuery]
@@ -40,11 +42,11 @@ const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 
 	return (
 		<>
-			{collateralShortPosition != null ? (
+			{collateralShortPosition != null && collateralShortPosition.collateralRatio ? (
 				<PriceChangeText
 					isPositive={collateralShortPosition.collateralRatio.gt(minCollateralRatio)}
 				>
-					{formatPercent(collateralShortPosition.collateralRatio)}
+					{formatPercent(collateralShortPosition?.collateralRatio)}
 				</PriceChangeText>
 			) : (
 				<span>{NO_VALUE}</span>

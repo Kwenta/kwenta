@@ -16,6 +16,7 @@ const ProfitLossCol: FC<ProfitLossColType> = ({ cellProps }) => {
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
 		cellProps.row.original.txHash,
+		cellProps.row.original.createdAt,
 		true
 	);
 	const collateralShortPosition = useMemo(
