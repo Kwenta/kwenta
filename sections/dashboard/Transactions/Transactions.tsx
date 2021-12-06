@@ -18,8 +18,29 @@ const Transactions: FC = () => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useWalletTradesQuery } = useSynthetixQueries();
-	const walletTradesQuery = useWalletTradesQuery(walletAddress ?? '');
+	const { exchanges } = useSynthetixQueries();
+	const walletTradesQuery = exchanges.useGetSynthExchanges(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				account: walletAddress,
+			},
+		},
+		{
+			id: true,
+			account: true,
+			fromSynth: true,
+			toSynth: true,
+			fromAmount: true,
+			fromAmountInUSD: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			toAddress: true,
+			timestamp: true,
+			gasPrice: true,
+		}
+	);
 
 	const synthFilterList = useMemo(
 		() => [
