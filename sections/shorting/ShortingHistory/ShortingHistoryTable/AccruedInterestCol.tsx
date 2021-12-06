@@ -16,9 +16,7 @@ type AccruedInterestColType = {
 const AccruedInterestCol: FC<AccruedInterestColType> = ({ cellProps }) => {
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
-		cellProps.row.original.txHash,
-		null,
-		true
+		cellProps.row.original.txHash
 	);
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),

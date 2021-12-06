@@ -4,7 +4,7 @@ import { CurrencyKey, SYNTH_DECIMALS } from 'constants/currency';
 import { wei } from '@synthetixio/wei';
 
 export const SHORT_GRAPH_ENDPOINT =
-	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
 export const SHORT_GRAPH_ENDPOINT_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';

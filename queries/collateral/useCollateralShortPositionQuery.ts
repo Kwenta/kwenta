@@ -8,10 +8,15 @@ import request, { gql } from 'graphql-request';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
-import { SHORT_GRAPH_ENDPOINT } from 'queries/collateral/subgraph/utils';
+import {
+	SHORT_GRAPH_ENDPOINT,
+	SHORT_GRAPH_ENDPOINT_OVM,
+	SHORT_GRAPH_ENDPOINT_KOVAN,
+	SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
+} from 'queries/collateral/subgraph/utils';
 import { appReadyState } from 'store/app';
 import { hexToAscii } from 'utils/formatters/string';
-import { isMainnetState } from 'store/wallet';
+import { isL2KovanState, isL2MainnetState, isL1KovanState } from 'store/wallet';
 import { isWalletConnectedState } from 'store/wallet';
 
 export type ShortPosition = {
@@ -38,19 +43,28 @@ type InitialCollateralPrice = {
 const useCollateralShortPositionQuery = (
 	loanId: string | null,
 	loanTxHash?: string | null,
-	loanCreatedAt?: Date | null,
-	skipSubgraph?: boolean | null,
 	options?: UseQueryOptions<ShortPosition>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { provider, synthetixjs } = Connector.useContainer();
-	const isMainnet = useRecoilValue(isMainnetState);
+	const isL1Kovan = useRecoilValue(isL1KovanState);
+	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+	const isL2Kovan = useRecoilValue(isL2KovanState);
+
+	const shortsSubgraphEndpoint = isL1Kovan
+		? SHORT_GRAPH_ENDPOINT_KOVAN
+		: isL2Kovan
+		? SHORT_GRAPH_ENDPOINT_OVM_KOVAN
+		: isL2Mainnet
+		? SHORT_GRAPH_ENDPOINT_OVM
+		: SHORT_GRAPH_ENDPOINT;
 
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
 			const { CollateralShort, CollateralUtil, ExchangeRates } = synthetixjs!.contracts;
+
 			const loan = (await CollateralShort.loans(loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
 				lastInteraction: ethers.BigNumber;
@@ -70,49 +84,46 @@ const useCollateralShortPositionQuery = (
 			let closedAt = null;
 			let profitLoss = null;
 
-			if (skipSubgraph == null) {
-				try {
-					const response = (await request(
-						SHORT_GRAPH_ENDPOINT, // fetching to l1 mainnet only
-						gql`
-							query shorts($id: String!) {
-								shorts(where: { id: $id }) {
-									txHash
-									isOpen
-									createdAt
-									closedAt
-								}
+			try {
+				const response = (await request(
+					shortsSubgraphEndpoint,
+					gql`
+						query shorts($id: String!) {
+							shorts(where: { id: $id }) {
+								txHash
+								isOpen
+								createdAt
+								closedAt
 							}
-						`,
-						{
-							id: loanId,
 						}
-					)) as {
-						shorts: Array<{
-							txHash: string;
-							isOpen: boolean;
-							createdAt: string;
-							closedAt: string;
-						}>;
-					};
+					`,
+					{
+						id: loanId,
+					}
+				)) as {
+					shorts: Array<{
+						txHash: string;
+						isOpen: boolean;
+						createdAt: string;
+						closedAt: string;
+					}>;
+				};
 
-					const subgraphShort = response.shorts[0];
+				const subgraphShort = response.shorts[0];
 
-					txHash = subgraphShort.txHash;
-					isOpen = subgraphShort.isOpen;
-					createdAt = fromUnixTime(Number(subgraphShort.createdAt));
-					closedAt = fromUnixTime(Number(subgraphShort.closedAt));
-				} catch (e) {
-					console.error(e?.data?.message);
-				}
+				txHash = subgraphShort.txHash;
+				isOpen = subgraphShort.isOpen;
+				createdAt = fromUnixTime(Number(subgraphShort.createdAt));
+				closedAt = fromUnixTime(Number(subgraphShort.closedAt));
+			} catch (e) {
+				console.error(e?.data?.message);
 			}
 
 			if (txHash != null && provider != null && createdAt != null) {
 				const tx = await provider.getTransaction(txHash);
-				if (tx != null && loanCreatedAt != null) {
-					const RATE_UPDATES_ENDPOINT = isMainnet
-						? 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges'
-						: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
+				if (tx != null) {
+					const RATE_UPDATES_ENDPOINT =
+						'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
 
 					let [initialCollateralPriceResponse, latestCollateralPrice] = (await Promise.all([
 						request(
@@ -134,7 +145,7 @@ const useCollateralShortPositionQuery = (
 							`,
 							{
 								currencyKey: hexToAscii(loan.currency),
-								timestamp: Date.parse(loanCreatedAt.toISOString()) / 1000,
+								timestamp: Date.parse(createdAt.toISOString()) / 1000,
 							}
 						),
 						ExchangeRates.rateForCurrency(loan.currency),
@@ -146,7 +157,6 @@ const useCollateralShortPositionQuery = (
 					const latestUSDPrice = wei(latestCollateralPrice);
 
 					const pnlPercentage = initialUSDPrice.sub(latestUSDPrice).div(initialUSDPrice);
-					createdAt = loanCreatedAt;
 
 					profitLoss = pnlPercentage.mul(loanAmount).mul(initialUSDPrice);
 				}
