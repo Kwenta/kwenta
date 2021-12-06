@@ -15,6 +15,14 @@ const useCombinedRates = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
+	return {
+		data: [],
+		change: 0,
+		noData: true,
+		isLoadingRates: false, //baseHistoricalRates.isLoading || quoteHistoricalRates.isLoading,
+		low: 0,
+		high: 0,
+	};
 	const { useHistoricalRatesQuery } = useSynthetixQueries();
 
 	const baseHistoricalRates = useHistoricalRatesQuery(

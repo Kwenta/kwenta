@@ -9,7 +9,7 @@ const useCandleSticksChartData = ({
 	currencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const query = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
+	const query = { isSuccess: false, data: [], isLoading: false }; //useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 	const data = query.isSuccess && query.data ? query.data : [];
 	const noData = query.isSuccess && query.data && data.length === 0;
 

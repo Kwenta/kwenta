@@ -22,6 +22,8 @@ import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
 	priceRate: number | null;
@@ -29,15 +31,12 @@ type MarketDetailsCardProps = {
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
+	console.log('***MarketDetailsCard');
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { tokensMap } = Connector.useContainer();
 
-	const {
-		useHistoricalVolumeQuery,
-		useHistoricalRatesQuery,
-		useSynthMarketCapQuery,
-	} = useSynthetixQueries();
+	const { exchanges, useHistoricalRatesQuery, useSynthMarketCapQuery } = useSynthetixQueries();
 
 	const {
 		selectPriceCurrencyRate,
@@ -46,7 +45,31 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	} = useSelectedPriceCurrency();
 	const theme = useTheme();
 
-	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
+	const vol24HQuery = exchanges.useGetSynthExchanges(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
+			},
+		},
+		{
+			id: true,
+			account: true,
+			from: true,
+			fromCurrencyKey: true,
+			fromAmount: true,
+			fromAmountInUSD: true,
+			toCurrencyKey: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			toAddress: true,
+			timestamp: true,
+			gasPrice: true,
+			block: true,
+		}
+	);
+
 	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
 	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 

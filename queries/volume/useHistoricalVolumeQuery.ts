@@ -7,7 +7,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 declare type HistoricalVolume = Record<CurrencyKey, Wei>;
 
-const useHistoricalVolumeQuery = (exchanges) => {
+const useHistoricalVolumeQuery = (exchanges: any) => {
 	return useQuery<HistoricalVolume>(
 		['rates', 'historicalVolume'], //ctx.networkId, period],
 		async () => {
@@ -40,7 +40,7 @@ const useHistoricalVolumeQuery = (exchanges) => {
 
 			return synthExchanges.isSuccess
 				? synthExchanges.data?.reduce(
-						(totalVol, { fromCurrencyKey, toCurrencyKey, fromAmountInUSD, toAmountInUSD }) => {
+						(totalVol: any, { fromCurrencyKey, toCurrencyKey, fromAmountInUSD, toAmountInUSD }) => {
 							if (totalVol[fromCurrencyKey] != null) {
 								totalVol[fromCurrencyKey] = totalVol[fromCurrencyKey].add(fromAmountInUSD);
 							} else {

@@ -1,10 +1,13 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
 import useSynthetixQueries from '@synthetixio/queries';
+import { ethers } from 'ethers';
 
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
-import { PeriodLabel } from 'constants/period';
+import { PeriodLabel, PERIOD_IN_HOURS } from 'constants/period';
+
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 const useCombinedRates = ({
 	baseCurrencyKey,
@@ -15,15 +18,49 @@ const useCombinedRates = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	const { exchanges } = useSynthetixQueries();
+	const period = PERIOD_IN_HOURS[selectedChartPeriodLabel.period];
 
-	const baseHistoricalRates = useHistoricalRatesQuery(
-		baseCurrencyKey,
-		selectedChartPeriodLabel.period
+	const baseHistoricalRatesQuery = exchanges.useGetRateUpdates(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: calculateTimestampForPeriod(period),
+				synth: baseCurrencyKey,
+			},
+		},
+		{
+			id: true,
+			currencyKey: true,
+			synth: true,
+			rate: true,
+			block: true,
+			timestamp: true,
+		},
+		{
+			enabled: baseCurrencyKey !== undefined
+		}
 	);
-	const quoteHistoricalRates = useHistoricalRatesQuery(
-		quoteCurrencyKey,
-		selectedChartPeriodLabel.period
+
+	const quoteHistoricalRatesQuery = exchanges.useGetRateUpdates(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: calculateTimestampForPeriod(period),
+				synth: quoteCurrencyKey,
+			},
+		},
+		{
+			id: true,
+			currencyKey: true,
+			synth: true,
+			rate: true,
+			block: true,
+			timestamp: true,
+		},
+		{
+			enabled: quoteCurrencyKey !== undefined
+		}
 	);
 
 	const { data: baseInitialRate } = usePeriodStartSynthRateQuery(
@@ -35,17 +72,19 @@ const useCombinedRates = ({
 		selectedChartPeriodLabel.period
 	);
 
-	const baseRates = useMemo(() => baseHistoricalRates.data?.rates ?? [], [baseHistoricalRates]);
-	const quoteRates = useMemo(() => quoteHistoricalRates.data?.rates ?? [], [quoteHistoricalRates]);
+	const baseRates = useMemo(() => baseHistoricalRatesQuery.data ?? [], [baseHistoricalRatesQuery]);
+	const quoteRates = useMemo(() => quoteHistoricalRatesQuery.data ?? [], [
+		quoteHistoricalRatesQuery,
+	]);
 
 	const baseNoData =
-		baseHistoricalRates.isSuccess &&
-		baseHistoricalRates.data &&
-		baseHistoricalRates.data.rates.length === 0;
+		baseHistoricalRatesQuery.isSuccess &&
+		baseHistoricalRatesQuery.data &&
+		baseHistoricalRatesQuery.data.length === 0;
 	const quoteNoData =
-		quoteHistoricalRates.isSuccess &&
-		quoteHistoricalRates.data &&
-		quoteHistoricalRates.data.rates.length === 0;
+		quoteHistoricalRatesQuery.isSuccess &&
+		quoteHistoricalRatesQuery.data &&
+		quoteHistoricalRatesQuery.data.length === 0;
 	const noData = baseNoData || quoteNoData;
 
 	const data = useMemo(() => {
