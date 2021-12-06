@@ -4,4 +4,4 @@ const TVChartContainer = dynamic(() => import('./TVChart').then((mod) => mod.TVC
 	ssr: false,
 });
 
-export default () => <TVChartContainer />;
+export default (props: any) => <TVChartContainer {...props} />;

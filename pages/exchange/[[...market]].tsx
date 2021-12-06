@@ -110,7 +110,7 @@ const ExchangePage = () => {
 							<PageWidthContainer>{footerCard}</PageWidthContainer>
 
 							<AnimateSharedLayout>
-								{chartsToggler}
+								{/*chartsToggler*/}
 
 								<ChartsContainer>
 									{isShowingSingleChart ? (

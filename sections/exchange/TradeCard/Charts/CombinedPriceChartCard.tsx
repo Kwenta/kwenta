@@ -139,9 +139,11 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 	}, [eitherCurrencyIsSUSD, isCompareChart, isCandleStickChart, selectedChartPeriod]);
 
 	return (
-		<Container {...rest}>
-			<TVChart />
-		</Container>
+		baseCurrencyKey && (
+			<Container {...rest}>
+				<TVChart symbol={baseCurrencyKey} />
+			</Container>
+		)
 	);
 
 	return (
