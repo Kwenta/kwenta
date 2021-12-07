@@ -91,17 +91,19 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[exchangeRates, selectedPriceCurrency.name, short.collateralLocked]
 	);
 
-	const collateralValue = useMemo(() => short.collateralLockedAmount.mul(collateralLockedPrice), [
-		short.collateralLockedAmount,
-		collateralLockedPrice,
-	]);
-
 	const liquidationPrice = useMemo(
 		() =>
-			BigNumber.isBigNumber(minCollateralRatio)
-				? collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio))
+			short.synthBorrowedAmount && minCollateralRatio && short.synthBorrowedAmount.gt(0)
+				? short.collateralLockedAmount
+						.mul(collateralLockedPrice)
+						.div(short.synthBorrowedAmount.mul(minCollateralRatio))
 				: wei(0),
-		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
+		[
+			short.collateralLockedAmount,
+			collateralLockedPrice,
+			minCollateralRatio,
+			short.synthBorrowedAmount,
+		]
 	);
 
 	const inputChangePreview = useMemo(() => {
@@ -152,6 +154,17 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		</ArrowIcon>
 	);
 
+	const liquidationPriceDisplayed = formatCurrency(
+		short.collateralLocked,
+		selectPriceCurrencyRate != null
+			? liquidationPrice.div(selectPriceCurrencyRate)
+			: liquidationPrice,
+		{
+			currencyKey: short.synthBorrowed,
+			sign: selectedPriceCurrency.sign,
+		}
+	);
+
 	return (
 		<StyledCard>
 			<StyledCardHeader>
@@ -189,16 +202,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 							{t('shorting.history.manage-short.fields.liquidation-price')}
 						</LightFieldText>
 						<DataField>
-							{formatCurrency(
-								short.collateralLocked,
-								selectPriceCurrencyRate != null
-									? liquidationPrice.div(selectPriceCurrencyRate)
-									: liquidationPrice,
-								{
-									currencyKey: short.synthBorrowed,
-									sign: selectedPriceCurrency.sign,
-								}
-							)}
+							{liquidationPriceDisplayed}
 							{inputChangePreview != null && (
 								<>
 									{arrowIcon}
