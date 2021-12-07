@@ -66,6 +66,7 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 	setSelectedChartType,
 	...rest
 }) => {
+	console.log('***CombinedPriceChartCard');
 	const { t } = useTranslation();
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

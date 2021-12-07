@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
 import useSynthetixQueries from '@synthetixio/queries';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
 
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
@@ -21,47 +21,49 @@ const useCombinedRates = ({
 	const { exchanges } = useSynthetixQueries();
 	const period = PERIOD_IN_HOURS[selectedChartPeriodLabel.period];
 
-	const baseHistoricalRatesQuery = exchanges.useGetRateUpdates(
-		{
-			first: Number.MAX_SAFE_INTEGER,
-			where: {
-				timestamp_gte: calculateTimestampForPeriod(period),
-				synth: baseCurrencyKey,
-			},
-		},
-		{
-			id: true,
-			currencyKey: true,
-			synth: true,
-			rate: true,
-			block: true,
-			timestamp: true,
-		},
-		{
-			enabled: baseCurrencyKey !== undefined
-		}
-	);
+	const baseHistoricalRatesQuery = !baseCurrencyKey
+		? { isSuccess: false, data: [], isLoading: false }
+		: exchanges.useGetRateUpdates(
+				{
+					first: Number.MAX_SAFE_INTEGER,
+					where: {
+						timestamp_gte: calculateTimestampForPeriod(period),
+						synth: baseCurrencyKey,
+					},
+				},
+				{
+					id: true,
+					currencyKey: true,
+					synth: true,
+					rate: true,
+					block: true,
+					timestamp: true,
+				}
+		  );
 
-	const quoteHistoricalRatesQuery = exchanges.useGetRateUpdates(
-		{
-			first: Number.MAX_SAFE_INTEGER,
-			where: {
-				timestamp_gte: calculateTimestampForPeriod(period),
-				synth: quoteCurrencyKey,
-			},
-		},
-		{
-			id: true,
-			currencyKey: true,
-			synth: true,
-			rate: true,
-			block: true,
-			timestamp: true,
-		},
-		{
-			enabled: quoteCurrencyKey !== undefined
-		}
-	);
+	// const baseHistoricalRatesQuery = useMemo(() => {
+
+	// }, [baseCurrencyKey])
+
+	const quoteHistoricalRatesQuery = !quoteCurrencyKey
+	? { isSuccess: false, data: [], isLoading: false }
+		: exchanges.useGetRateUpdates(
+				{
+					first: Number.MAX_SAFE_INTEGER,
+					where: {
+						timestamp_gte: calculateTimestampForPeriod(period),
+						synth: quoteCurrencyKey,
+					},
+				},
+				{
+					id: true,
+					currencyKey: true,
+					synth: true,
+					rate: true,
+					block: true,
+					timestamp: true,
+				}
+		  );
 
 	const { data: baseInitialRate } = usePeriodStartSynthRateQuery(
 		baseCurrencyKey,
@@ -126,7 +128,7 @@ const useCombinedRates = ({
 	return {
 		data,
 		noData,
-		isLoadingRates: baseHistoricalRates.isLoading || quoteHistoricalRates.isLoading,
+		isLoadingRates: baseHistoricalRatesQuery.isLoading || quoteHistoricalRatesQuery.isLoading,
 	};
 };
 

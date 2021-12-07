@@ -71,7 +71,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 	const historicalRates = historicalRatesQuery.isSuccess ? historicalRatesQuery.data : [];
 
 	const [low, high] = getMinAndMaxRate(historicalRates);
-	const change = calculateRateChange(historicalRates);
+	const change = calculateRateChange(historicalRates); // KM-NOTE: update the fn with the one from js-monorepo. confirm it still works
 	const rates = {
 		rates: historicalRates.reverse(),
 		low,

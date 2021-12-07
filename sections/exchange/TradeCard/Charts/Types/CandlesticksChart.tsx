@@ -29,6 +29,7 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 	selectedPriceCurrency,
 	tooltipPriceFormatter,
 }) => {
+	console.log('***Candlesticks');
 	const [focusCandleIndex, setFocusCandleIndex] = useState<null | number>(null);
 
 	const theme = useContext(ThemeContext);

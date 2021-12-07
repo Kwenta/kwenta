@@ -5,6 +5,9 @@ import useSynthetixQueries from '@synthetixio/queries';
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
+import { PERIOD_IN_HOURS } from 'constants/period';
 
 const useCombinedRates = ({
 	baseCurrencyKey,
@@ -15,24 +18,65 @@ const useCombinedRates = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	return {
-		data: [],
-		change: 0,
-		noData: true,
-		isLoadingRates: false, //baseHistoricalRates.isLoading || quoteHistoricalRates.isLoading,
-		low: 0,
-		high: 0,
-	};
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	const timestamp_gte = calculateTimestampForPeriod(
+		PERIOD_IN_HOURS[selectedChartPeriodLabel.period]
+	);
 
-	const baseHistoricalRates = useHistoricalRatesQuery(
-		baseCurrencyKey,
-		selectedChartPeriodLabel.period
+	// return {
+	// 	data: [],
+	// 	change: 0,
+	// 	noData: true,
+	// 	isLoadingRates: false, //baseHistoricalRatesQuery.isLoading || quoteHistoricalRates.isLoading,
+	// 	low: 0,
+	// 	high: 0,
+	// };
+	// const { useHistoricalRatesQuery } = useSynthetixQueries();
+	const { exchanges } = useSynthetixQueries();
+
+	const baseHistoricalRatesQuery = exchanges.useGetRateUpdates(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte,
+				synth: baseCurrencyKey,
+			},
+		},
+		{
+			id: true,
+			currencyKey: true,
+			synth: true,
+			rate: true,
+			block: true,
+			timestamp: true,
+		}
 	);
-	const quoteHistoricalRates = useHistoricalRatesQuery(
-		quoteCurrencyKey,
-		selectedChartPeriodLabel.period
+
+	const quoteHistoricalRatesQuery = exchanges.useGetRateUpdates(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte,
+				synth: quoteCurrencyKey,
+			},
+		},
+		{
+			id: true,
+			currencyKey: true,
+			synth: true,
+			rate: true,
+			block: true,
+			timestamp: true,
+		}
 	);
+
+	// const baseHistoricalRates = useHistoricalRatesQuery(
+	// 	baseCurrencyKey,
+	// 	selectedChartPeriodLabel.period
+	// );
+	// const quoteHistoricalRates = useHistoricalRatesQuery(
+	// 	quoteCurrencyKey,
+	// 	selectedChartPeriodLabel.period
+	// );
 
 	const { data: baseInitialRate } = usePeriodStartSynthRateQuery(
 		baseCurrencyKey,
@@ -43,22 +87,22 @@ const useCombinedRates = ({
 		selectedChartPeriodLabel.period
 	);
 
-	const baseChange = useMemo(() => baseHistoricalRates.data?.change ?? null, [baseHistoricalRates]);
-	const quoteChange = useMemo(() => quoteHistoricalRates.data?.change ?? null, [
-		quoteHistoricalRates,
+	const baseChange = useMemo(() => baseHistoricalRatesQuery.data?.change ?? null, [baseHistoricalRatesQuery]);
+	const quoteChange = useMemo(() => quoteHistoricalRatesQuery.data?.change ?? null, [
+		quoteHistoricalRatesQuery,
 	]);
-	const baseRates = useMemo(() => baseHistoricalRates.data?.rates ?? [], [baseHistoricalRates]);
-	const quoteRates = useMemo(() => quoteHistoricalRates.data?.rates ?? [], [quoteHistoricalRates]);
+	const baseRates = useMemo(() => baseHistoricalRatesQuery.data?.rates ?? [], [baseHistoricalRatesQuery]);
+	const quoteRates = useMemo(() => quoteHistoricalRatesQuery.data?.rates ?? [], [quoteHistoricalRatesQuery]);
 	const change = useMemo(() => (baseChange! ?? 1) - (quoteChange! ?? 1), [quoteChange, baseChange]);
 
 	const baseNoData =
-		baseHistoricalRates.isSuccess &&
-		baseHistoricalRates.data &&
-		baseHistoricalRates.data.rates.length === 0;
+		baseHistoricalRatesQuery.isSuccess &&
+		baseHistoricalRatesQuery.data &&
+		baseHistoricalRatesQuery.data.rateUpdates.length === 0;
 	const quoteNoData =
-		quoteHistoricalRates.isSuccess &&
-		quoteHistoricalRates.data &&
-		quoteHistoricalRates.data.rates.length === 0;
+		quoteHistoricalRatesQuery.isSuccess &&
+		quoteHistoricalRatesQuery.data &&
+		quoteHistoricalRatesQuery.data.rateUpdates.length === 0;
 	const noData = baseNoData || quoteNoData;
 
 	const changes = useMemo(() => {
@@ -103,7 +147,7 @@ const useCombinedRates = ({
 		data: changes,
 		change,
 		noData,
-		isLoadingRates: baseHistoricalRates.isLoading || quoteHistoricalRates.isLoading,
+		isLoadingRates: baseHistoricalRatesQuery.isLoading || quoteHistoricalRatesQuery.isLoading,
 		low,
 		high,
 	};
