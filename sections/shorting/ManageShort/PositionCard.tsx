@@ -164,6 +164,10 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 			sign: selectedPriceCurrency.sign,
 		}
 	);
+	const minCollateralRatioPct = useMemo(
+		() => (minCollateralRatio ? formatPercent(minCollateralRatio) : ''),
+		[minCollateralRatio]
+	);
 
 	return (
 		<StyledCard>
@@ -278,9 +282,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
 										<div>
 											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
-												percent: BigNumber.isBigNumber(minCollateralRatio)
-													? formatPercent(minCollateralRatio)
-													: '',
+												percent: minCollateralRatioPct,
 											})}
 										</div>
 									</div>
