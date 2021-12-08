@@ -141,7 +141,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		: 0;
 
 	const balance = synthsWalletBalancesQuery.data?.balancesMap[currencyKey]?.balance ?? null;
-
 	const inputAmountBN = wei(inputAmount || 0);
 
 	const redirectToShortingHome = useCallback(() => router.push(ROUTES.Shorting.Home), [router]);
@@ -504,7 +503,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								currencyKey={currencyKey}
 								amount={inputAmount}
 								onAmountChange={setInputAmount}
-								walletBalance={null}
+								walletBalance={balance}
 								onBalanceClick={() => (balance != null ? setInputAmount(balance.toString()) : null)}
 								priceRate={assetPriceRate}
 								label={
