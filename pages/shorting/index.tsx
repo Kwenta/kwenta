@@ -22,7 +22,6 @@ const Shorting: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	// KM-NOTE: Confirm this works
 	const isL2 = useRecoilValue(isL2State);
 
 	return (
