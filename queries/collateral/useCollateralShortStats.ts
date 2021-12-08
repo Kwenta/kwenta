@@ -51,8 +51,8 @@ const useCollateralShortStats = (
 			])) as ethers.BigNumber[];
 
 			const rewardsTotalSupplies = stats;
-			const shorts = stats.splice(0, stats.length / 3);
-			const rewardsRates = stats.splice(0, stats.length / 2);
+			const shorts = stats.splice(0, currencyKeys.length);
+			const rewardsRates = stats.splice(currencyKeys.length, stats.length - currencyKeys.length);
 			return currencyKeys.reduce((ret, key, i) => {
 				ret[key] = {
 					shorts: shorts[i] === undefined ? wei(0) : wei(shorts[i]),
