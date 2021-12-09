@@ -172,7 +172,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				break;
 			case ShortingTab.ClosePosition:
 				params = [idParam];
-				method = 'close';
+				method = 'closeWithCollateral';
 				onSuccess = () => redirectToShortingHome();
 				break;
 			default:
