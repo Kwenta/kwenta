@@ -28,14 +28,14 @@ const useCandlesticksQuery = (
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
-	maxTimestamp = Math.floor(Date.now() / 1000)
+	maxTimestamp = Math.floor(Date.now() / 1000),
+	resolution = 'daily'
 ) => {
-	const candleGranularity = 'daily';
 	const response = (await request(
 		RATES_ENDPOINT,
 		gql`
-					query ${candleGranularity}Candles($synth: String!, $minTimestamp: BigInt!, $maxTimestamp: BigInt!) {
-						${candleGranularity}Candles(
+					query ${resolution}Candles($synth: String!, $minTimestamp: BigInt!, $maxTimestamp: BigInt!) {
+						${resolution}Candles(
 							where: { synth: $synth, timestamp_gt: $minTimestamp, timestamp_lt: $maxTimestamp }
 							orderBy: id
 							orderDirection: desc
@@ -58,7 +58,7 @@ export const requestCandlesticks = async (
 	)) as {
 		[key: string]: Array<Candle>;
 	};
-	return response[`${candleGranularity}Candles`].reverse();
+	return response[`${resolution}Candles`].reverse();
 };
 
 export default useCandlesticksQuery;

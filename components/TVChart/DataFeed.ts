@@ -1,33 +1,55 @@
 import { formatUnits } from '@ethersproject/units';
+import { Synths } from 'constants/currency';
+import {
+	HistoryCallback,
+	IBasicDataFeed,
+	LibrarySymbolInfo,
+	OnReadyCallback,
+	PeriodParams,
+	ResolutionString,
+	SearchSymbolsCallback,
+} from 'public/static/charting_library/charting_library';
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 
-const supportedResolutions = ['1', '3', '5', '15', '30', '60', '120', '240', 'D'];
+const supportedResolutions = ['D', 'W'] as ResolutionString[];
 
 const config = {
 	supported_resolutions: supportedResolutions,
 };
 
-const DataFeed = {
-	onReady: (cb) => {
-		console.log('=====onReady running');
+// symbolName name split from QUOTE:BASE
+const splitBaseQuote = (symbolName: string) => {
+	var split_data = symbolName.split(/[:/]/);
+	const base = split_data[0];
+	const quote = split_data[1];
+	return { base, quote };
+};
+
+const fetchCombinedCandleSticks = async (base: string, quote: string, from: number, to: number) => {
+	const baseCurrencyIsSUSD = base === Synths.sUSD;
+	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const baseData = await requestCandlesticks(base, from, to);
+	const quoteData = await requestCandlesticks(quote, from, to);
+	return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
+};
+
+const DataFeed: IBasicDataFeed = {
+	onReady: (cb: OnReadyCallback) => {
 		setTimeout(() => cb(config), 0);
 	},
-	searchSymbols: (userInput, exchange, symbolType, onResultReadyCallback) => {
-		console.log('====Search Symbols running');
-	},
-	resolveSymbol: (symbolName, onSymbolResolvedCallback, onResolveErrorCallback) => {
-		// expects a symbolInfo object in response
-		console.log('======resolveSymbol running');
-		var split_data = symbolName.split(/[:/]/);
+	resolveSymbol: (symbolName: string, onSymbolResolvedCallback: (val: any) => any) => {
+		const { base, quote } = splitBaseQuote(symbolName);
+
 		var symbol_stub = {
 			name: symbolName,
-			description: 'sUSD / ' + symbolName,
+			description: base + ' / ' + quote,
 			type: 'crypto',
 			session: '24x7',
 			timezone: 'Etc/UTC',
 			ticker: symbolName,
-			exchange: split_data[0],
+			exchange: '',
 			minmov: 1,
 			pricescale: 100000000,
 			has_intraday: true,
@@ -42,57 +64,46 @@ const DataFeed = {
 		}, 0);
 	},
 	getBars: function (
-		symbolInfo,
-		resolution,
-		{ from, to, countBack },
-		onHistoryCallback,
-		onErrorCallback,
-		firstDataRequest
+		symbolInfo: LibrarySymbolInfo,
+		_resolution: ResolutionString,
+		{ from, to, countBack }: PeriodParams,
+		onHistoryCallback: HistoryCallback,
+		onErrorCallback: (error: any) => any
 	) {
-		requestCandlesticks(symbolInfo.name, from, to).then((bars) => {
-			const chartBars = bars.map((b) => {
-				return {
-					...b,
-					high: formatUnits(b.high),
-					low: formatUnits(b.low),
-					open: formatUnits(b.open),
-					close: formatUnits(b.close),
-					time: Number(b.timestamp) * 1000,
-				};
-			});
+		const { base, quote } = splitBaseQuote(symbolInfo.name);
 
-			onHistoryCallback(chartBars, { noData: chartBars.length ? false : true });
-		});
+		try {
+			fetchCombinedCandleSticks(base, quote, from, to).then((bars) => {
+				const chartBars = bars.map((b) => {
+					return {
+						...b,
+						high: Number(formatUnits(String(b.high))),
+						low: Number(formatUnits(String(b.low))),
+						open: Number(formatUnits(String(b.open))),
+						close: Number(formatUnits(String(b.close))),
+						time: Number(b.timestamp) * 1000,
+					};
+				});
+
+				onHistoryCallback(chartBars, { noData: chartBars.length ? false : true });
+			});
+		} catch (err) {
+			onErrorCallback(err);
+		}
 	},
-	subscribeBars: (
-		symbolInfo,
-		resolution,
-		onRealtimeCallback,
-		subscribeUID,
-		onResetCacheNeededCallback
-	) => {
+	subscribeBars: () => {
 		console.log('=====subscribeBars runnning');
 	},
 	unsubscribeBars: (subscriberUID) => {
 		console.log('=====unsubscribeBars running');
 	},
-	calculateHistoryDepth: (resolution, resolutionBack, intervalBack) => {
-		//optional
-		console.log('=====calculateHistoryDepth running');
-		// while optional, this makes sure we request 24 hours of minute data at a time
-		// CryptoCompare's minute data endpoint will throw an error if we request data beyond 7 days in the past, and return no data
-		return resolution < 60 ? { resolutionBack: 'D', intervalBack: '1' } : undefined;
-	},
-	getMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
-		//optional
-		console.log('=====getMarks running');
-	},
-	getTimeScaleMarks: (symbolInfo, startDate, endDate, onDataCallback, resolution) => {
-		//optional
-		console.log('=====getTimeScaleMarks running');
-	},
-	getServerTime: (cb) => {
-		console.log('=====getServerTime running');
+	searchSymbols: (
+		userInput: string,
+		exchange: string,
+		symbolType: string,
+		onResult: SearchSymbolsCallback
+	) => {
+		onResult([]);
 	},
 };
 

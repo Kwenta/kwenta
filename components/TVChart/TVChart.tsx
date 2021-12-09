@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import colors from 'styles/theme/colors';
 
 import {
 	IChartingLibraryWidget,
@@ -7,20 +8,39 @@ import {
 } from '../../public/static/charting_library/charting_library';
 import DataFeed from './DataFeed';
 
+type Props = {
+	baseCurrencyKey: string;
+	quoteCurrencyKey: string;
+	interval: 'D';
+	containerId: string;
+	libraryPath: string;
+	fullscreen: boolean;
+	autosize: boolean;
+	height: string;
+	studiesOverrides: Record<string, any>;
+	overrides: Record<string, string>;
+};
+
 export function TVChart({
-	symbol = 'sETH',
+	baseCurrencyKey,
+	quoteCurrencyKey,
 	interval = 'D',
 	containerId = 'tv_chart_container',
 	libraryPath = '/static/charting_library/',
 	fullscreen = false,
 	autosize = true,
 	studiesOverrides = {},
-}) {
+	overrides = {
+		'paneProperties.background': colors.elderberry,
+		'paneProperties.backgroundType': 'solid',
+	},
+	height = '45vh',
+}: Props) {
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
 
 	React.useEffect(() => {
 		const widgetOptions = {
-			symbol: symbol,
+			symbol: quoteCurrencyKey + ':' + baseCurrencyKey,
 			// BEWARE: no trailing slash is expected in feed URL
 			datafeed: DataFeed,
 			interval: interval,
@@ -34,39 +54,33 @@ export function TVChart({
 			autosize: autosize,
 			studies_overrides: studiesOverrides,
 			theme: 'dark',
+			custom_css_url: './theme.css',
+			loading_screen: {
+				backgroundColor: colors.vampire,
+			},
+			overrides: overrides,
 		};
 
-		const tvWidget = new widget(widgetOptions);
-		_widget.current = tvWidget;
-
-		tvWidget.onChartReady(() => {
-			tvWidget.headerReady().then(() => {
-				const button = tvWidget.createButton();
-				button.setAttribute('title', 'Click to show a notification popup');
-				button.classList.add('apply-common-tooltip');
-				button.addEventListener('click', () =>
-					tvWidget.showNoticeDialog({
-						title: 'Notification',
-						body: 'TradingView Charting Library API works correctly',
-						callback: () => {
-							console.log('Noticed!');
-						},
-					})
-				);
-
-				button.innerHTML = 'Check API';
-			});
-		});
-		return () => {
+		const clearExistingWidget = () => {
 			if (_widget.current !== null) {
 				_widget.current.remove();
 				_widget.current = null;
 			}
 		};
-	}, []);
-	return <Container id={containerId} />;
+
+		clearExistingWidget();
+
+		// @ts-ignore complains about `container` item missing
+		const tvWidget = new widget(widgetOptions);
+		_widget.current = tvWidget;
+
+		return () => {
+			clearExistingWidget();
+		};
+	}, [baseCurrencyKey, quoteCurrencyKey]);
+	return <Container id={containerId} height={height} />;
 }
 
-const Container = styled.div`
-	height: 450px;
+const Container = styled.div<{ height: string }>`
+	height: ${(props) => props.height};
 `;

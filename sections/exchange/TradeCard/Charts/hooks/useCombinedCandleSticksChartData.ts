@@ -16,7 +16,6 @@ export type TempCandle = {
 	low: Wei;
 	close: Wei;
 	timestamp: BigInt;
-
 	isBase?: boolean;
 };
 
@@ -36,54 +35,7 @@ const useCombinedCandleSticksChartData = ({
 	const quote = useData(quoteCurrencyKey, selectedChartPeriodLabel);
 
 	const data = useMemo(() => {
-		if (baseCurrencyIsSUSD) return quote.data;
-		if (quoteCurrencyIsSUSD) return base.data;
-
-		if (!(base.data.length && quote.data.length)) return [];
-
-		const baseCandles = base.data.map((candle: Candle) => ({
-			isBase: true,
-			...toTempCandle(candle),
-		}));
-		const quoteCandles = quote.data.map(toTempCandle);
-
-		let allCandles: TempCandle[] = [];
-		allCandles = allCandles.concat(baseCandles);
-		allCandles = allCandles.concat(quoteCandles);
-		allCandles = orderBy(allCandles, 'timestamp');
-
-		let prevBaseCandle: TempCandle = baseCandles[0];
-		let prevQuoteCandle: TempCandle = quoteCandles[0];
-
-		return allCandles.reduce((candles, candle) => {
-			let open = zeroBN;
-			let high = zeroBN;
-			let low = zeroBN;
-			let close = zeroBN;
-
-			if (candle.isBase) {
-				open = candle.open.div(prevQuoteCandle.open);
-				high = candle.high.div(prevQuoteCandle.high);
-				low = candle.low.div(prevQuoteCandle.low);
-				close = candle.close.div(prevQuoteCandle.close);
-				prevBaseCandle = candle;
-			} else {
-				open = prevBaseCandle.open.div(candle.open);
-				high = prevBaseCandle.high.div(candle.high);
-				low = prevBaseCandle.low.div(candle.low);
-				close = prevBaseCandle.close.div(candle.close);
-				prevQuoteCandle = candle;
-			}
-			return candles.concat(
-				fromTempCandle({
-					timestamp: candle.timestamp,
-					open,
-					high,
-					low,
-					close,
-				} as TempCandle)
-			);
-		}, [] as Candle[]);
+		return combineDataToPair(base.data, quote.data, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	}, [base.data, quote.data, baseCurrencyIsSUSD, quoteCurrencyIsSUSD]);
 
 	return {
@@ -93,7 +45,72 @@ const useCombinedCandleSticksChartData = ({
 	};
 };
 
-const useData = (currencyKey: CurrencyKey | null, selectedChartPeriodLabel: PeriodLabel) => {
+export const combineDataToPair = (
+	baseData: Candle[],
+	quoteData: Candle[],
+	baseCurrencyIsSUSD: boolean,
+	quoteCurrencyIsSUSD: boolean
+) => {
+	if (baseCurrencyIsSUSD) return quoteData;
+	if (quoteCurrencyIsSUSD) return baseData;
+
+	if (!(baseData.length && quoteData.length)) return [];
+
+	const baseCandles = baseData.map((candle: Candle) => ({
+		isBase: true,
+		...toTempCandle(candle),
+	}));
+	const quoteCandles = quoteData.map(toTempCandle);
+
+	let allCandles: TempCandle[] = [];
+	allCandles = allCandles.concat(baseCandles);
+	allCandles = allCandles.concat(quoteCandles);
+	allCandles = orderBy(allCandles, 'timestamp');
+
+	let prevBaseCandle: TempCandle = baseCandles[0];
+	let prevQuoteCandle: TempCandle = quoteCandles[0];
+
+	return allCandles.reduce((candles, candle) => {
+		let open = zeroBN;
+		let high = zeroBN;
+		let low = zeroBN;
+		let close = zeroBN;
+
+		if (candle.isBase) {
+			open = candle.open.div(prevQuoteCandle.open);
+			high = candle.high.div(prevQuoteCandle.high);
+			low = candle.low.div(prevQuoteCandle.low);
+			close = candle.close.div(prevQuoteCandle.close);
+			prevBaseCandle = candle;
+		} else {
+			open = prevBaseCandle.open.div(candle.open);
+			high = prevBaseCandle.high.div(candle.high);
+			low = prevBaseCandle.low.div(candle.low);
+			close = prevBaseCandle.close.div(candle.close);
+			prevQuoteCandle = candle;
+		}
+		return candles.concat(
+			fromTempCandle({
+				timestamp: candle.timestamp,
+				open,
+				high,
+				low,
+				close,
+			} as TempCandle)
+		);
+	}, [] as Candle[]);
+};
+
+type ChartDataQuery = {
+	data: Candle[];
+	noData: boolean;
+	isLoading: boolean;
+};
+
+const useData = (
+	currencyKey: CurrencyKey | null,
+	selectedChartPeriodLabel: PeriodLabel
+): ChartDataQuery => {
 	const query = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 	const data = query.isSuccess && query.data ? query.data : [];
 	const noData = query.isSuccess && query.data && data.length === 0;

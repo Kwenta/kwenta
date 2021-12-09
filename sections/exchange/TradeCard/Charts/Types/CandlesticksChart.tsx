@@ -13,7 +13,6 @@ import RechartsResponsiveContainer from 'components/RechartsResponsiveContainer'
 import { Candle } from 'queries/rates/types';
 import { PeriodLabel } from 'constants/period';
 import { formatCurrency } from 'utils/formatters/number';
-import TVChart from 'components/TVChart';
 
 type CandlesticksChartProps = {
 	data: Candle[];
@@ -45,8 +44,6 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 		fill: theme.colors.white,
 		fontFamily: theme.fonts.mono,
 	};
-
-	return <TVChart />;
 
 	return (
 		<RechartsResponsiveContainer width="100%" height="100%">

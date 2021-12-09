@@ -55,7 +55,7 @@ export const PeriodSelector = styled(GridDivCenteredCol)`
 
 export const ChartBody = styled.div`
 	padding-top: 10px;
-	height: 35vh;
+	height: 45vh;
 `;
 
 export const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`
