@@ -47,7 +47,7 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 
 	return (
 		<Container {...rest}>
-			<ChartBody>
+			<ChartBody paddingTop="10px">
 				<ChartData disabledInteraction={disabledInteraction}>
 					{baseCurrencyKey ? (
 						<Container {...rest}>

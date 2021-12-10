@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
+import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 import colors from 'styles/theme/colors';
 
 import {
@@ -16,7 +17,6 @@ type Props = {
 	libraryPath: string;
 	fullscreen: boolean;
 	autosize: boolean;
-	height: string;
 	studiesOverrides: Record<string, any>;
 	overrides: Record<string, string>;
 };
@@ -34,14 +34,12 @@ export function TVChart({
 		'paneProperties.background': colors.elderberry,
 		'paneProperties.backgroundType': 'solid',
 	},
-	height = '45vh',
 }: Props) {
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
 
 	React.useEffect(() => {
 		const widgetOptions = {
-			symbol: quoteCurrencyKey + ':' + baseCurrencyKey,
-			// BEWARE: no trailing slash is expected in feed URL
+			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
 			datafeed: DataFeed,
 			interval: interval,
 			container_id: containerId,
@@ -59,6 +57,13 @@ export function TVChart({
 				backgroundColor: colors.vampire,
 			},
 			overrides: overrides,
+			time_frames: [
+				{ text: '3y', resolution: '1W', description: '3 Years' },
+				{ text: '1y', resolution: '1D', description: '1 Year' },
+				{ text: '6m', resolution: '1D', description: '6 Months' },
+				{ text: '3m', resolution: '1D', description: '3 Months' },
+				{ text: '1m', resolution: '1D', description: '1 Month' },
+			],
 		};
 
 		const clearExistingWidget = () => {
@@ -78,9 +83,15 @@ export function TVChart({
 			clearExistingWidget();
 		};
 	}, [baseCurrencyKey, quoteCurrencyKey]);
-	return <Container id={containerId} height={height} />;
+	return (
+		<Container>
+			<ChartBody id={containerId} />
+		</Container>
+	);
 }
 
-const Container = styled.div<{ height: string }>`
-	height: ${(props) => props.height};
+const Container = styled.div`
+	border-radius: 4px;
+	background: ${colors.elderberry};
+	padding: 4px;
 `;

@@ -1,4 +1,4 @@
-import { formatUnits } from '@ethersproject/units';
+import { formatEther } from '@ethersproject/units';
 import { Synths } from 'constants/currency';
 import {
 	HistoryCallback,
@@ -19,7 +19,12 @@ const config = {
 	supported_resolutions: supportedResolutions,
 };
 
-// symbolName name split from QUOTE:BASE
+const formatWei = (weiValue: BigInt) => {
+	const rounded = Number(formatEther(String(weiValue)));
+	return Number(rounded.toFixed(4));
+};
+
+// symbolName name split from BASE:QUOTE
 const splitBaseQuote = (symbolName: string) => {
 	var split_data = symbolName.split(/[:/]/);
 	const base = split_data[0];
@@ -51,7 +56,7 @@ const DataFeed: IBasicDataFeed = {
 			ticker: symbolName,
 			exchange: '',
 			minmov: 1,
-			pricescale: 100000000,
+			pricescale: 10000,
 			has_intraday: true,
 			intraday_multipliers: ['1', '60'],
 			supported_resolution: supportedResolutions,
@@ -77,14 +82,13 @@ const DataFeed: IBasicDataFeed = {
 				const chartBars = bars.map((b) => {
 					return {
 						...b,
-						high: Number(formatUnits(String(b.high))),
-						low: Number(formatUnits(String(b.low))),
-						open: Number(formatUnits(String(b.open))),
-						close: Number(formatUnits(String(b.close))),
+						high: formatWei(b.high),
+						low: formatWei(b.low),
+						open: formatWei(b.open),
+						close: formatWei(b.close),
 						time: Number(b.timestamp) * 1000,
 					};
 				});
-
 				onHistoryCallback(chartBars, { noData: chartBars.length ? false : true });
 			});
 		} catch (err) {
