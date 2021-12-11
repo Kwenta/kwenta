@@ -97,7 +97,7 @@
 			"one": {
 				"title": "You’ll need a web3 wallet with ETH for gas",
 				"subtitle": "Step One",
-				"copy": "Kwenta is on the Etherem blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
+				"copy": "Kwenta is on the Ethereum blockchain, so like all other dApps on Ethereum you’ll need a web3 wallet with ETH in it as gas to pay for transactions to be processed. Popular cryptocurrency wallet categories include hardware wallets, browser extension wallets, and mobile wallets."
 			},
 			"two": {
 				"title": "Acquire sUSD (or any other Synth)",
