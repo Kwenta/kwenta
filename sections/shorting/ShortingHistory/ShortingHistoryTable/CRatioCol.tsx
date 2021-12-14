@@ -40,7 +40,9 @@ const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 
 	return (
 		<>
-			{collateralShortPosition != null && collateralShortPosition.collateralRatio ? (
+			{collateralShortPosition != null &&
+			collateralShortPosition.collateralRatio &&
+			minCollateralRatio != null ? (
 				<PriceChangeText
 					isPositive={collateralShortPosition.collateralRatio.gt(minCollateralRatio)}
 				>
