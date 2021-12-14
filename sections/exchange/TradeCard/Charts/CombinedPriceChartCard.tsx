@@ -47,14 +47,16 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 
 	return (
 		<Container {...rest}>
-			<ChartBody paddingTop="10px">
-				<ChartData disabledInteraction={disabledInteraction}>
-					{baseCurrencyKey ? (
+			<ChartBody>
+				{baseCurrencyKey ? (
+					<ChartData disabledInteraction={disabledInteraction}>
 						<Container {...rest}>
 							<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={quoteCurrencyKey} />
 						</Container>
-					) : null}
-				</ChartData>
+					</ChartData>
+				) : (
+					<EmptyChartMessage>Select a pair to view chart</EmptyChartMessage>
+				)}
 
 				<AbsoluteCenteredDiv>
 					{showOverlayMessage ? (
@@ -116,6 +118,12 @@ const BothMarketsClosedOverlayMessageContainer = styled(FlexDiv)`
 
 const BothMarketsClosedOverlayMessageItem = styled(FlexDivCol)`
 	align-items: center;
+`;
+
+const EmptyChartMessage = styled.div`
+	text-align: center;
+	padding-top: 220px;
+	opacity: 0.5;
 `;
 
 export default CombinedPriceChartCard;

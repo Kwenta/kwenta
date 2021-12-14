@@ -188,8 +188,6 @@ const useExchange = ({
 		quoteChartTypeState
 	);
 
-	const [isShowingSingleChart, setIsShowingSingleChart] = useState(true);
-	const toggleIsShowingSingleChart = () => setIsShowingSingleChart((bool) => !bool);
 	const wideWidth = useChartWideWidth();
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
@@ -1173,12 +1171,10 @@ const useExchange = ({
 		footerCard,
 		handleCurrencySwap,
 		inverseRate,
-		isShowingSingleChart,
 		quoteCurrencyCard,
 		quoteCurrencyKey,
 		quoteMarketDetailsCard,
 		quotePriceChartCard,
-		toggleIsShowingSingleChart,
 		wideWidth,
 	};
 };
