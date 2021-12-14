@@ -470,6 +470,11 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		</SummaryItems>
 	);
 
+	const feeRate = // no fees for increasing and decreasing a position
+		tab === ShortingTab.IncreasePosition || tab === ShortingTab.DecreasePosition
+			? wei(0)
+			: issueFeeRate;
+
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -527,7 +532,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								gasPrices={gasPrices}
 								feeReclaimPeriodInSeconds={0}
 								quoteCurrencyKey={null}
-								feeRate={issueFeeRate}
+								feeRate={feeRate}
 								transactionFee={transactionFee}
 								feeCost={feeCost}
 								showFee={true}
