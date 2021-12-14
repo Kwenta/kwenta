@@ -65,6 +65,7 @@ import { ShortingTab } from './constants';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { isL2State } from 'store/wallet';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -94,6 +95,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [txError, setTxError] = useState<string | null>(null);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthsMap, synthetixjs } = Connector.useContainer();
+	const isL2 = useRecoilValue(isL2State);
 
 	const {
 		useEthGasPriceQuery,
@@ -172,14 +174,14 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				break;
 			case ShortingTab.ClosePosition:
 				params = [idParam];
-				method = 'closeWithCollateral';
+				method = isL2 ? 'closeWithCollateral' : 'close'; // closeWithCollateral only available on L2
 				onSuccess = () => redirectToShortingHome();
 				break;
 			default:
 				throw new Error('unrecognized tab');
 		}
 		return { method, params, onSuccess };
-	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]);
+	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome, isL2]);
 
 	const gasPrice = useMemo(
 		() =>
