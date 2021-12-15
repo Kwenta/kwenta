@@ -340,7 +340,7 @@
 				"value": "Value",
 				"fee-reclaim": "Fee Rebate/Reclaim",
 				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Trransaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
+				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
 				"price-adjustment-hint": "Price adjustment currently in progress"
 			}
 		},
