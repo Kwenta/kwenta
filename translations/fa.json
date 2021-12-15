@@ -1,0 +1,742 @@
+{
+	"languages": {
+		"en": "English",
+		"fa": "Persian"
+	},
+	"meta": {
+		"description": "در بستر اتریوم با لغزش صفر، معاملات رمزارزها، فارکس، سهام، شاخص‌ها و کالاها را انجام دهید.",
+		"og": {
+			"title": "Kwenta",
+			"site-name": "Kwenta"
+		}
+	},
+	"header": {
+		"nav": {
+			"exchange": "تبادل",
+			"dashboard": "پیشخوان",
+			"shorting": "فروش قرضی"
+		},
+		"networks-switcher": {
+			"l2": "رفتن به لایه دوم",
+			"l1": "رفتن به لایه اول",
+			"optimistic-gateway": "دروازه لایه دوم Optimistic",
+			"optimistic-etherscan": "بایگانی Optimistic",
+			"learn-more": "بیشتر بدانید",
+			"optimism-mainnet": "Optimism",
+			"optimism-testnet": "OΞ شبکه آزمایشی"
+		}
+	},
+	"homepage": {
+		"page-title": "Kwenta | معامله مشتقات با نقدینگی بی‌نهایت",
+		"nav": {
+			"start-trading": "آغاز معامله",
+			"wallet": "اتصال کیف",
+			"why": "چرا Kwenta؟",
+			"how": "توضیح کارکرد",
+			"faq": "سوالات متداول",
+			"kips": "پیشنهادات بهبود"
+		},
+		"hero": {
+			"title": "معامله مشتقات با لغزش صفر"
+		},
+		"assets": {
+			"title": "معامله دارایی‌های دنیای واقعی و مشتقات بر بستر اتریوم",
+			"index": "شاخص‌های یکتا",
+			"forex": "فارکس",
+			"equities": "سهام سنتی",
+			"crypto": "رمزارزها",
+			"commodity": "فلزات گرانبها",
+			"short": "فروش قرضی"
+		},
+		"features": {
+			"title": "امکانات بی‌همتای معامله",
+			"infinite-liquidity": {
+				"title": "نقدینگی بی‌نهایت",
+				"copy": "تمام معاملات با استفاده از مدل نقدینگی ادغام شده پروتکل Synthetix به صورت کاربر-قرارداد انجام می شود. این به معنای عدم نیاز به تطابق طرف مقابل معامله، و اساساً نقدینگی نامحدود برای معامله‌گران است."
+			},
+			"zero-slippage": {
+				"title": "لغزش صفر",
+				"copy": "نقدینگی بی‌نهایت به این معنی است که معامله‌گران هرگز نگران تغییرات فهرست سفارشات و تحت تأثیر قرار گرفتن لغزش نباشند."
+			},
+			"synthetic-futures": {
+				"title": "قراردادهای آتی Synthetix",
+				"copy": "به محض اینکه که قراردادهای آتی بر اساس پروتکل Synthetix ساخته شدند، در Kwenta قابل معامله خواهند بود و قراردادهای آتی دائمی را در یک پلتفرم بدون حبس سرمایه و فرامجوز خواهیم داشت."
+			}
+		},
+		"l2": {
+			"title": "حالا روی Optimism لایه ۲",
+			"copy": "Kwenta اکنون می‌تواند بر بستر راه‌حل لایه ۲ Optimism با <0>کارمزد پایین</0> و <0>تراکنش های سریع</0> استفاده شود. مثل یک نخبه تجارت کنید.",
+			"transaction-cost": "کارمزدهای پایین‌تر*",
+			"transaction-speed": "سرعت تراکنش‌ها*",
+			"disclaimer": "* این آمارها به صورت تقریبی هستند. تجربه کاربری متغیر است.",
+			"cta-buttons": {
+				"learn-more": "بیشتر بدانید",
+				"switch-l2": "رفتن به لایه ۲"
+			},
+			"markets": {
+				"title": "بازارهای زنده",
+				"copy": "معامله روی لایه دوم Optimism را شروع کنید"
+			}
+		},
+		"benefits": {
+			"title": "بدون محدودیت‌های صرافی‌های متمرکز",
+			"peer-to-contract": {
+				"title": "معامله کاربر-قرارداد",
+				"copy": "همه معاملات بر اساس قراردادهای هوشمند Synthetix انجام می‌شود، بنابراین معامله‌گران لازم نیست نگران محدودیت‌های مدل معاملاتی کاربر-به-کاربر، مانند نقدینگی، لغزش، یا فهرست سفارشات باشند."
+			},
+			"trading-pair": {
+				"title": "بدون محدودیت جفت معاملاتی",
+				"copy": "هر Synth را می‌توان فوراً با هر Synth دیگری معامله کرد، بنابراین شما به جفت معاملاتی که صرافی ارائه می‌دهد محدود نمی‌شوید، که این یک محدودیت همیشگی در مدل صرافی‌های متمرکز است."
+			},
+			"permissionless": {
+				"title": "بدون حساب کاربری و بدون حبس سرمایه",
+				"copy": "Kwenta یک dApp است که از پروتکل Synthetix استفاده می‌کند، به این معنی که هیچ حساب کاربری ایجاد نمی‌کنید، هیچ واریز یا برداشتی به حساب صرافی وجود ندارد، و هیچکدام از دارایی‌های شما حبس نمی‌شود."
+			}
+		},
+		"steps": {
+			"title": "معاملات را تنها با ۳ گام شروع کنید",
+			"one": {
+				"title": "شما به یک کیف پول وب۳ با مقداری اتریوم جهت کارمزدها نیاز دارید",
+				"subtitle": "گام اول",
+				"copy": "Kwenta بر روی بلاکچین اتریوم است، بنابراین مانند همه dApp های دیگر در اتریوم، برای پرداخت هزینه تراکنش‌های مورد نیاز به یک کیف پول وب۳ با ETH برای کارمزد تراکنش‌ها در آن نیاز دارید. دسته‌بندی کیف پول‌های رمزارز محبوب شامل کیف پول‌های سخت‌افزاری، کیف پول‌های افزونه مرورگر و کیف پول‌های موبایل است."
+			},
+			"two": {
+				"title": "sUSD (یا هر Synth دیگری) را بدست آورید",
+				"subtitle": "گام دوم",
+				"copy": "شما برای شروع معامله به یک دارایی مصنوعی مشتقه که توسط Kwenta پشتیبانی شود نیاز دارید؛ به این دارایی‌ها Synth گفته می‌شود. در دسترس‌ترین Synth دلار مشتقه sUSD است که می‌توانید از طریق dAppهایی مانند یونی‌سواپ، Curve یا 1inch آن را تهیه کنید."
+			},
+			"three": {
+				"title": "با استفاده از Kwenta بازهٔ وسیعی از Synthها را معامله کنید",
+				"subtitle": "گام سوم",
+				"copy": "هنگامی که sUSD یا هر Synth دیگری را دریافت کردید، می‌توانید بین کل محدوده Synthها معامله کنید تا مجموعه‌ای متنوع از دارایی‌ها را ایجاد کنید، کاملا روی بلاکچین و بدون واگذاری مالکیت به صرافی!"
+			}
+		},
+		"faq": {
+			"title": "سوالات متداول",
+			"tabs": {
+				"explainer-video": "ویدیوی تشریحی",
+				"getting-started": {
+					"title": "آغاز کنید",
+					"items": {
+						"qna1": {
+							"question": "اتریوم چیست؟",
+							"answer": "اتریوم ایجاد زیرساختی را امکان‌پذیر می‌کند که می‌تواند توسط شبکه گسترده‌ای از افراد، مدیریت و اجرا شود و کاملاً آنلاین باقی بماند، به این معنی که هیچ کس آن را کنترل نمی‌کند و خاموش کردن آن (اگر نگوییم غیرممکن) بسیار دشوار  خواهد بود. این امر آن را از دسترس دولت‌ها یا سایر صاحبان قدرت خارج می‌کند. اتریوم توسط تیمی از علاقمندان به بیتکوین ایجاد شد که می‌خواستند طراحی پول غیرمتمرکز خود را برای ساختن استفاده‌های غیرمتمرکز دیگر توسعه دهند («غیرمتمرکز» به این معنی است که توسط یک نهاد مرکزی کنترل نمی‌شود). اکوسیستم عظیمی از پروژه‌ها در بلاکچین اتریوم وجود دارد که همه آنها می‌توانند با یکدیگر تعامل داشته باشند."
+						},
+						"qna2": {
+							"question": "دیفای چیست؟",
+							"answer": "DeFi مخفف امور مالی غیرمتمرکز است و نشان‌دهنده اکوسیستمی از ابزارها، محصولات و پروتکل‌های مالی باز در اتریوم است. هم Kwenta و هم پروتکل Synthetix که روی آن ساخته شده است بخشی از اکوسیستم DeFi هستند. DeFi بر روی قراردادهای هوشمند اجرا می‌شود که یکی از ویژگی‌های کلیدی بلاکچین اتریوم است. قراردادهای هوشمند برنامه‌ها یا پروتکل‌هایی هستند که رویدادها و اقدامات خاصی را با توجه به کدنویسی آن‌ها اجرا یا کنترل می‌کنند. آنها اجازه ایجاد زیرساخت غیرمتمرکزی را می‌دهند که وظایف خاصی را انجام می‌دهد: به عنوان مثال، یک قرارداد هوشمند که امکان وام دادن و استقراض را فراهم می‌کند، قراردادهای هوشمندی خواهد داشت که وجوهی را که به عنوان وثیقه سپرده می‌شود قفل می کند و کاربران را قادر می سازد تا سایر دارایی‌ها را در مقابل وثیقه خود وام بگیرند."
+						},
+						"qna3": {
+							"question": "dApp چیست؟",
+							"answer": "dApp مخفف برنامه غیرمتمرکز است. dAppها رابط‌هایی هستند که دسترسی به پروتکل‌های منبع باز در بلاکچین را فراهم می‌کنند. اگر پروتکل زیربنایی به صورت آزاد در دسترس باشد، آنگاه چندین dApp می‌تواند وجود داشته باشد که رابط‌های متفاوتی را برای پروتکل‌های یکسان ارائه می‌دهند. dAppها به افراد اجازه می‌دهند تا از کیف پول رمزارزهای خود برای تعامل مستقیم با قراردادهای هوشمند استفاده کنند، به این معنی که نیازی به ایجاد حساب یا واریز یا برداشت نیست، زیرا کاربران هرگز نیازی به تسلیم نگه داشتن دارایی‌های خود ندارند."
+						}
+					}
+				},
+				"trading-on-kwenta": {
+					"title": "معامله در Kwenta",
+					"items": {
+						"qna1": {
+							"question": "نقدینگی از کجا تامین می‌شود؟",
+							"answer": "Kwenta بر اساس پروتکل Synthetix ساخته شده است، بنابراین نقدینگی Synth قابل معامله در Kwenta کاملاً توسط سهامداران SNX در Synthetix ایجاد شده است."
+						},
+						"qna2": {
+							"question": "در صورت نبودن طرف مقابل، معامله چگونه انجام می‌شود؟",
+							"answer": "هیچ طرف مقابل مستقیمی برای معامله در پروتکل Synthetix وجود ندارد، اما این پروتکل از یک مدل مشابه طرف مقابل استفاده می‌کند که در آن سهامداران SNX هنگام ضرب کردن sUSD، نسبتی از استخر بدهی Synthetix را در نظر می‌گیرند. برای اطلاعات بیشتر به <0>سفیدنامه</0>. Synthetix مراجعه کنید."
+						},
+						"qna3": {
+							"question": "کارمزد تراکنش‌ها چگونه محاسبه می‌شود؟",
+							"answer": "هزینه تراکنش‌ها متناسب با میزان قدرت پردازشی مورد نیاز استخراج‌کنندگان اتریوم برای پردازش آن است. Kwenta از پروتکل Synthetix استفاده می‌کند که بسیار پیچیده‌تر از اکثر پروژه‌های دیگر اتریوم است، بنابراین تراکنش‌های آن نیاز به کارمزد بیشتری برای اجرا دارند."
+						}
+					}
+				}
+			}
+		},
+		"footer": {
+			"cta": {
+				"title": "امروز معامله را شروع کنید",
+				"button": "نمایش صرافی"
+			}
+		}
+	},
+	"exchange": {
+		"page-title": "صرافی | Kwenta",
+		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"currency-card": {
+			"wallet-balance": "موجودی کیف پول",
+			"currency-selector": {
+				"select-synth": "انتخاب synth",
+				"select-token": "انتخاب توکن"
+			}
+		},
+		"market-details-card": {
+			"title": "جزییات بازار",
+			"24h-vol": "24H حجم",
+			"24h-high": "24H بالاترین",
+			"24h-low": "24H پایینترین",
+			"market-cap": "اندازه بازار",
+			"price-feed": "منبع قیمت",
+			"opens-in": "باز شده در",
+			"closes-in": "بسته شده در"
+		},
+		"price-chart-card": {
+			"compare": "مقایسه",
+			"ratio": "نسبت",
+			"overlay-messages": {
+				"frozen": {
+					"title": "{{currencyKey}} synth مسدود شد",
+					"subtitle": "بازنشانی در حال انجام است."
+				},
+				"market-closure": {
+					"title": "بازار {{currencyKey}} بسته شد",
+					"subtitle": "بازنشانی در حال انجام است.",
+					"after-hours": "استخر معاملات پس از بازار <linkTag>{{linkText}}</linkTag> در دسترس است.",
+					"here": "اینجا"
+				},
+				"system-upgrade": {
+					"title": "{{currencyKey}} synth متوقف شد",
+					"subtitle": "لطفا برای اطلاعات بیشتر به دیسکورد Synthetix مراجعه کنید."
+				},
+				"circuit-breaker": {
+					"title": "مدارشکن برای {{currencyKey}} فعال شد",
+					"subtitle": "بازنشانی در حال انجام است"
+				},
+				"emergency": {
+					"title": "توقف اضطراری برای {{currencyKey}} فعال شد",
+					"subtitle": "بازنشانی در حال انجام است"
+				}
+			},
+			"tooltip": {
+				"close": "بسته شدن",
+				"high": "بالاترین",
+				"low": "پایینترین",
+				"open": "باز شدن",
+				"price": "قیمت"
+			},
+			"no-data": "بدون اطلاعات"
+		},
+		"summary-info": {
+			"gas-price-gwei": "قیمت کارمزد شبکه اتریوم (GWEI)",
+			"fee": "کارمزد",
+			"fee-cost": "هزینه کارمزد",
+			"button": {
+				"approve": "تایید",
+				"approving": "در حال تایید",
+				"c-ratio-too-low": "نسبت-C خیلی پایین است",
+				"fee-reclaim-period": "محدوده بازپس‌گیری کارمزد",
+				"insufficient-balance": "موجودی کافی نیست",
+				"enter-amount": "مقدار را وارد کنید",
+				"select-synth": "انتخاب synth",
+				"select-token": "انتخاب توکن",
+				"submit-order": "ثبت سفارش",
+				"submitting-order": "در حال ارسال سفارش...",
+				"submitting-approval": "در حال ارسال تاییدیه...",
+				"approve-balancer": "تایید قرارداد بالانسر",
+				"add-more-collateral": "وثیقه‌گذاری بیشتر"
+			}
+		},
+		"onboard": {
+			"message": "کیف پول شما هیچ Synthی ندارد. برای معامله Synthها  <0>{{currencyKey}}</0> بخرید:",
+			"l2-message": "کیف پول شما هیچ Synthی ندارد. برای معامله Synthها، از طریق سپرده‌گذاری کمی <0>{{currencyKey}}</0> ضرب کنید:",
+			"mint-button": "نمایش سپرده‌گذاری"
+		},
+		"connect-wallet-card": {
+			"message": "برای شروع معامله، کیف پول خود را متصل کنید"
+		},
+		"footer-card": {
+			"market-closure": {
+				"button-label": "بازار تعطیل است",
+				"reasons": {
+					"frozen": {
+						"message": "{{currencyKey}} synth مسدود شد - بازنشانی در حال انجام است."
+					},
+					"market-closure": {
+						"message": "بازار {{currencyKey}} بسته شده است - بازنشانی در حال انجام است."
+					},
+					"system-upgrade": {
+						"message": "{{currencyKey}} synth متوقف شد. لطفا برای اطلاعات بیشتر به دیسکورد Synthetix مراجعه کنید."
+					},
+					"circuit-breaker": {
+						"message": "مدارشکن برای {{currencyKey}} فعال شد - بازنشانی در حال انجام است."
+					},
+					"emergency": {
+						"message": "توقف اضظراری برای {{currencyKey}} فعال شد - بازنشانی در حال انجام است."
+					},
+					"both-synths-suspended": {
+						"message": "Synthهای انتخاب شده در حال حاضر متوقف هستند - بازنشانی در حال انجام است."
+					},
+					"after-hours": {
+						"message": "صرافی سهام تعطیل است. برای معاملاتِ پس از بازار، از بالانسر استفاده کنید",
+						"button-label": "رفتن به استخر بالانسر"
+					}
+				}
+			},
+			"get-l2-gas": {
+				"message": "مقدار wETH لایه دوم برای کارمزد تراکنش کافی نیست. از طریق پل Optimism کمی منتقل کنید:"
+			}
+		},
+		"common": {
+			"from": "از",
+			"into": "به"
+		},
+		"errors": {
+			"fee-reclamation": "پس از اتمام معامله، یک دوره انتظار وجود دارد. لطفاً قبل از اقدام به مبادله {{currencyKey}} تقریباً {{waitingPeriod}} دقیقه صبر کنید"
+		},
+		"charts": {
+			"single": "تکی",
+			"double": "دوتایی"
+		}
+	},
+	"dashboard": {
+		"page-title": "پیشخوان | Kwenta",
+		"trending": "پرطرفدار",
+		"watchlist": {
+			"title": "فهرست تحت‌نظر"
+		},
+		"tabs": {
+			"nav": {
+				"synth-balances": "Synth موجودی",
+				"convert": "Synth در حال تبدیل",
+				"crypto-balances": "موجودی کریپتو",
+				"transactions": "تراکنش‌ها",
+				"deprecated": "منسوخ‌شده"
+			}
+		},
+		"onboard": {
+			"convert": "Synth در حال تبدیل",
+			"title": "یاد بگیرید چطور کار می‌کند",
+			"subtitle": "با استفاده از Kwenta همه چیز را معامله کنید.",
+			"learn-more": "بیشتر بدانید",
+			"how-it-works-modal": {
+				"title": "چگونگی کارکرد"
+			},
+			"convert-card": {
+				"slippage-selector": {
+					"title": "لغزش"
+				}
+			}
+		},
+		"your-portfolio": {
+			"title": "پورتفوی شما"
+		},
+		"synth-sort": {
+			"price": "قیمت",
+			"24h-vol": "24H حجم",
+			"24h-high": "24H بالاترین",
+			"24h-low": "24H پایین‌ترین",
+			"24h-change": "24H تغییرات"
+		},
+		"transactions": {
+			"synth-sort": {
+				"allSynths": "همهٔ Synthها"
+			},
+			"order-type-sort": {
+				"allOrderTypes": "همهٔ انواع سفارشات",
+				"market": "بازار",
+				"limit": "محدود"
+			},
+			"table": {
+				"orderType": "نوع سفارش",
+				"from": "از",
+				"to": "یه",
+				"value": "ارزش",
+				"fee-reclaim": "تخفیف / بازپس‌گیری هزینه تراکنش",
+				"no-results": "تراکنشی یافت نشد",
+				"tx-reclaim-fee-hint": "تراکنش در صورت مثبت بودن با تخفیف کارمزد همراه خواهد بود. در غیر این صورت، کارمزد بازپس گرفته می‌شود.",
+				"price-adjustment-hint": "تعدیل قیمت در حال حاضر در حال انجام است"
+			}
+		},
+		"fee-reclaiming-synths": {
+			"title": "در حال انجام",
+			"row": {
+				"main-col-subtitle": "در حال تعدیل قیمت",
+				"main-col-complete-subtitle": "تعدیل قیمت کامل شد",
+				"col-trades": "معاملات",
+				"col-debt-surplus": "بدهی/مازاد",
+				"col-remaining": "باقیمانده"
+			},
+			"settling-fee": "در حال تسویه حساب...",
+			"settle-fee": "کارمزد تسویه‌حساب"
+		},
+		"deprecated": {
+			"info": "دارایی‌های Synth منسوخ شده را می‌توان در هر زمان با نرخ بازخرید ثابت با sUSD مبادله کرد.",
+			"button": {
+				"default": "بازخرید همه",
+				"redeeming": "در حال انتظار"
+			},
+			"susd-total": "sUSD مجموع"
+		}
+	},
+	"shorting": {
+		"page-title": "فروش قرضی | Kwenta",
+		"common": {
+			"collateral": "وثیقه‌",
+			"posting": "در حال ارسال",
+			"shorting": "در حال فروش قرضی",
+			"interestRate": "نرخ بهره",
+			"cRatio": "نسبت-C"
+		},
+		"shorting-card": {
+			"summary-info": {
+				"button": {
+					"c-ratio-too-low": "نسبت-C خیلی کم است",
+					"add-more-collateral": "وثیقه بیشتری اضافه کنید",
+					"min-collateral": "حداقل وثیقه <0>{{amount}}</0> <1>{{currencyKey}}</1> است"
+				}
+			}
+		},
+		"c-ratio": {
+			"safe": "ایمن",
+			"safeMax": "بسیار ایمن",
+			"highRisk": "ریسک بالا"
+		},
+		"stats": {
+			"title": "آمار فروش‌های قرضی",
+			"table": {
+				"asset": "دارایی",
+				"apr": "APR",
+				"open-interest": "بهره باز",
+				"total": "مجموع"
+			}
+		},
+		"rewards": {
+			"title": "پاداش‌های موجود",
+			"button": {
+				"claim": "مطالبه",
+				"claiming": "در حال مطالبه..."
+			},
+			"tx-confirm": {
+				"claiming": "در حال مطالبه"
+			}
+		},
+		"history": {
+			"title": "معاملات شما",
+			"assets-sort": {
+				"allAssets": "همهٔ دارایی‌ها"
+			},
+			"dates-sort": {
+				"all-dates": "همه تاریخ‌ها",
+				"past-week": "هفته گذشته",
+				"past-month": "ماه گذشته",
+				"past-year": "سال گذشته"
+			},
+			"sizes-sort": {
+				"all-sizes": "تمام اندازه‌ها"
+			},
+			"manage-short": {
+				"page-title": "فروش قرضی | Kwenta",
+				"no-results": "فروش قرضی پیدا نشد",
+				"title": "مدیریت معاملات #{{loanId}}",
+				"close": "بستن",
+				"subtitle": "جزییات معامله",
+				"fields": {
+					"collateral": "وثیقه",
+					"liquidation-price": "قیمت انحلال",
+					"profit-loss": "سود / زیان",
+					"shorting": "فروش قرضی",
+					"collateral-ratio": "نسبت وثیقه",
+					"date": "تاریخ باز کردن",
+					"interest-rate": "نرخ بهره",
+					"accrued-interest": "بهره تعهد"
+				},
+				"collateral-ratio-tooltip": {
+					"line1": "معامله در معرض خطر انحلال خواهد بود",
+					"line2": "اگر نسبت وثیقه کمتر از حداقل {{percent}} باشد"
+				},
+				"interaction-disabled": {
+					"title": "یک دوره انتظار پس از تعامل با وام وجود دارد.",
+					"message": {
+						"part1": "لطفا صبر کنید حدود",
+						"part2": "قبل از تعامل مجدد با آن."
+					}
+				},
+				"sections": {
+					"add-collateral": {
+						"nav-title": "افزودن وثیقه",
+						"tx-confirm": {
+							"base-currency-label": "ارسال..."
+						}
+					},
+					"remove-collateral": {
+						"nav-title": "حذف وثیقه",
+						"tx-confirm": {
+							"base-currency-label": "در حال برداشت..."
+						},
+						"button": {
+							"amount-greater-than-collateral": "مبلغ بیشتر از وثیقه"
+						}
+					},
+					"decrease-position": {
+						"nav-title": "کاستن موقعیت",
+						"tx-confirm": {
+							"base-currency-label": "در حال کاستن موقعیت"
+						},
+						"button": {
+							"amount-greater-than-debt": "مبلغ بیشتر از بدهی",
+							"close-position-instead": "بستن موقعیت به جای بازپرداخت"
+						}
+					},
+					"increase-position": {
+						"nav-title": "افزایش موقعیت",
+						"tx-confirm": {
+							"base-currency-label": "در حال افزایش موقعیت"
+						}
+					},
+					"close-position": {
+						"nav-title": "بستن معامله",
+						"tx-confirm": {
+							"quote-currency-label": "در حال بازگرداندن",
+							"base-currency-label": "در حال دریافت"
+						},
+						"close-button-label": "بستن معامله",
+						"total-to-replay-label": "مجموع بازپرداخت",
+						"button": {
+							"insufficient-balance-to-repay": "موجودی ناکافی برای بازپرداخت"
+						}
+					},
+					"panel": {
+						"collateral": "وثیقه",
+						"shorting": "فروش قرضی",
+						"wallet-balance": "موجودی کیف پول"
+					}
+				}
+			},
+			"table": {
+				"id": "شناسه",
+				"date": "تاریخ",
+				"shorting": "فروش قرضی",
+				"collateral": "وثیقه",
+				"liquidation-price": "قیمت انحلال",
+				"collateral-ratio": "نسبت-C",
+				"profit-loss": "سود / زیان",
+				"no-results": "فروش قرضی پیدا نشد",
+				"accrued-interest": "بهره تعهدی"
+			}
+		}
+	},
+	"not-found": {
+		"page-title": "یافت نشد | Kwenta",
+		"title": "۴۰۴",
+		"subtitle": "صفحه یافت نشد."
+	},
+	"system-status": {
+		"page-title": "تعمیر و نگهداری | Kwenta",
+		"title": "Kwenta در حال حاضر برای تعمیر و نگهداری از کار افتاده است",
+		"subtitle": "ما برای هر گونه ناراحتی ایجاد شده عذرخواهی می‌کنیم، به زودی بازخواهیم گشت."
+	},
+	"modals": {
+		"select-currency": {
+			"title": "انتخاب synth",
+			"header": {
+				"search-results": "نتایج جستجو",
+				"category-synths": "Synthهای {{category}}",
+				"all-synths": "همهٔ synthها",
+				"your-synths": "synthهای شما",
+				"holdings": "دارایی‌ها"
+			},
+			"search": {
+				"placeholder": "جستجوی synthها",
+				"empty-results": "نتیجه‌ای یافت نشد. لطفا دوباره تلاش کنید."
+			}
+		},
+		"select-token": {
+			"title": "انتخاب توکن",
+			"header": {
+				"search-results": "نتایج جستجو",
+				"all-tokens": "همه توکن‌ها",
+				"holdings": "دارایی‌ها"
+			},
+			"search": {
+				"placeholder": "جستجوی توکن‌ها",
+				"empty-results": "نتیجه‌ای پیدا نشد. لطفا دوباره تلاش کنید."
+			}
+		},
+		"select-short-currency": {
+			"title": "انتخاب دارایی فروش قرضی",
+			"header": {
+				"your-synths": "موجودی <0>{{currencyKey}}</0> شما"
+			}
+		},
+		"confirm-transaction": {
+			"title": "تایید تراکنش",
+			"confirm-with-provider": "تراکنش خود را از طریق کیف پولتان تایید کنید.",
+			"exchange-fee-hint": "کارمزد تراکنش پروتکل Synthetix برای <0>{{currencyKey}}</0>. <1>کارمزدهای Synth</1>",
+			"price-adjustment-hint": "این تراکنش مشمول مدت تعدیل قیمت است. <0>بیشتر بدانید.</0>"
+		},
+		"approve-transaction": {
+			"title": "تصویب تراکنش",
+			"confirm-with-provider": "تراکنش خود را از طریق کیف پولتان تایید کنید."
+		},
+		"afterHours": {
+			"title": "استخر معاملات پس از بازار",
+			"approve": "تایید",
+			"balancer-pool": "استخر بالانسر",
+			"slippage-levels": {
+				"low": "کم",
+				"medium": "متوسط",
+				"high": "زیاد"
+			},
+			"powered-by-balancer": "با قدرت بالانسر",
+			"max-slippage-tolerance": "بیشترین تغییرات لغزش",
+			"estimated-slippage": "لغزش تخمینی",
+			"confirm-text": "تراکش خود را از طریق تامین‌کننده وب۳ خود تایید کنید.",
+			"notice-text": "در طول ساعات معاملاتی، ما قیمت‌های دقیقی را بر اساس داده‌های Chainlink ارائه می‌کنیم. پس از ساعات معاملاتی، می توانید با نرخ جاری در بالانسر معامله کنید. لطفاً به انحرافات احتمالی قیمت و همچنین لغزش در سفارشات بزرگتر توجه داشته باشید."
+		},
+		"settings": {
+			"title": "تنظیمات",
+			"options": {
+				"currency": "واحد پول",
+				"language": "زبان"
+			}
+		},
+		"wallet": {
+			"title": "گزینه‌های کیف پول"
+		},
+		"notifications": {
+			"title": "اعلان‌ها",
+			"fee-reclaiming-synths": {
+				"title": "واحد پول بازپس‌گیری کارمزدها"
+			},
+			"open-orders": {
+				"title": "سفارشات باز",
+				"no-results": "سفارشی باز نیست"
+			},
+			"recent-notifications": {
+				"title": "آخرین اعلان‌ها",
+				"no-results": "تراکنش تازه‌ای وجود ندارد"
+			},
+			"deprecated-synths": {
+				"title": "منسوخ شده Synthهای",
+				"description": "موجودی شما شامل ترکیبات منسوخ شده است که تا زمان بازخرید مسدود باقی خواهند ماند.",
+				"short-description": "آزادسازی synthهای منسوخ شده ({{amount}} {{asset}})",
+				"button": {
+					"default": "آزادسازی",
+					"redeeming": "در حال آزادسازی"
+				}
+			},
+			"all-notifications": {
+				"title": "همهٔ اعلان‌ها",
+				"no-results": "هیچ"
+			},
+			"view-all": "نمایش همه"
+		},
+		"deprecated-synths": {
+			"from": "از",
+			"to": "یه"
+		}
+	},
+	"common": {
+		"order-type": {
+			"market": "بازار",
+			"limit": "محدود"
+		},
+		"currency": {
+			"currency-amount": "<0>{{currencyKey}}</0> مقدار",
+			"exchange-fee": "کارمزد صرافی",
+			"currency-value": "<0>{{currencyKey}}</0> ارزش",
+			"estimated-currency-value": "<0>{{currencyKey}}</0> ارزش معامله",
+			"currency-contract": "<0>{{currencyKey}}</0> قرارداد",
+			"currency-price": "<0>{{currencyKey}}</0> قیمت",
+			"synthetic-currency-name": "{{currencyName}} مصنوعی",
+			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
+			"buy-currency": "خرید <0>{{currencyKey}}</0>",
+			"get-currency": "گرفتن <0>{{currencyKey}}</0>",
+			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> برای <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
+			"swap-currency": "مبادله با <0>{{currencyKey}}</0>",
+			"trade-into": "معامله با <0>{{currencyKey}}</0>",
+			"price-adjustment": "تعدیل قیمت",
+			"deprecated": "منسوخ شده"
+		},
+		"total-assets": "{{total}} دارایی",
+		"total-results": "{{total}} نتیجه",
+		"currency-category": {
+			"crypto": "کریپتو",
+			"forex": "فارکس",
+			"commodity": "کالاها",
+			"equities": "سهام"
+		},
+		"contract": "قرارداد",
+		"search-results": "نتایج جستجو",
+		"chart-periods": {
+			"4H": "4H",
+			"1D": "1D",
+			"1W": "1W",
+			"1M": "1M"
+		},
+		"chart-types": {
+			"compare": "مقایسه",
+			"ratio": "نسبت",
+			"candlesticks": "کندل‌ها"
+		},
+		"transaction": {
+			"revert-reason": "خطا: {{reason}}",
+			"error": "خطایی غیرمنتظره رخ داد.",
+			"reattempt": "تلاش دوباره",
+			"transaction-sent": "تراکنش شما به شبکه ارسال شد.",
+			"transaction-failed": "تراکنش شما شکست خورد",
+			"transaction-confirmed": "تراکنش شما موفقیت‌آمیز بود!"
+		},
+		"price": "قیمت",
+		"asset": "دارایی",
+		"cancel": "لغو",
+		"order-types": {
+			"market": "سفارش بازار",
+			"limit": "سفارش محدود"
+		},
+		"features": {
+			"coming-soon": "به زودی"
+		},
+		"wallet": {
+			"connect-wallet": "اتصال کیف پول",
+			"switch-wallet": "تعویض کیف پول",
+			"switch-accounts": "تعویض حساب",
+			"disconnect-wallet": "قطع کیف پول"
+		},
+		"tx-status": {
+			"waiting": "در انتظار",
+			"open": "باز",
+			"closed": "بسته شده",
+			"closing": "در حال بسته شدن",
+			"in": "منتقل شده به",
+			"out": "منتقل شده از",
+			"complete": "کامل",
+			"pending": "در انتظار",
+			"confirmed": "تایید شده",
+			"cancelled": "لغو شده",
+			"failed": "شکست خورده"
+		},
+		"switch": "تعویض",
+		"gas-prices": {
+			"average": "معمولی",
+			"fast": "سریع",
+			"fastest": "سریع‌ترین"
+		},
+		"custom": "دلخواه",
+		"edit": "ویرایش",
+		"powered-by": "قدرت گرفته از",
+		"dex-aggregators": {
+			"1inch": {
+				"title": "تجمیع‌کننده صرافی‌های غیرمتمرکز - ۱ اینچ"
+			},
+			"balancer": {
+				"title": "بالانسر"
+			}
+		},
+		"totals": {
+			"total-synth-value": "ارزش مجموع synthها",
+			"your-currencyKey-balance": "موجودی <0>{{currencyKey}}</0> شما"
+		},
+		"pagination": {
+			"page": "صفحه",
+			"page-of-total-pages": "{{page}} از {{totalPages}}"
+		},
+		"time": {
+			"years": "y",
+			"months": "mo",
+			"days": "d",
+			"hours": "h",
+			"minutes": "m",
+			"seconds": "s"
+		},
+		"min": "کمترین"
+	}
+}
