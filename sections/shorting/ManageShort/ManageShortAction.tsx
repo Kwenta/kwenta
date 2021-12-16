@@ -229,7 +229,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			if (feeReclaimPeriodInSeconds > 0) {
 				return t('exchange.summary-info.button.fee-reclaim-period');
 			}
-			if (balance != null && totalToRepay.gt(balance)) {
+			if (!isL2 && balance != null && totalToRepay.gt(balance)) {
 				return t(
 					'shorting.history.manage-short.sections.close-position.button.insufficient-balance-to-repay'
 				);
@@ -284,6 +284,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		short,
 		isCloseTab,
 		totalToRepay,
+		isL2,
 	]);
 
 	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
