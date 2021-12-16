@@ -56,7 +56,6 @@ import {
 	singleChartPeriodState,
 	baseChartPeriodState,
 	quoteChartPeriodState,
-	singleChartTypeState,
 	baseChartTypeState,
 	quoteChartTypeState,
 } from 'store/app';
@@ -188,12 +187,7 @@ const useExchange = ({
 	const [selectedQuoteChartType, setSelectedQuoteChartType] = usePersistedRecoilState<ChartType>(
 		quoteChartTypeState
 	);
-	const [selectedSingleChartType, setSelectedSingleChartType] = usePersistedRecoilState<ChartType>(
-		singleChartTypeState
-	);
 
-	const [isShowingSingleChart, setIsShowingSingleChart] = useState(true);
-	const toggleIsShowingSingleChart = () => setIsShowingSingleChart((bool) => !bool);
 	const wideWidth = useChartWideWidth();
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
@@ -1070,8 +1064,6 @@ const useExchange = ({
 				quoteCurrencyKey: quoteCurrencyKey as CurrencyKey,
 				quotePriceRate,
 			}}
-			selectedChartType={selectedSingleChartType}
-			setSelectedChartType={setSelectedSingleChartType}
 			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
 			selectedChartPeriod={selectedSingleChartPeriod}
 			setSelectedChartPeriod={setSelectedSingleChartPeriod}
@@ -1179,12 +1171,10 @@ const useExchange = ({
 		footerCard,
 		handleCurrencySwap,
 		inverseRate,
-		isShowingSingleChart,
 		quoteCurrencyCard,
 		quoteCurrencyKey,
 		quoteMarketDetailsCard,
 		quotePriceChartCard,
-		toggleIsShowingSingleChart,
 		wideWidth,
 	};
 };

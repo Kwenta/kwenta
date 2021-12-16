@@ -17,14 +17,26 @@ const useCandlesticksQuery = (
 	// TODO: move to data library in js monorepo once L2 branch is merged
 	return useQuery<Array<Candle>>(
 		QUERY_KEYS.Rates.Candlesticks(currencyKey!, period),
-		async () => {
-			const candleGranularity = 'daily';
-			const response = (await request(
-				RATES_ENDPOINT,
-				gql`
-					query ${candleGranularity}Candles($synth: String!, $minTimestamp: BigInt!) {
-						${candleGranularity}Candles(
-							where: { synth: $synth, timestamp_gt: $minTimestamp }
+		async () => requestCandlesticks(currencyKey, calculateTimestampForPeriod(periodInHours)),
+		{
+			enabled: !!currencyKey && !!period,
+			...options,
+		}
+	);
+};
+
+export const requestCandlesticks = async (
+	currencyKey: string | null,
+	minTimestamp: number,
+	maxTimestamp = Math.floor(Date.now() / 1000),
+	resolution = 'daily'
+) => {
+	const response = (await request(
+		RATES_ENDPOINT,
+		gql`
+					query ${resolution}Candles($synth: String!, $minTimestamp: BigInt!, $maxTimestamp: BigInt!) {
+						${resolution}Candles(
+							where: { synth: $synth, timestamp_gt: $minTimestamp, timestamp_lt: $maxTimestamp }
 							orderBy: id
 							orderDirection: desc
 						) {
@@ -38,20 +50,15 @@ const useCandlesticksQuery = (
 						}
 					}
 				`,
-				{
-					synth: currencyKey,
-					minTimestamp: calculateTimestampForPeriod(periodInHours),
-				}
-			)) as {
-				[key: string]: Array<Candle>;
-			};
-			return response[`${candleGranularity}Candles`].reverse();
-		},
 		{
-			enabled: !!currencyKey && !!period,
-			...options,
+			synth: currencyKey,
+			maxTimestamp: maxTimestamp,
+			minTimestamp: minTimestamp,
 		}
-	);
+	)) as {
+		[key: string]: Array<Candle>;
+	};
+	return response[`${resolution}Candles`].reverse();
 };
 
 export default useCandlesticksQuery;
