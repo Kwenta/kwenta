@@ -1,20 +1,20 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
-
-import BlockExplorer from 'containers/BlockExplorer';
-
-import Card from 'components/Card';
+import { BigNumber } from 'ethers';
+import { wei } from '@synthetixio/wei';
 
 import ArrowRightIcon from 'assets/svg/app/arrow-right.svg';
+import BlockExplorer from 'containers/BlockExplorer';
+import Card from 'components/Card';
 import InfoIcon from 'assets/svg/app/info.svg';
-
-import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
-
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { formatDateWithTime } from 'utils/formatters/date';
-
+import LinkIcon from 'assets/svg/app/link.svg';
+import ProfitLoss from 'sections/shorting/components/ProfitLoss';
+import media from 'styles/media';
+import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import {
 	FlexDivRow,
 	ExternalLink,
@@ -22,23 +22,12 @@ import {
 	InfoTooltip,
 	InfoTooltipContent,
 } from 'styles/common';
-import media from 'styles/media';
-
-import LinkIcon from 'assets/svg/app/link.svg';
-
-import ProfitLoss from 'sections/shorting/components/ProfitLoss';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-
-import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
 import { NO_VALUE } from 'constants/placeholder';
-
+import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 import { ShortingTab } from './constants';
-import { MIN_COLLATERAL_RATIO } from '../constants';
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatDateWithTime } from 'utils/formatters/date';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 type PositionCardProps = {
 	short: ShortPosition;
@@ -54,7 +43,6 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency, selectPriceCurrencyRate } = useSelectedPriceCurrency();
-	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const isAddCollateralTab = useMemo(() => activeTab === ShortingTab.AddCollateral, [activeTab]);
 	const isRemoveCollateralTab = useMemo(() => activeTab === ShortingTab.RemoveCollateral, [
@@ -75,6 +63,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		isIncreasePositionTab,
 		isDecreasePositionTab,
 	]);
+	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 
 	const collateralShortInfo = useMemo(
 		() =>
@@ -84,11 +73,9 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(
-		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
-		[collateralShortInfo?.minCollateralRatio]
-	);
-
+	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio, [
+		collateralShortInfo?.minCollateralRatio,
+	]);
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
@@ -104,14 +91,19 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		[exchangeRates, selectedPriceCurrency.name, short.collateralLocked]
 	);
 
-	const collateralValue = useMemo(() => short.collateralLockedAmount.mul(collateralLockedPrice), [
-		short.collateralLockedAmount,
-		collateralLockedPrice,
-	]);
-
 	const liquidationPrice = useMemo(
-		() => collateralValue.div(short.synthBorrowedAmount.mul(minCollateralRatio)),
-		[collateralValue, short.synthBorrowedAmount, minCollateralRatio]
+		() =>
+			short.synthBorrowedAmount && minCollateralRatio && short.synthBorrowedAmount.gt(0)
+				? short.collateralLockedAmount
+						.mul(collateralLockedPrice)
+						.div(short.synthBorrowedAmount.mul(minCollateralRatio))
+				: wei(0),
+		[
+			short.collateralLockedAmount,
+			collateralLockedPrice,
+			minCollateralRatio,
+			short.synthBorrowedAmount,
+		]
 	);
 
 	const inputChangePreview = useMemo(() => {
@@ -132,7 +124,6 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 			}
 
 			const collateralValue = collateralLockedAmount.mul(collateralLockedPrice);
-
 			const liquidationPrice = synthBorrowedAmount.gt(0)
 				? collateralValue.div(synthBorrowedAmount.mul(minCollateralRatio))
 				: wei(0);
@@ -161,6 +152,21 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 		<ArrowIcon>
 			<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
 		</ArrowIcon>
+	);
+
+	const liquidationPriceDisplayed = formatCurrency(
+		short.collateralLocked,
+		selectPriceCurrencyRate != null
+			? liquidationPrice.div(selectPriceCurrencyRate)
+			: liquidationPrice,
+		{
+			currencyKey: short.synthBorrowed,
+			sign: selectedPriceCurrency.sign,
+		}
+	);
+	const minCollateralRatioPct = useMemo(
+		() => (minCollateralRatio ? formatPercent(minCollateralRatio) : ''),
+		[minCollateralRatio]
 	);
 
 	return (
@@ -200,16 +206,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 							{t('shorting.history.manage-short.fields.liquidation-price')}
 						</LightFieldText>
 						<DataField>
-							{formatCurrency(
-								short.collateralLocked,
-								selectPriceCurrencyRate != null
-									? liquidationPrice.div(selectPriceCurrencyRate)
-									: liquidationPrice,
-								{
-									currencyKey: short.synthBorrowed,
-									sign: selectedPriceCurrency.sign,
-								}
-							)}
+							{liquidationPriceDisplayed}
 							{inputChangePreview != null && (
 								<>
 									{arrowIcon}
@@ -271,7 +268,13 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 						<LightFieldText>
 							{t('shorting.history.manage-short.fields.collateral-ratio')}
 						</LightFieldText>
-						<DataField isPositive={short.collateralRatio.gt(minCollateralRatio)}>
+						<DataField
+							isPositive={
+								BigNumber.isBigNumber(minCollateralRatio)
+									? short.collateralRatio.gt(minCollateralRatio)
+									: null
+							}
+						>
 							{formatPercent(short.collateralRatio)}{' '}
 							<InfoTooltip
 								content={
@@ -279,7 +282,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 										<div>{t('shorting.history.manage-short.collateral-ratio-tooltip.line1')}</div>
 										<div>
 											{t('shorting.history.manage-short.collateral-ratio-tooltip.line2', {
-												percent: formatPercent(minCollateralRatio),
+												percent: minCollateralRatioPct,
 											})}
 										</div>
 									</div>

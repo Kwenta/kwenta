@@ -44,10 +44,10 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
 
 	const gasPriceItem = hasCustomGasPrice ? (
-		<span data-testid="gas-price">{formatNumber(customGasPrice, { maxDecimals: 1 })}</span>
+		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
 	) : (
 		<span data-testid="gas-price">
-			{ESTIMATE_VALUE} {formatNumber(gasPrice ?? 0, { maxDecimals: 1 })}
+			{ESTIMATE_VALUE} {formatNumber(gasPrice ?? 0, { minDecimals: 4 })}
 		</span>
 	);
 

@@ -3,29 +3,35 @@ import { hexToAscii } from 'utils/formatters/string';
 import { CurrencyKey, SYNTH_DECIMALS } from 'constants/currency';
 import { wei } from '@synthetixio/wei';
 
-// MainNet - 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
-// Kovan - 'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan'
-
 export const SHORT_GRAPH_ENDPOINT =
-	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-shorts';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
 export const SHORT_GRAPH_ENDPOINT_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
 
-export const formatShort = (response: any): Partial<HistoricalShortPosition> => ({
-	id: response.id,
-	txHash: response.txHash,
-	collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
-	collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS, true),
-	synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
-	synthBorrowedAmount: wei(response.synthBorrowedAmount, SYNTH_DECIMALS, true),
-	createdAt: new Date(Number(response.createdAt) * 1000),
-	closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
-	isOpen: Boolean(response.isOpen),
-	collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
-	liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
-	loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
-});
+export const SHORT_GRAPH_ENDPOINT_OVM_KOVAN =
+	'https://api.thegraph.com/subgraphs/name/dbeal-eth/optimism-kovan-shorts4';
+
+export const SHORT_GRAPH_ENDPOINT_OVM =
+	'https://api.thegraph.com/subgraphs/name/kmeraz/optimism-main';
+// 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
+
+export const formatShort = (response: any): Partial<HistoricalShortPosition> => {
+	return {
+		id: response.id,
+		txHash: response.txHash,
+		collateralLocked: hexToAscii(response.collateralLocked) as CurrencyKey,
+		collateralLockedAmount: wei(response.collateralLockedAmount, SYNTH_DECIMALS),
+		synthBorrowed: hexToAscii(response.synthBorrowed) as CurrencyKey,
+		synthBorrowedAmount: wei(response.synthBorrowedAmount, SYNTH_DECIMALS),
+		createdAt: new Date(Number(response.createdAt) * 1000),
+		closedAt: response.closedAt != null ? new Date(Number(response.closedAt) * 1000) : null,
+		isOpen: Boolean(response.isOpen),
+		collateralChanges: (response?.collateralChanges ?? []).map(formatShortCollateralChanges),
+		liquidations: (response?.liquidations ?? []).map(formatShortLiquidations),
+		loanChanges: (response?.loanChanges ?? []).map(formatShortLoanChanges),
+	};
+};
 
 export const formatShortLiquidations = (response: any): ShortLiquidation => ({
 	id: response.id,

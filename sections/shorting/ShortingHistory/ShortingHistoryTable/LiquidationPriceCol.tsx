@@ -9,8 +9,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 
-import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
-
 import { StyledCurrencyKey, StyledPrice } from './common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
@@ -49,19 +47,18 @@ const LiquidationPriceCol: FC<LiquidationPriceColType> = ({ cellProps }) => {
 		? collateralShortContractInfoQuery?.data ?? null
 		: null;
 
-	const minCollateralRatio = useMemo(
-		() => collateralShortContractInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
-		[collateralShortContractInfo?.minCollateralRatio]
-	);
+	const minCollateralRatio = useMemo(() => collateralShortContractInfo?.minCollateralRatio, [
+		collateralShortContractInfo?.minCollateralRatio,
+	]);
 
 	const liquidationPrice = useMemo(
 		() =>
-			synthBorrowedAmount && synthBorrowedAmount.gt(0)
+			synthBorrowedAmount && minCollateralRatio && synthBorrowedAmount.gt(0)
 				? collateralLockedAmount
 						.mul(collateralLockedPrice)
 						.div(synthBorrowedAmount.mul(minCollateralRatio))
 				: wei(0),
-		[collateralLockedAmount, collateralLockedPrice, synthBorrowedAmount, minCollateralRatio]
+		[collateralLockedAmount, collateralLockedPrice, minCollateralRatio, synthBorrowedAmount]
 	);
 
 	return (

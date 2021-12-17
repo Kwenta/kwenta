@@ -25,6 +25,7 @@ const ProfitLoss = ({ value }: ProfitLossType) => {
 					{isPositive != null && (isPositive ? '+' : '-')}
 					{formatCurrency(selectedPriceCurrency.name, value.abs(), {
 						sign: selectedPriceCurrency.sign,
+						minDecimals: 2,
 					})}
 				</Container>
 			) : (
