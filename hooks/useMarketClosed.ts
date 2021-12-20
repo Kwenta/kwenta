@@ -7,15 +7,9 @@ export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useMarketClosed>;
 
 const useMarketClosed = (currencyKey: CurrencyKey | null) => {
-	const { useFrozenSynthsQuery, useSynthSuspensionQuery } = useSynthetixQueries();
+	const { useSynthSuspensionQuery } = useSynthetixQueries();
 
-	const frozenSynthsQuery = useFrozenSynthsQuery();
 	const currencySuspendedQuery = useSynthSuspensionQuery(currencyKey);
-
-	const isCurrencyFrozen =
-		currencyKey != null && frozenSynthsQuery.isSuccess && frozenSynthsQuery.data
-			? frozenSynthsQuery.data.has(currencyKey)
-			: false;
 
 	const isCurrencySuspended =
 		currencySuspendedQuery.isSuccess && currencySuspendedQuery.data
@@ -23,12 +17,9 @@ const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 			: false;
 
 	return {
-		isMarketClosed: isCurrencyFrozen || isCurrencySuspended,
-		isCurrencyFrozen,
+		isMarketClosed: isCurrencySuspended,
 		isCurrencySuspended,
-		marketClosureReason: isCurrencyFrozen
-			? 'frozen'
-			: (currencySuspendedQuery.data?.reason as MarketClosureReason),
+		marketClosureReason: currencySuspendedQuery.data?.reason as MarketClosureReason,
 	};
 };
 

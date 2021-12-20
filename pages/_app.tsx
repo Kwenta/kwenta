@@ -31,14 +31,6 @@ import Connector from 'containers/Connector';
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 	const { provider, network } = Connector.useContainer();
-	const subgraphEndpoints =
-		network?.id === 69
-			? {
-					exchanges: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/kovan-exchanges',
-					exchanger: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/kovan-exchanger',
-					issuance: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/kovan-issuance',
-			  }
-			: undefined;
 	return (
 		<>
 			<MediaContextProvider>
@@ -48,7 +40,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 							? createQueryContext({
 									provider: provider,
 									networkId: network!.id,
-									subgraphEndpoints,
 							  })
 							: createQueryContext({ networkId: null })
 					}

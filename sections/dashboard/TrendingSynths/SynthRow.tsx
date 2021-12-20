@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { PERIOD_IN_HOURS, Period } from 'constants/period';
 import ROUTES from 'constants/routes';
 
 import { SelectableCurrencyRow } from 'styles/common';
@@ -14,17 +13,8 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { Synth } from '@synthetixio/contracts-interface';
-import {
-	// CurrencyKey,
-	sUSD_EXCHANGE_RATE,
-} from 'constants/currency';
 
 import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-
-import { getMinAndMaxRate, usdHistoricalRates } from './utils';
-
-import { ethers } from 'ethers';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 type SynthRowProps = {
 	price: number | null;
@@ -35,49 +25,31 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const twentyFourHoursAgo = useMemo(
-		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
-		[]
-	);
 
 	const currencyKey = synth.name as CurrencyKey;
 
-	const { exchanges } = useSynthetixQueries();
-	const periodInHours = PERIOD_IN_HOURS[Period.ONE_DAY];
-	let historicalRates = {};
+	let priceChange = 0;
 
-	if (currencyKey === Synths.sUSD) {
-		historicalRates = {
-			rates: usdHistoricalRates(periodInHours, sUSD_EXCHANGE_RATE.toNumber()),
-			low: sUSD_EXCHANGE_RATE,
-			high: sUSD_EXCHANGE_RATE,
-			change: 0,
-		};
-	} else {
-		// https://github.com/Synthetixio/js-monorepo/blob/1ec49781f371e60c2cf8928459aaa4c602089c2d/packages/queries/src/queries/rates/useHistoricalRatesQuery.ts
-		let historicalRatesQuery = exchanges.useGetRateUpdates(
+	if (currencyKey !== Synths.sUSD) {
+		const synthCandle = useSynthetixQueries().subgraph.useGetDailyCandles(
 			{
-				first: Number.MAX_SAFE_INTEGER,
+				first: 1,
 				where: {
-					timestamp_gte: twentyFourHoursAgo,
-					synth: ethers.utils.formatBytes32String(currencyKey),
+					synth: synth.name,
 				},
+				orderBy: 'timestamp',
+				orderDirection: 'desc',
 			},
 			{
-				id: true,
-				currencyKey: true,
-				synth: true,
-				rate: true,
-				block: true,
-				timestamp: true,
+				open: true,
+				close: true,
 			}
 		);
-		historicalRates = getMinAndMaxRate(historicalRatesQuery.data ?? []);
+		if (synthCandle.isSuccess && synthCandle.data?.length) {
+			const [candle] = synthCandle.data;
+			priceChange = candle?.open.sub(candle.close).div(candle.open).toNumber();
+		}
 	}
-	// return <div>hi</div>;
-	// const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
-	// 	refetchInterval: false,
-	// });
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
@@ -99,11 +71,11 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 			/>
 			{price != null ? (
 				<Currency.Price
-					currencyKey={selectedPriceCurrency.name as CurrencyKey}
+					currencyKey={selectedPriceCurrency.name}
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					change={priceChange}
 				/>
 			) : (
 				NO_VALUE

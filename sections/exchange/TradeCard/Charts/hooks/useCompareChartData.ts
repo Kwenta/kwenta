@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
 import useSynthetixQueries from '@synthetixio/queries';
-// import { ethers } from 'ethers';
 
 import usePeriodStartSynthRateQuery from 'queries/rates/usePeriodStartSynthRateQuery';
 import { CurrencyKey, Synths } from 'constants/currency';
@@ -46,7 +45,7 @@ const useCombinedRates = ({
 	// }, [baseCurrencyKey])
 
 	const quoteHistoricalRatesQuery = !quoteCurrencyKey
-	? { isSuccess: false, data: [], isLoading: false }
+		? { isSuccess: false, data: [], isLoading: false }
 		: exchanges.useGetRateUpdates(
 				{
 					first: Number.MAX_SAFE_INTEGER,

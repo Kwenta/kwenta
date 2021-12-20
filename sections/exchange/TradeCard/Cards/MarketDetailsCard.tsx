@@ -9,7 +9,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { Period } from 'constants/period';
+import { PERIOD_IN_HOURS } from 'constants/period';
 
 import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
 
@@ -36,7 +36,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { tokensMap } = Connector.useContainer();
 
-	const { exchanges, useHistoricalRatesQuery, useSynthMarketCapQuery } = useSynthetixQueries();
+	const { subgraph, useSynthMarketCapQuery } = useSynthetixQueries();
 
 	const {
 		selectPriceCurrencyRate,
@@ -45,7 +45,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	} = useSelectedPriceCurrency();
 	const theme = useTheme();
 
-	const vol24HQuery = exchanges.useGetSynthExchanges(
+	const vol24HQuery = subgraph.useGetSynthExchanges(
 		{
 			first: Number.MAX_SAFE_INTEGER,
 			where: {
@@ -54,31 +54,32 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 		},
 		{
 			id: true,
-			account: true,
-			from: true,
-			fromCurrencyKey: true,
-			fromAmount: true,
-			fromAmountInUSD: true,
-			toCurrencyKey: true,
-			toAmount: true,
-			toAmountInUSD: true,
-			feesInUSD: true,
-			toAddress: true,
-			timestamp: true,
-			gasPrice: true,
-			block: true,
+
+			// TODO @MF what do we need here?
 		}
 	);
 
-	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const historicalRates24HQuery = subgraph.useGetDailyCandles(
+		{
+			first: 1,
+			where: {
+				synth: currencyKey,
+				timestamp_gte: calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
+			},
+		},
+		{
+			high: true,
+			low: true,
+		}
+	);
 	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 
 	let marketCap = synthMarketCapQuery.isSuccess ? synthMarketCapQuery.data ?? null : null;
 	let rates24High = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.high ?? null
+		? historicalRates24HQuery.data[0].high ?? null
 		: null;
 	let rates24Low = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.low ?? null
+		? historicalRates24HQuery.data[0].low ?? null
 		: null;
 	let volume24H =
 		vol24HQuery.isSuccess && currencyKey != null

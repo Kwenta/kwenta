@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { Synth } from '@synthetixio/contracts-interface';
-import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
 import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
@@ -18,8 +17,8 @@ const Transactions: FC = () => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { exchanges } = useSynthetixQueries();
-	const walletTradesQuery = exchanges.useGetSynthExchanges(
+	const { subgraph } = useSynthetixQueries();
+	const walletTradesQuery = subgraph.useGetSynthExchanges(
 		{
 			first: Number.MAX_SAFE_INTEGER,
 			where: {
