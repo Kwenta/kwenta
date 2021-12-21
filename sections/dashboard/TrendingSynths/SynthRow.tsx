@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -15,6 +15,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { Synth } from '@synthetixio/contracts-interface';
 
 import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type SynthRowProps = {
 	price: number | null;
@@ -24,6 +26,7 @@ type SynthRowProps = {
 const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const network = useRecoilValue(networkState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const currencyKey = synth.name as CurrencyKey;
@@ -31,7 +34,13 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	let priceChange = 0;
 
 	if (currencyKey !== Synths.sUSD) {
-		const synthCandle = useSynthetixQueries().subgraph.useGetDailyCandles(
+		//  TODO @DEV the dailyCandle query is broken on L1 but this is super important for fetching
+		// the price in a time range. So we need to use the exchanges subgraph when user is on L1.
+		// For L2 we should use the subgraph namespace. Once this bug is fixed on L1, delete it and
+		// just use the subgraph namespace.
+		const synthCandle = useSynthetixQueries()[
+			network.id === 10 ? 'subgraph' : 'exchanges'
+		].useGetDailyCandles(
 			{
 				first: 1,
 				where: {
