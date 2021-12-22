@@ -2,7 +2,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { GWEI_UNIT } from 'constants/network';
+import { ETH_UNIT, GWEI_UNIT } from 'constants/network';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
@@ -24,14 +24,21 @@ export async function getDefaultNetworkId(): Promise<NetworkId> {
 	}
 }
 
+export type GasInfo = {
+	limit: number;
+	l1Fee: number;
+};
+
 export const getTransactionPrice = (
 	gasPrice: number | null,
-	gasLimit: number | null,
-	ethPrice: number | null
+	gasLimit: number | null | undefined,
+	ethPrice: number | null,
+	l1SecurityFeeWei: number = 0
 ) => {
 	if (!gasPrice || !gasLimit || !ethPrice) return null;
-
-	return (gasPrice * ethPrice * gasLimit) / GWEI_UNIT;
+	const gasFeeEth = (gasLimit * gasPrice) / GWEI_UNIT;
+	const l1FeeEth = l1SecurityFeeWei / ETH_UNIT;
+	return (gasFeeEth + l1FeeEth) * ethPrice;
 };
 
 export const normalizeGasLimit = (gasLimit: number) => gasLimit + DEFAULT_GAS_BUFFER;

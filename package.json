@@ -21,6 +21,7 @@
 	"dependencies": {
 		"@artsy/fresnel": "1.7.0",
 		"@balancer-labs/sor": "1.0.0",
+		"@eth-optimism/contracts": "^0.5.1",
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",

@@ -14,7 +14,6 @@ export type CollateralContractInfo = {
 	minCollateral: Wei;
 	interactionDelay: number;
 	canOpenLoans: boolean;
-	maxLoansPerAccount: number;
 };
 
 const useCollateralShortContractInfoQuery = (options?: UseQueryOptions<CollateralContractInfo>) => {
@@ -25,7 +24,7 @@ const useCollateralShortContractInfoQuery = (options?: UseQueryOptions<Collatera
 	return useQuery<CollateralContractInfo>(
 		QUERY_KEYS.Collateral.ShortContractInfo,
 		async () => {
-			const { CollateralShort } = synthetixjs!.contracts;
+			const { CollateralShort, SystemSettings } = synthetixjs!.contracts;
 
 			const [
 				issueFeeRate,
@@ -33,30 +32,19 @@ const useCollateralShortContractInfoQuery = (options?: UseQueryOptions<Collatera
 				minCollateral,
 				interactionDelay,
 				canOpenLoans,
-				maxLoansPerAccount,
 			] = (await Promise.all([
 				CollateralShort.issueFeeRate(),
 				CollateralShort.minCratio(),
 				CollateralShort.minCollateral(),
-				CollateralShort.interactionDelay(),
+				SystemSettings.interactionDelay(CollateralShort.address),
 				CollateralShort.canOpenLoans(),
-				CollateralShort.maxLoansPerAccount(),
-			])) as [
-				ethers.BigNumber,
-				ethers.BigNumber,
-				ethers.BigNumber,
-				ethers.BigNumber,
-				boolean,
-				ethers.BigNumber
-			];
-
+			])) as [ethers.BigNumber, ethers.BigNumber, ethers.BigNumber, ethers.BigNumber, boolean];
 			return {
 				issueFeeRate: wei(issueFeeRate),
 				minCollateralRatio: wei(minCratio),
 				minCollateral: wei(minCollateral),
 				interactionDelay: interactionDelay.toNumber(),
 				canOpenLoans,
-				maxLoansPerAccount: maxLoansPerAccount.toNumber(),
 			};
 		},
 		{

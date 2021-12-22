@@ -53,9 +53,11 @@ export const PeriodSelector = styled(GridDivCenteredCol)`
 	grid-gap: 8px;
 `;
 
-export const ChartBody = styled.div`
-	padding-top: 10px;
-	height: 35vh;
+export const ChartBody = styled.div<{ paddingTop?: string }>`
+	padding-top: ${(props) => props.paddingTop || '0'};
+	height: 45vh;
+	min-height: 450px;
+	max-height: 650px;
 `;
 
 export const StyledTextButton = styled(TextButton)<{ isActive: boolean }>`

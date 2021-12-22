@@ -54,37 +54,41 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					{
 						Header: <StyledTableHeader>{t('shorting.history.table.date')}</StyledTableHeader>,
 						accessor: 'date',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<CellData>{formatDateWithTime(cellProps.row.original.createdAt)}</CellData>
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return <CellData>{formatDateWithTime(cellProps.row.original.createdAt)}</CellData>;
+						},
 						width: 140,
 						sortable: true,
 					},
 					{
 						Header: <StyledTableHeader>{t('shorting.history.table.shorting')}</StyledTableHeader>,
 						accessor: 'synthBorrowedAmount',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<span>
-								<StyledPrice>
-									{formatNumber(cellProps.row.original.synthBorrowedAmount)}
-								</StyledPrice>
-								<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
-							</span>
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return (
+								<span>
+									<StyledPrice>
+										{formatNumber(cellProps.row.original.synthBorrowedAmount, { minDecimals: 4 })}
+									</StyledPrice>
+									<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>
+								</span>
+							);
+						},
 						width: 100,
 						sortable: true,
 					},
 					{
 						Header: <StyledTableHeader>{t('shorting.history.table.collateral')}</StyledTableHeader>,
 						accessor: 'collateralLockedAmount',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<span>
-								<StyledPrice>
-									{formatNumber(cellProps.row.original.collateralLockedAmount)}
-								</StyledPrice>
-								<StyledCurrencyKey>{cellProps.row.original.collateralLocked}</StyledCurrencyKey>
-							</span>
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return (
+								<span>
+									<StyledPrice>
+										{formatNumber(cellProps.row.original.collateralLockedAmount)}
+									</StyledPrice>
+									<StyledCurrencyKey>{cellProps.row.original.collateralLocked}</StyledCurrencyKey>
+								</span>
+							);
+						},
 						width: 120,
 						sortable: true,
 					},
@@ -93,9 +97,9 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 							<StyledTableHeader>{t('shorting.history.table.liquidation-price')}</StyledTableHeader>
 						),
 						accessor: 'liquidationPrice',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<LiquidationPriceCol cellProps={cellProps} />
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return <LiquidationPriceCol cellProps={cellProps} />;
+						},
 						width: 120,
 						sortable: true,
 					},
@@ -104,9 +108,9 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 							<StyledTableHeader>{t('shorting.history.table.accrued-interest')}</StyledTableHeader>
 						),
 						accessor: 'accruedInterest',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<AccruedInterestCol cellProps={cellProps} />
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return <AccruedInterestCol cellProps={cellProps} />;
+						},
 						width: 120,
 						sortable: true,
 					},
@@ -134,9 +138,9 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 					},
 					{
 						id: 'actions',
-						Cell: (cellProps: CellProps<HistoricalShortPosition>) => (
-							<ActionsCol cellProps={cellProps} />
-						),
+						Cell: (cellProps: CellProps<HistoricalShortPosition>) => {
+							return <ActionsCol cellProps={cellProps} />;
+						},
 						sortable: false,
 						width: 50,
 					},
