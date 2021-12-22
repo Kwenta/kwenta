@@ -133,7 +133,7 @@ const useCollateralShortPositionQuery = (
 									rateUpdates(
 										first: 1
 										orderBy: timestamp
-										direction: desc
+										orderDirection: desc
 										where: { synth: $currencyKey, timestamp_lte: $timestamp }
 									) {
 										id
