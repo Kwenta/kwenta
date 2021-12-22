@@ -17,12 +17,13 @@ const useCombinedRates = ({
 	quoteCurrencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const { exchanges } = useSynthetixQueries();
+	// TODO @DEV @MF test it
+	const { subgraph } = useSynthetixQueries();
 	const period = PERIOD_IN_HOURS[selectedChartPeriodLabel.period];
 
 	const baseHistoricalRatesQuery = !baseCurrencyKey
 		? { isSuccess: false, data: [], isLoading: false }
-		: exchanges.useGetRateUpdates(
+		: subgraph.useGetRateUpdates(
 				{
 					first: Number.MAX_SAFE_INTEGER,
 					where: {
@@ -46,7 +47,7 @@ const useCombinedRates = ({
 
 	const quoteHistoricalRatesQuery = !quoteCurrencyKey
 		? { isSuccess: false, data: [], isLoading: false }
-		: exchanges.useGetRateUpdates(
+		: subgraph.useGetRateUpdates(
 				{
 					first: Number.MAX_SAFE_INTEGER,
 					where: {

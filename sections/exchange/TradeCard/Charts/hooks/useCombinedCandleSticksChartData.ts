@@ -94,6 +94,7 @@ const useCombinedCandleSticksChartData = ({
 };
 
 const useData = (currencyKey: CurrencyKey | null, selectedChartPeriodLabel: PeriodLabel) => {
+	// TODO @DEV @MF test it
 	const query = { isSuccess: false, data: [], isLoading: false }; //useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 	const data = query.isSuccess && query.data ? query.data : [];
 	const noData = query.isSuccess && query.data && data.length === 0;

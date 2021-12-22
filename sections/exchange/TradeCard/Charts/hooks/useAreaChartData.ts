@@ -9,9 +9,8 @@ const useAreaChartData = ({
 	currencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
-
-	const data = useHistoricalRatesQuery(currencyKey, selectedChartPeriodLabel.period);
+	const { useCandlesticksQuery } = useSynthetixQueries();
+	const data = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 
 	const change = data.data?.change ?? null;
 	// eslint-disable-next-line

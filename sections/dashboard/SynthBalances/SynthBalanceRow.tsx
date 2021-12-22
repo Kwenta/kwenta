@@ -59,7 +59,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 				close: true,
 			}
 		);
-		console.log(synthCandle.data);
+
 		if (synthCandle.isSuccess && synthCandle.data?.length) {
 			const [candle] = synthCandle.data;
 			priceChange = candle?.open.sub(candle.close).div(candle.open).toNumber();

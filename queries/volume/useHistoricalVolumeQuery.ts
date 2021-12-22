@@ -7,11 +7,12 @@ import { useQuery, UseQueryOptions } from 'react-query';
 
 declare type HistoricalVolume = Record<CurrencyKey, Wei>;
 
-const useHistoricalVolumeQuery = (exchanges: any) => {
+// TODO @DEV @MF test it, do we need it? Maybe remove?
+const useHistoricalVolumeQuery = (subgraph: any) => {
 	return useQuery<HistoricalVolume>(
 		['rates', 'historicalVolume'], //ctx.networkId, period],
 		async () => {
-			const synthExchanges = await exchanges.useGetSynthExchanges(
+			const synthExchanges = await subgraph.useGetSynthExchanges(
 				{
 					first: Number.MAX_SAFE_INTEGER,
 					where: {

@@ -23,12 +23,12 @@ type SynthRowProps = {
 const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	// TODO @DEV @MF test it
+	const { useCandlesticksQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.name as CurrencyKey;
 
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const historicalRates = useCandlesticksQuery(currencyKey, Period.ONE_DAY);
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
@@ -44,7 +44,8 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 				<Currency.Price
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					// calculate the change, open - close / open
+					change={historicalRates.data[0]?.change}
 					{...{ price, currencyKey }}
 				/>
 			) : (

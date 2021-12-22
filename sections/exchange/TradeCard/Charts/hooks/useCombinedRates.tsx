@@ -17,6 +17,7 @@ const useCombinedRates = ({
 }) => {
 	const { subgraph } = useSynthetixQueries();
 
+	// TODO @DEV @MF test it
 	const baseHistoricalRatesQuery = subgraph.useGetRateUpdates(
 		{
 			first: Number.MAX_SAFE_INTEGER,
