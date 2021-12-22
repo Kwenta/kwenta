@@ -4,9 +4,9 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
 import { Candle } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
+import useSynthetixQueries from '@synthetixio/queries';
 
 export type TempCandle = {
 	id: string;
@@ -111,6 +111,7 @@ const useData = (
 	currencyKey: CurrencyKey | null,
 	selectedChartPeriodLabel: PeriodLabel
 ): ChartDataQuery => {
+	const { useCandlesticksQuery } = useSynthetixQueries();
 	const query = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 	const data = query.isSuccess && query.data ? query.data : [];
 	const noData = query.isSuccess && query.data && data.length === 0;

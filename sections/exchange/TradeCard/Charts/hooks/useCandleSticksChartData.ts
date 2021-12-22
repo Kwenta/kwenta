@@ -1,6 +1,6 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
-import useCandlesticksQuery from 'queries/rates/useCandlesticksQuery';
 
 const useCandleSticksChartData = ({
 	currencyKey,
@@ -9,7 +9,9 @@ const useCandleSticksChartData = ({
 	currencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const query = { isSuccess: false, data: [], isLoading: false }; //useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
+	// TODO @DEV @MF test it
+	const { useCandlesticksQuery } = useSynthetixQueries();
+	const query = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
 	const data = query.isSuccess && query.data ? query.data : [];
 	const noData = query.isSuccess && query.data && data.length === 0;
 

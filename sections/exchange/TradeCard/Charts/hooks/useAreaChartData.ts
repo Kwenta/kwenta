@@ -11,8 +11,8 @@ const useAreaChartData = ({
 }) => {
 	const { useCandlesticksQuery } = useSynthetixQueries();
 	const data = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
-
-	const change = data.data?.change ?? null;
+	// TODO @DEV @MF test it and calculate rate
+	const change = data.data[0].open ?? null;
 	// eslint-disable-next-line
 	const rates = data.data?.rates ?? [];
 

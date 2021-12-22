@@ -56,12 +56,12 @@ const useCombinedRates = ({
 		selectedChartPeriodLabel.period
 	);
 
-	console.log(
+	/* 	console.log(
 		baseHistoricalRatesQuery.data,
 		quoteHistoricalRatesQuery.data,
 		baseCurrencyKey,
 		quoteCurrencyKey
-	);
+	); */
 
 	const baseChange = useMemo(() => {
 		if (baseHistoricalRatesQuery.data) {

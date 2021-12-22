@@ -34,7 +34,7 @@ import {
 } from './common/styles';
 import { Side } from 'sections/exchange/TradeCard/types';
 import useAreaChartData from './hooks/useAreaChartData';
-import useCandleSticksChartData from './hooks/useCandleSticksChartData';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type ChartCardProps = {
 	side: Side;
@@ -79,11 +79,13 @@ const ChartCard: FC<ChartCardProps> = ({
 		change,
 		rates,
 	} = useAreaChartData({ currencyKey, selectedChartPeriodLabel });
+	const { useCandlesticksQuery } = useSynthetixQueries();
+	// TODO @DEV @MF test it
 	const {
 		noData: noCandleSticksChartData,
 		isLoading: isLoadingCandleSticksChartData,
 		data: candleSticksChartData,
-	} = useCandleSticksChartData({ currencyKey, selectedChartPeriodLabel });
+	} = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel);
 
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 	const price = currentPrice || priceRate;

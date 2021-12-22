@@ -1,4 +1,4 @@
-import { FC, ReactNode, useContext, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
@@ -30,7 +30,6 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { Svg } from 'react-optimized-image';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSynthetixQueries, { SynthetixQueryContext } from '@synthetixio/queries';
 import useSettlementOwingQuery from 'hooks/useSettlementOwingQuery';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
@@ -81,6 +80,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 		(quoteCurrencyKey ?? '') as CurrencyKey,
 		walletAddress ?? ''
 	);
+	console.log(priceAdjustmentQuery.data);
 	const priceAdjustment = useMemo(
 		() =>
 			priceAdjustmentQuery.data ?? {
