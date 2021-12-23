@@ -28,7 +28,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const router = useRouter();
 	const network = useRecoilValue(networkState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
+	const { subgraph, exchanges } = useSynthetixQueries();
 	const currencyKey = synth.name as CurrencyKey;
 
 	let priceChange = 0;
@@ -38,9 +38,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 		// the price in a time range. So we need to use the exchanges subgraph when user is on L1.
 		// For L2 we should use the subgraph namespace. Once this bug is fixed on L1, delete it and
 		// just use the subgraph namespace.
-		const synthCandle = useSynthetixQueries()[
-			network.id === 10 ? 'subgraph' : 'exchanges'
-		].useGetDailyCandles(
+		const synthCandle = (network.id === 10 ? subgraph : exchanges).useGetDailyCandles(
 			{
 				first: 1,
 				where: {

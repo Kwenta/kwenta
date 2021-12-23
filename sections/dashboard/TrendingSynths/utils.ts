@@ -63,20 +63,3 @@ export const calculateRateChange = (
 
 	return percentageChange;
 };
-
-export const getMinAndMaxRate = (
-	rates // : RateUpdate[]
-) => {
-	if (rates.length === 0) return [0, 0];
-
-	return rates.reduce(
-		([minRate, maxRate], val) => {
-			const { rate } = val;
-			const newMax = rate > maxRate ? rate : maxRate;
-			const newMin = rate < minRate ? rate : minRate;
-
-			return [newMin, newMax];
-		},
-		[Number.MAX_SAFE_INTEGER, 0]
-	);
-};

@@ -30,7 +30,7 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import { Svg } from 'react-optimized-image';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSettlementOwingQuery from 'hooks/useSettlementOwingQuery';
+import useSynthetixQueries from '@synthetixio/queries';
 
 export type TxProvider = 'synthetix' | '1inch' | 'balancer';
 
@@ -68,26 +68,34 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { subgraph } = useSynthetixQueries();
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
 			minDecimals: decimals,
 		});
 	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
 
-	// TODO @DEV @MF test it
-	const priceAdjustmentQuery = useSettlementOwingQuery(
-		(quoteCurrencyKey ?? '') as CurrencyKey,
-		walletAddress ?? ''
+	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
+		{
+			where: { from: walletAddress },
+		},
+		{
+			reclaim: true,
+			rebate: true,
+		}
 	);
-	console.log(priceAdjustmentQuery.data);
+
 	const priceAdjustment = useMemo(
 		() =>
-			priceAdjustmentQuery.data ?? {
-				rebate: wei(0),
-				reclaim: wei(0),
-				numEntries: wei(0),
-			},
+			priceAdjustmentQuery.data?.length
+				? {
+						rebate: priceAdjustmentQuery.data[0].rebate,
+						reclaim: priceAdjustmentQuery.data[0].reclaim,
+				  }
+				: {
+						rebate: wei(0),
+						reclaim: wei(0),
+				  },
 		[priceAdjustmentQuery.data]
 	);
 

@@ -37,15 +37,14 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 
 	const totalValue = synth.usdBalance;
 	const price = exchangeRates && exchangeRates[synth.currencyKey];
+	const { subgraph, exchanges } = useSynthetixQueries();
 	let priceChange = 0;
 	if (currencyKey !== Synths.sUSD) {
 		//  TODO @DEV the dailyCandle query is broken on L1 but this is super important for fetching
 		// the price in a time range. So we need to use the exchanges subgraph when user is on L1.
 		// For L2 we should use the subgraph namespace. Once this bug is fixed on L1, delete it and
 		// just use the subgraph namespace.
-		const synthCandle = useSynthetixQueries()[
-			network.id === 10 ? 'subgraph' : 'exchanges'
-		].useGetDailyCandles(
+		const synthCandle = (network.id === 10 ? subgraph : exchanges).useGetDailyCandles(
 			{
 				first: 1,
 				where: {

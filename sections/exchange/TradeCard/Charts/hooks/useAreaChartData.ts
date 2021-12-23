@@ -1,4 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import { PeriodLabel } from 'constants/period';
 
@@ -9,20 +10,35 @@ const useAreaChartData = ({
 	currencyKey: CurrencyKey | null;
 	selectedChartPeriodLabel: PeriodLabel;
 }) => {
-	const { useCandlesticksQuery } = useSynthetixQueries();
-	const data = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
-	// TODO @DEV @MF test it and calculate rate
-	const change = data.data[0].open ?? null;
-	// eslint-disable-next-line
-	const rates = data.data?.rates ?? [];
+	const { useCandlesticksQuery, subgraph } = useSynthetixQueries();
+	const candleQuery = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
+	const ratesQuery = subgraph.useGetRateUpdates({}, { rate: true, timestamp: true });
 
-	const noData = data.isSuccess && data.data && data.data.rates.length === 0;
+	const candlesData = candleQuery.data?.length ? candleQuery.data : [];
+
+	const change = candleQuery.data?.length
+		? wei(candleQuery.data[0].open)
+				.sub(candleQuery.data[0].close)
+				.div(candleQuery.data[0].open)
+				.toNumber()
+		: null;
+
+	const rates = ratesQuery.data?.length
+		? ratesQuery.data.map((rate) => ({
+				rate: rate.rate.toNumber(),
+				timestamp: rate.timestamp.toNumber(),
+		  }))
+		: [];
+
+	const noData =
+		candleQuery.isSuccess && !!candleQuery.data.length && ratesQuery.data?.length === 0;
 
 	return {
 		noData,
 		change,
 		rates,
-		isLoading: data.isLoading,
+		candlesData,
+		isLoading: candleQuery.isLoading || ratesQuery.isLoading,
 	};
 };
 

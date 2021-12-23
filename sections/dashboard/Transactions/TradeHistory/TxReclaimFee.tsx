@@ -22,7 +22,6 @@ const TxReclaimFee: FC<{ trade: Record<string, any> }> = ({ trade }) => {
 			reclaim: true,
 		}
 	);
-	// TODO @DEV / @MF needs to be tested
 	const fee = feeQuery.data?.length
 		? feeQuery.data[0].rebate.sub(feeQuery.data[0].reclaim)
 		: wei(0);

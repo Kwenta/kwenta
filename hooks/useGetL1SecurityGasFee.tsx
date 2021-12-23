@@ -1,10 +1,8 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
-import detectEthereumProvider from '@metamask/detect-provider';
 import { ethers } from 'ethers';
 import { omit } from 'lodash';
 
 import Connector from 'containers/Connector';
-import { EthereumProvider } from '@synthetixio/optimism-networks/build/node/types';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
@@ -31,14 +29,14 @@ export const useGetL1SecurityFee = () => {
 	return async (metaTx: MetaTx): Promise<number> => {
 		if (!isL2) return 0;
 
-		const provider = (await detectEthereumProvider()) as EthereumProvider;
 		if (!signer) return Promise.reject('Wallet not connected');
 		const contract = new ethers.Contract(OVMGasPriceOracle.address, contractAbi, signer);
 		const nonce = await signer.getTransactionCount();
+		const chainId = await signer.getChainId();
 		const txParams = {
 			...omit(metaTx, 'from'),
 			nonce: nonce,
-			chainId: Number(provider?.chainId) || 1,
+			chainId: Number(chainId) || 1,
 			value: 0,
 		};
 		const serializedTx = ethers.utils.serializeTransaction(txParams);

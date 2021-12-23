@@ -15,10 +15,7 @@ import SynthRow from './SynthRow';
 import { numericSort } from './utils';
 import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
 import { trendingSynthsOptionState } from 'store/ui';
-import useSynthetixQueries, {
-	HistoricalRatesUpdates,
-	HistoricalVolume,
-} from '@synthetixio/queries';
+import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import mapValues from 'lodash/mapValues';
 import Connector from 'containers/Connector';
@@ -31,7 +28,6 @@ import { Period } from 'constants/period';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 import { PERIOD_IN_HOURS } from 'constants/period';
-import Wei from '@synthetixio/wei';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
@@ -56,7 +52,7 @@ const TrendingSynths: FC = () => {
 		{
 			id: true,
 			account: true,
-			// from: true,
+			from: true,
 			fromCurrencyKey: true,
 			fromAmount: true,
 			fromAmountInUSD: true,
@@ -64,6 +60,8 @@ const TrendingSynths: FC = () => {
 			toAmount: true,
 			toAmountInUSD: true,
 			feesInUSD: true,
+			toSynth: true,
+			fromSynth: true,
 			toAddress: true,
 			timestamp: true,
 			gasPrice: true,
@@ -108,7 +106,7 @@ const TrendingSynths: FC = () => {
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	// bug in queries lib: should return already parsed with `parseBytes32String`
-	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data : null;
+	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data[0] : null;
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
@@ -118,7 +116,7 @@ const TrendingSynths: FC = () => {
 		}
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
 			return unfrozenSynths.sort((a: Synth, b: Synth) =>
-				numericSort(historicalVolume, a.name, b.name)
+				numericSort(historicalVolume.toSynth as any, a.name, b.name)
 			);
 		}
 		if (historicalRates != null) {
@@ -141,7 +139,6 @@ const TrendingSynths: FC = () => {
 
 		return unfrozenSynths;
 	}, [unfrozenSynths, currentSynthSort, exchangeRates, historicalVolume, historicalRates]);
-	console.log('***sortedSynths', sortedSynths);
 
 	return (
 		<>
