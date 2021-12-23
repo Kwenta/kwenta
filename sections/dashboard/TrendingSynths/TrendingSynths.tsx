@@ -41,8 +41,8 @@ const TrendingSynths: FC = () => {
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const { useExchangeRatesQuery, exchanges } = useSynthetixQueries();
-	const historicalVolumeQuery = exchanges.useGetSynthExchanges(
+	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
+	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
 		{
 			first: Number.MAX_SAFE_INTEGER,
 			where: {
@@ -51,21 +51,14 @@ const TrendingSynths: FC = () => {
 		},
 		{
 			id: true,
-			account: true,
-			from: true,
-			fromCurrencyKey: true,
 			fromAmount: true,
 			fromAmountInUSD: true,
-			toCurrencyKey: true,
 			toAmount: true,
 			toAmountInUSD: true,
 			feesInUSD: true,
-			toSynth: true,
-			fromSynth: true,
 			toAddress: true,
 			timestamp: true,
 			gasPrice: true,
-			block: true,
 		}
 	);
 

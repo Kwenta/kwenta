@@ -55,8 +55,21 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, ...rest })
 		}
 	);
 
-	// TODO @MF get volume 24h
-
+	const synthExchangeQuery = subgraph.useGetSynthExchanges(
+		{
+			where: { timestamp_gte: yesterday, fromSynth: currencyKey },
+		},
+		{
+			id: true,
+			fromAmountInUSD: true,
+			fromAmount: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			timestamp: true,
+			gasPrice: true,
+		}
+	);
 	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 
 	let marketCap = synthMarketCapQuery.isSuccess ? synthMarketCapQuery.data ?? null : null;
@@ -67,8 +80,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, ...rest })
 		? synthRate24HQuery.data[synthRate24HQuery.data.length - 1].rate.toNumber() ?? null
 		: null;
 	let volume24H =
-		synthRate24HQuery.isSuccess && currencyKey != null
-			? (synthRate24HQuery.data && synthRate24HQuery.data[0].rate) ?? null
+		synthExchangeQuery.isSuccess && currencyKey != null
+			? (synthExchangeQuery.data && synthExchangeQuery.data[0].fromAmountInUSD) ?? null
 			: null;
 
 	if (selectPriceCurrencyRate != null) {
