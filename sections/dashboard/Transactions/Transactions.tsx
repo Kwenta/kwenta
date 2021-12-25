@@ -127,7 +127,7 @@ const Transactions: FC = () => {
 					return activeSynths.indexOf(trade.fromSynth?.symbol as CurrencyKey) !== -1;
 				})
 				.filter(createOrderSizeFilter(orderSize.key)),
-		[trades, orderSize.key, orderType.key, synthFilter.key, synths, createOrderSizeFilter]
+		[trades, orderSize.key, synthFilter.key, synths, createOrderSizeFilter]
 	);
 
 	return (
