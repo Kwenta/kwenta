@@ -15,7 +15,7 @@ const TxReclaimFee: FC<{ trade: Record<string, any> }> = ({ trade }) => {
 	const { useGetExchangeEntrySettleds } = useSynthetixQueries().subgraph;
 	const feeQuery = useGetExchangeEntrySettleds(
 		{
-			where: { exchangeTimestamp: trade.timestamp / 1000, from: walletAddress },
+			where: { exchangeTimestamp: Math.floor(trade.timestamp / 1000), from: walletAddress },
 		},
 		{
 			rebate: true,

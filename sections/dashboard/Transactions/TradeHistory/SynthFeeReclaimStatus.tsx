@@ -11,7 +11,7 @@ import { walletAddressState } from 'store/wallet';
 
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import CircleTick from 'assets/svg/app/circle-tick.svg';
-import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 const SynthFeeReclaimStatus: FC<{ trade: SynthExchangeResult }> = ({ trade }) => {
@@ -20,7 +20,7 @@ const SynthFeeReclaimStatus: FC<{ trade: SynthExchangeResult }> = ({ trade }) =>
 
 	const { useFeeReclaimPeriodQuery } = useSynthetixQueries();
 	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(
-		trade.toCurrencyKey as CurrencyKey,
+		trade.toSynth?.symbol as CurrencyKey,
 		walletAddress
 	);
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess

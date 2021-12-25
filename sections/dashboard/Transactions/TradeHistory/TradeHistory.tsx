@@ -21,8 +21,9 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import SynthFeeReclaimStatus from './SynthFeeReclaimStatus';
 import TxReclaimFee from './TxReclaimFee';
-import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
+
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 
 export interface SynthTradesExchangeResult extends SynthExchangeResult {
 	hash: string;
@@ -64,10 +65,10 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<span>
-							<StyledCurrencyKey>{cellProps.row.original.fromCurrencyKey}</StyledCurrencyKey>
+							<StyledCurrencyKey>{cellProps.row.original.fromSynth?.symbol}</StyledCurrencyKey>
 							<StyledPrice>
 								{formatCurrency(
-									cellProps.row.original.fromCurrencyKey,
+									cellProps.row.original.fromSynth?.symbol || '',
 									cellProps.row.original.fromAmount
 								)}
 							</StyledPrice>
@@ -82,10 +83,10 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<span>
-							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
+							<StyledCurrencyKey>{cellProps.row.original.toSynth?.symbol}</StyledCurrencyKey>
 							<StyledPrice>
 								{formatCurrency(
-									cellProps.row.original.toCurrencyKey,
+									cellProps.row.original.toSynth?.symbol || '',
 									cellProps.row.original.toAmount
 								)}
 							</StyledPrice>
@@ -108,7 +109,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					sortType: 'basic',
 					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<Currency.Price
-							currencyKey={cellProps.row.original.toCurrencyKey as CurrencyKey}
+							currencyKey={cellProps.row.original.toSynth?.symbol as CurrencyKey}
 							price={cellProps.row.original.toAmountInUSD}
 							sign={selectedPriceCurrency.sign}
 							conversionRate={selectPriceCurrencyRate}

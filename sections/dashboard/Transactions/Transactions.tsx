@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
 import useSynthetixQueries from '@synthetixio/queries';
-import { CurrencyKey, Synth } from '@synthetixio/contracts-interface';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
@@ -12,7 +12,7 @@ import { CapitalizedText, GridDiv } from 'styles/common';
 import Connector from 'containers/Connector';
 
 import TradeHistory from './TradeHistory';
-import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
+import { SynthTradesExchangeResult } from './TradeHistory/TradeHistory';
 
 const Transactions: FC = () => {
 	const { t } = useTranslation();
@@ -21,7 +21,7 @@ const Transactions: FC = () => {
 	const { subgraph } = useSynthetixQueries();
 	const walletTradesQuery = subgraph.useGetSynthExchanges(
 		{
-			first: Number.MAX_SAFE_INTEGER,
+			first: 1000,
 			where: {
 				account: walletAddress,
 			},
@@ -31,6 +31,12 @@ const Transactions: FC = () => {
 			fromAmount: true,
 			fromAmountInUSD: true,
 			fromSynth: {
+				symbol: true,
+				id: true,
+				name: true,
+				totalSupply: true,
+			},
+			toSynth: {
 				symbol: true,
 				id: true,
 				name: true,
@@ -81,24 +87,8 @@ const Transactions: FC = () => {
 
 	const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 
-	const createSynthTypeFilter = useCallback(
-		(synths: Synth[], synthFilter: string) => (trade: SynthExchangeResult) =>
-			synths
-				.filter((synth) => synth.category === synthFilter || synthFilter === 'ALL_SYNTHS')
-				.map((synth) => synth.name)
-				.indexOf(trade.fromSynth as CurrencyKey) !== -1,
-		[]
-	);
-
-	// This will always return true until we add limit orders back in.
-	const createOrderTypeFilter = useCallback(
-		(orderType: string) => (trade: SynthExchangeResult) => true,
-		[]
-	);
-
 	const createOrderSizeFilter = useCallback(
-		(orderSize: string) => (trade: SynthExchangeResult) => {
-			console.log(trade);
+		(orderSize: string) => (trade: SynthTradesExchangeResult) => {
 			switch (orderSize) {
 				case orderSizeList[1].key:
 					return trade.fromAmount.toNumber() <= 1000;
@@ -122,28 +112,22 @@ const Transactions: FC = () => {
 		return t.map((trade) => ({
 			...trade,
 			hash: trade.id.split('-')[0],
-		}));
+		})) as SynthTradesExchangeResult[];
 	}, [walletTradesQuery.data]);
-	console.log(trades);
+
 	const filteredHistoricalTrades = useMemo(
 		() =>
 			trades
-				// @ts-ignore
-				.filter(createSynthTypeFilter(synths, synthFilter.key))
-				// @ts-ignore
-				.filter(createOrderTypeFilter(orderType.key))
-				// @ts-ignore
+				.filter((trade) => {
+					const activeSynths = synths
+						.filter(
+							(synth) => synth.category === synthFilter.key || synthFilter.key === 'ALL_SYNTHS'
+						)
+						.map((synth) => synth.name);
+					return activeSynths.indexOf(trade.fromSynth?.symbol as CurrencyKey) !== -1;
+				})
 				.filter(createOrderSizeFilter(orderSize.key)),
-		[
-			trades,
-			orderSize.key,
-			orderType.key,
-			synthFilter.key,
-			synths,
-			createSynthTypeFilter,
-			createOrderTypeFilter,
-			createOrderSizeFilter,
-		]
+		[trades, orderSize.key, orderType.key, synthFilter.key, synths, createOrderSizeFilter]
 	);
 
 	return (
