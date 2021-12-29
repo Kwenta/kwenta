@@ -51,8 +51,8 @@ export const combineDataToPair = (
 	baseCurrencyIsSUSD: boolean,
 	quoteCurrencyIsSUSD: boolean
 ) => {
-	if (baseCurrencyIsSUSD) return quoteData;
-	if (quoteCurrencyIsSUSD) return baseData;
+	if (baseCurrencyIsSUSD) return quoteData.map(toTempCandle).map(fromTempCandle); // Double map to make sure output is still in the same format
+	if (quoteCurrencyIsSUSD) return baseData.map(toTempCandle).map(fromTempCandle);
 
 	if (!(baseData.length && quoteData.length)) return [];
 
@@ -75,7 +75,6 @@ export const combineDataToPair = (
 		let high = zeroBN;
 		let low = zeroBN;
 		let close = zeroBN;
-
 		if (candle.isBase) {
 			open = candle.open.div(prevQuoteCandle.open);
 			high = candle.high.div(prevQuoteCandle.high);

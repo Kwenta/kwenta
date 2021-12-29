@@ -1,7 +1,8 @@
 import request, { gql } from 'graphql-request';
 import { Candle } from './types';
 
-const RATES_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-rates';
+const RATES_ENDPOINT =
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
