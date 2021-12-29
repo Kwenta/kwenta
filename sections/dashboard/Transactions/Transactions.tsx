@@ -30,7 +30,7 @@ const Transactions: FC = () => {
 			id: true,
 			fromAmount: true,
 			fromAmountInUSD: true,
-			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library
+			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
 			fromSynth: { name: true, symbol: true, id: true },
 			toAmount: true,
 			toAmountInUSD: true,

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FC } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
@@ -26,6 +26,8 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	const { t } = useTranslation();
 	const pairCurrencyName = `${quoteCurrencyKey}/${baseCurrencyKey}`;
 	const theme = useTheme();
+	const [rates24High, setRates24High] = useState(0);
+	const [rates24Low, setRates24Low] = useState(0);
 	const { subgraph } = useSynthetixQueries();
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const rates24hQuery = subgraph.useGetRateUpdates(
@@ -40,14 +42,12 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 		{ rate: true }
 	);
 
-	const rates24High =
-		rates24hQuery.isSuccess && rates24hQuery.data.length
-			? rates24hQuery.data[0].rate.toNumber()
-			: 0;
-	const rates24Low =
-		rates24hQuery.isSuccess && rates24hQuery.data.length
-			? rates24hQuery.data[rates24hQuery.data.length - 1].rate.toNumber()
-			: 0;
+	useEffect(() => {
+		if (rates24hQuery.isSuccess && rates24hQuery.data.length) {
+			setRates24Low(rates24hQuery.data[rates24hQuery.data.length - 1].rate.toNumber());
+			setRates24High(rates24hQuery.data[0].rate.toNumber());
+		}
+	}, [rates24hQuery.data]);
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(
 		marketNextTransition((quoteCurrencyKey as CurrencyKey) ?? '') ?? null
