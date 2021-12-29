@@ -6,8 +6,6 @@ import Wei from '@synthetixio/wei';
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
 
-import { Period } from 'constants/period';
-
 import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
 
 import { formatPercent } from 'utils/formatters/number';
@@ -16,6 +14,10 @@ import media from 'styles/media';
 import { GridDivCentered } from 'styles/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
+
+import { Synths } from '@synthetixio/contracts-interface';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;
@@ -26,19 +28,42 @@ export type SynthBalanceRowProps = {
 const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, totalUSDBalance }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
 	const { synthsMap } = Connector.useContainer();
-
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	const network = useRecoilValue(networkState);
 
 	const currencyKey = synth.currencyKey;
 	const percent = synth.usdBalance.div(totalUSDBalance).toNumber();
-
 	const synthDesc = synthsMap != null ? synthsMap[synth.currencyKey]?.description : '';
 
 	const totalValue = synth.usdBalance;
 	const price = exchangeRates && exchangeRates[synth.currencyKey];
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const { subgraph, exchanges } = useSynthetixQueries();
+	let priceChange = 0;
+	if (currencyKey !== Synths.sUSD) {
+		//  TODO @DEV the dailyCandle query is broken on L1 but this is super important for fetching
+		// the price in a time range. So we need to use the exchanges subgraph when user is on L1.
+		// For L2 we should use the subgraph namespace. Once this bug is fixed on L1, delete it and
+		// just use the subgraph namespace.
+		const synthCandle = (network.id === 10 ? subgraph : exchanges).useGetDailyCandles(
+			{
+				first: 1,
+				where: {
+					synth: currencyKey,
+				},
+				orderBy: 'timestamp',
+				orderDirection: 'desc',
+			},
+			{
+				open: true,
+				close: true,
+			}
+		);
+
+		if (synthCandle.isSuccess && synthCandle.data?.length) {
+			const [candle] = synthCandle.data;
+			priceChange = candle?.open.sub(candle.close).div(candle.open).toNumber();
+		}
+	}
 
 	return (
 		<>
@@ -62,13 +87,13 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 					/>
 				</AmountCol>
 				<ExchangeRateCol>
-					{price != null && (
+					{price !== null && (
 						<Currency.Price
 							currencyKey={currencyKey}
 							price={price}
 							sign={selectedPriceCurrency.sign}
 							conversionRate={selectPriceCurrencyRate}
-							change={historicalRates.data?.change}
+							change={priceChange}
 						/>
 					)}
 				</ExchangeRateCol>

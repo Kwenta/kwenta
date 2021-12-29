@@ -77,7 +77,6 @@ import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, GasInfo } from '
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import L2Gas from 'containers/L2Gas';
-// import useCMCQuotesQuery from 'queries/cmc/useCMCQuotesQuery';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
@@ -934,7 +933,7 @@ const useExchange = ({
 
 	const quoteMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} priceRate={quotePriceRate} />
+			<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} />
 		) : null;
 
 	const slippagePercent = useMemo(() => {
@@ -1053,7 +1052,7 @@ const useExchange = ({
 
 	const baseMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} priceRate={basePriceRate} />
+			<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} />
 		) : null;
 
 	const combinedPriceChartCard = showPriceCard ? (

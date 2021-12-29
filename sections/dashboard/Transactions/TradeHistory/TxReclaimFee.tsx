@@ -3,19 +3,29 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Tippy from '@tippyjs/react';
 import useSynthetixQueries from '@synthetixio/queries';
-import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
 import { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
 import { walletAddressState } from 'store/wallet';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
-const TxReclaimFee: FC<{ trade: SynthExchangeExpanded }> = ({ trade }) => {
+const TxReclaimFee: FC<{ trade: Record<string, any> }> = ({ trade }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useTxReclaimFeeQuery } = useSynthetixQueries();
-	const feeQuery = useTxReclaimFeeQuery(trade.timestamp / 1000, walletAddress);
-	const fee = feeQuery.data ?? wei(0);
+	const { useGetExchangeEntrySettleds } = useSynthetixQueries().subgraph;
+	const feeQuery = useGetExchangeEntrySettleds(
+		{
+			where: { exchangeTimestamp: Math.floor(trade.timestamp / 1000), from: walletAddress },
+		},
+		{
+			rebate: true,
+			reclaim: true,
+		}
+	);
+	const fee = feeQuery.data?.length
+		? feeQuery.data[0].rebate.sub(feeQuery.data[0].reclaim)
+		: wei(0);
+
 	return (
 		<Tooltip
 			placement="top"

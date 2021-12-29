@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { Svg } from 'react-optimized-image';
-import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -23,8 +22,15 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import SynthFeeReclaimStatus from './SynthFeeReclaimStatus';
 import TxReclaimFee from './TxReclaimFee';
 
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
+
+export interface SynthTradesExchangeResult extends SynthExchangeResult {
+	hash: string;
+}
+
 type TradeHistoryProps = {
-	trades: SynthExchangeExpanded[];
+	trades: SynthTradesExchangeResult[];
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -35,7 +41,6 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const columnsDeps = useMemo(() => [selectPriceCurrencyRate], [selectPriceCurrencyRate]);
-
 	return (
 		<StyledTable
 			palette="primary"
@@ -45,7 +50,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 						<StyledTableHeader>{t('dashboard.transactions.table.orderType')}</StyledTableHeader>
 					),
 					accessor: 'orderType',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<StyledOrderType>
 							{t('dashboard.transactions.order-type-sort.market')}
 							<SynthFeeReclaimStatus trade={cellProps.row.original} />
@@ -58,12 +63,12 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					Header: <StyledTableHeader>{t('dashboard.transactions.table.from')}</StyledTableHeader>,
 					accessor: 'fromAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<span>
-							<StyledCurrencyKey>{cellProps.row.original.fromCurrencyKey}</StyledCurrencyKey>
+							<StyledCurrencyKey>{cellProps.row.original.fromSynth?.symbol}</StyledCurrencyKey>
 							<StyledPrice>
 								{formatCurrency(
-									cellProps.row.original.fromCurrencyKey,
+									cellProps.row.original.fromSynth?.symbol || '',
 									cellProps.row.original.fromAmount
 								)}
 							</StyledPrice>
@@ -76,12 +81,12 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					Header: <StyledTableHeader>{t('dashboard.transactions.table.to')}</StyledTableHeader>,
 					accessor: 'toAmount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<span>
-							<StyledCurrencyKey>{cellProps.row.original.toCurrencyKey}</StyledCurrencyKey>
+							<StyledCurrencyKey>{cellProps.row.original.toSynth?.symbol}</StyledCurrencyKey>
 							<StyledPrice>
 								{formatCurrency(
-									cellProps.row.original.toCurrencyKey,
+									cellProps.row.original.toSynth?.symbol || '',
 									cellProps.row.original.toAmount
 								)}
 							</StyledPrice>
@@ -102,9 +107,9 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					),
 					accessor: 'amount',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<Currency.Price
-							currencyKey={cellProps.row.original.toCurrencyKey}
+							currencyKey={cellProps.row.original.toSynth?.symbol as CurrencyKey}
 							price={cellProps.row.original.toAmountInUSD}
 							sign={selectedPriceCurrency.sign}
 							conversionRate={selectPriceCurrencyRate}
@@ -119,7 +124,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					),
 					accessor: 'timestamp',
 					sortType: 'basic',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) => (
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => (
 						<TxReclaimFee trade={cellProps.row.original} />
 					),
 					width: 175,
@@ -127,7 +132,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 				},
 				{
 					id: 'link',
-					Cell: (cellProps: CellProps<SynthExchangeExpanded>) =>
+					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) =>
 						blockExplorerInstance != null && cellProps.row.original.hash ? (
 							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
 								<StyledLinkIcon

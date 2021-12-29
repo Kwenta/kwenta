@@ -1,29 +1,8 @@
-import { Period, PERIOD_IN_HOURS } from 'constants/period';
-import QUERY_KEYS from 'constants/queryKeys';
 import request, { gql } from 'graphql-request';
-import { UseQueryOptions, useQuery } from 'react-query';
 import { Candle } from './types';
-import { calculateTimestampForPeriod } from './utils';
 
-const RATES_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-rates';
-
-const useCandlesticksQuery = (
-	currencyKey: string | null,
-	period: Period = Period.ONE_DAY,
-	options?: UseQueryOptions<Array<Candle>>
-) => {
-	const periodInHours = PERIOD_IN_HOURS[period];
-
-	// TODO: move to data library in js monorepo once L2 branch is merged
-	return useQuery<Array<Candle>>(
-		QUERY_KEYS.Rates.Candlesticks(currencyKey!, period),
-		async () => requestCandlesticks(currencyKey, calculateTimestampForPeriod(periodInHours)),
-		{
-			enabled: !!currencyKey && !!period,
-			...options,
-		}
-	);
-};
+const RATES_ENDPOINT =
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
@@ -60,5 +39,3 @@ export const requestCandlesticks = async (
 	};
 	return response[`${resolution}Candles`].reverse();
 };
-
-export default useCandlesticksQuery;

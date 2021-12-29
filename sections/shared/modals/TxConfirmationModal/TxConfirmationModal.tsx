@@ -68,26 +68,34 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletAddress = useRecoilValue(walletAddressState);
-
+	const { subgraph } = useSynthetixQueries();
 	const getBaseCurrencyAmount = (decimals?: number) =>
 		formatCurrency(baseCurrencyKey, baseCurrencyAmount, {
 			minDecimals: decimals,
 		});
-
-	const { useSettlementOwingQuery } = useSynthetixQueries();
-
 	const priceUSD = useCurrencyPrice((quoteCurrencyKey ?? '') as CurrencyKey);
-	const priceAdjustmentQuery = useSettlementOwingQuery(
-		(quoteCurrencyKey ?? '') as CurrencyKey,
-		walletAddress ?? ''
+
+	const priceAdjustmentQuery = subgraph.useGetExchangeEntrySettleds(
+		{
+			where: { from: walletAddress },
+		},
+		{
+			reclaim: true,
+			rebate: true,
+		}
 	);
+
 	const priceAdjustment = useMemo(
 		() =>
-			priceAdjustmentQuery.data ?? {
-				rebate: wei(0),
-				reclaim: wei(0),
-				numEntries: wei(0),
-			},
+			priceAdjustmentQuery.data?.length
+				? {
+						rebate: priceAdjustmentQuery.data[0].rebate,
+						reclaim: priceAdjustmentQuery.data[0].reclaim,
+				  }
+				: {
+						rebate: wei(0),
+						reclaim: wei(0),
+				  },
 		[priceAdjustmentQuery.data]
 	);
 

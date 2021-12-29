@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CATEGORY_MAP } from 'constants/currency';
 import useSynthetixQueries from '@synthetixio/queries';
-import { Synth } from '@synthetixio/contracts-interface';
-import { SynthExchangeExpanded } from '@synthetixio/data/build/node/src/types';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
@@ -13,13 +12,34 @@ import { CapitalizedText, GridDiv } from 'styles/common';
 import Connector from 'containers/Connector';
 
 import TradeHistory from './TradeHistory';
+import { SynthTradesExchangeResult } from './TradeHistory/TradeHistory';
 
 const Transactions: FC = () => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useWalletTradesQuery } = useSynthetixQueries();
-	const walletTradesQuery = useWalletTradesQuery(walletAddress ?? '');
+	const { subgraph } = useSynthetixQueries();
+	const walletTradesQuery = subgraph.useGetSynthExchanges(
+		{
+			first: 1000,
+			where: {
+				account: walletAddress,
+			},
+		},
+		{
+			id: true,
+			fromAmount: true,
+			fromAmountInUSD: true,
+			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
+			fromSynth: { name: true, symbol: true, id: true },
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			toAddress: true,
+			timestamp: true,
+			gasPrice: true,
+		}
+	);
 
 	const synthFilterList = useMemo(
 		() => [
@@ -38,7 +58,6 @@ const Transactions: FC = () => {
 				key: 'ALL_ORDER_TYPES',
 			},
 			{ label: t('dashboard.transactions.order-type-sort.market'), key: 'MARKET' },
-			/* { label: t('dashboard.transactions.order-type-sort.limit'), key: 'LIMIT' }, */
 		],
 		[t]
 	);
@@ -58,32 +77,17 @@ const Transactions: FC = () => {
 
 	const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 
-	const createSynthTypeFilter = useCallback(
-		(synths: Synth[], synthFilter: string) => (trade: SynthExchangeExpanded) =>
-			synths
-				.filter((synth) => synth.category === synthFilter || synthFilter === 'ALL_SYNTHS')
-				.map((synth) => synth.name)
-				.indexOf(trade.fromCurrencyKey) !== -1,
-		[]
-	);
-
-	// This will always return true until we add limit orders back in.
-	const createOrderTypeFilter = useCallback(
-		(orderType: string) => (trade: SynthExchangeExpanded) => true,
-		[]
-	);
-
 	const createOrderSizeFilter = useCallback(
-		(orderSize: string) => (trade: SynthExchangeExpanded) => {
+		(orderSize: string) => (trade: SynthTradesExchangeResult) => {
 			switch (orderSize) {
 				case orderSizeList[1].key:
-					return trade.fromAmount <= 1000;
+					return trade.fromAmount.toNumber() <= 1000;
 				case orderSizeList[2].key:
-					return 1000 < trade.fromAmount && trade.fromAmount <= 10000;
+					return 1000 < trade.fromAmount.toNumber() && trade.fromAmount.toNumber() <= 10000;
 				case orderSizeList[3].key:
-					return 10000 < trade.fromAmount && trade.fromAmount <= 100000;
+					return 10000 < trade.fromAmount.toNumber() && trade.fromAmount.toNumber() <= 100000;
 				case orderSizeList[4].key:
-					return trade.fromAmount >= 100000;
+					return trade.fromAmount.toNumber() >= 100000;
 				default:
 					return true;
 			}
@@ -98,24 +102,22 @@ const Transactions: FC = () => {
 		return t.map((trade) => ({
 			...trade,
 			hash: trade.id.split('-')[0],
-		}));
+		})) as SynthTradesExchangeResult[];
 	}, [walletTradesQuery.data]);
+
 	const filteredHistoricalTrades = useMemo(
 		() =>
 			trades
-				.filter(createSynthTypeFilter(synths, synthFilter.key))
-				.filter(createOrderTypeFilter(orderType.key))
+				.filter((trade) => {
+					const activeSynths = synths
+						.filter(
+							(synth) => synth.category === synthFilter.key || synthFilter.key === 'ALL_SYNTHS'
+						)
+						.map((synth) => synth.name);
+					return activeSynths.indexOf(trade.fromSynth?.symbol as CurrencyKey) !== -1;
+				})
 				.filter(createOrderSizeFilter(orderSize.key)),
-		[
-			trades,
-			orderSize.key,
-			orderType.key,
-			synthFilter.key,
-			synths,
-			createSynthTypeFilter,
-			createOrderTypeFilter,
-			createOrderSizeFilter,
-		]
+		[trades, orderSize.key, synthFilter.key, synths, createOrderSizeFilter]
 	);
 
 	return (
@@ -156,7 +158,7 @@ const Transactions: FC = () => {
 				/>
 			</Filters>
 			<TradeHistory
-				trades={filteredHistoricalTrades}
+				trades={filteredHistoricalTrades as any}
 				isLoaded={walletTradesQuery.isSuccess}
 				isLoading={walletTradesQuery.isLoading}
 			/>

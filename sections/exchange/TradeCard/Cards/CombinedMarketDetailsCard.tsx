@@ -1,42 +1,53 @@
 import { useTranslation } from 'react-i18next';
-import { FC } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
-import { PERIOD_LABELS_MAP } from 'constants/period';
 import { FlexDivRowCentered } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketNextTransition, marketIsOpen } from 'utils/marketHours';
-import useCombinedRates from 'sections/exchange/TradeCard/Charts/hooks/useCombinedRates';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type MarketDetailsCardProps = {
 	baseCurrencyKey: CurrencyKey | null;
 	quoteCurrencyKey: CurrencyKey | null;
-	basePriceRate: number | null;
-	quotePriceRate: number | null;
 	className?: string;
 };
 
 const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 	baseCurrencyKey,
 	quoteCurrencyKey,
-	basePriceRate,
-	quotePriceRate,
 	...rest
 }) => {
 	const { t } = useTranslation();
 	const pairCurrencyName = `${quoteCurrencyKey}/${baseCurrencyKey}`;
 	const theme = useTheme();
+	const [rates24High, setRates24High] = useState(0);
+	const [rates24Low, setRates24Low] = useState(0);
+	const { subgraph } = useSynthetixQueries();
+	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
+	const rates24hQuery = subgraph.useGetRateUpdates(
+		{
+			where: {
+				synth: baseCurrencyKey === 'sUSD' ? quoteCurrencyKey : baseCurrencyKey,
+				timestamp_gte: yesterday,
+			},
+			orderDirection: 'desc',
+			orderBy: 'rate',
+		},
+		{ rate: true }
+	);
 
-	const { low: rates24Low, high: rates24High } = useCombinedRates({
-		baseCurrencyKey,
-		quoteCurrencyKey,
-		selectedChartPeriodLabel: PERIOD_LABELS_MAP.ONE_DAY,
-	});
+	useEffect(() => {
+		if (rates24hQuery.isSuccess && rates24hQuery.data.length) {
+			setRates24Low(rates24hQuery.data[rates24hQuery.data.length - 1].rate.toNumber());
+			setRates24High(rates24hQuery.data[0].rate.toNumber());
+		}
+	}, [rates24hQuery.data]);
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(
 		marketNextTransition((quoteCurrencyKey as CurrencyKey) ?? '') ?? null

@@ -9,7 +9,6 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { Period } from 'constants/period';
 
 import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
 
@@ -24,20 +23,15 @@ import Connector from 'containers/Connector';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;
-	priceRate: number | null;
 	className?: string;
 };
 
-const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate, ...rest }) => {
+const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, ...rest }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { tokensMap } = Connector.useContainer();
 
-	const {
-		useHistoricalVolumeQuery,
-		useHistoricalRatesQuery,
-		useSynthMarketCapQuery,
-	} = useSynthetixQueries();
+	const { subgraph, useSynthMarketCapQuery } = useSynthetixQueries();
 
 	const {
 		selectPriceCurrencyRate,
@@ -46,20 +40,48 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({ currencyKey, priceRate,
 	} = useSelectedPriceCurrency();
 	const theme = useTheme();
 
-	const vol24HQuery = useHistoricalVolumeQuery(Period.ONE_DAY);
-	const historicalRates24HQuery = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const yesterday = new Date().setDate(new Date().getDate() - 1);
+	const synthRate24HQuery = subgraph.useGetRateUpdates(
+		{
+			where: {
+				synth: currencyKey,
+				timestamp_gte: yesterday,
+			},
+			orderBy: 'rate',
+			orderDirection: 'desc',
+		},
+		{
+			rate: true,
+		}
+	);
+
+	const synthExchangeQuery = subgraph.useGetSynthExchanges(
+		{
+			where: { timestamp_gte: yesterday, fromSynth: currencyKey },
+		},
+		{
+			id: true,
+			fromAmountInUSD: true,
+			fromAmount: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			timestamp: true,
+			gasPrice: true,
+		}
+	);
 	const synthMarketCapQuery = useSynthMarketCapQuery(currencyKey);
 
 	let marketCap = synthMarketCapQuery.isSuccess ? synthMarketCapQuery.data ?? null : null;
-	let rates24High = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.high ?? null
+	let rates24High = synthRate24HQuery.isSuccess
+		? synthRate24HQuery.data[0].rate.toNumber() ?? null
 		: null;
-	let rates24Low = historicalRates24HQuery.isSuccess
-		? historicalRates24HQuery.data?.low ?? null
+	let rates24Low = synthRate24HQuery.isSuccess
+		? synthRate24HQuery.data[synthRate24HQuery.data.length - 1].rate.toNumber() ?? null
 		: null;
 	let volume24H =
-		vol24HQuery.isSuccess && currencyKey != null
-			? (vol24HQuery.data && vol24HQuery.data[currencyKey]) ?? null
+		synthExchangeQuery.isSuccess && currencyKey != null
+			? (synthExchangeQuery.data && synthExchangeQuery.data[0].fromAmountInUSD) ?? null
 			: null;
 
 	if (selectPriceCurrencyRate != null) {
