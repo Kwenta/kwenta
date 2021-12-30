@@ -17,7 +17,7 @@ import {
 import { appReadyState } from 'store/app';
 import { hexToAscii } from 'utils/formatters/string';
 import { isL2KovanState, isL2MainnetState, isL1KovanState } from 'store/wallet';
-import { isWalletConnectedState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 
 export type ShortPosition = {
 	id: string;
@@ -51,6 +51,8 @@ const useCollateralShortPositionQuery = (
 	const isL1Kovan = useRecoilValue(isL1KovanState);
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 	const isL2Kovan = useRecoilValue(isL2KovanState);
+	const isL2 = isL2Mainnet || isL2Kovan;
+	const walletAddress = useRecoilValue(walletAddressState);
 
 	const shortsSubgraphEndpoint = isL1Kovan
 		? SHORT_GRAPH_ENDPOINT_KOVAN
@@ -63,9 +65,16 @@ const useCollateralShortPositionQuery = (
 	return useQuery<ShortPosition>(
 		QUERY_KEYS.Collateral.ShortPosition(loanId as string),
 		async () => {
-			const { CollateralShort, CollateralUtil, ExchangeRates } = synthetixjs!.contracts;
+			const {
+				CollateralShort,
+				CollateralUtil,
+				ExchangeRates,
+				CollateralStateShort,
+			} = synthetixjs!.contracts;
 
-			const loan = (await CollateralShort.loans(loanId as string)) as {
+			const loan = (isL2
+				? await CollateralShort.loans(loanId as string)
+				: await CollateralStateShort.getLoan(walletAddress, loanId as string)) as {
 				accruedInterest: ethers.BigNumber;
 				lastInteraction: ethers.BigNumber;
 				currency: string;
@@ -73,10 +82,9 @@ const useCollateralShortPositionQuery = (
 				collateral: string;
 			};
 
-			const collateralRatio = (await CollateralUtil.getCollateralRatio(
-				loan,
-				utils.formatBytes32String(Synths.sUSD)
-			)) as ethers.BigNumber;
+			const collateralRatio = (isL2
+				? await CollateralUtil.getCollateralRatio(loan, utils.formatBytes32String(Synths.sUSD))
+				: await CollateralShort.collateralRatio(loan)) as ethers.BigNumber;
 
 			let txHash = loanTxHash ?? null;
 			let isOpen = null;
