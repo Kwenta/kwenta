@@ -9,7 +9,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
 import { SYNTHS_TO_SHORT } from '../constants';
 
-import ShortingReward from './ShortingRewardRow';
+import ShortingReward, { GasInfo } from './ShortingRewardRow';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getTransactionPrice } from 'utils/network';
@@ -22,7 +22,8 @@ import useSynthetixQueries from '@synthetixio/queries';
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
 
-	const [gasLimit, setGasLimit] = useState<number | null>(null);
+	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
@@ -66,11 +67,10 @@ const ShortingRewards: FC = () => {
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
+	const transactionFee = useMemo(
+		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
+		[gasPrice, gasInfo?.limit, gasInfo?.l1Fee, ethPriceRate]
+	);
 
 	return (
 		<div>
@@ -78,7 +78,7 @@ const ShortingRewards: FC = () => {
 			{SYNTHS_TO_SHORT.map((currencyKey) => (
 				<ShortingReward
 					key={currencyKey}
-					{...{ gasPrice, setGasLimit, currencyKey, snxPriceRate }}
+					{...{ gasPrice, setGasInfo, currencyKey, snxPriceRate }}
 				/>
 			))}
 			<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />

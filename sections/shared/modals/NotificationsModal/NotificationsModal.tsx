@@ -19,7 +19,8 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	const ordersByStatus = useRecoilValue(ordersByStatusState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useFeeReclaimPeriodsQuery } = useSynthetixQueries();
+	const { useFeeReclaimPeriodsQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
+
 	const feeWaitingPeriodsQuery = useFeeReclaimPeriodsQuery(walletAddress ?? '');
 	const feeWaitingPeriods = useMemo(() => feeWaitingPeriodsQuery.data ?? [], [
 		feeWaitingPeriodsQuery.data,
@@ -27,6 +28,17 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	const hasWaitingPeriod = useMemo(() => !!feeWaitingPeriods.find((fw) => fw.waitingPeriod !== 0), [
 		feeWaitingPeriods,
 	]);
+
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
+	const redeemableDeprecatedSynths =
+		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
+			? redeemableDeprecatedSynthsQuery.data
+			: null;
+
+	const hasRedeemableDeprecatedSynths = useMemo(
+		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
+		[redeemableDeprecatedSynths?.totalUSDBalance]
+	);
 
 	const orderGroups = useMemo(
 		() => [
@@ -49,7 +61,16 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	);
 
 	return isFullScreen ? (
-		<FullScreen {...{ onDismiss, feeWaitingPeriods, hasWaitingPeriod, orderGroups }} />
+		<FullScreen
+			{...{
+				onDismiss,
+				feeWaitingPeriods,
+				hasWaitingPeriod,
+				orderGroups,
+				hasRedeemableDeprecatedSynths,
+				redeemableDeprecatedSynthsQuery,
+			}}
+		/>
 	) : (
 		<Popup
 			{...{
@@ -59,6 +80,8 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 				orderGroups,
 				setIsFullScreen,
 				ordersByStatus,
+				hasRedeemableDeprecatedSynths,
+				redeemableDeprecatedSynthsQuery,
 			}}
 		/>
 	);

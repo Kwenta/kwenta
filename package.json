@@ -11,6 +11,7 @@
 		"lint": "eslint . --ext ts,.tsx && tsc",
 		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
+		"test:unit": "jest",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
 		"test:e2e:ci": "synpress run --group smoke-tests --record --parallel",
 		"postinstall": "husky install",
@@ -21,22 +22,22 @@
 		"@artsy/fresnel": "1.7.0",
 		"@balancer-labs/sor": "1.0.0",
 		"@material-ui/core": "^4.12.3",
+		"@eth-optimism/contracts": "^0.5.1",
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "0.0.0-5b69131",
-		"@synthetixio/data": "0.0.0-5b69131",
-		"@synthetixio/optimism-networks": "2.46.3",
-		"@synthetixio/providers": "0.0.0-dddf502",
-		"@synthetixio/queries": "0.0.0-5b69131",
-		"@synthetixio/transaction-notifier": "0.0.8",
-		"@synthetixio/wei": "0.0.0-b7f59d8",
+		"@synthetixio/contracts-interface": "2.56.3",
+		"@synthetixio/optimism-networks": "2.56.3",
+		"@synthetixio/providers": "2.56.3",
+		"@synthetixio/queries": "2.56.3",
+		"@synthetixio/transaction-notifier": "2.56.3",
+		"@synthetixio/wei": "2.56.3",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
-		"bnc-onboard": "1.26.0",
+		"bnc-onboard": "1.35.3",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
 		"ethcall": "3.2.0",
@@ -44,7 +45,7 @@
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
-		"immer": "8.0.1",
+		"immer": "9.0.6",
 		"lodash": "4.17.20",
 		"moment-business-time": "1.1.1",
 		"next": "10.0.0",
@@ -68,14 +69,18 @@
 		"styled-media-query": "2.1.2",
 		"synthetix": "^2.40.1-alpha",
 		"synthetix-data": "2.1.42",
-		"unstated-next": "1.1.0",
-		"use-immer": "0.4.2"
+		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
 		"@svgr/core": "5.5.0",
 		"@synthetixio/synpress": "0.8.1",
+		"@testing-library/jest-dom": "5.14.1",
+		"@testing-library/react": "12.1.2",
+		"@testing-library/react-hooks": "7.0.2",
+		"@testing-library/user-event": "13.5.0",
 		"@types/date-fns": "2.6.0",
+		"@types/jest": "27.0.2",
 		"@types/lodash": "4.14.159",
 		"@types/node": "14.0.13",
 		"@types/react": "16.9.46",
@@ -101,10 +106,12 @@
 		"husky": "5.0.9",
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
+		"jest": "27.3.1",
 		"lint-staged": "10.0.10",
 		"optimized-images-loader": "github:clementbalestrat/optimized-images-loader",
 		"pinst": "2.1.4",
 		"prettier": "2.0.5",
+		"react-test-renderer": "17.0.1",
 		"typescript": "4.0.5",
 		"url-loader": "4.1.0",
 		"webp-loader": "0.6.0"
@@ -116,6 +123,22 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"jest": {
+		"roots": [
+			"<rootDir>"
+		],
+		"modulePaths": [
+			"<rootDir>"
+		],
+		"moduleDirectories": [
+			"node_modules"
+		],
+		"globalSetup": "./test-setup/global.js",
+		"setupFilesAfterEnv": [
+			"./test-setup/setup.js"
+		],
+		"testEnvironment": "jest-environment-jsdom"
 	},
 	"engines": {
 		"node": ">=14",

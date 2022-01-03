@@ -14,6 +14,7 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
+import { wei } from '@synthetixio/wei';
 
 type SynthRowProps = {
 	price: number | null;
@@ -23,12 +24,14 @@ type SynthRowProps = {
 const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	const { useCandlesticksQuery } = useSynthetixQueries();
 
 	const currencyKey = synth.name as CurrencyKey;
 
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY);
+	const historicalRates = useCandlesticksQuery(currencyKey, Period.ONE_DAY);
+	const change = (historicalRates.data ?? []).map((rate) =>
+		wei(rate.open).sub(wei(rate.close)).div(rate.open).toNumber()
+	);
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
@@ -44,7 +47,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth, onClick }) => {
 				<Currency.Price
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					change={change[0]}
 					{...{ price, currencyKey }}
 				/>
 			) : (

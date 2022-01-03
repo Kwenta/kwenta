@@ -21,6 +21,8 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
+const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
+
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
@@ -43,6 +45,11 @@ const Header: FC = () => {
 				label: t('homepage.nav.faq'),
 				ref: faqRef,
 			},
+			{
+				id: 'kips',
+				label: t('homepage.nav.kips'),
+				onClick: () => window.open(KIPS_LINK, '_blank'),
+			},
 		],
 		[t, whyKwentaRef, howItWorksRef, faqRef]
 	);
@@ -53,11 +60,11 @@ const Header: FC = () => {
 				<Container>
 					<Logo isL2={isL2} />
 					<Links>
-						{links.map(({ id, label, ref }) => (
+						{links.map(({ id, label, ref, onClick }) => (
 							<StyledTextButton
 								key={id}
 								onClick={() => {
-									scrollToRef(ref);
+									ref ? scrollToRef(ref) : onClick?.();
 								}}
 							>
 								{label}

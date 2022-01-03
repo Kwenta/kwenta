@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
-import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
+import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 import Card from 'components/Card';
 
@@ -10,29 +11,57 @@ import FullScreenModal from 'components/FullScreenModal';
 import { OrderGroup } from './types';
 import CurrencyFeeReclaim from './CurrencyFeeReclaim';
 import CurrencyExchange from './CurrencyExchange';
+import RedeemableDeprecatedSynths from './RedeemableDeprecatedSynths';
 
 type FullScreenProps = {
 	onDismiss?: () => void;
 	orderGroups: OrderGroup[];
 	feeWaitingPeriods: SynthFeeAndWaitingPeriod[];
 	hasWaitingPeriod: boolean;
+	hasRedeemableDeprecatedSynths: boolean;
+	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;
 };
 
-export const FullScreen: FC<FullScreenProps> = ({ orderGroups, feeWaitingPeriods }) => {
+export const FullScreen: FC<FullScreenProps> = ({
+	orderGroups,
+	feeWaitingPeriods,
+	hasWaitingPeriod,
+	hasRedeemableDeprecatedSynths,
+	redeemableDeprecatedSynthsQuery,
+}) => {
 	const { t } = useTranslation();
 
 	return (
 		<StyledFullScreenModal isOpen={true} title={t('modals.notifications.title')}>
-			<StyledCard>
-				<StyledCardHeader>{t('modals.notifications.fee-reclaiming-synths.title')}</StyledCardHeader>
-				<StyledCardBody>
-					{feeWaitingPeriods.map(({ currencyKey, waitingPeriod }) =>
-						waitingPeriod === 0 ? null : (
-							<CurrencyFeeReclaim key={currencyKey} {...{ currencyKey, waitingPeriod }} />
-						)
-					)}
-				</StyledCardBody>
-			</StyledCard>
+			{!hasWaitingPeriod ? null : (
+				<StyledCard>
+					<StyledCardHeader>
+						{t('modals.notifications.fee-reclaiming-synths.title')}
+					</StyledCardHeader>
+					<StyledCardBody>
+						{feeWaitingPeriods.map(({ currencyKey, waitingPeriod }) =>
+							waitingPeriod === 0 ? null : (
+								<CurrencyFeeReclaim key={currencyKey} {...{ currencyKey, waitingPeriod }} />
+							)
+						)}
+					</StyledCardBody>
+				</StyledCard>
+			)}
+
+			{!hasRedeemableDeprecatedSynths ? null : (
+				<StyledCard>
+					<StyledCardHeader>
+						{t('modals.notifications.fee-reclaiming-synths.title')}
+					</StyledCardHeader>
+					<StyledCardBody>
+						<RedeemableDeprecatedSynths
+							{...{
+								redeemableDeprecatedSynthsQuery,
+							}}
+						/>
+					</StyledCardBody>
+				</StyledCard>
+			)}
 
 			{orderGroups.map((group) => (
 				<StyledCard key={group.id}>

@@ -20,7 +20,6 @@ import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
 
 import { formatCurrency } from 'utils/formatters/number';
-import { hexToAsciiV2 } from 'utils/formatters/string';
 
 import { ShortPosition } from 'queries/collateral/useCollateralShortPositionQuery';
 import useCollateralShortContractInfoQuery from 'queries/collateral/useCollateralShortContractInfoQuery';
@@ -66,6 +65,7 @@ import { ShortingTab } from './constants';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { isL2State } from 'store/wallet';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -95,6 +95,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const [txError, setTxError] = useState<string | null>(null);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthsMap, synthetixjs } = Connector.useContainer();
+	const isL2 = useRecoilValue(isL2State);
 
 	const {
 		useEthGasPriceQuery,
@@ -142,7 +143,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		: 0;
 
 	const balance = synthsWalletBalancesQuery.data?.balancesMap[currencyKey]?.balance ?? null;
-
 	const inputAmountBN = wei(inputAmount || 0);
 
 	const redirectToShortingHome = useCallback(() => router.push(ROUTES.Shorting.Home), [router]);
@@ -174,14 +174,14 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				break;
 			case ShortingTab.ClosePosition:
 				params = [idParam];
-				method = 'close';
+				method = isL2 ? 'closeWithCollateral' : 'close'; // closeWithCollateral only available on L2
 				onSuccess = () => redirectToShortingHome();
 				break;
 			default:
 				throw new Error('unrecognized tab');
 		}
 		return { method, params, onSuccess };
-	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome]);
+	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome, isL2]);
 
 	const gasPrice = useMemo(
 		() =>
@@ -229,7 +229,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			if (feeReclaimPeriodInSeconds > 0) {
 				return t('exchange.summary-info.button.fee-reclaim-period');
 			}
-			if (balance != null && totalToRepay.gt(balance)) {
+			if (!isL2 && balance != null && totalToRepay.gt(balance)) {
 				return t(
 					'shorting.history.manage-short.sections.close-position.button.insufficient-balance-to-repay'
 				);
@@ -284,6 +284,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		short,
 		isCloseTab,
 		totalToRepay,
+		isL2,
 	]);
 
 	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
@@ -355,12 +356,8 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					await CollateralShort.callStatic[method](...params);
 					throw e;
 				} catch (e) {
-					console.log(e);
-					setTxError(
-						e.data
-							? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
-							: e.message
-					);
+					console.error(e);
+					setTxError(e?.data?.message ?? 'Error');
 				}
 			} finally {
 				setIsSubmitting(false);
@@ -405,9 +402,9 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 				}
 				setTxApproveModalOpen(false);
 			} catch (e) {
-				console.log(e);
+				console.error(e);
 				setIsApproving(false);
-				setTxError(e.message);
+				setTxError(e?.data?.message ?? 'Error');
 			}
 		}
 	};
@@ -474,6 +471,11 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		</SummaryItems>
 	);
 
+	const feeRate = // no fees for increasing and decreasing a position
+		tab === ShortingTab.IncreasePosition || tab === ShortingTab.DecreasePosition
+			? wei(0)
+			: issueFeeRate;
+
 	return (
 		<Container>
 			{!isWalletConnected ? (
@@ -509,7 +511,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								currencyKey={currencyKey}
 								amount={inputAmount}
 								onAmountChange={setInputAmount}
-								walletBalance={null}
+								walletBalance={balance}
 								onBalanceClick={() => (balance != null ? setInputAmount(balance.toString()) : null)}
 								priceRate={assetPriceRate}
 								label={
@@ -531,7 +533,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								gasPrices={gasPrices}
 								feeReclaimPeriodInSeconds={0}
 								quoteCurrencyKey={null}
-								feeRate={issueFeeRate}
+								feeRate={feeRate}
 								transactionFee={transactionFee}
 								feeCost={feeCost}
 								showFee={true}

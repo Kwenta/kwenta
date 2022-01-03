@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Currency from 'components/Currency';
 
 import { NO_VALUE } from 'constants/placeholder';
-import { Period } from 'constants/period';
 import ROUTES from 'constants/routes';
 
 import { SelectableCurrencyRow } from 'styles/common';
@@ -14,24 +13,50 @@ import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries from '@synthetixio/queries';
 import { Synth } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
+
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type SynthRowProps = {
 	price: number | null;
 	synth: Synth;
 };
+
 const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const network = useRecoilValue(networkState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-
+	const { subgraph, exchanges } = useSynthetixQueries();
 	const currencyKey = synth.name as CurrencyKey;
 
-	const { useHistoricalRatesQuery } = useSynthetixQueries();
+	let priceChange = 0;
 
-	const historicalRates = useHistoricalRatesQuery(currencyKey, Period.ONE_DAY, {
-		refetchInterval: false,
-	});
+	if (currencyKey !== Synths.sUSD) {
+		//  TODO @DEV the dailyCandle query is broken on L1 but this is super important for fetching
+		// the price in a time range. So we need to use the exchanges subgraph when user is on L1.
+		// For L2 we should use the subgraph namespace. Once this bug is fixed on L1, delete it and
+		// just use the subgraph namespace.
+		const synthCandle = (network.id === 10 ? subgraph : exchanges).useGetDailyCandles(
+			{
+				first: 1,
+				where: {
+					synth: synth.name,
+				},
+				orderBy: 'timestamp',
+				orderDirection: 'desc',
+			},
+			{
+				open: true,
+				close: true,
+			}
+		);
+		if (synthCandle.isSuccess && synthCandle.data?.length) {
+			const [candle] = synthCandle.data;
+			priceChange = candle?.open.sub(candle.close).div(candle.open).toNumber();
+		}
+	}
 	const { marketClosureReason } = useMarketClosed(currencyKey);
 
 	return (
@@ -53,11 +78,11 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 			/>
 			{price != null ? (
 				<Currency.Price
-					currencyKey={selectedPriceCurrency.name as CurrencyKey}
+					currencyKey={selectedPriceCurrency.name}
 					price={price}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
-					change={historicalRates.data?.change}
+					change={priceChange}
 				/>
 			) : (
 				NO_VALUE

@@ -9,7 +9,6 @@ import useCollateralShortContractInfoQuery from 'queries/collateral/useCollatera
 import { formatPercent } from 'utils/formatters/number';
 
 import { PriceChangeText } from './common';
-import { MIN_COLLATERAL_RATIO } from 'sections/shorting/constants';
 
 type CRatioColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
@@ -18,9 +17,9 @@ type CRatioColType = {
 const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
-		cellProps.row.original.txHash,
-		true
+		cellProps.row.original.txHash
 	);
+
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),
 		[collateralShortPositionQuery]
@@ -35,18 +34,19 @@ const CRatioCol: FC<CRatioColType> = ({ cellProps }) => {
 		[collateralShortContractInfoQuery.isSuccess, collateralShortContractInfoQuery.data]
 	);
 
-	const minCollateralRatio = useMemo(
-		() => collateralShortInfo?.minCollateralRatio ?? MIN_COLLATERAL_RATIO,
-		[collateralShortInfo?.minCollateralRatio]
-	);
+	const minCollateralRatio = useMemo(() => collateralShortInfo?.minCollateralRatio, [
+		collateralShortInfo?.minCollateralRatio,
+	]);
 
 	return (
 		<>
-			{collateralShortPosition != null ? (
+			{collateralShortPosition != null &&
+			collateralShortPosition.collateralRatio &&
+			minCollateralRatio != null ? (
 				<PriceChangeText
 					isPositive={collateralShortPosition.collateralRatio.gt(minCollateralRatio)}
 				>
-					{formatPercent(collateralShortPosition.collateralRatio)}
+					{formatPercent(collateralShortPosition?.collateralRatio)}
 				</PriceChangeText>
 			) : (
 				<span>{NO_VALUE}</span>

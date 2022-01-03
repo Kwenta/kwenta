@@ -41,7 +41,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	let weiValue = wei(0);
 	try {
 		weiValue = wei(value);
-	} catch {}
+	} catch (e) {
+		console.error('***Error in formatNumber', e);
+	}
 
 	const isNegative = weiValue.lt(wei(0));
 	const formattedValue = [];

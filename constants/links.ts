@@ -1,5 +1,7 @@
 import { CurrencyKey } from './currency';
 
+export const PROD_HOSTNAME = 'kwenta.io';
+
 export const EXTERNAL_LINKS = {
 	Trading: {
 		DexAG: 'https://dex.ag/',
@@ -14,9 +16,9 @@ export const EXTERNAL_LINKS = {
 	},
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
-		Medium: 'https://blog.synthetix.io/',
+		Medium: 'https://blog.kwenta.io/',
 		Discord: 'https://discord.gg/SwNfgV4w6C',
-		GitHub: 'https://github.com/synthetixio/kwenta',
+		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {
 		Synthetix: 'https://synths.snx.eth.link/',

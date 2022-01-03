@@ -5,7 +5,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { PERIOD_IN_HOURS, Period } from 'constants/period';
 
-import { calculateTimestampForPeriod } from './utils';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 interface Rate {
 	rate: number;

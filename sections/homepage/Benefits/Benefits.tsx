@@ -3,10 +3,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Img from 'react-optimized-image';
 
-import { Synths } from 'constants/currency';
-
-// import SwapPreview from 'assets/svg/marketing/swap-preview.svg';
-// import SwapPreviewMd from 'assets/svg/marketing/swap-preview-md.svg';
 import P2CIcon from 'assets/svg/marketing/icon-p2c.svg';
 import PermissionlessIcon from 'assets/svg/marketing/icon-permissionless.svg';
 import RestrictionsIcon from 'assets/svg/marketing/icon-restrictions.svg';
@@ -16,7 +12,6 @@ import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import { StackSection, CenterSubHeader, Title, Copy } from '../common';
-import useExchange from 'sections/exchange/hooks/useExchange';
 
 const BENEFITS = [
 	{
@@ -41,21 +36,10 @@ const BENEFITS = [
 
 const Benefits = () => {
 	const { t } = useTranslation();
-	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
-		footerCardAttached: true,
-		persistSelectedCurrencies: false,
-		defaultQuoteCurrencyKey: Synths.sBTC,
-		defaultBaseCurrencyKey: Synths.sETH,
-	});
 
 	return (
 		<StackSection>
 			<StyledCenterSubHeader>{t('homepage.benefits.title')}</StyledCenterSubHeader>
-			<ExchangeCards>
-				{quoteCurrencyCard}
-				{baseCurrencyCard}
-			</ExchangeCards>
-			<ExchangeFooter>{footerCard}</ExchangeFooter>
 			<BenefitContainer>
 				{BENEFITS.map(({ id, image, title, copy }) => (
 					<BenefitCard key={id}>
@@ -68,46 +52,6 @@ const Benefits = () => {
 		</StackSection>
 	);
 };
-
-const ExchangeFooter = styled.div`
-	width: 100%;
-	.footer-card {
-		padding: 16px 18px;
-		max-width: unset;
-	}
-	${media.lessThan('md')`
-		.footer-card {
-			width: unset;
-			position: unset;
-			box-shadow: unset;
-		}
-		.trade-summary-card {
-			margin-bottom: 24px;
-		}
-	`}
-`;
-
-const ExchangeCards = styled.div`
-	display: grid;
-	justify-content: center;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 2px;
-	padding-bottom: 2px;
-
-	.currency-card {
-		width: 400px;
-	}
-	${media.lessThan('md')`
-		width: 100%;
-		justify-content: unset;
-		grid-template-columns: unset;
-		grid-template-rows: auto auto;
-		.currency-card {
-			width: 100%;
-		}
-		padding-bottom: 24px;
-	`}
-`;
 
 export const ResponsiveImage = styled(Img)`
 	width: 100%;
@@ -139,7 +83,7 @@ const BenefitContainer = styled.div`
 	display: grid;
 	grid-auto-flow: column;
 	align-items: baseline;
-	margin: 100px 0px 140px 0;
+	margin: 60px 0px 140px 0;
 	grid-gap: 40px;
 	${media.lessThan('md')`
 		margin: 80px 0;

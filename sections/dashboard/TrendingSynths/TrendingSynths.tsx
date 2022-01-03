@@ -25,22 +25,49 @@ import { useQueryClient, Query } from 'react-query';
 import { networkState } from 'store/wallet';
 import { Period } from 'constants/period';
 
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
+import { PERIOD_IN_HOURS } from 'constants/period';
+
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();
 	const network = useRecoilValue(networkState);
+	const twentyFourHoursAgo = useMemo(
+		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
+		[]
+	);
 
 	const { synthsMap } = Connector.useContainer();
 
 	const [currentSynthSort, setCurrentSynthSort] = useRecoilState(trendingSynthsOptionState);
 
-	const { useExchangeRatesQuery, useHistoricalVolumeQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery, subgraph } = useSynthetixQueries();
+	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
+		{
+			first: Number.MAX_SAFE_INTEGER,
+			where: {
+				timestamp_gte: twentyFourHoursAgo,
+			},
+		},
+		{
+			id: true,
+			fromAmount: true,
+			fromAmountInUSD: true,
+			toAmount: true,
+			toAmountInUSD: true,
+			feesInUSD: true,
+			toAddress: true,
+			timestamp: true,
+			gasPrice: true,
+		}
+	);
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const historicalVolumeQuery = useHistoricalVolumeQuery();
 
 	const queryCache = useQueryClient().getQueryCache();
+	// KM-NOTE: come back and delete
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
 
 	const unfrozenSynths =
@@ -72,7 +99,7 @@ const TrendingSynths: FC = () => {
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	// bug in queries lib: should return already parsed with `parseBytes32String`
-	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data : null;
+	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data[0] : null;
 
 	const sortedSynths = useMemo(() => {
 		if (currentSynthSort.value === SynthSort.Price && exchangeRates != null) {
@@ -82,7 +109,7 @@ const TrendingSynths: FC = () => {
 		}
 		if (currentSynthSort.value === SynthSort.Volume && historicalVolume != null) {
 			return unfrozenSynths.sort((a: Synth, b: Synth) =>
-				numericSort(historicalVolume, a.name, b.name)
+				numericSort(historicalVolume.toSynth as any, a.name, b.name)
 			);
 		}
 		if (historicalRates != null) {

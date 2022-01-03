@@ -7,6 +7,8 @@ import { formatNumber } from 'utils/formatters/number';
 
 import { StyledCurrencyKey, StyledPrice } from './common';
 
+import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+
 type AccruedInterestColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
 };
@@ -14,8 +16,7 @@ type AccruedInterestColType = {
 const AccruedInterestCol: FC<AccruedInterestColType> = ({ cellProps }) => {
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
-		cellProps.row.original.txHash,
-		true
+		cellProps.row.original.txHash
 	);
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),
@@ -26,7 +27,9 @@ const AccruedInterestCol: FC<AccruedInterestColType> = ({ cellProps }) => {
 		<span>
 			<StyledPrice>
 				{collateralShortPosition != null
-					? formatNumber(collateralShortPosition.accruedInterest)
+					? formatNumber(collateralShortPosition.accruedInterest, {
+							minDecimals: DEFAULT_TOKEN_DECIMALS,
+					  })
 					: NO_VALUE}
 			</StyledPrice>
 			<StyledCurrencyKey>{cellProps.row.original.synthBorrowed}</StyledCurrencyKey>

@@ -1,5 +1,6 @@
 import formatDate from 'date-fns/format';
 import getISOWeeksInYear from 'date-fns/getISOWeeksInYear';
+import subHours from 'date-fns/subHours';
 
 import { strPadLeft } from './string';
 
@@ -22,3 +23,6 @@ export const secondsToTime = (seconds: number) => {
 };
 
 export const WEEKS_IN_YEAR = getISOWeeksInYear(new Date());
+
+export const calculateTimestampForPeriod = (periodInHours: number) =>
+	Math.trunc(subHours(new Date().getTime(), periodInHours).getTime());

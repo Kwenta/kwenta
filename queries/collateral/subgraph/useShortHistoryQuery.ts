@@ -8,7 +8,13 @@ import { walletAddressState, isWalletConnectedState, networkState } from 'store/
 import QUERY_KEYS from 'constants/queryKeys';
 
 import { HistoricalShortPosition } from './types';
-import { formatShort, SHORT_GRAPH_ENDPOINT_KOVAN, SHORT_GRAPH_ENDPOINT } from './utils';
+import {
+	formatShort,
+	SHORT_GRAPH_ENDPOINT,
+	SHORT_GRAPH_ENDPOINT_KOVAN,
+	SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
+	SHORT_GRAPH_ENDPOINT_OVM,
+} from './utils';
 import { historicalShortsPositionState } from 'store/shorts';
 
 const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[]>) => {
@@ -19,12 +25,19 @@ const useShortHistoryQuery = (options?: UseQueryOptions<HistoricalShortPosition[
 	const [historicalShortPositions, setHistoricalShortPositions] = useRecoilState(
 		historicalShortsPositionState
 	);
-
+	const endpoint =
+		network && network.name === 'kovan'
+			? SHORT_GRAPH_ENDPOINT_KOVAN
+			: network.id === 69
+			? SHORT_GRAPH_ENDPOINT_OVM_KOVAN
+			: network.id === 10
+			? SHORT_GRAPH_ENDPOINT_OVM
+			: SHORT_GRAPH_ENDPOINT;
 	return useQuery<HistoricalShortPosition[]>(
 		QUERY_KEYS.Collateral.ShortHistory(walletAddress ?? '', network?.id!),
 		async () => {
 			const response = await request(
-				network && network.name === 'kovan' ? SHORT_GRAPH_ENDPOINT_KOVAN : SHORT_GRAPH_ENDPOINT,
+				endpoint,
 				gql`
 					query shorts($account: String!) {
 						shorts(where: { account: $account, isOpen: true }, orderBy: id, orderDirection: desc) {

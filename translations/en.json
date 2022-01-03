@@ -24,7 +24,9 @@
 			"l1": "Switch to Layer 1",
 			"optimistic-gateway": "Optimistic L2 Gateway",
 			"optimistic-etherscan": "Optimistic Etherscan",
-			"learn-more": "Learn more"
+			"learn-more": "Learn more",
+			"optimism-mainnet": "Optimism",
+			"optimism-testnet": "OΞ Kovan"
 		}
 	},
 	"homepage": {
@@ -34,7 +36,8 @@
 			"wallet": "Connect Wallet",
 			"why": "Why Kwenta?",
 			"how": "How it Works",
-			"faq": "FAQ"
+			"faq": "FAQ",
+			"kips": "KIPs"
 		},
 		"hero": {
 			"title": "Derivatives trading with zero slippage"
@@ -294,7 +297,8 @@
 				"synth-balances": "Synth Balances",
 				"convert": "Synth Onramp",
 				"crypto-balances": "Crypto Balances",
-				"transactions": "Transactions"
+				"transactions": "Transactions",
+				"deprecated": "Deprecated"
 			}
 		},
 		"onboard": {
@@ -352,6 +356,14 @@
 			},
 			"settling-fee": "Settling...",
 			"settle-fee": "Settle fee"
+		},
+		"deprecated": {
+			"info": "Deprecated synths can be exchanged for sUSD at any time at the fixed redemption rate.",
+			"button": {
+				"default": "Redeem All",
+				"redeeming": "Pending"
+			},
+			"susd-total": "sUSD Total"
 		}
 	},
 	"shorting": {
@@ -779,11 +791,24 @@
 				"title": "recent notifications",
 				"no-results": "No recent transactions"
 			},
+			"deprecated-synths": {
+				"title": "Deprecated Synths",
+				"description": "Your balance includes deprecated synths which will remained frozen until redeemed.",
+				"short-description": "Redeem deprecated synths ({{amount}} {{asset}})",
+				"button": {
+					"default": "Redeem",
+					"redeeming": "Redeeming"
+				}
+			},
 			"all-notifications": {
 				"title": "all notifications",
 				"no-results": "None"
 			},
 			"view-all": "view all"
+		},
+		"deprecated-synths": {
+			"from": "From",
+			"to": "Into"
 		}
 	},
 	"futures-dashboard": {
@@ -814,7 +839,8 @@
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
-			"price-adjustment": "Price Adjustment"
+			"price-adjustment": "Price Adjustment",
+			"deprecated": "Deprecated"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",

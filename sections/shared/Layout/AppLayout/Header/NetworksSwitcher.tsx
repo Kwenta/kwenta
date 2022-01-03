@@ -1,10 +1,8 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-import Connector from 'containers/Connector';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import { isL2State, networkState } from 'store/wallet';
 import Select from 'components/Select';
 import Img, { Svg } from 'react-optimized-image';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
@@ -13,10 +11,9 @@ import SwitchIcon from 'assets/svg/app/switch.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
 import BlockExplorer from 'containers/BlockExplorer';
-import { utils, BigNumber } from 'ethers';
 import { components } from 'react-select';
 import { IndicatorSeparator } from 'components/Select/Select';
-import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -29,49 +26,13 @@ type ReactSelectOptionProps = {
 type NetworksSwitcherProps = {};
 
 const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
-	const [, setNetworkError] = useState<string | null>(null);
-
+	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
+	const networkLabel = 'header.networks-switcher.optimism-' + network;
 	const theme = useTheme();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
-
-	const switchToL1 = async () => {
-		if (!isWalletConnected) await connectWallet();
-		try {
-			if (!window.ethereum || !window.ethereum.isMetaMask) {
-				return setNetworkError(t('user-menu.error.please-install-metamask'));
-			}
-			setNetworkError(null);
-
-			//TODO: add to monorepo
-			const formattedChainId = utils.hexStripZeros(
-				BigNumber.from(L2_TO_L1_NETWORK_MAPPER[network.id]).toHexString()
-			);
-			(window.ethereum as any).request({
-				method: 'wallet_switchEthereumChain',
-				params: [{ chainId: formattedChainId }],
-			});
-		} catch (e) {
-			setNetworkError(e.message);
-		}
-	};
-
-	const switchToL2 = async () => {
-		if (!isWalletConnected) await connectWallet();
-		try {
-			if (!window.ethereum || !window.ethereum.isMetaMask) {
-				return setNetworkError(t('user-menu.error.please-install-metamask'));
-			}
-			setNetworkError(null);
-			addOptimismNetworkToMetamask({ ethereum: window.ethereum });
-		} catch (e) {
-			setNetworkError(e.message);
-		}
-	};
 
 	const OPTIMISM_OPTIONS = [
 		{ label: 'header.networks-switcher.l1', postfixIcon: 'Switch', onClick: switchToL1 },
@@ -130,7 +91,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={28}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: 'Optimism', prefixIcon: 'Optimism' }}
+				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}

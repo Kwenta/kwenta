@@ -70,8 +70,10 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 
 	const tokenBalancesAddresses = useMemo(
 		() =>
-			tokenBalances != null
-				? Object.values(tokenBalances).map((tokenBalance) => tokenBalance?.token.address)
+			tokenBalances !== null
+				? Object.values(tokenBalances).map((tokenBalance) =>
+						tokenBalance?.token.address ? tokenBalance.token.address : ''
+				  )
 				: [],
 		[tokenBalances]
 	);

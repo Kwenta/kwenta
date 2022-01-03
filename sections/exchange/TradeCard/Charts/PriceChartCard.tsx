@@ -34,7 +34,6 @@ import {
 } from './common/styles';
 import { Side } from 'sections/exchange/TradeCard/types';
 import useAreaChartData from './hooks/useAreaChartData';
-import useCandleSticksChartData from './hooks/useCandleSticksChartData';
 
 type ChartCardProps = {
 	side: Side;
@@ -73,24 +72,16 @@ const ChartCard: FC<ChartCardProps> = ({
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
 
-	const {
-		noData: noAreaChartData,
-		isLoading: isLoadingAreaChartData,
-		change,
-		rates,
-	} = useAreaChartData({ currencyKey, selectedChartPeriodLabel });
-	const {
-		noData: noCandleSticksChartData,
-		isLoading: isLoadingCandleSticksChartData,
-		data: candleSticksChartData,
-	} = useCandleSticksChartData({ currencyKey, selectedChartPeriodLabel });
+	const { noData, isLoading, change, rates, candlesData } = useAreaChartData({
+		currencyKey,
+		selectedChartPeriodLabel,
+	});
 
 	const [currentPrice, setCurrentPrice] = useState<number | null>(null);
 	const price = currentPrice || priceRate;
 
 	const showOverlayMessage = isMarketClosed;
-	const showLoader = isLoadingAreaChartData || isLoadingCandleSticksChartData;
-	const disabledInteraction = showLoader || showOverlayMessage;
+	const disabledInteraction = isLoading || showOverlayMessage;
 	const isSUSD = currencyKey === Synths.sUSD;
 
 	const isAreaChart = useMemo(() => selectedChartType === ChartType.AREA, [selectedChartType]);
@@ -98,9 +89,8 @@ const ChartCard: FC<ChartCardProps> = ({
 		selectedChartType,
 	]);
 
-	const noData =
-		(isAreaChart && noAreaChartData && !isSUSD) ||
-		(isCandleStickChart && noCandleSticksChartData && !isSUSD);
+	const noDataAvailable =
+		(isAreaChart && noData && !isSUSD) || (isCandleStickChart && noData && !isSUSD);
 
 	const computedRates = useMemo(() => {
 		return rates
@@ -202,7 +192,7 @@ const ChartCard: FC<ChartCardProps> = ({
 								setCurrentPrice,
 							}}
 							data={computedRates}
-							noData={!isSUSD && noAreaChartData}
+							noData={noDataAvailable}
 							{...(isSUSD ? { yAxisDomain: ['dataMax', 'dataMax'] } : {})}
 							yAxisTickFormatter={(val: number) =>
 								formatCurrency(selectedPriceCurrency.name, val, {
@@ -218,8 +208,8 @@ const ChartCard: FC<ChartCardProps> = ({
 						/>
 					) : (
 						<CandlesticksChart
-							data={candleSticksChartData}
-							noData={noCandleSticksChartData}
+							data={candlesData}
+							noData={noDataAvailable}
 							tooltipPriceFormatter={(n: number) =>
 								formatCurrency(selectedPriceCurrency.name, n, {
 									sign: selectedPriceCurrency.sign,
@@ -240,9 +230,9 @@ const ChartCard: FC<ChartCardProps> = ({
 								}}
 							/>
 						</OverlayMessage>
-					) : showLoader ? (
+					) : isLoading ? (
 						<Svg src={LoaderIcon} />
-					) : noData ? (
+					) : noDataAvailable ? (
 						<NoData>{t('exchange.price-chart-card.no-data')}</NoData>
 					) : undefined}
 				</AbsoluteCenteredDiv>

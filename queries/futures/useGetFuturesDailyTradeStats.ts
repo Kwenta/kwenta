@@ -7,7 +7,7 @@ import { isL2State, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
-import { calculateTimestampForPeriod } from 'queries/rates/utils';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { calculateDailyTradeStats } from './utils';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 

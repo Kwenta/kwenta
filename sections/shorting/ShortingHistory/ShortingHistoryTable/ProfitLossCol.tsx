@@ -15,8 +15,7 @@ const ProfitLossCol: FC<ProfitLossColType> = ({ cellProps }) => {
 	const { selectPriceCurrencyRate } = useSelectedPriceCurrency();
 	const collateralShortPositionQuery = useCollateralShortPositionQuery(
 		cellProps.row.original.id,
-		cellProps.row.original.txHash,
-		true
+		cellProps.row.original.txHash
 	);
 	const collateralShortPosition = useMemo(
 		() => (collateralShortPositionQuery.isSuccess ? collateralShortPositionQuery.data : null),
