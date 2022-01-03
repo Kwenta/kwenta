@@ -9,7 +9,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
 import { SYNTHS_TO_SHORT } from '../constants';
 
-import ShortingReward, { GasInfo } from './ShortingRewardRow';
+import ShortingRewardRow, { GasInfo } from './ShortingRewardRow';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getTransactionPrice } from 'utils/network';
@@ -76,9 +76,14 @@ const ShortingRewards: FC = () => {
 		<div>
 			<Title>{t('shorting.rewards.title')}</Title>
 			{SYNTHS_TO_SHORT.map((currencyKey) => (
-				<ShortingReward
+				<ShortingRewardRow
 					key={currencyKey}
-					{...{ gasPrice, setGasInfo, currencyKey, snxPriceRate }}
+					{...{
+						gasPrice,
+						setGasInfo,
+						currencyKey,
+						snxPriceRate,
+					}}
 				/>
 			))}
 			<StyledGasPriceSummaryItem {...{ gasPrices, transactionFee }} />
