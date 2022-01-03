@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useEffect, useCallback, Dispatch, SetStateAction } from 'react';
+import { FC, useMemo, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -118,14 +118,6 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 		return null;
 	}, [walletAddress, currencyKey, synthetixjs, gasPrice, getL1SecurityFee]);
 
-	useEffect(() => {
-		async function getGasEstimateCall() {
-			const gasInfo = await getGasEstimate();
-			setGasInfo(gasInfo);
-		}
-		getGasEstimateCall();
-	}, [getGasEstimate, setGasInfo, gasPrice]);
-
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
@@ -161,7 +153,7 @@ const ShortingRewardRow: FC<ShortingRewardRowProps> = ({
 				setTxConfirmationModalOpen(false);
 			} catch (e) {
 				console.log(e);
-				setTxError(e.message);
+				setTxError(e?.message);
 			} finally {
 				setIsSubmitting(false);
 			}
