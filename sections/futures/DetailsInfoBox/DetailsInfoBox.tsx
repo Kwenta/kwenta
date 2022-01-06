@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface DetailsInfoBoxProps {
+type DetailsInfoBoxProps = {
 	details: { key: string; value: string }[];
-}
+};
 
 const DetailsInfoBox: React.FC<DetailsInfoBoxProps> = ({ details }) => (
 	<DetailsInfoBoxContainer>

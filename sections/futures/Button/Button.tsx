@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components';
 
-interface ButtonProps {
+type ButtonProps = {
 	onClick(): void;
 	size?: 'sm' | 'md';
 	variant?: 'success' | 'danger';
-}
+};
 
 const Button = styled.button<ButtonProps>`
 	${({ size }) =>

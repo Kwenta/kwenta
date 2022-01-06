@@ -1,30 +1,25 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-interface SegmentedControlProps {
+type SegmentedControlProps = {
 	values: string[];
 	selectedIndex: number;
 	onChange(index: number): void;
-}
-
-const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedIndex, onChange }) => {
-	return (
-		<SegmentedControlContainer length={values.length}>
-			{values.map((value, index) => (
-				<SegmentedControlOption
-					isSelected={selectedIndex === index}
-					onClick={() => onChange(index)}
-				>
-					{value}
-				</SegmentedControlOption>
-			))}
-		</SegmentedControlContainer>
-	);
 };
+
+const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedIndex, onChange }) => (
+	<SegmentedControlContainer length={values.length}>
+		{values.map((value, index) => (
+			<SegmentedControlOption isSelected={selectedIndex === index} onClick={() => onChange(index)}>
+				{value}
+			</SegmentedControlOption>
+		))}
+	</SegmentedControlContainer>
+);
 
 const SegmentedControlContainer = styled.div<{ length: number }>`
 	display: grid;
-	grid-template-columns: repeat(${(p) => p.length}, 1fr);
+	grid-template-columns: repeat(${(props) => props.length}, 1fr);
 	grid-gap: 14px;
 	height: 46px;
 	padding: 6px;

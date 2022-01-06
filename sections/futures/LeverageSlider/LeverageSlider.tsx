@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import Slider from '@material-ui/core/Slider';
 
-interface LeverageSliderProps {
+type LeverageSliderProps = {
 	value?: number;
 	disabled?: boolean;
 	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
-}
+};
 
 const LeverageSlider: React.FC<LeverageSliderProps> = ({ value, onChange, onChangeCommitted }) => (
 	<LeverageSliderContainer>

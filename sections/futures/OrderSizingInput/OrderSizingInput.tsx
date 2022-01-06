@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface OrderSizingInputProps {
+type OrderSizingInputProps = {
 	value: string;
 	onChange(text: string): void;
 	synth: string;
-}
+};
 
 const OrderSizingInput: React.FC<OrderSizingInputProps> = ({ value, onChange, synth }) => {
 	return (
