@@ -10,7 +10,11 @@ type SegmentedControlProps = {
 const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedIndex, onChange }) => (
 	<SegmentedControlContainer length={values.length}>
 		{values.map((value, index) => (
-			<SegmentedControlOption isSelected={selectedIndex === index} onClick={() => onChange(index)}>
+			<SegmentedControlOption
+				key={value}
+				isSelected={selectedIndex === index}
+				onClick={() => onChange(index)}
+			>
 				{value}
 			</SegmentedControlOption>
 		))}
