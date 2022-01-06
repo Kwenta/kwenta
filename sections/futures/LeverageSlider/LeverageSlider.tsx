@@ -2,12 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import Slider from '@material-ui/core/Slider';
 
-// This does not use the <Slider /> component,
-// because it has properties unique to leverage-related functionality.
-// However, the styles for the slider thumbs and marks could be generalized
-// for use in other parts of the application,
-// as part of the UI revamp.
-
 interface LeverageSliderProps {
 	value?: number;
 	disabled?: boolean;

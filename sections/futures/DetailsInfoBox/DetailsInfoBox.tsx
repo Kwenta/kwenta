@@ -1,14 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-// TODO: move this to a separate component
-// Maybe convert details to Record<string, string>?
-
 interface DetailsInfoBoxProps {
-	details: {
-		key: string;
-		value: string;
-	}[];
+	details: { key: string; value: string }[];
 }
 
 const DetailsInfoBox: React.FC<DetailsInfoBoxProps> = ({ details }) => (
