@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 type ButtonProps = {
-	size?: 'sm' | 'md';
+	size?: 'sm' | 'md' | 'lg' | 'xl';
 	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'success' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
@@ -18,6 +18,7 @@ const Button = styled.button<ButtonProps>`
 	box-sizing: border-box;
 	text-transform: capitalize;
 	outine: none;
+	white-space: nowrap;
 
 	color: #ece8e3;
 	border: 1px solid #ffffff1a;
