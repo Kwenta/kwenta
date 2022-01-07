@@ -16,6 +16,7 @@ const Button = styled.button<ButtonProps>`
 	border-radius: 16px;
 	padding: 0 14px;
 	box-sizing: border-box;
+	text-transform: capitalize;
 
 	color: #ece8e3;
 	border: 1px solid #ffffff1a;
