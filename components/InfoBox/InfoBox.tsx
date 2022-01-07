@@ -34,6 +34,7 @@ const InfoBoxContainer = styled.div`
 		.key {
 			color: #787878;
 			font-size: 12px;
+			text-transform: capitalize;
 		}
 
 		.value {
