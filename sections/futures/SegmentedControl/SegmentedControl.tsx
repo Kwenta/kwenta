@@ -25,11 +25,12 @@ const SegmentedControlContainer = styled.div<{ length: number }>`
 	display: grid;
 	grid-template-columns: repeat(${(props) => props.length}, 1fr);
 	grid-gap: 14px;
+	box-sizing: border-box;
 	height: 46px;
 	padding: 6px;
 	background: linear-gradient(180deg, #1b1b1b 0%, #212121 100%);
 	border: 1px solid #ffffff1a;
-	border-radius: 6px;
+	border-radius: 16px;
 `;
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
@@ -51,7 +52,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 					border: 1px solid #ffffff1a;
 					color: #ece8e3;
 					font-weight: 700;
-					border-radius: 6px;
+					border-radius: 12px;
 			  `
 			: css`
 					background: transparent;

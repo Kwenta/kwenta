@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 
 type DetailsInfoBoxProps = {
-	details: { key: string; value: string }[];
+	details: Record<string, string>;
 };
 
 const DetailsInfoBox: React.FC<DetailsInfoBoxProps> = ({ details }) => (
 	<DetailsInfoBoxContainer>
-		{details.map(({ key, value }) => (
+		{Object.entries(details).map(([key, value]) => (
 			<div key={key}>
 				<p className="key">{key}:</p>
 				<p className="value">{value}</p>
@@ -20,12 +20,16 @@ const DetailsInfoBoxContainer = styled.div`
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 4px;
 	padding: 14px;
+	box-sizing: border-box;
 
-	div:not(last-of-type) {
+	div {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 8px;
+
+		p {
+			margin: 0;
+		}
 
 		.key {
 			color: #787878;
@@ -36,6 +40,10 @@ const DetailsInfoBoxContainer = styled.div`
 			color: #ece8e3;
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 12px;
+		}
+
+		&:not(:last-of-type) {
+			margin-bottom: 8px;
 		}
 	}
 `;
