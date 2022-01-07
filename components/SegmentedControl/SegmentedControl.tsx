@@ -23,7 +23,7 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedInd
 
 const SegmentedControlContainer = styled.div<{ length: number }>`
 	display: grid;
-	grid-template-columns: repeat(${(p) => p.length}, 1fr);
+	grid-template-columns: repeat(${(props) => props.length}, 1fr);
 	box-sizing: border-box;
 	grid-gap: 14px;
 	width: 100%;
