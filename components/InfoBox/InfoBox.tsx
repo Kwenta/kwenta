@@ -21,6 +21,7 @@ const InfoBoxContainer = styled.div`
 	border-radius: 16px;
 	padding: 14px;
 	box-sizing: border-box;
+	width: 100%;
 
 	div {
 		display: flex;
