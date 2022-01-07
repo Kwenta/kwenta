@@ -6,10 +6,10 @@ type ButtonProps = {
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;
+	fullWidth?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
-	width: 100%;
 	height: 41px;
 	cursor: pointer;
 	position: relative;
@@ -110,6 +110,12 @@ const Button = styled.button<ButtonProps>`
 		props.size === 'md' &&
 		css`
 			height: 41px;
+		`};
+
+	${(props) =>
+		props.fullWidth &&
+		css`
+			width: 100%;
 		`};
 `;
 
