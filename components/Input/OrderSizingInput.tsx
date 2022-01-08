@@ -2,20 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 
 type OrderSizingInputProps = {
-	value: string;
-	onChange(text: string): void;
+	value?: string;
+	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	synth: string;
-	style?: React.CSSProperties;
 };
 
-const OrderSizingInput: React.FC<OrderSizingInputProps> = ({ value, onChange, synth, style }) => {
-	return (
-		<OrderSizingInputContainer {...{ style }}>
-			<input value={value} onChange={(e) => onChange(e.target.value)} />
-			<span>{synth}</span>
-		</OrderSizingInputContainer>
-	);
-};
+const OrderSizingInput: React.FC<OrderSizingInputProps> = ({ value, onChange, synth }) => (
+	<OrderSizingInputContainer>
+		<input value={value} onChange={onChange} />
+		<span>{synth}</span>
+	</OrderSizingInputContainer>
+);
 
 const OrderSizingInputContainer = styled.div`
 	display: flex;
@@ -39,6 +36,10 @@ const OrderSizingInputContainer = styled.div`
 
 		&:focus {
 			outline: none;
+		}
+
+		::placeholder {
+			color: #787878;
 		}
 	}
 
