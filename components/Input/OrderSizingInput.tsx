@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 type OrderSizingInputProps = {
-	value?: string;
+	value?: string | number;
 	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	synth: string;
 };
