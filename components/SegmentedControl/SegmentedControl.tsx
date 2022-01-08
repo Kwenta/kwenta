@@ -47,10 +47,9 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 						rgba(228, 179, 120, 0.12) 11.46%,
 						rgba(135, 105, 70, 0.06) 100%
 					);
-					box-shadow: 0px 1px 0px 0px #ffffff12 inset;
-					box-shadow: 0px 1px 2px 0px #00000080;
-					box-shadow: 0px 4px 4px 0px #00000040;
-					box-shadow: 0px 0px 20px 0px #ffffff08 inset;
+					box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5),
+						inset 0px 0px 20px rgba(255, 255, 255, 0.03),
+						inset 0px 1px 0px rgba(255, 255, 255, 0.09);
 					border: 1px solid #ffffff1a;
 					color: #ece8e3;
 					font-weight: 700;
