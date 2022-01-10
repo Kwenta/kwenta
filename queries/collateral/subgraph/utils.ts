@@ -7,7 +7,7 @@ export const SHORT_GRAPH_ENDPOINT =
 	'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
 export const SHORT_GRAPH_ENDPOINT_KOVAN =
-	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/kovan-main';
 
 export const SHORT_GRAPH_ENDPOINT_OVM_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/dbeal-eth/optimism-kovan-shorts4';
