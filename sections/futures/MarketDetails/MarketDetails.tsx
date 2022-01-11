@@ -19,20 +19,20 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: '$12,392.92',
 			},
 			'24H Change': {
-				value: '$12,392.92',
+				value: '$392.92 (1.8%)',
 				color: 'red',
 			},
-			'24h Volume': {
-				value: '$12,392.92',
+			'24H Volume': {
+				value: '$1,392,988.92',
 			},
 			'24H Trades': {
-				value: '$12,392.92',
+				value: '22,321',
 			},
 			'Open Interest': {
-				value: '$12,392.92',
+				value: '88,278.12 ETH',
 			},
 			'1H Funding': {
-				value: '$12,392.92',
+				value: '0.004418%',
 				color: 'green',
 			},
 		};
