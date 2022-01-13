@@ -173,25 +173,49 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     color: #787878;
     text-align: center;
 
-    &:nth-child(5) {
+		&:nth-child(5) {
       margin-left: -12px;
+      ${(props) =>
+				props.$currentMark === 1 &&
+				css`
+					&.MuiSlider-markLabelActive {
+						color: #ece8e3;
+					}
+				`};
     }
 
     &:nth-child(7) {
       margin-left: 11px;
+      ${(props) =>
+				props.$currentMark === 2 &&
+				css`
+					&.MuiSlider-markLabelActive {
+						color: #ece8e3;
+					}
+				`};
     }
 
     &:nth-child(9) {
       margin-left: -1px;
+      ${(props) =>
+				props.$currentMark === 5 &&
+				css`
+					&.MuiSlider-markLabelActive {
+						color: #ece8e3;
+					}
+				`};
     }
 
     &:nth-child(11) {
       margin-left: -18px;
+      ${(props) =>
+				props.$currentMark === 10 &&
+				css`
+					&.MuiSlider-markLabelActive {
+						color: #ece8e3;
+					}
+				`};
     }
-  }
-
-  .MuiSlider-markLabelActive {
-    color: #ece8e3;
   }
 `;
 
