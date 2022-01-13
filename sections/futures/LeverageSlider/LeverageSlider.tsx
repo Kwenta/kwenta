@@ -4,6 +4,8 @@ import Slider from '@material-ui/core/Slider';
 import imageBackground from 'assets/svg/futures/sliderbackground.svg';
 
 type LeverageSliderProps = {
+	min?: number;
+	max?: number;
 	value?: number;
 	defaultValue?: number;
 	disabled?: boolean;
@@ -12,21 +14,23 @@ type LeverageSliderProps = {
 };
 
 const LeverageSlider: React.FC<LeverageSliderProps> = ({
+	min,
+	max,
 	value,
 	defaultValue,
 	disabled,
 	onChange,
 	onChangeCommitted,
 }) => {
-	const [currentMark, setCurrentMark] = React.useState(1);
+	const [currentMark, setCurrentMark] = React.useState(defaultValue || 0);
 
 	return (
 		<LeverageSliderContainer>
 			<StyledSlider
-				min={0}
-				max={10}
+				min={min || 0}
+				max={max || 10}
 				step={null}
-				defaultValue={defaultValue || 1}
+				defaultValue={defaultValue || 0}
 				value={value}
 				onChange={(e, v) => {
 					setCurrentMark(v as number);
@@ -47,7 +51,7 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 };
 
 const LeverageSliderContainer = styled.div`
-	width: 100%;
+	width: 334px;
 	height: 24px;
 	background: url(${imageBackground as any}) no-repeat;
 	padding: 0 5px;
@@ -72,6 +76,12 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     border-radius: 2px;
 
     ${(props) =>
+			props.$currentMark === 0 &&
+			css`
+				width: 0 !important;
+			`}
+
+    ${(props) =>
 			props.$currentMark === 1 &&
 			css`
 				width: calc(10% - 17px) !important;
@@ -80,19 +90,19 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     ${(props) =>
 			props.$currentMark === 2 &&
 			css`
-				width: calc(20% + 6px) !important;
+				width: calc(20% + 7px) !important;
 			`}
 
   ${(props) =>
 		props.$currentMark === 5 &&
 		css`
-			width: calc(50% - 5px) !important;
+			width: calc(50% + 1px) !important;
 		`}
 
   ${(props) =>
 		props.$currentMark === 10 &&
 		css`
-			width: calc(100% - 22px) !important;
+			width: 100% !important;
 		`}
   }
 
@@ -100,19 +110,19 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     margin-top: -7px !important;
 
     &:nth-child(4) {
-      margin-left: -18px;
+      margin-left: -17px;
     }
 
     &:nth-child(6) {
-      margin-left: 5px;
+      margin-left: 7px;
     }
 
     &:nth-child(8) {
-      margin-left: -6px;
+      margin-left: -1px;
     }
 
     &:nth-child(10) {
-      margin-left: -23px;
+      margin-left: -12px;
     }
 
     &:not(.MuiSlider-markActive) {
@@ -140,25 +150,25 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     ${(props) =>
 			props.$currentMark === 1 &&
 			css`
-				margin-left: -19px;
+				margin-left: -18px;
 			`};
 
     ${(props) =>
 			props.$currentMark === 2 &&
 			css`
-				margin-left: 4px;
+				margin-left: 6px;
 			`};
 
     ${(props) =>
 			props.$currentMark === 5 &&
 			css`
-				margin-left: -7px;
+				margin-left: -2px;
 			`};
 
     ${(props) =>
 			props.$currentMark === 10 &&
 			css`
-				margin-left: -24px;
+				margin-left: -14px;
 			`};
   }
 
@@ -185,7 +195,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     }
 
     &:nth-child(7) {
-      margin-left: 11px;
+      margin-left: 13px;
       ${(props) =>
 				props.$currentMark === 2 &&
 				css`
@@ -196,7 +206,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     }
 
     &:nth-child(9) {
-      margin-left: -1px;
+      margin-left: 5px;
       ${(props) =>
 				props.$currentMark === 5 &&
 				css`
@@ -207,7 +217,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     }
 
     &:nth-child(11) {
-      margin-left: -18px;
+      margin-left: -7px;
       ${(props) =>
 				props.$currentMark === 10 &&
 				css`

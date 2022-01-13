@@ -2,12 +2,13 @@ import { FC, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import Slider from 'components/Slider';
+// import Slider from 'components/Slider';
 import Button from 'components/Button';
 import NumericAutoGrowInput from 'components/Input/NumericAutoGrowInput';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
+import LeverageSlider from '../LeverageSlider';
 
 type LeverageInputProps = {
 	currentLeverage: number;
@@ -22,7 +23,7 @@ type LeverageInputProps = {
 };
 
 const MIN_LEVERAGE = 0;
-const DEFAULT_STEPS = 0.01;
+// const DEFAULT_STEPS = 0.01;
 
 const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
@@ -111,11 +112,10 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				</FlexDivCol>
 			</LeverageRow>
 			<SliderRow>
-				<Slider
+				<LeverageSlider
 					disabled={maxLeverage <= 0}
-					steps={DEFAULT_STEPS}
-					minValue={MIN_LEVERAGE}
-					maxValue={maxLeverage}
+					min={MIN_LEVERAGE}
+					max={maxLeverage}
 					value={currentLeverage}
 					onChange={(_, newValue) => {
 						setIsLeverageValueCommitted(false);
