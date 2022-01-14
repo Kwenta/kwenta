@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Slider from '@material-ui/core/Slider';
 import imageBackground from 'assets/svg/futures/sliderbackground.svg';
 
@@ -28,7 +28,7 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 				<StyledSlider
 					min={min || 0}
 					max={max || 10}
-					step={0.01}
+					step={0.1}
 					defaultValue={defaultValue || 1}
 					value={value}
 					onChange={onChange}
@@ -38,7 +38,9 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 						{ value: 1, label: '1x' },
 						{ value: 10, label: '10x' },
 					]}
-					$currentMark={value}
+					valueLabelDisplay="on"
+					valueLabelFormat={(v) => `${v}x`}
+					$currentMark={value || 1}
 				/>
 			</div>
 		</LeverageSliderContainer>
@@ -104,6 +106,37 @@ const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 		font-size: 11px;
 		color: #787878;
 		margin-left: 8px;
+
+		${(props) =>
+			props.$currentMark &&
+			props.$currentMark === 1 &&
+			css`
+				&:nth-child(5) {
+					color: #ece8e3;
+				}
+			`}
+
+		${(props) =>
+			props.$currentMark &&
+			props.$currentMark === 10 &&
+			css`
+				&:nth-child(7) {
+					color: #ece8e3;
+				}
+			`}
+	}
+
+	.MuiSlider-valueLabel {
+		font-family: ${(props) => props.theme.fonts.mono};
+		font-size: 11px;
+		top: initial;
+		bottom: -41px;
+		${(props) =>
+			props.$currentMark &&
+			(props.$currentMark < 2 || props.$currentMark > 9) &&
+			css`
+				display: none;
+			`};
 	}
 `;
 

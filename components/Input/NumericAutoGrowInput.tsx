@@ -12,7 +12,7 @@ type NumericAutoGrowInputProps = {
 const INVALID_CHARS = ['-', '+', 'e'];
 
 const NumericAutoGrowInput: FC<NumericAutoGrowInputProps> = ({ value, onChange, ...rest }) => {
-	const [noNumberSelected, setNoNumberSelected] = useState(Boolean(value));
+	const [noNumberSelected, setNoNumberSelected] = useState(isNaN(Number(value)));
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const { value } = e.target;
 		const cleanedValue = parseFloat(value.replace(/,/g, '.').replace(/[e+-]/gi, ''));

@@ -69,7 +69,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [error, setError] = useState<string | null>(null);
 	const competitionClosed = true;
 
-	const [leverage, setLeverage] = useState<number>(0);
+	const [leverage, setLeverage] = useState<number>(1);
 
 	const [tradeSize, setTradeSize] = useState<string>('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
