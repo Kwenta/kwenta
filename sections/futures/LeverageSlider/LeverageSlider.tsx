@@ -22,15 +22,15 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 	onChange,
 	onChangeCommitted,
 }) => {
-	const [currentMark, setCurrentMark] = React.useState(defaultValue || 0);
+	const [currentMark, setCurrentMark] = React.useState(defaultValue || 1);
 
 	return (
 		<LeverageSliderContainer>
 			<StyledSlider
-				min={min || 0}
+				min={min || 1}
 				max={max || 10}
-				step={null}
-				defaultValue={defaultValue || 0}
+				step={1}
+				defaultValue={defaultValue || 1}
 				value={value}
 				onChange={(e, v) => {
 					setCurrentMark(v as number);
@@ -76,12 +76,6 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     border-radius: 2px;
 
     ${(props) =>
-			props.$currentMark === 0 &&
-			css`
-				width: 0 !important;
-			`}
-
-    ${(props) =>
 			props.$currentMark === 1 &&
 			css`
 				width: calc(10% - 17px) !important;
@@ -92,11 +86,29 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
 			css`
 				width: calc(20% + 7px) !important;
 			`}
+			
+    ${(props) =>
+			props.$currentMark === 3 &&
+			css`
+				width: 30% !important;
+			`}
+
+    ${(props) =>
+			props.$currentMark === 4 &&
+			css`
+				width: calc(40% + 3px) !important;
+			`}
 
   ${(props) =>
 		props.$currentMark === 5 &&
 		css`
 			width: calc(50% + 1px) !important;
+		`}
+
+  ${(props) =>
+		props.$currentMark === 6 &&
+		css`
+			width: calc(60% + 1px) !important;
 		`}
 
   ${(props) =>
@@ -110,15 +122,15 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     margin-top: -7px !important;
 
     &:nth-child(4) {
-      margin-left: -17px;
+      margin-left: 15px;
     }
 
     &:nth-child(6) {
-      margin-left: 7px;
+      margin-left: 36px;
     }
 
     &:nth-child(8) {
-      margin-left: -1px;
+      margin-left: 17px;
     }
 
     &:nth-child(10) {
@@ -150,19 +162,56 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     ${(props) =>
 			props.$currentMark === 1 &&
 			css`
-				margin-left: -18px;
+				margin-left: 14px;
 			`};
+
 
     ${(props) =>
 			props.$currentMark === 2 &&
 			css`
-				margin-left: 6px;
+				margin-left: 35px;
+			`};
+
+    ${(props) =>
+			props.$currentMark === 3 &&
+			css`
+				margin-left: 24px;
+			`};
+			
+    ${(props) =>
+			props.$currentMark === 4 &&
+			css`
+				margin-left: 14px;
 			`};
 
     ${(props) =>
 			props.$currentMark === 5 &&
 			css`
-				margin-left: -2px;
+				margin-left: 16px;
+			`};
+
+    ${(props) =>
+			props.$currentMark === 6 &&
+			css`
+				margin-left: 5px;
+			`};
+
+    ${(props) =>
+			props.$currentMark === 7 &&
+			css`
+				margin-left: -4px;
+			`};
+
+    ${(props) =>
+			props.$currentMark === 8 &&
+			css`
+				margin-left: -4px;
+			`};
+
+    ${(props) =>
+			props.$currentMark === 9 &&
+			css`
+				margin-left: -4px;
 			`};
 
     ${(props) =>
@@ -184,7 +233,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     text-align: center;
 
 		&:nth-child(5) {
-      margin-left: -12px;
+      margin-left: 20px;
       ${(props) =>
 				props.$currentMark === 1 &&
 				css`
@@ -195,7 +244,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     }
 
     &:nth-child(7) {
-      margin-left: 13px;
+      margin-left: 41px;
       ${(props) =>
 				props.$currentMark === 2 &&
 				css`
@@ -206,7 +255,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
     }
 
     &:nth-child(9) {
-      margin-left: 5px;
+      margin-left: 22px;
       ${(props) =>
 				props.$currentMark === 5 &&
 				css`

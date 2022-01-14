@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-// import Slider from 'components/Slider';
 import Button from 'components/Button';
 import NumericAutoGrowInput from 'components/Input/NumericAutoGrowInput';
 import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
@@ -22,8 +21,7 @@ type LeverageInputProps = {
 	currentPosition: FuturesPosition | null;
 };
 
-const MIN_LEVERAGE = 0;
-// const DEFAULT_STEPS = 0.01;
+const MIN_LEVERAGE = 1;
 
 const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
