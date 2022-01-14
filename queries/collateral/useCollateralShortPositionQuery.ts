@@ -130,8 +130,7 @@ const useCollateralShortPositionQuery = (
 			if (txHash != null && provider != null && createdAt != null) {
 				const tx = await provider.getTransaction(txHash);
 				if (tx != null) {
-					const RATE_UPDATES_ENDPOINT =
-						'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
+					const RATE_UPDATES_ENDPOINT = isL2 ? SHORT_GRAPH_ENDPOINT_OVM : SHORT_GRAPH_ENDPOINT;
 
 					let [initialCollateralPriceResponse, latestCollateralPrice] = (await Promise.all([
 						request(
