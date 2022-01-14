@@ -1,5 +1,5 @@
 {
     "name": "Kwenta",
-    "iconPath": "your_logo.svg",
+    "iconPath": "./images/favicon.svg",
     "description": "Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage."
 }
