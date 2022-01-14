@@ -91,7 +91,11 @@ const useConnector = () => {
 	useEffect(() => {
 		if (isAppReady && network) {
 			const onboard = initOnboard(network, {
-				address: setWalletAddress,
+				address: (address) => {
+					if (address) {
+						setWalletAddress(address);
+					}
+				},
 				network: (networkId: number) => {
 					const isSupportedNetwork =
 						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
@@ -139,7 +143,7 @@ const useConnector = () => {
 							name: network.name as NetworkName,
 							useOvm,
 						});
-						setSelectedWallet(wallet.name);
+						if (!isIFrame()) setSelectedWallet(wallet.name); // don't allow iframed kwenta to override localstorage
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
 						// TODO: setting provider to null might cause issues, perhaps use a default provider?
@@ -158,10 +162,19 @@ const useConnector = () => {
 
 	// load previously saved wallet
 	useEffect(() => {
-		if (onboard && selectedWallet && !walletAddress) {
+		// disables caching if in IFrame allow parent to set wallet address
+		if (onboard && selectedWallet && !walletAddress && !isIFrame()) {
 			onboard.walletSelect(selectedWallet);
 		}
 	}, [onboard, selectedWallet, walletAddress]);
+
+	const isIFrame = () => {
+		try {
+			return window.self !== window.top;
+		} catch (e) {
+			return true;
+		}
+	};
 
 	const resetCachedUI = () => {
 		// TODO: since orders are not persisted, we need to reset them.
