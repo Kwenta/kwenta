@@ -1,14 +1,12 @@
 // next.config.js
-const gitRevision = require('child_process')
-	.execSync('git rev-parse --short HEAD')
-	.toString()
-	.trim();
+const gitRevision = require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
 
 module.exports = {
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
 	webpack: (config, options) => {
+
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 
 		config.module.rules.push({
@@ -37,19 +35,5 @@ module.exports = {
 				page: '/exchange/[[...market]]',
 			},
 		};
-	},
-	async headers() {
-		return [
-			{
-				// Apply headers to all routes.
-				source: '/(.*)',
-				headers: [
-					{
-						key: 'Content-Security-Policy',
-						value: 'frame-ancestors *.dhedge.org dhedge.org',
-					},
-				],
-			},
-		];
 	},
 };
