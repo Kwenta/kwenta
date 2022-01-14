@@ -17,7 +17,7 @@ jobs:
         run: npm install -g npm@7.19.0
       - name: Update @synthetixio/contracts-interface dependency
         run: |
-          npm install --legacy-peer-deps
+          npm install --legacy-peer-deps --no-audit
           npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }} --save-exact
           npm install @synthetixio/queries@${{ github.event.client_payload.version }} --save-exact
           npm install @synthetixio/data@${{ github.event.client_payload.version }} --save-exact
