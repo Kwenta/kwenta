@@ -10,7 +10,7 @@ type MarketDropdownOptionProps = {
 
 const MarketsDropdownOptionContainer: React.FC<MarketDropdownOptionProps> = ({ option }) => (
 	<OptionDetailsContainer>
-		<CurrencyIcon currencyKey={option.value} />
+		<CurrencyIcon currencyKey={option.value} width="31px" height="31px" />
 		<CurrencyMeta>
 			<div>
 				<CurrencyLabel>{option.value}</CurrencyLabel>
