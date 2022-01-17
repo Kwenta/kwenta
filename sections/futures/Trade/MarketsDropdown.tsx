@@ -37,6 +37,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				}}
 				value={assetToCurrencyOption(asset)}
 				options={markets.map((x) => assetToCurrencyOption(x.asset))}
+				isSearchable={false}
 			/>
 		</SelectContainer>
 	);
