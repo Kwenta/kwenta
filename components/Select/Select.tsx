@@ -64,7 +64,7 @@ function Select<T>(props: Props<T>) {
 			option: (provided, state) => ({
 				...provided,
 				fontFamily: fonts.bold,
-				color: colors.white,
+				color: state.isSelected ? '#E4B378' : colors.white,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',

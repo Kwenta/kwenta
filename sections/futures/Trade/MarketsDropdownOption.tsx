@@ -1,35 +1,41 @@
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
-import { MarketsCurrencyOption } from './MarketsDropdown';
 import { FlexDivCentered } from 'styles/common';
+import { components, OptionProps } from 'react-select';
 
-type MarketDropdownOptionProps = {
-	option: MarketsCurrencyOption;
-};
-
-const MarketsDropdownOptionContainer: React.FC<MarketDropdownOptionProps> = ({ option }) => (
-	<OptionDetailsContainer>
-		<CurrencyIcon currencyKey={option.value} width="31px" height="31px" />
-		<CurrencyMeta>
+const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
+	<components.Option {...props}>
+		<OptionDetailsContainer $isSelected={props.isSelected}>
+			<CurrencyIcon currencyKey={props.data.value} width="31px" height="31px" />
+			<CurrencyMeta $isSelected={props.isSelected}>
+				<div>
+					<CurrencyLabel>{props.data.label}</CurrencyLabel>
+					<p className="name">{props.data.description}</p>
+				</div>
+			</CurrencyMeta>
 			<div>
-				<CurrencyLabel>{option.value}</CurrencyLabel>
-				<p className="name">{option.description}</p>
+				<p className="price">$42,977.23</p>
+				<p className="change">+0.68%</p>
 			</div>
-		</CurrencyMeta>
-		<div>
-			<p className="price">$42,977.23</p>
-			<p className="change">+0.68%</p>
-		</div>
-	</OptionDetailsContainer>
+		</OptionDetailsContainer>
+	</components.Option>
 );
 
-const CurrencyMeta = styled(FlexDivCentered)`
+const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 	flex: 1;
 	margin-left: 12px;
+
+	${(props) =>
+		props.$isSelected &&
+		css`
+			${CurrencyLabel} {
+				color: #e4b378;
+			}
+		`}
 `;
 
-const OptionDetailsContainer = styled(SingleValueContainer)`
+const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boolean }>`
 	p {
 		margin: 0;
 	}
@@ -38,6 +44,11 @@ const OptionDetailsContainer = styled(SingleValueContainer)`
 		font-family: ${(props) => props.theme.fonts.mono};
 		color: #ece8e3;
 		font-size: 15px;
+		${(props) =>
+			props.$isSelected &&
+			css`
+				color: #e4b378;
+			`}
 	}
 
 	.change {
@@ -52,4 +63,4 @@ const OptionDetailsContainer = styled(SingleValueContainer)`
 	}
 `;
 
-export default MarketsDropdownOptionContainer;
+export default MarketsDropdownOption;

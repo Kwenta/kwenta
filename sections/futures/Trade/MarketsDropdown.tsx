@@ -60,7 +60,6 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 			<Select
 				controlHeight={55}
 				menuWidth={'100%'}
-				formatOptionLabel={(option) => <MarketsDropdownOption option={option} />}
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
@@ -72,7 +71,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					assetToCurrencyOption(x.asset, getSynthDescription(x.asset), DUMMY_PRICE, DUMMY_CHANGE)
 				)}
 				isSearchable={false}
-				components={{ SingleValue: MarketsDropdownSingleValue }}
+				components={{ SingleValue: MarketsDropdownSingleValue, Option: MarketsDropdownOption }}
 			/>
 		</SelectContainer>
 	);
