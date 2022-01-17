@@ -1,8 +1,16 @@
 import React, { FC, useContext, useMemo } from 'react';
-import ReactSelect, { Props, StylesConfig } from 'react-select';
+import ReactSelect, { components, Props, StylesConfig, IndicatorProps } from 'react-select';
 import { ThemeContext } from 'styled-components';
+import { Svg } from 'react-optimized-image';
+import dropdownArrow from '../../assets/svg/app/dropdown-arrow.svg';
 
 export const IndicatorSeparator: FC = () => null;
+
+export const DropdownIndicator: FC<IndicatorProps<any>> = (props) => (
+	<components.DropdownIndicator {...props}>
+		<Svg src={dropdownArrow} />
+	</components.DropdownIndicator>
+);
 
 function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
@@ -81,6 +89,7 @@ function Select<T>(props: Props<T>) {
 				'&:hover': {
 					color: state.selectProps.dropdownIndicatorColorHover ?? colors.goldColors.color3,
 				},
+				marginRight: '22px',
 			}),
 		};
 		return styles;
@@ -90,7 +99,7 @@ function Select<T>(props: Props<T>) {
 		<ReactSelect
 			styles={computedStyles}
 			classNamePrefix="react-select"
-			components={{ IndicatorSeparator }}
+			components={{ IndicatorSeparator, DropdownIndicator }}
 			{...props}
 		/>
 	);

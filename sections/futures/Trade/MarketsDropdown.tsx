@@ -21,7 +21,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	return (
 		<SelectContainer>
 			<Select
-				controlHeight={48}
+				controlHeight={55}
 				menuWidth={'100%'}
 				formatOptionLabel={(option) => (
 					<FlexDivCentered>
