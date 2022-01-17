@@ -30,7 +30,6 @@ function Select<T>(props: Props<T>) {
 			}),
 			control: (provided, state) => ({
 				...provided,
-				fontFamily: fonts.bold,
 				color: colors.white,
 				cursor: 'pointer',
 				boxShadow:
@@ -68,10 +67,7 @@ function Select<T>(props: Props<T>) {
 				color: colors.white,
 				cursor: 'pointer',
 				fontSize: '12px',
-				backgroundColor: colors.elderberry,
-				'&:hover': {
-					backgroundColor: colors.navy,
-				},
+				backgroundColor: 'transparent',
 				padding: state.selectProps.optionPadding ?? '6px 8px',
 				borderBottom: state.selectProps.optionBorderBottom,
 			}),
@@ -82,14 +78,16 @@ function Select<T>(props: Props<T>) {
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,
-				color: state.selectProps.dropdownIndicatorColor ?? colors.goldColors.color1,
 				transition: 'transform 0.2s ease-in-out',
-				padding: '0 8px',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
 				'&:hover': {
 					color: state.selectProps.dropdownIndicatorColorHover ?? colors.goldColors.color3,
 				},
 				marginRight: '22px',
+			}),
+			valueContainer: (provided) => ({
+				...provided,
+				height: '100%',
 			}),
 		};
 		return styles;
@@ -99,8 +97,8 @@ function Select<T>(props: Props<T>) {
 		<ReactSelect
 			styles={computedStyles}
 			classNamePrefix="react-select"
-			components={{ IndicatorSeparator, DropdownIndicator }}
 			{...props}
+			components={{ IndicatorSeparator, DropdownIndicator, ...props.components }}
 		/>
 	);
 }
