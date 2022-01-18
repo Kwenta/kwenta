@@ -126,6 +126,8 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 
 const Container = styled.div`
 	position: relative;
+	display: flex;
+	align-items: center;
 `;
 
 const DeprecatedXIconContainer = styled.div`
