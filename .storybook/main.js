@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 const path = require("path");
 
-=======
->>>>>>> db2f77d1bf6e8677dd0bb8e24de8f74062fd668c
 module.exports = {
   "stories": [
     "../stories/**/*.stories.mdx",
@@ -12,7 +9,6 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials"
   ],
-<<<<<<< HEAD
   "framework": "@storybook/react",
   "webpackFinal": async (config) => {
     config.resolve.modules = [
@@ -22,7 +18,4 @@ module.exports = {
 
     return config;
   },
-=======
-  "framework": "@storybook/react"
->>>>>>> db2f77d1bf6e8677dd0bb8e24de8f74062fd668c
 }
