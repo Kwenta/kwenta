@@ -73,8 +73,8 @@ const Button = styled.button<ButtonProps>`
 			&:hover {
 				background: linear-gradient(
 					180deg,
-					rgba(127, 212, 130, 0.5) 0%,
-					rgba(71, 122, 73, 0.5) 100%
+					rgba(127, 212, 130, 0.15) 0%,
+					rgba(71, 122, 73, 0.15) 100%
 				);
 
 				&:before {

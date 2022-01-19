@@ -20,9 +20,9 @@ export default {
 
 const Template: ComponentStory<typeof Button> = (args) => <Button {...args} />;
 
-export const Primary = Template.bind({});
-Primary.args = {
-	primary: true,
+export const Small = Template.bind({});
+Small.args = {
+	size: 'sm',
 	children: 'Button',
 };
 
@@ -32,18 +32,22 @@ Medium.args = {
 	children: 'Button',
 };
 
-export const Small = Template.bind({});
-Small.args = {
-	size: 'sm',
-	children: 'Button',
-};
-
 export const ActiveSuccess = Template.bind({});
 
 ActiveSuccess.args = {
 	size: 'md',
 	children: 'Long',
 	variant: 'success',
+	isActive: true,
+	fullWidth: true,
+};
+
+export const ActiveDanger = Template.bind({});
+
+ActiveDanger.args = {
+	size: 'md',
+	children: 'Long',
+	variant: 'danger',
 	isActive: true,
 	fullWidth: true,
 };
