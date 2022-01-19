@@ -30,6 +30,7 @@ export const Medium = Template.bind({});
 Medium.args = {
 	size: 'md',
 	children: 'Button',
+	style: { width: '157px' },
 };
 
 export const ActiveSuccess = Template.bind({});
@@ -39,15 +40,16 @@ ActiveSuccess.args = {
 	children: 'Long',
 	variant: 'success',
 	isActive: true,
-	fullWidth: true,
+	style: { width: '157px' },
 };
 
 export const ActiveDanger = Template.bind({});
 
 ActiveDanger.args = {
 	size: 'md',
-	children: 'Long',
+	children: 'Short',
 	variant: 'danger',
 	isActive: true,
 	fullWidth: true,
+	style: { width: '157px' },
 };
