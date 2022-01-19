@@ -17,7 +17,11 @@
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
+<<<<<<< HEAD
     "storybook": "start-storybook -p 6006 -s ./public",
+=======
+    "storybook": "start-storybook -p 6006",
+>>>>>>> db2f77d1bf6e8677dd0bb8e24de8f74062fd668c
     "build-storybook": "build-storybook"
   },
   "dependencies": {

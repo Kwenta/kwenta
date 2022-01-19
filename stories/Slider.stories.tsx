@@ -8,15 +8,7 @@ export default {
 	component: LeverageSlider,
 	decorators: [
 		(Story) => (
-			<div
-				style={{
-					width: 334,
-					height: 50,
-					backgroundColor: '#282626',
-					display: 'flex',
-					alignItems: 'center',
-				}}
-			>
+			<div style={{ width: 334 }}>
 				<Story />
 			</div>
 		),
