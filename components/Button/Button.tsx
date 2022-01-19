@@ -31,6 +31,27 @@ const Button = styled.button<ButtonProps>`
 		box-shadow: 0px 2px 2px 0px #00000040;
 	}
 
+	&:disabled {
+		color: #544f4d;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #2a2827;
+		box-shadow: none;
+
+		${(props) =>
+			props.isActive &&
+			css`
+				&:hover {
+					background: #2a2827;
+					color: #544f4d;
+					text-shadow: none;
+
+					&:before {
+						display: none;
+					}
+				}
+			`};
+	}
+
 	${(props) =>
 		props.mono
 			? css`
