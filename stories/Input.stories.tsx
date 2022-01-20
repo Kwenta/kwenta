@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComponentMeta } from '@storybook/react';
+import { ComponentMeta, ComponentStory } from '@storybook/react';
 import Input from '../components/Input/Input';
 import NumericInput from '../components/Input/NumericInput';
 import OrderSizingInput from '../components/Input/OrderSizingInput';
@@ -16,18 +16,16 @@ export default {
 	],
 } as ComponentMeta<typeof Input>;
 
-export const Default = () => {
-	return <Input />;
+export const Default: ComponentStory<typeof Input> = (args) => <Input {...args} />;
+
+export const Numeric: ComponentStory<typeof NumericInput> = (args) => {
+	return <NumericInput {...args} />;
 };
 
-export const Numeric = () => {
-	const [value, setValue] = React.useState('');
-
-	return <NumericInput value={value} onChange={(e) => setValue(e.target.value)} />;
+export const OrderSizing: ComponentStory<typeof OrderSizingInput> = (args) => {
+	return <OrderSizingInput {...args} />;
 };
 
-export const OrderSizing = () => {
-	const [value, setValue] = React.useState('');
-
-	return <OrderSizingInput value={value} onChange={(e) => setValue(e.target.value)} synth="sUSD" />;
+OrderSizing.args = {
+	synth: 'sUSD',
 };
