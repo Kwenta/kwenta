@@ -2,13 +2,12 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import Slider, { SliderProps } from 'components/Slider/Slider';
 
-type LeverageSliderProps = Omit<SliderProps, 'onChange'> & {
+type LeverageSliderProps = SliderProps & {
 	minValue?: number;
 	maxValue?: number;
 	value?: number;
 	defaultValue?: number;
 	disabled?: boolean;
-	onChange: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 	onChangeCommitted: (event: React.ChangeEvent<{}>, value: number | number[]) => void;
 };
 
@@ -44,11 +43,6 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 
 const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 	.MuiSlider-markLabel {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
-		color: #787878;
-		margin-left: 8px;
-
 		${(props) =>
 			props.$currentMark &&
 			props.$currentMark === 1 &&
@@ -69,10 +63,6 @@ const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 	}
 
 	.MuiSlider-valueLabel {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
-		top: initial;
-		bottom: -41px;
 		${(props) =>
 			props.$currentMark &&
 			(props.$currentMark < 2 || props.$currentMark > 9) &&
