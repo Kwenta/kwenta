@@ -36,6 +36,7 @@ const Button = styled.button<ButtonProps>`
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		background: #2a2827;
 		box-shadow: none;
+		cursor: initial;
 
 		${(props) =>
 			props.isActive &&
