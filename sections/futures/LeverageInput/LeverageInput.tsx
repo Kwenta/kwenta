@@ -112,8 +112,8 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			<SliderRow>
 				<LeverageSlider
 					disabled={maxLeverage <= 0}
-					min={MIN_LEVERAGE}
-					max={maxLeverage}
+					minValue={MIN_LEVERAGE}
+					maxValue={maxLeverage}
 					value={currentLeverage}
 					onChange={(_, newValue) => {
 						setIsLeverageValueCommitted(false);

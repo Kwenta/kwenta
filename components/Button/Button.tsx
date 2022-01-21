@@ -31,6 +31,28 @@ const Button = styled.button<ButtonProps>`
 		box-shadow: 0px 2px 2px 0px #00000040;
 	}
 
+	&:disabled {
+		color: #544f4d;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #2a2827;
+		box-shadow: none;
+		cursor: initial;
+
+		${(props) =>
+			props.isActive &&
+			css`
+				&:hover {
+					background: #2a2827;
+					color: #544f4d;
+					text-shadow: none;
+
+					&:before {
+						display: none;
+					}
+				}
+			`};
+	}
+
 	${(props) =>
 		props.mono
 			? css`
@@ -73,8 +95,8 @@ const Button = styled.button<ButtonProps>`
 			&:hover {
 				background: linear-gradient(
 					180deg,
-					rgba(127, 212, 130, 0.5) 0%,
-					rgba(71, 122, 73, 0.5) 100%
+					rgba(127, 212, 130, 0.15) 0%,
+					rgba(71, 122, 73, 0.15) 100%
 				);
 
 				&:before {
