@@ -16,6 +16,7 @@ const common = {
 
 const defaultTheme = {
 	background: '#474747',
+	border: '1px solid rgba(255, 255, 255, 0.1);',
 	button: {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
 		hover: 'linear-gradient(180deg, #4F463D 0%, #332F2D 100%)',
@@ -51,15 +52,25 @@ const defaultTheme = {
 			background: 'linear-gradient(180deg, #262322 0%, #39332D 100%);',
 			shadow:
 				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09);',
+			inactive: {
+				color: '#787878',
+			},
+		},
+	},
+	slider: {
+		label: '#787878',
+		thumb: {
+			hover: {
+				shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
+			},
+		},
+		track: {
+			shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)',
 		},
 	},
 
-	border: '1px solid rgba(255, 255, 255, 0.1);',
 	gradientFill:
 		'linear-gradient(180deg, rgba(228, 179, 120, 0.1) 0%, rgba(135, 105, 70, 0.08) 100%)',
-	inputGradient: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.75) 100%)',
-	secondaryInputGradient: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.3) 100%)',
-	segmentGradient: 'linear-gradient(180deg, #1B1B1B 0%, #212121 100%)',
 };
 
 export default {

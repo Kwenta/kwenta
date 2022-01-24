@@ -64,7 +64,7 @@ const StyledSlider = styled(Slider)`
 	.MuiSlider-track {
 		height: 4px;
 		background-color: #7d6b54;
-		box-shadow: inset 0px 0.5px 0px rgba(255, 255, 255, 0.5);
+		box-shadow: ${(props) => props.theme.colors.defaultTheme.slider.track.shadow};
 		margin-top: -3px;
 		border-radius: 2px;
 		margin-left: 1px;
@@ -76,7 +76,7 @@ const StyledSlider = styled(Slider)`
 		height: 12px;
 		border-radius: 6px;
 		background-color: #7d6b54;
-		box-shadow: inset 0px 0.5px 0px rgba(255, 255, 255, 0.5);
+		box-shadow: ${(props) => props.theme.colors.defaultTheme.slider.track.shadow};
 		margin-top: -7px;
 		margin-left: 1px;
 		opacity: 1;
@@ -84,7 +84,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-thumb {
 		background-color: #e4b378;
-		box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5) !important;
+		box-shadow: ${(props) => props.theme.colors.defaultTheme.slider.thumb.hover.shadow} !important;
 		width: 14px;
 		height: 14px;
 		margin-left: initial;
@@ -93,13 +93,13 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-thumb.Mui-focusVisible,
 	.MuiSlider-thumb:hover {
-		box-shadow: inset 0px 0.5px 0px rgba(255, 255, 255, 0.5) !important;
+		box-shadow: ${(props) => props.theme.colors.defaultTheme.slider.thumb.hover.shadow} !important;
 	}
 
 	.MuiSlider-markLabel {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;
-		color: #787878;
+		color: ${(props) => props.theme.colors.defaultTheme.slider.label};
 		margin-left: 8px;
 	}
 

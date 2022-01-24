@@ -29,8 +29,8 @@ const SegmentedControlContainer = styled.div<{ length: number }>`
 	width: 100%;
 	height: 46px;
 	padding: 6px;
-	background: linear-gradient(180deg, #1b1b1b 0%, #212121 100%);
-	border: 1px solid #ffffff1a;
+	background: ${(props) => props.theme.colors.defaultTheme.segmented.background};
+	border: ${(props) => props.theme.colors.defaultTheme.border};
 	border-radius: 16px;
 `;
 
@@ -42,23 +42,17 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 	${(props) =>
 		props.isSelected
 			? css`
-					background: linear-gradient(
-						180deg,
-						rgba(228, 179, 120, 0.12) 11.46%,
-						rgba(135, 105, 70, 0.06) 100%
-					);
-					box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5),
-						inset 0px 0px 20px rgba(255, 255, 255, 0.03),
-						inset 0px 1px 0px rgba(255, 255, 255, 0.09);
-					border: 1px solid #ffffff1a;
-					color: #ece8e3;
+					background: ${(props) => props.theme.colors.defaultTheme.segmented.button.background};
+					box-shadow: ${(props) => props.theme.colors.defaultTheme.segmented.button.shadow};
+					border: ${(props) => props.theme.colors.defaultTheme.border};
+					color: ${(props) => props.theme.colors.common.primaryWhite};
 					font-weight: 700;
 					border-radius: 12px;
 			  `
 			: css`
 					background: transparent;
 					border: none;
-					color: #787878;
+					color: ${(props) => props.theme.colors.defaultTheme.segmented.button.inactive};
 			  `}
 `;
 
