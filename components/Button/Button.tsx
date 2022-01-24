@@ -20,21 +20,19 @@ const Button = styled.button<ButtonProps>`
 	outine: none;
 	white-space: nowrap;
 
-	color: #ece8e3;
-	border: 1px solid #ffffff1a;
-	background: linear-gradient(180deg, #39332d 0%, #2d2a28 100%);
-	box-shadow: 0px 0px 20px 0px #ffffff08 inset;
-	box-shadow: 0px 2px 2px 0px #00000040;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	border: ${(props) => props.theme.colors.defaultTheme.border};
+	background: ${(props) => props.theme.colors.defaultTheme.button.background};
+	box-shadow: ${(props) => props.theme.colors.defaultTheme.button.shadow};
 
 	&:hover {
-		background: linear-gradient(180deg, #4f463d 0%, #332f2d 100%);
-		box-shadow: 0px 2px 2px 0px #00000040;
+		background: ${(props) => props.theme.colors.defaultTheme.button.hover};
 	}
 
 	&:disabled {
-		color: #544f4d;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		background: #2a2827;
+		color: ${(props) => props.theme.colors.defaultTheme.button.disabled.text};
+		border: ${(props) => props.theme.colors.defaultTheme.border};
+		background: ${(props) => props.theme.colors.defaultTheme.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
 
@@ -42,8 +40,8 @@ const Button = styled.button<ButtonProps>`
 			props.isActive &&
 			css`
 				&:hover {
-					background: #2a2827;
-					color: #544f4d;
+					background: ${props.theme.colors.defaultTheme.button.disabled.background};
+					color: ${props.theme.colors.defaultTheme.button.disabled.text};
 					text-shadow: none;
 
 					&:before {
@@ -56,10 +54,10 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.mono
 			? css`
-					font-family: ${(props) => props.theme.fonts.mono};
+					font-family: ${props.theme.fonts.mono};
 			  `
 			: css`
-					font-family: ${(props) => props.theme.fonts.bold};
+					font-family: ${props.theme.fonts.bold};
 			  `};
 
 	${(props) =>
@@ -77,11 +75,11 @@ const Button = styled.button<ButtonProps>`
 			}
 
 			&:hover {
-				color: #ece8e3;
-				text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+				color: ${props.theme.colors.common.primaryWhite};
+				text-shadow: ${props.theme.colors.defaultTheme.button.active.textShadow};
 
 				&:before {
-					box-shadow: 0px 2px 2px 0px #00000040;
+					box-shadow: ${props.theme.colors.defaultTheme.button.active.shadow};
 				}
 			}
 		`};
@@ -89,18 +87,14 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'success' &&
 		css`
-			color: #7fd482;
-			border: 2px solid #7fd482;
+			color: ${props.theme.colors.common.primaryGreen};
+			border: 2px solid ${props.theme.colors.common.primaryGreen};
 
 			&:hover {
-				background: linear-gradient(
-					180deg,
-					rgba(127, 212, 130, 0.15) 0%,
-					rgba(71, 122, 73, 0.15) 100%
-				);
+				background: ${props.theme.colors.defaultTheme.button.active.hover.successBackground};
 
 				&:before {
-					border: 2px solid rgba(127, 212, 130, 0.2);
+					border: 2px solid ${props.theme.colors.defaultTheme.button.active.hover.successBorder};
 				}
 			}
 		`};
@@ -108,18 +102,14 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'danger' &&
 		css`
-			color: #ef6868;
-			border: 2px solid #ef6868;
+			color: ${props.theme.colors.common.primaryRed};
+			border: 2px solid ${props.theme.colors.common.primaryRed};
 
 			&:hover {
-				background: linear-gradient(
-					180deg,
-					rgba(239, 104, 104, 0.5) 0%,
-					rgba(116, 56, 56, 0.5) 100%
-				);
+				background: ${props.theme.colors.defaultTheme.button.active.hover.dangerBackground};
 
 				&:before {
-					border: 2px solid rgba(239, 104, 104, 0.2);
+					border: 2px solid ${props.theme.colors.defaultTheme.button.active.hover.dangerBorder};
 				}
 			}
 		`};
