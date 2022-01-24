@@ -42,6 +42,8 @@ const defaultTheme = {
 		secondary: {
 			background: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.3) 100%)',
 		},
+		placeholder: '#787878',
+		shadow: 'box-shadow: 0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 	},
 	segmented: {
 		background: 'linear-gradient(180deg, #1B1B1B 0%, #212121 100%)',
