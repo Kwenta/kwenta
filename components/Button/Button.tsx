@@ -21,18 +21,18 @@ const Button = styled.button<ButtonProps>`
 	white-space: nowrap;
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	border: ${(props) => props.theme.colors.defaultTheme.border};
-	background: ${(props) => props.theme.colors.defaultTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.defaultTheme.button.shadow};
+	border: ${(props) => props.theme.colors.eliteTheme.border};
+	background: ${(props) => props.theme.colors.eliteTheme.button.background};
+	box-shadow: ${(props) => props.theme.colors.eliteTheme.button.shadow};
 
 	&:hover {
-		background: ${(props) => props.theme.colors.defaultTheme.button.hover};
+		background: ${(props) => props.theme.colors.eliteTheme.button.hover};
 	}
 
 	&:disabled {
-		color: ${(props) => props.theme.colors.defaultTheme.button.disabled.text};
-		border: ${(props) => props.theme.colors.defaultTheme.border};
-		background: ${(props) => props.theme.colors.defaultTheme.button.disabled.background};
+		color: ${(props) => props.theme.colors.eliteTheme.button.disabled.text};
+		border: ${(props) => props.theme.colors.eliteTheme.border};
+		background: ${(props) => props.theme.colors.eliteTheme.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
 
@@ -40,8 +40,8 @@ const Button = styled.button<ButtonProps>`
 			props.isActive &&
 			css`
 				&:hover {
-					background: ${props.theme.colors.defaultTheme.button.disabled.background};
-					color: ${props.theme.colors.defaultTheme.button.disabled.text};
+					background: ${props.theme.colors.eliteTheme.button.disabled.background};
+					color: ${props.theme.colors.eliteTheme.button.disabled.text};
 					text-shadow: none;
 
 					&:before {
@@ -76,10 +76,10 @@ const Button = styled.button<ButtonProps>`
 
 			&:hover {
 				color: ${props.theme.colors.common.primaryWhite};
-				text-shadow: ${props.theme.colors.defaultTheme.button.active.textShadow};
+				text-shadow: ${props.theme.colors.eliteTheme.button.active.textShadow};
 
 				&:before {
-					box-shadow: ${props.theme.colors.defaultTheme.button.active.shadow};
+					box-shadow: ${props.theme.colors.eliteTheme.button.active.shadow};
 				}
 			}
 		`};
@@ -91,10 +91,10 @@ const Button = styled.button<ButtonProps>`
 			border: 2px solid ${props.theme.colors.common.primaryGreen};
 
 			&:hover {
-				background: ${props.theme.colors.defaultTheme.button.active.hover.successBackground};
+				background: ${props.theme.colors.eliteTheme.button.active.hover.successBackground};
 
 				&:before {
-					border: 2px solid ${props.theme.colors.defaultTheme.button.active.hover.successBorder};
+					border: 2px solid ${props.theme.colors.eliteTheme.button.active.hover.successBorder};
 				}
 			}
 		`};
@@ -106,10 +106,10 @@ const Button = styled.button<ButtonProps>`
 			border: 2px solid ${props.theme.colors.common.primaryRed};
 
 			&:hover {
-				background: ${props.theme.colors.defaultTheme.button.active.hover.dangerBackground};
+				background: ${props.theme.colors.eliteTheme.button.active.hover.dangerBackground};
 
 				&:before {
-					border: 2px solid ${props.theme.colors.defaultTheme.button.active.hover.dangerBorder};
+					border: 2px solid ${props.theme.colors.eliteTheme.button.active.hover.dangerBorder};
 				}
 			}
 		`};

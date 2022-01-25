@@ -59,7 +59,7 @@ const MarketDetailsContainer = styled.div`
 	justify-content: space-between;
 	align-items: center;
 
-	border: ${(props) => props.theme.colors.defaultTheme.border};
+	border: ${(props) => props.theme.colors.eliteTheme.border};
 	border-radius: 16px;
 	box-sizing: border-box;
 

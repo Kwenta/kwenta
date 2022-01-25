@@ -20,9 +20,9 @@ const OrderSizingInputContainer = styled.div`
 	justify-content: space-between;
 	box-sizing: border-box;
 	height: 46px;
-	background: ${(props) => props.theme.colors.defaultTheme.input.background};
-	box-shadow: ${(props) => props.theme.colors.defaultTheme.input.shadow};
-	border: ${(props) => props.theme.colors.defaultTheme.border};
+	background: ${(props) => props.theme.colors.eliteTheme.input.background};
+	box-shadow: ${(props) => props.theme.colors.eliteTheme.input.shadow};
+	border: ${(props) => props.theme.colors.eliteTheme.border};
 	border-radius: 16px;
 	padding: 12px 14px;
 
@@ -42,14 +42,14 @@ const OrderSizingInputContainer = styled.div`
 		}
 
 		::placeholder {
-			color: ${(props) => props.theme.colors.defaultTheme.input.placeholder};
+			color: ${(props) => props.theme.colors.eliteTheme.input.placeholder};
 		}
 	}
 
 	span {
 		font-family: monospace;
 		font-size: 16px;
-		color: ${(props) => props.theme.colors.defaultTheme.input.placeholder};
+		color: ${(props) => props.theme.colors.eliteTheme.input.placeholder};
 	}
 `;
 

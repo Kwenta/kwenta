@@ -15,7 +15,7 @@ const common = {
 	secondaryGold: '#E4B378',
 };
 
-const defaultTheme = {
+const eliteTheme = {
 	background: '#474747',
 	border: '1px solid rgba(255, 255, 255, 0.1);',
 	button: {
@@ -106,5 +106,5 @@ export default {
 	noNetwork: 'rgb(155, 155, 155)',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
-	defaultTheme,
+	eliteTheme,
 };
