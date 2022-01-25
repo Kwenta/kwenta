@@ -18,7 +18,7 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 
 export const CurrencyLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: #ece8e3;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-size: 16px;
 `;
 
@@ -32,7 +32,7 @@ export const SingleValueContainer = styled(FlexDivCentered)`
 		font-size: 12.5px;
 		line-height: 12.5px;
 		margin: 2px 0 0 0;
-		color: #787878;
+		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;
 
