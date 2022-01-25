@@ -17,7 +17,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details }) => (
 );
 
 const InfoBoxContainer = styled.div`
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: ${(props) => props.theme.colors.eliteTheme.border};
 	border-radius: 16px;
 	padding: 14px;
 	box-sizing: border-box;
@@ -33,13 +33,13 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.key {
-			color: #787878;
+			color: ${(props) => props.theme.colors.eliteTheme.input.placeholder};
 			font-size: 12px;
 			text-transform: capitalize;
 		}
 
 		.value {
-			color: #ece8e3;
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 12px;
 		}

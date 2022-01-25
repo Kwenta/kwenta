@@ -48,7 +48,7 @@ const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 			props.$currentMark === 1 &&
 			css`
 				&:nth-child(5) {
-					color: #ece8e3;
+					color: ${(props) => props.theme.colors.common.primaryWhite};
 				}
 			`}
 
@@ -57,7 +57,7 @@ const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 			props.$currentMark === 10 &&
 			css`
 				&:nth-child(7) {
-					color: #ece8e3;
+					color: ${(props) => props.theme.colors.common.primaryWhite};
 				}
 			`}
 	}

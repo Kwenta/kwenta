@@ -32,18 +32,17 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				color: colors.white,
 				cursor: 'pointer',
-				boxShadow:
-					'0px 2px 2px rgba(0, 0, 0, 0.2), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
+				boxShadow: colors.eliteTheme.select.control.shadow,
 
-				border: '1px solid rgba(255, 255, 255, 0.1)',
+				border: colors.eliteTheme.border,
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					border: `1px solid rgba(255, 255, 255, 0.1)`,
+					border: colors.eliteTheme.border,
 				},
 				fontSize: '12px',
-				background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
+				background: colors.eliteTheme.button.background,
 				borderRadius: '16px',
 			}),
 			menu: (provided, state) => ({
@@ -51,7 +50,7 @@ function Select<T>(props: Props<T>) {
 				background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
 				border: '1px solid rgba(255, 255, 255, 0.1)',
 				borderRadius: '8px',
-				boxShadow: '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
+				boxShadow: colors.eliteTheme.button.shadow,
 				padding: 0,
 				width: state.selectProps.menuWidth,
 			}),
@@ -64,7 +63,7 @@ function Select<T>(props: Props<T>) {
 			option: (provided, state) => ({
 				...provided,
 				fontFamily: fonts.bold,
-				color: state.isSelected ? '#E4B378' : colors.white,
+				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',
@@ -89,9 +88,10 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				height: '100%',
 			}),
+			...props.styles,
 		};
 		return styles;
-	}, [colors, fonts]);
+	}, [colors, fonts, props]);
 
 	return (
 		<ReactSelect

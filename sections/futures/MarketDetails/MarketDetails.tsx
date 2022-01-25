@@ -59,7 +59,7 @@ const MarketDetailsContainer = styled.div`
 	justify-content: space-between;
 	align-items: center;
 
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: ${(props) => props.theme.colors.eliteTheme.border};
 	border-radius: 16px;
 	box-sizing: border-box;
 
@@ -70,22 +70,22 @@ const MarketDetailsContainer = styled.div`
 
 	.heading {
 		font-size: 12px;
-		color: #787878;
+		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 
 	.value {
 		margin-top: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
-		color: #ece8e3;
+		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 
 	.green {
-		color: #7fd482;
+		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
 
 	.red {
-		color: #ef6868;
+		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
 `;
 

@@ -30,7 +30,7 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 		props.$isSelected &&
 		css`
 			${CurrencyLabel} {
-				color: #e4b378;
+				color: ${(props) => props.theme.colors.common.secondaryGold};
 			}
 		`}
 `;
@@ -42,19 +42,19 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
-		color: #ece8e3;
+		color: ${(props) => props.theme.colors.common.primaryWhite};
 		font-size: 15px;
 		${(props) =>
 			props.$isSelected &&
 			css`
-				color: #e4b378;
+				color: ${(props) => props.theme.colors.common.secondaryGold};
 			`}
 	}
 
 	.change {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11.5px;
-		color: #7fd482;
+		color: ${(props) => props.theme.colors.common.primaryGreen};
 		text-align: right;
 	}
 
