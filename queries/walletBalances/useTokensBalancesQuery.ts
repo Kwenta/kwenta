@@ -46,7 +46,7 @@ const useTokensBalancesQuery = (
 			const balancesMap = zipObject(symbols, data);
 			const positiveBalances = omitBy(balancesMap, (entry) => entry.lte(0));
 
-			const d = mapValues(positiveBalances, (balance, symbol: string) => {
+			return mapValues(positiveBalances, (balance, symbol: string) => {
 				const token = tokensMap[symbol];
 
 				return {
@@ -54,9 +54,6 @@ const useTokensBalancesQuery = (
 					token,
 				};
 			});
-			console.log(d);
-
-			return d;
 		},
 		{
 			enabled: !!provider && tokens.length > 0 && !!walletAddress,
