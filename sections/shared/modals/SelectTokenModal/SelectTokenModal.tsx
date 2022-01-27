@@ -12,6 +12,7 @@ import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
+import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import { CoinGeckoPriceIds } from 'queries/coingecko/types';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -32,7 +33,6 @@ import Connector from 'containers/Connector';
 import { RowsHeader, RowsContainer, CenteredModal } from '../common';
 
 import TokenRow from './TokenRow';
-import useSynthetixQueries from '@synthetixio/queries';
 import { omitBy } from 'lodash';
 
 type SelectTokenModalProps = {
@@ -49,7 +49,6 @@ export const SelectTokenModal: FC<SelectTokenModalProps> = ({
 	const { t } = useTranslation();
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const { connectWallet } = Connector.useContainer();
-	const { useTokensBalancesQuery } = useSynthetixQueries();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 

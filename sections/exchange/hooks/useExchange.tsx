@@ -26,6 +26,7 @@ import { ChartType } from 'constants/chartType';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
+import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
@@ -128,7 +129,6 @@ const useExchange = ({
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
 		useExchangeFeeRateQuery,
-		useTokensBalancesQuery,
 	} = useSynthetixQueries();
 
 	const router = useRouter();
