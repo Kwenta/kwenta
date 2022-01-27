@@ -270,7 +270,7 @@
 				}
 			},
 			"get-l2-gas": {
-				"message": "Not enough L2 wETH for transaction fees. Get some via Optimism Bridge:"
+				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
 			}
 		},
 		"common": {

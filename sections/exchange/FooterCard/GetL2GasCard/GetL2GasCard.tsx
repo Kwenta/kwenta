@@ -33,7 +33,7 @@ const GetL2GasCard: FC<GetL2GasCardProps> = ({ attached }) => {
 						<Trans
 							t={t}
 							i18nKey="common.currency.buy-currency"
-							values={{ currencyKey: 'wETH' }}
+							values={{ currencyKey: 'ETH' }}
 							components={[<NoTextTransform />]}
 						/>
 					</MessageButton>
