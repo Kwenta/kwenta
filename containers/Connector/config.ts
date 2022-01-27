@@ -65,6 +65,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				{ walletName: 'torus' },
 				{ walletName: 'status' },
 				{ walletName: 'authereum' },
+				{ walletName: 'tally' },
 			],
 		},
 		walletCheck: [
