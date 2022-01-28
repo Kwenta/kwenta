@@ -1,7 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
+import useFeeReclaimPeriodsQuery from 'queries/synths/useFeeReclaimPeriodsQuery';
+
+import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
 import { walletAddressState } from 'store/wallet';
 import { ordersByStatusState } from 'store/orders';
@@ -18,8 +20,6 @@ export const NotificationsModal: FC<NotificationsModalProps> = ({ onDismiss }) =
 	const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
 	const ordersByStatus = useRecoilValue(ordersByStatusState);
 	const walletAddress = useRecoilValue(walletAddressState);
-
-	const { useFeeReclaimPeriodsQuery, useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
 
 	const feeWaitingPeriodsQuery = useFeeReclaimPeriodsQuery(walletAddress ?? '');
 	const feeWaitingPeriods = useMemo(() => feeWaitingPeriodsQuery.data ?? [], [
