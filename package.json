@@ -23,7 +23,6 @@
 		"@balancer-labs/sor": "1.0.0",
 		"@eth-optimism/contracts": "^0.5.1",
 		"@metamask/detect-provider": "1.2.0",
-		"@portis/web3": "^4.0.6",
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
@@ -68,8 +67,7 @@
 		"styled-media-query": "2.1.2",
 		"synthetix": "^2.40.1-alpha",
 		"synthetix-data": "2.1.42",
-		"unstated-next": "1.1.0",
-		"web3": "^1.7.0"
+		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.5",
