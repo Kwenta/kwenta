@@ -270,7 +270,7 @@
 				}
 			},
 			"get-l2-gas": {
-				"message": "Not enough L2 wETH for transaction fees. Get some via Optimism Bridge:"
+				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
 			}
 		},
 		"common": {
@@ -637,6 +637,7 @@
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
+			"bridge-currency": "Bridge <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",
