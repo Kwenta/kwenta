@@ -40,16 +40,28 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					</Message>
 				</DesktopOnlyView>
 				{isL2 ? (
-					<Link href={'https://staking.synthetix.io/staking'}>
-						<MessageButton size="lg" variant="primary" isRounded={true}>
-							<Trans
-								t={t}
-								i18nKey="exchange.onboard.mint-button"
-								values={{ currencyKey: sUSD }}
-								components={[<NoTextTransform />]}
-							/>
-						</MessageButton>
-					</Link>
+					<>
+						<Link href={'https://app.1inch.io/#/1/swap/USDC/sUSD'}>
+							<MessageButton size="lg" variant="primary" isRounded={true}>
+								<Trans
+									t={t}
+									i18nKey="exchange.onboard.1inch-button"
+									values={{ currencyKey: sUSD }}
+									components={[<NoTextTransform />]}
+								/>
+							</MessageButton>
+						</Link>
+						<Link href={'https://app.uniswap.org/'}>
+							<MessageButton size="lg" variant="primary" isRounded={true}>
+								<Trans
+									t={t}
+									i18nKey="exchange.onboard.uniswap-button"
+									values={{ currencyKey: sUSD }}
+									components={[<NoTextTransform />]}
+								/>
+							</MessageButton>
+						</Link>
+					</>
 				) : (
 					<Link href={ROUTES.Dashboard.Convert}>
 						<MessageButton>
