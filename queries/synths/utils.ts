@@ -1,7 +1,5 @@
 import { Contract } from 'ethcall';
 
-export const formatGwei = (wei: number) => wei / 1e8 / 10;
-
 const abi = [
 	{
 		constant: true,
