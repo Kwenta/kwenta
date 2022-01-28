@@ -30,7 +30,9 @@ const useFeeReclaimPeriodsQuery = (
 
 			const Exchanger = new Contract(BaseExchanger.address, ExchangerABI);
 
-			let waitingPeriodCalls = [];
+			const waitingPeriodCalls = [];
+			const feeCalls = [];
+
 			for (const currencyKey of synths) {
 				waitingPeriodCalls.push(
 					Exchanger.maxSecsLeftInWaitingPeriod(
@@ -38,10 +40,7 @@ const useFeeReclaimPeriodsQuery = (
 						ethers.utils.formatBytes32String(currencyKey.name)
 					)
 				);
-			}
 
-			let feeCalls = [];
-			for (const currencyKey of synths) {
 				feeCalls.push(
 					Exchanger.settlementOwing(
 						walletAddress,
