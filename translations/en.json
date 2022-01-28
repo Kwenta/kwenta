@@ -235,7 +235,7 @@
 		},
 		"onboard": {
 			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
-			"l2-message": "Your wallet has no Synths. You can swap for <0>{{currencyKey}}</0> on 1inch or Uniswap to trade Synths:",
+			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch or Uniswap to trade Synths:",
 			"mint-button": "Visit Staking",
 			"1inch-button": "Visit 1inch",
 			"uniswap-button": "Visit Uniswap"

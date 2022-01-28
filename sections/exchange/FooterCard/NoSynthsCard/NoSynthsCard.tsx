@@ -41,7 +41,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 				</DesktopOnlyView>
 				{isL2 ? (
 					<>
-						<Link href={'https://app.1inch.io/#/1/swap/USDC/sUSD'}>
+						<a href="https://app.1inch.io/#/1/swap/USDC/sUSD" target="_blank" rel="noreferrer">
 							<MessageButton size="lg" variant="primary" isRounded={true}>
 								<Trans
 									t={t}
@@ -50,8 +50,8 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 									components={[<NoTextTransform />]}
 								/>
 							</MessageButton>
-						</Link>
-						<Link href={'https://app.uniswap.org/'}>
+						</a>
+						<a href="https://app.uniswap.org/" target="_blank" rel="noreferrer">
 							<MessageButton size="lg" variant="primary" isRounded={true}>
 								<Trans
 									t={t}
@@ -60,7 +60,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 									components={[<NoTextTransform />]}
 								/>
 							</MessageButton>
-						</Link>
+						</a>
 					</>
 				) : (
 					<Link href={ROUTES.Dashboard.Convert}>
