@@ -44,12 +44,15 @@ const FeeReclaimingSynth: FC<{
 	const { gasPrice, gasPriceWei, getGasLimitEstimate } = useGas();
 
 	const onSettleFee = async () => {
+		console.log('In here');
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 
 			const { Exchanger } = synthetixjs.contracts;
 			const method = 'settle';
 			const params = [address, ethers.utils.formatBytes32String(currencyKey)];
+
+			console.log('being run?');
 
 			try {
 				setIsSettling(true);
