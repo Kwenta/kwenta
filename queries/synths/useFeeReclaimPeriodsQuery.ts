@@ -5,7 +5,6 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
-import ExchangerABI from 'lib/abis/Exchanger.json';
 
 import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
@@ -26,9 +25,10 @@ const useFeeReclaimPeriodsQuery = (
 			const {
 				synths,
 				contracts: { Exchanger: BaseExchanger },
+				sources,
 			} = synthetixjs;
 
-			const Exchanger = new Contract(BaseExchanger.address, ExchangerABI);
+			const Exchanger = new Contract(BaseExchanger.address, sources.Exchanger.abi as any);
 
 			const waitingPeriodCalls = [];
 			const feeCalls = [];

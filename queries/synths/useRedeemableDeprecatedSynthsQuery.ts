@@ -7,7 +7,6 @@ import { wei } from '@synthetixio/wei';
 import { DeprecatedSynthBalance, DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { getProxySynthSymbol } from './utils';
 import Connector from 'containers/Connector';
-import SynthRedeemerABI from 'lib/abis/SynthRedeemer.json';
 
 const ethCallProvider = new Provider();
 
@@ -22,6 +21,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 			await ethCallProvider.init(provider as any);
 			const {
 				contracts: { SynthRedeemer },
+				sources,
 			} = synthetixjs!;
 
 			const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
@@ -30,7 +30,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 				(e: any) => e.args?.synth ?? ''
 			);
 
-			const Redeemer = new Contract(SynthRedeemer.address, SynthRedeemerABI);
+			const Redeemer = new Contract(SynthRedeemer.address, sources.SynthRedeemer.abi as any);
 
 			const symbolCalls = [];
 			const balanceCalls = [];
