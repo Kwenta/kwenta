@@ -235,10 +235,8 @@
 		},
 		"onboard": {
 			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
-			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch or Uniswap to trade Synths:",
-			"mint-button": "Visit Staking",
-			"1inch-button": "Visit 1inch",
-			"uniswap-button": "Visit Uniswap"
+			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch to trade Synths:",
+			"1inch-button": "Visit 1inch"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
