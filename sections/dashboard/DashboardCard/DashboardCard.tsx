@@ -21,6 +21,7 @@ import { BoldText } from 'styles/common';
 import { CardTitle, ConvertContainer } from '../common';
 import FeeReclaimingSynths from '../FeeReclaimingSynths';
 
+import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { isL2State } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -42,11 +43,7 @@ const DashboardCard: FC = () => {
 	const router = useRouter();
 	const isL2 = useRecoilValue(isL2State);
 
-	const {
-		useExchangeRatesQuery,
-		useSynthsBalancesQuery,
-		useRedeemableDeprecatedSynthsQuery,
-	} = useSynthetixQueries();
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
 	const tabQuery = useMemo(() => {
 		if (router.query.tab) {

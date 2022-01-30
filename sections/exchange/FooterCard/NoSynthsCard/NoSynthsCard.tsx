@@ -3,8 +3,9 @@ import { useTranslation, Trans } from 'react-i18next';
 import Link from 'next/link';
 
 import { Synths } from 'constants/currency';
+import { EXTERNAL_LINKS } from 'constants/links';
 
-import { NoTextTransform } from 'styles/common';
+import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import ROUTES from 'constants/routes';
@@ -40,16 +41,16 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 					</Message>
 				</DesktopOnlyView>
 				{isL2 ? (
-					<Link href={'https://staking.synthetix.io/staking'}>
+					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
 						<MessageButton size="lg" variant="primary" isRounded={true}>
 							<Trans
 								t={t}
-								i18nKey="exchange.onboard.mint-button"
+								i18nKey="exchange.onboard.1inch-button"
 								values={{ currencyKey: sUSD }}
 								components={[<NoTextTransform />]}
 							/>
 						</MessageButton>
-					</Link>
+					</ExternalLink>
 				) : (
 					<Link href={ROUTES.Dashboard.Convert}>
 						<MessageButton>
