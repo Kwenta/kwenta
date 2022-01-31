@@ -9,6 +9,7 @@ import {
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
+	ExternalLink,
 } from 'styles/common';
 
 import { Copy, FlexSection, GridContainer, LeftSubHeader, Title } from '../common';
@@ -24,6 +25,7 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import ROUTES from 'constants/routes';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const L2 = () => {
 	const { t } = useTranslation();
@@ -72,11 +74,11 @@ const L2 = () => {
 						</L2Copy>
 						<Media lessThan="lg">{OptimismStats}</Media>
 						<CTARow>
-							<Link href={'https://blog.kwenta.io/hello-optimism-kwenta-is-live-on-l2/'}>
+							<ExternalLink href={EXTERNAL_LINKS.Docs.DocsRoot}>
 								<Button variant={'outline'} size={'lg'}>
 									{t('homepage.l2.cta-buttons.learn-more')}
 								</Button>
-							</Link>
+							</ExternalLink>
 							{isL2 ? (
 								<Link href={ROUTES.Dashboard.Home}>
 									<Button variant="primary" isRounded={false} size="lg">
