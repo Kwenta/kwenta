@@ -1,56 +1,28 @@
 name: Update dependency
 
 on:
-  workflow_dispatch:
-    inputs:
-      monorepo_version:
-        description: 'New Monorepo Version (ex. 2.50.0-alpha) (leave empty to "patch")'
-        required: false
+  repository_dispatch:
+    types: update-dependency
 
 jobs:
   update_version:
     name: Update contracts-interface version
     runs-on: ubuntu-latest
-
-    container:
-      image: ghcr.io/synthetixio/docker-node/alpine:14.17
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
-
-      - name: Set npm cache directory
-        run: npm config set cache .npm-cache --global
-        continue-on-error: true
-
-      - name: Cache node modules
-        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed # pin@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          path: |
-            .npm-cache
-            node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-alpine-node-
-        continue-on-error: true
-
-      # fix: permission issues on ghactions+docker+npm@7
-      - name: Chown workspace
-        run: chown -R $(whoami) .
-
-      - name: Install dependencies
-        run: npm install --prefer-offline --no-audit
-
-      - name: Update all @synthetixio/* dependency
-        run: "sed -i 's/\"@synthetixio\\/\\(.*\\)\": \".*\"/\"@synthetixio\\/\\1\": \"${{ github.event.inputs.monorepo_version }}\"/' package.json"
-
-      - run: npm install
-
+          node-version: '14.17.1'
+      - name: npm update
+        run: npm install -g npm@7.19.0
+      - name: Update @synthetixio/contracts-interface dependency
+        run: |
+          npm install --legacy-peer-deps --no-audit
+          npm install @synthetixio/contracts-interface@${{ github.event.client_payload.version }} --save-exact
+          npm install @synthetixio/queries@${{ github.event.client_payload.version }} --save-exact
+          npm install @synthetixio/data@${{ github.event.client_payload.version }} --save-exact
       - name: Commit changes
         run: |
           git config --global user.email "team@synthetix.io" && git config --global user.name "Synthetix Team"
-          git commit -am 'contracts-interface@${{ github.event.inputs.version }}'
+          git commit -am 'contracts-interface@${{ github.event.client_payload.version }}'
           git push origin dev
