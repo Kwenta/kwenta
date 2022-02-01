@@ -6,7 +6,7 @@ import get from 'lodash/get';
 import produce from 'immer';
 import { SOR } from '@balancer-labs/sor';
 import { BigNumber } from 'bignumber.js';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 
@@ -54,11 +54,11 @@ type ExchangeCardProps = {
 };
 
 const BALANCER_LINKS = {
-	[NetworkId.Mainnet]: {
+	[NetworkIdByName.mainnet]: {
 		poolsUrl: 'https://storageapi.fleek.co/balancer-bucket/balancer-exchange/pools',
 		proxyAddr: '0x3E66B66Fd1d0b02fDa6C811Da9E0547970DB2f21', // Balancer Mainnet proxy
 	},
-	[NetworkId.Kovan]: {
+	[NetworkIdByName.kovan]: {
 		poolsUrl:
 			'https://ipfs.fleek.co/ipns/balancer-team-bucket.storage.fleek.co/balancer-exchange-kovan/pools',
 		proxyAddr: '0x4e67bf5bD28Dd4b570FBAFe11D0633eCbA2754Ec', // Kovan proxy
@@ -256,7 +256,7 @@ const useBalancerExchange = ({
 			provider != null &&
 			gasPrice != null &&
 			network?.id != null &&
-			(network.id === NetworkId.Mainnet || network.id === NetworkId.Kovan)
+			(network.id === NetworkIdByName.mainnet || network.id === NetworkIdByName.kovan)
 		) {
 			const maxNoPools = 2;
 			const sor = new SOR(
@@ -299,7 +299,7 @@ const useBalancerExchange = ({
 				synthetixjs != null &&
 				signer != null &&
 				id != null &&
-				(id === NetworkId.Mainnet || id === NetworkId.Kovan)
+				(id === NetworkIdByName.mainnet || id === NetworkIdByName.kovan)
 			) {
 				if (contractNeedsInit) {
 					const proxyContract = new ethers.Contract(

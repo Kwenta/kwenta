@@ -8,12 +8,7 @@ import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import {
-	NetworkId,
-	Network as NetworkName,
-	SynthetixJS,
-	synthetix,
-} from '@synthetixio/contracts-interface';
+import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
@@ -73,7 +68,7 @@ const useConnector = () => {
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum,
 			});
-			const useOvm = getIsOVM(networkId);
+			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
@@ -107,7 +102,12 @@ const useConnector = () => {
 						const signer = provider.getSigner();
 						const useOvm = getIsOVM(networkId);
 
-						const snxjs = synthetix({ provider, networkId, signer, useOvm });
+						const snxjs = synthetix({
+							provider,
+							networkId: networkId as NetworkId,
+							signer,
+							useOvm,
+						});
 
 						onboard.config({ networkId });
 						if (transactionNotifier) {
@@ -131,7 +131,7 @@ const useConnector = () => {
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
-						const useOvm = getIsOVM(networkId);
+						const useOvm = getIsOVM(Number(networkId));
 
 						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
 
@@ -140,7 +140,7 @@ const useConnector = () => {
 						setSynthetixjs(snxjs);
 						setNetwork({
 							id: networkId,
-							name: network.name as NetworkName,
+							name: network.name,
 							useOvm,
 						});
 						if (!isIFrame()) setSelectedWallet(wallet.name); // don't allow iframed kwenta to override localstorage

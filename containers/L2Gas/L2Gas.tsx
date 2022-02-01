@@ -3,7 +3,6 @@ import { createContainer } from 'unstated-next';
 import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
 import { networkState, isL2State, walletAddressState } from 'store/wallet';
-import { Network } from '@synthetixio/contracts-interface';
 import { makeContract as makeL2WETHContract } from 'contracts/L2WETH';
 import { wei } from '@synthetixio/wei';
 
@@ -17,7 +16,7 @@ const MakeContainer = () => {
 
 	const wETHContract = useMemo(() => {
 		const networkName = network!?.name;
-		if (!(isL2 && networkName && networkName !== Network['Kovan-Ovm'] && provider)) {
+		if (!(isL2 && networkName && networkName !== 'kovan-ovm' && provider)) {
 			return null;
 		}
 		return makeL2WETHContract(networkName, provider)!;

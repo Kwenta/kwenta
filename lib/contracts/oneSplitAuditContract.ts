@@ -1,8 +1,8 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
 export default {
 	addresses: {
-		[NetworkId.Mainnet]: '0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E',
+		[NetworkIdByName.mainnet]: '0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E',
 	},
 	abi: [
 		{
