@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
-	variant: 'primary' | 'secondary' | 'outline' | 'alt' | 'success' | 'danger' | 'text' | 'select';
+	variant?: 'primary' | 'secondary' | 'outline' | 'alt' | 'success' | 'danger' | 'text' | 'select';
 	isActive?: boolean;
 	isRounded?: boolean;
 	mono?: boolean;
@@ -19,6 +19,7 @@ const Button = styled.button<ButtonProps>`
 	text-transform: capitalize;
 	outine: none;
 	white-space: nowrap;
+	font-size: 17px;
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	border: ${(props) => props.theme.colors.eliteTheme.border};
@@ -35,20 +36,6 @@ const Button = styled.button<ButtonProps>`
 		background: ${(props) => props.theme.colors.eliteTheme.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
-
-		${(props) =>
-			props.isActive &&
-			css`
-				&:hover {
-					background: ${props.theme.colors.eliteTheme.button.disabled.background};
-					color: ${props.theme.colors.eliteTheme.button.disabled.text};
-					text-shadow: none;
-
-					&:before {
-						display: none;
-					}
-				}
-			`};
 	}
 
 	${(props) =>
@@ -61,69 +48,57 @@ const Button = styled.button<ButtonProps>`
 			  `};
 
 	${(props) =>
-		['success', 'danger'].includes(props.variant) &&
+		props.variant === 'primary' &&
 		css`
-			&:before {
-				content: ' ';
-				position: absolute;
-				z-index: -1;
-				top: -4px;
-				right: -4px;
-				bottom: -4px;
-				left: -4px;
-				border-radius: 18px;
-			}
+			background: ${props.theme.colors.eliteTheme.button.primary.background};
+			color: ${props.theme.colors.common.primaryWhite};
+			text-shadow: ${props.theme.colors.eliteTheme.button.primary.textShadow};
 
 			&:hover {
-				color: ${props.theme.colors.common.primaryWhite};
-				text-shadow: ${props.theme.colors.eliteTheme.button.active.textShadow};
-
-				&:before {
-					box-shadow: ${props.theme.colors.eliteTheme.button.active.shadow};
-				}
+				background: ${props.theme.colors.eliteTheme.button.primary.hover};
 			}
 		`};
 
 	${(props) =>
-		props.variant === 'success' &&
+		props.variant === 'secondary' &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
-			border: 2px solid ${props.theme.colors.common.primaryGreen};
-
-			&:hover {
-				background: ${props.theme.colors.eliteTheme.button.active.hover.successBackground};
-
-				&:before {
-					border: 2px solid ${props.theme.colors.eliteTheme.button.active.hover.successBorder};
-				}
-			}
+			color: ${props.theme.colors.eliteTheme.button.secondary.text};
 		`};
 
 	${(props) =>
 		props.variant === 'danger' &&
 		css`
 			color: ${props.theme.colors.common.primaryRed};
-			border: 2px solid ${props.theme.colors.common.primaryRed};
-
-			&:hover {
-				background: ${props.theme.colors.eliteTheme.button.active.hover.dangerBackground};
-
-				&:before {
-					border: 2px solid ${props.theme.colors.eliteTheme.button.active.hover.dangerBorder};
-				}
-			}
 		`};
 
 	${(props) =>
 		props.size === 'sm' &&
 		css`
 			height: 41px;
+			min-width: 157px;
 		`};
 
 	${(props) =>
 		props.size === 'md' &&
 		css`
-			height: 55px;
+			height: 50px;
+			min-width: 200px;
+		`};
+
+	${(props) =>
+		props.size === 'lg' &&
+		css`
+			height: 70px;
+			min-width: 260px;
+			font-size: 19px;
+		`};
+
+	${(props) =>
+		props.size === 'xl' &&
+		css`
+			height: 80px;
+			min-width: 360px;
+			font-size: 21px;
 		`};
 
 	${(props) =>
