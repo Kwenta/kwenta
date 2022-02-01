@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import Button from 'components/Button';
 
 import { FixedFooterMixin, GridDivCentered } from 'styles/common';
 import media from 'styles/media';
@@ -48,3 +49,9 @@ export const MessageContainer = styled(GridDivCentered)<{
 		z-index: ${zIndex.BASE};
 	`}
 `;
+
+export const MessageButton = styled(Button).attrs({
+	variant: 'primary',
+	size: 'lg',
+	isRounded: true,
+})``;

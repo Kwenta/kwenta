@@ -15,8 +15,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
-import { MessageContainer, Message } from '../common';
-import NetworksSwitcher from 'sections/shared/Layout/AppLayout/Header/NetworksSwitcher';
+import { MessageContainer, Message, MessageButton } from '../common';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
 const ShortingCard: FC = () => {
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useShort({
@@ -26,6 +26,7 @@ const ShortingCard: FC = () => {
 
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
+	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 
 	return (
 		<Container>
@@ -45,7 +46,9 @@ const ShortingCard: FC = () => {
 					<Message>
 						<Trans t={t} i18nKey="shorting.l1-deprecated" />
 					</Message>
-					<NetworksSwitcher />
+					<MessageButton size="lg" variant="primary" isRounded={true} onClick={switchToL2}>
+						{t('header.networks-switcher.l2')}
+					</MessageButton>
 				</MessageContainer>
 			)}
 		</Container>
