@@ -1,8 +1,8 @@
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import { Network } from 'store/wallet';
 
 const getEtherscanBaseURL = (network: Network) => {
-	if (network.id === NetworkId.Mainnet) {
+	if (network.id === NetworkIdByName.mainnet) {
 		return 'https://etherscan.io';
 	}
 	return `https://${network.name}.etherscan.io`;

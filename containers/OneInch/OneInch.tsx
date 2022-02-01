@@ -5,7 +5,7 @@ import Connector from 'containers/Connector';
 import ethers, { Contract } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 
 const sUSDTokenAddress = '0x57ab1ec28d129707052df4df418d58a2d46d5f51';
 const ethTokenAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
@@ -18,7 +18,7 @@ const useOneInch = () => {
 	useEffect(() => {
 		if (isAppReady && signer) {
 			const contract = new ethers.Contract(
-				oneSplitAuditContract.addresses[NetworkId.Mainnet],
+				oneSplitAuditContract.addresses[NetworkIdByName.mainnet],
 				oneSplitAuditContract.abi,
 				signer
 			);
