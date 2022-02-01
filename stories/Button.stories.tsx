@@ -2,6 +2,8 @@ import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import Button from '../components/Button';
+import PositionButtons from 'sections/futures/PositionButtons';
+import { MarketPosition } from 'sections/futures/PositionButtons/PositionButtons';
 
 export default {
 	title: 'Components/Button',
@@ -35,23 +37,12 @@ Medium.args = {
 	style: { width: '157px' },
 };
 
-export const ActiveSuccess = Template.bind({});
+export const Danger = Template.bind({});
 
-ActiveSuccess.args = {
+Danger.args = {
 	size: 'md',
-	children: 'Long',
-	variant: 'success',
-	isActive: true,
-	style: { width: '157px' },
-};
-
-export const ActiveDanger = Template.bind({});
-
-ActiveDanger.args = {
-	size: 'md',
-	children: 'Short',
+	children: 'Button',
 	variant: 'danger',
-	isActive: true,
 	fullWidth: true,
 	style: { width: '157px' },
 };
@@ -63,4 +54,34 @@ Disabled.args = {
 	children: 'Button',
 	style: { width: '157px' },
 	disabled: true,
+};
+
+export const Primary = Template.bind({});
+
+Primary.args = {
+	size: 'md',
+	children: 'Button',
+	variant: 'primary',
+};
+
+export const Secondary = Template.bind({});
+
+Secondary.args = {
+	size: 'md',
+	children: 'Button',
+	variant: 'secondary',
+};
+
+export const Monospace = Template.bind({});
+
+Monospace.args = {
+	size: 'sm',
+	children: '10x',
+	mono: true,
+};
+
+export const Position = () => {
+	const [selected, setSelected] = React.useState<MarketPosition>('long');
+
+	return <PositionButtons selected={selected} setSelected={setSelected} />;
 };
