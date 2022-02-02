@@ -11,7 +11,7 @@ type CustomThemeContextType = {
 	setTheme(name: ThemeName): void;
 };
 
-const CustomThemeContext = React.createContext<CustomThemeContextType>({
+export const CustomThemeContext = React.createContext<CustomThemeContextType>({
 	setTheme: () => {},
 });
 
@@ -31,4 +31,10 @@ export const CustomThemeProvider: React.FC = ({ children }) => {
 			<ThemeProvider theme={themeObj}>{children}</ThemeProvider>
 		</CustomThemeContext.Provider>
 	);
+};
+
+export const useSetTheme = () => {
+	const { setTheme } = React.useContext(CustomThemeContext);
+
+	return setTheme;
 };

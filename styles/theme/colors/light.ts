@@ -1,14 +1,13 @@
-import common from './common';
-
 const lightTheme = {
 	background: '#F9F9F9',
 	border: '1px solid rgba(0, 0, 0, 0.1)',
 	button: {
-		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
+		background:
+			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%)',
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
 		shadow:
 			'0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
-		text: common.primaryWhite,
+		text: '#000000',
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',
