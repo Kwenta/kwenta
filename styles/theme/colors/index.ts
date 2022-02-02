@@ -43,7 +43,6 @@ const colors = {
 	noNetwork: 'rgb(155, 155, 155)',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
-	eliteTheme,
 };
 
 type ValueOf<T> = T[keyof T];
