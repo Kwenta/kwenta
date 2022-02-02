@@ -5,14 +5,13 @@ import { RecoilRoot } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
-import { ThemeProvider } from 'styled-components';
 import { MediaContextProvider } from 'styles/media';
 
 import WithAppContainers from 'containers';
-import theme from 'styles/theme';
 
 import { ReactQueryDevtools } from 'react-query/devtools';
 
+import { CustomThemeProvider } from 'contexts/CustomThemeContext';
 import SystemStatus from 'sections/shared/SystemStatus';
 
 import 'styles/main.css';
@@ -81,7 +80,7 @@ const App: FC<AppProps> = (props) => {
 				<meta name="twitter:url" content="https://kwenta.io" />
 				<link rel="icon" href="/images/favicon.svg" />
 			</Head>
-			<ThemeProvider theme={theme}>
+			<CustomThemeProvider>
 				<RecoilRoot>
 					<QueryClientProvider client={new QueryClient()}>
 						<WithAppContainers>
@@ -89,7 +88,7 @@ const App: FC<AppProps> = (props) => {
 						</WithAppContainers>
 					</QueryClientProvider>
 				</RecoilRoot>
-			</ThemeProvider>
+			</CustomThemeProvider>
 		</>
 	);
 };

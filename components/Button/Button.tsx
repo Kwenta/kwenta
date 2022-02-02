@@ -22,18 +22,18 @@ const Button = styled.button<ButtonProps>`
 	font-size: 17px;
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	border: ${(props) => props.theme.colors.eliteTheme.border};
-	background: ${(props) => props.theme.colors.eliteTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.eliteTheme.button.shadow};
+	border: ${(props) => props.theme.colors.current.border};
+	background: ${(props) => props.theme.colors.current.button.background};
+	box-shadow: ${(props) => props.theme.colors.current.button.shadow};
 
 	&:hover {
-		background: ${(props) => props.theme.colors.eliteTheme.button.hover};
+		background: ${(props) => props.theme.colors.current.button.hover};
 	}
 
 	&:disabled {
-		color: ${(props) => props.theme.colors.eliteTheme.button.disabled.text};
-		border: ${(props) => props.theme.colors.eliteTheme.border};
-		background: ${(props) => props.theme.colors.eliteTheme.button.disabled.background};
+		color: ${(props) => props.theme.colors.current.button.disabled.text};
+		border: ${(props) => props.theme.colors.current.border};
+		background: ${(props) => props.theme.colors.current.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
 	}
@@ -50,19 +50,19 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'primary' &&
 		css`
-			background: ${props.theme.colors.eliteTheme.button.primary.background};
+			background: ${props.theme.colors.current.button.primary.background};
 			color: ${props.theme.colors.common.primaryWhite};
-			text-shadow: ${props.theme.colors.eliteTheme.button.primary.textShadow};
+			text-shadow: ${props.theme.colors.current.button.primary.textShadow};
 
 			&:hover {
-				background: ${props.theme.colors.eliteTheme.button.primary.hover};
+				background: ${props.theme.colors.current.button.primary.hover};
 			}
 		`};
 
 	${(props) =>
 		props.variant === 'secondary' &&
 		css`
-			color: ${props.theme.colors.eliteTheme.button.secondary.text};
+			color: ${props.theme.colors.current.button.secondary.text};
 		`};
 
 	${(props) =>
