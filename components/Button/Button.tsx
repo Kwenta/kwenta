@@ -22,18 +22,18 @@ const Button = styled.button<ButtonProps>`
 	font-size: 17px;
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	border: ${(props) => props.theme.colors.eliteTheme.border};
-	background: ${(props) => props.theme.colors.eliteTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.eliteTheme.button.shadow};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 
 	&:hover {
-		background: ${(props) => props.theme.colors.eliteTheme.button.hover};
+		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 	}
 
 	&:disabled {
-		color: ${(props) => props.theme.colors.eliteTheme.button.disabled.text};
-		border: ${(props) => props.theme.colors.eliteTheme.border};
-		background: ${(props) => props.theme.colors.eliteTheme.button.disabled.background};
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
 	}
@@ -50,19 +50,19 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'primary' &&
 		css`
-			background: ${props.theme.colors.eliteTheme.button.primary.background};
+			background: ${props.theme.colors.selectedTheme.button.primary.background};
 			color: ${props.theme.colors.common.primaryWhite};
-			text-shadow: ${props.theme.colors.eliteTheme.button.primary.textShadow};
+			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
 
 			&:hover {
-				background: ${props.theme.colors.eliteTheme.button.primary.hover};
+				background: ${props.theme.colors.selectedTheme.button.primary.hover};
 			}
 		`};
 
 	${(props) =>
 		props.variant === 'secondary' &&
 		css`
-			color: ${props.theme.colors.eliteTheme.button.secondary.text};
+			color: ${props.theme.colors.selectedTheme.button.secondary.text};
 		`};
 
 	${(props) =>
