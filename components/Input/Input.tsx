@@ -4,8 +4,8 @@ export const inputCSS = css`
 	width: 100%;
 	min-width: 0;
 	font-family: ${(props) => props.theme.fonts.regular};
-	border: ${(props) => props.theme.colors.current.border};
-	background: ${(props) => props.theme.colors.current.input.secondary.background};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
 	height: 46px;
 	padding: 0 12px;
 	font-size: 18px;
@@ -14,7 +14,7 @@ export const inputCSS = css`
 	outline: none;
 
 	::placeholder {
-		color: ${(props) => props.theme.colors.current.input.placeholder};
+		color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
 	}
 `;
 

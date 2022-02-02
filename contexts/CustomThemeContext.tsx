@@ -21,7 +21,7 @@ export const CustomThemeProvider: React.FC = ({ children }) => {
 	const themeObj = React.useMemo(
 		() => ({
 			...theme,
-			colors: { ...theme.colors, current: themeColors[customTheme] },
+			colors: { ...theme.colors, selectedTheme: themeColors[customTheme] },
 		}),
 		[customTheme]
 	);

@@ -65,10 +65,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 
 			${props.$isActive &&
 			css`
-				background: ${props.theme.colors.current.button.active.hover.successBackground};
+				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
 
 				&:before {
-					border: 2px solid ${props.theme.colors.current.button.active.hover.successBorder};
+					border: 2px solid ${props.theme.colors.selectedTheme.button.active.hover.successBorder};
 				}
 			`};
 		`};
@@ -80,10 +80,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 
 			${props.$isActive &&
 			css`
-				background: ${props.theme.colors.current.button.active.hover.dangerBackground};
+				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
 
 				&:before {
-					border: 2px solid ${props.theme.colors.current.button.active.hover.dangerBorder};
+					border: 2px solid ${props.theme.colors.selectedTheme.button.active.hover.dangerBorder};
 				}
 			`};
 		`};
@@ -91,10 +91,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$isActive &&
 		css`
-			text-shadow: ${props.theme.colors.current.button.active.textShadow};
+			text-shadow: ${props.theme.colors.selectedTheme.button.active.textShadow};
 
 			&:before {
-				box-shadow: ${props.theme.colors.current.button.active.shadow};
+				box-shadow: ${props.theme.colors.selectedTheme.button.active.shadow};
 			}
 		`};
 `;

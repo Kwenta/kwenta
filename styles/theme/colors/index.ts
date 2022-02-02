@@ -47,4 +47,4 @@ const colors = {
 
 type ValueOf<T> = T[keyof T];
 
-export default colors as typeof colors & { current: ValueOf<typeof themeColors> };
+export default colors as typeof colors & { selectedTheme: ValueOf<typeof themeColors> };
