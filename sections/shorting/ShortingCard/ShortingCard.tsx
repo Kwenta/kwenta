@@ -26,7 +26,7 @@ const ShortingCard: FC = () => {
 
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const { switchToL1, switchToL2 } = useNetworkSwitcher();
+	const { switchToL2 } = useNetworkSwitcher();
 
 	return (
 		<Container>
