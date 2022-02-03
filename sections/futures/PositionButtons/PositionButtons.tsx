@@ -40,6 +40,8 @@ const PositionButtonsContainer = styled.div`
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-gap: 15px;
+	margin-bottom: 16px;
+	margin-top: 8px;
 `;
 
 const StyledPositionButton = styled(Button)<PositionButtonProps>`
