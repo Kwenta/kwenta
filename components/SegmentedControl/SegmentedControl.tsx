@@ -52,7 +52,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 			: css`
 					background: transparent;
 					border: none;
-					color: ${(props) => props.theme.colors.selectedTheme.segmented.button.inactive};
+					color: ${(props) => props.theme.colors.selectedTheme.segmented.button.inactive.color};
 			  `}
 `;
 
