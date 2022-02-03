@@ -51,9 +51,7 @@ const eliteTheme = {
 	slider: {
 		label: '#787878',
 		thumb: {
-			hover: {
-				shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
-			},
+			shadow: 'inset 0px 1px 0px rgba(255, 255, 255, 0.5)',
 		},
 		track: {
 			shadow: 'inset 0px 0.5px 0px rgba(255, 255, 255, 0.5)',

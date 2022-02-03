@@ -1,12 +1,11 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import Button from 'components/Button';
-
-export type MarketPosition = 'long' | 'short';
+import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
-	selected: MarketPosition;
-	setSelected(position: MarketPosition): void;
+	selected: PositionSide;
+	setSelected(position: PositionSide): void;
 }
 
 const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, setSelected }) => {
@@ -14,17 +13,17 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, setSelected
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
-				$position="long"
+				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
-				onClick={() => setSelected('long')}
+				onClick={() => setSelected(PositionSide.LONG)}
 			>
 				Long
 			</StyledPositionButton>
 			<StyledPositionButton
 				fullWidth
-				$position="short"
+				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
-				onClick={() => setSelected('short')}
+				onClick={() => setSelected(PositionSide.SHORT)}
 			>
 				Short
 			</StyledPositionButton>
@@ -33,7 +32,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, setSelected
 };
 
 type PositionButtonProps = {
-	$position: MarketPosition;
+	$position: PositionSide;
 	$isActive: boolean;
 };
 
@@ -59,7 +58,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	}
 
 	${(props) =>
-		props.$position === 'long' &&
+		props.$position === PositionSide.LONG &&
 		css`
 			border: 1px solid ${props.theme.colors.common.primaryGreen};
 
@@ -74,7 +73,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		`};
 
 	${(props) =>
-		props.$position === 'short' &&
+		props.$position === PositionSide.SHORT &&
 		css`
 			border: 1px solid ${props.theme.colors.common.primaryRed};
 
