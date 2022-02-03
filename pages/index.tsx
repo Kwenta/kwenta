@@ -1,9 +1,7 @@
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import Head from 'next/head';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-
-import Loading from 'components/Loading';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import {
@@ -22,13 +20,6 @@ import { Subheader } from 'sections/futures/common';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
-	const [isLoading, setLoading] = useState<boolean>(true);
-
-	useEffect(() => {
-		setTimeout(() => setLoading(false), 1500);
-	}, []);
-
-	if (isLoading) return <Loading />;
 
 	return (
 		<>
