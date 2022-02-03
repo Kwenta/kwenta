@@ -3,7 +3,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import Button from '../components/Button';
 import PositionButtons from 'sections/futures/PositionButtons';
-import { MarketPosition } from 'sections/futures/PositionButtons/PositionButtons';
+import { PositionSide } from 'queries/futures/types';
 
 export default {
 	title: 'Components/Button',
@@ -81,7 +81,7 @@ Monospace.args = {
 };
 
 export const Position = () => {
-	const [selected, setSelected] = React.useState<MarketPosition>('long');
+	const [selected, setSelected] = React.useState<PositionSide>(PositionSide.LONG);
 
 	return <PositionButtons selected={selected} setSelected={setSelected} />;
 };
