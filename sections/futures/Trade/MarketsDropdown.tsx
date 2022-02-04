@@ -87,6 +87,10 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 const SelectContainer = styled.div`
 	margin-top: 5px;
 	margin-bottom: 16px;
+
+	.react-select__dropdown-indicator {
+		margin-right: 22px;
+	}
 `;
 
 export default MarketsDropdown;
