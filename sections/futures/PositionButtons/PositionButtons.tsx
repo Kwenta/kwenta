@@ -5,17 +5,17 @@ import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
-	setSelected(position: PositionSide): void;
+	onSelect(position: PositionSide): void;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, setSelected }) => {
+const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
-				onClick={() => setSelected(PositionSide.LONG)}
+				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				Long
 			</StyledPositionButton>
@@ -23,7 +23,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, setSelected
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
-				onClick={() => setSelected(PositionSide.SHORT)}
+				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				Short
 			</StyledPositionButton>

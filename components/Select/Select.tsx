@@ -74,16 +74,14 @@ function Select<T>(props: Props<T>) {
 				'&:hover': {
 					color: state.selectProps.dropdownIndicatorColorHover ?? colors.goldColors.color3,
 				},
-				marginRight: '22px',
 			}),
 			valueContainer: (provided) => ({
 				...provided,
 				height: '100%',
 			}),
-			...props.styles,
 		};
 		return styles;
-	}, [colors, fonts, props]);
+	}, [colors, fonts]);
 
 	return (
 		<ReactSelect

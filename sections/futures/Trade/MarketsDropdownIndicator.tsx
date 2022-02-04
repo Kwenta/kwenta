@@ -5,7 +5,7 @@ import dropdownArrow from '../../../assets/svg/app/dropdown-arrow.svg';
 
 const MarketsDropdownIndicator: React.FC<IndicatorProps<any>> = (props) => (
 	<components.DropdownIndicator {...props}>
-		<Svg src={dropdownArrow} />
+		<Svg src={dropdownArrow} style={{ marginRight: 22 }} />
 	</components.DropdownIndicator>
 );
 
