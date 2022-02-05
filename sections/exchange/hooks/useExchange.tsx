@@ -27,6 +27,7 @@ import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
@@ -214,6 +215,8 @@ const useExchange = ({
 		baseCurrencyKey as CurrencyKey
 	);
 
+	const baseFeeRateQuery = useBaseFeeRateQuery(baseCurrencyKey as CurrencyKey);
+
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 
@@ -302,6 +305,7 @@ const useExchange = ({
 	);
 
 	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
+	const baseFeeRate = baseFeeRateQuery.isSuccess ? baseFeeRateQuery.data ?? null : null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
@@ -1118,7 +1122,8 @@ const useExchange = ({
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					feeRate={exchangeFeeRate}
+					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}
+					baseFeeRate={baseFeeRate != null ? baseFeeRate : null}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					// show fee's only for "synthetix" (provider)
