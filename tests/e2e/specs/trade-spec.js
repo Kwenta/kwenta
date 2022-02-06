@@ -3,33 +3,37 @@ import ExchangePage from '../pages/exchange/exchange-page';
 const exchange = new ExchangePage();
 const testedAsset = 'sETH';
 
-describe('Trades tests', () => {
+let metamaskWalletAddress;
+
+/*
+* This end-to-end test illustrates the happy flow of swapping synths through the Kwenta exchange on Optimistic Kovan
+* 1 sUSD is swapped
+* This e2e test works with Chrome on Optimistic Kovan   
+*/
+
+describe('Trade 1 sUSD for sETH on Optimism', () => {
 	context(`Trade sUSD => ${testedAsset}`, () => {
 		before(() => {
-			exchange.snxExchangerSettle(testedAsset).then((settleTx) => {
-				if (settleTx) {
-					exchange.waitUntilAvailableOnEtherscan(settleTx, 'settleTx');
-				}
+			exchange.getMetamaskWalletAddress().then((address) => {
+				metamaskWalletAddress = address;
 			});
-			exchange.snxCheckWaitingPeriod(testedAsset);
-			exchange.visit(`${testedAsset}-sUSD`);
+			exchange.visit();
 			exchange.connectBrowserWallet();
+			
+			/* when this test is runned chained as a part of testrun the snippet below causes problems. However,if the test is run "standalone" it becomes required
+			// TODO: investigate fix for the above, for now assuming chained test runs
 			exchange.acceptMetamaskAccessRequest();
 			exchange.waitUntilLoggedIn();
+			*/
+			
+			exchange.visit(`${testedAsset}-sUSD`);
 		});
 		it(`should exchange with success`, () => {
+			// enters a value of 1 sUSD
 			exchange.getCurrencyAmount().type('1');
 			exchange.getSubmitOrderBtn().click();
 			exchange.confirmMetamaskTransaction();
 			exchange.waitForTransactionSuccess();
-			exchange.getTransactionUrl().then((url) => {
-				exchange.waitUntilAvailableOnEtherscan(url, 'etherscan');
-				cy.get('@etherscan').should((response) => {
-					expect(response.body).to.include('</i>Success</span>');
-					// blocker: need slippage explanations
-					// todo: verify gas amount in metamask and etherscan, etherscan asset sent, fee and received asset value
-				});
-			});
 		});
 	});
 });
