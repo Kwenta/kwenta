@@ -25,7 +25,7 @@ import { singleChartTypeState, singleChartPeriodState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import Button from 'components/Button';
+import TabButton from 'components/Button/TabButton';
 
 type MarketInfoProps = {
 	market: string;
@@ -135,9 +135,9 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				setSelectedChartPeriod={setChartPeriod}
 			/>
 			<TabButtonsContainer>
-				<Button>Open Positions</Button>
-				<Button disabled>Open History</Button>
-				<Button disabled>Open Orders</Button>
+				<TabButton title="Open Positions" badge={3} />
+				<TabButton title="Open History" disabled />
+				<TabButton title="Open Orders" disabled />
 			</TabButtonsContainer>
 			{/* <MarketInfoContainer>
 				<StyledFlexDiv>
@@ -188,6 +188,7 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 `;
 
 const TabButtonsContainer = styled.div`
+	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
 
