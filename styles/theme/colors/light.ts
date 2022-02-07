@@ -1,3 +1,5 @@
+import common from './common';
+
 const lightTheme = {
 	background: '#F9F9F9',
 	border: '1px solid rgba(0, 0, 0, 0.1)',
@@ -28,6 +30,14 @@ const lightTheme = {
 			},
 		},
 		disabled: { text: '#555555', background: '#272727' },
+		tab: {
+			badge: {
+				background: '#E4B378',
+				text: common.secondaryGray,
+				shadow: 'inset 0px 0.8px 0px rgba(255, 255, 255, 0.6)',
+			},
+			disabled: { border: '1px solid #353333', text: '#353333' },
+		},
 	},
 	input: {
 		background: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.75) 100%)',

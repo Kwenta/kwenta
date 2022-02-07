@@ -1,3 +1,5 @@
+import common from './common';
+
 const eliteTheme = {
 	background: '#474747',
 	border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -24,9 +26,14 @@ const eliteTheme = {
 				dangerBorder: 'rgba(239, 104, 104, 0.2)',
 			},
 		},
-		disabled: {
-			text: '#544F4D',
-			background: '#2A2827',
+		disabled: { text: '#544F4D', background: '#2A2827' },
+		tab: {
+			badge: {
+				background: '#E4B378',
+				text: common.secondaryGray,
+				shadow: 'inset 0px 0.8px 0px rgba(255, 255, 255, 0.6)',
+			},
+			disabled: { border: '1px solid #353333', text: '#353333' },
 		},
 	},
 	input: {
