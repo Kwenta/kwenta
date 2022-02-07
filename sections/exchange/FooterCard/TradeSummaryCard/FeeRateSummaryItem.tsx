@@ -32,7 +32,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 					{totalFeeRate != null && baseFeeRate != null ? (
 						totalFeeRate.sub(baseFeeRate).toNumber() > 0 ? (
 							<>
-								<span>+</span>
+								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<DynamicFeeRateTooltip
 									content="This transaction will incur an additional dynamic fee due to market volatility."
 									trigger="mouseenter focus"
@@ -55,6 +55,16 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 	);
 };
 
+export const FeeRateItem = styled.span`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+`;
+
+export const DynamicFeeLabel = styled.span`
+	color: ${(props) => props.theme.colors.blueberry}
+`;
+
 export const DynamicFeeRateTooltip = styled(Tippy)`
 	width: auto;
 	text-align: justify;
@@ -63,12 +73,6 @@ export const DynamicFeeRateTooltip = styled(Tippy)`
 		padding: 15px;
 		font-family: ${(props) => props.theme.fonts.mono};
 	}
-`;
-
-export const FeeRateItem = styled.span`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
 `;
 
 export const DynamicFeeRateItem = styled.span`
