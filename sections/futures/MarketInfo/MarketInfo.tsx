@@ -14,9 +14,7 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
 
-import { FlexDivCol, FlexDivRow } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Card from 'components/Card';
 import UserInfo from '../UserInfo';
 import { FuturesMarket } from 'queries/futures/types';
 import { ChartType } from 'constants/chartType';
@@ -25,7 +23,6 @@ import { singleChartTypeState, singleChartPeriodState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import TabButton from 'components/Button/TabButton';
 
 type MarketInfoProps = {
 	market: string;
@@ -134,70 +131,12 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				selectedChartPeriod={chartPeriod}
 				setSelectedChartPeriod={setChartPeriod}
 			/>
-			<TabButtonsContainer>
-				<TabButton title="Open Positions" badge={3} />
-				<TabButton title="Open History" disabled />
-				<TabButton title="Open Orders" disabled />
-			</TabButtonsContainer>
-			{/* <MarketInfoContainer>
-				<StyledFlexDiv>
-					{marketInfoCols.map(({ title, data }, i) => (
-						<InfoBox key={`infobox-${i}`}>
-							<InfoTitle>{title}</InfoTitle>
-							<InfoData>{data}</InfoData>
-						</InfoBox>
-					))}
-				</StyledFlexDiv>
-			</MarketInfoContainer> */}
 			<UserInfo marketAsset={baseCurrencyKey} />
 		</>
 	);
 };
 export default MarketInfo;
 
-const MarketInfoContainer = styled(Card)`
-	margin: 16px 0px;
-`;
-
-const StyledFlexDiv = styled(FlexDivRow)`
-	justify-content: space-between;
-	align-items: center;
-`;
-
-const InfoBox = styled(FlexDivCol)`
-	padding: 20px;
-`;
-
-const InfoTitle = styled.div`
-	color: ${(props) => props.theme.colors.blueberry};
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
-	text-transform: capitalize;
-	margin-bottom: 16px;
-`;
-
-const InfoData = styled(FlexDivRow)`
-	align-items: center;
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 12px;
-`;
-
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 4px;
-`;
-
-const TabButtonsContainer = styled.div`
-	display: flex;
-	margin-top: 16px;
-	margin-bottom: 16px;
-
-	& > button {
-		height: 38px;
-		font-size: 13px;
-
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
-	}
 `;

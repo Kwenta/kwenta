@@ -7,10 +7,11 @@ type TabButtonProps = {
 	detail?: string;
 	badge?: number;
 	active?: boolean;
+	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...props }) => {
 	return (
 		<StyledButton {...props}>
 			<div>
