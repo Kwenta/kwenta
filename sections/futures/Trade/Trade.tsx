@@ -233,7 +233,9 @@ const Trade: React.FC<TradeProps> = () => {
 				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
 					Deposit
 				</MarketActionButton>
-				<MarketActionButton>Withdraw</MarketActionButton>
+				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
+					Withdraw
+				</MarketActionButton>
 			</MarketActions>
 
 			<MarketInfoBox
