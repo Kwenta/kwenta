@@ -24,6 +24,8 @@ import { Period } from 'constants/period';
 import { singleChartTypeState, singleChartPeriodState } from 'store/app';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import { CurrencyKey } from 'constants/currency';
+import MarketDetails from '../MarketDetails';
+import Button from 'components/Button';
 
 type MarketInfoProps = {
 	market: string;
@@ -122,6 +124,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 						: t('futures.market.page-title')}
 				</title>
 			</Head>
+			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
 			<PriceChartCard
 				side="base"
 				currencyKey={baseCurrencyKey}
@@ -131,7 +134,12 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				selectedChartPeriod={chartPeriod}
 				setSelectedChartPeriod={setChartPeriod}
 			/>
-			<MarketInfoContainer>
+			<TabButtonsContainer>
+				<Button>Open Positions</Button>
+				<Button disabled>Open History</Button>
+				<Button disabled>Open Orders</Button>
+			</TabButtonsContainer>
+			{/* <MarketInfoContainer>
 				<StyledFlexDiv>
 					{marketInfoCols.map(({ title, data }, i) => (
 						<InfoBox key={`infobox-${i}`}>
@@ -140,7 +148,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 						</InfoBox>
 					))}
 				</StyledFlexDiv>
-			</MarketInfoContainer>
+			</MarketInfoContainer> */}
 			<UserInfo marketAsset={baseCurrencyKey} />
 		</>
 	);
@@ -177,4 +185,18 @@ const InfoData = styled(FlexDivRow)`
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 4px;
+`;
+
+const TabButtonsContainer = styled.div`
+	margin-top: 16px;
+	margin-bottom: 16px;
+
+	& > button {
+		height: 38px;
+		font-size: 13px;
+
+		&:not(:last-of-type) {
+			margin-right: 14px;
+		}
+	}
 `;

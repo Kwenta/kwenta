@@ -5,10 +5,17 @@ interface SegmentedControlProps {
 	values: string[];
 	selectedIndex: number;
 	onChange(index: number): void;
+	style?: React.CSSProperties;
+	className?: string;
 }
 
-const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedIndex, onChange }) => (
-	<SegmentedControlContainer length={values.length}>
+const SegmentedControl: React.FC<SegmentedControlProps> = ({
+	values,
+	selectedIndex,
+	onChange,
+	...props
+}) => (
+	<SegmentedControlContainer $length={values.length} {...props}>
 		{values.map((value, index) => (
 			<SegmentedControlOption
 				key={value}
@@ -21,9 +28,9 @@ const SegmentedControl: React.FC<SegmentedControlProps> = ({ values, selectedInd
 	</SegmentedControlContainer>
 );
 
-const SegmentedControlContainer = styled.div<{ length: number }>`
+const SegmentedControlContainer = styled.div<{ $length: number }>`
 	display: grid;
-	grid-template-columns: repeat(${(props) => props.length}, 1fr);
+	grid-template-columns: repeat(${(props) => props.$length}, 1fr);
 	box-sizing: border-box;
 	grid-gap: 14px;
 	width: 100%;
