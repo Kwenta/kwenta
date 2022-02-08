@@ -45,7 +45,7 @@ export default SliderComponent;
 const SliderContainer = styled.div`
 	width: 334px;
 	height: 24px;
-	background: url(${imageBackground as any}) no-repeat;
+	background: url(${imageBackground.src}) no-repeat;
 	padding: 0 19px 0 4px;
 	box-sizing: border-box;
 `;

@@ -2,14 +2,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
 
-import SpiralLines from 'assets/svg/app/future-position-background.svg';
-
-import Card from 'components/Card';
 import { FlexDivRow, FlexDivCol, FlexDivRowCentered, InfoTooltip } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
@@ -40,7 +37,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Card>
+			<Container>
 				<FlexDivRow>
 					<GraphicPosition>
 						<StyledGraphicRow>
@@ -181,7 +178,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						</DataCol>
 					</RightHand>
 				</FlexDivRow>
-			</Card>
+			</Container>
 			{closePositionModalIsVisible && onPositionClose && (
 				<ClosePositionModal
 					position={positionDetails}
@@ -195,13 +192,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
 };
 export default PositionCard;
 
+const Container = styled.div`
+	display: flex;
+	background-color: transparent;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	padding: 22px;
+	border-radius: 16px;
+`;
+
 const GraphicPosition = styled.div`
 	width: 45%;
 	padding: 20px;
 	background-size: cover;
 	background-position: center center;
-	background-image: url(${SpiralLines.src});
-	background-color: ${(props) => props.theme.colors.vampire};
 `;
 
 const StyledGraphicRow = styled(FlexDivRow)`
