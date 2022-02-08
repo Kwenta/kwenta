@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
 
-import { FlexDiv, FlexDivRow, FlexDivCol, FlexDivRowCentered, InfoTooltip } from 'styles/common';
+import { FlexDiv, FlexDivCol } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -13,7 +13,6 @@ import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
-import ROUTES from 'constants/routes';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -38,51 +37,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	return (
 		<>
 			<Container>
-				{/* <GraphicPosition>
-						<StyledGraphicRow>
-							<FlexDivCol>
-								<PositionSizeRow>
-									<StyledCurrencyIcon currencyKey={currencyKey} />
-									<PositionSizeCol>
-										<StyledPositionSize>
-											{formatCurrency(currencyKey, positionDetails?.size ?? zeroBN, {
-												currencyKey,
-											})}
-										</StyledPositionSize>
-										<StyledPositionSizeUSD>
-											{formatCurrency(
-												Synths.sUSD,
-												positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
-												{ sign: '$' }
-											)}
-										</StyledPositionSizeUSD>
-									</PositionSizeCol>
-								</PositionSizeRow>
-								<ROIContainer>
-									<InfoTooltip
-										placement="top"
-										content={<div>{t('futures.market.user.position.roi-tooltip')}</div>}
-									>
-										<StyledSubtitle>{t('futures.market.user.position.roi')}</StyledSubtitle>
-									</InfoTooltip>
-									<ROIValueContainer>
-										<StyledROIValue>
-											<div>
-												{formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' })}
-											</div>
-										</StyledROIValue>
-										<ChangePercent value={Number(positionDetails?.roiChange?.toString() ?? 0)} />
-									</ROIValueContainer>
-								</ROIContainer>
-							</FlexDivCol>
-							<FlexDivRow>
-								<Leverage>{`${formatNumber(positionDetails?.leverage ?? 0)}x |`}</Leverage>
-								<Side isLong={positionDetails?.side === PositionSide.LONG ?? true}>
-									{positionDetails?.side ?? PositionSide.LONG}
-								</Side>
-							</FlexDivRow>
-						</StyledGraphicRow>
-					</GraphicPosition> */}
 				<DataCol>
 					<InfoCol>
 						<FlexDiv>
@@ -93,10 +47,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							</div>
 						</FlexDiv>
 					</InfoCol>
-					<InfoCol>
+					<PositionInfoCol>
 						<StyledSubtitle>Position</StyledSubtitle>
 						<StyledValue>LONG</StyledValue>
-					</InfoCol>
+					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
@@ -115,76 +69,34 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
-						<StyledValue>$4,131.23</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
-						<InfoTooltip
-							placement="top"
-							content={<div>{t('futures.market.user.position.entry-tooltip')}</div>}
-						>
-							<StyledSubtitle>{t('futures.market.user.position.entry')}</StyledSubtitle>
-						</InfoTooltip>
-						<StyledValue>
-							{positionDetails && positionDetails.lastPrice
-								? formatCurrency(Synths.sUSD, positionDetails?.lastPrice, { sign: '$' })
-								: '--'}
-						</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<InfoTooltip
-							placement="top"
-							content={<div>{t('futures.market.user.position.remaining-margin-tooltip')}</div>}
-						>
-							<StyledSubtitle>{t('futures.market.user.position.remaining-margin')}</StyledSubtitle>
-						</InfoTooltip>
-						<StyledValue>
-							{formatCurrency(Synths.sUSD, position?.remainingMargin ?? zeroBN, { sign: '$' })}
-						</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
-						<InfoTooltip
-							placement="top"
-							content={<div>{t('futures.market.user.position.liquidation-tooltip')}</div>}
-						>
-							<StyledSubtitle>{t('futures.market.user.position.liquidation')}</StyledSubtitle>
-						</InfoTooltip>
 						<StyledValue>
 							{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 								sign: '$',
 							})}
 						</StyledValue>
 					</InfoCol>
+				</DataCol>
+				<DataCol>
 					<InfoCol>
-						<InfoTooltip
-							placement="top"
-							content={<div>{t('futures.market.user.position.margin-ratio-tooltip')}</div>}
-						>
-							<StyledSubtitle>{t('futures.market.user.position.margin-ratio')}</StyledSubtitle>
-						</InfoTooltip>
-
-						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionDetails?.marginRatio ?? zeroBN)}
-						</StyledValue>
+						<StyledSubtitle>Average Open</StyledSubtitle>
+						<StyledValue>$4,131.23</StyledValue>
+					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Average Close</StyledSubtitle>
+						<StyledValue>$4,131.23</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<InfoTooltip
-							placement="top"
-							content={<div>{t('futures.market.user.position.accrued-funding-tooltip')}</div>}
-						>
-							<StyledSubtitle>{t('futures.market.user.position.accrued-funding')}</StyledSubtitle>
-						</InfoTooltip>
-						<StyledValue>
-							{positionDetails && positionDetails.accruedFunding
-								? formatCurrency(Synths.sUSD, positionDetails.accruedFunding, { sign: '$' })
-								: '--'}
-						</StyledValue>
+						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
+						<StyledValue>-$10.83</StyledValue>
 					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Net Funding</StyledSubtitle>
+						<StyledValue>-$10.83</StyledValue>
+					</InfoCol>
+				</DataCol>
+				<DataCol style={{ justifyContent: 'flex-end' }}>
 					{onPositionClose && (
 						<CloseButton
 							isRounded={true}
@@ -195,15 +107,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						>
 							{t('futures.market.user.position.close-position')}
 						</CloseButton>
-					)}
-					{dashboard && (
-						<ManageButton
-							isRounded={true}
-							variant="text"
-							onClick={() => router.push(ROUTES.Markets.MarketPair(currencyKey))}
-						>
-							{t('futures.market.user.position.manage-position')}
-						</ManageButton>
 					)}
 				</DataCol>
 			</Container>
@@ -230,69 +133,10 @@ const Container = styled.div`
 	border-radius: 16px;
 `;
 
-const StyledGraphicRow = styled(FlexDivRow)`
-	align-items: flex-start;
-`;
-
-const PositionSizeRow = styled(FlexDivRow)`
-	justify-content: flex-start;
-	align-items: center;
-`;
-
-const PositionSizeCol = styled(FlexDivCol)`
-	margin-left: 8px;
-`;
-
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
-`;
-
-const StyledPositionSize = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
-	margin-bottom: 4px;
-`;
-
-const StyledPositionSizeUSD = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.silver};
-	text-transform: capitalize;
-`;
-
-const Leverage = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
-`;
-
-const Side = styled.div<{ isLong: boolean }>`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	color: ${(props) => (props.isLong ? props.theme.colors.green : props.theme.colors.red)};
-	margin-left: 4px;
-	text-transform: uppercase;
-`;
-
-const ROIContainer = styled.div`
-	margin-top: 16px;
-`;
-
-const ROIValueContainer = styled(FlexDivRow)`
-	justify-content: flex-start;
-`;
-
-const StyledROIValue = styled(FlexDivRowCentered)`
-	div {
-		font-family: ${(props) => props.theme.fonts.bold};
-		font-size: 16px;
-		color: ${(props) => props.theme.colors.white};
-		margin-right: 6px;
-		margin-top: 4px;
-	}
 `;
 
 const DataCol = styled(FlexDivCol)`
@@ -322,21 +166,10 @@ const CloseButton = styled(Button)`
 	font-size: 13px;
 `;
 
-const ManageButton = styled(Button)`
-	color: ${(props) => props.theme.colors.white};
-	background: ${(props) => props.theme.colors.navy};
-	padding: 0 10px;
-	&:disabled {
-		color: ${(props) => props.theme.colors.silver};
-		background: ${(props) => props.theme.colors.navy};
-		opacity: 0.5;
-	}
-	&:hover:not(:disabled) {
-		color: ${(props) => props.theme.colors.white};
-		opacity: 0.9;
-	}
-`;
-
 const CurrencySubtitle = styled(StyledSubtitle)`
 	text-transform: initial;
+`;
+
+const PositionInfoCol = styled(InfoCol)`
+	padding-left: 38px;
 `;
