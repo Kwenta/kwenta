@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
 
-import { FlexDivRow, FlexDivCol, FlexDivRowCentered, InfoTooltip } from 'styles/common';
+import { FlexDiv, FlexDivRow, FlexDivCol, FlexDivRowCentered, InfoTooltip } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -85,12 +85,37 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</GraphicPosition> */}
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>sETH/sUSD</StyledSubtitle>
-						<StyledValue>Synthetic Ether</StyledValue>
+						<FlexDiv>
+							<StyledCurrencyIcon currencyKey={currencyKey} />
+							<div>
+								<CurrencySubtitle>{currencyKey}/sUSD</CurrencySubtitle>
+								<StyledValue>Synthetic Bitcoin</StyledValue>
+							</div>
+						</FlexDiv>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Position</StyledSubtitle>
 						<StyledValue>LONG</StyledValue>
+					</InfoCol>
+				</DataCol>
+				<DataCol>
+					<InfoCol>
+						<StyledSubtitle>Size</StyledSubtitle>
+						<StyledValue>8.98 ($4,131.23)</StyledValue>
+					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
+						<StyledValue>$4,131.23 (1.53%)</StyledValue>
+					</InfoCol>
+				</DataCol>
+				<DataCol>
+					<InfoCol>
+						<StyledSubtitle>Leverage</StyledSubtitle>
+						<StyledValue>4.12x</StyledValue>
+					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Liq. Price</StyledSubtitle>
+						<StyledValue>$4,131.23</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
@@ -198,17 +223,11 @@ export default PositionCard;
 const Container = styled.div`
 	display: grid;
 	grid-template-columns: repeat(6, 1fr);
+	grid-gap: 16px;
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 22px;
 	border-radius: 16px;
-`;
-
-const GraphicPosition = styled.div`
-	width: 45%;
-	padding: 20px;
-	background-size: cover;
-	background-position: center center;
 `;
 
 const StyledGraphicRow = styled(FlexDivRow)`
@@ -225,8 +244,9 @@ const PositionSizeCol = styled(FlexDivCol)`
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
-	width: 40px;
-	height: 40px;
+	width: 30px;
+	height: 30px;
+	margin-right: 8px;
 `;
 
 const StyledPositionSize = styled.div`
@@ -275,12 +295,6 @@ const StyledROIValue = styled(FlexDivRowCentered)`
 	}
 `;
 
-const RightHand = styled(FlexDivRow)`
-	width: 100%;
-	width: 75%;
-	padding: 20px;
-`;
-
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
@@ -321,4 +335,8 @@ const ManageButton = styled(Button)`
 		color: ${(props) => props.theme.colors.white};
 		opacity: 0.9;
 	}
+`;
+
+const CurrencySubtitle = styled(StyledSubtitle)`
+	text-transform: initial;
 `;

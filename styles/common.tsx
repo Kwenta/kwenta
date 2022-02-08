@@ -304,7 +304,6 @@ export const RightSideContent = styled(FlexDivCol)`
 	margin-right: -20px;
 	flex-shrink: 0;
 	position: relative;
-	margin-left: 20px;
 	height: 100%;
 `;
 
