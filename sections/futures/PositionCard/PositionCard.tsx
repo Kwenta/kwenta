@@ -39,13 +39,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			<Container>
 				<DataCol>
 					<InfoCol>
-						<FlexDiv>
+						<CurrencyInfo>
 							<StyledCurrencyIcon currencyKey={currencyKey} />
 							<div>
 								<CurrencySubtitle>{currencyKey}/sUSD</CurrencySubtitle>
 								<StyledValue>Synthetic Bitcoin</StyledValue>
 							</div>
-						</FlexDiv>
+						</CurrencyInfo>
 					</InfoCol>
 					<PositionInfoCol>
 						<StyledSubtitle>Position</StyledSubtitle>
@@ -193,4 +193,8 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
+`;
+
+const CurrencyInfo = styled(FlexDiv)`
+	align-items: flex-start;
 `;
