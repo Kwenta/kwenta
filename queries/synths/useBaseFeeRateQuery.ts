@@ -16,8 +16,9 @@ const useBaseFeeRateQuery = (currencyKey: CurrencyKey | null) => {
 		async () => {
 			const { SystemSettings } = synthetixjs!.contracts;
 
-			const baseFeeRate = await SystemSettings.exchangeFeeRate(ethers.utils.formatBytes32String(currencyKey as string));
-			
+			const baseFeeRate = await SystemSettings.exchangeFeeRate(
+				ethers.utils.formatBytes32String(currencyKey as string)
+			);
 			return baseFeeRate ? baseFeeRate : null;
 		},
 		{

@@ -27,7 +27,11 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 			<SummaryItemValue>
 				<FeeRateItem data-testid="exchange-fee-rate">
 					<span>
-						{baseFeeRate != null ? formatPercent(baseFeeRate, { minDecimals: 2 }) : NO_VALUE}
+						{baseFeeRate != null
+							? formatPercent(baseFeeRate, { minDecimals: 2 })
+							: totalFeeRate != null
+							? formatPercent(totalFeeRate, { minDecimals: 2 })
+							: NO_VALUE}
 					</span>
 					{totalFeeRate != null && baseFeeRate != null ? (
 						totalFeeRate.sub(baseFeeRate).toNumber() > 0 ? (
@@ -62,7 +66,7 @@ export const FeeRateItem = styled.span`
 `;
 
 export const DynamicFeeLabel = styled.span`
-	color: ${(props) => props.theme.colors.blueberry}
+	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 export const DynamicFeeRateTooltip = styled(Tippy)`
