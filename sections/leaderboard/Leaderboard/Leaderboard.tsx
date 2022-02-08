@@ -15,6 +15,8 @@ import { FuturesStat } from 'queries/futures/types';
 import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
 import { ethers } from 'ethers';
+import { GridDivCenteredCol, TextButton } from 'styles/common';
+import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -103,60 +105,78 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				data={data}
 				hideHeaders={compact}
 				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
-				columns={[
+				columns = {[
 					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-						accessor: 'rank',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
-						),
-						width: compact ? 40 : 100,
-					},
-					{
-						Header: !compact ? (
-							<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-						) : (
-							<></>
-						),
-						accessor: 'trader',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>
-								{compact && cellProps.row.original.rank + '. '}
-								{cellProps.row.original.trader}
-								{getMedal(cellProps.row.index + 1)}
-							</StyledOrderType>
-						),
-						width: 175,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-						accessor: 'totalTrades',
-						sortType: 'basic',
-						width: 175,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-						accessor: 'liquidations',
-						sortType: 'basic',
-						width: 175,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-						accessor: 'pnl',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: compact ? 'auto' : 175,
-						sortable: true,
-					},
+						Header:
+							<TableTitle>
+								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+								<PeriodSelector>
+									{PERIOD_LABELS.map((period) => (
+										<StyledTextButton
+											key={period.period}
+										>
+											{t(period.i18nLabel)}
+										</StyledTextButton>
+									))}
+								</PeriodSelector>
+							</TableTitle>,
+						accessor: 'title',
+						columns: [
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+								accessor: 'rank',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+								),
+								width: compact ? 40 : 100,
+							},
+							{
+								Header: !compact ? (
+									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+								) : (
+									<></>
+								),
+								accessor: 'trader',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>
+										{compact && cellProps.row.original.rank + '. '}
+										{cellProps.row.original.trader}
+										{getMedal(cellProps.row.index + 1)}
+									</StyledOrderType>
+								),
+								width: 175,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
+								accessor: 'totalTrades',
+								sortType: 'basic',
+								width: 175,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
+								accessor: 'liquidations',
+								sortType: 'basic',
+								width: 175,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+								accessor: 'pnl',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 175,
+								sortable: true,
+							},
+						]
+					}
 				]}
 			/>
 		</TableContainer>
@@ -192,9 +212,31 @@ const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
+const TableTitle = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const TitleText = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	color: ${(props) => props.theme.colors.blueberry};
+`;
+
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
+`;
+
+const PeriodSelector = styled(GridDivCenteredCol)`
+	grid-gap: 8px;
+`;
+
+const StyledTextButton = styled(TextButton)`
+	color: ${(props) => props.theme.colors.blueberry};
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 export default Leaderboard;
