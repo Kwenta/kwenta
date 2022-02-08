@@ -39,7 +39,7 @@ const darkTheme = {
 		},
 	},
 	input: {
-		background: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.75) 100%)',
+		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
 		secondary: {
 			background: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.3) 100%)',
 		},
@@ -47,9 +47,9 @@ const darkTheme = {
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 	},
 	segmented: {
-		background: 'linear-gradient(180deg, #1B1B1B 0%, #212121 100%)',
+		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(33, 33, 33, 0.1) 100%)',
 		button: {
-			background: 'linear-gradient(180deg, #262322 0%, #39332D 100%)',
+			background: 'linear-gradient(180deg, rgba(36, 36, 36, 0.08) 0%, rgba(88, 88, 88, 0.1) 100%)',
 			shadow:
 				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09)',
 			inactive: { color: '#787878' },

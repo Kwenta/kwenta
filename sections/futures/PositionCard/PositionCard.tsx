@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { wei } from '@synthetixio/wei';
 
 import { FlexDiv, FlexDivCol } from 'styles/common';
@@ -49,7 +49,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<PositionInfoCol>
 						<StyledSubtitle>Position</StyledSubtitle>
-						<StyledValue>LONG</StyledValue>
+						<PositionValue side={positionDetails?.side ?? PositionSide.LONG}>
+							{positionDetails?.side ?? PositionSide.LONG} ↗
+						</PositionValue>
 					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
@@ -172,4 +174,23 @@ const CurrencySubtitle = styled(StyledSubtitle)`
 
 const PositionInfoCol = styled(InfoCol)`
 	padding-left: 38px;
+`;
+
+const PositionValue = styled.p<{ side: PositionSide }>`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	text-transform: uppercase;
+	margin: 0;
+
+	${(props) =>
+		props.side === PositionSide.LONG &&
+		css`
+			color: ${props.theme.colors.common.primaryGreen};
+		`}
+
+	${(props) =>
+		props.side === PositionSide.SHORT &&
+		css`
+			color: ${props.theme.colors.common.primaryRed};
+		`}
 `;
