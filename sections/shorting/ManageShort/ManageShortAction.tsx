@@ -534,7 +534,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 								feeReclaimPeriodInSeconds={0}
 								quoteCurrencyKey={null}
 								totalFeeRate={feeRate}
-								baseFeeRate={null}
 								transactionFee={transactionFee}
 								feeCost={feeCost}
 								showFee={true}

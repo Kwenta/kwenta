@@ -15,7 +15,7 @@ import Wei from '@synthetixio/wei';
 
 type FeeRateSummaryItemProps = {
 	totalFeeRate: Wei | null;
-	baseFeeRate: Wei | null;
+	baseFeeRate?: Wei | null;
 };
 
 const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFeeRate }) => {

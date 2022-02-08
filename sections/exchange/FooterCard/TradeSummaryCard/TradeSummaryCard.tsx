@@ -41,7 +41,7 @@ type TradeSummaryCardProps = {
 	attached?: boolean;
 	className?: string;
 	totalFeeRate: Wei | null;
-	baseFeeRate: Wei | null;
+	baseFeeRate?: Wei | null;
 	transactionFee?: number | null;
 	feeCost: Wei | null;
 	isApproved?: boolean;
