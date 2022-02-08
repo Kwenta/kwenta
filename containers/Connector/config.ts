@@ -10,7 +10,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	return onboard({
 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
 		hideBranding: true,
-		networkId: network.id,
+		networkId: Number(network.id),
 		subscriptions,
 		darkMode: true,
 		walletSelect: {

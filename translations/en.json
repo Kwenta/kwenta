@@ -510,7 +510,9 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		}
+		},
+		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
+
 	},
 	"not-found": {
 		"page-title": "Not Found | Kwenta",
