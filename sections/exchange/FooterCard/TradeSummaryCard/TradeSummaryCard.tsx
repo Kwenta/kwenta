@@ -40,7 +40,8 @@ type TradeSummaryCardProps = {
 	showFee?: boolean;
 	attached?: boolean;
 	className?: string;
-	feeRate: Wei | null;
+	totalFeeRate: Wei | null;
+	baseFeeRate?: Wei | null;
 	transactionFee?: number | null;
 	feeCost: Wei | null;
 	isApproved?: boolean;
@@ -61,7 +62,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	quoteCurrencyKey,
 	showFee = true,
 	attached,
-	feeRate,
+	totalFeeRate,
+	baseFeeRate,
 	transactionFee,
 	feeCost,
 	isApproved = true,
@@ -93,7 +95,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 			</SummaryItem>
 			{showFee && (
 				<>
-					<FeeRateSummaryItem feeRate={feeRate} />
+					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
 					<FeeCostSummaryItem feeCost={feeCost} />
 				</>
 			)}
