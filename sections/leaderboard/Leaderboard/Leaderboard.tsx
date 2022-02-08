@@ -8,14 +8,13 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
+import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
 import { ethers } from 'ethers';
-import pnls from './leaderboard.snapshot.json';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -33,15 +32,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const [searchTerm, setSearchTerm] = useState<string | null>();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const participantsQuery = useGetRegisteredParticpants();
-	const participants = useMemo(() => participantsQuery.data ?? [], [participantsQuery]);
-
+	
 	const statsQuery = useGetStats();
-	const stats: any = statsQuery.data || [];
+	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
-			pnl: pnls ? wei((pnls as any)[ethers.utils.getAddress(stat.account)] ?? 0) : wei(0),
+			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
 		};
@@ -53,22 +50,22 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	let data = useMemo(() => {
-		return participants
-			.sort((a, b) => (pnlMap[b.address]?.pnl || 0) - (pnlMap[a.address]?.pnl || 0))
-			.map((participant, i) => ({
+		return stats
+			.sort((a: FuturesStat, b: FuturesStat) => (pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0))
+			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
-				address: participant.address,
-				trader: '@' + participant.username,
-				totalTrades: (pnlMap[participant.address]?.totalTrades ?? wei(0)).toNumber(),
-				liquidations: (pnlMap[participant.address]?.liquidations ?? wei(0)).toNumber(),
+				address: stat.account,
+				trader: truncateAddress(stat.account),
+				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
+				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
-				pnl: (pnlMap[participant.address]?.pnl ?? wei(0)).toNumber(),
+				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.filter((i) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
-	}, [participants, pnlMap, searchTerm]);
+			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
+	}, [stats, searchTerm]);
 
 	if (compact) {
-		const ownPosition = data.findIndex((i) => {
+		const ownPosition = data.findIndex((i: {address: string}) => {
 			return i.address.toLowerCase() === walletAddress?.toLowerCase();
 		});
 
@@ -102,7 +99,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			<StyledTable
 				compact={compact}
 				showPagination={true}
-				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
+				isLoading={statsQuery.isLoading}
 				data={data}
 				hideHeaders={compact}
 				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
