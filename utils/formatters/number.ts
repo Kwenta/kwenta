@@ -33,17 +33,28 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
-const zeroOutCommifiedDecimals = (value: string, decimals: number) => {
-	const comps = value.split('.');
+/**
+ * ethers utils.commify method will reduce the decimals of a number to one digit if those decimals are zero.
+ * This helper is used to reverse this behavior in or do display the specified decmials in the output.
+ *
+ * ex: utils.commify('10000', 2) => '10,000.0'
+ * ex: zeroOutCommifiedDecimals('10000', 2)) => '10,000.00'
+ * @param value - commified value from utils.commify
+ * @param decimals - number of decimals to display on commified value.
+ * @returns string
+ */
+export const zeroOutCommifiedDecimals = (value: string, decimals: number) => {
+	let formatted = utils.commify(value);
+	const comps = formatted.split('.');
 
 	if (comps.length === 2 && comps[1].length !== decimals) {
 		const zeros = '0'.repeat(decimals - comps[1].length);
 
-		const suffix = '.' + (comps[1] + zeros);
-		return comps[0] + suffix;
+		const decimalSuffix = `${comps[1]}${zeros}`;
+		formatted = `${comps[0]}.${decimalSuffix}`;
 	}
 
-	return value;
+	return formatted;
 };
 
 // TODO: implement max decimals
@@ -68,7 +79,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	);
 
 	const withCommas = zeroOutCommifiedDecimals(
-		utils.commify(weiAsStringWithDecimals),
+		weiAsStringWithDecimals,
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
 
