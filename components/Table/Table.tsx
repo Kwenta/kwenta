@@ -48,7 +48,7 @@ export const Table: FC<TableProps> = ({
 	className,
 	showPagination = false,
 	pageSize = null,
-	hiddenColumns = null,
+	hiddenColumns = undefined,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
