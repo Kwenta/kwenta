@@ -13,18 +13,15 @@ describe('Trade 1 sUSD for sETH on Optimism', () => {
 	context(`Trade sUSD => ${testedAsset}`, () => {
 		before(() => {
 			
+			// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
+			cy.disconnectMetamaskWalletFromAllDapps();
+
 			exchange.visit(`${testedAsset}-sUSD`);
 			exchange.connectBrowserWallet();
-			
+			exchange.acceptMetamaskAccessRequest();
+
 			// we must be logged in now ; added statement we need a wallet address available
 			cy.findByTestId('wallet-btn').should(`contain.text`,'0x');
-
-			/* when this test is runned chained as a part of testrun the snippet below causes problems. However,if the test is run "standalone" it becomes required
-			//   TODO: investigate fix for the above, for now assuming chained test runs		
-			exchange.acceptMetamaskAccessRequest();
-			exchange.waitUntilLoggedIn();
-			*/
-			
 			
 		});
 		it(`should exchange with success`, () => {
