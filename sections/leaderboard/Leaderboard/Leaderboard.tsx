@@ -8,14 +8,15 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
 import { Synths } from 'constants/currency';
-import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
+import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
 import { ethers } from 'ethers';
-import pnls from './leaderboard.snapshot.json';
+import { GridDivCenteredCol, TextButton } from 'styles/common';
+import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -33,15 +34,13 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const [searchTerm, setSearchTerm] = useState<string | null>();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const participantsQuery = useGetRegisteredParticpants();
-	const participants = useMemo(() => participantsQuery.data ?? [], [participantsQuery]);
-
+	
 	const statsQuery = useGetStats();
-	const stats: any = statsQuery.data || [];
+	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
-			pnl: pnls ? wei((pnls as any)[ethers.utils.getAddress(stat.account)] ?? 0) : wei(0),
+			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
 		};
@@ -53,22 +52,22 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	let data = useMemo(() => {
-		return participants
-			.sort((a, b) => (pnlMap[b.address]?.pnl || 0) - (pnlMap[a.address]?.pnl || 0))
-			.map((participant, i) => ({
+		return stats
+			.sort((a: FuturesStat, b: FuturesStat) => (pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0))
+			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
-				address: participant.address,
-				trader: '@' + participant.username,
-				totalTrades: (pnlMap[participant.address]?.totalTrades ?? wei(0)).toNumber(),
-				liquidations: (pnlMap[participant.address]?.liquidations ?? wei(0)).toNumber(),
+				address: stat.account,
+				trader: truncateAddress(stat.account),
+				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
+				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
-				pnl: (pnlMap[participant.address]?.pnl ?? wei(0)).toNumber(),
+				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.filter((i) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
-	}, [participants, pnlMap, searchTerm]);
+			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
+	}, [stats, searchTerm]);
 
 	if (compact) {
-		const ownPosition = data.findIndex((i) => {
+		const ownPosition = data.findIndex((i: {address: string}) => {
 			return i.address.toLowerCase() === walletAddress?.toLowerCase();
 		});
 
@@ -102,64 +101,82 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			<StyledTable
 				compact={compact}
 				showPagination={true}
-				isLoading={participantsQuery.isLoading && !participantsQuery.isSuccess}
+				isLoading={statsQuery.isLoading}
 				data={data}
 				hideHeaders={compact}
 				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
-				columns={[
+				columns = {[
 					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-						accessor: 'rank',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
-						),
-						width: compact ? 40 : 100,
-					},
-					{
-						Header: !compact ? (
-							<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-						) : (
-							<></>
-						),
-						accessor: 'trader',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>
-								{compact && cellProps.row.original.rank + '. '}
-								{cellProps.row.original.trader}
-								{getMedal(cellProps.row.index + 1)}
-							</StyledOrderType>
-						),
-						width: 175,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-						accessor: 'totalTrades',
-						sortType: 'basic',
-						width: 175,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-						accessor: 'liquidations',
-						sortType: 'basic',
-						width: 175,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-						accessor: 'pnl',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: compact ? 'auto' : 175,
-						sortable: true,
-					},
+						Header:
+							<TableTitle>
+								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+								<PeriodSelector>
+									{PERIOD_LABELS.map((period) => (
+										<StyledTextButton
+											key={period.period}
+										>
+											{t(period.i18nLabel)}
+										</StyledTextButton>
+									))}
+								</PeriodSelector>
+							</TableTitle>,
+						accessor: 'title',
+						columns: [
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+								accessor: 'rank',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+								),
+								width: compact ? 40 : 100,
+							},
+							{
+								Header: !compact ? (
+									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+								) : (
+									<></>
+								),
+								accessor: 'trader',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>
+										{compact && cellProps.row.original.rank + '. '}
+										{cellProps.row.original.trader}
+										{getMedal(cellProps.row.index + 1)}
+									</StyledOrderType>
+								),
+								width: 175,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
+								accessor: 'totalTrades',
+								sortType: 'basic',
+								width: 175,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
+								accessor: 'liquidations',
+								sortType: 'basic',
+								width: 175,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+								accessor: 'pnl',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 175,
+								sortable: true,
+							},
+						]
+					}
 				]}
 			/>
 		</TableContainer>
@@ -195,9 +212,31 @@ const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.blueberry};
 `;
 
+const TableTitle = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const TitleText = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	color: ${(props) => props.theme.colors.blueberry};
+`;
+
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
+`;
+
+const PeriodSelector = styled(GridDivCenteredCol)`
+	grid-gap: 8px;
+`;
+
+const StyledTextButton = styled(TextButton)`
+	color: ${(props) => props.theme.colors.blueberry};
+	&:hover {
+		color: ${(props) => props.theme.colors.white};
+	}
 `;
 
 export default Leaderboard;

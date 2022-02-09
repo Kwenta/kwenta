@@ -687,6 +687,7 @@
 		},
 		"leaderboard": {
 			"table": {
+				"title": "All Traders",
 				"rank": "Rank",
 				"trader": "Trader",
 				"total-trades": "Total Trades",

@@ -19,6 +19,7 @@ const MAX_PAGE_ROWS = 100;
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
 	sortable?: boolean;
+	columns?: Column[];
 };
 
 type TableProps = {
