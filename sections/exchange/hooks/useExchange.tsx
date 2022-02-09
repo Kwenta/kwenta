@@ -547,13 +547,6 @@ const useExchange = ({
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
 	);
 
-	const feeAmountInBaseCurrency = useMemo(() => {
-		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return wei(baseCurrencyAmount).mul(exchangeFeeRate);
-		}
-		return null;
-	}, [baseCurrencyAmount, exchangeFeeRate]);
-
 	const feeAmountInQuoteCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && quoteCurrencyAmount) {
 			return wei(quoteCurrencyAmount).mul(exchangeFeeRate);
@@ -563,15 +556,11 @@ const useExchange = ({
 	}, [quoteCurrencyAmount, exchangeFeeRate]);
 
 	const feeCost = useMemo(() => {
-		if (quoteCurrencyKey?.toString() === 'sUSD') {
-			return feeAmountInQuoteCurrency;
-		}
-
-		if (feeAmountInBaseCurrency != null) {
-			return feeAmountInBaseCurrency.mul(basePriceRate);
+		if (feeAmountInQuoteCurrency != null) {
+			return feeAmountInQuoteCurrency.mul(quotePriceRate);
 		}
 		return null;
-	}, [feeAmountInBaseCurrency, basePriceRate, feeAmountInQuoteCurrency, quoteCurrencyKey]);
+	}, [feeAmountInQuoteCurrency, quotePriceRate]);
 
 	useEffect(() => {
 		setCurrencyPair({

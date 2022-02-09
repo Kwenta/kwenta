@@ -33,14 +33,13 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
-const formatCommifiedDecimalZeros = (value: string, decimals: number) => {
-	let suffix;
+const zeroOutCommifiedDecimals = (value: string, decimals: number) => {
 	const comps = value.split('.');
 
 	if (comps.length === 2 && comps[1].length !== decimals) {
 		const zeros = '0'.repeat(decimals - comps[1].length);
 
-		suffix = '.' + (comps[1] + zeros);
+		const suffix = '.' + (comps[1] + zeros);
 		return comps[0] + suffix;
 	}
 
@@ -68,7 +67,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
 
-	const withCommas = formatCommifiedDecimalZeros(
+	const withCommas = zeroOutCommifiedDecimals(
 		utils.commify(weiAsStringWithDecimals),
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
