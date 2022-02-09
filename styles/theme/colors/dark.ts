@@ -41,7 +41,7 @@ const darkTheme = {
 	input: {
 		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
 		secondary: {
-			background: 'linear-gradient(180deg, #1B1B1B 0%, rgba(27, 27, 27, 0.3) 100%)',
+			background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
 		},
 		placeholder: '#787878',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',

@@ -101,13 +101,15 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							{truncatedWalletAddress}
 						</WalletButton>
 					) : (
-						<Button
-							variant={isTextButton ? 'text' : 'primary'}
+						<ConnectButton
+							variant={isTextButton ? 'text' : undefined}
+							size="sm"
 							onClick={connectWallet}
 							data-testid="connect-wallet"
+							mono
 						>
 							{t('common.wallet.connect-wallet')}
-						</Button>
+						</ConnectButton>
 					)}
 				</FlexDivCentered>
 			</Container>
@@ -154,6 +156,10 @@ const MenuButton = styled.button<{ isActive: boolean }>`
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 	padding: 5px;
+`;
+
+const ConnectButton = styled(Button)`
+	font-size: 13px;
 `;
 
 export default UserMenu;

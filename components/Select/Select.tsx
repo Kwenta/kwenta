@@ -39,7 +39,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			menu: (provided, state) => ({
 				...provided,
-				background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
+				background: colors.selectedTheme.button.background,
 				border: colors.selectedTheme.border,
 				borderRadius: '8px',
 				boxShadow: colors.selectedTheme.button.shadow,
