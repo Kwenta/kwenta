@@ -554,12 +554,24 @@ const useExchange = ({
 		return null;
 	}, [baseCurrencyAmount, exchangeFeeRate]);
 
+	const feeAmountInQuoteCurrency = useMemo(() => {
+		if (exchangeFeeRate != null && quoteCurrencyAmount) {
+			return wei(quoteCurrencyAmount).mul(exchangeFeeRate);
+		}
+
+		return null;
+	}, [quoteCurrencyAmount, exchangeFeeRate]);
+
 	const feeCost = useMemo(() => {
+		if (quoteCurrencyKey?.toString() === 'sUSD') {
+			return feeAmountInQuoteCurrency;
+		}
+
 		if (feeAmountInBaseCurrency != null) {
 			return feeAmountInBaseCurrency.mul(basePriceRate);
 		}
 		return null;
-	}, [feeAmountInBaseCurrency, basePriceRate]);
+	}, [feeAmountInBaseCurrency, basePriceRate, feeAmountInQuoteCurrency, quoteCurrencyKey]);
 
 	useEffect(() => {
 		setCurrencyPair({
