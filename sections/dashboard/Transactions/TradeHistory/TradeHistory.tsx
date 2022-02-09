@@ -153,7 +153,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 			]}
 			columnsDeps={columnsDeps}
 			data={trades}
-			hiddenColumns={[isL2 ? 'timestamp' : '']}
+			hiddenColumns={isL2 ? ['timestamp'] : []}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
