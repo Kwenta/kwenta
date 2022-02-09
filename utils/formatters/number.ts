@@ -33,6 +33,20 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
+const formatCommifiedDecimalZeros = (value: string, decimals: number) => {
+	let suffix;
+	const comps = value.split('.');
+
+	if (comps.length === 2 && comps[1].length !== decimals) {
+		const zeros = '0'.repeat(decimals - comps[1].length);
+
+		suffix = '.' + (comps[1] + zeros);
+		return comps[0] + suffix;
+	}
+
+	return value;
+};
+
 // TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -49,10 +63,16 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
+
 	const weiAsStringWithDecimals = weiValue.toString(
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
-	const withCommas = utils.commify(weiAsStringWithDecimals);
+
+	const withCommas = formatCommifiedDecimalZeros(
+		utils.commify(weiAsStringWithDecimals),
+		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
+	);
+
 	formattedValue.push(withCommas);
 
 	if (suffix) {
