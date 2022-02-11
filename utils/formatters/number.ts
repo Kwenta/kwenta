@@ -38,12 +38,12 @@ export const zeroBN = wei(0);
  * This helper is used to reverse this behavior in or do display the specified decmials in the output.
  *
  * ex: utils.commify('10000', 2) => '10,000.0'
- * ex: zeroOutCommifiedDecimals('10000', 2)) => '10,000.00'
+ * ex: padDecimals('10000', 2)) => '10,000.00'
  * @param value - commified value from utils.commify
  * @param decimals - number of decimals to display on commified value.
  * @returns string
  */
-export const zeroOutCommifiedDecimals = (value: string, decimals: number) => {
+export const padDecimals = (value: string, decimals: number) => {
 	let formatted = utils.commify(value);
 	const comps = formatted.split('.');
 
@@ -78,7 +78,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
 
-	const withCommas = zeroOutCommifiedDecimals(
+	const withCommas = padDecimals(
 		weiAsStringWithDecimals,
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
