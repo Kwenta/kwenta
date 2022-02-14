@@ -33,6 +33,7 @@ type TableProps = {
 	noResultsMessage?: React.ReactNode;
 	showPagination?: boolean;
 	pageSize?: number | null;
+	hiddenColumns?: string[];
 };
 
 export const Table: FC<TableProps> = ({
@@ -47,6 +48,7 @@ export const Table: FC<TableProps> = ({
 	className,
 	showPagination = false,
 	pageSize = null,
+	hiddenColumns = undefined,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -82,6 +84,7 @@ export const Table: FC<TableProps> = ({
 			data,
 			initialState: {
 				pageSize: showPagination ? (pageSize ? pageSize : MAX_PAGE_ROWS) : data.length,
+				hiddenColumns: hiddenColumns,
 			},
 			...options,
 		},
