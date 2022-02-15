@@ -70,9 +70,23 @@ The current e2e tests are written to be run on Optimistic Kovan using Chrome as 
 
 #### Setup
 - Download and install Google Chrome 
-- Setup a testing wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD 
-- Copy the private key of the wallet into the file `SYNPRESS_PRIVATEKEY` into the folder `kwenta/kwenta/tests/e2e`
-- Before proceeding to the next step you need to setup environment variables. Navigate to the folder `kwenta/kwenta/tests/e2e` and run the following command `source ./RUN-WITH-SOURCE-synpress-env-KovanOE.sh`
+- Setup a test wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD
+- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress. 
+
+```bash
+PRIVATE_KEY=<INSERTPRIVATEKEY>
+NETWORK_NAME=OptimisticKovan
+RPC_URL=https://kovan.optimism.io
+CHAIN_ID=69
+BLOCK_EXPLORER=https://kovan-optimistic.etherscan.io
+IS_TESTNET=true
+```
+
+##### Bash convenience script for setting up the environment
+A Bash convenience script [has been made available here](https://gist.github.com/raffiegang/b24a6b97bcd054645abf59be852bc88d). 
+- Open bash 
+- Copy the private key of the test wallet into the file `SYNPRESS_PRIVATEKEY` into the same folder location as the script. While using this method, please don't forget to update your .gitignore file to prevent your private key to be leaked.   
+- Run the following command `source ./synpress-envsetter.sh`
 
 #### Run the tests
 
