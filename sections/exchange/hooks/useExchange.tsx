@@ -36,6 +36,7 @@ import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCa
 import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
 import GetL2GasCard from 'sections/exchange/FooterCard/GetL2GasCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
@@ -718,6 +719,35 @@ const useExchange = ({
 		}
 	};
 
+	const handleSettle = useCallback(async () => {
+		if (synthetixjs != null) {
+			setTxError(null);
+			setTxConfirmationModalOpen(true);
+
+			try {
+				setIsSubmitting(true);
+
+				let tx: ethers.ContractTransaction | null = null;
+
+				// send transaction
+				tx = await synthetixjs.contracts.Synthetix.settle({ currencyKey: "sUSD" });
+
+				if (tx != null) {
+					monitorTransaction({
+						txHash: tx.hash,
+						onTxConfirmed: () => {},
+					});
+				}
+				setTxConfirmationModalOpen(false);
+			} catch (e) {
+				console.log(e);
+				setTxError(e.message);
+			} finally {
+				setIsSubmitting(false);
+			}
+		}
+	}, [monitorTransaction, synthetixjs]);
+
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
@@ -1111,6 +1141,11 @@ const useExchange = ({
 				/>
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
+			) : true ? (
+				<SettleTransactionsCard 
+					attached={footerCardAttached}
+					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
+				/>
 			) : (
 				<TradeSummaryCard
 					attached={footerCardAttached}

@@ -283,6 +283,10 @@
 		"charts": {
 			"single": "single",
 			"double": "double"
+		},
+		"settle": {
+			"message": "You have 12 consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
+			"buttontext": "Settle"
 		}
 	},
 	"dashboard": {
