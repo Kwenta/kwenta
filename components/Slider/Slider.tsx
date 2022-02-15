@@ -45,7 +45,7 @@ export default SliderComponent;
 const SliderContainer = styled.div`
 	width: 334px;
 	height: 24px;
-	background: url(${imageBackground as any}) no-repeat;
+	background: url(${imageBackground.src}) no-repeat;
 	padding: 0 19px 0 4px;
 	box-sizing: border-box;
 `;
@@ -84,7 +84,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-thumb {
 		background-color: #e4b378;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.hover.shadow} !important;
+		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
 		width: 14px;
 		height: 14px;
 		margin-left: initial;
@@ -93,7 +93,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-thumb.Mui-focusVisible,
 	.MuiSlider-thumb:hover {
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.hover.shadow} !important;
+		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
 	}
 
 	.MuiSlider-markLabel {

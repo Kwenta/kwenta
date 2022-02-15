@@ -1,9 +1,12 @@
 import React from 'react';
+import styled from 'styled-components';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 
 import Button from '../components/Button';
+import TabButton from 'components/Button/TabButton';
+
 import PositionButtons from 'sections/futures/PositionButtons';
-import { MarketPosition } from 'sections/futures/PositionButtons/PositionButtons';
+import { PositionSide } from 'queries/futures/types';
 
 export default {
 	title: 'Components/Button',
@@ -81,7 +84,27 @@ Monospace.args = {
 };
 
 export const Position = () => {
-	const [selected, setSelected] = React.useState<MarketPosition>('long');
+	const [selected, setSelected] = React.useState<PositionSide>(PositionSide.LONG);
 
-	return <PositionButtons selected={selected} setSelected={setSelected} />;
+	return <PositionButtons selected={selected} onSelect={setSelected} />;
 };
+
+export const Tab = () => {
+	return (
+		<TabGroup>
+			<TabButton title="Futures Positions" detail="$12,392.92" badge={3} active />
+			<TabButton title="Shorts" detail="$0" disabled />
+			<TabButton title="Spot Balances" detail="$0" disabled />
+		</TabGroup>
+	);
+};
+
+const TabGroup = styled.div`
+	display: flex;
+
+	button {
+		&:not(:last-of-type) {
+			margin-right: 15px;
+		}
+	}
+`;

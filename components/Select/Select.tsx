@@ -1,16 +1,8 @@
 import React, { FC, useContext, useMemo } from 'react';
-import ReactSelect, { components, Props, StylesConfig, IndicatorProps } from 'react-select';
+import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
-import { Svg } from 'react-optimized-image';
-import dropdownArrow from '../../assets/svg/app/dropdown-arrow.svg';
 
 export const IndicatorSeparator: FC = () => null;
-
-export const DropdownIndicator: FC<IndicatorProps<any>> = (props) => (
-	<components.DropdownIndicator {...props}>
-		<Svg src={dropdownArrow} />
-	</components.DropdownIndicator>
-);
 
 function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
@@ -47,8 +39,8 @@ function Select<T>(props: Props<T>) {
 			}),
 			menu: (provided, state) => ({
 				...provided,
-				background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
-				border: '1px solid rgba(255, 255, 255, 0.1)',
+				background: colors.selectedTheme.button.background,
+				border: colors.selectedTheme.border,
 				borderRadius: '8px',
 				boxShadow: colors.selectedTheme.button.shadow,
 				padding: 0,
@@ -82,23 +74,21 @@ function Select<T>(props: Props<T>) {
 				'&:hover': {
 					color: state.selectProps.dropdownIndicatorColorHover ?? colors.goldColors.color3,
 				},
-				marginRight: '22px',
 			}),
 			valueContainer: (provided) => ({
 				...provided,
 				height: '100%',
 			}),
-			...props.styles,
 		};
 		return styles;
-	}, [colors, fonts, props]);
+	}, [colors, fonts]);
 
 	return (
 		<ReactSelect
 			styles={computedStyles}
 			classNamePrefix="react-select"
 			{...props}
-			components={{ IndicatorSeparator, DropdownIndicator, ...props.components }}
+			components={{ IndicatorSeparator, ...props.components }}
 		/>
 	);
 }

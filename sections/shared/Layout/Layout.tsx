@@ -54,7 +54,7 @@ const GlobalStyle = createGlobalStyle`
 	`};
 
 	body {
-		background-color: ${(props) => props.theme.colors.black};
+		background-color: ${(props) => props.theme.colors.selectedTheme.background};
 		color: ${(props) => props.theme.colors.blueberry};
 	}
 

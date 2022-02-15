@@ -1,13 +1,13 @@
-import { FC, useMemo } from 'react';
-import styled, { css } from 'styled-components';
+import { FC, useMemo, useState } from 'react';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import Button from 'components/Button';
-import NumericAutoGrowInput from 'components/Input/NumericAutoGrowInput';
-import { FlexDivCol, FlexDivRow, FlexDivRowCentered } from 'styles/common';
+import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
+import NumericInput from 'components/Input/NumericInput';
+import Button from 'components/Button';
 
 type LeverageInputProps = {
 	currentLeverage: number;
@@ -16,7 +16,6 @@ type LeverageInputProps = {
 	side: PositionSide;
 	assetRate: number;
 	onLeverageChange: (value: number) => void;
-	onSideChange: (value: PositionSide) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
 };
@@ -29,12 +28,12 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	currentTradeSize,
 	side,
 	onLeverageChange,
-	onSideChange,
 	setIsLeverageValueCommitted,
 	currentPosition,
 	assetRate,
 }) => {
 	const { t } = useTranslation();
+	const [mode, setMode] = useState<'slider' | 'input'>('input');
 
 	const currentPositionLeverage = currentPosition?.position?.leverage?.toNumber() ?? 0;
 	const currentPositionSide = currentPosition?.position?.side ?? null;
@@ -69,128 +68,83 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		currentTradeSize,
 	]);
 
+	const modeButton = useMemo(() => {
+		return (
+			<TextButton
+				onClick={(e) => {
+					setMode(mode === 'slider' ? 'input' : 'slider');
+				}}
+			>
+				{mode === 'slider' ? 'Manual' : 'Slider'}
+			</TextButton>
+		);
+	}, [mode]);
+
 	return (
 		<LeverageInputWrapper>
 			<LeverageRow>
-				<LeverageTitle>{t('futures.market.trade.input.leverage.title')}</LeverageTitle>
-				<FlexDivCol>
-					<InputContainer>
-						<LeverageAmountContainer>
-							<NumericAutoGrowInput
-								min={MIN_LEVERAGE}
-								max={maxLeverage}
-								step="any"
-								onChange={(e, value) => {
-									onLeverageChange(value);
-									setIsLeverageValueCommitted(true);
-								}}
-								value={Math.round(currentLeverage * 100) / 100}
-							/>
-							x
-						</LeverageAmountContainer>
-						<LeverageSideContainer>
-							<LeverageSide
-								variant="outline"
-								side={PositionSide.LONG}
-								isActive={side === PositionSide.LONG}
-								onClick={() => onSideChange(PositionSide.LONG)}
-							>
-								{t('futures.market.trade.input.leverage.buy')}
-							</LeverageSide>
-							<LeverageSide
-								variant="outline"
-								side={PositionSide.SHORT}
-								isActive={side === PositionSide.SHORT}
-								onClick={() => onSideChange(PositionSide.SHORT)}
-							>
-								{t('futures.market.trade.input.leverage.sell')}
-							</LeverageSide>
-						</LeverageSideContainer>
-					</InputContainer>
-				</FlexDivCol>
+				<LeverageTitle>
+					{t('futures.market.trade.input.leverage.title')} <span>— Up to 10x</span>
+				</LeverageTitle>
+				{modeButton}
 			</LeverageRow>
-			<SliderRow>
-				<LeverageSlider
-					disabled={maxLeverage <= 0}
-					minValue={MIN_LEVERAGE}
-					maxValue={maxLeverage}
-					value={currentLeverage}
-					onChange={(_, newValue) => {
-						setIsLeverageValueCommitted(false);
-						onLeverageChange(newValue as number);
-					}}
-					onChangeCommitted={() => setIsLeverageValueCommitted(true)}
-				/>
-				{legend && <SliderLegend>{legend}</SliderLegend>}
-			</SliderRow>
+			{mode === 'slider' ? (
+				<SliderRow>
+					<LeverageSlider
+						disabled={maxLeverage <= 0}
+						minValue={MIN_LEVERAGE}
+						maxValue={maxLeverage}
+						value={currentLeverage}
+						onChange={(_, newValue) => {
+							setIsLeverageValueCommitted(false);
+							onLeverageChange(newValue as number);
+						}}
+						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
+					/>
+					{legend && <SliderLegend>{legend}</SliderLegend>}
+				</SliderRow>
+			) : (
+				<LeverageInputContainer>
+					<NumericInput
+						value={Math.round(currentLeverage * 100) / 100}
+						onChange={(e, value) => {
+							onLeverageChange(Number(value));
+							setIsLeverageValueCommitted(true);
+						}}
+					/>
+					<LeverageButton mono>2x</LeverageButton>
+					<LeverageButton mono>5x</LeverageButton>
+					<LeverageButton mono>10x</LeverageButton>
+				</LeverageInputContainer>
+			)}
 		</LeverageInputWrapper>
 	);
 };
 
 const LeverageInputWrapper = styled(FlexDivCol)`
-	margin-bottom: 48px;
-`;
-
-const InputContainer = styled(FlexDivRowCentered)`
-	background: ${(props) => props.theme.colors.black};
-	border-radius: 4px;
-	padding: 4px;
-	width: 225px;
+	margin-bottom: 16px;
 `;
 
 const LeverageRow = styled(FlexDivRow)`
 	width: 100%;
 	align-items: center;
+	margin-bottom: 8px;
+	padding: 0 14px;
 `;
 
 const LeverageTitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	text-transform: capitalize;
-`;
 
-const LeverageAmountContainer = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.silver};
-	margin-left: 8px;
-	max-width: 46px;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-`;
-
-const LeverageSideContainer = styled(FlexDivRow)`
-	padding: 4px 0px;
-	margin-right: 4px;
-`;
-
-const LeverageSide = styled(Button)<{ side: PositionSide; isActive: boolean }>`
-	${(props) =>
-		props.isActive
-			? css`
-					border: 1px solid
-						${props.side === PositionSide.LONG ? props.theme.colors.green : props.theme.colors.red};
-					color: ${props.side === PositionSide.LONG
-						? props.theme.colors.green
-						: props.theme.colors.red};
-			  `
-			: css`
-					border: 1px solid ${props.theme.colors.blueberry};
-					border-right-width: ${props.side === PositionSide.LONG ? '0px' : '1px'};
-					border-left-width: ${props.side === PositionSide.SHORT ? '0px' : '1px'};
-					color: ${props.theme.colors.blueberry};
-			  `}
-	border-radius: ${(props) =>
-		props.side === PositionSide.LONG ? `2px 0px 0px 2px` : `0px 2px 2px 0px`};
-	text-transform: uppercase;
-	text-align: center;
-	width: 75px;
+	span {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;
+	margin-bottom: 14px;
 	position: relative;
 `;
 
@@ -200,6 +154,29 @@ const SliderLegend = styled(FlexDivRow)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 10px;
 	color: ${(props) => props.theme.colors.blueberry};
+`;
+
+const LeverageInputContainer = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 43px 43px 43px;
+	grid-gap: 15px;
+	align-items: center;
+`;
+
+const LeverageButton = styled(Button)`
+	padding: 0;
+	font-weight: 700;
+	font-size: 13px;
+`;
+
+const TextButton = styled.button`
+	text-decoration: underline;
+	font-size: 11px;
+	line-height: 11px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
 `;
 
 export default LeverageInput;

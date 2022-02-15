@@ -5,12 +5,11 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivCol, FlexDivRow, FlexDivColCentered, FlexDivRowCentered } from 'styles/common';
 import { useState } from 'react';
 import { Synths } from 'constants/currency';
 
 import Button from 'components/Button';
-import { zeroBN, formatCurrency } from 'utils/formatters/number';
+import { zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
@@ -21,11 +20,7 @@ import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
-import TradeSizeInput from '../TradeSizeInput';
 import LeverageInput from '../LeverageInput';
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
-import MarginSection from './MarginSection';
 import EditMarginModal from './EditMarginModal';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
@@ -35,6 +30,11 @@ import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPos
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { gasPriceInWei } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
+import SegmentedControl from 'components/SegmentedControl';
+import PositionButtons from '../PositionButtons';
+import OrderSizing from '../OrderSizing';
+import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
+import FeeInfoBox from '../FeeInfoBox';
 
 type TradeProps = {};
 
@@ -228,86 +228,56 @@ const Trade: React.FC<TradeProps> = () => {
 
 	return (
 		<Panel>
-			<TopRow>
-				<FlexDivRow>
-					<Title>{t('futures.market.trade.market')}</Title>
-				</FlexDivRow>
-				<MarketsDropdown asset={marketAsset || Synths.sUSD} />
-				<FlexDivRow>
-					<Title>{t('futures.market.trade.title')}</Title>
-				</FlexDivRow>
-				<TradeSizeInput
-					amount={tradeSize}
-					assetRate={marketAssetRate}
-					onAmountChange={(value) => onTradeAmountChange(value)}
-					balance={futuresMarketsPosition?.remainingMargin ?? zeroBN}
-					asset={marketAsset || Synths.sUSD}
-					handleOnMax={() => onLeverageChange(maxLeverageValue.toNumber())}
-					balanceLabel={t('futures.market.trade.input.remaining-margin')}
-				/>
+			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
+			<MarketActions>
+				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
+					Deposit
+				</MarketActionButton>
+				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
+					Withdraw
+				</MarketActionButton>
+			</MarketActions>
 
-				<LeverageInput
-					currentLeverage={leverage}
-					maxLeverage={maxLeverageValue.toNumber()}
-					onSideChange={(side) => {
-						onLeverageChange(0);
-						setLeverageSide(side);
-					}}
-					onLeverageChange={(value) => onLeverageChange(value)}
-					side={leverageSide}
-					setIsLeverageValueCommitted={setIsLeverageValueCommitted}
-					currentPosition={futuresMarketsPosition}
-					assetRate={marketAssetRate}
-					currentTradeSize={tradeSize ? Number(tradeSize) : 0}
-				/>
-
-				<FlexDivCol>
-					<StyledFeeCostSummary feeCost={feeCost} />
-					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-					{futuresMarketsPosition && futuresMarketsPosition.remainingMargin.gt(zeroBN) ? (
-						<StyledButton
-							variant="primary"
-							disabled={!gasLimit || !!error || !tradeSize || competitionClosed}
-							isRounded
-							size="lg"
-							onClick={() => setIsTradeConfirmationModalOpen(true)}
-						>
-							{competitionClosed
-								? t('futures.market.trade.button.competition-closed')
-								: error
-								? error
-								: tradeSize
-								? t('futures.market.trade.button.open-trade')
-								: t('futures.market.trade.button.enter-amount')}
-						</StyledButton>
-					) : (
-						<CTAMargin>
-							<MarginTitle>{t('futures.market.trade.margin.deposit-susd')}</MarginTitle>
-							<MarginSubTitle>
-								{t('futures.market.trade.margin.min-initial-margin', {
-									minInitialMargin: formatCurrency(Synths.sUSD, market?.minInitialMargin ?? 0, {
-										currencyKey: Synths.sUSD,
-										minDecimals: 0,
-									}),
-								})}
-							</MarginSubTitle>
-							<DepositMarginButton
-								variant="primary"
-								isRounded
-								size="lg"
-								onClick={() => setIsEditMarginModalOpen(true)}
-							>
-								{t('futures.market.trade.button.deposit-margin')}
-							</DepositMarginButton>
-						</CTAMargin>
-					)}
-				</FlexDivCol>
-			</TopRow>
-			<MarginSection
-				remainingMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
-				sUSDBalance={sUSDBalance}
-				onDeposit={() => setIsEditMarginModalOpen(true)}
+			<MarketInfoBox
+				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
+				buyingPower={sUSDBalance}
 			/>
+
+			<StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} />
+
+			<OrderSizing
+				amount={tradeSize}
+				assetRate={marketAssetRate}
+				onAmountChange={(value) => onTradeAmountChange(value)}
+				marketAsset={marketAsset || Synths.sUSD}
+			/>
+
+			<PositionButtons
+				selected={leverageSide}
+				onSelect={(position) => {
+					onLeverageChange(0);
+					setLeverageSide(position);
+				}}
+			/>
+
+			<LeverageInput
+				currentLeverage={leverage}
+				maxLeverage={maxLeverageValue.toNumber()}
+				onLeverageChange={(value) => onLeverageChange(value)}
+				side={leverageSide}
+				setIsLeverageValueCommitted={setIsLeverageValueCommitted}
+				currentPosition={futuresMarketsPosition}
+				assetRate={marketAssetRate}
+				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
+			/>
+
+			<PlaceOrderButton fullWidth>Place Market Order</PlaceOrderButton>
+
+			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
+
+			{/* <FlexDivCol>
+					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
+				</FlexDivCol> */}
 			{isEditMarginModalOpen && (
 				<EditMarginModal
 					sUSDBalance={sUSDBalance}
@@ -338,73 +308,27 @@ const Trade: React.FC<TradeProps> = () => {
 };
 export default Trade;
 
-const Title = styled.div`
-	color: ${(props) => props.theme.colors.silver};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	text-transform: capitalize;
-`;
-
-const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	margin-bottom: 8px;
-`;
-
-const StyledFeeCostSummary = styled(FeeCostSummary)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	margin-bottom: 8px;
-`;
-
-const StyledButton = styled(Button)`
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
-`;
-
-const TopRow = styled(FlexDivCol)`
-	margin-top: 12px;
-`;
-
-const Panel = styled(FlexDivCol)`
+const Panel = styled.div`
 	height: 100%;
-	justify-content: space-between;
 	padding-bottom: 48px;
 `;
 
-const CTAMargin = styled(FlexDivColCentered)`
-	margin-top: 40px;
+const MarketActions = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 15px;
+	margin-bottom: 16px;
 `;
 
-const MarginTitle = styled.h3`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 14px;
-	margin: 0;
+const MarketActionButton = styled(Button)`
+	font-size: 15px;
 `;
 
-const MarginSubTitle = styled.h4`
-	color: ${(props) => props.theme.colors.blueberry};
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
-	margin: 5px 0 10px 0;
+const PlaceOrderButton = styled(Button)`
+	margin-bottom: 16px;
+	height: 55px;
 `;
 
-const DepositMarginButton = styled(Button)`
-	width: 100%;
+const StyledSegmentedControl = styled(SegmentedControl)`
+	margin-bottom: 16px;
 `;

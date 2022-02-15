@@ -41,7 +41,7 @@ const Market: FC = () => {
 export default Market;
 
 const StyledRightSideContent = styled(RightSideContent)`
-	width: 400px;
-	padding-left: 32px;
+	width: 385px;
+	padding-left: 15px;
 	padding-right: 32px;
 `;

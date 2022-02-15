@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 
-import { TabList, TabPanel, TabButton } from 'components/Tab';
+import { TabPanel } from 'components/Tab';
+import TabButton from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
@@ -65,30 +66,42 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		() => [
 			{
 				name: FuturesTab.POSITION,
-				label: t('futures.market.user.position.tab'),
+				label: 'Open Positions',
+				badge: 3,
 				active: activeTab === FuturesTab.POSITION,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
-
 			{
 				name: FuturesTab.TRADES,
-				label: t('futures.market.user.trades.tab'),
+				label: 'Order History',
 				active: activeTab === FuturesTab.TRADES,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				disabled: true,
+				active: activeTab === FuturesTab.ORDERS,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
+			},
 		],
-		[t, activeTab, router, marketAsset]
+		[activeTab, router, marketAsset]
 	);
 
 	return (
 		<>
-			<StyledTabList>
-				{TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} name={name} active={active} onClick={onClick}>
-						{label}
-					</TabButton>
+			<TabButtonsContainer>
+				{TABS.map(({ name, label, badge, active, disabled, onClick }) => (
+					<TabButton
+						key={name}
+						title={label}
+						badge={badge}
+						active={active}
+						disabled={disabled}
+						onClick={onClick}
+					/>
 				))}
-			</StyledTabList>
+			</TabButtonsContainer>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
 					position={futuresMarketsPosition ?? null}
@@ -114,6 +127,17 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 };
 export default UserInfo;
 
-const StyledTabList = styled(TabList)`
-	margin-bottom: 12px;
+const TabButtonsContainer = styled.div`
+	display: flex;
+	margin-top: 16px;
+	margin-bottom: 16px;
+
+	& > button {
+		height: 38px;
+		font-size: 13px;
+
+		&:not(:last-of-type) {
+			margin-right: 14px;
+		}
+	}
 `;

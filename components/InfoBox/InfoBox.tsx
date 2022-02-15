@@ -3,10 +3,12 @@ import styled from 'styled-components';
 
 type InfoBoxProps = {
 	details: Record<string, string>;
+	style?: React.CSSProperties;
+	className?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details }) => (
-	<InfoBoxContainer>
+const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className }) => (
+	<InfoBoxContainer style={style} className={className}>
 		{Object.entries(details).map(([key, value]) => (
 			<div key={key}>
 				<p className="key">{key}:</p>

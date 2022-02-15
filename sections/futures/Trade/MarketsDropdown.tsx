@@ -1,14 +1,17 @@
-import Select from 'components/Select';
 import React from 'react';
-import { useRouter } from 'next/router';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import ROUTES from 'constants/routes';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
+
+import Select from 'components/Select';
 import Connector from 'containers/Connector';
+import ROUTES from 'constants/routes';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 import MarketsDropdownOption from './MarketsDropdownOption';
+import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -71,7 +74,11 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					assetToCurrencyOption(x.asset, getSynthDescription(x.asset), DUMMY_PRICE, DUMMY_CHANGE)
 				)}
 				isSearchable={false}
-				components={{ SingleValue: MarketsDropdownSingleValue, Option: MarketsDropdownOption }}
+				components={{
+					SingleValue: MarketsDropdownSingleValue,
+					Option: MarketsDropdownOption,
+					DropdownIndicator: MarketsDropdownIndicator,
+				}}
 			/>
 		</SelectContainer>
 	);
@@ -79,7 +86,11 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 const SelectContainer = styled.div`
 	margin-top: 5px;
-	margin-bottom: 24px;
+	margin-bottom: 16px;
+
+	.react-select__dropdown-indicator {
+		margin-right: 22px;
+	}
 `;
 
 export default MarketsDropdown;
