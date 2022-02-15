@@ -236,8 +236,8 @@
 		},
 		"onboard": {
 			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
-			"l2-message": "Your wallet has no Synths. Mint <0>{{currencyKey}}</0> on Staking to trade Synths:",
-			"mint-button": "Visit Staking"
+			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch to trade Synths:",
+			"1inch-button": "Visit 1inch"
 		},
 		"connect-wallet-card": {
 			"message": "Connect your wallet to start trading"
@@ -271,7 +271,7 @@
 				}
 			},
 			"get-l2-gas": {
-				"message": "Not enough L2 wETH for transaction fees. Get some via Optimism Bridge:"
+				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
 			}
 		},
 		"common": {
@@ -511,7 +511,9 @@
 				"no-results": "No shorts found",
 				"accrued-interest": "Accrued Interest"
 			}
-		}
+		},
+		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
+
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
@@ -835,6 +837,7 @@
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
+			"bridge-currency": "Bridge <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",
 			"get-currency": "Get <0>{{currencyKey}}</0>",
 			"currency-exchange": "<0>{{orderType}}</0> <1>{{quoteCurrencyAmount}}</1> <2>{{quoteCurrencyKey}}</2> for <3>{{baseCurrencyAmount}}</3> <4>{{baseCurrencyKey}}</4>",

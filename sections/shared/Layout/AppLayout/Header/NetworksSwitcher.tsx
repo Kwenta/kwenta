@@ -14,6 +14,7 @@ import BlockExplorer from 'containers/BlockExplorer';
 import { components } from 'react-select';
 import { IndicatorSeparator } from 'components/Select/Select';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -49,7 +50,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		{
 			label: 'header.networks-switcher.learn-more',
 			postfixIcon: 'Link',
-			link: 'https://blog.kwenta.io/hello-optimism-kwenta-is-live-on-l2/',
+			link: EXTERNAL_LINKS.Docs.DocsRoot,
 		},
 	];
 

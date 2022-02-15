@@ -26,6 +26,8 @@ import { ChartType } from 'constants/chartType';
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
+import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
@@ -128,7 +130,6 @@ const useExchange = ({
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
 		useExchangeFeeRateQuery,
-		useTokensBalancesQuery,
 	} = useSynthetixQueries();
 
 	const router = useRouter();
@@ -213,6 +214,8 @@ const useExchange = ({
 		quoteCurrencyKey as CurrencyKey,
 		baseCurrencyKey as CurrencyKey
 	);
+
+	const baseFeeRateQuery = useBaseFeeRateQuery(baseCurrencyKey as CurrencyKey);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -302,6 +305,7 @@ const useExchange = ({
 	);
 
 	const exchangeFeeRate = exchangeFeeRateQuery.isSuccess ? exchangeFeeRateQuery.data ?? null : null;
+	const baseFeeRate = baseFeeRateQuery.isSuccess ? baseFeeRateQuery.data ?? null : null;
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
@@ -543,19 +547,20 @@ const useExchange = ({
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
 	);
 
-	const feeAmountInBaseCurrency = useMemo(() => {
-		if (exchangeFeeRate != null && baseCurrencyAmount) {
-			return wei(baseCurrencyAmount).mul(exchangeFeeRate);
+	const feeAmountInQuoteCurrency = useMemo(() => {
+		if (exchangeFeeRate != null && quoteCurrencyAmount) {
+			return wei(quoteCurrencyAmount).mul(exchangeFeeRate);
 		}
+
 		return null;
-	}, [baseCurrencyAmount, exchangeFeeRate]);
+	}, [quoteCurrencyAmount, exchangeFeeRate]);
 
 	const feeCost = useMemo(() => {
-		if (feeAmountInBaseCurrency != null) {
-			return feeAmountInBaseCurrency.mul(basePriceRate);
+		if (feeAmountInQuoteCurrency != null) {
+			return feeAmountInQuoteCurrency.mul(quotePriceRate);
 		}
 		return null;
-	}, [feeAmountInBaseCurrency, basePriceRate]);
+	}, [feeAmountInQuoteCurrency, quotePriceRate]);
 
 	useEffect(() => {
 		setCurrencyPair({
@@ -1118,7 +1123,8 @@ const useExchange = ({
 					gasPrices={ethGasPriceQuery.data}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					feeRate={exchangeFeeRate}
+					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}
+					baseFeeRate={baseFeeRate != null ? baseFeeRate : null}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					// show fee's only for "synthetix" (provider)

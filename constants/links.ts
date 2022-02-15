@@ -17,12 +17,15 @@ export const EXTERNAL_LINKS = {
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
 		Medium: 'https://blog.kwenta.io/',
-		Discord: 'https://discord.gg/SwNfgV4w6C',
+		Discord: 'https://discord.gg/kwenta',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {
 		Synthetix: 'https://synths.snx.eth.link/',
 		Zapper: 'https://zapper.fi/api/token-list',
 		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
+	},
+	Docs: {
+		DocsRoot: 'https://docs.kwenta.io/',
 	},
 };

@@ -20,8 +20,8 @@ import { MessageContainer } from '../common';
 import { SummaryItems, SummaryItem, SummaryItemLabel, SummaryItemValue } from '../common';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import FeeRateSummary from 'sections/shared/components/FeeRateSummary';
-import FeeCostSummary from 'sections/shared/components/FeeCostSummary';
+import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
+import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
 
 import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
 import { GasPrices } from '@synthetixio/queries';
@@ -41,7 +41,8 @@ type TradeSummaryCardProps = {
 	showFee?: boolean;
 	attached?: boolean;
 	className?: string;
-	feeRate: Wei | null;
+	totalFeeRate: Wei | null;
+	baseFeeRate?: Wei | null;
 	transactionFee?: number | null;
 	feeCost: Wei | null;
 	isApproved?: boolean;
@@ -62,7 +63,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	quoteCurrencyKey,
 	showFee = true,
 	attached,
-	feeRate,
+	totalFeeRate,
+	baseFeeRate,
 	transactionFee,
 	feeCost,
 	isApproved = true,
@@ -94,8 +96,8 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 			</SummaryItem>
 			{showFee && (
 				<>
-					<FeeRateSummary feeRate={feeRate} />
-					<FeeCostSummary feeCost={feeCost} />
+					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
+					<FeeCostSummaryItem feeCost={feeCost} />
 				</>
 			)}
 		</SummaryItems>

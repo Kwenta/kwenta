@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
-import useSynthetixQueries from '@synthetixio/queries';
 
 import Connector from 'containers/Connector';
+
+import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
 import Button from 'components/Button';
 
@@ -44,7 +45,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		hasOrdersNotificationState
 	);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useRedeemableDeprecatedSynthsQuery } = useSynthetixQueries();
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const redeemableDeprecatedSynths =

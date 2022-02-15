@@ -10,11 +10,10 @@ export const SHORT_GRAPH_ENDPOINT_KOVAN =
 	'https://api.thegraph.com/subgraphs/name/vbstreetz/synthetix-shorts-kovan';
 
 export const SHORT_GRAPH_ENDPOINT_OVM_KOVAN =
-	'https://api.thegraph.com/subgraphs/name/dbeal-eth/optimism-kovan-shorts4';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-kovan-main';
 
 export const SHORT_GRAPH_ENDPOINT_OVM =
-	'https://api.thegraph.com/subgraphs/name/kmeraz/optimism-main';
-// 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
+	'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
 
 export const formatShort = (response: any): Partial<HistoricalShortPosition> => {
 	return {
