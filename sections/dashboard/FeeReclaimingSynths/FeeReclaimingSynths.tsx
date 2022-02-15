@@ -1,9 +1,10 @@
 import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useRecoilValue } from 'recoil';
+
+import useFeeReclaimPeriodsQuery from 'queries/synths/useFeeReclaimPeriodsQuery';
 
 import { walletAddressState } from 'store/wallet';
 import { CardTitle } from 'sections/dashboard/common';
@@ -13,7 +14,6 @@ const FeeReclaimingSynths: FC = () => {
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { useFeeReclaimPeriodsQuery } = useSynthetixQueries();
 	const feeAndWaitingPeriodsQuery = useFeeReclaimPeriodsQuery(walletAddress ?? '');
 	const feeAndWaitingPeriods = useMemo(() => feeAndWaitingPeriodsQuery.data ?? [], [
 		feeAndWaitingPeriodsQuery.data,

@@ -64,6 +64,7 @@ export const QUERY_KEYS = {
 			quoteCurrencyKey,
 			baseCurrencyKey,
 		],
+		BaseFeeRate: (currencyKey: CurrencyKey) => ['synths', 'baseFeeRate', currencyKey],
 	},
 	Collateral: {
 		ShortHistory: (walletAddress: string, networkId: NetworkId) => [

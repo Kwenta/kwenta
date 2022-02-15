@@ -1,5 +1,5 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import { ETH_UNIT, GWEI_UNIT } from 'constants/network';
@@ -9,12 +9,17 @@ type EthereumProvider = {
 	chainId: string;
 };
 
+export function isSupportedNetworkId(id: number | string): id is NetworkId {
+	return id in NetworkNameById;
+}
+
 export async function getDefaultNetworkId(): Promise<NetworkId> {
 	try {
 		if (window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
 			if (provider && provider.chainId) {
-				return Number(provider.chainId);
+				const id = Number(provider.chainId);
+				return isSupportedNetworkId(id) ? id : DEFAULT_NETWORK_ID;
 			}
 		}
 		return DEFAULT_NETWORK_ID;

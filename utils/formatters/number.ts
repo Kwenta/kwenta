@@ -33,6 +33,30 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
+/**
+ * ethers utils.commify method will reduce the decimals of a number to one digit if those decimals are zero.
+ * This helper is used to reverse this behavior in order to display the specified decmials in the output.
+ *
+ * ex: utils.commify('10000', 2) => '10,000.0'
+ * ex: commifyAndPadDecimals('10000', 2)) => '10,000.00'
+ * @param value - commified value from utils.commify
+ * @param decimals - number of decimals to display on commified value.
+ * @returns string
+ */
+export const commifyAndPadDecimals = (value: string, decimals: number) => {
+	let formatted = utils.commify(value);
+	const comps = formatted.split('.');
+
+	if (comps.length === 2 && comps[1].length !== decimals) {
+		const zeros = '0'.repeat(decimals - comps[1].length);
+
+		const decimalSuffix = `${comps[1]}${zeros}`;
+		formatted = `${comps[0]}.${decimalSuffix}`;
+	}
+
+	return formatted;
+};
+
 // TODO: implement max decimals
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
@@ -129,3 +153,5 @@ export const formatCurrencyWithKey = (
 export function scale(input: Wei, decimalPlaces: number): Wei {
 	return input.mul(wei(10).pow(decimalPlaces));
 }
+
+export const formatGwei = (wei: number) => wei / 1e8 / 10;
