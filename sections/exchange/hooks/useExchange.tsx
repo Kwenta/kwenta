@@ -730,7 +730,7 @@ const useExchange = ({
 				let tx: ethers.ContractTransaction | null = null;
 
 				// send transaction
-				tx = await synthetixjs.contracts.Synthetix.settle({ currencyKey: "sUSD" });
+				tx = await synthetixjs.contracts.Synthetix.settle({ currencyKey: 'sUSD' });
 
 				if (tx != null) {
 					monitorTransaction({
@@ -1142,7 +1142,7 @@ const useExchange = ({
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
 			) : true ? (
-				<SettleTransactionsCard 
+				<SettleTransactionsCard
 					attached={footerCardAttached}
 					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
 				/>
