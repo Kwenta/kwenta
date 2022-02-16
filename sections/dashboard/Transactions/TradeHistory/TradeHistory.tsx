@@ -24,6 +24,8 @@ import TxReclaimFee from './TxReclaimFee';
 
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
+import { isL2State } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 export interface SynthTradesExchangeResult extends SynthExchangeResult {
 	hash: string;
@@ -37,6 +39,8 @@ type TradeHistoryProps = {
 
 const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
+
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -149,6 +153,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 			]}
 			columnsDeps={columnsDeps}
 			data={trades}
+			hiddenColumns={isL2 ? ['timestamp'] : []}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
