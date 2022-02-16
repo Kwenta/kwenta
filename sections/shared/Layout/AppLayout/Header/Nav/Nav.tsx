@@ -21,7 +21,8 @@ const Nav: FC = () => {
 					const isActive =
 						asPath === link ||
 						(asPath.includes('market') && link.includes('market')) ||
-						(asPath.includes('leaderboard') && link.includes('leaderboard'));
+						(asPath.includes('leaderboard') && link.includes('leaderboard')) ||
+						(asPath.includes('earn') && link.includes('earn'));
 					return (
 						<MenuLinkItem key={link} isActive={isActive}>
 							<Link href={link}>

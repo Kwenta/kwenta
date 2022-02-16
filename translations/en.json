@@ -17,7 +17,8 @@
 			"markets": "markets",
 			"futures": "futures",
 			"leaderboard": "leaderboard & statistics",
-			"futures-dashboard": "dashboard"
+			"futures-dashboard": "dashboard",
+			"earn": "earn"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
