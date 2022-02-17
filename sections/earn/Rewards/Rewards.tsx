@@ -12,7 +12,9 @@ const Rewards: React.FC = () => {
 				<Title>Your Total Rewards</Title>
 				<KwentaText white>734.72</KwentaText>
 				<StyledDescription>Total KWENTA claimable one live.</StyledDescription>
-				<Button disabled>Claim KWENTA</Button>
+				<Button disabled fullWidth>
+					Claim KWENTA
+				</Button>
 			</RewardsBody>
 		</RewardsContainer>
 	);
@@ -28,13 +30,17 @@ const RewardsBody = styled.div`
 	border: 1px solid #353333;
 	border-radius: 16px;
 
-	& > button:disabled {
-		background-color: transparent;
+	& > button {
+		height: 38px;
+		font-size: 13px;
+		&:disabled {
+			background-color: transparent;
+		}
 	}
 `;
 
 const StyledDescription = styled(Description)`
-	margin-bottom: 13px;
+	margin-bottom: 18px;
 `;
 
 const RewardsHeading = styled(Text.Heading)`

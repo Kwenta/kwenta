@@ -41,6 +41,13 @@ const KwentaLogo = styled(Svg)`
 
 export const OverlappingIcons = styled.div`
 	display: flex;
+	position: relative;
+
+	& > div:last-child {
+		position: absolute;
+		z-index: 5;
+		left: 12px;
+	}
 `;
 
 export const GridHeading = styled(Text.Heading)`
