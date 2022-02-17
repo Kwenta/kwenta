@@ -16,6 +16,7 @@ export const SplitColumn = styled.div<{ $isLast?: boolean }>`
 	& > div {
 		padding: 18px 24px;
 		height: 50%;
+		min-height: 95px;
 	}
 
 	& > div:last-child {
@@ -25,12 +26,16 @@ export const SplitColumn = styled.div<{ $isLast?: boolean }>`
 
 export const InfoGridContainer = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 266px 1fr;
+	grid-template-columns: repeat(3, minmax(auto, 1fr));
 	border-radius: 15px;
 	border: 1px solid #353333;
-	height: 188px;
 	max-width: 915px;
 	overflow: hidden;
+	box-sizing: border: box;
+
+	div {
+		box-sizing: border-box;
+	}
 
 	& > div {
 		border-left: 1px solid #353333;
