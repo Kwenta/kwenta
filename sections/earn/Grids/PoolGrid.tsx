@@ -11,6 +11,7 @@ import {
 	Column,
 	SplitColumn,
 	OverlappingIcons,
+	LiquidityAmount,
 } from '../common';
 
 const StakeGrid = () => {
@@ -22,13 +23,13 @@ const StakeGrid = () => {
 					<ColumnInner>
 						<div>
 							<Title>Your Liquidity</Title>
-							<div style={{ display: 'flex', marginBottom: 8 }}>
+							<LiquidityAmount>
 								<BigText>$8,923.22</BigText>
 								<OverlappingIcons>
 									<CurrencyIcon currencyKey="sETH" width="31px" height="31px" />
 									<CurrencyIcon currencyKey="sUSD" width="31px" height="31px" />
 								</OverlappingIcons>
-							</div>
+							</LiquidityAmount>
 							<Description>
 								Add liquidity to Curve's Stablecoin pool on Optimism to earn $KWENTA.
 							</Description>

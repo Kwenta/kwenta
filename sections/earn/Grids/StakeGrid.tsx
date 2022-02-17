@@ -12,6 +12,7 @@ import {
 	InfoGridContainer,
 	Column,
 	SplitColumn,
+	LiquidityAmount,
 } from '../common';
 
 const PoolGrid = () => {
@@ -23,11 +24,11 @@ const PoolGrid = () => {
 					<ColumnInner>
 						<div>
 							<Title>Your Liquidity</Title>
-							<div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+							<LiquidityAmount>
 								<BigText>2923.39</BigText>
 								<StyledSNXIcon currencyKey="SNX" width="23px" height="23px" />
 								<DollarValue>$32,284.31</DollarValue>
-							</div>
+							</LiquidityAmount>
 							<Description>Stake SNX on Optimism to earn $KWENTA.</Description>
 						</div>
 						<div>

@@ -121,3 +121,9 @@ export const InfoGridContainer = styled.div`
 		}
 	}
 `;
+
+export const LiquidityAmount = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+`;
