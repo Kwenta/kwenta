@@ -63,7 +63,6 @@ const MainContainer = styled.div`
 	width: 100%;
 	max-width: 1440px;
 	margin: 120px auto 0;
-	padding: 0 30px;
 `;
 
 const GridsContainer = styled.div`
