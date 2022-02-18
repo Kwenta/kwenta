@@ -35,6 +35,8 @@ const useConnector = () => {
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
+	const [ensName, setEns] = useState<string | undefined>();
+	const [ensAvatar, setAvatar] = useState<string | undefined>();
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -90,6 +92,14 @@ const useConnector = () => {
 					if (address) {
 						setWalletAddress(address);
 					}
+				},
+				ens: async (ens) => {
+					const ensName = ens?.name;
+					const ensAvatar = ens?.avatar;
+					setEns(ensName);
+					setAvatar(ensAvatar);
+					console.log(ensName);
+					console.log(ensAvatar);
 				},
 				network: (networkId: number) => {
 					const isSupportedNetwork =
@@ -163,10 +173,10 @@ const useConnector = () => {
 	// load previously saved wallet
 	useEffect(() => {
 		// disables caching if in IFrame allow parent to set wallet address
-		if (onboard && selectedWallet && !walletAddress && !isIFrame()) {
+		if (onboard && selectedWallet && !walletAddress && !ensName && !ensAvatar && !isIFrame()) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet, walletAddress]);
+	}, [onboard, selectedWallet, walletAddress, ensName, ensAvatar]);
 
 	const isIFrame = () => {
 		try {
@@ -189,11 +199,26 @@ const useConnector = () => {
 				const success = await onboard.walletSelect();
 				if (success) {
 					await onboard.walletCheck();
+					await displayENS();
 					resetCachedUI();
 				}
 			}
 		} catch (e) {
 			console.log(e);
+		}
+	};
+
+	const displayENS = async () => {
+		if (onboard) {
+			setEns(ensName);
+			setAvatar(ensAvatar);
+			console.log(ensName);
+			console.log(ensAvatar);
+			if (ensAvatar && ensName) {
+				return ensAvatar && ensName;
+			} else {
+				return ensName;
+			}
 		}
 	};
 
@@ -252,6 +277,7 @@ const useConnector = () => {
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
+		displayENS,
 	};
 };
 
