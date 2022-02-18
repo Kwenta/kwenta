@@ -1,13 +1,13 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { gasSpeedState } from 'store/wallet';
+import { gasSpeedState, isL2State } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
-import { SYNTHS_TO_SHORT } from '../constants';
+import { SYNTHS_TO_SHORT, SYNTHS_TO_SHORT_L1 } from '../constants';
 
 import ShortingRewardRow, { GasInfo } from './ShortingRewardRow';
 
@@ -22,6 +22,7 @@ import { parseGasPriceObject } from 'hooks/useGas';
 
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
@@ -76,7 +77,7 @@ const ShortingRewards: FC = () => {
 	return (
 		<div>
 			<Title>{t('shorting.rewards.title')}</Title>
-			{SYNTHS_TO_SHORT.map((currencyKey) => (
+			{(isL2 ? SYNTHS_TO_SHORT : SYNTHS_TO_SHORT_L1).map((currencyKey) => (
 				<ShortingRewardRow
 					key={currencyKey}
 					{...{
