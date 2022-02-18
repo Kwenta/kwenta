@@ -63,7 +63,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	}: ReactSelectOptionProps) => (
 		<ExternalLink href={link} onClick={onClick}>
 			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={12} />}
+				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={17} />}
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Link' ? <Svg src={LinkIcon} /> : <Svg src={SwitchIcon} />)}
@@ -90,9 +90,9 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		<Container>
 			<L2Select
 				formatOptionLabel={formatOptionLabel}
-				controlHeight={28}
+				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
+				value={{ label: 'L2', prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
@@ -133,7 +133,19 @@ const Button = styled.div`
 `;
 
 const L2Select = styled(Select)`
-	width: 110px;
+	width: 85px;
+
+	.react-select__control {
+		border-radius: 10px;
+	}
+
+	.react-select__dropdown-indicator {
+		padding-right: 13px;
+	}
+
+	.react-select__value-container {
+		padding-right: 0;
+	}
 `;
 
 const PrefixIcon = styled(Img)`
@@ -141,10 +153,11 @@ const PrefixIcon = styled(Img)`
 `;
 
 const StyledCaretDownIcon = styled(Svg)`
-	width: 8px;
-	color: ${(props) => props.theme.colors.blueberry};
+	width: 11px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};
+	font-size: 13px;
 `;
