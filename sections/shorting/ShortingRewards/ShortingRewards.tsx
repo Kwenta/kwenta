@@ -18,6 +18,7 @@ import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/G
 
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
@@ -41,7 +42,7 @@ const ShortingRewards: FC = () => {
 		() =>
 			ethGasPriceQuery.isSuccess
 				? ethGasPriceQuery?.data != null
-					? ethGasPriceQuery.data[gasSpeed]
+					? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 					: null
 				: null,
 		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]

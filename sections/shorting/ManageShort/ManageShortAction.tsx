@@ -66,6 +66,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { isL2State } from 'store/wallet';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -188,7 +189,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasPriceQuery.data != null
-				? ethGasPriceQuery.data[gasSpeed]
+				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);

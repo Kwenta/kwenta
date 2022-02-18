@@ -2,9 +2,22 @@ import { useMemo, useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 import { BigNumber } from 'ethers';
 
-import useSynthetixQueries from '@synthetixio/queries';
+import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
 import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import { normalizeGasLimit, gasPriceInWei } from 'utils/network';
+import { wei } from '@synthetixio/wei';
+
+// TODO add support for 1559. For now use maxFeePerGas (legacy)
+export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => {
+	const { gasPrice, maxFeePerGas } = gasPriceObject;
+	if (gasPrice) {
+		return wei(gasPriceObject.gasPrice, 9).toNumber();
+	} else if (maxFeePerGas) {
+		return wei(gasPriceObject.maxFeePerGas, 9).toNumber();
+	} else {
+		return null;
+	}
+};
 
 const useGas = () => {
 	const { useEthGasPriceQuery } = useSynthetixQueries();
@@ -17,7 +30,7 @@ const useGas = () => {
 			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasPriceQuery.data != null
-				? ethGasPriceQuery.data[gasSpeed]
+				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);

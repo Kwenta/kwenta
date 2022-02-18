@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
@@ -12,7 +13,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 
 const ether = {
 	address: ETH_ADDRESS,
-	chainId: 1,
+	chainId: 1 as NetworkId,
 	decimals: 18,
 	logoURI: ETHIcon.src,
 	name: 'Ethereum',

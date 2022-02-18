@@ -16,6 +16,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { UseQueryResult } from 'react-query';
+import { parseGasPriceObject } from './useGas';
 
 const useRedeemDeprecatedSynths = (
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>,
@@ -48,7 +49,7 @@ const useRedeemDeprecatedSynths = (
 			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasPriceQuery.data != null
-				? ethGasPriceQuery.data[gasSpeed]
+				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
