@@ -22,6 +22,7 @@ const Earn: React.FC = () => {
 				<PageContent>
 					<FullHeightContainer>
 						<MainContainer>
+							<EmptyColumn />
 							<GridsContainer>
 								<PageHeading variant="h4">Liquidity Mining Program</PageHeading>
 								<StyledBody size="large">
@@ -57,18 +58,20 @@ export const StyledButton = styled(Button)`
 const MainContainer = styled.div`
 	position: relative;
 	flex-grow: 1;
-	display: grid;
+	display: flex;
+	justify-content: space-between;
 	width: 100%;
 	max-width: 1440px;
-	margin: 80px auto 0;
+	margin: 120px auto 0;
 	padding: 0 30px;
-	grid-template-columns: 174px 1fr 216px;
-	grid-gap: 30px;
-	grid-template-areas: '. main rsb';
 `;
 
 const GridsContainer = styled.div`
-	grid-area: main;
+	max-width: 915px;
+`;
+
+const EmptyColumn = styled.div`
+	width: 174px;
 `;
 
 export default Earn;

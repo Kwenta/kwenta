@@ -54,7 +54,7 @@ const Container = styled.header<{ isL2: boolean }>`
 		box-sizing: border-box;
 		height: ${HEADER_HEIGHT};
 		line-height: ${HEADER_HEIGHT};
-		padding: 0 20px;
+		padding: 40px 20px 0;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;

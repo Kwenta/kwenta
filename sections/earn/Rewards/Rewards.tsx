@@ -21,11 +21,12 @@ const Rewards: React.FC = () => {
 };
 
 const RewardsContainer = styled.div`
-	grid-area: rsb;
+	width: 216px;
+	margin-left: 16px;
 `;
 
 const RewardsBody = styled.div`
-	width: 216px;
+	width: 100%;
 	padding: 18px 25px;
 	border: 1px solid #353333;
 	border-radius: 16px;

@@ -45,8 +45,10 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 	a {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.bold};
+		font-size: 15px;
 		text-transform: capitalize;
-		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.silver)};
+		color: ${(props) =>
+			props.isActive ? props.theme.colors.white : props.theme.colors.common.secondaryGray};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
 		}
