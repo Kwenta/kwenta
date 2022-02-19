@@ -14,8 +14,13 @@ import {
 	SplitColumn,
 	LiquidityAmount,
 } from '../common';
+import { useRewardsTimer } from '../hooks';
 
-const PoolGrid = () => {
+const DEADLINE = new Date('2022-03-20T23:59:59Z');
+
+const StakeGrid = () => {
+	const timeTillDeadline = useRewardsTimer(DEADLINE);
+
 	return (
 		<>
 			<GridHeading variant="h4">OVM SNX Stakers</GridHeading>
@@ -49,7 +54,7 @@ const PoolGrid = () => {
 				<SplitColumn>
 					<div>
 						<Title>Time Remaining</Title>
-						<BigText>16D:24H:18M</BigText>
+						<BigText>{timeTillDeadline}</BigText>
 					</div>
 					<div>
 						<Title>Last Snapshot</Title>
@@ -65,4 +70,4 @@ const StyledGridContainer = styled(InfoGridContainer)`
 	margin-bottom: 50px;
 `;
 
-export default PoolGrid;
+export default StakeGrid;

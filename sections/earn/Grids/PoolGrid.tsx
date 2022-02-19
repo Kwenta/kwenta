@@ -13,8 +13,13 @@ import {
 	OverlappingIcons,
 	LiquidityAmount,
 } from '../common';
+import { useRewardsTimer } from '../hooks';
 
-const StakeGrid = () => {
+const DEADLINE = new Date('2022-03-20T23:59:59Z');
+
+const PoolGrid = () => {
+	const timeTillDeadline = useRewardsTimer(DEADLINE);
+
 	return (
 		<>
 			<GridHeading variant="h4">OVM sUSD Curve LP</GridHeading>
@@ -52,7 +57,7 @@ const StakeGrid = () => {
 				<SplitColumn>
 					<div>
 						<Title>Time Remaining</Title>
-						<BigText>16D:24H:18M</BigText>
+						<BigText>{timeTillDeadline}</BigText>
 					</div>
 					<div>
 						<Title>Last Snapshot</Title>
@@ -64,4 +69,4 @@ const StakeGrid = () => {
 	);
 };
 
-export default StakeGrid;
+export default PoolGrid;
