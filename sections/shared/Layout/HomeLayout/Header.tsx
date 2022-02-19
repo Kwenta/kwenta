@@ -126,6 +126,11 @@ const FuturesBannerContainer = styled.div`
 		${(props) => props.theme.colors.goldColors.color1} 0%,
 		${(props) => props.theme.colors.goldColors.color2} 100%
 	);
+	${media.lessThan('md')`
+		position: relative;
+		top: ${HEADER_HEIGHT};
+		margin-bottom: ${HEADER_HEIGHT};
+	`}
 `;
 
 const FuturesBannerLinkWrapper = styled.div`
