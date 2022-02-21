@@ -28,6 +28,7 @@ import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { gasPriceInWei } from 'utils/network';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type OrdersProps = {
 	position: FuturesPosition | null;
@@ -63,7 +64,9 @@ const Orders: React.FC<OrdersProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
+		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
+		: null;
 
 	const orders: TableOrder[] = useMemo(
 		() =>

@@ -21,6 +21,7 @@ import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
@@ -73,7 +74,9 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
+		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
+		: null;
 
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
 		gasPrice,

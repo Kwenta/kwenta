@@ -77,16 +77,17 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	if (prefix) {
 		formattedValue.push(prefix);
 	}
-	const weiAsStringWithDecimals = weiValue
-		.abs()
-		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 
-	// commify removes trailing 0's on decimals
-	const [integer, preserveDecimals] = weiAsStringWithDecimals.split('.');
-	const integerWithCommas = utils.commify(integer);
-	formattedValue.push(
-		preserveDecimals ? integerWithCommas + '.' + preserveDecimals : integerWithCommas
+	const weiAsStringWithDecimals = weiValue.toString(
+		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
+
+	const withCommas = commifyAndPadDecimals(
+		weiAsStringWithDecimals,
+		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
+	);
+
+	formattedValue.push(withCommas);
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);

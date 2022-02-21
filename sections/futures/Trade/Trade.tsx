@@ -35,6 +35,7 @@ import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type TradeProps = {};
 
@@ -93,7 +94,7 @@ const Trade: React.FC<TradeProps> = () => {
 		() =>
 			ethGasPriceQuery.isSuccess
 				? ethGasPriceQuery?.data != null
-					? ethGasPriceQuery.data[gasSpeed]
+					? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 					: null
 				: null,
 		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]

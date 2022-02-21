@@ -22,6 +22,7 @@ import Connector from 'containers/Connector';
 import MarginInput from '../TradeSizeInput';
 import { gasPriceInWei } from 'utils/network';
 import { zeroBN } from 'utils/formatters/number';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type EditMarginModalProps = {
 	onDismiss: () => void;
@@ -76,7 +77,9 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
+		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
+		: null;
 
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
 		gasPrice,

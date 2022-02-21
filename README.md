@@ -1,4 +1,4 @@
-![Kwenta CI](https://github.com/Synthetixio/kwenta/workflows/Kwenta%20CI/badge.svg?branch=master) [![kwenta](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/camtjp/master&style=flat)](https://dashboard.cypress.io/projects/camtjp/runs) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
+![Kwenta CI](https://github.com/Synthetixio/kwenta/workflows/Kwenta%20CI/badge.svg?branch=master) [![Discord](https://img.shields.io/discord/413890591840272394.svg?color=768AD4&label=discord&logo=https%3A%2F%2Fdiscordapp.com%2Fassets%2F8c9701b98ad4372b58f13fd9f65f966e.svg)](https://discordapp.com/channels/413890591840272394/)
 [![Twitter Follow](https://img.shields.io/twitter/follow/kwenta_io.svg?label=kwenta_io&style=social)](https://twitter.com/kwenta_io)
 
 # DEPRECATED Kwenta
@@ -64,6 +64,40 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ```bash
 npm run build
 npm start
+```
+
+### End-2-End testing
+In order to run fully automated end-2-end (e2e) tests Kwenta uses [Synpress](https://github.com/Synthetixio/synpress) (a wrapper around [Cynpress](https://www.cypress.io/)).  
+
+#### Constraints 
+The current e2e tests are written to be run on Optimistic Kovan using Chrome as the browser.
+
+#### Setup
+- Download and install Google Chrome 
+- Setup a test wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD
+- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress. 
+
+```bash
+PRIVATE_KEY=<INSERTPRIVATEKEY>
+NETWORK_NAME=OptimisticKovan
+RPC_URL=https://kovan.optimism.io
+CHAIN_ID=69
+BLOCK_EXPLORER=https://kovan-optimistic.etherscan.io
+IS_TESTNET=true
+```
+
+##### Bash convenience script for setting up the environment
+A Bash convenience script [has been made available here](https://gist.github.com/raffiegang/b24a6b97bcd054645abf59be852bc88d). 
+- Open bash 
+- Copy the private key of the test wallet into the file `SYNPRESS_PRIVATEKEY` into the same folder location as the script. While using this method, please don't forget to update your .gitignore file to prevent your private key to be leaked.   
+- Run the following command `source ./synpress-envsetter.sh`
+
+#### Run the tests
+
+```bash
+npm run build
+npm start
+npm run test:e2e:only:tests
 ```
 
 ## Contributing

@@ -21,6 +21,7 @@ import { getTransactionPrice, gasPriceInWei } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
 import { walletAddressState } from 'store/wallet';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -63,7 +64,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
+		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
+		: null;
 
 	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
 		gasPrice,

@@ -22,6 +22,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
@@ -37,7 +38,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const isL2 = useRecoilValue(isL2State);
 
 	const hasCustomGasPrice = customGasPrice !== '';
-	const gasPrice = gasPrices ? gasPrices[gasSpeed] : null;
+	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
 	const gasPriceItem = hasCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>

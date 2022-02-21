@@ -88,6 +88,7 @@ export const Table: FC<TableProps> = ({
 			data,
 			initialState: {
 				pageSize: showPagination ? (pageSize ? pageSize : MAX_PAGE_ROWS) : data.length,
+				hiddenColumns: hiddenColumns,
 			},
 			...options,
 		},
