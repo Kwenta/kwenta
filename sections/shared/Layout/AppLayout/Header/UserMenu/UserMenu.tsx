@@ -36,7 +36,7 @@ type UserMenuProps = {
 const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, ensName } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
@@ -92,13 +92,14 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
+							className={ensName ? 'lowercase' : ''}
 							size="md"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
 						>
 							<StyledConnectionDot />
-							{truncatedWalletAddress}
+							{ensName ? ensName : truncatedWalletAddress}
 						</WalletButton>
 					) : (
 						<Button
@@ -134,6 +135,7 @@ const Menu = styled.div`
 const WalletButton = styled(Button)`
 	display: inline-flex;
 	align-items: center;
+	text-transform: ${(props) => (props.className === 'lowercase' ? 'lowercase' : '')};
 	font-family: ${(props) => props.theme.fonts.mono};
 	background-color: ${(props) => props.theme.colors.elderberry};
 	border: 1px solid ${(props) => props.theme.colors.navy};

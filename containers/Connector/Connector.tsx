@@ -21,6 +21,7 @@ import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard } from './config';
+import getENSNameAndAvatarUrl from './getENSNameAndAvatar';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
@@ -93,14 +94,6 @@ const useConnector = () => {
 						setWalletAddress(address);
 					}
 				},
-				ens: async (ens) => {
-					const ensName = ens?.name;
-					const ensAvatar = ens?.avatar;
-					setEns(ensName);
-					setAvatar(ensAvatar);
-					console.log(ensName);
-					console.log(ensAvatar);
-				},
 				network: (networkId: number) => {
 					const isSupportedNetwork =
 						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
@@ -170,6 +163,28 @@ const useConnector = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady]);
 
+	useEffect(() => {
+		if (signer) {
+			let provider,
+				account: string = '';
+			const infuraUrl = 'https://mainnet.infura.io/v3/';
+
+			provider = new ethers.providers.JsonRpcProvider(
+				infuraUrl + process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+			);
+
+			signer.getAddress().then((address) => {
+				account = address;
+			});
+
+			getENSNameAndAvatarUrl(account, provider).then((ensObj) => {
+				if (ensObj !== null) {
+					setEns(ensObj?.name);
+				}
+			});
+		}
+	}, [signer]);
+
 	// load previously saved wallet
 	useEffect(() => {
 		// disables caching if in IFrame allow parent to set wallet address
@@ -199,26 +214,11 @@ const useConnector = () => {
 				const success = await onboard.walletSelect();
 				if (success) {
 					await onboard.walletCheck();
-					await displayENS();
 					resetCachedUI();
 				}
 			}
 		} catch (e) {
 			console.log(e);
-		}
-	};
-
-	const displayENS = async () => {
-		if (onboard) {
-			setEns(ensName);
-			setAvatar(ensAvatar);
-			console.log(ensName);
-			console.log(ensAvatar);
-			if (ensAvatar && ensName) {
-				return ensAvatar && ensName;
-			} else {
-				return ensName;
-			}
 		}
 	};
 
@@ -277,7 +277,8 @@ const useConnector = () => {
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
-		displayENS,
+		ensName,
+		ensAvatar,
 	};
 };
 
