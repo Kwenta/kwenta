@@ -1,6 +1,8 @@
+import { NetworkId } from '@synthetixio/contracts-interface';
+
 export type Token = {
 	address: string;
-	chainId: number;
+	chainId: NetworkId;
 	decimals: number;
 	logoURI: string;
 	name: string;

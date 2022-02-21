@@ -52,6 +52,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
+import { parseGasPriceObject } from 'hooks/useGas';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -260,7 +261,7 @@ const useShort = ({
 			customGasPrice !== ''
 				? Number(customGasPrice)
 				: ethGasPriceQuery.data != null
-				? ethGasPriceQuery.data[gasSpeed]
+				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);

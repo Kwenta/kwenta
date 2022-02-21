@@ -15,7 +15,9 @@ export default class Page {
 	}
 
 	confirmMetamaskTransaction() {
-		cy.confirmMetamaskTransaction();
+		// Currently without supplying a gas configuration results in failing transactions
+		// Possibly caused by wrong default behaviour within Synpress
+		cy.confirmMetamaskTransaction({gasFee:1, gasLimit: 5000000});
 	}
 
 	snxExchangerSettle(asset) {
