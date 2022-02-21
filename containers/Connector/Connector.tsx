@@ -166,16 +166,12 @@ const useConnector = () => {
 	useEffect(() => {
 		if (signer) {
 			let provider,
-				account: string = '';
+				account: any = signer.getAddress();
 			const infuraUrl = 'https://mainnet.infura.io/v3/';
 
 			provider = new ethers.providers.JsonRpcProvider(
 				infuraUrl + process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
 			);
-
-			signer.getAddress().then((address) => {
-				account = address;
-			});
 
 			getENSNameAndAvatarUrl(account, provider).then((ensObj) => {
 				if (ensObj !== null) {
