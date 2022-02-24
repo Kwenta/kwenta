@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
+import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
@@ -26,6 +27,7 @@ type Stat = {
 	pnl: Wei;
 	liquidations: Wei;
 	totalTrades: Wei;
+	totalVolume: Wei;
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
@@ -43,6 +45,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
+			totalVolume: wei(stat.totalVolume ?? 0, 18, true),
 		};
 		return acc;
 	}, {});
@@ -59,9 +62,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				address: stat.account,
 				trader: truncateAddress(stat.account),
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
+				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
+				pnlPct: (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume) ?? wei(0)).toNumber(),
 			}))
 			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
 	}, [stats, searchTerm]);
@@ -104,7 +109,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				isLoading={statsQuery.isLoading}
 				data={data}
 				hideHeaders={compact}
-				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
+				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined}
 				columns = {[
 					{
 						Header:
@@ -161,6 +166,21 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 								sortable: true,
 							},
 							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
+								accessor: 'totalVolume',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<Currency.Price
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.totalVolume}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 125,
+								sortable: true,
+							},
+							{
 								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
 								accessor: 'pnl',
 								sortType: 'basic',
@@ -172,7 +192,19 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										conversionRate={1}
 									/>
 								),
-								width: compact ? 'auto' : 175,
+								width: compact ? 'auto' : 100,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.percent-pnl')}</TableHeader>,
+								accessor: 'pnlPct',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<ChangePercent
+										value={cellProps.row.original.pnlPct}
+									/>
+								),
+								width: compact ? 'auto' : 100,
 								sortable: true,
 							},
 						]

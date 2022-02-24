@@ -137,6 +137,7 @@ export type FuturesStat = {
 	pnlWithFeesPaid: string;
 	liquidations: number;
 	totalTrades: number;
+	totalVolume: number;
 };
 
 export type FuturesCumulativeStats = {
