@@ -7,6 +7,7 @@ import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
+import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
@@ -65,6 +66,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
+				pnlPct: (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume) ?? wei(0)).toNumber(),
 			}))
 			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
 	}, [stats, searchTerm]);
@@ -175,7 +177,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										conversionRate={1}
 									/>
 								),
-								width: compact ? 'auto' : 175,
+								width: compact ? 'auto' : 125,
 								sortable: true,
 							},
 							{
@@ -190,7 +192,19 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										conversionRate={1}
 									/>
 								),
-								width: compact ? 'auto' : 175,
+								width: compact ? 'auto' : 100,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.percent-pnl')}</TableHeader>,
+								accessor: 'pnlPct',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<ChangePercent
+										value={cellProps.row.original.pnlPct}
+									/>
+								),
+								width: compact ? 'auto' : 100,
 								sortable: true,
 							},
 						]

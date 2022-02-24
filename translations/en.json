@@ -696,7 +696,8 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "Total PnL"
+				"total-pnl": "PnL ($)",
+				"percent-pnl": "PnL (%)"
 			}
 		},
 		"statistics": {
