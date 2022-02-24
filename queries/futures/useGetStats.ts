@@ -23,6 +23,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 						pnlWithFeesPaid
 						liquidations
 						totalTrades
+						totalVolume
 					}
 				}
 			`,

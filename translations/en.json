@@ -693,6 +693,7 @@
 				"rank": "Rank",
 				"trader": "Trader",
 				"total-trades": "Total Trades",
+				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
 				"total-pnl": "Total PnL"

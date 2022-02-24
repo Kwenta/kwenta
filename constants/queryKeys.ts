@@ -143,9 +143,10 @@ export const QUERY_KEYS = {
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: ['futures', 'stats'],
 		AverageLeverage: ['futures', 'averageLeverage'],
-		CumulativeVolume: ['futurs', 'cumulativeVolume'],
+		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: ['futures', 'totalTrades'],
+		TotalVolume: ['futures', 'totalVolume'],
 	},
 };
 

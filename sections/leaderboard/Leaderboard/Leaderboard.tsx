@@ -26,6 +26,7 @@ type Stat = {
 	pnl: Wei;
 	liquidations: Wei;
 	totalTrades: Wei;
+	totalVolume: Wei;
 };
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
@@ -43,6 +44,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
 			liquidations: new Wei(stat.liquidations ?? 0),
 			totalTrades: new Wei(stat.totalTrades ?? 0),
+			totalVolume: wei(stat.totalVolume ?? 0, 18, true),
 		};
 		return acc;
 	}, {});
@@ -59,6 +61,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				address: stat.account,
 				trader: truncateAddress(stat.account),
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
+				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
@@ -158,6 +161,21 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 								accessor: 'liquidations',
 								sortType: 'basic',
 								width: 175,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
+								accessor: 'totalVolume',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<Currency.Price
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.totalVolume}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 175,
 								sortable: true,
 							},
 							{
