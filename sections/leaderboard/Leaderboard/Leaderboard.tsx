@@ -109,7 +109,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				isLoading={statsQuery.isLoading}
 				data={data}
 				hideHeaders={compact}
-				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations'] : undefined}
+				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined}
 				columns = {[
 					{
 						Header:
