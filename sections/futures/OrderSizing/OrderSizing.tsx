@@ -17,7 +17,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	assetRate,
 	onAmountChange,
 }) => {
-	const amountValue = Number(amount) * assetRate;
+	const amountValue = amount ? Number(amount) * assetRate : '';
 	const valueToAmount = (value: string) => (Number(value) / assetRate).toString();
 
 	return (
