@@ -73,7 +73,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				color: 'green',
 			},
 		};
-	}, [baseCurrencyKey, marketSummary]);
+	}, [
+		baseCurrencyKey,
+		marketSummary,
+		basePriceRate,
+		futuresTradingVolume,
+		selectedPriceCurrency.name,
+	]);
 
 	return (
 		<MarketDetailsContainer>

@@ -71,7 +71,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	const modeButton = useMemo(() => {
 		return (
 			<TextButton
-				onClick={(e) => {
+				onClick={() => {
 					setMode(mode === 'slider' ? 'input' : 'slider');
 				}}
 			>
@@ -112,9 +112,30 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							setIsLeverageValueCommitted(true);
 						}}
 					/>
-					<LeverageButton mono>2x</LeverageButton>
-					<LeverageButton mono>5x</LeverageButton>
-					<LeverageButton mono>10x</LeverageButton>
+					<LeverageButton
+						mono
+						onClick={() => {
+							onLeverageChange(2);
+						}}
+					>
+						2x
+					</LeverageButton>
+					<LeverageButton
+						mono
+						onClick={() => {
+							onLeverageChange(5);
+						}}
+					>
+						5x
+					</LeverageButton>
+					<LeverageButton
+						mono
+						onClick={() => {
+							onLeverageChange(10);
+						}}
+					>
+						10x
+					</LeverageButton>
 				</LeverageInputContainer>
 			)}
 		</LeverageInputWrapper>

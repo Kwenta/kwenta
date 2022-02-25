@@ -15,8 +15,8 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 				</div>
 			</CurrencyMeta>
 			<div>
-				<p className="price">$42,977.23</p>
-				<p className="change">+0.68%</p>
+				<p className="price">{props.data.price}</p>
+				<p className="change">{props.data.change}</p>
 			</div>
 		</OptionDetailsContainer>
 	</components.Option>
