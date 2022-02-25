@@ -242,6 +242,8 @@ const Trade: React.FC<TradeProps> = () => {
 			<MarketInfoBox
 				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				buyingPower={sUSDBalance}
+				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
+				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 			/>
 
 			<StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} />

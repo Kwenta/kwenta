@@ -8,17 +8,24 @@ import { Synths } from '@synthetixio/contracts-interface';
 type MarketInfoBoxProps = {
 	availableMargin: Wei;
 	buyingPower: Wei;
+	leverage: Wei;
+	liquidationPrice: Wei;
 };
 
-const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({ availableMargin, buyingPower }) => {
+const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
+	availableMargin,
+	buyingPower,
+	leverage,
+	liquidationPrice,
+}) => {
 	return (
 		<StyledInfoBox
 			details={{
 				'Available Margin': `${formatCurrency(Synths.sUSD, availableMargin, { sign: '$' })}`,
 				'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
 				'Margin Usage': '10%',
-				Leverage: '4x',
-				'Liquidation Price': '$3,718.33',
+				Leverage: `${leverage?.toNumber() || 0}x`,
+				'Liquidation Price': `${formatCurrency(Synths.sUSD, liquidationPrice, { sign: '$' })}`,
 			}}
 		/>
 	);
