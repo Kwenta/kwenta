@@ -115,6 +115,11 @@ const SelectContainer = styled.div`
 	.react-select__dropdown-indicator {
 		margin-right: 22px;
 	}
+
+	.react-select__menu-list {
+		padding-top: 6px;
+		padding-bottom: 6px;
+	}
 `;
 
 export default MarketsDropdown;

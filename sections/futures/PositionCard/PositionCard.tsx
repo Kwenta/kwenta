@@ -13,6 +13,10 @@ import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import useSynthetixQueries from '@synthetixio/queries';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -34,6 +38,26 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 
+	const { synthsMap } = Connector.useContainer();
+	const getSynthDescription = React.useCallback(
+		(synth: string) => {
+			return t('common.currency.synthetic-currency-name', {
+				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+			});
+		},
+		[t, synthsMap]
+	);
+
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const basePriceRate = React.useMemo(
+		() => getExchangeRatesForCurrencies(exchangeRates, currencyKey, selectedPriceCurrency.name),
+		[exchangeRates, currencyKey, selectedPriceCurrency]
+	);
+
 	return (
 		<>
 			<Container>
@@ -43,7 +67,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<StyledCurrencyIcon currencyKey={currencyKey} />
 							<div>
 								<CurrencySubtitle>{currencyKey}/sUSD</CurrencySubtitle>
-								<StyledValue>Synthetic Bitcoin</StyledValue>
+								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
 							</div>
 						</CurrencyInfo>
 					</InfoCol>
@@ -57,7 +81,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Size</StyledSubtitle>
-						<StyledValue>8.98 ($4,131.23)</StyledValue>
+						<StyledValue>
+							{position?.position?.size.toNumber() || 0} (
+							{formatCurrency(
+								Synths.sUSD,
+								position?.position?.size?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+								{ sign: '$' }
+							)}
+							)
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
