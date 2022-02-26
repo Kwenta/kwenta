@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
+import { gasSpeedState, isL2State } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
@@ -22,7 +22,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas, { parseGasPriceObject } from 'hooks/useGas';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;
@@ -37,14 +37,11 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
+	const { gasPrice, isCustomGasPrice, customGasPrice, setCustomGasPrice } = useGas();
 
-	const hasCustomGasPrice = customGasPrice !== '';
-	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
-
-	const gasPriceItem = hasCustomGasPrice ? (
+	const gasPriceItem = isCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
 	) : (
 		<span data-testid="gas-price">
@@ -99,7 +96,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 													setCustomGasPrice('');
 													setGasSpeed(speed);
 												}}
-												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+												isActive={isCustomGasPrice ? false : gasSpeed === speed}
 											>
 												<span>{t(`common.gas-prices.${speed}`)}</span>
 												<NumericValue>
