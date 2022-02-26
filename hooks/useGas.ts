@@ -22,8 +22,8 @@ export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => 
 const useGas = () => {
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const [isCustomGasPrice, setIsCustomGasPrice] = useState(false);
 
 	const gasPrice = useMemo(() => {
