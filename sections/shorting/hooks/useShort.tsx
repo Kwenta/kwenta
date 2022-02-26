@@ -25,13 +25,7 @@ import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import SelectShortCurrencyModal from 'sections/shared/modals/SelectShortCurrencyModal';
 import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
 
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isL2State,
-	isWalletConnectedState,
-	walletAddressState,
-} from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { customShortCRatioState, shortCRatioState } from 'store/ui';
 
@@ -52,7 +46,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -99,8 +93,7 @@ const useShort = ({
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const [selectShortCurrencyModalOpen, setSelectShortCurrencyModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
+	const { gasPrice, gasPriceWei, getGasLimitEstimate } = useGas();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const selectedShortCRatio = useRecoilValue(shortCRatioState);
 	const customShortCRatio = useRecoilValue(customShortCRatioState);
@@ -256,16 +249,6 @@ const useShort = ({
 		return [];
 	}, [isAppReady, synthetixjs]);
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
-	);
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -352,7 +335,6 @@ const useShort = ({
 				const metaTx = await synthetixjs!.contracts.CollateralShort.populateTransaction.open(
 					...params
 				);
-				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				const l1Fee = await getL1SecurityFee({
 					...metaTx,
