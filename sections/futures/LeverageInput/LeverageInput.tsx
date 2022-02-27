@@ -107,35 +107,21 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				<LeverageInputContainer>
 					<NumericInput
 						value={Math.round(currentLeverage * 100) / 100}
-						onChange={(e, value) => {
+						onChange={(_, value) => {
 							onLeverageChange(Number(value));
 							setIsLeverageValueCommitted(true);
 						}}
 					/>
-					<LeverageButton
-						mono
-						onClick={() => {
-							onLeverageChange(2);
-						}}
-					>
-						2x
-					</LeverageButton>
-					<LeverageButton
-						mono
-						onClick={() => {
-							onLeverageChange(5);
-						}}
-					>
-						5x
-					</LeverageButton>
-					<LeverageButton
-						mono
-						onClick={() => {
-							onLeverageChange(10);
-						}}
-					>
-						10x
-					</LeverageButton>
+					{[2, 5, 10].map((l) => (
+						<LeverageButton
+							mono
+							onClick={() => {
+								onLeverageChange(l);
+							}}
+						>
+							{l}x
+						</LeverageButton>
+					))}
 				</LeverageInputContainer>
 			)}
 		</LeverageInputWrapper>

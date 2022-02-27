@@ -9,7 +9,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -39,12 +39,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const data: MarketData = React.useMemo(() => {
 		return {
 			[`${baseCurrencyKey}/sUSD`]: {
-				value: formatCurrency(
-					selectedPriceCurrency.name,
-					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
-					{ sign: '$' }
-				),
-				color: 'green',
+				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
 			'Live Price': {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
@@ -66,10 +61,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: '22,321',
 			},
 			'Open Interest': {
-				value: '88,278.12 ETH',
+				value: formatCurrency(
+					selectedPriceCurrency.name,
+					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+					{ sign: '$' }
+				),
 			},
-			'1H Funding': {
-				value: '0.004418%',
+			'24H Funding': {
+				value: formatPercent(marketSummary?.currentFundingRate ?? zeroBN),
 				color: 'green',
 			},
 		};
