@@ -15,20 +15,27 @@ export default function Search({ onChange }: Props) {
 	};
 	return (
 		<SearchBar>
-			<Svg src={SearchIconPath} />
-			<SearchInput onChange={handleOnChange} placeholder="Search" />
+			<StyledSvg src={SearchIconPath} />
+			<StyledSearchInput onChange={handleOnChange} placeholder="Search..." />
 		</SearchBar>
 	);
 }
+
+const StyledSvg = styled(Svg)`
+	position: absolute;
+	left: 12px;
+`
+
+const StyledSearchInput = styled(SearchInput)`
+	position: relative;
+	text-indent: 16px;
+`
 
 const SearchBar = styled.div`
 	width: 100%;
 	height: 100%;
 	overflow-x: auto;
 	position: relative;
-	border: 1px solid ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-	padding: 5px 18px;
 	display: flex;
 	align-items: center;
 `;
