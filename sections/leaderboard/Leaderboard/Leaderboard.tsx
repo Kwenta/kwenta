@@ -115,15 +115,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						Header:
 							<TableTitle>
 								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
-								<PeriodSelector>
-									{PERIOD_LABELS.map((period) => (
-										<StyledTextButton
-											key={period.period}
-										>
-											{t(period.i18nLabel)}
-										</StyledTextButton>
-									))}
-								</PeriodSelector>
 							</TableTitle>,
 						accessor: 'title',
 						columns: [
