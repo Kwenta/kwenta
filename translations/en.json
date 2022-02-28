@@ -818,6 +818,14 @@
 	},
 	"futures-dashboard": {
 		"page-title": "Futures Dashboard | Kwenta",
+		"tabs": {
+			"nav": {
+				"overview": "Overview",
+				"positions": "Positions",
+				"rewards": "Rewards",
+				"markets": "Markets"
+			}
+		},
 		"position": {
 			"tab": "open positions"
 		},

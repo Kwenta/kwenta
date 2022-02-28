@@ -11,12 +11,7 @@ import {
 	FullHeightContainer,
 	FlexDivRow,
 } from 'styles/common';
-import { DesktopOnlyView } from 'components/Media';
-import Markets from 'sections/futures/Markets';
-import Hero from 'sections/futures/Hero';
-import FuturesDashboardTabs from './futures-dashboard-tabs';
-import Leaderboard from 'sections/leaderboard/Leaderboard';
-import { Subheader } from 'sections/futures/common';
+import DashboardContainer from 'sections/dashboard/DashboardContainer';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
@@ -30,18 +25,8 @@ const Futures: FC = () => {
 				<PageContent>
 					<FullHeightContainer>
 						<MainContent>
-							<Hero displayReferBox={false} />
-							<FuturesDashboardTabs />
+							<DashboardContainer />
 						</MainContent>
-						<DesktopOnlyView>
-							<StyledRightSideContent>
-								<HeaderRow>
-									<Subheader>{t('futures.leaderboard.title')}</Subheader>
-								</HeaderRow>
-								<Leaderboard compact />
-								<Markets />
-							</StyledRightSideContent>
-						</DesktopOnlyView>
 					</FullHeightContainer>
 				</PageContent>
 			</AppLayout>
