@@ -21,7 +21,6 @@ import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard } from './config';
-import getENSNameAndAvatarUrl from './getENSNameAndAvatar';
 import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
@@ -36,8 +35,6 @@ const useConnector = () => {
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
-	const [ensName, setEns] = useState<string | undefined>();
-	const [ensAvatar, setAvatar] = useState<string | undefined>();
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -163,31 +160,13 @@ const useConnector = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady]);
 
-	useEffect(() => {
-		if (signer) {
-			let provider,
-				account: any = signer.getAddress();
-			const infuraUrl = 'https://mainnet.infura.io/v3/';
-
-			provider = new ethers.providers.JsonRpcProvider(
-				infuraUrl + process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-			);
-
-			getENSNameAndAvatarUrl(account, provider).then((ensObj) => {
-				if (ensObj !== null) {
-					setEns(ensObj?.name);
-				}
-			});
-		}
-	}, [signer]);
-
 	// load previously saved wallet
 	useEffect(() => {
 		// disables caching if in IFrame allow parent to set wallet address
-		if (onboard && selectedWallet && !walletAddress && !ensName && !ensAvatar && !isIFrame()) {
+		if (onboard && selectedWallet && !walletAddress && !isIFrame()) {
 			onboard.walletSelect(selectedWallet);
 		}
-	}, [onboard, selectedWallet, walletAddress, ensName, ensAvatar]);
+	}, [onboard, selectedWallet, walletAddress]);
 
 	const isIFrame = () => {
 		try {
@@ -273,8 +252,6 @@ const useConnector = () => {
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
-		ensName,
-		ensAvatar,
 	};
 };
 

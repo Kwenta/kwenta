@@ -1,8 +1,9 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
+import { ethers } from 'ethers';
 
 import Connector from 'containers/Connector';
 
@@ -28,6 +29,7 @@ import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
+import getENSNameAndAvatarUrl from './getUserENSNameAndAvatarUrl';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -36,7 +38,8 @@ type UserMenuProps = {
 const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet, ensName } = Connector.useContainer();
+	const { connectWallet, signer } = Connector.useContainer();
+	const [ensName, setEns] = useState<string>('');
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
@@ -55,6 +58,25 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
 		[redeemableDeprecatedSynths?.totalUSDBalance]
 	);
+
+	/**
+	 * @dev We require this new provider since we need one connected to Ethereum
+	 * mainnet and NOT to the Optimism network.
+	 */
+	const infuraUrl = 'https://mainnet.infura.io/v3/';
+
+	let ensProvider = new ethers.providers.JsonRpcProvider(
+		infuraUrl + process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
+	);
+
+	useEffect(() => {
+		if (signer) {
+			let account: any = signer.getAddress();
+			getENSNameAndAvatarUrl(account, ensProvider).then((ensObj) => {
+				if (ensObj !== null) setEns(ensObj?.name);
+			});
+		}
+	}, [signer]);
 
 	return (
 		<>
