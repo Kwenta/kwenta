@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
-import { TabList, TabPanel, TabButton } from 'components/Tab';
+import { TabList, TabPanel } from 'components/Tab';
+import TabButton from 'components/Button/TabButton';
 import Leaderboard from '../Leaderboard';
 import Statistics from '../Statistics';
 
@@ -51,13 +52,16 @@ const LeaderboardContainer: FC = () => {
 
 	return (
 		<>
-			<StyledTabList>
+			<TabButtonsContainer>
 				{TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} name={name} active={active} onClick={onClick}>
-						{label}
-					</TabButton>
+					<TabButton
+						key={name}
+						title={label}
+						active={active}
+						onClick={onClick}
+					/>
 				))}
-			</StyledTabList>
+			</TabButtonsContainer>
 			<TabPanel name={Tab.Leaderboard} activeTab={activeTab}>
 				<Leaderboard />
 			</TabPanel>
@@ -68,8 +72,20 @@ const LeaderboardContainer: FC = () => {
 	);
 };
 
-const StyledTabList = styled(TabList)`
-	margin-bottom: 12px;
+const TabButtonsContainer = styled.div`
+	display: flex;
+	margin-top: 16px;
+	margin-bottom: 16px;
+
+	& > button {
+		height: 38px;
+		font-size: 13px;
+
+		&:not(:last-of-type) {
+			margin-right: 14px;
+		}
+	}
 `;
+
 
 export default LeaderboardContainer;
