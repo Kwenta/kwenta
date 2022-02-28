@@ -71,9 +71,11 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 
 	useEffect(() => {
 		if (signer) {
-			let account: any = signer.getAddress();
-			getENSNameAndAvatarUrl(account, ensProvider).then((ensObj) => {
-				if (ensObj !== null) setEns(ensObj?.name);
+			signer.getAddress().then((account: string) => {
+				let _account = account;
+				getENSNameAndAvatarUrl(_account, ensProvider).then((ensObj) => {
+					if (ensObj !== null) setEns(ensObj?.name);
+				});
 			});
 		}
 	}, [signer]);
