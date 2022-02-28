@@ -28,7 +28,7 @@ const AccruedInterestCol: FC<AccruedInterestColType> = ({ cellProps }) => {
 			<StyledPrice>
 				{collateralShortPosition != null
 					? formatNumber(collateralShortPosition.accruedInterest, {
-							minDecimals: DEFAULT_CRYPTO_DECIMALS,
+							maxDecimals: DEFAULT_CRYPTO_DECIMALS,
 					  })
 					: NO_VALUE}
 			</StyledPrice>
