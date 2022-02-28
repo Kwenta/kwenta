@@ -251,7 +251,7 @@ const Trade: React.FC<TradeProps> = () => {
 			<OrderSizing
 				amount={tradeSize}
 				assetRate={marketAssetRate}
-				onAmountChange={(value) => onTradeAmountChange(value)}
+				onAmountChange={onTradeAmountChange}
 				marketAsset={marketAsset || Synths.sUSD}
 			/>
 
@@ -274,7 +274,14 @@ const Trade: React.FC<TradeProps> = () => {
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 			/>
 
-			<PlaceOrderButton fullWidth>Place Market Order</PlaceOrderButton>
+			<PlaceOrderButton
+				fullWidth
+				onClick={() => {
+					setIsTradeConfirmationModalOpen(true);
+				}}
+			>
+				Place Market Order
+			</PlaceOrderButton>
 
 			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
 

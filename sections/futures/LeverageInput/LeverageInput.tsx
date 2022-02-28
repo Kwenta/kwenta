@@ -114,6 +114,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 					/>
 					{[2, 5, 10].map((l) => (
 						<LeverageButton
+							key={l.toString()}
 							mono
 							onClick={() => {
 								onLeverageChange(l);
