@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
-import { TabList, TabPanel, TabButton } from 'components/Tab';
+import TabButton from 'components/Button/TabButton';
+import { TabList, TabPanel } from 'components/Tab';
 
 enum Tab {
 	Overview = 'overview',
@@ -59,7 +60,18 @@ const DashboardContainer: FC = () => {
 				active: activeTab === Tab.Markets,
 				onClick: () => {},
 			},
-
+			{
+				name: Tab.Governance,
+				label: t('futures-dashboard.tabs.nav.governance'),
+				active: activeTab === Tab.Governance,
+				onClick: () => { },
+			},
+			{
+				name: Tab.Staking,
+				label: t('futures-dashboard.tabs.nav.staking'),
+				active: activeTab === Tab.Staking,
+				onClick: () => { },
+			},
 		],
 		[t, activeTab, router]
 	);
@@ -67,8 +79,16 @@ const DashboardContainer: FC = () => {
 	return (
 		<>
 			<StyledTabList>
-				{TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} name={name} active={active} onClick={onClick}>
+				<TabGroupTitle>Trading</TabGroupTitle>
+				{TABS.slice(0, 4).map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={name} active={active} onClick={onClick} >
+						{label}
+					</TabButton>
+				))}
+
+				<TabGroupTitle>Community</TabGroupTitle>
+				{TABS.slice(4).map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={name} active={active} onClick={onClick} >
 						{label}
 					</TabButton>
 				))}
@@ -82,6 +102,13 @@ const DashboardContainer: FC = () => {
 
 const StyledTabList = styled(TabList)`
 	margin-bottom: 12px;
+`;
+
+const TabGroupTitle = styled.div`
+	font-size: 13px;
+	text-transform: uppercase;
+	font-weight: 900;
+	color: ${(props) => props.theme.colors.purple};
 `;
 
 export default DashboardContainer;
