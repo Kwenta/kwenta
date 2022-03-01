@@ -10,6 +10,7 @@ import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolu
 import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -35,6 +36,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
+	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
+	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
 	const data: MarketData = React.useMemo(() => {
 		return {
@@ -58,7 +61,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				),
 			},
 			'24H Trades': {
-				value: '22,321',
+				value: `${futuresDailyTradeStats ?? 0}`,
 			},
 			'Open Interest': {
 				value: formatCurrency(
@@ -77,6 +80,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		marketSummary,
 		basePriceRate,
 		futuresTradingVolume,
+		futuresDailyTradeStats,
 		selectedPriceCurrency.name,
 	]);
 
