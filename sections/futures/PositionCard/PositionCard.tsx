@@ -82,10 +82,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Size</StyledSubtitle>
 						<StyledValue>
-							{position?.position?.size.toNumber() || 0} (
+							{formatNumber(position?.position?.size ?? 0)} (
 							{formatCurrency(
 								Synths.sUSD,
-								position?.position?.size?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+								positionDetails?.size?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
 								{ sign: '$' }
 							)}
 							)
@@ -93,13 +93,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						<StyledValue>$4,131.23 (1.53%)</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
+						</StyledValue>
+						{/* <StyledValue>$4,131.23 (1.53%)</StyledValue> */}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Leverage</StyledSubtitle>
-						<StyledValue>4.12x</StyledValue>
+						<StyledValue>{formatNumber(positionDetails?.leverage ?? zeroBN)}x</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
@@ -123,11 +126,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
-						<StyledValue>-$10.83</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
-						<StyledValue>-$10.83</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
+								sign: '$',
+							})}
+						</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol style={{ justifyContent: 'flex-end' }}>
