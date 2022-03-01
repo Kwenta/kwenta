@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -13,14 +13,13 @@ import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
-import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
 import { ethers } from 'ethers';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
-import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 
 type LeaderboardProps = {
 	compact?: boolean;
+	searchTerm?: string | null;
 };
 
 type Stat = {
@@ -30,10 +29,8 @@ type Stat = {
 	totalVolume: Wei;
 };
 
-const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
+const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardProps) => {
 	const { t } = useTranslation();
-
-	const [searchTerm, setSearchTerm] = useState<string | null>();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 	
@@ -49,10 +46,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		};
 		return acc;
 	}, {});
-
-	const onChangeSearch = (text: string) => {
-		setSearchTerm(text?.toLowerCase());
-	};
 
 	let data = useMemo(() => {
 		return stats
@@ -102,7 +95,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	return (
 		<TableContainer compact={compact}>
-			{!compact ? <Search onChange={onChangeSearch} /> : null}
 			<StyledTable
 				compact={compact}
 				showPagination={true}
@@ -222,7 +214,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 `;
 
 const TableContainer = styled.div<{ compact: boolean | undefined }>`
-	margin-top: 16px;
+	margin-top: 6px;
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 
@@ -249,17 +241,6 @@ const TitleText = styled.div`
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
-`;
-
-const PeriodSelector = styled(GridDivCenteredCol)`
-	grid-gap: 8px;
-`;
-
-const StyledTextButton = styled(TextButton)`
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
-	}
 `;
 
 export default Leaderboard;

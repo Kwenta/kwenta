@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -8,6 +8,7 @@ import { TabList, TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
 import Leaderboard from '../Leaderboard';
 import Statistics from '../Statistics';
+import Search from 'components/Table/Search';
 
 enum Tab {
 	Leaderboard = 'leaderboard',
@@ -18,6 +19,8 @@ const Tabs = Object.values(Tab);
 
 const LeaderboardContainer: FC = () => {
 	const { t } = useTranslation();
+	const [searchTerm, setSearchTerm] = useState<string | null>();
+
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
@@ -50,6 +53,10 @@ const LeaderboardContainer: FC = () => {
 		[t, activeTab, router]
 	);
 
+	const onChangeSearch = (text: string) => {
+		setSearchTerm(text?.toLowerCase());
+	};
+
 	return (
 		<>
 			<TabButtonsContainer>
@@ -61,9 +68,15 @@ const LeaderboardContainer: FC = () => {
 						onClick={onClick}
 					/>
 				))}
+				<Search
+					onChange={onChangeSearch}
+					disabled={!(activeTab === Tab.Leaderboard)}
+				/>
 			</TabButtonsContainer>
 			<TabPanel name={Tab.Leaderboard} activeTab={activeTab}>
-				<Leaderboard />
+				<Leaderboard
+					searchTerm={searchTerm}
+				/>
 			</TabPanel>
 			<TabPanel name={Tab.Statistics} activeTab={activeTab}>
 				<Statistics />
@@ -77,9 +90,7 @@ const TabButtonsContainer = styled.div`
 	margin-top: 16px;
 
 	& > button {
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
+		margin-right: 14px;
 	}
 `;
 
