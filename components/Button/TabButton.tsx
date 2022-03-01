@@ -18,7 +18,7 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
-			{badge && <div className="badge">{badge}</div>}
+			{!!badge && <div className="badge">{badge}</div>}
 		</StyledButton>
 	);
 };
