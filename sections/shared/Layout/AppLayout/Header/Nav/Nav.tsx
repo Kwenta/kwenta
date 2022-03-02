@@ -20,6 +20,7 @@ const Nav: FC = () => {
 				{menuLinks.map(({ i18nLabel, link }) => {
 					const isActive =
 						asPath === link ||
+						(asPath.includes('dashboard') && link.includes('dashboard')) ||
 						(asPath.includes('market') && link.includes('market')) ||
 						(asPath.includes('leaderboard') && link.includes('leaderboard')) ||
 						(asPath.includes('earn') && link.includes('earn'));
