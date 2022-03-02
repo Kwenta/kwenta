@@ -47,7 +47,7 @@ const StyledButton = styled(Button)`
 			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
 		}
 
-		border: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.border};
+		border: transparent;
 
 		.badge {
 			display: none;

@@ -47,30 +47,35 @@ const DashboardContainer: FC = () => {
 				name: Tab.Positions,
 				label: t('futures-dashboard.tabs.nav.positions'),
 				active: activeTab === Tab.Positions,
-				onClick: () => router.push(ROUTES.Home.Positions),
+				disabled: true,
+				onClick: () => {},
 			},
 			{
 				name: Tab.Rewards,
 				label: t('futures-dashboard.tabs.nav.rewards'),
 				active: activeTab === Tab.Rewards,
+				disabled: true,
 				onClick: () => {},
 			},
 			{
 				name: Tab.Markets,
 				label: t('futures-dashboard.tabs.nav.markets'),
 				active: activeTab === Tab.Markets,
+				disabled: true,
 				onClick: () => {},
 			},
 			{
 				name: Tab.Governance,
 				label: t('futures-dashboard.tabs.nav.governance'),
 				active: activeTab === Tab.Governance,
+				disabled: true,
 				onClick: () => { },
 			},
 			{
 				name: Tab.Staking,
 				label: t('futures-dashboard.tabs.nav.staking'),
 				active: activeTab === Tab.Staking,
+				disabled: true,
 				onClick: () => { },
 			},
 		],
@@ -81,15 +86,15 @@ const DashboardContainer: FC = () => {
 		<>
 			<StyledTabList>
 				<TabGroupTitle>Trading</TabGroupTitle>
-				{TABS.slice(0, 4).map(({ name, label, active, onClick }) => (
-					<NavButton key={name} title={name} isActive={active} onClick={onClick} >
+				{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
+					<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
 						{label}
 					</NavButton>
 				))}
 
 				<TabGroupTitle>Community</TabGroupTitle>
-				{TABS.slice(4).map(({ name, label, active, onClick }) => (
-					<NavButton key={name} title={name} isActive={active} onClick={onClick} >
+				{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
+					<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
 						{label}
 					</NavButton>
 				))}
