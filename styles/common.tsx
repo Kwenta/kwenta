@@ -151,7 +151,7 @@ export const AbsoluteCenteredDiv = styled.div`
 export const PageContent = styled.section`
 	position: relative;
 	margin: 0 auto;
-	padding: 0 20px;
+	padding: 0 30px;
 	width: 100%;
 	flex-grow: 1;
 	${(props) => props.theme.animations.show};
@@ -291,7 +291,7 @@ export const FullHeightContainer = styled(FlexDiv)`
 
 export const MainContent = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 1000px;
+	max-width: 1030px;
 	position: relative;
 	//overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
