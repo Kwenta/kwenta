@@ -2,7 +2,7 @@ import useSynthetixQueries, { GasPrice, GasPrices } from '@synthetixio/queries';
 import { BigNumber } from 'ethers';
 import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
@@ -32,20 +32,15 @@ const useGas = () => {
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
+	const [gasConfig, setGasConfig] = useState<GasPrice>(FALLBACK_GAS_PRICE);
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
 	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
-	const isCustomGasPrice = useMemo(() => customGasPrice !== '', [customGasPrice]);
+	const isCustomGasPrice: boolean = useMemo(() => customGasPrice !== '', [customGasPrice]);
 
-	const selectedGas = useMemo(() => gasPrices?.[gasSpeed] ?? FALLBACK_GAS_PRICE, [
+	const selectedGas: GasPrice = useMemo(() => gasPrices?.[gasSpeed] ?? FALLBACK_GAS_PRICE, [
 		gasPrices,
 		gasSpeed,
-	]);
-
-	const maxFeePerGas = useMemo(() => selectedGas.maxFeePerGas, [selectedGas.maxFeePerGas]);
-	const maxPriorityFeePerGas = useMemo(() => selectedGas.maxPriorityFeePerGas, [
-		selectedGas.maxPriorityFeePerGas,
 	]);
 
 	const gasPrice = useMemo(() => {
@@ -71,20 +66,28 @@ const useGas = () => {
 		}
 	}, []);
 
-	const gasConfig = useMemo(() => {
-		const maxFeePerGasValue = isCustomGasPrice ? gasPriceWei : maxFeePerGas;
+	useEffect(() => {
+		const maxPriorityFeePerGas = selectedGas.maxPriorityFeePerGas;
+		const maxFeePerGasValue = isCustomGasPrice ? gasPriceWei : selectedGas.maxFeePerGas;
+
 		const l1GasConfig = { maxPriorityFeePerGas, maxFeePerGas: maxFeePerGasValue };
 		const l2GasConfig = { gasPrice: gasPriceWei };
 
-		return isL2 ? l2GasConfig : l1GasConfig;
-	}, [gasPriceWei, isCustomGasPrice, isL2, maxFeePerGas, maxPriorityFeePerGas]);
+		const config = isL2 ? l2GasConfig : l1GasConfig;
+
+		setGasConfig(config as GasPrice);
+	}, [
+		gasPriceWei,
+		isCustomGasPrice,
+		isL2,
+		selectedGas.maxFeePerGas,
+		selectedGas.maxPriorityFeePerGas,
+	]);
 
 	return {
 		gasPrice,
 		gasPriceWei,
 		getGasLimitEstimate,
-		maxFeePerGas,
-		maxPriorityFeePerGas,
 		gasPrices,
 		gasSpeed,
 		setGasSpeed,
