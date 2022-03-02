@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
-import TabButton from 'components/Button/TabButton';
+import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
 
 enum Tab {
@@ -23,6 +23,7 @@ const DashboardContainer: FC = () => {
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
+		console.log(router.query.tab)
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as Tab;
 			if (Tabs.includes(tab)) {
@@ -40,13 +41,13 @@ const DashboardContainer: FC = () => {
 				name: Tab.Overview,
 				label: t('futures-dashboard.tabs.nav.overview'),
 				active: activeTab === Tab.Overview,
-				onClick: () => router.push(ROUTES.FuturesDashboard.Overview),
+				onClick: () => router.push(ROUTES.Home.Overview),
 			},
 			{
 				name: Tab.Positions,
 				label: t('futures-dashboard.tabs.nav.positions'),
 				active: activeTab === Tab.Positions,
-				onClick: () => {},
+				onClick: () => router.push(ROUTES.Home.Positions),
 			},
 			{
 				name: Tab.Rewards,
@@ -81,20 +82,21 @@ const DashboardContainer: FC = () => {
 			<StyledTabList>
 				<TabGroupTitle>Trading</TabGroupTitle>
 				{TABS.slice(0, 4).map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={name} active={active} onClick={onClick} >
+					<NavButton key={name} title={name} isActive={active} onClick={onClick} >
 						{label}
-					</TabButton>
+					</NavButton>
 				))}
 
 				<TabGroupTitle>Community</TabGroupTitle>
 				{TABS.slice(4).map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={name} active={active} onClick={onClick} >
+					<NavButton key={name} title={name} isActive={active} onClick={onClick} >
 						{label}
-					</TabButton>
+					</NavButton>
 				))}
 			</StyledTabList>
 			<TabPanel name={Tab.Overview} activeTab={activeTab}>
-				{/* <Leaderboard /> */}
+			</TabPanel>
+			<TabPanel name={Tab.Positions} activeTab={activeTab}>
 			</TabPanel>
 		</>
 	);
