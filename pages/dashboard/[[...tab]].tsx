@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import {
 	PageContent,
-	MainContent,
 	FullHeightContainer,
 } from 'styles/common';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
@@ -21,9 +20,7 @@ const Futures: FC = () => {
 			<AppLayout>
 				<PageContent>
 					<FullHeightContainer>
-						<MainContent>
-							<DashboardContainer />
-						</MainContent>
+						<DashboardContainer />
 					</FullHeightContainer>
 				</PageContent>
 			</AppLayout>

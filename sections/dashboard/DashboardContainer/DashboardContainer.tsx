@@ -6,6 +6,10 @@ import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
 import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
+import {
+	MainContent,
+	LeftSideContent,
+} from 'styles/common';
 
 enum Tab {
 	Overview = 'overview',
@@ -23,7 +27,6 @@ const DashboardContainer: FC = () => {
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
-		console.log(router.query.tab)
 		if (router.query.tab) {
 			const tab = castArray(router.query.tab)[0] as Tab;
 			if (Tabs.includes(tab)) {
@@ -84,32 +87,37 @@ const DashboardContainer: FC = () => {
 
 	return (
 		<>
-			<StyledTabList>
-				<TabGroupTitle>Trading</TabGroupTitle>
-				{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
-					<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
-						{label}
-					</NavButton>
-				))}
+			<LeftSideContent>
+				<StyledTabList>
+					<TabGroupTitle>Trading</TabGroupTitle>
+					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
+						<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
+							{label}
+						</NavButton>
+					))}
 
-				<TabGroupTitle>Community</TabGroupTitle>
-				{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
-					<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
-						{label}
-					</NavButton>
-				))}
-			</StyledTabList>
-			<TabPanel name={Tab.Overview} activeTab={activeTab}>
-			</TabPanel>
-			<TabPanel name={Tab.Positions} activeTab={activeTab}>
-			</TabPanel>
+					<TabGroupTitle>Community</TabGroupTitle>
+					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
+						<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
+							{label}
+						</NavButton>
+					))}
+				</StyledTabList>
+			</LeftSideContent>
+			<MainContent>
+				<TabPanel name={Tab.Overview} activeTab={activeTab}>
+				</TabPanel>
+			</MainContent>
 		</>
 	);
 };
 
 const StyledTabList = styled(TabList)`
+	width: 216px;
 	margin-bottom: 12px;
 `;
+
+const StyledTabPanel = styled(TabPanel)
 
 const TabGroupTitle = styled.div`
 	font-size: 13px;
