@@ -91,14 +91,14 @@ const DashboardContainer: FC = () => {
 				<StyledTabList>
 					<TabGroupTitle>Trading</TabGroupTitle>
 					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
+						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
 							{label}
 						</NavButton>
 					))}
 
 					<TabGroupTitle>Community</TabGroupTitle>
 					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton key={name} title={name} isActive={active} disabled={disabled}onClick={onClick} >
+						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
 							{label}
 						</NavButton>
 					))}
@@ -113,13 +113,15 @@ const DashboardContainer: FC = () => {
 };
 
 const StyledTabList = styled(TabList)`
-	width: 216px;
+	display: flex;
+	flex-direction: column;
 	margin-bottom: 12px;
 `;
 
-const StyledTabPanel = styled(TabPanel)
-
 const TabGroupTitle = styled.div`
+	margin-top: 35px;
+	margin-bottom: 10px;
+	margin-left: 14px;
 	font-size: 13px;
 	text-transform: uppercase;
 	font-weight: 900;

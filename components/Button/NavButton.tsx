@@ -11,17 +11,20 @@ type NavButtonProps = {
 
 const NavButton: React.FC<NavButtonProps> = ({ title, ...props }) => {
 	return (
-		<StyledButton {...props}>
-			<div>
+		<div>
+			<StyledButton {...props}>
 				<p className="title">{title}</p>
-			</div>
-		</StyledButton>
+			</StyledButton>
+		</div>
 	);
 };
 
 const StyledButton = styled(Button)`
 	height: initial;
 	display: flex;
+
+	margin-top: 8px;
+	margin-bottom: 8px;
 
 	padding-top: 10px;
 	padding-bottom: 10px;
