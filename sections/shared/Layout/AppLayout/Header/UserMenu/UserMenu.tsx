@@ -63,11 +63,9 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	 * @dev We require this new provider since we need one connected to Ethereum
 	 * mainnet and NOT to the Optimism network.
 	 */
-	const infuraUrl = 'https://mainnet.infura.io/v3/';
+	const apiKey = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
 
-	let ensProvider = new ethers.providers.JsonRpcProvider(
-		infuraUrl + process.env.NEXT_PUBLIC_INFURA_PROJECT_ID
-	);
+	let ensProvider = new ethers.providers.InfuraProvider(1, apiKey);
 
 	useEffect(() => {
 		if (signer) {
