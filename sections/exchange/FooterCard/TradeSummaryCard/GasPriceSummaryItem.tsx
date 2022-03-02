@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { gasSpeedState, isL2State } from 'store/wallet';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { isL2State } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
@@ -36,10 +36,16 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
-	const { gasPrice, isCustomGasPrice, customGasPrice, setCustomGasPrice } = useGas();
+	const {
+		gasPrice,
+		gasSpeed,
+		setGasSpeed,
+		isCustomGasPrice,
+		customGasPrice,
+		setCustomGasPrice,
+	} = useGas();
 
 	const gasPriceItem = isCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>

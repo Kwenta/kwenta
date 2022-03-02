@@ -70,7 +70,7 @@ import { ordersState } from 'store/orders';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, GasInfo } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -120,7 +120,6 @@ const useExchange = ({
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
 	const {
-		useEthGasPriceQuery,
 		useETHBalanceQuery,
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
@@ -161,7 +160,7 @@ const useExchange = ({
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
-	const { gasPrice } = useGas();
+	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
 	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
 	// 	enabled: txProvider === '1inch',
 	// });
@@ -197,7 +196,6 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
@@ -576,7 +574,6 @@ const useExchange = ({
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (gasInfo == null && submissionDisabledReason == null) {
-				const gasPriceWei = gasPrice ? gasPriceInWei(gasPrice) : null;
 				const gasEstimate = await getGasEstimateForExchange(gasPriceWei);
 				setGasInfo(gasEstimate);
 			}
@@ -694,11 +691,10 @@ const useExchange = ({
 						oneInchApproveAddress,
 						ethers.constants.MaxUint256
 					);
-					const gasPriceWei = gasPriceInWei(gasPrice);
 
 					const tx = await contract.approve(oneInchApproveAddress, ethers.constants.MaxUint256, {
 						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
-						gasPrice: gasPriceWei,
+						...gasConfig,
 					});
 
 					if (tx != null) {
@@ -772,8 +768,6 @@ const useExchange = ({
 
 				let tx: ethers.ContractTransaction | null = null;
 
-				const gasPriceWei = gasPriceInWei(gasPrice);
-
 				if (txProvider === '1inch' && tokensMap != null) {
 					tx = await swap1Inch(
 						quoteCurrencyTokenAddress!,
@@ -788,8 +782,8 @@ const useExchange = ({
 					setGasInfo(gasInfo);
 
 					const gas = {
-						gasPrice: gasPriceWei,
 						gasLimit: gasInfo?.limit,
+						...gasConfig,
 					};
 					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 				}
@@ -856,6 +850,8 @@ const useExchange = ({
 		slippage,
 		tokensMap,
 		synthetixjs,
+		gasPriceWei,
+		gasConfig,
 	]);
 
 	useEffect(() => {
@@ -1174,7 +1170,7 @@ const useExchange = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					gasPrices={ethGasPriceQuery.data}
+					gasPrices={gasPrices}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}

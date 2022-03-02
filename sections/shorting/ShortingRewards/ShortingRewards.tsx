@@ -25,18 +25,12 @@ const ShortingRewards: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+	const { gasPrice, gasPrices } = useGas();
 
-	const { gasPrice } = useGas();
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
