@@ -112,7 +112,6 @@ const DashboardContainer: FC = () => {
 				</TabPanel>
 			</MainContent>
 			<RightSideContent>
-				<p>Test</p>
 			</RightSideContent>
 		</>
 	);
