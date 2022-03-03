@@ -26,7 +26,7 @@ const Hero = () => {
 				<PoweredBySynthetix />
 			</SynthetixContainer>
 			<CTAContainer>
-				<Link href={ROUTES.Home}>
+				<Link href={ROUTES.Home.Overview}>
 					<Button variant="primary" isRounded={false} size="lg">
 						{t('homepage.nav.start-trading')}
 					</Button>

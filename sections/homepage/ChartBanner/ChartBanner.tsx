@@ -23,7 +23,7 @@ const FAQ = () => {
 				<ChartBannerImage src={ChartBanner} alt="" webp={true} />
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
-					<Link href={ROUTES.Home}>
+					<Link href={ROUTES.Home.Overview}>
 						<Button variant="primary" size="lg">
 							{t('homepage.footer.cta.button')}
 						</Button>
