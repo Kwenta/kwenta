@@ -220,7 +220,7 @@ const TableContainer = styled.div<{ compact: boolean | undefined }>`
 `;
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
-	margin-top: ${({ compact }) => (compact ? '0' : '20px')};
+	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
 `;
 
 const TableHeader = styled.div`

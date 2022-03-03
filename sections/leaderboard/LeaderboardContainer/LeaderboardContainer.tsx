@@ -88,6 +88,7 @@ const LeaderboardContainer: FC = () => {
 const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 16px;
+	height: 35px;
 
 	& > button {
 		margin-right: 14px;

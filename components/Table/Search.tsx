@@ -29,6 +29,7 @@ const StyledSvg = styled(Svg)`
 
 const StyledSearchInput = styled(SearchInput)`
 	position: relative;
+	height: 100%;
 	text-indent: 16px;
 `
 
