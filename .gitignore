@@ -46,3 +46,6 @@ tests/e2e/screenshots
 
 # Vscode
 .vscode
+
+# storybook
+.storybook
