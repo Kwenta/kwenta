@@ -46,10 +46,7 @@ const useConnector = () => {
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
 
-	/**
-	 * @dev We require this new provider since we need one connected to Ethereum
-	 * mainnet and NOT to the Optimism network.
-	 */
+	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
