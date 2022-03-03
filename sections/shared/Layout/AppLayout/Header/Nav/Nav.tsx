@@ -49,7 +49,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 		font-size: 15px;
 		text-transform: capitalize;
 		color: ${(props) =>
-			props.isActive ? props.theme.colors.white : props.theme.colors.common.secondaryGray};
+			props.isActive ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
 		}
