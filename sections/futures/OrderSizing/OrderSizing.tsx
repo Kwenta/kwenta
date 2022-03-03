@@ -17,8 +17,31 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	assetRate,
 	onAmountChange,
 }) => {
-	const amountValue = amount ? Number(amount) * assetRate : '';
-	const valueToAmount = (value: string) => (Number(value) / assetRate).toString();
+	const [usdAmount, setUsdAmount] = React.useState(Number(amount) * assetRate || '');
+
+	const handleAmountChange = React.useCallback(
+		(newAmount: string) => {
+			onAmountChange(newAmount);
+			if (newAmount === '') {
+				setUsdAmount('');
+			} else {
+				setUsdAmount((Number(newAmount) * assetRate).toFixed(2));
+			}
+		},
+		[assetRate, onAmountChange]
+	);
+
+	const handleUsdAmountChange = React.useCallback(
+		(newUsdAmount: string) => {
+			setUsdAmount(newUsdAmount);
+			if (newUsdAmount === '') {
+				onAmountChange('');
+			} else {
+				onAmountChange((Number(newUsdAmount) / assetRate).toFixed(2));
+			}
+		},
+		[assetRate, onAmountChange]
+	);
 
 	return (
 		<OrderSizingContainer>
@@ -29,14 +52,14 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			<OrderSizingInput
 				synth={marketAsset || Synths.sUSD}
 				value={amount}
-				onChange={(e) => onAmountChange(e.target.value)}
+				onChange={(e) => handleAmountChange(e.target.value)}
 				style={{ marginBottom: '8px' }}
 			/>
 
 			<OrderSizingInput
 				synth={Synths.sUSD}
-				value={amountValue}
-				onChange={(e) => onAmountChange(valueToAmount(e.target.value))}
+				value={usdAmount}
+				onChange={(e) => handleUsdAmountChange(e.target.value)}
 			/>
 		</OrderSizingContainer>
 	);
