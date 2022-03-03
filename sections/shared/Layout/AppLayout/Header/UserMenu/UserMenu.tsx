@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
-import { ethers } from 'ethers';
 
 import Connector from 'containers/Connector';
 
@@ -29,7 +28,7 @@ import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
-import getENSNameAndAvatarUrl from './getUserENSNameAndAvatarUrl';
+import getENSName from './getENSName';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -38,7 +37,7 @@ type UserMenuProps = {
 const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet, signer } = Connector.useContainer();
+	const { connectWallet, signer, staticMainnetProvider } = Connector.useContainer();
 	const [ensName, setEns] = useState<string>('');
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
@@ -59,22 +58,16 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		[redeemableDeprecatedSynths?.totalUSDBalance]
 	);
 
-	/**
-	 * @dev We require this new provider since we need one connected to Ethereum
-	 * mainnet and NOT to the Optimism network.
-	 */
-	let ensProvider = new ethers.providers.InfuraProvider();
-
 	useEffect(() => {
 		if (signer) {
 			signer.getAddress().then((account: string) => {
 				let _account = account;
-				getENSNameAndAvatarUrl(_account, ensProvider).then((ensObj) => {
-					if (ensObj !== null) setEns(ensObj?.name);
+				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
+					if (_ensName !== null) setEns(_ensName);
 				});
 			});
 		}
-	}, [signer, ensProvider]);
+	}, [signer]);
 
 	return (
 		<>

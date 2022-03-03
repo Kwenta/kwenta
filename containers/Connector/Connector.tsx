@@ -46,6 +46,12 @@ const useConnector = () => {
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
 
+	/**
+	 * @dev We require this new provider since we need one connected to Ethereum
+	 * mainnet and NOT to the Optimism network.
+	 */
+	const staticMainnetProvider = new ethers.providers.InfuraProvider();
+
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
 		if (synthetixjs == null) {
 			return [{}, {}, {}];
@@ -252,6 +258,7 @@ const useConnector = () => {
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
+		staticMainnetProvider,
 	};
 };
 
