@@ -10,6 +10,13 @@ export const ROUTES = {
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
 		Positions: normalizeRoute('/dashboard', 'positions', 'tab')
 	},
+	Dashboard: {
+		Home: '/dashboard',
+		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
+		SynthBalances: normalizeRoute('/dashboard', 'synth-balances', 'tab'),
+		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
+		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
+	},
 	Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Exchange: {
 		Home: '/exchange',
