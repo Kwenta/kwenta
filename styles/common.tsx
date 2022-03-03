@@ -291,14 +291,14 @@ export const FullHeightContainer = styled(FlexDiv)`
 
 export const MainContent = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 1030px;
+	max-width: 915px;
 	position: relative;
 	//overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 `;
 
 export const RightSideContent = styled(FlexDivCol)`
-	width: 380px;
+	width: 321px;
 	background-color: transparent;
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	margin-right: -20px;

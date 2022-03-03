@@ -6,9 +6,11 @@ import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
 import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
+import Overview from '../Overview';
 import {
 	MainContent,
 	LeftSideContent,
+	RightSideContent
 } from 'styles/common';
 
 enum Tab {
@@ -106,8 +108,12 @@ const DashboardContainer: FC = () => {
 			</LeftSideContent>
 			<MainContent>
 				<TabPanel name={Tab.Overview} activeTab={activeTab}>
+					<Overview />
 				</TabPanel>
 			</MainContent>
+			<RightSideContent>
+				<p>Test</p>
+			</RightSideContent>
 		</>
 	);
 };
@@ -119,7 +125,6 @@ const StyledTabList = styled(TabList)`
 `;
 
 const TabGroupTitle = styled.div`
-	margin-top: 35px;
 	margin-bottom: 10px;
 	margin-left: 14px;
 	font-size: 13px;
