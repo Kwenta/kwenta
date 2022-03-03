@@ -35,6 +35,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 	const walletAddress = useRecoilValue(walletAddressState);
 	
 	const statsQuery = useGetStats();
+	console.log(statsQuery)
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
@@ -59,7 +60,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				pnlPct: (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume) ?? wei(0)).toNumber(),
+				pnlPct: pnlMap[stat.account]?.totalVolume > 0 ? (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume)).toNumber() : 0,
 			}))
 			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
 	}, [stats, searchTerm]);
@@ -223,8 +224,8 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 `;
 
 const TableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const TableTitle = styled.div`
@@ -234,8 +235,8 @@ const TableTitle = styled.div`
 `;
 
 const TitleText = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const StyledOrderType = styled.div`
