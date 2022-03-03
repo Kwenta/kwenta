@@ -115,7 +115,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Average Open</StyledSubtitle>
+						<StyledSubtitle>Entry Price</StyledSubtitle>
 						<StyledValue>$4,131.23</StyledValue>
 					</InfoCol>
 					<InfoCol>

@@ -285,9 +285,6 @@ const Trade: React.FC<TradeProps> = () => {
 
 			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
 
-			{/* <FlexDivCol>
-					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-				</FlexDivCol> */}
 			{isEditMarginModalOpen && (
 				<EditMarginModal
 					sUSDBalance={sUSDBalance}
