@@ -153,6 +153,7 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 			<ActionTabsRow>
 				{[ACTIONS.DEPOSIT, ACTIONS.WITHDRAW].map((tab) => (
 					<ActionTab
+						key={tab}
 						onClick={() => {
 							setAmount('');
 							setActionTab(tab);
