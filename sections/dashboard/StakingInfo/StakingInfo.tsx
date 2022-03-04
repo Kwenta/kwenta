@@ -1,15 +1,18 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import BigText from 'components/Text/BigText';
+import { Title } from '../common'
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
 
 	return (
 		<StakingContainer>
-			<Title>{t('futures-dashboard.titles.staking')}</Title>
+			<CardTitle>{t('futures-dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
-
+				<Title>APY:</Title>
+				<BigText white logo>248.12</BigText>
 			</StakingBody>
 		</StakingContainer>
 	);
@@ -17,7 +20,7 @@ const StakingInfo: FC = () => {
 
 const StakingContainer = styled.div``;
 
-const Title = styled.div`
+const CardTitle = styled.div`
 	margin-bottom: 10px;
 	font-size: 13px;
 	text-transform: uppercase;

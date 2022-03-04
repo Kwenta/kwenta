@@ -4,16 +4,16 @@ import { Svg } from 'react-optimized-image';
 import Heading from './Heading';
 import kwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
-export const KwentaText: React.FC<{ white?: boolean }> = ({ children, white }) => {
+export const BigText: React.FC<{ white?: boolean, logo?: boolean }> = ({ children, white, logo }) => {
 	return (
 		<div style={{ display: 'flex', alignItems: 'center' }}>
-			<BigText $gold={!white}>{children}</BigText>
-			<KwentaLogo src={kwentaLogo} />
+			<TitleText $gold={!white}>{children}</TitleText>
+			{logo && <KwentaLogo src={kwentaLogo} />}
 		</div>
 	);
 };
 
-export const BigText = styled(Heading) <{ $gold?: boolean }>`
+export const TitleText = styled(Heading) <{ $gold?: boolean }>`
 	font-size: 25px;
 	${(props) =>
 		props.$gold &&
@@ -26,4 +26,4 @@ const KwentaLogo = styled(Svg)`
 	margin-left: 8px;
 `;
 
-export default KwentaText;
+export default BigText;
