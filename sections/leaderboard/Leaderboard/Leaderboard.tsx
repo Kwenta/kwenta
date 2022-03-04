@@ -66,7 +66,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				pnlPct: (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume) ?? wei(0)).toNumber(),
+				pnlPct: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber()
+				// pnlPct: (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume) ?? wei(0)).toNumber(),
 			}))
 			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
 	}, [stats, searchTerm]);
