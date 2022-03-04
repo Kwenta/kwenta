@@ -112,12 +112,17 @@ const DashboardContainer: FC = () => {
 					<Overview />
 				</TabPanel>
 			</MainContent>
-			<RightSideContent>
+			<StyledRightSideContent>
 				<StakingInfo />
-			</RightSideContent>
+			</StyledRightSideContent>
 		</>
 	);
 };
+
+const StyledRightSideContent = styled(RightSideContent)`
+	display: flex;
+	align-items: flex-end;
+`
 
 const StyledTabList = styled(TabList)`
 	display: flex;

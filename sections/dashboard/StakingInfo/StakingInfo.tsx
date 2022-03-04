@@ -2,6 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import BigText from 'components/Text/BigText';
+import Button from 'components/Button';
 import { Title } from '../common'
 
 const StakingInfo: FC = () => {
@@ -12,13 +13,25 @@ const StakingInfo: FC = () => {
 			<CardTitle>{t('futures-dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
 				<Title>APY:</Title>
+				<BigText white>60%</BigText>
+
+				<Title>Claimable:</Title>
 				<BigText white logo>248.12</BigText>
+				<StyledButton fullWidth>
+					Claim Rewards
+				</StyledButton>
 			</StakingBody>
 		</StakingContainer>
 	);
 };
 
-const StakingContainer = styled.div``;
+const StakingContainer = styled.div`
+	max-width: 255px;
+`;
+
+const StyledButton = styled(Button)`
+	margin-top: 20px;
+`
 
 const CardTitle = styled.div`
 	margin-bottom: 10px;

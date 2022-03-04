@@ -13,7 +13,7 @@ export const BigText: React.FC<{ white?: boolean, logo?: boolean }> = ({ childre
 	);
 };
 
-export const TitleText = styled(Heading) <{ $gold?: boolean }>`
+const TitleText = styled(Heading) <{ $gold?: boolean }>`
 	font-size: 25px;
 	${(props) =>
 		props.$gold &&
