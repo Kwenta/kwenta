@@ -30,7 +30,7 @@ const Overview: FC = () => {
 				label: 'Futures Positions',
 				badge: 3,
 				active: activePositionsTab === PositionsTab.FUTURES,
-				onClick: () => {},
+				onClick: () => { setActivePositionsTab(PositionsTab.FUTURES) },
 			},
 			{
 				name: PositionsTab.SHORTS,
@@ -38,7 +38,7 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
-				onClick: () => { },
+				onClick: () => { setActivePositionsTab(PositionsTab.SHORTS) },
 			},
 			{
 				name: PositionsTab.SPOT,
@@ -46,7 +46,7 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SPOT,
-				onClick: () => { },
+				onClick: () => { setActivePositionsTab(PositionsTab.SPOT) },
 			},
 		],
 		[activePositionsTab]
@@ -58,13 +58,13 @@ const Overview: FC = () => {
 				name: MarketsTab.FUTURES,
 				label: 'Futures Markets',
 				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => { },
+				onClick: () => { setActiveMarketsTab(MarketsTab.FUTURES) },
 			},
 			{
 				name: MarketsTab.SPOT,
 				label: 'Spot Markets',
 				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => { },
+				onClick: () => { setActiveMarketsTab(MarketsTab.SPOT) },
 			},
 		],
 		[activeMarketsTab]
@@ -86,11 +86,17 @@ const Overview: FC = () => {
 					/>
 				))}
 			</TabButtonsContainer>
+			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
+			</TabPanel>
 
-			{/* Positions / Shorts / Spot Balances Table */}
+			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>
+			</TabPanel>
+
+			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+			</TabPanel>
 
 			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, badge, active, onClick }) => (
+				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
@@ -99,7 +105,11 @@ const Overview: FC = () => {
 					/>
 				))}
 			</TabButtonsContainer>
-			{/* Futures Markets / Spot Markets Table */}
+			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
+			</TabPanel>
+
+			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+			</TabPanel>
 		</>
 	);
 };
