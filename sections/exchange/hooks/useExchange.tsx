@@ -28,6 +28,7 @@ import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQue
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
+import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
@@ -46,6 +47,7 @@ import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirm
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import SelectTokenModal from 'sections/shared/modals/SelectTokenModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
+import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
@@ -153,6 +155,7 @@ const useExchange = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
+	const [txSettleModalOpen, setTxSettleModalOpen] = useState<boolean>(false);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
 	const [selectBaseCurrencyModalOpen, setSelectBaseCurrencyModalOpen] = useState<boolean>(false);
@@ -211,6 +214,9 @@ const useExchange = ({
 		quoteCurrencyKey as CurrencyKey,
 		walletAddress
 	);
+
+	const numEntriesQuery = useNumEntriesQuery(walletAddress || '', baseCurrencyKey as CurrencyKey);
+
 	const exchangeFeeRateQuery = useExchangeFeeRateQuery(
 		quoteCurrencyKey as CurrencyKey,
 		baseCurrencyKey as CurrencyKey
@@ -311,6 +317,8 @@ const useExchange = ({
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
 		: 0;
+
+	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
 
 	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey as CurrencyKey]! : null;
 
@@ -719,34 +727,45 @@ const useExchange = ({
 		}
 	};
 
-	const handleSettle = useCallback(async () => {
-		if (synthetixjs != null) {
+	const handleSettle = async () => {
+		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
-			setTxConfirmationModalOpen(true);
+			setTxSettleModalOpen(true);
 
 			try {
-				setIsSubmitting(true);
-
-				let tx: ethers.ContractTransaction | null = null;
+				const gasPriceWei = gasPriceInWei(gasPrice);
+				const gasInfo = await getGasEstimateForExchange(gasPriceWei);
+				setGasInfo(gasInfo);
+				const gas = {
+					gasPrice: gasPriceWei,
+					gasLimit: gasInfo?.limit,
+				};
 
 				// send transaction
-				tx = await synthetixjs.contracts.Synthetix.settle({ currencyKey: 'sUSD' });
+				const tx = await synthetixjs.contracts.Exchanger.settle(
+					walletAddress,
+					ethers.utils.formatBytes32String(baseCurrencyKey as string),
+					gas
+				);
 
 				if (tx != null) {
 					monitorTransaction({
 						txHash: tx.hash,
-						onTxConfirmed: () => {},
+						onTxConfirmed: () => {
+							setIsApproving(false);
+							setIsApproved(true);
+						},
 					});
 				}
-				setTxConfirmationModalOpen(false);
+
+				setTxSettleModalOpen(false);
 			} catch (e) {
 				console.log(e);
+				setIsApproving(false);
 				setTxError(e.message);
-			} finally {
-				setIsSubmitting(false);
 			}
 		}
-	}, [monitorTransaction, synthetixjs]);
+	};
 
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
@@ -1141,10 +1160,12 @@ const useExchange = ({
 				/>
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
-			) : true ? (
+			) : !isL2 && numEntries >= 12 ? (
 				<SettleTransactionsCard
 					attached={footerCardAttached}
-					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
+					onSubmit={handleSettle}
+					settleCurrency={baseCurrencyKey as CurrencyKey}
+					numEntries={numEntries}
 				/>
 			) : (
 				<TradeSummaryCard
@@ -1197,6 +1218,16 @@ const useExchange = ({
 			)}
 			{selectBalancerTradeModal && (
 				<BalancerTradeModal onDismiss={() => setSelectBalancerTradeModal(false)} />
+			)}
+			{txSettleModalOpen && (
+				<TxSettleModal
+					onDismiss={() => setTxSettleModalOpen(false)}
+					txError={txError}
+					attemptRetry={handleSettle}
+					currencyKey={baseCurrencyKey!}
+					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
+					txProvider={txProvider}
+				/>
 			)}
 		</>
 	);

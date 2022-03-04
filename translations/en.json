@@ -222,6 +222,7 @@
 				"approving": "approving",
 				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
+				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
@@ -271,6 +272,10 @@
 			},
 			"get-l2-gas": {
 				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
+			},
+			"settle": {
+				"message": "You have <0>{{numEntries}}</0> consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
+				"learn-more": "Learn more"
 			}
 		},
 		"common": {
@@ -283,10 +288,6 @@
 		"charts": {
 			"single": "single",
 			"double": "double"
-		},
-		"settle": {
-			"message": "You have 12 consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
-			"buttontext": "Settle"
 		}
 	},
 	"dashboard": {
@@ -627,6 +628,10 @@
 		"deprecated-synths": {
 			"from": "From",
 			"to": "Into"
+		},
+		"settle-transaction": {
+			"title": "settle",
+			"confirm-with-provider": "Confirm your transaction through your wallet."
 		}
 	},
 	"common": {
