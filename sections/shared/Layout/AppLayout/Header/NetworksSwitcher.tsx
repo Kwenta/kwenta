@@ -7,6 +7,7 @@ import Select from 'components/Select';
 import Img, { Svg } from 'react-optimized-image';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import Button from 'components/Button';
 import SwitchIcon from 'assets/svg/app/switch.svg';
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import OptimismIcon from 'assets/svg/providers/optimism.svg';
@@ -84,7 +85,12 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			<Button>{t('header.networks-switcher.l2')}</Button>
+			<StyledButton
+				size="sm"
+				variant="outline"
+			>
+				{t('header.networks-switcher.l2')}
+			</StyledButton>
 		</Container>
 	) : (
 		<Container>
@@ -108,28 +114,15 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 export default NetworksSwitcher;
 
 const Container = styled.div`
-	margin: 4px 0;
 	font-size: 12px;
 	font-weight: bold;
 	line-height: 1;
 	cursor: pointer;
 `;
 
-const Button = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border: 1px solid ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-	height: 28px;
-	width: 110px;
-	padding: 0px 16px;
-	background: ${(props) => props.theme.colors.elderberry};
-	color: ${(props) => props.theme.colors.goldColors.color4};
-	:hover {
-		background: ${(props) => props.theme.colors.goldHover};
-		color: ${(props) => props.theme.colors.white};
-	}
+const StyledButton = styled(Button)`
+	font-size: 13px;
+	min-width: 0px;
 `;
 
 const L2Select = styled(Select)`

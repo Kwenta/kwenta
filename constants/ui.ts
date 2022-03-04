@@ -1,5 +1,5 @@
 export const HEADER_HEIGHT = '127px';
-export const HEADER_PADDING = '31px';
+export const HEADER_TOP_PADDING = '31px';
 
 export const SPACING_FROM_HEADER = '127px';
 

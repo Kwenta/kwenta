@@ -2,7 +2,7 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, HEADER_PADDING, zIndex } from 'constants/ui';
+import { HEADER_HEIGHT, HEADER_TOP_PADDING, zIndex } from 'constants/ui';
 
 import { GridDivCol } from 'styles/common';
 import media from 'styles/media';
@@ -50,14 +50,17 @@ const Container = styled.header<{ isL2: boolean }>`
 	`};
 	> div {
 		height: ${HEADER_HEIGHT};
-		padding: ${HEADER_PADDING} 30px;
+		padding-top: ${HEADER_TOP_PADDING};
+		padding-left: 30px;
+		padding-right: 30px;
 		display: flex;
 		justify-content: space-between;
-		align-items: baseline;
+		align-items: flex-start;
 	}
 `;
 
 const LogoNav = styled(GridDivCol)`
+	padding-top: 8px;
 	grid-gap: 24px;
 	align-items: start;
 `;
