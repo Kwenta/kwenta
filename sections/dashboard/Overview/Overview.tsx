@@ -1,7 +1,7 @@
 import { FC, useState, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabList, TabPanel } from 'components/Tab';
+import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
 
 enum PositionsTab {
@@ -14,9 +14,6 @@ enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot'
 }
-
-const PositionsTabs = Object.values(PositionsTab);
-const MarketsTabs = Object.values(MarketsTab);
 
 const Overview: FC = () => {
 	const { t } = useTranslation();

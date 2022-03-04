@@ -819,6 +819,11 @@
 	},
 	"futures-dashboard": {
 		"page-title": "Futures Dashboard | Kwenta",
+		"titles": {
+			"trading": "Trading",
+			"community": "Community",
+			"staking": "Stake & Rewards"
+		},
 		"tabs": {
 			"nav": {
 				"overview": "Overview",
