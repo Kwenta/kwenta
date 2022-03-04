@@ -11,7 +11,7 @@ const Rewards: React.FC = () => {
 			<RewardsBody>
 				<Title>Your Total Rewards</Title>
 				<KwentaText white>734.72</KwentaText>
-				<StyledDescription>Total KWENTA claimable one live.</StyledDescription>
+				<StyledDescription>Total KWENTA claimable when live.</StyledDescription>
 				<Button disabled fullWidth>
 					Claim KWENTA
 				</Button>
