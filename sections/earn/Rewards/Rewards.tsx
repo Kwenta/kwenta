@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 import Text from 'components/Text';
 import Button from 'components/Button';
-import { KwentaText, Title, Description } from '../common';
+import KwentaText from 'components/Text/KwentaText';
+import { Title, Description } from '../common';
 
 const Rewards: React.FC = () => {
 	return (
