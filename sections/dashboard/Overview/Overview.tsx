@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
+import PortfolioChart from '../PortfolioChart';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -69,7 +70,7 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			{/* Chart */}
+			<PortfolioChart />
 
 			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, onClick }) => (

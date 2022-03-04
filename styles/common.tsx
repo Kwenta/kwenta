@@ -298,7 +298,7 @@ export const MainContent = styled(FlexDivCol)`
 `;
 
 export const RightSideContent = styled(FlexDivCol)`
-	width: 321px;
+	width: 291px;
 	background-color: transparent;
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	flex-shrink: 0;
@@ -307,7 +307,7 @@ export const RightSideContent = styled(FlexDivCol)`
 `;
 
 export const LeftSideContent = styled(FlexDivCol)`
-	width: 204px;
+	width: 174px;
 	background-color: transparent;
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	flex-shrink: 0;

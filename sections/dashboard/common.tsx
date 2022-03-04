@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import Button from 'components/Button';
 import Text from 'components/Text';
 
 export const CardTitle = styled.div`
