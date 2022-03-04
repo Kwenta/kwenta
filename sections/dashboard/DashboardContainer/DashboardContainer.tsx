@@ -130,6 +130,10 @@ const TabGroupTitle = styled.div`
 	text-transform: uppercase;
 	font-weight: 900;
 	color: ${(props) => props.theme.colors.purple};
+
+	&:not(:first-of-type) {
+		margin-top: 65px;
+	}
 `;
 
 export default DashboardContainer;
