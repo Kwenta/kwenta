@@ -42,7 +42,7 @@ const Earn: React.FC = () => {
 
 const PageHeading = styled(Text.Heading)`
 	font-size: 21px;
-	margin-bottom: 11px;
+	margin-bottom: 2px;
 `;
 
 const StyledBody = styled(Text.Body)`

@@ -67,7 +67,7 @@ const StakeGrid = () => {
 };
 
 const StyledGridContainer = styled(InfoGridContainer)`
-	margin-bottom: 50px;
+	margin-bottom: 40px;
 `;
 
 export default StakeGrid;

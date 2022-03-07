@@ -17,6 +17,8 @@ export const KwentaText: React.FC<{ white?: boolean }> = ({ children, white }) =
 
 export const BigText = styled(Text.Heading)<{ $gold?: boolean }>`
 	font-size: 25px;
+	font-family: AkkuratMonoLLWeb-Regular;
+	letter-spacing: -0.7px;
 	${(props) =>
 		props.$gold &&
 		css`
@@ -27,7 +29,7 @@ export const BigText = styled(Text.Heading)<{ $gold?: boolean }>`
 export const Title = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 14px;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 `;
 
 export const Description = styled(Text.Body)`
@@ -52,7 +54,7 @@ export const OverlappingIcons = styled.div`
 
 export const GridHeading = styled(Text.Heading)`
 	font-size: 21px;
-	margin-bottom: 16px;
+	margin-bottom: 8px;
 `;
 
 export const StyledBody = styled(Text.Body)`
@@ -81,12 +83,12 @@ export const StyledSNXIcon = styled(CurrencyIcon)`
 `;
 
 export const Column = styled.div`
-	padding: 18px;
+	padding: 20px 24px 18px 24px;
 	outline: 1px solid #353333;
 `;
 
 export const SplitColumn = styled.div<{ $isLast?: boolean }>`
-	disply: flex;
+	display: flex;
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
@@ -94,7 +96,7 @@ export const SplitColumn = styled.div<{ $isLast?: boolean }>`
 	${(props) => !props.$isLast && css``}
 
 	& > div {
-		padding: 18px 24px;
+		padding: 20px 24px 18px 24px;
 		height: 50%;
 		min-height: 95px;
 	}
@@ -111,7 +113,7 @@ export const InfoGridContainer = styled.div`
 	border: 1px solid #353333;
 	max-width: 915px;
 	overflow: hidden;
-	box-sizing: border: box;
+	box-sizing: border-box;
 
 	div {
 		box-sizing: border-box;
@@ -132,5 +134,5 @@ export const InfoGridContainer = styled.div`
 export const LiquidityAmount = styled.div`
 	display: flex;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-bottom: 3px;
 `;
