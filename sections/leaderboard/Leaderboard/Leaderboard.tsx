@@ -35,7 +35,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 	const walletAddress = useRecoilValue(walletAddressState);
 	
 	const statsQuery = useGetStats();
-	console.log(statsQuery)
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
