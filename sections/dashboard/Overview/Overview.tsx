@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
+import { FuturesMarket } from 'queries/futures/types';
 import PortfolioChart from '../PortfolioChart';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
+
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -18,9 +22,22 @@ enum MarketsTab {
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	console.log(futuresMarkets)
+
+	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
+		(futuresMarkets as FuturesMarket[]).map(({ asset }: { asset: string }) => asset)
+	);
+	
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
-	
+
+	const positions = (futuresMarketsPositionQuery?.data ?? []).filter(({ position }) =>
+		Boolean(position)
+	);
+	console.log(positions)
+
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{

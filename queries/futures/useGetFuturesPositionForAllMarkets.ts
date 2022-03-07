@@ -10,7 +10,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
 
-const useGetFuturesPositionForAllMarket = (
+const useGetFuturesPositionForAllMarkets = (
 	markets: string[] | [],
 	options?: UseQueryOptions<FuturesPosition[] | []>
 ) => {
@@ -50,4 +50,4 @@ const useGetFuturesPositionForAllMarket = (
 	);
 };
 
-export default useGetFuturesPositionForAllMarket;
+export default useGetFuturesPositionForAllMarkets;
