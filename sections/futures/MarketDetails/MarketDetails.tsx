@@ -11,6 +11,8 @@ import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
+import { synthToCoingeckoPriceId } from './utils';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -39,13 +41,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
+	const priceId = synthToCoingeckoPriceId(baseCurrencyKey);
+	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
+	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
+	const livePrice = coinGeckoPrices?.[priceId].usd ?? 0;
+
 	const data: MarketData = React.useMemo(() => {
 		return {
 			[`${baseCurrencyKey}/sUSD`]: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
 			'Live Price': {
-				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+				value: formatCurrency(selectedPriceCurrency.name, livePrice, {
 					sign: '$',
 				}),
 			},
@@ -82,6 +89,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		futuresTradingVolume,
 		futuresDailyTradeStats,
 		selectedPriceCurrency.name,
+		livePrice,
 	]);
 
 	return (
