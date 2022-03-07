@@ -87,6 +87,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	return (
 		<SelectContainer>
 			<Select
+				instanceId={`markets-dropdown-${asset}`}
 				controlHeight={55}
 				menuWidth={'100%'}
 				onChange={(x) => {
