@@ -7,16 +7,12 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import useSynthetixQueries from '@synthetixio/queries';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -48,16 +44,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		[t, synthsMap]
 	);
 
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-
-	const basePriceRate = React.useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, currencyKey, selectedPriceCurrency.name),
-		[exchangeRates, currencyKey, selectedPriceCurrency]
-	);
-
 	return (
 		<>
 			<Container>
@@ -85,7 +71,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							{formatNumber(position?.position?.size ?? 0)} (
 							{formatCurrency(
 								Synths.sUSD,
-								positionDetails?.size?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+								positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
 								{ sign: '$' }
 							)}
 							)
@@ -119,7 +105,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						<StyledValue>$4,131.23</StyledValue>
 					</InfoCol>
 					<InfoCol>
-						<StyledSubtitle>Average Close</StyledSubtitle>
+						<StyledSubtitle>Fees</StyledSubtitle>
 						<StyledValue>$4,131.23</StyledValue>
 					</InfoCol>
 				</DataCol>
