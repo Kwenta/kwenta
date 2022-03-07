@@ -733,12 +733,14 @@ const useExchange = ({
 			setTxSettleModalOpen(true);
 
 			try {
-				const gasPriceWei = gasPriceInWei(gasPrice);
-				const gasInfo = await getGasEstimateForExchange(gasPriceWei);
-				setGasInfo(gasInfo);
+				const gasEstimate = await synthetixjs.contracts.Exchanger.estimateGas.settle(
+					walletAddress,
+					ethers.utils.formatBytes32String(baseCurrencyKey as string)
+				);
+
 				const gas = {
-					gasPrice: gasPriceWei,
-					gasLimit: gasInfo?.limit,
+					gasPrice: gasPriceInWei(gasPrice),
+					gasLimit: normalizeGasLimit(Number(gasEstimate)),
 				};
 
 				// send transaction
@@ -752,8 +754,7 @@ const useExchange = ({
 					monitorTransaction({
 						txHash: tx.hash,
 						onTxConfirmed: () => {
-							setIsApproving(false);
-							setIsApproved(true);
+							numEntriesQuery.refetch();
 						},
 					});
 				}
@@ -761,7 +762,6 @@ const useExchange = ({
 				setTxSettleModalOpen(false);
 			} catch (e) {
 				console.log(e);
-				setIsApproving(false);
 				setTxError(e.message);
 			}
 		}
@@ -830,6 +830,7 @@ const useExchange = ({
 								})
 							);
 							synthsWalletBalancesQuery.refetch();
+							numEntriesQuery.refetch();
 						},
 					});
 				}
@@ -855,6 +856,7 @@ const useExchange = ({
 		setOrders,
 		swap1Inch,
 		synthsWalletBalancesQuery,
+		numEntriesQuery,
 		txProvider,
 		monitorTransaction,
 		slippage,
