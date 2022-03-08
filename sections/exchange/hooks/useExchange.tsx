@@ -617,11 +617,11 @@ const useExchange = ({
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
 					const exchangeParams = getExchangeParams();
-					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
+					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
 						...exchangeParams
 					);
 					let gasLimitNum = Number(gasEstimate);
-					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
+					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
 						...exchangeParams
 					);
 					const l1Fee = await getL1SecurityFee({
@@ -747,7 +747,7 @@ const useExchange = ({
 						gasPrice: gasPriceWei,
 						gasLimit: gasInfo?.limit,
 					};
-					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
+					tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
 				}
 
 				if (tx != null) {
