@@ -31,8 +31,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 					market: position.asset,
 					position: position.side,
 					avgOpenClose: position.entryPrice.toNumber(),
-					pnl: position.entryPrice.sub(market.price).toNumber(),
-					pnlPct: position.entryPrice.sub(market.price).div(position.entryPrice),
+					pnl: position.entryPrice.sub(market?.price).toNumber(),
+					pnlPct: position.entryPrice.sub(market?.price).div(position.entryPrice),
 					margin: position.margin.toNumber()
 				}
 			})
