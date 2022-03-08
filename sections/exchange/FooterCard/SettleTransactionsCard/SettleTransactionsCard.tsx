@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
+import Tippy from '@tippyjs/react';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 
@@ -11,18 +12,24 @@ import { MobileOrTabletView } from 'components/Media';
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 import Button from 'components/Button';
 
+import { secondsToTime } from 'utils/formatters/date';
+
 type SettleTransactionsCardProps = {
+	submissionDisabledReason?: ReactNode;
 	attached?: boolean;
 	onSubmit: () => void;
 	settleCurrency: string | null;
 	numEntries: number | null;
+	settlementWaitingPeriodInSeconds: number;
 };
 
 const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
+	submissionDisabledReason,
 	attached,
 	onSubmit,
 	settleCurrency,
 	numEntries,
+	settlementWaitingPeriodInSeconds,
 }) => {
 	const { t } = useTranslation();
 
@@ -49,15 +56,33 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						/>
 					</UnderlineExternalLink>
 				</MessageItems>
-				<Button
-					variant="primary"
-					isRounded={true}
-					onClick={onSubmit}
-					size="lg"
-					data-testid="settle"
+				<ErrorTooltip
+					visible={settlementWaitingPeriodInSeconds > 0}
+					placement="top"
+					content={
+						<div>
+							{t('exchange.errors.settlement-waiting', {
+								waitingPeriod: secondsToTime(settlementWaitingPeriodInSeconds),
+								currencyKey: settleCurrency,
+							})}
+						</div>
+					}
 				>
-					{t('exchange.summary-info.button.settle')}
-				</Button>
+					<span>
+						<Button
+							variant="primary"
+							isRounded={true}
+							disabled={!!submissionDisabledReason}
+							onClick={onSubmit}
+							size="lg"
+							data-testid="settle"
+						>
+							{submissionDisabledReason
+								? submissionDisabledReason
+								: t('exchange.summary-info.button.settle')}
+						</Button>
+					</span>
+				</ErrorTooltip>
 			</MessageContainer>
 		</>
 	);
@@ -76,6 +101,15 @@ export const UnderlineExternalLink = styled(ExternalLink)`
 
 export const MessageItems = styled.span`
 	display: grid;
+`;
+
+export const ErrorTooltip = styled(Tippy)`
+	font-size: 12px;
+	background-color: ${(props) => props.theme.colors.red};
+	color: ${(props) => props.theme.colors.white};
+	.tippy-arrow {
+		color: ${(props) => props.theme.colors.red};
+	}
 `;
 
 export default SettleTransactionsCard;

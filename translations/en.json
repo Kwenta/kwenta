@@ -222,6 +222,7 @@
 				"approving": "approving",
 				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
+				"settle-waiting-period": "settlement waiting period",
 				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
@@ -283,7 +284,8 @@
 			"into": "into"
 		},
 		"errors": {
-			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}"
+			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}",
+			"settlement-waiting": "Please wait approximately {{waitingPeriod}} minutes before attempting to settle {{currencyKey}}"
 		},
 		"charts": {
 			"single": "single",

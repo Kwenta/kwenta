@@ -217,6 +217,11 @@ const useExchange = ({
 
 	const numEntriesQuery = useNumEntriesQuery(walletAddress || '', baseCurrencyKey as CurrencyKey);
 
+	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(
+		baseCurrencyKey as CurrencyKey,
+		walletAddress
+	);
+
 	const exchangeFeeRateQuery = useExchangeFeeRateQuery(
 		quoteCurrencyKey as CurrencyKey,
 		baseCurrencyKey as CurrencyKey
@@ -316,6 +321,10 @@ const useExchange = ({
 
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
+		: 0;
+
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.isSuccess
+		? settlementWaitingPeriodQuery.data ?? 0
 		: 0;
 
 	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
@@ -455,6 +464,11 @@ const useExchange = ({
 	// TODO: again, this fails when provider is not `synthetix`
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey as CurrencyKey);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey as CurrencyKey);
+
+	const settlementDisabledReason =
+		settlementWaitingPeriodInSeconds > 0
+			? t('exchange.summary-info.button.settle-waiting-period')
+			: null;
 
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =
@@ -1165,6 +1179,8 @@ const useExchange = ({
 			) : !isL2 && numEntries >= 12 ? (
 				<SettleTransactionsCard
 					attached={footerCardAttached}
+					submissionDisabledReason={settlementDisabledReason}
+					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
 					onSubmit={handleSettle}
 					settleCurrency={baseCurrencyKey as CurrencyKey}
 					numEntries={numEntries}
