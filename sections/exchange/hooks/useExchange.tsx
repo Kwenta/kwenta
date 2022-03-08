@@ -603,12 +603,12 @@ const useExchange = ({
 	]);
 
 	const getExchangeParams = useCallback(() => {
-		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = quoteCurrencyAmountBN.toBN();
+		const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
+		const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+		const sourceAmount = quoteCurrencyAmountBN.toBN();
 		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
-		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
+		return [sourceCurrencyKey, sourceAmount, destinationCurrencyKey, trackingCode];
 	}, [baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]);
 
 	const getGasEstimateForExchange = useCallback(
