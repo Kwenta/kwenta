@@ -17,7 +17,7 @@ import Connector from 'containers/Connector';
 type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
-	positionHistory: PositionHistory[] | null;
+	positionHistory?: PositionHistory[] | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
