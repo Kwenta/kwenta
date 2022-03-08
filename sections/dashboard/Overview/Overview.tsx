@@ -97,9 +97,13 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable
-					futuresPositions={futuresPositions}
-				/>
+				{
+					futuresPositions.length > 0 ?
+						<FuturesPositionsTable
+							futuresPositions={futuresPositions}
+						/>
+					: 	<></>
+				}
 				{/* <p>{futuresPositions.length > 0 ? futuresPositions[0].account : ''}</p> */}
 			</TabPanel>
 

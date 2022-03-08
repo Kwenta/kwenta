@@ -358,6 +358,15 @@
 			"settling-fee": "Settling...",
 			"settle-fee": "Settle fee"
 		},
+		"overview": {
+			"futures-positions-table": {
+				"market": "Market",
+				"position": "Position",
+				"avg-open-close": "Avg. Open/Close",
+				"pnl": "Unrealized P&L",
+				"margin": "Margin"
+			}
+		},
 		"deprecated": {
 			"info": "Deprecated synths can be exchanged for sUSD at any time at the fixed redemption rate.",
 			"button": {

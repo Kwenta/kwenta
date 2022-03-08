@@ -13,171 +13,82 @@ import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
-import Search from 'components/Table/Search';
 import Loader from 'components/Loader';
 import { PositionHistory } from 'queries/futures/types';
 import { ethers } from 'ethers';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
-import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
 
 type FuturesPositionTableProps = {
-	futuresPositions: PositionHistory
-};
-
-type Stat = {
-	pnl: Wei;
-	liquidations: Wei;
-	totalTrades: Wei;
-	totalVolume: Wei;
+	futuresPositions: PositionHistory[]
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-
-	const walletAddress = useRecoilValue(walletAddressState);
 	
-	const statsQuery = useGetStats();
-	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
-
-	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
-		acc[stat.account] = {
-			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
-			liquidations: new Wei(stat.liquidations ?? 0),
-			totalTrades: new Wei(stat.totalTrades ?? 0),
-			totalVolume: wei(stat.totalVolume ?? 0, 18, true),
-		};
-		return acc;
-	}, {});
-
 	let data = useMemo(() => {
-		return stats
-			.sort((a: FuturesStat, b: FuturesStat) => (pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0))
-			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
-				address: stat.account,
-				trader: truncateAddress(stat.account),
-				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
-				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
-				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
-				'24h': 80000,
-				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				pnlPct: wei(0),
+		return futuresPositions
+			.map((position: PositionHistory, i: number) => ({
+				market: position.asset,
+				position: position.side,
+				avgOpenClose: position.entryPrice.toNumber(),
+				pnl: position.pnl.toNumber(),
+				margin: position.margin.toNumber()
 			}))
-	}, [stats]);
-
-	if (statsQuery.isLoading) {
-		return <Loader />;
-	}
+	}, [futuresPositions]);
 
 	return (
 		<TableContainer>
 			<StyledTable
-				showPagination={true}
-				isLoading={statsQuery.isLoading}
 				data={data}
-				columns = {[
+				columns={[
 					{
-						Header:
-							<TableTitle>
-								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
-								<PeriodSelector>
-									{PERIOD_LABELS.map((period) => (
-										<StyledTextButton
-											key={period.period}
-										>
-											{t(period.i18nLabel)}
-										</StyledTextButton>
-									))}
-								</PeriodSelector>
-							</TableTitle>,
-						accessor: 'title',
-						columns: [
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-								accessor: 'rank',
-								Cell: (cellProps: CellProps<any>) => (
-									<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
-								),
-								width: 'auto',
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-								accessor: 'trader',
-								Cell: (cellProps: CellProps<any>) => (
-									<StyledOrderType>
-										{cellProps.row.original.trader}
-									</StyledOrderType>
-								),
-								width: 'auto',
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-								accessor: 'totalTrades',
-								sortType: 'basic',
-								width: 'auto',
-								sortable: true,
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-								accessor: 'liquidations',
-								sortType: 'basic',
-								width: 'auto',
-								sortable: true,
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
-								accessor: 'totalVolume',
-								sortType: 'basic',
-								Cell: (cellProps: CellProps<any>) => (
-									<Currency.Price
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.totalVolume}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: 'auto',
-								sortable: true,
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-								accessor: 'pnl',
-								sortType: 'basic',
-								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.pnl}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: 'auto',
-								sortable: true,
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.percent-pnl')}</TableHeader>,
-								accessor: 'pnlPct',
-								sortType: 'basic',
-								Cell: (cellProps: CellProps<any>) => (
-									<ChangePercent
-										value={cellProps.row.original.pnlPct}
-									/>
-								),
-								width: 'auto',
-								sortable: true,
-							},
-						]
-					}
+						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>,
+						accessor: 'market',
+						Cell: (cellProps: CellProps<any>) => (
+							<StyledOrderType>
+								{cellProps.row.original.market}
+							</StyledOrderType>
+						),
+						width: 100,
+					},
+					{
+						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.position')}</TableHeader>,
+						accessor: 'position',
+						// Cell: (cellProps: CellProps<any>) => (
+						// 	<StyledOrderType>
+						// 		{cellProps.row.original.trader}
+						// 	</StyledOrderType>
+						// ),
+						width: 175,
+					},
+					{
+						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.avg-open-close')}</TableHeader>,
+						accessor: 'avgOpenClose',
+						width: 175,
+					},
+					{
+						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>,
+						accessor: 'pnl',
+						width: 175,
+					},
+					{
+						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.margin')}</TableHeader>,
+						accessor: 'margin',
+						// Cell: (cellProps: CellProps<any>) => (
+						// 	<Currency.Price
+						// 		currencyKey={Synths.sUSD}
+						// 		price={cellProps.row.original.totalVolume}
+						// 		sign={'$'}
+						// 		conversionRate={1}
+						// 	/>
+						// ),
+						width: 125,
+					},
 				]}
 			/>
 		</TableContainer>
 	);
 };
-
-const Medal = styled.span`
-	font-size: 16px;
-	margin-left: 4px;
-`;
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
@@ -199,8 +110,6 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 `;
 
 const TableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 const TableTitle = styled.div`
@@ -209,25 +118,9 @@ const TableTitle = styled.div`
 	justify-content: space-between;
 `;
 
-const TitleText = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
-`;
-
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
-`;
-
-const PeriodSelector = styled(GridDivCenteredCol)`
-	grid-gap: 8px;
-`;
-
-const StyledTextButton = styled(TextButton)`
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
-	}
 `;
 
 export default FuturesPositionsTable;
