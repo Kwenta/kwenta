@@ -122,13 +122,13 @@ const PnlContainer = styled.div`
 	}
 `
 
-const TableContainer = styled.div<{ compact: boolean | undefined }>`
+const TableContainer = styled.div`
 	margin-top: 16px;
-	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
+	margin-bottom: '40px';
 `;
 
-const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
-	margin-top: ${({ compact }) => (compact ? '0' : '20px')};
+const StyledTable = styled(Table)`
+	margin-top: '20px';
 `;
 
 const TableHeader = styled.div`
