@@ -25,7 +25,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			if (newAmount === '') {
 				setUsdAmount('');
 			} else {
-				setUsdAmount((Number(newAmount) * assetRate).toFixed(2));
+				setUsdAmount((Number(newAmount) * assetRate).toString());
 			}
 		},
 		[assetRate, onAmountChange]
@@ -37,7 +37,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			if (newUsdAmount === '') {
 				onAmountChange('');
 			} else {
-				onAmountChange((Number(newUsdAmount) / assetRate).toFixed(2));
+				onAmountChange((Number(newUsdAmount) / assetRate).toString());
 			}
 		},
 		[assetRate, onAmountChange]

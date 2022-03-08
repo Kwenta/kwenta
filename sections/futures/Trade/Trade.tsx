@@ -247,7 +247,7 @@ const Trade: React.FC<TradeProps> = () => {
 				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 			/>
 
-			<StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} />
+			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
 			<OrderSizing
 				amount={tradeSize}
@@ -337,6 +337,6 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 `;
 
-const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
-`;
+// const StyledSegmentedControl = styled(SegmentedControl)`
+// 	margin-bottom: 16px;
+// `;
