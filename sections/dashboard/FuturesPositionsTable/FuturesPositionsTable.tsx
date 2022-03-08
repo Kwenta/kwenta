@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -10,26 +10,32 @@ import Currency from 'components/Currency';
 import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { PositionHistory } from 'queries/futures/types';
-import { ethers } from 'ethers';
-import { GridDivCenteredCol, TextButton } from 'styles/common';
+import { PositionHistory, FuturesMarket } from 'queries/futures/types';
 
 type FuturesPositionTableProps = {
 	futuresPositions: PositionHistory[]
+	futuresMarkets: FuturesMarket[]
 };
 
-const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions }: FuturesPositionTableProps) => {
+const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions, futuresMarkets }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	
 	let data = useMemo(() => {
 		return futuresPositions
-			.map((position: PositionHistory, i: number) => ({
-				market: position.asset,
-				position: position.side,
-				avgOpenClose: position.entryPrice.toNumber(),
-				pnl: position.pnl.toNumber(),
-				margin: position.margin.toNumber()
-			}))
+			.map((position: PositionHistory, i: number) => {
+				const market = futuresMarkets.find(({ asset }) => asset === position.asset);
+				console.log(position)
+				console.log(market)
+			
+				return {
+					market: position.asset,
+					position: position.side,
+					avgOpenClose: position.entryPrice.toNumber(),
+					pnl: position.entryPrice.sub(market.price).toNumber(),
+					pnlPct: position.entryPrice.sub(market.price).div(position.entryPrice),
+					margin: position.margin.toNumber()
+				}
+			})
 	}, [futuresPositions]);
 
 	return (
@@ -42,7 +48,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => (
 							<StyledOrderType>
-								{cellProps.row.original.market}-sUSD
+								{cellProps.row.original.market}/sUSD
 							</StyledOrderType>
 						),
 						width: 150,
@@ -72,12 +78,18 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>,
 						accessor: 'pnl',
 						Cell: (cellProps: CellProps<any>) => (
-							<Currency.Price
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
+							<PnlContainer>
+								<ChangePercent
+									value={cellProps.row.original.pnlPct}
+									className="change-pct"
+								/>
+								(<Currency.Price
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.pnl}
+									sign={'$'}
+									conversionRate={1}
+								/>)
+							</PnlContainer>
 						),
 						width: 125,
 					},
@@ -99,6 +111,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 		</TableContainer>
 	);
 };
+
+const PnlContainer = styled.div`
+	display: flex;
+	flex-direction: flex-row;
+	align-items: center;
+
+	.change-pct {
+		margin-right: 4px;
+	}
+`
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;

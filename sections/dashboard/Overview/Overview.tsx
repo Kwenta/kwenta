@@ -59,7 +59,7 @@ const Overview: FC = () => {
 				onClick: () => { setActivePositionsTab(PositionsTab.SPOT) },
 			},
 		],
-		[activePositionsTab, futuresPositions]
+		[activePositionsTab, futuresPositions, futuresMarkets]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -74,6 +74,7 @@ const Overview: FC = () => {
 				name: MarketsTab.SPOT,
 				label: 'Spot Markets',
 				active: activeMarketsTab === MarketsTab.SPOT,
+				disabled: true,
 				onClick: () => { setActiveMarketsTab(MarketsTab.SPOT) },
 			},
 		],
@@ -98,13 +99,13 @@ const Overview: FC = () => {
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
 				{
-					futuresPositions.length > 0 ?
+					futuresPositions.length > 0 && futuresMarkets.length > 0 ?
 						<FuturesPositionsTable
 							futuresPositions={futuresPositions}
+							futuresMarkets={futuresMarkets}
 						/>
 					: 	<></>
 				}
-				{/* <p>{futuresPositions.length > 0 ? futuresPositions[0].account : ''}</p> */}
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>
@@ -114,11 +115,12 @@ const Overview: FC = () => {
 			</TabPanel>
 
 			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
 						active={active}
+						disabled={disabled}
 						onClick={onClick}
 					/>
 				))}
