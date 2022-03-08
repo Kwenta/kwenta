@@ -242,6 +242,7 @@ const Trade: React.FC<TradeProps> = () => {
 			<MarketInfoBox
 				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				buyingPower={sUSDBalance}
+				marginUsage={(futuresMarketsPosition?.position?.marginRatio ?? zeroBN).mul(100)}
 				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
 				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 			/>
