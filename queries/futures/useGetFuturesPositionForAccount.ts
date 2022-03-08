@@ -8,8 +8,6 @@ import request, { gql } from 'graphql-request';
 import { PositionHistory } from './types';
 import { mapTradeHistory } from './utils';
 
-const PAGE_SIZE = 500;
-
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
@@ -44,7 +42,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 						`,
 					{ account: walletAddress }
 				);
-				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, false) : [];
+				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
 			}
 			catch (e) {
 				console.log(e);

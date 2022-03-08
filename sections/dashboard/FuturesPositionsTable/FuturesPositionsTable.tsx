@@ -122,16 +122,6 @@ const PnlContainer = styled.div`
 	}
 `
 
-const ColorCodedPrice = styled(Currency.Price)`
-	align-items: right;
-	color: ${(props) =>
-		props.price > 0
-			? props.theme.colors.green
-			: props.price < 0
-			? props.theme.colors.red
-			: props.theme.colors.white};
-`;
-
 const TableContainer = styled.div<{ compact: boolean | undefined }>`
 	margin-top: 16px;
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
@@ -142,12 +132,6 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 `;
 
 const TableHeader = styled.div`
-`;
-
-const TableTitle = styled.div`
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
 `;
 
 const StyledOrderType = styled.div`

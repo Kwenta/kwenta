@@ -102,7 +102,11 @@ const Overview: FC = () => {
 							futuresPositions={futuresPositions}
 							futuresMarkets={futuresMarkets}
 						/>
-					: 	<></>
+					:
+						<FuturesPositionsTable
+							futuresPositions={[]}
+							futuresMarkets={[]}
+						/>
 				}
 			</TabPanel>
 
@@ -146,5 +150,9 @@ const TabButtonsContainer = styled.div`
 		}
 	}
 `;
+
+const EmptyPositionsTable = styled.div`
+
+`
 
 export default Overview;
