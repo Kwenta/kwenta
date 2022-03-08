@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
-import { TabButtonProps } from 'components/Button/TabButton';
 import PortfolioChart from '../PortfolioChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
@@ -32,12 +31,12 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const POSITIONS_TABS = useMemo<TabButtonProps[]>(
+	const POSITIONS_TABS = useMemo(
 		() => [
 			{
 				name: PositionsTab.FUTURES,
 				label: 'Futures Positions',
-				badge: futuresPositions.length > 0 ? futuresPositions.length : null,
+				badge: futuresPositions.length > 0 ? futuresPositions.length : undefined,
 				active: activePositionsTab === PositionsTab.FUTURES,
 				onClick: () => { setActivePositionsTab(PositionsTab.FUTURES) },
 			},
@@ -61,7 +60,7 @@ const Overview: FC = () => {
 		[activePositionsTab, futuresPositions, futuresMarkets]
 	);
 
-	const MARKETS_TABS = useMemo<TabButtonProps[]>(
+	const MARKETS_TABS = useMemo(
 		() => [
 			{
 				name: MarketsTab.FUTURES,
