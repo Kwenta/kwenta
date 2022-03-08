@@ -32,12 +32,12 @@
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.10",
-		"@synthetixio/contracts-interface": "0.0.0-7c60a94",
-		"@synthetixio/optimism-networks": "0.0.0-7c60a94",
-		"@synthetixio/providers": "0.0.0-7c60a94",
-		"@synthetixio/queries": "0.0.0-7c60a94",
-		"@synthetixio/transaction-notifier": "0.0.0-7c60a94",
-		"@synthetixio/wei": "0.0.0-7c60a94",
+		"@synthetixio/contracts-interface": "0.0.0-717255a",
+		"@synthetixio/optimism-networks": "0.0.0-717255a",
+		"@synthetixio/providers": "0.0.0-717255a",
+		"@synthetixio/queries": "0.0.0-717255a",
+		"@synthetixio/transaction-notifier": "0.0.0-717255a",
+		"@synthetixio/wei": "0.0.0-717255a",
 		"@tippyjs/react": "4.1.0",
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
@@ -155,4 +155,3 @@
 		"npm": ">=7"
 	}
 }
-
