@@ -7,13 +7,9 @@ import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
+import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import useGetStats from 'queries/futures/useGetStats';
-import { walletAddressState } from 'store/wallet';
-import { truncateAddress } from 'utils/formatters/string';
-import { FuturesStat } from 'queries/futures/types';
-import Loader from 'components/Loader';
 import { PositionHistory } from 'queries/futures/types';
 import { ethers } from 'ethers';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
@@ -46,7 +42,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => (
 							<StyledOrderType>
-								{cellProps.row.original.market}
+								{cellProps.row.original.market}-sUSD
 							</StyledOrderType>
 						),
 						width: 100,
@@ -54,11 +50,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.position')}</TableHeader>,
 						accessor: 'position',
-						// Cell: (cellProps: CellProps<any>) => (
-						// 	<StyledOrderType>
-						// 		{cellProps.row.original.trader}
-						// 	</StyledOrderType>
-						// ),
+						Cell: (cellProps: CellProps<any>) => (
+							<PositionType side={cellProps.row.original.position} />
+						),
 						width: 175,
 					},
 					{
@@ -119,8 +113,6 @@ const TableTitle = styled.div`
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.white};
-	display: flex;
 `;
 
 export default FuturesPositionsTable;
