@@ -45,7 +45,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 								{cellProps.row.original.market}-sUSD
 							</StyledOrderType>
 						),
-						width: 100,
+						width: 150,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.position')}</TableHeader>,
@@ -53,29 +53,45 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 						Cell: (cellProps: CellProps<any>) => (
 							<PositionType side={cellProps.row.original.position} />
 						),
-						width: 175,
+						width: 100,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.avg-open-close')}</TableHeader>,
 						accessor: 'avgOpenClose',
-						width: 175,
+						Cell: (cellProps: CellProps<any>) => (
+							<Currency.Price
+								currencyKey={Synths.sUSD}
+								price={cellProps.row.original.avgOpenClose}
+								sign={'$'}
+								conversionRate={1}
+							/>
+						),
+						width: 125,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>,
 						accessor: 'pnl',
-						width: 175,
+						Cell: (cellProps: CellProps<any>) => (
+							<Currency.Price
+								currencyKey={Synths.sUSD}
+								price={cellProps.row.original.pnl}
+								sign={'$'}
+								conversionRate={1}
+							/>
+						),
+						width: 125,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.margin')}</TableHeader>,
 						accessor: 'margin',
-						// Cell: (cellProps: CellProps<any>) => (
-						// 	<Currency.Price
-						// 		currencyKey={Synths.sUSD}
-						// 		price={cellProps.row.original.totalVolume}
-						// 		sign={'$'}
-						// 		conversionRate={1}
-						// 	/>
-						// ),
+						Cell: (cellProps: CellProps<any>) => (
+							<Currency.Price
+								currencyKey={Synths.sUSD}
+								price={cellProps.row.original.margin}
+								sign={'$'}
+								conversionRate={1}
+							/>
+						),
 						width: 125,
 					},
 				]}
