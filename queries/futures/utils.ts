@@ -11,6 +11,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	FuturesTrade,
+	RawPosition,
 	PositionHistory,
 } from './types';
 
@@ -149,7 +150,7 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const mapTradeHistory = (futuresPositions: PositionHistory[], openOnly: boolean): any[] => {
+export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
 	return (
 		futuresPositions
 			?.map(
@@ -166,7 +167,7 @@ export const mapTradeHistory = (futuresPositions: PositionHistory[], openOnly: b
 					margin,
 					entryPrice,
 					exitPrice
-				}: PositionHistory) => {
+				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);

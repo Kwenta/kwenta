@@ -7,8 +7,8 @@ import { TabButtonProps } from 'components/Button/TabButton';
 import { FuturesMarket } from 'queries/futures/types';
 import PortfolioChart from '../PortfolioChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import FuturesPositionsTable from '../FuturesPositionsTable';
 
 
 enum PositionsTab {
@@ -97,7 +97,10 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<p>{futuresPositions.length > 0 ? futuresPositions[0].account : ''}</p>
+				<FuturesPositionsTable
+					futuresPositions={futuresPositions}
+				/>
+				{/* <p>{futuresPositions.length > 0 ? futuresPositions[0].account : ''}</p> */}
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>

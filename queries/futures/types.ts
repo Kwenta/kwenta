@@ -79,7 +79,7 @@ export type FuturesOpenInterest = {
 	};
 };
 
-export type PositionHistory = {
+export type RawPosition = {
 	id: string;
 	lastTxHash: string;
 	timestamp: number;
@@ -92,6 +92,24 @@ export type PositionHistory = {
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
+};
+
+export type PositionHistory = {
+	id: Number;
+	transactionHash: string;
+	timestamp: number;
+	market: string;
+	asset: string;
+	account: string;
+	isOpen: boolean;
+	isLiquidated: boolean;
+	size: Wei;
+	margin: Wei;
+	entryPrice: Wei;
+	exitPrice: Wei;
+	leverage: Wei;
+	side: PositionSide;
+	pnl: Wei;
 };
 
 export enum PositionSide {
