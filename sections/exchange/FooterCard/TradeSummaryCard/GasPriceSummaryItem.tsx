@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { isL2State } from 'store/wallet';
+import { isL2State, isMainnetState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
@@ -38,6 +38,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	const { t } = useTranslation();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
 	const {
 		gasPrice,
 		gasSpeed,
@@ -57,19 +58,29 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
+			<SummaryItemLabel>
+				{isMainnet || !isCustomGasPrice
+					? t('exchange.summary-info.max-fee-gwei')
+					: t('exchange.summary-info.gas-price-gwei')}
+			</SummaryItemLabel>
 			<SummaryItemValue>
 				{gasPrice != null ? (
 					<>
 						{transactionFee != null ? (
 							<GasPriceCostTooltip
 								content={
-									<span>
-										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
-											sign: selectedPriceCurrency.sign,
-											maxDecimals: 1,
-										})}
-									</span>
+									<GasEstimateUSD>
+										<GasEstimateUSDAmount>
+											{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
+												sign: selectedPriceCurrency.sign,
+												maxDecimals: 1,
+											})}
+										</GasEstimateUSDAmount>
+										<GasEstimateInfo>
+											It is recommended to not edit the Max Fee. The difference between Max Fee and
+											Current Gas Price will be refunded to the user
+										</GasEstimateInfo>
+									</GasEstimateUSD>
 								}
 								arrow={false}
 							>
@@ -153,6 +164,18 @@ export const GasSelectContainer = styled.div`
 
 export const CustomGasPriceContainer = styled.div`
 	margin: 0 10px 5px 10px;
+`;
+
+export const GasEstimateUSD = styled.span`
+	text-align: center;
+`;
+
+export const GasEstimateUSDAmount = styled.p`
+	color: #ffdf6d;
+`;
+
+export const GasEstimateInfo = styled.p`
+	text-align: left;
 `;
 
 export const CustomGasPrice = styled(NumericInput)`

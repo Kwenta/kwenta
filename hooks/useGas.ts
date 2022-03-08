@@ -1,21 +1,11 @@
 import useSynthetixQueries, { GasPrice, GasPrices } from '@synthetixio/queries';
 import { BigNumber } from 'ethers';
-import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
+import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
 import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
-export const DEFAULT_PRIORITY_FEE = wei(2, 9).toBN();
-export const DEFAULT_MAX_FEE_PER_GAS = wei(20, 9).toBN();
-
-export const FALLBACK_GAS_PRICE: GasPrice = {
-	maxFeePerGas: DEFAULT_MAX_FEE_PER_GAS,
-	maxPriorityFeePerGas: DEFAULT_PRIORITY_FEE,
-	baseFeePerGas: undefined,
-};
-
-// TODO add support for 1559. For now use maxFeePerGas (legacy)
 export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => {
 	const { gasPrice, maxFeePerGas } = gasPriceObject;
 	if (gasPrice) {
@@ -27,21 +17,29 @@ export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => 
 	}
 };
 
+type GasConfigL1 = {
+	maxPriorityFeePerGas?: BigNumber;
+	maxFeePerGas?: BigNumber;
+};
+
+type GasConfigL2 = {
+	gasPrice?: BigNumber;
+};
+
+type GasConfig = GasConfigL1 | GasConfigL2;
+
 const useGas = () => {
-	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const [gasConfig, setGasConfig] = useState<GasPrice>(FALLBACK_GAS_PRICE);
+	const [gasConfig, setGasConfig] = useState<GasConfig>({} as GasConfig);
 	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
 	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const isCustomGasPrice: boolean = useMemo(() => customGasPrice !== '', [customGasPrice]);
 
-	const selectedGas: GasPrice = useMemo(() => gasPrices?.[gasSpeed] ?? FALLBACK_GAS_PRICE, [
-		gasPrices,
-		gasSpeed,
-	]);
+	const selectedGas: GasPrice = useMemo(() => gasPrices?.[gasSpeed] ?? {}, [gasPrices, gasSpeed]);
 
 	const gasPrice = useMemo(() => {
 		return isCustomGasPrice
@@ -73,14 +71,14 @@ const useGas = () => {
 		const l1GasConfig = { maxPriorityFeePerGas, maxFeePerGas: maxFeePerGasValue };
 		const l2GasConfig = { gasPrice: gasPriceWei };
 
-		const config = isL2 ? l2GasConfig : l1GasConfig;
+		const config = isMainnet ? l1GasConfig : l2GasConfig;
 
 		setGasConfig(config as GasPrice);
 	}, [
 		gasPriceWei,
 		isCustomGasPrice,
-		isL2,
-		selectedGas.maxFeePerGas,
+		isMainnet,
+		selectedGas.baseFeePerGas,
 		selectedGas.maxPriorityFeePerGas,
 	]);
 
