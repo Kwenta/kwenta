@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import Button from 'components/Button';
-import { FuturesPosition, PositionSide } from 'queries/futures/types';
+import { FuturesPosition, PositionHistory, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ import Connector from 'containers/Connector';
 type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
+	positionHistory: PositionHistory[] | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
@@ -25,6 +26,7 @@ type PositionCardProps = {
 const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKey,
 	position,
+	positionHistory,
 	currencyKeyRate,
 	onPositionClose,
 	dashboard,
@@ -43,6 +45,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		},
 		[t, synthsMap]
 	);
+
+	const averageEntryPrice =
+		!!positionHistory && positionHistory?.length > 0
+			? positionHistory
+					?.reduce((acc, curr) => {
+						return acc.add(curr.entryPrice);
+					}, wei(0))
+					.div(positionHistory?.length)
+			: zeroBN;
 
 	return (
 		<>
@@ -101,12 +112,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Entry Price</StyledSubtitle>
-						<StyledValue>$4,131.23</StyledValue>
+						<StyledSubtitle>Average Entry Price</StyledSubtitle>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, averageEntryPrice, {
+								sign: '$',
+							})}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>$4,131.23</StyledValue>
+						<StyledValue>{}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
