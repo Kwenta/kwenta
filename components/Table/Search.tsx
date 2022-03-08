@@ -7,28 +7,37 @@ import SearchIconPath from 'assets/svg/app/search.svg';
 
 type Props = {
 	onChange: (text: string) => any;
+	disabled: boolean;
 };
 
-export default function Search({ onChange }: Props) {
+export default function Search({ onChange, disabled }: Props) {
 	const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
 		onChange(event.target.value);
 	};
 	return (
 		<SearchBar>
-			<Svg src={SearchIconPath} />
-			<SearchInput onChange={handleOnChange} placeholder="Search" />
+			<StyledSvg src={SearchIconPath} />
+			<StyledSearchInput onChange={handleOnChange} placeholder="Search..." disabled={disabled} />
 		</SearchBar>
 	);
 }
 
+const StyledSvg = styled(Svg)`
+	position: absolute;
+	left: 12px;
+`
+
+const StyledSearchInput = styled(SearchInput)`
+	position: relative;
+	height: 100%;
+	text-indent: 16px;
+	border-radius: 8px;
+`
+
 const SearchBar = styled.div`
 	width: 100%;
-	height: 100%;
 	overflow-x: auto;
 	position: relative;
-	border: 1px solid ${(props) => props.theme.colors.navy};
-	border-radius: 4px;
-	padding: 5px 18px;
 	display: flex;
 	align-items: center;
 `;
