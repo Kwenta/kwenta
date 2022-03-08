@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 
-type TabButtonProps = {
+export type TabButtonProps = {
 	title: string;
 	detail?: string;
 	badge?: number;

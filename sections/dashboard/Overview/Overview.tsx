@@ -3,10 +3,12 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
+import { TabButtonProps } from 'components/Button/TabButton';
 import { FuturesMarket } from 'queries/futures/types';
 import PortfolioChart from '../PortfolioChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAllMarkets from 'queries/futures/useGetFuturesPositionForAllMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 
 
 enum PositionsTab {
@@ -24,26 +26,19 @@ const Overview: FC = () => {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	console.log(futuresMarkets)
 
-	const futuresMarketsPositionQuery = useGetFuturesPositionForAllMarkets(
-		(futuresMarkets as FuturesMarket[]).map(({ asset }: { asset: string }) => asset)
-	);
+	const futuresMarketsPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositions = futuresMarketsPositionQuery?.data ?? [];
 	
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
-
-	const positions = (futuresMarketsPositionQuery?.data ?? []).filter(({ position }) =>
-		Boolean(position)
-	);
-	console.log(positions)
 
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
 				name: PositionsTab.FUTURES,
 				label: 'Futures Positions',
-				badge: 3,
+				badge: futuresPositions.length > 0 ? futuresPositions.length : null,
 				active: activePositionsTab === PositionsTab.FUTURES,
 				onClick: () => { setActivePositionsTab(PositionsTab.FUTURES) },
 			},
@@ -64,7 +59,7 @@ const Overview: FC = () => {
 				onClick: () => { setActivePositionsTab(PositionsTab.SPOT) },
 			},
 		],
-		[activePositionsTab]
+		[activePositionsTab, futuresPositions]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -102,6 +97,7 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
+				<p>{futuresPositions.length > 0 ? futuresPositions[0].account : ''}</p>
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>

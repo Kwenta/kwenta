@@ -139,6 +139,11 @@ export const QUERY_KEYS = {
 			markets,
 			walletAddress,
 		],
+		AccountPositions: (walletAddress: string | null) => [
+			'futures',
+			'accountPositions',
+			walletAddress
+		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: ['futures', 'stats'],

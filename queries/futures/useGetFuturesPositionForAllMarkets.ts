@@ -18,6 +18,7 @@ const useGetFuturesPositionForAllMarkets = (
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
+	console.log(synthetixjs)
 
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.Positions(markets || [], walletAddress || ''),
