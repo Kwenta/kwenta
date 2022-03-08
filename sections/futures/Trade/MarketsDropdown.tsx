@@ -117,9 +117,8 @@ const SelectContainer = styled.div`
 		margin-right: 22px;
 	}
 
-	.react-select__menu-list {
-		padding-top: 6px;
-		padding-bottom: 6px;
+	.react-select__option {
+		padding: 0;
 	}
 `;
 

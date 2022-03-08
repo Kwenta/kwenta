@@ -36,6 +36,8 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 `;
 
 const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boolean }>`
+	padding: 6px;
+
 	p {
 		margin: 0;
 	}
@@ -60,6 +62,10 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	&:not(:last-of-type) {
 		margin-bottom: 4px;
+	}
+
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.05);
 	}
 `;
 
