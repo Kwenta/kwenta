@@ -10,9 +10,10 @@ import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 type ChangePercentProps = {
 	value: number;
 	className?: string;
+	decimals?: number;
 };
 
-export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
+export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals=2, ...rest }) => {
 	const isPositive = value >= 0;
 
 	return (
@@ -28,7 +29,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, ...rest }) => {
 					viewBox={`0 0 ${ChangeNegativeIcon.width} ${ChangeNegativeIcon.height}`}
 				/>
 			)}
-			{formatPercent(Math.abs(value))}
+			{formatPercent(Math.abs(value), { minDecimals: decimals })}
 		</CurrencyChange>
 	);
 };
