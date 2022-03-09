@@ -48,6 +48,13 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 		setCustomGasPrice,
 	} = useGas();
 
+	const gasEstimateInfo = isMainnet ? (
+		<GasEstimateInfo>
+			It is recommended to not edit the Max Fee. The difference between Max Fee and Current Gas
+			Price will be refunded to the user
+		</GasEstimateInfo>
+	) : null;
+
 	const gasPriceItem = isCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
 	) : (
@@ -76,10 +83,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 												maxDecimals: 1,
 											})}
 										</GasEstimateUSDAmount>
-										<GasEstimateInfo>
-											It is recommended to not edit the Max Fee. The difference between Max Fee and
-											Current Gas Price will be refunded to the user.
-										</GasEstimateInfo>
+										{gasEstimateInfo}
 									</GasEstimateUSD>
 								}
 								arrow={false}
