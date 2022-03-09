@@ -7,6 +7,7 @@ import PortfolioChart from '../PortfolioChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import FuturesMarketsTable from '../FuturesMarketsTable';
 
 
 enum PositionsTab {
@@ -128,6 +129,8 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
+				<FuturesMarketsTable
+				/>
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
