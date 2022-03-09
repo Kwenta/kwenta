@@ -10,7 +10,7 @@ export type MenuLinks = MenuLink[];
 export const MENU_LINKS: MenuLinks = [
 	{
 		i18nLabel: 'header.nav.dashboard',
-		link: ROUTES.Home,
+		link: ROUTES.Home.Overview,
 	},
 	{
 		i18nLabel: 'header.nav.markets',

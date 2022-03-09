@@ -2,9 +2,9 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, zIndex } from 'constants/ui';
+import { HEADER_HEIGHT, HEADER_TOP_PADDING, zIndex } from 'constants/ui';
 
-import { GridDivCenteredCol } from 'styles/common';
+import { GridDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import Logo from '../../Logo';
@@ -49,18 +49,20 @@ const Container = styled.header<{ isL2: boolean }>`
 		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
 	`};
 	> div {
-		box-sizing: border-box;
 		height: ${HEADER_HEIGHT};
-		line-height: ${HEADER_HEIGHT};
-		padding: 0 30px;
+		padding-top: ${HEADER_TOP_PADDING};
+		padding-left: 30px;
+		padding-right: 30px;
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-start;
 	}
 `;
 
-const LogoNav = styled(GridDivCenteredCol)`
+const LogoNav = styled(GridDivCol)`
+	padding-top: 8px;
 	grid-gap: 24px;
+	align-items: start;
 `;
 
 export default Header;
