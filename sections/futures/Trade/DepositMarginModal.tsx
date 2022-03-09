@@ -165,6 +165,11 @@ const StyledBaseModal = styled(BaseModal)`
 
 const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
+	padding: 0 14px;
+
+	p {
+		margin: 0;
+	}
 `;
 
 const BalanceText = styled.p`
