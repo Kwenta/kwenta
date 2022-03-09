@@ -4,17 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import Connector from 'containers/Connector';
+import { FuturesMarket } from 'queries/futures/types';
 
 import Currency from 'components/Currency';
-import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import { DEFAULT_DATA } from './constants'
 
 type FuturesMarketsTableProps = {
+	futuresMarkets: FuturesMarket[]
 };
 
-const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ }: FuturesMarketsTableProps) => {
+const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 
@@ -26,15 +27,36 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ }: FuturesMarketsTa
 		},
 		[t, synthsMap]
 	);
-	
+
 	let data = useMemo(() => {
-		return []
-	}, [synthsMap]);
+		return futuresMarkets
+			.map((market: FuturesMarket, i: number) => {
+				const description = getSynthDescription(market.asset)
+
+				return {
+					market: market.asset,
+					synth: synthsMap[market.asset],
+					description: description,
+					price: market.price.toNumber(),
+					fundingRate: market.currentFundingRate.toNumber(),
+					openInterest: market.marketSize.toNumber(),
+					openInterestNative: market.marketSize.div(market.price).toNumber()
+
+					// position: position.side,
+					// avgOpenClose: position.entryPrice.toNumber(),
+					// pnl: position.entryPrice.sub(market?.price).toNumber(),
+					// pnlPct: position.entryPrice.sub(market?.price).div(position.entryPrice),
+					// margin: position.margin.toNumber()
+				}
+			})
+	}, [synthsMap, futuresMarkets]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data.length > 0 ? data : DEFAULT_DATA}
+				pageSize={5}
+				showPagination={true}
 				columns={[
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>,
@@ -51,48 +73,46 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ }: FuturesMarketsTa
 								<StyledValue>{cellProps.row.original.description}</StyledValue>
 							</MarketContainer>
 						},
-						width: 250,
+						width: 175,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.index-price')}</TableHeader>,
 						accessor: 'indexPrice',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.position === '-' ? <DefaultCell>-</DefaultCell> :
-								<PositionType side={cellProps.row.original.position} />
-						},
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-change')}</TableHeader>,
-						accessor: 'dailyChange',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.avgOpenClose === '-' ? <DefaultCell>-</DefaultCell> :
+							return cellProps.row.original.price === '-' ? <DefaultCell>-</DefaultCell> :
 							<Currency.Price
 								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.avgOpenClose}
+								price={cellProps.row.original.price}
 								sign={'$'}
 								conversionRate={1}
 							/>
 						},
-						width: 125,
+						width: 100,
 					},
+					// {
+					// 	Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-change')}</TableHeader>,
+					// 	accessor: 'dailyChange',
+					// 	Cell: (cellProps: CellProps<any>) => {
+					// 		return cellProps.row.original.avgOpenClose === '-' ? <DefaultCell>-</DefaultCell> :
+					// 		<Currency.Price
+					// 			currencyKey={Synths.sUSD}
+					// 			price={cellProps.row.original.avgOpenClose}
+					// 			sign={'$'}
+					// 			conversionRate={1}
+					// 		/>
+					// 	},
+					// 	width: 125,
+					// },
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.hourly-funding')}</TableHeader>,
-						accessor: 'hourlyFunding',
+						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.funding-rate')}</TableHeader>,
+						accessor: 'fundingRate',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.pnl === '-' ? <DefaultCell>-</DefaultCell> :
-							<PnlContainer>
-								<ChangePercent
-									value={cellProps.row.original.pnlPct}
-									className="change-pct"
-								/>
-								(<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign={'$'}
-									conversionRate={1}
-								/>)
-							</PnlContainer>
+							return cellProps.row.original.fundingRate === '-' ? <DefaultCell>-</DefaultCell> :
+							<ChangePercent
+								value={cellProps.row.original.fundingRate}
+								decimals={6}
+								className="change-pct"
+							/>
 						},
 						width: 125,
 					},
@@ -100,51 +120,55 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ }: FuturesMarketsTa
 						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.open-interest')}</TableHeader>,
 						accessor: 'openInterest',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.margin === '-' ? <DefaultCell>-</DefaultCell> :
-							<Currency.Price
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.margin}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						},
-						width: 125,
-					},
-					{
-						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-volume')}</TableHeader>,
-						accessor: 'dailyVolume',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.margin === '-' ? <DefaultCell>-</DefaultCell> :
+							return cellProps.row.original.openInterest === '-' ? <DefaultCell>-</DefaultCell> :
+							<OpenInterestContainer>
+								<Currency.Price
+									currencyKey={cellProps.row.original.synth}
+									price={cellProps.row.original.openInterestNative}
+									sign={cellProps.row.original.synth.sign}
+									conversionRate={1}
+								/>
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.margin}
+									price={cellProps.row.original.openInterest}
 									sign={'$'}
 									conversionRate={1}
 								/>
+							</OpenInterestContainer>
 						},
 						width: 125,
 					},
+					// {
+					// 	Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-volume')}</TableHeader>,
+					// 	accessor: 'dailyVolume',
+					// 	Cell: (cellProps: CellProps<any>) => {
+					// 		return cellProps.row.original.margin === '-' ? <DefaultCell>-</DefaultCell> :
+					// 			<Currency.Price
+					// 				currencyKey={Synths.sUSD}
+					// 				price={cellProps.row.original.margin}
+					// 				sign={'$'}
+					// 				conversionRate={1}
+					// 			/>
+					// 	},
+					// 	width: 125,
+					// },
 				]}
 			/>
 		</TableContainer>
 	);
 };
 
-const PnlContainer = styled.div`
-	display: flex;
-	flex-direction: flex-row;
-	align-items: center;
-
-	.change-pct {
-		margin-right: 4px;
-	}
-`
-
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
 `;
+
+const OpenInterestContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+`
 
 const IconContainer = styled.div`
 	grid-column: 1;

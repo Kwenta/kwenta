@@ -97,18 +97,10 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				{
-					futuresPositions.length > 0 && futuresMarkets.length > 0 ?
-						<FuturesPositionsTable
-							futuresPositions={futuresPositions}
-							futuresMarkets={futuresMarkets}
-						/>
-					:
-						<FuturesPositionsTable
-							futuresPositions={[]}
-							futuresMarkets={[]}
-						/>
-				}
+				<FuturesPositionsTable
+					futuresPositions={futuresPositions}
+					futuresMarkets={futuresMarkets}
+				/>
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>
@@ -130,6 +122,7 @@ const Overview: FC = () => {
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable
+					futuresMarkets={futuresMarkets}
 				/>
 			</TabPanel>
 

@@ -54,6 +54,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 		<TableContainer>
 			<StyledTable
 				data={data.length > 0 ? data : DEFAULT_DATA}
+				pageSize={5}
+				showPagination={true}
 				columns={[
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>,

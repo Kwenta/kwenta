@@ -370,7 +370,7 @@
 				"market": "Market",
 				"index-price": "Index Price",
 				"daily-change": "24H Change",
-				"hourly-funding": "1h Funding",
+				"funding-rate": "Funding Rate",
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
