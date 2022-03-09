@@ -78,7 +78,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 										</GasEstimateUSDAmount>
 										<GasEstimateInfo>
 											It is recommended to not edit the Max Fee. The difference between Max Fee and
-											Current Gas Price will be refunded to the user
+											Current Gas Price will be refunded to the user.
 										</GasEstimateInfo>
 									</GasEstimateUSD>
 								}
@@ -175,7 +175,7 @@ export const GasEstimateUSDAmount = styled.p`
 `;
 
 export const GasEstimateInfo = styled.p`
-	text-align: left;
+	text-align: center;
 `;
 
 export const CustomGasPrice = styled(NumericInput)`
