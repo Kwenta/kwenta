@@ -608,7 +608,7 @@ const useExchange = ({
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
 		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
-		return [sourceCurrencyKey, sourceAmount, destinationCurrencyKey, trackingCode];
+		return [destinationCurrencyKey, sourceAmount, sourceCurrencyKey, trackingCode];
 	}, [baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]);
 
 	const getGasEstimateForExchange = useCallback(
@@ -617,13 +617,40 @@ const useExchange = ({
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
 					const exchangeParams = getExchangeParams();
-					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
-						...exchangeParams
-					);
-					let gasLimitNum = Number(gasEstimate);
-					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
-						...exchangeParams
-					);
+					const destinationCurrencyKey = exchangeParams[0];
+
+					let gasEstimate, gasLimitNum, metaTx;
+
+					if (
+						destinationCurrencyKey === 'sBTC' ||
+						destinationCurrencyKey === 'sETH' ||
+						destinationCurrencyKey === 'sEUR'
+					) {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
+					gasLimitNum = Number(gasEstimate);
+
+					if (
+						destinationCurrencyKey === 'sBTC' ||
+						destinationCurrencyKey === 'sETH' ||
+						destinationCurrencyKey === 'sEUR'
+					) {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
 					const l1Fee = await getL1SecurityFee({
 						...metaTx,
 						gasPrice: gasPriceInWei!,
@@ -722,6 +749,7 @@ const useExchange = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 			const exchangeParams = getExchangeParams();
+			const destinationCurrencyKey = exchangeParams[0];
 
 			try {
 				setIsSubmitting(true);
@@ -747,7 +775,16 @@ const useExchange = ({
 						gasPrice: gasPriceWei,
 						gasLimit: gasInfo?.limit,
 					};
-					tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+
+					if (
+						destinationCurrencyKey === 'sBTC' ||
+						destinationCurrencyKey === 'sETH' ||
+						destinationCurrencyKey === 'sEUR'
+					) {
+						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+					} else {
+						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+					}
 				}
 
 				if (tx != null) {
