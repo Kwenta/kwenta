@@ -11,6 +11,7 @@ import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import { PositionHistory, FuturesMarket } from 'queries/futures/types';
+import { DEFAULT_DATA } from './constants'
 
 type FuturesPositionTableProps = {
 	futuresPositions: PositionHistory[]
@@ -34,48 +35,52 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 					margin: position.margin.toNumber()
 				}
 			})
-	}, [futuresPositions]);
+	}, [futuresPositions, futuresMarkets]);
 
 	return (
 		<TableContainer>
 			<StyledTable
-				data={data}
+				data={data.length > 0 ? data : DEFAULT_DATA}
 				columns={[
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>,
 						accessor: 'market',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>
-								{cellProps.row.original.market}/sUSD
-							</StyledOrderType>
-						),
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.market === '-' ? <DefaultCell>-</DefaultCell> :
+								<StyledOrderType>
+									{cellProps.row.original.market}/sUSD
+								</StyledOrderType>
+						},
 						width: 150,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.position')}</TableHeader>,
 						accessor: 'position',
-						Cell: (cellProps: CellProps<any>) => (
-							<PositionType side={cellProps.row.original.position} />
-						),
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.position === '-' ? <DefaultCell>-</DefaultCell> :
+								<PositionType side={cellProps.row.original.position} />
+						},
 						width: 100,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.avg-open-close')}</TableHeader>,
 						accessor: 'avgOpenClose',
-						Cell: (cellProps: CellProps<any>) => (
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.avgOpenClose === '-' ? <DefaultCell>-</DefaultCell> :
 							<Currency.Price
 								currencyKey={Synths.sUSD}
 								price={cellProps.row.original.avgOpenClose}
 								sign={'$'}
 								conversionRate={1}
 							/>
-						),
+						},
 						width: 125,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.pnl')}</TableHeader>,
 						accessor: 'pnl',
-						Cell: (cellProps: CellProps<any>) => (
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.pnl === '-' ? <DefaultCell>-</DefaultCell> :
 							<PnlContainer>
 								<ChangePercent
 									value={cellProps.row.original.pnlPct}
@@ -88,20 +93,21 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 									conversionRate={1}
 								/>)
 							</PnlContainer>
-						),
+						},
 						width: 125,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.margin')}</TableHeader>,
 						accessor: 'margin',
-						Cell: (cellProps: CellProps<any>) => (
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.margin === '-' ? <DefaultCell>-</DefaultCell> :
 							<Currency.Price
 								currencyKey={Synths.sUSD}
 								price={cellProps.row.original.margin}
 								sign={'$'}
 								conversionRate={1}
 							/>
-						),
+						},
 						width: 125,
 					},
 				]}
@@ -119,6 +125,8 @@ const PnlContainer = styled.div`
 		margin-right: 4px;
 	}
 `
+
+const DefaultCell = styled.p``
 
 const TableContainer = styled.div`
 	margin-top: 16px;
