@@ -67,7 +67,7 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const StyledCard = styled(Card)`
-	background-color: #282626;
+	background-color: ${(props) => props.theme.colors.selectedTheme.background};
 	border-radius: 15px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.25);

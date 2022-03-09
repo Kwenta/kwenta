@@ -1,7 +1,7 @@
 import common from './common';
 
 const eliteTheme = {
-	background: '#474747',
+	background: '#282626',
 	border: '1px solid rgba(255, 255, 255, 0.1)',
 	button: {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',

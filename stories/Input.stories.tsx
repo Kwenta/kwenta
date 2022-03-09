@@ -2,7 +2,7 @@ import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import Input from '../components/Input/Input';
 import NumericInput from '../components/Input/NumericInput';
-import OrderSizingInput from '../components/Input/OrderSizingInput';
+import CustomInput from '../components/Input/CustomInput';
 
 export default {
 	title: 'Components/Input',
@@ -22,10 +22,10 @@ export const Numeric: ComponentStory<typeof NumericInput> = (args) => {
 	return <NumericInput {...args} />;
 };
 
-export const OrderSizing: ComponentStory<typeof OrderSizingInput> = (args) => {
-	return <OrderSizingInput {...args} />;
+export const Custom: ComponentStory<typeof CustomInput> = (args) => {
+	return <CustomInput {...args} />;
 };
 
-OrderSizing.args = {
-	synth: 'sUSD',
+Custom.args = {
+	right: 'sUSD',
 };

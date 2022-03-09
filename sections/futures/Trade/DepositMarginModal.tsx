@@ -14,10 +14,12 @@ import { gasSpeedState } from 'store/wallet';
 import { parseGasPriceObject } from 'hooks/useGas';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getTransactionPrice } from 'utils/network';
+import { gasPriceInWei, getTransactionPrice } from 'utils/network';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
+import CustomInput from 'components/Input/CustomInput';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -35,6 +37,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	market,
 }) => {
 	const { synthetixjs } = Connector.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
@@ -92,6 +95,35 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 		getGasLimit();
 	}, [amount, market, synthetixjs]);
 
+	const handleDeposit = async () => {
+		if (!amount || !gasLimit || !market || !gasPrice) return;
+		try {
+			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
+			const marginAmount = wei(amount).toBN();
+			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
+				gasLimit,
+				gasPrice: gasPriceInWei(gasPrice),
+			});
+			if (tx != null) {
+				monitorTransaction({
+					txHash: tx.hash,
+					onTxConfirmed: () => {
+						onTxConfirmed();
+						onDismiss();
+					},
+				});
+			}
+		} catch (e) {
+			console.log(e);
+			// @ts-expect-error
+			setError(e?.data?.message ?? e.message);
+		}
+	};
+
+	const handleSetMax = React.useCallback(() => {
+		setAmount(sUSDBalance.toString());
+	}, [sUSDBalance]);
+
 	return (
 		<StyledBaseModal title="Deposit Margin" isOpen={true} onDismiss={onDismiss}>
 			<BalanceContainer>
@@ -100,6 +132,11 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 					<span>{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
+			<CustomInput
+				value={amount}
+				onChange={(e) => setAmount(e.target.value)}
+				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
+			/>
 			<StyledInfoBox
 				details={{
 					Fee: transactionFee
@@ -109,7 +146,9 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 					Total: '',
 				}}
 			/>
-			<DepositMarginButton fullWidth>Deposit Margin</DepositMarginButton>
+			<DepositMarginButton fullWidth onClick={handleDeposit}>
+				Deposit Margin
+			</DepositMarginButton>
 		</StyledBaseModal>
 	);
 };
@@ -142,6 +181,19 @@ const StyledInfoBox = styled(InfoBox)`
 
 const DepositMarginButton = styled(Button)`
 	height: 55px;
+`;
+
+const MaxButton = styled.button`
+	height: 22px;
+	padding: 4px 10px;
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	border-radius: 11px;
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	line-height: 13px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	cursor: pointer;
 `;
 
 export default DepositMarginModal;

@@ -4,25 +4,25 @@ import styled from 'styled-components';
 type OrderSizingInputProps = {
 	value?: string | number;
 	onChange?: React.ChangeEventHandler<HTMLInputElement>;
-	synth: string;
+	right: React.ReactNode;
 	style?: React.CSSProperties;
 	className?: string;
 };
 
-const OrderSizingInput: React.FC<OrderSizingInputProps> = ({
+const CustomInput: React.FC<OrderSizingInputProps> = ({
 	value,
 	onChange,
-	synth,
+	right,
 	style,
 	className,
 }) => (
-	<OrderSizingInputContainer style={style} className={className}>
+	<CustomInputContainer style={style} className={className}>
 		<input value={value} onChange={onChange} />
-		<span>{synth}</span>
-	</OrderSizingInputContainer>
+		{typeof right === 'string' ? <span>{right}</span> : right}
+	</CustomInputContainer>
 );
 
-const OrderSizingInputContainer = styled.div`
+const CustomInputContainer = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -61,4 +61,4 @@ const OrderSizingInputContainer = styled.div`
 	}
 `;
 
-export default OrderSizingInput;
+export default CustomInput;

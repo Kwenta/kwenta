@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Synths } from 'constants/currency';
-import OrderSizingInput from 'components/Input/OrderSizingInput';
+import CustomInput from 'components/Input/CustomInput';
 
 type OrderSizingProps = {
 	assetRate: number;
@@ -49,15 +49,15 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 				Amount <span>— Set order size</span>
 			</OrderSizingTitle>
 
-			<OrderSizingInput
-				synth={marketAsset || Synths.sUSD}
+			<CustomInput
+				right={marketAsset || Synths.sUSD}
 				value={amount}
 				onChange={(e) => handleAmountChange(e.target.value)}
 				style={{ marginBottom: '8px' }}
 			/>
 
-			<OrderSizingInput
-				synth={Synths.sUSD}
+			<CustomInput
+				right={Synths.sUSD}
 				value={usdAmount}
 				onChange={(e) => handleUsdAmountChange(e.target.value)}
 			/>
