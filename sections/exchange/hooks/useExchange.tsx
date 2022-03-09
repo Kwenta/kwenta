@@ -729,7 +729,7 @@ const useExchange = ({
 				);
 
 				const gas = {
-					gasPrice: gasPriceInWei(gasPrice),
+					gasPrice: gasPriceWei,
 					gasLimit: normalizeGasLimit(Number(gasEstimate)),
 				};
 

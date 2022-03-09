@@ -79,6 +79,7 @@ const useGas = () => {
 		isCustomGasPrice,
 		isMainnet,
 		selectedGas.baseFeePerGas,
+		selectedGas.maxFeePerGas,
 		selectedGas.maxPriorityFeePerGas,
 	]);
 
