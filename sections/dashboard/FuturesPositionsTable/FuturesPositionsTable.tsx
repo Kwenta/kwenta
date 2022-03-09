@@ -24,8 +24,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 		return futuresPositions
 			.map((position: PositionHistory, i: number) => {
 				const market = futuresMarkets.find(({ asset }) => asset === position.asset);
-				console.log(position)
-				console.log(market)
 			
 				return {
 					market: position.asset,
