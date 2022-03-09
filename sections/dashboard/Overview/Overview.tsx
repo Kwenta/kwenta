@@ -35,14 +35,14 @@ const Overview: FC = () => {
 		() => [
 			{
 				name: PositionsTab.FUTURES,
-				label: 'Futures Positions',
+				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositions.length > 0 ? futuresPositions.length : undefined,
 				active: activePositionsTab === PositionsTab.FUTURES,
 				onClick: () => { setActivePositionsTab(PositionsTab.FUTURES) },
 			},
 			{
 				name: PositionsTab.SHORTS,
-				label: 'Shorts',
+				label: t('dashboard.overview.positions-tabs.shorts'),
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
@@ -50,7 +50,7 @@ const Overview: FC = () => {
 			},
 			{
 				name: PositionsTab.SPOT,
-				label: 'Spot Balances',
+				label: t('dashboard.overview.positions-tabs.spot'),
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SPOT,
@@ -64,13 +64,13 @@ const Overview: FC = () => {
 		() => [
 			{
 				name: MarketsTab.FUTURES,
-				label: 'Futures Markets',
+				label: t('dashboard.overview.markets-tabs.futures'),
 				active: activeMarketsTab === MarketsTab.FUTURES,
 				onClick: () => { setActiveMarketsTab(MarketsTab.FUTURES) },
 			},
 			{
 				name: MarketsTab.SPOT,
-				label: 'Spot Markets',
+				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
 				disabled: true,
 				onClick: () => { setActiveMarketsTab(MarketsTab.SPOT) },

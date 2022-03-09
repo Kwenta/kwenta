@@ -365,6 +365,15 @@
 				"avg-open-close": "Avg. Open/Close",
 				"pnl": "Unrealized P&L",
 				"margin": "Margin"
+			},
+			"positions-tabs": {
+				"futures": "Futures Positions",
+				"shorts": "Shorts",
+				"spot": "Spot Balances"
+			},
+			"markets-tabs": {
+				"futures": "Futures Markets",
+				"spot": "Spot Markets"
 			}
 		},
 		"deprecated": {
