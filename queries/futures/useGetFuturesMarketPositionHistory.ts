@@ -52,7 +52,7 @@ const useGetFuturesMarketPositionHistory = (
 					{ market: marketAddress, account: walletAddress }
 				);
 
-				return response ? mapTradeHistory(response.futuresPositions) : [];
+				return response ? mapTradeHistory(response.futuresPositions, false) : [];
 			} catch (e) {
 				console.log(e);
 				return null;

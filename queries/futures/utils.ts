@@ -11,6 +11,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	FuturesTrade,
+	RawPosition,
 	PositionHistory,
 } from './types';
 
@@ -149,7 +150,7 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const mapTradeHistory = (futuresPositions: any[]): PositionHistory[] => {
+export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
 	return (
 		futuresPositions
 			?.map(
@@ -157,25 +158,16 @@ export const mapTradeHistory = (futuresPositions: any[]): PositionHistory[] => {
 					id,
 					lastTxHash,
 					timestamp,
+					market,
+					asset,
+					account,
 					isOpen,
 					isLiquidated,
-					entryPrice,
-					exitPrice,
 					size,
 					margin,
-					asset,
-				}: {
-					id: string;
-					lastTxHash: string;
-					timestamp: number;
-					isOpen: boolean;
-					isLiquidated: boolean;
-					entryPrice: string;
-					exitPrice: string;
-					size: string;
-					margin: string;
-					asset: string;
-				}) => {
+					entryPrice,
+					exitPrice
+				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);
@@ -184,13 +176,15 @@ export const mapTradeHistory = (futuresPositions: any[]): PositionHistory[] => {
 						id: Number(id.split('-')[1].toString()),
 						transactionHash: lastTxHash,
 						timestamp: timestamp * 1000,
+						market: market,
+						asset: utils.parseBytes32String(asset),
+						account: account,
 						isOpen,
 						isLiquidated,
+						size: sizeWei.abs(),
+						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,
-						size: sizeWei.abs(),
-						asset: utils.parseBytes32String(asset),
-						margin: marginWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)
 							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),
@@ -199,6 +193,13 @@ export const mapTradeHistory = (futuresPositions: any[]): PositionHistory[] => {
 					};
 				}
 			)
+			.filter(({ isOpen }: { isOpen: boolean }) => {
+				if(openOnly) {
+					return isOpen;
+				} else {
+					return true;
+				}
+			})
 			.filter(({ id }: { id: number }) => id !== 0) ?? null
 	);
 };

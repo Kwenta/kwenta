@@ -7,6 +7,7 @@ import ROUTES from 'constants/routes';
 import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
 import Overview from '../Overview';
+import StakingInfo from '../StakingInfo';
 import {
 	MainContent,
 	LeftSideContent,
@@ -91,14 +92,14 @@ const DashboardContainer: FC = () => {
 		<>
 			<LeftSideContent>
 				<StyledTabList>
-					<TabGroupTitle>Trading</TabGroupTitle>
+					<TabGroupTitle>{t('futures-dashboard.titles.trading')}</TabGroupTitle>
 					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
 						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
 							{label}
 						</NavButton>
 					))}
 
-					<TabGroupTitle>Community</TabGroupTitle>
+					<TabGroupTitle>{t('futures-dashboard.titles.community')}</TabGroupTitle>
 					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
 						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
 							{label}
@@ -111,11 +112,17 @@ const DashboardContainer: FC = () => {
 					<Overview />
 				</TabPanel>
 			</MainContent>
-			<RightSideContent>
-			</RightSideContent>
+			<StyledRightSideContent>
+				<StakingInfo />
+			</StyledRightSideContent>
 		</>
 	);
 };
+
+const StyledRightSideContent = styled(RightSideContent)`
+	display: flex;
+	align-items: flex-end;
+`
 
 const StyledTabList = styled(TabList)`
 	display: flex;

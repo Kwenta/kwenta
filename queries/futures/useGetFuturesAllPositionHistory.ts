@@ -43,7 +43,7 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 					{ account: walletAddress }
 				);
 
-				return response ? mapTradeHistory(response.futuresPositions) : [];
+				return response ? mapTradeHistory(response.futuresPositions, false) : [];
 			} catch (e) {
 				console.log(e);
 				return null;

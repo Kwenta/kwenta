@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 import Text from 'components/Text';
 import Button from 'components/Button';
-import { KwentaText, Title, Description } from '../common';
+import BigText from 'components/Text/BigText';
+import { Title, Description } from '../common';
 
 const Rewards: React.FC = () => {
 	return (
@@ -10,8 +11,8 @@ const Rewards: React.FC = () => {
 			<RewardsHeading variant="h5">Kwenta Rewards Total</RewardsHeading>
 			<RewardsBody>
 				<Title>Your Total Rewards</Title>
-				<KwentaText white>734.72</KwentaText>
-				<StyledDescription>Total KWENTA claimable when live.</StyledDescription>
+				<BigText white logo>734.72</BigText>
+				<StyledDescription>Total KWENTA claimable one live.</StyledDescription>
 				<Button disabled fullWidth>
 					Claim KWENTA
 				</Button>
