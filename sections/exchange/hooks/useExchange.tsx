@@ -815,11 +815,11 @@ const useExchange = ({
 
 						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
 					} else {
-						isAtomic = true;
+						isAtomic = false;
 
 						const exchangeParams = getExchangeParams(isAtomic);
 
-						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+						tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 					}
 				}
 
