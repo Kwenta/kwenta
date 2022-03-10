@@ -26,8 +26,8 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const futuresMarketsPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositions = futuresMarketsPositionQuery?.data ?? [];
+	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositions = futuresPositionQuery?.data ?? [];
 	
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
