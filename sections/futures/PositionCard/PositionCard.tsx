@@ -121,7 +121,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>{}</StyledValue>
+						<StyledValue>{formatCurrency(Synths.sUSD, zeroBN, { sign: '$' })}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>

@@ -113,7 +113,9 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 				);
 				setGasLimit(Number(estimate));
 			} catch (e) {
+				// @ts-ignore
 				console.log(e.message);
+				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
 		};
@@ -140,6 +142,7 @@ const EditMarginModal: FC<EditMarginModalProps> = ({
 			}
 		} catch (e) {
 			console.log(e);
+			// @ts-ignore
 			setError(e?.data?.message ?? e.message);
 		}
 	};

@@ -33,7 +33,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
 	sUSDBalance,
-	accessibleMargin,
 	market,
 }) => {
 	const { synthetixjs } = Connector.useContainer();

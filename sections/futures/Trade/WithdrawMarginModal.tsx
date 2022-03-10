@@ -31,7 +31,6 @@ type WithdrawMarginModalProps = {
 const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
-	sUSDBalance,
 	accessibleMargin,
 	market,
 }) => {
