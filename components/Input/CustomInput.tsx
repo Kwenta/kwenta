@@ -37,7 +37,7 @@ const CustomInputContainer = styled.div`
 	input {
 		display: flex;
 		flex: 1;
-		margin-right: 14px;
+		margin-right: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;
 		line-height: 22px;

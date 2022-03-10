@@ -86,9 +86,9 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				);
 				setGasLimit(Number(estimate));
 			} catch (e) {
-				// @ts-expect-error
+				// @ts-ignore
 				console.log(e.message);
-				// @ts-expect-error
+				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
 		};
@@ -115,7 +115,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			}
 		} catch (e) {
 			console.log(e);
-			// @ts-expect-error
+			// @ts-ignore
 			setError(e?.data?.message ?? e.message);
 		}
 	};

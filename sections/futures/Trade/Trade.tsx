@@ -153,6 +153,7 @@ const Trade: React.FC<TradeProps> = () => {
 			setTradeSize('');
 		} else {
 			setLeverage(value);
+			console.log(marketAssetRate);
 			const newTradeSize =
 				marketAssetRate === 0
 					? 0
@@ -190,7 +191,7 @@ const Trade: React.FC<TradeProps> = () => {
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
-				// @ts-expect-error
+				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
 		};
@@ -228,7 +229,7 @@ const Trade: React.FC<TradeProps> = () => {
 			}
 		} catch (e) {
 			console.log(e);
-			// @ts-expect-error
+			// @ts-ignore
 			setError(e?.data?.message ?? e.message);
 		}
 	};

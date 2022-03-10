@@ -106,7 +106,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 						: wei(size).mul(wei(price)).div(wei(margin)).abs(),
 				});
 			} catch (e) {
-				// @ts-expect-error
+				// @ts-ignore
 				console.log(e.message);
 			}
 		};
