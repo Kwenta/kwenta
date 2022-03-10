@@ -7,7 +7,7 @@ import { formatNumber } from 'utils/formatters/number';
 
 import { StyledCurrencyKey, StyledPrice } from './common';
 
-import { DEFAULT_TOKEN_DECIMALS } from 'constants/defaults';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 type AccruedInterestColType = {
 	cellProps: CellProps<HistoricalShortPosition>;
@@ -28,7 +28,7 @@ const AccruedInterestCol: FC<AccruedInterestColType> = ({ cellProps }) => {
 			<StyledPrice>
 				{collateralShortPosition != null
 					? formatNumber(collateralShortPosition.accruedInterest, {
-							minDecimals: DEFAULT_TOKEN_DECIMALS,
+							maxDecimals: DEFAULT_CRYPTO_DECIMALS,
 					  })
 					: NO_VALUE}
 			</StyledPrice>

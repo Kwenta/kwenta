@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -28,6 +28,7 @@ import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
+import getENSName from './getENSName';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -36,7 +37,8 @@ type UserMenuProps = {
 const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, signer, staticMainnetProvider } = Connector.useContainer();
+	const [ensName, setEns] = useState<string>('');
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
@@ -55,6 +57,17 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
 		[redeemableDeprecatedSynths?.totalUSDBalance]
 	);
+
+	useEffect(() => {
+		if (signer) {
+			signer.getAddress().then((account: string) => {
+				const _account = account;
+				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
+					if (_ensName !== null) setEns(_ensName);
+				});
+			});
+		}
+	}, [signer]);
 
 	return (
 		<>
@@ -92,13 +105,14 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
+							className={ensName ? 'lowercase' : ''}
 							size="md"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
 						>
 							<StyledConnectionDot />
-							{truncatedWalletAddress}
+							{ensName ? ensName : truncatedWalletAddress}
 						</WalletButton>
 					) : (
 						<Button
@@ -134,6 +148,7 @@ const Menu = styled.div`
 const WalletButton = styled(Button)`
 	display: inline-flex;
 	align-items: center;
+	text-transform: ${(props) => (props.className === 'lowercase' ? 'lowercase' : '')};
 	font-family: ${(props) => props.theme.fonts.mono};
 	background-color: ${(props) => props.theme.colors.elderberry};
 	border: 1px solid ${(props) => props.theme.colors.navy};

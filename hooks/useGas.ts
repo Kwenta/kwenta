@@ -1,13 +1,11 @@
-import { useMemo, useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
+import useSynthetixQueries, { GasPrice, GasPrices } from '@synthetixio/queries';
 import { BigNumber } from 'ethers';
-
-import useSynthetixQueries, { GasPrice } from '@synthetixio/queries';
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
-import { normalizeGasLimit, gasPriceInWei } from 'utils/network';
+import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
+import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
-// TODO add support for 1559. For now use maxFeePerGas (legacy)
 export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => {
 	const { gasPrice, maxFeePerGas } = gasPriceObject;
 	if (gasPrice) {
@@ -19,21 +17,41 @@ export const parseGasPriceObject = (gasPriceObject: GasPrice): number | null => 
 	}
 };
 
+type GasConfigL1 = {
+	maxPriorityFeePerGas?: BigNumber;
+	maxFeePerGas?: BigNumber;
+};
+
+type GasConfigL2 = {
+	gasPrice?: BigNumber;
+};
+
+type GasConfig = GasConfigL1 | GasConfigL2;
+
 const useGas = () => {
+	const isMainnet = useRecoilValue(isMainnetState);
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
-	const customGasPrice = useRecoilValue(customGasPriceState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
-	);
+	const [gasConfig, setGasConfig] = useState<GasConfig>({} as GasConfig);
+	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
+	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
+	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
+	const isCustomGasPrice: boolean = useMemo(() => customGasPrice !== '', [customGasPrice]);
+
+	const selectedGas: GasPrice = useMemo(() => gasPrices?.[gasSpeed] ?? {}, [gasPrices, gasSpeed]);
+
+	const gasPrice = useMemo(() => {
+		return isCustomGasPrice
+			? Number(customGasPrice)
+			: gasPrices != null
+			? parseGasPriceObject(gasPrices[gasSpeed])
+			: null;
+	}, [customGasPrice, isCustomGasPrice, gasPrices, gasSpeed]);
+
+	const gasPriceWei = useMemo(() => {
+		return !gasPrice ? 0 : gasPriceInWei(gasPrice);
+	}, [gasPrice]);
 
 	const getGasLimitEstimate = useCallback(async (getGasEstimate: () => Promise<BigNumber>): Promise<
 		number | null
@@ -46,10 +64,42 @@ const useGas = () => {
 		}
 	}, []);
 
+	useEffect(() => {
+		if (!isMainnet) {
+			setCustomGasPrice('');
+		}
+	}, [isMainnet, setCustomGasPrice]);
+
+	useEffect(() => {
+		const maxPriorityFeePerGas = selectedGas.maxPriorityFeePerGas;
+		const maxFeePerGasValue = isCustomGasPrice ? gasPriceWei : selectedGas.maxFeePerGas;
+
+		const l1GasConfig = { maxPriorityFeePerGas, maxFeePerGas: maxFeePerGasValue };
+		const l2GasConfig = { gasPrice: gasPriceWei };
+
+		const config = isMainnet ? l1GasConfig : l2GasConfig;
+
+		setGasConfig(config as GasPrice);
+	}, [
+		gasPriceWei,
+		isCustomGasPrice,
+		isMainnet,
+		selectedGas.baseFeePerGas,
+		selectedGas.maxFeePerGas,
+		selectedGas.maxPriorityFeePerGas,
+	]);
+
 	return {
 		gasPrice,
-		gasPriceWei: !gasPrice ? 0 : gasPriceInWei(gasPrice),
+		gasPriceWei,
 		getGasLimitEstimate,
+		gasPrices,
+		gasSpeed,
+		setGasSpeed,
+		isCustomGasPrice,
+		customGasPrice,
+		setCustomGasPrice,
+		gasConfig,
 	};
 };
 
