@@ -39,12 +39,12 @@ export type HistoricalRatesUpdates = {
 
 export type Candle = {
 	id: string;
-	synth: CurrencyKey;
-	open: number;
-	high: number;
-	low: number;
-	average: number;
-	close: number;
+	synth: string;
+	open: BigInt;
+	high: BigInt;
+	low: BigInt;
+	average?: BigInt;
+	close: BigInt;
 	timestamp: BigInt;
 };
 
