@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 
-type TabButtonProps = {
+export type TabButtonProps = {
 	title: string;
 	detail?: string;
 	badge?: number;
@@ -26,6 +26,7 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...
 const StyledButton = styled(Button)`
 	height: initial;
 	display: flex;
+	align-items: center;
 
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -37,6 +38,7 @@ const StyledButton = styled(Button)`
 	}
 
 	.title {
+		align-text: center;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 

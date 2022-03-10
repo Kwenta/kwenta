@@ -139,13 +139,19 @@ export const QUERY_KEYS = {
 			markets,
 			walletAddress,
 		],
+		AccountPositions: (walletAddress: string | null) => [
+			'futures',
+			'accountPositions',
+			walletAddress
+		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
 		Stats: ['futures', 'stats'],
 		AverageLeverage: ['futures', 'averageLeverage'],
-		CumulativeVolume: ['futurs', 'cumulativeVolume'],
+		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: ['futures', 'totalTrades'],
+		TotalVolume: ['futures', 'totalVolume'],
 	},
 };
 

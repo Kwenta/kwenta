@@ -79,17 +79,34 @@ export type FuturesOpenInterest = {
 	};
 };
 
-export type PositionHistory = {
-	id: number;
-	transactionHash: string;
+export type RawPosition = {
+	id: string;
+	lastTxHash: string;
 	timestamp: number;
+	market: string;
+	asset: string;
+	account: string;
 	isOpen: boolean;
 	isLiquidated: boolean;
+	size: Wei;
+	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
+};
+
+export type PositionHistory = {
+	id: Number;
+	transactionHash: string;
+	timestamp: number;
+	market: string;
+	asset: string;
+	account: string;
+	isOpen: boolean;
+	isLiquidated: boolean;
 	size: Wei;
-	asset?: string;
 	margin: Wei;
+	entryPrice: Wei;
+	exitPrice: Wei;
 	leverage: Wei;
 	side: PositionSide;
 	pnl: Wei;
@@ -137,6 +154,7 @@ export type FuturesStat = {
 	pnlWithFeesPaid: string;
 	liquidations: number;
 	totalTrades: number;
+	totalVolume: number;
 };
 
 export type FuturesCumulativeStats = {

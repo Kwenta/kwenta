@@ -13,7 +13,7 @@ const Button = styled.button<ButtonProps>`
 	height: 41px;
 	cursor: pointer;
 	position: relative;
-	border-radius: 16px;
+	border-radius: 10px;
 	padding: 0 14px;
 	box-sizing: border-box;
 	text-transform: capitalize;

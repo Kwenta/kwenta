@@ -78,7 +78,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue.toString(
+	const weiAsStringWithDecimals = weiValue.abs().toString(
 		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
 	);
 

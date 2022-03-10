@@ -24,6 +24,7 @@ const colors = {
 	navy: '#1A1A2E',
 	stormcloud: '#57616B',
 	blueberry: '#9F9EC5',
+	purple: '#8168AA',
 	silver: '#8A939F',
 	white: '#FFFFFF',
 	red: '#CB366D',

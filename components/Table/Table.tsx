@@ -241,7 +241,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 	height: 100%;
 	overflow-x: auto;
 	position: relative;
-	border: 1px solid ${(props) => props.theme.colors.navy};
+	border: 1px solid #3D3C3C;
 	border-radius: 4px;
 
 	${(props) =>
@@ -251,7 +251,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				max-height: calc(100% - ${CARD_HEIGHT});
 			}
 			${TableCell} {
-				color: ${(props) => props.theme.colors.white};
+				color: ${(props) => props.theme.colors.common.primaryWhite};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
@@ -260,8 +260,9 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				margin-bottom: 2px;
 			}
 			${TableCellHead} {
-				color: ${(props) => props.theme.colors.white};
-				border-bottom: 1px solid ${(props) => props.theme.colors.navy};
+				color: ${(props) => props.theme.colors.common.secondaryGray};
+				font-family: ${(props) => props.theme.fonts.mono};
+				border-bottom: 1px solid #3D3C3C;
 			}
 			${TableBodyRow} {
 			}
@@ -271,13 +272,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 const StyledSortDownIcon = styled(Svg)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const StyledSortUpIcon = styled(Svg)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export default Table;

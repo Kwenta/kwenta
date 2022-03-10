@@ -6,9 +6,10 @@ const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 	prettyURLsDisabled ? `${baseURL}?${queryParam}=${path}` : `${baseURL}/${path}`;
 
 export const ROUTES = {
-	Home: '/',
-	Position: normalizeRoute(`/`, 'position', 'tab'),
-	Trades: normalizeRoute(`/`, 'trades', 'tab'),
+	Home: {
+		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
+		Positions: normalizeRoute('/dashboard', 'positions', 'tab')
+	},
 	Dashboard: {
 		Home: '/dashboard',
 		Convert: normalizeRoute('/dashboard', 'convert', 'tab'),
@@ -16,6 +17,7 @@ export const ROUTES = {
 		Transactions: normalizeRoute('/dashboard', 'transactions', 'tab'),
 		Deprecated: normalizeRoute('/dashboard', 'deprecated', 'tab'),
 	},
+	Trades: normalizeRoute(`/`, 'trades', 'tab'),
 	Exchange: {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
@@ -50,6 +52,9 @@ export const ROUTES = {
 			normalizeRoute(`/shorting/manage/increase-position`, id, 'id'),
 		ManageShortClosePosition: (id: string) =>
 			normalizeRoute(`/shorting/manage/close-position`, id, 'id'),
+	},
+	Earn: {
+		Home: '/earn',
 	},
 };
 

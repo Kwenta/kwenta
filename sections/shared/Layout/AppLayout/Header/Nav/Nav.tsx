@@ -20,8 +20,10 @@ const Nav: FC = () => {
 				{menuLinks.map(({ i18nLabel, link }) => {
 					const isActive =
 						asPath === link ||
+						(asPath.includes('dashboard') && link.includes('dashboard')) ||
 						(asPath.includes('market') && link.includes('market')) ||
-						(asPath.includes('leaderboard') && link.includes('leaderboard'));
+						(asPath.includes('leaderboard') && link.includes('leaderboard')) ||
+						(asPath.includes('earn') && link.includes('earn'));
 					return (
 						<MenuLinkItem key={link} isActive={isActive}>
 							<Link href={link}>
@@ -44,8 +46,10 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 	a {
 		${linkCSS};
 		font-family: ${(props) => props.theme.fonts.bold};
+		font-size: 15px;
 		text-transform: capitalize;
-		color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.silver)};
+		color: ${(props) =>
+			props.isActive ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
 		&:hover {
 			color: ${(props) => props.theme.colors.white};
 		}

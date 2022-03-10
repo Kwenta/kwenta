@@ -151,7 +151,7 @@ export const AbsoluteCenteredDiv = styled.div`
 export const PageContent = styled.section`
 	position: relative;
 	margin: 0 auto;
-	padding: 0 20px;
+	padding: 0 30px;
 	width: 100%;
 	flex-grow: 1;
 	${(props) => props.theme.animations.show};
@@ -291,17 +291,25 @@ export const FullHeightContainer = styled(FlexDiv)`
 
 export const MainContent = styled(FlexDivCol)`
 	flex-grow: 1;
-	max-width: 1000px;
+	max-width: 915px;
 	position: relative;
 	//overflow: auto;
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 `;
 
 export const RightSideContent = styled(FlexDivCol)`
-	width: 380px;
+	width: 291px;
 	background-color: transparent;
 	padding: ${SPACING_FROM_HEADER} 0 5px 0;
-	margin-right: -20px;
+	flex-shrink: 0;
+	position: relative;
+	height: 100%;
+`;
+
+export const LeftSideContent = styled(FlexDivCol)`
+	width: 174px;
+	background-color: transparent;
+	padding: ${SPACING_FROM_HEADER} 0 5px 0;
 	flex-shrink: 0;
 	position: relative;
 	height: 100%;

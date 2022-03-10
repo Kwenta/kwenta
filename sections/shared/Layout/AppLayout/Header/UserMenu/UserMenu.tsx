@@ -61,24 +61,26 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 			<Container>
 				<FlexDivCentered>
 					<Menu>
-						<NetworksSwitcher />
 						{isWalletConnected && (
-							<MenuButton
-								onClick={() => {
-									setNotificationsModalOpened(!notificationsModalOpened);
-									setSettingsModalOpened(false);
-									if (hasOrdersNotification) {
-										setHasOrdersNotification(false);
-									}
-								}}
-								isActive={notificationsModalOpened}
-							>
-								{hasOrdersNotification || hasRedeemableDeprecatedSynths ? (
-									<Svg src={NotificationAlertIcon} />
-								) : (
-									<Svg src={NotificationIcon} />
-								)}
-							</MenuButton>
+							<>
+								<NetworksSwitcher />
+								<MenuButton
+									onClick={() => {
+										setNotificationsModalOpened(!notificationsModalOpened);
+										setSettingsModalOpened(false);
+										if (hasOrdersNotification) {
+											setHasOrdersNotification(false);
+										}
+									}}
+									isActive={notificationsModalOpened}
+								>
+									{hasOrdersNotification || hasRedeemableDeprecatedSynths ? (
+										<Svg src={NotificationAlertIcon} />
+									) : (
+										<Svg src={NotificationIcon} />
+									)}
+								</MenuButton>
+							</>
 						)}
 						<MenuButton
 							onClick={() => {
@@ -92,7 +94,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					</Menu>
 					{isWalletConnected ? (
 						<WalletButton
-							size="md"
+							size="sm"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
@@ -102,8 +104,8 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						</WalletButton>
 					) : (
 						<ConnectButton
-							variant={isTextButton ? 'text' : undefined}
 							size="sm"
+							variant="outline"
 							onClick={connectWallet}
 							data-testid="connect-wallet"
 							mono
@@ -134,14 +136,8 @@ const Menu = styled.div`
 `;
 
 const WalletButton = styled(Button)`
-	display: inline-flex;
-	align-items: center;
 	font-family: ${(props) => props.theme.fonts.mono};
-	background-color: ${(props) => props.theme.colors.elderberry};
-	border: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
-	border-radius: 4px;
-	height: 28px;
+	font-size: 13px;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`

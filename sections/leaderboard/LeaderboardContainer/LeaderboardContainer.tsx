@@ -1,12 +1,14 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
-import { TabList, TabPanel, TabButton } from 'components/Tab';
+import { TabList, TabPanel } from 'components/Tab';
+import TabButton from 'components/Button/TabButton';
 import Leaderboard from '../Leaderboard';
 import Statistics from '../Statistics';
+import Search from 'components/Table/Search';
 
 enum Tab {
 	Leaderboard = 'leaderboard',
@@ -17,6 +19,8 @@ const Tabs = Object.values(Tab);
 
 const LeaderboardContainer: FC = () => {
 	const { t } = useTranslation();
+	const [searchTerm, setSearchTerm] = useState<string | null>();
+
 	const router = useRouter();
 
 	const tabQuery = useMemo(() => {
@@ -49,17 +53,30 @@ const LeaderboardContainer: FC = () => {
 		[t, activeTab, router]
 	);
 
+	const onChangeSearch = (text: string) => {
+		setSearchTerm(text?.toLowerCase());
+	};
+
 	return (
 		<>
-			<StyledTabList>
+			<TabButtonsContainer>
 				{TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} name={name} active={active} onClick={onClick}>
-						{label}
-					</TabButton>
+					<TabButton
+						key={name}
+						title={label}
+						active={active}
+						onClick={onClick}
+					/>
 				))}
-			</StyledTabList>
+				<Search
+					onChange={onChangeSearch}
+					disabled={!(activeTab === Tab.Leaderboard)}
+				/>
+			</TabButtonsContainer>
 			<TabPanel name={Tab.Leaderboard} activeTab={activeTab}>
-				<Leaderboard />
+				<Leaderboard
+					searchTerm={searchTerm}
+				/>
 			</TabPanel>
 			<TabPanel name={Tab.Statistics} activeTab={activeTab}>
 				<Statistics />
@@ -68,8 +85,15 @@ const LeaderboardContainer: FC = () => {
 	);
 };
 
-const StyledTabList = styled(TabList)`
-	margin-bottom: 12px;
+const TabButtonsContainer = styled.div`
+	display: flex;
+	margin-top: 16px;
+	height: 35px;
+
+	& > button {
+		margin-right: 14px;
+	}
 `;
+
 
 export default LeaderboardContainer;

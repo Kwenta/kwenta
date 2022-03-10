@@ -16,8 +16,9 @@
 			"shorting": "shorting",
 			"markets": "markets",
 			"futures": "futures",
-			"leaderboard": "leaderboard & statistics",
-			"futures-dashboard": "dashboard"
+			"leaderboard": "leaderboard",
+			"futures-dashboard": "dashboard",
+			"earn": "earn"
 		},
 		"networks-switcher": {
 			"l2": "Switch to L2",
@@ -357,6 +358,24 @@
 			"settling-fee": "Settling...",
 			"settle-fee": "Settle fee"
 		},
+		"overview": {
+			"futures-positions-table": {
+				"market": "Market",
+				"position": "Position",
+				"avg-open-close": "Avg. Open/Close",
+				"pnl": "Unrealized P&L",
+				"margin": "Margin"
+			},
+			"positions-tabs": {
+				"futures": "Futures Positions",
+				"shorts": "Shorts",
+				"spot": "Spot Balances"
+			},
+			"markets-tabs": {
+				"futures": "Futures Markets",
+				"spot": "Spot Markets"
+			}
+		},
 		"deprecated": {
 			"info": "Deprecated synths can be exchanged for sUSD at any time at the fixed redemption rate.",
 			"button": {
@@ -693,9 +712,11 @@
 				"rank": "Rank",
 				"trader": "Trader",
 				"total-trades": "Total Trades",
+				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "Total PnL"
+				"total-pnl": "PnL ($)",
+				"percent-pnl": "PnL (%)"
 			}
 		},
 		"statistics": {
@@ -816,6 +837,21 @@
 	},
 	"futures-dashboard": {
 		"page-title": "Futures Dashboard | Kwenta",
+		"titles": {
+			"trading": "Trading",
+			"community": "Community",
+			"staking": "Stake & Rewards"
+		},
+		"tabs": {
+			"nav": {
+				"overview": "Overview",
+				"positions": "Positions",
+				"rewards": "Rewards",
+				"markets": "Markets",
+				"governance": "Governance",
+				"staking": "Staking"
+			}
+		},
 		"position": {
 			"tab": "open positions"
 		},
