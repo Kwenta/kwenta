@@ -64,20 +64,13 @@ import {
 	baseChartTypeState,
 	quoteChartTypeState,
 } from 'store/app';
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-} from 'store/wallet';
+import { isWalletConnectedState, walletAddressState, isL2State, networkState } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, GasInfo } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -85,13 +78,12 @@ import L2Gas from 'containers/L2Gas';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
-import { GasPrices } from '@synthetixio/queries';
 
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -128,7 +120,6 @@ const useExchange = ({
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
 	const {
-		useEthGasPriceQuery,
 		useETHBalanceQuery,
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
@@ -167,10 +158,9 @@ const useExchange = ({
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
+	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
 	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
 	// 	enabled: txProvider === '1inch',
 	// });
@@ -206,7 +196,6 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
@@ -554,16 +543,6 @@ const useExchange = ({
 		setBaseCurrencyAmount('');
 	}
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
-	);
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -595,7 +574,6 @@ const useExchange = ({
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (gasInfo == null && submissionDisabledReason == null) {
-				const gasPriceWei = gasPrice ? gasPriceInWei(gasPrice) : null;
 				const gasEstimate = await getGasEstimateForExchange(gasPriceWei);
 				setGasInfo(gasEstimate);
 			}
@@ -713,11 +691,10 @@ const useExchange = ({
 						oneInchApproveAddress,
 						ethers.constants.MaxUint256
 					);
-					const gasPriceWei = gasPriceInWei(gasPrice);
 
 					const tx = await contract.approve(oneInchApproveAddress, ethers.constants.MaxUint256, {
 						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
-						gasPrice: gasPriceWei,
+						...gasConfig,
 					});
 
 					if (tx != null) {
@@ -752,7 +729,7 @@ const useExchange = ({
 				);
 
 				const gas = {
-					gasPrice: gasPriceInWei(gasPrice),
+					gasPrice: gasPriceWei,
 					gasLimit: normalizeGasLimit(Number(gasEstimate)),
 				};
 
@@ -791,8 +768,6 @@ const useExchange = ({
 
 				let tx: ethers.ContractTransaction | null = null;
 
-				const gasPriceWei = gasPriceInWei(gasPrice);
-
 				if (txProvider === '1inch' && tokensMap != null) {
 					tx = await swap1Inch(
 						quoteCurrencyTokenAddress!,
@@ -807,8 +782,8 @@ const useExchange = ({
 					setGasInfo(gasInfo);
 
 					const gas = {
-						gasPrice: gasPriceWei,
 						gasLimit: gasInfo?.limit,
+						...gasConfig,
 					};
 					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 				}
@@ -875,6 +850,8 @@ const useExchange = ({
 		slippage,
 		tokensMap,
 		synthetixjs,
+		gasPriceWei,
+		gasConfig,
 	]);
 
 	useEffect(() => {
@@ -1193,7 +1170,7 @@ const useExchange = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					gasPrices={ethGasPriceQuery.data}
+					gasPrices={gasPrices}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}
