@@ -53,13 +53,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: F
 					price: market.price.toNumber(),
 					volume: volume?.toNumber() || 0,
 					pastPrice: pastPrice?.price || '-',
-					priceChange: (pastPrice?.price - market.price.toNumber()) / market.price.toNumber() || '-',
+					priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
 					fundingRate: market.currentFundingRate.toNumber(),
 					openInterest: market.marketSize.toNumber(),
 					openInterestNative: market.marketSize.div(market.price).toNumber()
 				}
 			})
 	}, [synthsMap, futuresMarkets, futuresVolume, dailyPriceChanges]);
+	console.log(data)
 
 	return (
 		<TableContainer>
