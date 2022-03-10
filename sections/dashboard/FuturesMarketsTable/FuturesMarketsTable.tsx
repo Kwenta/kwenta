@@ -5,11 +5,12 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import Connector from 'containers/Connector';
 import { FuturesMarket } from 'queries/futures/types';
-
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { DEFAULT_DATA } from './constants'
+import { DEFAULT_DATA } from './constants';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { Price } from 'queries/rates/types';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[]
@@ -18,6 +19,10 @@ type FuturesMarketsTableProps = {
 const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
+
+	const synthList = futuresMarkets.map(({ asset }) => asset);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
@@ -31,25 +36,22 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: F
 	let data = useMemo(() => {
 		return futuresMarkets
 			.map((market: FuturesMarket, i: number) => {
-				const description = getSynthDescription(market.asset)
+				const description = getSynthDescription(market.asset);
+				const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 
 				return {
 					market: market.asset,
 					synth: synthsMap[market.asset],
 					description: description,
 					price: market.price.toNumber(),
+					pastPrice: pastPrice?.price || '-',
+					priceChange: (pastPrice?.price - market.price.toNumber()) / market.price.toNumber() || '-',
 					fundingRate: market.currentFundingRate.toNumber(),
 					openInterest: market.marketSize.toNumber(),
 					openInterestNative: market.marketSize.div(market.price).toNumber()
-
-					// position: position.side,
-					// avgOpenClose: position.entryPrice.toNumber(),
-					// pnl: position.entryPrice.sub(market?.price).toNumber(),
-					// pnlPct: position.entryPrice.sub(market?.price).div(position.entryPrice),
-					// margin: position.margin.toNumber()
 				}
 			})
-	}, [synthsMap, futuresMarkets]);
+	}, [synthsMap, futuresMarkets, dailyPriceChanges]);
 
 	return (
 		<TableContainer>
@@ -89,30 +91,29 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: F
 						},
 						width: 100,
 					},
-					// {
-					// 	Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-change')}</TableHeader>,
-					// 	accessor: 'dailyChange',
-					// 	Cell: (cellProps: CellProps<any>) => {
-					// 		return cellProps.row.original.avgOpenClose === '-' ? <DefaultCell>-</DefaultCell> :
-					// 		<Currency.Price
-					// 			currencyKey={Synths.sUSD}
-					// 			price={cellProps.row.original.avgOpenClose}
-					// 			sign={'$'}
-					// 			conversionRate={1}
-					// 		/>
-					// 	},
-					// 	width: 125,
-					// },
+					{
+						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.daily-change')}</TableHeader>,
+						accessor: 'priceChange',
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.priceChange === '-' ? <DefaultCell>-</DefaultCell> :
+								<ChangePercent
+									value={cellProps.row.original.priceChange}
+									decimals={2}
+									className="change-pct"
+								/>
+						},
+						width: 125,
+					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-markets-table.funding-rate')}</TableHeader>,
 						accessor: 'fundingRate',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.fundingRate === '-' ? <DefaultCell>-</DefaultCell> :
-							<ChangePercent
-								value={cellProps.row.original.fundingRate}
-								decimals={6}
-								className="change-pct"
-							/>
+								<ChangePercent
+									value={cellProps.row.original.fundingRate}
+									decimals={6}
+									className="change-pct"
+								/>
 						},
 						width: 125,
 					},
