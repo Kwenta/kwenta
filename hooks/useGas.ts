@@ -65,6 +65,12 @@ const useGas = () => {
 	}, []);
 
 	useEffect(() => {
+		if (!isMainnet) {
+			setCustomGasPrice('');
+		}
+	}, [isMainnet, setCustomGasPrice]);
+
+	useEffect(() => {
 		const maxPriorityFeePerGas = selectedGas.maxPriorityFeePerGas;
 		const maxFeePerGasValue = isCustomGasPrice ? gasPriceWei : selectedGas.maxFeePerGas;
 
