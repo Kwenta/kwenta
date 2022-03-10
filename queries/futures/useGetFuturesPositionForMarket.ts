@@ -19,8 +19,6 @@ const useGetFuturesPositionForMarket = (
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
-	console.log(synthetixjs?.contracts);
-
 	return useQuery<FuturesPosition | null>(
 		QUERY_KEYS.Futures.Position(market || null, walletAddress || ''),
 		async () => {
