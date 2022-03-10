@@ -103,7 +103,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 		if (!amount || !gasLimit || !market || !gasPrice) return;
 		try {
 			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-			const marginAmount = wei(amount).toBN();
+			const marginAmount = computeAmount();
 			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
 				gasLimit,
 				gasPrice: gasPriceInWei(gasPrice),
