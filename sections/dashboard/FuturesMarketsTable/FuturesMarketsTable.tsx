@@ -60,7 +60,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({ futuresMarkets }: F
 				}
 			})
 	}, [synthsMap, futuresMarkets, futuresVolume, dailyPriceChanges]);
-	console.log(data)
 
 	return (
 		<TableContainer>
