@@ -195,7 +195,7 @@ const Trade: React.FC<TradeProps> = () => {
 				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
 				const [gasEstimate, orderFee] = await Promise.all([
 					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
-					FuturesMarketContract.orderFee(walletAddress, sizeDelta.toBN()),
+					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);
 				setGasLimit(Number(gasEstimate));
 				setFeeCost(wei(orderFee.fee));

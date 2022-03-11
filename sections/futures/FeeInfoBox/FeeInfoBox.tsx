@@ -33,7 +33,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ transactionFee, feeCost }) => {
 					: NO_VALUE,
 				Total: formatCurrency(
 					selectedPriceCurrency.name as CurrencyKey,
-					feeCost?.add(transactionFee) ?? zeroBN,
+					feeCost?.add(transactionFee ?? 0) ?? zeroBN,
 					{
 						sign: selectedPriceCurrency.sign,
 						minDecimals: feeCost?.lt(0.01) ? 4 : 2,
