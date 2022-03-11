@@ -1,4 +1,4 @@
-import { RateUpdates } from './types';
+import { RateUpdates, Candle, Candles, Prices } from './types';
 import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
@@ -43,3 +43,12 @@ export const mockHistoricalRates = (periodInHours: number, rate = 1, points = 10
 
 	return rates;
 };
+
+export const mapLaggedDailyPrices = (prices: Candles): Prices => {
+	return prices.map((candle) => {
+		return {
+			synth: candle.synth,
+			price: Number(candle.average)
+		}
+	});
+}

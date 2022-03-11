@@ -43,6 +43,16 @@ export type Candle = {
 	open: BigInt;
 	high: BigInt;
 	low: BigInt;
+	average?: BigInt;
 	close: BigInt;
 	timestamp: BigInt;
 };
+
+export type Candles = Candle[];
+
+export type Price = {
+	synth: string;
+	price: number;
+}
+
+export type Prices = Price[];

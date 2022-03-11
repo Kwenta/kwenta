@@ -1,3 +1,4 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 export type PositionDetail = {
@@ -147,6 +148,11 @@ export type FuturesTradeWithPrice = {
 
 export type FuturesTrade = {
 	size: string;
+	asset: string;
+};
+
+export type FuturesVolumes = {
+	[asset: string]: Wei
 };
 
 export type FuturesStat = {

@@ -1,8 +1,9 @@
 import Table from 'components/Table';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
+import Connector from 'containers/Connector';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
@@ -20,14 +21,26 @@ type FuturesPositionTableProps = {
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions, futuresMarkets }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
+	const { synthsMap } = Connector.useContainer();
+
+	const getSynthDescription = useCallback(
+		(synth: string) => {
+			return t('common.currency.synthetic-currency-name', {
+				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+			});
+		},
+		[t, synthsMap]
+	);
 	
 	let data = useMemo(() => {
 		return futuresPositions
 			.map((position: PositionHistory, i: number) => {
 				const market = futuresMarkets.find(({ asset }) => asset === position.asset);
+				const description = getSynthDescription(position.asset)
 			
 				return {
 					market: position.asset,
+					description: description,
 					position: position.side,
 					avgOpenClose: position.entryPrice.toNumber(),
 					pnl: position.entryPrice.sub(market?.price).toNumber(),
@@ -35,23 +48,31 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({ futuresPositions
 					margin: position.margin.toNumber()
 				}
 			})
-	}, [futuresPositions, futuresMarkets]);
+	}, [futuresPositions, futuresMarkets, synthsMap]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data.length > 0 ? data : DEFAULT_DATA}
+				pageSize={5}
+				showPagination={true}
 				columns={[
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.market')}</TableHeader>,
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.market === '-' ? <DefaultCell>-</DefaultCell> :
-								<StyledOrderType>
+							<MarketContainer>
+								<IconContainer>
+									<StyledCurrencyIcon currencyKey={cellProps.row.original.market} />
+								</IconContainer>
+								<StyledText>
 									{cellProps.row.original.market}/sUSD
-								</StyledOrderType>
+								</StyledText>
+								<StyledValue>{cellProps.row.original.description}</StyledValue>
+							</MarketContainer>
 						},
-						width: 150,
+						width: 250,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-positions-table.position')}</TableHeader>,
@@ -126,6 +147,25 @@ const PnlContainer = styled.div`
 	}
 `
 
+const StyledCurrencyIcon = styled(Currency.Icon)`
+	width: 30px;
+	height: 30px;
+	margin-right: 8px;
+`;
+
+const IconContainer = styled.div`
+	grid-column: 1;
+	grid-row: 1 / span 2;
+`;
+
+const StyledValue = styled.div`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 12px;
+	grid-column: 2;
+	grid-row: 2;
+`;
+
 const DefaultCell = styled.p``
 
 const TableContainer = styled.div`
@@ -140,7 +180,16 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div`
 `;
 
-const StyledOrderType = styled.div`
+const StyledText = styled.div`
+	grid-column: 2;
+	grid-row: 1;
+`;
+
+const MarketContainer = styled.div`
+	display: grid;
+	grid-template-rows: auto auto;
+	grid-template-columns: auto auto;
+	align-items: center;
 `;
 
 export default FuturesPositionsTable;

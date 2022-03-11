@@ -7,6 +7,7 @@ import PortfolioChart from '../PortfolioChart';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import FuturesMarketsTable from '../FuturesMarketsTable';
 
 
 enum PositionsTab {
@@ -25,8 +26,8 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const futuresMarketsPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositions = futuresMarketsPositionQuery?.data ?? [];
+	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositions = futuresPositionQuery?.data ?? [];
 	
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
@@ -96,18 +97,10 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				{
-					futuresPositions.length > 0 && futuresMarkets.length > 0 ?
-						<FuturesPositionsTable
-							futuresPositions={futuresPositions}
-							futuresMarkets={futuresMarkets}
-						/>
-					:
-						<FuturesPositionsTable
-							futuresPositions={[]}
-							futuresMarkets={[]}
-						/>
-				}
+				<FuturesPositionsTable
+					futuresPositions={futuresPositions}
+					futuresMarkets={futuresMarkets}
+				/>
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>
@@ -128,6 +121,9 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
+				<FuturesMarketsTable
+					futuresMarkets={futuresMarkets}
+				/>
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>

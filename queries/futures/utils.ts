@@ -11,6 +11,7 @@ import {
 	PositionDetail,
 	PositionSide,
 	FuturesTrade,
+	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
 } from './types';
@@ -133,6 +134,19 @@ export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 		(acc: Wei, { size }: { size: string }) => acc.add(new Wei(size, 18, true).abs()),
 		wei(0)
 	);
+};
+
+export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): FuturesVolumes => {
+	const volumes = {} as FuturesVolumes;
+
+	futuresTrades.forEach(({ asset, size }) => {
+		const sizeAdd = new Wei(size, 18, true);
+		volumes[asset] ?
+			volumes[asset] = volumes[asset].add(sizeAdd)
+		:
+			volumes[asset] = new Wei(size, 18, true)
+	})
+	return volumes;
 };
 
 export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) => {
