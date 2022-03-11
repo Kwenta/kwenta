@@ -74,7 +74,8 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const [leverage, setLeverage] = useState<number>(1);
 
-	const [tradeSize, setTradeSize] = useState<string>('');
+	const [tradeSize, setTradeSize] = useState('');
+	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
@@ -141,10 +142,20 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
+		setTradeSizeSUSD(value === '' ? '' : (Number(value) * marketAssetRate).toString());
+	};
+
+	useEffect(() => {
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
 		setLeverage(
-			(Number(value) * marketAssetRate) / Number(futuresMarketsPosition?.remainingMargin.toString())
+			(Number(tradeSize) * marketAssetRate) /
+				Number(futuresMarketsPosition?.remainingMargin.toString())
 		);
+	}, [tradeSize, marketAssetRate, futuresMarketsPosition]);
+
+	const onTradeAmountSUSDChange = (value: string) => {
+		setTradeSizeSUSD(value);
+		setTradeSize(value === '' ? '' : (Number(value) / marketAssetRate).toString());
 	};
 
 	const onLeverageChange = (value: number) => {
@@ -159,7 +170,7 @@ const Trade: React.FC<TradeProps> = () => {
 					: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
 					  marketAssetRate;
 
-			setTradeSize(newTradeSize.toString());
+			onTradeAmountChange(newTradeSize.toString());
 		}
 	};
 
@@ -257,8 +268,10 @@ const Trade: React.FC<TradeProps> = () => {
 
 			<OrderSizing
 				amount={tradeSize}
+				amountSUSD={tradeSizeSUSD}
 				assetRate={marketAssetRate}
 				onAmountChange={onTradeAmountChange}
+				onAmountSUSDChange={onTradeAmountSUSDChange}
 				marketAsset={marketAsset || Synths.sUSD}
 			/>
 

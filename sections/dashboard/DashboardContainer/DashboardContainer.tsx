@@ -8,11 +8,7 @@ import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
 import Overview from '../Overview';
 import StakingInfo from '../StakingInfo';
-import {
-	MainContent,
-	LeftSideContent,
-	RightSideContent
-} from 'styles/common';
+import { MainContent, LeftSideContent, RightSideContent } from 'styles/common';
 
 enum Tab {
 	Overview = 'overview',
@@ -20,7 +16,7 @@ enum Tab {
 	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
-	Staking = 'staking'
+	Staking = 'staking',
 }
 
 const Tabs = Object.values(Tab);
@@ -75,14 +71,14 @@ const DashboardContainer: FC = () => {
 				label: t('futures-dashboard.tabs.nav.governance'),
 				active: activeTab === Tab.Governance,
 				disabled: true,
-				onClick: () => { },
+				onClick: () => {},
 			},
 			{
 				name: Tab.Staking,
 				label: t('futures-dashboard.tabs.nav.staking'),
 				active: activeTab === Tab.Staking,
 				disabled: true,
-				onClick: () => { },
+				onClick: () => {},
 			},
 		],
 		[t, activeTab, router]
@@ -94,14 +90,26 @@ const DashboardContainer: FC = () => {
 				<StyledTabList>
 					<TabGroupTitle>{t('futures-dashboard.titles.trading')}</TabGroupTitle>
 					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
+						<NavButton
+							key={name}
+							title={name}
+							isActive={active}
+							disabled={disabled}
+							onClick={onClick}
+						>
 							{label}
 						</NavButton>
 					))}
 
 					<TabGroupTitle>{t('futures-dashboard.titles.community')}</TabGroupTitle>
 					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
-						<NavButton key={name} title={name} isActive={active} disabled={disabled} onClick={onClick} >
+						<NavButton
+							key={name}
+							title={name}
+							isActive={active}
+							disabled={disabled}
+							onClick={onClick}
+						>
 							{label}
 						</NavButton>
 					))}
@@ -122,7 +130,7 @@ const DashboardContainer: FC = () => {
 const StyledRightSideContent = styled(RightSideContent)`
 	display: flex;
 	align-items: flex-end;
-`
+`;
 
 const StyledTabList = styled(TabList)`
 	display: flex;

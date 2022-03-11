@@ -43,5 +43,4 @@ export default Market;
 const StyledRightSideContent = styled(RightSideContent)`
 	width: 385px;
 	padding-left: 15px;
-	padding-right: 22px;
 `;

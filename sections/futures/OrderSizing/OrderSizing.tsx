@@ -7,42 +7,19 @@ import CustomInput from 'components/Input/CustomInput';
 type OrderSizingProps = {
 	assetRate: number;
 	amount: string;
+	amountSUSD: string;
 	onAmountChange: (value: string) => void;
+	onAmountSUSDChange: (value: string) => void;
 	marketAsset: string | null;
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({
 	marketAsset,
 	amount,
-	assetRate,
+	amountSUSD,
 	onAmountChange,
+	onAmountSUSDChange,
 }) => {
-	const [usdAmount, setUsdAmount] = React.useState(Number(amount) * assetRate || '');
-
-	const handleAmountChange = React.useCallback(
-		(newAmount: string) => {
-			onAmountChange(newAmount);
-			if (newAmount === '') {
-				setUsdAmount('');
-			} else {
-				setUsdAmount((Number(newAmount) * assetRate).toString());
-			}
-		},
-		[assetRate, onAmountChange]
-	);
-
-	const handleUsdAmountChange = React.useCallback(
-		(newUsdAmount: string) => {
-			setUsdAmount(newUsdAmount);
-			if (newUsdAmount === '') {
-				onAmountChange('');
-			} else {
-				onAmountChange((Number(newUsdAmount) / assetRate).toString());
-			}
-		},
-		[assetRate, onAmountChange]
-	);
-
 	return (
 		<OrderSizingContainer>
 			<OrderSizingTitle>
@@ -52,14 +29,14 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			<CustomInput
 				right={marketAsset || Synths.sUSD}
 				value={amount}
-				onChange={(e) => handleAmountChange(e.target.value)}
+				onChange={(e) => onAmountChange(e.target.value)}
 				style={{ marginBottom: '8px' }}
 			/>
 
 			<CustomInput
 				right={Synths.sUSD}
-				value={usdAmount}
-				onChange={(e) => handleUsdAmountChange(e.target.value)}
+				value={amountSUSD}
+				onChange={(e) => onAmountSUSDChange(e.target.value)}
 			/>
 		</OrderSizingContainer>
 	);
