@@ -79,7 +79,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Size</StyledSubtitle>
 						<StyledValue>
-							{formatNumber(position?.position?.size ?? 0)} (
+							{formatNumber(positionDetails?.size ?? 0)} (
 							{formatCurrency(
 								Synths.sUSD,
 								positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
