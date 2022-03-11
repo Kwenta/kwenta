@@ -27,18 +27,18 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 			const response = await request(
 				FUTURES_ENDPOINT,
 				gql`
-					query FutureOneMinStats($minTimestamp: BigInt!, $skip: Int!) {
+					query FutureOneMinStats($skip: Int!) {
 						futuresOneMinStats(
 							skip: $skip
 							first: ${PAGE_SIZE}
-							where: { timestamp_gte: $minTimestamp }
+							where: { timestamp_gte: ${minTimestamp} }
 						) {
 							trades
 							volume
 						}
 					}
 				`,
-				{ minTimestamp, skip }
+				{ skip }
 			);
 			if (response) {
 				const combined = [...existing, ...response.futuresOneMinStats];

@@ -31,7 +31,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 	<StyledDialogOverlay onDismiss={onDismiss} isOpen={isOpen} {...rest}>
 		<StyledDialogContent aria-label="modal">
 			<StyledCard className="card">
-				<StyledCardHeader lowercase={lowercase} className="card-header">
+				<StyledCardHeader lowercase={lowercase} noBorder className="card-header">
 					{title}
 					{showCross && (
 						<DismissButton onClick={onDismiss}>
@@ -47,7 +47,7 @@ export const BaseModal: FC<BaseModalProps> = ({
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
-	background: hsla(0, 0%, 0%, 0.8);
+	background: rgba(0, 0, 0, 0.7);
 	${media.lessThan('sm')`
 		overflow: hidden;
 	`}
@@ -67,12 +67,18 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const StyledCard = styled(Card)`
+	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	border-radius: 15px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.25);
 	height: 100%;
 `;
 
 const StyledCardHeader = styled(Card.Header)`
 	justify-content: center;
 	height: 45px;
+	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const StyledCardBody = styled(Card.Body)`

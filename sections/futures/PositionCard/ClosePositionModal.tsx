@@ -85,12 +85,14 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				const size = wei(-positionSize);
 				const [estimate, orderFee] = await Promise.all([
 					FuturesMarketContract.estimateGas.closePosition(),
-					FuturesMarketContract.orderFee(walletAddress, size.toBN()),
+					FuturesMarketContract.orderFee(size.toBN()),
 				]);
 				setOrderFee(wei(orderFee.fee));
 				setGasLimit(Number(estimate));
 			} catch (e) {
+				// @ts-ignore
 				console.log(e.message);
+				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
 		};

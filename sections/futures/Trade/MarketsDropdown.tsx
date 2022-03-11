@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 
 import Select from 'components/Select';
@@ -12,6 +13,9 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownIndicator from './MarketsDropdownIndicator';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { formatCurrency } from 'utils/formatters/number';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -42,12 +46,15 @@ const DUMMY_PRICE = '42,977.23';
 const DUMMY_CHANGE = '+0.68%';
 
 const MarketsDropdown: React.FC<Props> = ({ asset }) => {
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const markets = futuresMarketsQuery?.data ?? [];
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
@@ -58,9 +65,29 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		[t, synthsMap]
 	);
 
+	const options = React.useMemo(() => {
+		const markets = futuresMarketsQuery?.data ?? [];
+
+		return markets.map((market) => {
+			const basePriceRate = getExchangeRatesForCurrencies(
+				exchangeRates,
+				market.asset,
+				selectedPriceCurrency.name
+			);
+
+			return assetToCurrencyOption(
+				market.asset,
+				getSynthDescription(market.asset),
+				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
+				DUMMY_CHANGE
+			);
+		});
+	}, [getSynthDescription, selectedPriceCurrency.name, exchangeRates, futuresMarketsQuery?.data]);
+
 	return (
 		<SelectContainer>
 			<Select
+				instanceId={`markets-dropdown-${asset}`}
 				controlHeight={55}
 				menuWidth={'100%'}
 				onChange={(x) => {
@@ -70,9 +97,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					}
 				}}
 				value={assetToCurrencyOption(asset, getSynthDescription(asset), DUMMY_PRICE, DUMMY_CHANGE)}
-				options={markets.map((x) =>
-					assetToCurrencyOption(x.asset, getSynthDescription(x.asset), DUMMY_PRICE, DUMMY_CHANGE)
-				)}
+				options={options}
 				isSearchable={false}
 				components={{
 					SingleValue: MarketsDropdownSingleValue,
@@ -90,6 +115,10 @@ const SelectContainer = styled.div`
 
 	.react-select__dropdown-indicator {
 		margin-right: 22px;
+	}
+
+	.react-select__option {
+		padding: 0;
 	}
 `;
 

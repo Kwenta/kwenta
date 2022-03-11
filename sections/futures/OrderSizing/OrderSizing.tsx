@@ -2,41 +2,41 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { Synths } from 'constants/currency';
-import OrderSizingInput from 'components/Input/OrderSizingInput';
+import CustomInput from 'components/Input/CustomInput';
 
 type OrderSizingProps = {
 	assetRate: number;
 	amount: string;
+	amountSUSD: string;
 	onAmountChange: (value: string) => void;
+	onAmountSUSDChange: (value: string) => void;
 	marketAsset: string | null;
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({
 	marketAsset,
 	amount,
-	assetRate,
+	amountSUSD,
 	onAmountChange,
+	onAmountSUSDChange,
 }) => {
-	const amountValue = Number(amount) * assetRate;
-	const valueToAmount = (value: string) => (Number(value) / assetRate).toString();
-
 	return (
 		<OrderSizingContainer>
 			<OrderSizingTitle>
 				Amount <span>— Set order size</span>
 			</OrderSizingTitle>
 
-			<OrderSizingInput
-				synth={marketAsset || Synths.sUSD}
+			<CustomInput
+				right={marketAsset || Synths.sUSD}
 				value={amount}
 				onChange={(e) => onAmountChange(e.target.value)}
 				style={{ marginBottom: '8px' }}
 			/>
 
-			<OrderSizingInput
-				synth={Synths.sUSD}
-				value={amountValue}
-				onChange={(e) => onAmountChange(valueToAmount(e.target.value))}
+			<CustomInput
+				right={Synths.sUSD}
+				value={amountSUSD}
+				onChange={(e) => onAmountSUSDChange(e.target.value)}
 			/>
 		</OrderSizingContainer>
 	);

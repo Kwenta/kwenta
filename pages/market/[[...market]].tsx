@@ -24,9 +24,9 @@ const Market: FC = () => {
 			<AppLayout>
 				<PageContent>
 					<FullHeightContainer>
-						<MainContent>
+						<StyledMainContent>
 							<MarketInfo market={router.query.market?.[0]!} />
-						</MainContent>
+						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
 								<Trade />
@@ -38,10 +38,15 @@ const Market: FC = () => {
 		</>
 	);
 };
+
 export default Market;
+
+const StyledMainContent = styled(MainContent)`
+	max-width: 1031px;
+	margin-left: 0;
+`;
 
 const StyledRightSideContent = styled(RightSideContent)`
 	width: 385px;
 	padding-left: 15px;
-	padding-right: 22px;
 `;

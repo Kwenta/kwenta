@@ -30,14 +30,6 @@ const Button = styled.button<ButtonProps>`
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 	}
 
-	&:disabled {
-		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		border: ${(props) => props.theme.colors.selectedTheme.border};
-		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
-		box-shadow: none;
-		cursor: initial;
-	}
-
 	${(props) =>
 		props.mono
 			? css`
@@ -106,6 +98,14 @@ const Button = styled.button<ButtonProps>`
 		css`
 			width: 100%;
 		`};
+
+	&:disabled {
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
+		box-shadow: none;
+		cursor: initial;
+	}
 `;
 
 export default Button;
