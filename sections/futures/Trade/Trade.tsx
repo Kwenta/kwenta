@@ -21,7 +21,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 import LeverageInput from '../LeverageInput';
-import EditMarginModal from './EditMarginModal';
+// import EditMarginModal from './EditMarginModal';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -30,12 +30,14 @@ import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPos
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { gasPriceInWei } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
-import SegmentedControl from 'components/SegmentedControl';
+// import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import { parseGasPriceObject } from 'hooks/useGas';
+import DepositMarginModal from './DepositMarginModal';
+import WithdrawMarginModal from './WithdrawMarginModal';
 
 type TradeProps = {};
 
@@ -72,7 +74,8 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const [leverage, setLeverage] = useState<number>(1);
 
-	const [tradeSize, setTradeSize] = useState<string>('');
+	const [tradeSize, setTradeSize] = useState('');
+	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
@@ -80,15 +83,17 @@ const Trade: React.FC<TradeProps> = () => {
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
-	const [isEditMarginModalOpen, setIsEditMarginModalOpen] = useState<boolean>(false);
+	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
+	const [isWithdrawMarginModalOpen, setIsWithdrawMarginModalOpen] = useState(false);
+	// const [isEditMarginModalOpen, setIsEditMarginModalOpen] = useState<boolean>(false);
 	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState<boolean>(false);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
+	// const gasPrices = useMemo(
+	// 	() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
+	// 	[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	// );
 
 	const gasPrice = useMemo(
 		() =>
@@ -137,10 +142,20 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const onTradeAmountChange = (value: string) => {
 		setTradeSize(value);
+		setTradeSizeSUSD(value === '' ? '' : (Number(value) * marketAssetRate).toString());
+	};
+
+	useEffect(() => {
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
 		setLeverage(
-			(Number(value) * marketAssetRate) / Number(futuresMarketsPosition?.remainingMargin.toString())
+			(Number(tradeSize) * marketAssetRate) /
+				Number(futuresMarketsPosition?.remainingMargin.toString())
 		);
+	}, [tradeSize, marketAssetRate, futuresMarketsPosition]);
+
+	const onTradeAmountSUSDChange = (value: string) => {
+		setTradeSizeSUSD(value);
+		setTradeSize(value === '' ? '' : (Number(value) / marketAssetRate).toString());
 	};
 
 	const onLeverageChange = (value: number) => {
@@ -155,7 +170,7 @@ const Trade: React.FC<TradeProps> = () => {
 					: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
 					  marketAssetRate;
 
-			setTradeSize(newTradeSize.toString());
+			onTradeAmountChange(newTradeSize.toString());
 		}
 	};
 
@@ -180,12 +195,13 @@ const Trade: React.FC<TradeProps> = () => {
 				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
 				const [gasEstimate, orderFee] = await Promise.all([
 					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
-					FuturesMarketContract.orderFee(walletAddress, sizeDelta.toBN()),
+					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);
 				setGasLimit(Number(gasEstimate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
+				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
 		};
@@ -223,6 +239,7 @@ const Trade: React.FC<TradeProps> = () => {
 			}
 		} catch (e) {
 			console.log(e);
+			// @ts-ignore
 			setError(e?.data?.message ?? e.message);
 		}
 	};
@@ -231,10 +248,10 @@ const Trade: React.FC<TradeProps> = () => {
 		<Panel>
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
-				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
+				<MarketActionButton onClick={() => setIsDepositMarginModalOpen(true)}>
 					Deposit
 				</MarketActionButton>
-				<MarketActionButton onClick={() => setIsEditMarginModalOpen(true)}>
+				<MarketActionButton onClick={() => setIsWithdrawMarginModalOpen(true)}>
 					Withdraw
 				</MarketActionButton>
 			</MarketActions>
@@ -242,14 +259,27 @@ const Trade: React.FC<TradeProps> = () => {
 			<MarketInfoBox
 				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				buyingPower={sUSDBalance}
+				marginUsage={
+					futuresMarketsPosition?.position?.size?.gt(zeroBN)
+						? (futuresMarketsPosition?.position?.size).div(
+								(futuresMarketsPosition?.position?.size).add(
+									futuresMarketsPosition?.remainingMargin ?? zeroBN
+								)
+						  )
+						: zeroBN
+				}
+				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
+				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 			/>
 
-			<StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} />
+			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
 			<OrderSizing
 				amount={tradeSize}
+				amountSUSD={tradeSizeSUSD}
 				assetRate={marketAssetRate}
-				onAmountChange={(value) => onTradeAmountChange(value)}
+				onAmountChange={onTradeAmountChange}
+				onAmountSUSDChange={onTradeAmountSUSDChange}
 				marketAsset={marketAsset || Synths.sUSD}
 			/>
 
@@ -272,14 +302,50 @@ const Trade: React.FC<TradeProps> = () => {
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 			/>
 
-			<PlaceOrderButton fullWidth>Place Market Order</PlaceOrderButton>
+			<PlaceOrderButton
+				fullWidth
+				onClick={() => {
+					setIsTradeConfirmationModalOpen(true);
+				}}
+			>
+				Place Market Order
+			</PlaceOrderButton>
 
 			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
 
-			{/* <FlexDivCol>
-					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-				</FlexDivCol> */}
-			{isEditMarginModalOpen && (
+			{isDepositMarginModalOpen && (
+				<DepositMarginModal
+					sUSDBalance={sUSDBalance}
+					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					onTxConfirmed={() => {
+						setTimeout(() => {
+							futuresMarketPositionQuery.refetch();
+							futuresPositionHistoryQuery.refetch();
+							synthsBalancesQuery.refetch();
+						}, 5 * 1000);
+					}}
+					market={marketAsset}
+					onDismiss={() => setIsDepositMarginModalOpen(false)}
+				/>
+			)}
+
+			{isWithdrawMarginModalOpen && (
+				<WithdrawMarginModal
+					sUSDBalance={sUSDBalance}
+					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					onTxConfirmed={() => {
+						setTimeout(() => {
+							futuresMarketPositionQuery.refetch();
+							futuresPositionHistoryQuery.refetch();
+							synthsBalancesQuery.refetch();
+						}, 5 * 1000);
+					}}
+					market={marketAsset}
+					onDismiss={() => setIsWithdrawMarginModalOpen(false)}
+				/>
+			)}
+
+			{/* {isEditMarginModalOpen && (
 				<EditMarginModal
 					sUSDBalance={sUSDBalance}
 					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
@@ -293,7 +359,8 @@ const Trade: React.FC<TradeProps> = () => {
 					market={marketAsset}
 					onDismiss={() => setIsEditMarginModalOpen(false)}
 				/>
-			)}
+			)} */}
+
 			{isTradeConfirmationModalOpen && (
 				<TradeConfirmationModal
 					tradeSize={tradeSize}
@@ -330,6 +397,6 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 `;
 
-const StyledSegmentedControl = styled(SegmentedControl)`
-	margin-bottom: 16px;
-`;
+// const StyledSegmentedControl = styled(SegmentedControl)`
+// 	margin-bottom: 16px;
+// `;

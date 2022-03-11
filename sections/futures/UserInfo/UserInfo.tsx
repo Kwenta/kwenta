@@ -67,7 +67,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			{
 				name: FuturesTab.POSITION,
 				label: 'Open Positions',
-				badge: 3,
+				badge: positionHistory?.length,
 				active: activeTab === FuturesTab.POSITION,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
@@ -85,7 +85,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 		],
-		[activeTab, router, marketAsset]
+		[activeTab, router, marketAsset, positionHistory]
 	);
 
 	return (
@@ -105,6 +105,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
 					position={futuresMarketsPosition ?? null}
+					positionHistory={positionHistory ?? null}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
 					onPositionClose={() =>

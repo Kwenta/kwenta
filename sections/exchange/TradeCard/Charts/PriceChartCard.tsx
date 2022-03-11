@@ -195,7 +195,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							noData={noDataAvailable}
 							{...(isSUSD ? { yAxisDomain: ['dataMax', 'dataMax'] } : {})}
 							yAxisTickFormatter={(val: number) =>
-								formatCurrency(selectedPriceCurrency.name, val, {
+								formatCurrency(selectedPriceCurrency.name, Number.isFinite(val) ? val : 0, {
 									sign: selectedPriceCurrency.sign,
 								})
 							}

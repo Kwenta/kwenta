@@ -106,6 +106,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 						: wei(size).mul(wei(price)).div(wei(margin)).abs(),
 				});
 			} catch (e) {
+				// @ts-ignore
 				console.log(e.message);
 			}
 		};
@@ -123,11 +124,11 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
-				label: 'currentPrice',
+				label: 'current price',
 				value: formatCurrency(Synths.sUSD, positionDetails?.currentPrice ?? zeroBN, { sign: '$' }),
 			},
 			{
-				label: 'liquidationPrice',
+				label: 'liquidation price',
 				value: formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 					sign: '$',
 				}),
@@ -164,13 +165,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			<NetworkFees>
 				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 			</NetworkFees>
-			<ConfirmTradeButton
-				variant="primary"
-				isRounded
-				size="lg"
-				onClick={handleConfirmOrder}
-				disabled={!positionDetails}
-			>
+			<ConfirmTradeButton isRounded onClick={handleConfirmOrder} disabled={!positionDetails}>
 				{t('futures.market.trade.confirmation.modal.confirm-order')}
 			</ConfirmTradeButton>
 		</StyledBaseModal>
@@ -191,8 +186,7 @@ const Row = styled(FlexDivCentered)`
 `;
 
 const Label = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -223,11 +217,11 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 `;
 
 const ConfirmTradeButton = styled(Button)`
-	width: 100%;
 	margin-top: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	height: 55px;
 `;
 
 export default TradeConfirmationModal;

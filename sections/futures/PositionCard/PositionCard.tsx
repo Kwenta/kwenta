@@ -7,16 +7,17 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import ChangePercent from 'components/ChangePercent';
 import Button from 'components/Button';
-import { FuturesPosition, PositionSide } from 'queries/futures/types';
+import { FuturesPosition, PositionHistory, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
+import Connector from 'containers/Connector';
 
 type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
+	positionHistory?: PositionHistory[] | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
@@ -25,6 +26,7 @@ type PositionCardProps = {
 const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKey,
 	position,
+	positionHistory,
 	currencyKeyRate,
 	onPositionClose,
 	dashboard,
@@ -33,6 +35,25 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const router = useRouter();
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+
+	const { synthsMap } = Connector.useContainer();
+	const getSynthDescription = React.useCallback(
+		(synth: string) => {
+			return t('common.currency.synthetic-currency-name', {
+				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+			});
+		},
+		[t, synthsMap]
+	);
+
+	const averageEntryPrice =
+		!!positionHistory && positionHistory?.length > 0
+			? positionHistory
+					?.reduce((acc, curr) => {
+						return acc.add(curr.entryPrice);
+					}, wei(0))
+					.div(positionHistory?.length)
+			: zeroBN;
 
 	return (
 		<>
@@ -43,7 +64,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<StyledCurrencyIcon currencyKey={currencyKey} />
 							<div>
 								<CurrencySubtitle>{currencyKey}/sUSD</CurrencySubtitle>
-								<StyledValue>Synthetic Bitcoin</StyledValue>
+								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
 							</div>
 						</CurrencyInfo>
 					</InfoCol>
@@ -57,17 +78,28 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Size</StyledSubtitle>
-						<StyledValue>8.98 ($4,131.23)</StyledValue>
+						<StyledValue>
+							{formatNumber(positionDetails?.size ?? 0)} (
+							{formatCurrency(
+								Synths.sUSD,
+								positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
+								{ sign: '$' }
+							)}
+							)
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						<StyledValue>$4,131.23 (1.53%)</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
+						</StyledValue>
+						{/* <StyledValue>$4,131.23 (1.53%)</StyledValue> */}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Leverage</StyledSubtitle>
-						<StyledValue>4.12x</StyledValue>
+						<StyledValue>{formatNumber(positionDetails?.leverage ?? zeroBN)}x</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
@@ -80,22 +112,32 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Average Open</StyledSubtitle>
-						<StyledValue>$4,131.23</StyledValue>
+						<StyledSubtitle>Average Entry Price</StyledSubtitle>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, averageEntryPrice, {
+								sign: '$',
+							})}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
-						<StyledSubtitle>Average Close</StyledSubtitle>
-						<StyledValue>$4,131.23</StyledValue>
+						<StyledSubtitle>Fees</StyledSubtitle>
+						<StyledValue>{formatCurrency(Synths.sUSD, zeroBN, { sign: '$' })}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
-						<StyledValue>-$10.83</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
-						<StyledValue>-$10.83</StyledValue>
+						<StyledValue>
+							{formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
+								sign: '$',
+							})}
+						</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol style={{ justifyContent: 'flex-end' }}>

@@ -366,6 +366,14 @@
 				"pnl": "Unrealized P&L",
 				"margin": "Margin"
 			},
+			"futures-markets-table": {
+				"market": "Market",
+				"index-price": "Index Price",
+				"daily-change": "24H Change",
+				"funding-rate": "Funding Rate",
+				"open-interest": "Open Interest",
+				"daily-volume": "24H Volume"
+			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
