@@ -153,7 +153,6 @@ const Trade: React.FC<TradeProps> = () => {
 			setTradeSize('');
 		} else {
 			setLeverage(value);
-			console.log(marketAssetRate);
 			const newTradeSize =
 				marketAssetRate === 0
 					? 0
