@@ -30,7 +30,7 @@ const useGetFuturesPositionForAllMarkets = (
 			const positionsForMarkets = await Promise.all(
 				(markets as [string]).map((market: string) =>
 					Promise.all([
-						FuturesMarketData.positionDetailsForAsset(
+						FuturesMarketData.positionDetailsForMarketKey(
 							ethersUtils.formatBytes32String(market),
 							walletAddress
 						),

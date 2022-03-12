@@ -28,7 +28,7 @@ const useGetFuturesPositionForMarket = (
 			if (!market) return null;
 
 			const [futuresPosition, canLiquidatePosition] = await Promise.all([
-				FuturesMarketData.positionDetailsForAsset(
+				FuturesMarketData.positionDetailsForMarketKey(
 					ethersUtils.formatBytes32String(market),
 					walletAddress
 				),
