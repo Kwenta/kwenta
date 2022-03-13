@@ -1,7 +1,7 @@
+import { NetworkIdByName, NetworkNameById } from '@synthetixio/contracts-interface';
 import onboard from 'bnc-onboard';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-
 import { Network } from 'store/wallet';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
@@ -51,7 +51,15 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [network.id]: infuraRpc },
+					rpc: {
+						'1': getInfuraRpcURL({ id: NetworkIdByName.mainnet, name: NetworkNameById[1] }),
+						'10': getInfuraRpcURL({
+							id: NetworkIdByName['mainnet-ovm'],
+							name: NetworkNameById[10],
+						}),
+						'42': getInfuraRpcURL({ id: NetworkIdByName.kovan, name: NetworkNameById[42] }),
+						'69': getInfuraRpcURL({ id: NetworkIdByName['kovan-ovm'], name: NetworkNameById[69] }),
+					},
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
