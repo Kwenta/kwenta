@@ -25,6 +25,8 @@ const Transactions: FC = () => {
 			where: {
 				account: walletAddress,
 			},
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
 		},
 		{
 			id: true,
@@ -32,6 +34,8 @@ const Transactions: FC = () => {
 			fromAmountInUSD: true,
 			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
 			fromSynth: { name: true, symbol: true, id: true },
+			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
+			toSynth: { name: true, symbol: true, id: true },
 			toAmount: true,
 			toAmountInUSD: true,
 			feesInUSD: true,

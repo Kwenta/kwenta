@@ -17,13 +17,17 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
-import { SYNTHS_TO_SHORT } from '../constants';
+import { SYNTHS_TO_SHORT, SYNTHS_TO_SHORT_L1 } from '../constants';
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { isL2State } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 const ShortingStats = () => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const isL2 = useRecoilValue(isL2State);
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 
@@ -43,7 +47,7 @@ const ShortingStats = () => {
 			return mapValues(shortStats, ({ shorts }, currencyKey) => {
 				const assetUSDPrice = exchangeRates[currencyKey];
 
-				const openInterest = shorts.mul(assetUSDPrice).div(selectPriceCurrencyRate);
+				const openInterest = shorts.mul(assetUSDPrice ?? wei(0)).div(selectPriceCurrencyRate);
 
 				return {
 					openInterest,
@@ -72,7 +76,7 @@ const ShortingStats = () => {
 					</TableRowHead>
 				</thead>
 				<tbody>
-					{SYNTHS_TO_SHORT.map((currencyKey) => (
+					{(isL2 ? SYNTHS_TO_SHORT : SYNTHS_TO_SHORT_L1).map((currencyKey) => (
 						<TableRow key={currencyKey}>
 							<TableCell colSpan={2}>
 								<StyledCurrencyName currencyKey={currencyKey} showIcon={true} />

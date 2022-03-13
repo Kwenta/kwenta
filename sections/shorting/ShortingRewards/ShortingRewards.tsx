@@ -1,13 +1,13 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { gasSpeedState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
-import { SYNTHS_TO_SHORT } from '../constants';
+import { SYNTHS_TO_SHORT, SYNTHS_TO_SHORT_L1 } from '../constants';
 
 import ShortingRewardRow, { GasInfo } from './ShortingRewardRow';
 
@@ -18,34 +18,19 @@ import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/G
 
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
+import useGas from 'hooks/useGas';
 
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+	const { gasPrice, gasPrices } = useGas();
 
-	const [gasSpeed] = useRecoilState(gasSpeedState);
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
-
-	const gasPrice = useMemo(
-		() =>
-			ethGasPriceQuery.isSuccess
-				? ethGasPriceQuery?.data != null
-					? ethGasPriceQuery.data[gasSpeed]
-					: null
-				: null,
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]
-	);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -75,7 +60,7 @@ const ShortingRewards: FC = () => {
 	return (
 		<div>
 			<Title>{t('shorting.rewards.title')}</Title>
-			{SYNTHS_TO_SHORT.map((currencyKey) => (
+			{(isL2 ? SYNTHS_TO_SHORT : SYNTHS_TO_SHORT_L1).map((currencyKey) => (
 				<ShortingRewardRow
 					key={currencyKey}
 					{...{
