@@ -38,21 +38,9 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		<>
 			<Container>
 				<FlexDivCentered>
-					<Menu>
-						{isWalletConnected && (
-							<>
-								<NetworksSwitcher />
-							</>
-						)}
-						<MenuButton
-							onClick={() => {
-								setSettingsModalOpened(!settingsModalOpened);
-							}}
-							isActive={settingsModalOpened}
-						>
-							<Svg src={MenuIcon} />
-						</MenuButton>
-					</Menu>
+					{isWalletConnected && (
+						<NetworksSwitcher />
+					)}
 					{isWalletConnected ? (
 						<WalletButton
 							size="sm"
@@ -74,6 +62,16 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							{t('common.wallet.connect-wallet')}
 						</ConnectButton>
 					)}
+					{isWalletConnected && (
+						<MenuButton
+							onClick={() => {
+								setSettingsModalOpened(!settingsModalOpened);
+							}}
+							isActive={settingsModalOpened}
+						>
+							<SettingsText>...</SettingsText>
+						</MenuButton>
+					)}
 				</FlexDivCentered>
 			</Container>
 			{walletOptionsModalOpened && (
@@ -86,30 +84,29 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 
 const Container = styled.div``;
 
-const Menu = styled.div`
-	padding-right: 16px;
-	display: grid;
-	grid-gap: 10px;
-	grid-auto-flow: column;
-`;
-
 const WalletButton = styled(Button)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
+	margin-left: 15px;
 `;
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
 `;
 
-const MenuButton = styled.button<{ isActive: boolean }>`
-	${resetButtonCSS};
-	color: ${(props) =>
-		props.isActive ? props.theme.colors.goldColors.color1 : props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
-	}
-	padding: 5px;
+const MenuButton = styled(Button)`
+	display: flex;
+	align-items: center;
+	margin-left: 12px;
+`;
+
+const SettingsText = styled.p`
+	margin: 0px;
+	margin-bottom: 5px;
+	line-height: 10px;
+	height: 10px;
+	letter-spacing: 2px;
+	text-align: center;
 `;
 
 const ConnectButton = styled(Button)`
