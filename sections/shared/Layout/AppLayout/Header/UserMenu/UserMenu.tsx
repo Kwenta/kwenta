@@ -15,15 +15,11 @@ import {
 	truncatedWalletAddressState,
 	walletAddressState,
 } from 'store/wallet';
-import { hasOrdersNotificationState } from 'store/ui';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 
-import NotificationIcon from 'assets/svg/app/notification.svg';
-import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
 import MenuIcon from 'assets/svg/app/menu.svg';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
-import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
@@ -39,11 +35,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { connectWallet } = Connector.useContainer();
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
-		hasOrdersNotificationState
-	);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
@@ -51,10 +43,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
 			? redeemableDeprecatedSynthsQuery.data
 			: null;
-	const hasRedeemableDeprecatedSynths = useMemo(
-		() => !!redeemableDeprecatedSynths?.totalUSDBalance.gt(0),
-		[redeemableDeprecatedSynths?.totalUSDBalance]
-	);
 
 	return (
 		<>
@@ -64,28 +52,11 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 						{isWalletConnected && (
 							<>
 								<NetworksSwitcher />
-								<MenuButton
-									onClick={() => {
-										setNotificationsModalOpened(!notificationsModalOpened);
-										setSettingsModalOpened(false);
-										if (hasOrdersNotification) {
-											setHasOrdersNotification(false);
-										}
-									}}
-									isActive={notificationsModalOpened}
-								>
-									{hasOrdersNotification || hasRedeemableDeprecatedSynths ? (
-										<Svg src={NotificationAlertIcon} />
-									) : (
-										<Svg src={NotificationIcon} />
-									)}
-								</MenuButton>
 							</>
 						)}
 						<MenuButton
 							onClick={() => {
 								setSettingsModalOpened(!settingsModalOpened);
-								setNotificationsModalOpened(false);
 							}}
 							isActive={settingsModalOpened}
 						>
@@ -119,9 +90,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
 			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
-			{notificationsModalOpened && (
-				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
-			)}
 		</>
 	);
 };
