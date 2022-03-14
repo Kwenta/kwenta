@@ -2,7 +2,6 @@ import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
 
 import Connector from 'containers/Connector';
 
@@ -12,9 +11,7 @@ import {
 	isWalletConnectedState,
 	truncatedWalletAddressState
 } from 'store/wallet';
-import { FlexDivCentered, resetButtonCSS } from 'styles/common';
-
-import MenuIcon from 'assets/svg/app/menu.svg';
+import { FlexDivCentered, } from 'styles/common';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
