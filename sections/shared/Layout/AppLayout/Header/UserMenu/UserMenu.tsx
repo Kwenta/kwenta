@@ -1,19 +1,16 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
 import Connector from 'containers/Connector';
-
-import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
 import Button from 'components/Button';
 
 import {
 	isWalletConnectedState,
-	truncatedWalletAddressState,
-	walletAddressState,
+	truncatedWalletAddressState
 } from 'store/wallet';
 import { FlexDivCentered, resetButtonCSS } from 'styles/common';
 
@@ -36,13 +33,6 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
-	const redeemableDeprecatedSynths =
-		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
-			? redeemableDeprecatedSynthsQuery.data
-			: null;
 
 	return (
 		<>
