@@ -7,6 +7,7 @@ import sub from 'date-fns/sub';
 import { useRecoilValue } from 'recoil';
 
 import { historicalShortsPositionState } from 'store/shorts';
+import { isL2State } from 'store/wallet';
 
 import Select from 'components/Select';
 
@@ -18,13 +19,21 @@ import ShortingHistoryTable from './ShortingHistoryTable';
 
 import { Title } from '../common';
 
-import { SYNTHS_TO_SHORT } from '../constants';
+import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
+
 import Connector from 'containers/Connector';
 
 const ShortingHistory: FC = () => {
 	const { t } = useTranslation();
 
 	const { synthetixjs } = Connector.useContainer();
+
+	const isL2 = useRecoilValue(isL2State);
+	
+	const shortListQuery = useGetShortableSynths(isL2);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [
+		shortListQuery.data,
+	]);
 
 	const shortHistoryQuery = useShortHistoryQuery();
 	const historicalShortsPosition = useRecoilValue(historicalShortsPositionState);

@@ -13,7 +13,6 @@ const useGetShortableSynths = (isL2: boolean) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const { synthetixjs, network, provider } = Connector.useContainer();
 
-
 	return useQuery(
 		[ 'getShortableSynths', network.id ],
 		async () => {
@@ -36,17 +35,15 @@ const useGetShortableSynths = (isL2: boolean) => {
 					getShortableCalls.push(CM.shortableSynthsByKey(ethers.utils.formatBytes32String(synth)));
 				}
 
-				const shortableListRaw = (await ethCallProvider.all(getShortableCalls, {})) as ethers.BigNumber[];
-				console.log("shortableListRaw:", shortableListRaw);
+				const shortableListRaw = (await ethCallProvider.all(getShortableCalls)) as ethers.BigNumber[];
 				const shortableList = shortableListRaw.map((retval) => Number(retval));
 
 				const SYNTHS_TO_SHORT : CurrencyKey[] = [];
-				// for (let i = 0; i < shortableList.length; i++) {
-				// 	if(shortableList[i] > 0) {
-				// 		SYNTHS_TO_SHORT.push(shortableSynthsList[i] as CurrencyKey)
-				// 	}
-				// }
-				console.log("SYNTHS_TO_SHORT:", SYNTHS_TO_SHORT)
+				for (let i = 0; i < shortableList.length; i++) {
+					if(shortableList[i] > 0) {
+						SYNTHS_TO_SHORT.push(shortableSynthsList[i] as CurrencyKey)
+					}
+				}
 	
 				return SYNTHS_TO_SHORT as CurrencyKey[];
 			} else {
@@ -54,7 +51,7 @@ const useGetShortableSynths = (isL2: boolean) => {
 			}
 		},
 		{
-			// enabled: isAppReady && !!synthetixjs,
+			enabled: isAppReady && !!synthetixjs,
 		}
 	);
 };

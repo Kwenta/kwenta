@@ -49,11 +49,8 @@ const useFeeReclaimPeriodsQuery = (
 				);
 			}
 
-			const waitingPeriodsRaw = (await ethcallProvider.all(
-				waitingPeriodCalls,
-				{}
-			)) as ethers.BigNumberish[];
-			const feesRaw = await ethcallProvider.all(feeCalls, {});
+			const waitingPeriodsRaw = (await ethcallProvider.all(waitingPeriodCalls)) as ethers.BigNumberish[];
+			const feesRaw = await ethcallProvider.all(feeCalls);
 
 			const waitingPeriods = waitingPeriodsRaw.map((period) => Number(period));
 

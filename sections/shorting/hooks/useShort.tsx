@@ -48,6 +48,7 @@ import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
 import { SYNTHS_TO_SHORT } from '../constants';
+import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
@@ -246,15 +247,20 @@ const useShort = ({
 			? synthsWalletBalancesQuery.data.balances.length === 0
 			: false;
 
-	// TODO: grab these from the smart contract
+	const shortListQuery = useGetShortableSynths(isL2);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [
+		shortListQuery.data,
+	]);
+
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
+			console.log(SYNTHS_TO_SHORT);
 			return synthetixjs!.synths.filter((synth) =>
-				SYNTHS_TO_SHORT.includes(synth.name as CurrencyKey)
+				SYNTHS_TO_SHORT?.includes(synth.name as CurrencyKey)
 			);
 		}
 		return [];
-	}, [isAppReady, synthetixjs]);
+	}, [isAppReady, synthetixjs, SYNTHS_TO_SHORT]);
 
 	const gasPrice = useMemo(
 		() =>

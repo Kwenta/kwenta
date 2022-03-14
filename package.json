@@ -41,7 +41,7 @@
 		"bnc-onboard": "1.37.3",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
-		"ethcall": "3.2.0",
+		"ethcall": "4.3.6",
 		"ethers": "5.5.0",
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
