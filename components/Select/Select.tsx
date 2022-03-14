@@ -8,7 +8,6 @@ function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
-		console.log(colors.selectedTheme)
 		const styles: StylesConfig = {
 			container: (provided, state) => ({
 				...provided,
