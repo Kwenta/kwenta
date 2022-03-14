@@ -8,6 +8,7 @@ function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
+		console.log(colors.selectedTheme)
 		const styles: StylesConfig = {
 			container: (provided, state) => ({
 				...provided,
@@ -54,6 +55,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			option: (provided, state) => ({
 				...provided,
+				border: colors.selectedTheme.border,
 				fontFamily: fonts.bold,
 				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
 				cursor: 'pointer',
