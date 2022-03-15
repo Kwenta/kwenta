@@ -8,44 +8,48 @@ import { isL2State, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition } from './utils';
-import { FuturesPosition } from './types';
+import Wei, { wei } from '@synthetixio/wei';
 
 const useGetCurrentPortfolioValue = (
 	markets: string[] | [],
-	options?: UseQueryOptions<Number | never[]>
+	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
-	return useQuery<Number | never[]>(
+	return useQuery<any | null>(
 		QUERY_KEYS.Futures.Positions(markets || [], walletAddress || ''),
 		async () => {
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
-			if (!markets) return [];
+			if (!markets) return null;
 
-			const positionsForMarkets = await Promise.all(
-				(markets as [string]).map((market: string) =>
-					Promise.all([
-						FuturesMarketData.positionDetailsForAsset(
-							ethersUtils.formatBytes32String(market),
-							walletAddress
-						)
-					])
-				)
-			);
-			
-			const portfolioValue = positionsForMarkets
-				.map(([position], i) => {
-					const mappedPosition = mapFuturesPosition(position, false, markets[i]);
-					return mappedPosition.remainingMargin.add(mappedPosition?.position?.roi || 0).toNumber();
-				})
-				.reduce((sum, val) => sum + val, 0);
-			console.log(portfolioValue)
-			return !!portfolioValue ? portfolioValue : 0;
+			try {
+				const positionsForMarkets = await Promise.all(
+					(markets as [string]).map((market: string) =>
+						Promise.all([
+							FuturesMarketData.positionDetailsForAsset(
+								ethersUtils.formatBytes32String(market),
+								walletAddress
+							)
+						])
+					)
+				);
+				
+				const portfolioValue = positionsForMarkets
+					.map(([position], i) => {
+						const mappedPosition = mapFuturesPosition(position, false, markets[i]);
+						return mappedPosition.remainingMargin.add(mappedPosition?.position?.roi || 0);
+					})
+					.reduce((sum: Wei, val) => sum.add(val), wei(0));
+				return !!portfolioValue ? portfolioValue : wei(0);
+			} catch (e) {
+				console.log(e);
+				return null;
+			}
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && markets.length > 0 && !!synthetixjs,

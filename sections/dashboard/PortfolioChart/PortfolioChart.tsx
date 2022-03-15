@@ -5,6 +5,7 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
+import { wei } from '@synthetixio/wei';
 
 type PortfolioChartProps = {
 	futuresMarkets: FuturesMarket[]
@@ -15,11 +16,11 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioCh
 
 	const markets = futuresMarkets.map((market: FuturesMarket) => {return market.asset})
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
-	const portfolioValue = portfolioValueQuery?.data ?? undefined;
+	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	return (
 		<Chart>
-			<PortfolioTitle>Portfolio Value</PortfolioTitle>
+			<PortfolioTitle>Futures Portfolio Value</PortfolioTitle>
 			{!!portfolioValue && <PortfolioText
 				currencyKey={Synths.sUSD}
 				price={portfolioValue}
@@ -38,8 +39,19 @@ const Chart = styled.div`
 `
 
 const PortfolioTitle = styled.p`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 26px;
+	margin-left: 26px;
 `
 const PortfolioText = styled(Currency.Price)`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 27px;
+	font-weight: bold;
+	margin-left: 26px;
 `
 
 
