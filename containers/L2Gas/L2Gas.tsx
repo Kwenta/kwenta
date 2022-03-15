@@ -36,8 +36,9 @@ const MakeContainer = () => {
 
 		const loadBalance = async () => {
 			try {
-				const balance = await ovmETHContract.balanceOf(address);
-				if (isMounted) setBalance(wei(balance.toString()).div(1e18));
+				const balance = await provider?.getBalance(address);
+				console.log('balance =', balance);
+				if (isMounted && balance !== undefined) setBalance(wei(balance.toString()).div(1e18));
 			} catch (e) {
 				console.error(e);
 			}
@@ -45,12 +46,10 @@ const MakeContainer = () => {
 
 		const subscribe = () => {
 			const transferEvent = ovmETHContract.filters.Transfer();
-			const onBalanceChange = async (from: string, to: string) => {
-				if (from === address || to === address) {
-					if (isMounted) setBalance(await ovmETHContract.balanceOf(address));
-				}
+			const onBalanceChange = (from: string, to: string) => {
+				if (from === address || to === address) loadBalance();
+				console.log('TRANSFER EVENT');
 			};
-
 			ovmETHContract.on(transferEvent, onBalanceChange);
 			unsubs.push(() => {
 				ovmETHContract.off(transferEvent, onBalanceChange);
