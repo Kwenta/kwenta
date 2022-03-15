@@ -10,12 +10,12 @@ import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
 
 type LeverageInputProps = {
-	currentLeverage: number;
+	currentLeverage: string;
 	currentTradeSize: number;
 	maxLeverage: number;
 	side: PositionSide;
 	assetRate: number;
-	onLeverageChange: (value: number) => void;
+	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
 };
@@ -34,6 +34,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
+	const [inputValue, setInputValue] = useState(currentLeverage.toString());
 
 	const currentPositionLeverage = currentPosition?.position?.leverage?.toNumber() ?? 0;
 	const currentPositionSide = currentPosition?.position?.side ?? null;
@@ -44,7 +45,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		if (!currentPositionLeverage) return null;
 		if (currentPositionSide === side) {
 			return t('futures.market.trade.input.leverage.total-leverage', {
-				totalLeverage: (currentPositionLeverage + currentLeverage).toFixed(2),
+				totalLeverage: (currentPositionLeverage + Number(currentLeverage)).toFixed(2),
 			});
 		} else {
 			const sizeDelta = currentTradeSize - currentPositionSize;
@@ -94,10 +95,10 @@ const LeverageInput: FC<LeverageInputProps> = ({
 						disabled={maxLeverage <= 0}
 						minValue={MIN_LEVERAGE}
 						maxValue={maxLeverage}
-						value={currentLeverage}
+						value={Number(currentLeverage)}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
-							onLeverageChange(newValue as number);
+							onLeverageChange(newValue.toString());
 						}}
 						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 					/>
@@ -106,13 +107,13 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			) : (
 				<LeverageInputContainer>
 					<NumericInput
-						value={Math.round(currentLeverage * 100) / 100}
+						value={currentLeverage === '' ? '' : Math.round(Number(currentLeverage) * 100) / 100}
 						onChange={(_, value) => {
-							onLeverageChange(Number(value));
+							onLeverageChange(value);
 							setIsLeverageValueCommitted(true);
 						}}
 					/>
-					{[2, 5, 10].map((l) => (
+					{['2', '5', '10'].map((l) => (
 						<LeverageButton
 							key={l.toString()}
 							mono
