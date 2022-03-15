@@ -54,6 +54,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			option: (provided, state) => ({
 				...provided,
+				border: colors.selectedTheme.border,
 				fontFamily: fonts.bold,
 				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
 				cursor: 'pointer',

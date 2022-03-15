@@ -19,8 +19,8 @@ export const MenuModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		margin-left: auto;
 		padding: 0;
-		margin-right: 12px;
-		margin-top: calc(${HEADER_HEIGHT} + 10px);
+		margin-right: 31px;
+		margin-top: calc(${HEADER_HEIGHT} - 35px);
 		${media.lessThan('sm')`
 			margin: 0;
 		`}

@@ -98,7 +98,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
 				options={OPTIMISM_OPTIONS}
-				value={{ label: 'L2', prefixIcon: 'Optimism' }}
+				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
@@ -114,6 +114,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 export default NetworksSwitcher;
 
 const Container = styled.div`
+	width: 100%;
 	font-size: 12px;
 	font-weight: bold;
 	line-height: 1;
@@ -126,7 +127,7 @@ const StyledButton = styled(Button)`
 `;
 
 const L2Select = styled(Select)`
-	width: 85px;
+	width: 125px;
 
 	.react-select__control {
 		border-radius: 10px;
