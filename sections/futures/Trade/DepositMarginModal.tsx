@@ -133,7 +133,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			</BalanceContainer>
 			<CustomInput
 				value={amount}
-				onChange={(e) => setAmount(e.target.value)}
+				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<StyledInfoBox

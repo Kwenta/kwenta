@@ -159,9 +159,11 @@ const Trade: React.FC<TradeProps> = () => {
 				).toString()
 			);
 		} else {
-			setLeverage('');
+			if (Number(leverage) !== 0) {
+				setLeverage('');
+			}
 		}
-	}, [tradeSize, marketAssetRate, futuresMarketsPosition]);
+	}, [tradeSize, marketAssetRate, futuresMarketsPosition, leverage]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);

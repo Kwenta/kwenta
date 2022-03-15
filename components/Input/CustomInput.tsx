@@ -1,26 +1,37 @@
 import React from 'react';
 import styled from 'styled-components';
 
-type OrderSizingInputProps = {
+type CustomInputProps = {
 	value?: string | number;
-	onChange?: React.ChangeEventHandler<HTMLInputElement>;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 	right: React.ReactNode;
 	style?: React.CSSProperties;
 	className?: string;
 };
 
-const CustomInput: React.FC<OrderSizingInputProps> = ({
-	value,
-	onChange,
-	right,
-	style,
-	className,
-}) => (
-	<CustomInputContainer style={style} className={className}>
-		<input value={value} onChange={onChange} />
-		{typeof right === 'string' ? <span>{right}</span> : right}
-	</CustomInputContainer>
-);
+const INVALID_CHARS = ['-', '+', 'e'];
+
+const CustomInput: React.FC<CustomInputProps> = ({ value, onChange, right, style, className }) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
+	};
+
+	return (
+		<CustomInputContainer style={style} className={className}>
+			<input
+				value={value}
+				type="number"
+				onChange={handleChange}
+				onKeyDown={(e) => {
+					if (INVALID_CHARS.includes(e.key)) {
+						e.preventDefault();
+					}
+				}}
+			/>
+			{typeof right === 'string' ? <span>{right}</span> : right}
+		</CustomInputContainer>
+	);
+};
 
 const CustomInputContainer = styled.div`
 	display: flex;

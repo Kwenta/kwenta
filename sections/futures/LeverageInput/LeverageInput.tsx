@@ -1,4 +1,4 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -25,49 +25,11 @@ const MIN_LEVERAGE = 1;
 const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
 	maxLeverage,
-	currentTradeSize,
-	side,
 	onLeverageChange,
 	setIsLeverageValueCommitted,
-	currentPosition,
-	assetRate,
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
-	const [inputValue, setInputValue] = useState(currentLeverage.toString());
-
-	const currentPositionLeverage = currentPosition?.position?.leverage?.toNumber() ?? 0;
-	const currentPositionSide = currentPosition?.position?.side ?? null;
-	const currentPositionSize = currentPosition?.position?.size?.toNumber() ?? 0;
-	const currentPositionMargin = currentPosition?.remainingMargin?.toNumber() ?? 0;
-
-	const legend = useMemo(() => {
-		if (!currentPositionLeverage) return null;
-		if (currentPositionSide === side) {
-			return t('futures.market.trade.input.leverage.total-leverage', {
-				totalLeverage: (currentPositionLeverage + Number(currentLeverage)).toFixed(2),
-			});
-		} else {
-			const sizeDelta = currentTradeSize - currentPositionSize;
-			return sizeDelta > 0
-				? t('futures.market.trade.input.leverage.close-position', {
-						leverageDelta: ((Math.abs(sizeDelta) * assetRate) / currentPositionMargin).toFixed(2),
-				  })
-				: t('futures.market.trade.input.leverage.partial-close-position', {
-						closePositionDelta: ((100 * currentTradeSize) / currentPositionSize).toFixed(2),
-				  });
-		}
-	}, [
-		currentPositionLeverage,
-		currentLeverage,
-		t,
-		side,
-		currentPositionSide,
-		assetRate,
-		currentPositionMargin,
-		currentPositionSize,
-		currentTradeSize,
-	]);
 
 	const modeButton = useMemo(() => {
 		return (
@@ -80,6 +42,11 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			</TextButton>
 		);
 	}, [mode]);
+
+	useEffect(() => {
+		console.log('Current Leverage', currentLeverage);
+		console.log((Math.round(Number(currentLeverage) * 100) / 100).toString());
+	}, [currentLeverage]);
 
 	return (
 		<LeverageInputWrapper>
@@ -102,12 +69,15 @@ const LeverageInput: FC<LeverageInputProps> = ({
 						}}
 						onChangeCommitted={() => setIsLeverageValueCommitted(true)}
 					/>
-					{legend && <SliderLegend>{legend}</SliderLegend>}
 				</SliderRow>
 			) : (
 				<LeverageInputContainer>
 					<NumericInput
-						value={currentLeverage === '' ? '' : Math.round(Number(currentLeverage) * 100) / 100}
+						value={
+							currentLeverage === ''
+								? ''
+								: (Math.round(Number(currentLeverage) * 100) / 100).toString()
+						}
 						onChange={(_, value) => {
 							onLeverageChange(value);
 							setIsLeverageValueCommitted(true);
@@ -155,14 +125,6 @@ const SliderRow = styled(FlexDivRow)`
 	margin-top: 8px;
 	margin-bottom: 14px;
 	position: relative;
-`;
-
-const SliderLegend = styled(FlexDivRow)`
-	position: absolute;
-	top: 100%;
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 10px;
-	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 const LeverageInputContainer = styled.div`
