@@ -37,18 +37,18 @@ const MakeContainer = () => {
 		const loadBalance = async () => {
 			try {
 				const balance = await provider?.getBalance(address);
-				console.log('balance =', balance);
 				if (isMounted && balance !== undefined) setBalance(wei(balance.toString()).div(1e18));
 			} catch (e) {
 				console.error(e);
 			}
 		};
 
+		// Need to find a way to track the connected wallet's ETH transfers
+		// Optimism's OVM_ETH contract does not track transfers of L2 ETH
 		const subscribe = () => {
 			const transferEvent = ovmETHContract.filters.Transfer();
 			const onBalanceChange = (from: string, to: string) => {
 				if (from === address || to === address) loadBalance();
-				console.log('TRANSFER EVENT');
 			};
 			ovmETHContract.on(transferEvent, onBalanceChange);
 			unsubs.push(() => {
@@ -62,7 +62,7 @@ const MakeContainer = () => {
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [ovmETHContract, address]);
+	}, [ovmETHContract, address, provider]);
 
 	return {
 		gas: balance,
