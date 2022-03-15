@@ -19,7 +19,7 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioCh
 
 	return (
 		<Chart>
-			<PortfolioTitle>Portfolio Value: </PortfolioTitle>
+			<PortfolioTitle>Portfolio Value</PortfolioTitle>
 			{!!portfolioValue && <PortfolioText
 				currencyKey={Synths.sUSD}
 				price={portfolioValue}
@@ -37,7 +37,7 @@ const Chart = styled.div`
 	border-radius: 16px;
 `
 
-const PortfolioTitle = styled.span`
+const PortfolioTitle = styled.p`
 `
 const PortfolioText = styled(Currency.Price)`
 `
