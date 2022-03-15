@@ -13,11 +13,11 @@ const StakingInfo: FC = () => {
 			<CardTitle>{t('futures-dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
 				<Title>APY:</Title>
-				<BigText white>60%</BigText>
+				<BigText white>--%</BigText>
 
 				<Title>Claimable:</Title>
-				<BigText white logo>248.12</BigText>
-				<StyledButton fullWidth>
+				<BigText white logo>--</BigText>
+				<StyledButton fullWidth disabled>
 					Claim Rewards
 				</StyledButton>
 			</StakingBody>
