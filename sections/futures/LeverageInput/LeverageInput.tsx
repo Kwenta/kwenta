@@ -95,7 +95,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 						disabled={maxLeverage <= 0}
 						minValue={MIN_LEVERAGE}
 						maxValue={maxLeverage}
-						value={Number(currentLeverage)}
+						value={currentLeverage ? Number(currentLeverage) : 1}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue.toString());
