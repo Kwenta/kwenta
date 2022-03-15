@@ -43,11 +43,6 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		);
 	}, [mode]);
 
-	useEffect(() => {
-		console.log('Current Leverage', currentLeverage);
-		console.log((Math.round(Number(currentLeverage) * 100) / 100).toString());
-	}, [currentLeverage]);
-
 	return (
 		<LeverageInputWrapper>
 			<LeverageRow>
