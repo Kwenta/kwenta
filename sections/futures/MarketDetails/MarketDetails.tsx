@@ -49,7 +49,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const livePrice = coinGeckoPrices?.[priceId].usd ?? 0;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice([baseCurrencyKey]);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(
+		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+	);
 	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
