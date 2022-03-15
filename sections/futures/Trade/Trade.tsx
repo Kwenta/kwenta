@@ -147,10 +147,18 @@ const Trade: React.FC<TradeProps> = () => {
 
 	useEffect(() => {
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
-		setLeverage(
-			(Number(tradeSize) * marketAssetRate) /
-				Number(futuresMarketsPosition?.remainingMargin.toString())
-		);
+		if (
+			Number(tradeSize) &&
+			Number(marketAssetRate) &&
+			Number(futuresMarketsPosition?.remainingMargin.toString())
+		) {
+			setLeverage(
+				(Number(tradeSize) * marketAssetRate) /
+					Number(futuresMarketsPosition?.remainingMargin.toString())
+			);
+		} else {
+			setLeverage(0);
+		}
 	}, [tradeSize, marketAssetRate, futuresMarketsPosition]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
