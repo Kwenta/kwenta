@@ -95,7 +95,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			'24H Funding': {
 				value: formatPercent(marketSummary?.currentFundingRate ?? zeroBN),
-				color: 'green',
 			},
 		};
 	}, [
