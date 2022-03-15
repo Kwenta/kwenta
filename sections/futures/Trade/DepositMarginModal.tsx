@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
 
 import BaseModal from 'components/BaseModal';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import InfoBox from 'components/InfoBox';
 import Button from 'components/Button';
@@ -133,16 +133,19 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			</BalanceContainer>
 			<CustomInput
 				value={amount}
-				onChange={(e) => setAmount(e.target.value)}
+				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<StyledInfoBox
 				details={{
-					Fee: transactionFee
-						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
+					'Gas Fee': transactionFee
+						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
 						: NO_VALUE,
-					'Gas Fee': '',
-					Total: '',
+					Fee: '',
+					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
+						sign: '$',
+						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
+					}),
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleDeposit}>

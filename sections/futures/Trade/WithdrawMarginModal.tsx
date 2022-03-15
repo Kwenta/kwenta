@@ -14,7 +14,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { parseGasPriceObject } from 'hooks/useGas';
 import { gasPriceInWei, getTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FlexDivRowCentered } from 'styles/common';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { NO_VALUE } from 'constants/placeholder';
@@ -138,16 +138,19 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			</BalanceContainer>
 			<CustomInput
 				value={amount}
-				onChange={(e) => setAmount(e.target.value)}
+				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<StyledInfoBox
 				details={{
-					Fee: transactionFee
+					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
 						: NO_VALUE,
-					'Gas Fee': '',
-					Total: '',
+					Fee: '-',
+					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
+						sign: '$',
+						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
+					}),
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleWithdraw}>

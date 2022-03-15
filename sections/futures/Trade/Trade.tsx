@@ -72,7 +72,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [error, setError] = useState<string | null>(null);
 	const competitionClosed = true;
 
-	const [leverage, setLeverage] = useState<number>(1);
+	const [leverage, setLeverage] = useState<string>('1');
 
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
@@ -147,27 +147,40 @@ const Trade: React.FC<TradeProps> = () => {
 
 	useEffect(() => {
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
-		setLeverage(
-			(Number(tradeSize) * marketAssetRate) /
-				Number(futuresMarketsPosition?.remainingMargin.toString())
-		);
-	}, [tradeSize, marketAssetRate, futuresMarketsPosition]);
+		if (
+			Number(tradeSize) &&
+			Number(marketAssetRate) &&
+			Number(futuresMarketsPosition?.remainingMargin.toString())
+		) {
+			setLeverage(
+				(
+					(Number(tradeSize) * marketAssetRate) /
+					Number(futuresMarketsPosition?.remainingMargin.toString())
+				).toString()
+			);
+		} else {
+			if (Number(leverage) !== 0) {
+				setLeverage('');
+			}
+		}
+	}, [tradeSize, marketAssetRate, futuresMarketsPosition, leverage]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);
 		setTradeSize(value === '' ? '' : (Number(value) / marketAssetRate).toString());
 	};
 
-	const onLeverageChange = (value: number) => {
-		if (value < 0) {
-			setLeverage(0);
+	const onLeverageChange = (value: string) => {
+		if (value === '' || Number(value) < 0) {
+			setLeverage('');
 			setTradeSize('');
+			setTradeSizeSUSD('');
 		} else {
 			setLeverage(value);
 			const newTradeSize =
 				marketAssetRate === 0
 					? 0
-					: (value * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
+					: (Number(value) * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
 					  marketAssetRate;
 
 			onTradeAmountChange(newTradeSize.toString());
@@ -229,7 +242,7 @@ const Trade: React.FC<TradeProps> = () => {
 				monitorTransaction({
 					txHash: tx.hash,
 					onTxConfirmed: () => {
-						onLeverageChange(0);
+						onLeverageChange('');
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
 							futuresPositionHistoryQuery.refetch();
@@ -286,7 +299,7 @@ const Trade: React.FC<TradeProps> = () => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={(position) => {
-					onLeverageChange(0);
+					onLeverageChange('');
 					setLeverageSide(position);
 				}}
 			/>

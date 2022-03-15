@@ -105,7 +105,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
 					position={futuresMarketsPosition ?? null}
-					positionHistory={positionHistory ?? null}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
 					onPositionClose={() =>

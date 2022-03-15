@@ -22,7 +22,7 @@ const Market: FC = () => {
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
 			<AppLayout>
-				<PageContent>
+				<StyledPageContent>
 					<FullHeightContainer>
 						<StyledMainContent>
 							<MarketInfo market={router.query.market?.[0]!} />
@@ -33,7 +33,7 @@ const Market: FC = () => {
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>
-				</PageContent>
+				</StyledPageContent>
 			</AppLayout>
 		</>
 	);
@@ -41,12 +41,15 @@ const Market: FC = () => {
 
 export default Market;
 
+const StyledPageContent = styled(PageContent)`
+	max-width: 1440px;
+`;
+
 const StyledMainContent = styled(MainContent)`
-	max-width: 1031px;
-	margin-left: 0;
+	max-width: initial;
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`
-	width: 385px;
+	width: 349px;
 	padding-left: 15px;
 `;
