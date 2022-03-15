@@ -5,19 +5,21 @@ import { wei } from '@synthetixio/wei';
 import { FlexDiv, FlexDivCol } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import Button from 'components/Button';
-import { FuturesPosition, PositionHistory, PositionSide } from 'queries/futures/types';
+import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
+import { NO_VALUE } from 'constants/placeholder';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 
 type PositionCardProps = {
 	currencyKey: string;
 	position: FuturesPosition | null;
-	positionHistory?: PositionHistory[] | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
@@ -26,7 +28,6 @@ type PositionCardProps = {
 const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKey,
 	position,
-	positionHistory,
 	currencyKeyRate,
 	onPositionClose,
 	dashboard,
@@ -35,6 +36,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const router = useRouter();
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+	const futuresPositionsQuery = useGetFuturesPositionForAccount();
+	const futuresMarketsQuery = useGetFuturesMarkets();
+
+	const futuresPositions = futuresPositionsQuery?.data ?? null;
+	const futuresMarkets = futuresMarketsQuery.data ?? [];
+
+	const market = futuresMarkets.find(({ asset }) => asset === position?.asset);
 
 	const { synthsMap } = Connector.useContainer();
 	const getSynthDescription = React.useCallback(
@@ -46,14 +54,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		[t, synthsMap]
 	);
 
-	const averageEntryPrice =
-		!!positionHistory && positionHistory?.length > 0
-			? positionHistory
-					?.reduce((acc, curr) => {
-						return acc.add(curr.entryPrice);
-					}, wei(0))
-					.div(positionHistory?.length)
-			: zeroBN;
+	const positionHistory = futuresPositions?.find(({ asset }) => asset === currencyKey);
 
 	return (
 		<>
@@ -91,9 +92,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
 						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
+							{market && positionHistory?.entryPrice.gt(zeroBN)
+								? `${formatCurrency(
+										Synths.sUSD,
+										positionHistory.entryPrice?.sub(market.price).toNumber() ?? zeroBN,
+										{ sign: '$' }
+								  )} (${formatPercent(
+										positionHistory.entryPrice?.sub(market.price).div(positionHistory.entryPrice)
+								  )})`
+								: NO_VALUE}
 						</StyledValue>
-						{/* <StyledValue>$4,131.23 (1.53%)</StyledValue> */}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
@@ -114,14 +122,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Average Entry Price</StyledSubtitle>
 						<StyledValue>
-							{formatCurrency(Synths.sUSD, averageEntryPrice, {
+							{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
 								sign: '$',
 							})}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>{formatCurrency(Synths.sUSD, zeroBN, { sign: '$' })}</StyledValue>
+						<StyledValue>{NO_VALUE}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>

@@ -13,6 +13,9 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 import { synthToCoingeckoPriceId } from './utils';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { Price } from 'queries/rates/types';
+import { NO_VALUE } from 'constants/placeholder';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -46,6 +49,11 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const livePrice = coinGeckoPrices?.[priceId].usd ?? 0;
 
+	const dailyPriceChangesQuery = useLaggedDailyPrice([baseCurrencyKey]);
+	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
+
+	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
+
 	const data: MarketData = React.useMemo(() => {
 		return {
 			[`${baseCurrencyKey}/sUSD`]: {
@@ -57,8 +65,16 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				}),
 			},
 			'24H Change': {
-				value: '$392.92 (1.8%)',
-				color: 'red',
+				value:
+					marketSummary?.price && pastPrice?.price
+						? `${formatCurrency(
+								selectedPriceCurrency.name,
+								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+								{ sign: '$' }
+						  )} (${formatPercent(
+								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+						  )})`
+						: NO_VALUE,
 			},
 			'24H Volume': {
 				value: formatCurrency(
@@ -90,6 +106,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		futuresDailyTradeStats,
 		selectedPriceCurrency.name,
 		livePrice,
+		pastPrice?.price,
 	]);
 
 	return (
