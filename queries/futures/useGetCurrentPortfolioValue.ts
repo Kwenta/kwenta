@@ -29,7 +29,7 @@ const useGetCurrentPortfolioValue = (
 
 			try {
 				const positionsForMarkets = await Promise.all(
-					(markets as [string]).map((market: string) =>
+					(markets as string[]).map((market: string) =>
 						Promise.all([
 							FuturesMarketData.positionDetailsForAsset(
 								ethersUtils.formatBytes32String(market),
