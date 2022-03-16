@@ -251,7 +251,6 @@ const useShort = ({
 
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {
-			console.log(SYNTHS_TO_SHORT);
 			return synthetixjs!.synths.filter((synth) =>
 				SYNTHS_TO_SHORT?.includes(synth.name as CurrencyKey)
 			);
