@@ -51,7 +51,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	onConfirmOrder,
 }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
@@ -119,7 +119,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			{
 				label: 'size',
 				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					currencyKey: market || '',
+					sign: market ? synthsMap[market].sign : ''
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
@@ -149,6 +149,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		onConfirmOrder();
 		onDismiss();
 	};
+	console.log(synthsMap)
 
 	return (
 		<StyledBaseModal
