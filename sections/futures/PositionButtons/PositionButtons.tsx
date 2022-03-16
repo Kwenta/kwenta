@@ -47,7 +47,6 @@ const PositionButtonsContainer = styled.div`
 const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	font-size: 16px;
 	height: 55px;
-	box-sizing: border-box;
 
 	&:before {
 		content: ' ';
