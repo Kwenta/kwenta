@@ -52,24 +52,28 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		content: ' ';
 		position: absolute;
 		z-index: -1;
-		top: -4px;
-		right: -4px;
-		bottom: -4px;
-		left: -4px;
-		border-radius: 18px;
+		top: -3px;
+		right: -3px;
+		bottom: -3px;
+		left: -3px;
+		border-radius: 10px;
 	}
 
 	${(props) =>
 		props.$position === PositionSide.LONG &&
 		css`
-			border: 1px solid ${props.theme.colors.common.primaryGreen};
-
 			${props.$isActive &&
 			css`
+				transform: scale(.98);
+				border: 2px solid ${props.theme.colors.common.primaryGreen};
 				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
 
 				&:before {
 					border: 2px solid ${props.theme.colors.selectedTheme.button.active.hover.successBorder};
+				}
+
+				&:hover {
+					background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
 				}
 			`};
 		`};
@@ -77,14 +81,18 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.SHORT &&
 		css`
-			border: 1px solid ${props.theme.colors.common.primaryRed};
-
 			${props.$isActive &&
 			css`
+				transform: scale(.98);
+				border: 2px solid ${props.theme.colors.common.primaryRed};
 				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
 
 				&:before {
 					border: 2px solid ${props.theme.colors.selectedTheme.button.active.hover.dangerBorder};
+				}
+
+				&:hover {
+					background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
 				}
 			`};
 		`};
