@@ -43,8 +43,6 @@ const MakeContainer = () => {
 			}
 		};
 
-		// Need to find a way to track the connected wallet's ETH transfers
-		// Optimism's OVM_ETH contract does not track transfers of L2 ETH
 		const subscribe = () => {
 			const transferEvent = ovmETHContract.filters.Transfer();
 			const onBalanceChange = (from: string, to: string) => {
