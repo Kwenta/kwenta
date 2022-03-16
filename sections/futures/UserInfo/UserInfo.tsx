@@ -61,19 +61,21 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	}, [router]);
 
 	const activeTab = tabQuery != null ? tabQuery : FuturesTab.POSITION;
+	console.log(positionHistory)
 
 	const TABS = useMemo(
 		() => [
 			{
 				name: FuturesTab.POSITION,
 				label: 'Open Positions',
-				badge: positionHistory?.length,
+				badge: positionHistory?.filter((val) => val.isOpen).length,
 				active: activeTab === FuturesTab.POSITION,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
 			{
 				name: FuturesTab.TRADES,
 				label: 'Order History',
+				badge: positionHistory?.length,
 				disabled: true,
 				active: activeTab === FuturesTab.TRADES,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
