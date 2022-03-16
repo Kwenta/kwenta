@@ -65,7 +65,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		css`
 			${props.$isActive &&
 			css`
-				transform: scale(1.02);
+				transform: scale(.98);
 				border: 2px solid ${props.theme.colors.common.primaryGreen};
 				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
 
@@ -82,10 +82,9 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.SHORT &&
 		css`
-			transform: scale(0.98);
 			${props.$isActive &&
 			css`
-				transform: scale(1);
+				transform: scale(.98);
 				border: 2px solid ${props.theme.colors.common.primaryRed};
 				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
 
