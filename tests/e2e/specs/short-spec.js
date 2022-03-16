@@ -1,10 +1,10 @@
-import ExchangePage from '../pages/exchange/exchange-page';
+import ShortingPage from '../pages/exchange/shorting-page';
 import {useCyShortHistoryQuery, useCyShortHistoryQueryPollAsync} from '../helper/CyShortHistoryQuery';
 
-const exchange = new ExchangePage();
+const shorting = new ShortingPage();
 
 /*
-* This end-to-end test illustrates the happy flow of opening a short through the Kwenta exchange on Optimistic Kovan
+* This end-to-end test illustrates the happy flow of opening a short through the Kwenta shorting on Optimistic Kovan
 * 1 sUSD is swapped
 * This e2e test works with Chrome on Optimistic Kovan
 * 
@@ -19,14 +19,14 @@ describe('Shorting on Optimism', () => {
 		
 		before(() => {	
 		
-			// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
-			cy.disconnectMetamaskWalletFromAllDapps();
-			cy.visit('/shorting');
+			shorting.disconnectMetamaskWalletFromAllDapps();
+			shorting.visit();
+			shorting.connectBrowserWallet();
+			shorting.acceptMetamaskAccessRequest();
 
-			exchange.connectBrowserWallet();
-			exchange.acceptMetamaskAccessRequest();
+			shorting.assertCollateralIsAbove100sUSD();
 
-			exchange.getMetamaskWalletAddress().then((address) => {
+			shorting.getMetamaskWalletAddress().then((address) => {
 				walletAddress = address;
 
 				// query the subgraph to find out the amount of short postions open
@@ -38,46 +38,13 @@ describe('Shorting on Optimism', () => {
 				});
 			});
 
-			// we must be logged in now ; added statement as an extra safeguard we need a wallet address available
-			cy.findByTestId('wallet-btn').should(`contain.text`,'0x');
-
-			// need to fill in the field with amount of collateral to short with a minimum 100 sUSD
-			cy.findAllByTestId('destination').each(($el, index, $list) => {			
-				if($el.text().match(/collateral/)) {
-					cy.wrap($el).parent().findAllByTestId('currency-amount').type('100');
-				} 
-			})
+			shorting.enterCollateralOf100sUSD();
 		});
 		
 		it(`should approve, open and register the short`, () => {
 
-			// need to be sure that the asset its value to short is bigger than 0 at this point
-			cy.findAllByTestId('destination').each(($el, index, $list) => {	
-				if($el.text().match(/shorting/)) {
-					cy.wrap($el).parent().findAllByTestId('currency-amount').invoke('val').then(short => { 
-						expect(+short, "Short value must be bigger than 0").to.above(0);
-					});
-				} 
-			})
-
-			exchange.getSubmitOrderBtn()
-				.then($submitButton => {					
-					// checking if we need to approve the spending of sUSD first and if yes we do so
-					if($submitButton.text().match(/appro/i)) {
-						cy.wrap($submitButton).click();
-						cy.confirmMetamaskPermissionToSpend();
-						exchange.waitForTransactionSuccess();		
-					}
-
-				// need again to get the submit button so that the chain runs smoothly  for the next then()
-				exchange.getSubmitOrderBtn();			
-				})
-				.then($submitButton => {
-					cy.wrap($submitButton).should('contain.text','submit');
-					cy.wrap($submitButton).click();
-					exchange.confirmMetamaskTransaction();
-					exchange.waitForTransactionSuccess(); 			
-				});	
+			shorting.assertAssetToShortItsValueExceedsZero();
+			shorting.executeApproveAndShortTransaction();	
 				
 			cy.wrap(useCyShortHistoryQueryPollAsync(numberOfShortsAtBegin, 0, walletAddress))
             .then((shorts) => {

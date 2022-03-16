@@ -1,8 +1,4 @@
-import {
-	SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
-} from 'queries/collateral/subgraph/utils';
-
-const ENDPOINT = SHORT_GRAPH_ENDPOINT_OVM_KOVAN;
+import { SHORT_GRAPH_ENDPOINT_OVM_KOVAN } from 'queries/collateral/subgraph/utils';
 
 const MAXPOLLS = 500;
 
@@ -10,7 +6,7 @@ const useCyShortHistoryQuery = (wallet : string) => {
 
 	return cy.request({
 		method: 'POST',
-		url: ENDPOINT,
+		url: SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
 		body: {
 			query: `query{ shorts(where: { account: \"` + wallet + `\", isOpen: true }){ id } }`,
 		},
@@ -35,16 +31,15 @@ function useCyShortHistoryQueryPollAsync (numberOfShorts : number, depth: number
 			cy
 				.request({
 					method: 'POST',
-					url: ENDPOINT,
+					url: SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
 					body: {
-						query: `query{ shorts(where: { account: \"` + wallet + `\", isOpen: true }){ id } }`,
+						query: `query{ shorts(where: { account: "${wallet}", isOpen: true }){ id } }`,
 					},
 				})
 				.its('body.data.shorts')
 				.its('length')
 				.then((numberOfShortsQueried) => {  
-					cy.log("depth=" + depth2 + " wallet=" + wallet);
-					cy.log("numberofshortsqueried=" + numberOfShortsQueried);
+
 					if(numberOfShortsQueried > numberOfShorts) {
 						number1 = numberOfShortsQueried;
 						resolve(number1);
@@ -61,8 +56,6 @@ function useCyShortHistoryQueryPollAsync (numberOfShorts : number, depth: number
 			reject(error);
 		}
 	})
-
-	
 }
  
 export { useCyShortHistoryQuery, useCyShortHistoryQueryPollAsync };
