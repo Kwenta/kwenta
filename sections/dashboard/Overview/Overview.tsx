@@ -82,7 +82,9 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			<PortfolioChart />
+			<PortfolioChart
+				futuresMarkets={futuresMarkets}
+			/>
 
 			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, onClick }) => (
