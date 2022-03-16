@@ -16,6 +16,7 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
+import { theme } from 'styles/theme';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -77,11 +78,15 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
 						  )})`
 						: NO_VALUE,
+				color:
+					marketSummary?.price && pastPrice?.price ?
+						marketSummary?.price.sub(pastPrice?.price) > zeroBN ? 'green' :
+						marketSummary?.price.sub(pastPrice?.price) < zeroBN ? 'red' : "" : ""
 			},
 			'24H Volume': {
 				value: formatCurrency(
 					selectedPriceCurrency.name,
-					futuresTradingVolume?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
+					futuresTradingVolume ?? zeroBN,
 					{ sign: '$' }
 				),
 			},

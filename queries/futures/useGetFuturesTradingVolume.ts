@@ -25,7 +25,7 @@ const useGetFuturesTradingVolume = (
 		async () => {
 			if (!currencyKey) return null;
 			try {
-				const minTimestamp = calculateTimestampForPeriod(DAY_PERIOD);
+				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
 				const response = await request(
 					FUTURES_ENDPOINT,
 					gql`
@@ -35,13 +35,13 @@ const useGetFuturesTradingVolume = (
 								orderBy: timestamp
 								orderDirection: desc
 							) {
-								size
+								size,
+								price
 							}
 						}
 					`,
 					{ currencyKey: ethersUtils.formatBytes32String(currencyKey) }
 				);
-
 				return response ? calculateTradeVolume(response.futuresTrades) : null;
 			} catch (e) {
 				console.log(e);

@@ -149,6 +149,7 @@ export type FuturesTradeWithPrice = {
 export type FuturesTrade = {
 	size: string;
 	asset: string;
+	price?: string;
 };
 
 export type FuturesVolumes = {
