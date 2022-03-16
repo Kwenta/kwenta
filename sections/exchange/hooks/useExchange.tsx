@@ -538,7 +538,7 @@ const useExchange = ({
 				: ethGasPriceQuery.data != null
 				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
+		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
 
 	const transactionFee = useMemo(

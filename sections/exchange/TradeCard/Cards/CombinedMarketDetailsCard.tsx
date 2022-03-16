@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';
@@ -47,7 +47,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 			setRates24Low(rates24hQuery.data[rates24hQuery.data.length - 1].rate.toNumber());
 			setRates24High(rates24hQuery.data[0].rate.toNumber());
 		}
-	}, [rates24hQuery.data]);
+	}, [rates24hQuery.isSuccess, rates24hQuery.data]);
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(
 		marketNextTransition((quoteCurrencyKey as CurrencyKey) ?? '') ?? null

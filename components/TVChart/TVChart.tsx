@@ -82,7 +82,17 @@ export function TVChart({
 		return () => {
 			clearExistingWidget();
 		};
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [
+		baseCurrencyKey,
+		quoteCurrencyKey,
+		autosize,
+		containerId,
+		fullscreen,
+		interval,
+		libraryPath,
+		overrides,
+		studiesOverrides,
+	]);
 	return (
 		<Container>
 			<ChartBody id={containerId} />

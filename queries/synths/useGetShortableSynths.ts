@@ -14,10 +14,9 @@ const useGetShortableSynths = (isL2: boolean) => {
 	const { synthetixjs, network, provider } = Connector.useContainer();
 
 	return useQuery(
-		[ 'getShortableSynths', network.id ],
+		['getShortableSynths', network.id],
 		async () => {
 			if (isL2) {
-
 				await ethCallProvider.init(provider as any);
 				const {
 					contracts: { CollateralManager },
@@ -29,22 +28,23 @@ const useGetShortableSynths = (isL2: boolean) => {
 				const getShortableCalls = [];
 				const shortableSynthsList = [];
 
-
-				for(const synth in Synths) {
+				for (const synth in Synths) {
 					shortableSynthsList.push(synth);
 					getShortableCalls.push(CM.shortableSynthsByKey(ethers.utils.formatBytes32String(synth)));
 				}
 
-				const shortableListRaw = (await ethCallProvider.all(getShortableCalls)) as ethers.BigNumber[];
+				const shortableListRaw = (await ethCallProvider.all(
+					getShortableCalls
+				)) as ethers.BigNumber[];
 				const shortableList = shortableListRaw.map((retval) => Number(retval));
 
-				const SYNTHS_TO_SHORT : CurrencyKey[] = [];
+				const SYNTHS_TO_SHORT: CurrencyKey[] = [];
 				for (let i = 0; i < shortableList.length; i++) {
-					if(shortableList[i] > 0) {
-						SYNTHS_TO_SHORT.push(shortableSynthsList[i] as CurrencyKey)
+					if (shortableList[i] > 0) {
+						SYNTHS_TO_SHORT.push(shortableSynthsList[i] as CurrencyKey);
 					}
 				}
-	
+
 				return SYNTHS_TO_SHORT as CurrencyKey[];
 			} else {
 				return [Synths.sBTC, Synths.sETH, Synths.sLINK] as CurrencyKey[];

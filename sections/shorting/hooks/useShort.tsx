@@ -47,7 +47,6 @@ import { zeroBN, formatNumber } from 'utils/formatters/number';
 import { NoTextTransform } from 'styles/common';
 import { historicalShortsPositionState } from 'store/shorts';
 
-import { SYNTHS_TO_SHORT } from '../constants';
 import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -248,9 +247,7 @@ const useShort = ({
 			: false;
 
 	const shortListQuery = useGetShortableSynths(isL2);
-	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [
-		shortListQuery.data,
-	]);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [shortListQuery.data]);
 
 	const synthsAvailableToShort = useMemo(() => {
 		if (isAppReady) {

@@ -25,9 +25,7 @@ const ShortingRewards: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
 
 	const shortListQuery = useGetShortableSynths(isL2);
-	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [
-		shortListQuery.data,
-	]);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [shortListQuery.data]);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
