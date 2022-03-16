@@ -16,7 +16,6 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
-import { theme } from 'styles/theme';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
