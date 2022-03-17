@@ -299,6 +299,7 @@ const Trade: React.FC<TradeProps> = () => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={(position) => {
+					onLeverageChange('');
 					setLeverageSide(position);
 				}}
 			/>
