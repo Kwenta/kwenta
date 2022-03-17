@@ -72,7 +72,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [error, setError] = useState<string | null>(null);
 	const competitionClosed = true;
 
-	const [leverage, setLeverage] = useState<string>('1');
+	const [leverage, setLeverage] = useState<string>('');
 
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
@@ -317,6 +317,9 @@ const Trade: React.FC<TradeProps> = () => {
 
 			<PlaceOrderButton
 				fullWidth
+				disabled={
+					!leverage || Number(leverage) < 0 || Number(leverage) > maxLeverageValue.toNumber()
+				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
