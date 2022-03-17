@@ -77,23 +77,31 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
 						  )})`
 						: NO_VALUE,
+				color:
+					marketSummary?.price && pastPrice?.price ?
+						marketSummary?.price.sub(pastPrice?.price) > zeroBN ? 'green' :
+						marketSummary?.price.sub(pastPrice?.price) < zeroBN ? 'red' : "" : ""
 			},
 			'24H Volume': {
-				value: formatCurrency(
-					selectedPriceCurrency.name,
-					futuresTradingVolume?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
-					{ sign: '$' }
-				),
+				value: 
+					!!futuresTradingVolume ?
+						formatCurrency(
+							selectedPriceCurrency.name,
+							futuresTradingVolume ?? zeroBN,
+							{ sign: '$' }
+						) : NO_VALUE
 			},
 			'24H Trades': {
-				value: `${futuresDailyTradeStats ?? 0}`,
+				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}`: NO_VALUE,
 			},
 			'Open Interest': {
-				value: formatCurrency(
-					selectedPriceCurrency.name,
-					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?? zeroBN,
-					{ sign: '$' }
-				),
+				value: 
+					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?
+						formatCurrency(
+							selectedPriceCurrency.name,
+							marketSummary.marketSize.mul(wei(basePriceRate ?? 0)),
+							{ sign: '$' }
+						) : NO_VALUE,
 			},
 			'24H Funding': {
 				value: NO_VALUE,

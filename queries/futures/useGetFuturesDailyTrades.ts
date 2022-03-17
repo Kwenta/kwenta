@@ -8,6 +8,7 @@ import { isL2State, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT } from './constants';
+import { DAY_PERIOD } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
 const useGetFuturesDailyTradeStatsForMarket = (
@@ -24,7 +25,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 			if (!currencyKey) return null;
 
 			try {
-				const minTimestamp = calculateTimestampForPeriod(24);
+				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
 				const response = await request(
 					FUTURES_ENDPOINT,
 					gql`

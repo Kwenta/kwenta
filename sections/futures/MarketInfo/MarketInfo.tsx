@@ -1,6 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
+import styled from 'styled-components'; 
 import useSynthetixQueries from '@synthetixio/queries';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -40,7 +41,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	);
 
 	return (
-		<>
+		<Container>
 			<Head>
 				<title>
 					{basePriceRate
@@ -64,7 +65,12 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				setSelectedChartPeriod={setChartPeriod}
 			/>
 			<UserInfo marketAsset={baseCurrencyKey} />
-		</>
+		</Container>
 	);
 };
+
+const Container = styled.div`
+	padding-bottom: 48px;
+`
+
 export default MarketInfo;
