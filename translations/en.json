@@ -363,6 +363,7 @@
 				"market": "Market",
 				"position": "Position",
 				"avg-open-close": "Avg. Open/Close",
+				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
 				"margin": "Margin"
 			},
