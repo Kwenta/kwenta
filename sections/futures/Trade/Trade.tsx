@@ -316,6 +316,7 @@ const Trade: React.FC<TradeProps> = () => {
 			/>
 
 			<PlaceOrderButton
+				variant="primary"
 				fullWidth
 				disabled={
 					!leverage || Number(leverage) < 0 || Number(leverage) > maxLeverageValue.toNumber()

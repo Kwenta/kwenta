@@ -165,7 +165,12 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			<NetworkFees>
 				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 			</NetworkFees>
-			<ConfirmTradeButton isRounded onClick={handleConfirmOrder} disabled={!positionDetails}>
+			<ConfirmTradeButton
+				variant="primary"
+				isRounded
+				onClick={handleConfirmOrder}
+				disabled={!positionDetails}
+			>
 				{t('futures.market.trade.confirmation.modal.confirm-order')}
 			</ConfirmTradeButton>
 		</StyledBaseModal>
