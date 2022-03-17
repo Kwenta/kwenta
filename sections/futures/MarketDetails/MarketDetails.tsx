@@ -78,33 +78,40 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						  )})`
 						: NO_VALUE,
 				color:
-					marketSummary?.price && pastPrice?.price ?
-						marketSummary?.price.sub(pastPrice?.price) > zeroBN ? 'green' :
-						marketSummary?.price.sub(pastPrice?.price) < zeroBN ? 'red' : "" : ""
+					marketSummary?.price && pastPrice?.price
+						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
+							? 'green'
+							: marketSummary?.price.sub(pastPrice?.price).lt(zeroBN)
+							? 'red'
+							: ''
+						: undefined,
 			},
 			'24H Volume': {
-				value: 
-					!!futuresTradingVolume ?
-						formatCurrency(
-							selectedPriceCurrency.name,
-							futuresTradingVolume ?? zeroBN,
-							{ sign: '$' }
-						) : NO_VALUE
+				value: !!futuresTradingVolume
+					? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+							sign: '$',
+					  })
+					: NO_VALUE,
 			},
 			'24H Trades': {
-				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}`: NO_VALUE,
+				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
 			},
 			'Open Interest': {
-				value: 
-					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?
-						formatCurrency(
+				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0))
+					? formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize.mul(wei(basePriceRate ?? 0)),
 							{ sign: '$' }
-						) : NO_VALUE,
+					  )
+					: NO_VALUE,
 			},
-			'24H Funding': {
-				value: NO_VALUE,
+			Funding: {
+				value: formatPercent(marketSummary?.currentFundingRate ?? zeroBN),
+				color: marketSummary?.currentFundingRate.gt(zeroBN)
+					? 'green'
+					: marketSummary?.currentFundingRate.lt(zeroBN)
+					? 'red'
+					: undefined,
 			},
 		};
 	}, [
