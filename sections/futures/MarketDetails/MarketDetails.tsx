@@ -107,7 +107,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			Funding: {
 				value: marketSummary?.currentFundingRate
-					? formatPercent(marketSummary?.currentFundingRate ?? zeroBN)
+					? formatPercent(marketSummary?.currentFundingRate ?? zeroBN, { minDecimals: 6 })
 					: NO_VALUE,
 				color: marketSummary?.currentFundingRate.gt(zeroBN)
 					? 'green'

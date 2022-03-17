@@ -63,7 +63,7 @@ const Overview: FC = () => {
 				},
 			},
 		],
-		[activePositionsTab, futuresPositions, futuresMarkets]
+		[activePositionsTab, futuresPositions, t]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -86,7 +86,7 @@ const Overview: FC = () => {
 				},
 			},
 		],
-		[activeMarketsTab]
+		[activeMarketsTab, t]
 	);
 
 	return (
@@ -150,7 +150,5 @@ const TabButtonsContainer = styled.div`
 		}
 	}
 `;
-
-const EmptyPositionsTable = styled.div``;
 
 export default Overview;
