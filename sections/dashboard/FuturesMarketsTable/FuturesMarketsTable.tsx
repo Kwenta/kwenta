@@ -72,7 +72,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		futuresVolumeQuery?.data,
 		getSynthDescription,
 	]);
-	console.log(data)
 
 	return (
 		<TableContainer>
