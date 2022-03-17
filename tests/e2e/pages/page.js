@@ -2,6 +2,7 @@
 /* eslint-disable ui-testing/no-hard-wait */
 
 export default class Page {
+	
 	getTitle() {
 		return cy.title();
 	}
@@ -41,6 +42,12 @@ export default class Page {
 			waitForTxSuccess(urlOrTx, alias);
 		}
 	}
+
+	disconnectMetamaskWalletFromAllDapps() {	
+		// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
+		cy.disconnectMetamaskWalletFromAllDapps();
+	}
+	
 }
 
 function waitForTxSuccess(url, alias) {
@@ -55,3 +62,4 @@ function waitForTxSuccess(url, alias) {
 		}
 	});
 }
+
