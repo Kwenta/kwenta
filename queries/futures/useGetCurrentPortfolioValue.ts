@@ -31,14 +31,14 @@ const useGetCurrentPortfolioValue = (
 				const positionsForMarkets = await Promise.all(
 					(markets as string[]).map((market: string) =>
 						Promise.all([
-							FuturesMarketData.positionDetailsForAsset(
+							FuturesMarketData.positionDetailsForMarketKey(
 								ethersUtils.formatBytes32String(market),
 								walletAddress
-							)
+							),
 						])
 					)
 				);
-				
+
 				const portfolioValue = positionsForMarkets
 					.map(([position], i) => {
 						const mappedPosition = mapFuturesPosition(position, false, markets[i]);

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
@@ -19,8 +19,6 @@ type LeverageInputProps = {
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
 };
-
-const MIN_LEVERAGE = 1;
 
 const LeverageInput: FC<LeverageInputProps> = ({
 	currentLeverage,
@@ -55,9 +53,9 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				<SliderRow>
 					<LeverageSlider
 						disabled={maxLeverage <= 0}
-						minValue={MIN_LEVERAGE}
+						minValue={0}
 						maxValue={maxLeverage}
-						value={currentLeverage ? Number(currentLeverage) : 1}
+						value={currentLeverage ? Number(currentLeverage) : 0}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue.toString());
@@ -85,6 +83,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							onClick={() => {
 								onLeverageChange(l);
 							}}
+							disabled={Number(l) > maxLeverage}
 						>
 							{l}x
 						</LeverageButton>
