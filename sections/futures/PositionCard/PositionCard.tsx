@@ -95,17 +95,26 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						<StyledValue>
-							{positionDetails && market && positionHistory?.entryPrice.gt(zeroBN)
-								? `${formatCurrency(
+						{positionDetails && market ?
+							<StyledValue className={
+								positionDetails.profitLoss > zeroBN ? 'green' :
+								positionDetails.profitLoss < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(
 										Synths.sUSD,
-										positionHistory.entryPrice?.sub(market.price).toNumber() ?? zeroBN,
+										positionDetails.profitLoss.toNumber(),
 										{ sign: '$' }
-								  )} (${formatPercent(
-										positionHistory.entryPrice?.sub(market.price).div(positionHistory.entryPrice)
-								  )})`
-								: NO_VALUE}
-						</StyledValue>
+									) + " (" +
+									formatPercent(
+										positionDetails.profitLoss.div(
+											positionDetails.initialMargin.mul(positionDetails.initialLeverage)
+										)
+									) + ")"
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
@@ -150,23 +159,31 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
-						<StyledValue>
-							{positionDetails ?
-								formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })
-								: NO_VALUE
-							}
-						</StyledValue>
+						{positionDetails ?
+							<StyledValue className={
+								positionDetails.accruedFunding > zeroBN ? 'green' :
+								positionDetails.accruedFunding < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
-						<StyledValue>
-							{positionDetails ?
-								formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
-									sign: '$',
-								})
-								: NO_VALUE
-							}
-						</StyledValue>
+						{positionDetails ?
+							<StyledValue className={
+								positionDetails.accruedFunding > zeroBN ? 'green' :
+									positionDetails.accruedFunding < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 				</DataCol>
 				<DataCol style={{ justifyContent: 'flex-end' }}>
@@ -218,6 +235,14 @@ const DataCol = styled(FlexDivCol)`
 
 const InfoCol = styled(FlexDivCol)`
 	margin-bottom: 8px;
+
+	.green {
+		color: ${(props) => props.theme.colors.common.primaryGreen};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.common.primaryRed};
+	}
 `;
 
 const StyledSubtitle = styled.div`
