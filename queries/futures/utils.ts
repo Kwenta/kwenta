@@ -131,7 +131,11 @@ export const mapOpenInterest = async (
 
 export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 	return futuresTrades.reduce(
-		(acc: Wei, { size }: { size: string }) => acc.add(new Wei(size, 18, true).abs()),
+		(acc: Wei, { size, price }: FuturesTrade) => {
+			const cleanSize = new Wei(size, 18, true).abs()
+			const cleanPrice = new Wei(price, 18, true)
+			return acc.add(cleanSize.mul(cleanPrice));
+		},
 		wei(0)
 	);
 };
