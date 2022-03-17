@@ -36,6 +36,7 @@ type TableProps = {
 	pageSize?: number | null;
 	hiddenColumns?: string[];
 	hideHeaders?: boolean;
+	highlightRowsOnHover?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -52,6 +53,7 @@ export const Table: FC<TableProps> = ({
 	pageSize = null,
 	hiddenColumns = [],
 	hideHeaders,
+	highlightRowsOnHover,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -160,6 +162,7 @@ export const Table: FC<TableProps> = ({
 											className="table-body-row"
 											{...row.getRowProps()}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+											$highlightRowsOnHover={highlightRowsOnHover}
 										>
 											{row.cells.map((cell: Cell) => (
 												<TableCell className="table-body-cell" {...cell.getCellProps()}>
@@ -211,8 +214,16 @@ const TableBody = styled.div`
 	overflow-x: hidden;
 `;
 
-const TableBodyRow = styled.div`
+const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+
+	${(props) =>
+		props.$highlightRowsOnHover &&
+		css`
+			&:hover {
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+		`}
 `;
 
 const TableCell = styled(FlexDivCentered)`
@@ -241,8 +252,8 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 	height: 100%;
 	overflow-x: auto;
 	position: relative;
-	border: 1px solid #3D3C3C;
-	border-radius: 4px;
+	border: 1px solid #3d3c3c;
+	border-radius: 8px;
 
 	${(props) =>
 		props.palette === 'primary' &&
@@ -262,7 +273,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.common.secondaryGray};
 				font-family: ${(props) => props.theme.fonts.mono};
-				border-bottom: 1px solid #3D3C3C;
+				border-bottom: 1px solid #3d3c3c;
 			}
 			${TableBodyRow} {
 			}

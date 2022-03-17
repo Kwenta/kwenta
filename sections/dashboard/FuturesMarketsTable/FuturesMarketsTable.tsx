@@ -3,6 +3,7 @@ import { FC, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import { FuturesMarket } from 'queries/futures/types';
 import Currency from 'components/Currency';
@@ -22,6 +23,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	futuresMarkets,
 }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
@@ -74,6 +76,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				data={data.length > 0 ? data : DEFAULT_DATA}
 				pageSize={5}
 				showPagination={true}
+				onTableRowClick={(row) => {
+					router.push(`/market/${row.original.market}`);
+				}}
+				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
