@@ -78,13 +78,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				active: activeTab === FuturesTab.TRADES,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
-			{
-				name: FuturesTab.ORDERS,
-				label: 'Open Orders',
-				disabled: true,
-				active: activeTab === FuturesTab.ORDERS,
-				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
-			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
 	);
