@@ -768,7 +768,7 @@ const useExchange = ({
 			try {
 				setIsSubmitting(true);
 
-				let tx: ethers.ContractTransaction | null = null
+				let tx: ethers.ContractTransaction | null = null;
 
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
