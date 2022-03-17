@@ -199,11 +199,11 @@ const MarketDetailsContainer = styled.div`
 	}
 
 	.green {
-		color: ${(props) => props.theme.colors.green};
+		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.red};
+		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
 `;
 

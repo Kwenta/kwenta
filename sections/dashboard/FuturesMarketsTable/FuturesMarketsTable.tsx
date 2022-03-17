@@ -220,11 +220,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 };
 
 const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.green};
+	color: ${(props) => props.theme.colors.common.primaryGreen};
 `;
 
 const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.red};
+	color: ${(props) => props.theme.colors.common.primaryRed};
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
