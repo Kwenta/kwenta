@@ -119,7 +119,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			{
 				label: 'size',
 				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					sign: market ? synthsMap[market].sign : ''
+					sign: market ? synthsMap[market].sign : '',
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
@@ -142,14 +142,13 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
 			},
 		],
-		[positionDetails, market]
+		[positionDetails, market, synthsMap]
 	);
 
 	const handleConfirmOrder = async () => {
 		onConfirmOrder();
 		onDismiss();
 	};
-	console.log(synthsMap)
 
 	return (
 		<StyledBaseModal
