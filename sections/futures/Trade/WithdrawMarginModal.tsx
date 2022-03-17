@@ -38,7 +38,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
+	const [amount, setAmount] = React.useState<string>('0');
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
@@ -81,8 +81,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			if (!market || !synthetixjs) return;
 			try {
 				setError(null);
-				setGasLimit(null);
-				if (!amount || Number(amount) === 0) return;
+				if (!amount) return;
 				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 				const marginAmount = computeAmount();
 				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
@@ -146,7 +145,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
 						: NO_VALUE,
-					Fee: '-',
 					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
 						sign: '$',
 						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
