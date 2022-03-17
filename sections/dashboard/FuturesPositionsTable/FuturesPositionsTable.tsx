@@ -3,6 +3,7 @@ import { FC, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 
 import Currency from 'components/Currency';
@@ -24,6 +25,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
+	const router = useRouter();
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
@@ -58,6 +60,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				data={data.length > 0 ? data : DEFAULT_DATA}
 				pageSize={5}
 				showPagination={true}
+				onTableRowClick={(row) => {
+					router.push(`/market/${row.original.market}`);
+				}}
 				highlightRowsOnHover
 				columns={[
 					{

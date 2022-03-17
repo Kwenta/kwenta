@@ -267,9 +267,6 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
 			}
-			${TableRow} {
-				margin-bottom: 2px;
-			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.common.secondaryGray};
 				font-family: ${(props) => props.theme.fonts.mono};
