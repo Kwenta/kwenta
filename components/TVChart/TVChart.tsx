@@ -1,7 +1,6 @@
 import * as React from 'react';
-import styled from 'styled-components';
+import styled, { ThemeContext } from 'styled-components';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
-import colors from 'styles/theme/colors';
 
 import {
 	IChartingLibraryWidget,
@@ -30,12 +29,10 @@ export function TVChart({
 	fullscreen = false,
 	autosize = true,
 	studiesOverrides = {},
-	overrides = {
-		'paneProperties.background': colors.elderberry,
-		'paneProperties.backgroundType': 'solid',
-	},
+	overrides,
 }: Props) {
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
+	const { colors } = React.useContext(ThemeContext);
 
 	React.useEffect(() => {
 		const widgetOptions = {
@@ -54,9 +51,13 @@ export function TVChart({
 			theme: 'dark',
 			custom_css_url: './theme.css',
 			loading_screen: {
-				backgroundColor: colors.vampire,
+				backgroundColor: colors.selectedTheme.background,
 			},
-			overrides: overrides,
+			overrides: overrides ?? {
+				'paneProperties.background': colors.selectedTheme.background,
+				'paneProperties.backgroundType': 'solid',
+			},
+			toolbar_bg: colors.selectedTheme.background,
 			time_frames: [
 				{ text: '3y', resolution: '1W', description: '3 Years' },
 				{ text: '1y', resolution: '1D', description: '1 Year' },
@@ -83,6 +84,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 	}, [baseCurrencyKey, quoteCurrencyKey]);
+
 	return (
 		<Container>
 			<ChartBody id={containerId} />
@@ -92,6 +94,6 @@ export function TVChart({
 
 const Container = styled.div`
 	border-radius: 4px;
-	background: ${colors.elderberry};
+	background: ${(props) => props.theme.colors.selectedTheme.background};
 	padding: 4px;
 `;
