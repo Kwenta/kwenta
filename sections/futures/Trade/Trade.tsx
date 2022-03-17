@@ -13,8 +13,6 @@ import { zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getTransactionPrice } from 'utils/network';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
@@ -70,9 +68,8 @@ const Trade: React.FC<TradeProps> = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const [error, setError] = useState<string | null>(null);
-	const competitionClosed = true;
 
-	const [leverage, setLeverage] = useState<string>('1');
+	const [leverage, setLeverage] = useState<string>('');
 
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
@@ -85,15 +82,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
 	const [isWithdrawMarginModalOpen, setIsWithdrawMarginModalOpen] = useState(false);
-	// const [isEditMarginModalOpen, setIsEditMarginModalOpen] = useState<boolean>(false);
 	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState<boolean>(false);
-
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	// const gasPrices = useMemo(
-	// 	() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-	// 	[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	// );
 
 	const gasPrice = useMemo(
 		() =>
@@ -110,21 +99,10 @@ const Trade: React.FC<TradeProps> = () => {
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
 	);
 
-	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
-		[exchangeRates, selectedPriceCurrency.name]
-	);
-
 	const marketAssetRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
 	);
-
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
 
 	const positionLeverage = futuresMarketPositionQuery?.data?.position?.leverage ?? wei(0);
 	const positionSide = futuresMarketPositionQuery?.data?.position?.side;
@@ -188,11 +166,10 @@ const Trade: React.FC<TradeProps> = () => {
 	};
 
 	useEffect(() => {
-		const getGasLimit = async () => {
+		const getOrderFee = async () => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
-				!walletAddress ||
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted
@@ -206,11 +183,7 @@ const Trade: React.FC<TradeProps> = () => {
 				setGasLimit(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
-				const [gasEstimate, orderFee] = await Promise.all([
-					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
-					FuturesMarketContract.orderFee(sizeDelta.toBN()),
-				]);
-				setGasLimit(Number(gasEstimate));
+				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -218,14 +191,13 @@ const Trade: React.FC<TradeProps> = () => {
 				setError(e?.data?.message ?? e.message);
 			}
 		};
-		getGasLimit();
+		getOrderFee();
 	}, [
 		tradeSize,
 		synthetixjs,
 		marketAsset,
 		futuresMarketsPosition,
 		leverageSide,
-		walletAddress,
 		isLeverageValueCommitted,
 	]);
 
@@ -323,15 +295,21 @@ const Trade: React.FC<TradeProps> = () => {
 			/>
 
 			<PlaceOrderButton
+				variant="primary"
 				fullWidth
+				disabled={
+					!leverage || Number(leverage) < 0 || Number(leverage) > maxLeverageValue.toNumber()
+				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				Place Market Order
+				{futuresMarketsPosition?.position ? 'Modify Position' : 'Open Position'}
 			</PlaceOrderButton>
 
-			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
+			{error && <ErrorMessage>{error}</ErrorMessage>}
+
+			<FeeInfoBox feeCost={feeCost} />
 
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
@@ -364,22 +342,6 @@ const Trade: React.FC<TradeProps> = () => {
 					onDismiss={() => setIsWithdrawMarginModalOpen(false)}
 				/>
 			)}
-
-			{/* {isEditMarginModalOpen && (
-				<EditMarginModal
-					sUSDBalance={sUSDBalance}
-					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
-					onTxConfirmed={() => {
-						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
-							futuresPositionHistoryQuery.refetch();
-							synthsBalancesQuery.refetch();
-						}, 5 * 1000);
-					}}
-					market={marketAsset}
-					onDismiss={() => setIsEditMarginModalOpen(false)}
-				/>
-			)} */}
 
 			{isTradeConfirmationModalOpen && (
 				<TradeConfirmationModal
@@ -415,6 +377,11 @@ const MarketActionButton = styled(Button)`
 const PlaceOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
+`;
+
+const ErrorMessage = styled.p`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-size: 12px;
 `;
 
 // const StyledSegmentedControl = styled(SegmentedControl)`
