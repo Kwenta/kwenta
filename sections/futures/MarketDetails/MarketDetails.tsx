@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
@@ -22,7 +22,7 @@ type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
 };
 
-type MarketData = Record<string, { value: string; color?: string }>;
+type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
@@ -129,33 +129,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								)}
 							</span>
 						</StyledTooltip>
-
-							// <Tooltip
-							// 	placement="top"
-							// 	content={
-							// 		<>
-							// 			<div className="green">
-							// 				{formatCurrency(
-							// 					selectedPriceCurrency.name,
-							// 					marketSummary.marketSize.add(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
-							// 					{sign: '$' }
-							// 				)}
-							// 			</div>
-							// 			<div className="red">
-							// 				{formatCurrency(
-							// 					selectedPriceCurrency.name,
-							// 					marketSummary.marketSize.sub(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
-							// 					{sign: '$' }
-							// 				)}
-							// 			</div>
-							// 		</>
-							// 	}
-							// 	arrow={false}
-							// 	interactive={true}
-							// >
-							// </Tooltip>
-						)						
-						: NO_VALUE,
+						) : NO_VALUE,
 			},
 			'24H Funding': {
 				value: NO_VALUE,
