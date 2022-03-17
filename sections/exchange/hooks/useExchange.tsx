@@ -609,7 +609,7 @@ const useExchange = ({
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
 			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
-			if (isAtomic === true) {
+			if (isAtomic) {
 				return [destinationCurrencyKey, sourceAmount, sourceCurrencyKey, trackingCode];
 			} else {
 				return [
@@ -759,12 +759,16 @@ const useExchange = ({
 			setTxConfirmationModalOpen(true);
 
 			const destinationCurrencyKey = getExchangeParams(true)[0];
+			const isAtomic =
+				destinationCurrencyKey === 'sBTC' ||
+				destinationCurrencyKey === 'sETH' ||
+				destinationCurrencyKey === 'sEUR';
+			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
 				setIsSubmitting(true);
 
-				let tx: ethers.ContractTransaction | null = null,
-					isAtomic;
+				let tx: ethers.ContractTransaction | null = null
 
 				const gasPriceWei = gasPriceInWei(gasPrice);
 
@@ -786,21 +790,9 @@ const useExchange = ({
 						gasLimit: gasInfo?.limit,
 					};
 
-					if (
-						destinationCurrencyKey === 'sBTC' ||
-						destinationCurrencyKey === 'sETH' ||
-						destinationCurrencyKey === 'sEUR'
-					) {
-						isAtomic = true;
-
-						const exchangeParams = getExchangeParams(isAtomic);
-
+					if (isAtomic) {
 						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
 					} else {
-						isAtomic = false;
-
-						const exchangeParams = getExchangeParams(isAtomic);
-
 						tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
 					}
 				}
