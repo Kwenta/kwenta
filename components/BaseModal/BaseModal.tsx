@@ -94,7 +94,7 @@ const DismissButton = styled.button`
 	${resetButtonCSS};
 	position: absolute;
 	right: 20px;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}
