@@ -149,7 +149,6 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		onConfirmOrder();
 		onDismiss();
 	};
-	console.log(synthsMap)
 
 	return (
 		<StyledBaseModal
