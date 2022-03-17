@@ -149,7 +149,6 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		onConfirmOrder();
 		onDismiss();
 	};
-	console.log(synthsMap)
 
 	return (
 		<StyledBaseModal
@@ -209,8 +208,8 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 	display: flex;
 	justify-content: space-between;
 	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
+	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;

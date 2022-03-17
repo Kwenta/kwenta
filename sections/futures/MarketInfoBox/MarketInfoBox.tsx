@@ -6,6 +6,7 @@ import { formatCurrency, formatNumber, formatPercent } from 'utils/formatters/nu
 import { Synths } from '@synthetixio/contracts-interface';
 
 type MarketInfoBoxProps = {
+	totalMargin: Wei;
 	availableMargin: Wei;
 	buyingPower: Wei;
 	marginUsage: Wei;
@@ -14,6 +15,7 @@ type MarketInfoBoxProps = {
 };
 
 const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
+	totalMargin,
 	availableMargin,
 	buyingPower,
 	marginUsage,
@@ -23,6 +25,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	return (
 		<StyledInfoBox
 			details={{
+				'Total Margin': `${formatCurrency(Synths.sUSD, totalMargin, { sign: '$' })}`,
 				'Available Margin': `${formatCurrency(Synths.sUSD, availableMargin, { sign: '$' })}`,
 				'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
 				'Margin Usage': `${formatPercent(marginUsage)}`,

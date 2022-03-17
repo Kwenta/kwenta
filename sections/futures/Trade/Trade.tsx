@@ -270,15 +270,22 @@ const Trade: React.FC<TradeProps> = () => {
 			</MarketActions>
 
 			<MarketInfoBox
-				availableMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
-				buyingPower={sUSDBalance}
+				totalMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
+				availableMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+				buyingPower={
+					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
+						futuresMarketsPosition?.remainingMargin?.mul(
+							market?.maxLeverage
+						)
+						: zeroBN
+				}
 				marginUsage={
-					futuresMarketsPosition?.position?.size?.gt(zeroBN)
-						? (futuresMarketsPosition?.position?.size).div(
-								(futuresMarketsPosition?.position?.size).add(
-									futuresMarketsPosition?.remainingMargin ?? zeroBN
-								)
-						  )
+					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
+						futuresMarketsPosition?.remainingMargin?.sub(
+							futuresMarketsPosition?.accessibleMargin
+						).div(
+							futuresMarketsPosition?.remainingMargin
+						)
 						: zeroBN
 				}
 				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
