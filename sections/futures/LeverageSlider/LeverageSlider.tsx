@@ -31,8 +31,8 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 			onChangeCommitted={onChangeCommitted}
 			disabled={disabled}
 			marks={[
-				{ value: minValue ?? 1, label: `${minValue ?? 1}x` },
-				{ value: maxValue ?? 10, label: `${maxValue ?? 10}x` },
+				{ value: minValue ?? 1, label: `${minValue ? minValue.toFixed(1) : 1}x` },
+				{ value: maxValue ?? 10, label: `${maxValue ? maxValue.toFixed(1) : 10}x` },
 			]}
 			valueLabelDisplay="on"
 			valueLabelFormat={(v) => `${v.toFixed(1)}x`}
@@ -41,7 +41,7 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 	);
 };
 
-const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
+const StyledSlider = styled(Slider)<{ $currentMark?: number; maxValue?: number }>`
 	.MuiSlider-markLabel {
 		${(props) =>
 			props.$currentMark &&
@@ -65,7 +65,7 @@ const StyledSlider = styled(Slider)<{ $currentMark?: number }>`
 	.MuiSlider-valueLabel {
 		${(props) =>
 			props.$currentMark &&
-			(props.$currentMark < 2 || props.$currentMark > 9) &&
+			(props.$currentMark < props.minValue + 1 || props.$currentMark > props.maxValue - 1) &&
 			css`
 				display: none;
 			`};
