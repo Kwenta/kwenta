@@ -39,7 +39,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('');
+	const [amount, setAmount] = React.useState<string>('0');
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
@@ -76,8 +76,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			if (!market || !synthetixjs) return;
 			try {
 				setError(null);
-				setGasLimit(null);
-				if (!amount || Number(amount) === 0) return;
+				if (!amount) return;
 				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 				const marginAmount = wei(amount).toBN();
 				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
@@ -140,12 +139,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				details={{
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-						: NO_VALUE,
-					Fee: '',
-					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
-						sign: '$',
-						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
-					}),
+						: NO_VALUE
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleDeposit}>

@@ -39,7 +39,7 @@ export function TVChart({
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
 			datafeed: DataFeed,
 			interval: interval,
-			container_id: containerId,
+			container: containerId,
 			library_path: libraryPath,
 
 			locale: 'en',

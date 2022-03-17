@@ -4,16 +4,15 @@ import Wei from '@synthetixio/wei';
 
 import InfoBox from 'components/InfoBox';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
 type FeeInfoBoxProps = {
-	transactionFee: number | null;
 	feeCost: Wei | null;
 };
 
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ transactionFee, feeCost }) => {
+const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ feeCost }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	return (
 		<StyledInfoBox
@@ -25,20 +24,6 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ transactionFee, feeCost }) => {
 								minDecimals: feeCost.lt(0.01) ? 4 : 2,
 						  })
 						: NO_VALUE,
-				'Gas Fee/Cost': transactionFee
-					? `${formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
-							sign: selectedPriceCurrency.sign,
-							maxDecimals: 1,
-					  })}`
-					: NO_VALUE,
-				Total: formatCurrency(
-					selectedPriceCurrency.name as CurrencyKey,
-					feeCost?.add(transactionFee ?? 0) ?? zeroBN,
-					{
-						sign: selectedPriceCurrency.sign,
-						minDecimals: feeCost?.lt(0.01) ? 4 : 2,
-					}
-				),
 			}}
 		/>
 	);
