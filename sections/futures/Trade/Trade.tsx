@@ -274,14 +274,14 @@ const Trade: React.FC<TradeProps> = () => {
 				availableMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
 				buyingPower={
 					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
-						futuresMarketsPosition?.remainingMargin.mul(
+						futuresMarketsPosition?.remainingMargin?.mul(
 							market?.maxLeverage
 						)
 						: zeroBN
 				}
 				marginUsage={
 					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
-						futuresMarketsPosition?.remainingMargin.sub(
+						futuresMarketsPosition?.remainingMargin?.sub(
 							futuresMarketsPosition?.accessibleMargin
 						).div(
 							futuresMarketsPosition?.remainingMargin
