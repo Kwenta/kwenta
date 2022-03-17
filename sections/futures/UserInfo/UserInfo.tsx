@@ -70,6 +70,21 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				active: activeTab === FuturesTab.POSITION,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
+			{
+				name: FuturesTab.TRADES,
+				label: 'Order History',
+				badge: positionHistory?.length,
+				disabled: true,
+				active: activeTab === FuturesTab.TRADES,
+				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
+			},
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				disabled: true,
+				active: activeTab === FuturesTab.ORDERS,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
+			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
 	);
@@ -77,11 +92,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	return (
 		<>
 			<TabButtonsContainer>
-				{TABS.map(({ name, label, active, onClick }) => (
+				{TABS.map(({ name, label, badge, active, disabled, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
+						badge={badge}
 						active={active}
+						disabled={disabled}
 						onClick={onClick}
 					/>
 				))}
