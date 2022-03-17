@@ -144,11 +144,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				details={{
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
-						: NO_VALUE,
-					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
-						sign: '$',
-						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
-					}),
+						: NO_VALUE
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleWithdraw}>

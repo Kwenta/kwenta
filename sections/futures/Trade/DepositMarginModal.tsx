@@ -139,11 +139,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				details={{
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-						: NO_VALUE,
-					Total: formatCurrency(Synths.sUSD, zeroBN?.add(transactionFee ?? 0) ?? zeroBN, {
-						sign: '$',
-						minDecimals: zeroBN.lt(0.01) ? 4 : 2,
-					}),
+						: NO_VALUE
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleDeposit}>
