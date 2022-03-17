@@ -862,7 +862,7 @@
 			}
 		},
 		"position": {
-			"tab": "open positions"
+			"tab": "open position"
 		},
 		"trades": {
 			"tab": "history"

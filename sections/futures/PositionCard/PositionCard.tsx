@@ -33,7 +33,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	dashboard,
 }) => {
 	const { t } = useTranslation();
-	const router = useRouter();
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
@@ -71,50 +70,72 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<PositionInfoCol>
 						<StyledSubtitle>Position</StyledSubtitle>
-						<PositionValue side={positionDetails?.side ?? PositionSide.LONG}>
-							{positionDetails?.side ?? PositionSide.LONG} ↗
-						</PositionValue>
+						{positionDetails ?
+							<PositionValue side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}>
+								{positionDetails.side === 'long' ? PositionSide.LONG + " ↗" : PositionSide.SHORT + " ↘"}
+							</PositionValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Size</StyledSubtitle>
 						<StyledValue>
-							{formatNumber(positionDetails?.size ?? 0)} (
-							{formatCurrency(
-								Synths.sUSD,
-								positionDetails?.size?.mul(wei(currencyKeyRate ?? 0)) ?? zeroBN,
-								{ sign: '$' }
-							)}
-							)
+							{positionDetails ?
+								formatNumber(positionDetails.size ?? 0) + " (" +
+								formatCurrency(
+									Synths.sUSD,
+									positionDetails.notionalValue ?? zeroBN,
+									{ sign: '$' }
+								) + ")"
+								: NO_VALUE
+							}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						<StyledValue>
-							{market && positionHistory?.entryPrice.gt(zeroBN)
-								? `${formatCurrency(
+						{positionDetails && market ?
+							<StyledValue className={
+								positionDetails.profitLoss > zeroBN ? 'green' :
+								positionDetails.profitLoss < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(
 										Synths.sUSD,
-										positionHistory.entryPrice?.sub(market.price).toNumber() ?? zeroBN,
+										positionDetails.profitLoss.toNumber(),
 										{ sign: '$' }
-								  )} (${formatPercent(
-										positionHistory.entryPrice?.sub(market.price).div(positionHistory.entryPrice)
-								  )})`
-								: NO_VALUE}
-						</StyledValue>
+									) + " (" +
+									formatPercent(
+										positionDetails.profitLoss.div(
+											positionDetails.initialMargin.mul(positionDetails.initialLeverage)
+										)
+									) + ")"
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Leverage</StyledSubtitle>
-						<StyledValue>{formatNumber(positionDetails?.leverage ?? zeroBN)}x</StyledValue>
+						<StyledValue>
+							{positionDetails ?
+								formatNumber(positionDetails?.leverage ?? zeroBN) + "x"
+								: NO_VALUE
+							}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
 						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-								sign: '$',
-							})}
+							{positionDetails ?
+								formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+									sign: '$',
+								})
+								: NO_VALUE
+							}
 						</StyledValue>
 					</InfoCol>
 				</DataCol>
@@ -122,9 +143,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Average Entry Price</StyledSubtitle>
 						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-								sign: '$',
-							})}
+							{positionDetails ?
+								formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+									sign: '$',
+								})
+								: NO_VALUE
+							}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
@@ -135,17 +159,31 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
-						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionDetails?.profitLoss ?? zeroBN, { sign: '$' })}
-						</StyledValue>
+						{positionDetails ?
+							<StyledValue className={
+								positionDetails.accruedFunding > zeroBN ? 'green' :
+								positionDetails.accruedFunding < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
-						<StyledValue>
-							{formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
-								sign: '$',
-							})}
-						</StyledValue>
+						{positionDetails ?
+							<StyledValue className={
+								positionDetails.accruedFunding > zeroBN ? 'green' :
+									positionDetails.accruedFunding < zeroBN ? 'red' : ""
+							}>
+								{
+									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
+								}
+							</StyledValue>
+							: <StyledValue>{NO_VALUE}</StyledValue>
+						}
 					</InfoCol>
 				</DataCol>
 				<DataCol style={{ justifyContent: 'flex-end' }}>
@@ -197,6 +235,14 @@ const DataCol = styled(FlexDivCol)`
 
 const InfoCol = styled(FlexDivCol)`
 	margin-bottom: 8px;
+
+	.green {
+		color: ${(props) => props.theme.colors.common.primaryGreen};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.common.primaryRed};
+	}
 `;
 
 const StyledSubtitle = styled.div`
@@ -231,6 +277,7 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	font-size: 12px;
 	text-transform: uppercase;
 	margin: 0;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 
 	${(props) =>
 		props.side === PositionSide.LONG &&
