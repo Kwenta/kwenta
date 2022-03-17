@@ -9,16 +9,15 @@ import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositi
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import FuturesMarketsTable from '../FuturesMarketsTable';
 
-
 enum PositionsTab {
 	FUTURES = 'futures',
 	SHORTS = 'shorts',
-	SPOT = 'spot'
+	SPOT = 'spot',
 }
 
 enum MarketsTab {
 	FUTURES = 'futures',
-	SPOT = 'spot'
+	SPOT = 'spot',
 }
 
 const Overview: FC = () => {
@@ -28,7 +27,7 @@ const Overview: FC = () => {
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositions = futuresPositionQuery?.data ?? [];
-	
+
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -39,7 +38,9 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositions.length > 0 ? futuresPositions.length : undefined,
 				active: activePositionsTab === PositionsTab.FUTURES,
-				onClick: () => { setActivePositionsTab(PositionsTab.FUTURES) },
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.FUTURES);
+				},
 			},
 			{
 				name: PositionsTab.SHORTS,
@@ -47,7 +48,9 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
-				onClick: () => { setActivePositionsTab(PositionsTab.SHORTS) },
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.SHORTS);
+				},
 			},
 			{
 				name: PositionsTab.SPOT,
@@ -55,10 +58,12 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SPOT,
-				onClick: () => { setActivePositionsTab(PositionsTab.SPOT) },
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.SPOT);
+				},
 			},
 		],
-		[activePositionsTab, futuresPositions, futuresMarkets]
+		[activePositionsTab, futuresPositions, t]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -67,24 +72,26 @@ const Overview: FC = () => {
 				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.markets-tabs.futures'),
 				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => { setActiveMarketsTab(MarketsTab.FUTURES) },
+				onClick: () => {
+					setActiveMarketsTab(MarketsTab.FUTURES);
+				},
 			},
 			{
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
 				disabled: true,
-				onClick: () => { setActiveMarketsTab(MarketsTab.SPOT) },
+				onClick: () => {
+					setActiveMarketsTab(MarketsTab.SPOT);
+				},
 			},
 		],
-		[activeMarketsTab]
+		[activeMarketsTab, t]
 	);
 
 	return (
 		<>
-			<PortfolioChart
-				futuresMarkets={futuresMarkets}
-			/>
+			<PortfolioChart futuresMarkets={futuresMarkets} />
 
 			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, onClick }) => (
@@ -105,11 +112,9 @@ const Overview: FC = () => {
 				/>
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}>
-			</TabPanel>
+			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-			</TabPanel>
+			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
@@ -123,13 +128,10 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable
-					futuresMarkets={futuresMarkets}
-				/>
+				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
 			</TabPanel>
 
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-			</TabPanel>
+			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}></TabPanel>
 		</>
 	);
 };
@@ -148,9 +150,5 @@ const TabButtonsContainer = styled.div`
 		}
 	}
 `;
-
-const EmptyPositionsTable = styled.div`
-
-`
 
 export default Overview;

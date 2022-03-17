@@ -245,19 +245,15 @@ const Trade: React.FC<TradeProps> = () => {
 				totalMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
 				availableMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
-						futuresMarketsPosition?.remainingMargin?.mul(
-							market?.maxLeverage
-						)
+					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
+						? futuresMarketsPosition?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN) ?
-						futuresMarketsPosition?.remainingMargin?.sub(
-							futuresMarketsPosition?.accessibleMargin
-						).div(
-							futuresMarketsPosition?.remainingMargin
-						)
+					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
+						? futuresMarketsPosition?.remainingMargin
+								?.sub(futuresMarketsPosition?.accessibleMargin)
+								.div(futuresMarketsPosition?.remainingMargin)
 						: zeroBN
 				}
 				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}

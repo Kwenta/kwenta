@@ -41,7 +41,7 @@ export const TabPanel = ({
 }: {
 	name: string;
 	activeTab: string;
-	children: ReactNode;
+	children?: ReactNode;
 }) =>
 	activeTab === name ? (
 		<TabPanelContainer
