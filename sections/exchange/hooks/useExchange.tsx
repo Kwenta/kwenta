@@ -630,23 +630,19 @@ const useExchange = ({
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
 					const destinationCurrencyKey = getExchangeParams(true)[0];
-
-					let gasEstimate, gasLimitNum, metaTx;
-
 					const isAtomic =
 						destinationCurrencyKey === 'sBTC' ||
 						destinationCurrencyKey === 'sETH' ||
 						destinationCurrencyKey === 'sEUR';
+					const exchangeParams = getExchangeParams(isAtomic);
+
+					let gasEstimate, gasLimitNum, metaTx;
 
 					if (isAtomic) {
-						const exchangeParams = getExchangeParams(isAtomic);
-
 						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
 							...exchangeParams
 						);
 					} else {
-						const exchangeParams = getExchangeParams(isAtomic);
-
 						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
 							...exchangeParams
 						);
@@ -655,14 +651,10 @@ const useExchange = ({
 					gasLimitNum = Number(gasEstimate);
 
 					if (isAtomic) {
-						const exchangeParams = getExchangeParams(isAtomic);
-
 						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
 							...exchangeParams
 						);
 					} else {
-						const exchangeParams = getExchangeParams(isAtomic);
-
 						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
 							...exchangeParams
 						);
