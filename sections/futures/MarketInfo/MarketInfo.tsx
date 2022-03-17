@@ -1,8 +1,7 @@
-import { FC, useMemo, useContext } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
 import useSynthetixQueries from '@synthetixio/queries';
-import { ThemeContext } from 'styled-components';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
@@ -27,8 +26,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const baseCurrencyKey = market as CurrencyKey;
 
-	const { colors } = useContext(ThemeContext);
-
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
@@ -49,14 +46,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<TVChart
-				baseCurrencyKey={baseCurrencyKey}
-				quoteCurrencyKey={Synths.sUSD}
-				overrides={{
-					'paneProperties.background': colors.selectedTheme.background,
-					'paneProperties.backgroundType': 'solid',
-				}}
-			/>
+			<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
 			<UserInfo marketAsset={baseCurrencyKey} />
 		</>
 	);
