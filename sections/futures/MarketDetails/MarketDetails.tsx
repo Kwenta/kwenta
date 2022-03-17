@@ -16,6 +16,7 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
+import { Tooltip } from 'styles/common';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -97,11 +98,64 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			'Open Interest': {
 				value: 
 					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?
-						formatCurrency(
-							selectedPriceCurrency.name,
-							marketSummary.marketSize.mul(wei(basePriceRate ?? 0)),
-							{ sign: '$' }
-						) : NO_VALUE,
+						(
+						<StyledTooltip
+							placement="bottom"
+							content={
+									<>
+										<div className="green">
+											Long: {formatCurrency(
+												selectedPriceCurrency.name,
+												marketSummary.marketSize.add(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
+												{sign: '$' }
+											)}
+										</div>
+										<div className="red">
+											Short: {formatCurrency(
+												selectedPriceCurrency.name,
+												marketSummary.marketSize.sub(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
+												{sign: '$' }
+											)}
+										</div>
+									</>
+							}
+							arrow={false}
+						>
+							<span>
+								{formatCurrency(
+									selectedPriceCurrency.name,
+									marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
+									{sign: '$' }
+								)}
+							</span>
+						</StyledTooltip>
+
+							// <Tooltip
+							// 	placement="top"
+							// 	content={
+							// 		<>
+							// 			<div className="green">
+							// 				{formatCurrency(
+							// 					selectedPriceCurrency.name,
+							// 					marketSummary.marketSize.add(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
+							// 					{sign: '$' }
+							// 				)}
+							// 			</div>
+							// 			<div className="red">
+							// 				{formatCurrency(
+							// 					selectedPriceCurrency.name,
+							// 					marketSummary.marketSize.sub(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
+							// 					{sign: '$' }
+							// 				)}
+							// 			</div>
+							// 		</>
+							// 	}
+							// 	arrow={false}
+							// 	interactive={true}
+							// >
+							// </Tooltip>
+						)						
+						: NO_VALUE,
 			},
 			'24H Funding': {
 				value: NO_VALUE,
@@ -138,7 +192,7 @@ const MarketDetailsContainer = styled.div`
 
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: start;
 
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 16px;
@@ -169,5 +223,12 @@ const MarketDetailsContainer = styled.div`
 		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
 `;
+
+const StyledTooltip = styled(Tooltip)`
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.mono};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	background: #131212;
+`
 
 export default MarketDetails;
