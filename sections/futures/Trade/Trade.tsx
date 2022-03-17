@@ -325,7 +325,7 @@ const Trade: React.FC<TradeProps> = () => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				Place Market Order
+				{futuresMarketsPosition?.position ? 'Modify Position' : 'Open Position'}
 			</PlaceOrderButton>
 
 			<FeeInfoBox transactionFee={transactionFee} feeCost={feeCost} />
