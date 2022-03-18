@@ -9,7 +9,6 @@ import { FuturesMarket } from 'queries/futures/types';
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { DEFAULT_DATA } from './constants';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
@@ -60,9 +59,19 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				fundingRate: market.currentFundingRate.toNumber(),
 				openInterest: market.marketSize.mul(market.price).toNumber(),
 				openInterestNative: market.marketSize.toNumber(),
-				longInterest: market.marketSize.add(market.marketSkew).div("2").abs().mul(market.price).toNumber(),
-				shortInterest: market.marketSize.sub(market.marketSkew).div("2").abs().mul(market.price).toNumber(),
-				marketSkew: market.marketSkew
+				longInterest: market.marketSize
+					.add(market.marketSkew)
+					.div('2')
+					.abs()
+					.mul(market.price)
+					.toNumber(),
+				shortInterest: market.marketSize
+					.sub(market.marketSkew)
+					.div('2')
+					.abs()
+					.mul(market.price)
+					.toNumber(),
+				marketSkew: market.marketSkew,
 			};
 		});
 	}, [
@@ -76,7 +85,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	return (
 		<TableContainer>
 			<StyledTable
-				data={data.length > 0 ? data : DEFAULT_DATA}
+				data={data}
 				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
@@ -106,7 +115,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.oracle-price')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-markets-table.oracle-price')}
+							</TableHeader>
 						),
 						accessor: 'oraclePrice',
 						Cell: (cellProps: CellProps<any>) => {

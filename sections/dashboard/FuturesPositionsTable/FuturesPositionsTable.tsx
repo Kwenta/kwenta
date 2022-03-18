@@ -11,7 +11,6 @@ import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import { PositionHistory, FuturesMarket } from 'queries/futures/types';
-import { DEFAULT_DATA } from './constants';
 import { formatNumber } from 'utils/formatters/number';
 
 type FuturesPositionTableProps = {
@@ -57,7 +56,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	return (
 		<TableContainer>
 			<StyledTable
-				data={data.length > 0 ? data : DEFAULT_DATA}
+				data={data}
 				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {

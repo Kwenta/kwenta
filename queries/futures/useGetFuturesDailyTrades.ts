@@ -20,7 +20,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats,
+		QUERY_KEYS.Futures.DayTradeStats(currencyKey),
 		async () => {
 			if (!currencyKey) return null;
 
