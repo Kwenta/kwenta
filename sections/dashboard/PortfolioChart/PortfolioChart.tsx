@@ -5,7 +5,7 @@ import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioV
 import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
-import { wei } from '@synthetixio/wei';
+import { zeroBN } from 'utils/formatters/number';
 
 type PortfolioChartProps = {
 	futuresMarkets: FuturesMarket[];
@@ -23,14 +23,12 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioCh
 	return (
 		<Chart>
 			<PortfolioTitle>Futures Portfolio Value</PortfolioTitle>
-			{!!portfolioValue && (
-				<PortfolioText
-					currencyKey={Synths.sUSD}
-					price={portfolioValue}
-					sign={'$'}
-					conversionRate={1}
-				/>
-			)}
+			<PortfolioText
+				currencyKey={Synths.sUSD}
+				price={portfolioValue ?? zeroBN}
+				sign={'$'}
+				conversionRate={1}
+			/>
 		</Chart>
 	);
 };
