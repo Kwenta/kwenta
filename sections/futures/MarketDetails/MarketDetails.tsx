@@ -156,7 +156,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					: undefined,
 			},
 			'Max Leverage': {
-				value: marketSummary?.maxLeverage ? marketSummary?.maxLeverage.toString(0) : NO_VALUE,
+				value: marketSummary?.maxLeverage ? `${marketSummary?.maxLeverage.toString(0)}x` : NO_VALUE,
 			},
 		};
 	}, [
