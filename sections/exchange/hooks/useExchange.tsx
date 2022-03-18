@@ -603,28 +603,64 @@ const useExchange = ({
 		oneInchQuoteQuery.isSuccess,
 	]);
 
-	const getExchangeParams = useCallback(() => {
-		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = quoteCurrencyAmountBN.toBN();
-		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
+	const getExchangeParams = useCallback(
+		(isAtomic: boolean) => {
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
+			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const sourceAmount = quoteCurrencyAmountBN.toBN();
+			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
-		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
-	}, [baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]);
+			if (isAtomic) {
+				return [destinationCurrencyKey, sourceAmount, sourceCurrencyKey, trackingCode];
+			} else {
+				return [
+					destinationCurrencyKey,
+					sourceAmount,
+					sourceCurrencyKey,
+					walletAddress,
+					trackingCode,
+				];
+			}
+		},
+		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]
+	);
 
 	const getGasEstimateForExchange = useCallback(
 		async (gasPriceInWei: number | null) => {
 			try {
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
-					const exchangeParams = getExchangeParams();
-					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
-						...exchangeParams
-					);
-					let gasLimitNum = Number(gasEstimate);
-					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
-						...exchangeParams
-					);
+					const destinationCurrencyKey = getExchangeParams(true)[0];
+					const isAtomic =
+						destinationCurrencyKey === 'sBTC' ||
+						destinationCurrencyKey === 'sETH' ||
+						destinationCurrencyKey === 'sEUR';
+					const exchangeParams = getExchangeParams(isAtomic);
+
+					let gasEstimate, gasLimitNum, metaTx;
+
+					if (isAtomic) {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
+					gasLimitNum = Number(gasEstimate);
+
+					if (isAtomic) {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
 					const l1Fee = await getL1SecurityFee({
 						...metaTx,
 						gasPrice: gasPriceInWei!,
@@ -761,7 +797,13 @@ const useExchange = ({
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
-			const exchangeParams = getExchangeParams();
+
+			const destinationCurrencyKey = getExchangeParams(true)[0];
+			const isAtomic =
+				destinationCurrencyKey === 'sBTC' ||
+				destinationCurrencyKey === 'sETH' ||
+				destinationCurrencyKey === 'sEUR';
+			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
 				setIsSubmitting(true);
@@ -785,7 +827,12 @@ const useExchange = ({
 						gasLimit: gasInfo?.limit,
 						...gasConfig,
 					};
-					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
+
+					if (isAtomic) {
+						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+					} else {
+						tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
+					}
 				}
 
 				if (tx != null) {
