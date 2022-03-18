@@ -58,6 +58,10 @@ const PortfolioText = styled(Currency.Price)`
 	margin-left: 26px;
 	margin-top: 0;
 	margin-bottom: 26px;
+
+	span {
+		line-height: 27px;
+	}
 `;
 
 export default PortfolioChart;
