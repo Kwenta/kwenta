@@ -37,7 +37,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals=2, ...re
 const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	display: inline-flex;
 	align-items: center;
-	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
+	color: ${(props) => (props.isPositive ? props.theme.colors.common.primaryGreen : props.theme.colors.common.primaryRed)};
 	font-family: ${(props) => props.theme.fonts.mono};
 	svg {
 		margin-right: 5px;
