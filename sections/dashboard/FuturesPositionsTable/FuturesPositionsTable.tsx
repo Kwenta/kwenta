@@ -46,8 +46,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				position: position.side,
 				avgOpenClose: position.entryPrice.toNumber(),
 				leverage: position.leverage.toNumber(),
-				pnl: market ? position.entryPrice.sub(market.price).toNumber() : '-',
-				pnlPct: market ? position.entryPrice.sub(market.price).div(position.entryPrice) : '-',
+				pnl: market ? market.price.sub(position.entryPrice).mul(position.size).mul(position.side === "short" ? "-1" : "1") : '-',
+				pnlPct: market ? market.price.sub(position.entryPrice).mul(position.side === "short" ? "-1" : "1").div(position.entryPrice) : '-',
 				margin: position.margin.toNumber(),
 			};
 		});
