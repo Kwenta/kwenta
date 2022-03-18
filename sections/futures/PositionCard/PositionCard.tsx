@@ -46,7 +46,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const { synthsMap } = Connector.useContainer();
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.futures-market-name', {
+			return t('common.currency.futures-market-short-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -66,7 +66,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								<CurrencySubtitle>
 									{
 										currencyKey ?
-											currencyKey?.slice(1)+"/sUSD"
+											currencyKey?.slice(1)+"-PERP"
 											: "Select a market"
 									}
 								</CurrencySubtitle>
@@ -158,7 +158,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Average Entry Price</StyledSubtitle>
+						<StyledSubtitle>Avg. Entry Price</StyledSubtitle>
 						<StyledValue>
 							{positionDetails ?
 								formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {

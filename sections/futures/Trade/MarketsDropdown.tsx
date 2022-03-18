@@ -32,7 +32,7 @@ const assetToCurrencyOption = (
 	change: string
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
-	label: `${asset}/sUSD`,
+	label: `${asset.slice(1)}-PERP`,
 	description,
 	price,
 	change,
@@ -42,8 +42,7 @@ type Props = {
 	asset: string;
 };
 
-const DUMMY_PRICE = '42,977.23';
-const DUMMY_CHANGE = '+0.68%';
+const DUMMY_CHANGE = '';
 
 const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
@@ -58,7 +57,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.synthetic-currency-name', {
+			return t('common.currency.futures-market-long-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -96,7 +95,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
-				value={assetToCurrencyOption(asset, getSynthDescription(asset), DUMMY_PRICE, DUMMY_CHANGE)}
+				value={assetToCurrencyOption(asset, getSynthDescription(asset), "", "")}
 				options={options}
 				isSearchable={false}
 				components={{
