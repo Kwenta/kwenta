@@ -143,12 +143,15 @@ export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
 export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): FuturesVolumes => {
 	const volumes = {} as FuturesVolumes;
 
-	futuresTrades.forEach(({ asset, size }) => {
+	futuresTrades.forEach(({ asset, size, price }) => {
 		const sizeAdd = new Wei(size, 18, true);
+		const priceAdd = new Wei(price, 18, true);
+		const volumeAdd = sizeAdd.mul(priceAdd).abs();
+
 		volumes[asset] ?
-			volumes[asset] = volumes[asset].add(sizeAdd)
+			volumes[asset] = volumes[asset].add(volumeAdd)
 		:
-			volumes[asset] = new Wei(size, 18, true)
+			volumes[asset] = volumeAdd
 	})
 	return volumes;
 };

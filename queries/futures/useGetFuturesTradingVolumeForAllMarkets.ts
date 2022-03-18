@@ -35,6 +35,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 							) {
 								asset
 								size
+								price
 							}
 						}
 					`,

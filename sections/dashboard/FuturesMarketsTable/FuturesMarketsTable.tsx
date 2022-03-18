@@ -58,8 +58,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				pastPrice: pastPrice?.price || '-',
 				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
 				fundingRate: market.currentFundingRate.toNumber(),
-				openInterest: market.marketSize.toNumber(),
-				openInterestNative: market.marketSize.div(market.price).toNumber(),
+				openInterest: market.marketSize.mul(market.price).toNumber(),
+				openInterestNative: market.marketSize.toNumber(),
+				longInterest: market.marketSize.add(market.marketSkew).div("2").abs().mul(market.price).toNumber(),
+				shortInterest: market.marketSize.sub(market.marketSkew).div("2").abs().mul(market.price).toNumber(),
+				marketSkew: market.marketSkew
 			};
 		});
 	}, [
@@ -172,15 +175,15 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								<DefaultCell>-</DefaultCell>
 							) : (
 								<OpenInterestContainer>
-									<Currency.Price
-										currencyKey={cellProps.row.original.synth}
-										price={cellProps.row.original.openInterestNative}
-										sign={cellProps.row.original.synth.sign}
+									<StyledLongPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.longInterest}
+										sign={'$'}
 										conversionRate={1}
 									/>
-									<Currency.Price
+									<StyledShortPrice
 										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.openInterest}
+										price={cellProps.row.original.shortInterest}
 										sign={'$'}
 										conversionRate={1}
 									/>
@@ -215,6 +218,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		</TableContainer>
 	);
 };
+
+const StyledLongPrice = styled(Currency.Price)`
+	color: ${(props) => props.theme.colors.common.primaryGreen};
+`;
+
+const StyledShortPrice = styled(Currency.Price)`
+	color: ${(props) => props.theme.colors.common.primaryRed};
+`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;

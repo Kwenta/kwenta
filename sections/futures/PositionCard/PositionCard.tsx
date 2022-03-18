@@ -103,7 +103,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								{
 									formatCurrency(
 										Synths.sUSD,
-										positionDetails.profitLoss.toNumber(),
+										positionDetails.profitLoss.add(positionDetails?.accruedFunding).toNumber(),
 										{ sign: '$' }
 									) + " (" +
 									formatPercent(
