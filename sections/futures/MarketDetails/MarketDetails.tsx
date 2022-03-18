@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
@@ -98,40 +98,52 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
 			},
 			'Open Interest': {
-				value: 
-					marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ?
-						(
-						<StyledTooltip
-							placement="bottom"
-							content={
-									<>
-										<div className="green">
-											Long: {formatCurrency(
-												selectedPriceCurrency.name,
-												marketSummary.marketSize.add(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
-												{sign: '$' }
-											)}
-										</div>
-										<div className="red">
-											Short: {formatCurrency(
-												selectedPriceCurrency.name,
-												marketSummary.marketSize.sub(marketSummary.marketSkew).div("2").abs().mul(basePriceRate ?? 0).toNumber(),
-												{sign: '$' }
-											)}
-										</div>
-									</>
-							}
-							arrow={false}
-						>
-							<span>
-								{formatCurrency(
-									selectedPriceCurrency.name,
-									marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
-									{sign: '$' }
-								)}
-							</span>
-						</StyledTooltip>
-						) : NO_VALUE,
+				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
+					<StyledTooltip
+						placement="bottom"
+						content={
+							<>
+								<div className="green">
+									Long:{' '}
+									{formatCurrency(
+										selectedPriceCurrency.name,
+										marketSummary.marketSize
+											.add(marketSummary.marketSkew)
+											.div('2')
+											.abs()
+											.mul(basePriceRate ?? 0)
+											.toNumber(),
+										{ sign: '$' }
+									)}
+								</div>
+								<div className="red">
+									Short:{' '}
+									{formatCurrency(
+										selectedPriceCurrency.name,
+										marketSummary.marketSize
+											.sub(marketSummary.marketSkew)
+											.div('2')
+											.abs()
+											.mul(basePriceRate ?? 0)
+											.toNumber(),
+										{ sign: '$' }
+									)}
+								</div>
+							</>
+						}
+						arrow={false}
+					>
+						<span>
+							{formatCurrency(
+								selectedPriceCurrency.name,
+								marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
+								{ sign: '$' }
+							)}
+						</span>
+					</StyledTooltip>
+				) : (
+					NO_VALUE
+				),
 			},
 			'Funding Rate': {
 				value: marketSummary?.currentFundingRate
@@ -212,6 +224,6 @@ const StyledTooltip = styled(Tooltip)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	background: #131212;
-`
+`;
 
 export default MarketDetails;

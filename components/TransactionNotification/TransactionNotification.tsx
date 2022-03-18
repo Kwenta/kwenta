@@ -49,7 +49,10 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 	);
 };
 
-const NotificationContainer = styled(FlexDivCentered)``;
+const NotificationContainer = styled(FlexDivCentered)`
+	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+`;
+
 const IconContainer = styled(FlexDivRowCentered)`
 	width: 35px;
 	margin-right: 12px;
