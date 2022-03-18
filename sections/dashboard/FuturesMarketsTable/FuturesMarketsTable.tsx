@@ -103,9 +103,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.index-price')}</TableHeader>
+							<TableHeader>{t('dashboard.overview.futures-markets-table.oracle-price')}</TableHeader>
 						),
-						accessor: 'indexPrice',
+						accessor: 'oraclePrice',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.price === '-' ? (
 								<DefaultCell>-</DefaultCell>
