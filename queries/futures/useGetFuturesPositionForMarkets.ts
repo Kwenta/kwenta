@@ -10,7 +10,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
 
-const useGetFuturesPositionForAllMarkets = (
+const useGetFuturesPositionForMarkets = (
 	markets: string[] | [],
 	options?: UseQueryOptions<FuturesPosition[] | []>
 ) => {
@@ -20,7 +20,7 @@ const useGetFuturesPositionForAllMarkets = (
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<FuturesPosition[] | []>(
-		QUERY_KEYS.Futures.Positions(markets || [], walletAddress || ''),
+		QUERY_KEYS.Futures.MarketsPositions(markets || []),
 		async () => {
 			const {
 				contracts: { FuturesMarketData },
@@ -39,6 +39,7 @@ const useGetFuturesPositionForAllMarkets = (
 				)
 			);
 
+			console.log(positionsForMarkets)
 			return positionsForMarkets.map(([position, canLiquidate], i) =>
 				mapFuturesPosition(position, canLiquidate, markets[i])
 			);
@@ -50,4 +51,4 @@ const useGetFuturesPositionForAllMarkets = (
 	);
 };
 
-export default useGetFuturesPositionForAllMarkets;
+export default useGetFuturesPositionForMarkets;

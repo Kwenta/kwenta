@@ -107,7 +107,6 @@ const Overview: FC = () => {
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
 				<FuturesPositionsTable
-					futuresPositions={futuresPositions}
 					futuresMarkets={futuresMarkets}
 				/>
 			</TabPanel>
