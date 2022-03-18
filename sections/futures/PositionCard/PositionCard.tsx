@@ -86,7 +86,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Size</StyledSubtitle>
+						<StyledSubtitle>Position Size</StyledSubtitle>
 						<StyledValue>
 							{positionDetails ?
 								formatNumber(
