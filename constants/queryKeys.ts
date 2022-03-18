@@ -116,7 +116,7 @@ export const QUERY_KEYS = {
 		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 	},
 	Futures: {
-		DayTradeStats: ['futures', 'dayTradeStats'],
+		DayTradeStats: (currencyKey: string | null) => ['futures', 'dayTradeStats', currencyKey],
 		Markets: ['futures', 'marketsSummaries'],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (currencyKey: string | null) => ['futures', 'tradingVolume', currencyKey],
@@ -143,7 +143,7 @@ export const QUERY_KEYS = {
 		AccountPositions: (walletAddress: string | null) => [
 			'futures',
 			'accountPositions',
-			walletAddress
+			walletAddress,
 		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
