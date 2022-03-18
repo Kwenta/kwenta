@@ -166,10 +166,11 @@ const Trade: React.FC<TradeProps> = () => {
 	};
 
 	useEffect(() => {
-		const getOrderFee = async () => {
+		const getGasLimit = async () => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
+				!walletAddress ||
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted
@@ -183,7 +184,11 @@ const Trade: React.FC<TradeProps> = () => {
 				setGasLimit(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
-				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
+				const [gasEstimate, orderFee] = await Promise.all([
+					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
+					FuturesMarketContract.orderFee(sizeDelta.toBN()),
+				]);
+				setGasLimit(Number(gasEstimate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -191,13 +196,14 @@ const Trade: React.FC<TradeProps> = () => {
 				setError(e?.data?.message ?? e.message);
 			}
 		};
-		getOrderFee();
+		getGasLimit();
 	}, [
 		tradeSize,
 		synthetixjs,
 		marketAsset,
 		futuresMarketsPosition,
 		leverageSide,
+		walletAddress,
 		isLeverageValueCommitted,
 	]);
 
