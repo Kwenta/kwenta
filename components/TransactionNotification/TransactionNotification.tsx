@@ -49,9 +49,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 	);
 };
 
-const NotificationContainer = styled(FlexDivCentered)`
-	background-color: ${(props) => props.theme.colors.selectedTheme.background};
-`;
+const NotificationContainer = styled(FlexDivCentered)``;
 
 const IconContainer = styled(FlexDivRowCentered)`
 	width: 35px;
@@ -59,13 +57,7 @@ const IconContainer = styled(FlexDivRowCentered)`
 `;
 
 const TransactionInfo = styled(FlexDivCol)``;
-const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>`
-	${(props) =>
-		props.isFailureMessage &&
-		css`
-			color: ${(props) => props.theme.colors.elderberry};
-		`}
-`;
+const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>``;
 
 const StyledImg = styled(Img)``;
 
