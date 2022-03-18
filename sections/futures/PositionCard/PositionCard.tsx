@@ -75,7 +75,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						</CurrencyInfo>
 					</InfoCol>
 					<PositionInfoCol>
-						<StyledSubtitle>Position</StyledSubtitle>
+						<StyledSubtitle>Position Side</StyledSubtitle>
 						{positionDetails ?
 							<PositionValue side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}>
 								{positionDetails.side === 'long' ? PositionSide.LONG + " ↗" : PositionSide.SHORT + " ↘"}
