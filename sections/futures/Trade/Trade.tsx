@@ -26,7 +26,7 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { gasPriceInWei } from 'utils/network';
+import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
 // import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
@@ -188,7 +188,7 @@ const Trade: React.FC<TradeProps> = () => {
 					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
 					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);
-				setGasLimit(Number(gasEstimate));
+				setGasLimit(normalizeGasLimit(gasEstimate.toNumber()));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
