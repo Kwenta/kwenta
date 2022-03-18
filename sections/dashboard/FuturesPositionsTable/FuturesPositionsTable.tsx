@@ -32,7 +32,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
-			return t('common.currency.futures-market-long-name', {
+			return t('common.currency.futures-market-short-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -70,7 +70,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
-					router.push(`/market/${row.original.market}`);
+					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
 				columns={[
@@ -92,7 +92,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								</MarketContainer>
 							);
 						},
-						width: 225,
+						width: 175,
 					},
 					{
 						Header: (

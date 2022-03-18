@@ -39,7 +39,6 @@ const useGetFuturesPositionForMarkets = (
 				)
 			);
 
-			console.log(positionsForMarkets)
 			return positionsForMarkets.map(([position, canLiquidate], i) =>
 				mapFuturesPosition(position, canLiquidate, markets[i])
 			);
