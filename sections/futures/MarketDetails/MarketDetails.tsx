@@ -48,7 +48,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const priceId = synthToCoingeckoPriceId(baseCurrencyKey);
 	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
-	const livePrice = coinGeckoPrices?.[priceId].usd ?? 0;
+	const externalPrice = coinGeckoPrices?.[priceId].usd ?? 0;
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
@@ -62,8 +62,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[`${baseCurrencyKey}/sUSD`]: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
-			'Live Price': {
-				value: formatCurrency(selectedPriceCurrency.name, livePrice, {
+			'External Price': {
+				value: formatCurrency(selectedPriceCurrency.name, externalPrice, {
 					sign: '$',
 				}),
 			},
@@ -151,7 +151,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		futuresTradingVolume,
 		futuresDailyTradeStats,
 		selectedPriceCurrency.name,
-		livePrice,
+		externalPrice,
 		pastPrice?.price,
 	]);
 
