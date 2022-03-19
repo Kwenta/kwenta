@@ -111,7 +111,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								</MarketContainer>
 							);
 						},
-						width: 175,
+						width: 190,
 					},
 					{
 						Header: (
@@ -132,7 +132,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								/>
 							);
 						},
-						width: 100,
+						width: 130,
 					},
 					{
 						Header: (
@@ -152,7 +152,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								/>
 							);
 						},
-						width: 125,
+						width: 105,
 					},
 					{
 						Header: (
@@ -277,6 +277,7 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
 `;

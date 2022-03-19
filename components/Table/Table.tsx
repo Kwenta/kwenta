@@ -216,6 +216,12 @@ const TableBody = styled.div`
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
+	border-bottom: 1px solid #353333;
+	padding: 6px 0;
+
+	&:last-child {
+		border: none ;
+	}
 
 	${(props) =>
 		props.$highlightRowsOnHover &&
@@ -229,15 +235,22 @@ const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 const TableCell = styled(FlexDivCentered)`
 	box-sizing: border-box;
 	&:first-child {
-		padding-left: 18px;
+		padding-left: 14px;
 	}
 	&:last-child {
-		padding-right: 18px;
+		padding-right: 14px;
 	}
 `;
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
+	//probably shouldn't be extending the tableCell styles to then overwrite them
+	&:first-child {
+		padding-left: 18px;
+	}
+	&:last-child {
+		padding-right: 18px;
+	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
 `;
 
