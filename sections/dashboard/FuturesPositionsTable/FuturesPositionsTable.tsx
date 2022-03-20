@@ -82,7 +82,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								</MarketContainer>
 							);
 						},
-						width: 250,
+						width: 190,
 					},
 					{
 						Header: (
@@ -96,7 +96,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<PositionType side={cellProps.row.original.position} />
 							);
 						},
-						width: 100,
+						width: 95,
 					},
 					{
 						Header: (
@@ -117,7 +117,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								/>
 							);
 						},
-						width: 125,
+						width: 140,
 					},
 					{
 						Header: (
@@ -131,7 +131,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<p>{formatNumber(cellProps.row.original.leverage ?? 0)}x</p>
 							);
 						},
-						width: 80,
+						width: 125,
 					},
 					{
 						Header: (
