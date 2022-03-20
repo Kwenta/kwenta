@@ -35,7 +35,7 @@ const StyledButton = styled(Button)`
 
 	p {
 		margin: 0;
-		font-size: 13px;
+		font-size: 15px;
 		text-align: left;
 	}
 
