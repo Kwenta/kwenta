@@ -135,11 +135,14 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
+			<MinimumAmountDisclaimer>
+				Note: Placing an order requires a minimum deposit of 100 sUSD.
+			</MinimumAmountDisclaimer>
 			<StyledInfoBox
 				details={{
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-						: NO_VALUE
+						: NO_VALUE,
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleDeposit}>
@@ -195,6 +198,12 @@ const MaxButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	cursor: pointer;
+`;
+
+const MinimumAmountDisclaimer = styled.div`
+	font-size: 12px;
+	margin-top: 8px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export default DepositMarginModal;
