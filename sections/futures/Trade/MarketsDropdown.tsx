@@ -37,7 +37,7 @@ const assetToCurrencyOption = (
 	negativeChange: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
-	label: `${asset}/sUSD`,
+	label: `${asset.slice(1)}-PERP`,
 	description,
 	price,
 	change,
@@ -69,7 +69,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.synthetic-currency-name', {
+			return t('common.currency.futures-market-long-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
