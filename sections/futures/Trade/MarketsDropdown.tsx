@@ -9,13 +9,16 @@ import Select from 'components/Select';
 import Connector from 'containers/Connector';
 import ROUTES from 'constants/routes';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 
 import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { Price } from 'queries/rates/types';
+import { wei } from '@synthetixio/wei';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -23,42 +26,50 @@ export type MarketsCurrencyOption = {
 	description: string;
 	price: string;
 	change: string;
+	negativeChange: boolean;
 };
 
 const assetToCurrencyOption = (
 	asset: string,
 	description: string,
 	price: string,
-	change: string
+	change: string,
+	negativeChange: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
-	label: `${asset}/sUSD`,
+	label: `${asset.slice(1)}-PERP`,
 	description,
 	price,
 	change,
+	negativeChange
 });
 
 type Props = {
 	asset: string;
 };
 
-const DUMMY_PRICE = '42,977.23';
-const DUMMY_CHANGE = '+0.68%';
+const DUMMY_PRICE = '';
+const DUMMY_CHANGE = '';
 
 const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const dailyPriceChangesQuery = useLaggedDailyPrice(
+		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+	);
+
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.synthetic-currency-name', {
+			return t('common.currency.futures-market-long-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -69,6 +80,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		const markets = futuresMarketsQuery?.data ?? [];
 
 		return markets.map((market) => {
+			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
+			
 			const basePriceRate = getExchangeRatesForCurrencies(
 				exchangeRates,
 				market.asset,
@@ -79,10 +92,17 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				market.asset,
 				getSynthDescription(market.asset),
 				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
-				DUMMY_CHANGE
+				formatPercent(
+					basePriceRate && pastPrice?.price ?
+						wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
+						: zeroBN
+				),
+				basePriceRate && pastPrice?.price ?
+					wei(basePriceRate).lt(pastPrice?.price) ? true : false
+					: false
 			);
 		});
-	}, [getSynthDescription, selectedPriceCurrency.name, exchangeRates, futuresMarketsQuery?.data]);
+	}, [getSynthDescription, selectedPriceCurrency.name, exchangeRates, futuresMarketsQuery?.data, dailyPriceChangesQuery?.data]);
 
 	return (
 		<SelectContainer>
@@ -96,7 +116,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
-				value={assetToCurrencyOption(asset, getSynthDescription(asset), DUMMY_PRICE, DUMMY_CHANGE)}
+				value={assetToCurrencyOption(asset, getSynthDescription(asset), DUMMY_PRICE, DUMMY_CHANGE, false)}
 				options={options}
 				isSearchable={false}
 				components={{
