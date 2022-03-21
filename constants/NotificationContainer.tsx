@@ -27,8 +27,9 @@ const StyledToastContainer = styled(ToastContainer)`
 		border-radius: 4px;
 	}
 	.Toastify__toast {
-		background-color: ${(props) => props.theme.colors.navy};
-		color: ${(props) => props.theme.colors.white};
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: ${(props) => props.theme.colors.selectedTheme.button.background};
+		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 	.Toastify__toast-body {
 		font-family: ${(props) => props.theme.fonts.regular};
