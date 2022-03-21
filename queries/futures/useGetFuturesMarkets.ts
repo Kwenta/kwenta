@@ -42,7 +42,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					market: market,
 					asset: utils.parseBytes32String(asset),
 					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate),
+					currentFundingRate: wei(currentFundingRate).mul(-1),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),
