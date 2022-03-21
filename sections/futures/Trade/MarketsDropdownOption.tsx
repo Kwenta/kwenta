@@ -16,7 +16,7 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 			</CurrencyMeta>
 			<div>
 				<p className="price">{props.data.price}</p>
-				<p className="change">{props.data.change}</p>
+				<p className={props.data.negativeChange ? `change red` : 'change green'}>{props.data.change}</p>
 			</div>
 		</OptionDetailsContainer>
 	</components.Option>
@@ -56,7 +56,6 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 	.change {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11.5px;
-		color: ${(props) => props.theme.colors.common.primaryGreen};
 		text-align: right;
 	}
 
@@ -66,6 +65,14 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.05);
+	}
+
+	.green {
+		color: ${(props) => props.theme.colors.common.primaryGreen};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
 `;
 
