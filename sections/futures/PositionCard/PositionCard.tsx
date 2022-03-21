@@ -92,7 +92,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								formatNumber(
 									positionDetails.size ?? 0,
 									{
-										minDecimals: positionDetails.size.lt(0.01) ? 4 : 2,
+										minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
 									}
 								) + " (" +
 								formatCurrency(
@@ -100,7 +100,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 									positionDetails.notionalValue ?? zeroBN,
 									{
 										sign: '$',
-										minDecimals: positionDetails.notionalValue.lt(0.01) ? 4 : 2,
+										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
 									}
 								) + ")"
 								: NO_VALUE
@@ -120,7 +120,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 										positionDetails.profitLoss.add(positionDetails?.accruedFunding),
 										{
 											sign: '$',
-											minDecimals: positionDetails.profitLoss.add(positionDetails?.accruedFunding).lt(0.01) ? 4 : 2,
+											minDecimals: positionDetails.profitLoss.add(positionDetails?.accruedFunding).abs().lt(0.01) ? 4 : 2,
 										}
 									) + " (" +
 									formatPercent(
@@ -184,7 +184,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								{
 									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
 										sign: '$',
-										minDecimals: positionDetails?.accruedFunding.lt(0.01) ? 4 : 2,
+										minDecimals: positionDetails?.accruedFunding.abs().lt(0.01) ? 4 : 2,
 									})
 								}
 							</StyledValue>

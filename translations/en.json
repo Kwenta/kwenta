@@ -361,11 +361,12 @@
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
-				"position": "Position",
+				"position": "Side",
 				"avg-open-close": "Avg. Open/Close",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
-				"margin": "Margin"
+				"notionalValue": "Size",
+				"liquidationPrice": "Liq. Price"
 			},
 			"futures-markets-table": {
 				"market": "Market",
