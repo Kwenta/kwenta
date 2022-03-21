@@ -96,6 +96,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
+							noOutline={true}
 						>
 							{label}
 						</NavButton>
@@ -109,6 +110,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
+							noOutline={true}
 						>
 							{label}
 						</NavButton>
