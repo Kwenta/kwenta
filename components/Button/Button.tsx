@@ -128,7 +128,6 @@ const Button = styled.button<ButtonProps>`
 
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		border: ${(props) => props.theme.colors.selectedTheme.border};
 		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
 		box-shadow: none;
 		cursor: initial;
