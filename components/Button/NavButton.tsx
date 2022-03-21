@@ -7,6 +7,7 @@ type NavButtonProps = {
 	isActive: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
+	noOutline?: boolean;
 };
 
 const NavButton: React.FC<NavButtonProps> = ({ title, ...props }) => {
@@ -35,7 +36,7 @@ const StyledButton = styled(Button)`
 
 	p {
 		margin: 0;
-		font-size: 13px;
+		font-size: 15px;
 		text-align: left;
 	}
 

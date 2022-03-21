@@ -10,6 +10,13 @@
 }
 
 @font-face {
+	font-family: 'AkkuratLLWeb-Black';
+	src: url('/fonts/AkkuratLLWeb-Black.woff2') format('woff2'),
+		url('/fonts/AkkuratLLWeb-Black.woff') format('woff');
+	font-display: sans-serif;
+}
+
+@font-face {
 	font-family: 'AkkuratLLWeb-Bold';
 	src: url('/fonts/AkkuratLLWeb-Bold.woff2') format('woff2'),
 		url('/fonts/AkkuratLLWeb-Bold.woff') format('woff');
@@ -39,7 +46,6 @@ body {
 	min-height: 100vh;
 	scroll-behavior: smooth;
 	font-size: 12px;
-	line-height: 140%;
 }
 
 ul {

@@ -87,7 +87,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 		<Container onClick={switchToL2}>
 			<StyledButton
 				size="sm"
-				variant="outline"
 			>
 				{t('header.networks-switcher.l2')}
 			</StyledButton>
@@ -116,9 +115,7 @@ export default NetworksSwitcher;
 const Container = styled.div`
 	width: 100%;
 	font-size: 12px;
-	font-weight: bold;
-	line-height: 1;
-	cursor: pointer;
+	font-family: AkkuratMonoLLWeb-Regular;
 `;
 
 const StyledButton = styled(Button)`
@@ -127,7 +124,7 @@ const StyledButton = styled(Button)`
 `;
 
 const L2Select = styled(Select)`
-	width: 135px;
+	width: 137px;
 
 	.react-select__control {
 		border-radius: 10px;
