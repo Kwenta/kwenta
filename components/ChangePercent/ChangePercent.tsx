@@ -41,8 +41,8 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	font-family: ${(props) => props.theme.fonts.mono};
 	svg {
 		margin-right: 5px;
-		width: 12px;
-		height: 12px;
+		width: 10px;
+		height: 10px;
 	}
 
 	${media.lessThan('md')`

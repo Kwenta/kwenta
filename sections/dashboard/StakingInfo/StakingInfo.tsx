@@ -37,8 +37,8 @@ const CardTitle = styled.div`
 	margin-bottom: 10px;
 	font-size: 13px;
 	text-transform: uppercase;
-	font-weight: 900;
-	color: ${(props) => props.theme.colors.purple};
+	font-family: ${(props) => props.theme.fonts.black};
+	color: ${(props) => props.theme.colors.common.primaryGold};
 `;
 
 const StakingBody = styled.div`
