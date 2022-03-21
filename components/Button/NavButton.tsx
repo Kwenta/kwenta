@@ -7,6 +7,7 @@ type NavButtonProps = {
 	isActive: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
+	noOutline?: boolean;
 };
 
 const NavButton: React.FC<NavButtonProps> = ({ title, ...props }) => {
