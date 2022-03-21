@@ -268,13 +268,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
-			<PositionButtons
-				selected={leverageSide}
-				onSelect={(position) => {
-					onLeverageChange('');
-					setLeverageSide(position);
-				}}
-			/>
+			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
 			<OrderSizing
 				amount={tradeSize}
