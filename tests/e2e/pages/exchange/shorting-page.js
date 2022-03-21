@@ -64,7 +64,7 @@ export default class ShortingPage extends Page {
 		cy.findAllByTestId('destination').each(($el, index, $list) => {			
 			if($el.text().match(/collateral/)) {
 				cy.wrap($el).parent().findAllByTestId('wallet-balance').invoke('text').then((sUSDinWallet) => {
-					sUSDinWallet = Number.parseInt(sUSDinWallet);
+					sUSDinWallet = Number.parseInt(sUSDinWallet.replace(/,/g,''));
 					expect(sUSDinWallet, "sUSD wallet balance must be above 100 to open the short").to.be.above(100);
 				});
 			} 
