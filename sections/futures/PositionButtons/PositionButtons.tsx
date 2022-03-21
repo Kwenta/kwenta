@@ -48,7 +48,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	font-size: 16px;
 	height: 55px;
 
-	&:before {
+	/* &:before {
 		content: ' ';
 		position: absolute;
 		z-index: -1;
@@ -57,7 +57,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		bottom: -3px;
 		left: -3px;
 		border-radius: 10px;
-	}
+	} */
 
 	${(props) =>
 		props.$position === PositionSide.LONG &&
