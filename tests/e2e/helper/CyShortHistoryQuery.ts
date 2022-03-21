@@ -1,4 +1,4 @@
-import { SHORT_GRAPH_ENDPOINT_OVM_KOVAN } from 'queries/collateral/subgraph/utils';
+import { SHORT_GRAPH_ENDPOINT_OVM_KOVAN } from '../../../queries/collateral/subgraph/utils';
 
 const MAXPOLLS = 500;
 
@@ -7,7 +7,7 @@ const useCyShortHistoryQuery = (wallet: string) => {
 		method: 'POST',
 		url: SHORT_GRAPH_ENDPOINT_OVM_KOVAN,
 		body: {
-			query: `query{ shorts(where: { account: \"` + wallet + `\", isOpen: true }){ id } }`,
+			query: `query{ shorts(where: { account: "${wallet}", isOpen: true }){ id } }`,
 		},
 	});
 };
