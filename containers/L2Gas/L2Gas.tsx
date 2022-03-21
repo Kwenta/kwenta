@@ -1,31 +1,20 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
 import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
-import { networkState, isL2State, walletAddressState } from 'store/wallet';
-import { makeContract as makeL2ovmETHContract } from 'contracts/L2OVMETH';
+import { walletAddressState } from 'store/wallet';
 import { wei } from '@synthetixio/wei';
 
 const MakeContainer = () => {
 	const { provider } = Connector.useContainer();
-	const isL2 = useRecoilValue(isL2State);
 	const address = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
 
 	const [balance, setBalance] = useState(wei(0));
 
-	const ovmETHContract = useMemo(() => {
-		const networkName = network!?.name;
-		if (!(isL2 && networkName && networkName !== 'kovan-ovm' && provider)) {
-			return null;
-		}
-		return makeL2ovmETHContract(networkName, provider)!;
-	}, [isL2, network, provider]);
-
-	const hasNoBalance = useMemo(() => !!ovmETHContract && balance.eq(0), [ovmETHContract, balance]);
+	const hasNoBalance = balance.eq(0);
 
 	useEffect(() => {
-		if (!(ovmETHContract && address)) return;
+		if (!address) return;
 
 		let isMounted = true;
 		const unsubs = [
@@ -43,24 +32,12 @@ const MakeContainer = () => {
 			}
 		};
 
-		const subscribe = () => {
-			const transferEvent = ovmETHContract.filters.Transfer();
-			const onBalanceChange = (from: string, to: string) => {
-				if (from === address || to === address) loadBalance();
-			};
-			ovmETHContract.on(transferEvent, onBalanceChange);
-			unsubs.push(() => {
-				ovmETHContract.off(transferEvent, onBalanceChange);
-			});
-		};
-
 		loadBalance();
-		subscribe();
 
 		return () => {
 			unsubs.forEach((unsub) => unsub());
 		};
-	}, [ovmETHContract, address, provider]);
+	}, [address, provider]);
 
 	return {
 		gas: balance,
