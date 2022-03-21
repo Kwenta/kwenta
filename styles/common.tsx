@@ -193,6 +193,7 @@ export const FullScreenContainer = styled(FlexDiv)`
 	width: 100%;
 	height: 100vh;
 	position: relative;
+	overflow-y: overlay;
 `;
 
 export const SwapCurrenciesButton = styled.button`
