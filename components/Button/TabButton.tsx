@@ -9,6 +9,7 @@ export type TabButtonProps = {
 	active?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
+	noOutline?: boolean;
 };
 
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...props }) => {
@@ -38,7 +39,7 @@ const StyledButton = styled(Button)`
 	}
 
 	.title {
-		align-text: center;
+		text-align: center;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 
@@ -67,7 +68,8 @@ const StyledButton = styled(Button)`
 			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
 		}
 
-		border: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.border};
+		/* border: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.border}; */
+		border: none;
 
 		.badge {
 			display: none;
