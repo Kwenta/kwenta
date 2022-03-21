@@ -300,7 +300,10 @@ const Trade: React.FC<TradeProps> = () => {
 				variant="primary"
 				fullWidth
 				disabled={
-					!leverage || Number(leverage) < 0 || Number(leverage) > maxLeverageValue.toNumber()
+					!leverage ||
+					Number(leverage) < 0 ||
+					Number(leverage) > maxLeverageValue.toNumber() ||
+					(futuresMarketsPosition?.accessibleMargin ?? zeroBN).lt(wei(100))
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
@@ -381,9 +384,10 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 `;
 
-const ErrorMessage = styled.p`
+const ErrorMessage = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
+	margin-bottom: 16px;
 `;
 
 // const StyledSegmentedControl = styled(SegmentedControl)`
