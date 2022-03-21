@@ -2,7 +2,6 @@
 /* eslint-disable ui-testing/no-hard-wait */
 
 export default class Page {
-	
 	getTitle() {
 		return cy.title();
 	}
@@ -18,7 +17,7 @@ export default class Page {
 	confirmMetamaskTransaction() {
 		// Currently without supplying a gas configuration results in failing transactions
 		// Possibly caused by wrong default behaviour within Synpress
-		cy.confirmMetamaskTransaction({gasFee:1, gasLimit: 5000000});
+		cy.confirmMetamaskTransaction({ gasFee: 1, gasLimit: 5000000 });
 	}
 
 	snxExchangerSettle(asset) {
@@ -43,11 +42,10 @@ export default class Page {
 		}
 	}
 
-	disconnectMetamaskWalletFromAllDapps() {	
+	disconnectMetamaskWalletFromAllDapps() {
 		// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
 		cy.disconnectMetamaskWalletFromAllDapps();
 	}
-	
 }
 
 function waitForTxSuccess(url, alias) {
@@ -62,4 +60,3 @@ function waitForTxSuccess(url, alias) {
 		}
 	});
 }
-
