@@ -26,7 +26,7 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { gasPriceInWei } from 'utils/network';
+import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
 // import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
@@ -188,7 +188,7 @@ const Trade: React.FC<TradeProps> = () => {
 					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
 					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);
-				setGasLimit(Number(gasEstimate));
+				setGasLimit(normalizeGasLimit(gasEstimate.toNumber()));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -268,6 +268,8 @@ const Trade: React.FC<TradeProps> = () => {
 
 			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
+			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+
 			<OrderSizing
 				amount={tradeSize}
 				amountSUSD={tradeSizeSUSD}
@@ -275,14 +277,6 @@ const Trade: React.FC<TradeProps> = () => {
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
 				marketAsset={marketAsset || Synths.sUSD}
-			/>
-
-			<PositionButtons
-				selected={leverageSide}
-				onSelect={(position) => {
-					onLeverageChange('');
-					setLeverageSide(position);
-				}}
 			/>
 
 			<LeverageInput
@@ -300,7 +294,10 @@ const Trade: React.FC<TradeProps> = () => {
 				variant="primary"
 				fullWidth
 				disabled={
-					!leverage || Number(leverage) < 0 || Number(leverage) > maxLeverageValue.toNumber()
+					!leverage ||
+					Number(leverage) < 0 ||
+					Number(leverage) > maxLeverageValue.toNumber() ||
+					(futuresMarketsPosition?.accessibleMargin ?? zeroBN).lt(wei(100))
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
@@ -381,9 +378,10 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 `;
 
-const ErrorMessage = styled.p`
+const ErrorMessage = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
+	margin-bottom: 16px;
 `;
 
 // const StyledSegmentedControl = styled(SegmentedControl)`

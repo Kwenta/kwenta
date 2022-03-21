@@ -127,7 +127,7 @@ const StyledButton = styled(Button)`
 `;
 
 const L2Select = styled(Select)`
-	width: 125px;
+	width: 135px;
 
 	.react-select__control {
 		border-radius: 10px;
