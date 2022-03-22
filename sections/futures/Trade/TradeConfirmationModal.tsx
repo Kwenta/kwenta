@@ -85,6 +85,11 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	]);
 
 	useEffect(() => {
+		console.log(ethGasPriceQuery?.data);
+		console.log(ethGasPriceQuery?.data?.fast.gasPrice?.toNumber());
+	}, [ethGasPriceQuery]);
+
+	useEffect(() => {
 		const getPositionDetails = async () => {
 			if (!tradeSize || !market || !synthetixjs || !walletAddress) return;
 			try {

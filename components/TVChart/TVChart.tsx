@@ -43,8 +43,7 @@ export function TVChart({
 			library_path: libraryPath,
 
 			locale: 'en',
-			disabled_features: ['use_localstorage_for_settings'],
-			enabled_features: ['study_templates'],
+			disabled_features: ['use_localstorage_for_settings', 'study_templates'],
 			fullscreen: fullscreen,
 			autosize: autosize,
 			studies_overrides: studiesOverrides,

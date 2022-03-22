@@ -14,7 +14,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { parseGasPriceObject } from 'hooks/useGas';
 import { gasPriceInWei, getTransactionPrice } from 'utils/network';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { FlexDivRowCentered } from 'styles/common';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { NO_VALUE } from 'constants/placeholder';
@@ -41,6 +41,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const [amount, setAmount] = React.useState<string>('0');
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
+	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -84,9 +85,17 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				if (!amount) return;
 				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 				const marginAmount = computeAmount();
-				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
-					wei(marginAmount).toBN()
-				);
+
+				let estimate;
+
+				if (isMax) {
+					estimate = await FuturesMarketContract.estimateGas.withdrawAllMargin();
+				} else {
+					estimate = await FuturesMarketContract.estimateGas.transferMargin(
+						wei(marginAmount).toBN()
+					);
+				}
+
 				setGasLimit(Number(estimate));
 			} catch (e) {
 				// @ts-ignore
@@ -96,17 +105,29 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			}
 		};
 		getGasLimit();
-	}, [amount, market, synthetixjs, computeAmount]);
+	}, [amount, market, synthetixjs, computeAmount, isMax]);
 
 	const handleWithdraw = async () => {
 		if (!amount || !gasLimit || !market || !gasPrice) return;
 		try {
 			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-			const marginAmount = computeAmount();
-			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
-				gasLimit,
-				gasPrice: gasPriceInWei(gasPrice),
-			});
+
+			let tx;
+
+			if (isMax) {
+				tx = await FuturesMarketContract.withdrawAllMargin({
+					gasLimit,
+					gasPrice,
+				});
+			} else {
+				const marginAmount = computeAmount();
+
+				tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
+					gasLimit,
+					gasPrice: gasPriceInWei(gasPrice),
+				});
+			}
+
 			if (tx != null) {
 				monitorTransaction({
 					txHash: tx.hash,
@@ -124,6 +145,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	};
 
 	const handleSetMax = React.useCallback(() => {
+		setMax(true);
 		setAmount(accessibleMargin.toString());
 	}, [accessibleMargin]);
 
@@ -137,14 +159,20 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			</BalanceContainer>
 			<CustomInput
 				value={amount}
-				onChange={(_, v) => setAmount(v)}
+				onChange={(_, v) => {
+					if (isMax) setMax(false);
+					setAmount(v);
+				}}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
+
 			<StyledInfoBox
 				details={{
 					'Gas Fee': transactionFee
 						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
-						: NO_VALUE
+						: NO_VALUE,
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleWithdraw}>
@@ -200,6 +228,11 @@ const MaxButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	cursor: pointer;
+`;
+
+const ErrorMessage = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export default WithdrawMarginModal;

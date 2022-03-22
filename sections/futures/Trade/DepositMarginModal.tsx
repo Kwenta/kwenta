@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
 
 import BaseModal from 'components/BaseModal';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import InfoBox from 'components/InfoBox';
 import Button from 'components/Button';
@@ -55,11 +55,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const ethPriceRate = React.useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrices = React.useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
 	);
 
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
@@ -148,6 +143,8 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			<DepositMarginButton fullWidth onClick={handleDeposit}>
 				Deposit Margin
 			</DepositMarginButton>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
@@ -203,6 +200,11 @@ const MaxButton = styled.button`
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin-top: 8px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
+
+const ErrorMessage = styled.div`
+	margin-top: 16px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
