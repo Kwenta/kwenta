@@ -361,11 +361,13 @@
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
-				"position": "Position",
+				"position": "Side",
 				"avg-open-close": "Avg. Open/Close",
+				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
-				"margin": "Margin"
+				"notionalValue": "Size",
+				"liquidationPrice": "Liq. Price"
 			},
 			"futures-markets-table": {
 				"market": "Market",
@@ -881,6 +883,8 @@
 			"currency-contract": "<0>{{currencyKey}}</0> Contract",
 			"currency-price": "<0>{{currencyKey}}</0> Price",
 			"synthetic-currency-name": "Synthetic {{currencyName}}",
+			"futures-market-short-name": "{{currencyName}} Perpetual",
+			"futures-market-long-name": "Synthetic {{currencyName}} Perpetual",
 			"trade-to-currency": "Trade to <0>{{currencyKey}}</0>",
 			"bridge-currency": "Bridge <0>{{currencyKey}}</0>",
 			"buy-currency": "Buy <0>{{currencyKey}}</0>",

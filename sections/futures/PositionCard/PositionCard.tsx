@@ -46,7 +46,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const { synthsMap } = Connector.useContainer();
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.synthetic-currency-name', {
+			return t('common.currency.futures-market-short-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -63,13 +63,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						<CurrencyInfo>
 							<StyledCurrencyIcon currencyKey={currencyKey} />
 							<div>
-								<CurrencySubtitle>{currencyKey}/sUSD</CurrencySubtitle>
+								<CurrencySubtitle>
+									{
+										currencyKey ?
+											currencyKey?.slice(1)+"-PERP"
+											: "Select a market"
+									}
+								</CurrencySubtitle>
 								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
 							</div>
 						</CurrencyInfo>
 					</InfoCol>
 					<PositionInfoCol>
-						<StyledSubtitle>Position</StyledSubtitle>
+						<StyledSubtitle>Position Side</StyledSubtitle>
 						{positionDetails ?
 							<PositionValue side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}>
 								{positionDetails.side === 'long' ? PositionSide.LONG + " ↗" : PositionSide.SHORT + " ↘"}
@@ -80,14 +86,22 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Size</StyledSubtitle>
+						<StyledSubtitle>Position Size</StyledSubtitle>
 						<StyledValue>
 							{positionDetails ?
-								formatNumber(positionDetails.size ?? 0) + " (" +
+								formatNumber(
+									positionDetails.size ?? 0,
+									{
+										minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+									}
+								) + " (" +
 								formatCurrency(
 									Synths.sUSD,
 									positionDetails.notionalValue ?? zeroBN,
-									{ sign: '$' }
+									{
+										sign: '$',
+										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
+									}
 								) + ")"
 								: NO_VALUE
 							}
@@ -103,8 +117,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								{
 									formatCurrency(
 										Synths.sUSD,
-										positionDetails.profitLoss.add(positionDetails?.accruedFunding).toNumber(),
-										{ sign: '$' }
+										positionDetails.profitLoss.add(positionDetails?.accruedFunding),
+										{
+											sign: '$',
+											minDecimals: positionDetails.profitLoss.add(positionDetails?.accruedFunding).abs().lt(0.01) ? 4 : 2,
+										}
 									) + " (" +
 									formatPercent(
 										positionDetails.profitLoss.div(
@@ -141,7 +158,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Average Entry Price</StyledSubtitle>
+						<StyledSubtitle>Last Entry Price</StyledSubtitle>
 						<StyledValue>
 							{positionDetails ?
 								formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
@@ -158,20 +175,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Realized P&amp;L</StyledSubtitle>
-						{positionDetails ?
-							<StyledValue className={
-								positionDetails.accruedFunding > zeroBN ? 'green' :
-								positionDetails.accruedFunding < zeroBN ? 'red' : ""
-							}>
-								{
-									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
-								}
-							</StyledValue>
-							: <StyledValue>{NO_VALUE}</StyledValue>
-						}
-					</InfoCol>
-					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
 						{positionDetails ?
 							<StyledValue className={
@@ -179,7 +182,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
 									positionDetails.accruedFunding < zeroBN ? 'red' : ""
 							}>
 								{
-									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, { sign: '$' })
+									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
+										sign: '$',
+										minDecimals: positionDetails?.accruedFunding.abs().lt(0.01) ? 4 : 2,
+									})
 								}
 							</StyledValue>
 							: <StyledValue>{NO_VALUE}</StyledValue>

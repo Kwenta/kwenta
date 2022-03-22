@@ -96,6 +96,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
+							noOutline={true}
 						>
 							{label}
 						</NavButton>
@@ -109,6 +110,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
+							noOutline={true}
 						>
 							{label}
 						</NavButton>
@@ -143,8 +145,8 @@ const TabGroupTitle = styled.div`
 	margin-left: 14px;
 	font-size: 13px;
 	text-transform: uppercase;
-	font-weight: 900;
-	color: ${(props) => props.theme.colors.purple};
+	font-family: ${(props) => props.theme.fonts.black};
+	color: ${(props) => props.theme.colors.common.primaryGold};
 
 	&:not(:first-of-type) {
 		margin-top: 65px;

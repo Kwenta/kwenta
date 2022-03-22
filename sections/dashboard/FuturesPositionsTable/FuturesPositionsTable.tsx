@@ -5,30 +5,34 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
-
 import Currency from 'components/Currency';
 import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { PositionHistory, FuturesMarket } from 'queries/futures/types';
+import { FuturesPosition, FuturesMarket } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import { NO_VALUE } from 'constants/placeholder';
+import { DEFAULT_DATA } from './constants';
 
 type FuturesPositionTableProps = {
-	futuresPositions: PositionHistory[];
 	futuresMarkets: FuturesMarket[];
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
-	futuresPositions,
 	futuresMarkets,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
+	const futuresPositionQuery = useGetFuturesPositionForMarkets(
+		futuresMarkets.map(({ asset }) => asset)
+	);
+	const futuresPositions = futuresPositionQuery?.data ?? [];
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
-			return t('common.currency.synthetic-currency-name', {
+			return t('common.currency.futures-market-short-name', {
 				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
 			});
 		},
@@ -36,21 +40,27 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	);
 
 	let data = useMemo(() => {
-		return futuresPositions.map((position: PositionHistory, i: number) => {
-			const market = futuresMarkets.find(({ asset }) => asset === position.asset);
+		const activePositions = futuresPositions.filter((position: FuturesPosition) => position?.position)
+		return activePositions.length > 0 ? activePositions.map((position: FuturesPosition, i: number) => {
 			const description = getSynthDescription(position.asset);
 
 			return {
-				market: position.asset,
+				asset: position.asset,
+				market: position.asset.slice(1) + '-PERP',
 				description: description,
-				position: position.side,
-				avgOpenClose: position.entryPrice.toNumber(),
-				leverage: position.leverage.toNumber(),
-				pnl: market ? market.price.sub(position.entryPrice).mul(position.size).mul(position.side === "short" ? "-1" : "1") : '-',
-				pnlPct: market ? market.price.sub(position.entryPrice).mul(position.side === "short" ? "-1" : "1").div(position.entryPrice) : '-',
-				margin: position.margin.toNumber(),
+				notionalValue: position?.position?.notionalValue,
+				position: position?.position?.side,
+				lastPrice: position?.position?.lastPrice,
+				liquidationPrice: position?.position?.liquidationPrice,
+				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
+				pnlPct: position?.position?.profitLoss.div(
+					position?.position?.initialMargin.mul(position?.position?.initialLeverage)
+				),
+				margin: position.accessibleMargin,
+				leverage: position?.position?.leverage,
 			};
-		});
+		})
+		: DEFAULT_DATA
 	}, [futuresPositions, futuresMarkets, getSynthDescription]);
 
 	return (
@@ -60,7 +70,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
-					router.push(`/market/${row.original.market}`);
+					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
 				columns={[
@@ -70,19 +80,19 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.market === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.market} />
+										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}/sUSD</StyledText>
+									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
 						},
-						width: 250,
+						width: 198,
 					},
 					{
 						Header: (
@@ -90,34 +100,32 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'position',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.position === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.position === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<PositionType side={cellProps.row.original.position} />
 							);
 						},
-						width: 100,
+						width: 90,
 					},
 					{
 						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.avg-open-close')}
-							</TableHeader>
+							<TableHeader>{t('dashboard.overview.futures-positions-table.notionalValue')}</TableHeader>
 						),
-						accessor: 'avgOpenClose',
+						accessor: 'notionalValue',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.avgOpenClose === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.notionalValue === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.avgOpenClose}
+									price={cellProps.row.original.notionalValue}
 									sign={'$'}
 									conversionRate={1}
 								/>
 							);
 						},
-						width: 125,
+						width: 90,
 					},
 					{
 						Header: (
@@ -125,13 +133,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'leverage',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.leverage === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.leverage === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<p>{formatNumber(cellProps.row.original.leverage ?? 0)}x</p>
 							);
 						},
-						width: 80,
+						width: 90,
 					},
 					{
 						Header: (
@@ -139,19 +147,19 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'pnl',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.pnl === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.pnl === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<PnlContainer>
 									<ChangePercent value={cellProps.row.original.pnlPct} className="change-pct" />
-									(
-									<Currency.Price
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.pnl}
-										sign={'$'}
-										conversionRate={1}
-									/>
-									)
+									<div>
+										(<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.pnl}
+											sign={'$'}
+											conversionRate={1}
+										/>)
+									</div>
 								</PnlContainer>
 							);
 						},
@@ -159,22 +167,43 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.margin')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-positions-table.last-entry')}
+							</TableHeader>
 						),
-						accessor: 'margin',
+						accessor: 'lastPrice',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.margin === '-' ? (
-								<DefaultCell>-</DefaultCell>
+							return cellProps.row.original.avgOpenClose === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
+								) : (
+									<Currency.Price
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.lastPrice}
+									sign={'$'}
+									conversionRate={1}
+								/>
+								);
+							},
+							width: 125,
+					},
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.futures-positions-table.liquidationPrice')}</TableHeader>
+						),
+						accessor: 'liquidationPrice',
+						Cell: (cellProps: CellProps<any>) => {
+							return cellProps.row.original.liquidationPrice === NO_VALUE ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.margin}
+									price={cellProps.row.original.liquidationPrice}
 									sign={'$'}
 									conversionRate={1}
 								/>
 							);
 						},
-						width: 125,
+						width: 115,
 					},
 				]}
 			/>

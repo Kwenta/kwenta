@@ -59,7 +59,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const data: MarketData = React.useMemo(() => {
 		return {
-			[`${baseCurrencyKey}/sUSD`]: {
+			[baseCurrencyKey ? `${baseCurrencyKey.slice(1)}-PERP` : ""]: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
 			'External Price': {
@@ -184,7 +184,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 const MarketDetailsContainer = styled.div`
 	width: 100%;
-	padding: 12px 18px;
+	height: 55px;
+	padding: 11.5px 25px 10px 25px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
 
@@ -207,7 +208,6 @@ const MarketDetailsContainer = styled.div`
 	}
 
 	.value {
-		margin-top: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
