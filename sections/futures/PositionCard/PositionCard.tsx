@@ -226,7 +226,7 @@ const Container = styled.div`
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 22px;
-	border-radius: 16px;
+	border-radius: 10px;
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`

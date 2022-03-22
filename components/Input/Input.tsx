@@ -9,7 +9,7 @@ export const inputCSS = css`
 	height: 46px;
 	padding: 0 12px;
 	font-size: 18px;
-	border-radius: 16px;
+	border-radius: 10px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	outline: none;
 

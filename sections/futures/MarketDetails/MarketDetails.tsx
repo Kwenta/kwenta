@@ -185,7 +185,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 const MarketDetailsContainer = styled.div`
 	width: 100%;
 	height: 55px;
-	padding: 11.5px 25px 10px 25px;
+	padding: 11px 35px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
 
@@ -194,7 +194,7 @@ const MarketDetailsContainer = styled.div`
 	align-items: start;
 
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 16px;
+	border-radius: 10px;
 	box-sizing: border-box;
 
 	p {
