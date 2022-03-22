@@ -45,7 +45,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		<LeverageInputWrapper>
 			<LeverageRow>
 				<LeverageTitle>
-					{t('futures.market.trade.input.leverage.title')} <span>— Up to 10x</span>
+					{t('futures.market.trade.input.leverage.title')} <span>— Up to {maxLeverage}x</span>
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
