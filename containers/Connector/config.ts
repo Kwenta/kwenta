@@ -1,11 +1,11 @@
-import { NetworkIdByName, NetworkNameById } from '@synthetixio/contracts-interface';
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import onboard from 'bnc-onboard';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
 import { Network } from 'store/wallet';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(network);
+	const infuraRpc = getInfuraRpcURL(network.id);
 
 	return onboard({
 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
@@ -51,15 +51,10 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: {
-						'1': getInfuraRpcURL({ id: NetworkIdByName.mainnet, name: NetworkNameById[1] }),
-						'10': getInfuraRpcURL({
-							id: NetworkIdByName['mainnet-ovm'],
-							name: NetworkNameById[10],
-						}),
-						'42': getInfuraRpcURL({ id: NetworkIdByName.kovan, name: NetworkNameById[42] }),
-						'69': getInfuraRpcURL({ id: NetworkIdByName['kovan-ovm'], name: NetworkNameById[69] }),
-					},
+					rpc: Object.values(NetworkIdByName).reduce((acc, id) => {
+						acc[id] = getInfuraRpcURL(id);
+						return acc;
+					}, {} as Record<string, string>),
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
