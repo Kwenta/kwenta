@@ -50,7 +50,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				description: description,
 				notionalValue: position?.position?.notionalValue,
 				position: position?.position?.side,
-				avgOpenClose: position?.position?.lastPrice,
+				lastPrice: position?.position?.lastPrice,
 				liquidationPrice: position?.position?.liquidationPrice,
 				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
 				pnlPct: position?.position?.profitLoss.div(
@@ -92,7 +92,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								</MarketContainer>
 							);
 						},
-						width: 180,
+						width: 198,
 					},
 					{
 						Header: (
@@ -106,7 +106,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<PositionType side={cellProps.row.original.position} />
 							);
 						},
-						width: 80,
+						width: 90,
 					},
 					{
 						Header: (
@@ -114,18 +114,18 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'notionalValue',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.margin === NO_VALUE ? (
+							return cellProps.row.original.notionalValue === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.margin}
+									price={cellProps.row.original.notionalValue}
 									sign={'$'}
 									conversionRate={1}
 								/>
 							);
 						},
-						width: 120,
+						width: 90,
 					},
 					{
 						Header: (
@@ -139,7 +139,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<p>{formatNumber(cellProps.row.original.leverage ?? 0)}x</p>
 							);
 						},
-						width: 80,
+						width: 90,
 					},
 					{
 						Header: (
@@ -168,17 +168,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					{
 						Header: (
 							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.avg-open-close')}
+								{t('dashboard.overview.futures-positions-table.last-entry')}
 							</TableHeader>
 						),
-						accessor: 'avgOpenClose',
+						accessor: 'lastPrice',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.avgOpenClose === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 								) : (
 									<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.avgOpenClose}
+									price={cellProps.row.original.lastPrice}
 									sign={'$'}
 									conversionRate={1}
 								/>
