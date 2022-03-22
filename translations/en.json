@@ -363,6 +363,7 @@
 				"market": "Market",
 				"position": "Side",
 				"avg-open-close": "Avg. Open/Close",
+				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
 				"notionalValue": "Size",
