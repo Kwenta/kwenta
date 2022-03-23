@@ -30,18 +30,20 @@ type DepositMarginModalProps = {
 	market: string | null;
 };
 
+const PLACEHOLDER = '$0.00';
+
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
 	sUSDBalance,
 	market,
 }) => {
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('0');
+	const [amount, setAmount] = React.useState<string>('');
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
@@ -128,6 +130,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 type CustomInputProps = {
+	placeholder?: string;
 	value?: string | number;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 	right: React.ReactNode;
@@ -11,7 +12,14 @@ type CustomInputProps = {
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const CustomInput: React.FC<CustomInputProps> = ({ value, onChange, right, style, className }) => {
+const CustomInput: React.FC<CustomInputProps> = ({
+	value,
+	placeholder,
+	onChange,
+	right,
+	style,
+	className,
+}) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
 	};
@@ -19,6 +27,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ value, onChange, right, style
 	return (
 		<CustomInputContainer style={style} className={className}>
 			<input
+				placeholder={placeholder}
 				value={value}
 				type="number"
 				onChange={handleChange}
