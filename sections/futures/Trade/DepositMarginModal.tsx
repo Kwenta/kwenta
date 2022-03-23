@@ -20,7 +20,6 @@ import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { useTranslation } from 'react-i18next';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -39,7 +38,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 }) => {
-	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -90,7 +88,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 
 				// @ts-ignore
 				if (e?.code === -32603) {
-					setError(t('futures.market.trade.button.errors.amount-too-large'));
+					setError('Amount exceeds max amount in user wallet.');
 				} else {
 					// @ts-ignore
 					setError(e?.data?.message ?? e.message);
@@ -98,7 +96,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			}
 		};
 		getGasLimit();
-	}, [amount, market, synthetixjs, t]);
+	}, [amount, market, synthetixjs]);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -169,7 +167,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				}}
 			/>
 			<DepositMarginButton disabled={disabled} fullWidth onClick={handleDeposit}>
-				{t('futures.market.trade.button.deposit-margin')}
+				Deposit Margin
 			</DepositMarginButton>
 
 			{error && <ErrorMessage>{error}</ErrorMessage>}

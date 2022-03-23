@@ -634,10 +634,7 @@
 					"edit": "Edit",
 					"open-trade": "Submit order",
 					"warning": "WARNING: this will close your position",
-					"competition-closed": "Competition Closed",
-          "errors": {
-            "amount-too-large": "Amount exceeds max amount in user wallet."
-          }
+					"competition-closed": "Competition Closed"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
