@@ -31,9 +31,9 @@ module.exports = {
 			'/dashboard': {
 				page: '/dashboard/[[...tab]]',
 			},
-			'/exchange': {
-				page: '/exchange/[[...market]]',
-			},
+			// '/exchange': {
+			// 	page: '/exchange/[[...market]]',
+			// },
 		};
 	},
 	async redirects() {
