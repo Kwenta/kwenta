@@ -20,6 +20,7 @@ import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useTranslation } from 'react-i18next';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -35,6 +36,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 }) => {
+  const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -141,7 +143,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				}}
 			/>
 			<DepositMarginButton fullWidth onClick={handleDeposit}>
-				Deposit Margin
+				{t('futures.market.trade.button.deposit-margin')}
 			</DepositMarginButton>
 
 			{error && <ErrorMessage>{error}</ErrorMessage>}
