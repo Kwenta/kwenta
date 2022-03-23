@@ -48,7 +48,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				asset: position.asset,
 				market: position.asset.slice(1) + '-PERP',
 				description: description,
-				notionalValue: position?.position?.notionalValue,
+				notionalValue: position?.position?.notionalValue.abs(),
 				position: position?.position?.side,
 				lastPrice: position?.position?.lastPrice,
 				liquidationPrice: position?.position?.liquidationPrice,
