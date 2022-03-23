@@ -88,7 +88,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 
 				// @ts-ignore
 				if (e?.code === -32603) {
-					setError('Amount exceeds max amount in user wallet.');
+					setError('Input amount exceeds max withdrawable amount.');
 				} else {
 					// @ts-ignore
 					setError(e?.data?.message ?? e.message);
@@ -208,9 +208,6 @@ const StyledInfoBox = styled(InfoBox)`
 
 const DepositMarginButton = styled(Button)`
 	height: 55px;
-	&:disabled {
-		cursor: not-allowed;
-	}
 `;
 
 const MaxButton = styled.button`
