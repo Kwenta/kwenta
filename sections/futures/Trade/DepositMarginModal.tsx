@@ -5,7 +5,6 @@ import Wei, { wei } from '@synthetixio/wei';
 import BaseModal from 'components/BaseModal';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import InfoBox from 'components/InfoBox';
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'styles/common';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -120,7 +119,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	return (
 		<StyledBaseModal title="Deposit Margin" isOpen={true} onDismiss={onDismiss}>
 			<BalanceContainer>
-				<BalanceText>Balance:</BalanceText>
+				<BalanceText $gold>Balance:</BalanceText>
 				<BalanceText>
 					<span>{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}</span> sUSD
 				</BalanceText>
@@ -131,25 +130,28 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<MinimumAmountDisclaimer>
-				Note: Placing an order requires a minimum deposit of 100 sUSD.
+				A $100 margin minimum is required to open a position.
 			</MinimumAmountDisclaimer>
-			<StyledInfoBox
-				details={{
-					'Gas Fee': transactionFee
-						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-						: NO_VALUE,
-				}}
-			/>
-			<DepositMarginButton fullWidth onClick={handleDeposit}>
+			<MarginActionButton fullWidth onClick={handleDeposit}>
 				Deposit Margin
-			</DepositMarginButton>
+			</MarginActionButton>
+			<GasFeeContainer>
+				<BalanceText>Gas Fee:</BalanceText>
+				<BalanceText>
+					<span>
+						{transactionFee
+							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+							: NO_VALUE}
+					</span>
+				</BalanceText>
+			</GasFeeContainer>
 
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
 
-const StyledBaseModal = styled(BaseModal)`
+export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
@@ -159,7 +161,7 @@ const StyledBaseModal = styled(BaseModal)`
 	}
 `;
 
-const BalanceContainer = styled(FlexDivRowCentered)`
+export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding: 0 14px;
 
@@ -168,23 +170,21 @@ const BalanceContainer = styled(FlexDivRowCentered)`
 	}
 `;
 
-const BalanceText = styled.p`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+export const BalanceText = styled.p<{ $gold?: boolean }>`
+	color: ${(props) =>
+		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
+
 	span {
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 `;
 
-const StyledInfoBox = styled(InfoBox)`
-	margin-top: 15px;
-	margin-bottom: 15px;
-`;
-
-const DepositMarginButton = styled(Button)`
+export const MarginActionButton = styled(Button)`
+	margin-top: 16px;
 	height: 55px;
 `;
 
-const MaxButton = styled.button`
+export const MaxButton = styled.button`
 	height: 22px;
 	padding: 4px 10px;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
@@ -200,12 +200,22 @@ const MaxButton = styled.button`
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin-top: 8px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	text-align: center;
+`;
+
+export const ErrorMessage = styled.div`
+	margin-top: 16px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+export const GasFeeContainer = styled(FlexDivRowCentered)`
+	margin-top: 13px;
+	padding: 0 14px;
+
+	p {
+		margin: 0;
+	}
 `;
 
 export default DepositMarginModal;

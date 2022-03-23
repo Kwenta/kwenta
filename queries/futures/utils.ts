@@ -130,14 +130,11 @@ export const mapOpenInterest = async (
 };
 
 export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
-	return futuresTrades.reduce(
-		(acc: Wei, { size, price }: FuturesTrade) => {
-			const cleanSize = new Wei(size, 18, true).abs()
-			const cleanPrice = new Wei(price, 18, true)
-			return acc.add(cleanSize.mul(cleanPrice));
-		},
-		wei(0)
-	);
+	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTrade) => {
+		const cleanSize = new Wei(size, 18, true).abs();
+		const cleanPrice = new Wei(price, 18, true);
+		return acc.add(cleanSize.mul(cleanPrice));
+	}, wei(0));
 };
 
 export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): FuturesVolumes => {
@@ -148,11 +145,10 @@ export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): Futur
 		const priceAdd = new Wei(price, 18, true);
 		const volumeAdd = sizeAdd.mul(priceAdd).abs();
 
-		volumes[asset] ?
-			volumes[asset] = volumes[asset].add(volumeAdd)
-		:
-			volumes[asset] = volumeAdd
-	})
+		volumes[asset]
+			? (volumes[asset] = volumes[asset].add(volumeAdd))
+			: (volumes[asset] = volumeAdd);
+	});
 	return volumes;
 };
 
@@ -171,7 +167,10 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
+export const mapTradeHistory = (
+	futuresPositions: RawPosition[],
+	openOnly: boolean
+): PositionHistory[] => {
 	return (
 		futuresPositions
 			?.map(
@@ -187,7 +186,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 					size,
 					margin,
 					entryPrice,
-					exitPrice
+					exitPrice,
 				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
@@ -215,7 +214,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 				}
 			)
 			.filter(({ isOpen }: { isOpen: boolean }) => {
-				if(openOnly) {
+				if (openOnly) {
 					return isOpen;
 				} else {
 					return true;
