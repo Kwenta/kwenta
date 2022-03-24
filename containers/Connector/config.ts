@@ -1,80 +1,84 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import onboard from 'bnc-onboard';
-import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
-import { getInfuraRpcURL } from 'utils/infura';
-import { Network } from 'store/wallet';
+import { init } from '@web3-onboard/react';
+import injectedModule from '@web3-onboard/injected-wallets';
+import ledgerModule from '@web3-onboard/ledger';
+import walletLinkModule from '@web3-onboard/walletlink';
+import trezorModule from '@web3-onboard/trezor';
+import walletConnectModule from '@web3-onboard/walletconnect';
+import gnosisModule from '@web3-onboard/gnosis';
+import portisModule from '@web3-onboard/portis';
+import torusModule from '@web3-onboard/torus';
 
-export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(network.id);
+const INFURA_ID = process.env.NEXT_PUBLIC_INFURA_PROJECT_ID;
+const EMAIL = 'info@synthetix.io';
+const APP_URL = 'https://www.synthetix.io';
 
-	return onboard({
-		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-		hideBranding: true,
-		networkId: Number(network.id),
-		subscriptions,
-		darkMode: true,
-		walletSelect: {
-			wallets: [
-				{
-					name: 'Browser Wallet',
-					iconSrc: '/images/wallet-icons/browserWallet.svg',
-					type: 'injected',
-					link: 'https://metamask.io',
-					wallet: async (helpers) => {
-						const { createModernProviderInterface } = helpers;
-						const provider = window.ethereum;
-						return {
-							provider,
-							interface: provider ? createModernProviderInterface(provider) : null,
-						};
-					},
-					preferred: true,
-					desktop: true,
-					mobile: true,
-				},
-				{
-					walletName: 'ledger',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'lattice',
-					appName: 'Kwenta',
-					rpcUrl: infuraRpc,
-				},
-				{
-					walletName: 'trezor',
-					appUrl: 'https://www.synthetix.io',
-					email: 'info@synthetix.io',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'walletConnect',
-					rpc: Object.values(NetworkIdByName).reduce((acc, id) => {
-						acc[id] = getInfuraRpcURL(id);
-						return acc;
-					}, {} as Record<string, string>),
-					preferred: true,
-				},
-				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
-				{
-					walletName: 'portis',
-					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-				},
-				{ walletName: 'gnosis', rpcUrl: infuraRpc },
-				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
-				{ walletName: 'torus' },
-				{ walletName: 'status' },
-				{ walletName: 'authereum' },
-				{ walletName: 'tally' },
-			],
+const injected = injectedModule();
+const ledger = ledgerModule();
+const walletLink = walletLinkModule();
+const trezor = trezorModule({ email: EMAIL, appUrl: APP_URL });
+const walletConnect = walletConnectModule();
+const gnosis = gnosisModule();
+const portis = portisModule({ apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID || '' });
+const torus = torusModule();
+
+// Note: There is no dark mode feature provided yet.
+export const initWeb3Onboard = init({
+	wallets: [
+		injected, // Injected wallets refers to wallet browser extensions such as MetaMask.
+		ledger,
+		walletLink, // WalletLink refers to the Coinbase Wallet.
+		trezor,
+		walletConnect,
+		gnosis,
+		portis,
+		torus,
+	],
+	chains: [
+		{
+			id: '0x1',
+			token: 'ETH',
+			label: 'Ethereum Mainnet',
+			rpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
 		},
-		walletCheck: [
-			{ checkName: 'derivationPath' },
-			{ checkName: 'accounts' },
-			{ checkName: 'connect' },
-		],
-	});
-};
+		{
+			id: '0x3',
+			token: 'tROP',
+			label: 'Ethereum Ropsten Testnet',
+			rpcUrl: `https://ropsten.infura.io/v3/${INFURA_ID}`,
+		},
+		{
+			id: '0x4',
+			token: 'rETH',
+			label: 'Ethereum Rinkeby Testnet',
+			rpcUrl: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
+		},
+		{
+			id: '0x38',
+			token: 'BNB',
+			label: 'Binance Smart Chain',
+			rpcUrl: 'https://bsc-dataseed.binance.org/',
+		},
+		{
+			id: '0x89',
+			token: 'MATIC',
+			label: 'Matic Mainnet',
+			rpcUrl: 'https://matic-mainnet.chainstacklabs.com',
+		},
+		{
+			id: '0xfa',
+			token: 'FTM',
+			label: 'Fantom Mainnet',
+			rpcUrl: 'https://rpc.ftm.tools/',
+		},
+	],
+	appMetadata: {
+		name: 'Kwenta',
+		icon: '../../public/images/favicon.svg',
+		logo: '../../public/images/favicon.svg', // TODO: Change the value to use the Kwenta logo
+		description:
+			'Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage.',
+		gettingStartedGuide: 'https://kwenta.io/',
+		explore: 'https://kwenta.io/',
+		recommendedInjectedWallets: [{ name: 'MetaMask', url: 'https://metamask.io' }],
+	},
+});

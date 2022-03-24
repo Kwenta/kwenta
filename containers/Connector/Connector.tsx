@@ -1,55 +1,46 @@
 import { useState, useEffect } from 'react';
 import { createContainer } from 'unstated-next';
-import {
-	TransactionNotifier,
-	TransactionNotifierInterface,
-} from '@synthetixio/transaction-notifier';
+import { TransactionNotifierInterface } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
+import { SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 
-import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
-
-import useLocalStorage from 'hooks/useLocalStorage';
-
-import { initOnboard } from './config';
-import { LOCAL_STORAGE_KEYS } from 'constants/storage';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { invert, keyBy } from 'lodash';
 import { useMemo } from 'react';
 
+import { OnboardAPI } from '@web3-onboard/core';
+import { useConnectWallet, useWallets } from '@web3-onboard/react';
+import { initWeb3Onboard } from './config';
+
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
 	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
-	const [signer, setSigner] = useState<ethers.Signer | null>(null);
+	const [signer] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
-	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
+
+	const [{ wallet }, connect, disconnect] = useConnectWallet();
+	const connectedWallets = useWallets();
+	const [web3Onboard, setWeb3Onboard] = useState<OnboardAPI | null>(null);
+
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
-	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
-		LOCAL_STORAGE_KEYS.SELECTED_WALLET,
-		''
-	);
-	const [
-		transactionNotifier,
-		setTransactionNotifier,
-	] = useState<TransactionNotifierInterface | null>(null);
+	const [transactionNotifier] = useState<TransactionNotifierInterface | null>(null);
 
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
 
-	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
+	const [synthsMap, tokensMap] = useMemo(() => {
 		if (synthetixjs == null) {
 			return [{}, {}, {}];
 		}
@@ -65,14 +56,12 @@ const useConnector = () => {
 		const init = async () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
-
 			const provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: window.ethereum,
 			});
 			const useOvm = getIsOVM(Number(networkId));
-
 			const snxjs = synthetix({ provider, networkId, useOvm });
 
 			// @ts-ignore
@@ -86,98 +75,34 @@ const useConnector = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	// Initialize the web3 onboard modal.
 	useEffect(() => {
 		if (isAppReady && network) {
-			const onboard = initOnboard(network, {
-				address: (address) => {
-					if (address) {
-						setWalletAddress(address);
-					}
-				},
-				network: (networkId: number) => {
-					const isSupportedNetwork =
-						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
-
-					if (isSupportedNetwork) {
-						const provider = loadProvider({
-							provider: onboard.getState().wallet.provider,
-						});
-						const signer = provider.getSigner();
-						const useOvm = getIsOVM(networkId);
-
-						const snxjs = synthetix({
-							provider,
-							networkId: networkId as NetworkId,
-							signer,
-							useOvm,
-						});
-
-						onboard.config({ networkId });
-						if (transactionNotifier) {
-							transactionNotifier.setProvider(provider);
-						} else {
-							setTransactionNotifier(new TransactionNotifier(provider));
-						}
-						setProvider(provider);
-						setSynthetixjs(snxjs);
-						setSigner(signer);
-						setNetwork({
-							id: networkId as NetworkId,
-							// @ts-ignore
-							name: chainIdToNetwork[networkId] as NetworkName,
-							useOvm,
-						});
-					}
-				},
-				wallet: async (wallet: OnboardWallet) => {
-					if (wallet.provider) {
-						const provider = loadProvider({ provider: wallet.provider });
-						const network = await provider.getNetwork();
-						const networkId = network.chainId as NetworkId;
-						const useOvm = getIsOVM(Number(networkId));
-
-						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
-
-						setProvider(provider);
-						setSigner(provider.getSigner());
-						setSynthetixjs(snxjs);
-						setNetwork({
-							id: networkId,
-							name: network.name,
-							useOvm,
-						});
-						if (!isIFrame()) setSelectedWallet(wallet.name); // don't allow iframed kwenta to override localstorage
-						setTransactionNotifier(new TransactionNotifier(provider));
-					} else {
-						// TODO: setting provider to null might cause issues, perhaps use a default provider?
-						// setProvider(null);
-						setSigner(null);
-						setWalletAddress(null);
-						setSelectedWallet(null);
-					}
-				},
-			});
-
-			setOnboard(onboard);
+			setWeb3Onboard(initWeb3Onboard);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isAppReady]);
+	}, [isAppReady, network]);
 
-	// load previously saved wallet
+	// Store previsouly connected wallets in the storage.
 	useEffect(() => {
-		// disables caching if in IFrame allow parent to set wallet address
-		if (onboard && selectedWallet && !walletAddress && !isIFrame()) {
-			onboard.walletSelect(selectedWallet);
-		}
-	}, [onboard, selectedWallet, walletAddress]);
+		if (!connectedWallets.length) return;
+		const connectedWalletsLabelArray = connectedWallets.map(({ label }) => label);
+		window.localStorage.setItem('connectedWallets', JSON.stringify(connectedWalletsLabelArray));
+	}, [connectedWallets]);
 
-	const isIFrame = () => {
-		try {
-			return window.self !== window.top;
-		} catch (e) {
-			return true;
+	// Connect automatically to the first previously connected wallet.
+	useEffect(() => {
+		const previouslyConnectedWalletsJSON = window.localStorage.getItem('connectedWallets');
+		if (previouslyConnectedWalletsJSON) {
+			const previouslyConnectedWallets = JSON.parse(previouslyConnectedWalletsJSON);
+			if (previouslyConnectedWallets?.length) {
+				async function setWalletFromLocalStorage() {
+					await connect({ autoSelect: previouslyConnectedWallets[0] });
+				}
+
+				setWalletFromLocalStorage();
+			}
 		}
-	};
+	}, [web3Onboard, connect]);
 
 	const resetCachedUI = () => {
 		// TODO: since orders are not persisted, we need to reset them.
@@ -187,13 +112,9 @@ const useConnector = () => {
 
 	const connectWallet = async () => {
 		try {
-			if (onboard) {
-				onboard.walletReset();
-				const success = await onboard.walletSelect();
-				if (success) {
-					await onboard.walletCheck();
-					resetCachedUI();
-				}
+			const success = await connect({});
+			if (success !== null) {
+				resetCachedUI();
 			}
 		} catch (e) {
 			console.log(e);
@@ -202,19 +123,15 @@ const useConnector = () => {
 
 	const disconnectWallet = async () => {
 		try {
-			if (onboard) {
-				onboard.walletReset();
-				resetCachedUI();
-			}
-		} catch (e) {
-			console.log(e);
-		}
-	};
+			if (wallet) {
+				const success = await disconnect(wallet);
+				if (success !== null) {
+					resetCachedUI();
 
-	const switchAccounts = async () => {
-		try {
-			if (onboard) {
-				onboard.accountSelect();
+					// Update the list of connected wallets stored in the storage.
+					const connectedWalletsList = connectedWallets.map(({ label }) => label);
+					window.localStorage.setItem('connectedWallets', JSON.stringify(connectedWalletsList));
+				}
 			}
 		} catch (e) {
 			console.log(e);
@@ -222,12 +139,8 @@ const useConnector = () => {
 	};
 
 	const isHardwareWallet = () => {
-		if (onboard) {
-			const onboardState = onboard.getState();
-			if (onboardState.address != null) {
-				return onboardState.wallet.type === 'hardware';
-			}
-		}
+		// TODO: Implement this once the feature is available.
+		// https://github.com/blocknative/web3-onboard/issues/897
 		return false;
 	};
 
@@ -248,10 +161,9 @@ const useConnector = () => {
 		synthetixjs,
 		synthsMap,
 		tokensMap,
-		onboard,
+		web3Onboard,
 		connectWallet,
 		disconnectWallet,
-		switchAccounts,
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
