@@ -224,6 +224,7 @@ const Trade: React.FC<TradeProps> = () => {
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
 							futuresPositionHistoryQuery.refetch();
+							marketQuery.refetch();
 						}, 5 * 1000);
 					},
 				});
