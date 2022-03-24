@@ -8,10 +8,10 @@ import { isL2State } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FUTURES_ENDPOINT, SECONDS_PER_DAY } from './constants';
-import { mapFuturesPosition } from './utils';
+import { calculateFundingRate } from './utils';
 import Wei, { wei } from '@synthetixio/wei';
 
-const useGetAverageFundingRate = (
+const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,
 	options?: UseQueryOptions<any | null>
 ) => {
@@ -27,8 +27,7 @@ const useGetAverageFundingRate = (
 			const marketAddress = contracts[`FuturesMarket${currencyKey.slice(1)}`].address;
 			if (!marketAddress) return null;
 			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY
-			console.log(marketAddress)
-			console.log(minTimestamp)
+			console.log(marketAddress, minTimestamp)
 
 			try {
 				const response = await request(
@@ -51,9 +50,7 @@ const useGetAverageFundingRate = (
 					{ market: marketAddress, minTimestamp: minTimestamp }
 				);
 
-				// return response ? mapTradeHistory(response.futuresPositions, false) : [];
-				console.log(response)
-				return response;
+				return response ? calculateFundingRate(response.fundingRateUpdates) : wei(0);
 			} catch (e) {
 				console.log(e);
 				return null;
@@ -66,4 +63,4 @@ const useGetAverageFundingRate = (
 	);
 };
 
-export default useGetAverageFundingRate;
+export default useGetAverageFundingRateForMarket;

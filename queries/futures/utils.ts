@@ -14,7 +14,9 @@ import {
 	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
+	FundingRateUpdate
 } from './types';
+import { SECONDS_PER_DAY } from './constants';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
@@ -169,6 +171,51 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 			totalVolume: wei(0),
 		}
 	);
+};
+
+export const calculateFundingRate = (fundingRateUpdates: FundingRateUpdate[]): Wei | null => {
+	if(!fundingRateUpdates) return null;
+	console.log(fundingRateUpdates)
+	return fundingRateUpdates.reduce(
+		(acc: { lastTimestamp: number, lastFundingRate: Wei, avgFundingRate: Wei}, { timestamp, fundingRate }: FundingRateUpdate) => {
+			// if the first value, return this timestamp and funding rate of 1
+			console.log(acc)
+			const fundingRateWei = new Wei(fundingRate, 18, true);
+			console.log(timestamp, fundingRateWei)
+			if(acc.lastTimestamp === 0) {
+				return { 
+					lastTimestamp: timestamp,
+					lastFundingRate: fundingRateWei,
+					avgFundingRate: acc.avgFundingRate
+				}
+			} else {
+				// console.log('calculating a thing')
+				console.log(`Current avg: ${acc.avgFundingRate}`)
+				console.log(`${timestamp - acc.lastTimestamp} seconds`)
+				console.log(`${acc.lastFundingRate} rate`)
+
+				// if any other value, add the funding rate between the periods
+				var timeDiff = (timestamp - acc.lastTimestamp) / SECONDS_PER_DAY;
+
+				var fundingChange = acc.avgFundingRate.mul(
+					acc.lastFundingRate.abs().add(1).mul(timeDiff)
+				)
+
+				var newAvgFunding = acc.lastFundingRate.gt(0) ?
+					acc.avgFundingRate.add(fundingChange) :
+					acc.avgFundingRate.sub(fundingChange)
+					
+
+				acc.lastFundingRate = fundingRateWei;
+				return {
+					lastTimestamp: timestamp,
+					lastFundingRate: fundingRateWei,
+					avgFundingRate: newAvgFunding
+				};
+			}
+		},
+		{ lastTimestamp: 0, lastFundingRate: wei(0), avgFundingRate: wei(1)}
+	).avgFundingRate;
 };
 
 export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {

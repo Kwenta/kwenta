@@ -11,6 +11,7 @@ import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
@@ -29,6 +30,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
+	
+	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey);
+	const avgFundingRate = fundingRateQuery?.data ?? null;
+	// console.log(avgFundingRate)
 
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
@@ -146,12 +151,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				),
 			},
 			'Funding Rate': {
-				value: marketSummary?.currentFundingRate
-					? formatPercent(marketSummary?.currentFundingRate ?? zeroBN, { minDecimals: 6 })
+				value: avgFundingRate
+					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
 					: NO_VALUE,
-				color: marketSummary?.currentFundingRate.gt(zeroBN)
+				color: avgFundingRate?.gt(zeroBN)
 					? 'green'
-					: marketSummary?.currentFundingRate.lt(zeroBN)
+					: avgFundingRate?.lt(zeroBN)
 					? 'red'
 					: undefined,
 			},
