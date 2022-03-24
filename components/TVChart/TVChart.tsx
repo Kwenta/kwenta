@@ -82,17 +82,8 @@ export function TVChart({
 		return () => {
 			clearExistingWidget();
 		};
-	}, [
-		baseCurrencyKey,
-		quoteCurrencyKey,
-		autosize,
-		containerId,
-		fullscreen,
-		interval,
-		libraryPath,
-		overrides,
-		studiesOverrides,
-	]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	return (
 		<Container>
 			<ChartBody id={containerId} />
