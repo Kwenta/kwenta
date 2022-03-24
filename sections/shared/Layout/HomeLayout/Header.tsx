@@ -62,8 +62,8 @@ const Header: FC = () => {
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
-						<FuturesLink href="https://raise.kwenta.io" target="_blank">
-							Kwenta Community Raise now live on Aelin
+						<FuturesLink href="https://v2.beta.kwenta.io/" target="_blank">
+							Perpetual Futures Beta available now
 						</FuturesLink>
 						<Img src={LinkWhiteIcon} />
 					</>
