@@ -1,12 +1,14 @@
 // next.config.js
-const gitRevision = require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
+const gitRevision = require('child_process')
+	.execSync('git rev-parse --short HEAD')
+	.toString()
+	.trim();
 
 module.exports = {
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
 	webpack: (config, options) => {
-
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 
 		config.module.rules.push({
@@ -23,6 +25,9 @@ module.exports = {
 			],
 		});
 		return config;
+	},
+	future: {
+		webpack5: true,
 	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
 	exportPathMap: function (defaultPathMap) {
