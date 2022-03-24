@@ -36,7 +36,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -46,6 +46,11 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const marketAssetRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
+	);
+
+	const futuresMarketsPosition = useMemo(
+		() => (futuresMarketPositionQuery?.data ?? null),
+		[marketAssetRate]
 	);
 
 	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
