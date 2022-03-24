@@ -37,7 +37,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 
-
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
@@ -50,7 +49,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 
 	const futuresMarketsPosition = useMemo(
 		() => (futuresMarketPositionQuery?.data ?? null),
-		[marketAssetRate]
+		[futuresMarketPositionQuery, marketAssetRate]
 	);
 
 	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
