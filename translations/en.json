@@ -214,8 +214,8 @@
 			"no-data": "No data"
 		},
 		"summary-info": {
-			"gas-price-gwei": "gas price (GWEI)",
-			"max-fee-gwei": "Max Fee (GWEI)",
+			"gas-price-gwei": "gas price (Gwei)",
+			"max-fee-gwei": "Max Fee (Gwei)",
 			"fee": "fee",
 			"fee-cost": "fee cost",
 			"button": {
