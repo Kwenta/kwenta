@@ -106,7 +106,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				console.log(e.message);
 				// @ts-ignore
 				if (e?.code === -32603) {
-					setError('Amount exceeds max amount in user wallet.');
+					setError('Input amount exceeds max withdrawable amount.');
 				} else {
 					// @ts-ignore
 					setError(e?.data?.message ?? e.message);
@@ -191,8 +191,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
-
 			<StyledInfoBox
 				details={{
 					'Gas Fee': transactionFee
@@ -203,6 +201,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			<DepositMarginButton disabled={disabled} fullWidth onClick={handleWithdraw}>
 				Withdraw Margin
 			</DepositMarginButton>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
