@@ -97,7 +97,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								) + " (" +
 								formatCurrency(
 									Synths.sUSD,
-									positionDetails.notionalValue ?? zeroBN,
+									positionDetails.notionalValue.abs() ?? zeroBN,
 									{
 										sign: '$',
 										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
