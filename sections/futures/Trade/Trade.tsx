@@ -298,7 +298,7 @@ const Trade: React.FC<TradeProps> = () => {
 					!leverage ||
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
-					(futuresMarketsPosition?.accessibleMargin ?? zeroBN).lt(wei(100))
+					!!error
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
