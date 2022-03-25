@@ -24,7 +24,7 @@ const Header: FC = () => {
 	const logo = <Logo isL2={isL2} />;
 
 	return (
-		<Container isL2={isL2}>
+		<>
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
@@ -38,24 +38,26 @@ const Header: FC = () => {
 				<Svg src={FuturesBordersSvg} />
 				<DivBorder />
 			</FuturesBannerContainer>
-			<MobileHiddenView>
-				<LogoNav>
-					{logo}
-					<Nav />
-				</LogoNav>
-				<UserMenu />
-			</MobileHiddenView>
-			<MobileOnlyView>
-				<LogoNav>{logo}</LogoNav>
-				<MobileUserMenu />
-			</MobileOnlyView>
-		</Container>
+			<Container isL2={isL2}>
+				<MobileHiddenView>
+					<LogoNav>
+						{logo}
+						<Nav />
+					</LogoNav>
+					<UserMenu />
+				</MobileHiddenView>
+				<MobileOnlyView>
+					<LogoNav>{logo}</LogoNav>
+					<MobileUserMenu />
+				</MobileOnlyView>
+			</Container>
+		</>
 	);
 };
 
 const Container = styled.header<{ isL2: boolean }>`
 	position: absolute;
-	top: 0;
+	top: ${HEADER_HEIGHT};
 	left: 0;
 	right: 0;
 	z-index: ${zIndex.HEADER};
