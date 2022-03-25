@@ -70,7 +70,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
-					router.push(`/market/${row.original.asset}`);
+					row.original.asset !== NO_VALUE ?
+						router.push(`/market/${row.original.asset}`) :
+						null;
 				}}
 				highlightRowsOnHover
 				columns={[

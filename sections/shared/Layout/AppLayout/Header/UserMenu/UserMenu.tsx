@@ -111,7 +111,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
-	margin-left: 12px;
+	margin-left: 15px;
 `;
 
 const SettingsText = styled.p`
