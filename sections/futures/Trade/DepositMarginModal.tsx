@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
 
 import BaseModal from 'components/BaseModal';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import InfoBox from 'components/InfoBox';
 import Button from 'components/Button';
@@ -29,6 +29,9 @@ type DepositMarginModalProps = {
 	market: string | null;
 };
 
+const PLACEHOLDER = '$0.00';
+const MIN_DEPOSIT_AMOUNT = wei('50');
+
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
@@ -39,7 +42,8 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('0');
+	const [amount, setAmount] = React.useState<string>('');
+	const [disabled, setDisabled] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
@@ -55,11 +59,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const ethPriceRate = React.useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const gasPrices = React.useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
 	);
 
 	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
@@ -86,15 +85,36 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			} catch (e) {
 				// @ts-ignore
 				console.log(e.message);
+
 				// @ts-ignore
-				setError(e?.data?.message ?? e.message);
+				if (e?.code === -32603) {
+					setError('Amount exceeds max amount in user wallet.');
+				} else {
+					// @ts-ignore
+					setError(e?.data?.message ?? e.message);
+				}
 			}
 		};
 		getGasLimit();
 	}, [amount, market, synthetixjs]);
 
+	React.useEffect(() => {
+		if (!amount) {
+			setDisabled(true);
+			return;
+		}
+
+		const amtWei = wei(amount);
+
+		if (amtWei.gte(MIN_DEPOSIT_AMOUNT) && amtWei.lte(sUSDBalance)) {
+			setDisabled(false);
+		} else {
+			setDisabled(true);
+		}
+	}, [amount, disabled, sUSDBalance, setDisabled]);
+
 	const handleDeposit = async () => {
-		if (!amount || !gasLimit || !market || !gasPrice) return;
+		if (disabled || !amount || !gasLimit || !market || !gasPrice) return;
 		try {
 			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 			const marginAmount = wei(amount).toBN();
@@ -131,12 +151,13 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<MinimumAmountDisclaimer>
-				Note: Placing an order requires a minimum deposit of 100 sUSD.
+				Note: Placing an order requires a minimum deposit of 50 sUSD.
 			</MinimumAmountDisclaimer>
 			<StyledInfoBox
 				details={{
@@ -145,9 +166,11 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 						: NO_VALUE,
 				}}
 			/>
-			<DepositMarginButton fullWidth onClick={handleDeposit}>
+			<DepositMarginButton disabled={disabled} fullWidth onClick={handleDeposit}>
 				Deposit Margin
 			</DepositMarginButton>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
@@ -203,6 +226,11 @@ const MaxButton = styled.button`
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin-top: 8px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
+
+const ErrorMessage = styled.div`
+	margin-top: 16px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 

@@ -20,7 +20,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className }) => (
 
 const InfoBoxContainer = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 16px;
+	border-radius: 10px;
 	padding: 14px;
 	box-sizing: border-box;
 	width: 100%;

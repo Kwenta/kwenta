@@ -30,13 +30,22 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 				right={marketAsset || Synths.sUSD}
 				value={amount}
 				onChange={(_, v) => onAmountChange(v)}
-				style={{ marginBottom: '8px' }}
+				style={{ 
+					marginBottom: '-1px', 
+					borderBottom: 'none',
+					borderBottomRightRadius: '0px', 
+					borderBottomLeftRadius: '0px' 
+				}}
 			/>
 
 			<CustomInput
 				right={Synths.sUSD}
 				value={amountSUSD}
 				onChange={(_, v) => onAmountSUSDChange(v)}
+				style={{ 
+					borderTopRightRadius: '0px', 
+					borderTopLeftRadius: '0px' 
+				}}
 			/>
 		</OrderSizingContainer>
 	);

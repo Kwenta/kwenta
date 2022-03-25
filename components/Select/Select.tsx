@@ -31,7 +31,7 @@ function Select<T>(props: Props<T>) {
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: colors.selectedTheme.button.hover
+					background: colors.selectedTheme.button.hover,
 				},
 				'&::before': {
 					content: '""',
@@ -43,9 +43,9 @@ function Select<T>(props: Props<T>) {
 					borderRadius: '10px',
 					padding: '1px',
 					background: 'rgb(255 255 255 / 10%)',
-					'-webkit-mask': 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-					'-webkit-mask-composite': 'xor',
-					'mask-composite': 'exclude',
+					WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+					WebkitMaskComposite: 'xor',
+					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
 				background: colors.selectedTheme.button.background,
@@ -67,7 +67,7 @@ function Select<T>(props: Props<T>) {
 				padding: 0,
 				textAlign: 'left',
 				border: colors.selectedTheme.border,
-				borderStyle:'solid',
+				borderStyle: 'solid',
 				outline: 'none',
 			}),
 			option: (provided, state) => ({
@@ -80,7 +80,7 @@ function Select<T>(props: Props<T>) {
 				backgroundColor: 'transparent',
 				padding: state.selectProps.optionPadding ?? '6px 8px',
 				borderBottom: colors.selectedTheme.border,
-				':last-child':{
+				':last-child': {
 					borderBottom: 'none',
 				},
 			}),

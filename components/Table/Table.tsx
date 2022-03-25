@@ -216,11 +216,15 @@ const TableBody = styled.div`
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
-	border-bottom: 1px solid #353333;
+	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 	padding: 6px 0;
 
 	&:last-child {
 		border: none ;
+	}
+
+	&:nth-child(odd) {
+		background-color:rgba(255, 255, 255, 0.01); ;
 	}
 
 	${(props) =>
@@ -265,8 +269,8 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 	height: 100%;
 	overflow-x: auto;
 	position: relative;
-	border: 1px solid #3d3c3c;
-	border-radius: 8px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 10px;
 
 	${(props) =>
 		props.palette === 'primary' &&
@@ -283,7 +287,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.common.secondaryGray};
 				font-family: ${(props) => props.theme.fonts.mono};
-				border-bottom: 1px solid #3d3c3c;
+				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 			}
 			${TableBodyRow} {
 			}

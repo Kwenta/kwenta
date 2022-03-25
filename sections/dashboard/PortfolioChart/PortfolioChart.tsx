@@ -35,8 +35,8 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioCh
 
 const Chart = styled.div`
 	min-width: 915px;
-	border: 1px solid #353333;
-	border-radius: 16px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 10px;
 	height: 200px ;
 `;
 

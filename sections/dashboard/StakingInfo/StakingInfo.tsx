@@ -46,7 +46,7 @@ const StakingBody = styled.div`
 	padding: 18px 25px;
 	margin-right: 31px;
 	border: 1px solid #353333;
-	border-radius: 16px;
+	border-radius: 10px;
 
 	& > button {
 		height: 38px;
