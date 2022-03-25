@@ -141,7 +141,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			if (isMax) {
 				tx = await FuturesMarketContract.withdrawAllMargin({
 					gasLimit,
-					gasPrice,
+					gasPrice: gasPriceInWei(gasPrice),
 				});
 			} else {
 				const marginAmount = computeAmount();
