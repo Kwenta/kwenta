@@ -52,7 +52,11 @@ const useFeeReclaimPeriodsQuery = (
 			const waitingPeriodsRaw = (await ethcallProvider.all(
 				waitingPeriodCalls
 			)) as ethers.BigNumberish[];
-			const feesRaw = (await ethcallProvider.all(feeCalls)) as [any, any, any]; // TODO: replace any with correct iterable type
+			const feesRaw = (await ethcallProvider.all(feeCalls)) as [
+				ethers.BigNumber,
+				ethers.BigNumber,
+				ethers.BigNumber
+			][];
 
 			const waitingPeriods = waitingPeriodsRaw.map((period) => Number(period));
 
