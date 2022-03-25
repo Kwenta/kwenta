@@ -172,6 +172,6 @@ export type FuturesCumulativeStats = {
 };
 
 export type FundingRateUpdate = {
-	fundingRate: string;
+	fundingRate: Wei;
 	timestamp: number;
 };

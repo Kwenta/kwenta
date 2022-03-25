@@ -175,47 +175,15 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 
 export const calculateFundingRate = (fundingRateUpdates: FundingRateUpdate[]): Wei | null => {
 	if(!fundingRateUpdates) return null;
-	console.log(fundingRateUpdates)
-	return fundingRateUpdates.reduce(
-		(acc: { lastTimestamp: number, lastFundingRate: Wei, avgFundingRate: Wei}, { timestamp, fundingRate }: FundingRateUpdate) => {
-			// if the first value, return this timestamp and funding rate of 1
-			console.log(acc)
-			const fundingRateWei = new Wei(fundingRate, 18, true);
-			console.log(timestamp, fundingRateWei)
-			if(acc.lastTimestamp === 0) {
-				return { 
-					lastTimestamp: timestamp,
-					lastFundingRate: fundingRateWei,
-					avgFundingRate: acc.avgFundingRate
-				}
-			} else {
-				// console.log('calculating a thing')
-				console.log(`Current avg: ${acc.avgFundingRate}`)
-				console.log(`${timestamp - acc.lastTimestamp} seconds`)
-				console.log(`${acc.lastFundingRate} rate`)
+	const firstFundingRate = fundingRateUpdates[0];
+	const lastFundingRate = fundingRateUpdates[fundingRateUpdates.length-1];
 
-				// if any other value, add the funding rate between the periods
-				var timeDiff = (timestamp - acc.lastTimestamp) / SECONDS_PER_DAY;
+	// clean values
+	const fundingStart = wei(firstFundingRate.fundingRate)
+	const fundingEnd = wei(lastFundingRate.fundingRate)
 
-				var fundingChange = acc.avgFundingRate.mul(
-					acc.lastFundingRate.abs().add(1).mul(timeDiff)
-				)
-
-				var newAvgFunding = acc.lastFundingRate.gt(0) ?
-					acc.avgFundingRate.add(fundingChange) :
-					acc.avgFundingRate.sub(fundingChange)
-					
-
-				acc.lastFundingRate = fundingRateWei;
-				return {
-					lastTimestamp: timestamp,
-					lastFundingRate: fundingRateWei,
-					avgFundingRate: newAvgFunding
-				};
-			}
-		},
-		{ lastTimestamp: 0, lastFundingRate: wei(0), avgFundingRate: wei(1)}
-	).avgFundingRate;
+	const avgFundingRate = fundingEnd.sub(fundingStart).div(fundingStart)
+	return avgFundingRate;
 };
 
 export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
