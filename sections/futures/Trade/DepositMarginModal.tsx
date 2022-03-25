@@ -30,7 +30,7 @@ type DepositMarginModalProps = {
 };
 
 const PLACEHOLDER = '$0.00';
-const MIN_DEPOSIT_AMOUNT = wei('100');
+const MIN_DEPOSIT_AMOUNT = wei('50');
 
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
