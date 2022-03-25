@@ -157,7 +157,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 			<MinimumAmountDisclaimer>
-				Note: Placing an order requires a minimum deposit of 100 sUSD.
+				Note: Placing an order requires a minimum deposit of 50 sUSD.
 			</MinimumAmountDisclaimer>
 			<StyledInfoBox
 				details={{
