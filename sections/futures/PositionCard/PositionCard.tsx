@@ -97,7 +97,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								) + " (" +
 								formatCurrency(
 									Synths.sUSD,
-									positionDetails.notionalValue ?? zeroBN,
+									positionDetails.notionalValue.abs() ?? zeroBN,
 									{
 										sign: '$',
 										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
@@ -170,7 +170,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>{NO_VALUE}</StyledValue>
+						<StyledValue>
+							{positionDetails ?
+								formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+									sign: '$',
+								})
+								: NO_VALUE
+							}
+						</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>

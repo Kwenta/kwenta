@@ -31,7 +31,7 @@ export const SingleValueContainer = styled(FlexDivCentered)`
 		font-family: ${(props) => props.theme.fonts.regular};
 		font-size: 12.5px;
 		line-height: 12.5px;
-		margin: 2px 0 0 0;
+		margin: 0;
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;

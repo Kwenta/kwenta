@@ -200,6 +200,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 					isOpen,
 					isLiquidated,
 					size,
+					feesPaid,
 					margin,
 					entryPrice,
 					exitPrice
@@ -207,6 +208,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);
+					const feesWei = new Wei(feesPaid, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),
@@ -218,6 +220,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 						isOpen,
 						isLiquidated,
 						size: sizeWei.abs(),
+						feesPaid: feesWei,
 						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,
