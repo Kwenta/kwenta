@@ -116,6 +116,7 @@ const Container = styled.header`
 		grid-template-columns: auto auto;
 	`}
 `;
+
 const FuturesBannerContainer = styled.div`
 	height: 65px;
 	width: 100%;
