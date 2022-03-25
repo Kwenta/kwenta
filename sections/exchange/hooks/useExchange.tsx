@@ -538,8 +538,6 @@ const useExchange = ({
 				: ethGasPriceQuery.data != null
 				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
 				: null,
-		// React Hook useMemo has an unnecessary dependency: 'isL2'
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
 	);
 
