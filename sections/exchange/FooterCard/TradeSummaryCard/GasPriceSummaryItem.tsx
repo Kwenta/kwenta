@@ -2,8 +2,8 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { isL2State, isMainnetState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 import { Svg } from 'react-optimized-image';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
@@ -22,7 +22,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices, GAS_SPEEDS } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas, { parseGasPriceObject } from 'hooks/useGas';
 
 type GasPriceSummaryItemProps = {
 	gasPrices: GasPrices | undefined;
@@ -36,15 +36,26 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
+	const isMainnet = useRecoilValue(isMainnetState);
+	const {
+		gasPrice,
+		gasSpeed,
+		setGasSpeed,
+		isCustomGasPrice,
+		customGasPrice,
+		setCustomGasPrice,
+	} = useGas();
 
-	const hasCustomGasPrice = customGasPrice !== '';
-	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
+	const gasEstimateInfo = isMainnet ? (
+		<GasEstimateInfo>
+			It is recommended to not edit the Max Fee. The difference between Max Fee and Current Gas
+			Price will be refunded to the user
+		</GasEstimateInfo>
+	) : null;
 
-	const gasPriceItem = hasCustomGasPrice ? (
+	const gasPriceItem = isCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
 	) : (
 		<span data-testid="gas-price">
@@ -54,19 +65,26 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 
 	return (
 		<SummaryItem {...rest}>
-			<SummaryItemLabel>{t('exchange.summary-info.gas-price-gwei')}</SummaryItemLabel>
+			<SummaryItemLabel>
+				{isMainnet || !isCustomGasPrice
+					? t('exchange.summary-info.max-fee-gwei')
+					: t('exchange.summary-info.gas-price-gwei')}
+			</SummaryItemLabel>
 			<SummaryItemValue>
 				{gasPrice != null ? (
 					<>
 						{transactionFee != null ? (
 							<GasPriceCostTooltip
 								content={
-									<span>
-										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
-											sign: selectedPriceCurrency.sign,
-											maxDecimals: 1,
-										})}
-									</span>
+									<GasEstimateUSD>
+										<GasEstimateUSDAmount>
+											{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
+												sign: selectedPriceCurrency.sign,
+												maxDecimals: 1,
+											})}
+										</GasEstimateUSDAmount>
+										{gasEstimateInfo}
+									</GasEstimateUSD>
 								}
 								arrow={false}
 							>
@@ -99,7 +117,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 													setCustomGasPrice('');
 													setGasSpeed(speed);
 												}}
-												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
+												isActive={isCustomGasPrice ? false : gasSpeed === speed}
 											>
 												<span>{t(`common.gas-prices.${speed}`)}</span>
 												<NumericValue>
@@ -150,6 +168,18 @@ export const GasSelectContainer = styled.div`
 
 export const CustomGasPriceContainer = styled.div`
 	margin: 0 10px 5px 10px;
+`;
+
+export const GasEstimateUSD = styled.span`
+	text-align: center;
+`;
+
+export const GasEstimateUSDAmount = styled.p`
+	color: #ffdf6d;
+`;
+
+export const GasEstimateInfo = styled.p`
+	text-align: center;
 `;
 
 export const CustomGasPrice = styled(NumericInput)`

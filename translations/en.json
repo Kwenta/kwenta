@@ -219,11 +219,17 @@
 			"no-data": "No data"
 		},
 		"summary-info": {
+			"gas-price-gwei": "gas price (GWEI)",
+			"max-fee-gwei": "Max Fee (GWEI)",
+			"fee": "fee",
+			"fee-cost": "fee cost",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
 				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
+				"settle-waiting-period": "settlement waiting period",
+				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
@@ -273,6 +279,10 @@
 			},
 			"get-l2-gas": {
 				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
+			},
+			"settle": {
+				"message": "You have <0>{{numEntries}}</0> consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
+				"learn-more": "Learn more"
 			}
 		},
 		"common": {
@@ -280,7 +290,8 @@
 			"into": "into"
 		},
 		"errors": {
-			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}"
+			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}",
+			"settlement-waiting": "Please wait approximately {{waitingPeriod}} minutes before attempting to settle {{currencyKey}}"
 		},
 		"charts": {
 			"single": "single",
@@ -844,6 +855,10 @@
 		"deprecated-synths": {
 			"from": "From",
 			"to": "Into"
+		},
+		"settle-transaction": {
+			"title": "settle",
+			"confirm-with-provider": "Confirm your transaction through your wallet."
 		}
 	},
 	"futures-dashboard": {
