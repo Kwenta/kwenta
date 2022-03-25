@@ -29,6 +29,9 @@ type DepositMarginModalProps = {
 	market: string | null;
 };
 
+const PLACEHOLDER = '$0.00';
+const MIN_DEPOSIT_AMOUNT = wei('100');
+
 const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
@@ -39,7 +42,8 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('0');
+	const [amount, setAmount] = React.useState<string>('');
+	const [disabled, setDisabled] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
@@ -81,15 +85,36 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			} catch (e) {
 				// @ts-ignore
 				console.log(e.message);
+
 				// @ts-ignore
-				setError(e?.data?.message ?? e.message);
+				if (e?.code === -32603) {
+					setError('Amount exceeds max amount in user wallet.');
+				} else {
+					// @ts-ignore
+					setError(e?.data?.message ?? e.message);
+				}
 			}
 		};
 		getGasLimit();
 	}, [amount, market, synthetixjs]);
 
+	React.useEffect(() => {
+		if (!amount) {
+			setDisabled(true);
+			return;
+		}
+
+		const amtWei = wei(amount);
+
+		if (amtWei.gte(MIN_DEPOSIT_AMOUNT) && amtWei.lte(sUSDBalance)) {
+			setDisabled(false);
+		} else {
+			setDisabled(true);
+		}
+	}, [amount, disabled, sUSDBalance, setDisabled]);
+
 	const handleDeposit = async () => {
-		if (!amount || !gasLimit || !market || !gasPrice) return;
+		if (disabled || !amount || !gasLimit || !market || !gasPrice) return;
 		try {
 			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
 			const marginAmount = wei(amount).toBN();
@@ -126,6 +151,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
@@ -140,7 +166,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 						: NO_VALUE,
 				}}
 			/>
-			<DepositMarginButton fullWidth onClick={handleDeposit}>
+			<DepositMarginButton disabled={disabled} fullWidth onClick={handleDeposit}>
 				Deposit Margin
 			</DepositMarginButton>
 
