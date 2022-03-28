@@ -16,6 +16,11 @@ import {
 	PositionHistory,
 } from './types';
 
+import {
+	FuturesTradeResult
+} from './subgraph';
+import { ETH_UNIT } from 'constants/network';
+
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
 	const contractName = `FuturesMarket${asset.substring(1)}`;
@@ -129,23 +134,23 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
+export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
 	return futuresTrades.reduce(
-		(acc: Wei, { size, price }: FuturesTrade) => {
-			const cleanSize = new Wei(size, 18, true).abs()
-			const cleanPrice = new Wei(price, 18, true)
+		(acc: Wei, { size, price }: FuturesTradeResult) => {
+			const cleanSize = new Wei(size).div(ETH_UNIT).abs()
+			const cleanPrice = new Wei(price).div(ETH_UNIT)
 			return acc.add(cleanSize.mul(cleanPrice));
 		},
 		wei(0)
 	);
 };
 
-export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): FuturesVolumes => {
+export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
 	const volumes = {} as FuturesVolumes;
 
 	futuresTrades.forEach(({ asset, size, price }) => {
-		const sizeAdd = new Wei(size, 18, true);
-		const priceAdd = new Wei(price, 18, true);
+		const sizeAdd = new Wei(size).div(ETH_UNIT);
+		const priceAdd = new Wei(price).div(ETH_UNIT);
 		const volumeAdd = sizeAdd.mul(priceAdd).abs();
 
 		volumes[asset] ?

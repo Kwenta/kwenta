@@ -12,6 +12,7 @@ import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
 import { calculateTradeVolumeForAll } from './utils';
 import { FuturesVolumes } from './types';
+import { getFuturesTrades } from './subgraph';
 
 const useGetFuturesTradingVolumeForAllMarkets = (
 	options?: UseQueryOptions<FuturesVolumes | null>
@@ -24,25 +25,24 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await request(
+				const response = await getFuturesTrades(
 					FUTURES_ENDPOINT,
-					gql`
-						query tradingVolume($minTimestamp: BigInt!) {
-							futuresTrades(
-								first: 1000
-								where: { timestamp_gte: $minTimestamp }
-								orderBy: timestamp
-								orderDirection: desc
-							) {
-								asset
-								size
-								price
-							}
+					{
+						first: 999999,
+						where: {
+							timestamp_gte: `${minTimestamp}`
 						}
-					`,
-					{ minTimestamp }
+					},
+					{
+						size: true,
+						price: true,
+						id: true,
+						timestamp: true,
+						account: true,
+						asset: true
+					}
 				);
-				return response ? calculateTradeVolumeForAll(response.futuresTrades) : null;
+				return response ? calculateTradeVolumeForAll(response) : null;
 			} catch (e) {
 				console.log(e);
 				return null;
