@@ -179,8 +179,8 @@ export const calculateFundingRate = (fundingRateUpdates: FundingRateUpdate[]): W
 	const lastFundingRate = fundingRateUpdates[fundingRateUpdates.length-1];
 
 	// clean values
-	const fundingStart = wei(firstFundingRate.fundingRate)
-	const fundingEnd = wei(lastFundingRate.fundingRate)
+	const fundingStart = wei(firstFundingRate.funding)
+	const fundingEnd = wei(lastFundingRate.funding)
 
 	const avgFundingRate = fundingEnd.sub(fundingStart).div(fundingStart)
 	return avgFundingRate;

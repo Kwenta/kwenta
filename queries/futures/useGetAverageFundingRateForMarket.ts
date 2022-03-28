@@ -27,7 +27,6 @@ const useGetAverageFundingRateForMarket = (
 			const marketAddress = contracts[`FuturesMarket${currencyKey.slice(1)}`].address;
 			if (!marketAddress) return null;
 			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY
-			console.log(marketAddress, minTimestamp)
 
 			try {
 				const response = await request(
@@ -43,7 +42,7 @@ const useGetAverageFundingRateForMarket = (
 								orderDirection: asc
 							) {
 								timestamp
-								fundingRate
+								funding
 							}
 						}
 					`,

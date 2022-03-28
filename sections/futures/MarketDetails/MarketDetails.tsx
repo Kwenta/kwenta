@@ -33,7 +33,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	
 	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
-	console.log(avgFundingRate)
 
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
