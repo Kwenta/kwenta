@@ -29,6 +29,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 					gql`
 						query tradingVolume($minTimestamp: BigInt!) {
 							futuresTrades(
+								first: 1000
 								where: { timestamp_gte: $minTimestamp }
 								orderBy: timestamp
 								orderDirection: desc

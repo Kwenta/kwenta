@@ -29,9 +29,10 @@ const useGetFuturesTradingVolume = (
 				const response = await request(
 					FUTURES_ENDPOINT,
 					gql`
-						query tradingVolume($currencyKey: String!) {
+						query tradingVolume($currencyKey: String!, $minTimestamp: BigInt!) {
 							futuresTrades(
-								where: { asset: $currencyKey, timestamp_gte: ${minTimestamp} }
+								first: 1000
+								where: { asset: $currencyKey, timestamp_gte: $minTimestamp }
 								orderBy: timestamp
 								orderDirection: desc
 							) {
@@ -40,7 +41,7 @@ const useGetFuturesTradingVolume = (
 							}
 						}
 					`,
-					{ currencyKey: ethersUtils.formatBytes32String(currencyKey) }
+					{ currencyKey: ethersUtils.formatBytes32String(currencyKey), minTimestamp: minTimestamp }
 				);
 				return response ? calculateTradeVolume(response.futuresTrades) : null;
 			} catch (e) {
