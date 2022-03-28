@@ -29,11 +29,12 @@ const useGetAverageFundingRateForMarket = (
 			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY
 
 			try {
-				const response = await request(
+				const responseMin = await request(
 					FUTURES_ENDPOINT,
 					gql`
 						query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
 							fundingRateUpdates(
+								first: 1
 								where: {
 									market: $market,
 									timestamp_gt: $minTimestamp
@@ -49,7 +50,30 @@ const useGetAverageFundingRateForMarket = (
 					{ market: marketAddress, minTimestamp: minTimestamp }
 				);
 
-				return response ? calculateFundingRate(response.fundingRateUpdates) : wei(0);
+				const responseMax = await request(
+					FUTURES_ENDPOINT,
+					gql`
+						query fundingRateUpdates($market: String!) {
+							fundingRateUpdates(
+								first: 1
+								where: {
+									market: $market
+								}
+								orderBy: sequenceLength
+								orderDirection: desc
+							) {
+								timestamp
+								funding
+							}
+						}
+					`,
+					{ market: marketAddress}
+				);
+
+
+				return responseMin && responseMax ?
+					calculateFundingRate(responseMin.fundingRateUpdates[0], responseMax.fundingRateUpdates[0]) :
+					wei(0);
 			} catch (e) {
 				console.log(e);
 				return null;

@@ -173,14 +173,12 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const calculateFundingRate = (fundingRateUpdates: FundingRateUpdate[]): Wei | null => {
-	if(!fundingRateUpdates) return null;
-	const firstFundingRate = fundingRateUpdates[0];
-	const lastFundingRate = fundingRateUpdates[fundingRateUpdates.length-1];
+export const calculateFundingRate = (minFunding: FundingRateUpdate, maxFunding: FundingRateUpdate): Wei | null => {
+	if (!minFunding || !maxFunding) return null;
 
 	// clean values
-	const fundingStart = wei(firstFundingRate.funding)
-	const fundingEnd = wei(lastFundingRate.funding)
+	const fundingStart = wei(minFunding.funding)
+	const fundingEnd = wei(maxFunding.funding)
 
 	const avgFundingRate = fundingEnd.sub(fundingStart).div(fundingStart)
 	return avgFundingRate;
