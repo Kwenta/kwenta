@@ -170,7 +170,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					{
 						Header: (
 							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.last-entry')}
+								{t('dashboard.overview.futures-positions-table.average-entry')}
 							</TableHeader>
 						),
 						accessor: 'lastPrice',
