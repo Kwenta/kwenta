@@ -27,7 +27,7 @@ import useCollateralShortContractInfoQuery from 'queries/collateral/useCollatera
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 
 import { getExchangeRatesForCurrencies, synthToContractName } from 'utils/currencies';
-import { normalizeGasLimit, gasPriceInWei, getTransactionPrice } from 'utils/network';
+import { normalizeGasLimit, getTransactionPrice } from 'utils/network';
 
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
@@ -37,12 +37,7 @@ import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isWalletConnectedState,
-	walletAddressState,
-} from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { NoTextTransform } from 'styles/common';
 import media from 'styles/media';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
@@ -66,7 +61,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { isL2State } from 'store/wallet';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 type ManageShortActionProps = {
 	short: ShortPosition;
@@ -99,7 +94,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 	const isL2 = useRecoilValue(isL2State);
 
 	const {
-		useEthGasPriceQuery,
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
@@ -107,9 +101,7 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const ethGasPriceQuery = useEthGasPriceQuery();
-	const customGasPrice = useRecoilValue(customGasPriceState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
+	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const collateralShortDataQuery = useCollateralShortContractInfoQuery();
@@ -184,16 +176,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		return { method, params, onSuccess };
 	}, [inputAmountBN, short.id, tab, walletAddress, redirectToShortingHome, isL2]);
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
-	);
-
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const assetPriceRate = useMemo(
@@ -205,8 +187,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
-
-	const gasPrices = useMemo(() => ethGasPriceQuery?.data ?? undefined, [ethGasPriceQuery.data]);
 
 	const totalToRepay = useMemo(() => short.synthBorrowedAmount.add(short.accruedInterest), [
 		short.accruedInterest,
@@ -330,8 +310,6 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 
 				let transaction: ethers.ContractTransaction | null = null;
 
-				const gasPriceWei = gasPriceInWei(gasPrice);
-
 				const gasLimitEstimate = await getGasLimitEstimate();
 
 				transaction = (await CollateralShort[method](...params, {
@@ -382,14 +360,13 @@ const ManageShortAction: FC<ManageShortActionProps> = ({
 					contracts.CollateralShort.address,
 					ethers.constants.MaxUint256
 				);
-				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				const tx = await collateralContract.approve(
 					contracts.CollateralShort.address,
 					ethers.constants.MaxUint256,
 					{
 						gasLimit: normalizeGasLimit(Number(gasEstimate)),
-						gasPrice: gasPriceWei,
+						...gasConfig,
 					}
 				);
 				if (tx != null) {

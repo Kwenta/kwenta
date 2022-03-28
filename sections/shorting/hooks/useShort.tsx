@@ -25,13 +25,7 @@ import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import SelectShortCurrencyModal from 'sections/shared/modals/SelectShortCurrencyModal';
 import useCurrencyPair from 'sections/exchange/hooks/useCurrencyPair';
 
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isL2State,
-	isWalletConnectedState,
-	walletAddressState,
-} from 'store/wallet';
+import { isL2State, isWalletConnectedState, walletAddressState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { customShortCRatioState, shortCRatioState } from 'store/ui';
 
@@ -40,7 +34,7 @@ import { getExchangeRatesForCurrencies, synthToContractName } from 'utils/curren
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit } from 'utils/network';
 
 import { zeroBN, formatNumber } from 'utils/formatters/number';
 
@@ -52,7 +46,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 type ShortCardProps = {
 	defaultBaseCurrencyKey?: CurrencyKey | null;
@@ -78,11 +72,7 @@ const useShort = ({
 		defaultQuoteCurrencyKey,
 	});
 
-	const {
-		useEthGasPriceQuery,
-		useSynthsBalancesQuery,
-		useExchangeRatesQuery,
-	} = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useExchangeRatesQuery } = useSynthetixQueries();
 
 	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
 
@@ -99,8 +89,7 @@ const useShort = ({
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const [selectShortCurrencyModalOpen, setSelectShortCurrencyModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
-	const gasSpeed = useRecoilValue(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
+	const { gasPrice, gasPriceWei, gasPrices } = useGas();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const selectedShortCRatio = useRecoilValue(shortCRatioState);
 	const customShortCRatio = useRecoilValue(customShortCRatioState);
@@ -115,7 +104,6 @@ const useShort = ({
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const collateralShortContractInfoQuery = useCollateralShortContractInfoQuery();
 	const collateralShortRateQuery = useCollateralShortRate(baseCurrencyKey);
@@ -256,16 +244,6 @@ const useShort = ({
 		return [];
 	}, [isAppReady, synthetixjs]);
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
-	);
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -352,7 +330,6 @@ const useShort = ({
 				const metaTx = await synthetixjs!.contracts.CollateralShort.populateTransaction.open(
 					...params
 				);
-				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				const l1Fee = await getL1SecurityFee({
 					...metaTx,
@@ -381,7 +358,6 @@ const useShort = ({
 
 				const collateralContract = contracts[synthToContractName(quoteCurrencyKey)];
 
-				const gasPriceWei = gasPriceInWei(gasPrice);
 				const gasEstimate = !isL2
 					? await collateralContract.estimateGas.approve(
 							contracts.CollateralShort.address,
@@ -461,8 +437,6 @@ const useShort = ({
 				setIsSubmitting(true);
 
 				let tx: ethers.ContractTransaction | null = null;
-
-				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				const gasEstimate = await getGasEstimateForShort();
 
@@ -586,7 +560,7 @@ const useShort = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency || null}
-					gasPrices={ethGasPriceQuery.data}
+					gasPrices={gasPrices}
 					feeReclaimPeriodInSeconds={0}
 					quoteCurrencyKey={quoteCurrencyKey}
 					totalFeeRate={issueFeeRate ?? null}

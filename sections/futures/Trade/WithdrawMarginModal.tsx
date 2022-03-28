@@ -28,6 +28,9 @@ type WithdrawMarginModalProps = {
 	market: string | null;
 };
 
+const PLACEHOLDER = '$0.00';
+const ZERO_WEI = wei(0);
+
 const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
@@ -38,7 +41,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-	const [amount, setAmount] = React.useState<string>('0');
+	const [amount, setAmount] = React.useState<string>('');
+	const [disabled, setDisabled] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<string | null>(null);
 	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 	const [isMax, setMax] = React.useState(false);
@@ -101,11 +105,31 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				// @ts-ignore
 				console.log(e.message);
 				// @ts-ignore
-				setError(e?.data?.message ?? e.message);
+				if (e?.code === -32603) {
+					setError('Input amount exceeds max withdrawable amount.');
+				} else {
+					// @ts-ignore
+					setError(e?.data?.message ?? e.message);
+				}
 			}
 		};
 		getGasLimit();
 	}, [amount, market, synthetixjs, computeAmount, isMax]);
+
+	React.useEffect(() => {
+		if (!amount) {
+			setDisabled(true);
+			return;
+		}
+
+		const amtWei = wei(amount);
+
+		if (amtWei.gt(ZERO_WEI) && amtWei.lte(accessibleMargin)) {
+			setDisabled(false);
+		} else {
+			setDisabled(true);
+		}
+	}, [amount, disabled, accessibleMargin, setDisabled]);
 
 	const handleWithdraw = async () => {
 		if (!amount || !gasLimit || !market || !gasPrice) return;
@@ -117,7 +141,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			if (isMax) {
 				tx = await FuturesMarketContract.withdrawAllMargin({
 					gasLimit,
-					gasPrice,
+					gasPrice: gasPriceInWei(gasPrice),
 				});
 			} else {
 				const marginAmount = computeAmount();
@@ -158,6 +182,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => {
 					if (isMax) setMax(false);
@@ -166,8 +191,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
-
 			<StyledInfoBox
 				details={{
 					'Gas Fee': transactionFee
@@ -175,9 +198,11 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 						: NO_VALUE,
 				}}
 			/>
-			<DepositMarginButton fullWidth onClick={handleWithdraw}>
+			<DepositMarginButton disabled={disabled} fullWidth onClick={handleWithdraw}>
 				Withdraw Margin
 			</DepositMarginButton>
+
+			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };

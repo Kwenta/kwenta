@@ -1,9 +1,9 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { gasSpeedState, isL2State } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
@@ -18,36 +18,19 @@ import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+	const { gasPrice, gasPrices } = useGas();
 
-	const [gasSpeed] = useRecoilState(gasSpeedState);
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
-
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
-
-	const gasPrice = useMemo(
-		() =>
-			ethGasPriceQuery.isSuccess
-				? ethGasPriceQuery?.data != null
-					? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-					: null
-				: null,
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]
-	);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

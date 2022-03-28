@@ -1,34 +1,27 @@
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import useSynthetixQueries, { DeprecatedSynthsBalances } from '@synthetixio/queries';
-import { ethers } from 'ethers';
-
-import { Synths } from 'constants/currency';
-
-import { customGasPriceState, gasSpeedState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
-
-import { normalizeGasLimit, gasPriceInWei, getTransactionPrice } from 'utils/network';
-import { hexToAsciiV2 } from 'utils/formatters/string';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-
+import useGas from './useGas';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useSynthetixQueries, { DeprecatedSynthsBalances } from '@synthetixio/queries';
+import { ethers } from 'ethers';
+import { getTransactionPrice } from 'utils/network';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { hexToAsciiV2 } from 'utils/formatters/string';
+import { Synths } from 'constants/currency';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UseQueryResult } from 'react-query';
-import { parseGasPriceObject } from './useGas';
+import { useTranslation } from 'react-i18next';
 
 const useRedeemDeprecatedSynths = (
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>,
 	onSuccess?: () => void
 ) => {
 	const { t } = useTranslation();
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
@@ -36,23 +29,11 @@ const useRedeemDeprecatedSynths = (
 		? redeemableDeprecatedSynthsQuery.data ?? null
 		: null;
 
-	const customGasPrice = useRecoilValue(customGasPriceState);
-	const gasSpeed = useRecoilValue(gasSpeedState);
-
 	const [redeemTxModalOpen, setRedeemTxModalOpen] = useState<boolean>(false);
 	const [isRedeeming, setIsRedeeming] = useState<boolean>(false);
 	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [txError, setTxError] = useState<string | null>(null);
-
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
-	);
+	const { gasPrice, gasPriceWei, getGasLimitEstimate } = useGas();
 
 	const Redeemer = useMemo(() => synthetixjs?.contracts.SynthRedeemer ?? null, [synthetixjs]);
 
@@ -75,26 +56,25 @@ const useRedeemDeprecatedSynths = (
 		[redeemableDeprecatedSynths?.balances]
 	);
 
-	const getGasLimitEstimate = useCallback(async (): Promise<number | null> => {
+	const gasLimitEstimate = useCallback(async (): Promise<number | null> => {
 		if (!Redeemer) return null;
 		try {
 			const { method, params } = getMethodAndParams();
-			const gasEstimate = await Redeemer.estimateGas[method](...params);
-			return normalizeGasLimit(Number(gasEstimate));
+			return await getGasLimitEstimate(() => Redeemer.estimateGas[method](...params));
 		} catch (e) {
 			return null;
 		}
-	}, [getMethodAndParams, Redeemer]);
+	}, [getMethodAndParams, Redeemer, getGasLimitEstimate]);
 
 	useEffect(() => {
 		async function updateGasLimit() {
 			if (gasLimit == null) {
-				const newGasLimit = await getGasLimitEstimate();
+				const newGasLimit = await gasLimitEstimate();
 				setGasLimit(newGasLimit);
 			}
 		}
 		updateGasLimit();
-	}, [gasLimit, getGasLimitEstimate]);
+	}, [gasLimit, gasLimitEstimate]);
 
 	const handleRedeem = async () => {
 		if (!(Redeemer && gasPrice)) return;
@@ -109,12 +89,11 @@ const useRedeemDeprecatedSynths = (
 
 			let transaction: ethers.ContractTransaction | null = null;
 
-			const gasPriceWei = gasPriceInWei(gasPrice);
+			const limitEstimate = await gasLimitEstimate();
 
-			const gasLimitEstimate = await getGasLimitEstimate();
 			transaction = (await Redeemer[method](...params, {
 				gasPrice: gasPriceWei,
-				gasLimit: gasLimitEstimate,
+				gasLimit: limitEstimate,
 			})) as ethers.ContractTransaction;
 
 			if (transaction != null) {

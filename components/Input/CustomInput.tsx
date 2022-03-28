@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 type CustomInputProps = {
+	placeholder?: string;
 	value?: string | number;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
 	right: React.ReactNode;
@@ -54,7 +55,7 @@ const CustomInputContainer = styled.div`
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
-	padding: 12px 14px;
+	padding: 12px 14px 12px 10px;
 
 	input {
 		display: flex;
