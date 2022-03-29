@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 
 import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
@@ -21,23 +20,6 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	onAmountChange,
 	onAmountSUSDChange,
 }) => {
-	const router = useRouter();
-
-	// console.log("router =", router)
-
-	useEffect(() => {
-        const handleRouteChange = (url: string) => {
-            console.log(`App is changing to ${url} `);
-			// amount = '';
-        };
-
-        router.events.on('routeChangeStart', handleRouteChange);
-
-        return () => {
-            router.events.off('routeChangeStart', handleRouteChange);
-        };
-    }, [router.events]);
-
 	return (
 		<OrderSizingContainer>
 			<OrderSizingTitle>
