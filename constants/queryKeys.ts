@@ -157,9 +157,10 @@ export const QUERY_KEYS = {
 			networkId,
 			walletAddress
 		],
-		Position: (market: string | null, walletAddress: string) => [
+		Position: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
 			'position',
+			networkId,
 			market,
 			walletAddress,
 		],
