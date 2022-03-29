@@ -70,7 +70,6 @@ const useGetAverageFundingRateForMarket = (
 					{ market: marketAddress}
 				);
 
-
 				return responseMin && responseMax ?
 					calculateFundingRate(responseMin.fundingRateUpdates[0], responseMax.fundingRateUpdates[0]) :
 					wei(0);

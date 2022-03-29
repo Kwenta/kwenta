@@ -149,9 +149,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					NO_VALUE
 				),
 			},
-			'Funding Rate': {
+			'24H Funding Rate': {
 				value: avgFundingRate
-					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
+					? formatCurrency(
+						selectedPriceCurrency.name,
+						avgFundingRate ?? zeroBN,
+						{ minDecimals: 6 }
+					)
 					: NO_VALUE,
 				color: avgFundingRate?.gt(zeroBN)
 					? 'green'
