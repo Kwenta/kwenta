@@ -128,7 +128,6 @@ const Trade: React.FC<TradeProps> = () => {
 			setTradeSize('');
 			setTradeSizeSUSD('');
         };
-
         router.events.on('routeChangeStart', handleRouteChange);
 
         return () => {
