@@ -26,10 +26,10 @@ const Overview: FC = () => {
 	const { t } = useTranslation();
 	const network = useRecoilValue(networkState)
 
-	const futuresMarketsQuery = useGetFuturesMarkets(network);
+	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const futuresPositionQuery = useGetFuturesPositionForAccount(network);
+	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositions = futuresPositionQuery?.data ?? [];
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
