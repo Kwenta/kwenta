@@ -1,53 +1,51 @@
 import React, { useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { useState } from 'react';
-import { Synths } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 import LeverageInput from '../LeverageInput';
-// import EditMarginModal from './EditMarginModal';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
-import { getFuturesMarketContract } from 'queries/futures/utils';
-import { gasPriceInWei, normalizeGasLimit } from 'utils/network';
 import MarketsDropdown from './MarketsDropdown';
 // import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
-import { parseGasPriceObject } from 'hooks/useGas';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import Connector from 'containers/Connector';
 
 type TradeProps = {};
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const Trade: React.FC<TradeProps> = () => {
-	const { t } = useTranslation();
+	// const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const {
 		useExchangeRatesQuery,
 		useSynthsBalancesQuery,
 		useEthGasPriceQuery,
+		useSynthetixTxn,
 	} = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -55,7 +53,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthetixjs } = Connector.useContainer();
 
-	const marketAsset = router.query.market?.[0] ?? null;
+	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
@@ -75,24 +73,15 @@ const Trade: React.FC<TradeProps> = () => {
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
-	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
 	const [isWithdrawMarginModalOpen, setIsWithdrawMarginModalOpen] = useState(false);
-	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState<boolean>(false);
+	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState(false);
 
-	const gasPrice = useMemo(
-		() =>
-			ethGasPriceQuery.isSuccess
-				? ethGasPriceQuery?.data != null
-					? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-					: null
-				: null,
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data, gasSpeed]
-	);
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -100,7 +89,7 @@ const Trade: React.FC<TradeProps> = () => {
 	);
 
 	const marketAssetRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
 	);
 
@@ -118,23 +107,25 @@ const Trade: React.FC<TradeProps> = () => {
 		}
 	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
 
-	const onTradeAmountChange = (value: string) => {
-		setTradeSize(value);
-		setTradeSizeSUSD(value === '' ? '' : (Number(value) * marketAssetRate).toString());
-	};
+	const onTradeAmountChange = React.useCallback(
+		(value: string) => {
+			setTradeSize(value);
+			setTradeSizeSUSD(value === '' ? '' : marketAssetRate.mul(Number(value)).toString());
+		},
+		[marketAssetRate]
+	);
 
 	useEffect(() => {
-		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
 		if (
 			Number(tradeSize) &&
-			Number(marketAssetRate) &&
+			marketAssetRate.toNumber() &&
 			Number(futuresMarketsPosition?.remainingMargin.toString())
 		) {
 			setLeverage(
-				(
-					(Number(tradeSize) * marketAssetRate) /
-					Number(futuresMarketsPosition?.remainingMargin.toString())
-				).toString()
+				marketAssetRate
+					.mul(Number(tradeSize))
+					.div(Number(futuresMarketsPosition?.remainingMargin.toString()))
+					.toString()
 			);
 		} else {
 			if (Number(leverage) !== 0) {
@@ -145,28 +136,35 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);
-		setTradeSize(value === '' ? '' : (Number(value) / marketAssetRate).toString());
+		setTradeSize(value === '' ? '' : wei(value).div(marketAssetRate).toString());
 	};
 
-	const onLeverageChange = (value: string) => {
-		if (value === '' || Number(value) < 0) {
-			setLeverage('');
-			setTradeSize('');
-			setTradeSizeSUSD('');
-		} else {
-			setLeverage(value);
-			const newTradeSize =
-				marketAssetRate === 0
+	const onLeverageChange = React.useCallback(
+		(value: string) => {
+			if (value === '' || Number(value) < 0) {
+				setLeverage('');
+				setTradeSize('');
+				setTradeSizeSUSD('');
+			} else {
+				setLeverage(value);
+				const newTradeSize = marketAssetRate.eq(0)
 					? 0
 					: (Number(value) * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
-					  marketAssetRate;
+					  marketAssetRate.toNumber();
 
-			onTradeAmountChange(newTradeSize.toString());
-		}
-	};
+				onTradeAmountChange(newTradeSize.toString());
+			}
+		},
+		[futuresMarketsPosition?.remainingMargin, marketAssetRate, onTradeAmountChange]
+	);
+
+	const sizeDelta = React.useMemo(
+		() => (tradeSize ? wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize) : zeroBN),
+		[leverageSide, tradeSize]
+	);
 
 	useEffect(() => {
-		const getGasLimit = async () => {
+		const getOrderFee = async () => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
@@ -175,20 +173,13 @@ const Trade: React.FC<TradeProps> = () => {
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted
 			) {
-				setGasLimit(null);
 				return;
 			}
 			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
 			try {
 				setError(null);
-				setGasLimit(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-				const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
-				const [gasEstimate, orderFee] = await Promise.all([
-					FuturesMarketContract.estimateGas.modifyPosition(sizeDelta.toBN()),
-					FuturesMarketContract.orderFee(sizeDelta.toBN()),
-				]);
-				setGasLimit(normalizeGasLimit(gasEstimate.toNumber()));
+				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -196,7 +187,7 @@ const Trade: React.FC<TradeProps> = () => {
 				setError(e?.data?.message ?? e.message);
 			}
 		};
-		getGasLimit();
+		getOrderFee();
 	}, [
 		tradeSize,
 		synthetixjs,
@@ -205,36 +196,58 @@ const Trade: React.FC<TradeProps> = () => {
 		leverageSide,
 		walletAddress,
 		isLeverageValueCommitted,
+		sizeDelta,
 	]);
 
-	const handleCreateOrder = async () => {
-		if (!gasLimit || !tradeSize || !gasPrice) return;
-		try {
-			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-			const sizeDelta = wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize);
-			const tx = await FuturesMarketContract.modifyPosition(sizeDelta.toBN(), {
-				gasLimit,
-				gasPrice: gasPriceInWei(gasPrice),
-			});
-			if (tx) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onLeverageChange('');
-						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
-							futuresPositionHistoryQuery.refetch();
-							marketQuery.refetch();
-						}, 5 * 1000);
-					},
-				});
-			}
-		} catch (e) {
-			console.log(e);
-			// @ts-ignore
-			setError(e?.data?.message ?? e.message);
+	const orderTxn = useSynthetixTxn(
+		`FuturesMarket${marketAsset?.substring(1)}`,
+		'modifyPosition',
+		[sizeDelta.toBN()],
+		gasPrice,
+		{
+			enabled:
+				!!marketAsset &&
+				!!leverage &&
+				Number(leverage) >= 0 &&
+				maxLeverageValue.gte(Number(leverage)) &&
+				!error,
+			onSuccess: (data) => {
+				console.log(data);
+			},
+			onError: (error) => {
+				setError(error as string);
+			},
 		}
-	};
+	);
+
+	useEffect(() => {
+		if (orderTxn.hash) {
+			monitorTransaction({
+				txHash: orderTxn.hash,
+				onTxConfirmed: () => {
+					onLeverageChange('');
+					setTimeout(() => {
+						futuresMarketPositionQuery.refetch();
+						futuresPositionHistoryQuery.refetch();
+						marketQuery.refetch();
+					}, 5 * 1000);
+				},
+			});
+		}
+	}, [
+		orderTxn.hash,
+		futuresMarketPositionQuery,
+		onLeverageChange,
+		marketQuery,
+		monitorTransaction,
+		futuresPositionHistoryQuery,
+	]);
+
+	useEffect(() => {
+		if (orderTxn.errorMessage) {
+			setError(orderTxn.errorMessage);
+		}
+	}, [orderTxn.errorMessage]);
 
 	return (
 		<Panel>
@@ -282,7 +295,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 			<LeverageInput
 				currentLeverage={leverage}
-				maxLeverage={maxLeverageValue.toNumber()}
+				maxLeverage={maxLeverageValue}
 				onLeverageChange={(value) => onLeverageChange(value)}
 				side={leverageSide}
 				setIsLeverageValueCommitted={setIsLeverageValueCommitted}
@@ -346,8 +359,9 @@ const Trade: React.FC<TradeProps> = () => {
 			{isTradeConfirmationModalOpen && (
 				<TradeConfirmationModal
 					tradeSize={tradeSize}
-					onConfirmOrder={handleCreateOrder}
-					gasLimit={gasLimit}
+					onConfirmOrder={() => orderTxn.mutate()}
+					gasLimit={orderTxn.gasLimit}
+					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
 					side={leverageSide}
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}

@@ -29,7 +29,7 @@ import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/
 import Connector from 'containers/Connector';
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
-	const { provider, network } = Connector.useContainer();
+	const { provider, signer, network } = Connector.useContainer();
 	return (
 		<>
 			<MediaContextProvider>
@@ -38,6 +38,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 						provider && network
 							? createQueryContext({
 									provider: provider,
+									signer: signer || undefined,
 									networkId: network!.id,
 							  })
 							: createQueryContext({ networkId: null })
