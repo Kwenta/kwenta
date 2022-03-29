@@ -22,7 +22,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<FuturesVolumes | null>(
-		QUERY_KEYS.Futures.TradingVolumeForAll,
+		QUERY_KEYS.Futures.TradingVolumeForAll(network.id),
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);

@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -16,11 +16,12 @@ const useGetCurrentPortfolioValue = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.Positions(markets || [], walletAddress || ''),
+		QUERY_KEYS.Futures.Positions(network.id, markets || [], walletAddress || ''),
 		async () => {
 			const {
 				contracts: { FuturesMarketData },

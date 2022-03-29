@@ -8,6 +8,8 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import FuturesMarketsTable from '../FuturesMarketsTable';
+import { networkState } from 'store/wallet';
+import { useRecoilValue } from 'recoil';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -22,10 +24,12 @@ enum MarketsTab {
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
-	const futuresMarketsQuery = useGetFuturesMarkets();
+	const network = useRecoilValue(networkState)
+
+	const futuresMarketsQuery = useGetFuturesMarkets(network);
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositionQuery = useGetFuturesPositionForAccount(network);
 	const futuresPositions = futuresPositionQuery?.data ?? [];
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);

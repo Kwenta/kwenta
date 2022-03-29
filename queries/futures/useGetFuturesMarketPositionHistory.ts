@@ -22,7 +22,7 @@ const useGetFuturesMarketPositionHistory = (
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.MarketPositionHistory(currencyKey || null, walletAddress || ''),
+		QUERY_KEYS.Futures.MarketPositionHistory(network.id, currencyKey || null, walletAddress || ''),
 		async () => {
 			if (!currencyKey) return null;
 			try {

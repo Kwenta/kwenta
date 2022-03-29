@@ -21,7 +21,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats(currencyKey),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, currencyKey),
 		async () => {
 			if (!currencyKey) return null;
 

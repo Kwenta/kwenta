@@ -19,7 +19,7 @@ import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET } from './constants';
 
 export const getFuturesEndpoint = (network: Network): string => {
-	return network && network.name === 'mainnet-ovm'
+	return network && network.id === 10
 		? FUTURES_ENDPOINT_MAINNET
 		: network.id === 69
 			? FUTURES_ENDPOINT_TESTNET

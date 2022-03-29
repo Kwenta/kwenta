@@ -19,7 +19,7 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AllPositionHistory(walletAddress || ''),
+		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
 				const response = await request(

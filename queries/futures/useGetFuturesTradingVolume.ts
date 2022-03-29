@@ -22,7 +22,7 @@ const useGetFuturesTradingVolume = (
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.TradingVolume(currencyKey || null),
+		QUERY_KEYS.Futures.TradingVolume(network.id, currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
 			try {

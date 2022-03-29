@@ -15,7 +15,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(walletAddress),
+		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id),
 		async () => {
 			try {
 				const response = await request(

@@ -17,7 +17,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<FuturesCumulativeStats | null>(
-		QUERY_KEYS.Futures.TotalTrades,
+		QUERY_KEYS.Futures.TotalTrades(network.id),
 		async () => {
 			try {
 				const response = await request(
