@@ -1,9 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
-import BaseModal from 'components/BaseModal';
-import Button from 'components/Button';
-import InfoBox from 'components/InfoBox';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
@@ -13,9 +9,17 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { newGetTransactionPrice } from 'utils/network';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { FlexDivRowCentered } from 'styles/common';
 import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
+import {
+	StyledBaseModal,
+	BalanceContainer,
+	BalanceText,
+	GasFeeContainer,
+	MaxButton,
+	ErrorMessage,
+	MarginActionButton,
+} from './DepositMarginModal';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
@@ -128,11 +132,12 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	return (
 		<StyledBaseModal title="Withdraw Margin" isOpen={true} onDismiss={onDismiss}>
 			<BalanceContainer>
-				<BalanceText>Balance:</BalanceText>
+				<BalanceText $gold>Balance:</BalanceText>
 				<BalanceText>
 					<span>{formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' })}</span> sUSD
 				</BalanceText>
 			</BalanceContainer>
+
 			<CustomInput
 				placeholder={PLACEHOLDER}
 				value={amount}
@@ -143,73 +148,24 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
 			/>
 
-			<StyledInfoBox
-				details={{
-					'Gas Fee': transactionFee
-						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$' })
-						: NO_VALUE,
-				}}
-			/>
-			<DepositMarginButton disabled={disabled} fullWidth onClick={() => withdrawTxn.mutate()}>
+			<MarginActionButton disabled={disabled} fullWidth onClick={() => withdrawTxn.mutate()}>
 				Withdraw Margin
-			</DepositMarginButton>
+			</MarginActionButton>
+
+			<GasFeeContainer>
+				<BalanceText>Gas Fee:</BalanceText>
+				<BalanceText>
+					<span>
+						{transactionFee
+							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+							: NO_VALUE}
+					</span>
+				</BalanceText>
+			</GasFeeContainer>
 
 			{error && <ErrorMessage>{error}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
-
-const StyledBaseModal = styled(BaseModal)`
-	[data-reach-dialog-content] {
-		width: 400px;
-	}
-
-	.card-body {
-		padding: 28px;
-	}
-`;
-
-const BalanceContainer = styled(FlexDivRowCentered)`
-	margin-bottom: 8px;
-	padding: 0 14px;
-
-	p {
-		margin: 0;
-	}
-`;
-
-const BalanceText = styled.p`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	span {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-	}
-`;
-
-const StyledInfoBox = styled(InfoBox)`
-	margin-top: 15px;
-	margin-bottom: 15px;
-`;
-
-const DepositMarginButton = styled(Button)`
-	height: 55px;
-`;
-
-const MaxButton = styled.button`
-	height: 22px;
-	padding: 4px 10px;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border-radius: 11px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	line-height: 13px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	cursor: pointer;
-`;
-
-const ErrorMessage = styled.div`
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
 
 export default WithdrawMarginModal;
