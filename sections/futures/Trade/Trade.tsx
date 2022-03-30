@@ -117,6 +117,18 @@ const Trade: React.FC<TradeProps> = () => {
 		[marketAssetRate]
 	);
 
+    useEffect(() => {
+        const handleRouteChange = () => {
+            setTradeSize('');
+            setTradeSizeSUSD('');
+        };
+        router.events.on('routeChangeStart', handleRouteChange);
+
+        return () => {
+            router.events.off('routeChangeStart', handleRouteChange);
+        };
+    }, [router.events]);
+
 	useEffect(() => {
 		if (Number(tradeSize) && !!futuresMarketsPosition?.remainingMargin) {
 			setLeverage(
