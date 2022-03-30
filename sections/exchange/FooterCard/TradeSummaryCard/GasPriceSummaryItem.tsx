@@ -66,7 +66,9 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 	return (
 		<SummaryItem {...rest}>
 			<SummaryItemLabel>
-				{isL2 ? t('exchange.summary-info.gas-price-gwei') : t('exchange.summary-info.max-fee-gwei')}
+				{isMainnet
+					? t('exchange.summary-info.max-fee-gwei')
+					: t('exchange.summary-info.gas-price-gwei')}
 			</SummaryItemLabel>
 			<SummaryItemValue>
 				{gasPrice != null ? (
