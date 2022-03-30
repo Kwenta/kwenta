@@ -1,9 +1,11 @@
 import React from 'react';
 import Wei, { wei } from '@synthetixio/wei';
+import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
+
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import useSynthetixQueries from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
@@ -38,6 +40,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	accessibleMargin,
 	market,
 }) => {
+	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -130,9 +133,13 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	}, [accessibleMargin]);
 
 	return (
-		<StyledBaseModal title="Withdraw Margin" isOpen={true} onDismiss={onDismiss}>
+		<StyledBaseModal
+			title={t('futures.market.trade.margin.modal.withdraw.title')}
+			isOpen={true}
+			onDismiss={onDismiss}
+		>
 			<BalanceContainer>
-				<BalanceText $gold>Balance:</BalanceText>
+				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
 					<span>{formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' })}</span> sUSD
 				</BalanceText>
@@ -145,15 +152,17 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 					if (isMax) setMax(false);
 					setAmount(v);
 				}}
-				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
+				right={
+					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+				}
 			/>
 
 			<MarginActionButton disabled={disabled} fullWidth onClick={() => withdrawTxn.mutate()}>
-				Withdraw Margin
+				{t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 
 			<GasFeeContainer>
-				<BalanceText>Gas Fee:</BalanceText>
+				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
 						{transactionFee

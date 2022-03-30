@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
+import { useTranslation } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
 import { formatCurrency } from 'utils/formatters/number';
@@ -34,6 +35,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 }) => {
+	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -116,9 +118,13 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	}, [sUSDBalance]);
 
 	return (
-		<StyledBaseModal title="Deposit Margin" isOpen={true} onDismiss={onDismiss}>
+		<StyledBaseModal
+			title={t('futures.market.trade.margin.modal.deposit.title')}
+			isOpen={true}
+			onDismiss={onDismiss}
+		>
 			<BalanceContainer>
-				<BalanceText $gold>Balance:</BalanceText>
+				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
 					<span>{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}</span> sUSD
 				</BalanceText>
@@ -127,19 +133,21 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
-				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
+				right={
+					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+				}
 			/>
 
 			<MinimumAmountDisclaimer>
-				A $50 margin minimum is required to open a position.
+				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
 			</MinimumAmountDisclaimer>
 
 			<MarginActionButton disabled={disabled} fullWidth onClick={() => depositTxn.mutate()}>
-				Deposit Margin
+				{t('futures.market.trade.margin.modal.deposit.button')}
 			</MarginActionButton>
 
 			<GasFeeContainer>
-				<BalanceText>Gas Fee:</BalanceText>
+				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
 				<BalanceText>
 					<span>
 						{transactionFee

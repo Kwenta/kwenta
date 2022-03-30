@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import styled from 'styled-components';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
@@ -39,7 +39,7 @@ type TradeProps = {};
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const Trade: React.FC<TradeProps> = () => {
-	// const { t } = useTranslation();
+	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const {
 		useExchangeRatesQuery,
@@ -249,10 +249,10 @@ const Trade: React.FC<TradeProps> = () => {
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
 				<MarketActionButton onClick={() => setIsDepositMarginModalOpen(true)}>
-					Deposit
+					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton onClick={() => setIsWithdrawMarginModalOpen(true)}>
-					Withdraw
+					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
 			</MarketActions>
 
@@ -313,7 +313,9 @@ const Trade: React.FC<TradeProps> = () => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				{futuresMarketsPosition?.position ? 'Modify Position' : 'Open Position'}
+				{!!futuresMarketsPosition?.position
+					? t('futures.market.trade.button.modify-position')
+					: t('futures.market.trade.button.open-position')}
 			</PlaceOrderButton>
 
 			{(orderTxn.errorMessage || error) && (
