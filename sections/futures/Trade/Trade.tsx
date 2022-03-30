@@ -118,11 +118,7 @@ const Trade: React.FC<TradeProps> = () => {
 	);
 
 	useEffect(() => {
-		if (
-			Number(tradeSize) &&
-			marketAssetRate.toNumber() &&
-			Number(futuresMarketsPosition?.remainingMargin.toString())
-		) {
+		if (Number(tradeSize) && !!futuresMarketsPosition?.remainingMargin) {
 			setLeverage(
 				marketAssetRate
 					.mul(Number(tradeSize))
