@@ -86,7 +86,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lte(Number(l))}
+							disabled={maxLeverage.lt(Number(l))}
 						>
 							{l}x
 						</LeverageButton>

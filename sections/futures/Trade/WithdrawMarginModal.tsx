@@ -5,18 +5,15 @@ import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
 import InfoBox from 'components/InfoBox';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import Connector from 'containers/Connector';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
-import { parseGasPriceObject } from 'hooks/useGas';
-import { gasPriceInWei, getTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FlexDivRowCentered } from 'styles/common';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
 
@@ -37,14 +34,12 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	accessibleMargin,
 	market,
 }) => {
-	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [disabled, setDisabled] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<string | null>(null);
-	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -57,64 +52,58 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrices = React.useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const computedAmount = React.useMemo(
+		() =>
+			accessibleMargin.eq(!!amount ? wei(amount) : zeroBN)
+				? accessibleMargin.mul(wei(-1)).toBN()
+				: wei(-amount).toBN(),
+		[amount, accessibleMargin]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
-		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
-		: null;
+	const withdrawTxn = useSynthetixTxn(
+		`FuturesMarket${market?.substring(1)}`,
+		isMax ? 'withdrawAllMargin' : 'transferMargin',
+		isMax ? [] : [computedAmount],
+		gasPrice || undefined,
+		{ enabled: !!market && !!amount }
+	);
 
 	const transactionFee = React.useMemo(
-		() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate),
-		[gasPrice, gasLimit, ethPriceRate]
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				withdrawTxn.gasLimit,
+				ethPriceRate,
+				withdrawTxn.optimismLayerOneFee
+			),
+		[gasPrice, ethPriceRate, withdrawTxn.gasLimit, withdrawTxn.optimismLayerOneFee]
 	);
 
-	const computeAmount = React.useCallback(() => {
-		return amount === accessibleMargin.toString()
-			? accessibleMargin.mul(wei(-1)).toBN()
-			: wei(-amount).toBN();
-	}, [amount, accessibleMargin]);
+	React.useEffect(() => {
+		if (withdrawTxn.hash) {
+			monitorTransaction({
+				txHash: withdrawTxn.hash,
+				onTxConfirmed: () => {
+					onTxConfirmed();
+					onDismiss();
+				},
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [withdrawTxn.hash]);
 
 	React.useEffect(() => {
-		const getGasLimit = async () => {
-			if (!market || !synthetixjs) return;
-			try {
-				setError(null);
-				if (!amount) return;
-				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-				const marginAmount = computeAmount();
-
-				let estimate;
-
-				if (isMax) {
-					estimate = await FuturesMarketContract.estimateGas.withdrawAllMargin();
-				} else {
-					estimate = await FuturesMarketContract.estimateGas.transferMargin(
-						wei(marginAmount).toBN()
-					);
-				}
-
-				setGasLimit(Number(estimate));
-			} catch (e) {
-				// @ts-ignore
-				console.log(e.message);
-				// @ts-ignore
-				if (e?.code === -32603) {
-					setError('Input amount exceeds max withdrawable amount.');
-				} else {
-					// @ts-ignore
-					setError(e?.data?.message ?? e.message);
-				}
-			}
-		};
-		getGasLimit();
-	}, [amount, market, synthetixjs, computeAmount, isMax]);
+		if (withdrawTxn.errorMessage) {
+			console.log(withdrawTxn.errorMessage);
+			setError(withdrawTxn.errorMessage);
+		}
+	}, [withdrawTxn.errorMessage]);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -130,43 +119,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			setDisabled(true);
 		}
 	}, [amount, disabled, accessibleMargin, setDisabled]);
-
-	const handleWithdraw = async () => {
-		if (!amount || !gasLimit || !market || !gasPrice) return;
-		try {
-			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-
-			let tx;
-
-			if (isMax) {
-				tx = await FuturesMarketContract.withdrawAllMargin({
-					gasLimit,
-					gasPrice: gasPriceInWei(gasPrice),
-				});
-			} else {
-				const marginAmount = computeAmount();
-
-				tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
-					gasLimit,
-					gasPrice: gasPriceInWei(gasPrice),
-				});
-			}
-
-			if (tx != null) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onTxConfirmed();
-						onDismiss();
-					},
-				});
-			}
-		} catch (e) {
-			console.log(e);
-			// @ts-ignore
-			setError(e?.data?.message ?? e.message);
-		}
-	};
 
 	const handleSetMax = React.useCallback(() => {
 		setMax(true);
@@ -198,7 +150,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 						: NO_VALUE,
 				}}
 			/>
-			<DepositMarginButton disabled={disabled} fullWidth onClick={handleWithdraw}>
+			<DepositMarginButton disabled={disabled} fullWidth onClick={() => withdrawTxn.mutate()}>
 				Withdraw Margin
 			</DepositMarginButton>
 

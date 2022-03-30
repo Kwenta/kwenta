@@ -11,13 +11,10 @@ import { FlexDivRowCentered } from 'styles/common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import { parseGasPriceObject } from 'hooks/useGas';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { gasPriceInWei, getTransactionPrice } from 'utils/network';
+import { newGetTransactionPrice } from 'utils/network';
 import { NO_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
@@ -38,14 +35,12 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 }) => {
-	const { synthetixjs } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [disabled, setDisabled] = React.useState<boolean>(true);
 	const [error, setError] = React.useState<string | null>(null);
-	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -57,46 +52,36 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
-		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
-		: null;
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const depositTxn = useSynthetixTxn(
+		`FuturesMarket${market?.substring(1)}`,
+		'transferMargin',
+		[wei(amount).toBN()],
+		gasPrice || undefined,
+		{ enabled: !!market && !!amount && !disabled }
+	);
 
 	const transactionFee = React.useMemo(
-		() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate),
-		[gasPrice, gasLimit, ethPriceRate]
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				depositTxn.gasLimit,
+				ethPriceRate,
+				depositTxn.optimismLayerOneFee
+			),
+		[gasPrice, ethPriceRate, depositTxn.gasLimit, depositTxn.optimismLayerOneFee]
 	);
 
 	React.useEffect(() => {
-		const getGasLimit = async () => {
-			if (!market || !synthetixjs) return;
-			try {
-				setError(null);
-				if (!amount) return;
-				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-				const marginAmount = wei(amount).toBN();
-				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
-					wei(marginAmount).toBN()
-				);
-				setGasLimit(Number(estimate));
-			} catch (e) {
-				// @ts-ignore
-				console.log(e.message);
-
-				// @ts-ignore
-				if (e?.code === -32603) {
-					setError('Amount exceeds max amount in user wallet.');
-				} else {
-					// @ts-ignore
-					setError(e?.data?.message ?? e.message);
-				}
-			}
-		};
-		getGasLimit();
-	}, [amount, market, synthetixjs]);
+		if (depositTxn.errorMessage) {
+			setError(depositTxn.errorMessage);
+		}
+	}, [depositTxn.errorMessage]);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -113,30 +98,19 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 		}
 	}, [amount, disabled, sUSDBalance, setDisabled]);
 
-	const handleDeposit = async () => {
-		if (disabled || !amount || !gasLimit || !market || !gasPrice) return;
-		try {
-			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-			const marginAmount = wei(amount).toBN();
-			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
-				gasLimit,
-				gasPrice: gasPriceInWei(gasPrice),
+	React.useEffect(() => {
+		if (depositTxn.hash) {
+			monitorTransaction({
+				txHash: depositTxn.hash,
+				onTxConfirmed: () => {
+					onTxConfirmed();
+					onDismiss();
+				},
 			});
-			if (tx != null) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onTxConfirmed();
-						onDismiss();
-					},
-				});
-			}
-		} catch (e) {
-			console.log(e);
-			// @ts-ignore
-			setError(e?.data?.message ?? e.message);
 		}
-	};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [depositTxn.hash]);
 
 	const handleSetMax = React.useCallback(() => {
 		setAmount(sUSDBalance.toString());
@@ -166,7 +140,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 						: NO_VALUE,
 				}}
 			/>
-			<DepositMarginButton disabled={disabled} fullWidth onClick={handleDeposit}>
+			<DepositMarginButton disabled={disabled} fullWidth onClick={() => depositTxn.mutate()}>
 				Deposit Margin
 			</DepositMarginButton>
 

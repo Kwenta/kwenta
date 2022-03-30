@@ -124,7 +124,7 @@ const Trade: React.FC<TradeProps> = () => {
 			setLeverage(
 				marketAssetRate
 					.mul(Number(tradeSize))
-					.div(Number(futuresMarketsPosition?.remainingMargin.toString()))
+					.div(futuresMarketsPosition?.remainingMargin)
 					.toString()
 			);
 		} else {
@@ -149,8 +149,9 @@ const Trade: React.FC<TradeProps> = () => {
 				setLeverage(value);
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
-					: (Number(value) * Number(futuresMarketsPosition?.remainingMargin?.toString() ?? 0)) /
-					  marketAssetRate.toNumber();
+					: wei(value)
+							.mul(futuresMarketsPosition?.remainingMargin ?? zeroBN)
+							.div(marketAssetRate);
 
 				onTradeAmountChange(newTradeSize.toString());
 			}
@@ -211,12 +212,6 @@ const Trade: React.FC<TradeProps> = () => {
 				Number(leverage) >= 0 &&
 				maxLeverageValue.gte(Number(leverage)) &&
 				!error,
-			onSuccess: (data) => {
-				console.log(data);
-			},
-			onError: (error) => {
-				setError(error as string);
-			},
 		}
 	);
 
@@ -234,14 +229,9 @@ const Trade: React.FC<TradeProps> = () => {
 				},
 			});
 		}
-	}, [
-		orderTxn.hash,
-		futuresMarketPositionQuery,
-		onLeverageChange,
-		marketQuery,
-		monitorTransaction,
-		futuresPositionHistoryQuery,
-	]);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [orderTxn.hash]);
 
 	useEffect(() => {
 		if (orderTxn.errorMessage) {
