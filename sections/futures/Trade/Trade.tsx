@@ -244,7 +244,7 @@ const Trade: React.FC<TradeProps> = () => {
 					Deposit
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={futuresMarketsPosition?.remainingMargin! <= zeroBN}
+					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					Withdraw
