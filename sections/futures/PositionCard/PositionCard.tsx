@@ -64,11 +64,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<StyledCurrencyIcon currencyKey={currencyKey} />
 							<div>
 								<CurrencySubtitle>
-									{
-										currencyKey ?
-											currencyKey?.slice(1)+"-PERP"
-											: "Select a market"
-									}
+									{currencyKey ? currencyKey?.slice(1) + '-PERP' : 'Select a market'}
 								</CurrencySubtitle>
 								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
 							</div>
@@ -76,22 +72,25 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<PositionInfoCol>
 						<StyledSubtitle>Position Side</StyledSubtitle>
-						{positionDetails ?
-							<PositionValue side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}>
-								{positionDetails.side === 'long' ? PositionSide.LONG + " ↗" : PositionSide.SHORT + " ↘"}
+						{positionDetails ? (
+							<PositionValue
+								side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+							>
+								{positionDetails.side === 'long'
+									? PositionSide.LONG + ' ↗'
+									: PositionSide.SHORT + ' ↘'}
 							</PositionValue>
-							: <StyledValue>{NO_VALUE}</StyledValue>
-						}
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
 					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Position Size</StyledSubtitle>
 						<StyledValue>
-							{positionDetails ?
-								formatNumber(
-									positionDetails.size ?? 0,
-									{
+							{positionDetails
+								? formatNumber(positionDetails.size ?? 0, {
 										minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
 									}
 								) + " (" +
@@ -101,58 +100,64 @@ const PositionCard: React.FC<PositionCardProps> = ({
 									{
 										sign: '$',
 										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-									}
-								) + ")"
-								: NO_VALUE
-							}
+								  }) +
+								  ')'
+								: NO_VALUE}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						{positionDetails && market ?
-							<StyledValue className={
-								positionDetails.profitLoss > zeroBN ? 'green' :
-								positionDetails.profitLoss < zeroBN ? 'red' : ""
-							}>
-								{
-									formatCurrency(
-										Synths.sUSD,
-										positionDetails.profitLoss.add(positionDetails?.accruedFunding),
-										{
-											sign: '$',
-											minDecimals: positionDetails.profitLoss.add(positionDetails?.accruedFunding).abs().lt(0.01) ? 4 : 2,
-										}
-									) + " (" +
+						{positionDetails && market ? (
+							<StyledValue
+								className={
+									positionDetails.profitLoss > zeroBN
+										? 'green'
+										: positionDetails.profitLoss < zeroBN
+										? 'red'
+										: ''
+								}
+							>
+								{formatCurrency(
+									Synths.sUSD,
+									positionDetails.profitLoss.add(positionDetails?.accruedFunding),
+									{
+										sign: '$',
+										minDecimals: positionDetails.profitLoss
+											.add(positionDetails?.accruedFunding)
+											.abs()
+											.lt(0.01)
+											? 4
+											: 2,
+									}
+								) +
+									' (' +
 									formatPercent(
 										positionDetails.profitLoss.div(
 											positionDetails.initialMargin.mul(positionDetails.initialLeverage)
 										)
-									) + ")"
-								}
+									) +
+									')'}
 							</StyledValue>
-							: <StyledValue>{NO_VALUE}</StyledValue>
-						}
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Leverage</StyledSubtitle>
 						<StyledValue>
-							{positionDetails ?
-								formatNumber(positionDetails?.leverage ?? zeroBN) + "x"
-								: NO_VALUE
-							}
+							{positionDetails ? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x' : NO_VALUE}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
 						<StyledValue>
-							{positionDetails ?
-								formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-									sign: '$',
-								})
-								: NO_VALUE
-							}
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
 						</StyledValue>
 					</InfoCol>
 				</DataCol>
@@ -160,12 +165,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					<InfoCol>
 						<StyledSubtitle>Last Entry Price</StyledSubtitle>
 						<StyledValue>
-							{positionDetails ?
-								formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-									sign: '$',
-								})
-								: NO_VALUE
-							}
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
 						</StyledValue>
 					</InfoCol>
 					<InfoCol>
@@ -183,34 +187,39 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
-						{positionDetails ?
-							<StyledValue className={
-								positionDetails.accruedFunding > zeroBN ? 'green' :
-									positionDetails.accruedFunding < zeroBN ? 'red' : ""
-							}>
-								{
-									formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
-										sign: '$',
-										minDecimals: positionDetails?.accruedFunding.abs().lt(0.01) ? 4 : 2,
-									})
+						{positionDetails ? (
+							<StyledValue
+								className={
+									positionDetails.accruedFunding > zeroBN
+										? 'green'
+										: positionDetails.accruedFunding < zeroBN
+										? 'red'
+										: ''
 								}
+							>
+								{formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
+									sign: '$',
+									minDecimals: positionDetails?.accruedFunding.abs().lt(0.01) ? 4 : 2,
+								})}
 							</StyledValue>
-							: <StyledValue>{NO_VALUE}</StyledValue>
-						}
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
 					</InfoCol>
-				</DataCol>
-				<DataCol style={{ justifyContent: 'flex-end' }}>
-					{onPositionClose && (
-						<CloseButton
-							isRounded={true}
-							size="sm"
-							variant="danger"
-							onClick={() => setClosePositionModalIsVisible(true)}
-							disabled={!positionDetails}
-						>
-							{t('futures.market.user.position.close-position')}
-						</CloseButton>
-					)}
+					<InfoCol>
+						{onPositionClose && (
+							<CloseButton
+								isRounded={true}
+								size="sm"
+								variant="danger"
+								onClick={() => setClosePositionModalIsVisible(true)}
+								disabled={!positionDetails}
+								noOutline={true}
+							>
+								{t('futures.market.user.position.close-position')}
+							</CloseButton>
+						)}
+					</InfoCol>
 				</DataCol>
 			</Container>
 			{closePositionModalIsVisible && onPositionClose && (
@@ -228,18 +237,19 @@ export default PositionCard;
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	grid-gap: 16px;
+	grid-template-columns: repeat(5, auto);
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 22px;
+	padding: 20px 60px 25px 18px;
+	justify-content: space-between;
 	border-radius: 10px;
+	min-height: 135px;
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
-	margin-right: 8px;
+	margin-right: 15px;
 `;
 
 const DataCol = styled(FlexDivCol)`
@@ -247,8 +257,6 @@ const DataCol = styled(FlexDivCol)`
 `;
 
 const InfoCol = styled(FlexDivCol)`
-	margin-bottom: 8px;
-
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -263,7 +271,6 @@ const StyledSubtitle = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	margin-bottom: 4px;
 `;
 
 const StyledValue = styled.div`
@@ -273,8 +280,28 @@ const StyledValue = styled.div`
 `;
 
 const CloseButton = styled(Button)`
-	height: 36px;
+	height: 34px;
 	font-size: 13px;
+	background: rgba(239, 104, 104, 0.04);
+	border: 1px solid #ef6868;
+	box-shadow: none;
+	min-width: 100px;
+	width: 110px;
+	padding: 0;
+	transition: all 0.1s cubic-bezier(0.93, 0.01, 0.97, 0);
+
+	&:hover {
+		background: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.white};
+		transform: scale(0.98);
+	}
+
+	&:disabled {
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: transparent;
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		transform: none;
+	}
 `;
 
 const CurrencySubtitle = styled(StyledSubtitle)`
@@ -282,7 +309,7 @@ const CurrencySubtitle = styled(StyledSubtitle)`
 `;
 
 const PositionInfoCol = styled(InfoCol)`
-	padding-left: 38px;
+	padding-left: 45px;
 `;
 
 const PositionValue = styled.p<{ side: PositionSide }>`
