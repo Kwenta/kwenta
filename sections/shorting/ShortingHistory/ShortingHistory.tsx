@@ -18,13 +18,19 @@ import ShortingHistoryTable from './ShortingHistoryTable';
 
 import { Title } from '../common';
 
-import { SYNTHS_TO_SHORT } from '../constants';
+import { isL2State } from 'store/wallet';
+import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
 import Connector from 'containers/Connector';
 
 const ShortingHistory: FC = () => {
 	const { t } = useTranslation();
 
 	const { synthetixjs } = Connector.useContainer();
+
+	const isL2 = useRecoilValue(isL2State);
+
+	const shortListQuery = useGetShortableSynths(isL2);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [shortListQuery.data]);
 
 	const shortHistoryQuery = useShortHistoryQuery();
 	const historicalShortsPosition = useRecoilValue(historicalShortsPositionState);
@@ -34,7 +40,7 @@ const ShortingHistory: FC = () => {
 			{ label: t('shorting.history.assets-sort.allAssets'), key: 'ALL_SYNTHS' },
 			...SYNTHS_TO_SHORT.map((synth) => ({ label: synth, key: synth })),
 		],
-		[t]
+		[t, SYNTHS_TO_SHORT]
 	);
 
 	const datesFilterList = useMemo(

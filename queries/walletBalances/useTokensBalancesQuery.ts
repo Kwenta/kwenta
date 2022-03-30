@@ -42,7 +42,7 @@ const useTokensBalancesQuery = (
 				}
 			}
 
-			const data = (await ethcallProvider.all(calls, {})) as ethers.BigNumber[];
+			const data = (await ethcallProvider.all(calls)) as ethers.BigNumber[];
 			const balancesMap = zipObject(symbols, data);
 			const positiveBalances = omitBy(balancesMap, (entry) => entry.lte(0));
 
