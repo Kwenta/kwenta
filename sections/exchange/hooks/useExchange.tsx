@@ -28,6 +28,7 @@ import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQue
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
+import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
@@ -36,6 +37,7 @@ import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCa
 import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
 import GetL2GasCard from 'sections/exchange/FooterCard/GetL2GasCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
@@ -45,6 +47,7 @@ import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirm
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import SelectTokenModal from 'sections/shared/modals/SelectTokenModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
+import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
@@ -61,20 +64,13 @@ import {
 	baseChartTypeState,
 	quoteChartTypeState,
 } from 'store/app';
-import {
-	customGasPriceState,
-	gasSpeedState,
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-} from 'store/wallet';
+import { isWalletConnectedState, walletAddressState, isL2State, networkState } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 
-import { getTransactionPrice, normalizeGasLimit, gasPriceInWei, GasInfo } from 'utils/network';
+import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -82,13 +78,12 @@ import L2Gas from 'containers/L2Gas';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
-import { GasPrices } from '@synthetixio/queries';
 
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import { parseGasPriceObject } from 'hooks/useGas';
+import useGas from 'hooks/useGas';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -125,7 +120,6 @@ const useExchange = ({
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
 
 	const {
-		useEthGasPriceQuery,
 		useETHBalanceQuery,
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
@@ -153,6 +147,7 @@ const useExchange = ({
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
+	const [txSettleModalOpen, setTxSettleModalOpen] = useState<boolean>(false);
 	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
 	const [txError, setTxError] = useState<string | null>(null);
 	const [selectBaseCurrencyModalOpen, setSelectBaseCurrencyModalOpen] = useState<boolean>(false);
@@ -163,10 +158,9 @@ const useExchange = ({
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
-	const gasSpeed = useRecoilValue<keyof GasPrices>(gasSpeedState);
-	const customGasPrice = useRecoilValue(customGasPriceState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
+	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
 	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
 	// 	enabled: txProvider === '1inch',
 	// });
@@ -202,7 +196,6 @@ const useExchange = ({
 		? synthsWalletBalancesQuery.data
 		: null;
 
-	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
@@ -211,6 +204,14 @@ const useExchange = ({
 		quoteCurrencyKey as CurrencyKey,
 		walletAddress
 	);
+
+	const numEntriesQuery = useNumEntriesQuery(walletAddress || '', baseCurrencyKey as CurrencyKey);
+
+	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(
+		baseCurrencyKey as CurrencyKey,
+		walletAddress
+	);
+
 	const exchangeFeeRateQuery = useExchangeFeeRateQuery(
 		quoteCurrencyKey as CurrencyKey,
 		baseCurrencyKey as CurrencyKey
@@ -311,6 +312,12 @@ const useExchange = ({
 	const feeReclaimPeriodInSeconds = feeReclaimPeriodQuery.isSuccess
 		? feeReclaimPeriodQuery.data ?? 0
 		: 0;
+
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.isSuccess
+		? settlementWaitingPeriodQuery.data ?? 0
+		: 0;
+
+	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
 
 	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey as CurrencyKey]! : null;
 
@@ -448,6 +455,11 @@ const useExchange = ({
 	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey as CurrencyKey);
 	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey as CurrencyKey);
 
+	const settlementDisabledReason =
+		settlementWaitingPeriodInSeconds > 0
+			? t('exchange.summary-info.button.settle-waiting-period')
+			: null;
+
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =
 			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
@@ -531,16 +543,6 @@ const useExchange = ({
 		setBaseCurrencyAmount('');
 	}
 
-	const gasPrice = useMemo(
-		() =>
-			customGasPrice !== ''
-				? Number(customGasPrice)
-				: ethGasPriceQuery.data != null
-				? parseGasPriceObject(ethGasPriceQuery.data[gasSpeed])
-				: null,
-		[customGasPrice, ethGasPriceQuery.data, gasSpeed, isL2]
-	);
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -572,7 +574,6 @@ const useExchange = ({
 	useEffect(() => {
 		const getGasLimitEstimate = async () => {
 			if (gasInfo == null && submissionDisabledReason == null) {
-				const gasPriceWei = gasPrice ? gasPriceInWei(gasPrice) : null;
 				const gasEstimate = await getGasEstimateForExchange(gasPriceWei);
 				setGasInfo(gasEstimate);
 			}
@@ -602,28 +603,64 @@ const useExchange = ({
 		oneInchQuoteQuery.isSuccess,
 	]);
 
-	const getExchangeParams = useCallback(() => {
-		const quoteKeyBytes32 = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-		const baseKeyBytes32 = ethers.utils.formatBytes32String(baseCurrencyKey!);
-		const amountToExchange = quoteCurrencyAmountBN.toBN();
-		const trackingCode = ethers.utils.formatBytes32String('KWENTA');
+	const getExchangeParams = useCallback(
+		(isAtomic: boolean) => {
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
+			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const sourceAmount = quoteCurrencyAmountBN.toBN();
+			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
 
-		return [quoteKeyBytes32, amountToExchange, baseKeyBytes32, walletAddress, trackingCode];
-	}, [baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]);
+			if (isAtomic) {
+				return [destinationCurrencyKey, sourceAmount, sourceCurrencyKey, trackingCode];
+			} else {
+				return [
+					destinationCurrencyKey,
+					sourceAmount,
+					sourceCurrencyKey,
+					walletAddress,
+					trackingCode,
+				];
+			}
+		},
+		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]
+	);
 
 	const getGasEstimateForExchange = useCallback(
 		async (gasPriceInWei: number | null) => {
 			try {
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
-					const exchangeParams = getExchangeParams();
-					const gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
-						...exchangeParams
-					);
-					let gasLimitNum = Number(gasEstimate);
-					const metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
-						...exchangeParams
-					);
+					const destinationCurrencyKey = getExchangeParams(true)[0];
+					const isAtomic =
+						destinationCurrencyKey === 'sBTC' ||
+						destinationCurrencyKey === 'sETH' ||
+						destinationCurrencyKey === 'sEUR';
+					const exchangeParams = getExchangeParams(isAtomic);
+
+					let gasEstimate, gasLimitNum, metaTx;
+
+					if (isAtomic) {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
+					gasLimitNum = Number(gasEstimate);
+
+					if (isAtomic) {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
+							...exchangeParams
+						);
+					} else {
+						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
+							...exchangeParams
+						);
+					}
+
 					const l1Fee = await getL1SecurityFee({
 						...metaTx,
 						gasPrice: gasPriceInWei!,
@@ -690,11 +727,10 @@ const useExchange = ({
 						oneInchApproveAddress,
 						ethers.constants.MaxUint256
 					);
-					const gasPriceWei = gasPriceInWei(gasPrice);
 
 					const tx = await contract.approve(oneInchApproveAddress, ethers.constants.MaxUint256, {
 						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
-						gasPrice: gasPriceWei,
+						...gasConfig,
 					});
 
 					if (tx != null) {
@@ -717,18 +753,62 @@ const useExchange = ({
 		}
 	};
 
+	const handleSettle = async () => {
+		if (synthetixjs != null && gasPrice != null) {
+			setTxError(null);
+			setTxSettleModalOpen(true);
+
+			try {
+				const gasEstimate = await synthetixjs.contracts.Exchanger.estimateGas.settle(
+					walletAddress,
+					ethers.utils.formatBytes32String(baseCurrencyKey as string)
+				);
+
+				const gas = {
+					gasPrice: gasPriceWei,
+					gasLimit: normalizeGasLimit(Number(gasEstimate)),
+				};
+
+				// send transaction
+				const tx = await synthetixjs.contracts.Exchanger.settle(
+					walletAddress,
+					ethers.utils.formatBytes32String(baseCurrencyKey as string),
+					gas
+				);
+
+				if (tx != null) {
+					monitorTransaction({
+						txHash: tx.hash,
+						onTxConfirmed: () => {
+							numEntriesQuery.refetch();
+						},
+					});
+				}
+
+				setTxSettleModalOpen(false);
+			} catch (e) {
+				console.log(e);
+				setTxError(e.message);
+			}
+		}
+	};
+
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
-			const exchangeParams = getExchangeParams();
+
+			const destinationCurrencyKey = getExchangeParams(true)[0];
+			const isAtomic =
+				destinationCurrencyKey === 'sBTC' ||
+				destinationCurrencyKey === 'sETH' ||
+				destinationCurrencyKey === 'sEUR';
+			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
 				setIsSubmitting(true);
 
 				let tx: ethers.ContractTransaction | null = null;
-
-				const gasPriceWei = gasPriceInWei(gasPrice);
 
 				if (txProvider === '1inch' && tokensMap != null) {
 					tx = await swap1Inch(
@@ -744,10 +824,15 @@ const useExchange = ({
 					setGasInfo(gasInfo);
 
 					const gas = {
-						gasPrice: gasPriceWei,
 						gasLimit: gasInfo?.limit,
+						...gasConfig,
 					};
-					tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
+
+					if (isAtomic) {
+						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
+					} else {
+						tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
+					}
 				}
 
 				if (tx != null) {
@@ -780,6 +865,7 @@ const useExchange = ({
 								})
 							);
 							synthsWalletBalancesQuery.refetch();
+							numEntriesQuery.refetch();
 						},
 					});
 				}
@@ -805,11 +891,14 @@ const useExchange = ({
 		setOrders,
 		swap1Inch,
 		synthsWalletBalancesQuery,
+		numEntriesQuery,
 		txProvider,
 		monitorTransaction,
 		slippage,
 		tokensMap,
 		synthetixjs,
+		gasPriceWei,
+		gasConfig,
 	]);
 
 	useEffect(() => {
@@ -1110,6 +1199,15 @@ const useExchange = ({
 				/>
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
+			) : !isL2 && numEntries >= 12 ? (
+				<SettleTransactionsCard
+					attached={footerCardAttached}
+					submissionDisabledReason={settlementDisabledReason}
+					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
+					onSubmit={handleSettle}
+					settleCurrency={baseCurrencyKey as CurrencyKey}
+					numEntries={numEntries}
+				/>
 			) : (
 				<TradeSummaryCard
 					attached={footerCardAttached}
@@ -1119,7 +1217,7 @@ const useExchange = ({
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					gasPrices={ethGasPriceQuery.data}
+					gasPrices={gasPrices}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}
@@ -1161,6 +1259,16 @@ const useExchange = ({
 			)}
 			{selectBalancerTradeModal && (
 				<BalancerTradeModal onDismiss={() => setSelectBalancerTradeModal(false)} />
+			)}
+			{txSettleModalOpen && (
+				<TxSettleModal
+					onDismiss={() => setTxSettleModalOpen(false)}
+					txError={txError}
+					attemptRetry={handleSettle}
+					currencyKey={baseCurrencyKey!}
+					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
+					txProvider={txProvider}
+				/>
 			)}
 		</>
 	);

@@ -4,5 +4,9 @@ export const SYNTHS_TO_SHORT_L1: CurrencyKey[] = [Synths.sBTC, Synths.sETH, Synt
 export const SYNTHS_TO_SHORT: CurrencyKey[] = [
 	Synths.sBTC,
 	Synths.sETH,
-	Synths.sLINK /* Synths.sSOL */,
+	Synths.sLINK,
+	Synths.sSOL,
+	Synths.sAVAX,
+	Synths.sMATIC,
+	Synths.sEUR,
 ];

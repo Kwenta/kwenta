@@ -46,6 +46,9 @@ const useConnector = () => {
 		setTransactionNotifier,
 	] = useState<TransactionNotifierInterface | null>(null);
 
+	// Provides a default mainnet provider, irrespective of the current network
+	const staticMainnetProvider = new ethers.providers.InfuraProvider();
+
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
 		if (synthetixjs == null) {
 			return [{}, {}, {}];
@@ -252,6 +255,7 @@ const useConnector = () => {
 		isHardwareWallet,
 		transactionNotifier,
 		getTokenAddress,
+		staticMainnetProvider,
 	};
 };
 

@@ -123,6 +123,18 @@ const Trade: React.FC<TradeProps> = () => {
 		setTradeSizeSUSD(value === '' ? '' : (Number(value) * marketAssetRate).toString());
 	};
 
+    useEffect(() => {
+        const handleRouteChange = () => {
+            setTradeSize('');
+            setTradeSizeSUSD('');
+        };
+        router.events.on('routeChangeStart', handleRouteChange);
+
+        return () => {
+            router.events.off('routeChangeStart', handleRouteChange);
+        };
+    }, [router.events]);
+
 	useEffect(() => {
 		// We should probably compute this using Wei(). Problem is exchangeRates return numbers.
 		if (
@@ -224,6 +236,7 @@ const Trade: React.FC<TradeProps> = () => {
 						setTimeout(() => {
 							futuresMarketPositionQuery.refetch();
 							futuresPositionHistoryQuery.refetch();
+							marketQuery.refetch();
 						}, 5 * 1000);
 					},
 				});
@@ -297,7 +310,7 @@ const Trade: React.FC<TradeProps> = () => {
 					!leverage ||
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
-					(futuresMarketsPosition?.accessibleMargin ?? zeroBN).lt(wei(100))
+					!!error
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
