@@ -40,7 +40,6 @@ const Button = styled.button<ButtonProps>`
 	}
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	/* border: ${(props) => props.theme.colors.selectedTheme.border}; */
 	border: none;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};

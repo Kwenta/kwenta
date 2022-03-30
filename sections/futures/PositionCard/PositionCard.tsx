@@ -191,20 +191,24 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							: <StyledValue>{NO_VALUE}</StyledValue>
 						}
 					</InfoCol>
+					<InfoCol>
+						{onPositionClose && (
+							<CloseButton
+								isRounded={true}
+								size="sm"
+								variant="danger"
+								onClick={() => setClosePositionModalIsVisible(true)}
+								disabled={!positionDetails}
+								noOutline={true}
+							>
+								{t('futures.market.user.position.close-position')}
+							</CloseButton>
+						)}
+					</InfoCol>
 				</DataCol>
-				<DataCol style={{ justifyContent: 'flex-end' }}>
-					{onPositionClose && (
-						<CloseButton
-							isRounded={true}
-							size="sm"
-							variant="danger"
-							onClick={() => setClosePositionModalIsVisible(true)}
-							disabled={!positionDetails}
-						>
-							{t('futures.market.user.position.close-position')}
-						</CloseButton>
-					)}
-				</DataCol>
+				{/* <DataCol style={{ justifyContent: 'flex-end' }}>
+				
+				</DataCol> */}
 			</Container>
 			{closePositionModalIsVisible && onPositionClose && (
 				<ClosePositionModal
@@ -221,18 +225,19 @@ export default PositionCard;
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	grid-gap: 16px;
+	grid-template-columns: repeat(5, auto);
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 22px;
+	padding: 20px 60px 25px 18px;
+	justify-content: space-between;
 	border-radius: 10px;
+	min-height: 135px;
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
-	margin-right: 8px;
+	margin-right: 15px;
 `;
 
 const DataCol = styled(FlexDivCol)`
@@ -240,8 +245,6 @@ const DataCol = styled(FlexDivCol)`
 `;
 
 const InfoCol = styled(FlexDivCol)`
-	margin-bottom: 8px;
-
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -256,7 +259,6 @@ const StyledSubtitle = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	margin-bottom: 4px;
 `;
 
 const StyledValue = styled.div`
@@ -266,8 +268,28 @@ const StyledValue = styled.div`
 `;
 
 const CloseButton = styled(Button)`
-	height: 36px;
+	height: 34px;
 	font-size: 13px;
+    background: rgba(239, 104, 104, 0.04);
+    border: 1px solid #ef6868;
+	box-shadow: none;
+	min-width: 100px;
+	width: 110px;
+	padding: 0;
+	transition: all 0.1s cubic-bezier(0.93, 0.01, 0.97, 0);
+
+	&:hover{
+		background: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.white};
+		transform: scale(0.98);
+	}
+
+	&:disabled{
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: transparent;
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		transform: none;
+	}
 `;
 
 const CurrencySubtitle = styled(StyledSubtitle)`
@@ -275,7 +297,7 @@ const CurrencySubtitle = styled(StyledSubtitle)`
 `;
 
 const PositionInfoCol = styled(InfoCol)`
-	padding-left: 38px;
+	padding-left: 45px;
 `;
 
 const PositionValue = styled.p<{ side: PositionSide }>`
