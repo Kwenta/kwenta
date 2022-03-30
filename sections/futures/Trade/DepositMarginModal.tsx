@@ -61,7 +61,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const depositTxn = useSynthetixTxn(
 		`FuturesMarket${market?.substring(1)}`,
 		'transferMargin',
-		[wei(amount).toBN()],
+		[wei(!!amount ? amount : 0).toBN()],
 		gasPrice || undefined,
 		{ enabled: !!market && !!amount && !disabled }
 	);

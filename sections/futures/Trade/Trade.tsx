@@ -108,9 +108,11 @@ const Trade: React.FC<TradeProps> = () => {
 	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
 
 	const onTradeAmountChange = React.useCallback(
-		(value: string) => {
-			setTradeSize(value);
-			setTradeSizeSUSD(value === '' ? '' : marketAssetRate.mul(Number(value)).toString());
+		(value: string, fromLeverage: boolean = false) => {
+			setTradeSize(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value);
+			setTradeSizeSUSD(
+				value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString()
+			);
 		},
 		[marketAssetRate]
 	);
@@ -136,13 +138,13 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);
-		setTradeSize(value === '' ? '' : wei(value).div(marketAssetRate).toString());
+		setTradeSize(value === '' ? '' : wei(value).div(marketAssetRate).toNumber().toString());
 	};
 
 	const onLeverageChange = React.useCallback(
 		(value: string) => {
-			if (value === '' || Number(value) < 0) {
-				setLeverage('');
+			if (value === '' || Number(value) <= 0) {
+				setLeverage(Number(value) === 0 ? value : '');
 				setTradeSize('');
 				setTradeSizeSUSD('');
 			} else {
@@ -153,7 +155,7 @@ const Trade: React.FC<TradeProps> = () => {
 							.mul(futuresMarketsPosition?.remainingMargin ?? zeroBN)
 							.div(marketAssetRate);
 
-				onTradeAmountChange(newTradeSize.toString());
+				onTradeAmountChange(newTradeSize.toString(), true);
 			}
 		},
 		[futuresMarketsPosition?.remainingMargin, marketAssetRate, onTradeAmountChange]
@@ -172,11 +174,12 @@ const Trade: React.FC<TradeProps> = () => {
 				!walletAddress ||
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
-				!isLeverageValueCommitted
+				!isLeverageValueCommitted ||
+				!futuresMarketsPosition ||
+				!futuresMarketsPosition.remainingMargin
 			) {
 				return;
 			}
-			if (!futuresMarketsPosition || !futuresMarketsPosition.remainingMargin) return;
 			try {
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
@@ -211,7 +214,7 @@ const Trade: React.FC<TradeProps> = () => {
 				!!leverage &&
 				Number(leverage) >= 0 &&
 				maxLeverageValue.gte(Number(leverage)) &&
-				!error,
+				!sizeDelta.eq(zeroBN),
 		}
 	);
 
@@ -232,12 +235,6 @@ const Trade: React.FC<TradeProps> = () => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
-
-	useEffect(() => {
-		if (orderTxn.errorMessage) {
-			setError(orderTxn.errorMessage);
-		}
-	}, [orderTxn.errorMessage]);
 
 	return (
 		<Panel>
@@ -301,6 +298,7 @@ const Trade: React.FC<TradeProps> = () => {
 					!leverage ||
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
+					sizeDelta.eq(zeroBN) ||
 					!!error
 				}
 				onClick={() => {
@@ -310,7 +308,9 @@ const Trade: React.FC<TradeProps> = () => {
 				{futuresMarketsPosition?.position ? 'Modify Position' : 'Open Position'}
 			</PlaceOrderButton>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
+			{(orderTxn.errorMessage || error) && (
+				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
+			)}
 
 			<FeeInfoBox feeCost={feeCost} />
 
