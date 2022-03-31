@@ -92,12 +92,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							{positionDetails
 								? formatNumber(positionDetails.size ?? 0, {
 										minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-									}
-								) + " (" +
-								formatCurrency(
-									Synths.sUSD,
-									positionDetails.notionalValue.abs() ?? zeroBN,
-									{
+								  }) +
+								  ' (' +
+								  formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
 										sign: '$',
 										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
 								  }) +
@@ -163,29 +160,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Last Entry Price</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>
-							{positionDetails ?
-								formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-									sign: '$',
-								})
-								: NO_VALUE
-							}
-						</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue
@@ -205,6 +179,28 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
 						)}
+					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Fees</StyledSubtitle>
+						<StyledValue>
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
+						</StyledValue>
+					</InfoCol>
+				</DataCol>
+				<DataCol>
+					<InfoCol>
+						<StyledSubtitle>Last Entry Price</StyledSubtitle>
+						<StyledValue>
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
+						</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						{onPositionClose && (
@@ -240,10 +236,10 @@ const Container = styled.div`
 	grid-template-columns: repeat(5, auto);
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 20px 60px 25px 18px;
+	padding: 20px 80px 20px 18px;
 	justify-content: space-between;
 	border-radius: 10px;
-	min-height: 135px;
+	/* min-height: 135px; */
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
@@ -252,11 +248,13 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 15px;
 `;
 
-const DataCol = styled(FlexDivCol)`
-	justify-content: space-between;
-`;
+const DataCol = styled(FlexDivCol)``;
 
 const InfoCol = styled(FlexDivCol)`
+	&:nth-of-type(odd) {
+		margin-bottom: 18px;
+	}
+
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -288,7 +286,7 @@ const CloseButton = styled(Button)`
 	min-width: 100px;
 	width: 110px;
 	padding: 0;
-	transition: all 0.1s cubic-bezier(0.93, 0.01, 0.97, 0);
+	transition: all 0s ease-in-out;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.common.primaryRed};
