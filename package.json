@@ -29,7 +29,7 @@
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.12",
-		"@synthetixio/contracts-interface": "2.64.1",
+		"@synthetixio/contracts-interface": "2.65.2",
 		"@synthetixio/optimism-networks": "2.63.1",
 		"@synthetixio/providers": "2.64.1",
 		"@synthetixio/queries": "2.64.1",
@@ -41,7 +41,7 @@
 		"bnc-onboard": "1.37.3",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
-		"ethcall": "3.2.0",
+		"ethcall": "4.4.0",
 		"ethers": "5.5.0",
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
@@ -118,7 +118,8 @@
 		"react-test-renderer": "17.0.1",
 		"typescript": "4.0.5",
 		"url-loader": "4.1.0",
-		"webp-loader": "0.6.0"
+		"webp-loader": "0.6.0",
+		"webpack": "^5.70.0"
 	},
 	"resolutions": {
 		"webpack": "^5.0.0-beta.30"

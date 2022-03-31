@@ -62,7 +62,7 @@ const Header: FC = () => {
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
-						<FuturesLink href="https://v2.beta.kwenta.io" target="_blank">
+						<FuturesLink href="https://v2.beta.kwenta.io/" target="_blank">
 							Perpetual Futures Beta available now
 						</FuturesLink>
 						<Img src={LinkWhiteIcon} />
@@ -116,6 +116,7 @@ const Container = styled.header`
 		grid-template-columns: auto auto;
 	`}
 `;
+
 const FuturesBannerContainer = styled.div`
 	height: 65px;
 	width: 100%;

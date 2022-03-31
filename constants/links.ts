@@ -16,7 +16,7 @@ export const EXTERNAL_LINKS = {
 	},
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
-		Medium: 'https://blog.kwenta.io/',
+		Medium: 'https://mirror.xyz/kwenta.eth/',
 		Discord: 'https://discord.gg/kwenta',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},

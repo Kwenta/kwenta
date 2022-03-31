@@ -7,7 +7,7 @@ import { isL2State } from 'store/wallet';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 
 import { CRYPTO_CURRENCY_MAP, Synths } from 'constants/currency';
-import { SYNTHS_TO_SHORT, SYNTHS_TO_SHORT_L1 } from '../constants';
+import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
 
 import ShortingRewardRow, { GasInfo } from './ShortingRewardRow';
 
@@ -23,6 +23,9 @@ import useGas from 'hooks/useGas';
 const ShortingRewards: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
+
+	const shortListQuery = useGetShortableSynths(isL2);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [shortListQuery.data]);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 	const { gasPrice, gasPrices } = useGas();
@@ -60,7 +63,7 @@ const ShortingRewards: FC = () => {
 	return (
 		<div>
 			<Title>{t('shorting.rewards.title')}</Title>
-			{(isL2 ? SYNTHS_TO_SHORT : SYNTHS_TO_SHORT_L1).map((currencyKey) => (
+			{SYNTHS_TO_SHORT.map((currencyKey) => (
 				<ShortingRewardRow
 					key={currencyKey}
 					{...{

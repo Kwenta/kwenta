@@ -17,7 +17,7 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
-import { SYNTHS_TO_SHORT, SYNTHS_TO_SHORT_L1 } from '../constants';
+import useGetShortableSynths from 'queries/synths/useGetShortableSynths';
 import { Title } from '../common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
@@ -28,6 +28,9 @@ const ShortingStats = () => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isL2 = useRecoilValue(isL2State);
+
+	const shortListQuery = useGetShortableSynths(isL2);
+	const SYNTHS_TO_SHORT = useMemo(() => shortListQuery.data ?? [], [shortListQuery.data]);
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 
@@ -76,7 +79,7 @@ const ShortingStats = () => {
 					</TableRowHead>
 				</thead>
 				<tbody>
-					{(isL2 ? SYNTHS_TO_SHORT : SYNTHS_TO_SHORT_L1).map((currencyKey) => (
+					{SYNTHS_TO_SHORT.map((currencyKey) => (
 						<TableRow key={currencyKey}>
 							<TableCell colSpan={2}>
 								<StyledCurrencyName currencyKey={currencyKey} showIcon={true} />
