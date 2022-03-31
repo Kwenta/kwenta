@@ -7,7 +7,11 @@ import { components, OptionProps } from 'react-select';
 const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 	<components.Option {...props}>
 		<OptionDetailsContainer $isSelected={props.isSelected}>
-			<CurrencyIcon currencyKey={props.data.value} width="31px" height="31px" />
+			<CurrencyIcon
+				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
+				width="31px"
+				height="31px"
+			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
 					<CurrencyLabel>{props.data.label}</CurrencyLabel>

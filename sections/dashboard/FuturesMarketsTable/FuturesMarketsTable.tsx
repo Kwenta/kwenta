@@ -105,7 +105,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
+										<StyledCurrencyIcon
+											currencyKey={
+												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+												cellProps.row.original.asset
+											}
+										/>
 									</IconContainer>
 									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
