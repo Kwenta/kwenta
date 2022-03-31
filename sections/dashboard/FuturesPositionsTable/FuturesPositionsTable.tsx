@@ -49,7 +49,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 					return {
 						asset: position.asset,
-						market: position.asset.slice(1) + '-PERP',
+						market: (position.asset[0] === 's' ? position.asset.slice(1) : position) + '-PERP',
 						description: description,
 						notionalValue: position?.position?.notionalValue.abs(),
 						position: position?.position?.side,

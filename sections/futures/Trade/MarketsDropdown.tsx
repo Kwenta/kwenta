@@ -37,7 +37,7 @@ const assetToCurrencyOption = (
 	negativeChange: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
-	label: `${asset.slice(1)}-PERP`,
+	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
 	description,
 	price,
 	change,

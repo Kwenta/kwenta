@@ -50,7 +50,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 			return {
 				asset: market.asset,
-				market: market.asset.slice(1) + '-PERP',
+				market: (market.asset[0] === 's' ? market.asset.slice(1) : market) + '-PERP',
 				synth: synthsMap[market.asset],
 				description: description,
 				price: market.price.toNumber(),
