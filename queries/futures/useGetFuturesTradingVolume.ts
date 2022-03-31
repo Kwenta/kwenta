@@ -5,13 +5,12 @@ import request, { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
-import { calculateTradeVolume } from './utils';
+import { calculateTradeVolume, getFuturesEndpoint, getFuturesMarketContract } from './utils';
 
 const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
@@ -19,15 +18,17 @@ const useGetFuturesTradingVolume = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network)
+
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.TradingVolume(currencyKey || null),
+		QUERY_KEYS.Futures.TradingVolume(network.id, currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
 				const response = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query tradingVolume($currencyKey: String!) {
 							futuresTrades(
@@ -48,7 +49,7 @@ const useGetFuturesTradingVolume = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress && !!currencyKey, ...options }
+		{ enabled: isAppReady && isL2 && !!currencyKey, ...options }
 	);
 };
 

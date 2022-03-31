@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { CANDLES_ENDPOINT } from './constants';
@@ -12,13 +12,14 @@ import { mapLaggedDailyPrices } from './utils';
 const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const minTimestamp = Math.floor(Date.now() / 1000) - 60*60*24;
 	const maxTimestamp = minTimestamp + 60*60;
 
 	return useQuery(
-		QUERY_KEYS.Futures.AllPositionHistory(walletAddress || ''),
+		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
 				const response = await request(

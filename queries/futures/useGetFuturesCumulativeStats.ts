@@ -3,23 +3,25 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import { FuturesCumulativeStats } from './types';
+import { getFuturesEndpoint } from './utils';
 import { wei } from '@synthetixio/wei';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network)
 
 	return useQuery<FuturesCumulativeStats | null>(
-		QUERY_KEYS.Futures.TotalTrades,
+		QUERY_KEYS.Futures.TotalTrades(network.id),
 		async () => {
 			try {
 				const response = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query FuturesCumulativeStats {
 							futuresCumulativeStat(id: "0") {
