@@ -16,7 +16,9 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 			</CurrencyMeta>
 			<div>
 				<p className="price">{props.data.price}</p>
-				<p className={props.data.negativeChange ? `change red` : 'change green'}>{props.data.change}</p>
+				<p className={props.data.negativeChange ? `change red` : 'change green'}>
+					{props.data.change}
+				</p>
 			</div>
 		</OptionDetailsContainer>
 	</components.Option>
