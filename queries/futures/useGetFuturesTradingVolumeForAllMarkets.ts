@@ -4,13 +4,12 @@ import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
-import { calculateTradeVolumeForAll } from './utils';
+import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 import { FuturesVolumes } from './types';
 
 const useGetFuturesTradingVolumeForAllMarkets = (
@@ -19,13 +18,16 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network)
+
 	return useQuery<FuturesVolumes | null>(
-		QUERY_KEYS.Futures.TradingVolumeForAll,
+		QUERY_KEYS.Futures.TradingVolumeForAll(network.id),
 		async () => {
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
 				const response = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query tradingVolume($minTimestamp: BigInt!) {
 							futuresTrades(

@@ -1,21 +1,23 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import request, { gql } from 'graphql-request';
 import { FuturesStat } from './types';
+import { getFuturesEndpoint } from './utils';
 
 const PAGE_SIZE = 500;
 
 const useGetStats = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network)
 
 	const query = async (existing: FuturesStat[], skip: number): Promise<FuturesStat[]> => {
 		const response = await request(
-			FUTURES_ENDPOINT,
+			futuresEndpoint,
 			gql`
 				query userStats($skip: Int!) {
 					futuresStats(skip: $skip, first: ${PAGE_SIZE}) {

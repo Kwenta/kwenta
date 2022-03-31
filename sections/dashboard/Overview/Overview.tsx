@@ -22,6 +22,7 @@ enum MarketsTab {
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 

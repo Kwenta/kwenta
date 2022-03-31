@@ -122,21 +122,45 @@ export const QUERY_KEYS = {
 		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 	},
 	Futures: {
-		DayTradeStats: (currencyKey: string | null) => ['futures', 'dayTradeStats', currencyKey],
-		Markets: ['futures', 'marketsSummaries'],
+		DayTradeStats: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'dayTradeStats',
+			networkId,
+			currencyKey
+		],
+		Markets: (networkId: NetworkId) => [
+			'futures',
+			'marketsSummaries',
+			networkId
+		],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
-		TradingVolume: (currencyKey: string | null) => ['futures', 'tradingVolume', currencyKey],
-		TradingVolumeForAll: ['futures', 'tradingVolumeForAll'],
-		MarketPositionHistory: (market: string | null, walletAddress: string) => [
+		TradingVolume: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'tradingVolume',
+			networkId,
+			currencyKey
+		],
+		TradingVolumeForAll: (networkId: NetworkId) => [
+			'futures',
+			'tradingVolumeForAll',
+			networkId
+		],
+		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
 			'marketPositionHistory',
 			market,
 			walletAddress,
 		],
-		AllPositionHistory: (walletAddress: string) => ['futures', 'allPositionHistory', walletAddress],
-		Position: (market: string | null, walletAddress: string) => [
+		AllPositionHistory: (networkId: NetworkId, walletAddress: string) => [
+			'futures',
+			'allPositionHistory',
+			networkId,
+			walletAddress
+		],
+		Position: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
 			'position',
+			networkId,
 			market,
 			walletAddress,
 		],
@@ -145,16 +169,18 @@ export const QUERY_KEYS = {
 			'marketsPositions',
 			markets
 		],
-		Positions: (markets: string[] | [], walletAddress: string) => [
+		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
 			'futures',
 			'positions',
+			networkId,
 			markets,
 			walletAddress,
 		],
-		AccountPositions: (walletAddress: string | null) => [
+		AccountPositions: (walletAddress: string | null, networkId: NetworkId) => [
 			'futures',
 			'accountPositions',
 			walletAddress,
+			networkId
 		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
@@ -162,7 +188,11 @@ export const QUERY_KEYS = {
 		AverageLeverage: ['futures', 'averageLeverage'],
 		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
-		TotalTrades: ['futures', 'totalTrades'],
+		TotalTrades: (networkId: NetworkId) => [
+			'futures',
+			'totalTrades',
+			networkId
+		],
 		TotalVolume: ['futures', 'totalVolume'],
 	},
 };

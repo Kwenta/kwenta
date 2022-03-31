@@ -3,12 +3,11 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { calculateDailyTradeStats } from './utils';
+import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
 
 const PAGE_SIZE = 500;
@@ -16,7 +15,8 @@ const PAGE_SIZE = 500;
 const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTradeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network)
 
 	const queryTrades = async (
 		skip: number,
@@ -25,7 +25,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 		try {
 			const minTimestamp = calculateTimestampForPeriod(24);
 			const response = await request(
-				FUTURES_ENDPOINT,
+				futuresEndpoint,
 				gql`
 					query FutureOneMinStats($skip: Int!) {
 						futuresOneMinStats(
@@ -55,13 +55,13 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	};
 
 	return useQuery<FuturesDailyTradeStats | null>(
-		QUERY_KEYS.Futures.DayTradeStats(null),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, null),
 		async () => {
 			const trades = await queryTrades(0, []);
 
 			return calculateDailyTradeStats(trades);
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress, ...options }
+		{ enabled: isAppReady && isL2, ...options }
 	);
 };
 
