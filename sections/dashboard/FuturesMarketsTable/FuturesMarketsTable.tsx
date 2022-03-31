@@ -87,7 +87,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
+				// pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
 					router.push(`/market/${row.original.asset}`);
@@ -277,7 +277,8 @@ const TableContainer = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-	margin-top: '20px';
+	margin-top: 20px;
+	margin-bottom: 20px;
 `;
 
 const TableHeader = styled.div``;
