@@ -28,7 +28,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresPositionQuery = useGetFuturesPositionForMarkets(
 		futuresMarkets.map(({ asset }) => asset)
 	);
-	const futuresPositions = futuresPositionQuery?.data ?? [];
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
@@ -40,28 +39,32 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	);
 
 	let data = useMemo(() => {
-		const activePositions = futuresPositions.filter((position: FuturesPosition) => position?.position)
-		return activePositions.length > 0 ? activePositions.map((position: FuturesPosition, i: number) => {
-			const description = getSynthDescription(position.asset);
+		const futuresPositions = futuresPositionQuery?.data ?? [];
+		const activePositions = futuresPositions.filter(
+			(position: FuturesPosition) => position?.position
+		);
+		return activePositions.length > 0
+			? activePositions.map((position: FuturesPosition, i: number) => {
+					const description = getSynthDescription(position.asset);
 
-			return {
-				asset: position.asset,
-				market: position.asset.slice(1) + '-PERP',
-				description: description,
-				notionalValue: position?.position?.notionalValue.abs(),
-				position: position?.position?.side,
-				lastPrice: position?.position?.lastPrice,
-				liquidationPrice: position?.position?.liquidationPrice,
-				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-				pnlPct: position?.position?.profitLoss.div(
-					position?.position?.initialMargin.mul(position?.position?.initialLeverage)
-				),
-				margin: position.accessibleMargin,
-				leverage: position?.position?.leverage,
-			};
-		})
-		: DEFAULT_DATA
-	}, [futuresPositions, futuresMarkets, getSynthDescription]);
+					return {
+						asset: position.asset,
+						market: position.asset.slice(1) + '-PERP',
+						description: description,
+						notionalValue: position?.position?.notionalValue.abs(),
+						position: position?.position?.side,
+						lastPrice: position?.position?.lastPrice,
+						liquidationPrice: position?.position?.liquidationPrice,
+						pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
+						pnlPct: position?.position?.profitLoss.div(
+							position?.position?.initialMargin.mul(position?.position?.initialLeverage)
+						),
+						margin: position.accessibleMargin,
+						leverage: position?.position?.leverage,
+					};
+			  })
+			: DEFAULT_DATA;
+	}, [futuresPositionQuery.data, getSynthDescription]);
 
 	return (
 		<TableContainer>
@@ -69,11 +72,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				data={data}
 				pageSize={5}
 				showPagination={true}
-				onTableRowClick={(row) => {
-					row.original.asset !== NO_VALUE ?
-						router.push(`/market/${row.original.asset}`) :
-						null;
-				}}
+				onTableRowClick={(row) =>
+					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
+				}
 				highlightRowsOnHover
 				columns={[
 					{
@@ -87,7 +88,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
+										<StyledCurrencyIcon
+											currencyKey={
+												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+												cellProps.row.original.asset
+											}
+										/>
 									</IconContainer>
 									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
@@ -112,7 +118,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.notionalValue')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-positions-table.notionalValue')}
+							</TableHeader>
 						),
 						accessor: 'notionalValue',
 						Cell: (cellProps: CellProps<any>) => {
@@ -155,12 +163,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<PnlContainer>
 									<ChangePercent value={cellProps.row.original.pnlPct} className="change-pct" />
 									<div>
-										(<Currency.Price
+										(
+										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
-										/>)
+										/>
+										)
 									</div>
 								</PnlContainer>
 							);
@@ -177,20 +187,22 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.avgOpenClose === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
-								) : (
-									<Currency.Price
+							) : (
+								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.lastPrice}
 									sign={'$'}
 									conversionRate={1}
 								/>
-								);
-							},
-							width: 125,
+							);
+						},
+						width: 125,
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.liquidationPrice')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-positions-table.liquidationPrice')}
+							</TableHeader>
 						),
 						accessor: 'liquidationPrice',
 						Cell: (cellProps: CellProps<any>) => {
