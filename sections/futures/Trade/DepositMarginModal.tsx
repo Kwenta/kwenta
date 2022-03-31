@@ -40,7 +40,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
-	const [disabled, setDisabled] = React.useState<boolean>(true);
+	const [isDisabled, setDisabled] = React.useState<boolean>(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -63,7 +63,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
-		{ enabled: !!market && !!amount && !disabled }
+		{ enabled: !!market && !!amount && !isDisabled }
 	);
 
 	const transactionFee = React.useMemo(
@@ -90,7 +90,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 		} else {
 			setDisabled(true);
 		}
-	}, [amount, disabled, sUSDBalance, setDisabled]);
+	}, [amount, isDisabled, sUSDBalance, setDisabled]);
 
 	React.useEffect(() => {
 		if (depositTxn.hash) {
@@ -135,7 +135,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
 			</MinimumAmountDisclaimer>
 
-			<MarginActionButton disabled={disabled} fullWidth onClick={() => depositTxn.mutate()}>
+			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => depositTxn.mutate()}>
 				{t('futures.market.trade.margin.modal.deposit.button')}
 			</MarginActionButton>
 

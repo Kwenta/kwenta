@@ -45,7 +45,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
-	const [disabled, setDisabled] = React.useState<boolean>(true);
+	const [isDisabled, setDisabled] = React.useState<boolean>(true);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -117,7 +117,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 		} else {
 			setDisabled(true);
 		}
-	}, [amount, disabled, accessibleMargin, setDisabled]);
+	}, [amount, isDisabled, accessibleMargin, setDisabled]);
 
 	const handleSetMax = React.useCallback(() => {
 		setMax(true);
@@ -149,7 +149,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				}
 			/>
 
-			<MarginActionButton disabled={disabled} fullWidth onClick={() => withdrawTxn.mutate()}>
+			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => withdrawTxn.mutate()}>
 				{t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 
