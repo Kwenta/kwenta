@@ -212,7 +212,7 @@ const Trade: React.FC<TradeProps> = () => {
 	]);
 
 	const orderTxn = useSynthetixTxn(
-		`FuturesMarket${marketAsset?.substring(1)}`,
+		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
 		'modifyPosition',
 		[sizeDelta.toBN()],
 		gasPrice,

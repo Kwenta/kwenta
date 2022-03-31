@@ -10,7 +10,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { newGetTransactionPrice } from 'utils/network';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
 import {
@@ -46,7 +46,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [disabled, setDisabled] = React.useState<boolean>(true);
-	const [error, setError] = React.useState<string | null>(null);
 	const [isMax, setMax] = React.useState(false);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -67,14 +66,14 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 
 	const computedAmount = React.useMemo(
 		() =>
-			accessibleMargin.eq(!!amount ? wei(amount) : zeroBN)
+			accessibleMargin.eq(wei(amount || 0))
 				? accessibleMargin.mul(wei(-1)).toBN()
 				: wei(-amount).toBN(),
 		[amount, accessibleMargin]
 	);
 
 	const withdrawTxn = useSynthetixTxn(
-		`FuturesMarket${market?.substring(1)}`,
+		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
 		isMax ? 'withdrawAllMargin' : 'transferMargin',
 		isMax ? [] : [computedAmount],
 		gasPrice || undefined,
@@ -104,13 +103,6 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [withdrawTxn.hash]);
-
-	React.useEffect(() => {
-		if (withdrawTxn.errorMessage) {
-			console.log(withdrawTxn.errorMessage);
-			setError(withdrawTxn.errorMessage);
-		}
-	}, [withdrawTxn.errorMessage]);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -172,7 +164,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				</BalanceText>
 			</GasFeeContainer>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
+			{withdrawTxn.errorMessage && <ErrorMessage>{withdrawTxn.errorMessage}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };

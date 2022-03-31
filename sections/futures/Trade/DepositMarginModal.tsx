@@ -41,7 +41,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [disabled, setDisabled] = React.useState<boolean>(true);
-	const [error, setError] = React.useState<string | null>(null);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -60,9 +59,9 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${market?.substring(1)}`,
+		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
 		'transferMargin',
-		[wei(!!amount ? amount : 0).toBN()],
+		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
 		{ enabled: !!market && !!amount && !disabled }
 	);
@@ -77,12 +76,6 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			),
 		[gasPrice, ethPriceRate, depositTxn.gasLimit, depositTxn.optimismLayerOneFee]
 	);
-
-	React.useEffect(() => {
-		if (depositTxn.errorMessage) {
-			setError(depositTxn.errorMessage);
-		}
-	}, [depositTxn.errorMessage]);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -157,7 +150,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</GasFeeContainer>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
+			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
