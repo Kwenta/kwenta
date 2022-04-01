@@ -68,8 +68,10 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
-			return t('common.currency.futures-market-long-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
+			return t('common.currency.futures-market-short-name', {
+				currencyName:
+					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
 			});
 		},
 		[t, synthsMap]

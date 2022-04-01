@@ -40,14 +40,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 	const futuresMarkets = futuresMarketsQuery.data ?? [];
-
 	const market = futuresMarkets.find(({ asset }) => asset === position?.asset);
 
 	const { synthsMap } = Connector.useContainer();
+
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
+			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
 			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+				currencyName:
+					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
 			});
 		},
 		[t, synthsMap]

@@ -32,8 +32,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
+			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
 			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+				currencyName:
+					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
 			});
 		},
 		[t, synthsMap]
