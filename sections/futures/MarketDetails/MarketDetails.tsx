@@ -59,7 +59,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const data: MarketData = React.useMemo(() => {
 		return {
-			[baseCurrencyKey ? `${baseCurrencyKey.slice(1)}-PERP` : '']: {
+			[baseCurrencyKey
+				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
+				: '']: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
 			'External Price': {
