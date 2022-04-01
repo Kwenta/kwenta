@@ -29,7 +29,7 @@
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.12",
-		"@synthetixio/contracts-interface": "2.65.2",
+		"@synthetixio/contracts-interface": "2.66.0-1",
 		"@synthetixio/optimism-networks": "2.63.1",
 		"@synthetixio/providers": "2.64.1",
 		"@synthetixio/queries": "2.64.1",
