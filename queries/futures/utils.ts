@@ -22,9 +22,9 @@ export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
 		? FUTURES_ENDPOINT_MAINNET
 		: network.id === 69
-			? FUTURES_ENDPOINT_TESTNET
-			: FUTURES_ENDPOINT_MAINNET
-}
+		? FUTURES_ENDPOINT_TESTNET
+		: FUTURES_ENDPOINT_MAINNET;
+};
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
