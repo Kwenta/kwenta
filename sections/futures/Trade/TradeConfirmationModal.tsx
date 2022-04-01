@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
 import { gasSpeedState } from 'store/wallet';
 import { walletAddressState } from 'store/wallet';
 
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
-import { getTransactionPrice } from 'utils/network';
+import { newGetTransactionPrice } from 'utils/network';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
@@ -21,15 +21,16 @@ import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
-import { parseGasPriceObject } from 'hooks/useGas';
+import { GasLimitEstimate } from 'constants/network';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
 	market: string | null;
 	tradeSize: string;
-	gasLimit: number | null;
+	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
 	side: PositionSide;
+	l1Fee: Wei | null;
 };
 
 type PositionDetails = {
@@ -49,6 +50,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	side,
 	gasLimit,
 	onConfirmOrder,
+	l1Fee,
 }) => {
 	const { t } = useTranslation();
 	const { synthetixjs, synthsMap } = Connector.useContainer();
@@ -70,19 +72,16 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
-		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
-		: null;
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
+	const transactionFee = useMemo(
+		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
+		[gasPrice, gasLimit, ethPriceRate, l1Fee]
+	);
 
 	useEffect(() => {
 		const getPositionDetails = async () => {
