@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Head from 'next/head';
-import styled from 'styled-components'; 
+import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -55,6 +55,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 
 const Container = styled.div`
 	padding-bottom: 48px;
-`
+`;
 
 export default MarketInfo;
