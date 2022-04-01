@@ -37,7 +37,7 @@ const Chart = styled.div`
 	min-width: 915px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
-	height: 200px ;
+	height: 200px;
 `;
 
 const PortfolioTitle = styled.p`

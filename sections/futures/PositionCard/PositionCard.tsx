@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { wei } from '@synthetixio/wei';
 
 import { FlexDiv, FlexDivCol } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -11,7 +10,6 @@ import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
-import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -40,14 +38,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 	const futuresMarkets = futuresMarketsQuery.data ?? [];
-
 	const market = futuresMarkets.find(({ asset }) => asset === position?.asset);
 
 	const { synthsMap } = Connector.useContainer();
+
 	const getSynthDescription = React.useCallback(
 		(synth: string) => {
+			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
 			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+				currencyName:
+					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
 			});
 		},
 		[t, synthsMap]
@@ -61,10 +61,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
-							<StyledCurrencyIcon currencyKey={currencyKey} />
+							<StyledCurrencyIcon
+								currencyKey={currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : ''}
+							/>
 							<div>
 								<CurrencySubtitle>
-									{currencyKey ? currencyKey?.slice(1) + '-PERP' : 'Select a market'}
+									{currencyKey
+										? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
+										: 'Select a market'}
 								</CurrencySubtitle>
 								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
 							</div>
