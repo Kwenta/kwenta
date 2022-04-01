@@ -1,23 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
+import { useTranslation } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import InfoBox from 'components/InfoBox';
 import Button from 'components/Button';
 import { FlexDivRowCentered } from 'styles/common';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
-import { parseGasPriceObject } from 'hooks/useGas';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { gasPriceInWei, getTransactionPrice } from 'utils/network';
+import { newGetTransactionPrice } from 'utils/network';
 import { NO_VALUE } from 'constants/placeholder';
-import Connector from 'containers/Connector';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
@@ -38,14 +35,12 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	sUSDBalance,
 	market,
 }) => {
-	const { synthetixjs } = Connector.useContainer();
+	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
-	const [disabled, setDisabled] = React.useState<boolean>(true);
-	const [error, setError] = React.useState<string | null>(null);
-	const [gasLimit, setGasLimit] = React.useState<number | null>(null);
+	const [isDisabled, setDisabled] = React.useState<boolean>(true);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -57,46 +52,30 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	);
 
 	const ethPriceRate = React.useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
-		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
-		: null;
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
-	const transactionFee = React.useMemo(
-		() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate),
-		[gasPrice, gasLimit, ethPriceRate]
+	const depositTxn = useSynthetixTxn(
+		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		'transferMargin',
+		[wei(amount || 0).toBN()],
+		gasPrice || undefined,
+		{ enabled: !!market && !!amount && !isDisabled }
 	);
 
-	React.useEffect(() => {
-		const getGasLimit = async () => {
-			if (!market || !synthetixjs) return;
-			try {
-				setError(null);
-				if (!amount) return;
-				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-				const marginAmount = wei(amount).toBN();
-				const estimate = await FuturesMarketContract.estimateGas.transferMargin(
-					wei(marginAmount).toBN()
-				);
-				setGasLimit(Number(estimate));
-			} catch (e) {
-				// @ts-ignore
-				console.log(e.message);
-
-				// @ts-ignore
-				if (e?.code === -32603) {
-					setError('Amount exceeds max amount in user wallet.');
-				} else {
-					// @ts-ignore
-					setError(e?.data?.message ?? e.message);
-				}
-			}
-		};
-		getGasLimit();
-	}, [amount, market, synthetixjs]);
+	const transactionFee = React.useMemo(
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				depositTxn.gasLimit,
+				ethPriceRate,
+				depositTxn.optimismLayerOneFee
+			),
+		[gasPrice, ethPriceRate, depositTxn.gasLimit, depositTxn.optimismLayerOneFee]
+	);
 
 	React.useEffect(() => {
 		if (!amount) {
@@ -111,41 +90,34 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 		} else {
 			setDisabled(true);
 		}
-	}, [amount, disabled, sUSDBalance, setDisabled]);
+	}, [amount, isDisabled, sUSDBalance, setDisabled]);
 
-	const handleDeposit = async () => {
-		if (disabled || !amount || !gasLimit || !market || !gasPrice) return;
-		try {
-			const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-			const marginAmount = wei(amount).toBN();
-			const tx = await FuturesMarketContract.transferMargin(wei(marginAmount).toBN(), {
-				gasLimit,
-				gasPrice: gasPriceInWei(gasPrice),
+	React.useEffect(() => {
+		if (depositTxn.hash) {
+			monitorTransaction({
+				txHash: depositTxn.hash,
+				onTxConfirmed: () => {
+					onTxConfirmed();
+					onDismiss();
+				},
 			});
-			if (tx != null) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onTxConfirmed();
-						onDismiss();
-					},
-				});
-			}
-		} catch (e) {
-			console.log(e);
-			// @ts-ignore
-			setError(e?.data?.message ?? e.message);
 		}
-	};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [depositTxn.hash]);
 
 	const handleSetMax = React.useCallback(() => {
 		setAmount(sUSDBalance.toString());
 	}, [sUSDBalance]);
 
 	return (
-		<StyledBaseModal title="Deposit Margin" isOpen={true} onDismiss={onDismiss}>
+		<StyledBaseModal
+			title={t('futures.market.trade.margin.modal.deposit.title')}
+			isOpen={true}
+			onDismiss={onDismiss}
+		>
 			<BalanceContainer>
-				<BalanceText>Balance:</BalanceText>
+				<BalanceText $gold>{t('futures.market.trade.margin.modal.balance')}:</BalanceText>
 				<BalanceText>
 					<span>{formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' })}</span> sUSD
 				</BalanceText>
@@ -154,63 +126,66 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
-				right={<MaxButton onClick={handleSetMax}>Max</MaxButton>}
+				right={
+					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+				}
 			/>
-			<MinimumAmountDisclaimer>
-				Note: Placing an order requires a minimum deposit of 50 sUSD.
-			</MinimumAmountDisclaimer>
-			<StyledInfoBox
-				details={{
-					'Gas Fee': transactionFee
-						? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
-						: NO_VALUE,
-				}}
-			/>
-			<DepositMarginButton disabled={disabled} fullWidth onClick={handleDeposit}>
-				Deposit Margin
-			</DepositMarginButton>
 
-			{error && <ErrorMessage>{error}</ErrorMessage>}
+			<MinimumAmountDisclaimer>
+				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
+			</MinimumAmountDisclaimer>
+
+			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => depositTxn.mutate()}>
+				{t('futures.market.trade.margin.modal.deposit.button')}
+			</MarginActionButton>
+
+			<GasFeeContainer>
+				<BalanceText>{t('futures.market.trade.margin.modal.gas-fee')}:</BalanceText>
+				<BalanceText>
+					<span>
+						{transactionFee
+							? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+							: NO_VALUE}
+					</span>
+				</BalanceText>
+			</GasFeeContainer>
+
+			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
 		</StyledBaseModal>
 	);
 };
 
-const StyledBaseModal = styled(BaseModal)`
+export const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
 		width: 400px;
 	}
-
 	.card-body {
 		padding: 28px;
 	}
 `;
 
-const BalanceContainer = styled(FlexDivRowCentered)`
+export const BalanceContainer = styled(FlexDivRowCentered)`
 	margin-bottom: 8px;
 	padding: 0 14px;
-
 	p {
 		margin: 0;
 	}
 `;
 
-const BalanceText = styled.p`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+export const BalanceText = styled.p<{ $gold?: boolean }>`
+	color: ${(props) =>
+		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
 	span {
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 `;
 
-const StyledInfoBox = styled(InfoBox)`
-	margin-top: 15px;
-	margin-bottom: 15px;
-`;
-
-const DepositMarginButton = styled(Button)`
+export const MarginActionButton = styled(Button)`
+	margin-top: 16px;
 	height: 55px;
 `;
 
-const MaxButton = styled.button`
+export const MaxButton = styled.button`
 	height: 22px;
 	padding: 4px 10px;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
@@ -226,12 +201,21 @@ const MaxButton = styled.button`
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin-top: 8px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	text-align: center;
+`;
+
+export const ErrorMessage = styled.div`
+	margin-top: 16px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+export const GasFeeContainer = styled(FlexDivRowCentered)`
+	margin-top: 13px;
+	padding: 0 14px;
+	p {
+		margin: 0;
+	}
 `;
 
 export default DepositMarginModal;
