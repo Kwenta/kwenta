@@ -97,5 +97,4 @@ export function TVChart({
 const Container = styled.div`
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
-	padding: 4px;
 `;
