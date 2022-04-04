@@ -39,6 +39,7 @@ const colors = {
 	ropsten: '#FF4A8D',
 	kovan: '#7057FF',
 	rinkeby: '#F6C343',
+	optimism: '#7FD482',
 	goerli: 'rgb(48, 153, 242)',
 	connectedDefault: goldColors.color1,
 	noNetwork: '#EF6868',
