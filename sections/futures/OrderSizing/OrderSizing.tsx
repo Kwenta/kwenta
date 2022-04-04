@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
+import Wei from '@synthetixio/wei';
 
 import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
 
 type OrderSizingProps = {
-	assetRate: number;
+	assetRate: Wei;
 	amount: string;
 	amountSUSD: string;
 	disabled?: boolean;
@@ -33,11 +34,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 				right={marketAsset || Synths.sUSD}
 				value={amount}
 				onChange={(_, v) => onAmountChange(v)}
-				style={{ 
-					marginBottom: '-1px', 
+				style={{
+					marginBottom: '-1px',
 					borderBottom: 'none',
-					borderBottomRightRadius: '0px', 
-					borderBottomLeftRadius: '0px' 
+					borderBottomRightRadius: '0px',
+					borderBottomLeftRadius: '0px',
 				}}
 			/>
 
@@ -46,9 +47,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 				right={Synths.sUSD}
 				value={amountSUSD}
 				onChange={(_, v) => onAmountSUSDChange(v)}
-				style={{ 
-					borderTopRightRadius: '0px', 
-					borderTopLeftRadius: '0px' 
+				style={{
+					borderTopRightRadius: '0px',
+					borderTopLeftRadius: '0px',
 				}}
 			/>
 		</OrderSizingContainer>

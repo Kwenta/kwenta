@@ -7,7 +7,7 @@ type ButtonProps = {
 	isRounded?: boolean;
 	mono?: boolean;
 	fullWidth?: boolean;
-	noOutline?:boolean;
+	noOutline?: boolean;
 };
 
 const Button = styled.button<ButtonProps>`
@@ -23,24 +23,21 @@ const Button = styled.button<ButtonProps>`
 	font-size: 17px;
 
 	&::before {
-			content:"";
-			position:absolute;
-			top:0;
-			left:0;
-			right:0;
-			bottom:0;
-			border-radius:10px; 
-			padding:1px; 
-			background:rgb(255 255 255 / 10%); 
-			-webkit-mask: 
-				linear-gradient(#fff 0 0) content-box, 
-				linear-gradient(#fff 0 0);
-			-webkit-mask-composite: xor;
-					mask-composite: exclude; 
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 10px;
+		padding: 1px;
+		background: rgb(255 255 255 / 10%);
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
 	}
 
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	/* border: ${(props) => props.theme.colors.selectedTheme.border}; */
 	border: none;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
@@ -96,13 +93,13 @@ const Button = styled.button<ButtonProps>`
 			min-width: 200px;
 		`};
 
-	${(props) => 
-		props.noOutline && 
+	${(props) =>
+		props.noOutline &&
 		css`
 			&::before {
-			background:none; 
-		}`
-	};
+				background: none;
+			}
+		`};
 
 	${(props) =>
 		props.size === 'lg' &&

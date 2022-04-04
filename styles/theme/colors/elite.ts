@@ -7,6 +7,7 @@ const eliteTheme = {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
 		hover: 'linear-gradient(180deg, #4F463D 0%, #332F2D 100%)',
 		shadow: '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
+		text: common.primaryWhite,
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { Img } from 'react-optimized-image';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import i18n from 'i18n';

@@ -25,14 +25,14 @@ export default function Search({ onChange, disabled }: Props) {
 const StyledSvg = styled(Svg)`
 	position: absolute;
 	left: 12px;
-`
+`;
 
 const StyledSearchInput = styled(SearchInput)`
 	position: relative;
 	height: 100%;
 	text-indent: 16px;
 	border-radius: 8px;
-`
+`;
 
 const SearchBar = styled.div`
 	width: 100%;

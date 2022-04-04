@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Svg, Img } from 'react-optimized-image';
+import { Svg } from 'react-optimized-image';
 import ROUTES from 'constants/routes';
 
 import LogoSvg from 'assets/svg/brand/logo.svg';
