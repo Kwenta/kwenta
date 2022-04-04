@@ -373,7 +373,7 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"position": "Side",
-				"avg-open-close": "Avg. Open/Close",
+				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
