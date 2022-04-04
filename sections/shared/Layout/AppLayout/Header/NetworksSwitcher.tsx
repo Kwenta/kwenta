@@ -127,7 +127,7 @@ const L2Select = styled(Select)`
 	}
 
 	.react-select__dropdown-indicator {
-		padding-right: 13px;
+		margin-right: 5px;
 	}
 
 	.react-select__value-container {
