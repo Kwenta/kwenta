@@ -6,7 +6,7 @@ const darkTheme = {
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
-		shadow: 
+		shadow:
 			'rgb(0 0 0 / 25%) 0px 2px 2px, rgb(255 255 255 / 10%) 0px 1px 0px inset, rgb(255 255 255 / 3%) 0px 0px 20px inset',
 		text: common.primaryWhite,
 		primary: {

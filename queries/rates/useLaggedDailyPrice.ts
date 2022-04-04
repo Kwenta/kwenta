@@ -15,8 +15,8 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const minTimestamp = Math.floor(Date.now() / 1000) - 60*60*24;
-	const maxTimestamp = minTimestamp + 60*60;
+	const minTimestamp = Math.floor(Date.now() / 1000) - 60 * 60 * 24;
+	const maxTimestamp = minTimestamp + 60 * 60;
 
 	return useQuery(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
@@ -28,9 +28,9 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 						query candles($synths: [String!]!, $minTimestamp: BigInt!, $maxTimestamp: BigInt!) {
 							candles(
 								where: {
-									period: "3600",
-									synth_in: $synths,
-									timestamp_gt: $minTimestamp,
+									period: "3600"
+									synth_in: $synths
+									timestamp_gt: $minTimestamp
 									timestamp_lt: $maxTimestamp
 								}
 							) {

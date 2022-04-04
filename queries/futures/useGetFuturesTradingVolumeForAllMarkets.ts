@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import Wei from '@synthetixio/wei';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
@@ -19,7 +18,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<FuturesVolumes | null>(
 		QUERY_KEYS.Futures.TradingVolumeForAll(network.id),

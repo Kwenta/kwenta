@@ -18,7 +18,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<number | null>(
 		QUERY_KEYS.Futures.DayTradeStats(network.id, currencyKey),

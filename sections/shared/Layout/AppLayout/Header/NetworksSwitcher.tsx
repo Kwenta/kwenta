@@ -85,11 +85,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			<StyledButton
-				size="sm"
-			>
-				{t('header.networks-switcher.l2')}
-			</StyledButton>
+			<StyledButton size="sm">{t('header.networks-switcher.l2')}</StyledButton>
 		</Container>
 	) : (
 		<Container>

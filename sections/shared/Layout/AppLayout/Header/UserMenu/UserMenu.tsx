@@ -39,7 +39,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 				});
 			});
 		}
-	}, [signer]);
+	}, [signer, staticMainnetProvider]);
 
 	return (
 		<>

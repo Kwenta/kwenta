@@ -15,8 +15,7 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresEndpoint = getFuturesEndpoint(network)
-
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),

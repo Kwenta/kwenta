@@ -26,8 +26,9 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
-    const futuresMarkets = futuresMarketsQuery?.data ?? [];
-    const otherFuturesMarkets = futuresMarkets.filter(marketAsset => marketAsset.asset !== market) ?? []
+	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const otherFuturesMarkets =
+		futuresMarkets.filter((marketAsset) => marketAsset.asset !== market) ?? [];
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

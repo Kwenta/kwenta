@@ -31,7 +31,8 @@ const StyledButton = styled(Button)`
 	padding-bottom: 10px;
 
 	border: transparent;
-	background: ${(props) => props.isActive ? props.theme.colors.selectedTheme.button.background : "transparent"};
+	background: ${(props) =>
+		props.isActive ? props.theme.colors.selectedTheme.button.background : 'transparent'};
 	box-shadow: none;
 
 	p {
@@ -41,8 +42,11 @@ const StyledButton = styled(Button)`
 	}
 
 	.title {
-		color: ${(props) => props.isActive ? props.theme.colors.common.primaryWhite : props.theme.colors.common.secondaryGray};
-	}	
+		color: ${(props) =>
+			props.isActive
+				? props.theme.colors.common.primaryWhite
+				: props.theme.colors.common.secondaryGray};
+	}
 
 	&:disabled {
 		background-color: transparent;

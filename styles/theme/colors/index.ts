@@ -44,8 +44,7 @@ const colors = {
 	noNetwork: '#EF6868',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
+	selectedTheme: themeColors.dark,
 };
 
-type ValueOf<T> = T[keyof T];
-
-export default colors as typeof colors & { selectedTheme: ValueOf<typeof themeColors> };
+export default colors;
