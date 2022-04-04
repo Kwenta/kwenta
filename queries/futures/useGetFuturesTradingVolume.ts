@@ -11,6 +11,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
 import { calculateTradeVolume, getFuturesEndpoint } from './utils';
+import { getFuturesTrades } from './subgraph';
 
 const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
@@ -27,23 +28,25 @@ const useGetFuturesTradingVolume = (
 			if (!currencyKey) return null;
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await request(
+				const response = await getFuturesTrades(
 					futuresEndpoint,
-					gql`
-						query tradingVolume($currencyKey: String!) {
-							futuresTrades(
-								where: { asset: $currencyKey, timestamp_gte: ${minTimestamp} }
-								orderBy: timestamp
-								orderDirection: desc
-							) {
-								size,
-								price
-							}
-						}
-					`,
-					{ currencyKey: ethersUtils.formatBytes32String(currencyKey) }
+					{
+						first: 999999,
+						where: {
+							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							timestamp_gte: `${minTimestamp}`,
+						},
+					},
+					{
+						size: true,
+						price: true,
+						id: true,
+						timestamp: true,
+						account: true,
+						asset: true,
+					}
 				);
-				return response ? calculateTradeVolume(response.futuresTrades) : null;
+				return response ? calculateTradeVolume(response) : null;
 			} catch (e) {
 				console.log(e);
 				return null;

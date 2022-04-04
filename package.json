@@ -42,6 +42,7 @@
 		"axios": "0.21.1",
 		"bignumber.js": "9.0.0",
 		"bnc-onboard": "1.37.3",
+		"codegen-graph-ts": "^0.1.4",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
 		"ethcall": "3.2.0",
