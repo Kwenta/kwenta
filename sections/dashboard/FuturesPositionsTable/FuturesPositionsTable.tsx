@@ -50,9 +50,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
 					const description = getSynthDescription(position.asset);
-					const positionHistory = futuresPositionHistory?.filter(
+					const positionHistory = futuresPositionHistory?.find(
 						(positionHistory: PositionHistory) => positionHistory.isOpen && positionHistory.asset === position.asset
-					).shift()
+					)
 
 					return {
 						asset: position.asset,
