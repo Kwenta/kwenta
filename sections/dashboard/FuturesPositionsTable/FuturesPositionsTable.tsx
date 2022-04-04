@@ -22,7 +22,7 @@ type FuturesPositionTableProps = {
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresMarkets,
-	futuresPositionHistory
+	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
@@ -51,8 +51,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			? activePositions.map((position: FuturesPosition, i: number) => {
 					const description = getSynthDescription(position.asset);
 					const positionHistory = futuresPositionHistory?.find(
-						(positionHistory: PositionHistory) => positionHistory.isOpen && positionHistory.asset === position.asset
-					)
+						(positionHistory: PositionHistory) => {
+							return positionHistory.isOpen && positionHistory.asset === position.asset;
+						}
+					);
 
 					return {
 						asset: position.asset,
@@ -188,9 +190,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.avg-entry')}
-							</TableHeader>
+							<TableHeader>{t('dashboard.overview.futures-positions-table.avg-entry')}</TableHeader>
 						),
 						accessor: 'avgEntryPrice',
 						Cell: (cellProps: CellProps<any>) => {

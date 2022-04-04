@@ -60,7 +60,10 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
 			<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
 			<UserInfo marketAsset={baseCurrencyKey} />
-			<FuturesPositionsTable futuresMarkets={otherFuturesMarkets} futuresPositionHistory={futuresPositionHistory}/>
+			<FuturesPositionsTable
+				futuresMarkets={otherFuturesMarkets}
+				futuresPositionHistory={futuresPositionHistory}
+			/>
 		</Container>
 	);
 };
