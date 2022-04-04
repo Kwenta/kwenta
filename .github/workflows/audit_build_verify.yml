@@ -60,6 +60,10 @@ jobs:
             ${{ runner.os }}-alpine-node-
         continue-on-error: true
 
+      # fix: permission issues on ghactions+docker+npm@8
+      - name: Chown workspace
+        run: chown -R $(whoami) .
+
       - name: Install dependencies
         run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
 
@@ -113,6 +117,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-alpine-node-
         continue-on-error: true
+
+      # fix: permission issues on ghactions+docker+npm@8
+      - name: Chown workspace
+        run: chown -R $(whoami) .
 
       - name: Install dependencies
         run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
