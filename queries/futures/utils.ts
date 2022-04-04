@@ -14,7 +14,7 @@ import {
 	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
-	FundingRateUpdate
+	FundingRateUpdate,
 } from './types';
 import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
@@ -181,7 +181,10 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const calculateFundingRate = (minFunding: FundingRateUpdate, maxFunding: FundingRateUpdate): Wei | null => {
+export const calculateFundingRate = (
+	minFunding: FundingRateUpdate,
+	maxFunding: FundingRateUpdate
+): Wei | null => {
 	if (!minFunding || !maxFunding) return null;
 	// clean values
 	const fundingStart = new Wei(minFunding.funding, 18, true);
@@ -197,7 +200,10 @@ export const calculateFundingRate = (minFunding: FundingRateUpdate, maxFunding: 
 	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff); // convert to 24h period
 };
 
-export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
+export const mapTradeHistory = (
+	futuresPositions: RawPosition[],
+	openOnly: boolean
+): PositionHistory[] => {
 	return (
 		futuresPositions
 			?.map(

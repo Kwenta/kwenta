@@ -26,7 +26,7 @@ const useGetAverageFundingRateForMarket = (
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${currencyKey.slice(1)}`].address;
 			if (!marketAddress) return null;
-			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY
+			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY;
 
 			try {
 				const responseMin = await request(
@@ -35,10 +35,7 @@ const useGetAverageFundingRateForMarket = (
 						query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
 							fundingRateUpdates(
 								first: 1
-								where: {
-									market: $market,
-									timestamp_gt: $minTimestamp
-								}
+								where: { market: $market, timestamp_gt: $minTimestamp }
 								orderBy: sequenceLength
 								orderDirection: asc
 							) {
@@ -56,9 +53,7 @@ const useGetAverageFundingRateForMarket = (
 						query fundingRateUpdates($market: String!) {
 							fundingRateUpdates(
 								first: 1
-								where: {
-									market: $market
-								}
+								where: { market: $market }
 								orderBy: sequenceLength
 								orderDirection: desc
 							) {
@@ -67,12 +62,15 @@ const useGetAverageFundingRateForMarket = (
 							}
 						}
 					`,
-					{ market: marketAddress}
+					{ market: marketAddress }
 				);
 
-				return responseMin && responseMax ?
-					calculateFundingRate(responseMin.fundingRateUpdates[0], responseMax.fundingRateUpdates[0]) :
-					wei(0);
+				return responseMin && responseMax
+					? calculateFundingRate(
+							responseMin.fundingRateUpdates[0],
+							responseMax.fundingRateUpdates[0]
+					  )
+					: wei(0);
 			} catch (e) {
 				console.log(e);
 				return null;
