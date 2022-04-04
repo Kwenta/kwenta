@@ -3,12 +3,12 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT, SECONDS_PER_DAY } from './constants';
-import { calculateFundingRate } from './utils';
+import { SECONDS_PER_DAY } from './constants';
+import { calculateFundingRate, getFuturesEndpoint } from './utils';
 import Wei, { wei } from '@synthetixio/wei';
 
 const useGetAverageFundingRateForMarket = (
@@ -17,10 +17,12 @@ const useGetAverageFundingRateForMarket = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.FundingRate(currencyKey || ''),
+		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || ''),
 		async () => {
 			if (!currencyKey) return null;
 			const { contracts } = synthetixjs!;
@@ -30,7 +32,7 @@ const useGetAverageFundingRateForMarket = (
 
 			try {
 				const responseMin = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
 							fundingRateUpdates(
@@ -48,7 +50,7 @@ const useGetAverageFundingRateForMarket = (
 				);
 
 				const responseMax = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query fundingRateUpdates($market: String!) {
 							fundingRateUpdates(
