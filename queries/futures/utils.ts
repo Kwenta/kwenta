@@ -145,11 +145,14 @@ export const mapOpenInterest = async (
 };
 
 export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
-	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTradeResult) => {
-		const cleanSize = new Wei(size, 18, true).abs();
-		const cleanPrice = new Wei(price, 18, true);
-		return acc.add(cleanSize.mul(cleanPrice));
-	}, wei(0));
+	return futuresTrades.reduce(
+		(acc: Wei, { size, price }: FuturesTradeResult) => {
+			const cleanSize = new Wei(size).div(ETH_UNIT).abs()
+			const cleanPrice = new Wei(price).div(ETH_UNIT)
+			return acc.add(cleanSize.mul(cleanPrice));
+		},
+		wei(0)
+	)
 };
 
 export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
