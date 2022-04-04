@@ -75,7 +75,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [futuresPositionQuery.data, getSynthDescription]);
+	}, [futuresPositionQuery.data, futuresPositionHistory, getSynthDescription]);
 
 	return (
 		<TableContainer>
