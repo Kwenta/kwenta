@@ -33,7 +33,6 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 				}
 		}
 	}
-
 	return <Dot {...props} background={background} />;
 };
 
