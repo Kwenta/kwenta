@@ -34,8 +34,8 @@ const useGetFuturesTradingVolume = (
 						first: 999999,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
-							timestamp_gte: `${minTimestamp}`
-						}
+							timestamp_gte: `${minTimestamp}`,
+						},
 					},
 					{
 						size: true,
@@ -43,7 +43,7 @@ const useGetFuturesTradingVolume = (
 						id: true,
 						timestamp: true,
 						account: true,
-						asset: true
+						asset: true,
 					}
 				);
 				return response ? calculateTradeVolume(response) : null;

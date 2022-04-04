@@ -31,8 +31,8 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 					{
 						first: 999999,
 						where: {
-							timestamp_gte: `${minTimestamp}`
-						}
+							timestamp_gte: `${minTimestamp}`,
+						},
 					},
 					{
 						size: true,
@@ -40,7 +40,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 						id: true,
 						timestamp: true,
 						account: true,
-						asset: true
+						asset: true,
 					}
 				);
 				return response ? calculateTradeVolumeForAll(response) : null;
