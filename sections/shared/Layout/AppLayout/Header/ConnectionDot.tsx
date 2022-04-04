@@ -34,8 +34,6 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 		}
 	}
 
-	if (!isWalletConnected) background = '#EF6868';
-
 	return <Dot {...props} background={background} />;
 };
 
