@@ -183,7 +183,8 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 
 export const calculateFundingRate = (
 	minFunding: FundingRateUpdate,
-	maxFunding: FundingRateUpdate
+	maxFunding: FundingRateUpdate,
+	assetPrice: number
 ): Wei | null => {
 	if (!minFunding || !maxFunding) return null;
 	// clean values
@@ -197,7 +198,7 @@ export const calculateFundingRate = (
 		return null; // use fallback instanteneous value, or different a calculation that uses an earlier event
 	}
 
-	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff); // convert to 24h period
+	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice); // convert to 24h period
 };
 
 export const mapTradeHistory = (

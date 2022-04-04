@@ -31,9 +31,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
 
-	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey);
-	const avgFundingRate = fundingRateQuery?.data ?? null;
-
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
 
@@ -44,6 +41,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
+
+	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
+	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -153,7 +153,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			'24H Funding Rate': {
 				value: avgFundingRate
-					? formatCurrency(selectedPriceCurrency.name, avgFundingRate ?? zeroBN, { minDecimals: 6 })
+					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
 					: NO_VALUE,
 				color: avgFundingRate?.gt(zeroBN)
 					? 'green'
@@ -174,6 +174,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		selectedPriceCurrency.name,
 		externalPrice,
 		pastPrice?.price,
+		avgFundingRate,
 	]);
 
 	return (

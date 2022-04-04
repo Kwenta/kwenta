@@ -13,6 +13,7 @@ import Wei, { wei } from '@synthetixio/wei';
 
 const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,
+	assetPrice: number | null,
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -22,9 +23,9 @@ const useGetAverageFundingRateForMarket = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<any | null>(
-		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || ''),
+		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || '', assetPrice),
 		async () => {
-			if (!currencyKey) return null;
+			if (!currencyKey || !assetPrice) return null;
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${currencyKey.slice(1)}`].address;
 			if (!marketAddress) return null;
@@ -70,7 +71,8 @@ const useGetAverageFundingRateForMarket = (
 				return responseMin && responseMax
 					? calculateFundingRate(
 							responseMin.fundingRateUpdates[0],
-							responseMax.fundingRateUpdates[0]
+							responseMax.fundingRateUpdates[0],
+							assetPrice
 					  )
 					: wei(0);
 			} catch (e) {
