@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -13,7 +13,6 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<FuturesMarket[]>(
@@ -68,7 +67,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				);
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!synthetixjs,
 			...options,
 		}
 	);
