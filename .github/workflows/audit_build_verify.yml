@@ -37,7 +37,7 @@ jobs:
       NODE_OPTIONS: --max_old_space_size=8192
 
     container:
-      image: ghcr.io/synthetixio/docker-node/alpine:16.14
+      image: ghcr.io/synthetixio/docker-node/ubuntu:16.14
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -57,9 +57,9 @@ jobs:
           path: |
             .npm-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-ubuntu-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-node-
+            ${{ runner.os }}-ubuntu-node-
         continue-on-error: true
 
       # fix: permission issues on ghactions+docker+npm@8
@@ -96,7 +96,7 @@ jobs:
       NODE_OPTIONS: --max_old_space_size=8192
 
     container:
-      image: ghcr.io/synthetixio/docker-node/alpine:16.14
+      image: ghcr.io/synthetixio/docker-node/ubuntu:16.14
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -116,9 +116,9 @@ jobs:
           path: |
             .npm-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-ubuntu-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-node-
+            ${{ runner.os }}-ubuntu-node-
         continue-on-error: true
 
       # fix: permission issues on ghactions+docker+npm@8
