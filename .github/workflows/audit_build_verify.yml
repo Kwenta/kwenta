@@ -16,6 +16,7 @@ jobs:
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+      options: --shm-size=7gb
 
     steps:
       - name: Checkout
@@ -40,6 +41,7 @@ jobs:
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+      options: --shm-size=7gb
 
     steps:
       - name: Checkout
@@ -98,6 +100,7 @@ jobs:
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
+      options: --shm-size=7gb
 
     steps:
       - name: Checkout
