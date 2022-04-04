@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -7,17 +7,15 @@ import Connector from 'containers/Connector';
 
 import Button from 'components/Button';
 
-import {
-	isWalletConnectedState,
-	truncatedWalletAddressState
-} from 'store/wallet';
-import { FlexDivCentered, } from 'styles/common';
+import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
+import getENSName from './getENSName';
 
 type UserMenuProps = {
 	isTextButton?: boolean;
@@ -26,27 +24,38 @@ type UserMenuProps = {
 const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const { connectWallet } = Connector.useContainer();
+	const { connectWallet, signer, staticMainnetProvider } = Connector.useContainer();
+	const [ensName, setEns] = useState<string>('');
 	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+
+	useEffect(() => {
+		if (signer) {
+			signer.getAddress().then((account: string) => {
+				const _account = account;
+				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
+					if (_ensName !== null) setEns(_ensName);
+				});
+			});
+		}
+	}, [signer, staticMainnetProvider]);
 
 	return (
 		<>
 			<Container>
 				<FlexDivCentered>
-					{isWalletConnected && (
-						<NetworksSwitcher />
-					)}
+					{isWalletConnected && <NetworksSwitcher />}
 					{isWalletConnected ? (
 						<WalletButton
+							className={ensName ? 'lowercase' : ''}
 							size="sm"
 							variant="outline"
 							onClick={() => setWalletOptionsModalOpened(true)}
 							data-testid="wallet-btn"
 						>
 							<StyledConnectionDot />
-							{truncatedWalletAddress}
+							{ensName ? ensName : truncatedWalletAddress}
 						</WalletButton>
 					) : (
 						<ConnectButton
@@ -56,6 +65,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							data-testid="connect-wallet"
 							mono
 						>
+							<StyledConnectionDot />
 							{t('common.wallet.connect-wallet')}
 						</ConnectButton>
 					)}
@@ -82,6 +92,9 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 const Container = styled.div``;
 
 const WalletButton = styled(Button)`
+	display: inline-flex;
+	align-items: center;
+	text-transform: ${(props) => (props.className === 'lowercase' ? 'lowercase' : '')};
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	margin-left: 15px;

@@ -1,15 +1,17 @@
 import request, { gql } from 'graphql-request';
 import { Candle } from './types';
 
-const RATES_ENDPOINT =
-	'https://api.thegraph.com/subgraphs/name/synthetixio-team/synthetix-exchanges';
-
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
+	isL2 = false,
 	resolution = 'daily'
 ) => {
+	const RATES_ENDPOINT = isL2
+		? 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main'
+		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
+
 	const response = (await request(
 		RATES_ENDPOINT,
 		gql`

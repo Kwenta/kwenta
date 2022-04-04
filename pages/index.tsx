@@ -3,10 +3,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import {
-	PageContent,
-	FullHeightContainer,
-} from 'styles/common';
+import { PageContent, FullHeightContainer } from 'styles/common';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
 
 const Futures: FC = () => {

@@ -32,8 +32,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	const getSynthDescription = useCallback(
 		(synth: string) => {
+			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
 			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
+				currencyName:
+					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
 			});
 		},
 		[t, synthsMap]
@@ -50,7 +52,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 			return {
 				asset: market.asset,
-				market: market.asset.slice(1) + '-PERP',
+				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
 				synth: synthsMap[market.asset],
 				description: description,
 				price: market.price.toNumber(),
@@ -87,7 +89,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
+				// pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
 					router.push(`/market/${row.original.asset}`);
@@ -105,7 +107,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
+										<StyledCurrencyIcon
+											currencyKey={
+												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+												cellProps.row.original.asset
+											}
+										/>
 									</IconContainer>
 									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
@@ -272,7 +279,8 @@ const TableContainer = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-	margin-top: '20px';
+	margin-top: 20px;
+	margin-bottom: 20px;
 `;
 
 const TableHeader = styled.div``;

@@ -3,23 +3,26 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { PositionHistory } from './types';
-import { FUTURES_ENDPOINT } from './constants';
-import { mapTradeHistory } from './utils';
+
+import { mapTradeHistory, getFuturesEndpoint } from './utils';
 
 const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const futuresEndpoint = getFuturesEndpoint(network);
+
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AllPositionHistory(walletAddress || ''),
+		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
 				const response = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
 						query allPositionHistory($account: String!) {
 							futuresPositions(

@@ -27,6 +27,9 @@ const ConnectionDot: React.FC<ConnectionDotProps> = (props) => {
 			case NetworkIdByName.goerli:
 				background = theme.colors.goerli;
 				break;
+			case NetworkIdByName['mainnet-ovm']:
+				background = theme.colors.optimism;
+				break;
 			default:
 				if (network.useOvm) {
 					background = theme.colors.connectedDefault;

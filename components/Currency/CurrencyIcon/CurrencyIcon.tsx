@@ -7,7 +7,6 @@ import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
-import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
@@ -26,7 +25,7 @@ export const SNXIcon =
 	'https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/snx/SNX.svg';
 
 export const getSynthIcon = (currencyKey: CurrencyKey) =>
-	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
+	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/png/${currencyKey}.png`;
 
 const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
@@ -43,11 +42,6 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
-
-	const synthetixTokenListQuery = useSynthetixTokenList();
-	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
-		? synthetixTokenListQuery.data?.tokensMap ?? null
-		: null;
 
 	const ZapperTokenListQuery = useZapperTokenList();
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
@@ -78,11 +72,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				return (
 					<TokenIcon
 						{...{ isDeprecated }}
-						src={
-							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
-								? synthetixTokenListMap[currencyKey].logoURI
-								: getSynthIcon(currencyKey as CurrencyKey)
-						}
+						src={getSynthIcon(currencyKey as CurrencyKey)}
 						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}

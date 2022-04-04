@@ -6,7 +6,9 @@ import {
 	IChartingLibraryWidget,
 	widget,
 } from '../../public/static/charting_library/charting_library';
-import DataFeed from './DataFeed';
+import DataFeedFactory from './DataFeed';
+import { useRecoilValue } from 'recoil';
+import { isL2State } from 'store/wallet';
 
 type Props = {
 	baseCurrencyKey: string;
@@ -33,11 +35,12 @@ export function TVChart({
 }: Props) {
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
 	const { colors } = React.useContext(ThemeContext);
+	let isL2 = useRecoilValue(isL2State);
 
 	React.useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeed,
+			datafeed: DataFeedFactory(isL2),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -82,6 +85,7 @@ export function TVChart({
 		return () => {
 			clearExistingWidget();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	return (
@@ -94,5 +98,4 @@ export function TVChart({
 const Container = styled.div`
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
-	padding: 4px;
 `;

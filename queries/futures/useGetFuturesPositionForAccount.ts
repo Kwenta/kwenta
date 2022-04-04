@@ -1,58 +1,55 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import request, { gql } from 'graphql-request';
 import { PositionHistory } from './types';
-import { mapTradeHistory } from './utils';
+import { getFuturesEndpoint, mapTradeHistory } from './utils';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network);
+
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AccountPositions(walletAddress),
+		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id),
 		async () => {
 			try {
 				const response = await request(
-					FUTURES_ENDPOINT,
+					futuresEndpoint,
 					gql`
-							query userAllPositions($account: String!) {
-								futuresPositions (
-									where: {
-										account: $account
-									}
-								) {
-									id
-									lastTxHash
-									timestamp
-									account
-									market
-									asset
-									margin
-									size
-									feesPaid
-									isOpen
-									isLiquidated
-									entryPrice
-									exitPrice
-								}
+						query userAllPositions($account: String!) {
+							futuresPositions(where: { account: $account }) {
+								id
+								lastTxHash
+								timestamp
+								account
+								market
+								asset
+								margin
+								size
+								feesPaid
+								isOpen
+								isLiquidated
+								entryPrice
+								exitPrice
 							}
-						`,
+						}
+					`,
 					{ account: walletAddress }
 				);
 				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
-			}
-			catch (e) {
+			} catch (e) {
 				console.log(e);
 				return null;
 			}
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress,
-			...options
+			...options,
 		}
 	);
 };
