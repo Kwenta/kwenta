@@ -220,11 +220,11 @@ const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	padding: 6px 0;
 
 	&:last-child {
-		border: none ;
+		border: none;
 	}
 
 	&:nth-child(odd) {
-		background-color:rgba(255, 255, 255, 0.01); ;
+		background-color: rgba(255, 255, 255, 0.01);
 	}
 
 	${(props) =>

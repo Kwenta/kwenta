@@ -642,10 +642,13 @@
 					"deposit-margin": "Deposit margin",
 					"withdraw-margin": "Withdraw margin",
 					"deposit": "Deposit",
+					"withdraw": "Withdraw",
 					"edit": "Edit",
 					"open-trade": "Submit order",
 					"warning": "WARNING: this will close your position",
-					"competition-closed": "Competition Closed"
+					"competition-closed": "Competition Closed",
+					"open-position": "Open Position",
+					"modify-position": "Modify Position"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -655,6 +658,18 @@
 					"available-balance": "sUSD balance",
 					"balance": "Balance",
 					"modal": {
+						"balance": "Balance",
+						"gas-fee": "Gas Fee",
+						"max": "Max",
+						"deposit": {
+							"title": "Deposit Margin",
+							"button": "Deposit Margin",
+							"disclaimer": "A $50 margin minimum is required to open a position."
+						},
+						"withdraw": {
+							"title": "Withdraw Margin",
+							"button": "Withdraw Margin"
+						},
 						"title": "Edit margin",
 						"actions": {
 							"withdraw": "Withdraw",

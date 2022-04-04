@@ -85,6 +85,7 @@ export function TVChart({
 		return () => {
 			clearExistingWidget();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	return (
@@ -97,5 +98,4 @@ export function TVChart({
 const Container = styled.div`
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
-	padding: 4px;
 `;

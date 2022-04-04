@@ -10,7 +10,6 @@ import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTrad
 import Loader from 'components/Loader';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import useGetRegisteredParticpants from 'queries/futures/useGetRegisteredParticpants';
 import media from 'styles/media';
 
 export default function Statistics() {
@@ -18,7 +17,6 @@ export default function Statistics() {
 	const futuresCumulativeStatsQuery = useGetFuturesCumulativeStats();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
-	const totalWalletsQuery = useGetRegisteredParticpants();
 
 	const distributionData =
 		futuresMarketsQuery.data?.map((m) => ({
@@ -27,7 +25,6 @@ export default function Statistics() {
 		})) ?? [];
 
 	const currencyKeys = futuresMarketsQuery.data?.map((m) => m.asset);
-	const totalWallets = totalWalletsQuery.data?.length ?? '-';
 	const cumulativeVolume = formatUsdValue(futuresCumulativeStatsQuery.data?.totalVolume);
 	const averageTradeSize = formatUsdValue(futuresCumulativeStatsQuery.data?.averageTradeSize);
 
@@ -54,10 +51,6 @@ export default function Statistics() {
 				</GridItem>
 			</Row>
 			<Row bottomMargin="40px">
-				<GridItem>
-					<Label>Total Wallets</Label>
-					<Value>{totalWalletsQuery.isLoading ? <Loader /> : totalWallets}</Value>
-				</GridItem>
 				<RowSpacer3 />
 				<GridItem>
 					<Label>Daily Trades</Label>
