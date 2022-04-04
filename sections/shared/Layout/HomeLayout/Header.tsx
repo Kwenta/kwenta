@@ -118,7 +118,6 @@ const Container = styled.header`
 `;
 
 const FuturesBannerContainer = styled.div`
-	height: 65px;
 	width: 100%;
 	display: flex;
 	align-items: center;
