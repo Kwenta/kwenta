@@ -15,6 +15,16 @@ import {
 	RawPosition,
 	PositionHistory,
 } from './types';
+import { Network } from 'store/wallet';
+import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET } from './constants';
+
+export const getFuturesEndpoint = (network: Network): string => {
+	return network && network.id === 10
+		? FUTURES_ENDPOINT_MAINNET
+		: network.id === 69
+		? FUTURES_ENDPOINT_TESTNET
+		: FUTURES_ENDPOINT_MAINNET;
+};
 
 import {
 	FuturesTradeResult
@@ -23,7 +33,7 @@ import { ETH_UNIT } from 'constants/network';
 
 export const getFuturesMarketContract = (asset: string | null, contracts: ContractsMap) => {
 	if (!asset) throw new Error(`Asset needs to be specified`);
-	const contractName = `FuturesMarket${asset.substring(1)}`;
+	const contractName = `FuturesMarket${asset[0] === 's' ? asset.substring(1) : asset}`;
 	const contract = contracts[contractName];
 	if (!contract) throw new Error(`${contractName} for ${asset} does not exist`);
 	return contract;
@@ -135,14 +145,11 @@ export const mapOpenInterest = async (
 };
 
 export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
-	return futuresTrades.reduce(
-		(acc: Wei, { size, price }: FuturesTradeResult) => {
-			const cleanSize = new Wei(size).div(ETH_UNIT).abs()
-			const cleanPrice = new Wei(price).div(ETH_UNIT)
-			return acc.add(cleanSize.mul(cleanPrice));
-		},
-		wei(0)
-	);
+	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTradeResult) => {
+		const cleanSize = new Wei(size, 18, true).abs();
+		const cleanPrice = new Wei(price, 18, true);
+		return acc.add(cleanSize.mul(cleanPrice));
+	}, wei(0));
 };
 
 export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
@@ -153,11 +160,10 @@ export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]):
 		const priceAdd = new Wei(price).div(ETH_UNIT);
 		const volumeAdd = sizeAdd.mul(priceAdd).abs();
 
-		volumes[asset] ?
-			volumes[asset] = volumes[asset].add(volumeAdd)
-		:
-			volumes[asset] = volumeAdd
-	})
+		volumes[asset]
+			? (volumes[asset] = volumes[asset].add(volumeAdd))
+			: (volumes[asset] = volumeAdd);
+	});
 	return volumes;
 };
 
@@ -176,7 +182,10 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
-export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boolean): PositionHistory[] => {
+export const mapTradeHistory = (
+	futuresPositions: RawPosition[],
+	openOnly: boolean
+): PositionHistory[] => {
 	return (
 		futuresPositions
 			?.map(
@@ -193,7 +202,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 					feesPaid,
 					margin,
 					entryPrice,
-					exitPrice
+					exitPrice,
 				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
@@ -223,7 +232,7 @@ export const mapTradeHistory = (futuresPositions: RawPosition[], openOnly: boole
 				}
 			)
 			.filter(({ isOpen }: { isOpen: boolean }) => {
-				if(openOnly) {
+				if (openOnly) {
 					return isOpen;
 				} else {
 					return true;
