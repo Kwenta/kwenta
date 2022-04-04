@@ -32,6 +32,8 @@ jobs:
     # run only on audit success or audit skipped
     if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max_old_space_size=8192 --optimize_for_size
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
@@ -84,6 +86,8 @@ jobs:
     # run only on lint success or lint skipped
     if: always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max_old_space_size=8192 --optimize_for_size
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
