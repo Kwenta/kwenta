@@ -966,9 +966,9 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"switch-wallet": "Switch Wallet",
+			"switch-accounts": "Switch Accounts",
+			"disconnect-wallet": "Disconnect Wallet"
 		},
 		"tx-status": {
 			"waiting": "Waiting",

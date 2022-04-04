@@ -60,6 +60,7 @@ function Select<T>(props: Props<T>) {
 				boxShadow: colors.selectedTheme.button.shadow,
 				padding: 0,
 				width: state.selectProps.menuWidth,
+				right: 0,
 			}),
 			menuList: (provided) => ({
 				...provided,
@@ -80,6 +81,9 @@ function Select<T>(props: Props<T>) {
 				backgroundColor: 'transparent',
 				padding: state.selectProps.optionPadding ?? '6px 8px',
 				borderBottom: colors.selectedTheme.border,
+				'&:hover': {
+					background: colors.selectedTheme.button.hover,
+				},
 				':last-child': {
 					borderBottom: 'none',
 				},
