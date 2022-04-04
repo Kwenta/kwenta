@@ -126,25 +126,17 @@ export const QUERY_KEYS = {
 			'futures',
 			'dayTradeStats',
 			networkId,
-			currencyKey
+			currencyKey,
 		],
-		Markets: (networkId: NetworkId) => [
-			'futures',
-			'marketsSummaries',
-			networkId
-		],
+		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'tradingVolume',
 			networkId,
-			currencyKey
+			currencyKey,
 		],
-		TradingVolumeForAll: (networkId: NetworkId) => [
-			'futures',
-			'tradingVolumeForAll',
-			networkId
-		],
+		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
 			'marketPositionHistory',
@@ -155,7 +147,7 @@ export const QUERY_KEYS = {
 			'futures',
 			'allPositionHistory',
 			networkId,
-			walletAddress
+			walletAddress,
 		],
 		Position: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',
@@ -164,11 +156,7 @@ export const QUERY_KEYS = {
 			market,
 			walletAddress,
 		],
-		MarketsPositions: (markets: string[] | []) => [
-			'futures',
-			'marketsPositions',
-			markets
-		],
+		MarketsPositions: (markets: string[] | []) => ['futures', 'marketsPositions', markets],
 		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
 			'futures',
 			'positions',
@@ -180,7 +168,7 @@ export const QUERY_KEYS = {
 			'futures',
 			'accountPositions',
 			walletAddress,
-			networkId
+			networkId,
 		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
@@ -188,11 +176,7 @@ export const QUERY_KEYS = {
 		AverageLeverage: ['futures', 'averageLeverage'],
 		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
-		TotalTrades: (networkId: NetworkId) => [
-			'futures',
-			'totalTrades',
-			networkId
-		],
+		TotalTrades: (networkId: NetworkId) => ['futures', 'totalTrades', networkId],
 		TotalVolume: ['futures', 'totalVolume'],
 	},
 };

@@ -5,12 +5,12 @@ import request, { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
-import { calculateTradeVolume, getFuturesEndpoint, getFuturesMarketContract } from './utils';
+import { calculateTradeVolume, getFuturesEndpoint } from './utils';
 
 const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
@@ -19,7 +19,7 @@ const useGetFuturesTradingVolume = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<Wei | null>(
 		QUERY_KEYS.Futures.TradingVolume(network.id, currencyKey || null),

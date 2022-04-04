@@ -4,7 +4,11 @@ import { Svg } from 'react-optimized-image';
 import Heading from './Heading';
 import kwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
-export const BigText: React.FC<{ white?: boolean, logo?: boolean }> = ({ children, white, logo }) => {
+export const BigText: React.FC<{ white?: boolean; logo?: boolean }> = ({
+	children,
+	white,
+	logo,
+}) => {
 	return (
 		<div style={{ display: 'flex', alignItems: 'center' }}>
 			<TitleText $gold={!white}>{children}</TitleText>
@@ -13,7 +17,7 @@ export const BigText: React.FC<{ white?: boolean, logo?: boolean }> = ({ childre
 	);
 };
 
-const TitleText = styled(Heading) <{ $gold?: boolean }>`
+const TitleText = styled(Heading)<{ $gold?: boolean }>`
 	font-size: 25px;
 	${(props) =>
 		props.$gold &&

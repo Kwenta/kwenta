@@ -30,7 +30,11 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 						<StyledBodySubtitle>{t('futures.hero.welcome.subtitle')}</StyledBodySubtitle>
 						<StyledBodyText>
 							{t('futures.hero.welcome.body')}{' '}
-							<a href={'https://blog.kwenta.io/futures-dashboards/'} target="_blank">
+							<a
+								href={'https://blog.kwenta.io/futures-dashboards/'}
+								target="_blank"
+								rel="noreferrer"
+							>
 								{t('futures.hero.welcome.button')}
 							</a>
 						</StyledBodyText>

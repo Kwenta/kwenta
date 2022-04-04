@@ -13,7 +13,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	const query = async (existing: FuturesStat[], skip: number): Promise<FuturesStat[]> => {
 		const response = await request(
