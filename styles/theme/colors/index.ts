@@ -41,7 +41,7 @@ const colors = {
 	rinkeby: '#F6C343',
 	goerli: 'rgb(48, 153, 242)',
 	connectedDefault: goldColors.color1,
-	noNetwork: 'rgb(155, 155, 155)',
+	noNetwork: '#EF6868',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
 };

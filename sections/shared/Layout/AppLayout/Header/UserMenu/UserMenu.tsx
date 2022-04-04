@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -7,11 +7,8 @@ import Connector from 'containers/Connector';
 
 import Button from 'components/Button';
 
-import {
-	isWalletConnectedState,
-	truncatedWalletAddressState
-} from 'store/wallet';
-import { FlexDivCentered, } from 'styles/common';
+import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
 
 import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
@@ -48,9 +45,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 		<>
 			<Container>
 				<FlexDivCentered>
-					{isWalletConnected && (
-						<NetworksSwitcher />
-					)}
+					{isWalletConnected && <NetworksSwitcher />}
 					{isWalletConnected ? (
 						<WalletButton
 							className={ensName ? 'lowercase' : ''}
@@ -70,6 +65,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							data-testid="connect-wallet"
 							mono
 						>
+							<StyledConnectionDot />
 							{t('common.wallet.connect-wallet')}
 						</ConnectButton>
 					)}
