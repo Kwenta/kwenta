@@ -33,7 +33,7 @@ jobs:
     if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max_old_space_size=8192 --optimize_for_size
+      NODE_OPTIONS: --max_old_space_size=8192
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
@@ -61,7 +61,7 @@ jobs:
         continue-on-error: true
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit --legacy-peer-deps
+        run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
 
       - name: Lint
         # run only on master/dev/v2/v2-dev branch and pull requests
@@ -87,7 +87,7 @@ jobs:
     if: always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max_old_space_size=8192 --optimize_for_size
+      NODE_OPTIONS: --max_old_space_size=8192
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
@@ -115,7 +115,7 @@ jobs:
         continue-on-error: true
 
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit --legacy-peer-deps
+        run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
 
       - name: Cache next.js build cache
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
@@ -127,7 +127,7 @@ jobs:
         continue-on-error: true
 
       - name: Build
-        run: npm run build
+        run: npm run build --optimize_for_size
 
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
