@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-sec-tools/base:14.17
+      image: ghcr.io/synthetixio/docker-sec-tools/base:16.14
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
@@ -32,6 +32,12 @@ jobs:
     # run only on audit success or audit skipped
     if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
+
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:16.14
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
     steps:
       - name: Checkout
@@ -79,6 +85,11 @@ jobs:
     if: always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
     runs-on: ubuntu-latest
 
+    container:
+      image: ghcr.io/synthetixio/docker-node/alpine:16.14
+      credentials:
+        username: synthetixio
+        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
 
     steps:
       - name: Checkout
