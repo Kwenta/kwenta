@@ -13,6 +13,7 @@ import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import Wei from '@synthetixio/wei';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -20,6 +21,22 @@ type PositionCardProps = {
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
+};
+
+type PositionData = {
+	currencyIconKey: string;
+	marketShortName: string;
+	marketLongName: string;
+	positionSide: JSX.Element;
+	positionSize: string;
+	leverage: string;
+	liquidationPrice: string;
+	pnl: Wei;
+	pnlText: string;
+	netFunding: Wei;
+	netFundingText: string;
+	fees: string;
+	avgEntryPrice: string;
 };
 
 const PositionCard: React.FC<PositionCardProps> = ({
@@ -49,7 +66,75 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		[t, synthsMap]
 	);
 
-	const positionHistory = futuresPositions?.find(({ asset, isOpen }) => isOpen && asset === currencyKey);
+	const positionHistory = futuresPositions?.find(
+		({ asset, isOpen }) => isOpen && asset === currencyKey
+	);
+
+	const data: PositionData = React.useMemo(() => {
+		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const netFunding =
+			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
+
+		return {
+			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
+			marketShortName: currencyKey
+				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
+				: 'Select a market',
+			marketLongName: getSynthDescription(currencyKey),
+			positionSide: positionDetails ? (
+				<PositionValue
+					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+				>
+					{positionDetails.side === 'long' ? PositionSide.LONG + ' ↗' : PositionSide.SHORT + ' ↘'}
+				</PositionValue>
+			) : (
+				<StyledValue>{NO_VALUE}</StyledValue>
+			),
+			positionSize: positionDetails
+				? `${formatNumber(positionDetails.size ?? 0, {
+						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+				  })} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
+						sign: '$',
+						minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
+				  })})`
+				: NO_VALUE,
+			leverage: positionDetails
+				? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'
+				: NO_VALUE,
+			liquidationPrice: positionDetails
+				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+						sign: '$',
+				  })
+				: NO_VALUE,
+			pnl: pnl,
+			pnlText:
+				positionDetails && pnl
+					? `${formatCurrency(Synths.sUSD, pnl, {
+							sign: '$',
+							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+					  })} (${formatPercent(
+							positionDetails.profitLoss.div(
+								positionDetails.initialMargin.mul(positionDetails.initialLeverage)
+							)
+					  )})`
+					: NO_VALUE,
+			netFunding: netFunding,
+			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
+				sign: '$',
+				minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
+			}),
+			fees: positionDetails
+				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+						sign: '$',
+				  })
+				: NO_VALUE,
+			avgEntryPrice: positionDetails
+				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+						sign: '$',
+				  })
+				: NO_VALUE,
+		};
+	}, [currencyKey, positionDetails, positionHistory]);
 
 	return (
 		<>
@@ -57,83 +142,28 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
-							<StyledCurrencyIcon
-								currencyKey={currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : ''}
-							/>
+							<StyledCurrencyIcon currencyKey={data.currencyIconKey} />
 							<div>
-								<CurrencySubtitle>
-									{currencyKey
-										? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
-										: 'Select a market'}
-								</CurrencySubtitle>
-								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
+								<CurrencySubtitle>{data.marketShortName}</CurrencySubtitle>
+								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
 						</CurrencyInfo>
 					</InfoCol>
 					<PositionInfoCol>
 						<StyledSubtitle>Position Side</StyledSubtitle>
-						{positionDetails ? (
-							<PositionValue
-								side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-							>
-								{positionDetails.side === 'long'
-									? PositionSide.LONG + ' ↗'
-									: PositionSide.SHORT + ' ↘'}
-							</PositionValue>
-						) : (
-							<StyledValue>{NO_VALUE}</StyledValue>
-						)}
+						{data.positionSide}
 					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Position Size</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatNumber(positionDetails.size ?? 0, {
-										minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-								  }) +
-								  ' (' +
-								  formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
-										sign: '$',
-										minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-								  }) +
-								  ')'
-								: NO_VALUE}
-						</StyledValue>
+						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
 						{positionDetails ? (
-							<StyledValue
-								className={
-									positionDetails.profitLoss > zeroBN
-										? 'green'
-										: positionDetails.profitLoss < zeroBN
-										? 'red'
-										: ''
-								}
-							>
-								{formatCurrency(
-									Synths.sUSD,
-									positionDetails.profitLoss.add(positionDetails?.accruedFunding),
-									{
-										sign: '$',
-										minDecimals: positionDetails.profitLoss
-											.add(positionDetails?.accruedFunding)
-											.abs()
-											.lt(0.01)
-											? 4
-											: 2,
-									}
-								) +
-									' (' +
-									formatPercent(
-										positionDetails.profitLoss.div(
-											positionDetails.initialMargin.mul(positionDetails.initialLeverage)
-										)
-									) +
-									')'}
+							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
+								{data.pnlText}
 							</StyledValue>
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
@@ -143,19 +173,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Leverage</StyledSubtitle>
-						<StyledValue>
-							{positionDetails ? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x' : NO_VALUE}
-						</StyledValue>
+						<StyledValue>{data.leverage}</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Liq. Price</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
+						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
@@ -164,21 +186,10 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						{positionDetails ? (
 							<StyledValue
 								className={
-									positionDetails.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) > zeroBN
-										? 'green'
-										: positionDetails.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) < zeroBN
-										? 'red'
-										: ''
+									data.netFunding > zeroBN ? 'green' : data.netFunding < zeroBN ? 'red' : ''
 								}
 							>
-								{formatCurrency(
-									Synths.sUSD,
-									positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN,
-									{
-										sign: '$',
-										minDecimals: positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN).abs().lt(0.01) ? 4 : 2,
-									})
-								}
+								{data.netFundingText}
 							</StyledValue>
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
@@ -186,25 +197,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
+						<StyledValue>{data.fees}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
 						<StyledSubtitle>Avg. Entry Price</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
+						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoCol>
 					<InfoCol>
 						{onPositionClose && (
