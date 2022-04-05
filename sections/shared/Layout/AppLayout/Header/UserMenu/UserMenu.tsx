@@ -14,6 +14,7 @@ import { FlexDiv, FlexDivCentered } from 'styles/common';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import WalletActions from '../WalletActions';
+import BalanceNav from '../BalanceNav';
 import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
@@ -55,6 +56,7 @@ const UserMenu: FC = () => {
 
 	const walletIsConnectedAndSupported = (
 		<>
+			<BalanceNav />
 			<NetworksSwitcher />
 			<WalletActions />
 			<MenuButton

@@ -28,6 +28,9 @@
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
 			"optimism-testnet": "OΞ Kovan"
+		},
+		"balance": {
+			"1inch": "Get more sUSD on 1inch.exchange"
 		}
 	},
 	"homepage": {
