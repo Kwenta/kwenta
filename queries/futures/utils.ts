@@ -10,7 +10,6 @@ import {
 	FuturesOneMinuteStat,
 	PositionDetail,
 	PositionSide,
-	FuturesTrade,
 	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
@@ -126,7 +125,6 @@ export const mapOpenInterest = async (
 					},
 				});
 			} else {
-				const longsBigger = longSize.gt(shortSize);
 				const combined = shortSize.add(longSize);
 
 				openInterest.push({

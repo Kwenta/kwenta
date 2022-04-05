@@ -122,12 +122,6 @@ const StyledCurrency = styled.span`
 	//margin-right: 4px;
 `;
 
-const StyledPercent = styled.span`
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-`;
-
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;

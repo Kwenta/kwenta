@@ -224,17 +224,6 @@ const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const TableTitle = styled.div`
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-`;
-
-const TitleText = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
