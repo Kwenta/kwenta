@@ -4,7 +4,7 @@ import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 // Import this tooltip to a new component and customize
 
 interface ToolTipProps {
-	content?: any;
+	content?: string;
 	children?: React.ReactNode;
 	preset?: string;
 	top?: string;
