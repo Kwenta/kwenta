@@ -12,7 +12,6 @@ import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 
 type PositionCardProps = {
@@ -34,11 +33,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const futuresMarketsQuery = useGetFuturesMarkets();
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
-	const futuresMarkets = futuresMarketsQuery.data ?? [];
-	const market = futuresMarkets.find(({ asset }) => asset === position?.asset);
 
 	const { synthsMap } = Connector.useContainer();
 
@@ -108,7 +104,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					</InfoCol>
 					<InfoCol>
 						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
-						{positionDetails && market ? (
+						{positionDetails ? (
 							<StyledValue
 								className={
 									positionDetails.profitLoss > zeroBN
