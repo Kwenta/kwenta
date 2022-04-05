@@ -66,11 +66,17 @@ const useConnector = () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
-			const provider = loadProvider({
-				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
-			});
+			let provider;
+
+			if (walletAddress && window.ethereum) {
+				provider = loadProvider({ networkId, provider: window.ethereum });
+			} else {
+				provider = loadProvider({
+					networkId,
+					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				});
+			}
+
 			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });

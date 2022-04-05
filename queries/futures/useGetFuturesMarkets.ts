@@ -13,7 +13,6 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<FuturesMarket[]>(
@@ -68,7 +67,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				);
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!synthetixjs,
 			...options,
 		}
 	);
