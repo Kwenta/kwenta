@@ -150,17 +150,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						</CurrencyInfo>
 					</InfoCol>
 					<PositionInfoCol>
-						<StyledSubtitle>Position Side</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
 						{data.positionSide}
 					</PositionInfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Position Size</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoCol>
 					<InfoCol>
-						<StyledSubtitle>Unrealized P&amp;L</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.pnl')}</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
 								{data.pnlText}
@@ -172,17 +172,17 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Leverage</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
 						<StyledValue>{data.leverage}</StyledValue>
 					</InfoCol>
 					<InfoCol>
-						<StyledSubtitle>Liq. Price</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Net Funding</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue
 								className={
@@ -196,13 +196,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						)}
 					</InfoCol>
 					<InfoCol>
-						<StyledSubtitle>Fees</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.fees')}</StyledSubtitle>
 						<StyledValue>{data.fees}</StyledValue>
 					</InfoCol>
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Avg. Entry Price</StyledSubtitle>
+						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoCol>
 					<InfoCol>
