@@ -66,16 +66,11 @@ const useConnector = () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId();
 
-			let provider;
-
-			if (walletAddress && window.ethereum) {
-				provider = loadProvider({ networkId, provider: window.ethereum });
-			} else {
-				provider = loadProvider({
-					networkId,
-					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				});
-			}
+			const provider = loadProvider({
+				networkId,
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				provider: walletAddress ? window.ethereum : undefined,
+			});
 
 			const useOvm = getIsOVM(Number(networkId));
 
