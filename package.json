@@ -72,7 +72,7 @@
 		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
-		"@microsoft/eslint-formatter-sarif": "2.1.5",
+		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@svgr/core": "5.5.0",
 		"@synthetixio/synpress": "1.1.1",
 		"@testing-library/jest-dom": "5.14.1",
