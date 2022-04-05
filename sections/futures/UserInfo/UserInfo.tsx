@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 
@@ -30,7 +29,6 @@ type UserInfoProps = {
 };
 
 const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
-	const { t } = useTranslation();
 	const router = useRouter();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();

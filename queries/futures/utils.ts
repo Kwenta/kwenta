@@ -10,7 +10,6 @@ import {
 	FuturesOneMinuteStat,
 	PositionDetail,
 	PositionSide,
-	FuturesTrade,
 	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
@@ -127,7 +126,6 @@ export const mapOpenInterest = async (
 					},
 				});
 			} else {
-				const longsBigger = longSize.gt(shortSize);
 				const combined = shortSize.add(longSize);
 
 				openInterest.push({
@@ -226,7 +224,7 @@ export const mapTradeHistory = (
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);
-					const feesWei = new Wei(feesPaid, 18, true);
+					const feesWei = new Wei(feesPaid || 0, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),

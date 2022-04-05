@@ -60,6 +60,7 @@
 		"react-dom": "17.0.1",
 		"react-i18next": "11.7.0",
 		"react-input-autosize": "3.0.0",
+		"react-is": "^18.0.0",
 		"react-optimized-image": "^0.4.1",
 		"react-query": "3.16.0",
 		"react-responsive": "8.2.0",
@@ -78,7 +79,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.16.7",
-		"@microsoft/eslint-formatter-sarif": "2.1.5",
+		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@storybook/addon-actions": "^6.4.13",
 		"@storybook/addon-essentials": "^6.4.13",
 		"@storybook/addon-links": "^6.4.13",

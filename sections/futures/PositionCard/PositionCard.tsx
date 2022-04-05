@@ -197,7 +197,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Last Entry Price</StyledSubtitle>
+						<StyledSubtitle>Avg. Entry Price</StyledSubtitle>
 						<StyledValue>
 							{positionDetails
 								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
