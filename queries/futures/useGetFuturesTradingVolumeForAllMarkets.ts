@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';

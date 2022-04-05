@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
@@ -12,8 +11,6 @@ type PortfolioChartProps = {
 };
 
 const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioChartProps) => {
-	const { t } = useTranslation();
-
 	const markets = futuresMarkets.map((market: FuturesMarket) => {
 		return market.asset;
 	});
