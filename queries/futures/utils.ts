@@ -196,6 +196,7 @@ export const mapTradeHistory = (
 					isLiquidated,
 					size,
 					feesPaid,
+					netFunding,
 					margin,
 					entryPrice,
 					exitPrice,
@@ -204,6 +205,7 @@ export const mapTradeHistory = (
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);
 					const feesWei = new Wei(feesPaid || 0, 18, true);
+					const netFundingWei = new Wei(netFunding || 0, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),
@@ -216,6 +218,7 @@ export const mapTradeHistory = (
 						isLiquidated,
 						size: sizeWei.abs(),
 						feesPaid: feesWei,
+						netFunding: netFundingWei,
 						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,

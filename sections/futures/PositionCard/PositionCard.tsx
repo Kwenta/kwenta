@@ -49,7 +49,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		[t, synthsMap]
 	);
 
-	const positionHistory = futuresPositions?.find(({ asset }) => asset === currencyKey);
+	const positionHistory = futuresPositions?.find(({ asset, isOpen }) => isOpen && asset === currencyKey);
 
 	return (
 		<>
@@ -164,17 +164,21 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						{positionDetails ? (
 							<StyledValue
 								className={
-									positionDetails.accruedFunding > zeroBN
+									positionDetails.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) > zeroBN
 										? 'green'
-										: positionDetails.accruedFunding < zeroBN
+										: positionDetails.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) < zeroBN
 										? 'red'
 										: ''
 								}
 							>
-								{formatCurrency(Synths.sUSD, positionDetails?.accruedFunding ?? zeroBN, {
-									sign: '$',
-									minDecimals: positionDetails?.accruedFunding.abs().lt(0.01) ? 4 : 2,
-								})}
+								{formatCurrency(
+									Synths.sUSD,
+									positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN,
+									{
+										sign: '$',
+										minDecimals: positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN).abs().lt(0.01) ? 4 : 2,
+									})
+								}
 							</StyledValue>
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
