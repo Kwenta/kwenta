@@ -9,6 +9,7 @@ type OrderSizingProps = {
 	assetRate: Wei;
 	amount: string;
 	amountSUSD: string;
+	disabled?: boolean;
 	onAmountChange: (value: string) => void;
 	onAmountSUSDChange: (value: string) => void;
 	marketAsset: string | null;
@@ -18,6 +19,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	marketAsset,
 	amount,
 	amountSUSD,
+	disabled,
 	onAmountChange,
 	onAmountSUSDChange,
 }) => {
@@ -28,6 +30,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			</OrderSizingTitle>
 
 			<CustomInput
+				disabled={disabled}
 				right={marketAsset || Synths.sUSD}
 				value={amount}
 				onChange={(_, v) => onAmountChange(v)}
@@ -40,6 +43,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			/>
 
 			<CustomInput
+				disabled={disabled}
 				right={Synths.sUSD}
 				value={amountSUSD}
 				onChange={(_, v) => onAmountSUSDChange(v)}
