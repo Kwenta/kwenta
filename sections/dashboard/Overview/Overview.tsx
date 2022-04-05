@@ -22,10 +22,12 @@ enum MarketsTab {
 
 const Overview: FC = () => {
 	const { t } = useTranslation();
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
@@ -105,7 +107,10 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable futuresMarkets={futuresMarkets} />
+				<FuturesPositionsTable
+					futuresMarkets={futuresMarkets}
+					futuresPositionHistory={futuresPositionHistory}
+				/>
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>

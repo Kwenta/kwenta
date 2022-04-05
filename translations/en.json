@@ -219,11 +219,17 @@
 			"no-data": "No data"
 		},
 		"summary-info": {
+			"gas-price-gwei": "gas price (GWEI)",
+			"max-fee-gwei": "Max Fee (GWEI)",
+			"fee": "fee",
+			"fee-cost": "fee cost",
 			"button": {
 				"approve": "approve",
 				"approving": "approving",
 				"c-ratio-too-low": "c-ratio is too low",
 				"fee-reclaim-period": "fee reclaim period",
+				"settle-waiting-period": "settlement waiting period",
+				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
@@ -273,6 +279,10 @@
 			},
 			"get-l2-gas": {
 				"message": "Not enough L2 ETH for transaction fees. Get some via Optimism Bridge:"
+			},
+			"settle": {
+				"message": "You have <0>{{numEntries}}</0> consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
+				"learn-more": "Learn more"
 			}
 		},
 		"common": {
@@ -280,7 +290,8 @@
 			"into": "into"
 		},
 		"errors": {
-			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}"
+			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}",
+			"settlement-waiting": "Please wait approximately {{waitingPeriod}} minutes before attempting to settle {{currencyKey}}"
 		},
 		"charts": {
 			"single": "single",
@@ -362,7 +373,7 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"position": "Side",
-				"avg-open-close": "Avg. Open/Close",
+				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
@@ -631,10 +642,13 @@
 					"deposit-margin": "Deposit margin",
 					"withdraw-margin": "Withdraw margin",
 					"deposit": "Deposit",
+					"withdraw": "Withdraw",
 					"edit": "Edit",
 					"open-trade": "Submit order",
 					"warning": "WARNING: this will close your position",
-					"competition-closed": "Competition Closed"
+					"competition-closed": "Competition Closed",
+					"open-position": "Open Position",
+					"modify-position": "Modify Position"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -644,6 +658,18 @@
 					"available-balance": "sUSD balance",
 					"balance": "Balance",
 					"modal": {
+						"balance": "Balance",
+						"gas-fee": "Gas Fee",
+						"max": "Max",
+						"deposit": {
+							"title": "Deposit Margin",
+							"button": "Deposit Margin",
+							"disclaimer": "A $50 margin minimum is required to open a position."
+						},
+						"withdraw": {
+							"title": "Withdraw Margin",
+							"button": "Withdraw Margin"
+						},
 						"title": "Edit margin",
 						"actions": {
 							"withdraw": "Withdraw",
@@ -844,6 +870,10 @@
 		"deprecated-synths": {
 			"from": "From",
 			"to": "Into"
+		},
+		"settle-transaction": {
+			"title": "settle",
+			"confirm-with-provider": "Confirm your transaction through your wallet."
 		}
 	},
 	"futures-dashboard": {
@@ -936,9 +966,9 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"switch-wallet": "Switch Wallet",
+			"switch-accounts": "Switch Accounts",
+			"disconnect-wallet": "Disconnect Wallet"
 		},
 		"tx-status": {
 			"waiting": "Waiting",

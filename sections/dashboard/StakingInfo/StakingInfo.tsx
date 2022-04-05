@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import BigText from 'components/Text/BigText';
 import Button from 'components/Button';
-import { Title } from '../common'
+import { Title } from '../common';
 
 const StakingInfo: FC = () => {
 	const { t } = useTranslation();
@@ -16,7 +16,9 @@ const StakingInfo: FC = () => {
 				<BigText white>--%</BigText>
 
 				<Title>Claimable:</Title>
-				<BigText white logo>--</BigText>
+				<BigText white logo>
+					--
+				</BigText>
 				<StyledButton fullWidth disabled>
 					Claim Rewards
 				</StyledButton>
@@ -31,7 +33,7 @@ const StakingContainer = styled.div`
 
 const StyledButton = styled(Button)`
 	margin-top: 20px;
-`
+`;
 
 const CardTitle = styled.div`
 	margin-bottom: 10px;
@@ -56,6 +58,5 @@ const StakingBody = styled.div`
 		}
 	}
 `;
-
 
 export default StakingInfo;

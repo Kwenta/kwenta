@@ -5,6 +5,6 @@ export const DEFAULT_DATA = [
 		volume: '-',
 		fundingRate: '-',
 		priceChange: '-',
-		openInterest: '-'
-	}
-]
+		openInterest: '-',
+	},
+];

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import { wei } from '@synthetixio/wei';
 
 import { FlexDiv, FlexDivCol } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -11,7 +10,6 @@ import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import ClosePositionModal from './ClosePositionModal';
-import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -166,28 +164,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				</DataCol>
 				<DataCol>
 					<InfoCol>
-						<StyledSubtitle>Last Entry Price</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>Fees</StyledSubtitle>
-						<StyledValue>
-							{positionDetails
-								? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-										sign: '$',
-								  })
-								: NO_VALUE}
-						</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
 						<StyledSubtitle>Net Funding</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue
@@ -208,19 +184,42 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<StyledValue>{NO_VALUE}</StyledValue>
 						)}
 					</InfoCol>
+					<InfoCol>
+						<StyledSubtitle>Fees</StyledSubtitle>
+						<StyledValue>
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
+						</StyledValue>
+					</InfoCol>
 				</DataCol>
-				<DataCol style={{ justifyContent: 'flex-end' }}>
-					{onPositionClose && (
-						<CloseButton
-							isRounded={true}
-							size="sm"
-							variant="danger"
-							onClick={() => setClosePositionModalIsVisible(true)}
-							disabled={!positionDetails}
-						>
-							{t('futures.market.user.position.close-position')}
-						</CloseButton>
-					)}
+				<DataCol>
+					<InfoCol>
+						<StyledSubtitle>Avg. Entry Price</StyledSubtitle>
+						<StyledValue>
+							{positionDetails
+								? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+										sign: '$',
+								  })
+								: NO_VALUE}
+						</StyledValue>
+					</InfoCol>
+					<InfoCol>
+						{onPositionClose && (
+							<CloseButton
+								isRounded={true}
+								size="sm"
+								variant="danger"
+								onClick={() => setClosePositionModalIsVisible(true)}
+								disabled={!positionDetails}
+								noOutline={true}
+							>
+								{t('futures.market.user.position.close-position')}
+							</CloseButton>
+						)}
+					</InfoCol>
 				</DataCol>
 			</Container>
 			{closePositionModalIsVisible && onPositionClose && (
@@ -238,26 +237,27 @@ export default PositionCard;
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: repeat(6, 1fr);
-	grid-gap: 16px;
+	grid-template-columns: repeat(5, auto);
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 22px;
+	padding: 20px 80px 20px 18px;
+	justify-content: space-between;
 	border-radius: 10px;
+	/* min-height: 135px; */
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
-	margin-right: 8px;
+	margin-right: 15px;
 `;
 
-const DataCol = styled(FlexDivCol)`
-	justify-content: space-between;
-`;
+const DataCol = styled(FlexDivCol)``;
 
 const InfoCol = styled(FlexDivCol)`
-	margin-bottom: 8px;
+	&:nth-of-type(odd) {
+		margin-bottom: 18px;
+	}
 
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
@@ -273,7 +273,6 @@ const StyledSubtitle = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	margin-bottom: 4px;
 `;
 
 const StyledValue = styled.div`
@@ -283,8 +282,28 @@ const StyledValue = styled.div`
 `;
 
 const CloseButton = styled(Button)`
-	height: 36px;
+	height: 34px;
 	font-size: 13px;
+	background: rgba(239, 104, 104, 0.04);
+	border: 1px solid #ef6868;
+	box-shadow: none;
+	min-width: 100px;
+	width: 110px;
+	padding: 0;
+	transition: all 0s ease-in-out;
+
+	&:hover {
+		background: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.white};
+		transform: scale(0.98);
+	}
+
+	&:disabled {
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: transparent;
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		transform: none;
+	}
 `;
 
 const CurrencySubtitle = styled(StyledSubtitle)`
@@ -292,7 +311,7 @@ const CurrencySubtitle = styled(StyledSubtitle)`
 `;
 
 const PositionInfoCol = styled(InfoCol)`
-	padding-left: 38px;
+	padding-left: 45px;
 `;
 
 const PositionValue = styled.p<{ side: PositionSide }>`

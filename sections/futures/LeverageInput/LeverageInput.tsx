@@ -1,6 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { PositionSide } from '../types';
@@ -8,13 +9,14 @@ import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
 import NumericInput from 'components/Input/NumericInput';
 import Button from 'components/Button';
+import { formatNumber } from 'utils/formatters/number';
 
 type LeverageInputProps = {
 	currentLeverage: string;
 	currentTradeSize: number;
-	maxLeverage: number;
+	maxLeverage: Wei;
 	side: PositionSide;
-	assetRate: number;
+	assetRate: Wei;
 	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
@@ -46,16 +48,16 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			<LeverageRow>
 				<LeverageTitle>
 					{t('futures.market.trade.input.leverage.title')}{' '}
-					<span>— Up to {maxLeverage.toFixed(1)}x</span>
+					<span>— Up to {formatNumber(maxLeverage, { maxDecimals: 1 })}x</span>
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
-						disabled={maxLeverage <= 0}
+						disabled={maxLeverage.lte(0)}
 						minValue={0}
-						maxValue={maxLeverage}
+						maxValue={maxLeverage.toNumber()}
 						value={currentLeverage ? Number(currentLeverage) : 0}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
@@ -84,7 +86,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={Number(l) > maxLeverage}
+							disabled={maxLeverage.lt(Number(l))}
 						>
 							{l}x
 						</LeverageButton>

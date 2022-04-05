@@ -7,47 +7,28 @@ import Connector from 'containers/Connector';
 
 import Button from 'components/Button';
 
-import {
-	isWalletConnectedState,
-	truncatedWalletAddressState
-} from 'store/wallet';
-import { FlexDivCentered, } from 'styles/common';
+import { isWalletConnectedState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
 
-import WalletOptionsModal from 'sections/shared/modals/WalletOptionsModal';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
-import ConnectionDot from '../ConnectionDot';
 import NetworksSwitcher from '../NetworksSwitcher';
+import WalletActions from '../WalletActions';
+import ConnectionDot from '../ConnectionDot';
 
-type UserMenuProps = {
-	isTextButton?: boolean;
-};
-
-const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
+const UserMenu: FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { connectWallet } = Connector.useContainer();
-	const [walletOptionsModalOpened, setWalletOptionsModalOpened] = useState<boolean>(false);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
 	return (
 		<>
 			<Container>
 				<FlexDivCentered>
-					{isWalletConnected && (
-						<NetworksSwitcher />
-					)}
+					{isWalletConnected && <NetworksSwitcher />}
 					{isWalletConnected ? (
-						<WalletButton
-							size="sm"
-							variant="outline"
-							onClick={() => setWalletOptionsModalOpened(true)}
-							data-testid="wallet-btn"
-						>
-							<StyledConnectionDot />
-							{truncatedWalletAddress}
-						</WalletButton>
+						<WalletActions />
 					) : (
 						<ConnectButton
 							size="sm"
@@ -56,6 +37,7 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 							data-testid="connect-wallet"
 							mono
 						>
+							<StyledConnectionDot />
 							{t('common.wallet.connect-wallet')}
 						</ConnectButton>
 					)}
@@ -71,21 +53,12 @@ const UserMenu: FC<UserMenuProps> = ({ isTextButton }) => {
 					)}
 				</FlexDivCentered>
 			</Container>
-			{walletOptionsModalOpened && (
-				<WalletOptionsModal onDismiss={() => setWalletOptionsModalOpened(false)} />
-			)}
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 		</>
 	);
 };
 
 const Container = styled.div``;
-
-const WalletButton = styled(Button)`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 13px;
-	margin-left: 15px;
-`;
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;

@@ -1,4 +1,4 @@
-import { RateUpdates, Candle, Candles, Prices } from './types';
+import { RateUpdates, Candles, Prices } from './types';
 import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
@@ -48,7 +48,7 @@ export const mapLaggedDailyPrices = (prices: Candles): Prices => {
 	return prices.map((candle) => {
 		return {
 			synth: candle.synth,
-			price: Number(candle.average)
-		}
+			price: Number(candle.average),
+		};
 	});
-}
+};

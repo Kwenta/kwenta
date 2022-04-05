@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 
 import { CurrencyKey, MARKET_HOURS_SYNTHS } from 'constants/currency';

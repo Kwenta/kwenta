@@ -1,17 +1,16 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
-import request, { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { FUTURES_ENDPOINT } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { DAY_PERIOD } from './constants';
-import { calculateTradeVolume } from './utils';
+import { calculateTradeVolume, getFuturesEndpoint } from './utils';
+import { getFuturesTrades } from './subgraph';
 
 const useGetFuturesTradingVolume = (
 	currencyKey: string | null,
@@ -19,36 +18,40 @@ const useGetFuturesTradingVolume = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const network = useRecoilValue(networkState);
+	const futuresEndpoint = getFuturesEndpoint(network);
+
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.TradingVolume(currencyKey || null),
+		QUERY_KEYS.Futures.TradingVolume(network.id, currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await request(
-					FUTURES_ENDPOINT,
-					gql`
-						query tradingVolume($currencyKey: String!) {
-							futuresTrades(
-								where: { asset: $currencyKey, timestamp_gte: ${minTimestamp} }
-								orderBy: timestamp
-								orderDirection: desc
-							) {
-								size,
-								price
-							}
-						}
-					`,
-					{ currencyKey: ethersUtils.formatBytes32String(currencyKey) }
+				const response = await getFuturesTrades(
+					futuresEndpoint,
+					{
+						first: 999999,
+						where: {
+							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							timestamp_gte: `${minTimestamp}`,
+						},
+					},
+					{
+						size: true,
+						price: true,
+						id: true,
+						timestamp: true,
+						account: true,
+						asset: true,
+					}
 				);
-				return response ? calculateTradeVolume(response.futuresTrades) : null;
+				return response ? calculateTradeVolume(response) : null;
 			} catch (e) {
 				console.log(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress && !!currencyKey, ...options }
+		{ enabled: isAppReady && isL2 && !!currencyKey, ...options }
 	);
 };
 

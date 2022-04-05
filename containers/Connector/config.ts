@@ -1,11 +1,11 @@
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import onboard from 'bnc-onboard';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
 import { getInfuraRpcURL } from 'utils/infura';
-
 import { Network } from 'store/wallet';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(network);
+	const infuraRpc = getInfuraRpcURL(network.id);
 
 	return onboard({
 		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
@@ -51,7 +51,10 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 				},
 				{
 					walletName: 'walletConnect',
-					rpc: { [network.id]: infuraRpc },
+					rpc: Object.values(NetworkIdByName).reduce((acc, id) => {
+						acc[id] = getInfuraRpcURL(id);
+						return acc;
+					}, {} as Record<string, string>),
 					preferred: true,
 				},
 				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
@@ -59,7 +62,7 @@ export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 					walletName: 'portis',
 					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
 				},
-				{ walletName: 'gnosis' },
+				{ walletName: 'gnosis', rpcUrl: infuraRpc },
 				{ walletName: 'trust', rpcUrl: infuraRpc },
 				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
 				{ walletName: 'torus' },
