@@ -221,11 +221,11 @@ const ValueColumn = styled(FlexDivCol)`
 `;
 
 const StyledButton = styled(Button)`
-	width: 100%;
 	margin-top: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	height: 55px; 
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`
