@@ -58,12 +58,15 @@ jobs:
             ${{ runner.os }}-alpine-cache-
         continue-on-error: true
 
-      # fix: permission issues on ghactions+docker+npm@8
+      # fixes permission issues on gh actions + docker + npm@8
       - name: Chown workspace
         run: chown -R $(whoami) .
 
+      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
+        run: |
+          mkdir -p node_modules
+          npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Lint
         # run only on master/dev/v2/v2-dev branch and pull requests
@@ -114,12 +117,15 @@ jobs:
             ${{ runner.os }}-alpine-cache-
         continue-on-error: true
 
-      # fix: permission issues on ghactions+docker+npm@8
+      # fixes permission issues on gh actions + docker + npm@8
       - name: Chown workspace
         run: chown -R $(whoami) .
 
+      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
       - name: Install dependencies
-        run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
+        run: |
+          mkdir -p node_modules
+          npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Cache next.js build cache
         uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
@@ -131,7 +137,7 @@ jobs:
         continue-on-error: true
 
       - name: Build
-        run: npm run build --optimize_for_size
+        run: npm run build
 
       - name: Compress build
         run: tar -zcvf build.tar.gz .next
