@@ -53,9 +53,9 @@ jobs:
           path: |
             .npm-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-node-
+            ${{ runner.os }}-alpine-cache-
         continue-on-error: true
 
       # fix: permission issues on ghactions+docker+npm@8
@@ -109,9 +109,9 @@ jobs:
           path: |
             .npm-cache
             node_modules
-          key: ${{ runner.os }}-alpine-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-alpine-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-alpine-node-
+            ${{ runner.os }}-alpine-cache-
         continue-on-error: true
 
       # fix: permission issues on ghactions+docker+npm@8
@@ -125,9 +125,9 @@ jobs:
         uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
         with:
           path: .next/cache
-          key: ${{ runner.os }}-next.js-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-next.js-cache-
+            ${{ runner.os }}-next-cache-
         continue-on-error: true
 
       - name: Build
