@@ -251,7 +251,10 @@ const Trade: React.FC<TradeProps> = () => {
 				<MarketActionButton onClick={() => setIsDepositMarginModalOpen(true)}>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
-				<MarketActionButton onClick={() => setIsWithdrawMarginModalOpen(true)}>
+				<MarketActionButton
+					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
+					onClick={() => setIsWithdrawMarginModalOpen(true)}
+				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
 			</MarketActions>
@@ -280,6 +283,7 @@ const Trade: React.FC<TradeProps> = () => {
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
 			<OrderSizing
+				disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
 				amount={tradeSize}
 				amountSUSD={tradeSizeSUSD}
 				assetRate={marketAssetRate}
