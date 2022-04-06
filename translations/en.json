@@ -373,7 +373,7 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"position": "Side",
-				"avg-open-close": "Avg. Open/Close",
+				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
@@ -966,9 +966,9 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"switch-wallet": "Switch Wallet",
+			"switch-accounts": "Switch Accounts",
+			"disconnect-wallet": "Disconnect Wallet"
 		},
 		"tx-status": {
 			"waiting": "Waiting",

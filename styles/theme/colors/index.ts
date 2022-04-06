@@ -39,13 +39,13 @@ const colors = {
 	ropsten: '#FF4A8D',
 	kovan: '#7057FF',
 	rinkeby: '#F6C343',
+	optimism: '#7FD482',
 	goerli: 'rgb(48, 153, 242)',
 	connectedDefault: goldColors.color1,
-	noNetwork: 'rgb(155, 155, 155)',
+	noNetwork: '#EF6868',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
+	selectedTheme: themeColors.dark,
 };
 
-type ValueOf<T> = T[keyof T];
-
-export default colors as typeof colors & { selectedTheme: ValueOf<typeof themeColors> };
+export default colors;

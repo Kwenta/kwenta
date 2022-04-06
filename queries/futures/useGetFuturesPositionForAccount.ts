@@ -12,7 +12,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.AccountPositions(walletAddress, network.id),
@@ -21,40 +21,35 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 				const response = await request(
 					futuresEndpoint,
 					gql`
-							query userAllPositions($account: String!) {
-								futuresPositions (
-									where: {
-										account: $account
-									}
-								) {
-									id
-									lastTxHash
-									timestamp
-									account
-									market
-									asset
-									margin
-									size
-									feesPaid
-									isOpen
-									isLiquidated
-									entryPrice
-									exitPrice
-								}
+						query userAllPositions($account: String!) {
+							futuresPositions(where: { account: $account }) {
+								id
+								lastTxHash
+								timestamp
+								account
+								market
+								asset
+								margin
+								size
+								feesPaid
+								isOpen
+								isLiquidated
+								entryPrice
+								exitPrice
 							}
-						`,
+						}
+					`,
 					{ account: walletAddress }
 				);
 				return response?.futuresPositions ? mapTradeHistory(response.futuresPositions, true) : [];
-			}
-			catch (e) {
+			} catch (e) {
 				console.log(e);
 				return null;
 			}
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress,
-			...options
+			...options,
 		}
 	);
 };

@@ -53,6 +53,6 @@ export type Candles = Candle[];
 export type Price = {
 	synth: string;
 	price: number;
-}
+};
 
 export type Prices = Price[];

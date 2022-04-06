@@ -14,7 +14,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network)
+	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<FuturesCumulativeStats | null>(
 		QUERY_KEYS.Futures.TotalTrades(network.id),

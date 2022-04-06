@@ -78,9 +78,9 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue.abs().toString(
-		options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS
-	);
+	const weiAsStringWithDecimals = weiValue
+		.abs()
+		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
