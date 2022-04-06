@@ -18,7 +18,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
     box-sizing: border-box;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
     border-radius: 10px;
-    padding: 1em;
+    padding: 12.5px 0px 40px 0px;
     position: absolute;
     top: ${(props) => props.top};
     bottom: ${(props) => props.bottom};
@@ -29,11 +29,11 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 		margin: auto;
 		font-size: 12px;
 		text-align: left;
-        font-family: 'Akkurat LL';
+        font-family: ${(props) => props.theme.fonts.regular};
         font-style: normal;
         font-weight: 400;
         line-height: 12px;
-        color: #ECE8E3;
+        color: ${(props) => props.theme.colors.white};
         padding: 0 20% 2%;
         
 	}
