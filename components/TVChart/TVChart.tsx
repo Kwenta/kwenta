@@ -13,7 +13,7 @@ import { isL2State } from 'store/wallet';
 type Props = {
 	baseCurrencyKey: string;
 	quoteCurrencyKey: string;
-	interval: 'D';
+	interval: string;
 	containerId: string;
 	libraryPath: string;
 	fullscreen: boolean;
@@ -25,7 +25,7 @@ type Props = {
 export function TVChart({
 	baseCurrencyKey,
 	quoteCurrencyKey,
-	interval = 'D',
+	interval = 'H',
 	containerId = 'tv_chart_container',
 	libraryPath = '/static/charting_library/',
 	fullscreen = false,
