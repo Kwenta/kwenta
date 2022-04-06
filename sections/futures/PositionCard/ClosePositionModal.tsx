@@ -108,7 +108,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			},
 			{
 				label: t('futures.market.user.position.modal-close.size'),
-				value: formatCurrency(currencyKey, position?.size ?? zeroBN, { currencyKey }),
+				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
+					sign: currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey,
+				}),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.leverage'),
