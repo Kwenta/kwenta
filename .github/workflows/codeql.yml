@@ -4,11 +4,11 @@ on:
   push:
     branches: [master, dev, v2, v2-dev]
     paths-ignore:
-    - node_modules
+      - node_modules
   pull_request:
     branches: [master, dev, v2, v2-dev]
     paths-ignore:
-    - node_modules
+      - node_modules
   schedule:
     - cron: '0 6 * * 3'
 
