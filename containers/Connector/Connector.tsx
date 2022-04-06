@@ -8,12 +8,7 @@ import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import {
-	NetworkId,
-	SynthetixJS,
-	synthetix,
-	NetworkIdByName,
-} from '@synthetixio/contracts-interface';
+import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
@@ -72,7 +67,7 @@ const useConnector = () => {
 			const networkId = await getDefaultNetworkId();
 
 			const provider = loadProvider({
-				networkId: walletAddress ? networkId : NetworkIdByName['mainnet-ovm'],
+				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 				provider: walletAddress ? window.ethereum : undefined,
 			});
