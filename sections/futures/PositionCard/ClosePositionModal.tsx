@@ -20,7 +20,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
-import { walletAddressState } from 'store/wallet';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -36,7 +35,6 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	onPositionClose,
 }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -102,7 +100,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			}
 		};
 		getOrderFee();
-	}, [synthetixjs, currencyKey, walletAddress, positionSize]);
+	}, [synthetixjs, currencyKey, positionSize]);
 
 	const dataRows = useMemo(() => {
 		if (!position || !currencyKey) return [];
