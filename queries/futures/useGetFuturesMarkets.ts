@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
