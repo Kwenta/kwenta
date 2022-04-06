@@ -17,7 +17,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	value,
 	placeholder,
 	onChange,
-	right, 
+	right,
 	style,
 	className,
 	disabled,
