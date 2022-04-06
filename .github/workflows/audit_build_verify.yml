@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Audit dependencies
         run: npm audit --audit-level=critical
@@ -41,14 +41,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
         with:
           path: |
             .npm-cache
@@ -73,7 +73,7 @@ jobs:
       - name: Upload lint results
         # run if lint failed and only on master/dev/v2/v2-dev branch and pull requests
         if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev')
-        uses: github/codeql-action/upload-sarif@33f3438c1d59883f5e769fdf2b6adb6794d91d0f # pin@codeql-bundle-20210517
+        uses: github/codeql-action/upload-sarif@81bfc289f5947eca8a3358341c874cb4f4697b64 # pin@codeql-bundle-20220322
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
@@ -97,14 +97,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
         with:
           path: |
             .npm-cache
@@ -122,7 +122,7 @@ jobs:
         run: npm install --prefer-offline --no-audit --legacy-peer-deps --optimize_for_size
 
       - name: Cache next.js build cache
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353 # pin@v2
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next.js-cache-${{ hashFiles('**/package-lock.json') }}
@@ -138,7 +138,7 @@ jobs:
 
       - name: Archive build
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
-        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074 # pin@v2
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v3
         with:
           name: build
           path: build.tar.gz
