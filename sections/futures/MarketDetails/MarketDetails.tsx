@@ -17,6 +17,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import { Tooltip } from 'styles/common';
+import { getMarketKey } from 'utils/futures';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -45,7 +46,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const priceId = synthToCoingeckoPriceId(baseCurrencyKey);
+	const marketKey = getMarketKey(baseCurrencyKey);
+	const priceId = synthToCoingeckoPriceId(marketKey);
 	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
@@ -65,9 +67,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 			},
 			'External Price': {
-				value: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-					sign: '$',
-				}),
+				value:
+					externalPrice === 0
+						? '-'
+						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
+								sign: '$',
+						  }),
 			},
 			'24H Change': {
 				value:

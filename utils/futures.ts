@@ -3,7 +3,7 @@ import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import futuresMarketsKovan from 'synthetix/publish/deployed/kovan-ovm/futures-markets.json';
 import futuresMarketsMainnet from 'synthetix/publish/deployed/mainnet-ovm/futures-markets.json';
 
-export const getMarketKey = (asset: string | null, networkId: NetworkId) => {
+export const getMarketKey = (asset: string | null, networkId: NetworkId = 10) => {
 	if (networkId === NetworkIdByName['mainnet-ovm']) {
 		return futuresMarketsMainnet.find((market) => market.asset === asset)?.marketKey || 'sETH';
 	} else if (networkId === NetworkIdByName['kovan-ovm']) {
