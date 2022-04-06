@@ -33,6 +33,7 @@ import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
+import { getMarketKey } from 'utils/futures';
 
 type TradeProps = {};
 
@@ -51,14 +52,16 @@ const Trade: React.FC<TradeProps> = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, network } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
+		getMarketKey(marketAsset, network.id)
+	);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
