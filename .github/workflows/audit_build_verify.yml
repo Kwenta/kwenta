@@ -16,7 +16,6 @@ jobs:
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
 
     steps:
       - name: Checkout
@@ -33,15 +32,12 @@ jobs:
     # run only on audit success or audit skipped
     if: always() && (needs.audit.result == 'success' || needs.audit.result == 'skipped')
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: --max_old_space_size=8192
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
 
     steps:
       - name: Checkout
@@ -92,15 +88,12 @@ jobs:
     # run only on lint success or lint skipped
     if: always() && (needs.lint.result == 'success' || needs.lint.result == 'skipped')
     runs-on: ubuntu-latest
-    env:
-      NODE_OPTIONS: --max_old_space_size=8192
 
     container:
       image: ghcr.io/synthetixio/docker-node/alpine:16.14
       credentials:
         username: synthetixio
         password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
 
     steps:
       - name: Checkout
