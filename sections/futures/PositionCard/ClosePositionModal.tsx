@@ -63,7 +63,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey[0] === 's' ? currencyKey : `s${currencyKey}`}`,
+		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
 		'closePosition',
 		[],
 		gasPrice ?? undefined,
