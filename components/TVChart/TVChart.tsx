@@ -61,7 +61,6 @@ export function TVChart({
 			},
 			toolbar_bg: colors.selectedTheme.background,
 			time_frames: [
-				{ text: '3y', resolution: '1W', description: '3 Years' },
 				{ text: '1y', resolution: '1D', description: '1 Year' },
 				{ text: '6m', resolution: '1D', description: '6 Months' },
 				{ text: '3m', resolution: '1D', description: '3 Months' },
