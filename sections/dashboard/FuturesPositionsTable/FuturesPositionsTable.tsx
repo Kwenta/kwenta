@@ -14,6 +14,7 @@ import { formatNumber } from 'utils/formatters/number';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
+import { getMarketKey } from 'utils/futures';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -25,10 +26,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const router = useRouter();
+
 	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => asset)
+		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
 	);
 
 	const getSynthDescription = useCallback(
