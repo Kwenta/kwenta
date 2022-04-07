@@ -14,6 +14,7 @@ import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { getSynthDescription } from 'utils/futures';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -42,17 +43,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	const { synthsMap } = Connector.useContainer();
 
-	const getSynthDescription = React.useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
-
 	const positionHistory = futuresPositions?.find(({ asset }) => asset === currencyKey);
 
 	return (
@@ -70,7 +60,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 										? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
 										: 'Select a market'}
 								</CurrencySubtitle>
-								<StyledValue>{getSynthDescription(currencyKey)}</StyledValue>
+								<StyledValue>{getSynthDescription(currencyKey, synthsMap, t)}</StyledValue>
 							</div>
 						</CurrencyInfo>
 					</InfoCol>
