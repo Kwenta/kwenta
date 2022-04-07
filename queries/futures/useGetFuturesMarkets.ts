@@ -67,7 +67,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				);
 		},
 		{
-			enabled: isAppReady && isL2 && !!synthetixjs,
+			enabled: isAppReady && !!synthetixjs,
 			...options,
 		}
 	);
