@@ -4,7 +4,7 @@ import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 // Import this tooltip to a new component and customize
 
 interface ToolTipProps {
-	content?: string;
+	content?: any;
 	children?: React.ReactNode;
 	preset?: string;
 	top?: string;
@@ -26,11 +26,7 @@ const StyledTooltip = (props: ToolTipProps) => {
 	return (
 		<ToolTipWrapper onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
-			{activeMouse && (
-				<Tooltip {...props}>
-					<p>{props.content}</p>
-				</Tooltip>
-			)}
+			{activeMouse && <Tooltip {...props}><p>{props.content}</p></Tooltip>}
 		</ToolTipWrapper>
 	);
 };
