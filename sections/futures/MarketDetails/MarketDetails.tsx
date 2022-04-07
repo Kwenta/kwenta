@@ -16,7 +16,7 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
-import OpenInterestToolTip from 'components/Tooltip/OpenInterestTooltip';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -101,9 +101,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			'Open Interest': {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
-					<OpenInterestToolTip
+					<StyledTooltip
 						preset="bottom"
-						longOI={formatCurrency(
+						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
 								.add(marketSummary.marketSkew)
@@ -113,7 +113,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								.toNumber(),
 							{ sign: '$' }
 						)}
-						shortOI={formatCurrency(
+						Short: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
 								.sub(marketSummary.marketSkew)
@@ -122,7 +122,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								.mul(basePriceRate ?? 0)
 								.toNumber(),
 							{ sign: '$' }
-						)}
+						)}`}
 					>
 						<span>
 							{formatCurrency(
@@ -131,7 +131,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								{ sign: '$' }
 							)}
 						</span>
-					</OpenInterestToolTip>
+					</StyledTooltip>
 				) : (
 					NO_VALUE
 				),
