@@ -173,3 +173,8 @@ export type FuturesCumulativeStats = {
 	totalLiquidations: string;
 	averageTradeSize: string;
 };
+
+export type FundingRateUpdate = {
+	funding: Wei;
+	timestamp: number;
+};
