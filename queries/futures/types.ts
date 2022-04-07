@@ -90,6 +90,7 @@ export type RawPosition = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
@@ -106,6 +107,7 @@ export type PositionHistory = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
