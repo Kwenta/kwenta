@@ -14,8 +14,9 @@ import { FlexDiv, FlexDivCentered } from 'styles/common';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
 import WalletActions from '../WalletActions';
-import BalanceNav from '../BalanceNav';
 import ConnectionDot from '../ConnectionDot';
+import UniswapModal from 'sections/shared/modals/UniswapModal';
+import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
 
@@ -25,6 +26,7 @@ const UserMenu: FC = () => {
 	const network = useRecoilValue(networkState);
 	const { connectWallet } = Connector.useContainer();
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
+	const [uniswapWidgetOpened, setUniswapWidgetOpened] = useState<boolean>(false);
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const walletIsNotConnected = (
@@ -56,7 +58,10 @@ const UserMenu: FC = () => {
 
 	const walletIsConnectedAndSupported = (
 		<>
-			<BalanceNav />
+			<BalanceActions
+				uniswapWidgetOpened={uniswapWidgetOpened}
+				setShowUniswapWidget={setUniswapWidgetOpened}
+			/>
 			<NetworksSwitcher />
 			<WalletActions />
 			<MenuButton
@@ -82,6 +87,7 @@ const UserMenu: FC = () => {
 				</FlexDivCentered>
 			</Container>
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+			{uniswapWidgetOpened && <UniswapModal onDismiss={() => setUniswapWidgetOpened(false)} />}
 		</>
 	);
 };

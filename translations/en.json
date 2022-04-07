@@ -30,7 +30,10 @@
 			"optimism-testnet": "OΞ Kovan"
 		},
 		"balance": {
-			"1inch": "Get more sUSD on 1inch.exchange"
+			"get-susd": "Get sUSD",
+			"get-more-susd": "Get more sUSD",
+			"margin-label": "Available Margin:",
+			"no-accessible-margin": "You have no accessible margin"
 		}
 	},
 	"homepage": {
@@ -921,6 +924,9 @@
 		"settle-transaction": {
 			"title": "settle",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"uniswap-widget": {
+			"title": "Swap Widget"
 		}
 	},
 	"futures-dashboard": {

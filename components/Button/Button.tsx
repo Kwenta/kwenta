@@ -8,6 +8,7 @@ type ButtonProps = {
 	mono?: boolean;
 	fullWidth?: boolean;
 	noOutline?: boolean;
+	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 };
 
 const Button = styled.button<ButtonProps>`
@@ -17,7 +18,7 @@ const Button = styled.button<ButtonProps>`
 	border-radius: 10px;
 	padding: 0 14px;
 	box-sizing: border-box;
-	text-transform: capitalize;
+	text-transform: ${(props) => props.textTransform || 'capitalize'};
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
