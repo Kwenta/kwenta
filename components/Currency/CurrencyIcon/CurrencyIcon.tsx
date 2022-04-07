@@ -24,8 +24,20 @@ export type CurrencyIconProps = {
 export const SNXIcon =
 	'https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/snx/SNX.svg';
 
-export const getSynthIcon = (currencyKey: CurrencyKey) =>
-	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/png/${currencyKey}.png`;
+export const getSynthIcon = (currencyKey: CurrencyKey) => {
+	let parsedCurrencyKey = currencyKey as string;
+
+	// Using a switch so that we can add more currencies if the need arises.
+	switch (currencyKey as string) {
+		case 'sWTI':
+			parsedCurrencyKey = 'sOIL';
+			break;
+		default:
+			break;
+	}
+
+	return `https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/png/${parsedCurrencyKey}.png`;
+};
 
 const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
@@ -54,8 +66,8 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		: null;
 
 	const props = {
-		width: '24px',
-		height: '24px',
+		width: '30px',
+		height: '30px',
 		alt: currencyKey,
 		...rest,
 	};
@@ -107,7 +119,11 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		);
 	} else {
 		return (
-			<Placeholder {...{ isDeprecated }} style={{ width: props.width, height: props.height }}>
+			<Placeholder
+				{...{ isDeprecated }}
+				style={{ width: props.width, height: props.height }}
+				{...props}
+			>
 				{currencyKey}
 			</Placeholder>
 		);

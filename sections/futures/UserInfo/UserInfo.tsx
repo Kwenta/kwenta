@@ -15,6 +15,8 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getMarketKey } from 'utils/futures';
+import Connector from 'containers/Connector';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -31,8 +33,11 @@ type UserInfoProps = {
 const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const router = useRouter();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
+		getMarketKey(marketAsset, network.id)
+	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 

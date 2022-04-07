@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei';
 
 import Select from 'components/Select';
 import Connector from 'containers/Connector';
@@ -18,7 +19,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
-import { wei } from '@synthetixio/wei';
+import { getSynthDescription } from 'utils/futures';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -66,17 +67,6 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const getSynthDescription = React.useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
-
 	const options = React.useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const markets = futuresMarketsQuery?.data ?? [];
@@ -92,7 +82,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 			return assetToCurrencyOption(
 				market.asset,
-				getSynthDescription(market.asset),
+				getSynthDescription(market.asset, synthsMap, t),
 				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 				formatPercent(
 					basePriceRate && pastPrice?.price
@@ -107,11 +97,12 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 			);
 		});
 	}, [
-		getSynthDescription,
 		selectedPriceCurrency.name,
 		exchangeRates,
 		futuresMarketsQuery?.data,
 		dailyPriceChangesQuery?.data,
+		synthsMap,
+		t,
 	]);
 
 	return (
@@ -128,7 +119,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				}}
 				value={assetToCurrencyOption(
 					asset,
-					getSynthDescription(asset),
+					getSynthDescription(asset, synthsMap, t),
 					DUMMY_PRICE,
 					DUMMY_CHANGE,
 					false

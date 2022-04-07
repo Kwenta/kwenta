@@ -13,6 +13,7 @@ import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
 
 type PositionCardProps = {
@@ -55,17 +56,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	const { synthsMap } = Connector.useContainer();
 
-	const getSynthDescription = React.useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
-
 	const positionHistory = futuresPositions?.find(
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
@@ -80,7 +70,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			marketShortName: currencyKey
 				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
 				: 'Select a market',
-			marketLongName: getSynthDescription(currencyKey),
+			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -130,7 +120,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				  })
 				: NO_VALUE,
 		};
-	}, [currencyKey, positionDetails, positionHistory]);
+	}, [currencyKey, positionDetails, positionHistory, synthsMap, t]);
 
 	return (
 		<>
