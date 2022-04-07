@@ -15,13 +15,14 @@ import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice, gasPriceInWei } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
 import { walletAddressState } from 'store/wallet';
 import { parseGasPriceObject } from 'hooks/useGas';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -109,7 +110,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			{
 				label: t('futures.market.user.position.modal-close.size'),
 				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
-					sign: currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey,
+					sign: synthToAsset(currencyKey as CurrencyKey),
 				}),
 			},
 			{
