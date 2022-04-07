@@ -74,7 +74,7 @@ import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import L2Gas from 'containers/L2Gas';
+// import L2Gas from 'containers/L2Gas';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
@@ -114,7 +114,14 @@ const useExchange = ({
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { hasNone: hasNoL2Gas } = L2Gas.useContainer();
+	// const { hasNone: hasNoL2Gas } = L2Gas.useContainer();
+	/**
+	 * FIXME: Temporary solution
+	 * Remove ETH balance check
+	 *
+	 * @see https://github.com/Kwenta/kwenta/issues/626
+	 */
+	const hasNoL2Gas = false;
 
 	const { synthsMap, synthetixjs } = Connector.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
