@@ -114,7 +114,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(
 							positionDetails.profitLoss.div(
-								positionDetails.initialMargin.mul(positionDetails.initialLeverage)
+								positionDetails.initialMargin
 							)
 					  )})`
 					: NO_VALUE,
