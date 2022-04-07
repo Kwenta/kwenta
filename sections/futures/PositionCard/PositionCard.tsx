@@ -112,11 +112,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					? `${formatCurrency(Synths.sUSD, pnl, {
 							sign: '$',
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(
-							positionDetails.profitLoss.div(
-								positionDetails.initialMargin
-							)
-					  )})`
+					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
