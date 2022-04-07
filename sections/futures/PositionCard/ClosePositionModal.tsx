@@ -15,13 +15,11 @@ import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { getExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { getTransactionPrice, gasPriceInWei } from 'utils/network';
+import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
-import { walletAddressState } from 'store/wallet';
-import { parseGasPriceObject } from 'hooks/useGas';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 type ClosePositionModalProps = {
@@ -38,15 +36,13 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	onPositionClose,
 }) => {
 	const { t } = useTranslation();
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
-	const { useEthGasPriceQuery, useExchangeRatesQuery } = useSynthetixQueries();
+	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const [error, setError] = useState<string | null>(null);
-	const [gasLimit, setGasLimit] = useState<number | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
@@ -61,35 +57,42 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	);
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed]
-		? parseGasPriceObject(ethGasPriceQuery?.data?.[gasSpeed])
-		: null;
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
-	const transactionFee = useMemo(() => getTransactionPrice(gasPrice, gasLimit, ethPriceRate), [
-		gasPrice,
-		gasLimit,
-		ethPriceRate,
-	]);
+	const closeTxn = useSynthetixTxn(
+		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
+		'closePosition',
+		[],
+		gasPrice ?? undefined,
+		{ enabled: !!currencyKey }
+	);
+
+	const transactionFee = useMemo(
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				closeTxn.gasLimit,
+				ethPriceRate,
+				closeTxn.optimismLayerOneFee
+			),
+		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
+	);
 
 	const positionSize = position?.size ?? wei(0);
 
 	useEffect(() => {
-		const getGasLimit = async () => {
+		const getOrderFee = async () => {
 			try {
-				if (!synthetixjs || !currencyKey || !walletAddress || !positionSize) return;
+				if (!synthetixjs || !currencyKey || !positionSize) return;
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
-				const size = wei(-positionSize);
-				const [estimate, orderFee] = await Promise.all([
-					FuturesMarketContract.estimateGas.closePosition(),
-					FuturesMarketContract.orderFee(size.toBN()),
-				]);
+				const size = positionSize.neg();
+				const orderFee = await FuturesMarketContract.orderFee(size.toBN());
 				setOrderFee(wei(orderFee.fee));
-				setGasLimit(Number(estimate));
 			} catch (e) {
 				// @ts-ignore
 				console.log(e.message);
@@ -97,8 +100,8 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				setError(e?.data?.message ?? e.message);
 			}
 		};
-		getGasLimit();
-	}, [synthetixjs, currencyKey, walletAddress, positionSize]);
+		getOrderFee();
+	}, [synthetixjs, currencyKey, positionSize]);
 
 	const dataRows = useMemo(() => {
 		if (!position || !currencyKey) return [];
@@ -128,28 +131,19 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		];
 	}, [position, currencyKey, t, orderFee]);
 
-	const handleClosePosition = async () => {
-		if (!gasLimit || !gasPrice) return;
-		try {
-			const FuturesMarketContract = getFuturesMarketContract(currencyKey, synthetixjs!.contracts);
-			const tx = await FuturesMarketContract.closePosition({
-				gasLimit,
-				gasPrice: gasPriceInWei(gasPrice),
+	useEffect(() => {
+		if (closeTxn.hash) {
+			monitorTransaction({
+				txHash: closeTxn.hash,
+				onTxConfirmed: () => {
+					onDismiss();
+					onPositionClose();
+				},
 			});
-			if (tx) {
-				monitorTransaction({
-					txHash: tx.hash,
-					onTxConfirmed: () => {
-						onDismiss();
-						onPositionClose();
-					},
-				});
-			}
-		} catch (e) {
-			console.log(e);
-			setError(e?.data?.message ?? e.message);
 		}
-	};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [closeTxn.hash]);
 
 	return (
 		<StyledBaseModal
@@ -173,10 +167,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 					variant="primary"
 					isRounded
 					size="lg"
-					onClick={handleClosePosition}
-					disabled={!gasLimit || !!error}
+					onClick={() => closeTxn.mutate()}
+					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || t('futures.market.user.position.modal-close.title')}
+					{error || closeTxn.errorMessage || t('futures.market.user.position.modal-close.title')}
 				</StyledButton>
 			</>
 		</StyledBaseModal>
@@ -226,7 +220,7 @@ const StyledButton = styled(Button)`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	height: 55px; 
+	height: 55px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`
