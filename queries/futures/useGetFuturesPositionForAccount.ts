@@ -32,6 +32,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 								margin
 								size
 								feesPaid
+								netFunding
 								isOpen
 								isLiquidated
 								entryPrice

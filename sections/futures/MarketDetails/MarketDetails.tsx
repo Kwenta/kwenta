@@ -11,6 +11,7 @@ import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
@@ -43,6 +44,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
+
+	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
+	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -154,13 +158,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					NO_VALUE
 				),
 			},
-			'Funding Rate': {
-				value: marketSummary?.currentFundingRate
-					? formatPercent(marketSummary?.currentFundingRate ?? zeroBN, { minDecimals: 6 })
+			'24H Funding Rate': {
+				value: avgFundingRate
+					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
 					: NO_VALUE,
-				color: marketSummary?.currentFundingRate.gt(zeroBN)
+				color: avgFundingRate?.gt(zeroBN)
 					? 'green'
-					: marketSummary?.currentFundingRate.lt(zeroBN)
+					: avgFundingRate?.lt(zeroBN)
 					? 'red'
 					: undefined,
 			},
@@ -177,6 +181,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		selectedPriceCurrency.name,
 		externalPrice,
 		pastPrice?.price,
+		avgFundingRate,
 	]);
 
 	return (

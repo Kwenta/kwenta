@@ -90,6 +90,7 @@ export type RawPosition = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
@@ -106,6 +107,7 @@ export type PositionHistory = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
@@ -170,4 +172,9 @@ export type FuturesCumulativeStats = {
 	totalVolume: string;
 	totalLiquidations: string;
 	averageTradeSize: string;
+};
+
+export type FundingRateUpdate = {
+	funding: Wei;
+	timestamp: number;
 };
