@@ -26,7 +26,11 @@ const StyledTooltip = (props: ToolTipProps) => {
 	return (
 		<ToolTipWrapper onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
-			{activeMouse && <Tooltip {...props}><p>{props.content}</p></Tooltip>}
+			{activeMouse && (
+				<Tooltip {...props}>
+					<p>{props.content}</p>
+				</Tooltip>
+			)}
 		</ToolTipWrapper>
 	);
 };
