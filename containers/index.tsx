@@ -13,9 +13,7 @@ export const WithAppContainers: FC<WithAppContainersProps> = ({ children }) => (
 	<Connector.Provider>
 		<BlockExplorer.Provider>
 			<Convert.Provider>
-				<TransactionNotifier.Provider>
-					{children}
-				</TransactionNotifier.Provider>
+				<TransactionNotifier.Provider>{children}</TransactionNotifier.Provider>
 			</Convert.Provider>
 		</BlockExplorer.Provider>
 	</Connector.Provider>
