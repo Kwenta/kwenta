@@ -66,6 +66,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
 
 	const data: MarketData = React.useMemo(() => {
+		const fundingTitle = `${avgFundingRate ? '24H' : 'Inst.'} Funding Rate`;
+		const fundingValue = avgFundingRate ?? marketSummary?.currentFundingRate;
+
 		return {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
@@ -158,15 +161,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					NO_VALUE
 				),
 			},
-			'24H Funding Rate': {
-				value: avgFundingRate
-					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
-					: NO_VALUE,
-				color: avgFundingRate?.gt(zeroBN)
-					? 'green'
-					: avgFundingRate?.lt(zeroBN)
-					? 'red'
-					: undefined,
+			[fundingTitle]: {
+				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
+				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 			},
 			'Max Leverage': {
 				value: marketSummary?.maxLeverage ? `${marketSummary?.maxLeverage.toString(0)}x` : NO_VALUE,
