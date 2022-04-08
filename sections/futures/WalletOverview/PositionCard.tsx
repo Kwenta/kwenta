@@ -12,6 +12,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import WarningIcon from 'assets/svg/app/liquidation-warning.svg';
 import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
+import Badge from 'components/Badge';
 
 type PositionCardProps = {
 	position: FuturesPosition;
@@ -67,6 +68,13 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 	);
 };
 export default PositionCard;
+
+const StyledBadge = styled(Badge)`
+	letter-spacing: 0.105em;
+	margin-left: 4px;
+	line-height: 10px;
+	font-size: 9px;
+`;
 
 const StyledCard = styled(Card)<{ isCTA: boolean }>`
 	margin-bottom: ${(props) => (props.isCTA ? 0 : '16px')};
