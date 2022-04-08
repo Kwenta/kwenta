@@ -184,6 +184,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		externalPrice,
 		pastPrice?.price,
 		avgFundingRate,
+		fundingRateQuery,
 	]);
 
 	return (
