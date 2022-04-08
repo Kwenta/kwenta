@@ -66,8 +66,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
 
 	const data: MarketData = React.useMemo(() => {
-		const fundingTitle = `${avgFundingRate ? '24H' : 'Inst.'} Funding Rate`;
-		const fundingValue = avgFundingRate ?? marketSummary?.currentFundingRate;
+		const fundingTitle = `${
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
+		} Funding Rate`;
+		const fundingValue =
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
+				? marketSummary?.currentFundingRate
+				: avgFundingRate;
 
 		return {
 			[baseCurrencyKey
