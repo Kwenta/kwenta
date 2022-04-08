@@ -5,7 +5,6 @@ import Select from 'components/Select';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
-import { FuturesPosition } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -17,7 +16,7 @@ import { walletAddressState } from 'store/wallet';
 import styled, { useTheme } from 'styled-components';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, getMarketAssetFromKey, getMarketKey } from 'utils/futures';
+import { getDisplayAsset, getMarketKey } from 'utils/futures';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -28,9 +27,13 @@ type ReactSelectOptionProps = {
 
 type FuturesPositionTableProps = {
 	setShowUniswapWidget: Dispatch<SetStateAction<boolean>>;
+	uniswapWidgetOpened: boolean;
 };
 
-const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget }) => {
+const BalanceActions: FC<FuturesPositionTableProps> = ({
+	uniswapWidgetOpened,
+	setShowUniswapWidget,
+}) => {
 	const [balanceLabel, setBalanceLabel] = useState('');
 	const { t } = useTranslation();
 	const theme = useTheme();
@@ -60,15 +63,16 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 
 	const setMarketConfig = (asset: string): ReactSelectOptionProps => {
 		const accessibleMargin =
-			futuresPositions.find((posittion) => posittion.asset === asset)?.accessibleMargin ?? zeroBN;
+			accessiblePositions.find((posittion) => posittion.asset === asset)?.accessibleMargin ??
+			zeroBN;
 
-		const routePath = getMarketAssetFromKey(asset, network.id);
+		const marketKey = getMarketKey(asset, network.id);
 
 		return {
 			label: `${getDisplayAsset(asset)}-PERP`,
-			synthIcon: asset,
+			synthIcon: marketKey,
 			marketAccessibleMargin: formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' }),
-			onClick: () => router.push(`/market/${routePath}`),
+			onClick: () => router.push(`/market/${asset}`),
 		};
 	};
 
@@ -98,9 +102,9 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 		marketAccessibleMargin,
 		onClick,
 	}: ReactSelectOptionProps) => (
-		<LabelContainer noPadding={synthIcon === 'sUSD'} onClick={onClick}>
+		<LabelContainer onClick={onClick}>
 			<FlexDivRow>
-				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} />}
+				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
 				<StyledLabel noPadding={!synthIcon}>{t(label)}</StyledLabel>
 			</FlexDivRow>
 			<Container>{marketAccessibleMargin}</Container>
@@ -123,7 +127,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 	const NoOptionsMessage: FC<any> = (props) => {
 		return (
 			<components.NoOptionsMessage {...props}>
-				{t('header.balance.no-accessible-margin')}
+				<span>{t('header.balance.no-accessible-margin')}</span>
 				<UniswapButton />
 			</components.NoOptionsMessage>
 		);
@@ -133,6 +137,10 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 		setBalanceLabel(formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' }));
 	}, [balanceLabel, sUSDBalance]);
 
+	useEffect(() => {
+		synthsBalancesQuery.refetch();
+	}, [uniswapWidgetOpened]);
+
 	if (!balanceLabel) {
 		return null;
 	}
@@ -141,7 +149,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 		<Container>
 			{sUSDBalance === zeroBN ? (
 				<StyledWidgetButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
-					<StyledCurrencyIcon currencyKey={Synths.sUSD} />
+					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="24px" height="24px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (
@@ -151,7 +159,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget })
 					controlHeight={41}
 					options={OPTIONS}
 					value={{ label: balanceLabel, synthIcon: Synths.sUSD }}
-					menuWidth={350}
+					menuWidth={290}
 					maxMenuHeight={500}
 					optionPadding={'0px'} //override default padding to 0
 					optionBorderBottom={theme.colors.selectedTheme.border}
@@ -172,7 +180,7 @@ export default BalanceActions;
 
 const Container = styled.div`
 	font-size: 12px;
-	font-family: AkkuratMonoLLWeb-Regular;
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const BalanceSelect = styled(Select)<{ value: { label: string } }>`
@@ -181,16 +189,13 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 	}
 
 	.react-select__group {
-		margin: 20px;
-		padding-top: 0px;
-		padding-bottom: 0px;
+		padding: 20px;
 
 		.react-select__group-heading {
 			color: ${(props) => props.theme.colors.white};
 			font-size: 12px;
-			margin-bottom: 20px;
-			padding-left: 0px;
-			padding-right: 0px;
+			padding: 0;
+			margin-bottom: 15px;
 			text-transform: none;
 		}
 	}
@@ -207,6 +212,10 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		display: flex;
 		justify-content: center;
 	}
+
+	.react-select__menu-notice--no-options {
+		padding: 15px;
+	}
 `;
 
 const StyledOptions = styled.div`
@@ -216,8 +225,6 @@ const StyledOptions = styled.div`
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 5px;
-	height: 22px;
-	width: 22px;
 `;
 
 const StyledLabel = styled.div<{ noPadding: boolean }>`
@@ -225,7 +232,7 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 	white-space: nowrap;
 `;
 
-const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
+const LabelContainer = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.white};
 	padding: 10px;
 	font-size: 13px;
@@ -235,12 +242,13 @@ const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 const StyledButton = styled(Button)`
 	width: 100%;
 	font-size: 13px;
-	margin-top: 10px;
+	margin-top: 15px;
 	align-items: center;
 `;
 
 const StyledWidgetButton = styled(Button)`
 	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 10px;
 	white-space: nowrap;
 	display: flex;
