@@ -15,11 +15,12 @@ import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -111,7 +112,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			},
 			{
 				label: t('futures.market.user.position.modal-close.size'),
-				value: formatCurrency(currencyKey, position?.size ?? zeroBN, { currencyKey }),
+				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
+					sign: synthToAsset(currencyKey as CurrencyKey),
+				}),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.leverage'),
@@ -213,11 +216,11 @@ const ValueColumn = styled(FlexDivCol)`
 `;
 
 const StyledButton = styled(Button)`
-	width: 100%;
 	margin-top: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	height: 55px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`

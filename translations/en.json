@@ -620,6 +620,16 @@
 				"debt": "market debt",
 				"rate": "24H funding rate"
 			},
+			"position-card": {
+				"position-side": "Position Side",
+				"position-size": "Position Size",
+				"pnl": "Unrealized P&L",
+				"leverage": "Leverage",
+				"liquidation-price": "Liq. Price",
+				"net-funding": "Net Funding",
+				"fees": "Fees",
+				"avg-entry-price": "Avg. Entry Price"
+			},
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
@@ -923,7 +933,10 @@
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
 			"price-adjustment": "Price Adjustment",
-			"deprecated": "Deprecated"
+			"deprecated": "Deprecated",
+			"futures-market-oil-short-name": "Oil Perpetual",
+			"futures-market-gold-short-name": "Gold Perpetual",
+			"futures-market-silver-short-name": "Silver Perpetual"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",

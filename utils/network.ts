@@ -15,9 +15,9 @@ export function isSupportedNetworkId(id: number | string): id is NetworkId {
 	return id in NetworkNameById;
 }
 
-export async function getDefaultNetworkId(): Promise<NetworkId> {
+export async function getDefaultNetworkId(walletConnected: boolean = true): Promise<NetworkId> {
 	try {
-		if (window.ethereum) {
+		if (walletConnected && window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
 			if (provider && provider.chainId) {
 				const id = Number(provider.chainId);

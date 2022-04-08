@@ -13,11 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/synthetixio/docker-e2e/base:12.20
-      credentials:
-        username: synthetixio
-        password: ${{ secrets.GH_PACKAGES_READ_ONLY }}
-      options: --shm-size=7gb
+      image: synthetixio/docker-e2e:16.14-ubuntu
 
     steps:
       - name: Checkout
@@ -28,8 +24,8 @@ jobs:
           lhci autorun --config=tests/lighthouse/lhci-desktop.conf.js
           lhci autorun --config=tests/lighthouse/lhci-mobile.conf.js
         env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            BASE_URL: ${{ github.event.inputs.url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_URL: ${{ github.event.inputs.url }}
         continue-on-error: true
 
       - name: Archive lighthouse artifacts
