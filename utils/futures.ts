@@ -15,6 +15,16 @@ export const getMarketKey = (asset: string | null, networkId: NetworkId) => {
 	}
 };
 
+export const getMarketAssetFromKey = (marketKey: string, networkId: NetworkId) => {
+	if (networkId === NetworkIdByName['mainnet-ovm']) {
+		return futuresMarketsMainnet.find((market) => market.marketKey === marketKey)?.asset || 'sETH';
+	} else if (networkId === NetworkIdByName['kovan-ovm']) {
+		return futuresMarketsKovan.find((market) => market.marketKey === marketKey)?.asset || 'sETH';
+	} else {
+		return 'sETH';
+	}
+};
+
 export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
