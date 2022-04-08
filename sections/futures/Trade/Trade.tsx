@@ -288,7 +288,7 @@ const Trade: React.FC<TradeProps> = () => {
 				assetRate={marketAssetRate}
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
-				marketAsset={marketAsset || Synths.sUSD}	
+				marketAsset={marketAsset || Synths.sUSD}
 			/>
 
 			<LeverageInput
