@@ -41,12 +41,14 @@ const LeaderboardContainer: FC = () => {
 				name: Tab.Leaderboard,
 				label: t('leaderboard.tabs.nav.leaderboard'),
 				active: activeTab === Tab.Leaderboard,
+				disabled: false,
 				onClick: () => router.push(ROUTES.Leaderboard.Leaderboard),
 			},
 			{
 				name: Tab.Statistics,
 				label: t('leaderboard.tabs.nav.statistics'),
 				active: activeTab === Tab.Statistics,
+				disabled: true,
 				onClick: () => router.push(ROUTES.Leaderboard.Statistics),
 			},
 		],
@@ -60,8 +62,8 @@ const LeaderboardContainer: FC = () => {
 	return (
 		<>
 			<TabButtonsContainer>
-				{TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={label} active={active} onClick={onClick} />
+				{TABS.map(({ name, label, active, disabled, onClick }) => (
+					<TabButton key={name} title={label} active={active} disabled={disabled} onClick={onClick} />
 				))}
 				<Search onChange={onChangeSearch} disabled={!(activeTab === Tab.Leaderboard)} />
 			</TabButtonsContainer>
