@@ -20,10 +20,12 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription } from 'utils/futures';
+import Badge from 'components/Badge';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
 	label: string;
+	badge: string;
 	description: string;
 	price: string;
 	change: string;
@@ -39,6 +41,7 @@ const assetToCurrencyOption = (
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
 	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
+	badge: 'Paused',
 	description,
 	price,
 	change,

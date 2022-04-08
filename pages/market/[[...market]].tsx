@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
+import { MarketState } from 'sections/futures/types';
 
 const Market: FC = () => {
 	const { t } = useTranslation();
@@ -22,6 +23,7 @@ const Market: FC = () => {
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
 			<AppLayout>
+				{/* <StyledPageContent className="paused"> */}
 				<StyledPageContent>
 					<FullHeightContainer>
 						<StyledMainContent>
@@ -29,7 +31,7 @@ const Market: FC = () => {
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade />
+								<Trade marketState={MarketState.PAUSED} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>
@@ -43,6 +45,10 @@ export default Market;
 
 const StyledPageContent = styled(PageContent)`
 	max-width: 1440px;
+
+	/* &.paused * {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	} */
 `;
 
 const StyledMainContent = styled(MainContent)`
