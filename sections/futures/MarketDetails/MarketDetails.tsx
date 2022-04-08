@@ -227,6 +227,10 @@ const MarketDetailsContainer = styled.div`
 	.red {
 		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
+
+	.paused {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 export default MarketDetails;

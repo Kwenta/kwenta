@@ -14,6 +14,8 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
+import PositionType from 'components/Text/PositionType';
+import Badge from 'components/Badge';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -98,7 +100,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<StyledBadge>Paused</StyledBadge>
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -222,6 +227,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	);
 };
 
+const StyledBadge = styled(Badge)`
+	margin-left: 4px;
+	line-height: 10px;
+	font-size: 9px;
+`;
+
 const StyledLongPrice = styled(Currency.Price)`
 	color: ${(props) => props.theme.colors.common.primaryGreen};
 `;
@@ -269,6 +280,9 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;

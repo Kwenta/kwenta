@@ -10,7 +10,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
-import { PositionSide } from '../types';
+import { PositionSide, MarketState } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -35,11 +35,11 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 
-type TradeProps = {};
+type TradeProps = { marketState: MarketState };
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC<TradeProps> = () => {
+const Trade: React.FC<TradeProps> = ({ marketState }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const {
@@ -251,11 +251,17 @@ const Trade: React.FC<TradeProps> = () => {
 		<Panel>
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
-				<MarketActionButton onClick={() => setIsDepositMarginModalOpen(true)}>
+				<MarketActionButton
+					disabled={marketState === MarketState.PAUSED}
+					onClick={() => setIsDepositMarginModalOpen(true)}
+				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
+					disabled={
+						futuresMarketsPosition?.remainingMargin?.lte(zeroBN) ||
+						marketState === MarketState.PAUSED
+					}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -283,7 +289,11 @@ const Trade: React.FC<TradeProps> = () => {
 
 			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+			<PositionButtons
+				selected={leverageSide}
+				onSelect={setLeverageSide}
+				marketState={marketState}
+			/>
 
 			<OrderSizing
 				disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
@@ -304,6 +314,7 @@ const Trade: React.FC<TradeProps> = () => {
 				currentPosition={futuresMarketsPosition}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
+				marketState={MarketState.PAUSED}
 			/>
 
 			<PlaceOrderButton
@@ -314,6 +325,7 @@ const Trade: React.FC<TradeProps> = () => {
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
 					sizeDelta.eq(zeroBN) ||
+					marketState === MarketState.PAUSED ||
 					!!error
 				}
 				onClick={() => {
@@ -393,11 +405,27 @@ const MarketActions = styled.div`
 
 const MarketActionButton = styled(Button)`
 	font-size: 15px;
+
+	&:disabled {
+		border: 1px solid #2b2a2a;
+		background: none;
+		&:hover {
+			background: none;
+		}
+	}
 `;
 
 const PlaceOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
+
+	&:disabled {
+		border: 1px solid #2b2a2a;
+		background: none;
+		&:hover {
+			background: none;
+		}
+	}
 `;
 
 const ErrorMessage = styled.div`

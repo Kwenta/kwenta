@@ -16,6 +16,7 @@ import UserInfo from '../UserInfo';
 import { CurrencyKey, Synths } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
 import TVChart from 'components/TVChart';
+import { MarketState } from '../types';
 
 type MarketInfoProps = {
 	market: string;
