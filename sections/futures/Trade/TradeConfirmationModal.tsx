@@ -118,7 +118,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			{
 				label: 'size',
 				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					sign: market ? synthsMap[market].sign : '',
+					sign: market ? synthsMap[market]?.sign : '',
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },

@@ -15,7 +15,7 @@ export const getMarketKey = (asset: string | null, networkId: NetworkId) => {
 	}
 };
 
-export const getDisplayAsset = (asset: string | null, networkId: NetworkId) => {
+export const getDisplayAsset = (asset: string | null) => {
 	return asset ? (asset[0] === 's' ? asset.slice(1) : asset) : null;
 };
 
