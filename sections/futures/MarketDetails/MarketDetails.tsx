@@ -17,7 +17,7 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
-import { Tooltip } from 'styles/common';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 
@@ -113,38 +113,27 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			'Open Interest': {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
 					<StyledTooltip
-						placement="bottom"
-						content={
-							<>
-								<div className="green">
-									Long:{' '}
-									{formatCurrency(
-										selectedPriceCurrency.name,
-										marketSummary.marketSize
-											.add(marketSummary.marketSkew)
-											.div('2')
-											.abs()
-											.mul(basePriceRate ?? 0)
-											.toNumber(),
-										{ sign: '$' }
-									)}
-								</div>
-								<div className="red">
-									Short:{' '}
-									{formatCurrency(
-										selectedPriceCurrency.name,
-										marketSummary.marketSize
-											.sub(marketSummary.marketSkew)
-											.div('2')
-											.abs()
-											.mul(basePriceRate ?? 0)
-											.toNumber(),
-										{ sign: '$' }
-									)}
-								</div>
-							</>
-						}
-						arrow={false}
+						preset="bottom"
+						content={`Long: ${formatCurrency(
+							selectedPriceCurrency.name,
+							marketSummary.marketSize
+								.add(marketSummary.marketSkew)
+								.div('2')
+								.abs()
+								.mul(basePriceRate ?? 0)
+								.toNumber(),
+							{ sign: '$' }
+						)}
+						Short: ${formatCurrency(
+							selectedPriceCurrency.name,
+							marketSummary.marketSize
+								.sub(marketSummary.marketSkew)
+								.div('2')
+								.abs()
+								.mul(basePriceRate ?? 0)
+								.toNumber(),
+							{ sign: '$' }
+						)}`}
 					>
 						<span>
 							{formatCurrency(
@@ -234,13 +223,6 @@ const MarketDetailsContainer = styled.div`
 	.red {
 		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
-`;
-
-const StyledTooltip = styled(Tooltip)`
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	background: #131212;
 `;
 
 export default MarketDetails;
