@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { PositionSide } from '../types';
+import { MarketState, PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
 import NumericInput from 'components/Input/NumericInput';
@@ -17,6 +17,7 @@ type LeverageInputProps = {
 	maxLeverage: Wei;
 	side: PositionSide;
 	assetRate: Wei;
+	marketState: MarketState;
 	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
@@ -27,6 +28,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	maxLeverage,
 	onLeverageChange,
 	setIsLeverageValueCommitted,
+	marketState,
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
@@ -86,7 +88,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(Number(l))}
+							disabled={maxLeverage.lt(Number(l)) || marketState === MarketState.PAUSED}
 						>
 							{l}x
 						</LeverageButton>
@@ -135,6 +137,13 @@ const LeverageButton = styled(Button)`
 	padding: 0;
 	font-weight: 700;
 	font-size: 13px;
+	&:disabled {
+		border: 1px solid #2b2a2a;
+		background: none;
+		&:hover {
+			background: none;
+		}
+	}
 `;
 
 const TextButton = styled.button`

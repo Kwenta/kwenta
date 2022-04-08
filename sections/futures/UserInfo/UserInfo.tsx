@@ -17,6 +17,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
+import { MarketState } from '../types';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -104,6 +105,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			</TabButtonsContainer>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
+					// TODO: remove this when we have a real position
+					marketState={MarketState.PAUSED}
 					position={futuresMarketsPosition ?? null}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}

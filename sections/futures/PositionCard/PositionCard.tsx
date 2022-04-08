@@ -15,6 +15,8 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
+import Badge from 'components/Badge';
+import { MarketState } from '../types';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -22,6 +24,7 @@ type PositionCardProps = {
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
+	marketState?: MarketState;
 };
 
 type PositionData = {
@@ -46,6 +49,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKeyRate,
 	onPositionClose,
 	dashboard,
+	marketState,
 }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
@@ -124,13 +128,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container>
+			<Container id="paused">
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
 							<StyledCurrencyIcon currencyKey={data.currencyIconKey} />
 							<div>
-								<CurrencySubtitle>{data.marketShortName}</CurrencySubtitle>
+								<CurrencySubtitle>
+									{data.marketShortName}
+									<StyledBadge>Paused</StyledBadge>
+								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
 						</CurrencyInfo>
@@ -198,7 +205,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								size="sm"
 								variant="danger"
 								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails}
+								disabled={!positionDetails || marketState === MarketState.PAUSED}
 								noOutline={true}
 							>
 								{t('futures.market.user.position.close-position')}
@@ -220,6 +227,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 };
 export default PositionCard;
 
+const StyledBadge = styled(Badge)`
+	letter-spacing: 0.105em;
+	margin-left: 4px;
+	line-height: 9px;
+	font-size: 8px;
+`;
+
 const Container = styled.div`
 	display: grid;
 	grid-template-columns: repeat(5, auto);
@@ -235,6 +249,10 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 15px;
+
+	${Container}#paused & {
+		opacity: 0.3;
+	}
 `;
 
 const DataCol = styled(FlexDivCol)``;
@@ -264,6 +282,10 @@ const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+
+	${Container}#paused & {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const CloseButton = styled(Button)`
@@ -293,6 +315,8 @@ const CloseButton = styled(Button)`
 
 const CurrencySubtitle = styled(StyledSubtitle)`
 	text-transform: initial;
+	display: flex;
+	align-items: center;
 `;
 
 const PositionInfoCol = styled(InfoCol)`
@@ -305,6 +329,10 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	text-transform: uppercase;
 	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+
+	${Container}#paused & {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 
 	${(props) =>
 		props.side === PositionSide.LONG &&

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { components, SingleValueProps } from 'react-select';
 import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import Badge from 'components/Badge';
 
 const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 	<components.SingleValue {...props}>
@@ -13,17 +14,30 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 				height="31px"
 			/>
 			<div className="currency-meta">
-				<CurrencyLabel>{props.data.label}</CurrencyLabel>
+				<CurrencyLabel>
+					{props.data.label}
+					<StyledBadge>Paused</StyledBadge>
+				</CurrencyLabel>
 				<p className="name">{props.data.description}</p>
 			</div>
 		</SingleValueContainer>
 	</components.SingleValue>
 );
 
+const StyledBadge = styled(Badge)`
+	letter-spacing: 0.105em;
+	margin: 0px 10px;
+	line-height: 10px;
+	font-size: 10px;
+`;
+
 export const CurrencyLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-size: 16px;
+  display: flex;
+  align-items: center;
+}
 `;
 
 export const SingleValueContainer = styled(FlexDivCentered)`

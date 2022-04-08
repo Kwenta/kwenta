@@ -15,6 +15,7 @@ import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositi
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
 import { getMarketKey, getSynthDescription } from 'utils/futures';
+import Badge from 'components/Badge';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -96,7 +97,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<StyledBadge>Paused</StyledBadge>
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -223,6 +227,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		</TableContainer>
 	);
 };
+
+const StyledBadge = styled(Badge)`
+	margin-left: 5px;
+	line-height: 10px;
+	font-size: 9px;
+`;
 
 const PnlContainer = styled.div`
 	display: flex;
