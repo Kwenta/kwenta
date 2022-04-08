@@ -7,7 +7,7 @@ export const DEFAULT_DATA = [
 		description: NO_VALUE,
 		notionalValue: NO_VALUE,
 		position: NO_VALUE,
-		avgOpenClose: NO_VALUE,
+		avgEntryPrice: NO_VALUE,
 		liquidationPrice: NO_VALUE,
 		pnl: NO_VALUE,
 		pnlPct: NO_VALUE,

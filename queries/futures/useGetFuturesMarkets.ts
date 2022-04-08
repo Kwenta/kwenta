@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -11,14 +11,20 @@ import { FuturesMarket } from './types';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
+
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
+	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
+			if (isWalletConnected && !isL2) {
+				return null;
+			}
+
 			const {
 				contracts: { FuturesMarketData, SystemStatus },
 				utils,
@@ -68,7 +74,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				);
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!synthetixjs,
+			enabled: isWalletConnected ? isL2 && isReady : isReady,
 			...options,
 		}
 	);

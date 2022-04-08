@@ -10,13 +10,16 @@ import {
 	FuturesOneMinuteStat,
 	PositionDetail,
 	PositionSide,
-	FuturesTrade,
 	FuturesVolumes,
 	RawPosition,
 	PositionHistory,
+	FundingRateUpdate,
 } from './types';
 import { Network } from 'store/wallet';
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET } from './constants';
+import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
+
+import { FuturesTradeResult } from './subgraph';
+import { ETH_UNIT } from 'constants/network';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -123,7 +126,6 @@ export const mapOpenInterest = async (
 					},
 				});
 			} else {
-				const longsBigger = longSize.gt(shortSize);
 				const combined = shortSize.add(longSize);
 
 				openInterest.push({
@@ -139,20 +141,20 @@ export const mapOpenInterest = async (
 	return openInterest;
 };
 
-export const calculateTradeVolume = (futuresTrades: FuturesTrade[]): Wei => {
-	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTrade) => {
-		const cleanSize = new Wei(size, 18, true).abs();
-		const cleanPrice = new Wei(price, 18, true);
+export const calculateTradeVolume = (futuresTrades: FuturesTradeResult[]): Wei => {
+	return futuresTrades.reduce((acc: Wei, { size, price }: FuturesTradeResult) => {
+		const cleanSize = new Wei(size).div(ETH_UNIT).abs();
+		const cleanPrice = new Wei(price).div(ETH_UNIT);
 		return acc.add(cleanSize.mul(cleanPrice));
 	}, wei(0));
 };
 
-export const calculateTradeVolumeForAll = (futuresTrades: FuturesTrade[]): FuturesVolumes => {
+export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]): FuturesVolumes => {
 	const volumes = {} as FuturesVolumes;
 
 	futuresTrades.forEach(({ asset, size, price }) => {
-		const sizeAdd = new Wei(size, 18, true);
-		const priceAdd = new Wei(price, 18, true);
+		const sizeAdd = new Wei(size).div(ETH_UNIT);
+		const priceAdd = new Wei(price).div(ETH_UNIT);
 		const volumeAdd = sizeAdd.mul(priceAdd).abs();
 
 		volumes[asset]
@@ -177,6 +179,26 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	);
 };
 
+export const calculateFundingRate = (
+	minFunding: FundingRateUpdate,
+	maxFunding: FundingRateUpdate,
+	assetPrice: number
+): Wei | null => {
+	if (!minFunding || !maxFunding) return null;
+	// clean values
+	const fundingStart = new Wei(minFunding.funding, 18, true);
+	const fundingEnd = new Wei(maxFunding.funding, 18, true);
+
+	const fundingDiff = fundingEnd.sub(fundingStart); // funding is already in ratio units
+	const timeDiff = maxFunding.timestamp - minFunding.timestamp;
+
+	if (timeDiff === 0) {
+		return null; // use fallback instanteneous value, or different a calculation that uses an earlier event
+	}
+
+	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice); // convert to 24h period
+};
+
 export const mapTradeHistory = (
 	futuresPositions: RawPosition[],
 	openOnly: boolean
@@ -195,6 +217,7 @@ export const mapTradeHistory = (
 					isLiquidated,
 					size,
 					feesPaid,
+					netFunding,
 					margin,
 					entryPrice,
 					exitPrice,
@@ -202,7 +225,8 @@ export const mapTradeHistory = (
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
 					const sizeWei = new Wei(size, 18, true);
-					const feesWei = new Wei(feesPaid, 18, true);
+					const feesWei = new Wei(feesPaid || 0, 18, true);
+					const netFundingWei = new Wei(netFunding || 0, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),
@@ -215,6 +239,7 @@ export const mapTradeHistory = (
 						isLiquidated,
 						size: sizeWei.abs(),
 						feesPaid: feesWei,
+						netFunding: netFundingWei,
 						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,

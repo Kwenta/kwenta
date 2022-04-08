@@ -16,7 +16,7 @@ export const DEFAULT_PRICE_CURRENCY: Synth = localStore.get(priceCurrencyStateKe
 };
 
 // network defaults
-export const DEFAULT_NETWORK_ID = NetworkIdByName.mainnet;
+export const DEFAULT_NETWORK_ID = NetworkIdByName['mainnet-ovm'];
 
 export const DEFAULT_GAS_BUFFER = 5000;
 export const DEFAULT_GAS_LIMIT = 500000;

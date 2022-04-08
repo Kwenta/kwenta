@@ -375,7 +375,7 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"position": "Side",
-				"avg-open-close": "Avg. Open/Close",
+				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
@@ -621,6 +621,16 @@
 				"skew": "market skew",
 				"debt": "market debt",
 				"rate": "24H funding rate"
+			},
+			"position-card": {
+				"position-side": "Position Side",
+				"position-size": "Position Size",
+				"pnl": "Unrealized P&L",
+				"leverage": "Leverage",
+				"liquidation-price": "Liq. Price",
+				"net-funding": "Net Funding",
+				"fees": "Fees",
+				"avg-entry-price": "Avg. Entry Price"
 			},
 			"trade": {
 				"market": "isolated market",
@@ -925,7 +935,10 @@
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
 			"price-adjustment": "Price Adjustment",
-			"deprecated": "Deprecated"
+			"deprecated": "Deprecated",
+			"futures-market-oil-short-name": "Oil Perpetual",
+			"futures-market-gold-short-name": "Gold Perpetual",
+			"futures-market-silver-short-name": "Silver Perpetual"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",
@@ -968,9 +981,9 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"switch-wallet": "Switch Wallet",
+			"switch-accounts": "Switch Accounts",
+			"disconnect-wallet": "Disconnect Wallet"
 		},
 		"tx-status": {
 			"waiting": "Waiting",

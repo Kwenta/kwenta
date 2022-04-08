@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -9,35 +9,28 @@ import Currency from 'components/Currency';
 import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket } from 'queries/futures/types';
+import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
+import { getMarketKey, getSynthDescription } from 'utils/futures';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
+	futuresPositionHistory: PositionHistory[];
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresMarkets,
+	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const router = useRouter();
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => asset)
-	);
 
-	const getSynthDescription = useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
+	const futuresPositionQuery = useGetFuturesPositionForMarkets(
+		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
 	);
 
 	let data = useMemo(() => {
@@ -47,7 +40,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		);
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
-					const description = getSynthDescription(position.asset);
+					const description = getSynthDescription(position.asset, synthsMap, t);
+					const positionHistory = futuresPositionHistory?.find(
+						(positionHistory: PositionHistory) => {
+							return positionHistory.isOpen && positionHistory.asset === position.asset;
+						}
+					);
 
 					return {
 						asset: position.asset,
@@ -57,6 +55,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						notionalValue: position?.position?.notionalValue.abs(),
 						position: position?.position?.side,
 						lastPrice: position?.position?.lastPrice,
+						avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
 						liquidationPrice: position?.position?.liquidationPrice,
 						pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
 						pnlPct: position?.position?.profitLoss.div(
@@ -67,7 +66,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [futuresPositionQuery.data, getSynthDescription]);
+	}, [futuresPositionQuery.data, futuresPositionHistory, synthsMap, t]);
 
 	return (
 		<TableContainer>
@@ -182,18 +181,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.last-entry')}
-							</TableHeader>
+							<TableHeader>{t('dashboard.overview.futures-positions-table.avg-entry')}</TableHeader>
 						),
-						accessor: 'lastPrice',
+						accessor: 'avgEntryPrice',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.avgOpenClose === NO_VALUE ? (
+							return cellProps.row.original.avgEntryPrice === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.lastPrice}
+									price={cellProps.row.original.avgEntryPrice}
 									sign={'$'}
 									conversionRate={1}
 								/>

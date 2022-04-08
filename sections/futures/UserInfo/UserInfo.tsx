@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 
@@ -16,6 +15,8 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getMarketKey } from 'utils/futures';
+import Connector from 'containers/Connector';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -30,11 +31,13 @@ type UserInfoProps = {
 };
 
 const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
-	const { t } = useTranslation();
 	const router = useRouter();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(marketAsset);
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
+		getMarketKey(marketAsset, network.id)
+	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
