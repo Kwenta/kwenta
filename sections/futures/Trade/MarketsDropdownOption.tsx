@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
 import { FlexDivCentered } from 'styles/common';
 import { components, OptionProps } from 'react-select';
+import Badge from 'components/Badge';
 
 const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 	<components.Option {...props}>
@@ -14,7 +15,10 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
-					<CurrencyLabel>{props.data.label}</CurrencyLabel>
+					<CurrencyLabel>
+						{props.data.label}
+						<StyledBadge>Paused</StyledBadge>
+					</CurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>
 			</CurrencyMeta>
@@ -39,6 +43,13 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 				color: ${(props) => props.theme.colors.common.secondaryGold};
 			}
 		`}
+`;
+
+const StyledBadge = styled(Badge)`
+	letter-spacing: 0.105em;
+	margin-left: 4px;
+	line-height: 10px;
+	font-size: 8px;
 `;
 
 const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boolean }>`
