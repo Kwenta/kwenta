@@ -225,6 +225,7 @@ const CategoryFilters = styled.div`
 
 const CategoryButton = styled(Button)`
 	text-transform: uppercase;
+	font-size: 12px;
 `;
 
 const EmptyDisplay = styled(FlexDivCentered)`

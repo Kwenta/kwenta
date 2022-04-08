@@ -9,13 +9,13 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import BaseModal from 'components/BaseModal';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { PositionSide } from '../types';
-import { Synths } from 'constants/currency';
+import { CurrencyKey, Synths } from 'constants/currency';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getExchangeRatesForCurrencies, iStandardSynth, synthToAsset } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getTransactionPrice, gasPriceInWei } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
@@ -108,7 +108,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			},
 			{
 				label: t('futures.market.user.position.modal-close.size'),
-				value: formatCurrency(currencyKey, position?.size ?? zeroBN, { currencyKey }),
+				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
+					sign:iStandardSynth(currencyKey as CurrencyKey) ? synthToAsset(currencyKey as CurrencyKey) : currencyKey,
+				}),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.leverage'),
@@ -219,11 +221,11 @@ const ValueColumn = styled(FlexDivCol)`
 `;
 
 const StyledButton = styled(Button)`
-	width: 100%;
 	margin-top: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
+	height:55px;
 `;
 
 const StyledGasPriceSelect = styled(GasPriceSelect)`

@@ -3,17 +3,15 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { Svg } from 'react-optimized-image';
 
-import ArrowsIcon from 'assets/svg/app/arrows.svg';
+import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
-import { PageContent, SwapCurrenciesButton, FlexDivCol, FullHeightContainer } from 'styles/common';
+import { PageContent, SwapCurrenciesButton, FullHeightContainer, MainContent } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
-import { DEFAULT_WIDTH } from 'sections/exchange/TradeCard/constants';
 import { formatCurrency } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
-import GitIDFooter from 'sections/shared/Layout/AppLayout/GitID';
 
 const Exchange: FC = () => {
 	const { t } = useTranslation();
@@ -23,7 +21,6 @@ const Exchange: FC = () => {
 		inverseRate,
 		quoteCurrencyCard,
 		baseCurrencyCard,
-		handleCurrencySwap,
 		footerCard,
 	} = useExchange({
 		showPriceCard: true,
@@ -50,28 +47,28 @@ const Exchange: FC = () => {
 				</title>
 			</Head>
 			<AppLayout>
-				<StyledPageContent>
-					<FullHeightContainer>
-						<DesktopContainer>
-							<SwapCurrenciesButtonContainer>
-								<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-										<Svg src={ArrowsIcon} />
-								</SwapCurrenciesButton>
-							</SwapCurrenciesButtonContainer>
+				<PageContent>
+					<StyledFullHeightContainer>
+						<StyledMainContent>
+							<ExchangeTitle>{t('exchange.synth-exchange')}</ExchangeTitle>
 							<PageWidthContainer>
 								<DesktopCardsContainer>
-									<LeftCardContainer data-testid="left-side">{quoteCurrencyCard}</LeftCardContainer>
-									<RightCardContainer data-testid="right-side">
+									<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
+									<SwapCurrenciesButtonContainer>
+										<SwapCurrenciesButton data-testid="swap-btn">
+												<Svg src={ArrowIcon} />
+										</SwapCurrenciesButton>
+									</SwapCurrenciesButtonContainer>
+									<BottomCardContainer data-testid="bottom-side">
 										{baseCurrencyCard}
-									</RightCardContainer>
+									</BottomCardContainer>
 								</DesktopCardsContainer>
 							</PageWidthContainer>
 
 							<PageWidthContainer>{footerCard}</PageWidthContainer>
-						<GitIDFooter />
-						</DesktopContainer>
-					</FullHeightContainer>
-				</StyledPageContent>
+						</StyledMainContent>
+					</ StyledFullHeightContainer>
+				</PageContent>
 			</AppLayout>
 		</>
 	);
@@ -79,42 +76,59 @@ const Exchange: FC = () => {
 
 export default Exchange;
 
-const StyledPageContent = styled(PageContent)`
-	max-width: 1440px;
+const ExchangeTitle = styled.p`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-family: ${(props) => props.theme.fonts.regular};
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 30px;
+	text-align: center;
 `;
+
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	padding-top: 14px;
+`;
+
 
 const SwapCurrenciesButtonContainer = styled.div`
 	align-self: flex-start;
-	margin-top: 37px;
+	margin-top: 170px;
 	position: absolute;
 	left: calc(50% - 16px);
 	z-index: ${zIndex.BASE + 10};
 `;
 
 const PageWidthContainer = styled.div`
-	width: ${DEFAULT_WIDTH}px;
+	width: 565px;
 	margin: 0 auto;
 `;
 
-const DesktopContainer = styled(FlexDivCol)``;
+const StyledMainContent = styled(MainContent)`
+	max-width: initial;
+`;
 
 const DesktopCardsContainer = styled.div`
-	display: grid;
-	padding-bottom: 2px;
-	gap: 2px;
-	grid-template-columns: 1fr 1fr;
-	flex: 1;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 4px;
+	background: ${(props) => props.theme.colors.cellGradient};
+	box-sizing: border-box;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 `;
+
 
 const CardContainerMixin = `
 	display: grid;
+	height: 183px;
 `;
 
-const LeftCardContainer = styled.div`
+const TopCardContainer = styled.div`
 	${CardContainerMixin};
+
 `;
 
-const RightCardContainer = styled.div`
+const BottomCardContainer = styled.div`
 	${CardContainerMixin};
 `;
 

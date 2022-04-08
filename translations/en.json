@@ -165,8 +165,10 @@
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"synth-exchange": "Synth Exchange",
 		"currency-card": {
-			"wallet-balance": "wallet balance",
+			"amount-placeholder": "0.0000",
+			"wallet-balance": "balance:",
 			"currency-selector": {
 				"select-synth": "select synth",
 				"select-token": "select token"
@@ -234,7 +236,7 @@
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
-				"submit-order": "submit order",
+				"submit-order": "swap",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
 				"approve-balancer": "approve balancer contract",
@@ -986,7 +988,7 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"title": "gas price (GWEI)",
+				"title": "gas price",
 				"average": "Average",
 				"fast": "Fast",
 				"fastest": "Fastest"

@@ -6,20 +6,27 @@ import { Svg } from 'react-optimized-image';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 
-import { FlexDivRowCentered, numericValueCSS, CapitalizedText } from 'styles/common';
+import { FlexDivRowCentered, numericValueCSS, CapitalizedText, FlexDivColCentered, FlexDivCol, FlexDiv, FlexDivRow } from 'styles/common';
 
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
+import { StyledTextButton } from '../Charts/common/styles';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import Currency from 'components/Currency';
+import { Synth } from '@synthetixio/contracts-interface';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import Connector from 'containers/Connector';
+import Button from 'components/Button';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -80,7 +87,8 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	const currencyKeySelected = currencyKey != null;
 	const hasCurrencySelectCallback = onCurrencySelect != null;
-
+	const { synthsMap } = Connector.useContainer();
+	
 	return (
 		<StyledCard
 			className={`currency-card currency-card-${side}`}
@@ -88,70 +96,100 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 			{...rest}
 		>
 			<StyledCardBody className="currency-card-body">
-				<LabelContainer data-testid="destination">{label}</LabelContainer>
-				<CurrencyWalletBalanceContainer className="currency-wallet-container">
-					<CurrencyContainer className="currency-container">
+				<CurrencyContainer className="currency-container">
+					<InputContainer>
+						<InputLabel data-testid="destination">{label}</InputLabel>
+						<CurrencyAmountContainer
+							className="currency-amount-container"
+							disableInput={disableInput}
+						>
+							<FlexDivRowCentered>
+								<CurrencyAmount
+									value={isBase && Number(amount) > 0 ? Number(amount).toFixed(DEFAULT_CRYPTO_DECIMALS).toString() : amount}
+									onChange={(_, value) => onAmountChange(value)}
+									placeholder={t('exchange.currency-card.amount-placeholder')}
+									data-testid="currency-amount"
+								/>
+							{!isBase && <MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}><CapitalizedText>max</CapitalizedText></MaxButton>}
+							</FlexDivRowCentered>
+							<FlexDivRowCentered>
+								<CurrencyAmountValue data-testid="amount-value">
+									{currencyKeySelected && tradeAmount != null
+										? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
+												sign: selectedPriceCurrency.sign,
+										})
+										: null}
+								</CurrencyAmountValue>
+								<Slippage>
+									{!isLoading &&
+										slippagePercent != null &&
+										slippagePercent.lt(0) &&
+										formatPercent(slippagePercent)}
+								</Slippage>
+							</FlexDivRowCentered>
+							{isLoading && <StyledLoader width="24px" height="24px" />}
+						</CurrencyAmountContainer>
+					</InputContainer>
+
+					<SelectorContainer>
+						<CurrencyNameLabel data-testid="currency-name">
+							{currencyKeySelected 
+								? t('common.currency.synthetic-currency-name', {
+									currencyName: synthsMap[currencyKey].description,}) 
+								: 'Synth Name'}
+						</CurrencyNameLabel>
 						<CurrencySelector
 							currencyKeySelected={currencyKeySelected}
 							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
 							role="button"
 							data-testid="currency-selector"
 						>
-							{currencyKey ?? (
-								<CapitalizedText>
-									{txProvider === '1inch'
-										? t('exchange.currency-card.currency-selector.select-token')
-										: t('exchange.currency-card.currency-selector.select-synth')}
-								</CapitalizedText>
-							)}{' '}
+							<TokenLabel>
+								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey}/>}
+								{currencyKey ?? (
+										<CapitalizedText>
+											{txProvider === '1inch'
+												? t('exchange.currency-card.currency-selector.select-token')
+												: t('exchange.currency-card.currency-selector.select-synth')}
+										</CapitalizedText>
+								)}
+							</TokenLabel>
 							{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}
 						</CurrencySelector>
-						{currencyKeySelected && (
-							<CurrencyAmountContainer
-								className="currency-amount-container"
-								disableInput={disableInput}
+						<WalletBalanceContainer disableInput={disableInput}>
+							<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
+							<WalletBalance
+								onClick={hasWalletBalance ? onBalanceClick : undefined}
+								insufficientBalance={insufficientBalance}
+								data-testid="wallet-balance"
 							>
-								<CurrencyAmount
-									value={amount}
-									onChange={(_, value) => onAmountChange(value)}
-									placeholder="0"
-									data-testid="currency-amount"
-								/>
-								<FlexDivRowCentered>
-									<CurrencyAmountValue data-testid="amount-value">
-										{tradeAmount != null
-											? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
-													sign: selectedPriceCurrency.sign,
-											  })
-											: null}
-									</CurrencyAmountValue>
-									<Slippage>
-										{!isLoading &&
-											slippagePercent != null &&
-											slippagePercent.lt(0) &&
-											formatPercent(slippagePercent)}
-									</Slippage>
-								</FlexDivRowCentered>
-								{isLoading && <StyledLoader width="24px" height="24px" />}
-							</CurrencyAmountContainer>
-						)}
-					</CurrencyContainer>
-					<WalletBalanceContainer disableInput={disableInput}>
-						<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-						<WalletBalance
-							onClick={hasWalletBalance ? onBalanceClick : undefined}
-							insufficientBalance={insufficientBalance}
-							data-testid="wallet-balance"
-						>
-							{/* @ts-ignore */}
-							{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
-						</WalletBalance>
-					</WalletBalanceContainer>
-				</CurrencyWalletBalanceContainer>
+								{/* @ts-ignore */}
+								{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
+							</WalletBalance>
+						</WalletBalanceContainer>	
+					</SelectorContainer>
+				</CurrencyContainer>
 			</StyledCardBody>
 		</StyledCard>
 	);
 };
+
+const MaxButton = styled(Button)`
+	width: 40px;
+	height: 21px;
+	font-size: 11px;
+	padding: 0px 10px;
+	margin-top: 15px;
+	margin-right: 16px;
+	text-align: center;
+	font-family: ${(props) => props.theme.fonts.mono};
+`;
+const TokenLabel = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	gap: 10px;
+`;
 
 const StyledCard = styled(Card)<{ interactive?: boolean }>`
 	${(props) =>
@@ -162,18 +200,29 @@ const StyledCard = styled(Card)<{ interactive?: boolean }>`
 `;
 
 const StyledCardBody = styled(Card.Body)`
-	padding: 11px 30px;
+	padding: 20px 32px;
 `;
 
-const LabelContainer = styled.div`
-	padding-bottom: 2px;
+const InputContainer = styled(FlexDivCol)`
+	row-gap: 21px;
+`
+
+const InputLabel = styled.div`
 	text-transform: capitalize;
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	line-height: 11px;
+	padding-top: 6px;
+	margin-left: 16px;
 `;
 
-const CurrencyWalletBalanceContainer = styled.div``;
+const SelectorContainer = styled(FlexDivColCentered)`
+	row-gap: 18px;
+`;
 
 const CurrencyContainer = styled(FlexDivRowCentered)`
-	padding-bottom: 6px;
+	gap: 20px;
 `;
 
 const CurrencySelector = styled.div<{
@@ -181,41 +230,49 @@ const CurrencySelector = styled.div<{
 	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
 	interactive?: boolean;
 }>`
-	display: grid;
-	align-items: center;
-	grid-auto-flow: column;
-	grid-gap: 9px;
-	margin-right: 20px;
-	font-size: 16px;
-	padding: 4px 10px;
-	margin-left: -10px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	display: flex;
+	justify-content: space-between;
+	padding: 12px;
+	font-size: 18px;
+	line-height: 18px;
+	height: 43px;
+	width: 161px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	border-radius: 8px;
+
 	${(props) =>
 		!props.currencyKeySelected &&
 		css`
-			margin: 12px 6px 12px -10px;
+
 		`};
 
 	${(props) =>
 		props.onClick &&
 		css`
 			&:hover {
-				background-color: ${(props) => props.theme.colors.black};
-				border-radius: 100px;
+				background-color: ${(props) => props.theme.colors.selectedTheme.button.hover};
 				cursor: pointer;
 			}
 		`};
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
-	background-color: ${(props) => props.theme.colors.black};
-	border-radius: 4px;
-	width: 100%;
+	background: ${(props) => props.theme.colors.inputGradient};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.inputHighlight};
+	border-radius: 8px;
+	height: 84px;
+	width: 323px;
 	position: relative;
 	${(props) =>
 		props.disableInput &&
@@ -225,18 +282,24 @@ const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 `;
 
 const CurrencyAmount = styled(NumericInput)`
+	margin-top: 10px;
+	padding: 10px 16px;
 	font-size: 16px;
 	border: 0;
 	height: 30px;
+	font-size: 30px;
+	line-height: 36px;
+	letter-spacing: -1px;
 `;
 
 const CurrencyAmountValue = styled.div`
 	${numericValueCSS};
-	padding: 0px 8px 2px 8px;
-	font-size: 10px;
+	padding: 8px 8px 2px 16px;
+	font-size: 14px;
+	line-height: 17px;
 	width: 150px;
 	overflow: hidden;
-	text-overflow: ellipsis;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const Slippage = styled.div`
@@ -246,18 +309,34 @@ const Slippage = styled.div`
 	color: ${(props) => props.theme.colors.yellow};
 `;
 
-const WalletBalanceContainer = styled(FlexDivRowCentered)<{ disableInput?: boolean }>`
+const CurrencyNameLabel = styled.div`
+	text-transform: capitalize;
+	text-align: left;
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	line-height: 11px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	width: 161px;
+	padding-left: 12px;
+`;
+
+const WalletBalanceContainer = styled(FlexDivRow)<{ disableInput?: boolean }>`
 	${(props) =>
 		props.disableInput &&
 		css`
 			pointer-events: none;
 		`}
+	width: 136px;
 `;
 
 const WalletBalanceLabel = styled.div`
 	text-transform: capitalize;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	line-height: 14px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
+
 
 const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
@@ -267,6 +346,10 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.red};
 		`}
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.mono};
+	line-height: 14px;
 `;
 
 const StyledLoader = styled(Loader)`
