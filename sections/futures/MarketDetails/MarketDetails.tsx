@@ -17,7 +17,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import OpenInterestToolTip from 'components/Tooltip/OpenInterestTooltip';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import GeneralTooltip from 'components/Tooltip/GeneralTooltip';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -44,8 +44,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const updateTime = exchangeRatesQuery.dataUpdatedAt;
 	const currentTime = Date.now()
-	const minutes = Math.floor((currentTime - updateTime)/60000).toString();
-	console.log("minutes", minutes)
+	const minDiff = ((currentTime - updateTime)/60000);
+	const minFloor = Math.floor((currentTime - updateTime)/60000);
+	const secFloor = Math.floor((minDiff - minFloor)*60);
+	console.log("minutes, seconds", minFloor, secFloor)
 
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
@@ -69,10 +71,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: { value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
-				<StyledTooltip>
-
-					
-				</StyledTooltip>
+				<GeneralTooltip 
+					preset='bottom' 
+					contentArray={[`Time since last oracle update: ${minFloor}:${secFloor}`]}
+				>
+					{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
+				</GeneralTooltip>
 				) : (
 					NO_VALUE
 				)
