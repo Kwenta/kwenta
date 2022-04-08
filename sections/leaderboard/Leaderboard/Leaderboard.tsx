@@ -60,10 +60,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				pnlPct:
-					pnlMap[stat.account]?.totalVolume > 0
-						? pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume).toNumber()
-						: 0,
 			}))
 			.filter((i: { trader: string }) =>
 				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
@@ -139,14 +135,14 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
 						accessor: 'totalTrades',
 						sortType: 'basic',
-						width: 175,
+						width: 100,
 						sortable: true,
 					},
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
 						accessor: 'liquidations',
 						sortType: 'basic',
-						width: 175,
+						width: 100,
 						sortable: true,
 					},
 					{
@@ -175,16 +171,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 								sign={'$'}
 								conversionRate={1}
 							/>
-						),
-						width: compact ? 'auto' : 100,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.percent-pnl')}</TableHeader>,
-						accessor: 'pnlPct',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<ChangePercent value={cellProps.row.original.pnlPct} />
 						),
 						width: compact ? 'auto' : 100,
 						sortable: true,

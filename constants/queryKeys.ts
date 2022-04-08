@@ -179,7 +179,11 @@ export const QUERY_KEYS = {
 		],
 		Participants: () => ['futures', 'participants'],
 		Participant: (walletAddress: string) => ['futures', 'participant', walletAddress],
-		Stats: ['futures', 'stats'],
+		Stats: (networkId: NetworkId) => [
+			'futures',
+			'stats',
+			networkId
+		],
 		AverageLeverage: ['futures', 'averageLeverage'],
 		CumulativeVolume: ['futures', 'cumulativeVolume'],
 		TotalLiquidations: ['futures', 'totalLiquidations'],
