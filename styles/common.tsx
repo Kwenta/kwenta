@@ -207,8 +207,8 @@ export const SwapCurrenciesButton = styled.button`
 	justify-content: center;
 	z-index: ${zIndex.BASE};
 	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};;
-	border:${(props) => props.theme.colors.selectedTheme.border};
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	cursor: default;

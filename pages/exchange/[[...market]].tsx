@@ -56,7 +56,7 @@ const Exchange: FC = () => {
 									<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 									<SwapCurrenciesButtonContainer>
 										<SwapCurrenciesButton data-testid="swap-btn">
-												<Svg src={ArrowIcon} />
+											<Svg src={ArrowIcon} />
 										</SwapCurrenciesButton>
 									</SwapCurrenciesButtonContainer>
 									<BottomCardContainer data-testid="bottom-side">
@@ -67,7 +67,7 @@ const Exchange: FC = () => {
 
 							<PageWidthContainer>{footerCard}</PageWidthContainer>
 						</StyledMainContent>
-					</ StyledFullHeightContainer>
+					</StyledFullHeightContainer>
 				</PageContent>
 			</AppLayout>
 		</>
@@ -88,7 +88,6 @@ const ExchangeTitle = styled.p`
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	padding-top: 14px;
 `;
-
 
 const SwapCurrenciesButtonContainer = styled.div`
 	align-self: flex-start;
@@ -114,9 +113,8 @@ const DesktopCardsContainer = styled.div`
 	border-radius: 4px;
 	background: ${(props) => props.theme.colors.cellGradient};
 	box-sizing: border-box;
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 `;
-
 
 const CardContainerMixin = `
 	display: grid;
@@ -125,10 +123,8 @@ const CardContainerMixin = `
 
 const TopCardContainer = styled.div`
 	${CardContainerMixin};
-
 `;
 
 const BottomCardContainer = styled.div`
 	${CardContainerMixin};
 `;
-

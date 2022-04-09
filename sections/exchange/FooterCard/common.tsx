@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 
-import { FixedFooterMixin, GridDivCentered, GridDivCenteredRow, GridDivRow, numericValueCSS } from 'styles/common';
+import { GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
 
 export const SummaryItems = styled.div<{ attached?: boolean }>`

@@ -9,7 +9,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import BaseModal from 'components/BaseModal';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { PositionSide } from '../types';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';

@@ -8,22 +8,26 @@ import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
 
-import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 import Card from 'components/Card';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
 
-import { FlexDivRowCentered, numericValueCSS, CapitalizedText, FlexDivColCentered, FlexDivCol, FlexDiv, FlexDivRow } from 'styles/common';
+import {
+	FlexDivRowCentered,
+	numericValueCSS,
+	CapitalizedText,
+	FlexDivColCentered,
+	FlexDivCol,
+	FlexDivRow,
+} from 'styles/common';
 
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
-import { StyledTextButton } from '../Charts/common/styles';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import Currency from 'components/Currency';
-import { Synth } from '@synthetixio/contracts-interface';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
@@ -88,7 +92,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const currencyKeySelected = currencyKey != null;
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 	const { synthsMap } = Connector.useContainer();
-	
+
 	return (
 		<StyledCard
 			className={`currency-card currency-card-${side}`}
@@ -105,19 +109,27 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						>
 							<FlexDivRowCentered>
 								<CurrencyAmount
-									value={isBase && Number(amount) > 0 ? Number(amount).toFixed(DEFAULT_CRYPTO_DECIMALS).toString() : amount}
+									value={
+										isBase && Number(amount) > 0
+											? Number(amount).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+											: amount
+									}
 									onChange={(_, value) => onAmountChange(value)}
 									placeholder={t('exchange.currency-card.amount-placeholder')}
 									data-testid="currency-amount"
 								/>
-							{!isBase && <MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}><CapitalizedText>max</CapitalizedText></MaxButton>}
+								{!isBase && (
+									<MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}>
+										<CapitalizedText>max</CapitalizedText>
+									</MaxButton>
+								)}
 							</FlexDivRowCentered>
 							<FlexDivRowCentered>
 								<CurrencyAmountValue data-testid="amount-value">
 									{currencyKeySelected && tradeAmount != null
 										? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
 												sign: selectedPriceCurrency.sign,
-										})
+										  })
 										: null}
 								</CurrencyAmountValue>
 								<Slippage>
@@ -133,9 +145,10 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 					<SelectorContainer>
 						<CurrencyNameLabel data-testid="currency-name">
-							{currencyKeySelected 
+							{currencyKeySelected
 								? t('common.currency.synthetic-currency-name', {
-									currencyName: synthsMap[currencyKey].description,}) 
+										currencyName: synthsMap[currencyKey].description,
+								  })
 								: 'Synth Name'}
 						</CurrencyNameLabel>
 						<CurrencySelector
@@ -145,13 +158,13 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 							data-testid="currency-selector"
 						>
 							<TokenLabel>
-								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey}/>}
+								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey} />}
 								{currencyKey ?? (
-										<CapitalizedText>
-											{txProvider === '1inch'
-												? t('exchange.currency-card.currency-selector.select-token')
-												: t('exchange.currency-card.currency-selector.select-synth')}
-										</CapitalizedText>
+									<CapitalizedText>
+										{txProvider === '1inch'
+											? t('exchange.currency-card.currency-selector.select-token')
+											: t('exchange.currency-card.currency-selector.select-synth')}
+									</CapitalizedText>
 								)}
 							</TokenLabel>
 							{hasCurrencySelectCallback && <Svg src={CaretDownIcon} />}
@@ -166,7 +179,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								{/* @ts-ignore */}
 								{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
 							</WalletBalance>
-						</WalletBalanceContainer>	
+						</WalletBalanceContainer>
 					</SelectorContainer>
 				</CurrencyContainer>
 			</StyledCardBody>
@@ -205,7 +218,7 @@ const StyledCardBody = styled(Card.Body)`
 
 const InputContainer = styled(FlexDivCol)`
 	row-gap: 21px;
-`
+`;
 
 const InputLabel = styled.div`
 	text-transform: capitalize;
@@ -243,17 +256,13 @@ const CurrencySelector = styled.div<{
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};;
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border-radius: 8px;
 
-	${(props) =>
-		!props.currencyKeySelected &&
-		css`
-
-		`};
+	${(props) => !props.currencyKeySelected && css``};
 
 	${(props) =>
 		props.onClick &&
@@ -336,7 +345,6 @@ const WalletBalanceLabel = styled.div`
 	line-height: 14px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
-
 
 const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
