@@ -9,7 +9,6 @@ const darkTheme = {
 		shadow:
 			'rgb(0 0 0 / 25%) 0px 2px 2px, rgb(255 255 255 / 10%) 0px 1px 0px inset, rgb(255 255 255 / 3%) 0px 0px 20px inset',
 		text: common.primaryWhite,
-		inputHighlight: 'inset 0px -1px 0px rgba(255, 255, 255, 0.07)',
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',

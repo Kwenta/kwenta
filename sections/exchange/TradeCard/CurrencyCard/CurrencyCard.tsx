@@ -147,7 +147,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						<CurrencyNameLabel data-testid="currency-name">
 							{currencyKeySelected
 								? t('common.currency.synthetic-currency-name', {
-										currencyName: synthsMap[currencyKey].description,
+										currencyName: synthsMap[currencyKey as CurrencyKey].description,
 								  })
 								: 'Synth Name'}
 						</CurrencyNameLabel>
@@ -158,7 +158,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 							data-testid="currency-selector"
 						>
 							<TokenLabel>
-								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey} />}
+								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey as CurrencyKey} />}
 								{currencyKey ?? (
 									<CapitalizedText>
 										{txProvider === '1inch'
@@ -278,7 +278,7 @@ const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 	background: ${(props) => props.theme.colors.inputGradient};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.inputHighlight};
+	box-shadow: ${(props) => props.theme.colors.inputHighlight};
 	border-radius: 8px;
 	height: 84px;
 	width: 323px;
