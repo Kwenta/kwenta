@@ -999,7 +999,7 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"title": "gas price (GWEI)",
+				"title": "gas price (Gwei)",
 				"average": "Average",
 				"fast": "Fast",
 				"fastest": "Fastest"
