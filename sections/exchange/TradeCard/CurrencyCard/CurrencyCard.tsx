@@ -158,7 +158,13 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 							data-testid="currency-selector"
 						>
 							<TokenLabel>
-								{currencyKeySelected && <CurrencyIcon currencyKey={currencyKey as CurrencyKey} />}
+								{currencyKeySelected && (
+									<CurrencyIcon
+										currencyKey={currencyKey as CurrencyKey}
+										width="25px"
+										height="25px"
+									/>
+								)}
 								{currencyKey ?? (
 									<CapitalizedText>
 										{txProvider === '1inch'
@@ -192,9 +198,7 @@ const MaxButton = styled(Button)`
 	height: 21px;
 	font-size: 11px;
 	padding: 0px 10px;
-	margin-top: 15px;
-	margin-right: 16px;
-	text-align: center;
+	margin: 16px 16px 0px 0px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 const TokenLabel = styled.div`
@@ -225,7 +229,7 @@ const InputLabel = styled.div`
 	color: ${(props) => props.theme.colors.common.primaryGold};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	line-height: 11px;
+	line-height: 0.75em;
 	padding-top: 6px;
 	margin-left: 16px;
 `;
@@ -245,11 +249,11 @@ const CurrencySelector = styled.div<{
 }>`
 	display: flex;
 	justify-content: space-between;
-	padding: 12px;
-	font-size: 18px;
-	line-height: 18px;
 	height: 43px;
 	width: 161px;
+	padding: 12px;
+	font-size: 18px;
+	line-height: 1em;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	svg {
@@ -258,9 +262,9 @@ const CurrencySelector = styled.div<{
 
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	box-sizing: border-box;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border-radius: 8px;
+	box-sizing: border-box;
 
 	${(props) => !props.currencyKeySelected && css``};
 
@@ -297,7 +301,7 @@ const CurrencyAmount = styled(NumericInput)`
 	border: 0;
 	height: 30px;
 	font-size: 30px;
-	line-height: 36px;
+	line-height: 2.25em;
 	letter-spacing: -1px;
 `;
 
@@ -305,7 +309,7 @@ const CurrencyAmountValue = styled.div`
 	${numericValueCSS};
 	padding: 8px 8px 2px 16px;
 	font-size: 14px;
-	line-height: 17px;
+	line-height: 1.25em;
 	width: 150px;
 	overflow: hidden;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
@@ -323,7 +327,7 @@ const CurrencyNameLabel = styled.div`
 	text-align: left;
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	line-height: 11px;
+	line-height: 0.75em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 161px;
 	padding-left: 12px;
@@ -342,12 +346,13 @@ const WalletBalanceLabel = styled.div`
 	text-transform: capitalize;
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	line-height: 14px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
+	font-size: 14px;
+	font-family: ${(props) => props.theme.fonts.mono};
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 	${(props) =>
 		props.insufficientBalance &&
@@ -355,9 +360,6 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 			color: ${props.theme.colors.red};
 		`}
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	line-height: 14px;
 `;
 
 const StyledLoader = styled(Loader)`

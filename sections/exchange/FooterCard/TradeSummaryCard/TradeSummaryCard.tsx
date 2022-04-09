@@ -138,7 +138,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 							onClick={onSubmit}
 							size="lg"
 							data-testid="submit-order"
-							fullWidth
+							fullWidth={true}
 						>
 							{isSubmissionDisabled
 								? submissionDisabledReason

@@ -84,7 +84,6 @@ import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
