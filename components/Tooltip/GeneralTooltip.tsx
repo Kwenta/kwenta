@@ -27,7 +27,7 @@ const GeneralTooltip = (props: ToolTipProps) => {
 			{activeMouse && (
 				<Tooltip {...props}>
 					{props.contentArray?.map((content, i) => (
-						<p>{content}</p>
+						<p key={i}>{content}</p>
 					))}
 				</Tooltip>
 			)}

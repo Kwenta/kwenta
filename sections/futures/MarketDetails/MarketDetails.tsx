@@ -12,7 +12,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
-import { synthToCoingeckoPriceId } from './utils';
+import { synthToCoingeckoPriceId, findDateTimeDiff } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
@@ -42,13 +42,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
 
-	const updateTime = exchangeRatesQuery.dataUpdatedAt;
 	const currentTime = Date.now()
-	const minDiff = ((currentTime - updateTime)/60000);
-	const minFloor = Math.floor((currentTime - updateTime)/60000);
-	const secFloor = Math.floor((minDiff - minFloor)*60);
-	console.log("minutes, seconds", minFloor, secFloor)
-
+	let updateTime = currentTime - 15000*60
+	
+	const timeSinceOracleUpdate = (currentTime - updateTime) / 1000
+	// const timeDiff = (currentTime - updateTime) / 1000
+	console.log("timeSinceOracleUpdate", timeSinceOracleUpdate)
+	console.log("basePriceRate", basePriceRate)
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -73,7 +73,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				: '']: { value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
 				<GeneralTooltip 
 					preset='bottom' 
-					contentArray={[`Time since last oracle update: ${minFloor}:${secFloor}`]}
+					contentArray={[`Time since last oracle update: ${timeSinceOracleUpdate}`]}
 				>
 					{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
 				</GeneralTooltip>

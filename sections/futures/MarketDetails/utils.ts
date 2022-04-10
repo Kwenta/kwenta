@@ -15,3 +15,28 @@ export const synthToCoingeckoPriceId = (synth: any) => {
 		return 'ethereum';
 	}
 };
+
+export function findDateTimeDiff(date1: any, date2: any) {
+	const dayDiff = Math.abs(date2 - date1) / (1000 * 60 * 60 * 24),
+	  dayFloor = Math.floor(dayDiff),
+	  hourDiff = (dayDiff - dayFloor) * 24,
+	  hourFloor = Math.floor(hourDiff),
+	  minDiff = (hourDiff - hourFloor) * 60,
+	  minFloor = Math.floor(minDiff),
+	  secDiff = (minDiff - minFloor) * 60,
+	  secFloor = Math.floor(minDiff)
+  
+	let dayResult: string = '',
+	  hourResult: string = ''
+  
+	if (dayFloor.toString() !== '0') dayResult = `${ dayFloor.toString() } days, `
+	if (hourFloor.toString() !== '0') hourResult = `${ hourFloor.toString() } hrs, `
+  
+	let minResult = `${ minFloor.toString() } min`,
+		secResult = `${ secFloor.toString() } sec`
+
+  
+	const dateTimeDiff = `${ minResult }${ secResult }`
+  
+	return dateTimeDiff
+};
