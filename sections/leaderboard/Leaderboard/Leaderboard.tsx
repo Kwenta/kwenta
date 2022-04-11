@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo } from 'react';
+import { FC, SyntheticEvent, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -14,6 +14,7 @@ import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import Loader from 'components/Loader';
+import TraderHistory from '../TraderHistory';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -34,6 +35,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+	const [selectedTrader, setSelectedTrader] = useState('');
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
@@ -54,7 +56,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
 				address: stat.account,
-				trader: truncateAddress(stat.account),
+				trader: stat.account,
+				traderShort: truncateAddress(stat.account),
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
 				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
@@ -91,8 +94,22 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 		}
 	};
 
+	const onClickTrader = (trader: string) => {
+		setSelectedTrader(trader)
+	}
+
 	if (statsQuery.isLoading) {
 		return <Loader />;
+	}
+
+	if(selectedTrader !== '') {
+		return (
+			<TraderHistory
+				trader={selectedTrader}
+				resetSelection={() => setSelectedTrader('')}
+				compact={compact}
+			/>
+		)
 	}
 
 	return (
@@ -132,7 +149,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 								Cell: (cellProps: CellProps<any>) => (
 									<StyledOrderType>
 										{compact && cellProps.row.original.rank + '. '}
-										{cellProps.row.original.trader}
+										<StyledTrader onClick={() => { onClickTrader(cellProps.row.original.trader) }}>
+											{cellProps.row.original.traderShort}
+										</StyledTrader>
 										{getMedal(cellProps.row.index + 1)}
 									</StyledOrderType>
 								),
@@ -233,6 +252,16 @@ const TableHeader = styled.div`
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
+`;
+
+const StyledTrader = styled.a`
+	color: ${(props) => props.theme.colors.white};
+	display: flex;
+
+	&:hover {
+		text-decoration: underline;
+		cursor: pointer;
+	}
 `;
 
 export default Leaderboard;
