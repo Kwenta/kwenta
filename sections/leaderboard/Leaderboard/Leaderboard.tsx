@@ -108,73 +108,82 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				}
 				columns={[
 					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-						accessor: 'rank',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
-						),
-						width: compact ? 40 : 100,
-					},
-					{
-						Header: !compact ? (
-							<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-						) : (
-							<></>
-						),
-						accessor: 'trader',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>
-								{compact && cellProps.row.original.rank + '. '}
-								{cellProps.row.original.trader}
-								{getMedal(cellProps.row.index + 1)}
-							</StyledOrderType>
-						),
-						width: 175,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-						accessor: 'totalTrades',
-						sortType: 'basic',
-						width: 100,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-						accessor: 'liquidations',
-						sortType: 'basic',
-						width: 100,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
-						accessor: 'totalVolume',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<Currency.Price
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.totalVolume}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: compact ? 'auto' : 125,
-						sortable: true,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-						accessor: 'pnl',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: compact ? 'auto' : 100,
-						sortable: true,
-					},
+						Header:
+							<TableTitle>
+								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+							</TableTitle>,
+						accessor: 'title',
+						columns: [
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+								accessor: 'rank',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+								),
+								width: compact ? 40 : 100,
+							},
+							{
+								Header: !compact ? (
+									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+								) : (
+									<></>
+								),
+								accessor: 'trader',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>
+										{compact && cellProps.row.original.rank + '. '}
+										{cellProps.row.original.trader}
+										{getMedal(cellProps.row.index + 1)}
+									</StyledOrderType>
+								),
+								width: 175,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
+								accessor: 'totalTrades',
+								sortType: 'basic',
+								width: 100,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
+								accessor: 'liquidations',
+								sortType: 'basic',
+								width: 100,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
+								accessor: 'totalVolume',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<Currency.Price
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.totalVolume}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 125,
+								sortable: true,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+								accessor: 'pnl',
+								sortType: 'basic',
+								Cell: (cellProps: CellProps<any>) => (
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: compact ? 'auto' : 100,
+								sortable: true,
+							},	
+						]
+					}
 				]}
 			/>
 		</TableContainer>
@@ -203,6 +212,17 @@ const TableContainer = styled.div<{ compact: boolean | undefined }>`
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
+`;
+
+const TableTitle = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+`;
+
+const TitleText = styled.div`
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const TableHeader = styled.div`
