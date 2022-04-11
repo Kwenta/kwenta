@@ -14,10 +14,38 @@ const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
+
+	function getLink(link: string) {
+		if (link.slice(0, 7) === '/market') {
+			// Get lastVisited from local storage
+			const lastVisitedMarket: string | null | undefined = getLastVisited();
+
+			if (lastVisitedMarket !== null || lastVisitedMarket !== undefined) {
+				return lastVisitedMarket?.slice(8);
+			} else {
+				return link;
+			}
+		} else {
+			return link;
+		}
+	}
+
+	function getLastVisited() {
+		if (typeof window !== 'undefined') {
+			console.log('we are running on the client');
+			const lastVisitedMarket = localStorage.getItem('lastVisitedMarket');
+			return lastVisitedMarket;
+		} else {
+			console.log('we are running on the server');
+		}
+	}
+
 	return (
 		<nav>
 			<MenuLinks>
 				{menuLinks.map(({ i18nLabel, link }) => {
+					console.log('Link: ', link);
+
 					const isActive =
 						asPath === link ||
 						(asPath.includes('dashboard') && link.includes('dashboard')) ||
@@ -25,8 +53,8 @@ const Nav: FC = () => {
 						(asPath.includes('leaderboard') && link.includes('leaderboard')) ||
 						(asPath.includes('earn') && link.includes('earn'));
 					return (
-						<MenuLinkItem key={link} isActive={isActive}>
-							<Link href={link}>
+						<MenuLinkItem key={`${getLink(link)}`} isActive={isActive}>
+							<Link href={`${getLink(link)}`}>
 								<a>{t(i18nLabel)}</a>
 							</Link>
 						</MenuLinkItem>
