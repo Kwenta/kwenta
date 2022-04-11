@@ -16,27 +16,14 @@ export const synthToCoingeckoPriceId = (synth: any) => {
 	}
 };
 
-export function findDateTimeDiff(date1: any, date2: any) {
-	const dayDiff = Math.abs(date2 - date1) / (1000 * 60 * 60 * 24),
-	  dayFloor = Math.floor(dayDiff),
-	  hourDiff = (dayDiff - dayFloor) * 24,
-	  hourFloor = Math.floor(hourDiff),
-	  minDiff = (hourDiff - hourFloor) * 60,
-	  minFloor = Math.floor(minDiff),
-	  secDiff = (minDiff - minFloor) * 60,
-	  secFloor = Math.floor(minDiff)
-  
-	let dayResult: string = '',
-	  hourResult: string = ''
-  
-	if (dayFloor.toString() !== '0') dayResult = `${ dayFloor.toString() } days, `
-	if (hourFloor.toString() !== '0') hourResult = `${ hourFloor.toString() } hrs, `
-  
-	let minResult = `${ minFloor.toString() } min`,
-		secResult = `${ secFloor.toString() } sec`
+export function findTimeDiff(numSecs: any) {
+	const minDiff = Math.abs(numSecs) / (1000 * 60),
+		minFloor = Math.floor(minDiff),
+		secDiff = (minDiff - minFloor) * 60,
+		secFloor = Math.floor(secDiff)
 
-  
-	const dateTimeDiff = `${ minResult }${ secResult }`
-  
-	return dateTimeDiff
+	const min = minFloor.toString().padStart(2, '0'),
+		sec = secFloor.toString().padStart(2, '0')
+
+	return `${ min }:${ sec } mm:ss`
 };

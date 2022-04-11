@@ -12,7 +12,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
-import { synthToCoingeckoPriceId, findDateTimeDiff } from './utils';
+import { synthToCoingeckoPriceId, findTimeDiff } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
@@ -43,12 +43,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 
 	const currentTime = Date.now()
-	let updateTime = currentTime - 15000*60
+	const updateTime = currentTime - 15000*60 + 37000
 	
-	const timeSinceOracleUpdate = (currentTime - updateTime) / 1000
-	// const timeDiff = (currentTime - updateTime) / 1000
+	const timeSinceOracleUpdate = findTimeDiff(currentTime - updateTime)
 	console.log("timeSinceOracleUpdate", timeSinceOracleUpdate)
 	console.log("basePriceRate", basePriceRate)
+	console.log("useSynthetixQueries()", useSynthetixQueries())
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
