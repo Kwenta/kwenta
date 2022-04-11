@@ -30,7 +30,7 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
 
