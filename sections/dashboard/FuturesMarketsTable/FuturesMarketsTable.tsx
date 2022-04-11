@@ -229,7 +229,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 const StyledBadge = styled(Badge)`
 	margin-left: 4px;
-	line-height: 10px;
+	line-height: 80%;
 	font-size: 9px;
 `;
 
@@ -271,6 +271,10 @@ const DefaultCell = styled.p``;
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
+
+	.paused {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const StyledTable = styled(Table)`
