@@ -231,7 +231,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 const StyledBadge = styled(Badge)`
 	margin-left: 5px;
-	line-height: 10px;
+	line-height: 80%;
 	font-size: 9px;
 `;
 
