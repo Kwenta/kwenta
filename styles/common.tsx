@@ -298,6 +298,16 @@ export const MainContent = styled(FlexDivCol)`
 	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 `;
 
+export const MarketLeftSideContent = styled.div`
+	width: 326px;
+	margin-right: 15px;
+	background-color: transparent;
+	padding: ${SPACING_FROM_HEADER} 0 5px 0;
+	flex-shrink: 0;
+	position: relative;
+	height: 100%;
+`;
+
 export const RightSideContent = styled(FlexDivCol)`
 	width: 291px;
 	background-color: transparent;

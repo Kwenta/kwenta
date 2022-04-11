@@ -6,11 +6,18 @@ import { useRouter } from 'next/router';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { DesktopOnlyView } from 'components/Media';
 
-import { PageContent, FullHeightContainer, MainContent, RightSideContent } from 'styles/common';
+import {
+	PageContent,
+	FullHeightContainer,
+	MainContent,
+	RightSideContent,
+	MarketLeftSideContent,
+} from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
+import NextPrice from 'sections/futures/NextPrice';
 
 const Market: FC = () => {
 	const { t } = useTranslation();
@@ -24,6 +31,11 @@ const Market: FC = () => {
 			<AppLayout>
 				<StyledPageContent>
 					<FullHeightContainer>
+						<DesktopOnlyView>
+							<MarketLeftSideContent>
+								<NextPrice />
+							</MarketLeftSideContent>
+						</DesktopOnlyView>
 						<StyledMainContent>
 							<MarketInfo market={router.query.market?.[0]!} />
 						</StyledMainContent>
@@ -42,7 +54,7 @@ const Market: FC = () => {
 export default Market;
 
 const StyledPageContent = styled(PageContent)`
-	max-width: 1440px;
+	max-width: 1680px;
 `;
 
 const StyledMainContent = styled(MainContent)`
