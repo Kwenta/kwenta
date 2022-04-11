@@ -178,7 +178,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			{Object.entries(data).map(([key, { value, color }]) => (
 				<div key={key}>
 					<p className="heading">{key}</p>
-					<p className={color ? `value ${color}` : 'value'}>{value}</p>
+					<span className={color ? `value ${color}` : 'value'}>{value}</span>
 				</div>
 			))}
 		</MarketDetailsContainer>
@@ -200,7 +200,8 @@ const MarketDetailsContainer = styled.div`
 	border-radius: 10px;
 	box-sizing: border-box;
 
-	p {
+	p,
+	span {
 		margin: 0;
 		text-align: left;
 	}
