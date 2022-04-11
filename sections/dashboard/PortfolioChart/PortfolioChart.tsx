@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
@@ -12,8 +11,6 @@ type PortfolioChartProps = {
 };
 
 const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioChartProps) => {
-	const { t } = useTranslation();
-
 	const markets = futuresMarkets.map((market: FuturesMarket) => {
 		return market.asset;
 	});
@@ -37,7 +34,7 @@ const Chart = styled.div`
 	min-width: 915px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
-	height: 200px ;
+	height: 200px;
 `;
 
 const PortfolioTitle = styled.p`

@@ -14,8 +14,6 @@ import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import Loader from 'components/Loader';
-import { ethers } from 'ethers';
-import { GridDivCenteredCol, TextButton } from 'styles/common';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -33,9 +31,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 	const { t } = useTranslation();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-	
+
 	const statsQuery = useGetStats();
-	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery])
+	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
@@ -49,7 +47,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 
 	let data = useMemo(() => {
 		return stats
-			.sort((a: FuturesStat, b: FuturesStat) => (pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0))
+			.sort(
+				(a: FuturesStat, b: FuturesStat) =>
+					(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
+			)
 			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
 				address: stat.account,
@@ -59,13 +60,18 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
-				pnlPct: pnlMap[stat.account]?.totalVolume > 0 ? (pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume)).toNumber() : 0,
+				pnlPct:
+					pnlMap[stat.account]?.totalVolume > 0
+						? pnlMap[stat.account]?.pnl.div(pnlMap[stat.account]?.totalVolume).toNumber()
+						: 0,
 			}))
-			.filter((i: {trader: string}) => (searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true));
-	}, [stats, searchTerm]);
+			.filter((i: { trader: string }) =>
+				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
+			);
+	}, [stats, searchTerm, pnlMap]);
 
 	if (compact) {
-		const ownPosition = data.findIndex((i: {address: string}) => {
+		const ownPosition = data.findIndex((i: { address: string }) => {
 			return i.address.toLowerCase() === walletAddress?.toLowerCase();
 		});
 
@@ -101,8 +107,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				isLoading={statsQuery.isLoading}
 				data={data}
 				hideHeaders={compact}
-				hiddenColumns={compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined}
-				columns = {[
+				hiddenColumns={
+					compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
+				}
+				columns={[
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
 						accessor: 'rank',
@@ -176,9 +184,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 						accessor: 'pnlPct',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<any>) => (
-							<ChangePercent
-								value={cellProps.row.original.pnlPct}
-							/>
+							<ChangePercent value={cellProps.row.original.pnlPct} />
 						),
 						width: compact ? 'auto' : 100,
 						sortable: true,
@@ -214,17 +220,6 @@ const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 `;
 
 const TableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-const TableTitle = styled.div`
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-`;
-
-const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;

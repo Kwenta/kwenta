@@ -19,7 +19,7 @@ export type Network = {
 
 export const networkState = atom<Network>({
 	key: getWalletKey('network'),
-	default: { id: NetworkIdByName.mainnet, name: NetworkNameById[1] },
+	default: { id: NetworkIdByName['mainnet-ovm'], name: NetworkNameById[10] },
 });
 
 export const isMainnetState = selector<boolean>({

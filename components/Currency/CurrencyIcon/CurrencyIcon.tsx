@@ -7,7 +7,6 @@ import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
-import useSynthetixTokenList from 'queries/tokenLists/useSynthetixTokenList';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
@@ -25,8 +24,20 @@ export type CurrencyIconProps = {
 export const SNXIcon =
 	'https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/snx/SNX.svg';
 
-export const getSynthIcon = (currencyKey: CurrencyKey) =>
-	`https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/${currencyKey}.svg`;
+export const getSynthIcon = (currencyKey: CurrencyKey) => {
+	let parsedCurrencyKey = currencyKey as string;
+
+	// Using a switch so that we can add more currencies if the need arises.
+	switch (currencyKey as string) {
+		case 'sWTI':
+			parsedCurrencyKey = 'sOIL';
+			break;
+		default:
+			break;
+	}
+
+	return `https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/png/${parsedCurrencyKey}.png`;
+};
 
 const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
@@ -44,11 +55,6 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
 
-	const synthetixTokenListQuery = useSynthetixTokenList();
-	const synthetixTokenListMap = synthetixTokenListQuery.isSuccess
-		? synthetixTokenListQuery.data?.tokensMap ?? null
-		: null;
-
 	const ZapperTokenListQuery = useZapperTokenList();
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
 		? ZapperTokenListQuery.data?.tokensMap ?? null
@@ -60,8 +66,8 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		: null;
 
 	const props = {
-		width: '24px',
-		height: '24px',
+		width: '30px',
+		height: '30px',
 		alt: currencyKey,
 		...rest,
 	};
@@ -78,11 +84,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				return (
 					<TokenIcon
 						{...{ isDeprecated }}
-						src={
-							synthetixTokenListMap != null && synthetixTokenListMap[currencyKey] != null
-								? synthetixTokenListMap[currencyKey].logoURI
-								: getSynthIcon(currencyKey as CurrencyKey)
-						}
+						src={getSynthIcon(currencyKey as CurrencyKey)}
 						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}
@@ -117,7 +119,11 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		);
 	} else {
 		return (
-			<Placeholder {...{ isDeprecated }} style={{ width: props.width, height: props.height }}>
+			<Placeholder
+				{...{ isDeprecated }}
+				style={{ width: props.width, height: props.height }}
+				{...props}
+			>
 				{currencyKey}
 			</Placeholder>
 		);

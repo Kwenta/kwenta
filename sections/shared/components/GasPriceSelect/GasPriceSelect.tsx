@@ -5,6 +5,7 @@ import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState, isL2State } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
+import Wei from '@synthetixio/wei';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
@@ -26,7 +27,7 @@ import { parseGasPriceObject } from 'hooks/useGas';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
-	transactionFee?: number | null;
+	transactionFee?: Wei | number | null;
 	className?: string;
 };
 

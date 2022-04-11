@@ -373,7 +373,7 @@
 			"futures-positions-table": {
 				"market": "Market",
 				"position": "Side",
-				"avg-open-close": "Avg. Open/Close",
+				"avg-entry": "Avg. Entry Price",
 				"last-entry": "Last Entry Price",
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
@@ -620,6 +620,16 @@
 				"debt": "market debt",
 				"rate": "24H funding rate"
 			},
+			"position-card": {
+				"position-side": "Position Side",
+				"position-size": "Position Size",
+				"pnl": "Unrealized P&L",
+				"leverage": "Leverage",
+				"liquidation-price": "Liq. Price",
+				"net-funding": "Net Funding",
+				"fees": "Fees",
+				"avg-entry-price": "Avg. Entry Price"
+			},
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
@@ -642,10 +652,13 @@
 					"deposit-margin": "Deposit margin",
 					"withdraw-margin": "Withdraw margin",
 					"deposit": "Deposit",
+					"withdraw": "Withdraw",
 					"edit": "Edit",
 					"open-trade": "Submit order",
 					"warning": "WARNING: this will close your position",
-					"competition-closed": "Competition Closed"
+					"competition-closed": "Competition Closed",
+					"open-position": "Open Position",
+					"modify-position": "Modify Position"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -655,6 +668,18 @@
 					"available-balance": "sUSD balance",
 					"balance": "Balance",
 					"modal": {
+						"balance": "Balance",
+						"gas-fee": "Gas Fee",
+						"max": "Max",
+						"deposit": {
+							"title": "Deposit Margin",
+							"button": "Deposit Margin",
+							"disclaimer": "A $50 margin minimum is required to open a position."
+						},
+						"withdraw": {
+							"title": "Withdraw Margin",
+							"button": "Withdraw Margin"
+						},
 						"title": "Edit margin",
 						"actions": {
 							"withdraw": "Withdraw",
@@ -908,7 +933,10 @@
 			"swap-currency": "Swap for <0>{{currencyKey}}</0>",
 			"trade-into": "Trade into <0>{{currencyKey}}</0>",
 			"price-adjustment": "Price Adjustment",
-			"deprecated": "Deprecated"
+			"deprecated": "Deprecated",
+			"futures-market-oil-short-name": "Oil Perpetual",
+			"futures-market-gold-short-name": "Gold Perpetual",
+			"futures-market-silver-short-name": "Silver Perpetual"
 		},
 		"total-assets": "{{total}} assets",
 		"total-results": "{{total}} results",
@@ -951,9 +979,9 @@
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",
-			"switch-wallet": "switch wallet",
-			"switch-accounts": "switch accounts",
-			"disconnect-wallet": "disconnect wallet"
+			"switch-wallet": "Switch Wallet",
+			"switch-accounts": "Switch Accounts",
+			"disconnect-wallet": "Disconnect Wallet"
 		},
 		"tx-status": {
 			"waiting": "Waiting",

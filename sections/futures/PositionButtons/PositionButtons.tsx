@@ -47,7 +47,7 @@ const PositionButtonsContainer = styled.div`
 const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	font-size: 16px;
 	height: 55px;
-	transition: all .1s ease-in-out;
+	transition: all 0.1s ease-in-out;
 
 	> span {
 		position: relative;
@@ -60,13 +60,12 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryGreen};
 			${props.$isActive &&
 			css`
-				transform: scale(.98);
+				transform: scale(0.98);
 				color: ${props.theme.colors.common.primaryWhite};
 				border: 2px solid ${props.theme.colors.common.primaryGreen};
 				border-radius: 11px;
 				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
 				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #7fd48245 0px 0 10px 0px;
-
 
 				&:hover {
 					background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
@@ -80,13 +79,12 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryRed};
 			${props.$isActive &&
 			css`
-				transform: scale(.98);
+				transform: scale(0.98);
 				color: ${props.theme.colors.common.primaryWhite};
 				border: 2px solid ${props.theme.colors.common.primaryRed};
 				border-radius: 11px;
 				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
 				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #ef53504d 0px 0 10px 0px;
-
 
 				&:hover {
 					background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
@@ -98,7 +96,6 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		props.$isActive &&
 		css`
 			text-shadow: ${props.theme.colors.selectedTheme.button.active.textShadow};
-
 		`};
 `;
 

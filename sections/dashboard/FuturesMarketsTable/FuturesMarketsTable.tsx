@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -13,6 +13,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
+import { getSynthDescription } from 'utils/futures';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -30,27 +31,18 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
-	const getSynthDescription = useCallback(
-		(synth: string) => {
-			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
-
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
 
 		return futuresMarkets.map((market: FuturesMarket, i: number) => {
-			const description = getSynthDescription(market.asset);
+			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 
 			return {
 				asset: market.asset,
-				market: market.asset.slice(1) + '-PERP',
+				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
 				synth: synthsMap[market.asset],
 				description: description,
 				price: market.price.toNumber(),
@@ -75,19 +67,13 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				marketSkew: market.marketSkew,
 			};
 		});
-	}, [
-		synthsMap,
-		futuresMarkets,
-		dailyPriceChangesQuery?.data,
-		futuresVolumeQuery?.data,
-		getSynthDescription,
-	]);
+	}, [synthsMap, futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
+				// pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
 					router.push(`/market/${row.original.asset}`);
@@ -105,7 +91,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
+										<StyledCurrencyIcon
+											currencyKey={
+												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+												cellProps.row.original.asset
+											}
+										/>
 									</IconContainer>
 									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>

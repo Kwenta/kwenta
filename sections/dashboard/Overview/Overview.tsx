@@ -27,7 +27,7 @@ const Overview: FC = () => {
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositions = futuresPositionQuery?.data ?? [];
+	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
@@ -37,7 +37,7 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.FUTURES,
 				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositions.length > 0 ? futuresPositions.length : undefined,
+				badge: futuresPositionQuery?.data?.length,
 				active: activePositionsTab === PositionsTab.FUTURES,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
@@ -64,7 +64,7 @@ const Overview: FC = () => {
 				},
 			},
 		],
-		[activePositionsTab, futuresPositions, t]
+		[activePositionsTab, futuresPositionQuery?.data, t]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -109,6 +109,7 @@ const Overview: FC = () => {
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
 				<FuturesPositionsTable
 					futuresMarkets={futuresMarkets}
+					futuresPositionHistory={futuresPositionHistory}
 				/>
 			</TabPanel>
 

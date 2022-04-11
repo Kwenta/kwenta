@@ -8,7 +8,7 @@ const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 export const ROUTES = {
 	Home: {
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
-		Positions: normalizeRoute('/dashboard', 'positions', 'tab')
+		Positions: normalizeRoute('/dashboard', 'positions', 'tab'),
 	},
 	Dashboard: {
 		Home: '/dashboard',
@@ -25,7 +25,7 @@ export const ROUTES = {
 		Into: (currencyKey: CurrencyKey) => normalizeRoute(`/exchange`, currencyKey, 'market'),
 	},
 	Markets: {
-		Home: '/market/sBTC',
+		Home: '/market/sETH',
 		MarketPair: (baseCurrencyKey: CurrencyKey | string) =>
 			normalizeRoute('/market', `${baseCurrencyKey}`, 'market'),
 		Position: (baseCurrencyKey: CurrencyKey) =>

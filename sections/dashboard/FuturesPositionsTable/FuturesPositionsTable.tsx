@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -9,59 +9,64 @@ import Currency from 'components/Currency';
 import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket } from 'queries/futures/types';
+import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
+import { getMarketKey, getSynthDescription } from 'utils/futures';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
+	futuresPositionHistory: PositionHistory[];
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresMarkets,
+	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const router = useRouter();
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => asset)
-	);
-	const futuresPositions = futuresPositionQuery?.data ?? [];
 
-	const getSynthDescription = useCallback(
-		(synth: string) => {
-			return t('common.currency.futures-market-short-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
-			});
-		},
-		[t, synthsMap]
+	const futuresPositionQuery = useGetFuturesPositionForMarkets(
+		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
 	);
 
 	let data = useMemo(() => {
-		const activePositions = futuresPositions.filter((position: FuturesPosition) => position?.position)
-		return activePositions.length > 0 ? activePositions.map((position: FuturesPosition, i: number) => {
-			const description = getSynthDescription(position.asset);
+		const futuresPositions = futuresPositionQuery?.data ?? [];
+		const activePositions = futuresPositions.filter(
+			(position: FuturesPosition) => position?.position
+		);
+		return activePositions.length > 0
+			? activePositions.map((position: FuturesPosition, i: number) => {
+					const description = getSynthDescription(position.asset, synthsMap, t);
+					const positionHistory = futuresPositionHistory?.find(
+						(positionHistory: PositionHistory) => {
+							return positionHistory.isOpen && positionHistory.asset === position.asset;
+						}
+					);
 
-			return {
-				asset: position.asset,
-				market: position.asset.slice(1) + '-PERP',
-				description: description,
-				notionalValue: position?.position?.notionalValue.abs(),
-				position: position?.position?.side,
-				lastPrice: position?.position?.lastPrice,
-				liquidationPrice: position?.position?.liquidationPrice,
-				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-				pnlPct: position?.position?.profitLoss.div(
-					position?.position?.initialMargin.mul(position?.position?.initialLeverage)
-				),
-				margin: position.accessibleMargin,
-				leverage: position?.position?.leverage,
-			};
-		})
-		: DEFAULT_DATA
-	}, [futuresPositions, futuresMarkets, getSynthDescription]);
+					return {
+						asset: position.asset,
+						market:
+							(position.asset[0] === 's' ? position.asset.slice(1) : position.asset) + '-PERP',
+						description: description,
+						notionalValue: position?.position?.notionalValue.abs(),
+						position: position?.position?.side,
+						lastPrice: position?.position?.lastPrice,
+						avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
+						liquidationPrice: position?.position?.liquidationPrice,
+						pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
+						pnlPct: position?.position?.profitLoss.div(
+							position?.position?.initialMargin.mul(position?.position?.initialLeverage)
+						),
+						margin: position.accessibleMargin,
+						leverage: position?.position?.leverage,
+					};
+			  })
+			: DEFAULT_DATA;
+	}, [futuresPositionQuery.data, futuresPositionHistory, synthsMap, t]);
 
 	return (
 		<TableContainer>
@@ -69,11 +74,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				data={data}
 				pageSize={5}
 				showPagination={true}
-				onTableRowClick={(row) => {
-					row.original.asset !== NO_VALUE ?
-						router.push(`/market/${row.original.asset}`) :
-						null;
-				}}
+				onTableRowClick={(row) =>
+					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
+				}
 				highlightRowsOnHover
 				columns={[
 					{
@@ -87,7 +90,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							) : (
 								<MarketContainer>
 									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.asset} />
+										<StyledCurrencyIcon
+											currencyKey={
+												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
+												cellProps.row.original.asset
+											}
+										/>
 									</IconContainer>
 									<StyledText>{cellProps.row.original.market}</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
@@ -112,7 +120,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.notionalValue')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-positions-table.notionalValue')}
+							</TableHeader>
 						),
 						accessor: 'notionalValue',
 						Cell: (cellProps: CellProps<any>) => {
@@ -155,12 +165,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<PnlContainer>
 									<ChangePercent value={cellProps.row.original.pnlPct} className="change-pct" />
 									<div>
-										(<Currency.Price
+										(
+										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
-										/>)
+										/>
+										)
 									</div>
 								</PnlContainer>
 							);
@@ -169,28 +181,28 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					},
 					{
 						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-positions-table.last-entry')}
-							</TableHeader>
+							<TableHeader>{t('dashboard.overview.futures-positions-table.avg-entry')}</TableHeader>
 						),
-						accessor: 'lastPrice',
+						accessor: 'avgEntryPrice',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.avgOpenClose === NO_VALUE ? (
+							return cellProps.row.original.avgEntryPrice === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
-								) : (
-									<Currency.Price
+							) : (
+								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.lastPrice}
+									price={cellProps.row.original.avgEntryPrice}
 									sign={'$'}
 									conversionRate={1}
 								/>
-								);
-							},
-							width: 125,
+							);
+						},
+						width: 125,
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-positions-table.liquidationPrice')}</TableHeader>
+							<TableHeader>
+								{t('dashboard.overview.futures-positions-table.liquidationPrice')}
+							</TableHeader>
 						),
 						accessor: 'liquidationPrice',
 						Cell: (cellProps: CellProps<any>) => {

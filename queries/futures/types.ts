@@ -1,4 +1,3 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
 
 export type PositionDetail = {
@@ -91,6 +90,7 @@ export type RawPosition = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
@@ -107,6 +107,7 @@ export type PositionHistory = {
 	isLiquidated: boolean;
 	size: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
@@ -155,7 +156,7 @@ export type FuturesTrade = {
 };
 
 export type FuturesVolumes = {
-	[asset: string]: Wei
+	[asset: string]: Wei;
 };
 
 export type FuturesStat = {
@@ -171,4 +172,9 @@ export type FuturesCumulativeStats = {
 	totalVolume: string;
 	totalLiquidations: string;
 	averageTradeSize: string;
+};
+
+export type FundingRateUpdate = {
+	funding: Wei;
+	timestamp: number;
 };

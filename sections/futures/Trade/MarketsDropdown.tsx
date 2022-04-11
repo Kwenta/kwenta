@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei';
 
 import Select from 'components/Select';
 import Connector from 'containers/Connector';
@@ -18,7 +19,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
-import { wei } from '@synthetixio/wei';
+import { getSynthDescription } from 'utils/futures';
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -37,11 +38,11 @@ const assetToCurrencyOption = (
 	negativeChange: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
-	label: `${asset.slice(1)}-PERP`,
+	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
 	description,
 	price,
 	change,
-	negativeChange
+	negativeChange,
 });
 
 type Props = {
@@ -65,23 +66,14 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	const { t } = useTranslation();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-
-	const getSynthDescription = React.useCallback(
-		(synth: string) => {
-			return t('common.currency.futures-market-long-name', {
-				currencyName: synthsMap[synth] ? synthsMap[synth].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
 
 	const options = React.useMemo(() => {
+		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const markets = futuresMarketsQuery?.data ?? [];
 
 		return markets.map((market) => {
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
-			
+
 			const basePriceRate = getExchangeRatesForCurrencies(
 				exchangeRates,
 				market.asset,
@@ -90,19 +82,28 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 			return assetToCurrencyOption(
 				market.asset,
-				getSynthDescription(market.asset),
+				getSynthDescription(market.asset, synthsMap, t),
 				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 				formatPercent(
-					basePriceRate && pastPrice?.price ?
-						wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
+					basePriceRate && pastPrice?.price
+						? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
 						: zeroBN
 				),
-				basePriceRate && pastPrice?.price ?
-					wei(basePriceRate).lt(pastPrice?.price) ? true : false
+				basePriceRate && pastPrice?.price
+					? wei(basePriceRate).lt(pastPrice?.price)
+						? true
+						: false
 					: false
 			);
 		});
-	}, [getSynthDescription, selectedPriceCurrency.name, exchangeRates, futuresMarketsQuery?.data, dailyPriceChangesQuery?.data]);
+	}, [
+		selectedPriceCurrency.name,
+		exchangeRates,
+		futuresMarketsQuery?.data,
+		dailyPriceChangesQuery?.data,
+		synthsMap,
+		t,
+	]);
 
 	return (
 		<SelectContainer>
@@ -116,7 +117,13 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
-				value={assetToCurrencyOption(asset, getSynthDescription(asset), DUMMY_PRICE, DUMMY_CHANGE, false)}
+				value={assetToCurrencyOption(
+					asset,
+					getSynthDescription(asset, synthsMap, t),
+					DUMMY_PRICE,
+					DUMMY_CHANGE,
+					false
+				)}
 				options={options}
 				isSearchable={false}
 				components={{

@@ -8,6 +8,7 @@ type CustomInputProps = {
 	right: React.ReactNode;
 	style?: React.CSSProperties;
 	className?: string;
+	disabled?: boolean;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -19,6 +20,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	right,
 	style,
 	className,
+	disabled,
 }) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
@@ -27,6 +29,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	return (
 		<CustomInputContainer style={style} className={className}>
 			<input
+				disabled={disabled}
 				placeholder={placeholder}
 				value={value}
 				type="number"

@@ -7,14 +7,14 @@ import {
 import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM } from 'utils/network';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
+import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -34,6 +34,7 @@ const useConnector = () => {
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
@@ -64,13 +65,14 @@ const useConnector = () => {
 	useEffect(() => {
 		const init = async () => {
 			// TODO: need to verify we support the network
-			const networkId = await getDefaultNetworkId();
+			const networkId = await getDefaultNetworkId(isWalletConnected);
 
 			const provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
+				provider: isWalletConnected ? window.ethereum : undefined,
 			});
+
 			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });

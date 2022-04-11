@@ -13,7 +13,7 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 
-const supportedResolutions = ['D', 'W'] as ResolutionString[];
+const supportedResolutions = ['H', 'D'] as ResolutionString[];
 
 const config = {
 	supported_resolutions: supportedResolutions,
@@ -37,12 +37,13 @@ const fetchCombinedCandleSticks = async (
 	quote: string,
 	from: number,
 	to: number,
+	resolution: ResolutionString,
 	isL2: boolean
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseData = await requestCandlesticks(base, from, to, isL2);
-	const quoteData = await requestCandlesticks(quote, from, to, isL2);
+	const baseData = await requestCandlesticks(base, from, to, resolution, isL2);
+	const quoteData = await requestCandlesticks(quote, from, to, resolution, isL2);
 	return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 };
 
@@ -85,7 +86,7 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandleSticks(base, quote, from, to, isL2).then((bars) => {
+				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
 							...b,
