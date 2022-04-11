@@ -74,7 +74,7 @@
 	"devDependencies": {
 		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@svgr/core": "5.5.0",
-		"@synthetixio/synpress": "1.1.1",
+		"@synthetixio/synpress": "1.2.0",
 		"@testing-library/jest-dom": "5.14.1",
 		"@testing-library/react": "12.1.2",
 		"@testing-library/react-hooks": "7.0.2",
