@@ -119,7 +119,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 };
 
 const GasPriceTooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.elderberry};
+	background: ${(props) => props.theme.colors.common.secondaryGray};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 	width: 120px;

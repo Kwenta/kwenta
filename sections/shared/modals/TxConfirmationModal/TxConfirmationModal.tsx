@@ -339,7 +339,9 @@ const SummaryItem = styled(FlexDivRowCentered)`
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 `;
 
-const SummaryItemLabel = styled.div``;
+const SummaryItemLabel = styled.div`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};

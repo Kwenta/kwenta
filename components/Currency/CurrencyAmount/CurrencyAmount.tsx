@@ -58,6 +58,8 @@ const Container = styled.span`
 const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};
 `;
-const TotalValue = styled.span``;
+const TotalValue = styled.span`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 export default CurrencyAmount;

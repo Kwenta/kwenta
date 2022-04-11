@@ -198,7 +198,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	background-color: ${(props) => props.theme.colors.cellGradient};
 	color: ${(props) => props.theme.colors.white};
 	height: 32px;
 	width: 32px;
@@ -211,7 +210,14 @@ export const SwapCurrenciesButton = styled.button`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	cursor: default;
+	cursor: pointer;
+	transition-duration: 0.8s;
+
+	&:hover {
+		transform: rotate(180deg);
+		transition-duration: 0.8s;
+		transition-property: transform;
+	}
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -333,7 +339,7 @@ export const CurrencyCardsSelector = styled.div`
 	position: absolute;
 	padding: 6px;
 	border-radius: 4px;
-	background: ${(props) => props.theme.colors.elderberry};
+	background: ${(props) => props.theme.colors.common.secondaryGray};
 	border: 2px solid ${(props) => props.theme.colors.black};
 	left: 50%;
 	top: 50%;

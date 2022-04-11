@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();
-	const { quoteCurrencyCard, baseCurrencyCard, footerCard } = useExchange({
+	const { quoteCurrencyCard, baseCurrencyCard, footerCard, handleCurrencySwap } = useExchange({
 		showPriceCard: true,
 		showMarketDetailsCard: true,
 		footerCardAttached: false,
@@ -27,7 +27,7 @@ const BasicSwap: FC = () => {
 				<DesktopCardsContainer>
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
-						<SwapCurrenciesButton data-testid="swap-btn">
+						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
 							<Svg src={ArrowIcon} />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
