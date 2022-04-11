@@ -38,7 +38,6 @@ import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/Combine
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
-import GetL2GasCard from 'sections/exchange/FooterCard/GetL2GasCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -74,7 +73,6 @@ import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import L2Gas from 'containers/L2Gas';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
@@ -114,7 +112,6 @@ const useExchange = ({
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { hasNone: hasNoL2Gas } = L2Gas.useContainer();
 
 	const { synthsMap, synthetixjs } = Connector.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
@@ -161,9 +158,6 @@ const useExchange = ({
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
 	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
-	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
-	// 	enabled: txProvider === '1inch',
-	// });
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -1177,8 +1171,6 @@ const useExchange = ({
 		<>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={footerCardAttached} />
-			) : hasNoL2Gas ? (
-				<GetL2GasCard attached={footerCardAttached} />
 			) : (baseCurrencyMarketClosed.isMarketClosed &&
 					baseCurrencyKey &&
 					AFTER_HOURS_SYNTHS.has(baseCurrencyKey as CurrencyKey)) ||

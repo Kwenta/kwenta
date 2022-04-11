@@ -126,11 +126,13 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			<CategoryFilters>
 				{CATEGORY_FILTERS.map((category) => {
 					const isActive = synthCategory === category;
-
+					const noItem =
+						synths.filter((synth) => synth.category.toString() === category).length === 0;
 					return (
 						<CategoryButton
 							variant="secondary"
 							isActive={isActive}
+							disabled={noItem}
 							onClick={() => {
 								setAssetSearch('');
 								setSynthCategory(isActive ? null : category);

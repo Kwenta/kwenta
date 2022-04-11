@@ -149,7 +149,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								? t('common.currency.synthetic-currency-name', {
 										currencyName: synthsMap[currencyKey as CurrencyKey].description,
 								  })
-								: 'Synth Name'}
+								: t('exchange.currency-card.synth-name')}
 						</CurrencyNameLabel>
 						<CurrencySelector
 							currencyKeySelected={currencyKeySelected}
