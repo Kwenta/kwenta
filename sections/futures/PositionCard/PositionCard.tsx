@@ -230,7 +230,7 @@ export default PositionCard;
 const StyledBadge = styled(Badge)`
 	letter-spacing: 0.105em;
 	margin-left: 4px;
-	line-height: 9px;
+	line-height: 80%;
 	font-size: 8px;
 `;
 
