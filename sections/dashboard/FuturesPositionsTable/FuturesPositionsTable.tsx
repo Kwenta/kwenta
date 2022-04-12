@@ -278,8 +278,12 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
 	grid-column: 2;
 	grid-row: 1;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: -4px;
 `;
 
 const MarketContainer = styled.div`
