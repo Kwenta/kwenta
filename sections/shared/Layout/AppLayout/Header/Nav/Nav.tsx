@@ -15,28 +15,24 @@ const Nav: FC = () => {
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
 
+	function getLastVisited() {
+		if (typeof window !== 'undefined') {
+			const lastVisited = localStorage.getItem('lastVisited');
+			return lastVisited;
+		}
+	}
+
 	function getLink(link: string) {
 		if (link.slice(0, 7) === '/market') {
-			// Get lastVisited from local storage
-			const lastVisitedMarket: string | null | undefined = getLastVisited();
+			const lastVisited: string | null | undefined = getLastVisited();
 
-			if (lastVisitedMarket !== null || lastVisitedMarket !== undefined) {
-				return lastVisitedMarket?.slice(8);
+			if (lastVisited !== null || lastVisited !== undefined) {
+				return lastVisited?.slice(8);
 			} else {
 				return link;
 			}
 		} else {
 			return link;
-		}
-	}
-
-	function getLastVisited() {
-		if (typeof window !== 'undefined') {
-			console.log('we are running on the client');
-			const lastVisitedMarket = localStorage.getItem('lastVisitedMarket');
-			return lastVisitedMarket;
-		} else {
-			console.log('we are running on the server');
 		}
 	}
 
