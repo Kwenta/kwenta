@@ -72,7 +72,7 @@ const MenuButton = styled(Button)`
 
 const SettingsText = styled.p`
 	margin: 0px;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	line-height: 10px;
 	height: 10px;
 	letter-spacing: 2px;

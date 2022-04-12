@@ -197,8 +197,8 @@ const NetworkFees = styled(FlexDivCol)`
 `;
 
 const Label = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -228,10 +228,10 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 	display: flex;
 	justify-content: space-between;
 	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.blueberry};
+	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
 	margin-bottom: 8px;
 `;
