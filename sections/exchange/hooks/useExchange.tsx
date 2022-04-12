@@ -136,6 +136,7 @@ const useExchange = ({
 		defaultBaseCurrencyKey,
 		defaultQuoteCurrencyKey,
 	});
+
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
@@ -555,7 +556,7 @@ const useExchange = ({
 	useEffect(() => {
 		setCurrencyPair({
 			base: null,
-			quote: null,
+			quote: 'sUSD',
 		});
 	}, [network.id, setCurrencyPair]);
 

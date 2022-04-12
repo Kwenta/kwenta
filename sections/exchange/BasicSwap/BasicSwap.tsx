@@ -17,7 +17,7 @@ const BasicSwap: FC = () => {
 		footerCardAttached: false,
 		routingEnabled: true,
 		persistSelectedCurrencies: true,
-		showNoSynthsCard: true,
+		showNoSynthsCard: false,
 	});
 
 	return (
