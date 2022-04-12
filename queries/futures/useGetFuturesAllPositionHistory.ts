@@ -31,6 +31,8 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 								orderDirection: desc
 							) {
 								id
+								account
+								market
 								lastTxHash
 								timestamp
 								isOpen
@@ -40,6 +42,9 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 								size
 								margin
 								asset
+								pnl
+								feesPaid
+								netFunding
 							}
 						}
 					`,

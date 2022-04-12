@@ -94,6 +94,9 @@ export type RawPosition = {
 	margin: Wei;
 	entryPrice: Wei;
 	exitPrice: Wei;
+	pnl: Wei;
+	pnlWithFeesPaid: Wei;
+	totalVolume: Wei;
 };
 
 export type PositionHistory = {

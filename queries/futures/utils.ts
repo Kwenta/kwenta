@@ -221,6 +221,7 @@ export const mapTradeHistory = (
 					margin,
 					entryPrice,
 					exitPrice,
+					pnl,
 				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
@@ -228,6 +229,8 @@ export const mapTradeHistory = (
 					const feesWei = new Wei(feesPaid || 0, 18, true);
 					const netFundingWei = new Wei(netFunding || 0, 18, true);
 					const marginWei = new Wei(margin, 18, true);
+					const pnlWei = new Wei(pnl, 18, true);
+
 					return {
 						id: Number(id.split('-')[1].toString()),
 						transactionHash: lastTxHash,
@@ -243,11 +246,11 @@ export const mapTradeHistory = (
 						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,
+						pnl: pnlWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)
 							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),
 						side: sizeWei.gte(wei(0)) ? PositionSide.LONG : PositionSide.SHORT,
-						pnl: sizeWei.mul(exitPriceWei.sub(entryPriceWei)),
 					};
 				}
 			)
