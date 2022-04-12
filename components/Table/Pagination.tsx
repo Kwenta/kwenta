@@ -72,7 +72,6 @@ const PageInfo = styled.span`
 
 const PaginationContainer = styled(GridDivCenteredCol)`
 	grid-template-columns: auto 1fr auto;
-	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 15px 12px;
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
@@ -89,7 +88,7 @@ const ArrowButton = styled.button`
 	svg {
 		width: 14px;
 		height: 14px;
-		color: ${(props) => props.theme.colors.goldColors.color1};
+		fill: ${(props) => props.theme.colors.common.primaryWhite};
 	}
 `;
 
