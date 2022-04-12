@@ -36,7 +36,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
+		getMarketKey(marketAsset, network.id),
+		{
+			refetchInterval: 6000,
+		}
 	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
