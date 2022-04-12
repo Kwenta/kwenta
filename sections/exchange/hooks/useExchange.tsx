@@ -532,11 +532,6 @@ const useExchange = ({
 		}
 	};
 
-	function resetCurrencies() {
-		setQuoteCurrencyAmount('');
-		setBaseCurrencyAmount('');
-	}
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -589,7 +584,12 @@ const useExchange = ({
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
+		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '') {
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			setBaseCurrencyAmount(baseCurrencyAmountNoFee.toString());
+		}
 	}, [
+		rate,
 		quoteCurrencyAmount,
 		baseCurrencyAmount,
 		txProvider,
@@ -930,7 +930,7 @@ const useExchange = ({
 				amount={quoteCurrencyAmount}
 				onAmountChange={async (value) => {
 					if (value === '') {
-						resetCurrencies();
+						setQuoteCurrencyAmount('');
 					} else {
 						setQuoteCurrencyAmount(value);
 						if (txProvider === 'synthetix') {
@@ -973,7 +973,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: pair.base === currencyKey ? null : pair.base,
@@ -989,7 +989,7 @@ const useExchange = ({
 				<SelectTokenModal
 					onDismiss={() => setSelectQuoteTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: pair.base === currencyKey ? null : pair.base,
@@ -1039,7 +1039,7 @@ const useExchange = ({
 				amount={baseCurrencyAmount}
 				onAmountChange={async (value) => {
 					if (value === '') {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 					} else {
 						setBaseCurrencyAmount(value);
 						if (txProvider === 'synthetix') {
@@ -1080,7 +1080,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1101,7 +1101,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
