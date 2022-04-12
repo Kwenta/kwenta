@@ -17,6 +17,8 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
 import TVChart from 'components/TVChart';
 import { MarketState } from '../types';
+import StaticChart from 'assets/png/chart/static-chart.png';
+import Img from 'react-optimized-image';
 
 type MarketInfoProps = {
 	market: string;
@@ -59,7 +61,8 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
+			<AssetsImage src={StaticChart} alt="" webp={true} />
+			{/* <TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} /> */}
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}
@@ -71,6 +74,38 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 
 const Container = styled.div`
 	padding-bottom: 48px;
+`;
+
+const OverlayContainer = styled.div`
+	position: relative;
+	width: 50%;
+	overflow: hidden;
+`;
+
+const Overlay = styled.div`
+	.overlay {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 100%;
+		width: 100%;
+		opacity: 0;
+		transition: 0.5s ease-in-out;
+		color: white;
+	}
+`;
+
+const StyledImage = styled.img`
+	display: block;
+	width: 100%;
+	height: auto;
+`;
+
+const AssetsImage = styled(Img)`
+	width: 100%;
+	border-radius: 16px;
 `;
 
 export default MarketInfo;
