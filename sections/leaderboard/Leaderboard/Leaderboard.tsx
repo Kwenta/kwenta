@@ -95,21 +95,21 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 	};
 
 	const onClickTrader = (trader: string) => {
-		setSelectedTrader(trader)
-	}
+		setSelectedTrader(trader);
+	};
 
 	if (statsQuery.isLoading) {
 		return <Loader />;
 	}
 
-	if(selectedTrader !== '') {
+	if (selectedTrader !== '') {
 		return (
 			<TraderHistory
 				trader={selectedTrader}
 				resetSelection={() => setSelectedTrader('')}
 				compact={compact}
 			/>
-		)
+		);
 	}
 
 	return (
@@ -125,10 +125,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				}
 				columns={[
 					{
-						Header:
+						Header: (
 							<TableTitle>
 								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
-							</TableTitle>,
+							</TableTitle>
+						),
 						accessor: 'title',
 						columns: [
 							{
@@ -149,30 +150,34 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 								Cell: (cellProps: CellProps<any>) => (
 									<StyledOrderType>
 										{compact && cellProps.row.original.rank + '. '}
-										<StyledOrderType>
-											{cellProps.row.original.traderShort}
-										</StyledOrderType>
+										<StyledOrderType>{cellProps.row.original.traderShort}</StyledOrderType>
 										{getMedal(cellProps.row.index + 1)}
 									</StyledOrderType>
 								),
 								width: 175,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
+								),
 								accessor: 'totalTrades',
 								sortType: 'basic',
 								width: 100,
 								sortable: true,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
+								),
 								accessor: 'liquidations',
 								sortType: 'basic',
 								width: 100,
 								sortable: true,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
+								),
 								accessor: 'totalVolume',
 								sortType: 'basic',
 								Cell: (cellProps: CellProps<any>) => (
@@ -200,9 +205,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 								),
 								width: compact ? 'auto' : 100,
 								sortable: true,
-							},	
-						]
-					}
+							},
+						],
+					},
 				]}
 			/>
 		</TableContainer>

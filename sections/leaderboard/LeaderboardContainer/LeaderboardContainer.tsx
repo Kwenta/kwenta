@@ -63,7 +63,13 @@ const LeaderboardContainer: FC = () => {
 		<>
 			<TabButtonsContainer>
 				{TABS.map(({ name, label, active, disabled, onClick }) => (
-					<TabButton key={name} title={label} active={active} disabled={disabled} onClick={onClick} />
+					<TabButton
+						key={name}
+						title={label}
+						active={active}
+						disabled={disabled}
+						onClick={onClick}
+					/>
 				))}
 				<Search onChange={onChangeSearch} disabled={!(activeTab === Tab.Leaderboard)} />
 			</TabButtonsContainer>

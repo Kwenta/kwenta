@@ -21,7 +21,11 @@ type TraderHistoryProps = {
 	compact?: boolean;
 };
 
-const TraderHistory: FC<TraderHistoryProps> = ({ trader, resetSelection, compact }: TraderHistoryProps) => {
+const TraderHistory: FC<TraderHistoryProps> = ({
+	trader,
+	resetSelection,
+	compact,
+}: TraderHistoryProps) => {
 	const { t } = useTranslation();
 
 	return (
@@ -34,32 +38,35 @@ const TraderHistory: FC<TraderHistoryProps> = ({ trader, resetSelection, compact
 				hideHeaders={compact}
 				columns={[
 					{
-						Header:
+						Header: (
 							<TableTitle>
-								<TitleText onClick={() => { resetSelection() }}>
+								<TitleText
+									onClick={() => {
+										resetSelection();
+									}}
+								>
 									{t('leaderboard.leaderboard.table.title')}
 								</TitleText>
 								<TitleSeparator>&gt;</TitleSeparator>
 								<TraderText>{trader}</TraderText>
-							</TableTitle>,
+							</TableTitle>
+						),
 						accessor: 'title',
 						columns: [
 							{
 								Header: <TableHeader>Test</TableHeader>,
 								accessor: 'rank',
-								Cell: (cellProps: CellProps<any>) => (
-									<p>Test</p>
-								),
+								Cell: (cellProps: CellProps<any>) => <p>Test</p>,
 								width: compact ? 40 : 100,
 							},
-						]
-					}
+						],
+					},
 				]}
 			/>
 		</TableContainer>
 	);
 
-	return <></>
+	return <></>;
 };
 
 const TableContainer = styled.div<{ compact: boolean | undefined }>`
@@ -67,7 +74,7 @@ const TableContainer = styled.div<{ compact: boolean | undefined }>`
 	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
 `;
 
-const StyledTable = styled(Table) <{ compact: boolean | undefined }>`
+const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
 `;
 
