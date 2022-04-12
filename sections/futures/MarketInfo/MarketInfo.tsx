@@ -18,6 +18,9 @@ import MarketDetails from '../MarketDetails';
 import TVChart from 'components/TVChart';
 import { MarketState } from '../types';
 import MarketOverlay from '../MarketOverlay';
+import OverlayMessageContainer from 'sections/exchange/TradeCard/Charts/common/OverlayMessage';
+import { OverlayMessage } from 'sections/exchange/TradeCard/Charts/common/styles';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 type MarketInfoProps = {
 	market: string;
@@ -40,6 +43,8 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const baseCurrencyKey = market as CurrencyKey;
 
+	const { isMarketClosed } = useMarketClosed(baseCurrencyKey);
+
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
@@ -60,8 +65,11 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<MarketOverlay />
-			{/* <TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} /> */}
+			{isMarketClosed ? (
+				<MarketOverlay />
+			) : (
+				<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
+			)}
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}

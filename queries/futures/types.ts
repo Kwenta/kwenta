@@ -69,6 +69,7 @@ export type FuturesMarket = {
 	maxLeverage: Wei;
 	price: Wei;
 	minInitialMargin: Wei;
+	isSuspended: boolean;
 };
 
 export type FuturesOpenInterest = {
