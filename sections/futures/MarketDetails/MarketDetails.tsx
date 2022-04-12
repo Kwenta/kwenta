@@ -195,7 +195,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		</MarketDetailsContainer>
 	);
 };
-// color ? `value ${color} paused` : 'value paused'
 
 const MarketDetailsContainer = styled.div`
 	width: 100%;
