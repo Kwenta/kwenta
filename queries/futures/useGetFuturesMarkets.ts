@@ -45,7 +45,6 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				})
 			);
 
-			// const suspensionsWithReason = zip(suspensions, reasons);
 
 			// console.log(suspensions);
 
