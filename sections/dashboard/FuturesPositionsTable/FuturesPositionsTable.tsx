@@ -41,6 +41,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		);
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
+					const isSuspended =
+						futuresMarkets.find((market) => market.asset === position.asset)?.isSuspended ?? false;
 					const description = getSynthDescription(position.asset, synthsMap, t);
 					const positionHistory = futuresPositionHistory?.find(
 						(positionHistory: PositionHistory) => {
@@ -64,10 +66,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						margin: position.accessibleMargin,
 						leverage: position?.position?.leverage,
+						isSuspended,
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [futuresPositionQuery.data, futuresPositionHistory, synthsMap, t]);
+	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<TableContainer>
@@ -100,7 +103,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										<StyledBadge>Paused</StyledBadge>
+										{cellProps.row.original.isSuspended && <StyledBadge>Paused</StyledBadge>}
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
@@ -278,11 +281,11 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
-	display: flex;
+	/* display: flex;
+  align-items: center;
+	justify-content: center; */
 	grid-column: 2;
 	grid-row: 1;
-	align-items: center;
-	justify-content: center;
 	margin-bottom: -4px;
 `;
 

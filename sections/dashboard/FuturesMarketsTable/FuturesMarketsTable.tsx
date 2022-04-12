@@ -14,7 +14,6 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
-import PositionType from 'components/Text/PositionType';
 import Badge from 'components/Badge';
 
 type FuturesMarketsTableProps = {
@@ -67,6 +66,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					.mul(market.price)
 					.toNumber(),
 				marketSkew: market.marketSkew,
+				isSuspended: market.isSuspended,
 			};
 		});
 	}, [synthsMap, futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
@@ -108,7 +108,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										<StyledBadge>Paused</StyledBadge>
+										{cellProps.row.original.isSuspended && <StyledBadge>Paused</StyledBadge>}
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
@@ -298,9 +298,9 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	/* display: flex; */
+	/* align-items: center;
+	justify-content: center; */
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
