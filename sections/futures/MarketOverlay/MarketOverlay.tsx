@@ -5,10 +5,6 @@ import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
 import Img, { Svg } from 'react-optimized-image';
 
-type MarketOverlayProps = {
-	isPaused: boolean;
-};
-
 const MarketOverlay = () => {
 	const { t } = useTranslation();
 	return (
