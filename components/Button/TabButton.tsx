@@ -51,6 +51,7 @@ const StyledButton = styled(Button)`
 	.badge {
 		height: 16px;
 		width: fit-content;
+		min-width: 16px;
 		padding-left: 4px;
 		padding-right: 4px;
 		margin-left: 7px;
