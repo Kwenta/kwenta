@@ -3,7 +3,7 @@ import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/ty
 import { BigNumber } from '@ethersproject/bignumber';
 import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
 
-import { zeroBN } from 'utils/formatters/number';
+import { formatNumber, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -20,6 +20,7 @@ import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } f
 
 import { FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
+import { formatDistance, fromUnixTime } from 'date-fns';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -260,4 +261,15 @@ export const mapTradeHistory = (
 			})
 			.filter(({ id }: { id: number }) => id !== 0) ?? null
 	);
+};
+
+export const formatTrades = (
+	tradesResult: Pick<FuturesTradeResult, 'id' | 'timestamp' | 'asset' | 'size' | 'price'>[]
+) => {
+	return tradesResult.map(({ id, size, price, timestamp }) => ({
+		id,
+		size: formatNumber(new Wei(size).div(ETH_UNIT).abs(), { maxDecimals: 4 }),
+		price: formatNumber(new Wei(price).div(ETH_UNIT).abs(), { maxDecimals: 2 }),
+		timestamp: formatDistance(fromUnixTime(Number(timestamp)), new Date(), { addSuffix: true }),
+	}));
 };

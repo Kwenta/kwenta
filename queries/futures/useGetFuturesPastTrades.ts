@@ -1,25 +1,24 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint } from './utils';
+import { formatTrades, getFuturesEndpoint } from './utils';
 import { getFuturesTrades } from './subgraph';
 
 const useGetFuturesPastTrades = (
 	currencyKey: string | null,
-	options?: UseQueryOptions<Wei | null>
+	options?: UseQueryOptions<ReturnType<typeof formatTrades> | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
-	return useQuery<any | null>(
+	return useQuery(
 		QUERY_KEYS.Futures.PastTrades(network.id, currencyKey || null),
 		async () => {
 			if (!currencyKey) return null;
@@ -42,7 +41,7 @@ const useGetFuturesPastTrades = (
 						asset: true,
 					}
 				);
-				return response ?? null;
+				return response ? formatTrades(response) : null;
 			} catch (e) {
 				console.log(e);
 				return null;

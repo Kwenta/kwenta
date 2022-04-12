@@ -1,11 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import Wei from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import useGetFuturesPastTrades from 'queries/futures/useGetFuturesPastTrades';
-import { formatNumber } from 'utils/formatters/number';
-import { ETH_UNIT } from 'constants/network';
 
 const NextPrice: React.FC = () => {
 	const router = useRouter();
@@ -25,12 +22,12 @@ const NextPrice: React.FC = () => {
 				</TradeHistoryTitle>
 				<TradeHistoryHeading></TradeHistoryHeading>
 				<TradeHistoryBody>
-					{pastTrades.map((t: any) => {
+					{pastTrades.map((t) => {
 						return (
 							<div key={t.id}>
-								<p>{formatNumber(new Wei(t.size).div(ETH_UNIT), { maxDecimals: 4 })}</p>
-								<p>{formatNumber(new Wei(t.price).div(ETH_UNIT), { maxDecimals: 2 })}</p>
-								<p>{Number(t.timestamp)}</p>
+								<p>{t.size}</p>
+								<p>{t.price}</p>
+								<p>{t.timestamp}</p>
 							</div>
 						);
 					})}
