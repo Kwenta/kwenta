@@ -16,7 +16,6 @@ import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositi
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
 import Badge from 'components/Badge';
-import { MarketState } from '../types';
 import useMarketClosed from 'hooks/useMarketClosed';
 import { CurrencyKey } from 'constants/currency';
 
@@ -26,7 +25,6 @@ type PositionCardProps = {
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
-	marketState?: MarketState;
 };
 
 type PositionData = {
@@ -51,7 +49,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKeyRate,
 	onPositionClose,
 	dashboard,
-	marketState,
 }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
