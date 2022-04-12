@@ -15,14 +15,14 @@ const Nav: FC = () => {
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
 
-	function getLastVisited() {
+	function getLastVisited(): string | null | undefined {
 		if (typeof window !== 'undefined') {
 			const lastVisited = localStorage.getItem('lastVisited');
 			return lastVisited;
 		}
 	}
 
-	function getLink(link: string) {
+	function getLink(link: string): string | undefined {
 		if (link.slice(0, 7) === '/market') {
 			const lastVisited: string | null | undefined = getLastVisited();
 
