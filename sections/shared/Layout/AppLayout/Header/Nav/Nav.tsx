@@ -26,7 +26,7 @@ const Nav: FC = () => {
 		if (link.slice(0, 7) === '/market') {
 			const lastVisited: string | null | undefined = getLastVisited();
 
-			if (lastVisited !== null || lastVisited !== undefined) {
+			if (lastVisited !== null && lastVisited !== undefined) {
 				return lastVisited?.slice(8);
 			} else {
 				return link;
