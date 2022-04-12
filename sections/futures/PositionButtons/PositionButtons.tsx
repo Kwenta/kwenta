@@ -71,10 +71,16 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 
 	&:disabled {
 		border: 1px solid #2b2a2a;
+		box-shadow: none;
 		background: none;
 		&:hover {
 			background: none;
 		}
+	}
+
+	> span {
+		position: relative;
+		top: -2px;
 	}
 
 	${(props) =>
