@@ -173,6 +173,11 @@ const Trade: React.FC<TradeProps> = () => {
 		[leverageSide, tradeSize]
 	);
 
+	const placeOrderTranslationKey = React.useMemo(() => {
+		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position'; 		
+		return !futuresMarketsPosition?.remainingMargin || futuresMarketsPosition.remainingMargin < wei('50') ? 'futures.market.trade.button.deposit-margin-minimum' : 'futures.market.trade.button.open-position';
+	}, [futuresMarketsPosition])
+
 	useEffect(() => {
 		const getOrderFee = async () => {
 			if (
@@ -242,6 +247,8 @@ const Trade: React.FC<TradeProps> = () => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
+
+
 
 	return (
 		<Panel>
@@ -316,15 +323,15 @@ const Trade: React.FC<TradeProps> = () => {
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
 					sizeDelta.eq(zeroBN) ||
-					!!error
+					!!error ||
+					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum'
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				{!!futuresMarketsPosition?.position
-					? t('futures.market.trade.button.modify-position')
-					: t('futures.market.trade.button.open-position')}
+				{t(placeOrderTranslationKey)} 
+
 			</PlaceOrderButton>
 
 			{(orderTxn.errorMessage || error) && (
