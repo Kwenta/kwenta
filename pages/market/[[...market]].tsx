@@ -22,7 +22,6 @@ const Market: FC = () => {
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
 			<AppLayout>
-				{/* <StyledPageContent className="paused"> */}
 				<StyledPageContent>
 					<FullHeightContainer>
 						<StyledMainContent>
@@ -44,10 +43,6 @@ export default Market;
 
 const StyledPageContent = styled(PageContent)`
 	max-width: 1440px;
-
-	/* &.paused * {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-	} */
 `;
 
 const StyledMainContent = styled(MainContent)`

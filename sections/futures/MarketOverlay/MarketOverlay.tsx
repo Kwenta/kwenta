@@ -13,9 +13,6 @@ const MarketOverlay = () => {
 				<OverlayContent>
 					<StyledSvg src={PausedIcon} />
 					<StyledText>This market has been closed</StyledText>
-					{/* <StyledSubText>
-						Trading activity will resume in: <StyledTimer>12:09:22</StyledTimer>
-					</StyledSubText> */}
 				</OverlayContent>
 			</Overlay>
 			<AssetsImage src={StaticChart} alt="" webp={true} />
@@ -57,7 +54,7 @@ const OverlayContent = styled.div`
 const AssetsImage = styled(Img)`
 	width: 100%;
 	border-radius: 16px;
-	opacity: 0.05;
+	opacity: 0.08;
 `;
 
 const StyledSvg = styled(Svg)`
