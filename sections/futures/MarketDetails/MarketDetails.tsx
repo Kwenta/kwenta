@@ -181,7 +181,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			{Object.entries(data).map(([key, { value, color }]) => (
 				<div key={key}>
 					<p className="heading">{key}</p>
-					<span className={color ? `value ${color}` : 'value'}>{value}</span>
+					<span className={color ? `value ${color} paused` : 'value paused'}>{value}</span>
 				</div>
 			))}
 		</MarketDetailsContainer>
