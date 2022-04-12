@@ -280,9 +280,8 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
-	/* display: flex;
-  align-items: center;
-	justify-content: center; */
+	display: flex;
+	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
