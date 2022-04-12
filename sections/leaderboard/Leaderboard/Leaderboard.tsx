@@ -149,9 +149,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 								Cell: (cellProps: CellProps<any>) => (
 									<StyledOrderType>
 										{compact && cellProps.row.original.rank + '. '}
-										<StyledTrader onClick={() => { onClickTrader(cellProps.row.original.trader) }}>
+										<StyledOrderType>
 											{cellProps.row.original.traderShort}
-										</StyledTrader>
+										</StyledOrderType>
 										{getMedal(cellProps.row.index + 1)}
 									</StyledOrderType>
 								),
