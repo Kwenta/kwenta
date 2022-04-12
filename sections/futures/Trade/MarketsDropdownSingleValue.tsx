@@ -16,7 +16,7 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 			<div className="currency-meta">
 				<CurrencyLabel>
 					{props.data.label}
-					<StyledBadge>Paused</StyledBadge>
+					{props.data.isMarketClosed && <StyledBadge>Paused</StyledBadge>}
 				</CurrencyLabel>
 				<p className="name">{props.data.description}</p>
 			</div>

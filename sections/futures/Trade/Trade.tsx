@@ -34,6 +34,7 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 type TradeProps = { marketState: MarketState };
 
@@ -55,6 +56,7 @@ const Trade: React.FC<TradeProps> = ({ marketState }) => {
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
+	const { isMarketClosed } = useMarketClosed(marketAsset);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
@@ -252,16 +254,13 @@ const Trade: React.FC<TradeProps> = ({ marketState }) => {
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
 				<MarketActionButton
-					disabled={marketState === MarketState.PAUSED}
+					disabled={isMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={
-						futuresMarketsPosition?.remainingMargin?.lte(zeroBN) ||
-						marketState === MarketState.PAUSED
-					}
+					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN) || isMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -292,7 +291,7 @@ const Trade: React.FC<TradeProps> = ({ marketState }) => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={setLeverageSide}
-				marketState={marketState}
+				isMarketClosed={isMarketClosed}
 			/>
 
 			<OrderSizing
@@ -314,7 +313,7 @@ const Trade: React.FC<TradeProps> = ({ marketState }) => {
 				currentPosition={futuresMarketsPosition}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
-				marketState={MarketState.PAUSED}
+				isMarketClosed={isMarketClosed}
 			/>
 
 			<PlaceOrderButton
@@ -325,7 +324,7 @@ const Trade: React.FC<TradeProps> = ({ marketState }) => {
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
 					sizeDelta.eq(zeroBN) ||
-					marketState === MarketState.PAUSED ||
+					isMarketClosed ||
 					!!error
 				}
 				onClick={() => {

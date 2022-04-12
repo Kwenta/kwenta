@@ -37,6 +37,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
 
+	const isSuspended = marketSummary?.isSuspended ?? false;
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -178,15 +179,24 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	return (
 		<MarketDetailsContainer>
-			{Object.entries(data).map(([key, { value, color }]) => (
-				<div key={key}>
-					<p className="heading">{key}</p>
-					<span className={color ? `value ${color} paused` : 'value paused'}>{value}</span>
-				</div>
-			))}
+			{Object.entries(data).map(([key, { value, color }]) => {
+				let spanClass = color ? `value ${color}` : 'value';
+
+				if (isSuspended) {
+					spanClass = `${spanClass} paused`;
+				}
+
+				return (
+					<div key={key}>
+						<p className="heading">{key}</p>
+						<span className={spanClass}>{value}</span>
+					</div>
+				);
+			})}
 		</MarketDetailsContainer>
 	);
 };
+// color ? `value ${color} paused` : 'value paused'
 
 const MarketDetailsContainer = styled.div`
 	width: 100%;
