@@ -17,6 +17,8 @@ import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
 import Badge from 'components/Badge';
 import { MarketState } from '../types';
+import useMarketClosed from 'hooks/useMarketClosed';
+import { CurrencyKey } from 'constants/currency';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -55,6 +57,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
+	const { isMarketClosed } = useMarketClosed(currencyKey as CurrencyKey);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
@@ -128,7 +131,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container id="paused">
+			<Container id={isMarketClosed ? 'paused' : ''}>
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
@@ -136,7 +139,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									<StyledBadge>Paused</StyledBadge>
+									{isMarketClosed && <StyledBadge>Paused</StyledBadge>}
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
@@ -205,7 +208,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								size="sm"
 								variant="danger"
 								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails || marketState === MarketState.PAUSED}
+								disabled={!positionDetails || isMarketClosed}
 								noOutline={true}
 							>
 								{t('futures.market.user.position.close-position')}

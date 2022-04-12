@@ -17,7 +17,7 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 				<div>
 					<CurrencyLabel>
 						{props.data.label}
-						<StyledBadge>Paused</StyledBadge>
+						{props.data.isMarketClosed && <StyledBadge>Paused</StyledBadge>}
 					</CurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>
