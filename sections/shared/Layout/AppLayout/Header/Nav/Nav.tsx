@@ -40,8 +40,6 @@ const Nav: FC = () => {
 		<nav>
 			<MenuLinks>
 				{menuLinks.map(({ i18nLabel, link }) => {
-					console.log('Link: ', link);
-
 					const isActive =
 						asPath === link ||
 						(asPath.includes('dashboard') && link.includes('dashboard')) ||
