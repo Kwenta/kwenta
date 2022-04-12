@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import { MarketState } from 'sections/futures/types';
 
 const Market: FC = () => {
 	const { t } = useTranslation();
@@ -31,7 +30,7 @@ const Market: FC = () => {
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade marketState={MarketState.PAUSED} />
+								<Trade />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>

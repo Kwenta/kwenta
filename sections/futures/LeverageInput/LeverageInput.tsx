@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { MarketState, PositionSide } from '../types';
+import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
 import NumericInput from 'components/Input/NumericInput';
@@ -17,7 +17,6 @@ type LeverageInputProps = {
 	maxLeverage: Wei;
 	side: PositionSide;
 	assetRate: Wei;
-	marketState: MarketState;
 	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;

@@ -16,10 +16,7 @@ import UserInfo from '../UserInfo';
 import { CurrencyKey, Synths } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
 import TVChart from 'components/TVChart';
-import { MarketState } from '../types';
 import MarketOverlay from '../MarketOverlay';
-import OverlayMessageContainer from 'sections/exchange/TradeCard/Charts/common/OverlayMessage';
-import { OverlayMessage } from 'sections/exchange/TradeCard/Charts/common/styles';
 import useMarketClosed from 'hooks/useMarketClosed';
 
 type MarketInfoProps = {

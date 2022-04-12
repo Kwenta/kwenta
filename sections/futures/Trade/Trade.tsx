@@ -10,7 +10,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
-import { PositionSide, MarketState } from '../types';
+import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -37,11 +37,9 @@ import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
 
-type TradeProps = { marketState: MarketState };
-
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC<TradeProps> = ({ marketState }) => {
+const Trade: React.FC = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
