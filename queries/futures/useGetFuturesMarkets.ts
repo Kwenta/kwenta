@@ -42,9 +42,10 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				})
 			);
 
-			return markets.map(
-				(
-					{
+			return markets
+				.filter((_: any, i: number) => suspensions[i] === false)
+				.map(
+					({
 						market,
 						asset,
 						currentFundingRate,
@@ -54,26 +55,23 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						maxLeverage,
 						marketSize,
 						price,
-					}: FuturesMarket,
-					i: number
-				) => ({
-					market: market,
-					asset: utils.parseBytes32String(asset),
-					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate).mul(-1),
-					feeRates: {
-						makerFee: wei(feeRates.makerFee),
-						takerFee: wei(feeRates.takerFee),
-					},
-					marketDebt: wei(marketDebt),
-					marketSkew: wei(marketSkew),
-					maxLeverage: wei(maxLeverage),
-					marketSize: wei(marketSize),
-					price: wei(price),
-					minInitialMargin: wei(globals.minInitialMargin),
-					isSuspended: suspensions[i],
-				})
-			);
+					}: FuturesMarket) => ({
+						market: market,
+						asset: utils.parseBytes32String(asset),
+						assetHex: asset,
+						currentFundingRate: wei(currentFundingRate).mul(-1),
+						feeRates: {
+							makerFee: wei(feeRates.makerFee),
+							takerFee: wei(feeRates.takerFee),
+						},
+						marketDebt: wei(marketDebt),
+						marketSkew: wei(marketSkew),
+						maxLeverage: wei(maxLeverage),
+						marketSize: wei(marketSize),
+						price: wei(price),
+						minInitialMargin: wei(globals.minInitialMargin),
+					})
+				);
 		},
 		{
 			enabled: isWalletConnected ? isL2 && isReady : isReady,
