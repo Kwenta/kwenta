@@ -21,7 +21,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription } from 'utils/futures';
 
-function setLastVisited(baseCurrencyPair: string) {
+function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
 }
 
