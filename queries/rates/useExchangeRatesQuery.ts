@@ -32,9 +32,8 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<Rates>(
-		['rates', 'exchangeRates', network.id],
+		['rates', 'exchangeRates2', network.id],
 		async () => {
-			console.log('here');
 			const exchangeRates: Rates = {};
 
 			const [synthsRates, ratesForCurrencies] = (await Promise.all([
@@ -42,14 +41,10 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 				synthetixjs!.contracts.ExchangeRates.ratesForCurrencies(additionalCurrencies),
 			])) as [SynthRatesTuple, CurrencyRate[]];
 
-			console.log('additional', additionalCurrencies);
-			console.log('rates', ratesForCurrencies);
-
 			const synths = [...synthsRates[0], ...additionalCurrencies] as CurrencyKey[];
 			const rates = [...synthsRates[1], ...ratesForCurrencies] as CurrencyRate[];
 
 			synths.forEach((currencyKeyBytes32: CurrencyKey, idx: number) => {
-				console.log(currencyKeyBytes32);
 				const currencyKey = ethers.utils.parseBytes32String(currencyKeyBytes32) as CurrencyKey;
 				const rate = Number(ethers.utils.formatEther(rates[idx]));
 

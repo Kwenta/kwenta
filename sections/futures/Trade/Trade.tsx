@@ -87,10 +87,6 @@ const Trade: React.FC<TradeProps> = () => {
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
 	);
 
-	useEffect(() => {
-		console.log(exchangeRates);
-	}, [exchangeRates]);
-
 	const marketAssetRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
