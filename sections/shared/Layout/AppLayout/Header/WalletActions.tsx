@@ -40,9 +40,8 @@ export const WalletActions: FC = () => {
 	const hardwareWallet = isHardwareWallet();
 
 	const [ensName, setEns] = useState<string>('');
+	const [walletLabel, setWalletLabel] = useState<string>('');
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-
-	const walletLabel = ensName ? ensName : truncatedWalletAddress;
 
 	const WALLET_OPTIONS = useMemo(() => {
 		let options = [
@@ -101,10 +100,12 @@ export const WalletActions: FC = () => {
 
 	useEffect(() => {
 		if (signer) {
+			setWalletLabel('loading...');
 			signer.getAddress().then((account: string) => {
 				const _account = account;
 				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
 					setEns(_ensName);
+					setWalletLabel(_ensName || truncatedWalletAddress!);
 				});
 			});
 		}
