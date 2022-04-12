@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import MarketsDropdown from './MarketsDropdown';
 // import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
@@ -42,12 +43,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const {
-		useExchangeRatesQuery,
-		useSynthsBalancesQuery,
-		useEthGasPriceQuery,
-		useSynthetixTxn,
-	} = useSynthetixQueries();
+	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
@@ -90,6 +86,10 @@ const Trade: React.FC<TradeProps> = () => {
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
 	);
+
+	useEffect(() => {
+		console.log(exchangeRates);
+	}, [exchangeRates]);
 
 	const marketAssetRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
