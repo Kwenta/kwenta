@@ -286,6 +286,7 @@ const Trade: React.FC = () => {
 				}
 				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
 				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
+				isMarketClosed={isMarketClosed}
 			/>
 
 			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
