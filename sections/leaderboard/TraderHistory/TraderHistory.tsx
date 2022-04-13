@@ -57,6 +57,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 			<StyledTable
 				compact={compact}
 				showPagination={true}
+				pageSize={10}
 				isLoading={false}
 				data={data}
 				hideHeaders={compact}

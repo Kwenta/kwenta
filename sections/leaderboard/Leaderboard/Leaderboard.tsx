@@ -118,6 +118,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 				showPagination={true}
 				isLoading={statsQuery.isLoading}
 				data={data}
+				pageSize={20}
 				hideHeaders={compact}
 				hiddenColumns={
 					compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
