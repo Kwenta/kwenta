@@ -79,6 +79,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
+				sortBy={[
+					{
+						id: 'dailyVolume',
+						desc: true,
+					},
+				]}
 				columns={[
 					{
 						Header: (
@@ -215,6 +221,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							);
 						},
 						width: 125,
+						sortType: useMemo(
+							() => (rowA: any, rowB: any) => {
+								const rowOne = rowA.original.volume;
+								const rowTwo = rowB.original.volume;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 					},
 				]}
 			/>

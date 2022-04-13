@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
+import { getMarketAssetFromKey } from 'utils/futures';
 
 const useGetFuturesPositionForMarket = (
 	market: string | null,
@@ -36,7 +37,11 @@ const useGetFuturesPositionForMarket = (
 				getFuturesMarketContract(market, synthetixjs!.contracts).canLiquidate(walletAddress),
 			]);
 
-			return mapFuturesPosition(futuresPosition, canLiquidatePosition, market);
+			return mapFuturesPosition(
+				futuresPosition,
+				canLiquidatePosition,
+				getMarketAssetFromKey(market, network.id)
+			);
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && !!market && !!synthetixjs,
