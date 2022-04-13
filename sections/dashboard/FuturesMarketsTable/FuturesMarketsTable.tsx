@@ -14,7 +14,7 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
-import Badge from 'components/Badge';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -108,7 +108,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										{cellProps.row.original.isSuspended && <Badge>Paused</Badge>}
+										{cellProps.row.original.isSuspended && (
+											<MarketBadge currencyKey={cellProps.row.original.asset} />
+										)}
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>

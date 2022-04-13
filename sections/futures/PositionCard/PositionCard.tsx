@@ -15,9 +15,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
-import Badge from 'components/Badge';
 import useMarketClosed from 'hooks/useMarketClosed';
 import { CurrencyKey } from 'constants/currency';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									{isMarketClosed && <Badge>Paused</Badge>}
+									{isMarketClosed && <MarketBadge currencyKey={currencyKey as CurrencyKey} />}
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>

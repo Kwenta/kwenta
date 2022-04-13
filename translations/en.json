@@ -629,6 +629,15 @@
 				"fees": "Fees",
 				"avg-entry-price": "Avg. Entry Price"
 			},
+			"state": {
+				"opens-in": "Opens in",
+				"closes-in": "Closes in",
+				"frozen": "paused",
+				"market-closure": "paused",
+				"system-upgrade": "paused",
+				"circuit-breaker": "paused",
+				"emergency": "paused"
+			},
 			"chart": {
 				"overlay-messages": {
 					"frozen": {

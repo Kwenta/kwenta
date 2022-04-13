@@ -3,32 +3,27 @@ import styled from 'styled-components';
 import { components, SingleValueProps } from 'react-select';
 import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Badge from 'components/Badge';
+import MarketBadge from 'components/Badge/MarketBadge';
+import { CurrencyKey } from 'constants/currency';
 
-const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
-	<components.SingleValue {...props}>
-		<SingleValueContainer>
-			<CurrencyIcon
-				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
-			/>
-			<div className="currency-meta">
-				<CurrencyLabel>
-					{props.data.label}
-					{props.data.isMarketClosed && <StyledBadge>Paused</StyledBadge>}
-				</CurrencyLabel>
-				<p className="name">{props.data.description}</p>
-			</div>
-		</SingleValueContainer>
-	</components.SingleValue>
-);
+const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => {
+	const currencyKey = ((props.data.value[0] !== 's' ? 's' : '') + props.data.value) as CurrencyKey;
 
-const StyledBadge = styled(Badge)`
-	margin: 0px 10px;
-	line-height: 10px;
-	font-size: 10px;
-`;
+	return (
+		<components.SingleValue {...props}>
+			<SingleValueContainer>
+				<CurrencyIcon currencyKey={currencyKey} width="31px" height="31px" />
+				<div className="currency-meta">
+					<CurrencyLabel>
+						{props.data.label}
+						{props.data.isMarketClosed && <MarketBadge currencyKey={currencyKey} />}
+					</CurrencyLabel>
+					<p className="name">{props.data.description}</p>
+				</div>
+			</SingleValueContainer>
+		</components.SingleValue>
+	);
+};
 
 export const CurrencyLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
