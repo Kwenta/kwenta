@@ -53,6 +53,19 @@ const LabelWithInput = (props: {
 	);
 };
 
+const StatWithContainer = (props: { label: string; stateVar: any; type: number }) => {
+	return (
+		<>
+			<StatContainer>
+				<StatLabel>{props.label}</StatLabel>
+				{props.type === 0 ? <Stat style={{ color: '#7FD482' }}>{`$ ${props.stateVar}`}</Stat> : ''}
+				{props.type === 1 ? <Stat style={{ color: '#EF6868' }}>{`$ ${props.stateVar}`}</Stat> : ''}
+				{props.type === 2 ? <Stat style={{ color: '#ECE8E3' }}>{`${props.stateVar}x`}</Stat> : ''}
+			</StatContainer>
+		</>
+	);
+};
+
 const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	marketAsset,
 	setOpenProfitCalcModal,
@@ -200,77 +213,121 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 				 */
 				title={t('Profit Calculator')}
 			>
-				<form onSubmit={handleCalculateProfit}>
-					<LabelWithInput
-						className={'entry-price'}
-						labelText={'Entry Price: '}
-						placeholder={'$43,938.11'}
-						onChange={handleSetEntryPrice}
-					/>
-					<ProfitCalcGrid>
-						{/* LEFT column */}
-						<LeftColumn>
-							<LabelWithInput
-								labelText={'Exit Price: '}
-								placeholder={'$46,939.11'}
-								onChange={handleSetExitPrice}
-							/>
-							<LabelWithInput
-								labelText={'Stop Loss: '}
-								placeholder={'$32,000.00'}
-								onChange={handleSetStopLoss}
-							/>
-							<LabelWithInput
-								labelText={'Position Size: '}
-								placeholder={`23.1 ${marketAsset}`}
-								onChange={(e: any): void => handleSetPositionSize(e, false)}
-							/>
-						</LeftColumn>
-						{/* RIGHT column */}
-						<RightColumn>
-							<LabelWithInput
-								labelText={'Gain %: '}
-								placeholder={`5.55%`}
-								onChange={(e: any): void => handleSetPercent(e, true)}
-							/>
-							<LabelWithInput
-								labelText={'Loss %: '}
-								placeholder={`4.1%`}
-								onChange={(e: any): void => handleSetPercent(e, false)}
-							/>
-							<LabelWithInput
-								labelText={'Position Size: '}
-								placeholder={`$305,532.28 sUSD`}
-								onChange={(e: any): void => handleSetPositionSize(e, true)}
-							/>
-						</RightColumn>
-					</ProfitCalcGrid>
-					{/* BUTTONS */}
-					<PositionButtons type={'submit'} selected={leverageSide} onSelect={setLeverageSide} />
-					<StatsContainer>
-						<Stat>{'exit PnL'}</Stat>
-						<Stat>{'Stop PnL'}</Stat>
-						<Stat>{'R:R'}</Stat>
-					</StatsContainer>
-				</form>
+				<ModalWindow>
+					<form onSubmit={handleCalculateProfit}>
+						<LabelWithInput
+							className={'entry-price'}
+							labelText={'Entry Price: '}
+							placeholder={'$43,938.11'}
+							onChange={handleSetEntryPrice}
+						/>
+						<ProfitCalcGrid>
+							{/* LEFT column */}
+							<LeftColumn>
+								<LabelWithInput
+									labelText={'Exit Price: '}
+									placeholder={'$46,939.11'}
+									onChange={handleSetExitPrice}
+								/>
+								<LabelWithInput
+									labelText={'Stop Loss: '}
+									placeholder={'$32,000.00'}
+									onChange={handleSetStopLoss}
+								/>
+								<LabelWithInput
+									labelText={'Position Size: '}
+									placeholder={`23.1 ${marketAsset}`}
+									onChange={(e: any): void => handleSetPositionSize(e, false)}
+								/>
+							</LeftColumn>
+							{/* RIGHT column */}
+							<RightColumn>
+								<LabelWithInput
+									labelText={'Gain %: '}
+									placeholder={`5.55%`}
+									onChange={(e: any): void => handleSetPercent(e, true)}
+								/>
+								<LabelWithInput
+									labelText={'Loss %: '}
+									placeholder={`4.1%`}
+									onChange={(e: any): void => handleSetPercent(e, false)}
+								/>
+								<LabelWithInput
+									labelText={'Position Size: '}
+									placeholder={`$305,532.28 sUSD`}
+									onChange={(e: any): void => handleSetPositionSize(e, true)}
+								/>
+							</RightColumn>
+						</ProfitCalcGrid>
+						{/* BUTTONS */}
+						<PositionButtons type={'submit'} selected={leverageSide} onSelect={setLeverageSide} />
+						{/* STATS row of 3 */}
+						<StatsGrid>
+							<StatWithContainer label={'Exit PnL'} stateVar={''} type={0} />
+							<StatWithContainer label={'Stop PnL'} stateVar={''} type={1} />
+							<StatWithContainer label={'R:R'} stateVar={''} type={2} />
+						</StatsGrid>
+						{/* PROFIT DETAILS */}
+						{/**
+						 * @todo refactor `ProfitDetails` into its own custom component,
+						 *       since you're calling `leverageSide` 3 times!
+						 */}
+						<ProfitDetails>
+							{/**
+							 * @todo where does `Market` come from, as shown in the mockup?
+							 */}
+							<EntryOrder leverageSide={leverageSide} market={market}/>
+							<TakeProfit leverageSide={leverageSide} exitPrice={exitPrice} />
+							<StopLoss leverageSide={leverageSide} stopLoss={stopLoss} />
+							<Size marketAssetPositionSize={marketAssetPositionSize} marketAsset={marketAsset} />
+						</ProfitDetails>
+					</form>
+				</ModalWindow>
 			</BaseModal>
 		</>
 	);
 };
 
+const ProfitDetails = styled.div`
+	display: grid;
+	grid-gap: 1.1rem;
+	grid-template-columns: repeat(1, 1fr);
+
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-sizing: border-box;
+	border-radius: 6px;
+
+	margin-top: 20px;
+`;
+
 const Stat = styled.div`
-width: 160px;
-height: 69px;
+	font-size: 16px;
+	line-height: 19px;
+	margin: -7.5px 0px 0px 12px;
+`;
 
-border: 1px solid rgba(255, 255, 255, 0.1);
-box-sizing: border-box;
-border-radius: 6px;
-`
+const StatLabel = styled.p`
+	font-size: 14px;
+	line-height: 14px;
+	color: #787878;
+	margin-left: 12px;
+`;
 
-const StatsContainer = styled.div`
+const StatContainer = styled.div`
+	width: auto;
+	height: 69px;
+
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-sizing: border-box;
+	border-radius: 6px;
+`;
+
+const StatsGrid = styled.div`
 	display: grid;
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(3, 1fr);
+	
+	margin-top: 20px;
 `;
 
 const LeftColumn = styled.div`
@@ -327,6 +384,10 @@ const StyledInput = styled.input`
 const InputContainer = styled.div`
 	width: ${(props) => (props.className ? '100%' : 'auto')};
 	height: 46px;
+`;
+
+const ModalWindow = styled.div`
+	height: 789px;
 `;
 
 export default ProfitCalculator;
