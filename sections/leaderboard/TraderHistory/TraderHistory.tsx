@@ -58,7 +58,13 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									{t('leaderboard.leaderboard.table.title')}
 								</TitleText>
 								<TitleSeparator>&gt;</TitleSeparator>
-								<TraderText>{trader}</TraderText>
+								<TraderText
+									href={`https://optimistic.etherscan.io/address/${trader}`}
+									target="_blank"
+									rel="noreferrer noopener"
+								>
+									{trader}
+								</TraderText>
 							</TableTitle>
 						),
 						accessor: 'title',
@@ -111,9 +117,13 @@ const TitleSeparator = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const TraderText = styled.div`
+const TraderText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+
+	&:hover {
+		text-decoration: underline;
+	}
 `;
 
 const TableHeader = styled.div`

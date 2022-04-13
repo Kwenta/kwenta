@@ -766,6 +766,16 @@
 				"percent-pnl": "PnL (%)"
 			}
 		},
+		"trader-history": {
+			"table": {
+				"timestamp": "Date/Time",
+				"market": "market",
+				"total-trades": "Total Trades",
+				"total-volume": "Total Volume",
+				"liquidations": "Liquidations",
+				"total-pnl": "PnL ($)"
+			}
+		},
 		"statistics": {
 			"failed-loading": "Failed to fetch results.",
 			"empty-results": "No results found.",
