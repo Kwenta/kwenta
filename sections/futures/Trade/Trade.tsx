@@ -174,9 +174,12 @@ const Trade: React.FC<TradeProps> = () => {
 	);
 
 	const placeOrderTranslationKey = React.useMemo(() => {
-		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position'; 		
-		return !futuresMarketsPosition?.remainingMargin || futuresMarketsPosition.remainingMargin < wei('50') ? 'futures.market.trade.button.deposit-margin-minimum' : 'futures.market.trade.button.open-position';
-	}, [futuresMarketsPosition])
+		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
+		return !futuresMarketsPosition?.remainingMargin ||
+			futuresMarketsPosition.remainingMargin < wei('50')
+			? 'futures.market.trade.button.deposit-margin-minimum'
+			: 'futures.market.trade.button.open-position';
+	}, [futuresMarketsPosition]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -247,8 +250,6 @@ const Trade: React.FC<TradeProps> = () => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
-
-
 
 	return (
 		<Panel>
@@ -330,8 +331,7 @@ const Trade: React.FC<TradeProps> = () => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				{t(placeOrderTranslationKey)} 
-
+				{t(placeOrderTranslationKey)}
 			</PlaceOrderButton>
 
 			{(orderTxn.errorMessage || error) && (
