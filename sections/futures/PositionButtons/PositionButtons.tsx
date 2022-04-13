@@ -6,15 +6,17 @@ import { PositionSide } from '../types';
 interface PositionButtonsProps {
 	selected: PositionSide;
 	onSelect(position: PositionSide): void;
+	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
+const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect, type }) => {
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
+				type={type}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				<span>Long</span>
@@ -23,6 +25,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect })
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
+				type={type}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				<span>Short</span>
