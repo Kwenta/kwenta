@@ -4,8 +4,14 @@ import styled from 'styled-components';
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
 import Img, { Svg } from 'react-optimized-image';
-import { CurrencyKey, FIAT_SYNTHS } from '@synthetixio/contracts-interface/build/node/src/types';
-import { AFTER_HOURS_SYNTHS, TSE_SYNTHS, LSE_SYNTHS, COMMODITY_SYNTHS } from 'constants/currency';
+import {
+	CurrencyKey,
+	AFTER_HOURS_SYNTHS,
+	TSE_SYNTHS,
+	LSE_SYNTHS,
+	FIAT_SYNTHS,
+	COMMODITY_SYNTHS,
+} from 'constants/currency';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import { marketNextOpen } from 'utils/marketHours';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
