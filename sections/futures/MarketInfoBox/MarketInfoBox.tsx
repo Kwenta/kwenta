@@ -12,6 +12,7 @@ type MarketInfoBoxProps = {
 	marginUsage: Wei;
 	leverage: Wei;
 	liquidationPrice: Wei;
+	isMarketClosed: boolean;
 };
 
 const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
@@ -21,6 +22,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	marginUsage,
 	leverage,
 	liquidationPrice,
+	isMarketClosed,
 }) => {
 	return (
 		<StyledInfoBox
@@ -34,6 +36,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 				Leverage: `${formatNumber(leverage)}x`,
 				'Liquidation Price': `${formatCurrency(Synths.sUSD, liquidationPrice, { sign: '$' })}`,
 			}}
+			isMarketClosed={isMarketClosed}
 		/>
 	);
 };

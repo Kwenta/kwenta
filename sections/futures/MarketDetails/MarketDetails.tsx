@@ -180,16 +180,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	return (
 		<MarketDetailsContainer>
 			{Object.entries(data).map(([key, { value, color }]) => {
-				let spanClass = color ? `value ${color}` : 'value';
-
-				if (isSuspended) {
-					spanClass = `${spanClass} paused`;
-				}
+				const pausedClass = isSuspended ? 'paused' : '';
+				const colorClass = color || '';
 
 				return (
 					<div key={key}>
 						<p className="heading">{key}</p>
-						<span className={spanClass}>{value}</span>
+						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
 					</div>
 				);
 			})}
