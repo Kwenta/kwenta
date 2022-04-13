@@ -147,7 +147,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						<CurrencyNameLabel data-testid="currency-name">
 							{currencyKeySelected
 								? t('common.currency.synthetic-currency-name', {
-										currencyName: synthsMap[currencyKey as CurrencyKey].description,
+										currencyName: synthsMap[currencyKey as CurrencyKey]?.description,
 								  })
 								: t('exchange.currency-card.synth-name')}
 						</CurrencyNameLabel>
@@ -327,7 +327,7 @@ const CurrencyNameLabel = styled.div`
 	text-align: left;
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	line-height: 0.75em;
+	line-height: 1.25em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 161px;
 	padding-left: 12px;
