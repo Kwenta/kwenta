@@ -108,9 +108,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										{cellProps.row.original.isSuspended && (
-											<MarketBadge currencyKey={cellProps.row.original.asset} />
-										)}
+										<MarketBadge currencyKey={cellProps.row.original.asset} />
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>

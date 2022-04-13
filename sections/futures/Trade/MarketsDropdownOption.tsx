@@ -18,11 +18,7 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 				<div>
 					<CurrencyLabel>
 						{props.data.label}
-						{props.data.isMarketClosed && (
-							<MarketBadge
-								currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-							/>
-						)}
+						<MarketBadge currencyKey={props.data.value} />
 					</CurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>
