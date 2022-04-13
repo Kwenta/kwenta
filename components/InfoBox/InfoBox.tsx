@@ -9,13 +9,13 @@ type InfoBoxProps = {
 };
 
 const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, isMarketClosed }) => {
-	const paused = isMarketClosed ? 'paused' : '';
+	const closed = isMarketClosed ? 'closed' : '';
 	return (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value]) => (
 				<div key={key}>
 					<p className="key">{key}:</p>
-					<p className={`value ${paused}`}>{value}</p>
+					<p className={`value ${closed}`}>{isMarketClosed ? '-' : value}</p>
 				</div>
 			))}
 		</InfoBoxContainer>
@@ -50,7 +50,7 @@ const InfoBoxContainer = styled.div`
 			font-size: 12px;
 		}
 
-		.paused {
+		.closed {
 			color: ${(props) => props.theme.colors.common.secondaryGray};
 		}
 
