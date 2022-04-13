@@ -769,11 +769,12 @@
 		"trader-history": {
 			"table": {
 				"timestamp": "Date/Time",
-				"market": "market",
-				"total-trades": "Total Trades",
+				"market": "Market",
+				"status": "Status",
+				"liquidated": "Liquidated",
+				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"liquidations": "Liquidations",
-				"total-pnl": "PnL ($)"
+				"total-pnl": "Realized PnL ($)"
 			}
 		},
 		"statistics": {
