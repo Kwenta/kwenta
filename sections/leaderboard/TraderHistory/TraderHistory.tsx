@@ -41,7 +41,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				isLiquidated: stat.isLiquidated,
 				feesPaid: stat.feesPaid,
 				netFunding: stat.netFunding,
-				pnl: stat.pnl,
+				pnl: stat.pnl.sub(stat.feesPaid).add(stat.netFunding),
 				totalVolume: stat.totalVolume,
 				trades: stat.trades,
 				side: stat.side,
