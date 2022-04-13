@@ -34,6 +34,8 @@ export const ROUTES = {
 			normalizeRoute(`/market/${baseCurrencyKey}`, 'orders', 'tab'),
 		Trades: (baseCurrencyKey: CurrencyKey) =>
 			normalizeRoute(`/market/${baseCurrencyKey}`, 'trades', 'tab'),
+		Calculator: (baseCurrencyKey: CurrencyKey) =>
+			normalizeRoute(`/market/${baseCurrencyKey}`, 'calculator', 'tab'),
 	},
 	Leaderboard: {
 		Home: '/leaderboard',

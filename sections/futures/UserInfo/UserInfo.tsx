@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+/* eslint-disable react/forbid-foreign-prop-types */
+import React, { useMemo, Children } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabPanel } from 'components/Tab';
-import TabButton from 'components/Button/TabButton';
+import TabButton, { TabButtonProps } from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
@@ -22,6 +23,7 @@ enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
 	TRADES = 'trades',
+	CALCULATOR = 'calculator',
 }
 
 const FutureTabs = Object.values(FuturesTab);
@@ -84,6 +86,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				active: activeTab === FuturesTab.TRADES,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
+			{
+				name: FuturesTab.CALCULATOR,
+				label: 'Calculator',
+				icon: true,
+				active: activeTab === FuturesTab.CALCULATOR,
+				onClick: () => router.push(ROUTES.Markets.Calculator(marketAsset)),
+			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
 	);
@@ -91,11 +100,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	return (
 		<>
 			<TabButtonsContainer>
-				{TABS.map(({ name, label, badge, active, disabled, onClick }) => (
+				
+				{TABS.map(({ name, label, badge, icon, active, disabled, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
 						badge={badge}
+						icon={icon}
 						active={active}
 						disabled={disabled}
 						onClick={onClick}
@@ -129,6 +140,7 @@ export default UserInfo;
 
 const TabButtonsContainer = styled.div`
 	display: flex;
+	justify-content: center;
 	margin-top: 16px;
 	margin-bottom: 16px;
 
