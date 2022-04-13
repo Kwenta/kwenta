@@ -22,6 +22,10 @@ import { Price } from 'queries/rates/types';
 import { getSynthDescription } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
 
+function setLastVisited(baseCurrencyPair: string): void {
+	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
+}
+
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
 	label: string;
@@ -122,6 +126,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
+						setLastVisited(ROUTES.Markets.MarketPair(x.value));
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}

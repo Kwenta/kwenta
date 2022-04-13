@@ -1,3 +1,4 @@
+import Wei from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 
 export type SynthExchange = {
@@ -56,3 +57,5 @@ export type Price = {
 };
 
 export type Prices = Price[];
+
+export type Rates = Record<string, Wei>;

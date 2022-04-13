@@ -189,7 +189,7 @@ export const calculateFundingRate = (
 	const fundingStart = new Wei(minFunding.funding, 18, true);
 	const fundingEnd = new Wei(maxFunding.funding, 18, true);
 
-	const fundingDiff = fundingEnd.sub(fundingStart); // funding is already in ratio units
+	const fundingDiff = fundingStart.sub(fundingEnd); // funding is already in ratio units
 	const timeDiff = maxFunding.timestamp - minFunding.timestamp;
 
 	if (timeDiff === 0) {
