@@ -100,6 +100,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 										</StyledCell>
 									);
 								},
+								sortType: 'basic',
+								sortable: true,
 								width: compact ? 40 : 100,
 							},
 							{
@@ -132,6 +134,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 								),
 								accessor: 'trades',
 								width: compact ? 40 : 100,
+								sortType: 'basic',
+								sortable: true,
 							},
 							{
 								Header: (
@@ -147,6 +151,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									/>
 								),
 								width: compact ? 40 : 100,
+								sortType: 'basic',
+								sortable: true,
 							},
 							{
 								Header: (
@@ -162,6 +168,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									/>
 								),
 								width: compact ? 40 : 100,
+								sortType: 'basic',
+								sortable: true,
 							},
 						],
 					},
