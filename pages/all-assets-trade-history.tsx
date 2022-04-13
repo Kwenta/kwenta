@@ -1,5 +1,5 @@
 import Trades from 'sections/futures/Trades';
-import useGetFuturesAllPositionHistory from 'queries/futures/useGetFuturesAllPositionHistory';
+import useGetFuturesAllPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
 
 const AllAssetsTradeHistory = () => {
 	const futuresPositionHistoryQuery = useGetFuturesAllPositionHistory();
