@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -20,6 +19,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -29,7 +29,6 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);

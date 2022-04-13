@@ -9,7 +9,8 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { SECONDS_PER_DAY } from './constants';
 import { calculateFundingRate, getFuturesEndpoint } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
+import { getDisplayAsset } from 'utils/futures';
 
 const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,
@@ -27,7 +28,7 @@ const useGetAverageFundingRateForMarket = (
 		async () => {
 			if (!currencyKey || !assetPrice) return null;
 			const { contracts } = synthetixjs!;
-			const marketAddress = contracts[`FuturesMarket${currencyKey.slice(1)}`].address;
+			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 			if (!marketAddress) return null;
 			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY;
 
