@@ -25,7 +25,6 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 );
 
 const StyledBadge = styled(Badge)`
-	letter-spacing: 0.105em;
 	margin: 0px 10px;
 	line-height: 10px;
 	font-size: 10px;
