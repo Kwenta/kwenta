@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
@@ -46,6 +46,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -92,11 +93,15 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				label: 'Calculator',
 				icon: true,
 				active: activeTab === FuturesTab.CALCULATOR,
-				onClick: () => router.push(ROUTES.Markets.Calculator(marketAsset)),
+				onClick: () => handleOpenProfitCalc(),
 			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
 	);
+
+	const handleOpenProfitCalc = () => {
+		setOpenProfitCalcModal(!openProfitCalcModal);
+	};
 
 	return (
 		<>
@@ -156,13 +161,15 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					isLoaded={futuresPositionHistoryQuery.isFetched}
 				/>
 			</TabPanel>
-			<TabPanel name={FuturesTab.CALCULATOR} activeTab={activeTab}>
-				<ProfitCalculator></ProfitCalculator>
-			</TabPanel>
+			{openProfitCalcModal ? (
+				<ProfitCalculator
+					marketAsset={marketAsset}
+					setOpenProfitCalcModal={setOpenProfitCalcModal}
+				/>
+			) : null}
 		</>
 	);
 };
-export default UserInfo;
 
 const TabButtonsContainer = styled.div`
 	display: grid;
@@ -194,3 +201,5 @@ const TabRight = styled.div`
 	flex-direction: row;
 	justify-content: right;
 `;
+
+export default UserInfo;
