@@ -16,7 +16,7 @@ import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
-import { Tooltip } from 'styles/common';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -29,7 +29,7 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
 
@@ -65,6 +65,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
 
 	const data: MarketData = React.useMemo(() => {
+		const fundingTitle = `${
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
+		} Funding Rate`;
+		const fundingValue =
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
+				? marketSummary?.currentFundingRate
+				: avgFundingRate;
+
 		return {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
@@ -112,38 +120,27 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			'Open Interest': {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
 					<StyledTooltip
-						placement="bottom"
-						content={
-							<>
-								<div className="green">
-									Long:{' '}
-									{formatCurrency(
-										selectedPriceCurrency.name,
-										marketSummary.marketSize
-											.add(marketSummary.marketSkew)
-											.div('2')
-											.abs()
-											.mul(basePriceRate ?? 0)
-											.toNumber(),
-										{ sign: '$' }
-									)}
-								</div>
-								<div className="red">
-									Short:{' '}
-									{formatCurrency(
-										selectedPriceCurrency.name,
-										marketSummary.marketSize
-											.sub(marketSummary.marketSkew)
-											.div('2')
-											.abs()
-											.mul(basePriceRate ?? 0)
-											.toNumber(),
-										{ sign: '$' }
-									)}
-								</div>
-							</>
-						}
-						arrow={false}
+						preset="bottom"
+						content={`Long: ${formatCurrency(
+							selectedPriceCurrency.name,
+							marketSummary.marketSize
+								.add(marketSummary.marketSkew)
+								.div('2')
+								.abs()
+								.mul(basePriceRate ?? 0)
+								.toNumber(),
+							{ sign: '$' }
+						)}
+						Short: ${formatCurrency(
+							selectedPriceCurrency.name,
+							marketSummary.marketSize
+								.sub(marketSummary.marketSkew)
+								.div('2')
+								.abs()
+								.mul(basePriceRate ?? 0)
+								.toNumber(),
+							{ sign: '$' }
+						)}`}
 					>
 						<span>
 							{formatCurrency(
@@ -157,15 +154,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					NO_VALUE
 				),
 			},
-			'24H Funding Rate': {
-				value: avgFundingRate
-					? formatPercent(avgFundingRate ?? zeroBN, { minDecimals: 6 })
-					: NO_VALUE,
-				color: avgFundingRate?.gt(zeroBN)
-					? 'green'
-					: avgFundingRate?.lt(zeroBN)
-					? 'red'
-					: undefined,
+			[fundingTitle]: {
+				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
+				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 			},
 			'Max Leverage': {
 				value: marketSummary?.maxLeverage ? `${marketSummary?.maxLeverage.toString(0)}x` : NO_VALUE,
@@ -181,6 +172,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		externalPrice,
 		pastPrice?.price,
 		avgFundingRate,
+		fundingRateQuery,
 	]);
 
 	return (
@@ -188,7 +180,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			{Object.entries(data).map(([key, { value, color }]) => (
 				<div key={key}>
 					<p className="heading">{key}</p>
-					<p className={color ? `value ${color}` : 'value'}>{value}</p>
+					<span className={color ? `value ${color}` : 'value'}>{value}</span>
 				</div>
 			))}
 		</MarketDetailsContainer>
@@ -210,7 +202,8 @@ const MarketDetailsContainer = styled.div`
 	border-radius: 10px;
 	box-sizing: border-box;
 
-	p {
+	p,
+	span {
 		margin: 0;
 		text-align: left;
 	}
@@ -233,13 +226,6 @@ const MarketDetailsContainer = styled.div`
 	.red {
 		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
-`;
-
-const StyledTooltip = styled(Tooltip)`
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.mono};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	background: #131212;
 `;
 
 export default MarketDetails;
