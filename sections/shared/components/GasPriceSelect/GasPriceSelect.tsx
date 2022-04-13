@@ -7,7 +7,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Svg } from 'react-optimized-image';
 import Wei from '@synthetixio/wei';
 
-import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
+import { NO_VALUE } from 'constants/placeholder';
 
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
@@ -44,9 +44,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const gasPriceItem = hasCustomGasPrice ? (
 		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
 	) : (
-		<span data-testid="gas-price">
-			{ESTIMATE_VALUE} {formatNumber(gasPrice ?? 0, { minDecimals: 4 })}
-		</span>
+		<span data-testid="gas-price">{formatNumber(gasPrice ?? 0, { minDecimals: 4 })}</span>
 	);
 
 	return (
@@ -93,13 +91,21 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 												key={speed}
 												variant="select"
 												onClick={() => {
-													setCustomGasPrice('');
+													setCustomGasPrice(
+														formatNumber(parseGasPriceObject(gasPrices![speed]) ?? 0, {
+															maxDecimals: 1,
+														})
+													);
 													setGasSpeed(speed);
 												}}
 												isActive={hasCustomGasPrice ? false : gasSpeed === speed}
 											>
 												<span>{t(`common.summary.gas-prices.${speed}`)}</span>
-												<NumericValue>{gasPrices![speed]}</NumericValue>
+												<NumericValue>
+													{formatNumber(parseGasPriceObject(gasPrices![speed]) ?? 0, {
+														maxDecimals: 1,
+													})}
+												</NumericValue>
 											</StyledGasButton>
 										))}
 									</GasSelectContainer>
@@ -119,10 +125,9 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 };
 
 const GasPriceTooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.common.secondaryGray};
-	border: 0.5px solid ${(props) => props.theme.colors.navy};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 4px;
-	width: 120px;
+	width: 155px;
 	.tippy-content {
 		padding: 0;
 	}
@@ -138,14 +143,25 @@ const GasPriceCostTooltip = styled(GasPriceTooltip)`
 `;
 
 const GasSelectContainer = styled.div`
-	padding: 16px 0 8px 0;
+	display: flex;
+	flex-direction: column;
+	row-gap: 10px;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 10px;
 `;
 
 const CustomGasPriceContainer = styled.div`
-	margin: 0 10px 5px 10px;
+	margin: 10px 10px 5px 10px;
+	background: ${(props) => props.theme.colors.inputGradient};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.inputHighlight};
+	border-radius: 8px;
 `;
 
 const CustomGasPrice = styled(NumericInput)`
+	color: ${(props) => props.theme.colors.white};
 	width: 100%;
 	border: 0;
 	font-size: 12px;
@@ -155,7 +171,8 @@ const CustomGasPrice = styled(NumericInput)`
 `;
 
 const StyledGasButton = styled(Button)`
-	width: 100%;
+	width: 90%;
+	font-size: 12px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
