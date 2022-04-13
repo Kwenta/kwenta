@@ -72,7 +72,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) =>
 					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
