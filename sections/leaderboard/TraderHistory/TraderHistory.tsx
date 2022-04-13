@@ -9,7 +9,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import useGetFuturesAllPositionHistory from 'queries/futures/useGetFuturesAllPositionHistory';
+import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
@@ -30,8 +30,12 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const positionsQuery = useGetFuturesAllPositionHistory();
+	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
+
+	let data = useMemo(() => {
+		return positions
+	}, [positions])
 	console.log(positions)
 
 	return (
@@ -40,7 +44,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				compact={compact}
 				showPagination={true}
 				isLoading={false}
-				data={[]}
+				data={data}
 				hideHeaders={compact}
 				columns={[
 					{
