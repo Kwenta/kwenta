@@ -102,7 +102,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										{cellProps.row.original.isSuspended && <StyledBadge>Paused</StyledBadge>}
+										{cellProps.row.original.isSuspended && <Badge>Paused</Badge>}
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
@@ -230,12 +230,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		</TableContainer>
 	);
 };
-
-const StyledBadge = styled(Badge)`
-	margin-left: 5px;
-	line-height: 80%;
-	font-size: 9px;
-`;
 
 const PnlContainer = styled.div`
 	display: flex;

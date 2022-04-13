@@ -9,6 +9,9 @@ const Badge = styled.span`
 	background: #ef6868;
 	border-radius: 100px;
 	letter-spacing: 0.105em;
+	margin-left: 4px;
+	line-height: 80%;
+	font-size: 9px;
 `;
 
 Badge.displayName = 'Badge';
