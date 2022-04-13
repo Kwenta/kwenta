@@ -83,6 +83,8 @@ export type RawPosition = {
 	id: string;
 	lastTxHash: string;
 	timestamp: number;
+	openTimestamp: number;
+	closeTimestamp: number;
 	market: string;
 	asset: string;
 	account: string;
@@ -97,12 +99,15 @@ export type RawPosition = {
 	pnl: Wei;
 	pnlWithFeesPaid: Wei;
 	totalVolume: Wei;
+	trades: number;
 };
 
 export type PositionHistory = {
 	id: Number;
 	transactionHash: string;
 	timestamp: number;
+	openTimestamp: number;
+	closeTimestamp: number;
 	market: string;
 	asset: string;
 	account: string;
@@ -117,6 +122,8 @@ export type PositionHistory = {
 	leverage: Wei;
 	side: PositionSide;
 	pnl: Wei;
+	totalVolume: Wei;
+	trades: number;
 };
 
 export enum PositionSide {

@@ -33,6 +33,10 @@ const useGetFuturesAccountPositionHistory = (account: string, options?: UseQuery
 								account
 								market
 								lastTxHash
+								openTimestamp
+								closeTimestamp
+								totalVolume
+								trades
 								timestamp
 								isOpen
 								isLiquidated

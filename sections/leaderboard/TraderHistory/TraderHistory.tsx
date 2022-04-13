@@ -10,9 +10,7 @@ import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
-import { walletAddressState } from 'store/wallet';
-import { truncateAddress } from 'utils/formatters/string';
-import { FuturesStat } from 'queries/futures/types';
+import { PositionHistory } from 'queries/futures/types';
 import Loader from 'components/Loader';
 
 type TraderHistoryProps = {
@@ -28,13 +26,27 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 }: TraderHistoryProps) => {
 	const { t } = useTranslation();
 
-	const walletAddress = useRecoilValue(walletAddressState);
-
 	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
 
 	let data = useMemo(() => {
 		return positions
+			.sort(
+				(a: PositionHistory, b: PositionHistory) =>
+					a.timestamp - b.timestamp
+			)
+			.map((stat: PositionHistory, i: number) => ({
+				rank: i + 1,
+				openTimestamp: stat.openTimestamp,
+				asset: stat.asset,
+				isOpen: stat.isOpen,
+				feesPaid: stat.feesPaid,
+				netFunding: stat.netFunding,
+				pnl: stat.pnl,
+				totalVolume: stat.totalVolume,
+				trades: stat.trades,
+				side: stat.side
+			}))
 	}, [positions])
 	console.log(positions)
 
