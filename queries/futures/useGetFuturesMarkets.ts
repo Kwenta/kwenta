@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
 import { getMarketKey } from 'utils/futures';
+import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);

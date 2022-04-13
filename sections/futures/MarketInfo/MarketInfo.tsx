@@ -40,7 +40,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const baseCurrencyKey = market as CurrencyKey;
 
-	const { isMarketClosed } = useMarketClosed(baseCurrencyKey);
+	const { isMarketClosed, marketClosureReason } = useMarketClosed(baseCurrencyKey);
 
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
@@ -63,7 +63,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
 			{isMarketClosed ? (
-				<MarketOverlay />
+				<MarketOverlay marketClosureReason={marketClosureReason} currencyKey={baseCurrencyKey} />
 			) : (
 				<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
 			)}

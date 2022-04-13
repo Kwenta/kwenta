@@ -1,18 +1,55 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
 import Img, { Svg } from 'react-optimized-image';
+import { CurrencyKey, FIAT_SYNTHS } from '@synthetixio/contracts-interface/build/node/src/types';
+import { AFTER_HOURS_SYNTHS, TSE_SYNTHS, LSE_SYNTHS, COMMODITY_SYNTHS } from 'constants/currency';
+import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { marketNextOpen } from 'utils/marketHours';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
 
-const MarketOverlay = () => {
+const MarketOverlay: FC<{
+	marketClosureReason: MarketClosureReason;
+	currencyKey: CurrencyKey;
+}> = ({ marketClosureReason, currencyKey }) => {
 	const { t } = useTranslation();
+	// const linkToAfterHoursMarket = useMemo(() => AFTER_HOURS_SYNTHS.has(currencyKey), [currencyKey]);
+	const showMarketIsReopeningSoon = useMemo(
+		() =>
+			AFTER_HOURS_SYNTHS.has(currencyKey) ||
+			TSE_SYNTHS.has(currencyKey) ||
+			LSE_SYNTHS.has(currencyKey) ||
+			FIAT_SYNTHS.has(currencyKey) ||
+			COMMODITY_SYNTHS.has(currencyKey),
+		[currencyKey]
+	);
+	const timer = useMarketHoursTimer(marketNextOpen(currencyKey) ?? null);
+
 	return (
 		<OverlayContainer>
 			<Overlay>
 				<OverlayContent>
 					<StyledSvg src={PausedIcon} />
-					<StyledText>This market has been closed</StyledText>
+					<StyledText>
+						<Trans
+							i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.title`}
+							values={{
+								currencyKey,
+							}}
+						/>
+					</StyledText>
+					{marketClosureReason === 'market-closure' && showMarketIsReopeningSoon ? (
+						<StyledSubText>
+							{t('futures.market.chart.overlay-messages.market-closure.subtitle')}
+							<StyledTimer>{timer}</StyledTimer>
+						</StyledSubText>
+					) : (
+						<StyledText>
+							{t(`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`)}
+						</StyledText>
+					)}
 				</OverlayContent>
 			</Overlay>
 			<AssetsImage src={StaticChart} alt="" webp={true} />
@@ -69,10 +106,11 @@ const StyledText = styled.div`
 `;
 
 const StyledSubText = styled.div`
-	font-family: 'AkkuratLLWeb-Regular';
+	font-family: 'AkkuratMonoLLWeb-Regular';
 	font-weight: bolder;
 	color: #787878;
-	line-height: 12px;
+	line-height: 9px;
+	letter-spacing: 0.1px;
 	font-size: 16px;
 `;
 
