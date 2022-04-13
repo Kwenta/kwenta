@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									{isMarketClosed && <StyledBadge>Paused</StyledBadge>}
+									{isMarketClosed && <Badge>Paused</Badge>}
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
@@ -226,13 +226,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	);
 };
 export default PositionCard;
-
-const StyledBadge = styled(Badge)`
-	letter-spacing: 0.105em;
-	margin-left: 4px;
-	line-height: 80%;
-	font-size: 8px;
-`;
 
 const Container = styled.div`
 	display: grid;

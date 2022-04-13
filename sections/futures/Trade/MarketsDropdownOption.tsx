@@ -46,7 +46,6 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 `;
 
 const StyledBadge = styled(Badge)`
-	letter-spacing: 0.105em;
 	margin-left: 4px;
 	line-height: 10px;
 	font-size: 8px;
