@@ -263,7 +263,6 @@ const TableContainer = styled.div`
 `;
 
 const StyledTable = styled(Table)`
-	margin-top: 20px;
 	margin-bottom: 20px;
 `;
 
