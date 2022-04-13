@@ -1,12 +1,12 @@
 /* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo, Children } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabPanel } from 'components/Tab';
-import TabButton, { TabButtonProps } from 'components/Button/TabButton';
+import TabButton from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
@@ -18,6 +18,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
+import ProfitCalculator from '../ProfitCalculator';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -100,18 +101,40 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	return (
 		<>
 			<TabButtonsContainer>
-				
-				{TABS.map(({ name, label, badge, icon, active, disabled, onClick }) => (
+				<TabLeft>
+					{/* POSITION tab */}
 					<TabButton
-						key={name}
-						title={label}
-						badge={badge}
-						icon={icon}
-						active={active}
-						disabled={disabled}
-						onClick={onClick}
+						key={TABS[0].name}
+						title={TABS[0].label}
+						badge={TABS[0].badge}
+						icon={TABS[0].icon}
+						active={TABS[0].active}
+						disabled={TABS[0].disabled}
+						onClick={TABS[0].onClick}
 					/>
-				))}
+					{/* TRADES tab */}
+					<TabButton
+						key={TABS[1].name}
+						title={TABS[1].label}
+						badge={TABS[1].badge}
+						icon={TABS[1].icon}
+						active={TABS[1].active}
+						disabled={TABS[1].disabled}
+						onClick={TABS[1].onClick}
+					/>
+				</TabLeft>
+				<TabRight>
+					{/* CALCULATOR tab */}
+					<TabButton
+						key={TABS[2].name}
+						title={TABS[2].label}
+						badge={TABS[2].badge}
+						icon={TABS[2].icon}
+						active={TABS[2].active}
+						disabled={TABS[2].disabled}
+						onClick={TABS[2].onClick}
+					/>
+				</TabRight>
 			</TabButtonsContainer>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
@@ -133,14 +156,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					isLoaded={futuresPositionHistoryQuery.isFetched}
 				/>
 			</TabPanel>
+			<TabPanel name={FuturesTab.CALCULATOR} activeTab={activeTab}>
+				<ProfitCalculator></ProfitCalculator>
+			</TabPanel>
 		</>
 	);
 };
 export default UserInfo;
 
 const TabButtonsContainer = styled.div`
-	display: flex;
-	justify-content: center;
+	display: grid;
+	grid-gap: 0rem;
+	grid-template-columns: repeat(2, 1fr);
+
 	margin-top: 16px;
 	margin-bottom: 16px;
 
@@ -152,4 +180,17 @@ const TabButtonsContainer = styled.div`
 			margin-right: 14px;
 		}
 	}
+`;
+
+const TabLeft = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	grid-gap: 12px;
+`;
+
+const TabRight = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
 `;
