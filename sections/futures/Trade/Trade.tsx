@@ -14,7 +14,7 @@ import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { walletAddressState } from 'store/wallet';
+import { isWalletConnectedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 
 import LeverageInput from '../LeverageInput';
@@ -43,6 +43,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 const Trade: React.FC<TradeProps> = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -252,8 +253,7 @@ const Trade: React.FC<TradeProps> = () => {
 				</MarketActionButton>
 				<MarketActionButton
 					disabled={
-						!futuresMarketsPosition?.remainingMargin ||
-						futuresMarketsPosition.remainingMargin.lte(zeroBN)
+						!isWalletConnected || futuresMarketsPosition?.remainingMargin?.lte(zeroBN) 
 					}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
@@ -286,8 +286,7 @@ const Trade: React.FC<TradeProps> = () => {
 
 			<OrderSizing
 				disabled={
-					!futuresMarketsPosition?.remainingMargin ||
-					futuresMarketsPosition.remainingMargin.lte(zeroBN)
+					!isWalletConnected || futuresMarketsPosition?.remainingMargin?.lte(zeroBN) 
 				}
 				amount={tradeSize}
 				amountSUSD={tradeSizeSUSD}
