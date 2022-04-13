@@ -25,7 +25,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import MarketsDropdown from './MarketsDropdown';
-// import SegmentedControl from 'components/SegmentedControl';
+import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
@@ -35,6 +35,7 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import NextPrice from './NextPrice';
 
 type TradeProps = {};
 
@@ -71,6 +72,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
+	const [orderType, setOrderType] = useState(0);
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
@@ -277,7 +279,13 @@ const Trade: React.FC<TradeProps> = () => {
 				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 			/>
 
-			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
+			<StyledSegmentedControl
+				values={['Market', 'Next-Price', 'Limit']}
+				selectedIndex={orderType}
+				onChange={setOrderType}
+			/>
+
+			{orderType === 1 && <NextPrice />}
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
@@ -402,6 +410,6 @@ const ErrorMessage = styled.div`
 	margin-bottom: 16px;
 `;
 
-// const StyledSegmentedControl = styled(SegmentedControl)`
-// 	margin-bottom: 16px;
-// `;
+const StyledSegmentedControl = styled(SegmentedControl)`
+	margin-bottom: 16px;
+`;

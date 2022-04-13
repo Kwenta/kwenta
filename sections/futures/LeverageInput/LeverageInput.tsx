@@ -47,8 +47,8 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		<LeverageInputWrapper>
 			<LeverageRow>
 				<LeverageTitle>
-					{t('futures.market.trade.input.leverage.title')}{' '}
-					<span>— Up to {formatNumber(maxLeverage, { maxDecimals: 1 })}x</span>
+					{t('futures.market.trade.input.leverage.title')}&nbsp; —
+					<span>&nbsp; Up to {formatNumber(maxLeverage, { maxDecimals: 1 })}x</span>
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
@@ -81,7 +81,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 					/>
 					{['2', '5', '10'].map((l) => (
 						<LeverageButton
-							key={l.toString()}
+							key={l}
 							mono
 							onClick={() => {
 								onLeverageChange(l);

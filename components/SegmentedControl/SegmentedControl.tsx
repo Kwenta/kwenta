@@ -38,7 +38,7 @@ const SegmentedControlContainer = styled.div<{ $length: number }>`
 	padding: 6px;
 	background: ${(props) => props.theme.colors.selectedTheme.segmented.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 16px;
+	border-radius: 8px;
 `;
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
@@ -54,7 +54,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 					border: ${(props) => props.theme.colors.selectedTheme.border};
 					color: ${(props) => props.theme.colors.common.primaryWhite};
 					font-weight: 700;
-					border-radius: 12px;
+					border-radius: 6px;
 			  `
 			: css`
 					background: transparent;
