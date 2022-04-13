@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { SECONDS_PER_DAY } from './constants';
 import { calculateFundingRate, getFuturesEndpoint } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 
 const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,

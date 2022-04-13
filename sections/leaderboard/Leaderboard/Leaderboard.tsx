@@ -1,13 +1,12 @@
 import Table from 'components/Table';
-import { FC, SyntheticEvent, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
+ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import Currency from 'components/Currency';
-import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';

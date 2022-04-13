@@ -10,7 +10,10 @@ import { PositionHistory } from './types';
 
 import { mapTradeHistory, getFuturesEndpoint } from './utils';
 
-const useGetFuturesAccountPositionHistory = (account: string, options?: UseQueryOptions<any | null>) => {
+const useGetFuturesAccountPositionHistory = (
+	account: string,
+	options?: UseQueryOptions<any | null>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);

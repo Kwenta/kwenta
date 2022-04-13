@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo} from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -30,10 +30,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 
 	let data = useMemo(() => {
 		return positions
-			.sort(
-				(a: PositionHistory, b: PositionHistory) =>
-					b.timestamp - a.timestamp
-			)
+			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
 			.map((stat: PositionHistory, i: number) => ({
 				rank: i + 1,
 				currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
@@ -47,10 +44,10 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				pnl: stat.pnl,
 				totalVolume: stat.totalVolume,
 				trades: stat.trades,
-				side: stat.side
-			}))
-	}, [positionsQuery, positions])
-	
+				side: stat.side,
+			}));
+	}, [positions]);
+
 	if (positionsQuery.isLoading) {
 		return <Loader />;
 	}
@@ -87,66 +84,83 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 						accessor: 'title',
 						columns: [
 							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
+								),
 								accessor: 'openTimestamp',
 								Cell: (cellProps: CellProps<any>) => {
 									const date = new Date(cellProps.row.original.openTimestamp);
 									const dateFmt = date.toLocaleString().split(', ');
 
-									return <StyledCell>{dateFmt[0]}<br />{dateFmt[1]}</StyledCell>
+									return (
+										<StyledCell>
+											{dateFmt[0]}
+											<br />
+											{dateFmt[1]}
+										</StyledCell>
+									);
 								},
 								width: compact ? 40 : 100,
 							},
 							{
 								Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
 								accessor: 'asset',
-								Cell: (cellProps: CellProps<any>) =>
+								Cell: (cellProps: CellProps<any>) => (
 									<CurrencyInfo>
 										<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
 										<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-									</CurrencyInfo>,
+									</CurrencyInfo>
+								),
 								width: compact ? 40 : 100,
 							},
 							{
 								Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
 								accessor: 'status',
 								Cell: (cellProps: CellProps<any>) => {
-									const status = cellProps.row.original.isOpen ?
-										"Open" :
-										cellProps.row.original.isLiquidated ?
-										"Liquidated" :
-										"Closed"
+									const status = cellProps.row.original.isOpen
+										? 'Open'
+										: cellProps.row.original.isLiquidated
+										? 'Liquidated'
+										: 'Closed';
 									return <StyledCell>{status}</StyledCell>;
 								},
 								width: compact ? 40 : 100,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>
+								),
 								accessor: 'trades',
 								width: compact ? 40 : 100,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>
+								),
 								accessor: 'totalVolume',
-								Cell: (cellProps: CellProps<any>) =>
+								Cell: (cellProps: CellProps<any>) => (
 									<Currency.Price
 										currencyKey={Synths.sUSD}
 										price={cellProps.row.original.totalVolume}
 										sign={'$'}
 										conversionRate={1}
-									/>,
+									/>
+								),
 								width: compact ? 40 : 100,
 							},
 							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
+								Header: (
+									<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
+								),
 								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) =>
+								Cell: (cellProps: CellProps<any>) => (
 									<ColorCodedPrice
 										currencyKey={Synths.sUSD}
 										price={cellProps.row.original.pnl}
 										sign={'$'}
 										conversionRate={1}
-									/>,
+									/>
+								),
 								width: compact ? 40 : 100,
 							},
 						],
@@ -233,8 +247,8 @@ const ColorCodedPrice = styled(Currency.Price)`
 		props.price > 0
 			? props.theme.colors.green
 			: props.price < 0
-				? props.theme.colors.red
-				: props.theme.colors.white};
+			? props.theme.colors.red
+			: props.theme.colors.white};
 `;
 
 export default TraderHistory;
