@@ -236,22 +236,20 @@ const CategoryButton = styled(Button)`
 		props.isActive &&
 		css`
 			color: ${props.theme.colors.common.primaryWhite};
-			border: 2px solid  ${props.theme.colors.common.primaryWhite};
+			border: 2px solid ${props.theme.colors.common.primaryWhite};
 			border-radius: 11px;
 			background: ${props.theme.colors.common.secondaryGray};
 
 			&:hover {
 				background: ${props.theme.colors.common.secondaryGray};
 			}
-		`
-	};
+		`};
 	${(props) =>
 		props.disabled &&
 		css`
 			color: ${props.theme.colors.selectedTheme.button.disabled.text};
 			background: ${props.theme.colors.selectedTheme.button.disabled.background};
-		`
-	};
+		`};
 `;
 
 const EmptyDisplay = styled(FlexDivCentered)`
