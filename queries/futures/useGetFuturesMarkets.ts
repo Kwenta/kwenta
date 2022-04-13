@@ -36,7 +36,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const { suspensions } = await SystemStatus.getFuturesMarketSuspensions(
+			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
 				markets.map((m: any) => {
 					const asset = utils.parseBytes32String(m.asset);
 					const marketKey = getMarketKey(asset, network.id);
@@ -73,7 +73,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketSize: wei(marketSize),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
-					isSuspended: suspensions[i],
+					isSuspended: true, // suspensions[i],
+					marketClosureReason: 'market-closure', // getReasonFromCode(reasons[i]),
 				})
 			);
 		},
