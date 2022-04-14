@@ -70,6 +70,14 @@ function Select<T>(props: Props<T>) {
 				border: colors.selectedTheme.border,
 				borderStyle: 'solid',
 				outline: 'none',
+				'div.react-select__option:first-of-type:hover': {
+					borderTopLeftRadius: '8px',
+					borderTopRightRadius: '8px',
+				},
+				'div.react-select__option:last-of-type:hover': {
+					borderBottomLeftRadius: '8px',
+					borderBottomRightRadius: '8px',
+				},
 			}),
 			option: (provided, state) => ({
 				...provided,

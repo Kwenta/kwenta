@@ -111,6 +111,7 @@ export default NetworksSwitcher;
 const Container = styled.div`
 	width: 100%;
 	font-size: 12px;
+	margin-left: 15px;
 	font-family: AkkuratMonoLLWeb-Regular;
 `;
 
