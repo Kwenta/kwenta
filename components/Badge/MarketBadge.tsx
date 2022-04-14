@@ -1,6 +1,6 @@
 import { CurrencyKey } from 'constants/currency';
 import useMarketClosed from 'hooks/useMarketClosed';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
 import styled from 'styled-components';
@@ -14,34 +14,20 @@ type MarketBadgeProps = {
 };
 
 type TimerBadgeProps = {
-	currencyKey: CurrencyKey | null;
+	timer: string | null;
 	isOpen: boolean;
 	description: 'long' | 'short';
 };
 
-export const TimerBadge: FC<TimerBadgeProps> = ({ isOpen, currencyKey, description }) => {
-	const [timer, setTimer] = React.useState<any>(null);
+export const TimerBadge: FC<TimerBadgeProps> = ({ isOpen, description, timer }) => {
 	const { t } = useTranslation();
-	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
-	const nextOpenTimer = useMarketHoursTimer(nextOpen ?? null);
-
-	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
-	const nextTransitionTimer = useMarketHoursTimer(nextTransition ?? null);
-
-	useEffect(() => {
-		if (isOpen) {
-			setTimer(nextTransitionTimer);
-		} else {
-			setTimer(nextOpenTimer);
-		}
-	}, []);
 
 	return (
 		<StyledBadge
-			background={isOpen ? theme.colors.common.primaryRed : theme.colors.common.primaryRed}
+			background={isOpen ? theme.colors.common.primaryRed : theme.colors.common.primaryGreen}
 		>
 			{description === 'long' && t(`futures.market.state.${isOpen ? 'closes-in' : 'opens-in'}`)}{' '}
-			{timer && <CountdownTimer>{timer}</CountdownTimer>}
+			{<CountdownTimer>{timer}</CountdownTimer>}
 		</StyledBadge>
 	);
 };
@@ -50,16 +36,26 @@ export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey, description }) 
 	const { t } = useTranslation();
 	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
+	const [timer, setTimer] = useState<string>('');
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
+	// const isMarketClosed = true;
+	// const marketClosureReason = 'market-closure';
+	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
+	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 
-	if (isOpen !== null) {
-		return (
-			<TimerBadge description={description || 'short'} isOpen={isOpen} currencyKey={currencyKey} />
-		);
+	const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
+	const clock = useMarketHoursTimer(timerSetting ?? null);
+
+	useEffect(() => {
+		setTimer(clock);
+	}, [timerSetting]);
+
+	if (isOpen !== null && timer) {
+		return <TimerBadge description={description || 'short'} isOpen={isOpen} timer={timer} />;
 	}
 
 	if (isMarketClosed) {
-		<Badge>{t(`futures.market.state.${marketClosureReason}`)}</Badge>;
+		return <Badge>{t(`futures.market.state.${marketClosureReason}`)}</Badge>;
 	}
 
 	return null;
@@ -73,4 +69,6 @@ const CountdownTimer = styled.span`
 
 const StyledBadge = styled(Badge)<{ background: string }>`
 	background: ${(props) => props.background};
+	padding: 1px 5px;
+	line-height: 9px;
 `;

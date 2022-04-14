@@ -31,7 +31,17 @@ const MarketOverlay: FC<{
 			COMMODITY_SYNTHS.has(currencyKey),
 		[currencyKey]
 	);
-	const timer = useMarketHoursTimer(marketNextOpen(currencyKey) ?? null);
+
+	const TimerDisplay = () => {
+		const timer = useMarketHoursTimer(marketNextOpen(currencyKey) ?? null);
+
+		return (
+			<StyledSubText>
+				{t('futures.market.chart.overlay-messages.market-closure.subtitle')}
+				<StyledTimer>{timer}</StyledTimer>
+			</StyledSubText>
+		);
+	};
 
 	return (
 		<OverlayContainer>
@@ -41,16 +51,11 @@ const MarketOverlay: FC<{
 					<StyledText>
 						<Trans
 							i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.title`}
-							values={{
-								currencyKey,
-							}}
+							values={{ currencyKey }}
 						/>
 					</StyledText>
 					{marketClosureReason === 'market-closure' && showMarketIsReopeningSoon ? (
-						<StyledSubText>
-							{t('futures.market.chart.overlay-messages.market-closure.subtitle')}
-							<StyledTimer>{timer}</StyledTimer>
-						</StyledSubText>
+						<TimerDisplay />
 					) : (
 						<StyledText>
 							{t(`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`)}

@@ -62,11 +62,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			{isMarketClosed ? (
-				<MarketOverlay marketClosureReason={marketClosureReason} currencyKey={baseCurrencyKey} />
-			) : (
-				<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
-			)}
+			<TVChartWrapper baseCurrencyKey={baseCurrencyKey} />
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}
