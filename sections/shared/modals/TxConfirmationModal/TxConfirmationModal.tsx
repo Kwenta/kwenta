@@ -295,7 +295,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 270px;
+		width: 300px;
 	}
 	.card-body {
 		padding: 24px;

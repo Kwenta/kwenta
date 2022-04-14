@@ -28,8 +28,8 @@ type GasPriceSelectProps = {
 
 const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
 	const { t } = useTranslation();
-	const [gasSpeed, setGasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-	const [customGasPrice, setCustomGasPrice] = useRecoilState(customGasPriceState);
+	const [gasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
+	const [customGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isMainnet = useRecoilValue(isMainnetState);
 

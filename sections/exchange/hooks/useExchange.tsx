@@ -585,12 +585,13 @@ const useExchange = ({
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
-		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '') {
+		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
 			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
 			setBaseCurrencyAmount(baseCurrencyAmountNoFee.toString());
 		}
 	}, [
 		rate,
+		baseCurrencyKey,
 		quoteCurrencyAmount,
 		baseCurrencyAmount,
 		txProvider,
@@ -861,6 +862,8 @@ const useExchange = ({
 							);
 							synthsWalletBalancesQuery.refetch();
 							numEntriesQuery.refetch();
+							setQuoteCurrencyAmount('');
+							setBaseCurrencyAmount('');
 						},
 					});
 				}
@@ -934,7 +937,7 @@ const useExchange = ({
 						setQuoteCurrencyAmount('');
 					} else {
 						setQuoteCurrencyAmount(value);
-						if (txProvider === 'synthetix') {
+						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
 							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
@@ -1043,7 +1046,7 @@ const useExchange = ({
 						setBaseCurrencyAmount('');
 					} else {
 						setBaseCurrencyAmount(value);
-						if (txProvider === 'synthetix') {
+						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
 							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
 							setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.add(fee).toString());

@@ -250,7 +250,7 @@ const CurrencySelector = styled.div<{
 	display: flex;
 	justify-content: space-between;
 	height: 43px;
-	width: 161px;
+	width: 180px;
 	padding: 12px;
 	font-size: 18px;
 	line-height: 1em;
@@ -285,7 +285,7 @@ const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
 	box-shadow: ${(props) => props.theme.colors.inputHighlight};
 	border-radius: 8px;
 	height: 84px;
-	width: 323px;
+	width: 290px;
 	position: relative;
 	${(props) =>
 		props.disableInput &&
@@ -329,7 +329,7 @@ const CurrencyNameLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	line-height: 1.25em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-	width: 161px;
+	width: 180px;
 	padding-left: 12px;
 `;
 
@@ -339,19 +339,19 @@ const WalletBalanceContainer = styled(FlexDivRow)<{ disableInput?: boolean }>`
 		css`
 			pointer-events: none;
 		`}
-	width: 136px;
+	width: 160px;
 `;
 
 const WalletBalanceLabel = styled.div`
 	text-transform: capitalize;
-	font-size: 14px;
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${numericValueCSS};
-	font-size: 14px;
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	cursor: ${(props) => (props.onClick ? 'pointer' : 'default')};
 	${(props) =>
