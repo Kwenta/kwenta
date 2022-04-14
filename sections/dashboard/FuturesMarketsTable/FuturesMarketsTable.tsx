@@ -14,6 +14,7 @@ import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFutur
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -79,6 +80,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
+				sortBy={[
+					{
+						id: 'dailyVolume',
+						desc: true,
+					},
+				]}
 				columns={[
 					{
 						Header: (
@@ -98,7 +105,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<MarketBadge currencyKey={cellProps.row.original.asset} />
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -215,6 +225,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							);
 						},
 						width: 125,
+						sortType: useMemo(
+							() => (rowA: any, rowB: any) => {
+								const rowOne = rowA.original.volume;
+								const rowTwo = rowB.original.volume;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 					},
 				]}
 			/>
@@ -260,6 +278,10 @@ const DefaultCell = styled.p``;
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
+
+	.paused {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const StyledTable = styled(Table)`
@@ -269,6 +291,8 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
+	align-items: center;
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;

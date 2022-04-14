@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
 import { FlexDivCentered } from 'styles/common';
 import { components, OptionProps } from 'react-select';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 	<components.Option {...props}>
@@ -14,7 +15,10 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
-					<CurrencyLabel>{props.data.label}</CurrencyLabel>
+					<CurrencyLabel>
+						{props.data.label}
+						<MarketBadge currencyKey={props.data.value} />
+					</CurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>
 			</CurrencyMeta>
