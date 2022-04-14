@@ -128,7 +128,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container id={isMarketClosed ? 'paused' : ''}>
+			<Container id={isMarketClosed ? 'closed' : ''}>
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									<MarketBadge currencyKey={currencyKey as CurrencyKey} />
+									<MarketBadge description="long" currencyKey={currencyKey as CurrencyKey} />
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
@@ -243,7 +243,7 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 	height: 30px;
 	margin-right: 15px;
 
-	${Container}#paused & {
+	${Container}#closed & {
 		opacity: 0.3;
 	}
 `;
@@ -276,7 +276,7 @@ const StyledValue = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
 
-	${Container}#paused & {
+	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;
@@ -323,7 +323,7 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 
-	${Container}#paused & {
+	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 

@@ -4,7 +4,6 @@ import { components, SingleValueProps } from 'react-select';
 import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import MarketBadge from 'components/Badge/MarketBadge';
-import { CurrencyKey } from 'constants/currency';
 
 const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 	<components.SingleValue {...props}>
@@ -17,7 +16,7 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 			<div className="currency-meta">
 				<CurrencyLabel>
 					{props.data.label}
-					<MarketBadge currencyKey={props.data.value} />
+					<MarketBadge description="long" currencyKey={props.data.value} />
 				</CurrencyLabel>
 				<p className="name">{props.data.description}</p>
 			</div>

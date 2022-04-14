@@ -66,7 +66,7 @@ export const MARKET_HOURS_SYNTHS = new Set([
 	...AFTER_HOURS_SYNTHS,
 ]);
 
-export const COMMODITY_SYNTHS = new Set<any>(['AAVE', 'XAU', 'XAG', 'WTI']);
+export const COMMODITY_SYNTHS = new Set<any>(['XAU', 'XAG', 'WTI']);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;

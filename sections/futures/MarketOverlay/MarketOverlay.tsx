@@ -18,22 +18,22 @@ import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 const MarketOverlay: FC<{
 	marketClosureReason: MarketClosureReason;
-	currencyKey: CurrencyKey;
-}> = ({ marketClosureReason, currencyKey }) => {
+	baseCurrencyKey: CurrencyKey;
+}> = ({ marketClosureReason, baseCurrencyKey }) => {
 	const { t } = useTranslation();
-	// const linkToAfterHoursMarket = useMemo(() => AFTER_HOURS_SYNTHS.has(currencyKey), [currencyKey]);
+	// const linkToAfterHoursMarket = useMemo(() => AFTER_HOURS_SYNTHS.has(baseCurrencyKey), [baseCurrencyKey]);
 	const showMarketIsReopeningSoon = useMemo(
 		() =>
-			AFTER_HOURS_SYNTHS.has(currencyKey) ||
-			TSE_SYNTHS.has(currencyKey) ||
-			LSE_SYNTHS.has(currencyKey) ||
-			FIAT_SYNTHS.has(currencyKey) ||
-			COMMODITY_SYNTHS.has(currencyKey),
-		[currencyKey]
+			AFTER_HOURS_SYNTHS.has(baseCurrencyKey) ||
+			TSE_SYNTHS.has(baseCurrencyKey) ||
+			LSE_SYNTHS.has(baseCurrencyKey) ||
+			FIAT_SYNTHS.has(baseCurrencyKey) ||
+			COMMODITY_SYNTHS.has(baseCurrencyKey),
+		[baseCurrencyKey]
 	);
 
 	const TimerDisplay = () => {
-		const timer = useMarketHoursTimer(marketNextOpen(currencyKey) ?? null);
+		const timer = useMarketHoursTimer(marketNextOpen(baseCurrencyKey) ?? null);
 
 		return (
 			<StyledSubText>
@@ -51,7 +51,7 @@ const MarketOverlay: FC<{
 					<StyledText>
 						<Trans
 							i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.title`}
-							values={{ currencyKey }}
+							values={{ baseCurrencyKey }}
 						/>
 					</StyledText>
 					{marketClosureReason === 'market-closure' && showMarketIsReopeningSoon ? (
