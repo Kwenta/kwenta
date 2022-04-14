@@ -21,7 +21,7 @@ import { getDisplayAsset, getMarketKey } from 'utils/futures';
 type ReactSelectOptionProps = {
 	label: string;
 	synthIcon: string;
-	marketAccessibleMargin?: string;
+	marketRemainingMargin?: string;
 	onClick?: () => {};
 };
 
@@ -53,33 +53,32 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	const futuresPositions = futuresPositionQuery?.data ?? [];
 
 	const accessiblePositions = futuresPositions.filter((position) =>
-		position.accessibleMargin.gt(zeroBN)
+		position.remainingMargin.gt(zeroBN)
 	);
 
-	const totalAccessibleMargin = accessiblePositions.reduce(
-		(prev, position) => prev.add(position.accessibleMargin),
+	const totalRemainingMargin = accessiblePositions.reduce(
+		(prev, position) => prev.add(position.remainingMargin),
 		zeroBN
 	);
 
 	const setMarketConfig = (asset: string): ReactSelectOptionProps => {
-		const accessibleMargin =
-			accessiblePositions.find((posittion) => posittion.asset === asset)?.accessibleMargin ??
-			zeroBN;
+		const remainingMargin =
+			accessiblePositions.find((posittion) => posittion.asset === asset)?.remainingMargin ?? zeroBN;
 
 		const marketKey = getMarketKey(asset, network.id);
 
 		return {
 			label: `${getDisplayAsset(asset)}-PERP`,
 			synthIcon: marketKey,
-			marketAccessibleMargin: formatCurrency(Synths.sUSD, accessibleMargin, { sign: '$' }),
+			marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
 			onClick: () => router.push(`/market/${asset}`),
 		};
 	};
 
 	const OPTIONS = [
 		{
-			label: 'header.balance.margin-label',
-			totalAvailableMargin: formatCurrency(Synths.sUSD, totalAccessibleMargin, { sign: '$' }),
+			label: 'header.balance.total-margin-label',
+			totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
 			options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 		},
 	];
@@ -99,7 +98,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	const formatOptionLabel = ({
 		label,
 		synthIcon,
-		marketAccessibleMargin,
+		marketRemainingMargin,
 		onClick,
 	}: ReactSelectOptionProps) => (
 		<LabelContainer onClick={onClick}>
@@ -107,7 +106,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 				{synthIcon && <StyledCurrencyIcon currencyKey={synthIcon} width="24px" height="24px" />}
 				<StyledLabel noPadding={!synthIcon}>{t(label)}</StyledLabel>
 			</FlexDivRow>
-			<Container>{marketAccessibleMargin}</Container>
+			<Container>{marketRemainingMargin}</Container>
 		</LabelContainer>
 	);
 
