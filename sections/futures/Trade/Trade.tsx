@@ -35,6 +35,7 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
 
 type TradeProps = {};
@@ -214,8 +215,8 @@ const Trade: React.FC<TradeProps> = () => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
-		'modifyPosition',
-		[sizeDelta.toBN()],
+		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPosition',
+		orderType === 1 ? [sizeDelta.toBN(), KWENTA_TRACKING_CODE] : [sizeDelta.toBN()],
 		gasPrice,
 		{
 			enabled:
@@ -280,7 +281,7 @@ const Trade: React.FC<TradeProps> = () => {
 			/>
 
 			<StyledSegmentedControl
-				values={['Market', 'Next-Price', 'Limit']}
+				values={['Market', 'Next-Price']}
 				selectedIndex={orderType}
 				onChange={setOrderType}
 			/>

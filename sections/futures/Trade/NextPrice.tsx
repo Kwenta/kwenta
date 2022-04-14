@@ -2,25 +2,39 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import NumericInput from 'components/Input/NumericInput';
+import Input from 'components/Input/Input';
 
 const NextPrice: React.FC = () => {
 	const [volatility, setVolatility] = React.useState('');
+	const inputRef = React.useRef<HTMLInputElement>(null);
+
+	React.useEffect(() => {
+		if (volatility.includes('%')) {
+			inputRef?.current?.setSelectionRange(volatility.length - 1, volatility.length - 1);
+		}
+	}, [volatility]);
 
 	return (
 		<NextPriceContainer>
 			<p className="next-price-description">
-				Next-Price orders are subject to volatility and execute at the very next on-chain price.
-				Learn more ↗
+				Next-Price orders are subject to volatility and execute at the very next on-chain price.{' '}
+				<a href="https://example.com" rel="noreferrer" target="_blank">
+					Learn more ↗
+				</a>
 			</p>
 			<VolatilityTitle>
 				Volatility&nbsp; —<span>&nbsp; Maximum acceptable price deviation</span>
 			</VolatilityTitle>
 			<VolatilityInputContainer>
-				<NumericInput
+				<Input
+					ref={inputRef}
 					value={volatility}
-					onChange={(_, value) => {
-						setVolatility(value);
+					onChange={(e) => {
+						if (e.target.value === '' || e.target.value === '%') {
+							setVolatility('');
+						} else {
+							setVolatility(`${e.target.value.replace('%', '')}%`);
+						}
 					}}
 				/>
 				{['.5', '1', '5'].map((v) => (
@@ -28,7 +42,7 @@ const NextPrice: React.FC = () => {
 						key={v}
 						mono
 						onClick={() => {
-							setVolatility(v);
+							setVolatility(`${v}%`);
 						}}
 					>
 						{v}%
@@ -45,6 +59,10 @@ const NextPriceContainer = styled.div`
 	.next-price-description {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 		margin: 0 8px;
+
+		a {
+			color: ${(props) => props.theme.colors.common.primaryWhite};
+		}
 	}
 `;
 
