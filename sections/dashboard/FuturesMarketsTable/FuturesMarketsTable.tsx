@@ -66,7 +66,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					.mul(market.price)
 					.toNumber(),
 				marketSkew: market.marketSkew,
-				isSuspended: market.isSuspended,
 			};
 		});
 	}, [synthsMap, futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);

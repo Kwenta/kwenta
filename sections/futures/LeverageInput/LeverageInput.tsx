@@ -137,13 +137,6 @@ const LeverageButton = styled(Button)`
 	padding: 0;
 	font-weight: 700;
 	font-size: 13px;
-	&:disabled {
-		border: 1px solid #2b2a2a;
-		background: none;
-		&:hover {
-			background: none;
-		}
-	}
 `;
 
 const TextButton = styled.button`

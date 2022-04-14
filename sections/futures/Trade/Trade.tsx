@@ -406,27 +406,11 @@ const MarketActions = styled.div`
 
 const MarketActionButton = styled(Button)`
 	font-size: 15px;
-
-	&:disabled {
-		border: 1px solid #2b2a2a;
-		background: none;
-		&:hover {
-			background: none;
-		}
-	}
 `;
 
 const PlaceOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
-
-	&:disabled {
-		border: 1px solid #2b2a2a;
-		background: none;
-		&:hover {
-			background: none;
-		}
-	}
 `;
 
 const ErrorMessage = styled.div`

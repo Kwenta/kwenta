@@ -39,8 +39,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const baseCurrencyKey = market as CurrencyKey;
 
-	const { isMarketClosed, marketClosureReason } = useMarketClosed(baseCurrencyKey);
-
 	const basePriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]

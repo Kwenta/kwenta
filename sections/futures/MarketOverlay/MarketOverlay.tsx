@@ -77,7 +77,7 @@ export default MarketOverlay;
 const OverlayContainer = styled.div`
 	position: relative;
 	overflow: hidden;
-	background-color: rgba(8, 8, 8, 0.93);
+	background-color: ${(props) => props.theme.colors.transparentBlack};
 	border-radius: 16px;
 `;
 
@@ -90,8 +90,7 @@ const Overlay = styled.div`
 	height: 100%;
 	width: 100%;
 	transition: 0.5s ease-in-out;
-	color: white;
-	border-radius: 16px;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 const OverlayContent = styled.div`
@@ -105,7 +104,6 @@ const OverlayContent = styled.div`
 
 const AssetsImage = styled(Img)`
 	width: 100%;
-	border-radius: 16px;
 	opacity: 0.08;
 `;
 
@@ -114,23 +112,23 @@ const StyledSvg = styled(Svg)`
 `;
 
 const StyledText = styled.div`
-	font-family: 'AkkuratLLWeb-Regular';
-	color: white;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.white};
 	font-size: 24px;
 	padding-bottom: 10px;
 `;
 
 const StyledSubText = styled.div`
-	font-family: 'AkkuratMonoLLWeb-Regular';
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-weight: bolder;
-	color: #787878;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	line-height: 9px;
 	letter-spacing: 0.1px;
 	font-size: 16px;
 `;
 
 const StyledTimer = styled.span`
-	font-family: 'AkkuratMonoLLWeb-Regular';
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-weight: bolder;
 	color: white;
 `;
