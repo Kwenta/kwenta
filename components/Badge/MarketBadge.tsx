@@ -38,8 +38,7 @@ export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey, description }) 
 
 	const [timer, setTimer] = useState<string>('');
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
-	// const isMarketClosed = true;
-	// const marketClosureReason = 'market-closure';
+
 	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
 	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 

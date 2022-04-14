@@ -56,6 +56,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	height: 55px;
 	transition: all 0.1s ease-in-out;
 
+	/* TODO reconcile this with Yashar */
 	&:disabled {
 		border: 1px solid #2b2a2a;
 		box-shadow: none;
