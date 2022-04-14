@@ -35,12 +35,11 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
-
-type TradeProps = {};
+import useMarketClosed from 'hooks/useMarketClosed';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC<TradeProps> = () => {
+const Trade: React.FC = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -51,6 +50,7 @@ const Trade: React.FC<TradeProps> = () => {
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
+	const { isMarketClosed } = useMarketClosed(marketAsset);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
@@ -173,6 +173,14 @@ const Trade: React.FC<TradeProps> = () => {
 		[leverageSide, tradeSize]
 	);
 
+	const placeOrderTranslationKey = React.useMemo(() => {
+		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
+		return !futuresMarketsPosition?.remainingMargin ||
+			futuresMarketsPosition.remainingMargin < wei('50')
+			? 'futures.market.trade.button.deposit-margin-minimum'
+			: 'futures.market.trade.button.open-position';
+	}, [futuresMarketsPosition]);
+
 	useEffect(() => {
 		const getOrderFee = async () => {
 			if (
@@ -247,11 +255,14 @@ const Trade: React.FC<TradeProps> = () => {
 		<Panel>
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
-				<MarketActionButton onClick={() => setIsDepositMarginModalOpen(true)}>
+				<MarketActionButton
+					disabled={isMarketClosed}
+					onClick={() => setIsDepositMarginModalOpen(true)}
+				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
+					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN) || isMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -275,11 +286,16 @@ const Trade: React.FC<TradeProps> = () => {
 				}
 				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
 				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
+				isMarketClosed={isMarketClosed}
 			/>
 
 			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
+			<PositionButtons
+				selected={leverageSide}
+				onSelect={setLeverageSide}
+				isMarketClosed={isMarketClosed}
+			/>
 
 			<OrderSizing
 				disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
@@ -300,6 +316,7 @@ const Trade: React.FC<TradeProps> = () => {
 				currentPosition={futuresMarketsPosition}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
+				isMarketClosed={isMarketClosed}
 			/>
 
 			<PlaceOrderButton
@@ -310,15 +327,15 @@ const Trade: React.FC<TradeProps> = () => {
 					Number(leverage) < 0 ||
 					Number(leverage) > maxLeverageValue.toNumber() ||
 					sizeDelta.eq(zeroBN) ||
-					!!error
+					!!error ||
+					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
+					isMarketClosed
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);
 				}}
 			>
-				{!!futuresMarketsPosition?.position
-					? t('futures.market.trade.button.modify-position')
-					: t('futures.market.trade.button.open-position')}
+				{t(placeOrderTranslationKey)}
 			</PlaceOrderButton>
 
 			{(orderTxn.errorMessage || error) && (

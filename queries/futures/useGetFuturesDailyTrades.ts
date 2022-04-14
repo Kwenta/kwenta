@@ -33,6 +33,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 					query FuturesTradesDailyCount($currencyKey: String!) {
 						futuresTrades(
 							where: { asset: $currencyKey, timestamp_gte: ${minTimestamp} }
+							first: 1000
 						) {
 							id
 						}

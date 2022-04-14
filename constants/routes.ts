@@ -37,8 +37,7 @@ export const ROUTES = {
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
-		Leaderboard: normalizeRoute('/leaderboard', 'leaderboard', 'tab'),
-		Statistics: normalizeRoute('/leaderboard', 'statistics', 'tab'),
+		Trader: (trader: string) => normalizeRoute('/leaderboard', `${trader}`, 'trader'),
 	},
 	Shorting: {
 		Home: '/shorting',

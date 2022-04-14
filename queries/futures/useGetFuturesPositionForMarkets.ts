@@ -23,10 +23,13 @@ const useGetFuturesPositionForMarkets = (
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(markets || []),
 		async () => {
+			if (!markets || (walletAddress && !isL2)) {
+				return [];
+			}
+
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
-			if (!markets) return [];
 
 			const positionsForMarkets = await Promise.all(
 				(markets as [string]).map((market: string) =>

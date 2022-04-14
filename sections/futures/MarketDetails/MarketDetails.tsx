@@ -175,14 +175,20 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		fundingRateQuery,
 	]);
 
+	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
+
 	return (
 		<MarketDetailsContainer>
-			{Object.entries(data).map(([key, { value, color }]) => (
-				<div key={key}>
-					<p className="heading">{key}</p>
-					<span className={color ? `value ${color}` : 'value'}>{value}</span>
-				</div>
-			))}
+			{Object.entries(data).map(([key, { value, color }]) => {
+				const colorClass = color || '';
+
+				return (
+					<div key={key}>
+						<p className="heading">{key}</p>
+						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
+					</div>
+				);
+			})}
 		</MarketDetailsContainer>
 	);
 };
@@ -225,6 +231,10 @@ const MarketDetailsContainer = styled.div`
 
 	.red {
 		color: ${(props) => props.theme.colors.common.primaryRed};
+	}
+
+	.paused {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;
 

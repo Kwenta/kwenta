@@ -57,7 +57,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress && synths.length > 0, ...options }
+		{ enabled: isAppReady && isL2 && synths.length > 0, ...options }
 	);
 };
 

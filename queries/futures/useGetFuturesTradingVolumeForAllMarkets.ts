@@ -48,7 +48,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress, ...options }
+		{ enabled: isAppReady && isL2, ...options }
 	);
 };
 

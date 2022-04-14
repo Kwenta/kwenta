@@ -13,9 +13,10 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 
 import UserInfo from '../UserInfo';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import TVChart from 'components/TVChart';
+import useMarketClosed from 'hooks/useMarketClosed';
+import TVChartWrapper from '../TvChartWrapper';
 
 type MarketInfoProps = {
 	market: string;
@@ -58,7 +59,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
+			<TVChartWrapper baseCurrencyKey={baseCurrencyKey} />
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}

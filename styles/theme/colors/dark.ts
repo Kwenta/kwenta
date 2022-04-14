@@ -28,7 +28,7 @@ const darkTheme = {
 				dangerBorder: 'rgba(239, 104, 104, 0.2)',
 			},
 		},
-		disabled: { text: '#555555', background: '#272727' },
+		disabled: { text: '#555555', background: 'transparent' },
 		tab: {
 			badge: {
 				background: '#E4B378',
