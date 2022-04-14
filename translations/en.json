@@ -554,7 +554,6 @@
 			}
 		},
 		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
-
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
@@ -582,7 +581,7 @@
 		"hero": {
 			"countdown": {
 				"title": "Countdown",
-				"endMessage": "Competition ends " ,
+				"endMessage": "Competition ends ",
 				"closed": "NOW CLOSED"
 			},
 			"welcome": {
@@ -629,6 +628,40 @@
 				"net-funding": "Net Funding",
 				"fees": "Fees",
 				"avg-entry-price": "Avg. Entry Price"
+			},
+			"state": {
+				"opens-in": "Opens in",
+				"closes-in": "Closes in",
+				"frozen": "paused",
+				"market-closure": "paused",
+				"system-upgrade": "paused",
+				"circuit-breaker": "paused",
+				"emergency": "paused"
+			},
+			"chart": {
+				"overlay-messages": {
+					"frozen": {
+						"title": "{{baseCurrencyKey}} market has been frozen",
+						"subtitle": "Reset in progress."
+					},
+					"market-closure": {
+						"title": "{{baseCurrencyKey}} market has been paused",
+						"timer-subtitle": "Trading activity will resume in: ",
+						"subtitle": ""
+					},
+					"system-upgrade": {
+						"title": "{{baseCurrencyKey}} market paused",
+						"subtitle": "Please check the Synthetix Discord for details."
+					},
+					"circuit-breaker": {
+						"title": "Circuit breaker triggered for {{baseCurrencyKey}}",
+						"subtitle": "Reset in progress"
+					},
+					"emergency": {
+						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
+						"subtitle": "Reset in progress"
+					}
+				}
 			},
 			"trade": {
 				"market": "isolated market",

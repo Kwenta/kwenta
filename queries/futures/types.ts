@@ -1,4 +1,5 @@
 import Wei from '@synthetixio/wei';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 export type PositionDetail = {
 	remainingMargin: Wei;
@@ -69,6 +70,8 @@ export type FuturesMarket = {
 	maxLeverage: Wei;
 	price: Wei;
 	minInitialMargin: Wei;
+	isSuspended: boolean;
+	marketClosureReason: MarketClosureReason;
 };
 
 export type FuturesOpenInterest = {
