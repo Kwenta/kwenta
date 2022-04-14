@@ -84,9 +84,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 					accessor: 'title',
 					columns: [
 						{
-							Header: (
-								<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
-							),
+							Header: <TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>,
 							accessor: 'openTimestamp',
 							Cell: (cellProps: CellProps<any>) => {
 								const date = new Date(cellProps.row.original.openTimestamp);
@@ -155,9 +153,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							sortable: true,
 						},
 						{
-							Header: (
-								<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
-							),
+							Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
 								<ColorCodedPrice

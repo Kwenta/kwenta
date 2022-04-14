@@ -1,7 +1,7 @@
 import Table from 'components/Table';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
- import { CellProps } from 'react-table';
+import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
@@ -109,17 +109,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	return (
 		<>
 			<SearchContainer>
-				<Search onChange={onChangeSearch} disabled={selectedTrader !== ''}/>
+				<Search onChange={onChangeSearch} disabled={selectedTrader !== ''} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
-				{
-					selectedTrader !== '' ?
-						<TraderHistory
-							trader={selectedTrader}
-							resetSelection={() => setSelectedTrader('')}
-							compact={compact}
-						/>
-					:
+				{selectedTrader !== '' ? (
+					<TraderHistory
+						trader={selectedTrader}
+						resetSelection={() => setSelectedTrader('')}
+						compact={compact}
+					/>
+				) : (
 					<StyledTable
 						compact={compact}
 						showPagination={true}
@@ -199,7 +198,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										sortable: true,
 									},
 									{
-										Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+										Header: (
+											<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
+										),
 										accessor: 'pnl',
 										sortType: 'basic',
 										Cell: (cellProps: CellProps<any>) => (
@@ -217,7 +218,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 							},
 						]}
 					/>
-				}
+				)}
 			</TableContainer>
 		</>
 	);
