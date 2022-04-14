@@ -18,7 +18,12 @@ export default function Search({ value, onChange, disabled }: Props) {
 	return (
 		<SearchBar>
 			<StyledSvg src={SearchIconPath} />
-			<StyledSearchInput value={value} onChange={handleOnChange} placeholder="Search..." disabled={disabled} />
+			<StyledSearchInput
+				value={value}
+				onChange={handleOnChange}
+				placeholder="Search..."
+				disabled={disabled}
+			/>
 		</SearchBar>
 	);
 }
