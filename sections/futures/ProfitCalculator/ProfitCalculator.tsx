@@ -66,6 +66,98 @@ const StatWithContainer = (props: { label: string; stateVar: any; type: number }
 	);
 };
 
+const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
+	let rateOfReturn: any = 0,
+		profit: BigNumber = ethers.BigNumber.from(0),
+		loss: BigNumber = ethers.BigNumber.from(0);
+
+	const labels = ['Exit PnL', 'Stop PnL', 'R:R'];
+
+	if (
+		parseFloat(props.entryPrice.toString()) !== 0 &&
+		parseFloat(props.exitPrice.toString()) !== 0 &&
+		parseFloat(props.stopLoss.toString()) !== 0
+	) {
+		profit = props.exitPrice.sub(props.entryPrice);
+		loss = props.stopLoss.sub(props.entryPrice);
+
+		rateOfReturn = profit.div(loss.abs());
+		rateOfReturn = parseFloat(rateOfReturn.toString()).toPrecision(2);
+	}
+
+	const returnStateVar = (index: number) => {
+		if (index === 0) return profit.toString();
+		if (index === 1) return loss.toString();
+		if (index === 2) return rateOfReturn;
+	};
+
+	return (
+		<>
+			{labels.map((_label: string, index: number) => (
+				<StatWithContainer
+					key={index}
+					label={_label}
+					stateVar={returnStateVar(index)}
+					type={index}
+				/>
+			))}
+		</>
+	);
+};
+
+const ProfitDetails = (props: {
+	leverageSide: PositionSide;
+	exitPrice: BigNumber;
+	stopLoss: BigNumber;
+	marketAssetPositionSize: number;
+	marketAsset: string;
+}) => {
+	const entryOrderDetails = props.leverageSide === PositionSide.LONG ? 'Long' : 'Short';
+
+	return (
+		<>
+			{console.log('current leverage Side: ', props.leverageSide)}
+			<StyledProfitDetails>
+				{/* ENTRY ORDER */}
+				<div>
+					<RowText className="row-name">{'Entry Order:'}</RowText>
+				</div>
+				<div>
+					<RowText className={props.leverageSide}>{`${entryOrderDetails}`}</RowText>
+					<RowText>{`, Market`}</RowText>
+				</div>
+				{/* TAKE PROFIT */}
+				<div>
+					<RowText className="row-name">{'Take Profit:'}</RowText>
+				</div>
+				<div>
+					<RowText>{`Sell`}</RowText>
+					<RowText className="gray-font-color">{`at`}</RowText>
+					<RowText>{props.exitPrice.toString()}</RowText>
+				</div>
+				{/* STOP LOSS */}
+				<div>
+					<RowText className="row-name">{'Stop Loss:'}</RowText>
+				</div>
+				<div>
+					<RowText>{`Sell`}</RowText>
+					<RowText className="gray-font-color">{`at`}</RowText>
+					<RowText>{props.stopLoss.toString()}</RowText>
+				</div>
+				{/* SIZE */}
+				<div>
+					<RowText className="row-name">{'Size:'}</RowText>
+				</div>
+				<div>
+					<RowText>{`${props.marketAssetPositionSize}`}</RowText>
+					<RowText className="gray-font-color">{`${props.marketAsset}-PERP`}</RowText>
+				</div>
+			</StyledProfitDetails>
+		</>
+	);
+};
+
+// Core component
 const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	marketAsset,
 	setOpenProfitCalcModal,
@@ -75,11 +167,9 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [gainPercent, setGainPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [lossPercent, setLossPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(
-		ethers.BigNumber.from(0)
-	);
+	const [gainPercent, setGainPercent] = useState<number>(0.0);
+	const [lossPercent, setLossPercent] = useState<number>(0.0);
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0);
 	const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
 
 	const handleSetEntryPrice = (e: any) => {
@@ -98,7 +188,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(entryPrice_) && entryPrice_ !== '') {
-				setEntryPrice(entryPrice_);
+				setEntryPrice(ethers.BigNumber.from(entryPrice_));
 			}
 		}
 	};
@@ -119,7 +209,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(exitPrice_) && exitPrice_ !== '') {
-				setExitPrice(exitPrice_);
+				setExitPrice(ethers.BigNumber.from(exitPrice_));
 			}
 		}
 	};
@@ -141,9 +231,9 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 
 			if (!isNaN(percent_) && percent_ !== '') {
 				if (isGain) {
-					setGainPercent(percent_);
+					setGainPercent(parseFloat(percent_));
 				} else {
-					setLossPercent(percent_);
+					setLossPercent(parseFloat(percent_));
 				}
 			}
 		}
@@ -165,7 +255,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(stopLoss_) && stopLoss_ !== '') {
-				setStopLoss(stopLoss_);
+				setStopLoss(ethers.BigNumber.from(stopLoss_));
 			}
 		}
 	};
@@ -187,9 +277,11 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 
 			if (!isNaN(positionSize_) && positionSize_ !== '') {
 				if (isBase) {
-					setBasePositionSize(positionSize_);
+					console.log('marketAsset positionSize: ', typeof positionSize_);
+					setBasePositionSize(ethers.BigNumber.from(positionSize_ * 1000));
 				} else {
-					setMarketAssetPositionSize(positionSize_);
+					console.log('base positionSize: ', typeof positionSize_);
+					setMarketAssetPositionSize(parseFloat(positionSize_));
 				}
 			}
 		}
@@ -263,24 +355,16 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 						<PositionButtons type={'submit'} selected={leverageSide} onSelect={setLeverageSide} />
 						{/* STATS row of 3 */}
 						<StatsGrid>
-							<StatWithContainer label={'Exit PnL'} stateVar={''} type={0} />
-							<StatWithContainer label={'Stop PnL'} stateVar={''} type={1} />
-							<StatWithContainer label={'R:R'} stateVar={''} type={2} />
+							<PnLs entryPrice={entryPrice} exitPrice={exitPrice} stopLoss={stopLoss} />
 						</StatsGrid>
 						{/* PROFIT DETAILS */}
-						{/**
-						 * @todo refactor `ProfitDetails` into its own custom component,
-						 *       since you're calling `leverageSide` 3 times!
-						 */}
-						<ProfitDetails>
-							{/**
-							 * @todo where does `Market` come from, as shown in the mockup?
-							 */}
-							<EntryOrder leverageSide={leverageSide} market={market}/>
-							<TakeProfit leverageSide={leverageSide} exitPrice={exitPrice} />
-							<StopLoss leverageSide={leverageSide} stopLoss={stopLoss} />
-							<Size marketAssetPositionSize={marketAssetPositionSize} marketAsset={marketAsset} />
-						</ProfitDetails>
+						<ProfitDetails
+							leverageSide={leverageSide}
+							exitPrice={exitPrice}
+							stopLoss={stopLoss}
+							marketAssetPositionSize={marketAssetPositionSize}
+							marketAsset={marketAsset}
+						/>
 					</form>
 				</ModalWindow>
 			</BaseModal>
@@ -288,10 +372,23 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	);
 };
 
-const ProfitDetails = styled.div`
+const RowText = styled.p`
+	display: inline-block;
+
+	color: #ece8e3;
+	color: ${(props) => (props.className === 'long' ? '#7FD482' : '')};
+	color: ${(props) => (props.className === 'short' ? '#EF6868' : '')};
+	color: ${(props) => (props.className === 'gray-font-color' ? '#787878' : '')};
+
+	font-size: 14px;
+	line-height: 17px;
+	text-align: ${(props) => (props.className === 'row-name' ? 'left' : 'right')};
+`;
+
+const StyledProfitDetails = styled.div`
 	display: grid;
-	grid-gap: 1.1rem;
-	grid-template-columns: repeat(1, 1fr);
+	grid-gap: 0rem;
+	grid-template-columns: repeat(2, 1fr);
 
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	box-sizing: border-box;
@@ -326,7 +423,7 @@ const StatsGrid = styled.div`
 	display: grid;
 	grid-gap: 1.1rem;
 	grid-template-columns: repeat(3, 1fr);
-	
+
 	margin-top: 20px;
 `;
 
