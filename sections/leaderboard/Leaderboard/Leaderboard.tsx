@@ -285,6 +285,7 @@ const TableHeader = styled.div`
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	display: flex;
+	align-items: center;
 `;
 
 const StyledTrader = styled.a`
