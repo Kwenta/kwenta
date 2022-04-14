@@ -982,7 +982,8 @@
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "Switch Wallet",
 			"switch-accounts": "Switch Accounts",
-			"disconnect-wallet": "Disconnect Wallet"
+			"disconnect-wallet": "Disconnect Wallet",
+			"unsupported-network": "Unsupported Network"
 		},
 		"tx-status": {
 			"waiting": "Waiting",
