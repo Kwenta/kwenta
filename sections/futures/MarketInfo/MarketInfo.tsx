@@ -61,7 +61,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<TVChartWrapper currencyKey={baseCurrencyKey} />
+			<TVChartWrapper baseCurrencyKey={baseCurrencyKey} />
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}

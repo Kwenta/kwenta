@@ -5,16 +5,16 @@ import TVChart from 'components/TVChart';
 import MarketOverlay from '../MarketOverlay';
 
 type TVChartWrapperProps = {
-	currencyKey: CurrencyKey;
+	baseCurrencyKey: CurrencyKey;
 };
 
-export const TVChartWrapper: FC<TVChartWrapperProps> = ({ currencyKey }) => {
-	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
+export const TVChartWrapper: FC<TVChartWrapperProps> = ({ baseCurrencyKey }) => {
+	const { isMarketClosed, marketClosureReason } = useMarketClosed(baseCurrencyKey);
 
 	return isMarketClosed ? (
-		<MarketOverlay marketClosureReason={marketClosureReason} currencyKey={currencyKey} />
+		<MarketOverlay marketClosureReason={marketClosureReason} baseCurrencyKey={baseCurrencyKey} />
 	) : (
-		<TVChart baseCurrencyKey={currencyKey} quoteCurrencyKey={Synths.sUSD} />
+		<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={Synths.sUSD} />
 	);
 };
 
