@@ -11,6 +11,8 @@ import { PositionHistory } from 'queries/futures/types';
 import Loader from 'components/Loader';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDiv } from 'styles/common';
+import router from 'next/router';
+import ROUTES from 'constants/routes';
 
 type TraderHistoryProps = {
 	trader: string;
@@ -67,6 +69,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							<TitleText
 								onClick={() => {
 									resetSelection();
+									router.push(ROUTES.Leaderboard.Home);
 								}}
 							>
 								{t('leaderboard.leaderboard.table.title')}

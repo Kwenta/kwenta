@@ -12,9 +12,11 @@ import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
+import { useRouter } from 'next/router';
 import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
+import ROUTES from 'constants/routes';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -30,12 +32,21 @@ type Stat = {
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState<string | null>();
+	const [selectedTrader, setSelectedTrader] = useState('');
+	const router = useRouter();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
-	const [selectedTrader, setSelectedTrader] = useState('');
+
+	useMemo(() => {
+		if (router.query.tab) {
+			const trader = router.query.tab[0];
+			setSelectedTrader(trader);
+		}
+		return null;
+	}, [router.query]);
 
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
 		acc[stat.account] = {
@@ -100,6 +111,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const onClickTrader = (trader: string) => {
 		setSelectedTrader(trader);
+		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
 
 	if (statsQuery.isLoading) {
