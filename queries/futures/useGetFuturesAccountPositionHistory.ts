@@ -10,15 +10,17 @@ import { PositionHistory } from './types';
 
 import { mapTradeHistory, getFuturesEndpoint } from './utils';
 
-const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) => {
+const useGetFuturesAccountPositionHistory = (
+	account: string,
+	options?: UseQueryOptions<any | null>
+) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
+		QUERY_KEYS.Futures.AllPositionHistory(network.id, account || ''),
 		async () => {
 			try {
 				const response = await request(
@@ -31,7 +33,13 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 								orderDirection: desc
 							) {
 								id
+								account
+								market
 								lastTxHash
+								openTimestamp
+								closeTimestamp
+								totalVolume
+								trades
 								timestamp
 								isOpen
 								isLiquidated
@@ -40,10 +48,13 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 								size
 								margin
 								asset
+								pnl
+								feesPaid
+								netFunding
 							}
 						}
 					`,
-					{ account: walletAddress }
+					{ account: account }
 				);
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
@@ -52,8 +63,8 @@ const useGetFuturesAllPositionHistory = (options?: UseQueryOptions<any | null>) 
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress, ...options }
+		{ enabled: isAppReady && isL2, ...options }
 	);
 };
 
-export default useGetFuturesAllPositionHistory;
+export default useGetFuturesAccountPositionHistory;
