@@ -8,7 +8,6 @@ import BaseModal from 'components/BaseModal';
 import PositionButtons from '../../../sections/futures/PositionButtons';
 import { PositionSide } from '../types';
 
-
 type ProfitCalculatorProps = {
 	// history: PositionHistory[] | null;
 	// isLoading: boolean;
@@ -29,7 +28,6 @@ const LabelWithInput = (props: {
 					<StyledInput
 						placeholder={props.placeholder}
 						inputMode={'decimal'}
-						type={'number'}
 						onChange={props.onChange}
 					/>
 				</StyledLabel>
@@ -54,20 +52,29 @@ const StatWithContainer = (props: { label: string; stateVar: any; type: number }
 // const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
 const PnLs = (props: { entryPrice: number; exitPrice: number; stopLoss: number }) => {
 	let rateOfReturn: any = 0,
-		profit: BigNumber = ethers.BigNumber.from(0),
-		loss: BigNumber = ethers.BigNumber.from(0);
+		// profit: BigNumber = ethers.BigNumber.from(0),
+		// loss: BigNumber = ethers.BigNumber.from(0);
+		profit: number = 0,
+		loss: number = 0;
 
 	const labels = ['Exit PnL', 'Stop PnL', 'R:R'];
 
 	if (
-		parseFloat(props.entryPrice.toString()) !== 0 &&
-		parseFloat(props.exitPrice.toString()) !== 0 &&
-		parseFloat(props.stopLoss.toString()) !== 0
+		// parseFloat(props.entryPrice.toString()) !== 0 &&
+		// parseFloat(props.exitPrice.toString()) !== 0 &&
+		// parseFloat(props.stopLoss.toString()) !== 0
+		props.entryPrice !== 0 &&
+		props.exitPrice !== 0 &&
+		props.stopLoss !== 0
 	) {
-		profit = props.exitPrice.sub(props.entryPrice);
-		loss = props.stopLoss.sub(props.entryPrice);
+		// profit = props.exitPrice.sub(props.entryPrice);
+		// loss = props.stopLoss.sub(props.entryPrice);
+		profit = props.exitPrice - props.entryPrice;
+		loss = props.stopLoss - props.entryPrice;
 
-		rateOfReturn = profit.div(loss.abs());
+		// rateOfReturn = profit.div(loss.abs());
+		rateOfReturn = profit / Math.abs(loss);
+
 		rateOfReturn = parseFloat(rateOfReturn.toString()).toPrecision(2);
 	}
 
@@ -174,8 +181,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	const [gainPercent, setGainPercent] = useState<number>(0.0);
 	const [lossPercent, setLossPercent] = useState<number>(0.0);
 	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0.0);
-	// BigNumbers
-	const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [basePositionSize, setBasePositionSize] = useState<number>(0.0);
 	// Strings
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
@@ -284,10 +290,8 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 
 			if (!isNaN(positionSize_) && positionSize_ !== '') {
 				if (isBase) {
-					console.log('marketAsset positionSize: ', typeof positionSize_);
-					setBasePositionSize(ethers.BigNumber.from(positionSize_));
+					setBasePositionSize(parseFloat(positionSize_));
 				} else {
-					console.log('base positionSize: ', typeof positionSize_);
 					setMarketAssetPositionSize(parseFloat(positionSize_));
 				}
 			}
