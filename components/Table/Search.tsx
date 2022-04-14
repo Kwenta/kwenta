@@ -38,6 +38,7 @@ const StyledSearchInput = styled(SearchInput)`
 	height: 100%;
 	text-indent: 16px;
 	border-radius: 8px;
+	padding: 10px 10px;
 `;
 
 const SearchBar = styled.div`
