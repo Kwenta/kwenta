@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
@@ -15,10 +15,11 @@ type ProfitCalculatorProps = {
 };
 
 const LabelWithInput = (props: {
+	id?: string;
 	labelText: string;
 	className?: string;
 	placeholder: string;
-	onChange: any;
+	onChange?: any;
 }) => {
 	return (
 		<>
@@ -26,6 +27,7 @@ const LabelWithInput = (props: {
 			<InputContainer className={props.className}>
 				<StyledLabel>
 					<StyledInput
+						id={props.id}
 						placeholder={props.placeholder}
 						inputMode={'decimal'}
 						onChange={props.onChange}
@@ -207,22 +209,22 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	};
 
 	const handleSetExitPrice = (e: any) => {
-		let exitPrice_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
+		let src_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
 
-		exitPrice_ = e.currentTarget.value;
-		isNum = /^\d+$/.test(exitPrice_);
-		isFloat = /^[0-9]+\.[0-9]+$/.test(exitPrice_);
-		isUglyFloat1 = /^\.[0-9]+$/.test(exitPrice_);
-		isUglyFloat2 = /^[0-9]+\.$/.test(exitPrice_);
+		src_ = e.currentTarget.value;
+		isNum = /^\d+$/.test(src_);
+		isFloat = /^[0-9]+\.[0-9]+$/.test(src_);
+		isUglyFloat1 = /^\.[0-9]+$/.test(src_);
+		isUglyFloat2 = /^[0-9]+\.$/.test(src_);
 
 		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2) {
-			if (exitPrice_.indexOf(' ') >= 0) {
+			if (src_.indexOf(' ') >= 0) {
 				// if includes whitespace
-				exitPrice_.trim();
+				src_.trim();
 			}
 
-			if (!isNaN(exitPrice_) && exitPrice_ !== '') {
-				setExitPrice(parseFloat(exitPrice_));
+			if (!isNaN(src_) && src_ !== '') {
+				setExitPrice(parseFloat(src_));
 			}
 		}
 	};
@@ -305,6 +307,28 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 		e.preventDefault();
 	};
 
+	const setTargetInputValue = (source: string, target: string) => {
+		let src_: HTMLElement | null | string = document.getElementById(source),
+			target_: HTMLElement | null | string = document.getElementById(target);
+
+		if (src_ !== null && target_ !== null) {
+			if (src_.nodeValue !== null && target_.nodeValue !== null) {
+				target_.nodeValue = src_.nodeValue;
+			}
+		}
+	};
+
+	// Run this whenever `exitPrice` and `stopLoss` are updated
+	useEffect(() => {
+		// let exitPrice_: HTMLElement | null | string = document.getElementById('exit-price'),
+		// 	stopLoss_: HTMLElement | null | string = document.getElementById('stop-loss'),
+		// 	positionSize_: HTMLElement | null | string = document.getElementById('market-position-size');
+
+		setTargetInputValue('exit-price', 'gain-percent');
+		setTargetInputValue('stop-loss', 'loss-percent');
+		setTargetInputValue('market-position-size', 'base-position-size');
+	}, [exitPrice, stopLoss, marketAssetPositionSize]);
+
 	return (
 		<>
 			<BaseModal
@@ -328,16 +352,19 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 							{/* LEFT column */}
 							<LeftColumn>
 								<LabelWithInput
+									id={'exit-price'}
 									labelText={'Exit Price: '}
 									placeholder={'$46,939.11'}
 									onChange={handleSetExitPrice}
 								/>
 								<LabelWithInput
+									id={'stop-loss'}
 									labelText={'Stop Loss: '}
 									placeholder={'$32,000.00'}
 									onChange={handleSetStopLoss}
 								/>
 								<LabelWithInput
+									id={'market-position-size'}
 									labelText={'Position Size: '}
 									placeholder={`23.1 ${marketAsset}`}
 									onChange={(e: any): void => handleSetPositionSize(e, false)}
@@ -345,17 +372,10 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 							</LeftColumn>
 							{/* RIGHT column */}
 							<RightColumn>
+								<LabelWithInput id={'gain-percent'} labelText={'Gain %: '} placeholder={`5.55%`} />
+								<LabelWithInput id={'loss-percent'} labelText={'Loss %: '} placeholder={`4.1%`} />
 								<LabelWithInput
-									labelText={'Gain %: '}
-									placeholder={`5.55%`}
-									onChange={(e: any): void => handleSetPercent(e, true)}
-								/>
-								<LabelWithInput
-									labelText={'Loss %: '}
-									placeholder={`4.1%`}
-									onChange={(e: any): void => handleSetPercent(e, false)}
-								/>
-								<LabelWithInput
+									id={'base-position-size'}
 									labelText={'Position Size: '}
 									placeholder={`$305,532.28 sUSD`}
 									onChange={(e: any): void => handleSetPositionSize(e, true)}
