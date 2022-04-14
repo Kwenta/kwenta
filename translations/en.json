@@ -641,23 +641,24 @@
 			"chart": {
 				"overlay-messages": {
 					"frozen": {
-						"title": "{{currencyKey}} market has been frozen",
+						"title": "{{baseCurrencyKey}} market has been frozen",
 						"subtitle": "Reset in progress."
 					},
 					"market-closure": {
-						"title": "{{currencyKey}} market has been closed",
-						"subtitle": "Trading activity will resume in: "
+						"title": "{{baseCurrencyKey}} market has been paused",
+						"timer-subtitle": "Trading activity will resume in: ",
+						"subtitle": ""
 					},
 					"system-upgrade": {
-						"title": "{{currencyKey}} market paused",
+						"title": "{{baseCurrencyKey}} market paused",
 						"subtitle": "Please check the Synthetix Discord for details."
 					},
 					"circuit-breaker": {
-						"title": "Circuit breaker triggered for {{currencyKey}}",
+						"title": "Circuit breaker triggered for {{baseCurrencyKey}}",
 						"subtitle": "Reset in progress"
 					},
 					"emergency": {
-						"title": "Emergency shutdown activated for {{currencyKey}}",
+						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
 						"subtitle": "Reset in progress"
 					}
 				}

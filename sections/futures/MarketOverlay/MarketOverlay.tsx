@@ -35,12 +35,13 @@ const MarketOverlay: FC<{
 	const TimerDisplay = () => {
 		const timer = useMarketHoursTimer(marketNextOpen(baseCurrencyKey) ?? null);
 
-		return (
+		// not sure if there is a better way
+		return timer !== '0:00:00' ? (
 			<StyledSubText>
-				{t('futures.market.chart.overlay-messages.market-closure.subtitle')}
+				{t('futures.market.chart.overlay-messages.market-closure.timer-subtitle')}
 				<StyledTimer>{timer}</StyledTimer>
 			</StyledSubText>
-		);
+		) : null;
 	};
 
 	return (
@@ -58,7 +59,10 @@ const MarketOverlay: FC<{
 						<TimerDisplay />
 					) : (
 						<StyledText>
-							{t(`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`)}
+							<Trans
+								i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`}
+								values={{ baseCurrencyKey }}
+							/>
 						</StyledText>
 					)}
 				</OverlayContent>
