@@ -6,18 +6,19 @@ import SearchInput from 'components/Input/SearchInput';
 import SearchIconPath from 'assets/svg/app/search.svg';
 
 type Props = {
+	value: string | undefined;
 	onChange: (text: string) => any;
 	disabled: boolean;
 };
 
-export default function Search({ onChange, disabled }: Props) {
+export default function Search({ value, onChange, disabled }: Props) {
 	const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
 		onChange(event.target.value);
 	};
 	return (
 		<SearchBar>
 			<StyledSvg src={SearchIconPath} />
-			<StyledSearchInput onChange={handleOnChange} placeholder="Search..." disabled={disabled} />
+			<StyledSearchInput value={value} onChange={handleOnChange} placeholder="Search..." disabled={disabled} />
 		</SearchBar>
 	);
 }

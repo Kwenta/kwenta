@@ -31,7 +31,7 @@ type Stat = {
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
-	const [searchTerm, setSearchTerm] = useState<string | null>();
+	const [searchTerm, setSearchTerm] = useState<string | undefined>();
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const router = useRouter();
 
@@ -110,6 +110,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	};
 
 	const onClickTrader = (trader: string) => {
+		setSearchTerm('');
 		setSelectedTrader(trader);
 		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
@@ -121,7 +122,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	return (
 		<>
 			<SearchContainer>
-				<Search onChange={onChangeSearch} disabled={selectedTrader !== ''} />
+				<Search value={searchTerm} onChange={onChangeSearch} disabled={selectedTrader !== ''} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
 				{selectedTrader !== '' ? (
