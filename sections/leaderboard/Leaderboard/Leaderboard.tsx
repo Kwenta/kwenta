@@ -14,10 +14,10 @@ import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
+import Search from 'components/Table/Search';
 
 type LeaderboardProps = {
 	compact?: boolean;
-	searchTerm?: string | null;
 };
 
 type Stat = {
@@ -27,8 +27,9 @@ type Stat = {
 	totalVolume: Wei;
 };
 
-const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardProps) => {
+const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
+	const [searchTerm, setSearchTerm] = useState<string | null>();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -45,6 +46,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 		};
 		return acc;
 	}, {});
+
+	const onChangeSearch = (text: string) => {
+		setSearchTerm(text?.toLowerCase());
+	};
 
 	let data = useMemo(() => {
 		return stats
@@ -101,116 +106,120 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact, searchTerm }: LeaderboardP
 		return <Loader />;
 	}
 
-	if (selectedTrader !== '') {
-		return (
-			<TraderHistory
-				trader={selectedTrader}
-				resetSelection={() => setSelectedTrader('')}
-				compact={compact}
-			/>
-		);
-	}
-
 	return (
-		<TableContainer compact={compact}>
-			<StyledTable
-				compact={compact}
-				showPagination={true}
-				isLoading={statsQuery.isLoading}
-				data={data}
-				pageSize={20}
-				hideHeaders={compact}
-				hiddenColumns={
-					compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
+		<>
+			<SearchContainer>
+				<Search onChange={onChangeSearch} disabled={selectedTrader !== ''}/>
+			</SearchContainer>
+			<TableContainer compact={compact}>
+				{
+					selectedTrader !== '' ?
+						<TraderHistory
+							trader={selectedTrader}
+							resetSelection={() => setSelectedTrader('')}
+							compact={compact}
+						/>
+					:
+					<StyledTable
+						compact={compact}
+						showPagination={true}
+						isLoading={statsQuery.isLoading}
+						data={data}
+						pageSize={20}
+						hideHeaders={compact}
+						hiddenColumns={
+							compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
+						}
+						columns={[
+							{
+								Header: (
+									<TableTitle>
+										<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+									</TableTitle>
+								),
+								accessor: 'title',
+								columns: [
+									{
+										Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+										accessor: 'rank',
+										Cell: (cellProps: CellProps<any>) => (
+											<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+										),
+										width: compact ? 40 : 100,
+									},
+									{
+										Header: !compact ? (
+											<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+										) : (
+											<></>
+										),
+										accessor: 'trader',
+										Cell: (cellProps: CellProps<any>) => (
+											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
+												{compact && cellProps.row.original.rank + '. '}
+												<StyledTrader>{cellProps.row.original.traderShort}</StyledTrader>
+												{getMedal(cellProps.row.index + 1)}
+											</StyledOrderType>
+										),
+										width: 175,
+									},
+									{
+										Header: (
+											<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
+										),
+										accessor: 'totalTrades',
+										sortType: 'basic',
+										width: 100,
+										sortable: true,
+									},
+									{
+										Header: (
+											<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
+										),
+										accessor: 'liquidations',
+										sortType: 'basic',
+										width: 100,
+										sortable: true,
+									},
+									{
+										Header: (
+											<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
+										),
+										accessor: 'totalVolume',
+										sortType: 'basic',
+										Cell: (cellProps: CellProps<any>) => (
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.totalVolume}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										),
+										width: compact ? 'auto' : 125,
+										sortable: true,
+									},
+									{
+										Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+										accessor: 'pnl',
+										sortType: 'basic',
+										Cell: (cellProps: CellProps<any>) => (
+											<ColorCodedPrice
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.pnl}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										),
+										width: compact ? 'auto' : 100,
+										sortable: true,
+									},
+								],
+							},
+						]}
+					/>
 				}
-				columns={[
-					{
-						Header: (
-							<TableTitle>
-								<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
-							</TableTitle>
-						),
-						accessor: 'title',
-						columns: [
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-								accessor: 'rank',
-								Cell: (cellProps: CellProps<any>) => (
-									<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
-								),
-								width: compact ? 40 : 100,
-							},
-							{
-								Header: !compact ? (
-									<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-								) : (
-									<></>
-								),
-								accessor: 'trader',
-								Cell: (cellProps: CellProps<any>) => (
-									<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
-										{compact && cellProps.row.original.rank + '. '}
-										<StyledTrader>{cellProps.row.original.traderShort}</StyledTrader>
-										{getMedal(cellProps.row.index + 1)}
-									</StyledOrderType>
-								),
-								width: 175,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
-								),
-								accessor: 'totalTrades',
-								sortType: 'basic',
-								width: 100,
-								sortable: true,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
-								),
-								accessor: 'liquidations',
-								sortType: 'basic',
-								width: 100,
-								sortable: true,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
-								),
-								accessor: 'totalVolume',
-								sortType: 'basic',
-								Cell: (cellProps: CellProps<any>) => (
-									<Currency.Price
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.totalVolume}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: compact ? 'auto' : 125,
-								sortable: true,
-							},
-							{
-								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-								accessor: 'pnl',
-								sortType: 'basic',
-								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.pnl}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: compact ? 'auto' : 100,
-								sortable: true,
-							},
-						],
-					},
-				]}
-			/>
-		</TableContainer>
+			</TableContainer>
+		</>
 	);
 };
 
@@ -227,6 +236,12 @@ const ColorCodedPrice = styled(Currency.Price)`
 			: props.price < 0
 			? props.theme.colors.red
 			: props.theme.colors.white};
+`;
+
+const SearchContainer = styled.div`
+	display: flex;
+	margin-top: 16px;
+	height: 35px;
 `;
 
 const TableContainer = styled.div<{ compact: boolean | undefined }>`

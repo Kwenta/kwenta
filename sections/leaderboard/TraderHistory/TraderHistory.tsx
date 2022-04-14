@@ -53,139 +53,130 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	}
 
 	return (
-		<TableContainer compact={compact}>
-			<StyledTable
-				compact={compact}
-				showPagination={true}
-				pageSize={10}
-				isLoading={false}
-				data={data}
-				hideHeaders={compact}
-				columns={[
-					{
-						Header: (
-							<TableTitle>
-								<TitleText
-									onClick={() => {
-										resetSelection();
-									}}
-								>
-									{t('leaderboard.leaderboard.table.title')}
-								</TitleText>
-								<TitleSeparator>&gt;</TitleSeparator>
-								<TraderText
-									href={`https://optimistic.etherscan.io/address/${trader}`}
-									target="_blank"
-									rel="noreferrer noopener"
-								>
-									{trader}
-								</TraderText>
-							</TableTitle>
-						),
-						accessor: 'title',
-						columns: [
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
-								),
-								accessor: 'openTimestamp',
-								Cell: (cellProps: CellProps<any>) => {
-									const date = new Date(cellProps.row.original.openTimestamp);
-									const dateFmt = date.toLocaleString().split(', ');
+		<StyledTable
+			compact={compact}
+			showPagination={true}
+			pageSize={10}
+			isLoading={false}
+			data={data}
+			hideHeaders={compact}
+			columns={[
+				{
+					Header: (
+						<TableTitle>
+							<TitleText
+								onClick={() => {
+									resetSelection();
+								}}
+							>
+								{t('leaderboard.leaderboard.table.title')}
+							</TitleText>
+							<TitleSeparator>&gt;</TitleSeparator>
+							<TraderText
+								href={`https://optimistic.etherscan.io/address/${trader}`}
+								target="_blank"
+								rel="noreferrer noopener"
+							>
+								{trader}
+							</TraderText>
+						</TableTitle>
+					),
+					accessor: 'title',
+					columns: [
+						{
+							Header: (
+								<TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>
+							),
+							accessor: 'openTimestamp',
+							Cell: (cellProps: CellProps<any>) => {
+								const date = new Date(cellProps.row.original.openTimestamp);
+								const dateFmt = date.toLocaleString().split(', ');
 
-									return (
-										<StyledCell>
-											{dateFmt[0]}
-											<br />
-											{dateFmt[1]}
-										</StyledCell>
-									);
-								},
-								sortType: 'basic',
-								sortable: true,
-								width: compact ? 40 : 100,
+								return (
+									<StyledCell>
+										{dateFmt[0]}
+										<br />
+										{dateFmt[1]}
+									</StyledCell>
+								);
 							},
-							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
-								accessor: 'asset',
-								Cell: (cellProps: CellProps<any>) => (
-									<CurrencyInfo>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
-										<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
-									</CurrencyInfo>
-								),
-								width: compact ? 40 : 100,
+							sortType: 'basic',
+							sortable: true,
+							width: compact ? 40 : 100,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.trader-history.table.market')}</TableHeader>,
+							accessor: 'asset',
+							Cell: (cellProps: CellProps<any>) => (
+								<CurrencyInfo>
+									<StyledCurrencyIcon currencyKey={cellProps.row.original.currencyIconKey} />
+									<StyledSubtitle>{cellProps.row.original.marketShortName}</StyledSubtitle>
+								</CurrencyInfo>
+							),
+							width: compact ? 40 : 100,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
+							accessor: 'status',
+							Cell: (cellProps: CellProps<any>) => {
+								const status = cellProps.row.original.isOpen
+									? 'Open'
+									: cellProps.row.original.isLiquidated
+									? 'Liquidated'
+									: 'Closed';
+								return <StyledCell>{status}</StyledCell>;
 							},
-							{
-								Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
-								accessor: 'status',
-								Cell: (cellProps: CellProps<any>) => {
-									const status = cellProps.row.original.isOpen
-										? 'Open'
-										: cellProps.row.original.isLiquidated
-										? 'Liquidated'
-										: 'Closed';
-									return <StyledCell>{status}</StyledCell>;
-								},
-								width: compact ? 40 : 100,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>
-								),
-								accessor: 'trades',
-								width: compact ? 40 : 100,
-								sortType: 'basic',
-								sortable: true,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>
-								),
-								accessor: 'totalVolume',
-								Cell: (cellProps: CellProps<any>) => (
-									<Currency.Price
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.totalVolume}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: compact ? 40 : 100,
-								sortType: 'basic',
-								sortable: true,
-							},
-							{
-								Header: (
-									<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
-								),
-								accessor: 'pnl',
-								Cell: (cellProps: CellProps<any>) => (
-									<ColorCodedPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.pnl}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								),
-								width: compact ? 40 : 100,
-								sortType: 'basic',
-								sortable: true,
-							},
-						],
-					},
-				]}
-			/>
-		</TableContainer>
+							width: compact ? 40 : 100,
+						},
+						{
+							Header: (
+								<TableHeader>{t('leaderboard.trader-history.table.total-trades')}</TableHeader>
+							),
+							accessor: 'trades',
+							width: compact ? 40 : 100,
+							sortType: 'basic',
+							sortable: true,
+						},
+						{
+							Header: (
+								<TableHeader>{t('leaderboard.trader-history.table.total-volume')}</TableHeader>
+							),
+							accessor: 'totalVolume',
+							Cell: (cellProps: CellProps<any>) => (
+								<Currency.Price
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.totalVolume}
+									sign={'$'}
+									conversionRate={1}
+								/>
+							),
+							width: compact ? 40 : 100,
+							sortType: 'basic',
+							sortable: true,
+						},
+						{
+							Header: (
+								<TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>
+							),
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => (
+								<ColorCodedPrice
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.pnl}
+									sign={'$'}
+									conversionRate={1}
+								/>
+							),
+							width: compact ? 40 : 100,
+							sortType: 'basic',
+							sortable: true,
+						},
+					],
+				},
+			]}
+		/>
 	);
-
-	return <></>;
 };
-
-const TableContainer = styled.div<{ compact: boolean | undefined }>`
-	margin-top: 6px;
-	margin-bottom: ${({ compact }) => (compact ? '0' : '40px')};
-`;
 
 const StyledTable = styled(Table)<{ compact: boolean | undefined }>`
 	margin-top: ${({ compact }) => (compact ? '0' : '15px')};
