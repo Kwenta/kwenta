@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
-import LeaderboardContainer from 'sections/leaderboard/LeaderboardContainer';
+import Leaderboard from 'sections/leaderboard/Leaderboard';
 
 const Futures: FC = () => {
 	const { t } = useTranslation();
@@ -17,7 +17,7 @@ const Futures: FC = () => {
 				<PageContent>
 					<FullHeightContainer>
 						<MainContent>
-							<LeaderboardContainer />
+							<Leaderboard />
 						</MainContent>
 					</FullHeightContainer>
 				</PageContent>

@@ -24,6 +24,9 @@ export const MENU_LINKS: MenuLinks = [
 	// 	i18nLabel: 'header.nav.leaderboard',
 	// 	link: ROUTES.Leaderboard.Home,
 	// },
+		i18nLabel: 'header.nav.leaderboard',
+		link: ROUTES.Leaderboard.Home,
+	},
 	// {
 	// 	i18nLabel: 'header.nav.earn',
 	// 	link: ROUTES.Earn.Home,

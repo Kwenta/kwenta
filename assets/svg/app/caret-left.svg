@@ -1,5 +1,5 @@
 <svg width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9.25 1.75L3.75 7.25L9.25 12.75L7.75 14.25L0.75 7.25L7.75 0.25L9.25 1.75Z" fill="url(#caret-left_paint0_linear)"/>
+<path d="M9.25 1.75L3.75 7.25L9.25 12.75L7.75 14.25L0.75 7.25L7.75 0.25L9.25 1.75Z" />
 <defs>
 <linearGradient id="caret-left_paint0_linear" x1="9.25" y1="7.25" x2="0.75" y2="7.25" gradientUnits="userSpaceOnUse">
 <stop stop-color="#BE9461"/>
