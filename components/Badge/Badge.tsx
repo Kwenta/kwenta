@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const Badge = styled.span`
 	text-transform: uppercase;
-	color: #000000;
+	color: ${(props) => props.theme.colors.black};
 	padding: 2px 3px 1px 5px;
 	text-align: center;
 	font-weight: bold;

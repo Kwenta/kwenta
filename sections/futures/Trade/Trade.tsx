@@ -323,13 +323,13 @@ const Trade: React.FC = () => {
 				variant="primary"
 				fullWidth
 				disabled={
-					!leverage ||
-					Number(leverage) < 0 ||
-					Number(leverage) > maxLeverageValue.toNumber() ||
-					sizeDelta.eq(zeroBN) ||
-					!!error ||
-					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum'
-					isMarketClosed
+					(!leverage ||
+						Number(leverage) < 0 ||
+						Number(leverage) > maxLeverageValue.toNumber() ||
+						sizeDelta.eq(zeroBN) ||
+						!!error ||
+						placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum',
+					isMarketClosed)
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);

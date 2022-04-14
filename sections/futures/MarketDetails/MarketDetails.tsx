@@ -175,16 +175,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		fundingRateQuery,
 	]);
 
+	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
+
 	return (
 		<MarketDetailsContainer>
 			{Object.entries(data).map(([key, { value, color }]) => {
-				const closedClass = marketSummary?.isSuspended ? 'closed' : '';
 				const colorClass = color || '';
 
 				return (
 					<div key={key}>
 						<p className="heading">{key}</p>
-						<span className={`value ${colorClass} ${closedClass}`}>{value}</span>
+						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
 					</div>
 				);
 			})}
@@ -232,7 +233,7 @@ const MarketDetailsContainer = styled.div`
 		color: ${(props) => props.theme.colors.common.primaryRed};
 	}
 
-	.closed {
+	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;

@@ -8,16 +8,32 @@ type InfoBoxProps = {
 	isMarketClosed?: boolean;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, isMarketClosed }) => {
-	const closed = isMarketClosed ? 'closed' : '';
+const DisabledInfoBox: React.FC<{ details: InfoBoxProps['details'] }> = ({ details }) => {
 	return (
-		<InfoBoxContainer style={style} className={className}>
-			{Object.entries(details).map(([key, value]) => (
+		<>
+			{Object.entries(details).map(([key, _]) => (
 				<div key={key}>
 					<p className="key">{key}:</p>
-					<p className={`value ${closed}`}>{isMarketClosed ? '-' : value}</p>
+					<p className="value closed">-</p>
 				</div>
 			))}
+		</>
+	);
+};
+
+const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, isMarketClosed }) => {
+	return (
+		<InfoBoxContainer style={style} className={className}>
+			{isMarketClosed ? (
+				<DisabledInfoBox details={details} />
+			) : (
+				Object.entries(details).map(([key, value]) => (
+					<div key={key}>
+						<p className="key">{key}:</p>
+						<p className="value">{value}</p>
+					</div>
+				))
+			)}
 		</InfoBoxContainer>
 	);
 };
