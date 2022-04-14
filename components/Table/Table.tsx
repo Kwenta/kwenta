@@ -37,6 +37,7 @@ type TableProps = {
 	hiddenColumns?: string[];
 	hideHeaders?: boolean;
 	highlightRowsOnHover?: boolean;
+	sortBy?: object[];
 };
 
 export const Table: FC<TableProps> = ({
@@ -54,6 +55,7 @@ export const Table: FC<TableProps> = ({
 	hiddenColumns = [],
 	hideHeaders,
 	highlightRowsOnHover,
+	sortBy = [],
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -91,6 +93,7 @@ export const Table: FC<TableProps> = ({
 			initialState: {
 				pageSize: showPagination ? (pageSize ? pageSize : MAX_PAGE_ROWS) : data.length,
 				hiddenColumns: hiddenColumns,
+				sortBy: sortBy,
 			},
 			...options,
 		},

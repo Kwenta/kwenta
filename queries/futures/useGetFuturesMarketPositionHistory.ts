@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
+import { getDisplayAsset } from 'utils/futures';
 
 const useGetFuturesMarketPositionHistory = (
 	currencyKey: string | null,
@@ -27,7 +28,7 @@ const useGetFuturesMarketPositionHistory = (
 			if (!currencyKey) return null;
 			try {
 				const { contracts } = synthetixjs!;
-				const marketAddress = contracts[`FuturesMarket${currencyKey.substr(1)}`].address;
+				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 				if (!marketAddress) return null;
 				const response = await request(
 					futuresEndpoint,
