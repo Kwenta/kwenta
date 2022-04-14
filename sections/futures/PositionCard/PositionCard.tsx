@@ -15,6 +15,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
+import useMarketClosed from 'hooks/useMarketClosed';
+import { CurrencyKey } from 'constants/currency';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -51,6 +54,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
+	const { isMarketClosed } = useMarketClosed(currencyKey as CurrencyKey);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
@@ -124,13 +128,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container>
+			<Container id={isMarketClosed ? 'closed' : ''}>
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
 							<StyledCurrencyIcon currencyKey={data.currencyIconKey} />
 							<div>
-								<CurrencySubtitle>{data.marketShortName}</CurrencySubtitle>
+								<CurrencySubtitle>
+									{data.marketShortName}
+									<MarketBadge description="long" currencyKey={currencyKey as CurrencyKey} />
+								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
 						</CurrencyInfo>
@@ -198,7 +205,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								size="sm"
 								variant="danger"
 								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails}
+								disabled={!positionDetails || isMarketClosed}
 								noOutline={true}
 							>
 								{t('futures.market.user.position.close-position')}
@@ -235,6 +242,10 @@ const StyledCurrencyIcon = styled(CurrencyIcon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 15px;
+
+	${Container}#closed & {
+		opacity: 0.3;
+	}
 `;
 
 const DataCol = styled(FlexDivCol)``;
@@ -264,6 +275,10 @@ const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.white};
+
+	${Container}#closed & {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const CloseButton = styled(Button)`
@@ -293,6 +308,8 @@ const CloseButton = styled(Button)`
 
 const CurrencySubtitle = styled(StyledSubtitle)`
 	text-transform: initial;
+	display: flex;
+	align-items: center;
 `;
 
 const PositionInfoCol = styled(InfoCol)`
@@ -305,6 +322,10 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	text-transform: uppercase;
 	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+
+	${Container}#closed & {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 
 	${(props) =>
 		props.side === PositionSide.LONG &&

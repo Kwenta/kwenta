@@ -86,7 +86,7 @@ Monospace.args = {
 export const Position = () => {
 	const [selected, setSelected] = React.useState<PositionSide>(PositionSide.LONG);
 
-	return <PositionButtons selected={selected} onSelect={setSelected} />;
+	return <PositionButtons selected={selected} onSelect={setSelected} isMarketClosed={false} />;
 };
 
 export const Tab = () => {

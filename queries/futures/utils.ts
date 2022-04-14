@@ -20,6 +20,7 @@ import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } f
 
 import { FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -189,7 +190,7 @@ export const calculateFundingRate = (
 	const fundingStart = new Wei(minFunding.funding, 18, true);
 	const fundingEnd = new Wei(maxFunding.funding, 18, true);
 
-	const fundingDiff = fundingEnd.sub(fundingStart); // funding is already in ratio units
+	const fundingDiff = fundingStart.sub(fundingEnd); // funding is already in ratio units
 	const timeDiff = maxFunding.timestamp - minFunding.timestamp;
 
 	if (timeDiff === 0) {
@@ -197,6 +198,23 @@ export const calculateFundingRate = (
 	}
 
 	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice); // convert to 24h period
+};
+
+export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
+	switch (reasonCode?.toNumber()) {
+		case 1:
+			return 'system-upgrade';
+		case 2:
+			return 'market-closure';
+		case 3:
+		case 55:
+		case 65:
+			return 'circuit-breaker';
+		case 99999:
+			return 'emergency';
+		default:
+			return null;
+	}
 };
 
 export const mapTradeHistory = (
