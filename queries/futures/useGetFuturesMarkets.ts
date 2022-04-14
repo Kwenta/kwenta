@@ -74,8 +74,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketSize: wei(marketSize),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
-					isSuspended: suspensions[i], // true
-					marketClosureReason: getReasonFromCode(reasons[i]), // 'market-closure',
+					isSuspended: true, // suspensions[i],
+					marketClosureReason: 'market-closure', // getReasonFromCode(reasons[i]),
 				})
 			);
 		},

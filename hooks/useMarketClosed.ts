@@ -17,9 +17,9 @@ const useMarketClosed = (currencyKey: CurrencyKey | null) => {
 			: false;
 
 	return {
-		isMarketClosed: isCurrencySuspended, // true
+		isMarketClosed: true, // isCurrencySuspended,
 		isCurrencySuspended,
-		marketClosureReason: currencySuspendedQuery.data?.reason as MarketClosureReason, // 'market-closure' as MarketClosureReason,
+		marketClosureReason: 'market-closure' as MarketClosureReason, // currencySuspendedQuery.data?.reason as MarketClosureReason,
 	};
 };
 
