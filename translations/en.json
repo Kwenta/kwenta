@@ -171,8 +171,11 @@
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"synth-exchange": "Synth Exchange",
 		"currency-card": {
-			"wallet-balance": "wallet balance",
+			"synth-name": "Synth Name",
+			"amount-placeholder": "0.0000",
+			"wallet-balance": "balance:",
 			"currency-selector": {
 				"select-synth": "select synth",
 				"select-token": "select token"
@@ -240,7 +243,7 @@
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
-				"submit-order": "submit order",
+				"submit-order": "swap",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
 				"approve-balancer": "approve balancer contract",
@@ -874,7 +877,7 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
-			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
 			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
 		},
 		"approve-transaction": {
@@ -1054,7 +1057,8 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"title": "gas price (Gwei)",
+				"gas-price": "gas price",
+				"max-fee": "max fee",
 				"average": "Average",
 				"fast": "Fast",
 				"fastest": "Fastest"
