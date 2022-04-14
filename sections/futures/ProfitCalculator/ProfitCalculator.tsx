@@ -114,6 +114,12 @@ const ProfitDetails = (props: {
 
 	return (
 		<>
+			{/**
+			 * @todo 1. Add css for row-separating lines
+			 *       2. Add css for spacing between `Sell` and `at` and value
+			 *       3. add proper margins to fit this component ~46px from the bottom
+			 *          of the modal container
+			 */}
 			<StyledProfitDetails>
 				{/* ENTRY ORDER */}
 				<div>
