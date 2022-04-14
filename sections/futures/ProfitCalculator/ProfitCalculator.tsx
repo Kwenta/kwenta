@@ -1,28 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import styled, { css } from 'styled-components';
-// import { CellProps } from 'react-table';
-// import { Svg } from 'react-optimized-image';
+import React, { useState } from 'react';
+import { ethers } from 'ethers';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { BigNumber } from '@ethersproject/bignumber';
+
 import BaseModal from 'components/BaseModal';
 import PositionButtons from '../../../sections/futures/PositionButtons';
 import { PositionSide } from '../types';
-import { ethers } from 'ethers';
-import { BigNumber } from '@ethersproject/bignumber';
 
-// // import BlockExplorer from 'containers/BlockExplorer';
-// // import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
-
-// import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
-// import LinkIcon from 'assets/svg/app/link.svg';
-// import { TradeStatus, PositionSide } from '../types';
-// import { Synths } from 'constants/currency';
-// import CurrencyIcon from 'components/Currency/CurrencyIcon';
-
-// import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
-// import FailureIcon from 'assets/svg/app/circle-error.svg';
-// import SuccessIcon from 'assets/svg/app/circle-tick.svg';
-// import { formatCurrency, formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
-// import { PositionHistory } from 'queries/futures/types';
 
 type ProfitCalculatorProps = {
 	// history: PositionHistory[] | null;
@@ -66,7 +51,8 @@ const StatWithContainer = (props: { label: string; stateVar: any; type: number }
 	);
 };
 
-const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
+// const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
+const PnLs = (props: { entryPrice: number; exitPrice: number; stopLoss: number }) => {
 	let rateOfReturn: any = 0,
 		profit: BigNumber = ethers.BigNumber.from(0),
 		loss: BigNumber = ethers.BigNumber.from(0);
@@ -107,8 +93,11 @@ const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: Bi
 
 const ProfitDetails = (props: {
 	leverageSide: PositionSide;
-	exitPrice: BigNumber;
-	stopLoss: BigNumber;
+	// exitPrice: BigNumber;
+	// stopLoss: BigNumber;
+	// marketAssetPositionSize: BigNumber;
+	exitPrice: number;
+	stopLoss: number;
 	marketAssetPositionSize: number;
 	marketAsset: string;
 }) => {
@@ -163,14 +152,32 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	setOpenProfitCalcModal,
 }: any) => {
 	const { t } = useTranslation();
-	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
-	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
+
+	/**
+	 * @todo Working with BigNumbers is complicated due to underflow/overflow
+	 *       errors AND because of errors when the input is a `float` type
+	 */
+	// // BigNumbers
+	// const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
+	// const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [gainPercent, setGainPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [lossPercent, setLossPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(ethers.BigNumber.from(0));
+
+	// Numbers
+	const [entryPrice, setEntryPrice] = useState<number>(0.0);
+	const [exitPrice, setExitPrice] = useState<number>(0.0);
+	const [stopLoss, setStopLoss] = useState<number>(0.0);
 	const [gainPercent, setGainPercent] = useState<number>(0.0);
 	const [lossPercent, setLossPercent] = useState<number>(0.0);
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0);
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0.0);
+	// BigNumbers
 	const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
+	// Strings
+	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
 	const handleSetEntryPrice = (e: any) => {
 		let entryPrice_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
@@ -188,7 +195,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(entryPrice_) && entryPrice_ !== '') {
-				setEntryPrice(ethers.BigNumber.from(entryPrice_));
+				setEntryPrice(parseFloat(entryPrice_));
 			}
 		}
 	};
@@ -209,7 +216,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(exitPrice_) && exitPrice_ !== '') {
-				setExitPrice(ethers.BigNumber.from(exitPrice_));
+				setExitPrice(parseFloat(exitPrice_));
 			}
 		}
 	};
@@ -255,7 +262,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(stopLoss_) && stopLoss_ !== '') {
-				setStopLoss(ethers.BigNumber.from(stopLoss_));
+				setStopLoss(parseFloat(stopLoss_));
 			}
 		}
 	};
@@ -278,7 +285,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			if (!isNaN(positionSize_) && positionSize_ !== '') {
 				if (isBase) {
 					console.log('marketAsset positionSize: ', typeof positionSize_);
-					setBasePositionSize(ethers.BigNumber.from(positionSize_ * 1000));
+					setBasePositionSize(ethers.BigNumber.from(positionSize_));
 				} else {
 					console.log('base positionSize: ', typeof positionSize_);
 					setMarketAssetPositionSize(parseFloat(positionSize_));
