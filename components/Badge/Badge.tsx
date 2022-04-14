@@ -15,6 +15,7 @@ const Badge = styled.span`
 	font-size: 10px;
 	font-variant: all-small-caps;
 	opacity: 1;
+	user-select: none;
 `;
 
 Badge.displayName = 'Badge';
