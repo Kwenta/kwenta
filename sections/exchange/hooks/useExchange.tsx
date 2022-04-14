@@ -1072,7 +1072,6 @@ const useExchange = ({
 				}
 				priceRate={basePriceRate}
 				label={t('exchange.common.into')}
-				disableInput={true}
 				slippagePercent={slippagePercent}
 				isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
 				txProvider={txProvider}

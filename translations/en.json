@@ -826,7 +826,7 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
-			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
 			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
 		},
 		"approve-transaction": {
@@ -1002,7 +1002,8 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"title": "gas price",
+				"gas-price": "gas price",
+				"max-fee": "max fee",
 				"average": "Average",
 				"fast": "Fast",
 				"fastest": "Fastest"
