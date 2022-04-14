@@ -658,7 +658,8 @@
 					"warning": "WARNING: this will close your position",
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
-					"modify-position": "Modify Position"
+					"modify-position": "Modify Position",
+					"deposit-margin-minimum": "Deposit $50 Margin Minimum"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
