@@ -114,7 +114,6 @@ const ProfitDetails = (props: {
 
 	return (
 		<>
-			{console.log('current leverage Side: ', props.leverageSide)}
 			<StyledProfitDetails>
 				{/* ENTRY ORDER */}
 				<div>
@@ -180,10 +179,10 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	const [entryPrice, setEntryPrice] = useState<number>(0.0);
 	const [exitPrice, setExitPrice] = useState<number>(0.0);
 	const [stopLoss, setStopLoss] = useState<number>(0.0);
-	const [gainPercent, setGainPercent] = useState<number>(0.0);
-	const [lossPercent, setLossPercent] = useState<number>(0.0);
+	// const [gainPercent, setGainPercent] = useState<number>(0.0);
+	// const [lossPercent, setLossPercent] = useState<number>(0.0);
 	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0.0);
-	const [basePositionSize, setBasePositionSize] = useState<number>(0.0);
+	// const [basePositionSize, setBasePositionSize] = useState<number>(0.0);
 	// Strings
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
@@ -229,31 +228,6 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 		}
 	};
 
-	const handleSetPercent = (e: any, isGain: boolean) => {
-		let percent_, isPositiveDecimal, isFloat, isUglyFloat1, isUglyFloat2;
-
-		percent_ = e.currentTarget.value;
-		isPositiveDecimal = /^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/.test(percent_);
-		isFloat = /^[0-9]+\.[0-9]+$/.test(percent_);
-		isUglyFloat1 = /^\.[0-9]+$/.test(percent_);
-		isUglyFloat2 = /^[0-9]+\.$/.test(percent_);
-
-		if (isPositiveDecimal || isFloat || isUglyFloat1 || isUglyFloat2) {
-			if (percent_.indexOf(' ') >= 0) {
-				// if includes whitespace
-				percent_.trim();
-			}
-
-			if (!isNaN(percent_) && percent_ !== '') {
-				if (isGain) {
-					setGainPercent(parseFloat(percent_));
-				} else {
-					setLossPercent(parseFloat(percent_));
-				}
-			}
-		}
-	};
-
 	const handleSetStopLoss = (e: any) => {
 		let stopLoss_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
 
@@ -291,11 +265,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 			}
 
 			if (!isNaN(positionSize_) && positionSize_ !== '') {
-				if (isBase) {
-					setBasePositionSize(parseFloat(positionSize_));
-				} else {
-					setMarketAssetPositionSize(parseFloat(positionSize_));
-				}
+				setMarketAssetPositionSize(parseFloat(positionSize_));
 			}
 		}
 	};
