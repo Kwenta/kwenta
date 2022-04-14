@@ -14,8 +14,7 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"shorting": "shorting",
-			"markets": "markets",
-			"futures": "futures",
+			"markets": "futures",
 			"leaderboard": "leaderboard",
 			"futures-dashboard": "dashboard",
 			"earn": "earn"
