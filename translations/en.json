@@ -28,6 +28,12 @@
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
 			"optimism-testnet": "OΞ Kovan"
+		},
+		"balance": {
+			"get-susd": "Get sUSD",
+			"get-more-susd": "Get more sUSD",
+			"total-margin-label": "Total Margin:",
+			"no-accessible-margin": "You have no accessible margin"
 		}
 	},
 	"homepage": {
@@ -918,6 +924,9 @@
 		"settle-transaction": {
 			"title": "settle",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"uniswap-widget": {
+			"title": "Swap Widget"
 		}
 	},
 	"futures-dashboard": {
