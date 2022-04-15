@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { BigNumber } from '@ethersproject/bignumber';
+import cl from '../../../soupStuff';
 
 import BaseModal from 'components/BaseModal';
 import PositionButtons from '../../../sections/futures/PositionButtons';
@@ -31,6 +32,7 @@ const LabelWithInput = (props: {
 						placeholder={props.placeholder}
 						inputMode={'decimal'}
 						onChange={props.onChange}
+						step={'0.01'}
 					/>
 				</StyledLabel>
 			</InputContainer>
@@ -51,31 +53,31 @@ const StatWithContainer = (props: { label: string; stateVar: any; type: number }
 	);
 };
 
-// const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
-const PnLs = (props: { entryPrice: number; exitPrice: number; stopLoss: number }) => {
+const PnLs = (props: { entryPrice: BigNumber; exitPrice: BigNumber; stopLoss: BigNumber }) => {
+	// const PnLs = (props: { entryPrice: number; exitPrice: number; stopLoss: number }) => {
 	let rateOfReturn: any = 0,
-		// profit: BigNumber = ethers.BigNumber.from(0),
-		// loss: BigNumber = ethers.BigNumber.from(0);
-		profit: number = 0,
-		loss: number = 0;
+		profit: BigNumber = ethers.BigNumber.from(0),
+		loss: BigNumber = ethers.BigNumber.from(0);
+	// profit: number = 0,
+	// loss: number = 0;
 
 	const labels = ['Exit PnL', 'Stop PnL', 'R:R'];
 
 	if (
-		// parseFloat(props.entryPrice.toString()) !== 0 &&
-		// parseFloat(props.exitPrice.toString()) !== 0 &&
-		// parseFloat(props.stopLoss.toString()) !== 0
-		props.entryPrice !== 0 &&
-		props.exitPrice !== 0 &&
-		props.stopLoss !== 0
+		parseFloat(props.entryPrice.toString()) !== 0 &&
+		parseFloat(props.exitPrice.toString()) !== 0 &&
+		parseFloat(props.stopLoss.toString()) !== 0
+		// props.entryPrice !== 0 &&
+		// props.exitPrice !== 0 &&
+		// props.stopLoss !== 0
 	) {
-		// profit = props.exitPrice.sub(props.entryPrice);
-		// loss = props.stopLoss.sub(props.entryPrice);
-		profit = props.exitPrice - props.entryPrice;
-		loss = props.stopLoss - props.entryPrice;
+		profit = props.exitPrice.sub(props.entryPrice);
+		loss = props.stopLoss.sub(props.entryPrice);
+		// profit = props.exitPrice - props.entryPrice;
+		// loss = props.stopLoss - props.entryPrice;
 
-		// rateOfReturn = profit.div(loss.abs());
-		rateOfReturn = profit / Math.abs(loss);
+		rateOfReturn = profit.div(loss.abs());
+		// rateOfReturn = profit / Math.abs(loss);
 
 		rateOfReturn = parseFloat(rateOfReturn.toString()).toPrecision(2);
 	}
@@ -102,12 +104,12 @@ const PnLs = (props: { entryPrice: number; exitPrice: number; stopLoss: number }
 
 const ProfitDetails = (props: {
 	leverageSide: PositionSide;
-	// exitPrice: BigNumber;
-	// stopLoss: BigNumber;
-	// marketAssetPositionSize: BigNumber;
-	exitPrice: number;
-	stopLoss: number;
-	marketAssetPositionSize: number;
+	exitPrice: BigNumber;
+	stopLoss: BigNumber;
+	marketAssetPositionSize: BigNumber;
+	// exitPrice: number;
+	// stopLoss: number;
+	// marketAssetPositionSize: number;
 	marketAsset: string;
 }) => {
 	const entryOrderDetails = props.leverageSide === PositionSide.LONG ? 'Long' : 'Short';
@@ -171,107 +173,126 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	 * @todo Working with BigNumbers is complicated due to underflow/overflow
 	 *       errors AND because of errors when the input is a `float` type
 	 */
-	// // BigNumbers
-	// const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
-	// const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [gainPercent, setGainPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [lossPercent, setLossPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
-	// const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(ethers.BigNumber.from(0));
+	// BigNumbers
+	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [gainPercent, setGainPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [lossPercent, setLossPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(
+		ethers.BigNumber.from(0)
+	);
+	const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
 
-	// Numbers
-	const [entryPrice, setEntryPrice] = useState<number>(0.0);
-	const [exitPrice, setExitPrice] = useState<number>(0.0);
-	const [stopLoss, setStopLoss] = useState<number>(0.0);
-	// const [gainPercent, setGainPercent] = useState<number>(0.0);
-	// const [lossPercent, setLossPercent] = useState<number>(0.0);
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0.0);
-	// const [basePositionSize, setBasePositionSize] = useState<number>(0.0);
-	// Strings
+	// // Numbers
+	// const [entryPrice, setEntryPrice] = useState<number>(0.0);
+	// const [exitPrice, setExitPrice] = useState<number>(0.0);
+	// const [stopLoss, setStopLoss] = useState<number>(0.0);
+	// // const [gainPercent, setGainPercent] = useState<number>(0.0);
+	// // const [lossPercent, setLossPercent] = useState<number>(0.0);
+	// const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<number>(0.0);
+	// // const [basePositionSize, setBasePositionSize] = useState<number>(0.0);
+	// // Strings
+
+	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
+	const scalar = 100;
+
 	const handleSetEntryPrice = (e: any) => {
-		let entryPrice_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
+		let entryPrice_, isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
 
 		entryPrice_ = e.currentTarget.value;
 		isNum = /^\d+$/.test(entryPrice_);
 		isFloat = /^[0-9]+\.[0-9]+$/.test(entryPrice_);
 		isUglyFloat1 = /^\.[0-9]+$/.test(entryPrice_);
 		isUglyFloat2 = /^[0-9]+\.$/.test(entryPrice_);
+		clampDecimals = /^\d+\.\d{0,2}$/.test(entryPrice_);
 
-		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2) {
+		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2 || clampDecimals) {
 			if (entryPrice_.indexOf(' ') >= 0) {
 				// if includes whitespace
 				entryPrice_.trim();
 			}
 
 			if (!isNaN(entryPrice_) && entryPrice_ !== '') {
-				setEntryPrice(parseFloat(entryPrice_));
+				setEntryPrice(
+					ethers.BigNumber.from(parseFloat(parseFloat(entryPrice_).toPrecision(2) * scalar))
+				);
+				cl('entryPrice: ', entryPrice.toString());
 			}
 		}
 	};
 
 	const handleSetExitPrice = (e: any) => {
-		let src_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
+		let src_, isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
 
 		src_ = e.currentTarget.value;
 		isNum = /^\d+$/.test(src_);
 		isFloat = /^[0-9]+\.[0-9]+$/.test(src_);
 		isUglyFloat1 = /^\.[0-9]+$/.test(src_);
 		isUglyFloat2 = /^[0-9]+\.$/.test(src_);
+		clampDecimals = /^\d+\.\d{0,2}$/.test(src_);
 
-		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2) {
+		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2 || clampDecimals) {
 			if (src_.indexOf(' ') >= 0) {
 				// if includes whitespace
 				src_.trim();
 			}
 
 			if (!isNaN(src_) && src_ !== '') {
-				setExitPrice(parseFloat(src_));
+				setExitPrice(ethers.BigNumber.from(parseFloat(parseFloat(src_).toPrecision(2)) * scalar));
+				cl('exitPrice: ', exitPrice.toString());
 			}
 		}
 	};
 
 	const handleSetStopLoss = (e: any) => {
-		let stopLoss_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
+		let stopLoss_, isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
 
 		stopLoss_ = e.currentTarget.value;
 		isNum = /^\d+$/.test(stopLoss_);
 		isFloat = /^[0-9]+\.[0-9]+$/.test(stopLoss_);
 		isUglyFloat1 = /^\.[0-9]+$/.test(stopLoss_);
 		isUglyFloat2 = /^[0-9]+\.$/.test(stopLoss_);
+		clampDecimals = /^\d+\.\d{0,2}$/.test(stopLoss_);
 
-		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2) {
+		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2 || clampDecimals) {
 			if (stopLoss_.indexOf(' ') >= 0) {
 				// if includes whitespace
 				stopLoss_.trim();
 			}
 
 			if (!isNaN(stopLoss_) && stopLoss_ !== '') {
-				setStopLoss(parseFloat(stopLoss_));
+				setStopLoss(
+					ethers.BigNumber.from(parseFloat(parseFloat(stopLoss_).toPrecision(2) * scalar))
+				);
+				cl('stopLoss: ', stopLoss.toString());
 			}
 		}
 	};
 
 	const handleSetPositionSize = (e: any, isBase: boolean): void => {
-		let positionSize_, isNum, isFloat, isUglyFloat1, isUglyFloat2;
+		let positionSize_, isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
 
 		positionSize_ = e.currentTarget.value;
 		isNum = /^\d+$/.test(positionSize_);
 		isFloat = /^[0-9]+\.[0-9]+$/.test(positionSize_);
 		isUglyFloat1 = /^\.[0-9]+$/.test(positionSize_);
 		isUglyFloat2 = /^[0-9]+\.$/.test(positionSize_);
+		clampDecimals = /^\d+\.\d{0,2}$/.test(positionSize_);
 
-		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2) {
+		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2 || clampDecimals) {
 			if (positionSize_.indexOf(' ') >= 0) {
 				// if includes whitespace
 				positionSize_.trim();
 			}
 
 			if (!isNaN(positionSize_) && positionSize_ !== '') {
-				setMarketAssetPositionSize(parseFloat(positionSize_));
+				setMarketAssetPositionSize(
+					ethers.BigNumber.from(parseFloat(parseFloat(positionSize_).toPrecision(2) * scalar))
+				);
+				cl('marketAssetPositionSize: ', marketAssetPositionSize.toString());
 			}
 		}
 	};

@@ -9,14 +9,13 @@ interface PositionButtonsProps {
 	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect, type }) => {
+const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
-				type={type}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				<span>Long</span>
@@ -25,7 +24,6 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect, t
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
-				type={type}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				<span>Short</span>
