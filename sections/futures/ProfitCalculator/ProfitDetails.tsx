@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { PositionSide } from '../types';
 
 export const ProfitDetails = (props: {
+	scalar: number;
 	leverageSide: PositionSide;
 	exitPrice: BigNumber;
 	stopLoss: BigNumber;
@@ -22,43 +23,60 @@ export const ProfitDetails = (props: {
 			 */}
 			<StyledProfitDetails>
 				{/* ENTRY ORDER */}
-				<div>
+				<RowName>
 					<RowText className="row-name">{'Entry Order:'}</RowText>
-				</div>
-				<div>
+				</RowName>
+				<Details style={{ justifySelf: 'right' }}>
 					<RowText className={props.leverageSide}>{`${entryOrderDetails}`}</RowText>
-					<RowText>{`, Market`}</RowText>
-				</div>
+					<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
+					<RowText style={{ marginLeft: '10px' }}>{`Market`}</RowText>
+				</Details>
 				{/* TAKE PROFIT */}
-				<div>
+				<RowName>
 					<RowText className="row-name">{'Take Profit:'}</RowText>
-				</div>
-				<div>
+				</RowName>
+				<Details style={{ justifySelf: 'right' }}>
 					<RowText>{`Sell`}</RowText>
-					<RowText className="gray-font-color">{`at`}</RowText>
-					<RowText>{props.exitPrice.toString()}</RowText>
-				</div>
+					<RowText
+						style={{ marginRight: '10px', marginLeft: '10px' }}
+						className="gray-font-color"
+					>{`at`}</RowText>
+					<RowText>{(props.exitPrice.toNumber() / props.scalar).toFixed(2)}</RowText>
+				</Details>
 				{/* STOP LOSS */}
-				<div>
+				<RowName>
 					<RowText className="row-name">{'Stop Loss:'}</RowText>
-				</div>
-				<div>
+				</RowName>
+				<Details style={{ justifySelf: 'right' }}>
 					<RowText>{`Sell`}</RowText>
-					<RowText className="gray-font-color">{`at`}</RowText>
-					<RowText>{props.stopLoss.toString()}</RowText>
-				</div>
+					<RowText
+						style={{ marginRight: '10px', marginLeft: '10px' }}
+						className="gray-font-color"
+					>{`at`}</RowText>
+					<RowText>{(props.stopLoss.toNumber() / props.scalar).toFixed(2)}</RowText>
+				</Details>
 				{/* SIZE */}
-				<div>
+				<RowName>
 					<RowText className="row-name">{'Size:'}</RowText>
-				</div>
-				<div>
-					<RowText>{`${props.marketAssetPositionSize}`}</RowText>
+				</RowName>
+				<Details style={{ justifySelf: 'right' }}>
+					<RowText style={{ marginRight: '10px' }}>
+						{(props.marketAssetPositionSize.toNumber() / props.scalar).toFixed(2)}
+					</RowText>
 					<RowText className="gray-font-color">{`${props.marketAsset}-PERP`}</RowText>
-				</div>
+				</Details>
 			</StyledProfitDetails>
 		</>
 	);
 };
+
+const RowName = styled.div`
+	margin-left: 15px;
+`;
+
+const Details = styled.div`
+	margin-right: 15px;
+`;
 
 const RowText = styled.p`
 	display: inline-block;

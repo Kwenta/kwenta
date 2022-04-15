@@ -58,25 +58,25 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 
 			if (!isNaN(_stateVar) && _stateVar !== '') {
 				if (_stateVarName === 'entryPrice') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toPrecision(3));
+					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setEntryPrice(ethers.BigNumber.from(clampedInput * scalar));
 					cl('entryPrice: ', entryPrice.toString());
 				}
-				
+
 				if (_stateVarName === 'exitPrice') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toPrecision(3));
+					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setExitPrice(ethers.BigNumber.from(clampedInput * scalar));
 					cl('exitPrice: ', exitPrice.toString());
 				}
 
 				if (_stateVarName === 'stopLoss') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toPrecision(3));
+					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setStopLoss(ethers.BigNumber.from(clampedInput * scalar));
 					cl('stopLoss: ', stopLoss.toString());
 				}
 
 				if (_stateVarName === 'marketAssetPositionSize') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toPrecision(4));
+					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(4));
 					setMarketAssetPositionSize(ethers.BigNumber.from(clampedInput * scalar));
 					cl('marketAssetPositionSize: ', marketAssetPositionSize.toString());
 				}
@@ -116,7 +116,8 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 				}
 
 				if (source === 'market-position-size') {
-					const basePositionSize_: number = parseFloat(src_.value) * entryPrice.toNumber() / scalar;
+					const basePositionSize_: number =
+						(parseFloat(src_.value) * entryPrice.toNumber()) / scalar;
 					const clampedBasePositionSize = basePositionSize_.toPrecision(10);
 
 					target_.value = clampedBasePositionSize;
@@ -177,16 +178,28 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 							</LeftColumn>
 							{/* RIGHT column */}
 							<RightColumn>
-								<LabelWithInput id={'gain-percent'} labelText={'Gain %: '} placeholder={`5.55%`} />
-								<LabelWithInput id={'loss-percent'} labelText={'Loss %: '} placeholder={`4.1%`} />
+								<LabelWithInput
+									id={'gain-percent'}
+									labelText={'Gain %: '}
+									placeholder={`5.55%`}
+									disabled={true}
+								/>
+								<LabelWithInput
+									id={'loss-percent'}
+									labelText={'Loss %: '}
+									placeholder={`4.1%`}
+									disabled={true}
+								/>
 								<LabelWithInput
 									id={'base-position-size'}
 									labelText={'Position Size: '}
 									placeholder={`$305,532.28 sUSD`}
+									disabled={true}
 								/>
 							</RightColumn>
 						</ProfitCalcGrid>
 						{/* BUTTONS */}
+						<div style={{ marginTop: '20px' }} />
 						<PositionButtons
 							selected={leverageSide}
 							onSelect={setLeverageSide}
@@ -203,6 +216,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 						</StatsGrid>
 						{/* PROFIT DETAILS */}
 						<ProfitDetails
+							scalar={scalar}
 							leverageSide={leverageSide}
 							exitPrice={exitPrice}
 							stopLoss={stopLoss}
@@ -245,7 +259,8 @@ const ProfitCalcGrid = styled.div`
 `;
 
 const ModalWindow = styled.div`
-	height: 789px;
+	height: 729px;
+	padding: 0px 30px;
 `;
 
 export default ProfitCalculator;

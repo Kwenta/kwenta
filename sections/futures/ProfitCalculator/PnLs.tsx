@@ -10,8 +10,8 @@ export const PnLs = (props: {
 	stopLoss: BigNumber;
 }) => {
 	let rateOfReturn: any = 0,
-		profit: BigNumber = ethers.BigNumber.from(0),
-		loss: BigNumber = ethers.BigNumber.from(0);
+		profit: any = ethers.BigNumber.from(0),
+		loss: any = ethers.BigNumber.from(0);
 
 	const labels = ['Exit PnL', 'Stop PnL', 'R:R'];
 
@@ -20,16 +20,15 @@ export const PnLs = (props: {
 		parseFloat(props.exitPrice.toString()) !== 0 &&
 		parseFloat(props.stopLoss.toString()) !== 0
 	) {
-		profit = props.exitPrice.sub(props.entryPrice);
-		loss = props.stopLoss.sub(props.entryPrice);
+		profit = props.exitPrice.sub(props.entryPrice).toNumber();
+		loss = props.stopLoss.sub(props.entryPrice).toNumber();
 
-		rateOfReturn = profit.div(loss.abs());
-		rateOfReturn = parseFloat(rateOfReturn.div(10).toString()).toPrecision(2);
+		rateOfReturn = (profit / Math.abs(loss)).toFixed(2);
 	}
 
 	const returnStateVar = (index: number) => {
-		if (index === 0) return profit.div(props.scalar).toString();
-		if (index === 1) return loss.div(props.scalar).toString();
+		if (index === 0) return (profit / props.scalar).toString();
+		if (index === 1) return (loss / props.scalar).toString();
 		if (index === 2) return rateOfReturn;
 	};
 

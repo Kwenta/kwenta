@@ -8,6 +8,7 @@ export const LabelWithInput = (props: {
 	className?: string;
 	placeholder: string;
 	onChange?: any;
+	disabled?: boolean
 	isPositionSize?: boolean;
 }) => {
 	return (
@@ -21,6 +22,7 @@ export const LabelWithInput = (props: {
 						inputMode={'decimal'}
 						onChange={props.onChange}
 						type={'number'}
+						disabled={props.disabled}
 						step={props.isPositionSize ? '' : '0.01'}
 						onKeyDown={(e) => {
 							if (INVALID_CHARS.includes(e.key)) {
