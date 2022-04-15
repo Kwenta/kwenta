@@ -34,12 +34,9 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [gainPercent, setGainPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [lossPercent, setLossPercent] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(
 		ethers.BigNumber.from(0)
 	);
-	const [basePositionSize, setBasePositionSize] = useState<BigNumber>(ethers.BigNumber.from(0));
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
@@ -119,7 +116,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 				}
 
 				if (source === 'market-position-size') {
-					const basePositionSize_: number = parseFloat(src_.value) * entryPrice.toNumber();
+					const basePositionSize_: number = parseFloat(src_.value) * entryPrice.toNumber() / scalar;
 					const clampedBasePositionSize = basePositionSize_.toPrecision(10);
 
 					target_.value = clampedBasePositionSize;
