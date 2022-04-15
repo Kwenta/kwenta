@@ -48,7 +48,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
 
-
 	const oracleRateUpdateQuery = React.useMemo(
 		()=> useRateUpdateQuery(baseCurrencyKey, isL2)
 		.then((result) => {
@@ -56,13 +55,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				const rateTime = result?.rateUpdates[0].timestamp
 				const updateTime = new Date(parseInt(rateTime) * 1000);
 				setLastOracleUpdateTime(updateTime)
-				console.log("RESULT = ", result?.rateUpdates[0].timestamp);
 			}
 		}),
 		[exchangeRates, baseCurrencyKey]
 	)
-
-	console.log("lastOracleUpdateTime", lastOracleUpdateTime)
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
