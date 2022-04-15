@@ -66,7 +66,8 @@ export const MARKET_HOURS_SYNTHS = new Set([
 	...AFTER_HOURS_SYNTHS,
 ]);
 
-export const COMMODITY_SYNTHS = new Set<CurrencyKey>([]);
+// Commodity synths are not listed in the CurrencyKey currently. This is a temporary workaround.
+export const COMMODITY_SYNTHS = new Set<CurrencyKey | 'XAU' | 'XAG' | 'WTI'>(['XAU', 'XAG', 'WTI']);
 
 export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;

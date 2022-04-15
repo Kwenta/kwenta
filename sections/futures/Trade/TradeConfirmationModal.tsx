@@ -118,7 +118,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			{
 				label: 'size',
 				value: formatCurrency(market || '', positionDetails?.size ?? zeroBN, {
-					sign: market ? synthsMap[market].sign : '',
+					sign: market ? synthsMap[market]?.sign : '',
 				}),
 			},
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
@@ -215,7 +215,7 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
 	margin-bottom: 8px;
 `;

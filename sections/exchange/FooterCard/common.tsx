@@ -2,22 +2,21 @@ import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
 
-import { FixedFooterMixin, GridDivCentered, numericValueCSS } from 'styles/common';
+import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
-
 import { zIndex } from 'constants/ui';
 
 export const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
 	grid-auto-flow: column;
 	flex-grow: 1;
+	padding-left: 32px;
 	${media.lessThan('md')`
 		grid-auto-flow: unset;
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
 		grid-gap: 20px;
 	`}
-
 	${(props) =>
 		props.attached &&
 		css`
@@ -38,6 +37,9 @@ export const SummaryItem = styled.div`
 
 export const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 13px;
 `;
 
 export const SummaryItemValue = styled.div`
@@ -46,31 +48,29 @@ export const SummaryItemValue = styled.div`
 	max-width: 100px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 13px;
 `;
 
-export const MessageContainer = styled(GridDivCentered)<{
+export const MessageContainer = styled(GridDivCenteredRow)<{
 	attached?: boolean;
 	showProvider?: boolean;
 }>`
-	display: grid;
 	-webkit-box-align: center;
-	align-items: center;
 	width: 100%;
 	border-radius: 4px;
-	grid-template-columns: ${(props) => props.showProvider && '.5fr'} 1fr auto;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	padding: 16px 32px;
+	grid-template-columns: ${(props) => props.showProvider && '.5fr'} 1fr;
+	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
 
 	/*
 	width: 100%;
 	border-radius: 1000px;
 	grid-template-columns: 1fr auto;
-	background-color: ${(props) => props.theme.colors.elderberry};
 	padding: 16px 32px;
 	max-width: 750px;
 	margin: 0 auto;
 	*/
+
 	${(props) =>
 		props.attached &&
 		css`
@@ -101,4 +101,9 @@ export const MessageButton = styled(Button).attrs({
 	variant: 'primary',
 	size: 'lg',
 	isRounded: true,
-})``;
+	fullwidth: true,
+})`
+	font-size: 17px;
+	height: 55px;
+	width: 100%;
+`;

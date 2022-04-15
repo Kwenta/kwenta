@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei';
 
 import Select from 'components/Select';
 import Connector from 'containers/Connector';
@@ -18,7 +19,12 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
-import { wei } from '@synthetixio/wei';
+import { getSynthDescription } from 'utils/futures';
+import useMarketClosed from 'hooks/useMarketClosed';
+
+function setLastVisited(baseCurrencyPair: string): void {
+	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
+}
 
 export type MarketsCurrencyOption = {
 	value: CurrencyKey;
@@ -27,6 +33,7 @@ export type MarketsCurrencyOption = {
 	price: string;
 	change: string;
 	negativeChange: boolean;
+	isMarketClosed: boolean;
 };
 
 const assetToCurrencyOption = (
@@ -34,7 +41,8 @@ const assetToCurrencyOption = (
 	description: string,
 	price: string,
 	change: string,
-	negativeChange: boolean
+	negativeChange: boolean,
+	isMarketClosed: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
 	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
@@ -42,6 +50,7 @@ const assetToCurrencyOption = (
 	price,
 	change,
 	negativeChange,
+	isMarketClosed,
 });
 
 type Props = {
@@ -59,23 +68,14 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
 
+	const { isMarketClosed } = useMarketClosed(asset as CurrencyKey);
+
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-
-	const getSynthDescription = React.useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
 
 	const options = React.useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
@@ -92,7 +92,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 
 			return assetToCurrencyOption(
 				market.asset,
-				getSynthDescription(market.asset),
+				getSynthDescription(market.asset, synthsMap, t),
 				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
 				formatPercent(
 					basePriceRate && pastPrice?.price
@@ -103,15 +103,18 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					? wei(basePriceRate).lt(pastPrice?.price)
 						? true
 						: false
-					: false
+					: false,
+				isMarketClosed
 			);
 		});
 	}, [
-		getSynthDescription,
-		selectedPriceCurrency.name,
-		exchangeRates,
-		futuresMarketsQuery?.data,
 		dailyPriceChangesQuery?.data,
+		futuresMarketsQuery?.data,
+		exchangeRates,
+		selectedPriceCurrency.name,
+		synthsMap,
+		t,
+		isMarketClosed,
 	]);
 
 	return (
@@ -123,15 +126,17 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
+						setLastVisited(ROUTES.Markets.MarketPair(x.value));
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
 				value={assetToCurrencyOption(
 					asset,
-					getSynthDescription(asset),
+					getSynthDescription(asset, synthsMap, t),
 					DUMMY_PRICE,
 					DUMMY_CHANGE,
-					false
+					false,
+					isMarketClosed
 				)}
 				options={options}
 				isSearchable={false}

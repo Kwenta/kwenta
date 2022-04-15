@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -14,6 +14,8 @@ import { formatNumber } from 'utils/formatters/number';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
+import { getMarketKey, getSynthDescription } from 'utils/futures';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -25,21 +27,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const router = useRouter();
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => asset)
-	);
 
-	const getSynthDescription = useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
+	const futuresPositionQuery = useGetFuturesPositionForMarkets(
+		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
 	);
 
 	let data = useMemo(() => {
@@ -49,7 +41,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		);
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
-					const description = getSynthDescription(position.asset);
+					const isSuspended =
+						futuresMarkets.find((market) => market.asset === position.asset)?.isSuspended ?? false;
+					const description = getSynthDescription(position.asset, synthsMap, t);
 					const positionHistory = futuresPositionHistory?.find(
 						(positionHistory: PositionHistory) => {
 							return positionHistory.isOpen && positionHistory.asset === position.asset;
@@ -72,16 +66,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						margin: position.accessibleMargin,
 						leverage: position?.position?.leverage,
+						isSuspended,
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [futuresPositionQuery.data, futuresPositionHistory, getSynthDescription]);
+	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) =>
 					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
@@ -106,7 +100,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<MarketBadge currencyKey={cellProps.row.original.asset} />
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -277,8 +274,11 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
+	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
+	margin-bottom: -4px;
 `;
 
 const MarketContainer = styled.div`

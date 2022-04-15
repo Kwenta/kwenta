@@ -5,27 +5,34 @@ import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
+	isMarketClosed: boolean;
 	onSelect(position: PositionSide): void;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
+const PositionButtons: React.FC<PositionButtonsProps> = ({
+	selected,
+	isMarketClosed,
+	onSelect,
+}) => {
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
+				disabled={isMarketClosed}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
-				Long
+				<span>Long</span>
 			</StyledPositionButton>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
+				disabled={isMarketClosed}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
-				Short
+				<span>Short</span>
 			</StyledPositionButton>
 		</PositionButtonsContainer>
 	);
@@ -49,6 +56,19 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	height: 55px;
 	transition: all 0.1s ease-in-out;
 
+	&:disabled {
+		border: transparent;
+		background: transparent;
+		&:hover {
+			background: transparent;
+		}
+	}
+
+	> span {
+		position: relative;
+		top: -2px;
+	}
+
 	${(props) =>
 		props.$position === PositionSide.LONG &&
 		css`
@@ -60,6 +80,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 				border: 2px solid ${props.theme.colors.common.primaryGreen};
 				border-radius: 11px;
 				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
+				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #7fd48245 0px 0 10px 0px;
 
 				&:hover {
 					background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
@@ -78,6 +99,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 				border: 2px solid ${props.theme.colors.common.primaryRed};
 				border-radius: 11px;
 				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
+				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #ef53504d 0px 0 10px 0px;
 
 				&:hover {
 					background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};

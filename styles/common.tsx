@@ -198,7 +198,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	background-color: ${(props) => props.theme.colors.elderberry};
 	color: ${(props) => props.theme.colors.white};
 	height: 32px;
 	width: 32px;
@@ -206,12 +205,23 @@ export const SwapCurrenciesButton = styled.button`
 	align-items: center;
 	justify-content: center;
 	z-index: ${zIndex.BASE};
-	border: 2px solid ${(props) => props.theme.colors.black};
 	border-radius: 50%;
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	cursor: pointer;
+	transition-duration: 0.8s;
+
+	&:hover {
+		transform: rotate(180deg);
+		transition-duration: 0.8s;
+		transition-property: transform;
+	}
 `;
 
 export const Tooltip = styled(Tippy)`
-	background: ${(props) => props.theme.colors.elderberry};
+	background-color: ${(props) => props.theme.colors.cellGradient};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
 	border-radius: 4px;
 `;
@@ -329,7 +339,7 @@ export const CurrencyCardsSelector = styled.div`
 	position: absolute;
 	padding: 6px;
 	border-radius: 4px;
-	background: ${(props) => props.theme.colors.elderberry};
+	background: ${(props) => props.theme.colors.common.secondaryGray};
 	border: 2px solid ${(props) => props.theme.colors.black};
 	left: 50%;
 	top: 50%;

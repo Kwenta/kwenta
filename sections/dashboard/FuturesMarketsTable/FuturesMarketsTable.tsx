@@ -1,5 +1,5 @@
 import Table from 'components/Table';
-import { FC, useMemo, useCallback } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -13,6 +13,8 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
+import { getSynthDescription } from 'utils/futures';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -30,23 +32,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
-	const getSynthDescription = useCallback(
-		(synth: string) => {
-			const parsedSynthKey = synth ? (synth[0] !== 's' ? `s${synth}` : synth) : '';
-			return t('common.currency.futures-market-short-name', {
-				currencyName:
-					parsedSynthKey && synthsMap[parsedSynthKey] ? synthsMap[parsedSynthKey].description : '',
-			});
-		},
-		[t, synthsMap]
-	);
-
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
 
 		return futuresMarkets.map((market: FuturesMarket, i: number) => {
-			const description = getSynthDescription(market.asset);
+			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 
@@ -77,13 +68,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				marketSkew: market.marketSkew,
 			};
 		});
-	}, [
-		synthsMap,
-		futuresMarkets,
-		dailyPriceChangesQuery?.data,
-		futuresVolumeQuery?.data,
-		getSynthDescription,
-	]);
+	}, [synthsMap, futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
 
 	return (
 		<TableContainer>
@@ -95,6 +80,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
+				sortBy={[
+					{
+						id: 'dailyVolume',
+						desc: true,
+					},
+				]}
 				columns={[
 					{
 						Header: (
@@ -114,7 +105,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<MarketBadge currencyKey={cellProps.row.original.asset} />
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -231,6 +225,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							);
 						},
 						width: 125,
+						sortType: useMemo(
+							() => (rowA: any, rowB: any) => {
+								const rowOne = rowA.original.volume;
+								const rowTwo = rowB.original.volume;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 					},
 				]}
 			/>
@@ -276,16 +278,21 @@ const DefaultCell = styled.p``;
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
+
+	.paused {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
 
 const StyledTable = styled(Table)`
-	margin-top: 20px;
 	margin-bottom: 20px;
 `;
 
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
+	align-items: center;
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;

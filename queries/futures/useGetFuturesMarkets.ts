@@ -3,22 +3,30 @@ import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
+import { getMarketKey } from 'utils/futures';
+import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
+
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
+	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
+			if (isWalletConnected && !isL2) {
+				return null;
+			}
+
 			const {
 				contracts: { FuturesMarketData, SystemStatus },
 				utils,
@@ -29,17 +37,17 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const { suspensions } = await SystemStatus.getFuturesMarketSuspensions(
+			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
 				markets.map((m: any) => {
 					const asset = utils.parseBytes32String(m.asset);
-					return utils.formatBytes32String((asset[0] !== 's' ? 's' : '') + asset);
+					const marketKey = getMarketKey(asset, network.id);
+					return utils.formatBytes32String(marketKey);
 				})
 			);
 
-			return markets
-				.filter((_: any, i: number) => suspensions[i] === false)
-				.map(
-					({
+			return markets.map(
+				(
+					{
 						market,
 						asset,
 						currentFundingRate,
@@ -49,26 +57,30 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 						maxLeverage,
 						marketSize,
 						price,
-					}: FuturesMarket) => ({
-						market: market,
-						asset: utils.parseBytes32String(asset),
-						assetHex: asset,
-						currentFundingRate: wei(currentFundingRate).mul(-1),
-						feeRates: {
-							makerFee: wei(feeRates.makerFee),
-							takerFee: wei(feeRates.takerFee),
-						},
-						marketDebt: wei(marketDebt),
-						marketSkew: wei(marketSkew),
-						maxLeverage: wei(maxLeverage),
-						marketSize: wei(marketSize),
-						price: wei(price),
-						minInitialMargin: wei(globals.minInitialMargin),
-					})
-				);
+					}: FuturesMarket,
+					i: number
+				) => ({
+					market: market,
+					asset: utils.parseBytes32String(asset),
+					assetHex: asset,
+					currentFundingRate: wei(currentFundingRate).mul(-1),
+					feeRates: {
+						makerFee: wei(feeRates.makerFee),
+						takerFee: wei(feeRates.takerFee),
+					},
+					marketDebt: wei(marketDebt),
+					marketSkew: wei(marketSkew),
+					maxLeverage: wei(maxLeverage),
+					marketSize: wei(marketSize),
+					price: wei(price),
+					minInitialMargin: wei(globals.minInitialMargin),
+					isSuspended: suspensions[i],
+					marketClosureReason: getReasonFromCode(reasons[i]),
+				})
+			);
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!synthetixjs,
+			enabled: isWalletConnected ? isL2 && isReady : isReady,
 			...options,
 		}
 	);

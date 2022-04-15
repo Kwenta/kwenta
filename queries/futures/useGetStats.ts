@@ -42,7 +42,7 @@ const useGetStats = (options?: UseQueryOptions<any>) => {
 	};
 
 	return useQuery({
-		queryKey: QUERY_KEYS.Futures.Stats,
+		queryKey: QUERY_KEYS.Futures.Stats(network.id),
 		queryFn: () => query([], 0),
 		enabled: isAppReady && isL2,
 		...options,

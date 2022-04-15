@@ -6,15 +6,15 @@ import {
 } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
-import { getDefaultNetworkId, getIsOVM } from 'utils/network';
-import { useSetRecoilState, useRecoilState } from 'recoil';
-import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
+import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { NetworkId, SynthetixJS, synthetix, NetworkName } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState } from 'store/wallet';
+import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
 
 import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
 
@@ -34,6 +34,7 @@ const useConnector = () => {
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [onboard, setOnboard] = useState<ReturnType<typeof initOnboard> | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
@@ -64,13 +65,14 @@ const useConnector = () => {
 	useEffect(() => {
 		const init = async () => {
 			// TODO: need to verify we support the network
-			const networkId = await getDefaultNetworkId();
+			const networkId = await getDefaultNetworkId(isWalletConnected);
 
 			const provider = loadProvider({
 				networkId,
 				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: window.ethereum,
+				provider: isWalletConnected ? window.ethereum : undefined,
 			});
+
 			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
@@ -95,10 +97,7 @@ const useConnector = () => {
 					}
 				},
 				network: (networkId: number) => {
-					const isSupportedNetwork =
-						chainIdToNetwork != null && chainIdToNetwork[networkId as NetworkId] ? true : false;
-
-					if (isSupportedNetwork) {
+					if (isSupportedNetworkId(networkId as NetworkId)) {
 						const provider = loadProvider({
 							provider: onboard.getState().wallet.provider,
 						});
@@ -127,6 +126,11 @@ const useConnector = () => {
 							name: chainIdToNetwork[networkId] as NetworkName,
 							useOvm,
 						});
+					} else {
+						setNetwork({
+							id: networkId as NetworkId,
+							name: chainIdToNetwork[networkId] as NetworkName,
+						});
 					}
 				},
 				wallet: async (wallet: OnboardWallet) => {
@@ -134,18 +138,32 @@ const useConnector = () => {
 						const provider = loadProvider({ provider: wallet.provider });
 						const network = await provider.getNetwork();
 						const networkId = network.chainId as NetworkId;
-						const useOvm = getIsOVM(Number(networkId));
 
-						const snxjs = synthetix({ provider, networkId, signer: provider.getSigner(), useOvm });
+						if (isSupportedNetworkId(networkId as NetworkId)) {
+							const useOvm = getIsOVM(Number(networkId));
 
-						setProvider(provider);
-						setSigner(provider.getSigner());
-						setSynthetixjs(snxjs);
-						setNetwork({
-							id: networkId,
-							name: network.name,
-							useOvm,
-						});
+							const snxjs = synthetix({
+								provider,
+								networkId,
+								signer: provider.getSigner(),
+								useOvm,
+							});
+
+							setProvider(provider);
+							setSigner(provider.getSigner());
+							setSynthetixjs(snxjs);
+							setNetwork({
+								id: networkId,
+								name: network.name,
+								useOvm,
+							});
+						} else {
+							setNetwork({
+								id: networkId as NetworkId,
+								name: network.name as NetworkName,
+							});
+						}
+
 						if (!isIFrame()) setSelectedWallet(wallet.name); // don't allow iframed kwenta to override localstorage
 						setTransactionNotifier(new TransactionNotifier(provider));
 					} else {
