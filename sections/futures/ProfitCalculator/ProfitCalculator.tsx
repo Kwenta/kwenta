@@ -40,6 +40,9 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
+	/**
+	 * @todo Handle overflow/underflow errors for certain input values
+	 */
 	const handleSetInput = (_e: any, _stateVar: any, _stateVarName: string) => {
 		let isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
 
