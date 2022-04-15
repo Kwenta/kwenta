@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 
 
 type Props = {
@@ -12,7 +11,6 @@ const formatTimeUnit = (value: number) => {
 };
 
 export default function CountUpTimer({ startTimeDate }: Props) {
-	const { t } = useTranslation();
 
 	const nowTime = new Date().getTime();
 	let startTime = startTimeDate?.getTime() ?? nowTime
