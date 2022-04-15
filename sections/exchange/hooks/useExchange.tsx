@@ -38,7 +38,6 @@ import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/Combine
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
-import GetL2GasCard from 'sections/exchange/FooterCard/GetL2GasCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -74,7 +73,6 @@ import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
 import useCurrencyPair from './useCurrencyPair';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import L2Gas from 'containers/L2Gas';
 
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
@@ -114,7 +112,6 @@ const useExchange = ({
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { hasNone: hasNoL2Gas } = L2Gas.useContainer();
 
 	const { synthsMap, synthetixjs } = Connector.useContainer();
 	const { createERC20Contract, swap1Inch } = Convert.useContainer();
@@ -139,6 +136,7 @@ const useExchange = ({
 		defaultBaseCurrencyKey,
 		defaultQuoteCurrencyKey,
 	});
+
 	const [isApproving, setIsApproving] = useState<boolean>(false);
 	const [isApproved, setIsApproved] = useState<boolean>(false);
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
@@ -161,9 +159,6 @@ const useExchange = ({
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
 	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
-	// const cmcQuotesQuery = useCMCQuotesQuery([SYNTHS_MAP.sUSD, CRYPTO_CURRENCY_MAP.ETH], {
-	// 	enabled: txProvider === '1inch',
-	// });
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -538,11 +533,6 @@ const useExchange = ({
 		}
 	};
 
-	function resetCurrencies() {
-		setQuoteCurrencyAmount('');
-		setBaseCurrencyAmount('');
-	}
-
 	const transactionFee = useMemo(
 		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
 		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
@@ -566,7 +556,7 @@ const useExchange = ({
 	useEffect(() => {
 		setCurrencyPair({
 			base: null,
-			quote: null,
+			quote: 'sUSD',
 		});
 	}, [network.id, setCurrencyPair]);
 
@@ -595,7 +585,13 @@ const useExchange = ({
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
+		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			setBaseCurrencyAmount(baseCurrencyAmountNoFee.toString());
+		}
 	}, [
+		rate,
+		baseCurrencyKey,
 		quoteCurrencyAmount,
 		baseCurrencyAmount,
 		txProvider,
@@ -866,6 +862,8 @@ const useExchange = ({
 							);
 							synthsWalletBalancesQuery.refetch();
 							numEntriesQuery.refetch();
+							setQuoteCurrencyAmount('');
+							setBaseCurrencyAmount('');
 						},
 					});
 				}
@@ -936,10 +934,10 @@ const useExchange = ({
 				amount={quoteCurrencyAmount}
 				onAmountChange={async (value) => {
 					if (value === '') {
-						resetCurrencies();
+						setQuoteCurrencyAmount('');
 					} else {
 						setQuoteCurrencyAmount(value);
-						if (txProvider === 'synthetix') {
+						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
 							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
@@ -979,7 +977,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: pair.base === currencyKey ? null : pair.base,
@@ -995,7 +993,7 @@ const useExchange = ({
 				<SelectTokenModal
 					onDismiss={() => setSelectQuoteTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: pair.base === currencyKey ? null : pair.base,
@@ -1045,10 +1043,10 @@ const useExchange = ({
 				amount={baseCurrencyAmount}
 				onAmountChange={async (value) => {
 					if (value === '') {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 					} else {
 						setBaseCurrencyAmount(value);
-						if (txProvider === 'synthetix') {
+						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
 							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
 							setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.add(fee).toString());
@@ -1077,7 +1075,6 @@ const useExchange = ({
 				}
 				priceRate={basePriceRate}
 				label={t('exchange.common.into')}
-				disableInput={txProvider === '1inch'}
 				slippagePercent={slippagePercent}
 				isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
 				txProvider={txProvider}
@@ -1086,7 +1083,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1107,7 +1104,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						resetCurrencies();
+						setBaseCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1177,8 +1174,6 @@ const useExchange = ({
 		<>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={footerCardAttached} />
-			) : hasNoL2Gas ? (
-				<GetL2GasCard attached={footerCardAttached} />
 			) : (baseCurrencyMarketClosed.isMarketClosed &&
 					baseCurrencyKey &&
 					AFTER_HOURS_SYNTHS.has(baseCurrencyKey as CurrencyKey)) ||

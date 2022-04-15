@@ -14,8 +14,7 @@
 			"exchange": "exchange",
 			"dashboard": "dashboard",
 			"shorting": "shorting",
-			"markets": "markets",
-			"futures": "futures",
+			"markets": "futures",
 			"leaderboard": "leaderboard",
 			"futures-dashboard": "dashboard",
 			"earn": "earn"
@@ -28,6 +27,12 @@
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
 			"optimism-testnet": "OΞ Kovan"
+		},
+		"balance": {
+			"get-susd": "Get sUSD",
+			"get-more-susd": "Get more sUSD",
+			"total-margin-label": "Total Margin:",
+			"no-accessible-margin": "You have no accessible margin"
 		}
 	},
 	"homepage": {
@@ -165,8 +170,11 @@
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"synth-exchange": "Synth Exchange",
 		"currency-card": {
-			"wallet-balance": "wallet balance",
+			"synth-name": "Synth Name",
+			"amount-placeholder": "0.0000",
+			"wallet-balance": "balance:",
 			"currency-selector": {
 				"select-synth": "select synth",
 				"select-token": "select token"
@@ -234,7 +242,7 @@
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
-				"submit-order": "submit order",
+				"submit-order": "swap",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
 				"approve-balancer": "approve balancer contract",
@@ -554,7 +562,6 @@
 			}
 		},
 		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
-
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
@@ -582,7 +589,7 @@
 		"hero": {
 			"countdown": {
 				"title": "Countdown",
-				"endMessage": "Competition ends " ,
+				"endMessage": "Competition ends ",
 				"closed": "NOW CLOSED"
 			},
 			"welcome": {
@@ -630,6 +637,40 @@
 				"fees": "Fees",
 				"avg-entry-price": "Avg. Entry Price"
 			},
+			"state": {
+				"opens-in": "Opens in",
+				"closes-in": "Closes in",
+				"frozen": "paused",
+				"market-closure": "paused",
+				"system-upgrade": "paused",
+				"circuit-breaker": "paused",
+				"emergency": "paused"
+			},
+			"chart": {
+				"overlay-messages": {
+					"frozen": {
+						"title": "{{baseCurrencyKey}} market has been frozen",
+						"subtitle": "Reset in progress."
+					},
+					"market-closure": {
+						"title": "{{baseCurrencyKey}} market has been paused",
+						"timer-subtitle": "Trading activity will resume in: ",
+						"subtitle": ""
+					},
+					"system-upgrade": {
+						"title": "{{baseCurrencyKey}} market paused",
+						"subtitle": "Please check the Synthetix Discord for details."
+					},
+					"circuit-breaker": {
+						"title": "Circuit breaker triggered for {{baseCurrencyKey}}",
+						"subtitle": "Reset in progress"
+					},
+					"emergency": {
+						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
+						"subtitle": "Reset in progress"
+					}
+				}
+			},
 			"trade": {
 				"market": "isolated market",
 				"title": "trade",
@@ -658,7 +699,8 @@
 					"warning": "WARNING: this will close your position",
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
-					"modify-position": "Modify Position"
+					"modify-position": "Modify Position",
+					"deposit-margin-minimum": "Deposit $50 Margin Minimum"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -766,6 +808,17 @@
 				"percent-pnl": "PnL (%)"
 			}
 		},
+		"trader-history": {
+			"table": {
+				"timestamp": "Date/Time",
+				"market": "Market",
+				"status": "Status",
+				"liquidated": "Liquidated",
+				"total-trades": "Trades",
+				"total-volume": "Total Volume",
+				"total-pnl": "Realized PnL ($)"
+			}
+		},
 		"statistics": {
 			"failed-loading": "Failed to fetch results.",
 			"empty-results": "No results found.",
@@ -823,7 +876,7 @@
 		"confirm-transaction": {
 			"title": "confirm transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet.",
-			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>. <1>Synth Fees</1>",
+			"exchange-fee-hint": "The Synthetix protocol exchange fee for <0>{{currencyKey}}</0>.",
 			"price-adjustment-hint": "This transaction is subject to a price adjustment period. <0>Learn more.</0>"
 		},
 		"approve-transaction": {
@@ -884,6 +937,9 @@
 		"settle-transaction": {
 			"title": "settle",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
+		},
+		"uniswap-widget": {
+			"title": "Swap Widget"
 		}
 	},
 	"futures-dashboard": {
@@ -981,7 +1037,8 @@
 			"connect-wallet": "connect wallet",
 			"switch-wallet": "Switch Wallet",
 			"switch-accounts": "Switch Accounts",
-			"disconnect-wallet": "Disconnect Wallet"
+			"disconnect-wallet": "Disconnect Wallet",
+			"unsupported-network": "Unsupported Network"
 		},
 		"tx-status": {
 			"waiting": "Waiting",
@@ -999,7 +1056,8 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"title": "gas price (Gwei)",
+				"gas-price": "gas price",
+				"max-fee": "max fee",
 				"average": "Average",
 				"fast": "Fast",
 				"fastest": "Fastest"

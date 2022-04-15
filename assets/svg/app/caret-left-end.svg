@@ -1,6 +1,6 @@
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M14.25 13.5L8.75 8L14.25 2.5L12.75 1L5.75 8L12.75 15L14.25 13.5Z" fill="url(#caret-left-end_paint0_linear)"/>
-<rect x="3" y="15.25" width="2" height="14" transform="rotate(-180 3 15.25)" fill="url(#caret-left-end_paint1_linear)"/>
+<path d="M14.25 13.5L8.75 8L14.25 2.5L12.75 1L5.75 8L12.75 15L14.25 13.5Z" />
+<rect x="3" y="15.25" width="2" height="14" transform="rotate(-180 3 15.25)" />
 <defs>
 <linearGradient id="caret-left-end_paint0_linear" x1="14.25" y1="8" x2="5.75" y2="8" gradientUnits="userSpaceOnUse">
 <stop stop-color="#BE9461"/>

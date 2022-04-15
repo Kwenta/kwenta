@@ -14,6 +14,8 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { CustomThemeProvider } from 'contexts/CustomThemeContext';
 import SystemStatus from 'sections/shared/SystemStatus';
 
+import { isSupportedNetworkId } from 'utils/network';
+
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -35,7 +37,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
 					value={
-						provider && network
+						provider && isSupportedNetworkId(network.id)
 							? createQueryContext({
 									provider,
 									signer: signer || undefined,

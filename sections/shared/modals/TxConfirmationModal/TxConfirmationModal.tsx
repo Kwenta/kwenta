@@ -14,7 +14,7 @@ import {
 	ExternalLink,
 } from 'styles/common';
 
-import { walletAddressState } from 'store/wallet';
+import { isL2State, walletAddressState } from 'store/wallet';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
@@ -66,6 +66,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	icon,
 }) => {
 	const { t } = useTranslation();
+	const isL2 = useRecoilValue(isL2State);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { subgraph } = useSynthetixQueries();
@@ -223,7 +224,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 						</span>
 					</SummaryItemValue>
 				</SummaryItem>
-				{!priceAdjustmentFeeUSD ? null : (
+				{!isL2 && priceAdjustmentFeeUSD ? (
 					<SummaryItem>
 						<SummaryItemLabel data-testid="price-adjustment-label">
 							<Trans
@@ -256,7 +257,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 							</span>
 						</SummaryItemValue>
 					</SummaryItem>
-				)}
+				) : null}
 			</Summary>
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
@@ -294,7 +295,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 270px;
+		width: 300px;
 	}
 	.card-body {
 		padding: 24px;
@@ -327,7 +328,7 @@ const ArrowsIconContainer = styled.div`
 
 const Subtitle = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	padding-bottom: 48px;
 `;
 
@@ -339,7 +340,9 @@ const SummaryItem = styled(FlexDivRowCentered)`
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 `;
 
-const SummaryItemLabel = styled.div``;
+const SummaryItemLabel = styled.div`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 const SummaryItemValue = styled.div`
 	color: ${(props) => props.theme.colors.white};

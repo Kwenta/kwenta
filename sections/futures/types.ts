@@ -1,5 +1,11 @@
 import { CurrencyKey } from 'constants/currency';
 
+export enum MarketState {
+	OPEN = 'OPEN',
+	CLOSED = 'CLOSED',
+	PAUSED = 'PAUSED',
+}
+
 export enum PositionSide {
 	LONG = 'long',
 	SHORT = 'short',

@@ -15,6 +15,7 @@ import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositi
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
 import { getMarketKey, getSynthDescription } from 'utils/futures';
+import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -40,6 +41,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		);
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
+					const isSuspended =
+						futuresMarkets.find((market) => market.asset === position.asset)?.isSuspended ?? false;
 					const description = getSynthDescription(position.asset, synthsMap, t);
 					const positionHistory = futuresPositionHistory?.find(
 						(positionHistory: PositionHistory) => {
@@ -63,16 +66,16 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						margin: position.accessibleMargin,
 						leverage: position?.position?.leverage,
+						isSuspended,
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [futuresPositionQuery.data, futuresPositionHistory, synthsMap, t]);
+	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
-				pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) =>
 					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
@@ -97,7 +100,10 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 											}
 										/>
 									</IconContainer>
-									<StyledText>{cellProps.row.original.market}</StyledText>
+									<StyledText>
+										{cellProps.row.original.market}
+										<MarketBadge currencyKey={cellProps.row.original.asset} />
+									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
 							);
@@ -268,8 +274,11 @@ const StyledTable = styled(Table)`
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
+	display: flex;
+	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
+	margin-bottom: -4px;
 `;
 
 const MarketContainer = styled.div`

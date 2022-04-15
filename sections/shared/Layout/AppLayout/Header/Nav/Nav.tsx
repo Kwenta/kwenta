@@ -14,6 +14,28 @@ const Nav: FC = () => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const menuLinks = useRecoilValue(menuLinksState);
+
+	function getLastVisited(): string | null | undefined {
+		if (typeof window !== 'undefined') {
+			const lastVisited = localStorage.getItem('lastVisited');
+			return lastVisited;
+		}
+	}
+
+	function getLink(link: string): string | undefined {
+		if (link.slice(0, 7) === '/market') {
+			const lastVisited: string | null | undefined = getLastVisited();
+
+			if (lastVisited !== null && lastVisited !== undefined) {
+				return lastVisited?.slice(8);
+			} else {
+				return link;
+			}
+		} else {
+			return link;
+		}
+	}
+
 	return (
 		<nav>
 			<MenuLinks>
@@ -22,11 +44,12 @@ const Nav: FC = () => {
 						asPath === link ||
 						(asPath.includes('dashboard') && link.includes('dashboard')) ||
 						(asPath.includes('market') && link.includes('market')) ||
+						(asPath.includes('exchange') && link.includes('exchange')) ||
 						(asPath.includes('leaderboard') && link.includes('leaderboard')) ||
 						(asPath.includes('earn') && link.includes('earn'));
 					return (
-						<MenuLinkItem key={link} isActive={isActive}>
-							<Link href={link}>
+						<MenuLinkItem key={`${getLink(link)}`} isActive={isActive}>
+							<Link href={`${getLink(link)}`}>
 								<a>{t(i18nLabel)}</a>
 							</Link>
 						</MenuLinkItem>

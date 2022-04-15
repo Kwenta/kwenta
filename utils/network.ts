@@ -1,18 +1,24 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { NetworkId, NetworkNameById } from '@synthetixio/contracts-interface';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
-import { ETH_UNIT, GWEI_UNIT, GWEI_DECIMALS, GasLimitEstimate } from 'constants/network';
+import {
+	ETH_UNIT,
+	GWEI_UNIT,
+	GWEI_DECIMALS,
+	GasLimitEstimate,
+	SUPPORTED_NETWORKS,
+} from 'constants/network';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
 	chainId: string;
 };
 
-export function isSupportedNetworkId(id: number | string): id is NetworkId {
-	return id in NetworkNameById;
+export function isSupportedNetworkId(id: NetworkId): boolean {
+	return SUPPORTED_NETWORKS.includes(id);
 }
 
 export async function getDefaultNetworkId(walletConnected: boolean = true): Promise<NetworkId> {
@@ -20,7 +26,7 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 		if (walletConnected && window.ethereum) {
 			const provider = (await detectEthereumProvider()) as EthereumProvider;
 			if (provider && provider.chainId) {
-				const id = Number(provider.chainId);
+				const id = Number(provider.chainId) as NetworkId;
 				return isSupportedNetworkId(id) ? id : DEFAULT_NETWORK_ID;
 			}
 		}
