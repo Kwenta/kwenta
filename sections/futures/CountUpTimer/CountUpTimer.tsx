@@ -43,17 +43,11 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 
 	return (
 		<Container>
-			<CountdownTime>
-				{`Time since last oracle update: ${time.minutes}:${time.seconds}`}
-			</CountdownTime>
+			<p>{`Time since oracle update: ${time.minutes}:${time.seconds} min`}</p>
 		</Container>
 	);
 }
 
 const Container = styled.div`
 
-`;
-
-const CountdownTime = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
 `;

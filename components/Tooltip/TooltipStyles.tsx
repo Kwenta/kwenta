@@ -72,3 +72,9 @@ export const ToolTipWrapper = styled.div`
 	position: relative;
 	display: inline-block;
 `;
+
+export const TimerTooltip = styled(Tooltip)`
+	width: 180px;
+`;
+
+

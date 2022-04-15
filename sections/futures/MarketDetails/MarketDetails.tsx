@@ -100,9 +100,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					preset='bottom' 
 					startTimeDate={lastOracleUpdateTime}
 				>
-					<HoverColor>
+					<HoverTransform>
 						{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
-					</HoverColor>
+					</HoverTransform>
 				</GeneralTooltip>
 				) : (
 					NO_VALUE
@@ -172,13 +172,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 							{ sign: '$' }
 						)}`}
 					>
-						<span>
+						<HoverTransform>
 							{formatCurrency(
 								selectedPriceCurrency.name,
 								marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
 								{ sign: '$' }
 							)}
-						</span>
+						</HoverTransform>
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -268,9 +268,9 @@ const MarketDetailsContainer = styled.div`
 	}
 `;
 
-const HoverColor = styled.div`
+const HoverTransform = styled.div`
 	:hover {
-		transform: scale(1.02);
+		transform: scale(1.03);
 	}
 `;
 
