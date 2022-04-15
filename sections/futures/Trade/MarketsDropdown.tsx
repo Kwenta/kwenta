@@ -20,6 +20,7 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription } from 'utils/futures';
+import useMarketClosed from 'hooks/useMarketClosed';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -32,6 +33,7 @@ export type MarketsCurrencyOption = {
 	price: string;
 	change: string;
 	negativeChange: boolean;
+	isMarketClosed: boolean;
 };
 
 const assetToCurrencyOption = (
@@ -39,7 +41,8 @@ const assetToCurrencyOption = (
 	description: string,
 	price: string,
 	change: string,
-	negativeChange: boolean
+	negativeChange: boolean,
+	isMarketClosed: boolean
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
 	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
@@ -47,6 +50,7 @@ const assetToCurrencyOption = (
 	price,
 	change,
 	negativeChange,
+	isMarketClosed,
 });
 
 type Props = {
@@ -63,6 +67,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
+
+	const { isMarketClosed } = useMarketClosed(asset as CurrencyKey);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
@@ -97,16 +103,18 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					? wei(basePriceRate).lt(pastPrice?.price)
 						? true
 						: false
-					: false
+					: false,
+				isMarketClosed
 			);
 		});
 	}, [
-		selectedPriceCurrency.name,
-		exchangeRates,
-		futuresMarketsQuery?.data,
 		dailyPriceChangesQuery?.data,
+		futuresMarketsQuery?.data,
+		exchangeRates,
+		selectedPriceCurrency.name,
 		synthsMap,
 		t,
+		isMarketClosed,
 	]);
 
 	return (
@@ -127,7 +135,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					getSynthDescription(asset, synthsMap, t),
 					DUMMY_PRICE,
 					DUMMY_CHANGE,
-					false
+					false,
+					isMarketClosed
 				)}
 				options={options}
 				isSearchable={false}

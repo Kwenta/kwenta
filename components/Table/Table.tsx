@@ -181,7 +181,7 @@ export const Table: FC<TableProps> = ({
 				</ReactTable>
 			</TableContainer>
 			{noResultsMessage}
-			{showPagination && data.length > MAX_PAGE_ROWS ? (
+			{showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}

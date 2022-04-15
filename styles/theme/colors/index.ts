@@ -34,6 +34,9 @@ const colors = {
 	goldColors,
 	gold: `linear-gradient(180deg, ${goldColors.color1} 0%, ${goldColors.color2} 100%)`,
 	goldHover: `linear-gradient(180deg, ${goldColors.color3} 0%, ${goldColors.color4} 100%)`,
+	cellGradient: `linear-gradient(180deg, #1E1D1D 0%, #161515 100%)`,
+	inputGradient: `linear-gradient(180deg, #101010 33.26%, rgba(24, 24, 24, 0.37) 100%)`,
+	inputHighlight: 'inset 0px -1px 0px rgba(255, 255, 255, 0.07)',
 	// network colors
 	mainnet: '#29B6AF',
 	ropsten: '#FF4A8D',

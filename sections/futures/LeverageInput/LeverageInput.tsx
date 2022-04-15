@@ -20,6 +20,7 @@ type LeverageInputProps = {
 	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
+	isMarketClosed: boolean;
 };
 
 const LeverageInput: FC<LeverageInputProps> = ({
@@ -27,6 +28,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	maxLeverage,
 	onLeverageChange,
 	setIsLeverageValueCommitted,
+	isMarketClosed,
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
@@ -86,7 +88,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(Number(l))}
+							disabled={maxLeverage.lt(Number(l)) || isMarketClosed}
 						>
 							{l}x
 						</LeverageButton>

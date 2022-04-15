@@ -86,7 +86,7 @@ export const DynamicFeeRateItem = styled.span`
 	justify-content: space-between;
 	cursor: pointer;
 	svg {
-		margin-left: 5px;
+		margin-left: 3px;
 	}
 `;
 
