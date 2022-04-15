@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Tooltip, ToolTipWrapper } from './TooltipStyles';
+import CountUpTimer from '../../sections/futures/CountUpTimer';
 
 interface ToolTipProps {
-	contentArray?: string[];
+	startTimeDate: Date | undefined;
 	children?: React.ReactNode;
 	preset?: string;
 	top?: string;
@@ -26,9 +27,7 @@ const GeneralTooltip = (props: ToolTipProps) => {
 			{props.children}
 			{activeMouse && (
 				<Tooltip {...props}>
-					{props.contentArray?.map((content, i) => (
-						<p key={i}>{content}</p>
-					))}
+					<CountUpTimer startTimeDate={props.startTimeDate} />
 				</Tooltip>
 			)}
 		</ToolTipWrapper>

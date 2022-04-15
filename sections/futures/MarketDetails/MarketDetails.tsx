@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
@@ -13,12 +13,12 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
-import { synthToCoingeckoPriceId, findTimeDiff } from './utils';
+import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import OpenInterestToolTip from 'components/Tooltip/OpenInterestTooltip';
-import GeneralTooltip from 'components/Tooltip/GeneralTooltip';
+import GeneralTooltip from 'components/Tooltip/TimerTooltip';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import { current } from 'immer';
@@ -35,6 +35,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
+	const [lastOracleUpdateTime, setLastOracleUpdateTime] = useState<Date>();
 
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
@@ -47,24 +48,21 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
 
-	const currentTime = Date.now()
-	let updateTime = currentTime;
-	 
+
 	const oracleRateUpdateQuery = React.useMemo(
 		()=> useRateUpdateQuery(baseCurrencyKey, isL2)
 		.then((result) => {
 			if(result?.rateUpdates) {
-				updateTime = result?.rateUpdates[0].timestamp;
+				const rateTime = result?.rateUpdates[0].timestamp
+				const updateTime = new Date(parseInt(rateTime) * 1000);
+				setLastOracleUpdateTime(updateTime)
 				console.log("RESULT = ", result?.rateUpdates[0].timestamp);
 			}
 		}),
 		[exchangeRates, baseCurrencyKey]
 	)
 
-	console.log("updateTime", updateTime)
-	
-	let timeSinceOracleUpdate = ''
-	if(updateTime) timeSinceOracleUpdate = findTimeDiff(currentTime - updateTime)
+	console.log("lastOracleUpdateTime", lastOracleUpdateTime)
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -89,7 +87,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				: '']: { value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
 				<GeneralTooltip 
 					preset='bottom' 
-					contentArray={[`Time since last oracle update: ${timeSinceOracleUpdate}`]}
+					startTimeDate={lastOracleUpdateTime}
 				>
 					<HoverColor>
 						{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
