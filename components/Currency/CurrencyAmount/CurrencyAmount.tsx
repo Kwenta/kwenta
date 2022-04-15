@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import { formatCurrency, FormatCurrencyOptions, formatNumber } from 'utils/formatters/number';
+import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 import { ethers } from 'ethers';
@@ -35,7 +35,7 @@ export const CurrencyAmount: FC<CurrencyAmountProps> = ({
 }) => (
 	<Container {...rest}>
 		{!showValue ? null : (
-			<Amount className="amount">{formatNumber(amount, formatAmountOptions)}</Amount>
+			<Amount className="amount">{formatCurrency(currencyKey, amount, formatAmountOptions)}</Amount>
 		)}
 		{!showTotalValue ? null : (
 			<TotalValue className="total-value">
@@ -58,6 +58,8 @@ const Container = styled.span`
 const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};
 `;
-const TotalValue = styled.span``;
+const TotalValue = styled.span`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 export default CurrencyAmount;

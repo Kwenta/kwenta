@@ -1,6 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import orderBy from 'lodash/orderBy';
 
 import Button from 'components/Button';
@@ -126,11 +126,14 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			<CategoryFilters>
 				{CATEGORY_FILTERS.map((category) => {
 					const isActive = synthCategory === category;
+					const noItem =
+						synths.filter((synth) => synth.category.toString() === category).length === 0;
 
 					return (
 						<CategoryButton
 							variant="secondary"
 							isActive={isActive}
+							disabled={noItem}
 							onClick={() => {
 								setAssetSearch('');
 								setSynthCategory(isActive ? null : category);
@@ -225,6 +228,32 @@ const CategoryFilters = styled.div`
 
 const CategoryButton = styled(Button)`
 	text-transform: uppercase;
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	transition: all 0.1s ease-in-out;
+
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	${(props) =>
+		props.isActive &&
+		css`
+			transform: scale(0.99);
+			color: ${props.theme.colors.common.primaryWhite};
+			border: 2px solid ${props.theme.colors.common.primaryGold};
+			border-radius: 11px;
+			background: ${props.theme.colors.selectedTheme.button.hover};
+			box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #7fd48245 0px 0 10px 0px;
+
+			&:hover {
+				background: ${props.theme.colors.selectedTheme.button.hover};
+			}
+		`};
+	${(props) =>
+		props.disabled &&
+		css`
+			color: ${props.theme.colors.selectedTheme.button.disabled.text};
+			background: ${props.theme.colors.selectedTheme.button.disabled.background};
+		`};
 `;
 
 const EmptyDisplay = styled(FlexDivCentered)`
