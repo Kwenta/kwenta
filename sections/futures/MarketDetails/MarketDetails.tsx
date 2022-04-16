@@ -65,9 +65,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
 
 	const data: MarketData = React.useMemo(() => {
-		const fundingTitle = `${
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
-		} Funding Rate`;
+		const fundingTitle = `${fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
+			} Funding Rate`;
 		const fundingValue =
 			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
 				? marketSummary?.currentFundingRate
@@ -84,34 +83,34 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					externalPrice === 0
 						? '-'
 						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-								sign: '$',
-						  }),
+							sign: '$',
+						}),
 			},
 			'24H Change': {
 				value:
 					marketSummary?.price && pastPrice?.price
 						? `${formatCurrency(
-								selectedPriceCurrency.name,
-								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-								{ sign: '$' }
-						  )} (${formatPercent(
-								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
-						  )})`
+							selectedPriceCurrency.name,
+							marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+							{ sign: '$' }
+						)} (${formatPercent(
+							marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+						)})`
 						: NO_VALUE,
 				color:
 					marketSummary?.price && pastPrice?.price
 						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
 							? 'green'
 							: marketSummary?.price.sub(pastPrice?.price).lt(zeroBN)
-							? 'red'
-							: ''
+								? 'red'
+								: ''
 						: undefined,
 			},
 			'24H Volume': {
 				value: !!futuresTradingVolume
 					? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-							sign: '$',
-					  })
+						sign: '$',
+					})
 					: NO_VALUE,
 			},
 			'24H Trades': {
