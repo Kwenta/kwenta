@@ -32,13 +32,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-style: normal;
 			font-weight: 400;
-			line-height: 12px;
+			line-height: 8px;
+			white-space: pre-line;
 			color: ${(props) => props.theme.colors.white};
 		}
 
 		${(props) =>
-			props.preset === 'top' &&
-			`
+		props.preset === 'top' &&
+		`
 				top: 0;
 				left: 50%;
 				transform: translate(-50%, -150%);
@@ -47,22 +48,22 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			`}
 
 		${(props) =>
-			props.preset === 'bottom' &&
-			`
+		props.preset === 'bottom' &&
+		`
 				bottom: 0;
 				transform: translate(-25%, 125%);
 			`}
 
 		${(props) =>
-			props.preset === 'left' &&
-			`
+		props.preset === 'left' &&
+		`
 				left: 0;
 				transform: translate(-105%, -80%);
 			`}
 
 		${(props) =>
-			props.preset === 'right' &&
-			`
+		props.preset === 'right' &&
+		`
 				right: 0;
 				transform: translate(105%, -80%);
 			`}
