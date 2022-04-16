@@ -131,6 +131,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 								.toNumber(),
 							{ sign: '$' }
 						)}
+						
 						Short: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
