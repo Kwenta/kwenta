@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { border } from 'styles/common';
 
 type ButtonProps = {
 	size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -22,26 +23,11 @@ const Button = styled.button<ButtonProps>`
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
-
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		border-radius: 10px;
-		padding: 1px;
-		background: rgb(255 255 255 / 10%);
-		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		-webkit-mask-composite: xor;
-		mask-composite: exclude;
-	}
-
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	border: none;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	${border}
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
