@@ -8,6 +8,7 @@ import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
 import Overview from '../Overview';
 import StakingInfo from '../StakingInfo';
+import Links from '../Links';
 import { MainContent, LeftSideContent, RightSideContent } from 'styles/common';
 
 enum Tab {
@@ -116,6 +117,7 @@ const DashboardContainer: FC = () => {
 						</NavButton>
 					))}
 				</StyledTabList>
+				<Links />
 			</LeftSideContent>
 			<MainContent>
 				<TabPanel name={Tab.Overview} activeTab={activeTab}>
