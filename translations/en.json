@@ -735,6 +735,15 @@
 					}
 				}
 			},
+			"history": {
+				"history-label": "trading history",
+				"last-n-trades": "last {{ numberOfTrades }} trades",
+				"skew-label": "skew",
+				"n-sec-ago": "{{ timeDelta }}s ago",
+				"n-min-ago": "{{ timeDelta }}m ago",
+				"n-hr-ago": "{{ timeDelta }}h ago",
+				"n-day-ago": "{{ timeDelta }}d ago"			
+			},
 			"user": {
 				"position": {
 					"tab": "Your Position",

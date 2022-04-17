@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -6,13 +5,20 @@ import { useRouter } from 'next/router';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { DesktopOnlyView } from 'components/Media';
 
-import { PageContent, FullHeightContainer, MainContent, RightSideContent } from 'styles/common';
+import {
+	PageContent,
+	FullHeightContainer,
+	MainContent,
+	RightSideContent,
+	LeftSideContent,
+} from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
+import TradingHistory from 'sections/futures/TradingHistory';
 
-const Market: FC = () => {
+const Market = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -24,6 +30,11 @@ const Market: FC = () => {
 			<AppLayout>
 				<StyledPageContent>
 					<FullHeightContainer>
+						<DesktopOnlyView>
+							<StyledLeftSideContent>
+								<TradingHistory currencyKey={router.query.market?.[0]!} />
+							</StyledLeftSideContent>
+						</DesktopOnlyView>
 						<StyledMainContent>
 							<MarketInfo market={router.query.market?.[0]!} />
 						</StyledMainContent>
@@ -52,4 +63,9 @@ const StyledMainContent = styled(MainContent)`
 const StyledRightSideContent = styled(RightSideContent)`
 	width: 349px;
 	padding-left: 15px;
+`;
+
+const StyledLeftSideContent = styled(LeftSideContent)`
+	width: 349px;
+	padding-right: 15px;
 `;
