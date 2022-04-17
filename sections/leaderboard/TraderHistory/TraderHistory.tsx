@@ -16,12 +16,14 @@ import ROUTES from 'constants/routes';
 
 type TraderHistoryProps = {
 	trader: string;
+	traderENSName: string | null;
 	resetSelection: Function;
 	compact?: boolean;
 };
 
 const TraderHistory: FC<TraderHistoryProps> = ({
 	trader,
+	traderENSName,
 	resetSelection,
 	compact,
 }: TraderHistoryProps) => {
@@ -80,7 +82,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 								target="_blank"
 								rel="noreferrer noopener"
 							>
-								{trader}
+								{traderENSName ?? trader}
 							</TraderText>
 						</TableTitle>
 					),
