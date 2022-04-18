@@ -19,10 +19,7 @@ type ProfitCalculatorProps = {
 	// isLoaded: boolean;
 };
 
-const ProfitCalculator = ({
-	marketAsset,
-	setOpenProfitCalcModal,
-}: any) => {
+const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 	const { t } = useTranslation();
 
 	// BigNumbers
