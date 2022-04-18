@@ -19,7 +19,7 @@ type ProfitCalculatorProps = {
 	// isLoaded: boolean;
 };
 
-const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
+const ProfitCalculator = ({
 	marketAsset,
 	setOpenProfitCalcModal,
 }: any) => {
