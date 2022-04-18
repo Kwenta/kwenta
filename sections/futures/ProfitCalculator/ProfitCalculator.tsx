@@ -48,37 +48,21 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 			if (!isNaN(_stateVar) && _stateVar !== '') {
 				if (_stateVarName === 'entryPrice') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-
-					console.log('_stateVar EnP: ', _stateVar);
-					console.log('clampedInput EnP: ', clampedInput);
-
 					setEntryPrice(ethers.BigNumber.from(clampedInput * scalar));
 				}
 
 				if (_stateVarName === 'exitPrice') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-
-					console.log('_stateVar ExP: ', _stateVar);
-					console.log('clampedInput ExP: ', clampedInput);
-
 					setExitPrice(ethers.BigNumber.from(clampedInput * scalar));
 				}
 
 				if (_stateVarName === 'stopLoss') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-
-					console.log('_stateVar SL: ', _stateVar);
-					console.log('clampedInput SL: ', clampedInput);
-
 					setStopLoss(ethers.BigNumber.from(clampedInput * scalar));
 				}
 
 				if (_stateVarName === 'marketAssetPositionSize') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-
-					console.log('_stateVar MA: ', _stateVar);
-					console.log('clampedInput MA: ', clampedInput);
-
 					setMarketAssetPositionSize(ethers.BigNumber.from(clampedInput * scalar));
 				}
 			}
