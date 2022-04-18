@@ -53,6 +53,10 @@ export const FIAT_SYNTHS: Set<CurrencyKey> = new Set([
 	Synths.sCHF,
 ]);
 
+export type Perpetual = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
+
+export const PERPETUAL_SYNTHS = new Set<Perpetual>(['EUR', 'JPY', 'USD', 'AUD', 'GBP', 'CHF']);
+
 export const LSE_SYNTHS = new Set<CurrencyKey>([]);
 
 export const TSE_SYNTHS = new Set<CurrencyKey>([]);
@@ -64,6 +68,7 @@ export const MARKET_HOURS_SYNTHS = new Set([
 	...LSE_SYNTHS,
 	...TSE_SYNTHS,
 	...AFTER_HOURS_SYNTHS,
+	...PERPETUAL_SYNTHS,
 ]);
 
 // Commodity synths are not listed in the CurrencyKey currently. This is a temporary workaround.
