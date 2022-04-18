@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import SearchInput from 'components/Input/SearchInput';
 import SearchIconPath from 'assets/svg/app/search.svg';

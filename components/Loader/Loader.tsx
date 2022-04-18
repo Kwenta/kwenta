@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import LoaderIcon from 'assets/svg/app/loader.svg';
 
 import { AbsoluteCenteredDiv } from 'styles/common';

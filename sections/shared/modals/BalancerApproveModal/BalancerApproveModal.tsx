@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CurrencyKey } from 'constants/currency';
-import Img from 'react-optimized-image';
+import Image from 'next/image';
 
 import BalancerImage from 'assets/svg/providers/balancer.svg';
 

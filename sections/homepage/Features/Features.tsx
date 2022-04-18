@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
+import Image from 'next/image';
 
 import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
@@ -17,19 +17,19 @@ const FEATURES = [
 		id: 'infinite-liquidity',
 		title: 'homepage.features.infinite-liquidity.title',
 		copy: 'homepage.features.infinite-liquidity.copy',
-		image: <Img src={InfiniteLiquidityIcon} alt="" />,
+		image: <Image src={InfiniteLiquidityIcon} alt="" />,
 	},
 	{
 		id: 'zero-slippage',
 		title: 'homepage.features.zero-slippage.title',
 		copy: 'homepage.features.zero-slippage.copy',
-		image: <Img src={SlippageIcon} alt="" />,
+		image: <Image src={SlippageIcon} alt="" />,
 	},
 	{
 		id: 'synthetic-futures',
 		title: 'homepage.features.synthetic-futures.title',
 		copy: 'homepage.features.synthetic-futures.copy',
-		image: <Img src={FuturesIcon} alt="" />,
+		image: <Image src={FuturesIcon} alt="" />,
 		comingSoon: true,
 	},
 ];

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -218,7 +218,7 @@ const Orders: React.FC<OrdersProps> = ({
 				noResultsMessage={
 					isLoaded && orders.length === 0 ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
+							<Image src={NoNotificationIcon} />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined

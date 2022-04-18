@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { customShortCRatioState, shortCRatioState } from 'store/ui';
 import { formatPercent } from 'utils/formatters/number';
 
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import {
 	NumericValue,
@@ -90,7 +90,10 @@ export const CRatioSelector: FC<CRatioSelectorProps> = () => {
 					shortCRatioTooLow={shortCRatioTooLow}
 				>
 					{formatPercent(shortCRatio, { minDecimals: 0 })}{' '}
-					<Svg src={CaretDownIcon} viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`} />
+					<Image
+						src={CaretDownIcon}
+						viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
+					/>
 				</StyledDropdownSelection>
 			</StyledSolidTooltip>
 		</Container>

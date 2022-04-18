@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
 
@@ -196,7 +196,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded }) => {
 				noResultsMessage={
 					isLoaded && Trades.length === 0 ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
+							<Image src={NoNotificationIcon} />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined

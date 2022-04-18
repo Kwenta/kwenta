@@ -2,7 +2,7 @@ import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import media from 'styles/media';
 import {
@@ -18,7 +18,7 @@ import Logo from 'sections/shared/Layout/Logo';
 import { EXTERNAL_LINKS, PROD_HOSTNAME } from 'constants/links';
 import { HEADER_HEIGHT } from 'constants/ui';
 
-import SystemDownIcon from 'assets/svg/app/system-down.svg';
+import SystemDownIcon from 'assets/svg/app/system-down.svg?include';
 import DiscordIcon from 'assets/svg/social/discord.svg';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 import GithubIcon from 'assets/svg/social/github.svg';
@@ -35,17 +35,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <Svg src={DiscordIcon} />,
+		icon: <Image src={DiscordIcon} />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <Svg src={TwitterIcon} />,
+		icon: <Image src={TwitterIcon} />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <Svg src={GithubIcon} />,
+		icon: <Image src={GithubIcon} />,
 	},
 ];
 

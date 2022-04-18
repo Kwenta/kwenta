@@ -10,7 +10,7 @@ import { useRecoilValue } from 'recoil';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import { components } from 'react-select';
 import Select from 'components/Select';
@@ -80,9 +80,9 @@ export const WalletActions: FC = () => {
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Switch' ? (
-						<Svg src={SwitchWalletIcon} height={17} />
+						<Image src={SwitchWalletIcon} height={17} />
 					) : (
-						<Svg src={DisconnectIcon} height={17} />
+						<Image src={DisconnectIcon} height={17} />
 					))}
 			</LabelContainer>
 		);

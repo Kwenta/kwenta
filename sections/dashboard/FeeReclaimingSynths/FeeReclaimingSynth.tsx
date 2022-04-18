@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Countdown, { zeroPad } from 'react-countdown';
 import addTime from 'date-fns/add';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
 
@@ -104,7 +104,7 @@ const FeeReclaimingSynth: FC<{
 				<ColTitle>
 					{hasWaitingPeriod ? (
 						<PendingIcon>
-							<Svg src={CircleEllipsis} />
+							<Image src={CircleEllipsis} />
 						</PendingIcon>
 					) : (
 						<Change {...{ currencyKey }} value={fee.mul(price)} />

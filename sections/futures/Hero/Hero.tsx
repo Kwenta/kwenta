@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import Card from 'components/Card';
 import Button from 'components/Button';

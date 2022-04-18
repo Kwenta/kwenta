@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
+import Image from 'next/image';
 
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 

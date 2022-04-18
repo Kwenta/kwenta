@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
@@ -102,7 +102,7 @@ const FAQ = () => {
 												{link && (
 													<ExplainerVideoLink>
 														<ExternalLink href={link}>
-															{t('homepage.faq.tabs.explainer-video')} <Svg src={LinkIcon} />
+															{t('homepage.faq.tabs.explainer-video')} <Image src={LinkIcon} />
 														</ExternalLink>
 													</ExplainerVideoLink>
 												)}

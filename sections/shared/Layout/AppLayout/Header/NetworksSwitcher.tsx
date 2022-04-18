@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State, networkState } from 'store/wallet';
 import Select from 'components/Select';
-import Img, { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import Button from 'components/Button';
@@ -67,7 +67,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={17} />}
 				{t(label)}
 				{postfixIcon &&
-					(postfixIcon === 'Link' ? <Svg src={LinkIcon} /> : <Svg src={SwitchIcon} />)}
+					(postfixIcon === 'Link' ? <Image src={LinkIcon} /> : <Image src={SwitchIcon} />)}
 			</LabelContainer>
 		</ExternalLink>
 	);

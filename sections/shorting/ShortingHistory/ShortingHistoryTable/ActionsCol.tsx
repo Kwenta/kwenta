@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 import BlockExplorer from 'containers/BlockExplorer';

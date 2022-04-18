@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import Button from 'components/Button';
 import Text from 'components/Text';

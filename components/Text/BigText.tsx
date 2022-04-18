@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import Heading from './Heading';
 import kwentaLogo from 'assets/svg/earn/KWENTA.svg';
 

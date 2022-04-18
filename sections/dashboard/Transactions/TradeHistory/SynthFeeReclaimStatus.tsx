@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import Tippy from '@tippyjs/react';
 import { differenceInMinutes } from 'date-fns';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -41,11 +41,11 @@ const SynthFeeReclaimStatus: FC<{ trade: SynthExchangeResult }> = ({ trade }) =>
 		>
 			{isConfirmed ? (
 				<ConfirmedIcon>
-					<Svg src={CircleTick} />
+					<Image src={CircleTick} />
 				</ConfirmedIcon>
 			) : (
 				<PendingIcon>
-					<Svg src={CircleEllipsis} />
+					<Image src={CircleEllipsis} />
 				</PendingIcon>
 			)}
 		</Tooltip>

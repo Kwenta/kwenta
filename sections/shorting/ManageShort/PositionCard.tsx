@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { BigNumber } from 'ethers';
 import { wei } from '@synthetixio/wei';
 
@@ -150,7 +150,10 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 	const arrowIcon = (
 		<ArrowIcon>
-			<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
+			<Image
+				src={ArrowRightIcon}
+				viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`}
+			/>
 		</ArrowIcon>
 	);
 
@@ -290,7 +293,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 								arrow={false}
 							>
 								<InfoTooltipContent>
-									<Svg src={InfoIcon} />
+									<Image src={InfoIcon} />
 								</InfoTooltipContent>
 							</InfoTooltip>
 						</DataField>

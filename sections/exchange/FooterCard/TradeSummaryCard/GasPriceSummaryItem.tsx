@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { isL2State, isMainnetState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import { NO_VALUE, ESTIMATE_VALUE } from 'constants/placeholder';
 
@@ -90,7 +90,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 							>
 								<GasPriceItem>
 									{gasPriceItem}
-									<Svg src={InfoIcon} />
+									<Image src={InfoIcon} />
 								</GasPriceItem>
 							</GasPriceCostTooltip>
 						) : (

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import styled from 'styled-components';
 
 import media from 'styles/media';

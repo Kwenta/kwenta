@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
-import Img, { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import {
 	CurrencyKey,
 	AFTER_HOURS_SYNTHS,

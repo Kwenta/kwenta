@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import castArray from 'lodash/castArray';
 import add from 'date-fns/add';

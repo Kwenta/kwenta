@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import Fade from 'assets/svg/marketing/fade.svg';
@@ -62,7 +62,7 @@ const Assets = () => {
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
 						<AssetsImage src={AssetCollections} alt="" webp={true} />
-						<Svg src={Fade} />
+						<Image src={Fade} />
 					</AssetCollectionWrapper>
 					<Col>
 						{title}

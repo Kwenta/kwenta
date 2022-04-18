@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
@@ -20,7 +20,7 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<Svg src={LogoNoTextSVG} />
+			<Image src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
 			<SynthetixContainer>
 				<PoweredBySynthetix />
