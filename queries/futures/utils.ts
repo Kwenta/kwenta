@@ -202,6 +202,7 @@ export const calculateFundingRate = (
 
 export const newCalculateFundingRate = (
 	minTimestamp: number,
+	periodLength: number,
 	fundingRates: FundingRateUpdate[],
 	assetPrice: number,
 	currentFundingRate: number
@@ -215,32 +216,32 @@ export const newCalculateFundingRate = (
 	let lastTimestamp = minTimestamp;
 
 	// iterate through funding updates
-	console.log(fundingRates)
 	for (let ind = 0; ind < numUpdates-1; ind++) {
 		const minFunding = fundingRates[ind];
 		const maxFunding = fundingRates[ind + 1];
-
-		console.log(ind)
-		console.log(minFunding)
-		console.log(maxFunding)
 
 		const fundingStart = new Wei(minFunding.funding, 18, true);
 		const fundingEnd = new Wei(maxFunding.funding, 18, true);
 
 		const fundingDiff = fundingStart.sub(fundingEnd);
-		const timeDiff = maxFunding.timestamp - Math.min(minFunding.timestamp, lastTimestamp);
+		const timeDiff = maxFunding.timestamp - Math.max(minFunding.timestamp, lastTimestamp);
+		const timeMax = maxFunding.timestamp - minFunding.timestamp;
 
-		fundingPaid += fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice).toNumber();
-		timeTotal += timeTotal;
+		if(timeMax > 0) {
+			fundingPaid += fundingDiff.mul(timeDiff).div(timeMax).toNumber();
+			timeTotal += timeDiff;
+		}
+		lastTimestamp = maxFunding.timestamp;
 	}
 
 	// add funding from current rate
-	const timeLeft = Math.max(SECONDS_PER_DAY - timeTotal, 0);
+	const timeLeft = Math.max(periodLength - timeTotal, 0);
 	if(timeLeft > 0) {
-		fundingPaid += wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).div(assetPrice).toNumber();
+		fundingPaid += wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).mul(assetPrice).toNumber();
 	}
 
-	return fundingPaid;
+	const fundingRate = fundingPaid / assetPrice;
+	return fundingRate;
 };
 
 

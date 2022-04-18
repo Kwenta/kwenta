@@ -11,12 +11,13 @@ import { SECONDS_PER_DAY } from './constants';
 import { getFuturesEndpoint, newCalculateFundingRate } from './utils';
 import { wei } from '@synthetixio/wei';
 import { getDisplayAsset } from 'utils/futures';
-import { FundingRate } from './types';
+import { FundingRateUpdate } from './types';
 
 
 const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,
 	assetPrice: number | null,
+	periodLength: number,
 	currentFundingRate: number | undefined,
 	options?: UseQueryOptions<any | null>
 ) => {
@@ -33,10 +34,9 @@ const useGetAverageFundingRateForMarket = (
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 			if (!marketAddress) return null;
-			const minTimestamp = Math.floor(Date.now() / 1000) - SECONDS_PER_DAY;
-
+			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 			try {
-				const response: {string: FundingRate[]} = await request(
+				const response: {string: FundingRateUpdate[]} = await request(
 					futuresEndpoint,
 					gql`
 						query fundingRateUpdates($market: String!, $minTimestamp: BigInt!) {
@@ -77,13 +77,14 @@ const useGetAverageFundingRateForMarket = (
 					{ market: marketAddress, minTimestamp: minTimestamp }
 				);
 				const responseFilt = Object.values(response)
-					.filter((value: FundingRate[]) => value.length > 0)
-					.map((entry: FundingRate[]): FundingRate => entry[0])
-					.sort((a: FundingRate, b: FundingRate) => a.timestamp - b.timestamp)
+					.filter((value: FundingRateUpdate[]) => value.length > 0)
+					.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
+					.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp)
 
 				return responseFilt && !!currentFundingRate
 					? newCalculateFundingRate(
 						minTimestamp,
+						periodLength,
 						responseFilt,
 						assetPrice,
 						currentFundingRate

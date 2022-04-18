@@ -21,6 +21,8 @@ import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -51,6 +53,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const fundingRatesQuery = useGetAverageFundingRateForMarkets(
 		baseCurrencyKey,
 		basePriceRate,
+		PERIOD_IN_SECONDS[Period.ONE_HOUR],
 		marketSummary?.currentFundingRate.toNumber()
 	);
 	const avgFundingRates = fundingRatesQuery?.data ?? null;
