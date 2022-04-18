@@ -20,6 +20,7 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -46,6 +47,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
+
+	const fundingRatesQuery = useGetAverageFundingRateForMarkets(
+		baseCurrencyKey,
+		basePriceRate,
+		marketSummary?.currentFundingRate.toNumber()
+	);
+	const avgFundingRates = fundingRatesQuery?.data ?? null;
+	avgFundingRates ? console.log(avgFundingRates) : null;
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
