@@ -8,15 +8,25 @@ import { isL2State, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesEndpoint, calculateFundingRate } from './utils';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { getDisplayAsset } from 'utils/futures';
 import { FundingRateUpdate } from './types';
 
-const useGetAverageFundingRateForMarkets = (
-	currencyKeys: string[] | [],
+type FundingRateInput = {
+	currencyKey: string,
 	assetPrice: number | null,
+	currentFundingRate: number | undefined
+};
+
+export type FundingRateResponse = {
+	asset: string,
+	fundingRate: Wei | null
+};
+
+
+const useGetAverageFundingRateForMarkets = (
+	fundingRateInputs: FundingRateInput[] | [],
 	periodLength: number,
-	currentFundingRate: number | undefined,
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -26,7 +36,7 @@ const useGetAverageFundingRateForMarkets = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQueries(
-		currencyKeys.map((currencyKey) => {
+		fundingRateInputs.map(({ currencyKey, assetPrice, currentFundingRate }) => {
 			return {
 				queryKey: QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || '', assetPrice, currentFundingRate),
 				queryFn: async () => {
@@ -81,15 +91,19 @@ const useGetAverageFundingRateForMarkets = (
 							.map((entry: FundingRateUpdate[]): FundingRateUpdate => entry[0])
 							.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
 
-						return responseFilt && !!currentFundingRate
-							? calculateFundingRate(
-								minTimestamp,
-								periodLength,
-								responseFilt,
-								assetPrice,
-								currentFundingRate
-							)
-							: wei(0);
+
+						const fundingRateResponse: FundingRateResponse = {
+							asset: currencyKey,
+							fundingRate: responseFilt && !!currentFundingRate ?
+								calculateFundingRate(
+									minTimestamp,
+									periodLength,
+									responseFilt,
+									assetPrice,
+									currentFundingRate
+								) : wei(0)
+						}
+						return fundingRateResponse;
 					} catch (e) {
 						console.log(e);
 						return null;
