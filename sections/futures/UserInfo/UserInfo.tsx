@@ -17,6 +17,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
+import OpenOrdersTable from './OpenOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -84,6 +85,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				active: activeTab === FuturesTab.TRADES,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				active: activeTab === FuturesTab.ORDERS,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
+			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
 	);
@@ -121,6 +128,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					isLoading={futuresPositionHistoryQuery.isLoading}
 					isLoaded={futuresPositionHistoryQuery.isFetched}
 				/>
+			</TabPanel>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+				<OpenOrdersTable currencyKey={marketAsset} />
 			</TabPanel>
 		</>
 	);

@@ -185,6 +185,7 @@ export const QUERY_KEYS = {
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: (networkId: NetworkId) => ['futures', 'totalTrades', networkId],
 		TotalVolume: ['futures', 'totalVolume'],
+		OpenOrders: (networkId: NetworkId) => ['futures', 'openOrders', networkId],
 	},
 };
 
