@@ -8,8 +8,9 @@ export const LabelWithInput = (props: {
 	className?: string;
 	placeholder: string;
 	onChange?: any;
-	disabled?: boolean
+	disabled?: boolean;
 	isPositionSize?: boolean;
+	marketAsset?: string;
 }) => {
 	return (
 		<>
@@ -30,6 +31,7 @@ export const LabelWithInput = (props: {
 							}
 						}}
 					/>
+					{/* {props.marketAsset ? <span>{props.marketAsset}</span> : ''} */}
 				</StyledLabel>
 			</InputContainer>
 		</>
@@ -71,6 +73,5 @@ const LabelText = styled.p`
 
 	color: #ece8e3;
 `;
-
 
 export default LabelWithInput;

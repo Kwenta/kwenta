@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import { BigNumber } from '@ethersproject/bignumber';
-import cl from '../../../soupStuff';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
@@ -26,10 +25,6 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 }: any) => {
 	const { t } = useTranslation();
 
-	/**
-	 * @todo Working with BigNumbers is complicated due to underflow/overflow
-	 *       errors AND because of errors when the input is a `float` type
-	 */
 	// BigNumbers
 	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
 	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
@@ -63,32 +58,28 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 				if (_stateVarName === 'entryPrice') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setEntryPrice(ethers.BigNumber.from(clampedInput * scalar));
-					cl('entryPrice: ', entryPrice.toString());
 				}
 
 				if (_stateVarName === 'exitPrice') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setExitPrice(ethers.BigNumber.from(clampedInput * scalar));
-					cl('exitPrice: ', exitPrice.toString());
 				}
 
 				if (_stateVarName === 'stopLoss') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(3));
 					setStopLoss(ethers.BigNumber.from(clampedInput * scalar));
-					cl('stopLoss: ', stopLoss.toString());
 				}
 
 				if (_stateVarName === 'marketAssetPositionSize') {
 					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(4));
 					setMarketAssetPositionSize(ethers.BigNumber.from(clampedInput * scalar));
-					cl('marketAssetPositionSize: ', marketAssetPositionSize.toString());
 				}
 			}
 		}
 	};
 
 	/**
-	 * @todo Save this for last!
+	 * @todo Does this form need to do anything once the PositionButton is clicked?
 	 */
 	const handleCalculateProfit = (e: any) => {
 		e.preventDefault();
@@ -177,6 +168,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 									onChange={(e: any) =>
 										handleSetInput(e, marketAssetPositionSize, 'marketAssetPositionSize')
 									}
+									marketAsset={marketAsset}
 								/>
 							</LeftColumn>
 							{/* RIGHT column */}
@@ -198,6 +190,7 @@ const ProfitCalculator: React.FC<ProfitCalculatorProps> = ({
 									labelText={'Position Size: '}
 									placeholder={`$305,532.28 sUSD`}
 									disabled={true}
+									marketAsset={'sUSD'}
 								/>
 							</RightColumn>
 						</ProfitCalcGrid>
