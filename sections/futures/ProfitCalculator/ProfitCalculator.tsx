@@ -194,6 +194,7 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 						<StatsGrid>
 							<PnLs
 								scalar={scalar}
+								amountInAsset={marketAssetPositionSize}
 								entryPrice={entryPrice}
 								exitPrice={exitPrice}
 								stopLoss={stopLoss}

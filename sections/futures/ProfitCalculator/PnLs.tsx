@@ -5,6 +5,7 @@ import StatWithContainer from './StatWithContainer';
 
 export const PnLs = (props: {
 	scalar: number;
+	amountInAsset: BigNumber;
 	entryPrice: BigNumber;
 	exitPrice: BigNumber;
 	stopLoss: BigNumber;
@@ -20,8 +21,8 @@ export const PnLs = (props: {
 		parseFloat(props.exitPrice.toString()) !== 0 &&
 		parseFloat(props.stopLoss.toString()) !== 0
 	) {
-		profit = props.exitPrice.sub(props.entryPrice).toNumber();
-		loss = props.stopLoss.sub(props.entryPrice).toNumber();
+		profit = props.exitPrice.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
+		loss = props.stopLoss.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
 
 		rateOfReturn = (profit / Math.abs(loss)).toFixed(2);
 	}
