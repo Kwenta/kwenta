@@ -31,7 +31,7 @@ export const LabelWithInput = (props: {
 							}
 						}}
 					/>
-					{/* {props.marketAsset ? <span>{props.marketAsset}</span> : ''} */}
+					{props.marketAsset ? <div>{props.marketAsset}</div> : ''}
 				</StyledLabel>
 			</InputContainer>
 		</>

@@ -13,7 +13,7 @@ type CustomInputProps = {
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-const CustomInput: React.FC<CustomInputProps> = ({
+export const CustomInput: React.FC<CustomInputProps> = ({
 	value,
 	placeholder,
 	onChange,
