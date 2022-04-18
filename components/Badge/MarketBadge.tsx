@@ -32,32 +32,37 @@ export const TimerBadge: FC<TimerBadgeProps> = ({ isOpen, description, timer }) 
 	);
 };
 
+/*
+  This component is used to display the market state (open/closed) and the time until the next market state.
+  We have removed the timer functionality from the component due to inconsistencies in the data.
+  leaving the timer here in case we need to turn it on again.
+*/
 export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey, description }) => {
 	const { t } = useTranslation();
-	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
+	// const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
-	const [timer, setTimer] = useState<string>('');
+	// const [timer, setTimer] = useState<string>('');
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
 
-	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
-	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
+	// const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
+	// const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 
-	const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
-	const clock = useMarketHoursTimer(timerSetting ?? null);
+	// const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
+	// const clock = useMarketHoursTimer(timerSetting ?? null);
 
-	useEffect(() => {
-		setTimer(clock);
-	}, [timerSetting]);
+	// useEffect(() => {
+	// 	setTimer(clock);
+	// }, [timerSetting]);
 
-	if (isOpen !== null && timer) {
-		return <TimerBadge description={description || 'short'} isOpen={isOpen} timer={timer} />;
+	// if (isOpen !== null && timer) {
+	// 	return <TimerBadge description={description || 'short'} isOpen={isOpen} timer={timer} />;
+	// }
+
+	if (!isMarketClosed) {
+		return null;
 	}
 
-	if (isMarketClosed) {
-		return <Badge>{t(`futures.market.state.${marketClosureReason}`)}</Badge>;
-	}
-
-	return null;
+	return <Badge>{t(`futures.market.state.${marketClosureReason}`)}</Badge>;
 };
 
 export default MarketBadge;

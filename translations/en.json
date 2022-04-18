@@ -654,7 +654,6 @@
 					},
 					"market-closure": {
 						"title": "{{baseCurrencyKey}} market has been paused",
-						"timer-subtitle": "Trading activity will resume in: ",
 						"subtitle": ""
 					},
 					"system-upgrade": {

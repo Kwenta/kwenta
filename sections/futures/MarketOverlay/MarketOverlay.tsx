@@ -12,8 +12,6 @@ import {
 	FIAT_SYNTHS,
 	COMMODITY_SYNTHS,
 } from 'constants/currency';
-import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
-import { marketNextOpen } from 'utils/marketHours';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 const MarketOverlay: FC<{
@@ -21,28 +19,6 @@ const MarketOverlay: FC<{
 	baseCurrencyKey: CurrencyKey;
 }> = ({ marketClosureReason, baseCurrencyKey }) => {
 	const { t } = useTranslation();
-	// const linkToAfterHoursMarket = useMemo(() => AFTER_HOURS_SYNTHS.has(baseCurrencyKey), [baseCurrencyKey]);
-	const showMarketIsReopeningSoon = useMemo(
-		() =>
-			AFTER_HOURS_SYNTHS.has(baseCurrencyKey) ||
-			TSE_SYNTHS.has(baseCurrencyKey) ||
-			LSE_SYNTHS.has(baseCurrencyKey) ||
-			FIAT_SYNTHS.has(baseCurrencyKey) ||
-			COMMODITY_SYNTHS.has(baseCurrencyKey),
-		[baseCurrencyKey]
-	);
-
-	const TimerDisplay = () => {
-		const timer = useMarketHoursTimer(marketNextOpen(baseCurrencyKey) ?? null);
-
-		// not sure if there is a better way
-		return timer !== '0:00:00' ? (
-			<StyledSubText>
-				{t('futures.market.chart.overlay-messages.market-closure.timer-subtitle')}
-				<StyledTimer>{timer}</StyledTimer>
-			</StyledSubText>
-		) : null;
-	};
 
 	return (
 		<OverlayContainer>
@@ -55,16 +31,12 @@ const MarketOverlay: FC<{
 							values={{ baseCurrencyKey }}
 						/>
 					</StyledText>
-					{marketClosureReason === 'market-closure' && showMarketIsReopeningSoon ? (
-						<TimerDisplay />
-					) : (
-						<StyledText>
-							<Trans
-								i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`}
-								values={{ baseCurrencyKey }}
-							/>
-						</StyledText>
-					)}
+					<StyledText>
+						<Trans
+							i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.subtitle`}
+							values={{ baseCurrencyKey }}
+						/>
+					</StyledText>
 				</OverlayContent>
 			</Overlay>
 			<AssetsImage src={StaticChart} alt="" webp={true} />
@@ -116,19 +88,4 @@ const StyledText = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	font-size: 24px;
 	padding-bottom: 10px;
-`;
-
-const StyledSubText = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-weight: bolder;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	line-height: 9px;
-	letter-spacing: 0.1px;
-	font-size: 16px;
-`;
-
-const StyledTimer = styled.span`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-weight: bolder;
-	color: white;
 `;
