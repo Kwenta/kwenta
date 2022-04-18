@@ -83,8 +83,8 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 	};
 
 	const setTargetInputValue = (source: string, target: string) => {
-		let src_: HTMLElement | null | string = document.getElementById(source),
-			target_: HTMLElement | null | string = document.getElementById(target);
+		let src_: any = document.getElementById(source),
+			target_: any = document.getElementById(target);
 
 		const scalePercentage = 100;
 
