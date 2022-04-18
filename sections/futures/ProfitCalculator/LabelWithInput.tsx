@@ -34,6 +34,8 @@ const LabelText = styled.p`
 	left: 479px;
 	top: 329px;
 
+	margin-left: 12.1px;
+
 	font-weight: 400;
 	font-size: 12px;
 	line-height: 12px;
