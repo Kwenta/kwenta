@@ -136,14 +136,7 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		FundingRate: (networkId: NetworkId, currencyKey: string | null, assetPrice: number | null) => [
-			'futures',
-			'fundingRate',
-			networkId,
-			currencyKey,
-			assetPrice,
-		],
-		FundingRates: (
+		FundingRate: (
 			networkId: NetworkId,
 			currencyKey: string | null,
 			assetPrice: number | null,

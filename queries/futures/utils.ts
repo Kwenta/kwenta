@@ -181,42 +181,22 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 };
 
 export const calculateFundingRate = (
-	minFunding: FundingRateUpdate,
-	maxFunding: FundingRateUpdate,
-	assetPrice: number
-): Wei | null => {
-	if (!minFunding || !maxFunding) return null;
-	// clean values
-	const fundingStart = new Wei(minFunding.funding, 18, true);
-	const fundingEnd = new Wei(maxFunding.funding, 18, true);
-
-	const fundingDiff = fundingStart.sub(fundingEnd); // funding is already in ratio units
-	const timeDiff = maxFunding.timestamp - minFunding.timestamp;
-
-	if (timeDiff === 0) {
-		return null; // use fallback instanteneous value, or different a calculation that uses an earlier event
-	}
-
-	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice); // convert to 24h period
-};
-
-export const newCalculateFundingRate = (
 	minTimestamp: number,
 	periodLength: number,
 	fundingRates: FundingRateUpdate[],
 	assetPrice: number,
 	currentFundingRate: number
-): number | null => {
+): Wei | null => {
 	const numUpdates = fundingRates.length;
 	if (numUpdates < 2) return null;
 
 	// variables to keep track
-	let fundingPaid = 0;
+	let fundingPaid = wei(0);
 	let timeTotal = 0;
 	let lastTimestamp = minTimestamp;
 
 	// iterate through funding updates
-	for (let ind = 0; ind < numUpdates-1; ind++) {
+	for (let ind = 0; ind < numUpdates - 1; ind++) {
 		const minFunding = fundingRates[ind];
 		const maxFunding = fundingRates[ind + 1];
 
@@ -227,8 +207,8 @@ export const newCalculateFundingRate = (
 		const timeDiff = maxFunding.timestamp - Math.max(minFunding.timestamp, lastTimestamp);
 		const timeMax = maxFunding.timestamp - minFunding.timestamp;
 
-		if(timeMax > 0) {
-			fundingPaid += fundingDiff.mul(timeDiff).div(timeMax).toNumber();
+		if (timeMax > 0) {
+			fundingPaid = fundingPaid.add(fundingDiff.mul(timeDiff).div(timeMax));
 			timeTotal += timeDiff;
 		}
 		lastTimestamp = maxFunding.timestamp;
@@ -236,14 +216,15 @@ export const newCalculateFundingRate = (
 
 	// add funding from current rate
 	const timeLeft = Math.max(periodLength - timeTotal, 0);
-	if(timeLeft > 0) {
-		fundingPaid += wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).mul(assetPrice).toNumber();
+	if (timeLeft > 0) {
+		fundingPaid = fundingPaid.add(
+			wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).mul(assetPrice)
+		);
 	}
 
-	const fundingRate = fundingPaid / assetPrice;
+	const fundingRate = fundingPaid.div(assetPrice);
 	return fundingRate;
 };
-
 
 export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
 	switch (reasonCode?.toNumber()) {

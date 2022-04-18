@@ -15,11 +15,11 @@ export const PERIOD_IN_HOURS: Record<Period, number> = {
 };
 
 export const PERIOD_IN_SECONDS: Record<Period, number> = {
-	ONE_HOUR: 60*60,
-	FOUR_HOURS: 4*60*60,
-	ONE_DAY: 24*60*60,
-	ONE_MONTH: 672*60*60,
-	ONE_WEEK: 168*60*60,
+	ONE_HOUR: 60 * 60,
+	FOUR_HOURS: 4 * 60 * 60,
+	ONE_DAY: 24 * 60 * 60,
+	ONE_MONTH: 672 * 60 * 60,
+	ONE_WEEK: 168 * 60 * 60,
 };
 
 export type PeriodLabel = {
