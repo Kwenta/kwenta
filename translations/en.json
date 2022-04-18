@@ -392,7 +392,7 @@
 				"market": "Market",
 				"oracle-price": "Oracle Price",
 				"daily-change": "24H Change",
-				"funding-rate": "Funding Rate",
+				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
