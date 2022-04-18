@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
@@ -6,7 +6,7 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import { useRateUpdateQuery }  from 'queries/rates/useRateUpdateQuery';
+import { useRateUpdateQuery } from 'queries/rates/useRateUpdateQuery';
 import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -22,9 +22,6 @@ import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import GeneralTooltip from 'components/Tooltip/TimerTooltip';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
-import { current } from 'immer';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -33,7 +30,6 @@ type MarketDetailsProps = {
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
-	const isL2 = useRecoilValue(isL2State);
 	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
@@ -54,17 +50,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
-	const oracleRateUpdateQuery = React.useMemo(
-		()=> useRateUpdateQuery(baseCurrencyKey, isL2)
-		.then((result) => {
-			if(result?.rateUpdates) {
-				const rateTime = result?.rateUpdates[0].timestamp
-				const updateTime = new Date(parseInt(rateTime) * 1000);
-				setLastOracleUpdateTime(updateTime)
-			}
-		}),
-		[exchangeRates, baseCurrencyKey]
-	)
+	useRateUpdateQuery(baseCurrencyKey).then((oracleUpdateTime) => {
+		oracleUpdateTime && setLastOracleUpdateTime(oracleUpdateTime);
+	});
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -95,19 +83,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		return {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
-				: '']: { value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
-				<GeneralTooltip 
-					preset='bottom' 
-					startTimeDate={lastOracleUpdateTime}
-				>
-					<HoverTransform>
-						{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
-					</HoverTransform>
-				</GeneralTooltip>
+				: '']: {
+				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
+					<GeneralTooltip preset="bottom" startTimeDate={lastOracleUpdateTime}>
+						<HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
+						</HoverTransform>
+					</GeneralTooltip>
 				) : (
 					NO_VALUE
-				)
-				},
+				),
+			},
 			'External Price': {
 				value:
 					externalPrice === 0
@@ -148,7 +134,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			'Open Interest': {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
-
 					<StyledTooltip
 						preset="bottom"
 						content={`Long: ${formatCurrency(
@@ -203,6 +188,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		pastPrice?.price,
 		avgFundingRate,
 		fundingRateQuery,
+		lastOracleUpdateTime,
 	]);
 
 	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';

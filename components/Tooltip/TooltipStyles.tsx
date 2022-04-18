@@ -74,7 +74,5 @@ export const ToolTipWrapper = styled.div`
 `;
 
 export const TimerTooltip = styled(Tooltip)`
-	width: 180px;
+	width: 155px;
 `;
-
-

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-
 
 type Props = {
 	startTimeDate: Date | undefined;
@@ -11,13 +10,11 @@ const formatTimeUnit = (value: number) => {
 };
 
 export default function CountUpTimer({ startTimeDate }: Props) {
+	const calcTime = useCallback(() => {
+		const nowTime = new Date().getTime();
+		let startTime = startTimeDate?.getTime() ?? nowTime;
+		if (startTimeDate === undefined) startTime = nowTime;
 
-	const nowTime = new Date().getTime();
-	let startTime = startTimeDate?.getTime() ?? nowTime
-	const showCountdown = true
-
-	const calcTime = () => {
-		if(startTimeDate === undefined) startTime = nowTime
 		const nowSeconds = nowTime / 1000;
 		const timeSince = nowSeconds - startTime / 1000;
 		const hours = Math.floor(timeSince / 3600);
@@ -27,9 +24,9 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 		return {
 			hours: formatTimeUnit(hours),
 			minutes: formatTimeUnit(minutes),
-			seconds: formatTimeUnit(seconds)
+			seconds: formatTimeUnit(seconds),
 		};
-	};
+	}, [startTimeDate]);
 
 	const [time, setTime] = useState<{ hours: string; minutes: string; seconds: string }>(calcTime());
 
@@ -39,7 +36,7 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 		return () => {
 			clearInterval(interval);
 		};
-	}, []);
+	}, [calcTime]);
 
 	return (
 		<Container>
@@ -48,6 +45,4 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 	);
 }
 
-const Container = styled.div`
-
-`;
+const Container = styled.div``;
