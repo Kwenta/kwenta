@@ -1,7 +1,6 @@
 import { FC, MouseEvent, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import Image from 'next/image';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -173,7 +172,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									</CapitalizedText>
 								)}
 							</TokenLabel>
-							{hasCurrencySelectCallback && <Image src={CaretDownIcon} />}
+							{hasCurrencySelectCallback && <img src={CaretDownIcon} />}
 						</CurrencySelector>
 						<WalletBalanceContainer disableInput={disableInput}>
 							<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
+
 import { useTranslation } from 'react-i18next';
 
 import Card from 'components/Card';
@@ -101,7 +101,7 @@ const DataPercent = styled(Data)<{ isPositive: boolean }>`
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
 `;
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled.img`
 	margin-left: 4px;
 `;
 

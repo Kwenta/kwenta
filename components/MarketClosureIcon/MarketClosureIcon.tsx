@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import Image from 'next/image';
 
 import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
 import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';

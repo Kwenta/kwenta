@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
@@ -28,7 +27,7 @@ const BasicSwap: FC = () => {
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<Image src={ArrowIcon} />
+							<img src={ArrowIcon} />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
 					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>

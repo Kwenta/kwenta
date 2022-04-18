@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
 import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
@@ -102,7 +101,7 @@ const FAQ = () => {
 												{link && (
 													<ExplainerVideoLink>
 														<ExternalLink href={link}>
-															{t('homepage.faq.tabs.explainer-video')} <Image src={LinkIcon} />
+															{t('homepage.faq.tabs.explainer-video')} <img src={LinkIcon} />
 														</ExternalLink>
 													</ExplainerVideoLink>
 												)}
@@ -145,11 +144,11 @@ const AccordionIconMixin = `
 	margin-left: 40px;
 `;
 
-const AccordionOpenIcon = styled(Svg)`
+const AccordionOpenIcon = styled.img`
 	${AccordionIconMixin};
 `;
 
-const AccordionCloseIcon = styled(Svg)`
+const AccordionCloseIcon = styled.img`
 	transform: rotate(45deg);
 	${AccordionIconMixin};
 `;

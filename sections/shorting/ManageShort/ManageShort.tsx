@@ -1,7 +1,7 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
+
 import { useTranslation } from 'react-i18next';
 import castArray from 'lodash/castArray';
 import add from 'date-fns/add';
@@ -228,7 +228,7 @@ const ManageShortTitle = styled(CardTitle)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const StyledBackIcon = styled(Svg)`
+const StyledBackIcon = styled.img`
 	width: 18px;
 	height: 18px;
 	color: ${(props) => props.theme.colors.blueberry};

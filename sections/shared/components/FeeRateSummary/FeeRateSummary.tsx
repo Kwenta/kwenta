@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import Image from 'next/image';
 
 import { NO_VALUE } from 'constants/placeholder';
 
@@ -47,7 +46,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 										<span>
 											{formatPercent(totalFeeRate.sub(baseFeeRate).toNumber(), { minDecimals: 2 })}
 										</span>
-										<Image src={TimerIcon} />
+										<img src={TimerIcon} />
 									</DynamicFeeRateItem>
 								</DynamicFeeRateTooltip>
 							</>

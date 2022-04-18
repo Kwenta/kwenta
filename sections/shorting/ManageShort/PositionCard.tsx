@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
+
 import { BigNumber } from 'ethers';
 import { wei } from '@synthetixio/wei';
 
@@ -150,10 +150,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 	const arrowIcon = (
 		<ArrowIcon>
-			<Image
-				src={ArrowRightIcon}
-				viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`}
-			/>
+			<img src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
 		</ArrowIcon>
 	);
 
@@ -293,7 +290,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 								arrow={false}
 							>
 								<InfoTooltipContent>
-									<Image src={InfoIcon} />
+									<img src={InfoIcon} />
 								</InfoTooltipContent>
 							</InfoTooltip>
 						</DataField>
@@ -373,7 +370,7 @@ const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 			: props.theme.colors.white};
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled.img`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import Fade from 'assets/svg/marketing/fade.svg';
@@ -62,7 +61,7 @@ const Assets = () => {
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
 						<AssetsImage src={AssetCollections} alt="" webp={true} />
-						<Image src={Fade} />
+						<img src={Fade} />
 					</AssetCollectionWrapper>
 					<Col>
 						{title}
@@ -133,7 +132,7 @@ const AssetCardText = styled(Paragraph)`
 	text-align: center;
 `;
 
-const AssetsImage = styled(Img)`
+const AssetsImage = styled.img`
 	max-width: 500px;
 	width: 100%;
 `;

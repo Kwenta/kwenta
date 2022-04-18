@@ -1,7 +1,7 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
+
 import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
@@ -27,7 +27,7 @@ import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import Image from 'next/image';
+
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -194,7 +194,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								interactive={true}
 							>
 								<TooltipItem>
-									<Image src={InfoIcon} />
+									<img src={InfoIcon} />
 								</TooltipItem>
 							</StyledTooltip>
 						</SummaryItemLabel>
@@ -245,7 +245,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								interactive={true}
 							>
 								<TooltipItem>
-									<Image src={InfoIcon} />
+									<img src={InfoIcon} />
 								</TooltipItem>
 							</StyledTooltip>
 						</SummaryItemLabel>

@@ -2,7 +2,6 @@ import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import Image from 'next/image';
 
 import media from 'styles/media';
 import {
@@ -35,17 +34,17 @@ const SOCIAL_LINKS = [
 	{
 		id: 'discord',
 		href: EXTERNAL_LINKS.Social.Discord,
-		icon: <Image src={DiscordIcon} />,
+		icon: <img src={DiscordIcon} />,
 	},
 	{
 		id: 'twitter',
 		href: EXTERNAL_LINKS.Social.Twitter,
-		icon: <Image src={TwitterIcon} />,
+		icon: <img src={TwitterIcon} />,
 	},
 	{
 		id: 'github',
 		href: EXTERNAL_LINKS.Social.GitHub,
-		icon: <Image src={GithubIcon} />,
+		icon: <img src={GithubIcon} />,
 	},
 ];
 
@@ -116,7 +115,7 @@ const Container = styled(FlexDivColCentered)`
 	margin-top: -${HEADER_HEIGHT};
 `;
 
-const StyledSystemDownIcon = styled(Svg)`
+const StyledSystemDownIcon = styled.img`
 	margin-bottom: 51px;
 	${media.lessThan('sm')`
 		svg {

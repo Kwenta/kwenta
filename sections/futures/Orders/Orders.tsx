@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import Image from 'next/image';
+
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -218,7 +218,7 @@ const Orders: React.FC<OrdersProps> = ({
 				noResultsMessage={
 					isLoaded && orders.length === 0 ? (
 						<TableNoResults>
-							<Image src={NoNotificationIcon} />
+							<img src={NoNotificationIcon} />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined
@@ -274,7 +274,7 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusIcon = styled(Svg)<{ status: OrderStatus }>`
+const StatusIcon = styled.img<{ status: OrderStatus }>`
 	color: ${(props) =>
 		props.status === OrderStatus.PENDING
 			? props.theme.colors.yellow

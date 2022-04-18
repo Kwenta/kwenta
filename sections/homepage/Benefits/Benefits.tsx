@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import P2CIcon from 'assets/svg/marketing/icon-p2c.svg';
 import PermissionlessIcon from 'assets/svg/marketing/icon-permissionless.svg';
@@ -22,13 +21,13 @@ const BENEFITS = [
 	},
 	{
 		id: 'trading-pair',
-		image: <Image src={RestrictionsIcon} alt="" />,
+		image: <img src={RestrictionsIcon} alt="" />,
 		title: 'homepage.benefits.trading-pair.title',
 		copy: 'homepage.benefits.trading-pair.copy',
 	},
 	{
 		id: 'permissionless',
-		image: <Image src={PermissionlessIcon} alt="" />,
+		image: <img src={PermissionlessIcon} alt="" />,
 		title: 'homepage.benefits.permissionless.title',
 		copy: 'homepage.benefits.permissionless.copy',
 	},
@@ -53,7 +52,7 @@ const Benefits = () => {
 	);
 };
 
-export const ResponsiveImage = styled(Img)`
+export const ResponsiveImage = styled.img`
 	width: 100%;
 	max-width: 1200px;
 `;

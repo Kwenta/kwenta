@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import Image from 'next/image';
+
 import Heading from './Heading';
 import kwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
@@ -26,7 +26,7 @@ const TitleText = styled(Heading)<{ $gold?: boolean }>`
 		`}
 `;
 
-const KwentaLogo = styled(Svg)`
+const KwentaLogo = styled.img`
 	margin-left: 8px;
 `;
 

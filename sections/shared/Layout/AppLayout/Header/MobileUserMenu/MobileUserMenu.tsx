@@ -1,7 +1,6 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import Image from 'next/image';
 
 import { isWalletConnectedState } from 'store/wallet';
 import { hasOrdersNotificationState } from 'store/ui';
@@ -40,9 +39,9 @@ const MobileUserMenu: FC = () => {
 							isActive={notificationsModalOpened}
 						>
 							{hasOrdersNotification ? (
-								<Image src={NotificationAlertIcon} />
+								<img src={NotificationAlertIcon} />
 							) : (
-								<Image src={NotificationIcon} />
+								<img src={NotificationIcon} />
 							)}
 						</MenuButton>
 					)}
@@ -53,7 +52,7 @@ const MobileUserMenu: FC = () => {
 						}}
 						isActive={settingsModalOpened}
 					>
-						{settingsModalOpened ? <Image src={CrossIcon} /> : <Image src={MenuIcon} />}
+						{settingsModalOpened ? <img src={CrossIcon} /> : <img src={MenuIcon} />}
 					</MenuButton>
 				</Menu>
 			</Container>

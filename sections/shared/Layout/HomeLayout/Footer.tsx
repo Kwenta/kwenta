@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 
@@ -19,13 +18,13 @@ const Footer: React.FC = () => {
 			<PoweredBySynthetix />
 			<SocialIcons>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
-					<Image src={DiscordLogo} />
+					<img src={DiscordLogo} />
 				</ExternalLink>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
-					<Image src={TwitterLogo} />
+					<img src={TwitterLogo} />
 				</ExternalLink>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Medium}>
-					<Image src={MediumLogo} />
+					<img src={MediumLogo} />
 				</ExternalLink>
 			</SocialIcons>
 		</FooterContainer>

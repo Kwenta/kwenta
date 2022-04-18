@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 
@@ -63,7 +62,7 @@ const StyledSubtext = styled(Subtext)`
 	padding-bottom: 32px;
 `;
 
-const ChartBannerImage = styled(Img)`
+const ChartBannerImage = styled.img`
 	max-width: 1440px;
 `;
 

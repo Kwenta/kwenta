@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
 
 import Card from 'components/Card';
 import Button from 'components/Button';
@@ -85,7 +84,7 @@ const BackgroundImageContainer = styled.div`
 	text-align: center;
 `;
 
-const BackgroundImage = styled(Svg)`
+const BackgroundImage = styled.img`
 	margin: 0 auto;
 `;
 

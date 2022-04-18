@@ -8,8 +8,6 @@ import { formatPercent } from 'utils/formatters/number';
 
 import clamp from 'lodash/clamp';
 
-import Image from 'next/image';
-
 import {
 	DropdownSelection,
 	NumericValue,
@@ -87,10 +85,7 @@ export const SlippageSelector: FC<SlippageSelectorProps> = () => {
 			>
 				<DropdownSelection tooltipOpened={tooltipOpened}>
 					{formatPercent(slippage / 100, { minDecimals: 2 })}{' '}
-					<Image
-						src={CaretDownIcon}
-						viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
-					/>
+					<img src={CaretDownIcon} viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`} />
 				</DropdownSelection>
 			</StyledSolidTooltip>
 		</Container>

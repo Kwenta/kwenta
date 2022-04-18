@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import i18n from 'i18n';
 
@@ -59,6 +59,6 @@ const IconContainer = styled(FlexDivRowCentered)`
 const TransactionInfo = styled(FlexDivCol)``;
 const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>``;
 
-const StyledImg = styled(Img)``;
+const StyledImg = styled.img``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };

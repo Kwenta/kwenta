@@ -1,7 +1,6 @@
 import { FC, useState, useMemo, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import { CurrencyKey, Synths } from 'constants/currency';
 import { Period, PERIOD_LABELS_MAP, PERIOD_LABELS } from 'constants/period';
@@ -231,7 +230,7 @@ const ChartCard: FC<ChartCardProps> = ({
 							/>
 						</OverlayMessage>
 					) : isLoading ? (
-						<Image src={LoaderIcon} />
+						<img src={LoaderIcon} />
 					) : noDataAvailable ? (
 						<NoData>{t('exchange.price-chart-card.no-data')}</NoData>
 					) : undefined}

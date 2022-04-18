@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import CircleTick from 'assets/svg/app/circle-tick.svg';
@@ -51,18 +50,18 @@ export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 				</span>
 				{isConfirmed && (
 					<ConfirmedIcon>
-						<Image src={CircleTick} />
+						<img src={CircleTick} />
 					</ConfirmedIcon>
 				)}
 				{isPending && (
 					<PendingIcon>
-						<Image src={CircleEllipsis} />
+						<img src={CircleEllipsis} />
 					</PendingIcon>
 				)}
 			</FlexDivRowCentered>
 			{isConfirmed && blockExplorerInstance != null && (
 				<StyledExternalLink href={blockExplorerInstance.txLink(order.hash)}>
-					<Image src={Link} viewBox={`0 0 ${Link.width} ${Link.height}`} />
+					<img src={Link} viewBox={`0 0 ${Link.width} ${Link.height}`} />
 				</StyledExternalLink>
 			)}
 		</Container>

@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
 
 import InfoIcon from 'assets/svg/app/info.svg';
 
@@ -64,7 +63,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 					arrow={false}
 				>
 					<InfoIconWrapper>
-						<Image src={InfoIcon} />
+						<img src={InfoIcon} />
 					</InfoIconWrapper>
 				</SlippageHelperTooltip>
 			</FlexDivRowCentered>

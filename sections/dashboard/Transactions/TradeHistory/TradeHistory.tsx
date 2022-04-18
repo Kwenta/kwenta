@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import Image from 'next/image';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -158,7 +157,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
 					<TableNoResults>
-						<Image src={NoNotificationIcon} />
+						<img src={NoNotificationIcon} />
 						{t('dashboard.transactions.table.no-results')}
 					</TableNoResults>
 				) : undefined
@@ -172,7 +171,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled.img`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

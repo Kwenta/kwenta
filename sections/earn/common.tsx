@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import Image from 'next/image';
 
 import Button from 'components/Button';
 import Text from 'components/Text';
@@ -37,7 +36,7 @@ export const Description = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const KwentaLogo = styled(Svg)`
+const KwentaLogo = styled.img`
 	margin-left: 8px;
 `;
 

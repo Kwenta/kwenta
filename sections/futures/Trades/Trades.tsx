@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import Image from 'next/image';
+
 import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
 
@@ -196,7 +196,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded }) => {
 				noResultsMessage={
 					isLoaded && Trades.length === 0 ? (
 						<TableNoResults>
-							<Image src={NoNotificationIcon} />
+							<img src={NoNotificationIcon} />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined
@@ -261,7 +261,7 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusIcon = styled(Svg)<{ status: TradeStatus }>`
+const StatusIcon = styled.img<{ status: TradeStatus }>`
 	color: ${(props) =>
 		props.status === TradeStatus.OPEN
 			? props.theme.colors.yellow
@@ -283,7 +283,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled.img`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

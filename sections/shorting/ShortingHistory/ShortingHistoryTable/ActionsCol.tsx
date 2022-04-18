@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
-import Image from 'next/image';
+
 import { useRouter } from 'next/router';
 
 import BlockExplorer from 'containers/BlockExplorer';
@@ -51,7 +51,7 @@ const ActionsContainer = styled(GridDivCenteredCol)`
 	}
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled.img`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

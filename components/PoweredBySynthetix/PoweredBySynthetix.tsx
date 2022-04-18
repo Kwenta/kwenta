@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { ExternalLink, Paragraph } from 'styles/common';
 import media from 'styles/media';
 import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
 
@@ -14,7 +13,7 @@ const PoweredBySynthetix = () => {
 		<Container>
 			<Text>{t('common.powered-by')}</Text>
 			<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
-				<Image src={TextLogo} height="10.5px" />
+				<img src={TextLogo} height="10.5px" />
 			</ExternalLink>
 		</Container>
 	);

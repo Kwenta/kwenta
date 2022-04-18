@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
@@ -29,7 +28,7 @@ export const CurrencyFeeReclaim: FC<CurrencyFeeReclaimProps> = ({ currencyKey })
 					/>
 				</span>
 				<PendingIcon>
-					<Image src={CircleEllipsis} />
+					<img src={CircleEllipsis} />
 				</PendingIcon>
 				<PriceAjustmentLabel>{t('common.currency.price-adjustment')}</PriceAjustmentLabel>
 			</FlexDivRowCentered>

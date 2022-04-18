@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import BalancerImage from 'assets/svg/providers/balancer.svg';
 import ArrowsIcon from 'assets/svg/app/arrows.svg';
@@ -40,7 +39,7 @@ const BalancerTradeModal: FC<BalancerTradeModalProps> = ({ onDismiss }) => {
 			{quoteCurrencyCard}
 			<VerticalSpacer>
 				<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-					<Image src={ArrowsIcon} />
+					<img src={ArrowsIcon} />
 				</SwapCurrenciesButton>
 			</VerticalSpacer>
 			{baseCurrencyCard}
@@ -98,7 +97,7 @@ const PoweredBySection = styled(FlexDivRowCentered)`
 	width: 150px;
 `;
 
-const PaddedImg = styled(Img)`
+const PaddedImg = styled.img`
 	margin-left: 8px;
 `;
 

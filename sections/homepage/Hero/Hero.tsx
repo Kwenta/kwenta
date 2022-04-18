@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
@@ -20,7 +19,7 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<Image src={LogoNoTextSVG} />
+			<img src={LogoNoTextSVG} />
 			<Header>{t('homepage.hero.title')}</Header>
 			<SynthetixContainer>
 				<PoweredBySynthetix />
@@ -65,7 +64,7 @@ const HeroImageContainer = styled(GridDiv)`
 	`}
 `;
 
-const HeroImage = styled(Img)`
+const HeroImage = styled.img`
 	max-width: 1400px;
 	${media.lessThan('md')`
 		width: 1140px;

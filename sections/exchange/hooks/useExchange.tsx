@@ -6,7 +6,6 @@ import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
 import { useTranslation } from 'react-i18next';
-import Image from 'next/image';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
@@ -1239,7 +1238,7 @@ const useExchange = ({
 					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
-					icon={<Image src={ArrowsIcon} />}
+					icon={<img src={ArrowsIcon} />}
 				/>
 			)}
 			{txApproveModalOpen && (

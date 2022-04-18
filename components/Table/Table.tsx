@@ -1,7 +1,6 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
-import Image from 'next/image';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -202,7 +201,7 @@ const TableContainer = styled.div`
 	//width: 100%;
 `;
 
-const StyledSpinner = styled(Svg)`
+const StyledSpinner = styled.img`
 	display: block;
 	margin: 30px auto;
 `;
@@ -297,13 +296,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 		`}
 `;
 
-const StyledSortDownIcon = styled(Svg)`
+const StyledSortDownIcon = styled.img`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const StyledSortUpIcon = styled(Svg)`
+const StyledSortUpIcon = styled.img`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};

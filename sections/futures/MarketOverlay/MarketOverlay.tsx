@@ -3,7 +3,6 @@ import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
-import Image from 'next/image';
 import {
 	CurrencyKey,
 	AFTER_HOURS_SYNTHS,
@@ -102,12 +101,12 @@ const OverlayContent = styled.div`
 	font-weight: 700;
 `;
 
-const AssetsImage = styled(Img)`
+const AssetsImage = styled.img`
 	width: 100%;
 	opacity: 0.08;
 `;
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled.img`
 	margin: 25px;
 `;
 
