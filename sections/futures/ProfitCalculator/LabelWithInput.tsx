@@ -1,65 +1,32 @@
 import styled from 'styled-components';
-
-const INVALID_CHARS = ['-', '+', 'e'];
+import CustomInput from '../../../components/Input/CustomInput';
 
 export const LabelWithInput = (props: {
+	value?: any;
+	right?: any;
+	style?: any;
 	id?: string;
-	labelText: string;
-	className?: string;
-	placeholder: string;
 	onChange?: any;
+	labelText: string;
 	disabled?: boolean;
-	isPositionSize?: boolean;
-	marketAsset?: string;
+	placeholder: string;
 }) => {
 	return (
 		<>
 			<LabelText>{props.labelText}</LabelText>
-			<InputContainer className={props.className}>
-				<StyledLabel>
-					<StyledInput
-						id={props.id}
-						placeholder={props.placeholder}
-						inputMode={'decimal'}
-						onChange={props.onChange}
-						type={'number'}
-						disabled={props.disabled}
-						step={props.isPositionSize ? '' : '0.01'}
-						onKeyDown={(e) => {
-							if (INVALID_CHARS.includes(e.key)) {
-								e.preventDefault();
-							}
-						}}
-					/>
-					{props.marketAsset ? <div>{props.marketAsset}</div> : ''}
-				</StyledLabel>
-			</InputContainer>
+			<CustomInput
+				id={props.id}
+				value={props.value}
+				placeholder={props.placeholder}
+				right={props.right}
+				style={props.style}
+				className={'profit-calc'}
+				disabled={props.disabled}
+				onChange={props.onChange}
+			/>
 		</>
 	);
 };
-
-const InputContainer = styled.div`
-	width: ${(props) => (props.className ? '100%' : 'auto')};
-	height: 46px;
-`;
-
-const StyledLabel = styled.label`
-	display: flex;
-	flex-direction: row;
-`;
-
-const StyledInput = styled.input`
-	/* Rectangle 2050 */
-
-	color: #ece8e3;
-	width: 100%;
-	height: 46px;
-
-	background: linear-gradient(180deg, #101010 33.26%, rgba(24, 24, 24, 0.37) 100%);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-sizing: border-box;
-	border-radius: 6px;
-`;
 
 const LabelText = styled.p`
 	width: 100.91px;

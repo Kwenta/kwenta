@@ -9,16 +9,18 @@ type CustomInputProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	disabled?: boolean;
+	id?: any;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
-export const CustomInput: React.FC<CustomInputProps> = ({
+const CustomInput: React.FC<CustomInputProps> = ({
 	value,
 	placeholder,
 	onChange,
 	right,
 	style,
+	id,
 	className,
 	disabled,
 }) => {
@@ -29,10 +31,12 @@ export const CustomInput: React.FC<CustomInputProps> = ({
 	return (
 		<CustomInputContainer style={style} className={className}>
 			<input
+				id={id}
 				disabled={disabled}
 				placeholder={placeholder}
 				value={value}
-				type="number"
+				type={id ? '' : 'number'}
+				inputMode={id ? 'decimal' : undefined}
 				onChange={handleChange}
 				onKeyDown={(e) => {
 					if (INVALID_CHARS.includes(e.key)) {
@@ -58,8 +62,11 @@ const CustomInputContainer = styled.div`
 	padding: 12px 14px 12px 10px;
 
 	input {
-		display: flex;
-		flex: 1;
+		display: ${(props) => (props.className === 'profit-calc' ? '' : 'flex')};
+		flex: ${(props) => (props.className === 'profit-calc' ? '' : '1')};
+
+		width: ${(props) => (props.className === 'profit-calc' ? '100%' : '')};
+
 		margin-right: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;

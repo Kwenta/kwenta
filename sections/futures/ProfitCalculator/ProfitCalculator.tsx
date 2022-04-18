@@ -13,12 +13,6 @@ import { PositionSide } from '../types';
 
 const scalar = 100;
 
-type ProfitCalculatorProps = {
-	// history: PositionHistory[] | null;
-	// isLoading: boolean;
-	// isLoaded: boolean;
-};
-
 const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 	const { t } = useTranslation();
 
@@ -109,7 +103,7 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 				if (source === 'market-position-size') {
 					const basePositionSize_: number =
 						(parseFloat(src_.value) * entryPrice.toNumber()) / scalar;
-					const clampedBasePositionSize = basePositionSize_.toPrecision(10);
+					const clampedBasePositionSize = basePositionSize_.toFixed(2);
 
 					target_.value = clampedBasePositionSize;
 				}
@@ -138,7 +132,6 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 				<ModalWindow>
 					<form onSubmit={handleCalculateProfit}>
 						<LabelWithInput
-							className={'entry-price'}
 							labelText={'Entry Price: '}
 							placeholder={'$43,938.11'}
 							onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}
@@ -159,13 +152,13 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 									onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
 								/>
 								<LabelWithInput
+									right={marketAsset}
+									placeholder={`23.1`}
 									id={'market-position-size'}
 									labelText={'Position Size: '}
-									placeholder={`23.1 ${marketAsset}`}
 									onChange={(e: any) =>
 										handleSetInput(e, marketAssetPositionSize, 'marketAssetPositionSize')
 									}
-									marketAsset={marketAsset}
 								/>
 							</LeftColumn>
 							{/* RIGHT column */}
@@ -185,9 +178,9 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 								<LabelWithInput
 									id={'base-position-size'}
 									labelText={'Position Size: '}
-									placeholder={`$305,532.28 sUSD`}
+									placeholder={`$305,532.28`}
 									disabled={true}
-									marketAsset={'sUSD'}
+									right={'sUSD'}
 								/>
 							</RightColumn>
 						</ProfitCalcGrid>
@@ -253,7 +246,7 @@ const ProfitCalcGrid = styled.div`
 
 const ModalWindow = styled.div`
 	height: 729px;
-	padding: 0px 30px;
+	padding: 0px 25px;
 `;
 
 export default ProfitCalculator;
