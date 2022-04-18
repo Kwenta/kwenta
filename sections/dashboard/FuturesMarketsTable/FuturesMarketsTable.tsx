@@ -15,6 +15,8 @@ import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
+import useGetAverageFundingRateForMarkets from 'queries/futures/useGetAverageFundingRateForMarkets';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -31,6 +33,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+
+	const fundingRates = useGetAverageFundingRateForMarkets(
+		synthList,
+		1,
+		PERIOD_IN_SECONDS[Period.ONE_HOUR],
+		.0034
+	);
+	console.log(fundingRates)
 
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
