@@ -77,14 +77,13 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 	};
 
 	const setTargetInputValue = (source: string, target: string) => {
+		// We set the type of these `HTMLEement`s to `any` to ignore lint errors uwu
 		let src_: any = document.getElementById(source),
 			target_: any = document.getElementById(target);
 
 		const scalePercentage = 100;
 
 		if (src_ !== null && target_ !== null) {
-			// Ignore VSCode saying that there's an error, `HTMLElement.value` does
-			// not result in an error :p
 			if (src_.value !== null && target_.value !== null) {
 				if (source === 'exit-price') {
 					const gainPercent_: number = parseFloat(src_.value) / entryPrice.toNumber();
