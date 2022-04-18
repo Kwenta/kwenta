@@ -15,7 +15,9 @@ import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
 import { getSynthDescription } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
-import useGetAverageFundingRateForMarkets, { FundingRateResponse } from 'queries/futures/useGetAverageFundingRateForMarkets';
+import useGetAverageFundingRateForMarkets, {
+	FundingRateResponse,
+} from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import { UseQueryResult } from 'react-query';
 
@@ -37,14 +39,15 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	const fundingRates = useGetAverageFundingRateForMarkets(
 		futuresMarkets.map(({ asset, price, currentFundingRate }) => {
-		return {
-			currencyKey: asset,
-			assetPrice: price.toNumber(),
-			currentFundingRate: currentFundingRate.toNumber()
-		}}),
-		PERIOD_IN_SECONDS[Period.ONE_HOUR],
+			return {
+				currencyKey: asset,
+				assetPrice: price.toNumber(),
+				currentFundingRate: currentFundingRate.toNumber(),
+			};
+		}),
+		PERIOD_IN_SECONDS[Period.ONE_HOUR]
 	);
-	console.log(fundingRates)
+	console.log(fundingRates);
 
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
@@ -54,7 +57,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
-			const fundingRateResponse = fundingRates.find(({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset);
+			const fundingRateResponse = fundingRates.find(
+				({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
+			);
 
 			return {
 				asset: market.asset,
@@ -65,7 +70,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				volume: volume?.toNumber() || 0,
 				pastPrice: pastPrice?.price || '-',
 				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
-				fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate?.toNumber() ?? null,
+				fundingRate:
+					(fundingRateResponse?.data as FundingRateResponse)?.fundingRate?.toNumber() ?? null,
 				openInterest: market.marketSize.mul(market.price).toNumber(),
 				openInterestNative: market.marketSize.toNumber(),
 				longInterest: market.marketSize
@@ -83,7 +89,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				marketSkew: market.marketSkew,
 			};
 		});
-	}, [synthsMap, futuresMarkets, fundingRates, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
+	}, [
+		synthsMap,
+		futuresMarkets,
+		fundingRates,
+		dailyPriceChangesQuery?.data,
+		futuresVolumeQuery?.data,
+		t,
+	]);
 
 	return (
 		<TableContainer>
