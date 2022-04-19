@@ -772,6 +772,20 @@
 						"cancel": "cancel"
 					}
 				},
+				"open-orders": {
+					"tab": "Open Orders",
+					"table": {
+						"market-type": "Market/Type",
+						"side": "Side",
+						"size": "Size",
+						"parameters": "Parameters",
+						"actions": "Actions"
+					},
+					"actions": {
+						"cancel": "Cancel",
+						"edit": "Edit"
+					}
+				},
 				"trades": {
 					"tab": "History",
 					"table": {

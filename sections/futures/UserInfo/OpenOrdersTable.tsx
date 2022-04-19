@@ -2,36 +2,71 @@ import React from 'react';
 import styled from 'styled-components';
 import Table from 'components/Table';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
 import { CellProps } from 'react-table';
 import Currency from 'components/Currency';
 import MarketBadge from 'components/Badge/MarketBadge';
+import { getDisplayAsset, getMarketKey } from 'utils/futures';
+import Connector from 'containers/Connector';
+import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
+import { wei } from '@synthetixio/wei';
+import { PositionSide } from '../types';
+import PositionType from 'components/Text/PositionType';
+import { formatCurrency } from 'utils/formatters/number';
+import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 
 type OpenOrdersTableProps = {
 	currencyKey: CurrencyKey;
 };
 
 const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
+	const { t } = useTranslation();
+	const { network } = Connector.useContainer();
+	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const openOrdersQuery = useGetFuturesOpenOrders(currencyKey);
+	const futuresPositionQuery = useGetFuturesPositionForMarket(
+		getMarketKey(currencyKey, network.id)
+	);
+
+	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	const gasSpeed = useRecoilValue(gasSpeedState);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
+
+	const cancelOrderTxn = useSynthetixTxn(
+		`FuturesMarket${getDisplayAsset(currencyKey)}`,
+		'cancelNextPriceOrder',
+		[walletAddress],
+		gasPrice,
+		{ enabled: !!currencyKey && !!walletAddress }
+	);
 
 	const data = React.useMemo(() => {
 		const openOrders = openOrdersQuery?.data ?? [];
+		const positionSize = futuresPositionQuery?.data?.position?.notionalValue ?? wei(0);
 
 		return openOrders.map((order) => ({
 			asset: order.asset,
-			market: order.market,
+			market: (order.asset[0] === 's' ? order.asset.slice(1) : order.asset) + '-PERP',
+			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
+			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			timestamp: order.timestamp,
 		}));
-	}, [openOrdersQuery]);
+	}, [openOrdersQuery, futuresPositionQuery]);
 
 	return (
 		<Table
 			data={data}
 			highlightRowsOnHover
+			showPagination
 			columns={[
 				{
-					Header: <div>Market/Type</div>,
+					Header: <div>{t('futures.market.user.open-orders.table.market-type')}</div>,
 					accessor: 'market',
 					Cell: (cellProps: CellProps<any>) => {
 						return (
@@ -48,37 +83,52 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 									{cellProps.row.original.market}
 									<MarketBadge currencyKey={cellProps.row.original.asset} />
 								</StyledText>
-								<StyledValue>Next-Price</StyledValue>
+								<StyledValue>{cellProps.row.original.orderType}</StyledValue>
 							</MarketContainer>
+						);
+					},
+					width: 198,
+				},
+				{
+					Header: <div>{t('futures.market.user.open-orders.table.side')}</div>,
+					accessor: 'side',
+					Cell: (cellProps: CellProps<any>) => {
+						return (
+							<div>
+								<PositionType side={cellProps.row.original.side} />
+							</div>
+						);
+					},
+					width: 90,
+				},
+				{
+					Header: <div>{t('futures.market.user.open-orders.table.size')}</div>,
+					accessor: 'size',
+					Cell: (cellProps: CellProps<any>) => {
+						return (
+							<div>{formatCurrency(Synths.sUSD, cellProps.row.original.size, { sign: '$' })}</div>
 						);
 					},
 				},
 				{
-					Header: <div>Side</div>,
-					accessor: 'side',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>-</div>;
-					},
-				},
-				{
-					Header: <div>Size</div>,
-					accessor: 'size',
-					Cell: (cellProps: CellProps<any>) => {
-						return <div>{cellProps.row.original.size}</div>;
-					},
-				},
-				{
-					Header: <div>Parameters</div>,
+					Header: <div>{t('futures.market.user.open-orders.table.parameters')}</div>,
 					accessor: 'parameters',
 					Cell: (cellProps: CellProps<any>) => {
 						return <div>-</div>;
 					},
 				},
 				{
-					Header: <div>Actions</div>,
-					accessor: 'action',
+					Header: <div>{t('futures.market.user.open-orders.table.actions')}</div>,
+					accessor: 'actions',
 					Cell: (cellProps: CellProps<any>) => {
-						return <div></div>;
+						return (
+							<div style={{ display: 'flex' }}>
+								<CancelButton onClick={() => cancelOrderTxn.mutate()}>
+									{t('futures.market.user.open-orders.actions.cancel')}
+								</CancelButton>
+								<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>
+							</div>
+						);
 					},
 				},
 			]}
@@ -118,6 +168,25 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const EditButton = styled.button`
+	border: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
+	height: 20px;
+	box-sizing: border-box;
+	border-radius: 10px;
+	cursor: pointer;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 10px;
+	padding: initial 8px;
+`;
+
+const CancelButton = styled(EditButton)`
+	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
+	color: ${(props) => props.theme.colors.common.primaryRed};
+	margin-right: 8px;
 `;
 
 export default OpenOrdersTable;
