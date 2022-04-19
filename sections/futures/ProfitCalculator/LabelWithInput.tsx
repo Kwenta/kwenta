@@ -2,9 +2,8 @@ import styled from 'styled-components';
 import CustomInput from '../../../components/Input/CustomInput';
 
 export const LabelWithInput = (props: {
-	value?: any;
+	defaultValue?: any;
 	right?: any;
-	style?: any;
 	id?: string;
 	onChange?: any;
 	labelText: string;
@@ -16,10 +15,9 @@ export const LabelWithInput = (props: {
 			<LabelText>{props.labelText}</LabelText>
 			<CustomInput
 				id={props.id}
-				value={props.value}
+				defaultValue={props.defaultValue}
 				placeholder={props.placeholder}
 				right={props.right}
-				style={props.style}
 				className={'profit-calc'}
 				disabled={props.disabled}
 				onChange={props.onChange}

@@ -10,12 +10,14 @@ type CustomInputProps = {
 	className?: string;
 	disabled?: boolean;
 	id?: any;
+	defaultValue?: any;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
 
 const CustomInput: React.FC<CustomInputProps> = ({
 	value,
+	defaultValue,
 	placeholder,
 	onChange,
 	right,
@@ -32,6 +34,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 		<CustomInputContainer style={style} className={className}>
 			<input
 				id={id}
+				defaultValue={defaultValue}
 				disabled={disabled}
 				placeholder={placeholder}
 				value={value}
