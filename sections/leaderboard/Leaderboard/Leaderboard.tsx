@@ -17,6 +17,7 @@ import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
+import useENS from 'hooks/useENS';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -33,6 +34,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
 	const [searchTerm, setSearchTerm] = useState<string | undefined>();
 	const [selectedTrader, setSelectedTrader] = useState('');
+	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
 
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -44,6 +46,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		if (router.query.tab) {
 			const trader = router.query.tab[0];
 			setSelectedTrader(trader);
+		} else {
+			setSelectedTrader('');
 		}
 		return null;
 	}, [router.query]);
@@ -109,9 +113,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		}
 	};
 
-	const onClickTrader = (trader: string) => {
+	const onClickTrader = (trader: string, ensName: string | null) => {
 		setSearchTerm('');
 		setSelectedTrader(trader);
+		setTraderENSName(ensName);
 		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
 
@@ -128,6 +133,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				{selectedTrader !== '' ? (
 					<TraderHistory
 						trader={selectedTrader}
+						traderENSName={traderENSName}
 						resetSelection={() => setSelectedTrader('')}
 						compact={compact}
 					/>
@@ -166,13 +172,35 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 											<></>
 										),
 										accessor: 'trader',
-										Cell: (cellProps: CellProps<any>) => (
-											<StyledOrderType onClick={() => onClickTrader(cellProps.row.original.trader)}>
-												{compact && cellProps.row.original.rank + '. '}
-												<StyledTrader>{cellProps.row.original.traderShort}</StyledTrader>
-												{getMedal(cellProps.row.index + 1)}
-											</StyledOrderType>
-										),
+										Cell: (cellProps: CellProps<any>) => {
+											const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+											return (
+												<StyledOrderType
+													onClick={() => onClickTrader(cellProps.row.original.trader, ensName)}
+												>
+													{compact && cellProps.row.original.rank + '. '}
+													<StyledTrader>
+														{ensName ? (
+															<>
+																{ensAvatar && (
+																	<img
+																		src={ensAvatar}
+																		alt={ensName}
+																		width={16}
+																		height={16}
+																		style={{ borderRadius: '50%', marginRight: '8px' }}
+																	/>
+																)}
+																{ensName}
+															</>
+														) : (
+															cellProps.row.original.traderShort
+														)}
+													</StyledTrader>
+													{getMedal(cellProps.row.index + 1)}
+												</StyledOrderType>
+											);
+										},
 										width: 175,
 									},
 									{
