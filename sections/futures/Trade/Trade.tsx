@@ -179,7 +179,7 @@ const Trade: React.FC = () => {
 	const placeOrderTranslationKey = React.useMemo(() => {
 		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
 		return !futuresMarketsPosition?.remainingMargin ||
-			futuresMarketsPosition.remainingMargin < wei('50')
+			futuresMarketsPosition.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: 'futures.market.trade.button.open-position';
 	}, [futuresMarketsPosition]);
