@@ -25,7 +25,7 @@ const useGetAverageFundingRateForMarket = (
 	const { synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network);
 
-	return useQuery<any | null>(
+	return useQuery<Wei | null>(
 		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || '', assetPrice, currentFundingRate),
 		async () => {
 			if (!currencyKey || !assetPrice) return null;
