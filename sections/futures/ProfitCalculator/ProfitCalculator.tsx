@@ -93,29 +93,26 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 
 		const scalePercentage = 100;
 
-		if (src_ !== null && target_ !== null) {
-			if (src_.value !== null && target_.value !== null) {
-				if (source === 'exit-price') {
-					const gainPercent_: number = parseFloat(src_.value) / entryPrice.toNumber();
-					const clampedGainPercent = (gainPercent_ * scalePercentage).toPrecision(3);
+		if (src_?.value !== null && target_?.value !== null) {
+			if (source === 'exit-price') {
+				const gainPercent_: number = parseFloat(src_.value) / entryPrice.toNumber();
+				const clampedGainPercent = (gainPercent_ * scalePercentage).toPrecision(3);
 
-					target_.value = clampedGainPercent;
-				}
+				target_.value = clampedGainPercent;
+			}
 
-				if (source === 'stop-loss') {
-					const lossPercent_: number = parseFloat(src_.value) / stopLoss.toNumber();
-					const clampedLossPercent = (lossPercent_ * scalePercentage).toPrecision(3);
+			if (source === 'stop-loss') {
+				const lossPercent_: number = parseFloat(src_.value) / stopLoss.toNumber();
+				const clampedLossPercent = (lossPercent_ * scalePercentage).toPrecision(3);
 
-					target_.value = clampedLossPercent;
-				}
+				target_.value = clampedLossPercent;
+			}
 
-				if (source === 'market-position-size') {
-					const basePositionSize_: number =
-						(parseFloat(src_.value) * entryPrice.toNumber()) / scalar;
-					const clampedBasePositionSize = basePositionSize_.toFixed(2);
+			if (source === 'market-position-size') {
+				const basePositionSize_: number = (parseFloat(src_.value) * entryPrice.toNumber()) / scalar;
+				const clampedBasePositionSize = basePositionSize_.toFixed(2);
 
-					target_.value = clampedBasePositionSize;
-				}
+				target_.value = clampedBasePositionSize;
 			}
 		}
 	};
