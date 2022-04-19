@@ -8,7 +8,7 @@ import { isL2State, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesEndpoint, calculateFundingRate } from './utils';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { getDisplayAsset } from 'utils/futures';
 import { FundingRateUpdate } from './types';
 
