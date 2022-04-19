@@ -1,19 +1,19 @@
-import { ethers } from 'ethers';
+import Connector from 'containers/Connector';
 import { useEffect, useState } from 'react';
 
 const useENS = (address?: string): { ensName: string | null; ensAvatar: string | null } => {
 	const [ensName, setENSName] = useState<string | null>(null);
 	const [ensAvatar, setENSAvatar] = useState<string | null>(null);
+	const { staticMainnetProvider } = Connector.useContainer();
 
 	useEffect(() => {
 		let mounted = true;
 
 		(async () => {
-			if (address && ethers.utils.isAddress(address)) {
-				const provider = ethers.providers.getDefaultProvider();
-				const name = await provider.lookupAddress(address);
+			if (address) {
+				const name = await staticMainnetProvider.lookupAddress(address);
 				if (name && mounted) {
-					const avatar = await provider.getAvatar(name);
+					const avatar = await staticMainnetProvider.getAvatar(name);
 					setENSAvatar(avatar);
 					setENSName(name);
 				}
@@ -23,7 +23,7 @@ const useENS = (address?: string): { ensName: string | null; ensAvatar: string |
 		return () => {
 			mounted = false;
 		};
-	}, [address]);
+	}, [address, staticMainnetProvider]);
 
 	return { ensName, ensAvatar };
 };
