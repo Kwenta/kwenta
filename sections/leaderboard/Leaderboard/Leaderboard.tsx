@@ -44,6 +44,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		if (router.query.tab) {
 			const trader = router.query.tab[0];
 			setSelectedTrader(trader);
+		} else {
+			setSelectedTrader('');
 		}
 		return null;
 	}, [router.query]);

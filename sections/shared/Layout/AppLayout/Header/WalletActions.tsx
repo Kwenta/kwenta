@@ -100,7 +100,7 @@ export const WalletActions: FC = () => {
 
 	useEffect(() => {
 		if (signer) {
-			setWalletLabel('loading...');
+			setWalletLabel(truncatedWalletAddress!);
 			signer.getAddress().then((account: string) => {
 				const _account = account;
 				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
