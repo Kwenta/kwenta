@@ -35,7 +35,7 @@ const useGetAverageFundingRateForMarkets = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQueries(
-		fundingRateInputs.map(({ currencyKey, assetPrice, currentFundingRate }) => {
+		fundingRateInputs.map(({ currencyKey, assetPrice, currentFundingRate }: FundingRateInput) => {
 			return {
 				queryKey: QUERY_KEYS.Futures.FundingRate(
 					network.id,
