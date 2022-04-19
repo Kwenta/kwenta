@@ -19,7 +19,6 @@ import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import { UseQueryResult } from 'react-query';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
