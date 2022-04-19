@@ -42,13 +42,22 @@ const useGetFuturesMarketPositionHistory = (
 								id
 								lastTxHash
 								timestamp
+								account
+								market
+								asset
+								margin
+								size
+								feesPaid
+								netFunding
 								isOpen
 								isLiquidated
 								entryPrice
 								exitPrice
-								size
-								margin
-								asset
+								pnl
+								closeTimestamp
+								openTimestamp
+								totalVolume
+								trades
 							}
 						}
 					`,
