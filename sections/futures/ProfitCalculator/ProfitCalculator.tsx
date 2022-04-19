@@ -209,7 +209,6 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 								entryPrice={entryPrice}
 								exitPrice={exitPrice}
 								stopLoss={stopLoss}
-								marketAsset={marketAsset}
 							/>
 						</StatsGrid>
 						{/* PROFIT DETAILS */}
