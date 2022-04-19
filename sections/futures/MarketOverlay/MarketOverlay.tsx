@@ -1,25 +1,16 @@
-import React, { FC, useMemo } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
-import Img, { Svg } from 'react-optimized-image';
-import {
-	CurrencyKey,
-	AFTER_HOURS_SYNTHS,
-	TSE_SYNTHS,
-	LSE_SYNTHS,
-	FIAT_SYNTHS,
-	COMMODITY_SYNTHS,
-} from 'constants/currency';
+import { CurrencyKey } from 'constants/currency';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
+import React, { FC } from 'react';
+import { Trans } from 'react-i18next';
+import Img, { Svg } from 'react-optimized-image';
+import styled from 'styled-components';
 
 const MarketOverlay: FC<{
 	marketClosureReason: MarketClosureReason;
 	baseCurrencyKey: CurrencyKey;
 }> = ({ marketClosureReason, baseCurrencyKey }) => {
-	const { t } = useTranslation();
-
 	return (
 		<OverlayContainer>
 			<Overlay>
