@@ -435,25 +435,29 @@ export const SwapCurrenciesButton = styled.button`
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	cursor: pointer;
 	${border}
+	transition-duration: 0.1s;
 
 	&:before {
 		border-radius: 50%;
 	}
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+		transform: scale(1.07);
+		transition-duration: 0.12s;
+		transition-timing-function: ease-in-out;
 	}
 
 	&:hover .arrow {
 		transform: rotate(180deg);
-		transition-duration: 0.2s;
+		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
 	}
 
 	.arrow {
-		transition-property: transform;
+		transition-property: all;
 		width: 15px;
 		height: auto;
-		transition-duration: 0.2s;
+		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
 		z-index: 1;
 	}
