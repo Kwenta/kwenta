@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 
-import Button from 'components/Button';
+// import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 
 import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
@@ -196,30 +196,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 	overflow-y: overlay;
 `;
 
-export const SwapCurrenciesButton = styled.button`
-	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.white};
-	height: 32px;
-	width: 32px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: ${zIndex.BASE};
-	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	cursor: pointer;
-	transition-duration: 0.8s;
-
-	&:hover {
-		transform: rotate(180deg);
-		transition-duration: 0.8s;
-		transition-property: transform;
-	}
-`;
-
 export const Tooltip = styled(Tippy)`
 	background-color: ${(props) => props.theme.colors.cellGradient};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};
@@ -269,14 +245,14 @@ export const SolidTooltipCustomValue = styled(NumericInput)`
 	}
 `;
 
-export const SolidTooltipItemButton = styled(Button)`
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding-left: 10px;
-	padding-right: 10px;
-`;
+// export const SolidTooltipItemButton = styled(Button)`
+// 	width: 100%;
+// 	display: flex;
+// 	align-items: center;p
+// 	justify-content: space-between;
+// 	padding-left: 10px;
+// 	padding-right: 10px;
+// `;
 
 export const IconButton = styled.button`
 	${resetButtonCSS};
@@ -441,5 +417,44 @@ export const border = css`
 		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
 		mask-composite: exclude;
+	}
+`;
+
+export const SwapCurrenciesButton = styled.button`
+	${resetButtonCSS};
+	color: ${(props) => props.theme.colors.white};
+	height: 32px;
+	width: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: ${zIndex.BASE};
+	border-radius: 50%;
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	cursor: pointer;
+	${border}
+
+	&:before {
+		border-radius: 50%;
+	}
+	&:hover {
+		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+	}
+
+	&:hover .arrow {
+		transform: rotate(180deg);
+		transition-duration: 0.2s;
+		transition-timing-function: ease-in-out;
+	}
+
+	.arrow {
+		transition-property: transform;
+		width: 15px;
+		height: auto;
+		transition-duration: 0.2s;
+		transition-timing-function: ease-in-out;
+		z-index: 1;
 	}
 `;
