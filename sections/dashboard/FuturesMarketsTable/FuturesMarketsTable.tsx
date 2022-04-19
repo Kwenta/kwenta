@@ -47,7 +47,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		}),
 		PERIOD_IN_SECONDS[Period.ONE_HOUR]
 	);
-	console.log(fundingRates);
 
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
