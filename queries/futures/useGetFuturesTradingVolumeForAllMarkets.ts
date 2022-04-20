@@ -2,7 +2,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
@@ -16,7 +16,6 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
