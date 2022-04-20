@@ -15,7 +15,6 @@ import { formatCurrency } from 'utils/formatters/number';
 import UserInfo from '../UserInfo';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import useMarketClosed from 'hooks/useMarketClosed';
 import TVChartWrapper from '../TvChartWrapper';
 
 type MarketInfoProps = {

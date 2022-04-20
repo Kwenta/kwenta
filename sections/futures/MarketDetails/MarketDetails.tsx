@@ -21,7 +21,8 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import GeneralTooltip from 'components/Tooltip/TimerTooltip';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import TimerTooltip from 'components/Tooltip/TimerTooltip';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -47,7 +48,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
 
-	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
+	const fundingRateQuery = useGetAverageFundingRateForMarket(
+		baseCurrencyKey,
+		basePriceRate,
+		PERIOD_IN_SECONDS[Period.ONE_HOUR],
+		marketSummary?.currentFundingRate.toNumber()
+	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	useRateUpdateQuery(baseCurrencyKey).then((oracleUpdateTime) => {
@@ -73,7 +79,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const data: MarketData = React.useMemo(() => {
 		const fundingTitle = `${
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
 		} Funding Rate`;
 		const fundingValue =
 			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
@@ -85,11 +91,11 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
-					<GeneralTooltip preset="bottom" startTimeDate={lastOracleUpdateTime}>
+					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime}>
 						<HoverTransform>
 							{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
 						</HoverTransform>
-					</GeneralTooltip>
+					</TimerTooltip>
 				) : (
 					NO_VALUE
 				),

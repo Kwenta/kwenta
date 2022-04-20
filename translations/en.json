@@ -392,7 +392,7 @@
 				"market": "Market",
 				"oracle-price": "Oracle Price",
 				"daily-change": "24H Change",
-				"funding-rate": "Funding Rate",
+				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
@@ -1005,6 +1005,7 @@
 		"contract": "contract",
 		"search-results": "search results",
 		"chart-periods": {
+			"1H": "1H",
 			"4H": "4H",
 			"1D": "1D",
 			"1W": "1W",

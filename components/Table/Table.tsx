@@ -104,6 +104,7 @@ export const Table: FC<TableProps> = ({
 
 	useEffect(() => {
 		setHiddenColumns(hiddenColumns);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

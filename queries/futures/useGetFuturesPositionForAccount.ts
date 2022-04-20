@@ -37,6 +37,11 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 								isLiquidated
 								entryPrice
 								exitPrice
+								pnl
+								closeTimestamp
+								openTimestamp
+								totalVolume
+								trades
 							}
 						}
 					`,
