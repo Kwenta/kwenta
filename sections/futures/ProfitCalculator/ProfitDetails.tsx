@@ -5,11 +5,11 @@ import { PositionSide } from '../types';
 
 export const ProfitDetails = (props: {
 	scalar: number;
-	leverageSide: PositionSide;
-	exitPrice: BigNumber;
 	stopLoss: BigNumber;
-	marketAssetPositionSize: BigNumber;
 	marketAsset: string;
+	exitPrice: BigNumber;
+	leverageSide: PositionSide;
+	marketAssetPositionSize: BigNumber;
 }) => {
 	const entryOrderDetails = props.leverageSide === PositionSide.LONG ? 'Long' : 'Short';
 
@@ -31,10 +31,9 @@ export const ProfitDetails = (props: {
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText>{`Sell`}</RowText>
-					<RowText
-						style={{ marginRight: '10px', marginLeft: '10px' }}
-						className="gray-font-color"
-					>{`at`}</RowText>
+					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
+						{`at`}
+					</RowText>
 					<RowText>{(props.exitPrice.toNumber() / props.scalar).toFixed(2)}</RowText>
 				</Details>
 				{/* STOP LOSS */}
@@ -43,10 +42,9 @@ export const ProfitDetails = (props: {
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText>{`Sell`}</RowText>
-					<RowText
-						style={{ marginRight: '10px', marginLeft: '10px' }}
-						className="gray-font-color"
-					>{`at`}</RowText>
+					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
+						{`at`}
+					</RowText>
 					<RowText>{(props.stopLoss.toNumber() / props.scalar).toFixed(2)}</RowText>
 				</Details>
 				{/* SIZE */}
