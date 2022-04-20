@@ -1,4 +1,5 @@
 export enum Period {
+	ONE_HOUR = 'ONE_HOUR',
 	FOUR_HOURS = 'FOUR_HOURS',
 	ONE_DAY = 'ONE_DAY',
 	ONE_WEEK = 'ONE_WEEK',
@@ -6,10 +7,19 @@ export enum Period {
 }
 
 export const PERIOD_IN_HOURS: Record<Period, number> = {
+	ONE_HOUR: 1,
 	FOUR_HOURS: 4,
 	ONE_DAY: 24,
 	ONE_MONTH: 672,
 	ONE_WEEK: 168,
+};
+
+export const PERIOD_IN_SECONDS: Record<Period, number> = {
+	ONE_HOUR: 60 * 60,
+	FOUR_HOURS: 4 * 60 * 60,
+	ONE_DAY: 24 * 60 * 60,
+	ONE_MONTH: 672 * 60 * 60,
+	ONE_WEEK: 168 * 60 * 60,
 };
 
 export type PeriodLabel = {
@@ -19,6 +29,11 @@ export type PeriodLabel = {
 };
 
 export const PERIOD_LABELS_MAP: Record<Period, PeriodLabel> = {
+	ONE_HOUR: {
+		period: Period.ONE_HOUR,
+		value: PERIOD_IN_HOURS.ONE_HOUR,
+		i18nLabel: 'common.chart-periods.1H',
+	},
 	FOUR_HOURS: {
 		period: Period.FOUR_HOURS,
 		value: PERIOD_IN_HOURS.FOUR_HOURS,
