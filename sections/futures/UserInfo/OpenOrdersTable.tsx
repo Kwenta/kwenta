@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
+import TransactionNotifier from 'containers/TransactionNotifier';
 
 type OpenOrdersTableProps = {
 	currencyKey: CurrencyKey;
@@ -25,6 +26,7 @@ type OpenOrdersTableProps = {
 const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -45,7 +47,10 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 		'cancelNextPriceOrder',
 		[walletAddress],
 		gasPrice,
-		{ enabled: !!cancelCurrencyKey && !!walletAddress, onSettled: () => setCancelCurrencyKey(null) }
+		{
+			enabled: !!cancelCurrencyKey && !!walletAddress,
+			onSettled: () => setCancelCurrencyKey(null),
+		}
 	);
 
 	React.useEffect(() => {
@@ -54,6 +59,21 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cancelCurrencyKey]);
+
+	React.useEffect(() => {
+		if (cancelOrderTxn.hash) {
+			monitorTransaction({
+				txHash: cancelOrderTxn.hash,
+				onTxConfirmed: () => {
+					setTimeout(() => {
+						openOrdersQuery.refetch();
+					}, 5 * 1000);
+				},
+			});
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [cancelOrderTxn.hash]);
 
 	const data = React.useMemo(() => {
 		const openOrders = openOrdersQuery?.data ?? [];
