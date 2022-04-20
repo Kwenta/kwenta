@@ -136,13 +136,12 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		FundingRate: (networkId: NetworkId, currencyKey: string | null, assetPrice: number | null) => [
-			'futures',
-			'fundingRate',
-			networkId,
-			currencyKey,
-			assetPrice,
-		],
+		FundingRate: (
+			networkId: NetworkId,
+			currencyKey: string | null,
+			assetPrice: number | null,
+			currentFundingRate: number | undefined
+		) => ['futures', 'fundingRates', networkId, currencyKey, assetPrice, currentFundingRate],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',

@@ -18,7 +18,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 	const minTimestamp = Math.floor(Date.now() / 1000) - 60 * 60 * 24;
 	const maxTimestamp = minTimestamp + 60 * 60;
 
-	return useQuery(
+	return useQuery<any | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
