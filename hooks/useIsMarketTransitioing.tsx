@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { differenceInSeconds } from 'date-fns';
 
-const SECONDS_PER_HALF_DAY = 12 * 60 * 60;
+const SIX_HOURS = 6 * 60 * 60;
 
 const useIsMarketTransitioning = (nextOpen: Date | null) => {
 	const [now, setNow] = useState(new Date());
@@ -13,7 +13,7 @@ const useIsMarketTransitioning = (nextOpen: Date | null) => {
 	}, []);
 
 	if (nextOpen == null) return false;
-	return differenceInSeconds(nextOpen, now) <= SECONDS_PER_HALF_DAY;
+	return differenceInSeconds(nextOpen, now) <= SIX_HOURS;
 };
 
 export default useIsMarketTransitioning;
