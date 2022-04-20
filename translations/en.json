@@ -794,7 +794,17 @@
 						"pnl": "PNL",
 						"status": "status"
 					}
-				}
+				},
+        "transfers": {
+          "tab": "Transfers",
+          "table": {
+            "action": "action",
+            "amount": "amount",
+            "date": "date",
+            "transaction": "transaction",
+            "no-results": "You have no transfer history."
+          }
+        }
 			}
 		},
 		"modals": {

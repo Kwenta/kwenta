@@ -11,6 +11,7 @@ import TabButton from 'components/Button/TabButton';
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
 import ProfitCalculator from '../ProfitCalculator';
+import Transfers from '../Transfers';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -21,12 +22,17 @@ import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 
 import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+import PositionIcon from 'assets/svg/futures/icon-position.svg';
+import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
+	TRANSFERS = 'transfers',
 }
 
 const FutureTabs = Object.values(FuturesTab);
@@ -78,9 +84,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		() => [
 			{
 				name: FuturesTab.POSITION,
-				label: 'Open Position',
+				label: 'Position',
 				active: activeTab === FuturesTab.POSITION,
+				icon: PositionIcon,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
+			},
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				badge: positionHistory?.length,
+				disabled: true,
+				active: activeTab === FuturesTab.ORDERS,
+				icon: OpenPositionsIcon,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 			{
 				name: FuturesTab.TRADES,
@@ -88,6 +104,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				badge: positionHistory?.length,
 				disabled: true,
 				active: activeTab === FuturesTab.TRADES,
+				icon: OrderHistoryIcon,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
 			{
@@ -96,6 +113,14 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				icon: calculatorIcon,
 				active: activeTab === FuturesTab.CALCULATOR,
 				onClick: () => handleOpenProfitCalc(),
+			},
+			{
+				name: FuturesTab.TRANSFERS,
+				label: 'Transfers',
+				badge: positionHistory?.length,
+				active: activeTab === FuturesTab.TRANSFERS,
+				icon: TransfersIcon,
+				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
@@ -141,6 +166,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					/>
 				</TabRight>
 			</TabButtonsContainer>
+
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
 					position={futuresMarketsPosition ?? null}
@@ -153,6 +179,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 						}, 5 * 1000)
 					}
 				/>
+			</TabPanel>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+				{/* TODO */}
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades
