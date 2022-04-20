@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useLayoutEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useTranslation } from 'react-i18next';
@@ -184,9 +184,9 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 						{/* BUTTONS */}
 						<div style={{ marginTop: '20px' }} />
 						<PositionButtons
+							isMarketClosed={false}
 							selected={leverageSide}
 							onSelect={setLeverageSide}
-							isMarketClosed={false}
 						/>
 						{/* STATS row of 3 */}
 						<StatsGrid>
@@ -202,11 +202,11 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 						{/* PROFIT DETAILS */}
 						<ProfitDetails
 							scalar={scalar}
-							leverageSide={leverageSide}
-							exitPrice={exitPrice}
 							stopLoss={stopLoss}
-							marketAssetPositionSize={marketAssetPositionSize}
+							exitPrice={exitPrice}
 							marketAsset={marketAsset}
+							leverageSide={leverageSide}
+							marketAssetPositionSize={marketAssetPositionSize}
 						/>
 					</form>
 				</ModalWindow>
