@@ -177,12 +177,13 @@ const Trade: React.FC = () => {
 	);
 
 	const placeOrderTranslationKey = React.useMemo(() => {
+		if (orderType === 1) return 'futures.market.trade.button.submit-order';
 		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
 		return !futuresMarketsPosition?.remainingMargin ||
 			futuresMarketsPosition.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: 'futures.market.trade.button.open-position';
-	}, [futuresMarketsPosition]);
+	}, [futuresMarketsPosition, orderType]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {

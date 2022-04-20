@@ -18,6 +18,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import OpenOrdersTable from './OpenOrdersTable';
+import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -44,6 +45,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
+	const openOrders = openOrdersQuery?.data ?? null;
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -88,11 +92,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			{
 				name: FuturesTab.ORDERS,
 				label: 'Open Orders',
+				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
 				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 		],
-		[activeTab, router, marketAsset, positionHistory]
+		[activeTab, router, marketAsset, positionHistory?.length, openOrders?.length]
 	);
 
 	return (
