@@ -2,13 +2,15 @@ import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import StatWithContainer from './StatWithContainer';
+import { PositionSide } from '../types';
 
 export const PnLs = (props: {
 	scalar: number;
-	amountInAsset: BigNumber;
-	entryPrice: BigNumber;
-	exitPrice: BigNumber;
 	stopLoss: BigNumber;
+	exitPrice: BigNumber;
+	entryPrice: BigNumber;
+	amountInAsset: BigNumber;
+	leverageSide: PositionSide;
 }) => {
 	let rateOfReturn: any = 0,
 		profit: any = ethers.BigNumber.from(0),
@@ -21,8 +23,15 @@ export const PnLs = (props: {
 		parseFloat(props.exitPrice.toString()) !== 0 &&
 		parseFloat(props.stopLoss.toString()) !== 0
 	) {
-		profit = props.exitPrice.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
-		loss = props.stopLoss.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
+		console.log('eveerageSide: ', props.leverageSide);
+
+		if (props.leverageSide === 'long') {
+			profit = props.exitPrice.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
+			loss = props.stopLoss.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
+		} else {
+			profit = props.entryPrice.sub(props.exitPrice).mul(props.amountInAsset).toNumber();
+			loss = props.entryPrice.sub(props.exitPrice).mul(props.amountInAsset).toNumber();
+		}
 
 		rateOfReturn = (profit / Math.abs(loss)).toFixed(2);
 	}

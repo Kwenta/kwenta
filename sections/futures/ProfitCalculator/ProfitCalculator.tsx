@@ -8,7 +8,6 @@ import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
 import BaseModal from 'components/BaseModal';
 import LabelWithInput from './LabelWithInput';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import PositionButtons from '../../../sections/futures/PositionButtons';
 import { PositionSide } from '../types';
 
@@ -193,10 +192,11 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 						<StatsGrid>
 							<PnLs
 								scalar={scalar}
-								amountInAsset={marketAssetPositionSize}
-								entryPrice={entryPrice}
-								exitPrice={exitPrice}
 								stopLoss={stopLoss}
+								exitPrice={exitPrice}
+								entryPrice={entryPrice}
+								leverageSide={leverageSide}
+								amountInAsset={marketAssetPositionSize}
 							/>
 						</StatsGrid>
 						{/* PROFIT DETAILS */}

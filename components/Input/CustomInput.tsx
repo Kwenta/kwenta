@@ -38,8 +38,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
 				disabled={disabled}
 				placeholder={placeholder}
 				value={value}
-				type={id ? '' : 'number'}
-				step={'0.01'}
 				inputMode={id ? 'decimal' : undefined}
 				onChange={handleChange}
 				onKeyDown={(e) => {
