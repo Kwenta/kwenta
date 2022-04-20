@@ -8,7 +8,8 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import request, { gql } from 'graphql-request';
 import { getFuturesEndpoint } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
+import { ETH_UNIT } from 'constants/network';
 
 const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -18,10 +19,8 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<any[]>(
-		QUERY_KEYS.Futures.OpenOrders(network.id),
+		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
 		async () => {
-			if (!currencyKey || !walletAddress) return [];
-
 			try {
 				const response = await request(
 					futuresEndpoint,
@@ -45,7 +44,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 					? response.futuresOrders.map((o: any) => ({
 							...o,
 							asset: ethersUtils.parseBytes32String(o.asset),
-							size: new Wei(o.size, 18, true),
+							size: new Wei(o.size).div(ETH_UNIT),
 					  }))
 					: [];
 			} catch (e) {
@@ -53,7 +52,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!currencyKey, ...options }
+		{ enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress, ...options }
 	);
 };
 
