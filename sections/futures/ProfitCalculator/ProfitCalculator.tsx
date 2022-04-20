@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useLayoutEffect } from 'react';
 import { ethers } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useTranslation } from 'react-i18next';
@@ -9,17 +9,13 @@ import ProfitDetails from './ProfitDetails';
 import BaseModal from 'components/BaseModal';
 import LabelWithInput from './LabelWithInput';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import PositionButtons from '../../../sections/futures/PositionButtons';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { PositionSide } from '../types';
 
 const scalar = 100;
 
-const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
+const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
 	const { t } = useTranslation();
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	// BigNumbers
 	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
@@ -30,14 +26,6 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 	);
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
-
-	const baseCurrencyKey = marketAsset;
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-
-	const basePriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
-		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
-	);
 
 	const handleSetInput = (_e: any, _stateVar: any, _stateVarName: string) => {
 		let isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
@@ -141,7 +129,7 @@ const ProfitCalculator = ({ marketAsset, setOpenProfitCalcModal }: any) => {
 				<ModalWindow>
 					<form onSubmit={handleCalculateProfit}>
 						<LabelWithInput
-							defaultValue={basePriceRate}
+							defaultValue={marketAssetRate}
 							labelText={'Entry Price: '}
 							placeholder={'$43,938.11'}
 							onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}

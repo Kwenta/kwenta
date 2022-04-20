@@ -164,6 +164,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			{openProfitCalcModal ? (
 				<ProfitCalculator
 					marketAsset={marketAsset}
+					marketAssetRate={marketAssetRate}
 					setOpenProfitCalcModal={setOpenProfitCalcModal}
 				/>
 			) : null}
