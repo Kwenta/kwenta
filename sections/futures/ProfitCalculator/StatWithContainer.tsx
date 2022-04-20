@@ -1,13 +1,27 @@
 import styled from 'styled-components';
 
-export const StatWithContainer = (props: { label: string; stateVar: any; type: number }) => {
+type StatWithContainerProps = {
+	label: string;
+	stat: any;
+	type: number;
+};
+
+function textColor(type: number) {
+	if (type === 0) return '#7FD482';
+	if (type === 1) return '#EF6868';
+	if (type === 2) return '#ECE8E3';
+}
+
+function pnlText(type: number, stat: any) {
+	return `${type === 2 ? stat + 'x' : '$' + stat}`;
+}
+
+export const StatWithContainer: React.FC<StatWithContainerProps> = ({ label, stat, type }) => {
 	return (
 		<>
 			<StatContainer>
-				<StatLabel>{props.label}</StatLabel>
-				{props.type === 0 ? <Stat style={{ color: '#7FD482' }}>{`$ ${props.stateVar}`}</Stat> : ''}
-				{props.type === 1 ? <Stat style={{ color: '#EF6868' }}>{`$ ${props.stateVar}`}</Stat> : ''}
-				{props.type === 2 ? <Stat style={{ color: '#ECE8E3' }}>{`${props.stateVar}x`}</Stat> : ''}
+				<StatLabel>{label}</StatLabel>
+				<Stat style={{ color: textColor(type) }}>{pnlText(type, stat)}</Stat>
 			</StatContainer>
 		</>
 	);

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-import { BigNumber } from '@ethersproject/bignumber';
+import Wei, { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
@@ -8,69 +7,29 @@ import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
 import BaseModal from 'components/BaseModal';
 import LabelWithInput from './LabelWithInput';
-import PositionButtons from '../../../sections/futures/PositionButtons';
+import PositionButtons from 'sections/futures/PositionButtons';
 import { PositionSide } from '../types';
-
-const scalar = 100;
 
 const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
 	const { t } = useTranslation();
 
-	// BigNumbers
-	const [entryPrice, setEntryPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [exitPrice, setExitPrice] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [stopLoss, setStopLoss] = useState<BigNumber>(ethers.BigNumber.from(0));
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<BigNumber>(
-		ethers.BigNumber.from(0)
-	);
+	// Wei
+	const [entryPrice, setEntryPrice] = useState<Wei>(wei(0));
+	const [exitPrice, setExitPrice] = useState<Wei>(wei(0));
+	const [stopLoss, setStopLoss] = useState<Wei>(wei(0));
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<Wei>(wei(0));
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
 	const handleSetInput = (_e: any, _stateVar: any, _stateVarName: string) => {
-		let isNum, isFloat, isUglyFloat1, isUglyFloat2, clampDecimals;
-
 		_stateVar = _e.currentTarget.value;
-		isNum = /^\d+$/.test(_stateVar);
-		isFloat = /^[0-9]+\.[0-9]+$/.test(_stateVar);
-		isUglyFloat1 = /^\.[0-9]+$/.test(_stateVar);
-		isUglyFloat2 = /^[0-9]+\.$/.test(_stateVar);
-		clampDecimals = /^\d+\.\d{0,3}$/.test(_stateVar);
 
-		if (isNum || isFloat || isUglyFloat1 || isUglyFloat2 || clampDecimals) {
-			if (_stateVar.indexOf(' ') >= 0) {
-				// if includes whitespace
-				_stateVar.trim();
-			}
-
-			if (!isNaN(_stateVar) && _stateVar !== '') {
-				if (_stateVarName === 'entryPrice') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-					setEntryPrice(ethers.BigNumber.from(clampedInput * scalar));
-				}
-
-				if (_stateVarName === 'exitPrice') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-					setExitPrice(ethers.BigNumber.from(clampedInput * scalar));
-				}
-
-				if (_stateVarName === 'stopLoss') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-					setStopLoss(ethers.BigNumber.from(clampedInput * scalar));
-				}
-
-				if (_stateVarName === 'marketAssetPositionSize') {
-					const clampedInput = parseFloat(parseFloat(_stateVar).toFixed(2));
-					setMarketAssetPositionSize(ethers.BigNumber.from(clampedInput * scalar));
-				}
-			}
+		if (!isNaN(_stateVar) && _stateVar !== '' && parseFloat(_stateVar) > 0) {
+			if (_stateVarName === 'entryPrice') setEntryPrice(wei(_stateVar));
+			if (_stateVarName === 'exitPrice') setExitPrice(wei(_stateVar));
+			if (_stateVarName === 'stopLoss') setStopLoss(wei(_stateVar));
+			if (_stateVarName === 'marketAssetPositionSize') setMarketAssetPositionSize(wei(_stateVar));
 		}
-	};
-
-	/**
-	 * @todo Does this form need to do anything once the PositionButton is clicked?
-	 */
-	const handleCalculateProfit = (e: any) => {
-		e.preventDefault();
 	};
 
 	const setTargetInputValue = (source: string, target: string) => {
@@ -78,30 +37,21 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		let src_: any = document.getElementById(source),
 			target_: any = document.getElementById(target);
 
-		const scalePercentage = 100;
-
 		if (src_ !== null && target_ !== null) {
 			if (src_.value !== null && target_.value !== null) {
 				if (source === 'exit-price') {
-					const gainPercent_: number = parseFloat(src_.value) / entryPrice.toNumber();
-					const clampedGainPercent = (gainPercent_ * scalePercentage).toPrecision(3);
-
-					target_.value = clampedGainPercent;
+					const gainPercent: number = parseFloat(src_.value) / entryPrice.toNumber();
+					target_.value = gainPercent.toFixed(2);
 				}
 
 				if (source === 'stop-loss') {
-					const lossPercent_: number = parseFloat(src_.value) / stopLoss.toNumber();
-					const clampedLossPercent = (lossPercent_ * scalePercentage).toPrecision(3);
-
-					target_.value = clampedLossPercent;
+					const lossPercent: number = parseFloat(src_.value) / stopLoss.toNumber();
+					target_.value = lossPercent.toFixed(2);
 				}
 
 				if (source === 'market-position-size') {
-					const basePositionSize_: number =
-						(parseFloat(src_.value) * entryPrice.toNumber()) / scalar;
-					const clampedBasePositionSize = basePositionSize_.toFixed(2);
-
-					target_.value = clampedBasePositionSize;
+					const basePositionSize: number = parseFloat(src_.value) * entryPrice.toNumber();
+					target_.value = basePositionSize.toFixed(2);
 				}
 			}
 		}
@@ -126,89 +76,85 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 				title={t('Profit Calculator')}
 			>
 				<ModalWindow>
-					<form onSubmit={handleCalculateProfit}>
-						<LabelWithInput
-							defaultValue={marketAssetRate}
-							labelText={'Entry Price: '}
-							placeholder={'$43,938.11'}
-							onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}
-						/>
-						<ProfitCalcGrid>
-							{/* LEFT column */}
-							<LeftColumn>
-								<LabelWithInput
-									id={'exit-price'}
-									labelText={'Exit Price: '}
-									placeholder={'$46,939.11'}
-									onChange={(e: any) => handleSetInput(e, exitPrice, 'exitPrice')}
-								/>
-								<LabelWithInput
-									id={'stop-loss'}
-									labelText={'Stop Loss: '}
-									placeholder={'$32,000.00'}
-									onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
-								/>
-								<LabelWithInput
-									right={marketAsset}
-									placeholder={`23.1`}
-									id={'market-position-size'}
-									labelText={'Position Size: '}
-									onChange={(e: any) =>
-										handleSetInput(e, marketAssetPositionSize, 'marketAssetPositionSize')
-									}
-								/>
-							</LeftColumn>
-							{/* RIGHT column */}
-							<RightColumn>
-								<LabelWithInput
-									id={'gain-percent'}
-									labelText={'Gain %: '}
-									placeholder={`5.55%`}
-									disabled={true}
-								/>
-								<LabelWithInput
-									id={'loss-percent'}
-									labelText={'Loss %: '}
-									placeholder={`4.1%`}
-									disabled={true}
-								/>
-								<LabelWithInput
-									id={'base-position-size'}
-									labelText={'Position Size: '}
-									placeholder={`$305,532.28`}
-									disabled={true}
-									right={'sUSD'}
-								/>
-							</RightColumn>
-						</ProfitCalcGrid>
-						{/* BUTTONS */}
-						<div style={{ marginTop: '20px' }} />
-						<PositionButtons
-							isMarketClosed={false}
-							selected={leverageSide}
-							onSelect={setLeverageSide}
-						/>
-						{/* STATS row of 3 */}
-						<StatsGrid>
-							<PnLs
-								scalar={scalar}
-								stopLoss={stopLoss}
-								exitPrice={exitPrice}
-								entryPrice={entryPrice}
-								leverageSide={leverageSide}
-								amountInAsset={marketAssetPositionSize}
+					<LabelWithInput
+						defaultValue={marketAssetRate}
+						labelText={'Entry Price: '}
+						placeholder={'$43,938.11'}
+						onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}
+					/>
+					<ProfitCalcGrid>
+						{/* LEFT column */}
+						<LeftColumn>
+							<LabelWithInput
+								id={'exit-price'}
+								labelText={'Exit Price: '}
+								placeholder={'$46,939.11'}
+								onChange={(e: any) => handleSetInput(e, exitPrice, 'exitPrice')}
 							/>
-						</StatsGrid>
-						{/* PROFIT DETAILS */}
-						<ProfitDetails
-							scalar={scalar}
+							<LabelWithInput
+								id={'stop-loss'}
+								labelText={'Stop Loss: '}
+								placeholder={'$32,000.00'}
+								onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
+							/>
+							<LabelWithInput
+								right={marketAsset}
+								placeholder={`23.1`}
+								id={'market-position-size'}
+								labelText={'Position Size: '}
+								onChange={(e: any) =>
+									handleSetInput(e, marketAssetPositionSize, 'marketAssetPositionSize')
+								}
+							/>
+						</LeftColumn>
+						{/* RIGHT column */}
+						<RightColumn>
+							<LabelWithInput
+								id={'gain-percent'}
+								labelText={'Gain %: '}
+								placeholder={`${marketAssetRate * 0.05}`}
+								disabled={true}
+							/>
+							<LabelWithInput
+								id={'loss-percent'}
+								labelText={'Loss %: '}
+								placeholder={`${marketAssetRate * -0.05}`}
+								disabled={true}
+							/>
+							<LabelWithInput
+								id={'base-position-size'}
+								labelText={'Position Size: '}
+								placeholder={`${marketAssetRate * 10}`}
+								disabled={true}
+								right={'sUSD'}
+							/>
+						</RightColumn>
+					</ProfitCalcGrid>
+					{/* BUTTONS */}
+					<div style={{ marginTop: '20px' }} />
+					<PositionButtons
+						isMarketClosed={false}
+						selected={leverageSide}
+						onSelect={setLeverageSide}
+					/>
+					{/* STATS row of 3 */}
+					<StatsGrid>
+						<PnLs
 							stopLoss={stopLoss}
 							exitPrice={exitPrice}
-							marketAsset={marketAsset}
+							entryPrice={entryPrice}
 							leverageSide={leverageSide}
-							marketAssetPositionSize={marketAssetPositionSize}
+							amountInAsset={marketAssetPositionSize}
 						/>
-					</form>
+					</StatsGrid>
+					{/* PROFIT DETAILS */}
+					<ProfitDetails
+						stopLoss={stopLoss}
+						exitPrice={exitPrice}
+						marketAsset={marketAsset}
+						leverageSide={leverageSide}
+						marketAssetPositionSize={marketAssetPositionSize}
+					/>
 				</ModalWindow>
 			</BaseModal>
 		</>

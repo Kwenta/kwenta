@@ -73,10 +73,6 @@ const StyledButton = styled(Button)`
 		margin-left: 6px;
 	}
 
-	.left-position {
-		
-	}
-
 	&:disabled {
 		background-color: transparent;
 

@@ -1,30 +1,39 @@
+import React from 'react';
 import styled from 'styled-components';
-import CustomInput from '../../../components/Input/CustomInput';
+import NumericInput from 'components/Input/NumericInput';
 
-export const LabelWithInput = (props: {
-	defaultValue?: any;
-	right?: any;
-	id?: string;
-	onChange?: any;
-	labelText: string;
+type LabelWithInputProps = {
 	disabled?: boolean;
+	id?: string;
+	labelText: string;
 	placeholder: string;
-}) => {
-	return (
-		<>
-			<LabelText>{props.labelText}</LabelText>
-			<CustomInput
-				id={props.id}
-				defaultValue={props.defaultValue}
-				placeholder={props.placeholder}
-				right={props.right}
-				className={'profit-calc'}
-				disabled={props.disabled}
-				onChange={props.onChange}
-			/>
-		</>
-	);
+	right?: any;
+	onChange?: any;
+	defaultValue?: any;
 };
+
+const LabelWithInput: React.FC<LabelWithInputProps> = ({
+	id,
+	right,
+	onChange,
+	disabled,
+	labelText,
+	placeholder,
+	defaultValue,
+}) => (
+	<>
+		<LabelText>{labelText}</LabelText>
+		<NumericInput
+			// id={id}
+			right={right}
+			disabled={disabled}
+			onChange={onChange}
+			placeholder={placeholder}
+			className={'profit-calc'}
+			defaultValue={defaultValue}
+		/>
+	</>
+);
 
 const LabelText = styled.p`
 	width: 100.91px;

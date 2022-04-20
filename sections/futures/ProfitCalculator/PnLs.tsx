@@ -1,56 +1,52 @@
-import { ethers } from 'ethers';
-import { BigNumber } from '@ethersproject/bignumber';
+import React from 'react';
+import Wei from '@synthetixio/wei';
 
 import StatWithContainer from './StatWithContainer';
 import { PositionSide } from '../types';
 
-export const PnLs = (props: {
-	scalar: number;
-	stopLoss: BigNumber;
-	exitPrice: BigNumber;
-	entryPrice: BigNumber;
-	amountInAsset: BigNumber;
+type PnLsProps = {
+	stopLoss: Wei;
+	exitPrice: Wei;
+	entryPrice: Wei;
+	amountInAsset: Wei;
 	leverageSide: PositionSide;
+};
+
+const PnLs: React.FC<PnLsProps> = ({
+	stopLoss,
+	exitPrice,
+	entryPrice,
+	amountInAsset,
+	leverageSide,
 }) => {
 	let rateOfReturn: any = 0,
-		profit: any = ethers.BigNumber.from(0),
-		loss: any = ethers.BigNumber.from(0);
+		profit: any = 0,
+		loss: any = 0;
 
-	const labels = ['Exit PnL', 'Stop PnL', 'R:R'];
+	const labelsWithStats: any = {
+		'Exit PnL': profit,
+		'Stop PnL': loss,
+		'R:R': rateOfReturn,
+	};
 
-	if (
-		parseFloat(props.entryPrice.toString()) !== 0 &&
-		parseFloat(props.exitPrice.toString()) !== 0 &&
-		parseFloat(props.stopLoss.toString()) !== 0
-	) {
-		console.log('eveerageSide: ', props.leverageSide);
-
-		if (props.leverageSide === 'long') {
-			profit = props.exitPrice.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
-			loss = props.stopLoss.sub(props.entryPrice).mul(props.amountInAsset).toNumber();
+	if (!entryPrice.eq(0) && !exitPrice.eq(0) && !stopLoss.eq(0)) {
+		if (leverageSide === 'long') {
+			labelsWithStats['Exit PnL'] = exitPrice.sub(entryPrice).mul(amountInAsset).toNumber();
+			labelsWithStats['Stop PnL'] = stopLoss.sub(entryPrice).mul(amountInAsset).toNumber();
 		} else {
-			profit = props.entryPrice.sub(props.exitPrice).mul(props.amountInAsset).toNumber();
-			loss = props.entryPrice.sub(props.exitPrice).mul(props.amountInAsset).toNumber();
+			labelsWithStats['Exit PnL'] = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
+			labelsWithStats['Stop PnL'] = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
 		}
 
-		rateOfReturn = (profit / Math.abs(loss)).toFixed(2);
+		labelsWithStats['R:R'] = (
+			labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])
+		).toFixed(2);
 	}
-
-	const returnStateVar = (index: number) => {
-		if (index === 0) return (profit / props.scalar).toString();
-		if (index === 1) return (loss / props.scalar).toString();
-		if (index === 2) return rateOfReturn;
-	};
 
 	return (
 		<>
-			{labels.map((_label: string, index: number) => (
-				<StatWithContainer
-					key={index}
-					label={_label}
-					stateVar={returnStateVar(index)}
-					type={index}
-				/>
+			{Object.keys(labelsWithStats).map((label: string, index: number) => (
+				<StatWithContainer key={label} label={label} stat={labelsWithStats[label]} type={index} />
 			))}
 		</>
 	);

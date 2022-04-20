@@ -1,17 +1,32 @@
-import { BigNumber } from '@ethersproject/bignumber';
+import React from 'react';
+import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
 
 import { PositionSide } from '../types';
 
-export const ProfitDetails = (props: {
-	scalar: number;
-	stopLoss: BigNumber;
+function textColor(className?: string) {
+	if (!className) return '#ece8e3';
+	if (className === 'long') return '#7FD482';
+	if (className === 'short') return '#EF6868';
+	if (className === 'gray-font-color') return '#787878';
+}
+
+type ProfitDetailsProps = {
+	stopLoss: Wei;
+	exitPrice: Wei;
 	marketAsset: string;
-	exitPrice: BigNumber;
 	leverageSide: PositionSide;
-	marketAssetPositionSize: BigNumber;
+	marketAssetPositionSize: Wei;
+};
+
+const ProfitDetails: React.FC<ProfitDetailsProps> = ({
+	stopLoss,
+	exitPrice,
+	marketAsset,
+	leverageSide,
+	marketAssetPositionSize,
 }) => {
-	const entryOrderDetails = props.leverageSide === PositionSide.LONG ? 'Long' : 'Short';
+	const entryOrderDetails = leverageSide === PositionSide.LONG ? 'Long' : 'Short';
 
 	return (
 		<>
@@ -21,7 +36,7 @@ export const ProfitDetails = (props: {
 					<RowText className="row-name">{'Entry Order:'}</RowText>
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
-					<RowText className={props.leverageSide}>{`${entryOrderDetails}`}</RowText>
+					<RowText className={leverageSide}>{`${entryOrderDetails}`}</RowText>
 					<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
 					<RowText style={{ marginLeft: '10px' }}>{`Market`}</RowText>
 				</Details>
@@ -34,7 +49,7 @@ export const ProfitDetails = (props: {
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{`at`}
 					</RowText>
-					<RowText>{(props.exitPrice.toNumber() / props.scalar).toFixed(2)}</RowText>
+					<RowText>{exitPrice.toNumber().toFixed(2)}</RowText>
 				</Details>
 				{/* STOP LOSS */}
 				<RowName>
@@ -45,7 +60,7 @@ export const ProfitDetails = (props: {
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{`at`}
 					</RowText>
-					<RowText>{(props.stopLoss.toNumber() / props.scalar).toFixed(2)}</RowText>
+					<RowText>{stopLoss.toNumber().toFixed(2)}</RowText>
 				</Details>
 				{/* SIZE */}
 				<RowName>
@@ -53,9 +68,9 @@ export const ProfitDetails = (props: {
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText style={{ marginRight: '10px' }}>
-						{(props.marketAssetPositionSize.toNumber() / props.scalar).toFixed(2)}
+						{marketAssetPositionSize.toNumber().toFixed(2)}
 					</RowText>
-					<RowText className="gray-font-color">{`${props.marketAsset}-PERP`}</RowText>
+					<RowText className="gray-font-color">{`${marketAsset}-PERP`}</RowText>
 				</Details>
 			</StyledProfitDetails>
 		</>
@@ -73,10 +88,7 @@ const Details = styled.div`
 const RowText = styled.p`
 	display: inline-block;
 
-	color: #ece8e3;
-	color: ${(props) => (props.className === 'long' ? '#7FD482' : '')};
-	color: ${(props) => (props.className === 'short' ? '#EF6868' : '')};
-	color: ${(props) => (props.className === 'gray-font-color' ? '#787878' : '')};
+	color: ${(props) => textColor(props.className)};
 
 	font-size: 14px;
 	line-height: 17px;

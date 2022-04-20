@@ -8,6 +8,7 @@ type NumericInputProps = {
 	placeholder?: string;
 	onChange: (e: ChangeEvent<HTMLInputElement>, value: string) => void;
 	className?: string;
+	defaultValue?: any;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -17,6 +18,7 @@ const NumericInput: FC<NumericInputProps> = ({
 	onChange,
 	placeholder,
 	className,
+	defaultValue,
 	...rest
 }) => {
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -30,6 +32,7 @@ const NumericInput: FC<NumericInputProps> = ({
 			{...rest}
 			value={value}
 			type="number"
+			defaultValue={defaultValue}
 			onChange={handleOnChange}
 			placeholder={placeholder}
 			className={className}
