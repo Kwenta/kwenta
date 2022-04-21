@@ -27,6 +27,7 @@ import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
+import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -56,6 +57,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
+
+	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
+	const marginTransfers = marginTransfersQuery?.data ?? null;
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -118,7 +122,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			{
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
-				badge: positionHistory?.length,
+				badge: marginTransfers?.length,
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <Svg src={TransfersIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),

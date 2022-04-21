@@ -1,38 +1,31 @@
 import Card from 'components/Card';
 import Table from 'components/Table';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import BlockExplorer from 'containers/BlockExplorer';
+import { MarginTransfer } from 'queries/futures/types';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
-import { CellProps } from 'recharts';
 import styled from 'styled-components';
-import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
-import { formatCryptoCurrency } from 'utils/formatters/number';
+import { GridDivCenteredRow } from 'styles/common';
+
 import Trades from '../Trades';
 
 type TransferProps = {
+	marginTransfers: MarginTransfer[] | null;
 	isLoading: boolean;
 	isLoaded: boolean;
 };
 
-const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) => {
+const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
-
-	const data = [
-		{
-			action: 'withdrawal',
-			amount: '$10,000',
-			date: '12 hours ago',
-			transaction: '0x12441...AVAUB124',
-		},
-	];
-
-	const columnsDeps = useMemo(() => [data], [data]);
+	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	console.log(marginTransfers);
+	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
 
 	return (
 		<Card>
 			<StyledTable
 				palette="primary"
+				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
@@ -75,11 +68,11 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) =>
 						),
 						accessor: 'transaction',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => cellProps.value,
+						Cell: (cellProps: any) => blockExplorerInstance?.txLink(cellProps.value),
 						width: 50,
 					},
 				]}
-				data={data || []}
+				data={marginTransfers || []}
 				columnsDeps={columnsDeps}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
@@ -104,7 +97,6 @@ const StyledTable = styled(Table)`
 
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.blueberry};
 	text-transform: capitalize;
 `;
 

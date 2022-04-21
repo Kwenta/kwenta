@@ -3,7 +3,7 @@ import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/ty
 import { BigNumber } from '@ethersproject/bignumber';
 import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
 
-import { zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -15,11 +15,12 @@ import {
 	PositionHistory,
 	FundingRateUpdate,
 	FuturesTrade,
+	MarginTransfer,
 } from './types';
 import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
 
-import { FuturesTradeResult } from './subgraph';
+import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
@@ -242,6 +243,36 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 		default:
 			return null;
 	}
+};
+
+export const mapMarginTransfers = (
+	marginTransfers: FuturesMarginTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers.map(
+		({
+			// timestamp,
+			account,
+			market,
+			size,
+		}: FuturesMarginTransferResult) => {
+			const sizeWei = new Wei(size, 18, true);
+			const action = sizeWei.gt(0) ? 'deposit' : 'withdraw';
+			const amount = `${sizeWei.gt(0) ? '+' : '-'}${formatCurrency(market, sizeWei, {
+				maxDecimals: 2,
+			})}`;
+			console.log(market, market.toString());
+			// const timeAgo = moment.unix(timestamp).fromNow();
+			return {
+				// timestamp,
+				account,
+				market,
+				size,
+				action,
+				amount,
+				// timeAgo,
+			};
+		}
+	);
 };
 
 export const mapTradeHistory = (
