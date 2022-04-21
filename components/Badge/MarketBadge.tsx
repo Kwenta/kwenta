@@ -63,7 +63,7 @@ export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey, description }) 
 export default MarketBadge;
 
 const CountdownTimer = styled.span`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.monoBlack};
 `;
 
 const StyledBadge = styled(Badge)<{ background: string }>`
