@@ -1,5 +1,4 @@
 import React from 'react';
-import ImgSrc, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import Button from './Button';
 
@@ -12,7 +11,7 @@ export type TabButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
-	icon?: ImgSrc;
+	icon?: any;
 };
 
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
@@ -22,7 +21,7 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
-			{!!icon && <Svg src={icon} />}
+			<div>{icon}</div>
 			{!!badge && <div className="badge">{badge}</div>}
 			{icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''}
 		</StyledButton>
@@ -33,6 +32,7 @@ const StyledButton = styled(Button)`
 	height: initial;
 	display: flex;
 	align-items: center;
+  justify-content: center;
 
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -41,6 +41,11 @@ const StyledButton = styled(Button)`
 		margin: 0;
 		font-size: 13px;
 		text-align: left;
+	}
+
+	svg {
+    margin-left: 5px;
+		margin-top: 5px;
 	}
 
 	.title {
@@ -84,6 +89,12 @@ const StyledButton = styled(Button)`
 		.badge {
 			display: none;
 		}
+
+    svg {
+      path {
+        fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+      }
+    }
 	}
 `;
 

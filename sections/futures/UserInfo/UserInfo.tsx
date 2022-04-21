@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
+import { Svg } from 'react-optimized-image';
 
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
@@ -86,7 +87,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				name: FuturesTab.POSITION,
 				label: 'Position',
 				active: activeTab === FuturesTab.POSITION,
-				icon: PositionIcon,
+				icon: <Svg src={PositionIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
 			{
@@ -95,7 +96,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				badge: positionHistory?.length,
 				disabled: true,
 				active: activeTab === FuturesTab.ORDERS,
-				icon: OpenPositionsIcon,
+				icon: <Svg src={OpenPositionsIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 			{
@@ -104,7 +105,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				badge: positionHistory?.length,
 				disabled: true,
 				active: activeTab === FuturesTab.TRADES,
-				icon: OrderHistoryIcon,
+				icon: <Svg src={OrderHistoryIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
 			{
@@ -119,7 +120,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				label: 'Transfers',
 				badge: positionHistory?.length,
 				active: activeTab === FuturesTab.TRANSFERS,
-				icon: TransfersIcon,
+				icon: <Svg src={TransfersIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
