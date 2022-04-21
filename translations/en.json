@@ -638,8 +638,8 @@
 				"avg-entry-price": "Avg. Entry Price"
 			},
 			"state": {
-				"opens-in": "Opens in",
-				"closes-in": "Closes in",
+				"opens-soon": "Opens soon",
+				"closes-soon": "Closes soon",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",
@@ -654,7 +654,6 @@
 					},
 					"market-closure": {
 						"title": "{{baseCurrencyKey}} market has been paused",
-						"timer-subtitle": "Trading activity will resume in: ",
 						"subtitle": ""
 					},
 					"system-upgrade": {

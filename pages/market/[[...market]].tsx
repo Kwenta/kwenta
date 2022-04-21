@@ -53,6 +53,7 @@ const Market = () => {
 export default Market;
 
 const StyledPageContent = styled(PageContent)``;
+
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	display: grid;
 	grid-template-columns: 20% 60% 20%;
@@ -71,4 +72,9 @@ const StyledRightSideContent = styled(RightSideContent)`
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
+`;
+
+const StyledLeftSideContent = styled(LeftSideContent)`
+	width: 349px;
+	padding-right: 15px;
 `;
