@@ -64,6 +64,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		}
 	}
 
+	&:hover {
+		transform: translateY(-2px);
+	}
+
 	> span {
 		position: relative;
 		top: -2px;

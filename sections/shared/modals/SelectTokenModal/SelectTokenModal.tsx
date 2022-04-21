@@ -211,7 +211,7 @@ const StyledCenteredModal = styled(CenteredModal)`
 		width: 400px;
 	}
 	.card-body {
-		height: 80vh;
+		height: 100%;
 		padding: 16px 0;
 		overflow: hidden;
 	}
