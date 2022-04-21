@@ -7,7 +7,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import { FuturesMarket } from 'queries/futures/types';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getExchangeRatesForCurrencies, isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
@@ -21,6 +21,8 @@ import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { DEFAULT_FIAT_DECIMALS, DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
+import { Synths } from 'constants/currency';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -62,6 +64,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
+	const minDecimals =
+		isFiatCurrency(selectedPriceCurrency.name) && marketKey === Synths.sEUR
+			? DEFAULT_FIAT_EURO_DECIMALS
+			: undefined;
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
@@ -83,7 +89,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
-				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
+				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+					sign: '$',
+					minDecimals,
+				}),
 			},
 			'External Price': {
 				value:
@@ -91,6 +100,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						? '-'
 						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
 								sign: '$',
+								minDecimals,
 						  }),
 			},
 			'24H Change': {
