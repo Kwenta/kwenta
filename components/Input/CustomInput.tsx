@@ -55,7 +55,7 @@ const CustomInputContainer = styled.div`
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
-	padding: 12px 14px 12px 10px;
+	padding: 0 10px;
 
 	input {
 		display: flex;
@@ -67,6 +67,7 @@ const CustomInputContainer = styled.div`
 		background-color: transparent;
 		border: none;
 		color: ${(props) => props.theme.colors.common.primaryWhite};
+		width: 100%;
 
 		&:focus {
 			outline: none;
