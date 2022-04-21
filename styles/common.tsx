@@ -436,6 +436,8 @@ export const SwapCurrenciesButton = styled.button`
 	cursor: pointer;
 	${border}
 	transition-duration: 0.1s;
+	transition-property: all;
+	transition-timing-function: ease-in-out;
 
 	&:before {
 		border-radius: 50%;
