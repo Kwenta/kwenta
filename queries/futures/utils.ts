@@ -327,7 +327,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			size: sizeWei,
 			asset: asset,
 			price: priceWei,
-			trxId: id.split('-')[0].toString(),
+			txnHash: id.split('-')[0].toString(),
 			timestamp: timestamp,
 		};
 	});

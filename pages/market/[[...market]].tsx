@@ -52,9 +52,7 @@ const Market = () => {
 
 export default Market;
 
-const StyledPageContent = styled(PageContent)`
-	max-width: 1440px;
-`;
+const StyledPageContent = styled(PageContent)``;
 
 const StyledMainContent = styled(MainContent)`
 	max-width: initial;

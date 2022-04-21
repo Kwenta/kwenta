@@ -166,7 +166,7 @@ export type FuturesTrade = {
 	size: Wei;
 	asset: string;
 	price?: Wei;
-	trxId: string;
+	txnHash: string;
 	timestamp: Wei;
 };
 

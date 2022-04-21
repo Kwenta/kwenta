@@ -12,7 +12,6 @@ import { isL2MainnetState } from 'store/wallet';
 import styled from 'styled-components';
 import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_DATA } from './constants';
 
 type TradesHistoryTableProps = {
 	currencyKey: string | undefined;
@@ -32,10 +31,10 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						value: Number(trade?.price),
 						amount: Number(trade?.size),
 						time: Number(trade?.timestamp),
-						id: trade?.trxId,
+						id: trade?.txnHash,
 					};
 			  })
-			: DEFAULT_DATA;
+			: [];
 	}, [futuresTradesQuery.data]);
 
 	const calTimeDelta = (time: number) => {
@@ -83,7 +82,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 					highlightRowsOnHover
 					columns={[
 						{
-							Header: <TableHeader>Amount</TableHeader>,
+							Header: <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
 							accessor: 'Amount',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -115,7 +114,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 							width: 100,
 						},
 						{
-							Header: <TableHeader>Price</TableHeader>,
+							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: 'Price',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -129,7 +128,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 							width: 110,
 						},
 						{
-							Header: <TableHeader>Time</TableHeader>,
+							Header: <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
 							accessor: 'Time',
 							Cell: (cellProps: CellProps<any>) => {
 								return (
@@ -177,15 +176,20 @@ const TableContainer = styled.div``;
 
 const StyledTable = styled(Table)`
 	border: 0px;
-	height: 720px;
+	height: 695px;
+
 	.table-body {
 		::-webkit-scrollbar-thumb {
 			box-shadow: inset 0 0 13px 13px ${(props) => props.theme.colors.selectedTheme.slider.label};
 		}
 	}
+
+	.table-body-row {
+		padding: 0;
+	}
 `;
 
-const TableHeader = styled.div`
+const TableHeader = styled(CapitalizedText)`
 	font-family: ${(props) => props.theme.fonts.regular};
 `;
 

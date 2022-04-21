@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesEndpoint, mapTrades } from './utils';
@@ -16,10 +16,10 @@ const useGetFuturesTrades = (
 	options?: UseQueryOptions<FuturesTrade[] | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
@@ -51,7 +51,7 @@ const useGetFuturesTrades = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress, ...options }
+		{ enabled: isWalletConnected ? isL2 && isAppReady : isAppReady, ...options }
 	);
 };
 
