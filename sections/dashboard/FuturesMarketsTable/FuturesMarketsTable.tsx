@@ -19,6 +19,7 @@ import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -149,6 +150,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 						),
 						accessor: 'oraclePrice',
 						Cell: (cellProps: CellProps<any>) => {
+							const formatOptions =
+								cellProps.row.original.asset === 'EUR'
+									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									: {};
 							return cellProps.row.original.price === '-' ? (
 								<DefaultCell>-</DefaultCell>
 							) : (
@@ -157,6 +162,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									price={cellProps.row.original.price}
 									sign={'$'}
 									conversionRate={1}
+									formatOptions={formatOptions}
 								/>
 							);
 						},
