@@ -11,7 +11,7 @@ type OpenInterestProps = {
 const OpenInterestChart: React.FC<OpenInterestProps> = ({ skew }) => {
 	return (
 		<OIContainer>
-			{skew[0].long !== 0 && skew[0].short !== 0 ? (
+			{skew[0].long !== 0 || skew[0].short !== 0 ? (
 				<LongOI>
 					<ShortOI skew={skew}></ShortOI>
 				</LongOI>

@@ -1,3 +1,4 @@
+import { FuturesMarket } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +19,11 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets.length > 0
 			? futuresMarkets
-					.filter(({ asset }) => asset === currencyKey)
-					.map(({ marketSize, marketSkew }) => {
+					.filter((i: FuturesMarket) => i.asset === currencyKey)
+					.map((i: FuturesMarket) => {
 						return {
-							short: marketSize.sub(marketSkew).div('2').div(marketSize).toNumber(),
-							long: marketSize.add(marketSkew).div('2').div(marketSize).toNumber(),
+							short: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+							long: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
 						};
 					})
 			: [
