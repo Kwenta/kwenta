@@ -260,7 +260,7 @@ const DefaultCell = styled.p``;
 const TableContainer = styled.div``;
 
 const StyledTable = styled(Table)`
-	margin-top: 20px;
+	/* margin-top: 20px; */
 `;
 
 const TableHeader = styled.div``;
