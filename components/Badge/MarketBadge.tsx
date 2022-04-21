@@ -1,5 +1,5 @@
 import { CurrencyKey } from 'constants/currency';
-import useIsMarketTransitioning from 'hooks/useIsMarketTransitioing';
+import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
 import useMarketClosed from 'hooks/useMarketClosed';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
