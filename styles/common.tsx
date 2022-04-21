@@ -290,17 +290,21 @@ export const CenteredMessage = styled.div`
 	grid-gap: 10px;
 `;
 
-export const FullHeightContainer = styled.div`
-	display: grid;
-	grid-template-columns: 20% 60% 20%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
+export const FullHeightContainer = styled(FlexDiv)`
+	justify-content: space-between;
+	width: 100%;
+	flex-grow: 1;
 	height: 100vh;
 	position: relative;
 `;
 
-export const MainContent = styled.div`
+export const MainContent = styled(FlexDiv)`
 	position: relative;
+	flex-grow: 1;
+	max-width: 915px;
+	position: relative;
+	flex-direction: column;
+	margin: ${SPACING_FROM_HEADER} auto 0 auto;
 `;
 
 export const RightSideContent = styled.div`

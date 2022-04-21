@@ -29,7 +29,7 @@ const Market = () => {
 			</Head>
 			<AppLayout>
 				<StyledPageContent>
-					<FullHeightContainer>
+					<StyledFullHeightContainer>
 						<DesktopOnlyView>
 							<StyledLeftSideContent>
 								<TradingHistory currencyKey={router.query.market?.[0]!} />
@@ -43,7 +43,7 @@ const Market = () => {
 								<Trade />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
-					</FullHeightContainer>
+					</StyledFullHeightContainer>
 				</StyledPageContent>
 			</AppLayout>
 		</>
@@ -53,9 +53,16 @@ const Market = () => {
 export default Market;
 
 const StyledPageContent = styled(PageContent)``;
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	display: grid;
+	grid-template-columns: 20% 60% 20%;
+	column-gap: 15px;
+	width: calc(100% - 30px);
+`;
 
 const StyledMainContent = styled(MainContent)`
-	max-width: initial;
+	max-width: unset;
+	margin: unset;
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`
