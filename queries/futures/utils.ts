@@ -14,6 +14,7 @@ import {
 	RawPosition,
 	PositionHistory,
 	FundingRateUpdate,
+	FuturesTrade,
 } from './types';
 import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
@@ -316,4 +317,18 @@ export const mapTradeHistory = (
 			})
 			.filter(({ id }: { id: number }) => id !== 0) ?? null
 	);
+};
+
+export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
+	return futuresTrades?.map(({ id, timestamp, size, price, asset }: FuturesTradeResult) => {
+		const priceWei = new Wei(price, 18, true);
+		const sizeWei = new Wei(size, 18, true);
+		return {
+			size: sizeWei,
+			asset: asset,
+			price: priceWei,
+			txnHash: id.split('-')[0].toString(),
+			timestamp: timestamp,
+		};
+	});
 };
