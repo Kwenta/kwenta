@@ -15,7 +15,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import UserInfo from '../UserInfo';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import TVChartWrapper from '../TvChartWrapper';
+import PositionChart from '../PositionChart';
 
 type MarketInfoProps = {
 	market: string;
@@ -58,7 +58,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<TVChartWrapper baseCurrencyKey={baseCurrencyKey} />
+			<PositionChart marketAsset={baseCurrencyKey} />
 			<UserInfo marketAsset={baseCurrencyKey} />
 			<FuturesPositionsTable
 				futuresMarkets={otherFuturesMarkets}

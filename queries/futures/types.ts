@@ -98,6 +98,7 @@ export type RawPosition = {
 	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
+	avgEntryPrice: Wei;
 	exitPrice: Wei;
 	pnl: Wei;
 	pnlWithFeesPaid: Wei;
@@ -121,6 +122,7 @@ export type PositionHistory = {
 	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
+	avgEntryPrice: Wei;
 	exitPrice: Wei;
 	leverage: Wei;
 	side: PositionSide;

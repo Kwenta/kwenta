@@ -270,6 +270,7 @@ export const mapTradeHistory = (
 					closeTimestamp,
 					totalVolume,
 					trades,
+					avgEntryPrice,
 				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
@@ -279,7 +280,7 @@ export const mapTradeHistory = (
 					const marginWei = new Wei(margin, 18, true);
 					const pnlWei = new Wei(pnl, 18, true);
 					const totalVolumeWei = new Wei(totalVolume, 18, true);
-
+					const avgEntryPriceWei = new Wei(avgEntryPrice, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),
 						transactionHash: lastTxHash,
@@ -300,6 +301,7 @@ export const mapTradeHistory = (
 						pnl: pnlWei,
 						totalVolume: totalVolumeWei,
 						trades: trades,
+						avgEntryPrice: avgEntryPriceWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)
 							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),

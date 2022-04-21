@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useRef, useContext, useEffect } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 
@@ -9,6 +9,8 @@ import {
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
+import { formatNumber } from 'utils/formatters/number';
+import { ChartPosition } from './types';
 
 type Props = {
 	baseCurrencyKey: string;
@@ -20,6 +22,7 @@ type Props = {
 	autosize: boolean;
 	studiesOverrides: Record<string, any>;
 	overrides: Record<string, string>;
+	activePosition?: ChartPosition;
 };
 
 export function TVChart({
@@ -32,12 +35,13 @@ export function TVChart({
 	autosize = true,
 	studiesOverrides = {},
 	overrides,
+	activePosition,
 }: Props) {
-	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
-	const { colors } = React.useContext(ThemeContext);
+	const _widget = useRef<IChartingLibraryWidget | null>(null);
+	const { colors } = useContext(ThemeContext);
 	let isL2 = useRecoilValue(isL2State);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
 			datafeed: DataFeedFactory(isL2),
@@ -81,11 +85,43 @@ export function TVChart({
 		const tvWidget = new widget(widgetOptions);
 		_widget.current = tvWidget;
 
+		tvWidget.onChartReady(() => {
+			if (activePosition) {
+				tvWidget
+					.chart()
+					.createPositionLine()
+					.setText('ENTRY: ' + formatNumber(activePosition.avgEntryPrice))
+					.setTooltip('Average entry price')
+					.setQuantity(formatNumber(activePosition.size))
+					.setPrice(Number(activePosition.avgEntryPrice))
+					.setExtendLeft(false)
+					.setLineStyle(0)
+					.setLineLength(25);
+
+				if (activePosition.liquidationPrice) {
+					tvWidget
+						.chart()
+						.createPositionLine()
+						.setText('LIQUIDATION: ' + formatNumber(activePosition.liquidationPrice))
+						.setTooltip('Liquidation price')
+						.setQuantity(formatNumber(activePosition.size))
+						.setPrice(Number(activePosition.liquidationPrice))
+						.setExtendLeft(false)
+						.setLineStyle(0)
+						.setLineColor(colors.red)
+						.setBodyBorderColor(colors.red)
+						.setQuantityBackgroundColor(colors.red)
+						.setQuantityBorderColor(colors.red)
+						.setLineLength(25);
+				}
+			}
+		});
+
 		return () => {
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, activePosition]);
 
 	return (
 		<Container>
