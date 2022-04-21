@@ -129,6 +129,12 @@ export const QUERY_KEYS = {
 			currencyKey,
 		],
 		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
+		Trades: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'trades',
+			networkId,
+			currencyKey,
+		],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
@@ -136,13 +142,12 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
-		FundingRate: (networkId: NetworkId, currencyKey: string | null, assetPrice: number | null) => [
-			'futures',
-			'fundingRate',
-			networkId,
-			currencyKey,
-			assetPrice,
-		],
+		FundingRate: (
+			networkId: NetworkId,
+			currencyKey: string | null,
+			assetPrice: number | null,
+			currentFundingRate: number | undefined
+		) => ['futures', 'fundingRates', networkId, currencyKey, assetPrice, currentFundingRate],
 		TradingVolumeForAll: (networkId: NetworkId) => ['futures', 'tradingVolumeForAll', networkId],
 		MarketPositionHistory: (networkId: NetworkId, market: string | null, walletAddress: string) => [
 			'futures',

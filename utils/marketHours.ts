@@ -10,16 +10,16 @@ import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import moment from 'moment-business-time';
 
 export const forexHours = () => {
-	// Sunday 5pm ET to Friday 5pm ET
+	// Sunday 5pm ET to Friday 4pm ET
 	// This library's support for 24 hour markets is lacking as you'll see below. But this is still a better solution than calculating market hour diffs by hand.
 	moment.locale('forex', {
 		workinghours: {
-			0: ['17:00:00', '127:00:00'], // Closing time is (24 * days until close inclusive) - 7
-			1: ['00:00:00', '113:00:00'], // ie. On Monday it will be 113 hours until market close (5pm Friday)
-			2: ['00:00:00', '89:00:00'],
-			3: ['00:00:00', '65:00:00'],
-			4: ['00:00:00', '41:00:00'],
-			5: ['00:00:00', '17:00:00'],
+			0: ['17:00:00', '126:00:00'], // Closing time is (24 * days until close inclusive) - 7
+			1: ['00:00:00', '112:00:00'], // ie. On Monday it will be 112 hours until market close (4pm Friday)
+			2: ['00:00:00', '88:00:00'],
+			3: ['00:00:00', '64:00:00'],
+			4: ['00:00:00', '40:00:00'],
+			5: ['00:00:00', '16:00:00'],
 			6: null,
 		},
 	});

@@ -38,7 +38,6 @@ const Header: FC = () => {
 };
 
 const Container = styled.header<{ isL2: boolean }>`
-	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
