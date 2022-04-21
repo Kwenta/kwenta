@@ -77,9 +77,9 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 			>
 				<ModalWindow>
 					<LabelWithInput
-						defaultValue={marketAssetRate}
+						defaultValue={marketAssetRate.toFixed(2)}
 						labelText={'Entry Price: '}
-						placeholder={'$43,938.11'}
+						placeholder={`${marketAssetRate.toFixed(2)}`}
 						onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}
 					/>
 					<ProfitCalcGrid>
@@ -88,18 +88,18 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 							<LabelWithInput
 								id={'exit-price'}
 								labelText={'Exit Price: '}
-								placeholder={'$46,939.11'}
+								placeholder={`${(marketAssetRate + marketAssetRate * 0.05).toFixed(2)}`}
 								onChange={(e: any) => handleSetInput(e, exitPrice, 'exitPrice')}
 							/>
 							<LabelWithInput
 								id={'stop-loss'}
 								labelText={'Stop Loss: '}
-								placeholder={'$32,000.00'}
+								placeholder={`${(marketAssetRate - marketAssetRate * 0.05).toFixed(2)}`}
 								onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
 							/>
 							<LabelWithInput
 								right={marketAsset}
-								placeholder={`23.1`}
+								placeholder={`10.00`}
 								id={'market-position-size'}
 								labelText={'Position Size: '}
 								onChange={(e: any) =>
@@ -112,19 +112,19 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 							<LabelWithInput
 								id={'gain-percent'}
 								labelText={'Gain %: '}
-								placeholder={`${marketAssetRate * 0.05}`}
+								placeholder={`5.00`}
 								disabled={true}
 							/>
 							<LabelWithInput
 								id={'loss-percent'}
 								labelText={'Loss %: '}
-								placeholder={`${marketAssetRate * -0.05}`}
+								placeholder={`5.00`}
 								disabled={true}
 							/>
 							<LabelWithInput
 								id={'base-position-size'}
 								labelText={'Position Size: '}
-								placeholder={`${marketAssetRate * 10}`}
+								placeholder={`${(marketAssetRate * 10).toFixed(2)}`}
 								disabled={true}
 								right={'sUSD'}
 							/>

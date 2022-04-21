@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import CustomInput from 'components/Input/CustomInput';
 import NumericInput from 'components/Input/NumericInput';
 
 type LabelWithInputProps = {
@@ -23,8 +24,8 @@ const LabelWithInput: React.FC<LabelWithInputProps> = ({
 }) => (
 	<>
 		<LabelText>{labelText}</LabelText>
-		<NumericInput
-			// id={id}
+		<CustomInput
+			id={id}
 			right={right}
 			disabled={disabled}
 			onChange={onChange}

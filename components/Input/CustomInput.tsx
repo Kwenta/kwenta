@@ -1,6 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
+function classNameToCss(className: string | undefined, cssProp: string) {
+	if (className === 'profit-calc') {
+		if (cssProp === 'display') return '';
+		if (cssProp === 'flex') return '';
+		if (cssProp === 'width') return '100%';
+	}
+}
+
 type CustomInputProps = {
 	placeholder?: string;
 	value?: string | number;
@@ -9,6 +17,8 @@ type CustomInputProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	disabled?: boolean;
+	id?: string;
+	defaultValue?: any;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -21,6 +31,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	style,
 	className,
 	disabled,
+	id,
+	defaultValue,
 }) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
@@ -39,6 +51,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
 						e.preventDefault();
 					}
 				}}
+				id={id}
+				defaultValue={defaultValue}
 			/>
 			{typeof right === 'string' ? <span>{right}</span> : right}
 		</CustomInputContainer>
@@ -58,8 +72,10 @@ const CustomInputContainer = styled.div`
 	padding: 12px 14px 12px 10px;
 
 	input {
-		display: flex;
-		flex: 1;
+		display: ${(props) => classNameToCss(props.className, 'display')};
+		flex: ${(props) => classNameToCss(props.className, 'flex')};
+		width: ${(props) => classNameToCss(props.className, 'width')};
+
 		margin-right: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;
