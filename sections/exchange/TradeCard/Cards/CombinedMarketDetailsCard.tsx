@@ -47,6 +47,7 @@ const MarketDetailsCard: FC<MarketDetailsCardProps> = ({
 			setRates24Low(rates24hQuery.data[rates24hQuery.data.length - 1].rate.toNumber());
 			setRates24High(rates24hQuery.data[0].rate.toNumber());
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rates24hQuery.data]);
 
 	const quoteCurrencyMarketTimer = useMarketHoursTimer(
