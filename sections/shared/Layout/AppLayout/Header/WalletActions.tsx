@@ -62,6 +62,7 @@ export const WalletActions: FC = () => {
 		}
 
 		return options;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [hardwareWallet]);
 
 	const formatOptionLabel = ({
@@ -100,7 +101,7 @@ export const WalletActions: FC = () => {
 
 	useEffect(() => {
 		if (signer) {
-			setWalletLabel('loading...');
+			setWalletLabel(truncatedWalletAddress!);
 			signer.getAddress().then((account: string) => {
 				const _account = account;
 				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
@@ -109,6 +110,7 @@ export const WalletActions: FC = () => {
 				});
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [signer, truncatedWalletAddress]);
 
 	return (

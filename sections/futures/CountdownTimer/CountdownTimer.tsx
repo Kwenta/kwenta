@@ -43,6 +43,7 @@ export default function CountdownTimer({ endUtcTimestamp }: Props) {
 		return () => {
 			clearInterval(interval);
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
