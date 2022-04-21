@@ -55,7 +55,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
 						),
-						accessor: 'date',
+						accessor: 'timestamp',
 						// : CellProps<any></any>
 						Cell: (cellProps: any) => cellProps.value,
 						width: 50,
@@ -66,9 +66,12 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 								{t('futures.market.user.transfers.table.transaction')}
 							</StyledTableHeader>
 						),
-						accessor: 'transaction',
+						accessor: 'account',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => blockExplorerInstance?.txLink(cellProps.value),
+						Cell: (cellProps: any) => {
+							// blockExplorerInstance?.txLink(cellProps.value),
+							return cellProps.value;
+						},
 						width: 50,
 					},
 				]}

@@ -150,7 +150,7 @@ export const QUERY_KEYS = {
 		],
 		MarginTransfers: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
-			'marginTransfers',
+			'futuresMarginTransfers',
 			networkId,
 			currencyKey,
 		],

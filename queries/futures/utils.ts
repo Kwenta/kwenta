@@ -23,6 +23,7 @@ import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } f
 import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { Synths } from '@synthetixio/contracts-interface';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -248,22 +249,17 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
-	return marginTransfers.map(
-		({
-			// timestamp,
-			account,
-			market,
-			size,
-		}: FuturesMarginTransferResult) => {
-			const sizeWei = new Wei(size, 18, true);
-			const action = sizeWei.gt(0) ? 'deposit' : 'withdraw';
-			const amount = `${sizeWei.gt(0) ? '+' : '-'}${formatCurrency(market, sizeWei, {
+	console.log(marginTransfers);
+	return marginTransfers?.map(
+		({ timestamp, account, market, size }: FuturesMarginTransferResult) => {
+			const action = new Wei(size).gt(0) ? 'deposit' : 'withdraw';
+			const amount = `${new Wei(size).gt(0) ? '+' : ''}${formatCurrency(Synths.sUSD, size, {
 				maxDecimals: 2,
 			})}`;
-			console.log(market, market.toString());
+			// console.log(market, market.toString());
 			// const timeAgo = moment.unix(timestamp).fromNow();
 			return {
-				// timestamp,
+				timestamp,
 				account,
 				market,
 				size,
