@@ -160,12 +160,12 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 								<CancelButton
 									onClick={() => {
 										setCancelCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
-										// cancelOrderTxn.mutate();
 									}}
 								>
 									{t('futures.market.user.open-orders.actions.cancel')}
 								</CancelButton>
-								<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>
+								{/* TODO: This will probably be used for other order types. */}
+								{/*<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>*/}
 							</div>
 						);
 					},

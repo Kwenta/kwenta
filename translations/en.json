@@ -701,7 +701,7 @@
 					"open-position": "Open Position",
 					"modify-position": "Modify Position",
 					"deposit-margin-minimum": "Deposit $50 Margin Minimum",
-					"submit-order": "Submit Order"
+					"place-next-price-order": "Place Next-Price Order"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",

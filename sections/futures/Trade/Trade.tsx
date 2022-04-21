@@ -38,6 +38,7 @@ import { getMarketKey } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
+import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -65,6 +66,8 @@ const Trade: React.FC = () => {
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
 
 	const [error, setError] = useState<string | null>(null);
 
@@ -177,7 +180,7 @@ const Trade: React.FC = () => {
 	);
 
 	const placeOrderTranslationKey = React.useMemo(() => {
-		if (orderType === 1) return 'futures.market.trade.button.submit-order';
+		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
 		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
 		return !futuresMarketsPosition?.remainingMargin ||
 			futuresMarketsPosition.remainingMargin.lt('50')
@@ -247,6 +250,7 @@ const Trade: React.FC = () => {
 						futuresMarketPositionQuery.refetch();
 						futuresPositionHistoryQuery.refetch();
 						marketQuery.refetch();
+						openOrdersQuery.refetch();
 					}, 5 * 1000);
 				},
 			});
