@@ -59,11 +59,9 @@ const StyledMainContent = styled(MainContent)`
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`
-	width: 349px;
-	padding-left: 15px;
+	width: 100%;
 `;
 
 const StyledLeftSideContent = styled(LeftSideContent)`
-	width: 349px;
-	padding-right: 15px;
+	width: 100%;
 `;
