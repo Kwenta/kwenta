@@ -4,7 +4,7 @@ import Tippy from '@tippyjs/react';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 
-import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
+import { zIndex } from 'constants/ui';
 
 import media from 'styles/media';
 

@@ -73,8 +73,3 @@ const StyledRightSideContent = styled(RightSideContent)`
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
 `;
-
-const StyledLeftSideContent = styled(LeftSideContent)`
-	width: 349px;
-	padding-right: 15px;
-`;
