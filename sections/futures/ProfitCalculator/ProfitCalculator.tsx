@@ -40,12 +40,12 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		if (src_ !== null && target_ !== null) {
 			if (src_.value !== null && target_.value !== null) {
 				if (source === 'exit-price') {
-					const gainPercent: number = parseFloat(src_.value) / entryPrice.toNumber();
+					const gainPercent: number = (parseFloat(src_.value) / entryPrice.toNumber() - 1) * 100;
 					target_.value = gainPercent.toFixed(2);
 				}
 
 				if (source === 'stop-loss') {
-					const lossPercent: number = parseFloat(src_.value) / stopLoss.toNumber();
+					const lossPercent: number = (1 - parseFloat(src_.value) / entryPrice.toNumber()) * 100;
 					target_.value = lossPercent.toFixed(2);
 				}
 
@@ -57,12 +57,16 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		}
 	};
 
-	// Run this whenever `exitPrice` and `stopLoss` are updated
 	useEffect(() => {
 		setTargetInputValue('exit-price', 'gain-percent');
 		setTargetInputValue('stop-loss', 'loss-percent');
 		setTargetInputValue('market-position-size', 'base-position-size');
 	}, [exitPrice, stopLoss, marketAssetPositionSize]);
+
+	useEffect(() => {
+		const entryPrice_ = wei(marketAssetRate.toFixed(2));
+		setEntryPrice(entryPrice_);
+	}, []);
 
 	return (
 		<>

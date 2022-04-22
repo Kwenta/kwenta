@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
-import NumericInput from 'components/Input/NumericInput';
 
 type LabelWithInputProps = {
 	disabled?: boolean;
@@ -9,6 +8,7 @@ type LabelWithInputProps = {
 	labelText: string;
 	placeholder: string;
 	right?: any;
+	value?: any;
 	onChange?: any;
 	defaultValue?: any;
 };
@@ -16,6 +16,7 @@ type LabelWithInputProps = {
 const LabelWithInput: React.FC<LabelWithInputProps> = ({
 	id,
 	right,
+	value,
 	onChange,
 	disabled,
 	labelText,
@@ -27,11 +28,12 @@ const LabelWithInput: React.FC<LabelWithInputProps> = ({
 		<CustomInput
 			id={id}
 			right={right}
+			value={value}
 			disabled={disabled}
 			onChange={onChange}
 			placeholder={placeholder}
-			className={'profit-calc'}
 			defaultValue={defaultValue}
+			style={{ display: '', flex: '', width: '100%' }}
 		/>
 	</>
 );

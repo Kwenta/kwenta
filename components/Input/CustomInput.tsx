@@ -1,14 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-function classNameToCss(className: string | undefined, cssProp: string) {
-	if (className === 'profit-calc') {
-		if (cssProp === 'display') return '';
-		if (cssProp === 'flex') return '';
-		if (cssProp === 'width') return '100%';
-	}
-}
-
 type CustomInputProps = {
 	placeholder?: string;
 	value?: string | number;
@@ -72,9 +64,8 @@ const CustomInputContainer = styled.div`
 	padding: 0 10px;
 
 	input {
-		display: ${(props) => classNameToCss(props.className, 'display')};
-		flex: ${(props) => classNameToCss(props.className, 'flex')};
-		width: ${(props) => classNameToCss(props.className, 'width')};
+		display: flex;
+		flex: 1;
 
 		margin-right: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
