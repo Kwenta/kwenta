@@ -11,14 +11,11 @@ import PositionCard from '../PositionCard';
 import Trades from '../Trades';
 
 import ROUTES from 'constants/routes';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { getMarketKey } from 'utils/futures';
-import Connector from 'containers/Connector';
 import OpenOrdersTable from './OpenOrdersTable';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
+import { FuturesPosition } from 'queries/futures/types';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -30,24 +27,16 @@ const FutureTabs = Object.values(FuturesTab);
 
 type UserInfoProps = {
 	marketAsset: CurrencyKey;
+	position: FuturesPosition | null;
+	openOrders: any[];
+	refetch(): void;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
 	const router = useRouter();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id),
-		{
-			refetchInterval: 6000,
-		}
-	);
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
-
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
-	const openOrders = openOrdersQuery?.data ?? null;
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -116,13 +105,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			</TabButtonsContainer>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
-					position={futuresMarketsPosition ?? null}
+					position={position}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
 					onPositionClose={() =>
 						setTimeout(() => {
 							futuresPositionHistoryQuery.refetch();
-							futuresMarketPositionQuery.refetch();
+							refetch();
 						}, 5 * 1000)
 					}
 				/>
@@ -135,7 +124,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable currencyKey={marketAsset} />
+				<OpenOrdersTable
+					currencyKey={marketAsset}
+					position={position}
+					openOrders={openOrders}
+					refetch={refetch}
+				/>
 			</TabPanel>
 		</>
 	);

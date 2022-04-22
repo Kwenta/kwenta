@@ -20,7 +20,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import LeverageInput from '../LeverageInput';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -34,15 +33,19 @@ import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
+import { FuturesPosition } from 'queries/futures/types';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC = () => {
+type TradeProps = {
+	refetch(): void;
+	position: FuturesPosition | null;
+};
+
+const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -50,7 +53,7 @@ const Trade: React.FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs, network } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { isMarketClosed } = useMarketClosed(marketAsset);
@@ -58,16 +61,10 @@ const Trade: React.FC = () => {
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
-
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
 
 	const [error, setError] = useState<string | null>(null);
 
@@ -98,8 +95,8 @@ const Trade: React.FC = () => {
 		[exchangeRates, marketAsset]
 	);
 
-	const positionLeverage = futuresMarketPositionQuery?.data?.position?.leverage ?? wei(0);
-	const positionSide = futuresMarketPositionQuery?.data?.position?.side;
+	const positionLeverage = position?.position?.leverage ?? wei(0);
+	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 
 	const maxLeverageValue = useMemo(() => {
@@ -135,19 +132,14 @@ const Trade: React.FC = () => {
 	}, [router.events]);
 
 	useEffect(() => {
-		if (Number(tradeSize) && !!futuresMarketsPosition?.remainingMargin) {
-			setLeverage(
-				marketAssetRate
-					.mul(Number(tradeSize))
-					.div(futuresMarketsPosition?.remainingMargin)
-					.toString()
-			);
+		if (Number(tradeSize) && !!position?.remainingMargin) {
+			setLeverage(marketAssetRate.mul(Number(tradeSize)).div(position?.remainingMargin).toString());
 		} else {
 			if (Number(leverage) !== 0) {
 				setLeverage('');
 			}
 		}
-	}, [tradeSize, marketAssetRate, futuresMarketsPosition, leverage]);
+	}, [tradeSize, marketAssetRate, position, leverage]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);
@@ -165,13 +157,13 @@ const Trade: React.FC = () => {
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
 					: wei(value)
-							.mul(futuresMarketsPosition?.remainingMargin ?? zeroBN)
+							.mul(position?.remainingMargin ?? zeroBN)
 							.div(marketAssetRate);
 
 				onTradeAmountChange(newTradeSize.toString(), true);
 			}
 		},
-		[futuresMarketsPosition?.remainingMargin, marketAssetRate, onTradeAmountChange]
+		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
 	);
 
 	const sizeDelta = React.useMemo(
@@ -181,12 +173,11 @@ const Trade: React.FC = () => {
 
 	const placeOrderTranslationKey = React.useMemo(() => {
 		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
-		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
-		return !futuresMarketsPosition?.remainingMargin ||
-			futuresMarketsPosition.remainingMargin.lt('50')
+		if (!!position?.position) return 'futures.market.trade.button.modify-position';
+		return !position?.remainingMargin || position.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: 'futures.market.trade.button.open-position';
-	}, [futuresMarketsPosition, orderType]);
+	}, [position, orderType]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -197,8 +188,8 @@ const Trade: React.FC = () => {
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted ||
-				!futuresMarketsPosition ||
-				!futuresMarketsPosition.remainingMargin
+				!position ||
+				!position.remainingMargin
 			) {
 				return;
 			}
@@ -218,7 +209,7 @@ const Trade: React.FC = () => {
 		tradeSize,
 		synthetixjs,
 		marketAsset,
-		futuresMarketsPosition,
+		position,
 		leverageSide,
 		walletAddress,
 		isLeverageValueCommitted,
@@ -246,11 +237,10 @@ const Trade: React.FC = () => {
 				txHash: orderTxn.hash,
 				onTxConfirmed: () => {
 					onLeverageChange('');
-					setTimeout(() => {
-						futuresMarketPositionQuery.refetch();
+					setTimeout(async () => {
 						futuresPositionHistoryQuery.refetch();
 						marketQuery.refetch();
-						openOrdersQuery.refetch();
+						refetch();
 					}, 5 * 1000);
 				},
 			});
@@ -270,7 +260,7 @@ const Trade: React.FC = () => {
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN) || isMarketClosed}
+					disabled={position?.remainingMargin?.lte(zeroBN) || isMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -278,22 +268,22 @@ const Trade: React.FC = () => {
 			</MarketActions>
 
 			<MarketInfoBox
-				totalMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
-				availableMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+				totalMargin={position?.remainingMargin ?? zeroBN}
+				availableMargin={position?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
-						? futuresMarketsPosition?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
+					position && position?.remainingMargin.gt(zeroBN)
+						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
-						? futuresMarketsPosition?.remainingMargin
-								?.sub(futuresMarketsPosition?.accessibleMargin)
-								.div(futuresMarketsPosition?.remainingMargin)
+					position && position?.remainingMargin.gt(zeroBN)
+						? position?.remainingMargin
+								?.sub(position?.accessibleMargin)
+								.div(position?.remainingMargin)
 						: zeroBN
 				}
-				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
-				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
+				liquidationPrice={position?.position?.liquidationPrice ?? zeroBN}
+				leverage={position?.position?.leverage ?? zeroBN}
 				isMarketClosed={isMarketClosed}
 			/>
 
@@ -312,7 +302,7 @@ const Trade: React.FC = () => {
 			/>
 
 			<OrderSizing
-				disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
+				disabled={position?.remainingMargin?.lte(zeroBN)}
 				amount={tradeSize}
 				amountSUSD={tradeSizeSUSD}
 				assetRate={marketAssetRate}
@@ -327,7 +317,7 @@ const Trade: React.FC = () => {
 				onLeverageChange={(value) => onLeverageChange(value)}
 				side={leverageSide}
 				setIsLeverageValueCommitted={setIsLeverageValueCommitted}
-				currentPosition={futuresMarketsPosition}
+				currentPosition={position}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 				isMarketClosed={isMarketClosed}
@@ -361,10 +351,10 @@ const Trade: React.FC = () => {
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
+							refetch();
 							futuresPositionHistoryQuery.refetch();
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
@@ -377,10 +367,10 @@ const Trade: React.FC = () => {
 			{isWithdrawMarginModalOpen && (
 				<WithdrawMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
+							refetch();
 							futuresPositionHistoryQuery.refetch();
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
