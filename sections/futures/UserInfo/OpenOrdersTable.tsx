@@ -90,7 +90,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 	}, [openOrdersQuery, futuresPositionQuery]);
 
 	return (
-		<Table
+		<StyledTable
 			data={data}
 			highlightRowsOnHover
 			showPagination
@@ -174,6 +174,10 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ currencyKey }) => {
 		/>
 	);
 };
+
+const StyledTable = styled(Table)`
+	margin-bottom: 20px;
+`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
