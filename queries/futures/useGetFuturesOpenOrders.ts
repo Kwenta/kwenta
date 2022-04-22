@@ -10,6 +10,8 @@ import request, { gql } from 'graphql-request';
 import { getFuturesEndpoint } from './utils';
 import Wei from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
+import Connector from 'containers/Connector';
+import { getDisplayAsset } from 'utils/futures';
 
 const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -17,16 +19,19 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
+	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
 		async () => {
 			try {
+				const { contracts } = synthetixjs!;
+				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query OpenOrders($account: String!) {
-							futuresOrders(where: { account: $account, status: Pending }) {
+						query OpenOrders($account: String!, $market: String!) {
+							futuresOrders(where: { account: $account, market: $market, status: Pending }) {
 								id
 								account
 								size
@@ -37,7 +42,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 							}
 						}
 					`,
-					{ account: walletAddress }
+					{ account: walletAddress, market: marketAddress }
 				);
 
 				return response
