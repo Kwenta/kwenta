@@ -42,10 +42,7 @@ const PnLs: React.FC<PnLsProps> = ({
 			(labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])).toFixed(2)
 		);
 
-		if (!isNaN(rateOfReturn_))
-			labelsWithStats['R:R'] = (
-				labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])
-			).toFixed(2);
+		if (!isNaN(rateOfReturn_)) labelsWithStats['R:R'] = rateOfReturn_;
 	}
 
 	return (
