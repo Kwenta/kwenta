@@ -91,7 +91,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }) ? (
-					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime}>
+					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'125px'}>
 						<HoverTransform>
 							{formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' })}
 						</HoverTransform>
@@ -142,6 +142,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
 					<StyledTooltip
 						preset="bottom"
+						width={'189px'}
 						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize

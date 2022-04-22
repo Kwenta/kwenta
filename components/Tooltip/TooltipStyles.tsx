@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 interface ToolTipStyleProps {
 	preset?: string;
+	width?: string;
 	top?: string;
 	bottom?: string;
 	left?: string;
@@ -11,8 +12,8 @@ interface ToolTipStyleProps {
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
-		height: 50px;
-		width: 189px;
+		height: 56px;
+		width: ${(props) => props.width || '189px'};
 		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-sizing: border-box;
@@ -72,8 +73,4 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 export const ToolTipWrapper = styled.div`
 	position: relative;
 	display: inline-block;
-`;
-
-export const TimerTooltip = styled(Tooltip)`
-	width: 155px;
 `;

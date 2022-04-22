@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { TimerTooltip, ToolTipWrapper } from './TooltipStyles';
+import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 import CountUpTimer from '../../sections/futures/CountUpTimer';
 
 interface ToolTipProps {
 	startTimeDate: Date | undefined;
 	children?: React.ReactNode;
+	width?: string;
 	preset?: string;
 	top?: string;
 	bottom?: string;
@@ -12,7 +13,7 @@ interface ToolTipProps {
 	right?: string;
 }
 
-const GeneralTooltip = (props: ToolTipProps) => {
+const TimerTooltip = (props: ToolTipProps) => {
 	const [activeMouse, setActiveMouse] = useState(false);
 
 	const openToolTip = () => {
@@ -26,12 +27,12 @@ const GeneralTooltip = (props: ToolTipProps) => {
 		<ToolTipWrapper onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
 			{activeMouse && (
-				<TimerTooltip {...props}>
+				<Tooltip {...props}>
 					<CountUpTimer startTimeDate={props.startTimeDate} />
-				</TimerTooltip>
+				</Tooltip>
 			)}
 		</ToolTipWrapper>
 	);
 };
 
-export default GeneralTooltip;
+export default TimerTooltip;

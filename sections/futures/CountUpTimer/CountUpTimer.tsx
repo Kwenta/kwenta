@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
 	startTimeDate: Date | undefined;
@@ -10,6 +11,8 @@ const formatTimeUnit = (value: number) => {
 };
 
 export default function CountUpTimer({ startTimeDate }: Props) {
+	const { t } = useTranslation();
+
 	const calcTime = useCallback(() => {
 		const nowTime = new Date().getTime();
 		let startTime = startTimeDate?.getTime() ?? nowTime;
@@ -40,7 +43,11 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 
 	return (
 		<Container>
-			<p>{`Time since oracle update: ${time.minutes}:${time.seconds} min`}</p>
+			<p>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</p>
+			<p>
+				{`${time.minutes}:${time.seconds} `}
+				{t(`exchange.market-details-card.timer-tooltip.minutes-ago`)}
+			</p>
 		</Container>
 	);
 }

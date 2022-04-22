@@ -188,7 +188,11 @@
 			"market-cap": "Market cap",
 			"price-feed": "Price Feed",
 			"opens-in": "Opens in",
-			"closes-in": "Closes in"
+			"closes-in": "Closes in",
+			"timer-tooltip": {
+				"last-update": "Last Update",
+				"minutes-ago": "min ago"
+			}
 		},
 		"price-chart-card": {
 			"compare": "compare",
