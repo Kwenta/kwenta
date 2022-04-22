@@ -191,7 +191,9 @@
 			"closes-in": "Closes in",
 			"timer-tooltip": {
 				"last-update": "Last Update",
-				"minutes-ago": "mm:ss ago"
+				"minute-ago": "min ago",
+				"minutes-ago": "mins ago",
+				"seconds-ago": "sec ago"
 			}
 		},
 		"price-chart-card": {
