@@ -21,7 +21,7 @@ import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import { DEFAULT_FIAT_DECIMALS, DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { Synths } from 'constants/currency';
 
 type MarketDetailsProps = {

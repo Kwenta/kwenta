@@ -19,7 +19,7 @@ import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import { DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
