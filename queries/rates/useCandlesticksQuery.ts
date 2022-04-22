@@ -33,6 +33,7 @@ export const requestCandlesticks = async (
 					}
 					orderBy: id
 					orderDirection: desc
+					first: 1000
 				) {
 					id
 					synth
