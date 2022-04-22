@@ -38,9 +38,14 @@ const PnLs: React.FC<PnLsProps> = ({
 			labelsWithStats['Stop PnL'] = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
 		}
 
-		labelsWithStats['R:R'] = (
-			labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])
-		).toFixed(2);
+		const rateOfReturn_ = parseFloat(
+			(labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])).toFixed(2)
+		);
+
+		if (!isNaN(rateOfReturn_))
+			labelsWithStats['R:R'] = (
+				labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])
+			).toFixed(2);
 	}
 
 	return (
