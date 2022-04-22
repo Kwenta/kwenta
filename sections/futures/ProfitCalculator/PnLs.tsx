@@ -23,27 +23,26 @@ const PnLs: React.FC<PnLsProps> = ({
 		profit: any = 0,
 		loss: any = 0;
 
+	// Calculate values for each stat
+	if (!entryPrice.eq(0) && !exitPrice.eq(0) && !stopLoss.eq(0)) {
+		if (leverageSide === 'long') {
+			profit = exitPrice.sub(entryPrice).mul(amountInAsset).toNumber();
+			loss = stopLoss.sub(entryPrice).mul(amountInAsset).toNumber();
+		} else {
+			profit = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
+			loss = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
+		}
+
+		const rateOfReturn_ = parseFloat((profit / Math.abs(loss)).toFixed(2));
+
+		if (!isNaN(rateOfReturn_)) rateOfReturn = rateOfReturn_;
+	}
+
 	const labelsWithStats: any = {
 		'Exit PnL': profit,
 		'Stop PnL': loss,
 		'R:R': rateOfReturn,
 	};
-
-	if (!entryPrice.eq(0) && !exitPrice.eq(0) && !stopLoss.eq(0)) {
-		if (leverageSide === 'long') {
-			labelsWithStats['Exit PnL'] = exitPrice.sub(entryPrice).mul(amountInAsset).toNumber();
-			labelsWithStats['Stop PnL'] = stopLoss.sub(entryPrice).mul(amountInAsset).toNumber();
-		} else {
-			labelsWithStats['Exit PnL'] = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
-			labelsWithStats['Stop PnL'] = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
-		}
-
-		const rateOfReturn_ = parseFloat(
-			(labelsWithStats['Exit PnL'] / Math.abs(labelsWithStats['Stop PnL'])).toFixed(2)
-		);
-
-		if (!isNaN(rateOfReturn_)) labelsWithStats['R:R'] = rateOfReturn_;
-	}
 
 	return (
 		<>
