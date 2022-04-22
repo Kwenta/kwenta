@@ -32,9 +32,11 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 	}, [startTimeDate]);
 
 	const [time, setTime] = useState<{ hours: string; minutes: string; seconds: string }>(calcTime());
-	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`
-	if((parseInt(time.minutes) > 1)) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minutes-ago` 
-	if((parseInt(time.minutes) < 1)) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago` 
+	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`;
+	if (parseInt(time.minutes) > 1)
+		timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minutes-ago`;
+	if (parseInt(time.minutes) < 1)
+		timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago`;
 
 	useEffect(() => {
 		const interval = setInterval(() => setTime(calcTime()), 1000);
