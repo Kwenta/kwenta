@@ -13,7 +13,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
-import { getSynthDescription } from 'utils/futures';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
@@ -150,10 +150,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 						),
 						accessor: 'oraclePrice',
 						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions =
-								cellProps.row.original.asset === 'EUR'
-									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
-									: {};
+							const formatOptions = isEurForex(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								: {};
 							return cellProps.row.original.price === '-' ? (
 								<DefaultCell>-</DefaultCell>
 							) : (

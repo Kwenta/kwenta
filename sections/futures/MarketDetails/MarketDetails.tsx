@@ -17,12 +17,11 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getMarketKey } from 'utils/futures';
+import { getMarketKey, isEurForex } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { Synths } from 'constants/currency';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -65,7 +64,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
 	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && marketKey === Synths.sEUR
+		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
