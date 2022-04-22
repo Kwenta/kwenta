@@ -108,10 +108,10 @@ export function TVChart({
 						.setPrice(Number(activePosition.liquidationPrice))
 						.setExtendLeft(false)
 						.setLineStyle(0)
-						.setLineColor(colors.red)
-						.setBodyBorderColor(colors.red)
-						.setQuantityBackgroundColor(colors.red)
-						.setQuantityBorderColor(colors.red)
+						.setLineColor(colors.common.primaryRed)
+						.setBodyBorderColor(colors.common.primaryRed)
+						.setQuantityBackgroundColor(colors.common.primaryRed)
+						.setQuantityBorderColor(colors.common.primaryRed)
 						.setLineLength(25);
 				}
 			}
