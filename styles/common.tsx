@@ -4,7 +4,7 @@ import Tippy from '@tippyjs/react';
 import Button from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 
-import { SPACING_FROM_HEADER, zIndex } from 'constants/ui';
+import { zIndex } from 'constants/ui';
 
 import media from 'styles/media';
 
@@ -150,10 +150,7 @@ export const AbsoluteCenteredDiv = styled.div`
 
 export const PageContent = styled.section`
 	position: relative;
-	margin: 0 auto;
-	padding: 0 30px;
 	width: 100%;
-	flex-grow: 1;
 	${(props) => props.theme.animations.show};
 `;
 
@@ -194,6 +191,7 @@ export const FullScreenContainer = styled(FlexDiv)`
 	height: 100vh;
 	position: relative;
 	overflow-y: overlay;
+	padding: 0 15px;
 `;
 
 export const SwapCurrenciesButton = styled.button`
@@ -300,28 +298,22 @@ export const FullHeightContainer = styled(FlexDiv)`
 	position: relative;
 `;
 
-export const MainContent = styled(FlexDivCol)`
+export const MainContent = styled(FlexDiv)`
+	position: relative;
 	flex-grow: 1;
 	max-width: 915px;
-	position: relative;
-	//overflow: auto;
-	margin: ${SPACING_FROM_HEADER} auto 0 auto;
+	flex-direction: column;
+	margin: 0 auto;
 `;
 
-export const RightSideContent = styled(FlexDivCol)`
-	width: 291px;
+export const RightSideContent = styled.div`
 	background-color: transparent;
-	padding: ${SPACING_FROM_HEADER} 0 5px 0;
-	flex-shrink: 0;
 	position: relative;
 	height: 100%;
 `;
 
-export const LeftSideContent = styled(FlexDivCol)`
-	width: 174px;
+export const LeftSideContent = styled.div`
 	background-color: transparent;
-	padding: ${SPACING_FROM_HEADER} 0 5px 0;
-	flex-shrink: 0;
 	position: relative;
 	height: 100%;
 `;

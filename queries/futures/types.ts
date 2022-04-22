@@ -163,9 +163,11 @@ export type FuturesTradeWithPrice = {
 };
 
 export type FuturesTrade = {
-	size: string;
+	size: Wei;
 	asset: string;
-	price?: string;
+	price?: Wei;
+	txnHash: string;
+	timestamp: Wei;
 };
 
 export type FuturesVolumes = {

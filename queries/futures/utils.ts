@@ -14,6 +14,7 @@ import {
 	RawPosition,
 	PositionHistory,
 	FundingRateUpdate,
+	FuturesTrade,
 } from './types';
 import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
@@ -181,23 +182,49 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 };
 
 export const calculateFundingRate = (
-	minFunding: FundingRateUpdate,
-	maxFunding: FundingRateUpdate,
-	assetPrice: number
+	minTimestamp: number,
+	periodLength: number,
+	fundingRates: FundingRateUpdate[],
+	assetPrice: number,
+	currentFundingRate: number
 ): Wei | null => {
-	if (!minFunding || !maxFunding) return null;
-	// clean values
-	const fundingStart = new Wei(minFunding.funding, 18, true);
-	const fundingEnd = new Wei(maxFunding.funding, 18, true);
+	const numUpdates = fundingRates.length;
+	if (numUpdates < 2) return null;
 
-	const fundingDiff = fundingStart.sub(fundingEnd); // funding is already in ratio units
-	const timeDiff = maxFunding.timestamp - minFunding.timestamp;
+	// variables to keep track
+	let fundingPaid = wei(0);
+	let timeTotal = 0;
+	let lastTimestamp = minTimestamp;
 
-	if (timeDiff === 0) {
-		return null; // use fallback instanteneous value, or different a calculation that uses an earlier event
+	// iterate through funding updates
+	for (let ind = 0; ind < numUpdates - 1; ind++) {
+		const minFunding = fundingRates[ind];
+		const maxFunding = fundingRates[ind + 1];
+
+		const fundingStart = new Wei(minFunding.funding, 18, true);
+		const fundingEnd = new Wei(maxFunding.funding, 18, true);
+
+		const fundingDiff = fundingStart.sub(fundingEnd);
+		const timeDiff = maxFunding.timestamp - Math.max(minFunding.timestamp, lastTimestamp);
+		const timeMax = maxFunding.timestamp - minFunding.timestamp;
+
+		if (timeMax > 0) {
+			fundingPaid = fundingPaid.add(fundingDiff.mul(timeDiff).div(timeMax));
+			timeTotal += timeDiff;
+		}
+		lastTimestamp = maxFunding.timestamp;
 	}
 
-	return fundingDiff.mul(SECONDS_PER_DAY).div(timeDiff).div(assetPrice); // convert to 24h period
+	// add funding from current rate
+	const timeLeft = Math.max(periodLength - timeTotal, 0);
+	if (timeLeft > 0) {
+		fundingPaid = fundingPaid.add(
+			wei(currentFundingRate).mul(timeLeft).div(SECONDS_PER_DAY).mul(assetPrice)
+		);
+	}
+
+	const fundingRate = fundingPaid.div(assetPrice);
+	return fundingRate;
 };
 
 export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
@@ -290,4 +317,18 @@ export const mapTradeHistory = (
 			})
 			.filter(({ id }: { id: number }) => id !== 0) ?? null
 	);
+};
+
+export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
+	return futuresTrades?.map(({ id, timestamp, size, price, asset }: FuturesTradeResult) => {
+		const priceWei = new Wei(price, 18, true);
+		const sizeWei = new Wei(size, 18, true);
+		return {
+			size: sizeWei,
+			asset: asset,
+			price: priceWei,
+			txnHash: id.split('-')[0].toString(),
+			timestamp: timestamp,
+		};
+	});
 };

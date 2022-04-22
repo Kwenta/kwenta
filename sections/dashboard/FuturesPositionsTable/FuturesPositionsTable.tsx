@@ -169,7 +169,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<PnlContainer>
-									<ChangePercent value={cellProps.row.original.pnlPct} className="change-pct" />
+									<ChangePercent value={cellProps.row.original.pnlPct} />
 									<div>
 										(
 										<Currency.Price
@@ -233,12 +233,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 const PnlContainer = styled.div`
 	display: flex;
-	flex-direction: flex-row;
-	align-items: center;
-
-	.change-pct {
-		margin-right: 4px;
-	}
+	flex-direction: column;
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -262,13 +257,10 @@ const StyledValue = styled.div`
 
 const DefaultCell = styled.p``;
 
-const TableContainer = styled.div`
-	margin-top: 16px;
-	margin-bottom: '40px';
-`;
+const TableContainer = styled.div``;
 
 const StyledTable = styled(Table)`
-	margin-top: '20px';
+	/* margin-top: 20px; */
 `;
 
 const TableHeader = styled.div``;

@@ -20,6 +20,7 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -44,7 +45,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
 	);
 
-	const fundingRateQuery = useGetAverageFundingRateForMarket(baseCurrencyKey, basePriceRate);
+	const fundingRateQuery = useGetAverageFundingRateForMarket(
+		baseCurrencyKey,
+		basePriceRate,
+		PERIOD_IN_SECONDS[Period.ONE_HOUR],
+		marketSummary?.currentFundingRate.toNumber()
+	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
@@ -66,7 +72,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const data: MarketData = React.useMemo(() => {
 		const fundingTitle = `${
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '24H'
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
 		} Funding Rate`;
 		const fundingValue =
 			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
@@ -157,9 +163,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[fundingTitle]: {
 				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
 				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
-			},
-			'Max Leverage': {
-				value: marketSummary?.maxLeverage ? `${marketSummary?.maxLeverage.toString(0)}x` : NO_VALUE,
 			},
 		};
 	}, [
