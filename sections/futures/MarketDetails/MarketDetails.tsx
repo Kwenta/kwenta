@@ -108,7 +108,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						? `${formatCurrency(
 								selectedPriceCurrency.name,
 								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-								{ sign: '$' }
+								{ sign: '$', minDecimals }
 						  )} (${formatPercent(
 								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
 						  )})`
