@@ -15,7 +15,7 @@ type PortfolioChartProps = {
 const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioChartProps) => {
 	const { network } = Connector.useContainer();
 
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
+	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

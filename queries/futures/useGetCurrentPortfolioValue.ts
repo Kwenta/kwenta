@@ -41,7 +41,11 @@ const useGetCurrentPortfolioValue = (
 
 				const portfolioValue = positionsForMarkets
 					.map((position, i) => {
-						const mappedPosition = mapFuturesPosition(position, false, getMarketAssetFromKey(markets[i], network.id));
+						const mappedPosition = mapFuturesPosition(
+							position,
+							false,
+							getMarketAssetFromKey(markets[i], network.id)
+						);
 						return mappedPosition.remainingMargin;
 					})
 					.reduce((sum: Wei, val) => sum.add(val), wei(0));
