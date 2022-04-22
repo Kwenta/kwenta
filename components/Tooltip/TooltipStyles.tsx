@@ -28,6 +28,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 
 		p, span {
 			margin: auto;
+			margin-left: 3px;
 			font-size: 12px;
 			text-align: left;
 			font-family: ${(props) => props.theme.fonts.mono};
