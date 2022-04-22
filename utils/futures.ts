@@ -48,5 +48,5 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 	}
 };
 
-export const isEurForex = (marketKeyOrAsset: string): boolean =>
+export const isEurForex = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === Synths.sEUR || marketKeyOrAsset === 'EUR';
