@@ -50,8 +50,6 @@ const Container = styled.header<{ isL2: boolean }>`
 	> div {
 		height: ${HEADER_HEIGHT};
 		padding-top: ${HEADER_TOP_PADDING};
-		padding-left: 30px;
-		padding-right: 30px;
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;

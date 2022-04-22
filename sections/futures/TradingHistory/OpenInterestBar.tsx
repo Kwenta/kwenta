@@ -27,7 +27,7 @@ export default OpenInterestChart;
 const OIContainer = styled.div`
 	border: 1px solid #2b2a2a;
 	border-radius: 1px;
-	width: 292px;
+	width: 100%;
 	height: 100%;
 `;
 

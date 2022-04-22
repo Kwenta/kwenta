@@ -86,7 +86,7 @@ const SkewContainer = styled.div`
 const SkewHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
-	width: 292px;
+	width: 100%;
 	margin-bottom: 10px;
 `;
 
