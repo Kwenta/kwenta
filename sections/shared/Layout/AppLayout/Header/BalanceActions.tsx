@@ -138,6 +138,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 
 	useEffect(() => {
 		synthsBalancesQuery.refetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [uniswapWidgetOpened]);
 
 	if (!balanceLabel) {

@@ -131,7 +131,8 @@ const DashboardContainer: FC = () => {
 
 const StyledRightSideContent = styled(RightSideContent)`
 	display: flex;
-	align-items: flex-end;
+	flex-direction: row;
+	justify-content: end;
 `;
 
 const StyledTabList = styled(TabList)`

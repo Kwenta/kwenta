@@ -29,4 +29,8 @@ export const EXTERNAL_LINKS = {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 	},
+	Explorer: {
+		Optimism: 'https://optimistic.etherscan.io/tx',
+		OptimismKovan: 'https://kovan-optimistic.etherscan.io/tx',
+	},
 };
