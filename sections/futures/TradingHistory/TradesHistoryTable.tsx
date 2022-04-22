@@ -12,8 +12,8 @@ import { isL2MainnetState } from 'store/wallet';
 import styled from 'styled-components';
 import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
-import { isEurForex } from '../../../utils/futures';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { isEurForex } from 'utils/futures';
 
 type TradesHistoryTableProps = {
 	currencyKey: string | undefined;

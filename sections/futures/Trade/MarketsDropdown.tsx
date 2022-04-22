@@ -21,7 +21,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription, isEurForex } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
-import { DEFAULT_FIAT_EURO_DECIMALS } from '../../../constants/defaults';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
