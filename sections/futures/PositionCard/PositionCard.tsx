@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									<MarketBadge description="long" currencyKey={currencyKey as CurrencyKey} />
+									<MarketBadge currencyKey={currencyKey as CurrencyKey} />
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
@@ -235,6 +235,7 @@ const Container = styled.div`
 	padding: 20px 80px 20px 18px;
 	justify-content: space-between;
 	border-radius: 10px;
+	margin-bottom: 15px;
 	/* min-height: 135px; */
 `;
 
