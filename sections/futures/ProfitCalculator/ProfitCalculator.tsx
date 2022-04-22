@@ -11,6 +11,7 @@ import PositionButtons from 'sections/futures/PositionButtons';
 import { PositionSide } from '../types';
 
 const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
+	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
 	// Wei
@@ -102,7 +103,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 								onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
 							/>
 							<LabelWithInput
-								right={marketAsset}
+								right={marketAsset__RemovedSChar}
 								placeholder={`10.00`}
 								id={'market-position-size'}
 								labelText={'Position Size: '}
@@ -155,7 +156,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 					<ProfitDetails
 						stopLoss={stopLoss}
 						exitPrice={exitPrice}
-						marketAsset={marketAsset}
+						marketAsset={marketAsset__RemovedSChar}
 						leverageSide={leverageSide}
 						marketAssetPositionSize={marketAssetPositionSize}
 					/>
