@@ -644,8 +644,8 @@
 				"avg-entry-price": "Avg. Entry Price"
 			},
 			"state": {
-				"opens-in": "Opens in",
-				"closes-in": "Closes in",
+				"opens-soon": "Opens soon",
+				"closes-soon": "Closes soon",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",
@@ -660,7 +660,6 @@
 					},
 					"market-closure": {
 						"title": "{{baseCurrencyKey}} market has been paused",
-						"timer-subtitle": "Trading activity will resume in: ",
 						"subtitle": ""
 					},
 					"system-upgrade": {
@@ -740,6 +739,18 @@
 						"confirm-order": "Confirm order"
 					}
 				}
+			},
+			"history": {
+				"history-label": "trading history",
+				"last-n-trades": "last {{ numberOfTrades }} trades",
+				"skew-label": "skew",
+				"n-sec-ago": "{{ timeDelta }}s ago",
+				"n-min-ago": "{{ timeDelta }}m ago",
+				"n-hr-ago": "{{ timeDelta }}h ago",
+				"n-day-ago": "{{ timeDelta }}d ago",
+				"amount-label": "amount",
+				"price-label": "price",
+				"time-label": "time"
 			},
 			"user": {
 				"position": {
