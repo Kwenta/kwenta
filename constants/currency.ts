@@ -44,13 +44,14 @@ export const CRYPTO_CURRENCY = [
 
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
 
-export const FIAT_SYNTHS: Set<CurrencyKey> = new Set([
+export const FIAT_SYNTHS: Set<CurrencyKey | 'EUR'> = new Set([
 	Synths.sEUR,
 	Synths.sJPY,
 	Synths.sUSD,
 	Synths.sAUD,
 	Synths.sGBP,
 	Synths.sCHF,
+	'EUR',
 ]);
 
 export const LSE_SYNTHS = new Set<CurrencyKey>([]);

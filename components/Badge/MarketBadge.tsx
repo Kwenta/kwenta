@@ -1,6 +1,6 @@
 import { CurrencyKey } from 'constants/currency';
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import useMarketClosed from 'hooks/useMarketClosed';
+import { useFuturesMarketClosed } from 'hooks/useMarketClosed';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -31,8 +31,7 @@ export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
 	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
-	const { isMarketClosed, marketClosureReason } = useMarketClosed(currencyKey);
-
+	const { isMarketClosed, marketClosureReason } = useFuturesMarketClosed(currencyKey);
 	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
 	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 
