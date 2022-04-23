@@ -4,6 +4,7 @@ import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 
 import {
 	IChartingLibraryWidget,
+	IPositionLineAdapter,
 	widget,
 } from '../../public/static/charting_library/charting_library';
 import DataFeedFactory from './DataFeed';
@@ -38,6 +39,9 @@ export function TVChart({
 	activePosition,
 }: Props) {
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
+	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
+
 	const { colors } = useContext(ThemeContext);
 	let isL2 = useRecoilValue(isL2State);
 
@@ -85,10 +89,22 @@ export function TVChart({
 		const tvWidget = new widget(widgetOptions);
 		_widget.current = tvWidget;
 
-		tvWidget.onChartReady(() => {
+		return () => {
+			clearExistingWidget();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [baseCurrencyKey, quoteCurrencyKey]);
+
+	useEffect(() => {
+		_widget.current?.onChartReady(() => {
+			_entryLine.current?.remove?.();
+			_liquidationLine.current?.remove?.();
+			_entryLine.current = null;
+			_liquidationLine.current = null;
+
 			if (activePosition) {
-				tvWidget
-					.chart()
+				_entryLine.current = _widget.current
+					?.chart()
 					.createPositionLine()
 					.setText('ENTRY: ' + formatNumber(activePosition.avgEntryPrice))
 					.setTooltip('Average entry price')
@@ -99,8 +115,8 @@ export function TVChart({
 					.setLineLength(25);
 
 				if (activePosition.liquidationPrice) {
-					tvWidget
-						.chart()
+					_liquidationLine.current = _widget.current
+						?.chart()
 						.createPositionLine()
 						.setText('LIQUIDATION: ' + formatNumber(activePosition.liquidationPrice))
 						.setTooltip('Liquidation price')
@@ -116,12 +132,7 @@ export function TVChart({
 				}
 			}
 		});
-
-		return () => {
-			clearExistingWidget();
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey, activePosition]);
+	}, [activePosition, colors.common.primaryRed]);
 
 	return (
 		<Container>
