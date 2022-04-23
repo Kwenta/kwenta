@@ -129,6 +129,12 @@ export const QUERY_KEYS = {
 			currencyKey,
 		],
 		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
+		Trades: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'trades',
+			networkId,
+			currencyKey,
+		],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
