@@ -1,6 +1,6 @@
 import React from 'react';
-import Wei from '@synthetixio/wei';
 import styled from 'styled-components';
+import { wei } from '@synthetixio/wei';
 
 import { PositionSide } from '../types';
 
@@ -12,11 +12,11 @@ function textColor(className?: string) {
 }
 
 type ProfitDetailsProps = {
-	stopLoss: Wei;
-	exitPrice: Wei;
+	stopLoss: string;
+	exitPrice: string;
 	marketAsset: string;
 	leverageSide: PositionSide;
-	marketAssetPositionSize: Wei;
+	marketAssetPositionSize: string;
 };
 
 const ProfitDetails: React.FC<ProfitDetailsProps> = ({
@@ -49,7 +49,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{`at`}
 					</RowText>
-					<RowText>{exitPrice.toNumber().toFixed(2)}</RowText>
+					<RowText>{exitPrice !== '' ? wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
 				</Details>
 				{/* STOP LOSS */}
 				<RowName>
@@ -60,7 +60,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{`at`}
 					</RowText>
-					<RowText>{stopLoss.toNumber().toFixed(2)}</RowText>
+					<RowText>{stopLoss !== '' ? wei(stopLoss).toNumber().toFixed(2): ''}</RowText>
 				</Details>
 				{/* SIZE */}
 				<RowName>
@@ -68,7 +68,9 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText style={{ marginRight: '10px' }}>
-						{marketAssetPositionSize.toNumber().toFixed(2)}
+						{marketAssetPositionSize !== ''
+							? wei(marketAssetPositionSize).toNumber().toFixed(2)
+							: ''}
 					</RowText>
 					<RowText className="gray-font-color">{`${marketAsset}-PERP`}</RowText>
 				</Details>

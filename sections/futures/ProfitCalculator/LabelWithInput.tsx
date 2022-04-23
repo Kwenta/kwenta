@@ -6,7 +6,7 @@ type LabelWithInputProps = {
 	disabled?: boolean;
 	id?: string;
 	labelText: string;
-	placeholder: string;
+	placeholder?: string;
 	right?: any;
 	value?: any;
 	onChange?: any;

@@ -1,14 +1,14 @@
 import React from 'react';
-import Wei from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 
 import StatWithContainer from './StatWithContainer';
 import { PositionSide } from '../types';
 
 type PnLsProps = {
-	stopLoss: Wei;
-	exitPrice: Wei;
-	entryPrice: Wei;
-	amountInAsset: Wei;
+	stopLoss: string;
+	exitPrice: string;
+	entryPrice: string;
+	amountInAsset: string;
 	leverageSide: PositionSide;
 };
 
@@ -24,18 +24,18 @@ const PnLs: React.FC<PnLsProps> = ({
 		loss: any = 0;
 
 	// Calculate values for each stat
-	if (!entryPrice.eq(0) && !exitPrice.eq(0) && !stopLoss.eq(0)) {
+	if (entryPrice !== '' && exitPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
 		if (leverageSide === 'long') {
-			profit = exitPrice.sub(entryPrice).mul(amountInAsset).toNumber();
-			loss = stopLoss.sub(entryPrice).mul(amountInAsset).toNumber();
+			profit = wei(exitPrice).sub(entryPrice).mul(amountInAsset).toNumber().toFixed(2);
+			loss = wei(stopLoss).sub(entryPrice).mul(amountInAsset).toNumber().toFixed(2);
 		} else {
-			profit = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
-			loss = entryPrice.sub(exitPrice).mul(amountInAsset).toNumber();
+			profit = wei(entryPrice).sub(exitPrice).mul(amountInAsset).toNumber().toFixed(2);
+			loss = wei(entryPrice).sub(exitPrice).mul(amountInAsset).toNumber().toFixed(2);
 		}
 
-		const rateOfReturn_ = parseFloat((profit / Math.abs(loss)).toFixed(2));
-
-		if (!isNaN(rateOfReturn_)) rateOfReturn = rateOfReturn_;
+		if (wei(profit).gt(0) && wei(loss).abs().gt(0)) {
+			rateOfReturn = wei(profit).div(wei(loss).abs()).toNumber().toFixed(2);
+		}
 	}
 
 	const labelsWithStats: any = {

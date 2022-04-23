@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Wei, { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -15,58 +15,78 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	const { t } = useTranslation();
 
 	// Wei
-	const [entryPrice, setEntryPrice] = useState<Wei>(wei(0));
-	const [exitPrice, setExitPrice] = useState<Wei>(wei(0));
-	const [stopLoss, setStopLoss] = useState<Wei>(wei(0));
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<Wei>(wei(0));
+	const [entryPrice, setEntryPrice] = useState<string>('');
+	const [exitPrice, setExitPrice] = useState<string>('');
+	const [gainPercent, setGainPercent] = useState<string>('');
+	const [stopLoss, setStopLoss] = useState<string>('');
+	const [lossPercent, setLossPercent] = useState<string>('');
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<string>('');
+	const [basePositionSize, setBasePositionSize] = useState<string>('');
 	// Custom type
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
 
-	const handleSetInput = (_e: any, _stateVar: any, _stateVarName: string) => {
-		_stateVar = _e.currentTarget.value;
-
-		if (!isNaN(_stateVar) && _stateVar !== '' && parseFloat(_stateVar) > 0) {
-			if (_stateVarName === 'entryPrice') setEntryPrice(wei(_stateVar));
-			if (_stateVarName === 'exitPrice') setExitPrice(wei(_stateVar));
-			if (_stateVarName === 'stopLoss') setStopLoss(wei(_stateVar));
-			if (_stateVarName === 'marketAssetPositionSize') setMarketAssetPositionSize(wei(_stateVar));
-		}
+	const onEntryPriceAmountChange = (value: string) => {
+		setEntryPrice(value);
 	};
 
-	const setTargetInputValue = (source: string, target: string) => {
-		// We set the type of these `HTMLEement`s to `any` to ignore lint errors uwu
-		let src_: any = document.getElementById(source),
-			target_: any = document.getElementById(target);
-
-		if (src_ !== null && target_ !== null) {
-			if (src_.value !== null && target_.value !== null) {
-				if (source === 'exit-price') {
-					const gainPercent: number = (parseFloat(src_.value) / entryPrice.toNumber() - 1) * 100;
-					target_.value = gainPercent.toFixed(2);
-				}
-
-				if (source === 'stop-loss') {
-					const lossPercent: number = (1 - parseFloat(src_.value) / entryPrice.toNumber()) * 100;
-					target_.value = lossPercent.toFixed(2);
-				}
-
-				if (source === 'market-position-size') {
-					const basePositionSize: number = parseFloat(src_.value) * entryPrice.toNumber();
-					target_.value = basePositionSize.toFixed(2);
-				}
-			}
-		}
+	const onExitPriceAmountChange = (value: string, fromLeverage: boolean = false) => {
+		setExitPrice(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
+		setGainPercent(
+			value === '' ? '' : (100 * (wei(value).div(entryPrice).toNumber() - 1)).toFixed(2)
+		);
 	};
 
-	useEffect(() => {
-		setTargetInputValue('exit-price', 'gain-percent');
-		setTargetInputValue('stop-loss', 'loss-percent');
-		setTargetInputValue('market-position-size', 'base-position-size');
-	}, [exitPrice, stopLoss, marketAssetPositionSize]);
+	const onGainPercentChange = useCallback(
+		(value: string) => {
+			setGainPercent(value);
+			setExitPrice(
+				value === '' ? '' : wei(value).div(100).add(1).mul(entryPrice).toNumber().toFixed(2)
+			);
+		},
+		[entryPrice]
+	);
+
+	const onStopLossAmountChange = (value: string, fromLeverage: boolean = false) => {
+		setStopLoss(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
+		setLossPercent(
+			value === '' ? '' : ((1 - wei(value).div(entryPrice).toNumber()) * 100).toFixed(2)
+		);
+	};
+
+	const onLossPercentChange = useCallback(
+		(value: string) => {
+			setLossPercent(value);
+			setStopLoss(
+				value === '' ? '' : wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber().toFixed(2)
+			);
+		},
+		[entryPrice]
+	);
+
+	const onTradeAmountChange = useCallback(
+		(value: any, fromLeverage: boolean = false) => {
+			setMarketAssetPositionSize(
+				fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value
+			);
+			setBasePositionSize(
+				value === '' ? '' : (parseFloat(entryPrice) * parseFloat(value)).toFixed(2)
+			);
+		},
+		[entryPrice]
+	);
+
+	const onTradeAmountSUSDChange = useCallback(
+		(value: string) => {
+			setBasePositionSize(value);
+			setMarketAssetPositionSize(
+				value === '' ? '' : wei(value).div(entryPrice).toNumber().toFixed(2)
+			);
+		},
+		[entryPrice]
+	);
 
 	useEffect(() => {
-		const entryPrice_ = wei(marketAssetRate.toFixed(2));
-		setEntryPrice(entryPrice_);
+		setEntryPrice(marketAssetRate);
 	}, []);
 
 	return (
@@ -82,10 +102,9 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 			>
 				<ModalWindow>
 					<LabelWithInput
-						defaultValue={marketAssetRate.toFixed(2)}
 						labelText={'Entry Price: '}
-						placeholder={`${marketAssetRate.toFixed(2)}`}
-						onChange={(e: any) => handleSetInput(e, entryPrice, 'entryPrice')}
+						value={entryPrice}
+						onChange={(_: any, v: any) => onEntryPriceAmountChange(v)}
 					/>
 					<ProfitCalcGrid>
 						{/* LEFT column */}
@@ -94,22 +113,23 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 								id={'exit-price'}
 								labelText={'Exit Price: '}
 								placeholder={`${(marketAssetRate + marketAssetRate * 0.05).toFixed(2)}`}
-								onChange={(e: any) => handleSetInput(e, exitPrice, 'exitPrice')}
+								value={exitPrice}
+								onChange={(_: any, v: any) => onExitPriceAmountChange(v)}
 							/>
 							<LabelWithInput
 								id={'stop-loss'}
 								labelText={'Stop Loss: '}
 								placeholder={`${(marketAssetRate - marketAssetRate * 0.05).toFixed(2)}`}
-								onChange={(e: any) => handleSetInput(e, stopLoss, 'stopLoss')}
+								value={stopLoss}
+								onChange={(_: any, v: any) => onStopLossAmountChange(v)}
 							/>
 							<LabelWithInput
-								right={marketAsset__RemovedSChar}
-								placeholder={`10.00`}
 								id={'market-position-size'}
 								labelText={'Position Size: '}
-								onChange={(e: any) =>
-									handleSetInput(e, marketAssetPositionSize, 'marketAssetPositionSize')
-								}
+								placeholder={`10.00`}
+								right={marketAsset__RemovedSChar}
+								value={marketAssetPositionSize}
+								onChange={(_: any, v: any) => onTradeAmountChange(v)}
 							/>
 						</LeftColumn>
 						{/* RIGHT column */}
@@ -118,20 +138,23 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 								id={'gain-percent'}
 								labelText={'Gain %: '}
 								placeholder={`5.00`}
-								disabled={true}
+								value={gainPercent}
+								onChange={(_: any, v: any) => onGainPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'loss-percent'}
 								labelText={'Loss %: '}
 								placeholder={`5.00`}
-								disabled={true}
+								value={lossPercent}
+								onChange={(_: any, v: any) => onLossPercentChange(v)}
 							/>
 							<LabelWithInput
 								id={'base-position-size'}
 								labelText={'Position Size: '}
 								placeholder={`${(marketAssetRate * 10).toFixed(2)}`}
-								disabled={true}
 								right={'sUSD'}
+								value={basePositionSize}
+								onChange={(_: any, v: any) => onTradeAmountSUSDChange(v)}
 							/>
 						</RightColumn>
 					</ProfitCalcGrid>
