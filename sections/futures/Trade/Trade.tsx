@@ -37,13 +37,24 @@ import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import { FuturesPosition } from 'queries/futures/types';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC = ({	
+type PositionCardProps = {
+	currencyKey: string;
+	position: FuturesPosition | null;
+	currencyKeyRate: number;
+	onPositionClose?: () => void;
+	dashboard?: boolean;
+};
+
+const Trade: React.FC<PositionCardProps> = ({	
+	currencyKey,
+	position,
 	currencyKeyRate,
 	onPositionClose,
-	dashboard
+	dashboard,
 }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -53,7 +64,9 @@ const Trade: React.FC = ({
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthetixjs, network } = Connector.useContainer();
-	
+
+	console.log("onPositionClose",onPositionClose)
+
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 
@@ -346,7 +359,7 @@ const Trade: React.FC = ({
 				{t(placeOrderTranslationKey)}
 			</PlaceOrderButton>
 
-			<CloseOrderButton>
+			{/* <CloseOrderButton> */}
 				{onPositionClose && (
 					<CloseButton
 						isRounded={true}
@@ -359,7 +372,7 @@ const Trade: React.FC = ({
 						{t('futures.market.user.position.close-position')}
 					</CloseButton>
 				)}
-			</CloseOrderButton>
+			{/* </CloseOrderButton> */}
 
 			{(orderTxn.errorMessage || error) && (
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
@@ -445,9 +458,35 @@ const PlaceOrderButton = styled(Button)`
 	height: 55px;
 `;
 
-const CloseOrderButton = styled(Button)`
+// const CloseOrderButton = styled(Button)`
+// 	margin-bottom: 16px;
+// 	height: 55px;
+// `;
+
+const CloseButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
+	font-size: 13px;
+	background: rgba(239, 104, 104, 0.04);
+	border: 1px solid #ef6868;
+	box-shadow: none;
+	min-width: 100px;
+	width: 110px;
+	padding: 0;
+	transition: all 0s ease-in-out;
+
+	&:hover {
+		background: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.white};
+		transform: scale(0.98);
+	}
+
+	&:disabled {
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		background: transparent;
+		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
+		transform: none;
+	}
 `;
 
 const ErrorMessage = styled.div`

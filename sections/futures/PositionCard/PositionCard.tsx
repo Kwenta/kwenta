@@ -259,31 +259,6 @@ const StyledValue = styled.div`
 	}
 `;
 
-const CloseButton = styled(Button)`
-	height: 34px;
-	font-size: 13px;
-	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
-	box-shadow: none;
-	min-width: 100px;
-	width: 110px;
-	padding: 0;
-	transition: all 0s ease-in-out;
-
-	&:hover {
-		background: ${(props) => props.theme.colors.common.primaryRed};
-		color: ${(props) => props.theme.colors.white};
-		transform: scale(0.98);
-	}
-
-	&:disabled {
-		border: ${(props) => props.theme.colors.selectedTheme.border};
-		background: transparent;
-		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		transform: none;
-	}
-`;
-
 const CurrencySubtitle = styled(StyledSubtitle)`
 	text-transform: initial;
 	display: flex;
