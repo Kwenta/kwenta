@@ -10,8 +10,6 @@ type MarketInfoBoxProps = {
 	availableMargin: Wei;
 	buyingPower: Wei;
 	marginUsage: Wei;
-	leverage: Wei;
-	liquidationPrice: Wei;
 	isMarketClosed: boolean;
 };
 
@@ -20,8 +18,6 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	availableMargin,
 	buyingPower,
 	marginUsage,
-	leverage,
-	liquidationPrice,
 	isMarketClosed,
 }) => {
 	return (
@@ -32,9 +28,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 					currencyKey: Synths.sUSD,
 				})}`,
 				'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
-				'Margin Usage': `${formatPercent(marginUsage)}`,
-				Leverage: `${formatNumber(leverage)}x`,
-				'Liquidation Price': `${formatCurrency(Synths.sUSD, liquidationPrice, { sign: '$' })}`,
+				'Margin Usage': `${formatPercent(marginUsage)}`
 			}}
 			isMarketClosed={isMarketClosed}
 		/>
