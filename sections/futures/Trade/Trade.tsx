@@ -36,10 +36,15 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
+import ClosePositionModal from '../PositionCard/ClosePositionModal';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC = () => {
+const Trade: React.FC = ({	
+	currencyKeyRate,
+	onPositionClose,
+	dashboard
+}) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -48,6 +53,9 @@ const Trade: React.FC = () => {
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthetixjs, network } = Connector.useContainer();
+	
+	const positionDetails = position?.position ?? null;
+	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { isMarketClosed } = useMarketClosed(marketAsset);
@@ -338,6 +346,21 @@ const Trade: React.FC = () => {
 				{t(placeOrderTranslationKey)}
 			</PlaceOrderButton>
 
+			<CloseOrderButton>
+				{onPositionClose && (
+					<CloseButton
+						isRounded={true}
+						size="sm"
+						variant="danger"
+						onClick={() => setClosePositionModalIsVisible(true)}
+						disabled={!positionDetails || isMarketClosed}
+						noOutline={true}
+					>
+						{t('futures.market.user.position.close-position')}
+					</CloseButton>
+				)}
+			</CloseOrderButton>
+
 			{(orderTxn.errorMessage || error) && (
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
 			)}
@@ -387,6 +410,15 @@ const Trade: React.FC = () => {
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
 				/>
 			)}
+
+			{closePositionModalIsVisible && onPositionClose && (
+				<ClosePositionModal
+					position={positionDetails}
+					currencyKey={currencyKey}
+					onPositionClose={onPositionClose}
+					onDismiss={() => setClosePositionModalIsVisible(false)}
+				/>
+			)}
 		</Panel>
 	);
 };
@@ -409,6 +441,11 @@ const MarketActionButton = styled(Button)`
 `;
 
 const PlaceOrderButton = styled(Button)`
+	margin-bottom: 16px;
+	height: 55px;
+`;
+
+const CloseOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
 `;

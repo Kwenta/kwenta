@@ -9,7 +9,6 @@ import { Synths } from 'constants/currency';
 import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
-import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
@@ -198,30 +197,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoCol>
-					<InfoCol>
-						{onPositionClose && (
-							<CloseButton
-								isRounded={true}
-								size="sm"
-								variant="danger"
-								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails || isMarketClosed}
-								noOutline={true}
-							>
-								{t('futures.market.user.position.close-position')}
-							</CloseButton>
-						)}
-					</InfoCol>
 				</DataCol>
 			</Container>
-			{closePositionModalIsVisible && onPositionClose && (
-				<ClosePositionModal
-					position={positionDetails}
-					currencyKey={currencyKey}
-					onPositionClose={onPositionClose}
-					onDismiss={() => setClosePositionModalIsVisible(false)}
-				/>
-			)}
 		</>
 	);
 };
