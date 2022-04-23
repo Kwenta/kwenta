@@ -34,10 +34,11 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						amount: Number(trade?.size),
 						time: Number(trade?.timestamp),
 						id: trade?.txnHash,
+						currencyKey,
 					};
 			  })
 			: [];
-	}, [futuresTradesQuery.data]);
+	}, [futuresTradesQuery.data, currencyKey]);
 
 	const calTimeDelta = (time: number) => {
 		const timeDelta = (Date.now() - time * 1000) / 1000;
@@ -119,7 +120,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: 'Price',
 							Cell: (cellProps: CellProps<any>) => {
-								const formatOptions = isEurForex(currencyKey)
+								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
 									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 									: {};
 
