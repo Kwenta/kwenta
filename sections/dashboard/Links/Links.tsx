@@ -24,7 +24,7 @@ const Links: FC = () => {
 };
 
 const LinkContainer = styled.div`
-	max-width: 100px;
+	max-width: 80px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
