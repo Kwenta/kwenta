@@ -28,7 +28,7 @@ const TimerTooltip = (props: ToolTipProps) => {
 			{props.children}
 			{activeMouse && (
 				<Tooltip {...props}>
-					<CountUpTimer startTimeDate={props.startTimeDate} />
+					<CountUpTimer startTimeDate={props.startTimeDate} stopTimer={!activeMouse} />
 				</Tooltip>
 			)}
 		</ToolTipWrapper>

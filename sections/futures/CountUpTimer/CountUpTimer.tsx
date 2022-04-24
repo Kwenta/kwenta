@@ -4,53 +4,52 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
 	startTimeDate: Date | undefined;
+	stopTimer: Boolean;
 };
 
 const formatTimeUnit = (value: number) => {
 	return value < 10 ? '0' + value : String(value);
 };
 
-export default function CountUpTimer({ startTimeDate }: Props) {
+export default function CountUpTimer({ startTimeDate, stopTimer }: Props) {
 	const { t } = useTranslation();
+	const [currentStartTime, setCurrentStartTime] = useState<Date>();
+	const [totalSeconds, setTotalSeconds] = useState<number>(0);
 
-	const calcTime = useCallback(() => {
+	const calcTime = () => {
 		const nowTime = new Date().getTime();
 		let startTime = startTimeDate?.getTime() ?? nowTime;
 		if (startTimeDate === undefined) startTime = nowTime;
+		console.log(startTime)
 
-		const nowSeconds = nowTime / 1000;
-		const timeSince = nowSeconds - startTime / 1000;
-		const hours = Math.floor(timeSince / 3600);
-		const minutes = Math.floor((timeSince - hours * 3600) / 60);
-		const seconds = Math.floor(timeSince - (hours * 3600 + minutes * 60));
+		setTotalSeconds((nowTime - startTime) / 1000);
+	}
 
-		return {
-			hours: formatTimeUnit(hours),
-			minutes: formatTimeUnit(minutes),
-			seconds: formatTimeUnit(seconds),
-		};
-	}, [startTimeDate]);
+	useEffect(() => {		
+		setCurrentStartTime(startTimeDate);
+	}, [startTimeDate])
 
-	const [time, setTime] = useState<{ hours: string; minutes: string; seconds: string }>(calcTime());
+	useEffect(() => {		
+		// if (currentStartTime && (currentStartTime !== startTimeDate))
+		// clearInterval(interval)
+		const interval = setInterval(()=>{
+			calcTime()
+			if (stopTimer) clearInterval(interval)
+		}, 1000)
+	}, [stopTimer])
+
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = Math.floor(totalSeconds - minutes * 60);
+
 	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`;
-	if (parseInt(time.minutes) > 1)
-		timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minutes-ago`;
-	if (parseInt(time.minutes) < 1)
-		timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago`;
-
-	useEffect(() => {
-		const interval = setInterval(() => setTime(calcTime()), 1000);
-
-		return () => {
-			clearInterval(interval);
-		};
-	}, [calcTime]);
+	if (minutes > 1) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minutes-ago`;
+	if (minutes < 1) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago`;
 
 	return (
 		<Container>
 			<p>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</p>
 			<p>
-				{`${time.minutes}:${time.seconds} `}
+				{`${formatTimeUnit(minutes)}:${formatTimeUnit(seconds)} `}
 				{t(timeUnitsFormat)}
 			</p>
 		</Container>
