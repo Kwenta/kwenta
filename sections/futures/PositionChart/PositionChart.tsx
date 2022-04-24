@@ -17,22 +17,24 @@ export default function PositionChart({ marketAsset }: Props) {
 		getMarketKey(marketAsset, network.id)
 	);
 
-	const futuresPositionsQuery = useGetFuturesPositionForAccount();
+	const futuresPositionsQuery = useGetFuturesPositionForAccount({ refetchInterval: 5000 });
 	const positionHistory = futuresPositionsQuery?.data ?? [];
-	const existingPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
+	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
 	const activePosition = useMemo(() => {
-		if (!existingPosition || !futuresMarketsPosition) {
+		if (!futuresMarketsPosition?.position) {
 			return null;
 		}
 
 		return {
-			size: existingPosition.size.toString(),
-			avgEntryPrice: existingPosition.avgEntryPrice.toString(),
-			liquidationPrice: futuresMarketsPosition.position?.liquidationPrice.toString(),
+			// As there's often a delay in subgraph sync we use the contract last
+			// price until we get average price to keep it snappy on opening a spoition
+			avgEntryPrice: subgraphPosition?.avgEntryPrice || futuresMarketsPosition.position.lastPrice,
+			size: futuresMarketsPosition.position.size,
+			liquidationPrice: futuresMarketsPosition.position?.liquidationPrice,
 		};
-	}, [existingPosition, futuresMarketsPosition]);
+	}, [subgraphPosition, futuresMarketsPosition]);
 
 	return <TvChartWrapper baseCurrencyKey={marketAsset} activePosition={activePosition} />;
 }

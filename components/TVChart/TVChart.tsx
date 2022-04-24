@@ -109,7 +109,7 @@ export function TVChart({
 					.setText('ENTRY: ' + formatNumber(activePosition.avgEntryPrice))
 					.setTooltip('Average entry price')
 					.setQuantity(formatNumber(activePosition.size))
-					.setPrice(Number(activePosition.avgEntryPrice))
+					.setPrice(activePosition.avgEntryPrice.toNumber())
 					.setExtendLeft(false)
 					.setLineStyle(0)
 					.setLineLength(25);
@@ -121,7 +121,7 @@ export function TVChart({
 						.setText('LIQUIDATION: ' + formatNumber(activePosition.liquidationPrice))
 						.setTooltip('Liquidation price')
 						.setQuantity(formatNumber(activePosition.size))
-						.setPrice(Number(activePosition.liquidationPrice))
+						.setPrice(activePosition.liquidationPrice.toNumber())
 						.setExtendLeft(false)
 						.setLineStyle(0)
 						.setLineColor(colors.common.primaryRed)
