@@ -1,6 +1,6 @@
 import { CurrencyKey } from 'constants/currency';
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import { useFuturesMarketClosed } from 'hooks/useMarketClosed';
+import { FuturesSuspensionReason } from 'queries/futures/useFuturesSuspensionQuery';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -11,6 +11,8 @@ import Badge from './Badge';
 
 type MarketBadgeProps = {
 	currencyKey: CurrencyKey | null;
+	isFuturesMarketClosed: boolean;
+	futuresClosureReason: FuturesSuspensionReason;
 };
 
 type TransitionBadgeProps = {
@@ -27,11 +29,14 @@ export const TransitionBadge: FC<TransitionBadgeProps> = ({ isOpen }) => {
 	);
 };
 
-export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey }) => {
+export const MarketBadge: FC<MarketBadgeProps> = ({
+	currencyKey,
+	isFuturesMarketClosed,
+	futuresClosureReason,
+}) => {
 	const { t } = useTranslation();
 	const isOpen = marketIsOpen((currencyKey as CurrencyKey) ?? null);
 
-	const { isMarketClosed, marketClosureReason } = useFuturesMarketClosed(currencyKey);
 	const nextOpen = marketNextOpen((currencyKey as CurrencyKey) ?? '');
 	const nextTransition = marketNextTransition((currencyKey as CurrencyKey) ?? '');
 
@@ -42,11 +47,11 @@ export const MarketBadge: FC<MarketBadgeProps> = ({ currencyKey }) => {
 		return <TransitionBadge isOpen={isOpen} />;
 	}
 
-	if (!isMarketClosed) {
+	if (!isFuturesMarketClosed) {
 		return null;
 	}
 
-	return <Badge>{t(`futures.market.state.${marketClosureReason}`)}</Badge>;
+	return <Badge>{t(`futures.market.state.${futuresClosureReason}`)}</Badge>;
 };
 
 export default MarketBadge;
