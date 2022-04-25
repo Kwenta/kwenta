@@ -1,6 +1,6 @@
 import { CurrencyKey } from 'constants/currency';
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
-import { FuturesSuspensionReason } from 'queries/futures/useFuturesSuspensionQuery';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ import Badge from './Badge';
 type MarketBadgeProps = {
 	currencyKey: CurrencyKey | null;
 	isFuturesMarketClosed: boolean;
-	futuresClosureReason: FuturesSuspensionReason;
+	futuresClosureReason: FuturesClosureReason;
 };
 
 type TransitionBadgeProps = {

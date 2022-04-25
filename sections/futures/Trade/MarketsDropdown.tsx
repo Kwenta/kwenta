@@ -21,8 +21,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription, isEurForex } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import { FuturesSuspensionReason } from 'queries/futures/useFuturesSuspensionQuery';
+import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -36,7 +35,7 @@ export type MarketsCurrencyOption = {
 	change: string;
 	negativeChange: boolean;
 	isFuturesMarketClosed: boolean;
-	futuresClosureReason: FuturesSuspensionReason;
+	futuresClosureReason: FuturesClosureReason;
 };
 
 const assetToCurrencyOption = (
@@ -46,7 +45,7 @@ const assetToCurrencyOption = (
 	change: string,
 	negativeChange: boolean,
 	isFuturesMarketClosed: boolean,
-	futuresClosureReason: FuturesSuspensionReason
+	futuresClosureReason: FuturesClosureReason
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
 	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,

@@ -6,16 +6,14 @@ import { getReasonFromCode } from 'queries/futures/utils';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import QUERY_KEYS from 'constants/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { SynthSuspensionReason } from '@synthetixio/queries';
 import { appReadyState } from 'store/app';
 import { ethers } from 'ethers';
-
-export type FuturesSuspensionReason = SynthSuspensionReason;
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 
 interface FuturesMarketClosure {
 	isSuspended: boolean;
 	reasonCode: ethers.BigNumber;
-	reason: FuturesSuspensionReason;
+	reason: FuturesClosureReason;
 }
 
 const useFuturesSuspensionQuery = (
@@ -50,7 +48,7 @@ const useFuturesSuspensionQuery = (
 				return {
 					isSuspended,
 					reasonCode: reason,
-					reason: (isSuspended ? getReasonFromCode(reason) : null) as FuturesSuspensionReason,
+					reason: (isSuspended ? getReasonFromCode(reason) : null) as FuturesClosureReason,
 				};
 			} catch (e) {
 				return null;
