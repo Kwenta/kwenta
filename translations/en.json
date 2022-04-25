@@ -796,6 +796,11 @@
 					}
 				}
 			}
+		},
+		"modals": {
+			"profit-calculator": {
+				"title": "Profit Calculator"
+			}
 		}
 	},
 	"leaderboard": {

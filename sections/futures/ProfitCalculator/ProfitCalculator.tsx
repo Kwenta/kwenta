@@ -94,11 +94,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 			<BaseModal
 				onDismiss={() => setOpenProfitCalcModal(false)}
 				isOpen={true}
-				/**
-				 * @todo IDK how to make this comply with this project's style, e.g.
-				 *       `t('modals.confirm-transaction.title')`
-				 */
-				title={t('Profit Calculator')}
+				title={t('futures.modals.profit-calculator.title')}
 			>
 				<ModalWindow>
 					<LabelWithInput
