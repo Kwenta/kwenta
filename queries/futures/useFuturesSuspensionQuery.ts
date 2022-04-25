@@ -30,10 +30,6 @@ const useFuturesSuspensionQuery = (
 	return useQuery<any>(
 		QUERY_KEYS.Futures.MarketClosure(network.id, currencyKey),
 		async () => {
-			if (isWalletConnected && !isL2) {
-				return null;
-			}
-
 			try {
 				const {
 					contracts: { SystemStatus },

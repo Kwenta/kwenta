@@ -43,8 +43,8 @@ export const CRYPTO_CURRENCY = [
 ];
 
 export const CRYPTO_CURRENCY_MAP = keyBy(CRYPTO_CURRENCY);
-
-export const FIAT_SYNTHS: Set<CurrencyKey | 'EUR'> = new Set([
+export type FUTURES_FIAT = 'EUR' | 'JPY' | 'USD' | 'AUD' | 'GBP' | 'CHF';
+export const FIAT_SYNTHS: Set<CurrencyKey | FUTURES_FIAT> = new Set([
 	Synths.sEUR,
 	Synths.sJPY,
 	Synths.sUSD,
@@ -52,6 +52,11 @@ export const FIAT_SYNTHS: Set<CurrencyKey | 'EUR'> = new Set([
 	Synths.sGBP,
 	Synths.sCHF,
 	'EUR',
+	'JPY',
+	'USD',
+	'AUD',
+	'GBP',
+	'CHF',
 ]);
 
 export const LSE_SYNTHS = new Set<CurrencyKey>([]);

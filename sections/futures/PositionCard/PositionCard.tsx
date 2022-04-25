@@ -130,7 +130,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container id={isFuturesMarketClosed ? 'closed' : ''}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
