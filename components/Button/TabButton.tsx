@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import Button from './Button';
-import calculatorIcon from '../../assets/svg/futures/calculator-icon.svg';
 
 export type TabButtonProps = {
 	title: string;
 	detail?: string;
 	badge?: number;
-	icon?: boolean;
+	icon?: any;
 	active?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
@@ -22,11 +21,7 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 				{detail && <p className="detail">{detail}</p>}
 			</div>
 			{!!badge && <div className="badge">{badge}</div>}
-			{icon ? (
-				<img className="icon" src={`${calculatorIcon}`} height={'15px'} width={'auto'} />
-			) : (
-				''
-			)}
+			{icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''}
 		</StyledButton>
 	);
 };

@@ -10,6 +10,7 @@ import TabButton from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
+import ProfitCalculator from '../ProfitCalculator';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -18,7 +19,8 @@ import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
-import ProfitCalculator from '../ProfitCalculator';
+
+import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -91,7 +93,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			{
 				name: FuturesTab.CALCULATOR,
 				label: 'Calculator',
-				icon: true,
+				icon: calculatorIcon,
 				active: activeTab === FuturesTab.CALCULATOR,
 				onClick: () => handleOpenProfitCalc(),
 			},
@@ -112,7 +114,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 						key={TABS[0].name}
 						title={TABS[0].label}
 						badge={TABS[0].badge}
-						icon={TABS[0].icon}
 						active={TABS[0].active}
 						disabled={TABS[0].disabled}
 						onClick={TABS[0].onClick}
@@ -122,7 +123,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 						key={TABS[1].name}
 						title={TABS[1].label}
 						badge={TABS[1].badge}
-						icon={TABS[1].icon}
 						active={TABS[1].active}
 						disabled={TABS[1].disabled}
 						onClick={TABS[1].onClick}
