@@ -31,7 +31,7 @@ const PnLs: React.FC<PnLsProps> = ({
 
 	// Calculate values for each stat
 	if (leverageSide === 'long') {
-		if (entryPrice !== '' && exitPrice !== '') {
+		if (entryPrice !== '' && exitPrice !== '' && amountInAsset !== '') {
 			labelsWithStats['Exit PnL'] = wei(exitPrice)
 				.sub(entryPrice)
 				.mul(amountInAsset)
