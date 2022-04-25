@@ -23,26 +23,53 @@ const PnLs: React.FC<PnLsProps> = ({
 		profit: any = 0,
 		loss: any = 0;
 
-	// Calculate values for each stat
-	if (entryPrice !== '' && exitPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
-		if (leverageSide === 'long') {
-			profit = wei(exitPrice).sub(entryPrice).mul(amountInAsset).toNumber().toFixed(2);
-			loss = wei(stopLoss).sub(entryPrice).mul(amountInAsset).toNumber().toFixed(2);
-		} else {
-			profit = wei(entryPrice).sub(exitPrice).mul(amountInAsset).toNumber().toFixed(2);
-			loss = wei(entryPrice).sub(exitPrice).mul(amountInAsset).toNumber().toFixed(2);
-		}
-
-		if (wei(profit).gt(0) && wei(loss).abs().gt(0)) {
-			rateOfReturn = wei(profit).div(wei(loss).abs()).toNumber().toFixed(2);
-		}
-	}
-
 	const labelsWithStats: any = {
 		'Exit PnL': profit,
 		'Stop PnL': loss,
 		'R:R': rateOfReturn,
 	};
+
+	// Calculate values for each stat
+	if (leverageSide === 'long') {
+		if (entryPrice !== '' && exitPrice !== '') {
+			labelsWithStats['Exit PnL'] = wei(exitPrice)
+				.sub(entryPrice)
+				.mul(amountInAsset)
+				.toNumber()
+				.toFixed(2);
+		}
+
+		if (entryPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
+			labelsWithStats['Stop PnL'] = wei(stopLoss)
+				.sub(entryPrice)
+				.mul(amountInAsset)
+				.toNumber()
+				.toFixed(2);
+		}
+	} else {
+		if (entryPrice !== '' && exitPrice !== '') {
+			labelsWithStats['Exit PnL'] = wei(entryPrice)
+				.sub(exitPrice)
+				.mul(amountInAsset)
+				.toNumber()
+				.toFixed(2);
+		}
+
+		if (entryPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
+			labelsWithStats['Stop PnL'] = wei(entryPrice)
+				.sub(exitPrice)
+				.mul(amountInAsset)
+				.toNumber()
+				.toFixed(2);
+		}
+	}
+
+	if (wei(labelsWithStats['Exit PnL']).gt(0) && wei(labelsWithStats['Stop PnL']).abs().gt(0)) {
+		labelsWithStats['R:R'] = wei(labelsWithStats['Exit PnL'])
+			.div(wei(labelsWithStats['Stop PnL']).abs())
+			.toNumber()
+			.toFixed(2);
+	}
 
 	return (
 		<>
