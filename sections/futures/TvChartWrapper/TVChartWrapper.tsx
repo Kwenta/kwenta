@@ -6,11 +6,16 @@ import MarketOverlay from '../MarketOverlay';
 import { ChartPosition } from 'components/TVChart/types';
 
 type TVChartWrapperProps = {
-	activePosition?: ChartPosition | null;
 	baseCurrencyKey: CurrencyKey;
+	activePosition?: ChartPosition | null;
+	potentialTrade: ChartPosition | null;
 };
 
-export const TVChartWrapper: FC<TVChartWrapperProps> = ({ baseCurrencyKey, activePosition }) => {
+export const TVChartWrapper: FC<TVChartWrapperProps> = ({
+	baseCurrencyKey,
+	activePosition,
+	potentialTrade,
+}) => {
 	const { isMarketClosed, marketClosureReason } = useMarketClosed(baseCurrencyKey);
 
 	return isMarketClosed ? (
@@ -20,6 +25,7 @@ export const TVChartWrapper: FC<TVChartWrapperProps> = ({ baseCurrencyKey, activ
 			baseCurrencyKey={baseCurrencyKey}
 			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
+			potentialTrade={potentialTrade}
 		/>
 	);
 };

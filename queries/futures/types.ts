@@ -193,3 +193,11 @@ export type FundingRateUpdate = {
 	funding: Wei;
 	timestamp: number;
 };
+
+export type FuturesPotentialTradeDetails = {
+	size: Wei;
+	liqPrice: Wei;
+	margin: Wei;
+	price: Wei;
+	fee: Wei;
+};

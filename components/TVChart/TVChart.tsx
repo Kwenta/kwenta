@@ -13,9 +13,14 @@ import { isL2State } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import { ChartPosition } from './types';
 
-type Props = {
+export type ChartProps = {
 	baseCurrencyKey: string;
 	quoteCurrencyKey: string;
+	activePosition?: ChartPosition | null;
+	potentialTrade?: ChartPosition | null;
+};
+
+type Props = ChartProps & {
 	interval: string;
 	containerId: string;
 	libraryPath: string;
@@ -23,7 +28,6 @@ type Props = {
 	autosize: boolean;
 	studiesOverrides: Record<string, any>;
 	overrides: Record<string, string>;
-	activePosition?: ChartPosition;
 };
 
 export function TVChart({
@@ -37,6 +41,7 @@ export function TVChart({
 	studiesOverrides = {},
 	overrides,
 	activePosition,
+	potentialTrade,
 }: Props) {
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
@@ -102,37 +107,43 @@ export function TVChart({
 			_entryLine.current = null;
 			_liquidationLine.current = null;
 
-			if (activePosition) {
+			const setPositionLines = (position: ChartPosition, active: boolean) => {
 				_entryLine.current = _widget.current
 					?.chart()
 					.createPositionLine()
-					.setText('ENTRY: ' + formatNumber(activePosition.avgEntryPrice))
+					.setText('ENTRY: ' + formatNumber(position.price))
 					.setTooltip('Average entry price')
-					.setQuantity(formatNumber(activePosition.size))
-					.setPrice(activePosition.avgEntryPrice.toNumber())
+					.setQuantity(formatNumber(position.size.abs()))
+					.setPrice(position.price.toNumber())
 					.setExtendLeft(false)
-					.setLineStyle(0)
+					.setLineStyle(active ? 0 : 2)
 					.setLineLength(25);
 
-				if (activePosition.liquidationPrice) {
+				if (position.liqPrice) {
 					_liquidationLine.current = _widget.current
 						?.chart()
 						.createPositionLine()
-						.setText('LIQUIDATION: ' + formatNumber(activePosition.liquidationPrice))
+						.setText('LIQUIDATION: ' + formatNumber(position.liqPrice))
 						.setTooltip('Liquidation price')
-						.setQuantity(formatNumber(activePosition.size))
-						.setPrice(activePosition.liquidationPrice.toNumber())
+						.setQuantity(formatNumber(position.size.abs()))
+						.setPrice(position.liqPrice.toNumber())
 						.setExtendLeft(false)
-						.setLineStyle(0)
+						.setLineStyle(active ? 0 : 2)
 						.setLineColor(colors.common.primaryRed)
 						.setBodyBorderColor(colors.common.primaryRed)
 						.setQuantityBackgroundColor(colors.common.primaryRed)
 						.setQuantityBorderColor(colors.common.primaryRed)
 						.setLineLength(25);
 				}
+			};
+
+			if (activePosition) {
+				setPositionLines(activePosition, true);
+			} else if (potentialTrade) {
+				setPositionLines(potentialTrade, false);
 			}
 		});
-	}, [activePosition, colors.common.primaryRed]);
+	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
 	return (
 		<Container>

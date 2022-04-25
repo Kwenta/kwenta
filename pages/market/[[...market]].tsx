@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -11,10 +11,13 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
+import { PotentialTrade } from 'sections/futures/types';
 
 const Market: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+
+	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
 
 	return (
 		<>
@@ -25,11 +28,11 @@ const Market: FC = () => {
 				<StyledPageContent>
 					<FullHeightContainer>
 						<StyledMainContent>
-							<MarketInfo market={router.query.market?.[0]!} />
+							<MarketInfo market={router.query.market?.[0]!} potentialTrade={potentialTrade} />
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade />
+								<Trade onEditPositionInput={setPotentialTrade} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</FullHeightContainer>

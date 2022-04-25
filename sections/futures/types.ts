@@ -69,3 +69,8 @@ export type Trade = {
 	status: TradeStatus;
 	txHash: string;
 };
+
+export type PotentialTrade = {
+	size: string;
+	side: PositionSide;
+};
