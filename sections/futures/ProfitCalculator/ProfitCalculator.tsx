@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 

@@ -799,7 +799,21 @@
 		},
 		"modals": {
 			"profit-calculator": {
-				"title": "Profit Calculator"
+				"title": "Profit Calculator",
+				"profit-details": {
+					"row-name": {
+						"entry-price": "Entry Price: ",
+						"take-profit": "TakeProfit: ",
+						"stop-loss": "Stop Loss: ",
+						"size": "Size: "
+					},
+					"details": {
+						"entry-price": "Entry Price",
+						"market": "Market",
+						"sell": "Sell",
+						"at": "at"
+					}
+				}
 			}
 		}
 	},

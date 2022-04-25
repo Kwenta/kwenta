@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
+import { useTranslation } from 'react-i18next';
 
 import { PositionSide } from '../types';
 
@@ -26,6 +27,8 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 	leverageSide,
 	marketAssetPositionSize,
 }) => {
+	const { t } = useTranslation();
+
 	const entryOrderDetails = leverageSide === PositionSide.LONG ? 'Long' : 'Short';
 
 	return (
@@ -33,38 +36,48 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 			<StyledProfitDetails>
 				{/* ENTRY ORDER */}
 				<RowName>
-					<RowText className="row-name">{'Entry Order:'}</RowText>
+					<RowText className="row-name">
+						{t('futures.modals.profit-calculator.profit-details.row-name.entry-price')}
+					</RowText>
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText className={leverageSide}>{`${entryOrderDetails}`}</RowText>
 					<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
-					<RowText style={{ marginLeft: '10px' }}>{`Market`}</RowText>
+					<RowText style={{ marginLeft: '10px' }}>
+						{t('futures.modals.profit-calculator.profit-details.details.entry-price')}
+					</RowText>
 				</Details>
 				{/* TAKE PROFIT */}
 				<RowName>
-					<RowText className="row-name">{'Take Profit:'}</RowText>
+					<RowText className="row-name">
+						{t('futures.modals.profit-calculator.profit-details.row-name.take-profit')}
+					</RowText>
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
-					<RowText>{`Sell`}</RowText>
+					<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
-						{`at`}
+						{t('futures.modals.profit-calculator.profit-details.details.at')}
 					</RowText>
 					<RowText>{exitPrice !== '' ? wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
 				</Details>
 				{/* STOP LOSS */}
 				<RowName>
-					<RowText className="row-name">{'Stop Loss:'}</RowText>
+					<RowText className="row-name">
+						{t('futures.modals.profit-calculator.profit-details.row-name.stop-loss')}
+					</RowText>
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
-					<RowText>{`Sell`}</RowText>
+					<RowText>{t('futures.modals.profit-calculator.profit-details.details.sell')}</RowText>
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
-						{`at`}
+						{t('futures.modals.profit-calculator.profit-details.details.at')}
 					</RowText>
-					<RowText>{stopLoss !== '' ? wei(stopLoss).toNumber().toFixed(2): ''}</RowText>
+					<RowText>{stopLoss !== '' ? wei(stopLoss).toNumber().toFixed(2) : ''}</RowText>
 				</Details>
 				{/* SIZE */}
 				<RowName>
-					<RowText className="row-name">{'Size:'}</RowText>
+					<RowText className="row-name">
+						{t('futures.modals.profit-calculator.profit-details.row-name.size')}
+					</RowText>
 				</RowName>
 				<Details style={{ justifySelf: 'right' }}>
 					<RowText style={{ marginRight: '10px' }}>
