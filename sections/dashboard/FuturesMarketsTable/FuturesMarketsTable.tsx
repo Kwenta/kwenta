@@ -5,7 +5,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
-import { FundingRateUpdate, FuturesMarket } from 'queries/futures/types';
+import { FuturesMarket } from 'queries/futures/types';
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';

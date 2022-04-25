@@ -5,15 +5,17 @@ import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
 import { zeroBN } from 'utils/formatters/number';
+import { getMarketKey } from 'utils/futures';
+import Connector from 'containers/Connector';
 
 type PortfolioChartProps = {
 	futuresMarkets: FuturesMarket[];
 };
 
 const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioChartProps) => {
-	const markets = futuresMarkets.map((market: FuturesMarket) => {
-		return market.asset;
-	});
+	const { network } = Connector.useContainer();
+
+	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
