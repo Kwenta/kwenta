@@ -19,8 +19,9 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
-import { getSynthDescription } from 'utils/futures';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 import useMarketClosed from 'hooks/useMarketClosed';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -90,10 +91,11 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				selectedPriceCurrency.name
 			);
 
+			const minDecimals = isEurForex(market.asset) ? DEFAULT_FIAT_EURO_DECIMALS : undefined;
 			return assetToCurrencyOption(
 				market.asset,
 				getSynthDescription(market.asset, synthsMap, t),
-				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
+				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$', minDecimals }),
 				formatPercent(
 					basePriceRate && pastPrice?.price
 						? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
