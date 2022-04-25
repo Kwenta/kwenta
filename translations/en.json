@@ -796,6 +796,9 @@
 					"actions": {
 						"cancel": "Cancel",
 						"edit": "Edit"
+					},
+					"badges": {
+						"expired": "Expired"
 					}
 				},
 				"trades": {

@@ -37,6 +37,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 								size
 								market
 								asset
+								targetRoundId
 								timestamp
 								orderType
 							}
@@ -49,6 +50,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 					? response.futuresOrders.map((o: any) => ({
 							...o,
 							asset: ethersUtils.parseBytes32String(o.asset),
+							targetRoundId: Number(o.targetRoundId.toString()),
 							size: new Wei(o.size).div(ETH_UNIT),
 					  }))
 					: [];

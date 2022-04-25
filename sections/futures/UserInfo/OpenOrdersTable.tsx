@@ -16,6 +16,8 @@ import { useRecoilValue } from 'recoil';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { FuturesPosition } from 'queries/futures/types';
+import useGetCurrentRoundId from 'queries/futures/useGetCurrentRoundId';
+import Badge from 'components/Badge';
 
 type OpenOrdersTableProps = {
 	currencyKey: CurrencyKey;
@@ -41,6 +43,9 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
+
+	const currentRoundIdQuery = useGetCurrentRoundId(currencyKey);
+	const currentRoundId = currentRoundIdQuery.data ?? 0;
 
 	const cancelOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(cancelCurrencyKey)}`,
@@ -84,9 +89,10 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+			isStale: wei(currentRoundId).gte(wei(order.targetRoundId).add(2)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, position]);
+	}, [openOrders, position, currentRoundId]);
 
 	return (
 		<StyledTable
@@ -110,7 +116,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 								</IconContainer>
 								<StyledText>
 									{cellProps.row.original.market}
-									<MarketBadge currencyKey={cellProps.row.original.asset} />
+									{cellProps.row.original.isStale && (
+										<ExpiredBadge>
+											{t('futures.market.user.open-orders.badges.expired')}
+										</ExpiredBadge>
+									)}
 								</StyledText>
 								<StyledValue>{cellProps.row.original.orderType}</StyledValue>
 							</MarketContainer>
@@ -230,6 +240,12 @@ const CancelButton = styled(EditButton)`
 	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
 	color: ${(props) => props.theme.colors.common.primaryRed};
 	margin-right: 8px;
+`;
+
+const ExpiredBadge = styled(Badge)`
+	background: ${(props) => props.theme.colors.common.primaryRed};
+	padding: 1px 5px;
+	line-height: 9px;
 `;
 
 export default OpenOrdersTable;
