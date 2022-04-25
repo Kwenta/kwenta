@@ -116,6 +116,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 				futuresClosureReason
 			);
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		dailyPriceChangesQuery?.data,
 		futuresMarketsQuery?.data,
