@@ -28,7 +28,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 					currencyKey: Synths.sUSD,
 				})}`,
 				'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
-				'Margin Usage': `${formatPercent(marginUsage)}`
+				'Margin Usage': `${formatPercent(marginUsage)}`,
 			}}
 			isMarketClosed={isMarketClosed}
 		/>
