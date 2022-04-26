@@ -57,7 +57,7 @@ const PnLs: React.FC<PnLsProps> = ({
 
 		if (entryPrice !== '' && stopLoss !== '' && amountInAsset !== '') {
 			labelsWithStats['Stop PnL'] = wei(entryPrice)
-				.sub(exitPrice)
+				.sub(stopLoss)
 				.mul(amountInAsset)
 				.toNumber()
 				.toFixed(2);
