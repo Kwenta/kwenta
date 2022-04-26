@@ -32,7 +32,14 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	const onExitPriceAmountChange = (value: string, fromLeverage: boolean = false) => {
 		setExitPrice(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
 		setGainPercent(
-			value === '' ? '' : (100 * (wei(value).div(entryPrice).toNumber() - 1)).toFixed(2)
+			value === ''
+				? ''
+				: (
+						100 *
+						(leverageSide === 'long'
+							? wei(value).div(entryPrice).toNumber() - 1
+							: (wei(value).div(entryPrice).toNumber() - 1) * -1)
+				  ).toFixed(2)
 		);
 	};
 
@@ -49,7 +56,12 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 	const onStopLossAmountChange = (value: string, fromLeverage: boolean = false) => {
 		setStopLoss(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toFixed(2)) : value);
 		setLossPercent(
-			value === '' ? '' : ((1 - wei(value).div(entryPrice).toNumber()) * 100).toFixed(2)
+			value === ''
+				? ''
+				: (leverageSide === 'long'
+						? (1 - wei(value).div(entryPrice).toNumber()) * 100
+						: (1 - wei(value).div(entryPrice).toNumber()) * 100 * -1
+				  ).toFixed(2)
 		);
 	};
 
