@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Wei from '@synthetixio/wei';
 import InfoBox from 'components/InfoBox';
-import { formatCurrency, formatNumber, formatPercent } from 'utils/formatters/number';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
 
 type MarketInfoBoxProps = {
