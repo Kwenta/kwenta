@@ -86,6 +86,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					.mul(market.price)
 					.toNumber(),
 				marketSkew: market.marketSkew,
+				isSuspended: market.isSuspended,
+				marketClosureReason: market.marketClosureReason,
 			};
 		});
 	}, [
@@ -134,7 +136,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										<MarketBadge currencyKey={cellProps.row.original.asset} />
+										<MarketBadge
+											currencyKey={cellProps.row.original.asset}
+											isFuturesMarketClosed={cellProps.row.original.isSuspended}
+											futuresClosureReason={cellProps.row.original.marketClosureReason}
+										/>
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
