@@ -4,8 +4,9 @@ import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValu
 import { FlexDivCentered } from 'styles/common';
 import { components, OptionProps } from 'react-select';
 import MarketBadge from 'components/Badge/MarketBadge';
+import { MarketsCurrencyOption } from './MarketsDropdown';
 
-const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
+const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
 	<components.Option {...props}>
 		<OptionDetailsContainer $isSelected={props.isSelected}>
 			<CurrencyIcon
@@ -17,7 +18,11 @@ const MarketsDropdownOption: React.FC<OptionProps<any>> = (props) => (
 				<div>
 					<CurrencyLabel>
 						{props.data.label}
-						<MarketBadge currencyKey={props.data.value} />
+						<MarketBadge
+							currencyKey={props.data.value}
+							isFuturesMarketClosed={props.data.isFuturesMarketClosed}
+							futuresClosureReason={props.data.futuresClosureReason}
+						/>
 					</CurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>

@@ -41,8 +41,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		);
 		return activePositions.length > 0
 			? activePositions.map((position: FuturesPosition, i: number) => {
-					const isSuspended =
-						futuresMarkets.find((market) => market.asset === position.asset)?.isSuspended ?? false;
+					const market = futuresMarkets.find((market) => market.asset === position.asset);
 					const description = getSynthDescription(position.asset, synthsMap, t);
 					const positionHistory = futuresPositionHistory?.find(
 						(positionHistory: PositionHistory) => {
@@ -66,7 +65,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						margin: position.accessibleMargin,
 						leverage: position?.position?.leverage,
-						isSuspended,
+						isSuspended: market?.isSuspended,
+						marketClosureReason: market?.marketClosureReason,
 					};
 			  })
 			: DEFAULT_DATA;
@@ -102,7 +102,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										<MarketBadge currencyKey={cellProps.row.original.asset} />
+										<MarketBadge
+											currencyKey={cellProps.row.original.asset}
+											isFuturesMarketClosed={cellProps.row.original.isSuspended}
+											futuresClosureReason={cellProps.row.original.marketClosureReason}
+										/>
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>

@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
-import useMarketClosed from 'hooks/useMarketClosed';
 import { CurrencyKey, Synths } from 'constants/currency';
 import TVChart from 'components/TVChart';
 import MarketOverlay from '../MarketOverlay';
 import { ChartPosition } from 'components/TVChart/types';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 
 type TVChartWrapperProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -16,10 +16,10 @@ export const TVChartWrapper: FC<TVChartWrapperProps> = ({
 	activePosition,
 	potentialTrade,
 }) => {
-	const { isMarketClosed, marketClosureReason } = useMarketClosed(baseCurrencyKey);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(baseCurrencyKey);
 
-	return isMarketClosed ? (
-		<MarketOverlay marketClosureReason={marketClosureReason} baseCurrencyKey={baseCurrencyKey} />
+	return isFuturesMarketClosed ? (
+		<MarketOverlay marketClosureReason={futuresClosureReason} baseCurrencyKey={baseCurrencyKey} />
 	) : (
 		<TVChart
 			baseCurrencyKey={baseCurrencyKey}

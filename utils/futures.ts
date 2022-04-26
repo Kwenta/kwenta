@@ -4,6 +4,7 @@ import { Dictionary } from 'lodash';
 
 import futuresMarketsKovan from 'synthetix/publish/deployed/kovan-ovm/futures-markets.json';
 import futuresMarketsMainnet from 'synthetix/publish/deployed/mainnet-ovm/futures-markets.json';
+import { Synths } from 'constants/currency';
 
 export const getMarketKey = (asset: string | null, networkId: NetworkId) => {
 	if (networkId === NetworkIdByName['mainnet-ovm']) {
@@ -46,3 +47,6 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 			});
 	}
 };
+
+export const isEurForex = (marketKeyOrAsset: string | undefined): boolean =>
+	marketKeyOrAsset === Synths.sEUR || marketKeyOrAsset === 'EUR';

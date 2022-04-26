@@ -22,6 +22,8 @@ const useENS = (address?: string): { ensName: string | null; ensAvatar: string |
 
 		return () => {
 			mounted = false;
+			setENSAvatar(null);
+			setENSName(null);
 		};
 	}, [address, staticMainnetProvider]);
 
