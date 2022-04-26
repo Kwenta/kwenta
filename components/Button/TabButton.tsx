@@ -16,23 +16,23 @@ export type TabButtonProps = {
 
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
-		<StyledButton {...props}>
+		<StyledButton {...props} isActive={!!active}>
 			<div>
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
-			<div>{icon}</div>
+			{!!icon && <div>{icon}</div>}
 			{!!badge && <div className="badge">{badge}</div>}
 			{icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''}
 		</StyledButton>
 	);
 };
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ isActive: boolean }>`
 	height: initial;
 	display: flex;
 	align-items: center;
-  justify-content: center;
+	justify-content: center;
 
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -44,13 +44,16 @@ const StyledButton = styled(Button)`
 	}
 
 	svg {
-    margin-left: 5px;
+		margin-left: 5px;
 		margin-top: 5px;
 	}
 
 	.title {
 		text-align: center;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) =>
+			props.isActive
+				? props.theme.colors.common.primaryWhite
+				: props.theme.colors.common.secondaryGray};
 	}
 
 	.detail {
@@ -90,11 +93,11 @@ const StyledButton = styled(Button)`
 			display: none;
 		}
 
-    svg {
-      path {
-        fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
-      }
-    }
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+			}
+		}
 	}
 `;
 

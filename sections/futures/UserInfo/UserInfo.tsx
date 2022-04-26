@@ -132,7 +132,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
-		[activeTab, router, marketAsset, positionHistory]
+		[activeTab, router, marketAsset, positionHistory, marginTransfers]
 	);
 
 	const handleOpenProfitCalc = () => {

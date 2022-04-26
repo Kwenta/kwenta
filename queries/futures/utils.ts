@@ -250,13 +250,12 @@ export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers?.map(
-		({ timestamp, account, market, size }: FuturesMarginTransferResult) => {
-			const action = new Wei(size).gt(0) ? 'deposit' : 'withdraw';
-			const cleanSize = new Wei(size).div(ETH_UNIT).abs();
-			const isPositive = new Wei(size).gt(0) ? true : false;
+		({ timestamp, account, market, size, asset, txHash }: FuturesMarginTransferResult) => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
 			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
 				sign: '$',
-				maxDecimals: 2,
 			})}`;
 
 			return {
@@ -264,10 +263,11 @@ export const mapMarginTransfers = (
 				account,
 				market,
 				size,
-				action,
+				action: isPositive ? 'deposit' : 'withdraw',
 				amount,
 				isPositive,
-				// timeAgo,
+				asset: utils.parseBytes32String(asset),
+				txHash,
 			};
 		}
 	);

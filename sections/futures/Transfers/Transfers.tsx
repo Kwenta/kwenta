@@ -1,5 +1,3 @@
-import { Synths } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
 import Table from 'components/Table';
 import BlockExplorer from 'containers/BlockExplorer';
 import { differenceInSeconds, format } from 'date-fns';
@@ -8,7 +6,6 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 
 type TransferProps = {
@@ -21,7 +18,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
-	console.log(marginTransfers);
+
 	function timePresentation(timestamp: string) {
 		const actionTime = new Date(Number(timestamp) * 1000);
 		const seconds = differenceInSeconds(new Date(), actionTime);
@@ -47,7 +44,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 			});
 		}
 
-		if (seconds < 1209600) {
+		if (seconds < 2419200) {
 			return t('common.time.n-week-ago', {
 				timeDelta: Math.floor(seconds / 604800),
 			});
@@ -86,7 +83,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 							</StyledAmountCell>
 						),
 						sortable: true,
-						width: 100,
+						width: 50,
 					},
 					{
 						Header: (
@@ -104,27 +101,26 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 								{t('futures.market.user.transfers.table.transaction')}
 							</StyledTableHeader>
 						),
-						accessor: 'account',
+						accessor: 'txHash',
 						Cell: (cellProps: any) => {
 							return (
 								<DefaultCell>
-									<ExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
+									<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
 										{truncateAddress(cellProps.value)}
-									</ExternalLink>
+									</StyledExternalLink>
 								</DefaultCell>
 							);
 						},
 						width: 50,
 					},
 				]}
-				data={marginTransfers || []}
+				data={marginTransfers}
 				columnsDeps={columnsDeps}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
 					isLoaded && marginTransfers?.length === 0 ? (
 						<TableNoResults>
-							{t('futures.market.user.transfers.table.no-results')}
-							{t('futures.market.user.transfers.table.deposit')}
+							<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
 						</TableNoResults>
 					) : undefined
 				}
@@ -140,7 +136,9 @@ const StyledTable = styled(Table)`
 	margin-top: 16px;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.p`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+`;
 
 const TableContainer = styled.div`
 	margin-bottom: 15px;
@@ -148,6 +146,20 @@ const TableContainer = styled.div`
 
 const StyledActionCell = styled(DefaultCell)`
 	text-transform: capitalize;
+`;
+
+const StyledTitle = styled.p`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 16px;
+	margin: 0;
+`;
+
+const StyledExternalLink = styled(ExternalLink)`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	text-decoration: underline;
+	&:hover {
+		text-decoration: underline;
+	}
 `;
 
 const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
@@ -164,11 +176,9 @@ const StyledTableHeader = styled.div`
 
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
-	min-height: 60px;
 	justify-content: center;
 	background-color: transparent;
 	margin-top: -2px;
 	justify-items: center;
-	grid-gap: 10px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 `;

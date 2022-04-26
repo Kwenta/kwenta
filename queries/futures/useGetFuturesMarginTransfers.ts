@@ -1,6 +1,5 @@
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
@@ -35,6 +34,8 @@ const useGetFuturesMarginTransfers = (
 				account
 				market
 				size
+				asset
+				txHash
 			}
 		}
 	`;

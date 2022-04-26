@@ -106,13 +106,13 @@ export type RawPosition = {
 };
 
 export type MarginTransfer = {
-	// timestamp: number;
+	timestamp: number;
 	market: string;
 	size: Wei;
-	// txHash: string;
+	txHash: string;
 	action: string;
 	amount: string;
-	// timeAgo: string;
+	asset: string;
 };
 
 export type PositionHistory = {
