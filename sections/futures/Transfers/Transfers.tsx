@@ -1,16 +1,18 @@
-import Card from 'components/Card';
+import { Synths } from '@synthetixio/contracts-interface';
+import { wei } from '@synthetixio/wei';
 import Table from 'components/Table';
 import BlockExplorer from 'containers/BlockExplorer';
+import { differenceInSeconds, format } from 'date-fns';
 import { MarginTransfer } from 'queries/futures/types';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { GridDivCenteredRow } from 'styles/common';
-
-import Trades from '../Trades';
+import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { truncateAddress } from 'utils/formatters/string';
 
 type TransferProps = {
-	marginTransfers: MarginTransfer[] | null;
+	marginTransfers: MarginTransfer[] | [];
 	isLoading: boolean;
 	isLoaded: boolean;
 };
@@ -18,11 +20,44 @@ type TransferProps = {
 const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
-	console.log(marginTransfers);
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
+	console.log(marginTransfers);
+	function timePresentation(timestamp: string) {
+		const actionTime = new Date(Number(timestamp) * 1000);
+		const seconds = differenceInSeconds(new Date(), actionTime);
+		if (seconds < 60) {
+			return t('common.time.n-sec-ago', { timeDelta: seconds });
+		}
+
+		if (seconds < 3600) {
+			return t('common.time.n-min-ago', {
+				timeDelta: Math.floor(seconds / 60),
+			});
+		}
+
+		if (seconds < 86400) {
+			return t('common.time.n-hr-ago', {
+				timeDelta: Math.floor(seconds / 3600),
+			});
+		}
+
+		if (seconds < 604800) {
+			return t('common.time.n-day-ago', {
+				timeDelta: Math.floor(seconds / 86400),
+			});
+		}
+
+		if (seconds < 1209600) {
+			return t('common.time.n-week-ago', {
+				timeDelta: Math.floor(seconds / 604800),
+			});
+		}
+
+		return format(actionTime, 'MM/dd/yyyy');
+	}
 
 	return (
-		<Card>
+		<TableContainer>
 			<StyledTable
 				palette="primary"
 				highlightRowsOnHover
@@ -34,8 +69,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 							</StyledTableHeader>
 						),
 						accessor: 'action',
-						// : CellProps<any></any>
-						Cell: (cellProps: any) => cellProps.value,
+						Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
 						width: 50,
 					},
 					{
@@ -46,8 +80,11 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 						),
 						accessor: 'amount',
 						sortType: 'basic',
-						// : CellProps<any></any>
-						Cell: (cellProps: any) => cellProps.value,
+						Cell: (cellProps: any) => (
+							<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
+								{cellProps.value}
+							</StyledAmountCell>
+						),
 						sortable: true,
 						width: 100,
 					},
@@ -56,8 +93,9 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
 						),
 						accessor: 'timestamp',
-						// : CellProps<any></any>
-						Cell: (cellProps: any) => cellProps.value,
+						Cell: (cellProps: any) => (
+							<DefaultCell>{timePresentation(cellProps.value)}</DefaultCell>
+						),
 						width: 50,
 					},
 					{
@@ -67,10 +105,14 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 							</StyledTableHeader>
 						),
 						accessor: 'account',
-						// : CellProps<any></any>
 						Cell: (cellProps: any) => {
-							// blockExplorerInstance?.txLink(cellProps.value),
-							return cellProps.value;
+							return (
+								<DefaultCell>
+									<ExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
+										{truncateAddress(cellProps.value)}
+									</ExternalLink>
+								</DefaultCell>
+							);
 						},
 						width: 50,
 					},
@@ -79,16 +121,16 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 				columnsDeps={columnsDeps}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
-					isLoaded && Trades.length === 0 ? (
+					isLoaded && marginTransfers?.length === 0 ? (
 						<TableNoResults>
-							{/* <Svg src={NoNotificationIcon} /> */}
 							{t('futures.market.user.transfers.table.no-results')}
+							{t('futures.market.user.transfers.table.deposit')}
 						</TableNoResults>
 					) : undefined
 				}
 				showPagination={true}
 			/>
-		</Card>
+		</TableContainer>
 	);
 };
 
@@ -98,6 +140,23 @@ const StyledTable = styled(Table)`
 	margin-top: 16px;
 `;
 
+const DefaultCell = styled.p``;
+
+const TableContainer = styled.div`
+	margin-bottom: 15px;
+`;
+
+const StyledActionCell = styled(DefaultCell)`
+	text-transform: capitalize;
+`;
+
+const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
+	color: ${(props: any) =>
+		props.isPositive
+			? props.theme.colors.common.primaryGreen
+			: props.theme.colors.common.primaryRed};
+`;
+
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
@@ -105,15 +164,11 @@ const StyledTableHeader = styled.div`
 
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
+	min-height: 60px;
 	justify-content: center;
-	background-color: ${(props) => props.theme.colors.elderberry};
+	background-color: transparent;
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
-`;
-
-const StyledPositionSize = styled.div`
-	margin-left: 4px;
-	/* ${BoldTableText} */
-	text-transform: none;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 `;

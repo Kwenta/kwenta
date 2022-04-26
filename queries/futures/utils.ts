@@ -249,15 +249,16 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
-	console.log(marginTransfers);
 	return marginTransfers?.map(
 		({ timestamp, account, market, size }: FuturesMarginTransferResult) => {
 			const action = new Wei(size).gt(0) ? 'deposit' : 'withdraw';
-			const amount = `${new Wei(size).gt(0) ? '+' : ''}${formatCurrency(Synths.sUSD, size, {
+			const cleanSize = new Wei(size).div(ETH_UNIT).abs();
+			const isPositive = new Wei(size).gt(0) ? true : false;
+			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
+				sign: '$',
 				maxDecimals: 2,
 			})}`;
-			// console.log(market, market.toString());
-			// const timeAgo = moment.unix(timestamp).fromNow();
+
 			return {
 				timestamp,
 				account,
@@ -265,6 +266,7 @@ export const mapMarginTransfers = (
 				size,
 				action,
 				amount,
+				isPositive,
 				// timeAgo,
 			};
 		}

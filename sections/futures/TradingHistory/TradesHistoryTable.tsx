@@ -47,16 +47,16 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 			return NO_VALUE;
 		} else if (timeDelta < 60) {
 			// less than 1m
-			return `${t('futures.market.history.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`;
+			return `${t('common.time.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`;
 		} else if (timeDelta < 3600) {
 			// less than 1h
-			return `${t('futures.market.history.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`;
+			return `${t('common.time.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`;
 		} else if (timeDelta < 86400) {
 			// less than 1d
-			return `${t('futures.market.history.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`;
+			return `${t('common.time.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`;
 		} else {
 			// greater than 1d
-			return `${t('futures.market.history.n-day-ago', {
+			return `${t('common.time.n-day-ago', {
 				timeDelta: Math.floor(timeDelta / 86400),
 			})}`;
 		}

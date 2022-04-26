@@ -1,29 +1,31 @@
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { utils as ethersUtils } from 'ethers';
 import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { getDisplayAsset } from 'utils/futures';
 
-import { getFuturesMarginTransfers } from './subgraph';
 import { MarginTransfer } from './types';
 import { getFuturesEndpoint, mapMarginTransfers } from './utils';
 
 const useGetFuturesMarginTransfers = (
 	currencyKey: string | null,
-	options?: UseQueryOptions<number | null>
+	options?: UseQueryOptions<MarginTransfer[]>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
+	const { synthetixjs } = Connector.useContainer();
 
 	const gqlQuery = gql`
-		query userFuturesMarginTransfers($currencyKey: String!, $walletAddress: String!) {
+		query userFuturesMarginTransfers($market: String!, $walletAddress: String!) {
 			futuresMarginTransfers(
-				where: { account: "0xb0cffE0260BF4eA7b59915fBEa17273a8B9209F6" }
+				where: { account: $walletAddress, market: $market }
 				orderBy: timestamp
 				orderDirection: desc
 				first: 1000
@@ -37,20 +39,24 @@ const useGetFuturesMarginTransfers = (
 		}
 	`;
 
-	return useQuery<MarginTransfer[] | null>(
-		QUERY_KEYS.Futures.MarginTransfers(network.id, currencyKey || null),
+	return useQuery<MarginTransfer[]>(
+		QUERY_KEYS.Futures.MarginTransfers(network.id, walletAddress, currencyKey || null),
 		async () => {
-			if (!currencyKey) return null;
+			if (!currencyKey) return [];
+			const { contracts } = synthetixjs!;
+			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
+			if (!marketAddress) return [];
+
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
-					currencyKey: ethersUtils.formatBytes32String(currencyKey),
+					market: marketAddress,
 					walletAddress,
 				});
 
 				return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
 			} catch (e) {
 				console.log(e);
-				return null;
+				return [];
 			}
 		},
 		{
