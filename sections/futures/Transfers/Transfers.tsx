@@ -53,94 +53,82 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 		return format(actionTime, 'MM/dd/yyyy');
 	}
 
+	console.log(marginTransfers);
 	return (
-		<TableContainer>
-			<StyledTable
-				palette="primary"
-				columns={[
-					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.transfers.table.action')}
-							</StyledTableHeader>
-						),
-						accessor: 'action',
-						Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
-						width: 50,
+		<StyledTable
+			columns={[
+				{
+					Header: (
+						<StyledTableHeader>{t('futures.market.user.transfers.table.action')}</StyledTableHeader>
+					),
+					accessor: 'action',
+					Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
+					width: 50,
+				},
+				{
+					Header: (
+						<StyledTableHeader>{t('futures.market.user.transfers.table.amount')}</StyledTableHeader>
+					),
+					accessor: 'amount',
+					sortType: 'basic',
+					Cell: (cellProps: any) => (
+						<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
+							{cellProps.value}
+						</StyledAmountCell>
+					),
+					sortable: true,
+					width: 50,
+				},
+				{
+					Header: (
+						<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
+					),
+					accessor: 'timestamp',
+					Cell: (cellProps: any) => <DefaultCell>{timePresentation(cellProps.value)}</DefaultCell>,
+					width: 50,
+				},
+				{
+					Header: (
+						<StyledTableHeader>
+							{t('futures.market.user.transfers.table.transaction')}
+						</StyledTableHeader>
+					),
+					accessor: 'txHash',
+					Cell: (cellProps: any) => {
+						return (
+							<DefaultCell>
+								<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
+									{truncateAddress(cellProps.value)}
+								</StyledExternalLink>
+							</DefaultCell>
+						);
 					},
-					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.transfers.table.amount')}
-							</StyledTableHeader>
-						),
-						accessor: 'amount',
-						sortType: 'basic',
-						Cell: (cellProps: any) => (
-							<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
-								{cellProps.value}
-							</StyledAmountCell>
-						),
-						sortable: true,
-						width: 50,
-					},
-					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
-						),
-						accessor: 'timestamp',
-						Cell: (cellProps: any) => (
-							<DefaultCell>{timePresentation(cellProps.value)}</DefaultCell>
-						),
-						width: 50,
-					},
-					{
-						Header: (
-							<StyledTableHeader>
-								{t('futures.market.user.transfers.table.transaction')}
-							</StyledTableHeader>
-						),
-						accessor: 'txHash',
-						Cell: (cellProps: any) => {
-							return (
-								<DefaultCell>
-									<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
-										{truncateAddress(cellProps.value)}
-									</StyledExternalLink>
-								</DefaultCell>
-							);
-						},
-						width: 50,
-					},
-				]}
-				data={marginTransfers}
-				columnsDeps={columnsDeps}
-				isLoading={isLoading && !isLoaded}
-				noResultsMessage={
-					isLoaded && marginTransfers?.length === 0 ? (
-						<TableNoResults>
-							<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
-						</TableNoResults>
-					) : undefined
-				}
-				showPagination={true}
-			/>
-		</TableContainer>
+					width: 50,
+				},
+			]}
+			data={marginTransfers}
+			columnsDeps={columnsDeps}
+			isLoading={isLoading && !isLoaded}
+			noResultsMessage={
+				marginTransfers?.length === 0 ? (
+					<TableNoResults>
+						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
+					</TableNoResults>
+				) : undefined
+			}
+			showPagination={true}
+		/>
 	);
 };
 
 export default Transfers;
 
 const StyledTable = styled(Table)`
-	margin-top: 16px;
+	/* margin-top: 20px; */
 `;
 
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-`;
-
-const TableContainer = styled.div`
-	margin-bottom: 15px;
 `;
 
 const StyledActionCell = styled(DefaultCell)`
@@ -179,5 +167,4 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	background-color: transparent;
 	margin-top: -2px;
 	justify-items: center;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 `;
