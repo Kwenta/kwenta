@@ -30,28 +30,24 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 			details={{
 				...(orderType === 1 && {
 					'Keeper Deposit': !!nextPriceDetails?.keeperDeposit
-						? formatCurrency(
-								selectedPriceCurrency.name as CurrencyKey,
-								nextPriceDetails.keeperDeposit,
-								{
-									sign: selectedPriceCurrency.sign,
-									minDecimals: 2,
-								}
-						  )
+						? formatCurrency(selectedPriceCurrency.name, nextPriceDetails.keeperDeposit, {
+								sign: selectedPriceCurrency.sign,
+								minDecimals: 2,
+						  })
 						: NO_VALUE,
 				}),
 				[orderType === 1 ? 'Commit Deposit' : 'Fee']:
 					feeCost != null
-						? formatCurrency(selectedPriceCurrency.name as CurrencyKey, feeCost, {
+						? formatCurrency(selectedPriceCurrency.name, feeCost, {
 								sign: selectedPriceCurrency.sign,
 								minDecimals: feeCost.lt(0.01) ? 4 : 2,
 						  })
 						: NO_VALUE,
 				...(orderType === 1 && {
 					Total: formatCurrency(
-						Synths.sUSD,
+						selectedPriceCurrency.name,
 						(feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? 0),
-						{ sign: '$', minDecimals: 2 }
+						{ sign: selectedPriceCurrency.sign, minDecimals: 2 }
 					),
 				}),
 			}}

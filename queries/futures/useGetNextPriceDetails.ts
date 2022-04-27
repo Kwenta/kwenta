@@ -25,7 +25,7 @@ const useGetNextPriceDetails = (
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<NextPriceDetails | null>(
-		QUERY_KEYS.Futures.CurrentRoundId(network.id, walletAddress),
+		QUERY_KEYS.Futures.NextPriceDetails(network.id, walletAddress),
 		async () => {
 			try {
 				if (!currencyKey) return null;

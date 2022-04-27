@@ -196,7 +196,7 @@ export const QUERY_KEYS = {
 			networkId,
 			walletAddress,
 		],
-		CurrentRoundId: (networkId: NetworkId, currencyKey: string | null) => [
+		NextPriceDetails: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'currentRoundId',
 			networkId,
