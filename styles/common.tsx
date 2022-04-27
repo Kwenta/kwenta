@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 
-// import Button from 'components/Button';
+import Button, { border } from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 
 import { zIndex } from 'constants/ui';
@@ -243,14 +243,14 @@ export const SolidTooltipCustomValue = styled(NumericInput)`
 	}
 `;
 
-// export const SolidTooltipItemButton = styled(Button)`
-// 	width: 100%;
-// 	display: flex;
-// 	align-items: center;p
-// 	justify-content: space-between;
-// 	padding-left: 10px;
-// 	padding-right: 10px;
-// `;
+export const SolidTooltipItemButton = styled(Button)`
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-left: 10px;
+	padding-right: 10px;
+`;
 
 export const IconButton = styled.button`
 	${resetButtonCSS};
@@ -394,24 +394,6 @@ export const ExchangeCardsWithSelector = styled.div`
 		}
 	}
 `;
-
-export const border = css`
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		border-radius: 10px;
-		padding: 1px;
-		background: rgb(255 255 255 / 10%);
-		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		-webkit-mask-composite: xor;
-		mask-composite: exclude;
-	}
-`;
-
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
 	color: ${(props) => props.theme.colors.white};

@@ -21,9 +21,8 @@ import {
 	FlexDivColCentered,
 	FlexDivCol,
 	FlexDivRow,
-	border,
 } from 'styles/common';
-
+import { border } from 'components/Button';
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';

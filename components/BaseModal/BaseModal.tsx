@@ -6,7 +6,8 @@ import { Svg } from 'react-optimized-image';
 import CrossIcon from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
-import { resetButtonCSS, border } from 'styles/common';
+import { resetButtonCSS } from 'styles/common';
+import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 

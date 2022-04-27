@@ -4,7 +4,8 @@ import { Svg } from 'react-optimized-image';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
-import { SwapCurrenciesButton, BoldText, border } from 'styles/common';
+import { SwapCurrenciesButton, BoldText } from 'styles/common';
+import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
