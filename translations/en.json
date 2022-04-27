@@ -795,7 +795,8 @@
 					},
 					"actions": {
 						"cancel": "Cancel",
-						"edit": "Edit"
+						"edit": "Edit",
+						"execute": "Execute"
 					},
 					"badges": {
 						"expired": "Expired"

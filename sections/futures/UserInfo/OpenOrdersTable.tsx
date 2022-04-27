@@ -37,7 +37,8 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const [cancelCurrencyKey, setCancelCurrencyKey] = React.useState<string | null>(null);
+	const [selectedCurrencyKey, setSelectedCurrencyKey] = React.useState<string | null>(null);
+	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -46,28 +47,31 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
-	const cancelOrderTxn = useSynthetixTxn(
-		`FuturesMarket${getDisplayAsset(cancelCurrencyKey)}`,
-		'cancelNextPriceOrder',
+	const cancelOrExecuteOrderTxn = useSynthetixTxn(
+		`FuturesMarket${getDisplayAsset(currencyKey)}`,
+		`${action}NextPriceOrder`,
 		[walletAddress],
 		gasPrice,
 		{
-			enabled: !!cancelCurrencyKey && !!walletAddress,
-			onSettled: () => setCancelCurrencyKey(null),
+			enabled: !!selectedCurrencyKey && !!action,
+			onSettled: () => {
+				setAction('');
+				setSelectedCurrencyKey(null);
+			},
 		}
 	);
 
 	React.useEffect(() => {
-		if (!!cancelCurrencyKey) {
-			cancelOrderTxn.mutate();
+		if (!!selectedCurrencyKey && !!action) {
+			cancelOrExecuteOrderTxn.mutate();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cancelCurrencyKey]);
+	}, [selectedCurrencyKey, action]);
 
 	React.useEffect(() => {
-		if (cancelOrderTxn.hash) {
+		if (cancelOrExecuteOrderTxn.hash) {
 			monitorTransaction({
-				txHash: cancelOrderTxn.hash,
+				txHash: cancelOrExecuteOrderTxn.hash,
 				onTxConfirmed: () => {
 					setTimeout(async () => {
 						refetch();
@@ -77,7 +81,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cancelOrderTxn.hash]);
+	}, [cancelOrExecuteOrderTxn.hash]);
 
 	const data = React.useMemo(() => {
 		const positionSize = position?.position?.notionalValue ?? wei(0);
@@ -167,11 +171,20 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							<div style={{ display: 'flex' }}>
 								<CancelButton
 									onClick={() => {
-										setCancelCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
+										setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
+										setAction('cancel');
 									}}
 								>
 									{t('futures.market.user.open-orders.actions.cancel')}
 								</CancelButton>
+								<EditButton
+									onClick={() => {
+										setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
+										setAction('execute');
+									}}
+								>
+									{t('futures.market.user.open-orders.actions.execute')}
+								</EditButton>
 								{/* TODO: This will probably be used for other order types. */}
 								{/*<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>*/}
 							</div>

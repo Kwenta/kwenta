@@ -37,6 +37,7 @@ import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
 import { FuturesPosition } from 'queries/futures/types';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -82,6 +83,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
 	const [isWithdrawMarginModalOpen, setIsWithdrawMarginModalOpen] = useState(false);
 	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState(false);
+	const [isNextPriceConfirmationModalOpen, setIsNextPriceConfirmationModalOpen] = useState(false);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
@@ -334,7 +336,9 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 					isFuturesMarketClosed
 				}
 				onClick={() => {
-					setIsTradeConfirmationModalOpen(true);
+					orderType === 1
+						? setIsNextPriceConfirmationModalOpen(true)
+						: setIsTradeConfirmationModalOpen(true);
 				}}
 			>
 				{t(placeOrderTranslationKey)}
@@ -387,6 +391,20 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 					market={marketAsset}
 					side={leverageSide}
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
+				/>
+			)}
+
+			{isNextPriceConfirmationModalOpen && (
+				<NextPriceConfirmationModal
+					tradeSize={tradeSize}
+					onConfirmOrder={() => orderTxn.mutate()}
+					gasLimit={orderTxn.gasLimit}
+					l1Fee={orderTxn.optimismLayerOneFee}
+					market={marketAsset}
+					side={leverageSide}
+					onDismiss={() => setIsNextPriceConfirmationModalOpen(false)}
+					feeCost={feeCost}
+					positionSize={position?.position?.size ?? null}
 				/>
 			)}
 		</Panel>

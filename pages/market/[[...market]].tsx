@@ -38,7 +38,7 @@ const Market = () => {
 
 	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
 
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
+	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset, { refetchInterval: 6000 });
 	const openOrders = openOrdersQuery?.data ?? [];
 
 	const refetch = useCallback(() => {
