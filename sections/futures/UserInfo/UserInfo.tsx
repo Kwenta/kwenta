@@ -128,16 +128,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
 			{
-				name: FuturesTab.CALCULATOR,
-				label: 'Calculator',
-				icon: calculatorIcon,
-				active: activeTab === FuturesTab.CALCULATOR,
-				onClick: () => handleOpenProfitCalc(),
-			},
-			{
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
+				disabled: false,
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <Svg src={TransfersIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
@@ -146,43 +140,29 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		[activeTab, router, marketAsset]
 	);
 
-	const handleOpenProfitCalc = () => {
-		setOpenProfitCalcModal(!openProfitCalcModal);
-	};
-
 	return (
 		<>
 			<TabButtonsContainer>
 				<TabLeft>
-					{/* POSITION tab */}
-					<TabButton
-						key={TABS[0].name}
-						title={TABS[0].label}
-						badge={TABS[0].badge}
-						active={TABS[0].active}
-						disabled={TABS[0].disabled}
-						onClick={TABS[0].onClick}
-					/>
-					{/* TRADES tab */}
-					<TabButton
-						key={TABS[1].name}
-						title={TABS[1].label}
-						badge={TABS[1].badge}
-						active={TABS[1].active}
-						disabled={TABS[1].disabled}
-						onClick={TABS[1].onClick}
-					/>
+					{TABS.map(({ name, label, badge, active, disabled, onClick, icon }) => (
+						<TabButton
+							key={name}
+							title={label}
+							badge={badge}
+							active={active}
+							disabled={disabled}
+							onClick={onClick}
+							icon={icon}
+						/>
+					))}
 				</TabLeft>
 				<TabRight>
 					{/* CALCULATOR tab */}
 					<TabButton
-						key={TABS[2].name}
-						title={TABS[2].label}
-						badge={TABS[2].badge}
-						icon={TABS[2].icon}
-						active={TABS[2].active}
-						disabled={TABS[2].disabled}
-						onClick={TABS[2].onClick}
+						key={FuturesTab.CALCULATOR}
+						title="Calculator"
+						icon={<Svg src={calculatorIcon} />}
+						onClick={() => setOpenProfitCalcModal(!openProfitCalcModal)}
 					/>
 				</TabRight>
 			</TabButtonsContainer>
@@ -212,6 +192,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					history={positionHistory}
 					isLoading={futuresPositionHistoryQuery.isLoading}
 					isLoaded={futuresPositionHistoryQuery.isFetched}
+				/>
+			</TabPanel>
+			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
+				<Transfers
+					marginTransfers={marginTransfers}
+					isLoading={marginTransfersQuery.isLoading}
+					isLoaded={marginTransfersQuery.isFetched}
 				/>
 			</TabPanel>
 			{openProfitCalcModal ? (
