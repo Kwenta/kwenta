@@ -44,7 +44,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 					<RowText className={leverageSide}>{`${entryOrderDetails}`}</RowText>
 					<RowText style={{ marginLeft: '2px' }}>{`,`}</RowText>
 					<RowText style={{ marginLeft: '10px' }}>
-						{t('futures.modals.profit-calculator.profit-details.details.entry-price')}
+						{t('futures.modals.profit-calculator.profit-details.details.market')}
 					</RowText>
 				</Details>
 				{/* TAKE PROFIT */}
