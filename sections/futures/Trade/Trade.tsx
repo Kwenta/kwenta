@@ -220,8 +220,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
-		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPosition',
-		orderType === 1 ? [sizeDelta.toBN(), KWENTA_TRACKING_CODE] : [sizeDelta.toBN()],
+		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		gasPrice,
 		{
 			enabled:

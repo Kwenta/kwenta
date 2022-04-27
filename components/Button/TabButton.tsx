@@ -6,13 +6,14 @@ export type TabButtonProps = {
 	title: string;
 	detail?: string;
 	badge?: number;
+	icon?: any;
 	active?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
 		<StyledButton {...props}>
 			<div>
@@ -20,6 +21,7 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...
 				{detail && <p className="detail">{detail}</p>}
 			</div>
 			{!!badge && <div className="badge">{badge}</div>}
+			{icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''}
 		</StyledButton>
 	);
 };
@@ -60,6 +62,10 @@ const StyledButton = styled(Button)`
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.background};
 		box-shadow: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.shadow};
 		border-radius: 4px;
+	}
+
+	.icon {
+		margin-left: 6px;
 	}
 
 	&:disabled {

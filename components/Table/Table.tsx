@@ -216,6 +216,7 @@ const TableBody = styled.div`
 	//width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
+	min-width: fit-content;
 `;
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`

@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+/* eslint-disable react/forbid-foreign-prop-types */
+import React, { useMemo, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
@@ -9,6 +10,7 @@ import TabButton from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
+import ProfitCalculator from '../ProfitCalculator';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
@@ -17,10 +19,13 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
 import { FuturesPosition } from 'queries/futures/types';
 
+import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
 	TRADES = 'trades',
+	CALCULATOR = 'calculator',
 }
 
 const FutureTabs = Object.values(FuturesTab);
@@ -37,6 +42,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
+	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -62,6 +68,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 
 	const activeTab = tabQuery != null ? tabQuery : FuturesTab.POSITION;
 
+	const handleOpenProfitCalc = useCallback(() => {
+		setOpenProfitCalcModal(!openProfitCalcModal);
+	}, [openProfitCalcModal]);
+
 	const TABS = useMemo(
 		() => [
 			{
@@ -85,23 +95,59 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				active: activeTab === FuturesTab.ORDERS,
 				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
+			{
+				name: FuturesTab.CALCULATOR,
+				label: 'Calculator',
+				icon: calculatorIcon,
+				active: activeTab === FuturesTab.CALCULATOR,
+				onClick: () => handleOpenProfitCalc(),
+			},
 		],
-		[activeTab, router, marketAsset, positionHistory?.length, openOrders?.length]
+		[
+			activeTab,
+			router,
+			marketAsset,
+			positionHistory?.length,
+			openOrders?.length,
+			handleOpenProfitCalc,
+		]
 	);
 
 	return (
 		<>
 			<TabButtonsContainer>
-				{TABS.map(({ name, label, badge, active, disabled, onClick }) => (
+				<TabLeft>
+					{/* POSITION tab */}
 					<TabButton
-						key={name}
-						title={label}
-						badge={badge}
-						active={active}
-						disabled={disabled}
-						onClick={onClick}
+						key={TABS[0].name}
+						title={TABS[0].label}
+						badge={TABS[0].badge}
+						active={TABS[0].active}
+						disabled={TABS[0].disabled}
+						onClick={TABS[0].onClick}
 					/>
-				))}
+					{/* TRADES tab */}
+					<TabButton
+						key={TABS[1].name}
+						title={TABS[1].label}
+						badge={TABS[1].badge}
+						active={TABS[1].active}
+						disabled={TABS[1].disabled}
+						onClick={TABS[1].onClick}
+					/>
+				</TabLeft>
+				<TabRight>
+					{/* CALCULATOR tab */}
+					<TabButton
+						key={TABS[2].name}
+						title={TABS[2].label}
+						badge={TABS[2].badge}
+						icon={TABS[2].icon}
+						active={TABS[2].active}
+						disabled={TABS[2].disabled}
+						onClick={TABS[2].onClick}
+					/>
+				</TabRight>
 			</TabButtonsContainer>
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
@@ -131,13 +177,22 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					refetch={refetch}
 				/>
 			</TabPanel>
+			{openProfitCalcModal ? (
+				<ProfitCalculator
+					marketAsset={marketAsset}
+					marketAssetRate={marketAssetRate}
+					setOpenProfitCalcModal={setOpenProfitCalcModal}
+				/>
+			) : null}
 		</>
 	);
 };
-export default UserInfo;
 
 const TabButtonsContainer = styled.div`
-	display: flex;
+	display: grid;
+	grid-gap: 0rem;
+	grid-template-columns: repeat(2, 1fr);
+
 	margin-top: 16px;
 	margin-bottom: 16px;
 
@@ -150,3 +205,18 @@ const TabButtonsContainer = styled.div`
 		}
 	}
 `;
+
+const TabLeft = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	grid-gap: 12px;
+`;
+
+const TabRight = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
+`;
+
+export default UserInfo;

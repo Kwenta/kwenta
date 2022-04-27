@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
 
-import Button from 'components/Button';
+import Button, { border } from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
 
 import { zIndex } from 'constants/ui';
@@ -192,30 +192,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 	position: relative;
 	overflow-y: overlay;
 	padding: 0 15px;
-`;
-
-export const SwapCurrenciesButton = styled.button`
-	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.white};
-	height: 32px;
-	width: 32px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: ${zIndex.BASE};
-	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	cursor: pointer;
-	transition-duration: 0.8s;
-
-	&:hover {
-		transform: rotate(180deg);
-		transition-duration: 0.8s;
-		transition-property: transform;
-	}
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -416,5 +392,49 @@ export const ExchangeCardsWithSelector = styled.div`
 				padding-left: 18px;
 			`}
 		}
+	}
+`;
+export const SwapCurrenciesButton = styled.button`
+	${resetButtonCSS};
+	color: ${(props) => props.theme.colors.white};
+	height: 32px;
+	width: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: ${zIndex.BASE};
+	border-radius: 50%;
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	box-sizing: border-box;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	cursor: pointer;
+	${border}
+	transition-duration: 0.1s;
+	transition-property: all;
+	transition-timing-function: ease-in-out;
+
+	&:before {
+		border-radius: 50%;
+	}
+	&:hover {
+		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+		transform: scale(1.07);
+		transition-duration: 0.12s;
+		transition-timing-function: ease-in-out;
+	}
+
+	&:hover .arrow {
+		transform: rotate(180deg);
+		transition-duration: 0.12s;
+		transition-timing-function: ease-in-out;
+	}
+
+	.arrow {
+		transition-property: all;
+		width: 15px;
+		height: auto;
+		transition-duration: 0.12s;
+		transition-timing-function: ease-in-out;
+		z-index: 1;
 	}
 `;
