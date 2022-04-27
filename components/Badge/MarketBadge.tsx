@@ -56,10 +56,6 @@ export const MarketBadge: FC<MarketBadgeProps> = ({
 
 export default MarketBadge;
 
-const CountdownTimer = styled.span`
-	font-family: ${(props) => props.theme.fonts.monoBlack};
-`;
-
 const StyledBadge = styled(Badge)<{ background: string }>`
 	background: ${(props) => props.background};
 	padding: 1px 5px;
