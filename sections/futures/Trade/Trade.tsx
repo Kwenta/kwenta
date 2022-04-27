@@ -284,8 +284,6 @@ const Trade: React.FC = () => {
 								.div(futuresMarketsPosition?.remainingMargin)
 						: zeroBN
 				}
-				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
-				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 				isMarketClosed={isFuturesMarketClosed}
 			/>
 
