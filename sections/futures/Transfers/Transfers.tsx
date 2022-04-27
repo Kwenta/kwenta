@@ -57,7 +57,6 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 		<TableContainer>
 			<StyledTable
 				palette="primary"
-				highlightRowsOnHover
 				columns={[
 					{
 						Header: (
