@@ -40,7 +40,7 @@ const Market = () => {
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade />
+								<Trade currencyKey={router.query.market?.[0]!} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</StyledFullHeightContainer>

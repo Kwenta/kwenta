@@ -43,18 +43,10 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 
 type PositionCardProps = {
 	currencyKey: string;
-	position: FuturesPosition | null;
-	currencyKeyRate: number;
-	onPositionClose?: () => void;
-	dashboard?: boolean;
 };
 
 const Trade: React.FC<PositionCardProps> = ({	
-	currencyKey,
-	position,
-	currencyKeyRate,
-	onPositionClose,
-	dashboard,
+	currencyKey
 }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -65,9 +57,6 @@ const Trade: React.FC<PositionCardProps> = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { synthetixjs, network } = Connector.useContainer();
 
-	console.log("onPositionClose",onPositionClose)
-
-	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
@@ -80,6 +69,17 @@ const Trade: React.FC<PositionCardProps> = ({
 		getMarketKey(marketAsset, network.id)
 	);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	const positionDetails = futuresMarketsPosition?.position ?? null;
+
+	const onPositionClose = () => {
+		setTimeout(() => {
+			futuresPositionHistoryQuery.refetch();
+			futuresMarketPositionQuery.refetch();
+		}, 5 * 1000)
+	}
+
+	console.log("onPositionClose",onPositionClose)
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
@@ -456,6 +456,9 @@ const MarketActionButton = styled(Button)`
 const PlaceOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
+	width: 45%;
+	font-size: 13px;
+	text-align: center;
 `;
 
 // const CloseOrderButton = styled(Button)`
@@ -471,7 +474,7 @@ const CloseButton = styled(Button)`
 	border: 1px solid #ef6868;
 	box-shadow: none;
 	min-width: 100px;
-	width: 110px;
+	width: 45%;
 	padding: 0;
 	transition: all 0s ease-in-out;
 
