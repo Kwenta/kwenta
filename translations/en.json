@@ -699,7 +699,8 @@
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
 					"modify-position": "Modify Position",
-					"deposit-margin-minimum": "Deposit $50 Margin Minimum"
+					"deposit-margin-minimum": "Deposit $50 Margin Minimum",
+					"market-caps-reached": "Market Caps Reached"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
