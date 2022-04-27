@@ -80,7 +80,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	const orderDetails = useMemo(() => {
 		const newSize = side === PositionSide.LONG ? tradeSize : -tradeSize;
 
-		return { size: (positionSize ?? zeroBN).add(newSize) };
+		return { size: (positionSize ?? zeroBN).add(newSize).abs() };
 	}, [side, tradeSize, positionSize]);
 
 	const dataRows = useMemo(
