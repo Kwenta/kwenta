@@ -46,7 +46,14 @@ export function TVChart({
 			library_path: libraryPath,
 
 			locale: 'en',
-			disabled_features: ['use_localstorage_for_settings', 'study_templates'],
+			enabled_features: ['hide_left_toolbar_by_default'],
+			disabled_features: [
+				'use_localstorage_for_settings',
+				'header_compare',
+				'study_templates',
+				'header_symbol_search',
+				'display_market_status',
+			],
 			fullscreen: fullscreen,
 			autosize: autosize,
 			studies_overrides: studiesOverrides,
@@ -61,11 +68,12 @@ export function TVChart({
 			},
 			toolbar_bg: colors.selectedTheme.background,
 			time_frames: [
-				{ text: '1y', resolution: '1D', description: '1 Year' },
-				{ text: '6m', resolution: '1D', description: '6 Months' },
-				{ text: '3m', resolution: '1D', description: '3 Months' },
-				{ text: '1m', resolution: '1D', description: '1 Month' },
-				{ text: '1d', resolution: '1', description: '1 Day' },
+				{ text: '1D', resolution: '15', description: '1 Day' },
+				{ text: '5D', resolution: '15', description: '5 Days' },
+				{ text: '30D', resolution: '1H', description: '30 Days' },
+				{ text: '3M', resolution: '1H', description: '3 Months' },
+				{ text: '6M', resolution: '1D', description: '6 Months' },
+				{ text: '1Y', resolution: '1D', description: '1 Year' },
 			],
 		};
 
