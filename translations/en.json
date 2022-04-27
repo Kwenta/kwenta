@@ -796,6 +796,25 @@
 					}
 				}
 			}
+		},
+		"modals": {
+			"profit-calculator": {
+				"title": "Profit Calculator",
+				"profit-details": {
+					"row-name": {
+						"entry-price": "Entry Price: ",
+						"take-profit": "Take Profit: ",
+						"stop-loss": "Stop Loss: ",
+						"size": "Size: "
+					},
+					"details": {
+						"entry-price": "Entry Price",
+						"market": "Market",
+						"sell": "Sell",
+						"at": "at"
+					}
+				}
+			}
 		}
 	},
 	"leaderboard": {
