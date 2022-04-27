@@ -68,12 +68,12 @@ export function TVChart({
 			},
 			toolbar_bg: colors.selectedTheme.background,
 			time_frames: [
+				{ text: '4H', resolution: '5', description: '4 hours' },
+				{ text: '12H', resolution: '5', description: '1 Day' },
 				{ text: '1D', resolution: '15', description: '1 Day' },
 				{ text: '5D', resolution: '15', description: '5 Days' },
 				{ text: '30D', resolution: '1H', description: '30 Days' },
-				{ text: '3M', resolution: '1H', description: '3 Months' },
-				{ text: '6M', resolution: '1D', description: '6 Months' },
-				{ text: '1Y', resolution: '1D', description: '1 Year' },
+				{ text: '3M', resolution: '1H', description: '3 Months' }
 			],
 		};
 
