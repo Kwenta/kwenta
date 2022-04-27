@@ -73,7 +73,7 @@ export function TVChart({
 				{ text: '1D', resolution: '15', description: '1 Day' },
 				{ text: '5D', resolution: '15', description: '5 Days' },
 				{ text: '30D', resolution: '1H', description: '30 Days' },
-				{ text: '3M', resolution: '1H', description: '3 Months' }
+				{ text: '3M', resolution: '1H', description: '3 Months' },
 			],
 		};
 
