@@ -700,7 +700,7 @@
 					"open-position": "Open Position",
 					"modify-position": "Modify Position",
 					"deposit-margin-minimum": "Deposit $50 Margin Minimum",
-					"market-caps-reached": "Market Caps Reached"
+					"oi-caps-reached": "Open Interest Cap Reached"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",

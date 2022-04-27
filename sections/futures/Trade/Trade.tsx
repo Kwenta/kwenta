@@ -188,7 +188,7 @@ const Trade: React.FC = () => {
 			futuresMarketsPosition.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: isMarketCapReached
-			? 'futures.market.trade.button.market-caps-reached'
+			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
 	}, [futuresMarketsPosition, isMarketCapReached]);
 
