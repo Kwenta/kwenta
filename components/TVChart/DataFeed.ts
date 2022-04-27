@@ -47,12 +47,9 @@ const fetchCombinedCandleSticks = async (
 	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2);
 	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2);
 
-	return Promise.all([
-		baseDataPromise,
-		quoteDataPromise
-	]).then(([baseData, quoteData]) => {
+	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
-	})
+	});
 };
 
 const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {

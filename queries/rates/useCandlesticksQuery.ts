@@ -14,13 +14,19 @@ export const requestCandlesticks = async (
 		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
 	const period =
-		resolution === "1" ? 60 :
-		resolution === "5" ? 300 :
-		resolution === "15" ? 900 :
-		resolution === '60' ? 3600 :
-		resolution === '1D' ? 86400 : 3600;
+		resolution === '1'
+			? 60
+			: resolution === '5'
+			? 300
+			: resolution === '15'
+			? 900
+			: resolution === '60'
+			? 3600
+			: resolution === '1D'
+			? 86400
+			: 3600;
 
-	const response = (request(
+	const response = request(
 		RATES_ENDPOINT,
 		gql`
 			query candles(
@@ -56,8 +62,8 @@ export const requestCandlesticks = async (
 			minTimestamp: minTimestamp,
 			period: period,
 		}
-	)).then((response) => {
+	).then((response) => {
 		return response[`candles`] as Candle[];
-	})
+	});
 	return response;
 };
