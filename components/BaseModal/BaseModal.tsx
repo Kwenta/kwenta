@@ -7,6 +7,7 @@ import CrossIcon from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';
+import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -68,10 +69,10 @@ const StyledDialogContent = styled(DialogContent)`
 
 const StyledCard = styled(Card)`
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
-	border-radius: 15px;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.25);
-	height: 100%;
+	border-radius: 10px;
+	position: relative;
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	${border}
 `;
 
 const StyledCardHeader = styled(Card.Header)`

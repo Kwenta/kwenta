@@ -22,7 +22,7 @@ import {
 	FlexDivCol,
 	FlexDivRow,
 } from 'styles/common';
-
+import { border } from 'components/Button';
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
@@ -261,10 +261,15 @@ const CurrencySelector = styled.div<{
 	}
 
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	border-radius: 8px;
+	border-radius: 10px;
 	box-sizing: border-box;
+	position: relative;
+	${border}
+
+	&:hover {
+		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+	}
 
 	${(props) => !props.currencyKeySelected && css``};
 
