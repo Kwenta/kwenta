@@ -5,10 +5,8 @@ import Wei from '@synthetixio/wei';
 import InfoBox from 'components/InfoBox';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { Synths } from 'constants/currency';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
