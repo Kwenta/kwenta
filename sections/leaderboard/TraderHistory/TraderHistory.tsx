@@ -19,6 +19,7 @@ type TraderHistoryProps = {
 	traderENSName: string | null;
 	resetSelection: Function;
 	compact?: boolean;
+	searchTerm?: string | undefined;
 };
 
 const TraderHistory: FC<TraderHistoryProps> = ({
@@ -26,9 +27,9 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	traderENSName,
 	resetSelection,
 	compact,
+	searchTerm,
 }: TraderHistoryProps) => {
 	const { t } = useTranslation();
-
 	const positionsQuery = useGetFuturesAccountPositionHistory(trader);
 	const positions = useMemo(() => positionsQuery.data ?? [], [positionsQuery]);
 
@@ -41,16 +42,21 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
 				openTimestamp: stat.openTimestamp,
 				asset: stat.asset,
-				isOpen: stat.isOpen,
-				isLiquidated: stat.isLiquidated,
+				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
 				feesPaid: stat.feesPaid,
 				netFunding: stat.netFunding,
 				pnl: stat.pnl.sub(stat.feesPaid).add(stat.netFunding),
 				totalVolume: stat.totalVolume,
 				trades: stat.trades,
 				side: stat.side,
-			}));
-	}, [positions]);
+			}))
+			.filter((i: { marketShortName: string; status: string }) =>
+				searchTerm?.length
+					? i.marketShortName.toLowerCase().includes(searchTerm) ||
+					  i.status.toLowerCase().includes(searchTerm)
+					: true
+			);
+	}, [positions, searchTerm]);
 
 	if (positionsQuery.isLoading) {
 		return <Loader />;
@@ -122,12 +128,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							Header: <TableHeader>{t('leaderboard.trader-history.table.status')}</TableHeader>,
 							accessor: 'status',
 							Cell: (cellProps: CellProps<any>) => {
-								const status = cellProps.row.original.isOpen
-									? 'Open'
-									: cellProps.row.original.isLiquidated
-									? 'Liquidated'
-									: 'Closed';
-								return <StyledCell>{status}</StyledCell>;
+								return <StyledCell>{cellProps.row.original.status}</StyledCell>;
 							},
 							width: compact ? 40 : 100,
 						},

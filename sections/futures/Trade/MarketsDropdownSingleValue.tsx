@@ -4,8 +4,9 @@ import { components, SingleValueProps } from 'react-select';
 import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import MarketBadge from 'components/Badge/MarketBadge';
+import { MarketsCurrencyOption } from './MarketsDropdown';
 
-const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
+const MarketsDropdownSingleValue: React.FC<SingleValueProps<MarketsCurrencyOption>> = (props) => (
 	<components.SingleValue {...props}>
 		<SingleValueContainer>
 			<CurrencyIcon
@@ -16,7 +17,11 @@ const MarketsDropdownSingleValue: React.FC<SingleValueProps<any>> = (props) => (
 			<div className="currency-meta">
 				<CurrencyLabel>
 					{props.data.label}
-					<MarketBadge currencyKey={props.data.value} />
+					<MarketBadge
+						currencyKey={props.data.value}
+						isFuturesMarketClosed={props.data.isFuturesMarketClosed}
+						futuresClosureReason={props.data.futuresClosureReason}
+					/>
 				</CurrencyLabel>
 				<p className="name">{props.data.description}</p>
 			</div>
