@@ -346,7 +346,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
 			)}
 
-			<FeeInfoBox feeCost={feeCost} />
+			<FeeInfoBox orderType={orderType} feeCost={feeCost} currencyKey={marketAsset} />
 
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal

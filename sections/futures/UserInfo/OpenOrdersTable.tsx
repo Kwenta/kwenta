@@ -4,7 +4,6 @@ import Table from 'components/Table';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { CellProps } from 'react-table';
 import Currency from 'components/Currency';
-import MarketBadge from 'components/Badge/MarketBadge';
 import { getDisplayAsset } from 'utils/futures';
 import { wei } from '@synthetixio/wei';
 import { PositionSide } from '../types';
@@ -16,7 +15,7 @@ import { useRecoilValue } from 'recoil';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { FuturesPosition } from 'queries/futures/types';
-import useGetCurrentRoundId from 'queries/futures/useGetCurrentRoundId';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
 
 type OpenOrdersTableProps = {
@@ -44,8 +43,8 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
-	const currentRoundIdQuery = useGetCurrentRoundId(currencyKey);
-	const currentRoundId = currentRoundIdQuery.data ?? 0;
+	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(cancelCurrencyKey)}`,
@@ -89,10 +88,10 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isStale: wei(currentRoundId).gte(wei(order.targetRoundId).add(2)),
+			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, position, currentRoundId]);
+	}, [openOrders, position, nextPriceDetails?.currentRoundId]);
 
 	return (
 		<StyledTable

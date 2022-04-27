@@ -4,26 +4,56 @@ import Wei from '@synthetixio/wei';
 
 import InfoBox from 'components/InfoBox';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import { Synths } from 'constants/currency';
 
 type FeeInfoBoxProps = {
+	currencyKey: string | null;
+	orderType: number;
 	feeCost: Wei | null;
 };
 
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ feeCost }) => {
+const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const nextPriceDetails = nextPriceDetailsQuery.data;
+
+	// TODO: Confirm that the commit deposit is correct.
+	// We can ensure this in the future by calculating it on the frontend.
+	// However, it would be nice to have the calculations directly in the contract.
+
 	return (
 		<StyledInfoBox
 			details={{
-				Fee:
+				...(orderType === 1 && {
+					'Keeper Deposit': !!nextPriceDetails?.keeperDeposit
+						? formatCurrency(
+								selectedPriceCurrency.name as CurrencyKey,
+								nextPriceDetails.keeperDeposit,
+								{
+									sign: selectedPriceCurrency.sign,
+									minDecimals: 2,
+								}
+						  )
+						: NO_VALUE,
+				}),
+				[orderType === 1 ? 'Commit Deposit' : 'Fee']:
 					feeCost != null
 						? formatCurrency(selectedPriceCurrency.name as CurrencyKey, feeCost, {
 								sign: selectedPriceCurrency.sign,
 								minDecimals: feeCost.lt(0.01) ? 4 : 2,
 						  })
 						: NO_VALUE,
+				...(orderType === 1 && {
+					Total: formatCurrency(
+						Synths.sUSD,
+						(feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? 0),
+						{ sign: '$', minDecimals: 2 }
+					),
+				}),
 			}}
 		/>
 	);

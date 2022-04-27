@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { utils as ethersUtils } from 'ethers';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
@@ -8,9 +9,14 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 
-const useGetCurrentRoundId = (
+type NextPriceDetails = {
+	keeperDeposit: Wei;
+	currentRoundId: Wei;
+};
+
+const useGetNextPriceDetails = (
 	currencyKey: string | null,
-	options?: UseQueryOptions<number | null>
+	options?: UseQueryOptions<NextPriceDetails | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
@@ -18,16 +24,21 @@ const useGetCurrentRoundId = (
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
-	return useQuery<number | null>(
+	return useQuery<NextPriceDetails | null>(
 		QUERY_KEYS.Futures.CurrentRoundId(network.id, walletAddress),
 		async () => {
 			try {
 				if (!currencyKey) return null;
-				const { contracts } = synthetixjs!;
-				const currentRoundId = await contracts.ExchangeRates.getCurrentRoundId(
-					ethersUtils.formatBytes32String(currencyKey)
-				);
-				return Number(currentRoundId.toString());
+				const {
+					contracts: { ExchangeRates, FuturesMarketSettings },
+				} = synthetixjs!;
+
+				const [currentRoundId, keeperDeposit] = await Promise.all([
+					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.minKeeperFee(),
+				]);
+
+				return { keeperDeposit: wei(keeperDeposit), currentRoundId: wei(currentRoundId) };
 			} catch (e) {
 				console.log(e);
 				return null;
@@ -37,4 +48,4 @@ const useGetCurrentRoundId = (
 	);
 };
 
-export default useGetCurrentRoundId;
+export default useGetNextPriceDetails;
