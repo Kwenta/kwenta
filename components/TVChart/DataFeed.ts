@@ -62,7 +62,9 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 
 			var symbol_stub = {
 				name: symbolName,
-				description: base + ' / ' + quote,
+				description: `${base[0] === 's' ? base.slice(1) : base} / ${
+					quote[0] === 's' ? quote.slice(1) : quote
+				} (Oracle)`,
 				type: 'crypto',
 				session: '24x7',
 				timezone: 'Etc/UTC',
