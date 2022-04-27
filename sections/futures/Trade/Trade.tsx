@@ -36,6 +36,7 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import { ethers } from 'ethers';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -220,8 +221,8 @@ const Trade: React.FC = () => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
-		'modifyPosition',
-		[sizeDelta.toBN()],
+		'modifyPositionWithTracking',
+		[sizeDelta.toBN(), ethers.utils.formatBytes32String('KWENTA')],
 		gasPrice,
 		{
 			enabled:
