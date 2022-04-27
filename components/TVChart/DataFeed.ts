@@ -13,7 +13,7 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 
-const supportedResolutions = ['5', '15', '60', '1D'] as ResolutionString[];
+const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
 
 const config = {
 	supports_search: false,
