@@ -44,7 +44,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
-	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey, { refetchInterval: 6000 });
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
@@ -93,6 +93,9 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
+			isExecutable:
+				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId) ||
+				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
 	}, [openOrders, position, nextPriceDetails?.currentRoundId]);
@@ -177,14 +180,16 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 								>
 									{t('futures.market.user.open-orders.actions.cancel')}
 								</CancelButton>
-								<EditButton
-									onClick={() => {
-										setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
-										setAction('execute');
-									}}
-								>
-									{t('futures.market.user.open-orders.actions.execute')}
-								</EditButton>
+								{cellProps.row.original.isExecutable && (
+									<EditButton
+										onClick={() => {
+											setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
+											setAction('execute');
+										}}
+									>
+										{t('futures.market.user.open-orders.actions.execute')}
+									</EditButton>
+								)}
 								{/* TODO: This will probably be used for other order types. */}
 								{/*<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>*/}
 							</div>

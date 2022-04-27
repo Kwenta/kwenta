@@ -50,7 +50,7 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 					? response.futuresOrders.map((o: any) => ({
 							...o,
 							asset: ethersUtils.parseBytes32String(o.asset),
-							targetRoundId: Number(o.targetRoundId.toString()),
+							targetRoundId: new Wei(o.targetRoundId, 0),
 							size: new Wei(o.size).div(ETH_UNIT),
 					  }))
 					: [];

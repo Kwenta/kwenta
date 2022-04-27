@@ -38,7 +38,7 @@ const useGetNextPriceDetails = (
 					FuturesMarketSettings.minKeeperFee(),
 				]);
 
-				return { keeperDeposit: wei(keeperDeposit), currentRoundId: wei(currentRoundId) };
+				return { keeperDeposit: wei(keeperDeposit), currentRoundId: wei(currentRoundId, 0) };
 			} catch (e) {
 				console.log(e);
 				return null;
