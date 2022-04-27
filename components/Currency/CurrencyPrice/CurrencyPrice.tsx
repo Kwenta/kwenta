@@ -6,7 +6,7 @@ import ChangePercent from 'components/ChangePercent';
 
 import { CurrencyKey } from 'constants/currency';
 
-import { formatCurrency } from 'utils/formatters/number';
+import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 import { ethers } from 'ethers';
@@ -20,6 +20,7 @@ type CurrencyPriceProps = {
 	sign?: string;
 	change?: number;
 	conversionRate?: WeiSource | null;
+	formatOptions?: FormatCurrencyOptions;
 };
 
 export const CurrencyPrice: FC<CurrencyPriceProps> = ({
@@ -29,6 +30,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	change,
 	conversionRate,
 	showCurrencyKey,
+	formatOptions,
 	...rest
 }) => {
 	return (
@@ -40,6 +42,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 					{
 						sign,
 						currencyKey: showCurrencyKey != null ? currencyKey : undefined,
+						...formatOptions,
 					}
 				)}
 			</Price>

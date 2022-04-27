@@ -33,10 +33,10 @@ import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
-import useMarketClosed from 'hooks/useMarketClosed';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
 import { FuturesPosition } from 'queries/futures/types';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -56,7 +56,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 	const { synthetixjs } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
-	const { isMarketClosed } = useMarketClosed(marketAsset);
+	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
@@ -254,13 +254,13 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
 				<MarketActionButton
-					disabled={isMarketClosed}
+					disabled={isFuturesMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={position?.remainingMargin?.lte(zeroBN) || isMarketClosed}
+					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -282,9 +282,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 								.div(position?.remainingMargin)
 						: zeroBN
 				}
-				liquidationPrice={position?.position?.liquidationPrice ?? zeroBN}
-				leverage={position?.position?.leverage ?? zeroBN}
-				isMarketClosed={isMarketClosed}
+				isMarketClosed={isFuturesMarketClosed}
 			/>
 
 			<StyledSegmentedControl
@@ -298,7 +296,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 			<PositionButtons
 				selected={leverageSide}
 				onSelect={setLeverageSide}
-				isMarketClosed={isMarketClosed}
+				isMarketClosed={isFuturesMarketClosed}
 			/>
 
 			<OrderSizing
@@ -320,7 +318,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 				currentPosition={position}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
-				isMarketClosed={isMarketClosed}
+				isMarketClosed={isFuturesMarketClosed}
 			/>
 
 			<PlaceOrderButton
@@ -333,7 +331,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 					sizeDelta.eq(zeroBN) ||
 					!!error ||
 					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-					isMarketClosed
+					isFuturesMarketClosed
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);

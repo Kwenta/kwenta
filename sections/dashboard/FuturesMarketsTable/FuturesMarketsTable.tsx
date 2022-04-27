@@ -5,7 +5,7 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
-import { FundingRateUpdate, FuturesMarket } from 'queries/futures/types';
+import { FuturesMarket } from 'queries/futures/types';
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
@@ -13,12 +13,13 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
-import { getSynthDescription } from 'utils/futures';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -85,6 +86,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					.mul(market.price)
 					.toNumber(),
 				marketSkew: market.marketSkew,
+				isSuspended: market.isSuspended,
+				marketClosureReason: market.marketClosureReason,
 			};
 		});
 	}, [
@@ -133,7 +136,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</IconContainer>
 									<StyledText>
 										{cellProps.row.original.market}
-										<MarketBadge currencyKey={cellProps.row.original.asset} />
+										<MarketBadge
+											currencyKey={cellProps.row.original.asset}
+											isFuturesMarketClosed={cellProps.row.original.isSuspended}
+											futuresClosureReason={cellProps.row.original.marketClosureReason}
+										/>
 									</StyledText>
 									<StyledValue>{cellProps.row.original.description}</StyledValue>
 								</MarketContainer>
@@ -149,6 +156,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 						),
 						accessor: 'oraclePrice',
 						Cell: (cellProps: CellProps<any>) => {
+							const formatOptions = isEurForex(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								: {};
 							return cellProps.row.original.price === '-' ? (
 								<DefaultCell>-</DefaultCell>
 							) : (
@@ -157,6 +167,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									price={cellProps.row.original.price}
 									sign={'$'}
 									conversionRate={1}
+									formatOptions={formatOptions}
 								/>
 							);
 						},

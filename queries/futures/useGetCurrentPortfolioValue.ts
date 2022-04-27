@@ -9,6 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition } from './utils';
 import Wei, { wei } from '@synthetixio/wei';
+import { getMarketAssetFromKey } from 'utils/futures';
 
 const useGetCurrentPortfolioValue = (
 	markets: string[] | [],
@@ -30,19 +31,21 @@ const useGetCurrentPortfolioValue = (
 
 			try {
 				const positionsForMarkets = await Promise.all(
-					(markets as string[]).map((market: string) =>
-						Promise.all([
-							FuturesMarketData.positionDetailsForMarketKey(
-								ethersUtils.formatBytes32String(market),
-								walletAddress
-							),
-						])
+					markets.map((market: string) =>
+						FuturesMarketData.positionDetailsForMarketKey(
+							ethersUtils.formatBytes32String(market),
+							walletAddress
+						)
 					)
 				);
 
 				const portfolioValue = positionsForMarkets
-					.map(([position], i) => {
-						const mappedPosition = mapFuturesPosition(position, false, markets[i]);
+					.map((position, i) => {
+						const mappedPosition = mapFuturesPosition(
+							position,
+							false,
+							getMarketAssetFromKey(markets[i], network.id)
+						);
 						return mappedPosition.remainingMargin;
 					})
 					.reduce((sum: Wei, val) => sum.add(val), wei(0));
