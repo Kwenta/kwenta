@@ -13,7 +13,7 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 
-const supportedResolutions = ['15', '60', '1D'] as ResolutionString[];
+const supportedResolutions = ['5', '15', '60', '1D'] as ResolutionString[];
 
 const config = {
 	supports_search: false,
@@ -53,7 +53,6 @@ const fetchCombinedCandleSticks = async (
 	]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	})
-
 };
 
 const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
@@ -75,7 +74,7 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 				minmov: 1,
 				pricescale: 10000,
 				has_intraday: true,
-				intraday_multipliers: ['1', '60'],
+				intraday_multipliers: supportedResolutions,
 				supported_resolution: supportedResolutions,
 				volume_precision: 8,
 				data_status: 'streaming',

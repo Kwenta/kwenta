@@ -13,9 +13,10 @@ export const requestCandlesticks = async (
 		? 'https://api.thegraph.com/subgraphs/name/tburm/optimism-latest-rates'
 		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
-	console.log(resolution, minTimestamp, maxTimestamp)
 	const period =
-		resolution === "1" ? 900 :
+		resolution === "1" ? 60 :
+		resolution === "5" ? 300 :
+		resolution === "15" ? 900 :
 		resolution === '60' ? 3600 :
 		resolution === '1D' ? 86400 : 3600;
 
