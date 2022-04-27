@@ -803,7 +803,7 @@
 				"profit-details": {
 					"row-name": {
 						"entry-price": "Entry Price: ",
-						"take-profit": "TakeProfit: ",
+						"take-profit": "Take Profit: ",
 						"stop-loss": "Stop Loss: ",
 						"size": "Size: "
 					},

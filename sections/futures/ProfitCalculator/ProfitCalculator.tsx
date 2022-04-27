@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import { ethers } from 'ethers';
 
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';

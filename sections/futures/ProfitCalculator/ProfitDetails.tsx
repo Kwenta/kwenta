@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import { PositionSide } from '../types';
 
-function textColor(className?: string) {
-	if (!className) return '#ece8e3';
-	if (className === 'long') return '#7FD482';
-	if (className === 'short') return '#EF6868';
-	if (className === 'gray-font-color') return '#787878';
+function textColor(props: any) {
+	if (!props.className || props.className === 'row-name') return props.theme.colors.white;
+	if (props.className === 'long') return '#7FD482';
+	if (props.className === 'short') return '#EF6868';
+	if (props.className === 'gray-font-color') return '#787878';
 }
 
 type ProfitDetailsProps = {
@@ -58,7 +58,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{t('futures.modals.profit-calculator.profit-details.details.at')}
 					</RowText>
-					<RowText>{exitPrice !== '' ? wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
+					<RowText>{exitPrice !== '' ? '$' + wei(exitPrice).toNumber().toFixed(2) : ''}</RowText>
 				</Details>
 				{/* STOP LOSS */}
 				<RowName>
@@ -71,7 +71,7 @@ const ProfitDetails: React.FC<ProfitDetailsProps> = ({
 					<RowText style={{ marginRight: '10px', marginLeft: '10px' }} className="gray-font-color">
 						{t('futures.modals.profit-calculator.profit-details.details.at')}
 					</RowText>
-					<RowText>{stopLoss !== '' ? wei(stopLoss).toNumber().toFixed(2) : ''}</RowText>
+					<RowText>{stopLoss !== '' ? '$' + wei(stopLoss).toNumber().toFixed(2) : ''}</RowText>
 				</Details>
 				{/* SIZE */}
 				<RowName>
@@ -103,7 +103,7 @@ const Details = styled.div`
 const RowText = styled.p`
 	display: inline-block;
 
-	color: ${(props) => textColor(props.className)};
+	color: ${(props) => textColor(props)};
 
 	font-size: 14px;
 	line-height: 17px;
