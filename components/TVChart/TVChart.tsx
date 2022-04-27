@@ -25,7 +25,7 @@ type Props = {
 export function TVChart({
 	baseCurrencyKey,
 	quoteCurrencyKey,
-	interval = 'H',
+	interval = '15',
 	containerId = 'tv_chart_container',
 	libraryPath = '/static/charting_library/',
 	fullscreen = false,
@@ -65,6 +65,7 @@ export function TVChart({
 				{ text: '6m', resolution: '1D', description: '6 Months' },
 				{ text: '3m', resolution: '1D', description: '3 Months' },
 				{ text: '1m', resolution: '1D', description: '1 Month' },
+				{ text: '1d', resolution: '1', description: '1 Day' },
 			],
 		};
 
