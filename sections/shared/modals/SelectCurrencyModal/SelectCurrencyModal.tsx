@@ -9,7 +9,7 @@ import SearchInput from 'components/Input/SearchInput';
 
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 
-import { FlexDivCentered, BottomShadow } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
@@ -183,15 +183,9 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
 				)}
 			</RowsContainer>
-			<StyledBottomShadow />
 		</StyledCenteredModal>
 	);
 };
-
-const StyledBottomShadow = styled(BottomShadow)`
-	position: absolute;
-	height: 32px;
-`;
 
 const StyledCenteredModal = styled(CenteredModal)`
 	[data-reach-dialog-content] {
@@ -211,10 +205,10 @@ const SearchContainer = styled.div`
 const AssetSearchInput = styled(SearchInput)`
 	font-size: 16px;
 	height: 40px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	::placeholder {
 		text-transform: capitalize;
-		color: ${(props) => props.theme.colors.silver};
+		color: ${(props) => props.theme.colors.selectedTheme.button.secondary};
 	}
 `;
 

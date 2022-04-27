@@ -20,8 +20,8 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Price } from 'queries/rates/types';
 import { getSynthDescription, isEurForex } from 'utils/futures';
-import useMarketClosed from 'hooks/useMarketClosed';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -34,7 +34,8 @@ export type MarketsCurrencyOption = {
 	price: string;
 	change: string;
 	negativeChange: boolean;
-	isMarketClosed: boolean;
+	isFuturesMarketClosed: boolean;
+	futuresClosureReason: FuturesClosureReason;
 };
 
 const assetToCurrencyOption = (
@@ -43,7 +44,8 @@ const assetToCurrencyOption = (
 	price: string,
 	change: string,
 	negativeChange: boolean,
-	isMarketClosed: boolean
+	isFuturesMarketClosed: boolean,
+	futuresClosureReason: FuturesClosureReason
 ): MarketsCurrencyOption => ({
 	value: asset as CurrencyKey,
 	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
@@ -51,7 +53,8 @@ const assetToCurrencyOption = (
 	price,
 	change,
 	negativeChange,
-	isMarketClosed,
+	isFuturesMarketClosed,
+	futuresClosureReason,
 });
 
 type Props = {
@@ -69,7 +72,9 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
 
-	const { isMarketClosed } = useMarketClosed(asset as CurrencyKey);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
+		asset as CurrencyKey
+	);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
@@ -106,9 +111,11 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						? true
 						: false
 					: false,
-				isMarketClosed
+				isFuturesMarketClosed,
+				futuresClosureReason
 			);
 		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		dailyPriceChangesQuery?.data,
 		futuresMarketsQuery?.data,
@@ -116,7 +123,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		selectedPriceCurrency.name,
 		synthsMap,
 		t,
-		isMarketClosed,
+		isFuturesMarketClosed,
 	]);
 
 	return (
@@ -138,7 +145,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 					DUMMY_PRICE,
 					DUMMY_CHANGE,
 					false,
-					isMarketClosed
+					isFuturesMarketClosed,
+					futuresClosureReason
 				)}
 				options={options}
 				isSearchable={false}

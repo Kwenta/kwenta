@@ -185,6 +185,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		pastPrice?.price,
 		avgFundingRate,
 		fundingRateQuery,
+		minDecimals,
 	]);
 
 	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';

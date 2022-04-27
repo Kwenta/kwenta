@@ -15,9 +15,9 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
-import useMarketClosed from 'hooks/useMarketClosed';
 import { CurrencyKey } from 'constants/currency';
 import MarketBadge from 'components/Badge/MarketBadge';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -54,7 +54,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isMarketClosed } = useMarketClosed(currencyKey as CurrencyKey);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
+		currencyKey as CurrencyKey
+	);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
@@ -128,7 +130,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container id={isMarketClosed ? 'closed' : ''}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
 					<InfoCol>
 						<CurrencyInfo>
@@ -136,7 +138,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							<div>
 								<CurrencySubtitle>
 									{data.marketShortName}
-									<MarketBadge currencyKey={currencyKey as CurrencyKey} />
+									<MarketBadge
+										currencyKey={currencyKey as CurrencyKey}
+										isFuturesMarketClosed={isFuturesMarketClosed}
+										futuresClosureReason={futuresClosureReason}
+									/>
 								</CurrencySubtitle>
 								<StyledValue>{data.marketLongName}</StyledValue>
 							</div>
@@ -205,7 +211,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								size="sm"
 								variant="danger"
 								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails || isMarketClosed}
+								disabled={!positionDetails || isFuturesMarketClosed}
 								noOutline={true}
 							>
 								{t('futures.market.user.position.close-position')}
