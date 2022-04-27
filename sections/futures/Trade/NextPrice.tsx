@@ -67,16 +67,16 @@ const NextPriceContainer = styled.div`
 	}
 `;
 
-const VolatilityTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 12px;
-	margin-bottom: 8px;
-	margin-left: 8px;
+// const VolatilityTitle = styled.p`
+// 	color: ${(props) => props.theme.colors.common.primaryWhite};
+// 	font-size: 12px;
+// 	margin-bottom: 8px;
+// 	margin-left: 8px;
 
-	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-	}
-`;
+// 	span {
+// 		color: ${(props) => props.theme.colors.common.secondaryGray};
+// 	}
+// `;
 
 // const VolatilityInputContainer = styled.div`
 // 	display: grid;
