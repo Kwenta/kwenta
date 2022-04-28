@@ -738,10 +738,6 @@
 				"history-label": "trading history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
-				"n-sec-ago": "{{ timeDelta }}s ago",
-				"n-min-ago": "{{ timeDelta }}m ago",
-				"n-hr-ago": "{{ timeDelta }}h ago",
-				"n-day-ago": "{{ timeDelta }}d ago",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"
@@ -793,6 +789,17 @@
 						"final": "final price",
 						"pnl": "PNL",
 						"status": "status"
+					}
+				},
+				"transfers": {
+					"tab": "Transfers",
+					"table": {
+						"action": "action",
+						"amount": "amount",
+						"date": "date",
+						"transaction": "transaction",
+						"no-results": "You have no transfer history",
+						"deposit": "Deposit sUSD and start trading"
 					}
 				}
 			}
@@ -1125,10 +1132,17 @@
 		"time": {
 			"years": "y",
 			"months": "mo",
+			"weeks": "w",
 			"days": "d",
 			"hours": "h",
 			"minutes": "m",
-			"seconds": "s"
+			"seconds": "s",
+			"n-sec-ago": "{{ timeDelta }}s ago",
+			"n-min-ago": "{{ timeDelta }}m ago",
+			"n-hr-ago": "{{ timeDelta }}h ago",
+			"n-day-ago": "{{ timeDelta }}d ago",
+			"n-week-ago": "{{ timeDelta }}w ago",
+			"n-year-ago": "{{ timeDelta }}y ago"
 		},
 		"min": "min"
 	}

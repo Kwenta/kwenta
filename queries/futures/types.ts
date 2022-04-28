@@ -105,6 +105,16 @@ export type RawPosition = {
 	trades: number;
 };
 
+export type MarginTransfer = {
+	timestamp: number;
+	market: string;
+	size: Wei;
+	txHash: string;
+	action: string;
+	amount: string;
+	asset: string;
+};
+
 export type PositionHistory = {
 	id: Number;
 	transactionHash: string;
