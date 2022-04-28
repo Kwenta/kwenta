@@ -795,7 +795,15 @@
 						"entry": "entry price",
 						"final": "final price",
 						"pnl": "PNL",
-						"status": "status"
+						"status": "status",
+						"date": "date",
+						"fees": "fees",
+						"price": "price",
+						"trade-type": {
+							"exit": "(exit)",
+							"liquidated": "(liquidated)",
+							"entry": "(entry)"
+						}
 					}
 				},
 				"transfers": {
@@ -805,8 +813,7 @@
 						"amount": "amount",
 						"date": "date",
 						"transaction": "transaction",
-						"no-results": "You have no transfer history",
-						"deposit": "Deposit sUSD and start trading"
+						"no-results": "You have no transfer history"
 					}
 				}
 			}

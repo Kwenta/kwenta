@@ -13,6 +13,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
+	account?: string | undefined,
 	options?: UseQueryOptions<FuturesTrade[] | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -22,7 +23,7 @@ const useGetFuturesTrades = (
 	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
+		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null, account || null),
 		async () => {
 			if (!currencyKey) return null;
 			try {
@@ -32,17 +33,23 @@ const useGetFuturesTrades = (
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							account,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
 					},
 					{
-						size: true,
-						price: true,
 						id: true,
 						timestamp: true,
 						account: true,
+						size: true,
 						asset: true,
+						price: true,
+						positionSize: true,
+						positionClosed: true,
+						pnl: true,
+						feesPaid: true,
+						txHash: true,
 					}
 				);
 				return response ? mapTrades(response) : null;

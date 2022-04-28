@@ -22,7 +22,6 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 			</div>
 			{!!icon && <div>{icon}</div>}
 			{!!badge && <div className="badge">{badge}</div>}
-			{/* {icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''} */}
 		</StyledButton>
 	);
 };
@@ -63,10 +62,12 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 		box-shadow: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.shadow};
 		border-radius: 4px;
 	}
+
 	svg {
 		margin-left: 5px;
 		margin-top: 5px;
 	}
+
 	&:disabled {
 		background-color: transparent;
 		p {
@@ -77,7 +78,7 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
 			}
 		}
-		/* border: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.border}; */
+
 		border: none;
 		.badge {
 			display: none;

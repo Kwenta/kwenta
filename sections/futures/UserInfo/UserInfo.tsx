@@ -86,8 +86,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		[exchangeRates, marketAsset]
 	);
 
-	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
-
 	const tabQuery = useMemo(() => {
 		if (router.query.market) {
 			const tab = castArray(router.query.market)[1] as FuturesTab;
@@ -118,20 +116,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			// 	icon: <Svg src={OpenPositionsIcon} />,
 			// 	onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			// },
-			// {
-			// 	name: FuturesTab.TRADES,
-			// 	label: 'Order History',
-			// 	badge: undefined,
-			// 	disabled: true,
-			// 	active: activeTab === FuturesTab.TRADES,
-			// 	icon: <Svg src={OrderHistoryIcon} />,
-			// 	onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
-			// },
+			{
+				name: FuturesTab.TRADES,
+				label: 'Order History',
+				badge: undefined,
+				active: activeTab === FuturesTab.TRADES,
+				icon: <Svg src={OrderHistoryIcon} />,
+				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
+			},
 			{
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
-				disabled: false,
+				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <Svg src={TransfersIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
@@ -188,11 +185,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				{/* TODO */}
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
-				<Trades
-					history={positionHistory}
-					isLoading={futuresPositionHistoryQuery.isLoading}
-					isLoaded={futuresPositionHistoryQuery.isFetched}
-				/>
+				<Trades marketAsset={marketAsset} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
 				<Transfers
