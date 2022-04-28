@@ -53,7 +53,7 @@ export function TVChart({
 				'study_templates',
 				'header_symbol_search',
 				'display_market_status',
-				"volume_force_overlay"
+				'create_volume_indicator_by_default'
 			],
 			fullscreen: fullscreen,
 			autosize: autosize,
