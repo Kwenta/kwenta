@@ -8,10 +8,12 @@ import useLocalStorage from 'hooks/useLocalStorage';
 export type ThemeName = keyof typeof themeColors;
 
 type CustomThemeContextType = {
+	currentTheme: ThemeName;
 	setTheme(name: ThemeName): void;
 };
 
 export const CustomThemeContext = React.createContext<CustomThemeContextType>({
+	currentTheme: 'dark',
 	setTheme: () => {},
 });
 
@@ -27,7 +29,7 @@ export const CustomThemeProvider: React.FC = ({ children }) => {
 	);
 
 	return (
-		<CustomThemeContext.Provider value={{ setTheme }}>
+		<CustomThemeContext.Provider value={{ currentTheme: customTheme, setTheme }}>
 			<ThemeProvider theme={themeObj}>{children}</ThemeProvider>
 		</CustomThemeContext.Provider>
 	);

@@ -933,7 +933,8 @@
 			"title": "settings",
 			"options": {
 				"currency": "currency",
-				"language": "language"
+				"language": "language",
+				"theme": "theme"
 			}
 		},
 		"wallet": {
