@@ -109,10 +109,14 @@ const Trade: React.FC = () => {
 
 	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
 	const marketSize = market?.marketSize ?? wei(0);
+	const marketSkew = market?.marketSkew ?? wei(0);
 
 	const isMarketCapReached = useMemo(
-		() => marketSize?.mul(marketAssetRate ?? wei(0)).gte(maxMarketValueUSD),
-		[marketSize, marketAssetRate, maxMarketValueUSD]
+		() =>
+			leverageSide === PositionSide.LONG
+				? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
+				: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD),
+		[leverageSide, marketSize, marketSkew, marketAssetRate, maxMarketValueUSD]
 	);
 
 	const onTradeAmountChange = React.useCallback(
