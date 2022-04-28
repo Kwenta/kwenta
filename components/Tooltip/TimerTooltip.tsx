@@ -15,10 +15,6 @@ interface ToolTipProps {
 	right?: string;
 }
 
-type Props = {
-	startTimeDate: Date | undefined;
-};
-
 const formatTimeUnit = (value: number) => {
 	return value < 10 ? '0' + value : String(value);
 };
@@ -26,7 +22,6 @@ const formatTimeUnit = (value: number) => {
 const TimerTooltip = (props: ToolTipProps) => {
 	const { t } = useTranslation();
 	const [activeMouse, setActiveMouse] = useState(false);
-	let stopTimer = false;
 
 	const openToolTip = () => {
 		setActiveMouse(true);
@@ -34,7 +29,6 @@ const TimerTooltip = (props: ToolTipProps) => {
 
 	const closeToolTip = () => {
 		setActiveMouse(false);
-		stopTimer = true;
 	};
 
 	const startTimeDate = props.startTimeDate;
@@ -56,24 +50,18 @@ const TimerTooltip = (props: ToolTipProps) => {
 			setCurrentStartTime(startTimeDate);
 			setNewUpdate(true);
 		}
-	}, [startTimeDate, newUpdate]);
+	}, [startTimeDate, currentStartTime, newUpdate]);
 
 	useInterval(
 		() => {
-			if (activeMouse || !newUpdate) {
-				setTotalSeconds(calcTime());
-				console.log('useInterval =', totalSeconds);
-			}
+			if (activeMouse || !newUpdate) setTotalSeconds(calcTime());
 		},
 		1000,
 		[calcTime, activeMouse, currentStartTime]
 	);
 
 	useEffect(() => {
-		if (newUpdate) {
-			console.log('!! newUpdate =', newUpdate);
-			setNewUpdate(false);
-		}
+		if (newUpdate) setNewUpdate(false);
 	}, [newUpdate]);
 
 	const minutes = Math.floor(totalSeconds / 60);

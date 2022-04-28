@@ -179,9 +179,9 @@ export const Table: FC<TableProps> = ({
 							</TableBody>
 						)
 					)}
+					{!!noResultsMessage && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{noResultsMessage}
 			{showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}

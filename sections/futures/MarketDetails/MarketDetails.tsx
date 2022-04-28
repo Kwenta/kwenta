@@ -57,7 +57,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
-	console.log('lastOracleUpdate', lastOracleUpdateTime);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
