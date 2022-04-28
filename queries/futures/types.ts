@@ -180,8 +180,9 @@ export type FuturesTrade = {
 	timestamp: Wei;
 	positionSize: Wei;
 	positionClosed: boolean;
-	pnl: Wei;
-	feesPaid: Wei;
+	// pnl: Wei;
+	// feesPaid: Wei;
+	// txHash: string;
 };
 
 export type FuturesVolumes = {

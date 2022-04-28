@@ -13,7 +13,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
-	account?: string | undefined,
+	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -33,7 +33,7 @@ const useGetFuturesTrades = (
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
-							account,
+							account: account,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
@@ -47,9 +47,8 @@ const useGetFuturesTrades = (
 						price: true,
 						positionSize: true,
 						positionClosed: true,
-						pnl: true,
-						feesPaid: true,
-						txHash: true,
+						// pnl: true,
+						// feesPaid: true,
 					}
 				);
 				return response ? mapTrades(response) : null;

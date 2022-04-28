@@ -1162,9 +1162,8 @@ export type FuturesTradeResult = {
 	price: Wei;
 	positionSize: Wei;
 	positionClosed: boolean;
-	pnl: Wei;
-	feesPaid: Wei;
-	txHash: string;
+	// pnl: Wei;
+	// feesPaid: Wei;
 };
 export type FuturesTradeFields = {
 	id: true;
@@ -1175,9 +1174,8 @@ export type FuturesTradeFields = {
 	price: true;
 	positionSize: true;
 	positionClosed: true;
-	pnl: true;
-	feesPaid: true;
-  txHash: true;
+	// pnl: true;
+	// feesPaid: true;
 };
 export type FuturesTradeArgs<K extends keyof FuturesTradeResult> = {
 	[Property in keyof Pick<FuturesTradeFields, K>]: FuturesTradeFields[Property];

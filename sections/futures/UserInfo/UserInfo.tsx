@@ -31,6 +31,10 @@ import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTra
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { FuturesTrade } from 'queries/futures/types';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -51,6 +55,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
+	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
 		getMarketKey(marketAsset, network.id),
 		{
@@ -70,10 +75,16 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
-
 	const marginTransfers = useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
+	);
+
+	const futuresTradesQuery = useGetFuturesTrades(marketAsset, walletAddress);
+
+	const history: FuturesTrade[] = useMemo(
+		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
+		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);
 
 	const exchangeRates = useMemo(
@@ -185,7 +196,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				{/* TODO */}
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
-				<Trades marketAsset={marketAsset} />
+				<Trades
+					history={history}
+					isLoading={futuresTradesQuery.isLoading}
+					isLoaded={futuresTradesQuery.isFetched}
+					marketAsset={marketAsset}
+				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
 				<Transfers

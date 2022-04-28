@@ -358,23 +358,29 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			asset,
 			positionSize,
 			positionClosed,
-			pnl,
-			feesPaid,
-			txHash,
-		}: FuturesTradeResult) => {
+		}: // pnl,
+		// feesPaid,
+		// txHash,
+		FuturesTradeResult) => {
+			console.log(price);
 			const priceWei = new Wei(price, 18, true);
 			const sizeWei = new Wei(size, 18, true);
+
+			// dumbbyvalues until graph is updated
+			const pnl = new Wei(2, 18, true);
+			const feesPaid = new Wei(2, 17, true);
+			const positionSizeStub = new Wei(5, 18, true);
+
 			return {
 				size: sizeWei,
 				asset: asset,
 				price: priceWei,
 				txnHash: id.split('-')[0].toString(),
 				timestamp: timestamp,
-				positionSize,
-				positionClosed,
+				positionSize: positionSizeStub,
+				positionClosed: true,
 				pnl,
 				feesPaid,
-				transactionHash: txHash,
 			};
 		}
 	);

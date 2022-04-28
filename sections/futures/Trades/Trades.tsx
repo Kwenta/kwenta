@@ -1,55 +1,49 @@
-import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
-import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
-
-import Card from 'components/Card';
-import Table from 'components/Table';
-import BlockExplorer from 'containers/BlockExplorer';
-import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
-
-import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
-import { TradeStatus, PositionSide } from '../types';
-import { Synths } from 'constants/currency';
+import Card from 'components/Card';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-
-import PendingIcon from 'assets/svg/app/circle-ellipsis.svg';
-import FailureIcon from 'assets/svg/app/circle-error.svg';
-import SuccessIcon from 'assets/svg/app/circle-tick.svg';
-import { formatCurrency, formatCryptoCurrency, formatNumber } from 'utils/formatters/number';
-import { FuturesTrade } from 'queries/futures/types';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
+import { ETH_UNIT } from 'constants/network';
+import BlockExplorer from 'containers/BlockExplorer';
 import { format } from 'date-fns';
-import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { FuturesTrade } from 'queries/futures/types';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Svg } from 'react-optimized-image';
+import { CellProps } from 'react-table';
+import styled, { css } from 'styled-components';
+import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+
+import { PositionSide, TradeStatus } from '../types';
 
 type TradesProps = {
+	history: FuturesTrade[] | [];
+	isLoading: boolean;
+	isLoaded: boolean;
 	marketAsset: string;
 };
 
-const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
+const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
+	console.log(marketAsset);
 
-	const futuresTradesQuery = useGetFuturesTrades(marketAsset);
+	const historyData = history.map((trade: FuturesTrade) => {
+		return {
+			...trade,
+			value: Number(trade?.price?.div(ETH_UNIT)),
+			amount: Number(trade?.size.div(ETH_UNIT).abs()),
+			time: Number(trade?.timestamp),
+			id: trade?.txnHash,
+			asset: marketAsset,
+		};
+	});
 
-	let history = useMemo(() => {
-		const futuresTrades = futuresTradesQuery?.data ?? [];
-		return futuresTrades.length > 0
-			? futuresTrades.map((trade: FuturesTrade) => {
-					return {
-						value: Number(trade?.price),
-						amount: Number(trade?.size),
-						time: Number(trade?.timestamp),
-						id: trade?.txnHash,
-						marketAsset,
-					};
-			  })
-			: [];
-	}, [futuresTradesQuery.data, marketAsset]);
+	console.log(historyData);
 
-	const columnsDeps = useMemo(() => [history], [history]);
+	const columnsDeps = useMemo(() => [historyData], [historyData]);
 	// console.log(history);
 	// const returnStatusSVG = (status: TradeStatus) => {
 	// 	switch (status) {
@@ -122,12 +116,12 @@ const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
 						),
-						accessor: 'timestamp',
+						accessor: 'time',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<FlexDivCentered>
-								{format(new Date(cellProps.value), 'MM-dd-yy')}
-								{format(new Date(cellProps.value), 'HH:mm:ssaa')}
+								<div>{format(new Date(cellProps.value), 'MM-dd-yy')}</div>
+								<div>{format(new Date(cellProps.value), 'HH:mm:ssaa')}</div>
 							</FlexDivCentered>
 						),
 						width: 150,
@@ -139,7 +133,7 @@ const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
 								{t('futures.market.user.trades.table.position')}
 							</StyledTableHeader>
 						),
-						accessor: 'size',
+						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<FlexDivCentered>
@@ -173,7 +167,7 @@ const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
 						),
-						accessor: 'price',
+						accessor: 'value',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>
@@ -261,7 +255,7 @@ const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
 					// 	sortable: true,
 					// },
 					{
-						accessor: 'transactionHash',
+						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
 								<StyledLinkIcon
@@ -275,14 +269,11 @@ const Trades: React.FC<TradesProps> = ({ marketAsset }) => {
 					},
 				]}
 				columnsDeps={columnsDeps}
-				data={history}
-				isLoading={futuresTradesQuery.isLoading && futuresTradesQuery.isFetched}
+				data={historyData}
+				isLoading={isLoading && isLoaded}
 				noResultsMessage={
-					futuresTradesQuery.isFetched && history?.length === 0 ? (
-						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
-							{t('dashboard.transactions.table.no-results')}
-						</TableNoResults>
+					isLoaded && historyData?.length === 0 ? (
+						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
 				showPagination={true}
@@ -299,9 +290,7 @@ const BoldTableText = css`
 	text-transform: capitalize;
 `;
 
-const StyledTable = styled(Table)`
-	margin-top: 16px;
-`;
+const StyledTable = styled(Table)``;
 
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -313,15 +302,6 @@ const PriceDescription = styled.span<{ type: string }>`
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
 	margin-left: 2px;
-
-	/* color: ${(props) =>
-		props.type === 'entry'
-			? props.theme.colors.common.primaryWhite
-			: props.type === 'exit'
-			? props.theme.colors.common.secondaryGray
-			: props.type === 'liquidated'
-			? props.theme.colors.common.secondaryGray
-			: props.theme.colors.common.primaryWhite}; */
 `;
 
 const StyledId = styled.div`
@@ -377,10 +357,11 @@ const StatusIcon = styled(Svg)<{ status: TradeStatus }>`
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;
-	background-color: ${(props) => props.theme.colors.elderberry};
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 16px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
