@@ -7,6 +7,7 @@ interface PositionButtonsProps {
 	selected: PositionSide;
 	isMarketClosed: boolean;
 	onSelect(position: PositionSide): void;
+	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
 const PositionButtons: React.FC<PositionButtonsProps> = ({
