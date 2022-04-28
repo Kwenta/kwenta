@@ -11,18 +11,7 @@ type ButtonProps = {
 	textTransform?: 'none' | 'uppercase' | 'capitalize' | 'lowercase';
 };
 
-const Button = styled.button<ButtonProps>`
-	height: 41px;
-	cursor: pointer;
-	position: relative;
-	border-radius: 10px;
-	padding: 0 14px;
-	box-sizing: border-box;
-	text-transform: ${(props) => props.textTransform || 'capitalize'};
-	outline: none;
-	white-space: nowrap;
-	font-size: 17px;
-
+export const border = css`
 	&::before {
 		content: '';
 		position: absolute;
@@ -37,11 +26,24 @@ const Button = styled.button<ButtonProps>`
 		-webkit-mask-composite: xor;
 		mask-composite: exclude;
 	}
+`;
 
+const Button = styled.button<ButtonProps>`
+	height: 41px;
+	cursor: pointer;
+	position: relative;
+	border-radius: 10px;
+	padding: 0 14px;
+	box-sizing: border-box;
+	text-transform: ${(props) => props.textTransform || 'capitalize'};
+	outline: none;
+	white-space: nowrap;
+	font-size: 17px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	border: none;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	${border}
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};

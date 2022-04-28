@@ -1,10 +1,11 @@
 import { FC } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Svg } from 'react-optimized-image';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
 import { SwapCurrenciesButton, BoldText } from 'styles/common';
+import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +29,7 @@ const BasicSwap: FC = () => {
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<Svg src={ArrowIcon} />
+							<Svg src={ArrowIcon} className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
 					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>
@@ -51,11 +52,12 @@ const ExchangeTitle = styled(BoldText)`
 const DesktopCardsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	background: ${(props) => props.theme.colors.cellGradient};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	border-radius: 8px;
+	border-radius: 10px;
 	box-sizing: border-box;
+	${border}
+	position: relative;
 `;
 
 const PageWidthContainer = styled.div`
@@ -63,7 +65,7 @@ const PageWidthContainer = styled.div`
 	margin: 0 auto;
 `;
 
-const CardContainerMixin = `
+const CardContainerMixin = css`
 	display: grid;
 	height: 183px;
 `;

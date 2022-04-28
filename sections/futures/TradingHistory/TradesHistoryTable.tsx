@@ -12,6 +12,8 @@ import { isL2MainnetState } from 'store/wallet';
 import styled from 'styled-components';
 import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { isEurForex } from 'utils/futures';
 
 type TradesHistoryTableProps = {
 	currencyKey: string | undefined;
@@ -32,10 +34,11 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						amount: Number(trade?.size),
 						time: Number(trade?.timestamp),
 						id: trade?.txnHash,
+						currencyKey,
 					};
 			  })
 			: [];
-	}, [futuresTradesQuery.data]);
+	}, [futuresTradesQuery.data, currencyKey]);
 
 	const calTimeDelta = (time: number) => {
 		const timeDelta = (Date.now() - time * 1000) / 1000;
@@ -44,16 +47,16 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 			return NO_VALUE;
 		} else if (timeDelta < 60) {
 			// less than 1m
-			return `${t('futures.market.history.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`;
+			return `${t('common.time.n-sec-ago', { timeDelta: Math.floor(timeDelta) })}`;
 		} else if (timeDelta < 3600) {
 			// less than 1h
-			return `${t('futures.market.history.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`;
+			return `${t('common.time.n-min-ago', { timeDelta: Math.floor(timeDelta / 60) })}`;
 		} else if (timeDelta < 86400) {
 			// less than 1d
-			return `${t('futures.market.history.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`;
+			return `${t('common.time.n-hr-ago', { timeDelta: Math.floor(timeDelta / 3600) })}`;
 		} else {
 			// greater than 1d
-			return `${t('futures.market.history.n-day-ago', {
+			return `${t('common.time.n-day-ago', {
 				timeDelta: Math.floor(timeDelta / 86400),
 			})}`;
 		}
@@ -117,10 +120,14 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
 							accessor: 'Price',
 							Cell: (cellProps: CellProps<any>) => {
+								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
+									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+									: {};
+
 								return (
 									<PriceValue>
 										{cellProps.row.original.value !== NO_VALUE
-											? formatNumber(cellProps.row.original.value / 1e18)
+											? formatNumber(cellProps.row.original.value / 1e18, formatOptions)
 											: NO_VALUE}
 									</PriceValue>
 								);

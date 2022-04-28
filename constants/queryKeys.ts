@@ -135,6 +135,12 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
+		MarketClosure: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			'closures',
+			networkId,
+			currencyKey,
+		],
 		OpenInterest: (currencyKeys: string[]) => ['futures', 'openInterest', currencyKeys],
 		TradingVolume: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
@@ -142,6 +148,11 @@ export const QUERY_KEYS = {
 			networkId,
 			currencyKey,
 		],
+		MarginTransfers: (
+			networkId: NetworkId,
+			walletAddress: string | null,
+			currencyKey: string | null
+		) => ['futures', 'futuresMarginTransfers', networkId, walletAddress, currencyKey],
 		FundingRate: (
 			networkId: NetworkId,
 			currencyKey: string | null,
@@ -190,6 +201,12 @@ export const QUERY_KEYS = {
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: (networkId: NetworkId) => ['futures', 'totalTrades', networkId],
 		TotalVolume: ['futures', 'totalVolume'],
+		MarketLimit: (networkId: NetworkId, market: string | null) => [
+			'futures',
+			'marketLimit',
+			networkId,
+			market,
+		],
 	},
 };
 

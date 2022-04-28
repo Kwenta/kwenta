@@ -47,6 +47,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			const trader = router.query.tab[0];
 			setSelectedTrader(trader);
 		} else {
+			setSearchTerm('');
 			setSelectedTrader('');
 		}
 		return null;
@@ -127,7 +128,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	return (
 		<>
 			<SearchContainer>
-				<Search value={searchTerm} onChange={onChangeSearch} disabled={selectedTrader !== ''} />
+				<Search value={searchTerm} onChange={onChangeSearch} disabled={false} />
 			</SearchContainer>
 			<TableContainer compact={compact}>
 				{selectedTrader !== '' ? (
@@ -136,6 +137,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						traderENSName={traderENSName}
 						resetSelection={() => setSelectedTrader('')}
 						compact={compact}
+						searchTerm={searchTerm}
 					/>
 				) : (
 					<StyledTable

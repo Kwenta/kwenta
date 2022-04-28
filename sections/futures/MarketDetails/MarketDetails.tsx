@@ -6,8 +6,9 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
+import { useRateUpdateQuery } from 'queries/rates/useRateUpdateQuery';
 import { FuturesMarket } from 'queries/futures/types';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { getExchangeRatesForCurrencies, isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
@@ -17,10 +18,12 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getMarketKey } from 'utils/futures';
+import { getMarketKey, isEurForex } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import TimerTooltip from 'components/Tooltip/TimerTooltip';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -53,6 +56,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
+	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
+
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
@@ -62,6 +67,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
+	const minDecimals =
+		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
+			? DEFAULT_FIAT_EURO_DECIMALS
+			: undefined;
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
@@ -83,7 +92,21 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
-				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$' }),
+				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+					sign: '$',
+					minDecimals,
+				}) ? (
+					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+						<HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+								sign: '$',
+								minDecimals,
+							})}
+						</HoverTransform>
+					</TimerTooltip>
+				) : (
+					NO_VALUE
+				),
 			},
 			'External Price': {
 				value:
@@ -91,6 +114,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						? '-'
 						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
 								sign: '$',
+								minDecimals,
 						  }),
 			},
 			'24H Change': {
@@ -99,7 +123,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						? `${formatCurrency(
 								selectedPriceCurrency.name,
 								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-								{ sign: '$' }
+								{ sign: '$', minDecimals }
 						  )} (${formatPercent(
 								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
 						  )})`
@@ -127,6 +151,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
 					<StyledTooltip
 						preset="bottom"
+						width={'189px'}
 						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
@@ -148,13 +173,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 							{ sign: '$' }
 						)}`}
 					>
-						<span>
+						<HoverTransform>
 							{formatCurrency(
 								selectedPriceCurrency.name,
 								marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
 								{ sign: '$' }
 							)}
-						</span>
+						</HoverTransform>
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -176,6 +201,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		pastPrice?.price,
 		avgFundingRate,
 		fundingRateQuery,
+		lastOracleUpdateTime,
+		minDecimals,
 	]);
 
 	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
@@ -238,6 +265,12 @@ const MarketDetailsContainer = styled.div`
 
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
+`;
+
+const HoverTransform = styled.div`
+	:hover {
+		transform: scale(1.03);
 	}
 `;
 

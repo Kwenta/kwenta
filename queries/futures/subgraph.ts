@@ -404,10 +404,12 @@ export type FuturesMarginTransferFilter = {
 };
 export type FuturesMarginTransferResult = {
 	id: string;
-	timestamp: Wei;
+	timestamp: number;
 	account: string;
 	market: string;
 	size: Wei;
+	asset: string;
+	txHash: string;
 };
 export type FuturesMarginTransferFields = {
 	id: true;
@@ -415,6 +417,8 @@ export type FuturesMarginTransferFields = {
 	account: true;
 	market: true;
 	size: true;
+	asset: true;
+	txHash: true;
 };
 export type FuturesMarginTransferArgs<K extends keyof FuturesMarginTransferResult> = {
 	[Property in keyof Pick<FuturesMarginTransferFields, K>]: FuturesMarginTransferFields[Property];
@@ -472,6 +476,7 @@ export const getFuturesMarginTransfers = async function <
 		const res = await axios.post(url, {
 			query: generateGql('futuresMarginTransfers', paginatedOptions, args),
 		});
+
 		const r = res.data as any;
 		if (r.errors && r.errors.length) {
 			throw new Error(r.errors[0].message);
