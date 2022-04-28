@@ -10,12 +10,23 @@ export const requestCandlesticks = async (
 	isL2 = false
 ) => {
 	const RATES_ENDPOINT = isL2
-		? 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main'
+		? 'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main'
 		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
-	const period = resolution === '60' ? 3600 : resolution === '1D' ? 86400 : 3600;
+	const period =
+		resolution === '1'
+			? 60
+			: resolution === '5'
+			? 300
+			: resolution === '15'
+			? 900
+			: resolution === '60'
+			? 3600
+			: resolution === '1D'
+			? 86400
+			: 3600;
 
-	const response = (await request(
+	const response = request(
 		RATES_ENDPOINT,
 		gql`
 			query candles(
@@ -32,7 +43,7 @@ export const requestCandlesticks = async (
 						period: $period
 					}
 					orderBy: id
-					orderDirection: desc
+					orderDirection: asc
 					first: 1000
 				) {
 					id
@@ -51,8 +62,8 @@ export const requestCandlesticks = async (
 			minTimestamp: minTimestamp,
 			period: period,
 		}
-	)) as {
-		[key: string]: Array<Candle>;
-	};
-	return response[`candles`].reverse();
+	).then((response) => {
+		return response[`candles`] as Candle[];
+	});
+	return response;
 };
