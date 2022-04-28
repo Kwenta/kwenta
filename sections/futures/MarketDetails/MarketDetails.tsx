@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
@@ -57,7 +57,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
-	console.log("lastOracleUpdate", lastOracleUpdateTime)
+	console.log('lastOracleUpdate', lastOracleUpdateTime);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -93,15 +93,15 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
-				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, { 
+				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 					sign: '$',
-					minDecimals,            
+					minDecimals,
 				}) ? (
 					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
 						<HoverTransform>
-							{formatCurrency(selectedPriceCurrency.name, basePriceRate, { 
-                						sign: '$',
-								minDecimals,            
+							{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+								sign: '$',
+								minDecimals,
 							})}
 						</HoverTransform>
 					</TimerTooltip>

@@ -30,10 +30,10 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 		console.log(startTime);
 
 		return (nowTime - startTime) / 1000;
-	}, [startTimeDate])
+	}, [startTimeDate]);
 
 	const [currentStartTime, setCurrentStartTime] = useState<Date>();
-	const [totalSeconds, setTotalSeconds] = useState<number>( calcTime() );
+	const [totalSeconds, setTotalSeconds] = useState<number>(calcTime());
 
 	// useEffect(() => {
 	// 	setCurrentStartTime(startTimeDate);
@@ -43,13 +43,13 @@ export default function CountUpTimer({ startTimeDate }: Props) {
 		// if (currentStartTime && (currentStartTime !== startTimeDate))
 		// clearInterval(interval)
 		const interval = setInterval(() => {
-			setTotalSeconds(calcTime())
-			console.log("activeMouse =", activeMouse)
-			if(!activeMouse) clearInterval(interval)
+			setTotalSeconds(calcTime());
+			console.log('activeMouse =', activeMouse);
+			if (!activeMouse) clearInterval(interval);
 		}, 1000);
 	}, [calcTime]);
 
-	const minutes = Math.floor(totalSeconds / 60)
+	const minutes = Math.floor(totalSeconds / 60);
 	const seconds = Math.floor(totalSeconds - minutes * 60);
 
 	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`;

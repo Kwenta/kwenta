@@ -24,7 +24,6 @@ const formatTimeUnit = (value: number) => {
 };
 
 const TimerTooltip = (props: ToolTipProps) => {
-
 	const { t } = useTranslation();
 	const [activeMouse, setActiveMouse] = useState(false);
 	let stopTimer = false;
@@ -38,7 +37,7 @@ const TimerTooltip = (props: ToolTipProps) => {
 		stopTimer = true;
 	};
 
-	const startTimeDate = props.startTimeDate
+	const startTimeDate = props.startTimeDate;
 
 	const calcTime = useCallback(() => {
 		const nowTime = new Date().getTime();
@@ -46,37 +45,38 @@ const TimerTooltip = (props: ToolTipProps) => {
 		if (startTimeDate === undefined) startTime = nowTime;
 
 		return (nowTime - startTime) / 1000;
-	}, [startTimeDate])
+	}, [startTimeDate]);
 
-	const [totalSeconds, setTotalSeconds] = useState<number>( calcTime() );
+	const [totalSeconds, setTotalSeconds] = useState<number>(calcTime());
 	const [currentStartTime, setCurrentStartTime] = useState<Date | undefined>(startTimeDate);
 	const [newUpdate, setNewUpdate] = useState<Boolean>(false);
 
 	useEffect(() => {
-		if(currentStartTime !== startTimeDate ) {
+		if (currentStartTime !== startTimeDate) {
 			setCurrentStartTime(startTimeDate);
-			setNewUpdate(true)
+			setNewUpdate(true);
 		}
 	}, [startTimeDate, newUpdate]);
 
-	useInterval(() => { 
-		if(activeMouse || !newUpdate) {
-			setTotalSeconds(calcTime()) 
-			console.log("useInterval =", totalSeconds)
+	useInterval(
+		() => {
+			if (activeMouse || !newUpdate) {
+				setTotalSeconds(calcTime());
+				console.log('useInterval =', totalSeconds);
 			}
 		},
 		1000,
 		[calcTime, activeMouse, currentStartTime]
-	)
+	);
 
 	useEffect(() => {
-		if(newUpdate) { 
-			console.log("!! newUpdate =", newUpdate)
-			setNewUpdate(false)
+		if (newUpdate) {
+			console.log('!! newUpdate =', newUpdate);
+			setNewUpdate(false);
 		}
 	}, [newUpdate]);
 
-	const minutes = Math.floor(totalSeconds / 60)
+	const minutes = Math.floor(totalSeconds / 60);
 	const seconds = Math.floor(totalSeconds - minutes * 60);
 
 	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`;
