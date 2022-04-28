@@ -40,35 +40,41 @@ const TimerTooltip = (props: ToolTipProps) => {
 
 	const startTimeDate = props.startTimeDate
 
-	// console.log("startTimeDate", startTimeDate)
-
 	const calcTime = useCallback(() => {
 		const nowTime = new Date().getTime();
 		let startTime = startTimeDate?.getTime() ?? nowTime;
 		if (startTimeDate === undefined) startTime = nowTime;
-		// console.log(startTime);
 
 		return (nowTime - startTime) / 1000;
 	}, [startTimeDate])
 
-	const [currentStartTime, setCurrentStartTime] = useState<Date | undefined>(startTimeDate);
 	const [totalSeconds, setTotalSeconds] = useState<number>( calcTime() );
+	const [currentStartTime, setCurrentStartTime] = useState<Date | undefined>(startTimeDate);
+	const [newUpdate, setNewUpdate] = useState<Boolean>(false);
 
 	useEffect(() => {
-		if(currentStartTime !== startTimeDate ) 
+		if(currentStartTime !== startTimeDate ) {
 			setCurrentStartTime(startTimeDate);
-	}, [startTimeDate]);
+			setNewUpdate(true)
+		}
+	}, [startTimeDate, newUpdate]);
 
 	useInterval(() => { 
-		if(activeMouse) {
+		if(activeMouse || !newUpdate) {
 			setTotalSeconds(calcTime()) 
-			
 			console.log("useInterval =", totalSeconds)
 			}
 		},
 		1000,
 		[calcTime, activeMouse, currentStartTime]
 	)
+
+	useEffect(() => {
+		if(newUpdate) { 
+			console.log("!! newUpdate =", newUpdate)
+			setNewUpdate(false)
+		}
+	}, [newUpdate]);
 
 	const minutes = Math.floor(totalSeconds / 60)
 	const seconds = Math.floor(totalSeconds - minutes * 60);
