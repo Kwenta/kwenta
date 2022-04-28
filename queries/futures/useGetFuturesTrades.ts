@@ -45,8 +45,8 @@ const useGetFuturesTrades = (
 						size: true,
 						asset: true,
 						price: true,
-						positionSize: true,
-						positionClosed: true,
+						// positionSize: true,
+						// positionClosed: true,
 						// pnl: true,
 						// feesPaid: true,
 					}

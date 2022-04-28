@@ -15,7 +15,6 @@ import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-
 import { PositionSide, TradeStatus } from '../types';
 
 type TradesProps = {
@@ -38,13 +37,15 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 			time: Number(trade?.timestamp),
 			id: trade?.txnHash,
 			asset: marketAsset,
+			side: trade?.side,
+			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 		};
 	});
 
 	console.log(historyData);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
-	// console.log(history);
+
 	// const returnStatusSVG = (status: TradeStatus) => {
 	// 	switch (status) {
 	// 		case TradeStatus.OPEN:
@@ -56,35 +57,36 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	// 	}
 	// };
 
-	// const getStatus = (cellProps: CellProps<FuturesTrade>) => {
-	// 	const { isOpen, isLiquidated } = cellProps.row.original;
-	// 	return isLiquidated ? TradeStatus.LIQUIDATED : isOpen ? TradeStatus.OPEN : TradeStatus.CLOSED;
-	// };
+	const getStatus = (status: string) => {
+		switch (status) {
+			case TradeStatus.OPEN:
+				return (
+					<StyledStatus type="entry">
+						{t('futures.market.user.trades.table.trade-type.entry')}
+					</StyledStatus>
+				);
+			case TradeStatus.CLOSED:
+				return (
+					<StyledStatus type="exit">
+						{t('futures.market.user.trades.table.trade-type.exit')}
+					</StyledStatus>
+				);
+			case TradeStatus.LIQUIDATED:
+				return (
+					<StyledStatus type="liquidated">
+						{t('futures.market.user.trades.table.trade-type.liquidated')}
+					</StyledStatus>
+				);
+			default:
+				return null;
+		}
+	};
 
-	// const priceDescription = (cellProps: CellProps<FuturesTrade>) => {
-	// 	switch (getStatus(cellProps)) {
-	// 		case TradeStatus.OPEN:
-	// 			return (
-	// 				<PriceDescription type="entry">
-	// 					{t('futures.market.user.trades.table.trade-type.entry')}
-	// 				</PriceDescription>
-	// 			);
-	// 		case TradeStatus.CLOSED:
-	// 			return (
-	// 				<PriceDescription type="exit">
-	// 					{t('futures.market.user.trades.table.trade-type.exit')}
-	// 				</PriceDescription>
-	// 			);
-	// 		case TradeStatus.LIQUIDATED:
-	// 			return (
-	// 				<PriceDescription type="liquidated">
-	// 					{t('futures.market.user.trades.table.trade-type.liquidated')}
-	// 				</PriceDescription>
-	// 			);
-	// 		default:
-	// 			return null;
-	// 	}
-	// };
+	// Market
+	// Side
+	// Trigger Price // we dont have this yet
+	// Type (Next-Price, Market, Limit, etc.)
+	// Status -- we cannot get this right now?
 
 	// Date/Time
 	// Market
@@ -96,6 +98,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	// Fees paid
 	// Type (Next-Price, Market, Limit, etc.)
 	// Status
+
 	// Next Trade, market, liquidation
 
 	return (
@@ -119,12 +122,27 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'time',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<FlexDivCentered>
+							<GridDivCenteredRow>
 								<div>{format(new Date(cellProps.value), 'MM-dd-yy')}</div>
 								<div>{format(new Date(cellProps.value), 'HH:mm:ssaa')}</div>
+							</GridDivCenteredRow>
+						),
+						width: 100,
+						sortable: true,
+					},
+					{
+						Header: (
+							<StyledTableHeader>{t('futures.market.user.trades.table.side')}</StyledTableHeader>
+						),
+						accessor: 'side',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => (
+							<FlexDivCentered>
+								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
+								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
 							</FlexDivCentered>
 						),
-						width: 150,
+						width: 50,
 						sortable: true,
 					},
 					{
@@ -176,7 +194,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 										sign: '$',
 									})}
 								</Price>
-								{/* {priceDescription(cellProps)} */}
 							</>
 						),
 						width: 100,
@@ -242,12 +259,13 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// 		<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
 					// 	),
 					// 	id: 'status',
+					// 	accessor: 'status',
 					// 	sortType: 'basic',
 					// 	Cell: (cellProps: CellProps<FuturesTrade>) => {
 					// 		return (
 					// 			<FlexDivCentered>
 					// 				{/* {returnStatusSVG(status)} */}
-					// 				<StatusText>{getStatus(cellProps)}</StatusText>
+					// 				<StatusText>{getStatus(cellProps.value)}</StatusText>
 					// 			</FlexDivCentered>
 					// 		);
 					// 	},
@@ -297,7 +315,7 @@ const StyledTableHeader = styled.div`
 	text-transform: capitalize;
 `;
 
-const PriceDescription = styled.span<{ type: string }>`
+const StyledStatus = styled.span<{ type: string }>`
 	font-size: 10px;
 	color: ${(props) => props.theme.colors.white};
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -306,12 +324,6 @@ const PriceDescription = styled.span<{ type: string }>`
 
 const StyledId = styled.div`
 	${BoldTableText}
-`;
-
-const StyledPositionSize = styled.div`
-	margin-left: 4px;
-	${BoldTableText}
-	text-transform: none;
 `;
 
 const LeverageSize = styled.div`
@@ -326,6 +338,33 @@ ${BoldTableText}
 	text-transform: uppercase;
 `;
 
+const StyledPositionSize = styled.div`
+	margin-left: 4px;
+	${BoldTableText}
+	text-transform: none;
+`;
+
+const StyledPositionSide = styled.div<{ side: PositionSide }>`
+	text-transform: uppercase;
+	font-weight: bold;
+	${(props) =>
+		props.side === PositionSide.LONG &&
+		css`
+			color: ${props.theme.colors.common.primaryGreen};
+		`}
+
+	${(props) =>
+		props.side === PositionSide.SHORT &&
+		css`
+			color: ${props.theme.colors.common.primaryRed};
+		`}
+`;
+
+const StatusText = styled.div`
+	${BoldTableText};
+	margin-left: 4px;
+`;
+
 const Price = styled.div`
 	${BoldTableText};
 `;
@@ -338,11 +377,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.common.primaryRed
 			: props.theme.colors.common.primaryGreen};
-`;
-
-const StatusText = styled.div`
-	${BoldTableText};
-	margin-left: 4px;
 `;
 
 const StatusIcon = styled(Svg)<{ status: TradeStatus }>`

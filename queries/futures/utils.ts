@@ -356,9 +356,9 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			size,
 			price,
 			asset,
-			positionSize,
-			positionClosed,
-		}: // pnl,
+		}: // positionSize,
+		// positionClosed,
+		// pnl,
 		// feesPaid,
 		// txHash,
 		FuturesTradeResult) => {
@@ -379,6 +379,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				timestamp: timestamp,
 				positionSize: positionSizeStub,
 				positionClosed: true,
+				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl,
 				feesPaid,
 			};

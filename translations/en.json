@@ -799,11 +799,12 @@
 						"date": "date",
 						"fees": "fees",
 						"price": "price",
+            "side": "side",
 						"no-results": "You have no trades yet.",
 						"trade-type": {
-							"exit": "(exit)",
-							"liquidated": "(liquidated)",
-							"entry": "(entry)"
+							"exit": "exit",
+							"liquidated": "liquidated",
+							"entry": "entry"
 						}
 					}
 				},

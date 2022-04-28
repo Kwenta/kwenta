@@ -1160,8 +1160,8 @@ export type FuturesTradeResult = {
 	size: Wei;
 	asset: string;
 	price: Wei;
-	positionSize: Wei;
-	positionClosed: boolean;
+	// positionSize?: Wei;
+	// positionClosed?: boolean;
 	// pnl: Wei;
 	// feesPaid: Wei;
 };
@@ -1172,8 +1172,8 @@ export type FuturesTradeFields = {
 	size: true;
 	asset: true;
 	price: true;
-	positionSize: true;
-	positionClosed: true;
+	// positionSize?: true;
+	// positionClosed?: true;
 	// pnl: true;
 	// feesPaid: true;
 };
