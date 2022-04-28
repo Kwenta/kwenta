@@ -201,6 +201,12 @@ export const QUERY_KEYS = {
 		TotalLiquidations: ['futures', 'totalLiquidations'],
 		TotalTrades: (networkId: NetworkId) => ['futures', 'totalTrades', networkId],
 		TotalVolume: ['futures', 'totalVolume'],
+		MarketLimit: (networkId: NetworkId, market: string | null) => [
+			'futures',
+			'marketLimit',
+			networkId,
+			market,
+		],
 	},
 };
 
