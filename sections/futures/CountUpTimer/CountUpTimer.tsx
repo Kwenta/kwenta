@@ -4,41 +4,52 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
 	startTimeDate: Date | undefined;
-	stopTimer: Boolean;
 };
 
 const formatTimeUnit = (value: number) => {
 	return value < 10 ? '0' + value : String(value);
 };
 
-export default function CountUpTimer({ startTimeDate, stopTimer }: Props) {
+export default function CountUpTimer({ startTimeDate }: Props) {
 	const { t } = useTranslation();
-	const [currentStartTime, setCurrentStartTime] = useState<Date>();
-	const [totalSeconds, setTotalSeconds] = useState<number>(0);
 
-	const calcTime = () => {
+	const [activeMouse, setActiveMouse] = useState(false);
+
+	const openToolTip = () => {
+		setActiveMouse(true);
+	};
+
+	const closeToolTip = () => {
+		setActiveMouse(false);
+	};
+
+	const calcTime = useCallback(() => {
 		const nowTime = new Date().getTime();
 		let startTime = startTimeDate?.getTime() ?? nowTime;
 		if (startTimeDate === undefined) startTime = nowTime;
-		console.log(startTime)
+		console.log(startTime);
 
-		setTotalSeconds((nowTime - startTime) / 1000);
-	}
-
-	useEffect(() => {		
-		setCurrentStartTime(startTimeDate);
+		return (nowTime - startTime) / 1000;
 	}, [startTimeDate])
 
-	useEffect(() => {		
+	const [currentStartTime, setCurrentStartTime] = useState<Date>();
+	const [totalSeconds, setTotalSeconds] = useState<number>( calcTime() );
+
+	// useEffect(() => {
+	// 	setCurrentStartTime(startTimeDate);
+	// }, [startTimeDate]);
+
+	useEffect(() => {
 		// if (currentStartTime && (currentStartTime !== startTimeDate))
 		// clearInterval(interval)
-		const interval = setInterval(()=>{
-			calcTime()
-			if (stopTimer) clearInterval(interval)
-		}, 1000)
-	}, [stopTimer])
+		const interval = setInterval(() => {
+			setTotalSeconds(calcTime())
+			console.log("activeMouse =", activeMouse)
+			if(!activeMouse) clearInterval(interval)
+		}, 1000);
+	}, [calcTime]);
 
-	const minutes = Math.floor(totalSeconds / 60);
+	const minutes = Math.floor(totalSeconds / 60)
 	const seconds = Math.floor(totalSeconds - minutes * 60);
 
 	let timeUnitsFormat = `exchange.market-details-card.timer-tooltip.minute-ago`;
@@ -46,7 +57,7 @@ export default function CountUpTimer({ startTimeDate, stopTimer }: Props) {
 	if (minutes < 1) timeUnitsFormat = `exchange.market-details-card.timer-tooltip.seconds-ago`;
 
 	return (
-		<Container>
+		<Container onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			<p>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</p>
 			<p>
 				{`${formatTimeUnit(minutes)}:${formatTimeUnit(seconds)} `}

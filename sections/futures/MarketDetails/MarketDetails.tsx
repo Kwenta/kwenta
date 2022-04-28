@@ -35,7 +35,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
-	// const [lastOracleUpdateTime, setLastOracleUpdateTime] = useState<Date>();
 
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
@@ -56,11 +55,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
-	const lastOracleUpdateTime = React.useMemo(
-		() => useRateUpdateQuery(baseCurrencyKey, {refetchInterval: 6000 }).then((oracleUpdateTime) => {
-		oracleUpdateTime && setLastOracleUpdateTime(oracleUpdateTime);
-		}
-	), [])
+	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
+	console.log("lastOracleUpdate", lastOracleUpdateTime)
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
