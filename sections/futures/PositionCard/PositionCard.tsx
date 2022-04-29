@@ -57,7 +57,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
 		currencyKey as CurrencyKey
 	);
-
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
 	const { synthsMap } = Connector.useContainer();

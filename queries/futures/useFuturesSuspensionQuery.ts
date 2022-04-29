@@ -37,14 +37,16 @@ const useFuturesSuspensionQuery = (
 				} = synthetixjs!;
 
 				const marketKey = getMarketKey(currencyKey, network.id);
-				const [isSuspended, reason] = (await SystemStatus.getFuturesMarketSuspensions([
-					utils.formatBytes32String(marketKey),
-				])) as [boolean, ethers.BigNumber];
+				const marketKeyBytes32 = utils.formatBytes32String(marketKey);
+				const [isSuspended, reasonCode] = await SystemStatus.futuresMarketSuspension(
+					marketKeyBytes32
+				);
 
+				const reason = (isSuspended ? getReasonFromCode(reasonCode) : null) as FuturesClosureReason;
 				return {
-					isSuspended,
-					reasonCode: reason,
-					reason: (isSuspended ? getReasonFromCode(reason) : null) as FuturesClosureReason,
+					isFuturesMarketClosed: isSuspended,
+					reasonCode,
+					futuresClosureReason: reason,
 				};
 			} catch (e) {
 				return null;
