@@ -112,13 +112,13 @@ export function TVChart({
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
-			_entryLine.current?.remove?.();
-			_liquidationLine.current?.remove?.();
-			_entryLine.current = null;
-			_liquidationLine.current = null;
+			_widget.current?.chart().dataReady(() => {
+				_entryLine.current?.remove?.();
+				_liquidationLine.current?.remove?.();
+				_entryLine.current = null;
+				_liquidationLine.current = null;
 
-			const setPositionLines = (position: ChartPosition, active: boolean) => {
-				_widget.current?.chart().dataReady(() => {
+				const setPositionLines = (position: ChartPosition, active: boolean) => {
 					_entryLine.current = _widget.current
 						?.chart()
 						.createPositionLine()
@@ -146,14 +146,14 @@ export function TVChart({
 							.setQuantityBorderColor(colors.common.primaryRed)
 							.setLineLength(25);
 					}
-				});
-			};
+				};
 
-			if (activePosition) {
-				setPositionLines(activePosition, true);
-			} else if (potentialTrade) {
-				setPositionLines(potentialTrade, false);
-			}
+				if (activePosition) {
+					setPositionLines(activePosition, true);
+				} else if (potentialTrade) {
+					setPositionLines(potentialTrade, false);
+				}
+			});
 		});
 	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
