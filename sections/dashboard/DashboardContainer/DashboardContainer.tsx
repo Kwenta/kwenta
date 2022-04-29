@@ -64,8 +64,8 @@ const DashboardContainer: FC = () => {
 				name: Tab.Markets,
 				label: t('futures-dashboard.tabs.nav.markets'),
 				active: activeTab === Tab.Markets,
-				disabled: true,
-				onClick: () => {},
+				disabled: false,
+				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				name: Tab.Governance,
