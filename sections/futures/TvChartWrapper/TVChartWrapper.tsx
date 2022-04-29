@@ -10,7 +10,7 @@ type TVChartWrapperProps = {
 
 export const TVChartWrapper: FC<TVChartWrapperProps> = ({ baseCurrencyKey }) => {
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(baseCurrencyKey);
-
+	console.log(isFuturesMarketClosed, futuresClosureReason);
 	return isFuturesMarketClosed ? (
 		<MarketOverlay marketClosureReason={futuresClosureReason} baseCurrencyKey={baseCurrencyKey} />
 	) : (
