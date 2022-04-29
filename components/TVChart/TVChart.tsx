@@ -108,33 +108,35 @@ export function TVChart({
 			_liquidationLine.current = null;
 
 			const setPositionLines = (position: ChartPosition, active: boolean) => {
-				_entryLine.current = _widget.current
-					?.chart()
-					.createPositionLine()
-					.setText('ENTRY: ' + formatNumber(position.price))
-					.setTooltip('Average entry price')
-					.setQuantity(formatNumber(position.size.abs()))
-					.setPrice(position.price.toNumber())
-					.setExtendLeft(false)
-					.setLineStyle(active ? 0 : 2)
-					.setLineLength(25);
-
-				if (position.liqPrice) {
-					_liquidationLine.current = _widget.current
+				_widget.current?.chart().dataReady(() => {
+					_entryLine.current = _widget.current
 						?.chart()
 						.createPositionLine()
-						.setText('LIQUIDATION: ' + formatNumber(position.liqPrice))
-						.setTooltip('Liquidation price')
+						.setText('ENTRY: ' + formatNumber(position.price))
+						.setTooltip('Average entry price')
 						.setQuantity(formatNumber(position.size.abs()))
-						.setPrice(position.liqPrice.toNumber())
+						.setPrice(position.price.toNumber())
 						.setExtendLeft(false)
 						.setLineStyle(active ? 0 : 2)
-						.setLineColor(colors.common.primaryRed)
-						.setBodyBorderColor(colors.common.primaryRed)
-						.setQuantityBackgroundColor(colors.common.primaryRed)
-						.setQuantityBorderColor(colors.common.primaryRed)
 						.setLineLength(25);
-				}
+
+					if (position.liqPrice) {
+						_liquidationLine.current = _widget.current
+							?.chart()
+							.createPositionLine()
+							.setText('LIQUIDATION: ' + formatNumber(position.liqPrice))
+							.setTooltip('Liquidation price')
+							.setQuantity(formatNumber(position.size.abs()))
+							.setPrice(position.liqPrice.toNumber())
+							.setExtendLeft(false)
+							.setLineStyle(active ? 0 : 2)
+							.setLineColor(colors.common.primaryRed)
+							.setBodyBorderColor(colors.common.primaryRed)
+							.setQuantityBackgroundColor(colors.common.primaryRed)
+							.setQuantityBorderColor(colors.common.primaryRed)
+							.setLineLength(25);
+					}
+				});
 			};
 
 			if (activePosition) {
