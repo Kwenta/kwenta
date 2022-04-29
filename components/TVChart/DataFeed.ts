@@ -40,19 +40,20 @@ const fetchCombinedCandleSticks = async (
 	from: number,
 	to: number,
 	resolution: ResolutionString,
-	isL2: boolean
+	isL2: boolean,
+	networkId: number
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2);
-	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2);
+	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2, networkId);
+	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2, networkId);
 
 	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	});
 };
 
-const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
+const DataFeedFactory = (isL2: boolean = false, networkId: number): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
 			setTimeout(() => cb(config), 0);
@@ -93,18 +94,20 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2).then((bars) => {
-					const chartBars = bars.map((b) => {
-						return {
-							high: formatWei(b.high),
-							low: formatWei(b.low),
-							open: formatWei(b.open),
-							close: formatWei(b.close),
-							time: Number(b.timestamp) * 1000,
-						};
-					});
-					onHistoryCallback(chartBars, { noData: !chartBars.length });
-				});
+				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2, networkId).then(
+					(bars) => {
+						const chartBars = bars.map((b) => {
+							return {
+								high: formatWei(b.high),
+								low: formatWei(b.low),
+								open: formatWei(b.open),
+								close: formatWei(b.close),
+								time: Number(b.timestamp) * 1000,
+							};
+						});
+						onHistoryCallback(chartBars, { noData: !chartBars.length });
+					}
+				);
 			} catch (err) {
 				onErrorCallback(err);
 			}

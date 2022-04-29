@@ -8,7 +8,7 @@ import {
 } from '../../public/static/charting_library/charting_library';
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 type Props = {
 	baseCurrencyKey: string;
@@ -36,11 +36,12 @@ export function TVChart({
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
 	const { colors } = React.useContext(ThemeContext);
 	let isL2 = useRecoilValue(isL2State);
+	let network = useRecoilValue(networkState);
 
 	React.useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeedFactory(isL2),
+			datafeed: DataFeedFactory(isL2, network.id),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,

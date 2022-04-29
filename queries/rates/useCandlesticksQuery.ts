@@ -1,17 +1,17 @@
 import request, { gql } from 'graphql-request';
 import { ResolutionString } from 'public/static/charting_library/charting_library';
 import { Candle } from './types';
+import { getRatesEndpoint } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	resolution: ResolutionString,
-	isL2 = false
+	isL2 = false,
+	networkId: number
 ) => {
-	const RATES_ENDPOINT = isL2
-		? 'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main'
-		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
+	const RATES_ENDPOINT = getRatesEndpoint(networkId);
 
 	const period =
 		resolution === '1'

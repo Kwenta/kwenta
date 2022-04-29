@@ -2,6 +2,15 @@ import { RateUpdates, Candles, Prices } from './types';
 import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
+import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+
+export const getRatesEndpoint = (networkId: number): string => {
+	return networkId === 10
+		? RATES_ENDPOINT_MAINNET
+		: networkId === 69
+		? RATES_ENDPOINT_TESTNET
+		: RATES_ENDPOINT_MAINNET;
+};
 
 export const getMinAndMaxRate = (rates: RateUpdateResult[]): [Wei, Wei] => {
 	if (rates.length === 0) return [wei(0), wei(0)];
