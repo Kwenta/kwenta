@@ -6,6 +6,7 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
+import { useRateUpdateQuery } from 'queries/rates/useRateUpdateQuery';
 import { FuturesMarket } from 'queries/futures/types';
 import { getExchangeRatesForCurrencies, isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -21,6 +22,7 @@ import { getMarketKey, isEurForex } from 'utils/futures';
 import Connector from 'containers/Connector';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type MarketDetailsProps = {
@@ -53,6 +55,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		marketSummary?.currentFundingRate.toNumber()
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
+
+	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -91,7 +95,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 					sign: '$',
 					minDecimals,
-				}),
+				}) ? (
+					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+						<HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+								sign: '$',
+								minDecimals,
+							})}
+						</HoverTransform>
+					</TimerTooltip>
+				) : (
+					NO_VALUE
+				),
 			},
 			'External Price': {
 				value:
@@ -136,6 +151,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)) ? (
 					<StyledTooltip
 						preset="bottom"
+						width={'189px'}
 						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
@@ -157,13 +173,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 							{ sign: '$' }
 						)}`}
 					>
-						<span>
+						<HoverTransform>
 							{formatCurrency(
 								selectedPriceCurrency.name,
 								marketSummary?.marketSize?.mul(wei(basePriceRate ?? 0)).toNumber(),
 								{ sign: '$' }
 							)}
-						</span>
+						</HoverTransform>
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -185,6 +201,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		pastPrice?.price,
 		avgFundingRate,
 		fundingRateQuery,
+		lastOracleUpdateTime,
 		minDecimals,
 	]);
 
@@ -248,6 +265,12 @@ const MarketDetailsContainer = styled.div`
 
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
+`;
+
+const HoverTransform = styled.div`
+	:hover {
+		transform: scale(1.03);
 	}
 `;
 

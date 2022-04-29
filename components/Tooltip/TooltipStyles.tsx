@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 interface ToolTipStyleProps {
 	preset?: string;
+	width?: string;
 	top?: string;
 	bottom?: string;
 	left?: string;
@@ -11,14 +12,14 @@ interface ToolTipStyleProps {
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
-		height: 50px;
-		width: 189px;
+		height: 56px;
+		width: ${(props) => props.width || '189px'};
 		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-sizing: border-box;
 		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 		border-radius: 10px;
-		padding: 1em;
+		padding: 0.75em;
 		position: absolute;
 		top: ${(props) => props.top};
 		bottom: ${(props) => props.bottom};
@@ -27,12 +28,13 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 
 		p, span {
 			margin: auto;
+			margin-left: 3px;
 			font-size: 12px;
 			text-align: left;
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-style: normal;
 			font-weight: 400;
-			line-height: 125%;
+			line-height: 150%;
 			white-space: pre-line;
 			color: ${(props) => props.theme.colors.white};
 		}
