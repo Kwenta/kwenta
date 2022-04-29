@@ -1,4 +1,3 @@
-import { formatEther } from '@ethersproject/units';
 import { Synths } from 'constants/currency';
 import {
 	HistoryCallback,
@@ -12,6 +11,7 @@ import {
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
+import { getDisplayAsset } from 'utils/futures';
 
 const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
 
@@ -19,11 +19,6 @@ const config = {
 	supports_search: false,
 	supports_group_request: true,
 	supported_resolutions: supportedResolutions,
-};
-
-const formatWei = (weiValue: BigInt) => {
-	const rounded = Number(formatEther(String(weiValue)));
-	return Number(rounded.toFixed(4));
 };
 
 // symbolName name split from BASE:QUOTE
@@ -63,9 +58,7 @@ const DataFeedFactory = (isL2: boolean = false, networkId: number): IBasicDataFe
 
 			var symbol_stub = {
 				name: symbolName,
-				description: `${base[0] === 's' ? base.slice(1) : base} / ${
-					quote[0] === 's' ? quote.slice(1) : quote
-				} (Oracle)`,
+				description: `${getDisplayAsset(base)} / ${getDisplayAsset(quote)} (Oracle)`,
 				type: 'crypto',
 				session: '24x7',
 				timezone: 'Etc/UTC',
@@ -98,11 +91,11 @@ const DataFeedFactory = (isL2: boolean = false, networkId: number): IBasicDataFe
 					(bars) => {
 						const chartBars = bars.map((b) => {
 							return {
-								high: formatWei(b.high),
-								low: formatWei(b.low),
-								open: formatWei(b.open),
-								close: formatWei(b.close),
-								time: Number(b.timestamp) * 1000,
+								high: b.high,
+								low: b.low,
+								open: b.open,
+								close: b.close,
+								time: b.timestamp * 1000,
 							};
 						});
 						onHistoryCallback(chartBars, { noData: !chartBars.length });

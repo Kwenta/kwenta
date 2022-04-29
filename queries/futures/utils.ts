@@ -264,7 +264,7 @@ export const mapMarginTransfers = (
 			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
 				sign: '$',
 			})}`;
-			const numTimestamp = timestamp.toNumber();
+			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
 				timestamp: numTimestamp,

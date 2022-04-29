@@ -3,6 +3,8 @@ import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
 import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { CandleResult } from 'queries/futures/subgraph';
+import { Candle } from './types';
 
 export const getRatesEndpoint = (networkId: number): string => {
 	return networkId === 10
@@ -58,6 +60,20 @@ export const mapLaggedDailyPrices = (prices: Candles): Prices => {
 		return {
 			synth: candle.synth,
 			price: Number(candle.average),
+		};
+	});
+};
+
+export const mapCandles = (candles: CandleResult[]): Candle[] => {
+	return candles?.map(({ id, synth, open, high, low, close, timestamp }: CandleResult) => {
+		return {
+			id: id,
+			synth: synth,
+			open: open.toNumber(),
+			high: high.toNumber(),
+			low: low.toNumber(),
+			close: close.toNumber(),
+			timestamp: timestamp.toNumber(),
 		};
 	});
 };

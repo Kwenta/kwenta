@@ -47,7 +47,6 @@ const useGetFuturesDailyTradeStatsForMarket = (
 						positionClosed: true,
 					}
 				);
-				console.log(response);
 				return response ? response.length : null;
 			} catch (e) {
 				console.log(e);
