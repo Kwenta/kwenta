@@ -1,6 +1,7 @@
 import Wei, { WeiSource, wei } from '@synthetixio/wei';
 import axios from 'codegen-graph-ts/build/src/lib/axios';
 import generateGql from 'codegen-graph-ts/build/src/lib/gql';
+
 export type SingleQueryOptions = {
 	id: string;
 	block?:
@@ -118,7 +119,7 @@ export type CandleFilter = {
 	aggregatedPrices_lte?: WeiSource | null;
 	aggregatedPrices_in?: WeiSource[];
 	aggregatedPrices_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type CandleResult = {
 	id: string;
@@ -265,7 +266,7 @@ export type FundingRateUpdateFilter = {
 	funding_lte?: WeiSource | null;
 	funding_in?: WeiSource[];
 	funding_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FundingRateUpdateResult = {
 	id: string;
@@ -396,7 +397,7 @@ export type FuturesCumulativeStatFilter = {
 	averageTradeSize_lte?: WeiSource | null;
 	averageTradeSize_in?: WeiSource[];
 	averageTradeSize_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesCumulativeStatResult = {
 	id: string;
@@ -558,7 +559,7 @@ export type FuturesMarginTransferFilter = {
 	txHash_ends_with_nocase?: string | null;
 	txHash_not_ends_with?: string | null;
 	txHash_not_ends_with_nocase?: string | null;
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesMarginTransferResult = {
 	id: string;
@@ -697,7 +698,7 @@ export type FuturesMarketFilter = {
 	marketStats_ends_with_nocase?: string | null;
 	marketStats_not_ends_with?: string | null;
 	marketStats_not_ends_with_nocase?: string | null;
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesMarketResult = {
 	id: string;
@@ -811,7 +812,7 @@ export type FuturesOneMinStatFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesOneMinStatResult = {
 	id: string;
@@ -948,15 +949,7 @@ export type FuturesOrderFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
-	orderType?: FuturesOrderTypeFilter | null;
-	orderType_not?: FuturesOrderTypeFilter | null;
-	orderType_in?: FuturesOrderTypeFilter[];
-	orderType_not_in?: FuturesOrderTypeFilter[];
-	status?: FuturesOrderStatusFilter | null;
-	status_not?: FuturesOrderStatusFilter | null;
-	status_in?: FuturesOrderStatusFilter[];
-	status_not_in?: FuturesOrderStatusFilter[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesOrderResult = {
 	id: string;
@@ -966,8 +959,6 @@ export type FuturesOrderResult = {
 	account: string;
 	targetRoundId: Wei;
 	timestamp: Wei;
-	orderType: Partial<FuturesOrderTypeResult>;
-	status: Partial<FuturesOrderStatusResult>;
 };
 export type FuturesOrderFields = {
 	id: true;
@@ -977,8 +968,6 @@ export type FuturesOrderFields = {
 	account: true;
 	targetRoundId: true;
 	timestamp: true;
-	orderType: FuturesOrderTypeFields;
-	status: FuturesOrderStatusFields;
 };
 export type FuturesOrderArgs<K extends keyof FuturesOrderResult> = {
 	[Property in keyof Pick<FuturesOrderFields, K>]: FuturesOrderFields[Property];
@@ -1222,7 +1211,7 @@ export type FuturesPositionFilter = {
 	exitPrice_lte?: WeiSource | null;
 	exitPrice_in?: WeiSource[];
 	exitPrice_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesPositionResult = {
 	id: string;
@@ -1443,7 +1432,7 @@ export type FuturesStatFilter = {
 	totalVolume_lte?: WeiSource | null;
 	totalVolume_in?: WeiSource[];
 	totalVolume_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesStatResult = {
 	id: string;
@@ -1601,7 +1590,7 @@ export type FuturesTradeFilter = {
 	positionClosed_not?: boolean | null;
 	positionClosed_in?: boolean[];
 	positionClosed_not_in?: boolean[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type FuturesTradeResult = {
 	id: string;
@@ -1733,7 +1722,7 @@ export type LatestRateFilter = {
 	aggregator_not_in?: string[];
 	aggregator_contains?: string | null;
 	aggregator_not_contains?: string | null;
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type LatestRateResult = {
 	id: string;
@@ -1877,7 +1866,7 @@ export type RateUpdateFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
-	_change_block?: BlockChangedFilterFilter | null;
+	_change_block?: any | null;
 };
 export type RateUpdateResult = {
 	id: string;
