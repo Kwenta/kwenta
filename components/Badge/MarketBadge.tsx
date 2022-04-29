@@ -43,15 +43,19 @@ export const MarketBadge: FC<MarketBadgeProps> = ({
 	const timerSetting = isOpen === null ? null : isOpen ? nextTransition : nextOpen;
 	const isMarketTransitioning = useIsMarketTransitioning(timerSetting ?? null);
 
+	if (typeof isFuturesMarketClosed !== 'boolean') {
+		return null;
+	}
+
+	if (isFuturesMarketClosed) {
+		return <Badge>{t(`futures.market.state.${futuresClosureReason}`)}</Badge>;
+	}
+
 	if (isMarketTransitioning && isOpen !== null) {
 		return <TransitionBadge isOpen={isOpen} />;
 	}
 
-	if (!isFuturesMarketClosed) {
-		return null;
-	}
-
-	return <Badge>{t(`futures.market.state.${futuresClosureReason}`)}</Badge>;
+	return null;
 };
 
 export default MarketBadge;

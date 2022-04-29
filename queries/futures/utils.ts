@@ -230,7 +230,7 @@ export const calculateFundingRate = (
 };
 
 export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
-	switch (reasonCode?.toNumber()) {
+	switch (Number(reasonCode)) {
 		case 1:
 			return 'system-upgrade';
 		case 2:
