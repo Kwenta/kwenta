@@ -6,48 +6,50 @@ export type TabButtonProps = {
 	title: string;
 	detail?: string;
 	badge?: number;
+	icon?: any;
 	active?: boolean;
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
-		<StyledButton {...props}>
+		<StyledButton {...props} isActive={!!active}>
 			<div>
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
+			{!!icon && <div>{icon}</div>}
 			{!!badge && <div className="badge">{badge}</div>}
+			{/* {icon ? <img className="icon" src={`${icon}`} height={'15px'} width={'auto'} /> : ''} */}
 		</StyledButton>
 	);
 };
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(Button)<{ isActive: boolean }>`
 	height: initial;
 	display: flex;
 	align-items: center;
-
 	padding-top: 10px;
 	padding-bottom: 10px;
-
+	justify-content: center;
 	p {
 		margin: 0;
 		font-size: 13px;
 		text-align: left;
 	}
-
 	.title {
 		text-align: center;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) =>
+			props.isActive
+				? props.theme.colors.common.primaryWhite
+				: props.theme.colors.common.secondaryGray};
 	}
-
 	.detail {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 		margin-top: 2px;
 	}
-
 	.badge {
 		height: 16px;
 		width: fit-content;
@@ -61,21 +63,25 @@ const StyledButton = styled(Button)`
 		box-shadow: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.shadow};
 		border-radius: 4px;
 	}
-
+	svg {
+		margin-left: 5px;
+		margin-top: 5px;
+	}
 	&:disabled {
 		background-color: transparent;
-
 		p {
 			color: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
 		}
-
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.text};
+			}
+		}
 		/* border: ${(props) => props.theme.colors.selectedTheme.button.tab.disabled.border}; */
 		border: none;
-
 		.badge {
 			display: none;
 		}
 	}
 `;
-
 export default TabButton;

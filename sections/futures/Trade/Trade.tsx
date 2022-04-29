@@ -25,7 +25,6 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import MarketsDropdown from './MarketsDropdown';
-// import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
@@ -36,6 +35,8 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
+import { ethers } from 'ethers';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -57,6 +58,7 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
@@ -109,6 +111,18 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 			return positionLeverage.add(marketMaxLeverage);
 		}
 	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
+
+	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
+	const marketSize = market?.marketSize ?? wei(0);
+	const marketSkew = market?.marketSkew ?? wei(0);
+
+	const isMarketCapReached = useMemo(
+		() =>
+			leverageSide === PositionSide.LONG
+				? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
+				: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD),
+		[leverageSide, marketSize, marketSkew, marketAssetRate, maxMarketValueUSD]
+	);
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
@@ -182,8 +196,10 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 		return !futuresMarketsPosition?.remainingMargin ||
 			futuresMarketsPosition.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
+			: isMarketCapReached
+			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
-	}, [futuresMarketsPosition]);
+	}, [futuresMarketsPosition, isMarketCapReached]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -224,8 +240,8 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
-		'modifyPosition',
-		[sizeDelta.toBN()],
+		'modifyPositionWithTracking',
+		[sizeDelta.toBN(), ethers.utils.formatBytes32String('KWENTA')],
 		gasPrice,
 		{
 			enabled:
@@ -292,12 +308,8 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 								.div(futuresMarketsPosition?.remainingMargin)
 						: zeroBN
 				}
-				liquidationPrice={futuresMarketsPosition?.position?.liquidationPrice ?? zeroBN}
-				leverage={futuresMarketsPosition?.position?.leverage ?? zeroBN}
 				isMarketClosed={isFuturesMarketClosed}
 			/>
-
-			{/* <StyledSegmentedControl values={['Market', 'Limit']} selectedIndex={0} onChange={() => {}} /> */}
 
 			<PositionButtons
 				selected={leverageSide}
@@ -337,7 +349,8 @@ const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 					sizeDelta.eq(zeroBN) ||
 					!!error ||
 					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-					isFuturesMarketClosed
+					isFuturesMarketClosed ||
+					isMarketCapReached
 				}
 				onClick={() => {
 					setIsTradeConfirmationModalOpen(true);

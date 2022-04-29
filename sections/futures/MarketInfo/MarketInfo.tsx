@@ -5,10 +5,6 @@ import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -27,14 +23,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market, potentialTrade }) => {
 	const { t } = useTranslation();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	const otherFuturesMarkets =
-		futuresMarkets.filter((marketAsset) => marketAsset.asset !== market) ?? [];
-
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -62,10 +50,6 @@ const MarketInfo: FC<MarketInfoProps> = ({ market, potentialTrade }) => {
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
 			<PositionChart marketAsset={baseCurrencyKey} potentialTrade={potentialTrade} />
 			<UserInfo marketAsset={baseCurrencyKey} />
-			<FuturesPositionsTable
-				futuresMarkets={otherFuturesMarkets}
-				futuresPositionHistory={futuresPositionHistory}
-			/>
 		</Container>
 	);
 };

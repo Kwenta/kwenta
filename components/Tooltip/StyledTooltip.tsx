@@ -6,6 +6,7 @@ import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 interface ToolTipProps {
 	content?: any;
 	children?: React.ReactNode;
+	width?: string;
 	preset?: string;
 	top?: string;
 	bottom?: string;

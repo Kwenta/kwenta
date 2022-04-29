@@ -3,7 +3,7 @@ import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/ty
 import { BigNumber } from '@ethersproject/bignumber';
 import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
 
-import { zeroBN } from 'utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -15,13 +15,15 @@ import {
 	PositionHistory,
 	FundingRateUpdate,
 	FuturesTrade,
+	MarginTransfer,
 } from './types';
 import { Network } from 'store/wallet';
 import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
 
-import { FuturesTradeResult } from './subgraph';
+import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { Synths } from '@synthetixio/contracts-interface';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -242,6 +244,33 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 		default:
 			return null;
 	}
+};
+
+export const mapMarginTransfers = (
+	marginTransfers: FuturesMarginTransferResult[]
+): MarginTransfer[] => {
+	return marginTransfers?.map(
+		({ timestamp, account, market, size, asset, txHash }: FuturesMarginTransferResult) => {
+			const sizeWei = new Wei(size);
+			const cleanSize = sizeWei.div(ETH_UNIT).abs();
+			const isPositive = sizeWei.gt(0);
+			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
+				sign: '$',
+			})}`;
+
+			return {
+				timestamp,
+				account,
+				market,
+				size,
+				action: isPositive ? 'deposit' : 'withdraw',
+				amount,
+				isPositive,
+				asset: utils.parseBytes32String(asset),
+				txHash,
+			};
+		}
+	);
 };
 
 export const mapTradeHistory = (
