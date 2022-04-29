@@ -111,8 +111,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						? true
 						: false
 					: false,
-				isFuturesMarketClosed,
-				futuresClosureReason
+				market.isSuspended,
+				market.marketClosureReason
 			);
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
