@@ -5,18 +5,13 @@ import { useRecoilValue } from 'recoil';
 import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
-import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
+import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import mapValues from 'lodash/mapValues';
 import Connector from 'containers/Connector';
 import values from 'lodash/values';
-
 import { useQueryClient, Query } from 'react-query';
 import { networkState } from 'store/wallet';
-import { Period } from 'constants/period';
-
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-
 import { PERIOD_IN_HOURS } from 'constants/period';
 import { Rates } from 'queries/rates/types';
 import Currency from 'components/Currency';
@@ -27,21 +22,44 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import Table from 'components/Table';
 import { isEurForex } from 'utils/futures';
 
-type SpotMarketsTableProps = {
-	exchangeRates: Rates | null;
+const useHistoricalRates = (synths: Synth[]) => {
+	const { subgraph } = useSynthetixQueries();
+	const synthCandleQuery = subgraph.useGetDailyCandles(
+		{
+			where: {
+				synth_in: synths.map((synth): CurrencyKey => synth.name),
+			},
+			orderBy: 'timestamp',
+			orderDirection: 'desc',
+		},
+		{
+			open: true,
+			close: true,
+			synth: true,
+		}
+	);
+
+	const historicalRates: Record<string, number> = useMemo(() => {
+		const { isSuccess, data } = synthCandleQuery;
+		const synthCandle = isSuccess && data ? synthCandleQuery.data : [];
+		return synths.reduce((acc, cur) => {
+			const candle = synthCandle?.find((it) => it.synth === cur.name);
+			if (candle) {
+				acc[candle.synth] = candle.open.sub(candle.close).div(candle.open).toNumber();
+			}
+			return acc;
+		}, {} as Record<string, number>);
+	}, [synths, synthCandleQuery]);
+	return historicalRates;
 };
 
-const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
-	const { t } = useTranslation();
-	const network = useRecoilValue(networkState);
+const useHistoricalVolumes = () => {
+	const { subgraph } = useSynthetixQueries();
 	const twentyFourHoursAgo = useMemo(
 		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
 		[]
 	);
 
-	const { synthsMap } = Connector.useContainer();
-
-	const { subgraph } = useSynthetixQueries();
 	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
 		{
 			first: Number.MAX_SAFE_INTEGER,
@@ -62,6 +80,19 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 		}
 	);
 
+	return historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data[0] : null;
+};
+
+type SpotMarketsTableProps = {
+	exchangeRates: Rates | null;
+};
+
+const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
+	const { t } = useTranslation();
+	const network = useRecoilValue(networkState);
+
+	const { synthsMap } = Connector.useContainer();
+
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 
 	const queryCache = useQueryClient().getQueryCache();
@@ -75,31 +106,11 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			  )
 			: synths;
 
-	const historicalRates: Partial<Record<CurrencyKey, HistoricalRatesUpdates>> = useMemo(
-		() => ({}),
-		[]
-	);
-
-	for (const synth of unfrozenSynths) {
-		const historicalRateQuery = queryCache.find([
-			'rates',
-			'historicalRates',
-			network!.id,
-			synth.name,
-			Period.ONE_DAY,
-		]);
-
-		if (historicalRateQuery && (historicalRateQuery as Query).state.status === 'success') {
-			historicalRates[synth.name] = historicalRateQuery.state.data as HistoricalRatesUpdates;
-		}
-	}
-
-	// bug in queries lib: should return already parsed with `parseBytes32String`
-	const historicalVolume = historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data[0] : null;
+	const historicalRates: Record<string, number> = useHistoricalRates(unfrozenSynths);
+	const historicalVolume = useHistoricalVolumes();
 
 	let data = useMemo(() => {
 		const volumes = !_.isNil(historicalVolume) ? (historicalVolume.toSynth as any) : {};
-		const changes = !_.isNil(historicalRates) ? mapValues(historicalRates, 'change') : {};
 
 		return unfrozenSynths.map((synth: Synth) => {
 			const description = synth.description
@@ -110,7 +121,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
 			const volume = volumes[synth.asset] ?? 0;
-			const change = changes[synth.asset] ?? 0;
+			const change = historicalRates[synth.name] ?? 0;
 
 			return {
 				asset: synth.asset,
@@ -237,24 +248,10 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	);
 };
 
-const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.common.primaryGreen};
-`;
-
-const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.common.primaryRed};
-`;
-
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 8px;
-`;
-
-const OpenInterestContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
 `;
 
 const IconContainer = styled.div`
