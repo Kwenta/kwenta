@@ -22,12 +22,12 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import Table from 'components/Table';
 import { isEurForex } from 'utils/futures';
 
-const useHistoricalRates = (synths: Synth[]) => {
+const useHistoricalRates = (synthNames: CurrencyKey[]) => {
 	const { subgraph } = useSynthetixQueries();
 	const synthCandleQuery = subgraph.useGetDailyCandles(
 		{
 			where: {
-				synth_in: synths.map((synth): CurrencyKey => synth.name),
+				synth_in: synthNames,
 			},
 			orderBy: 'timestamp',
 			orderDirection: 'desc',
@@ -42,18 +42,18 @@ const useHistoricalRates = (synths: Synth[]) => {
 	const historicalRates: Record<string, number> = useMemo(() => {
 		const { isSuccess, data } = synthCandleQuery;
 		const synthCandle = isSuccess && data ? synthCandleQuery.data : [];
-		return synths.reduce((acc, cur) => {
-			const candle = synthCandle?.find((it) => it.synth === cur.name);
+		return synthNames.reduce((acc, cur) => {
+			const candle = synthCandle?.find((it) => it.synth === cur);
 			if (candle) {
 				acc[candle.synth] = candle.open.sub(candle.close).div(candle.open).toNumber();
 			}
 			return acc;
 		}, {} as Record<string, number>);
-	}, [synths, synthCandleQuery]);
+	}, [synthNames, synthCandleQuery]);
 	return historicalRates;
 };
 
-const useHistoricalVolumes = () => {
+const useHistoricalVolumes = (synthNames: CurrencyKey[]) => {
 	const { subgraph } = useSynthetixQueries();
 	const twentyFourHoursAgo = useMemo(
 		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
@@ -62,9 +62,9 @@ const useHistoricalVolumes = () => {
 
 	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
 		{
-			first: Number.MAX_SAFE_INTEGER,
 			where: {
 				timestamp_gte: twentyFourHoursAgo,
+				fromSynth_in: synthNames,
 			},
 		},
 		{
@@ -106,8 +106,9 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			  )
 			: synths;
 
-	const historicalRates: Record<string, number> = useHistoricalRates(unfrozenSynths);
-	const historicalVolume = useHistoricalVolumes();
+	const synthNames: CurrencyKey[] = synths.map((synth): CurrencyKey => synth.name);
+	const historicalRates: Record<string, number> = useHistoricalRates(synthNames);
+	const historicalVolume = useHistoricalVolumes(synthNames);
 
 	let data = useMemo(() => {
 		const volumes = !_.isNil(historicalVolume) ? (historicalVolume.toSynth as any) : {};
