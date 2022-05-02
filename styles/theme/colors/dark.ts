@@ -2,7 +2,7 @@ import common from './common';
 
 const darkTheme = {
 	background: '#131212',
-	border: '1px solid rgb(255 255 255 / 10%)',
+	border: '1px solid #2B2A2A',
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',

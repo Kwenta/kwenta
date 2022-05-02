@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
-import { FlexDiv, FlexDivCol } from 'styles/common';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDiv, FlexDivCol, FlexDivRow } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
@@ -14,9 +12,8 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription } from 'utils/futures';
 import Wei from '@synthetixio/wei';
-import useMarketClosed from 'hooks/useMarketClosed';
 import { CurrencyKey } from 'constants/currency';
-import MarketBadge from 'components/Badge/MarketBadge';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -30,6 +27,7 @@ type PositionData = {
 	currencyIconKey: string;
 	marketShortName: string;
 	marketLongName: string;
+	marketPrice: string;
 	positionSide: JSX.Element;
 	positionSize: string;
 	leverage: string;
@@ -53,7 +51,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionDetails = position?.position ?? null;
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isMarketClosed } = useMarketClosed(currencyKey as CurrencyKey);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
+		currencyKey as CurrencyKey
+	);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
@@ -74,11 +74,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
 				: 'Select a market',
 			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
+			marketPrice: formatCurrency(Synths.sUSD, currencyKeyRate, {
+				sign: '$',
+				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
+			}),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 				>
-					{positionDetails.side === 'long' ? PositionSide.LONG + ' ↗' : PositionSide.SHORT + ' ↘'}
+					{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 				</PositionValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
@@ -127,53 +131,36 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	return (
 		<>
-			<Container id={isMarketClosed ? 'closed' : ''}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
-					<InfoCol>
-						<CurrencyInfo>
-							<StyledCurrencyIcon currencyKey={data.currencyIconKey} />
-							<div>
-								<CurrencySubtitle>
-									{data.marketShortName}
-									<MarketBadge currencyKey={currencyKey as CurrencyKey} />
-								</CurrencySubtitle>
-								<StyledValue>{data.marketLongName}</StyledValue>
-							</div>
-						</CurrencyInfo>
-					</InfoCol>
-					<PositionInfoCol>
+					<InfoRow>
+						<CurrencySubtitle>{data.marketShortName}</CurrencySubtitle>
+						<StyledValue>{data.marketPrice}</StyledValue>
+					</InfoRow>
+					<PositionInfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
 						{data.positionSide}
-					</PositionInfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
+					</PositionInfoRow>
+
+					{/* <StyledInfoBox
+						details={{
+							'Total Margin': `${formatCurrency(Synths.sUSD, totalMargin, { currencyKey: Synths.sUSD })}`,
+							'Available Margin': `${formatCurrency(Synths.sUSD, availableMargin, {
+								currencyKey: Synths.sUSD,
+							})}`,
+							'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
+							'Margin Usage': `${formatPercent(marginUsage)}`,
+						}}
+						isMarketClosed={isMarketClosed}
+					/> */}
+
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
 						<StyledValue>{data.positionSize}</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.pnl')}</StyledSubtitle>
-						{positionDetails ? (
-							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
-								{data.pnlText}
-							</StyledValue>
-						) : (
-							<StyledValue>{NO_VALUE}</StyledValue>
-						)}
-					</InfoCol>
+					</InfoRow>
 				</DataCol>
 				<DataCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
-						<StyledValue>{data.leverage}</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
-						<StyledValue>{data.liquidationPrice}</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue
@@ -186,17 +173,42 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
 						)}
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.fees')}</StyledSubtitle>
-						<StyledValue>{data.fees}</StyledValue>
-					</InfoCol>
+					</InfoRow>
+					<InfoRow>
+						{/* Realized Pnl */}
+						<StyledSubtitle>{t('futures.market.position-card.r-pnl')}</StyledSubtitle>
+						{positionDetails ? (
+							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
+								{data.pnlText}
+							</StyledValue>
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
+					</InfoRow>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
+						<StyledValue>{data.liquidationPrice}</StyledValue>
+					</InfoRow>
 				</DataCol>
 				<DataCol>
-					<InfoCol>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
+						<StyledValue>{data.leverage}</StyledValue>
+					</InfoRow>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+						{positionDetails ? (
+							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
+								{data.pnlText}
+							</StyledValue>
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
+					</InfoRow>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
-					</InfoCol>
+					</InfoRow>
 				</DataCol>
 			</Container>
 		</>
@@ -216,19 +228,15 @@ const Container = styled.div`
 	/* min-height: 135px; */
 `;
 
-const StyledCurrencyIcon = styled(CurrencyIcon)`
-	width: 30px;
-	height: 30px;
-	margin-right: 15px;
-
-	${Container}#closed & {
-		opacity: 0.3;
-	}
+const DataCol = styled(FlexDivCol)`
+	width: 250px;
 `;
 
-const DataCol = styled(FlexDivCol)``;
+const InfoRow = styled(FlexDivRow)`
+	font-size: 13px;
+	padding: 0px;
+	line-height: 15.74px;
 
-const InfoCol = styled(FlexDivCol)`
 	&:nth-of-type(odd) {
 		margin-bottom: 18px;
 	}
@@ -265,7 +273,7 @@ const CurrencySubtitle = styled(StyledSubtitle)`
 	align-items: center;
 `;
 
-const PositionInfoCol = styled(InfoCol)`
+const PositionInfoRow = styled(InfoRow)`
 	padding-left: 45px;
 `;
 
@@ -291,8 +299,4 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
-
-const CurrencyInfo = styled(FlexDiv)`
-	align-items: flex-start;
 `;

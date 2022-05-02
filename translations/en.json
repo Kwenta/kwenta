@@ -630,7 +630,8 @@
 			"position-card": {
 				"position-side": "Position Side",
 				"position-size": "Position Size",
-				"pnl": "Unrealized P&L",
+				"r-pnl": "Realized P&L",
+				"u-pnl": "Unrealized P&L",
 				"leverage": "Leverage",
 				"liquidation-price": "Liq. Price",
 				"net-funding": "Net Funding",
@@ -738,10 +739,6 @@
 				"history-label": "trading history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
-				"n-sec-ago": "{{ timeDelta }}s ago",
-				"n-min-ago": "{{ timeDelta }}m ago",
-				"n-hr-ago": "{{ timeDelta }}h ago",
-				"n-day-ago": "{{ timeDelta }}d ago",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"
@@ -793,6 +790,36 @@
 						"final": "final price",
 						"pnl": "PNL",
 						"status": "status"
+					}
+				},
+				"transfers": {
+					"tab": "Transfers",
+					"table": {
+						"action": "action",
+						"amount": "amount",
+						"date": "date",
+						"transaction": "transaction",
+						"no-results": "You have no transfer history",
+						"deposit": "Deposit sUSD and start trading"
+					}
+				}
+			}
+		},
+		"modals": {
+			"profit-calculator": {
+				"title": "Profit Calculator",
+				"profit-details": {
+					"row-name": {
+						"entry-price": "Entry Price: ",
+						"take-profit": "Take Profit: ",
+						"stop-loss": "Stop Loss: ",
+						"size": "Size: "
+					},
+					"details": {
+						"entry-price": "Entry Price",
+						"market": "Market",
+						"sell": "Sell",
+						"at": "at"
 					}
 				}
 			}
@@ -1106,10 +1133,17 @@
 		"time": {
 			"years": "y",
 			"months": "mo",
+			"weeks": "w",
 			"days": "d",
 			"hours": "h",
 			"minutes": "m",
-			"seconds": "s"
+			"seconds": "s",
+			"n-sec-ago": "{{ timeDelta }}s ago",
+			"n-min-ago": "{{ timeDelta }}m ago",
+			"n-hr-ago": "{{ timeDelta }}h ago",
+			"n-day-ago": "{{ timeDelta }}d ago",
+			"n-week-ago": "{{ timeDelta }}w ago",
+			"n-year-ago": "{{ timeDelta }}y ago"
 		},
 		"min": "min"
 	}

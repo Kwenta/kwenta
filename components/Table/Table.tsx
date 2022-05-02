@@ -179,9 +179,9 @@ export const Table: FC<TableProps> = ({
 							</TableBody>
 						)
 					)}
+					{!!noResultsMessage && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{noResultsMessage}
 			{showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
@@ -216,6 +216,7 @@ const TableBody = styled.div`
 	//width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
+	min-width: fit-content;
 `;
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
