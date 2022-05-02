@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
 import ROUTES from 'constants/routes';
-import NavButton from 'components/Button/NavButton';
 import { TabList, TabPanel } from 'components/Tab';
+import NavButton from 'components/Button/NavButton';
+import Links from '../Links';
+import Markets from '../Markets';
 import Overview from '../Overview';
 import StakingInfo from '../StakingInfo';
-import Links from '../Links';
 import { MainContent, LeftSideContent, RightSideContent } from 'styles/common';
 
 enum Tab {
@@ -64,8 +65,8 @@ const DashboardContainer: FC = () => {
 				name: Tab.Markets,
 				label: t('futures-dashboard.tabs.nav.markets'),
 				active: activeTab === Tab.Markets,
-				disabled: true,
-				onClick: () => {},
+				disabled: false,
+				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				name: Tab.Governance,
@@ -122,6 +123,9 @@ const DashboardContainer: FC = () => {
 			<MainContent>
 				<TabPanel name={Tab.Overview} activeTab={activeTab}>
 					<Overview />
+				</TabPanel>
+				<TabPanel name={Tab.Markets} activeTab={activeTab}>
+					<Markets />
 				</TabPanel>
 			</MainContent>
 			<StyledRightSideContent>
