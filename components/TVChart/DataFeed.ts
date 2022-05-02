@@ -13,9 +13,11 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 
-const supportedResolutions = ['H', 'D'] as ResolutionString[];
+const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
 
 const config = {
+	supports_search: false,
+	supports_group_request: true,
 	supported_resolutions: supportedResolutions,
 };
 
@@ -42,9 +44,12 @@ const fetchCombinedCandleSticks = async (
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseData = await requestCandlesticks(base, from, to, resolution, isL2);
-	const quoteData = await requestCandlesticks(quote, from, to, resolution, isL2);
-	return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
+	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2);
+	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2);
+
+	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
+		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
+	});
 };
 
 const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
@@ -57,7 +62,9 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 
 			var symbol_stub = {
 				name: symbolName,
-				description: base + ' / ' + quote,
+				description: `${base[0] === 's' ? base.slice(1) : base} / ${
+					quote[0] === 's' ? quote.slice(1) : quote
+				} (Oracle)`,
 				type: 'crypto',
 				session: '24x7',
 				timezone: 'Etc/UTC',
@@ -66,7 +73,7 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 				minmov: 1,
 				pricescale: 10000,
 				has_intraday: true,
-				intraday_multipliers: ['1', '60'],
+				intraday_multipliers: supportedResolutions,
 				supported_resolution: supportedResolutions,
 				volume_precision: 8,
 				data_status: 'streaming',
@@ -89,7 +96,6 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
-							...b,
 							high: formatWei(b.high),
 							low: formatWei(b.low),
 							open: formatWei(b.open),
