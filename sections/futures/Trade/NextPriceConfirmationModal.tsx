@@ -2,7 +2,7 @@ import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -21,6 +21,8 @@ import { zeroBN, formatCurrency } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { GasLimitEstimate } from 'constants/network';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import { computeNPFee } from 'utils/nextPrice';
+import { NO_VALUE } from 'constants/placeholder';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;
@@ -80,8 +82,21 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	const orderDetails = useMemo(() => {
 		const newSize = side === PositionSide.LONG ? tradeSize : -tradeSize;
 
-		return { size: (positionSize ?? zeroBN).add(newSize).abs() };
+		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
 	}, [side, tradeSize, positionSize]);
+
+	const nextPriceFee = useMemo(() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)), [
+		nextPriceDetails,
+		orderDetails,
+	]);
+
+	const totalDeposit = useMemo(() => {
+		return (feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
+	}, [feeCost, nextPriceDetails?.keeperDeposit]);
+
+	const nextPriceDiscount = useMemo(() => {
+		return feeCost?.sub(nextPriceFee ?? zeroBN).neg();
+	}, [feeCost, nextPriceFee]);
 
 	const dataRows = useMemo(
 		() => [
@@ -93,25 +108,37 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 				}),
 			},
 			{
-				label: 'Keeper Deposit',
-				value: formatCurrency(Synths.sUSD, nextPriceDetails?.keeperDeposit ?? zeroBN, {
-					sign: '$',
-				}),
+				label: 'Total Deposit',
+				value: formatCurrency(Synths.sUSD, totalDeposit, { sign: '$' }),
 			},
 			{
-				label: 'Commit Deposit',
-				value: formatCurrency(Synths.sUSD, feeCost ?? zeroBN, { sign: '$' }),
+				label: 'Next-Price Discount',
+				value: !!nextPriceDiscount
+					? formatCurrency(Synths.sUSD, nextPriceDiscount, { sign: '$' })
+					: NO_VALUE,
 			},
 			{
-				label: 'Total Fee',
+				label: 'Estimated Fees',
 				value: formatCurrency(
-					Synths.sUSD,
-					(nextPriceDetails?.keeperDeposit ?? zeroBN).add(feeCost ?? zeroBN),
-					{ sign: '$' }
+					selectedPriceCurrency.name,
+					totalDeposit.add(nextPriceDiscount ?? zeroBN),
+					{
+						minDecimals: 2,
+						sign: selectedPriceCurrency.sign,
+					}
 				),
 			},
 		],
-		[orderDetails, market, synthsMap, nextPriceDetails?.keeperDeposit, side, feeCost]
+		[
+			orderDetails,
+			market,
+			synthsMap,
+			side,
+			nextPriceDiscount,
+			totalDeposit,
+			selectedPriceCurrency.name,
+			selectedPriceCurrency.sign,
+		]
 	);
 
 	const handleConfirmOrder = async () => {
