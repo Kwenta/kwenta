@@ -19,6 +19,8 @@ function Select<T>(props: Props<T>) {
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
+				display: 'flex',
+				alignItems: 'center',
 			}),
 			control: (provided, state) => ({
 				...provided,
