@@ -8,10 +8,15 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { getFuturesMarketContract } from './utils';
 
-type NextPriceDetails = {
+export type NextPriceDetails = {
 	keeperDeposit: Wei;
 	currentRoundId: Wei;
+	marketSkew: Wei;
+	takerFee: Wei;
+	makerFee: Wei;
+	assetPrice: Wei;
 };
 
 const useGetNextPriceDetails = (
@@ -29,16 +34,35 @@ const useGetNextPriceDetails = (
 		async () => {
 			try {
 				if (!currencyKey) return null;
-				const {
-					contracts: { ExchangeRates, FuturesMarketSettings },
-				} = synthetixjs!;
 
-				const [currentRoundId, keeperDeposit] = await Promise.all([
+				const { contracts } = synthetixjs!;
+				const { ExchangeRates, FuturesMarketSettings } = contracts;
+				const FuturesMarketContract = getFuturesMarketContract(currencyKey, contracts);
+
+				const [
+					currentRoundId,
+					keeperDeposit,
+					marketSkew,
+					takerFee,
+					makerFee,
+					assetPrice,
+				] = await Promise.all([
 					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketSettings.minKeeperFee(),
+					FuturesMarketContract.marketSkew(),
+					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketContract.assetPrice(),
 				]);
 
-				return { keeperDeposit: wei(keeperDeposit), currentRoundId: wei(currentRoundId, 0) };
+				return {
+					keeperDeposit: wei(keeperDeposit),
+					currentRoundId: wei(currentRoundId, 0),
+					marketSkew: wei(marketSkew),
+					takerFee: wei(takerFee),
+					makerFee: wei(makerFee),
+					assetPrice: wei(assetPrice[0]),
+				};
 			} catch (e) {
 				console.log(e);
 				return null;
