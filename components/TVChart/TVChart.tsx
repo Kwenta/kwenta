@@ -35,13 +35,12 @@ export function TVChart({
 }: Props) {
 	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
 	const { colors } = React.useContext(ThemeContext);
-	let isL2 = useRecoilValue(isL2State);
 	let network = useRecoilValue(networkState);
 
 	React.useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeedFactory(isL2, network.id),
+			datafeed: DataFeedFactory(network.id),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -96,7 +95,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, network.id]);
 
 	return (
 		<Container>

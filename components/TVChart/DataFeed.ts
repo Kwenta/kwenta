@@ -35,20 +35,19 @@ const fetchCombinedCandleSticks = async (
 	from: number,
 	to: number,
 	resolution: ResolutionString,
-	isL2: boolean,
 	networkId: number
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2, networkId);
-	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2, networkId);
+	const baseDataPromise = requestCandlesticks(base, from, to, resolution, networkId);
+	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, networkId);
 
 	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	});
 };
 
-const DataFeedFactory = (isL2: boolean = false, networkId: number): IBasicDataFeed => {
+const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
 			setTimeout(() => cb(config), 0);
@@ -87,20 +86,18 @@ const DataFeedFactory = (isL2: boolean = false, networkId: number): IBasicDataFe
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2, networkId).then(
-					(bars) => {
-						const chartBars = bars.map((b) => {
-							return {
-								high: b.high,
-								low: b.low,
-								open: b.open,
-								close: b.close,
-								time: b.timestamp * 1000,
-							};
-						});
-						onHistoryCallback(chartBars, { noData: !chartBars.length });
-					}
-				);
+				fetchCombinedCandleSticks(base, quote, from, to, _resolution, networkId).then((bars) => {
+					const chartBars = bars.map((b) => {
+						return {
+							high: b.high,
+							low: b.low,
+							open: b.open,
+							close: b.close,
+							time: b.timestamp * 1000,
+						};
+					});
+					onHistoryCallback(chartBars, { noData: !chartBars.length });
+				});
 			} catch (err) {
 				onErrorCallback(err);
 			}

@@ -7,7 +7,6 @@ export const requestCandlesticks = async (
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	resolution: ResolutionString,
-	isL2 = false,
 	networkId: number
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
