@@ -246,13 +246,13 @@ const MarketDetailsContainer = styled.div`
 
 	.heading {
 		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.text.title};
 	}
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
 
 	.green {

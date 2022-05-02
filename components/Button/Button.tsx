@@ -39,7 +39,7 @@ const Button = styled.button<ButtonProps>`
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	border: none;
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
@@ -128,7 +128,7 @@ const Button = styled.button<ButtonProps>`
 
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
+		background: transparent;
 		box-shadow: none;
 		cursor: not-allowed;
 	}

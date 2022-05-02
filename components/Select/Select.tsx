@@ -15,14 +15,14 @@ function Select<T>(props: Props<T>) {
 			}),
 			singleValue: (provided) => ({
 				...provided,
-				color: colors.white,
+				color: colors.selectedTheme.button.text,
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
 			}),
 			control: (provided, state) => ({
 				...provided,
-				color: colors.white,
+				color: colors.selectedTheme.button.text,
 				cursor: 'pointer',
 				boxShadow: colors.selectedTheme.select.control.shadow,
 

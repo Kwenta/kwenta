@@ -55,13 +55,13 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.key {
-			color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
 			font-size: 12px;
 			text-transform: capitalize;
 		}
 
 		.value {
-			color: ${(props) => props.theme.colors.common.primaryWhite};
+			color: ${(props) => props.theme.colors.selectedTheme.text.value};
 			font-family: ${(props) => props.theme.fonts.mono};
 			font-size: 12px;
 		}

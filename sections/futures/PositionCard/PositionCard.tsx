@@ -281,7 +281,7 @@ const StyledSubtitle = styled.div`
 const StyledValue = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
