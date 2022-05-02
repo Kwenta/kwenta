@@ -33,11 +33,13 @@ import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
+import { getMarketKey } from 'utils/futures';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
 import { FuturesPosition } from 'queries/futures/types';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
+import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -54,12 +56,13 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, network } = Connector.useContainer();
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 
@@ -110,6 +113,18 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 			return positionLeverage.add(marketMaxLeverage);
 		}
 	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
+
+	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
+	const marketSize = market?.marketSize ?? wei(0);
+	const marketSkew = market?.marketSkew ?? wei(0);
+
+	const isMarketCapReached = useMemo(
+		() =>
+			leverageSide === PositionSide.LONG
+				? marketSize.add(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD)
+				: marketSize.sub(marketSkew).div('2').abs().mul(marketAssetRate).gte(maxMarketValueUSD),
+		[leverageSide, marketSize, marketSkew, marketAssetRate, maxMarketValueUSD]
+	);
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
@@ -178,8 +193,10 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
 		return !position?.remainingMargin || position.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
+			: isMarketCapReached
+			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
-	}, [position, orderType]);
+	}, [position, orderType, isMarketCapReached]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -333,7 +350,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 					sizeDelta.eq(zeroBN) ||
 					!!error ||
 					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-					isFuturesMarketClosed
+					isFuturesMarketClosed ||
+					isMarketCapReached
 				}
 				onClick={() => {
 					orderType === 1

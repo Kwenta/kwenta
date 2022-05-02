@@ -9,6 +9,7 @@ export const ROUTES = {
 	Home: {
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
 		Positions: normalizeRoute('/dashboard', 'positions', 'tab'),
+		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 	},
 	Dashboard: {
 		Home: '/dashboard',
@@ -36,6 +37,8 @@ export const ROUTES = {
 			normalizeRoute(`/market/${baseCurrencyKey}`, 'trades', 'tab'),
 		Calculator: (baseCurrencyKey: CurrencyKey) =>
 			normalizeRoute(`/market/${baseCurrencyKey}`, 'calculator', 'tab'),
+		Transfers: (baseCurrencyKey: CurrencyKey) =>
+			normalizeRoute(`/market/${baseCurrencyKey}`, 'transfers', 'tab'),
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
