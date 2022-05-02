@@ -1,10 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
 
-export const computeCommitDeposit = (
-	details: NextPriceDetails | null | undefined,
-	sizeDelta: Wei
-) => {
+export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
 	if (
 		!details?.marketSkew ||
 		!details?.assetPrice ||

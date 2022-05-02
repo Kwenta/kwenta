@@ -50,8 +50,8 @@ const useGetNextPriceDetails = (
 					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketSettings.minKeeperFee(),
 					FuturesMarketContract.marketSkew(),
-					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketContract.assetPrice(),
 				]);
 

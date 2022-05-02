@@ -7,7 +7,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { computeCommitDeposit } from 'utils/nextPrice';
+import { computeNPFee } from 'utils/nextPrice';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
@@ -21,18 +21,18 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
-	const commitDeposit = React.useMemo(() => computeCommitDeposit(nextPriceDetails, sizeDelta), [
+	const nextPriceFee = React.useMemo(() => computeNPFee(nextPriceDetails, sizeDelta), [
 		nextPriceDetails,
 		sizeDelta,
 	]);
 
 	const totalDeposit = React.useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
+		return (feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
+	}, [feeCost, nextPriceDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = React.useMemo(() => {
-		return feeCost?.sub(totalDeposit);
-	}, [feeCost, totalDeposit]);
+		return feeCost?.sub(nextPriceFee ?? zeroBN).neg();
+	}, [feeCost, nextPriceFee]);
 
 	return (
 		<StyledInfoBox
@@ -48,10 +48,10 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 									: NO_VALUE,
 							},
 							'Commit Deposit': {
-								value: !!commitDeposit
-									? formatCurrency(selectedPriceCurrency.name, commitDeposit, {
+								value: !!feeCost
+									? formatCurrency(selectedPriceCurrency.name, feeCost, {
 											sign: selectedPriceCurrency.sign,
-											minDecimals: commitDeposit.lt(0.01) ? 4 : 2,
+											minDecimals: feeCost.lt(0.01) ? 4 : 2,
 									  })
 									: NO_VALUE,
 							},
