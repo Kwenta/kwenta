@@ -26,15 +26,24 @@ const useGetFuturesTrades = (
 		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null, account || null),
 		async () => {
 			if (!currencyKey) return null;
+
+			let whereClause: { asset: string; account?: string } = {
+				asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+			};
+
+			if (account) {
+				whereClause = {
+					...whereClause,
+					account,
+				};
+			}
+
 			try {
 				const response = await getFuturesTrades(
 					futuresEndpoint,
 					{
 						first: DEFAULT_NUMBER_OF_TRADES,
-						where: {
-							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
-							account: account,
-						},
+						where: whereClause,
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
 					},
@@ -45,10 +54,12 @@ const useGetFuturesTrades = (
 						size: true,
 						asset: true,
 						price: true,
-						// positionSize: true,
-						// positionClosed: true,
-						// pnl: true,
-						// feesPaid: true,
+						positionId: true,
+						positionSize: true,
+						positionClosed: true,
+						pnl: true,
+						feesPaid: true,
+						// orderType: true,
 					}
 				);
 				return response ? mapTrades(response) : null;

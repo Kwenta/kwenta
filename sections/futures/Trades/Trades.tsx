@@ -1,7 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import LinkIcon from 'assets/svg/app/link.svg';
 import Card from 'components/Card';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { ETH_UNIT } from 'constants/network';
@@ -27,7 +26,6 @@ type TradesProps = {
 const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAsset }) => {
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
-	console.log(marketAsset);
 
 	const historyData = history.map((trade: FuturesTrade) => {
 		return {
@@ -35,46 +33,35 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 			value: Number(trade?.price?.div(ETH_UNIT)),
 			amount: Number(trade?.size.div(ETH_UNIT).abs()),
 			time: Number(trade?.timestamp),
+			pnl: trade?.pnl.div(ETH_UNIT),
+			feesPaid: trade?.feesPaid.div(ETH_UNIT),
 			id: trade?.txnHash,
 			asset: marketAsset,
-			side: trade?.side,
+			// type: trade?.type,
 			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 		};
 	});
 
-	console.log(historyData);
-
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
-
-	// const returnStatusSVG = (status: TradeStatus) => {
-	// 	switch (status) {
-	// 		case TradeStatus.OPEN:
-	// 			return <StatusIcon status={status} src={PendingIcon} />;
-	// 		case TradeStatus.CLOSED:
-	// 			return <StatusIcon status={status} src={SuccessIcon} />;
-	// 		case TradeStatus.LIQUIDATED:
-	// 			return <StatusIcon status={status} src={FailureIcon} />;
-	// 	}
-	// };
 
 	const getStatus = (status: string) => {
 		switch (status) {
 			case TradeStatus.OPEN:
 				return (
-					<StyledStatus type="entry">
-						{t('futures.market.user.trades.table.trade-type.entry')}
+					<StyledStatus status={status}>
+						{t('futures.market.user.trades.table.trade-types.entry')}
 					</StyledStatus>
 				);
 			case TradeStatus.CLOSED:
 				return (
-					<StyledStatus type="exit">
-						{t('futures.market.user.trades.table.trade-type.exit')}
+					<StyledStatus status={status}>
+						{t('futures.market.user.trades.table.trade-types.exit')}
 					</StyledStatus>
 				);
 			case TradeStatus.LIQUIDATED:
 				return (
-					<StyledStatus type="liquidated">
-						{t('futures.market.user.trades.table.trade-type.liquidated')}
+					<StyledStatus status={status}>
+						{t('futures.market.user.trades.table.trade-types.liquidated')}
 					</StyledStatus>
 				);
 			default:
@@ -82,39 +69,11 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 		}
 	};
 
-	// Market
-	// Side
-	// Trigger Price // we dont have this yet
-	// Type (Next-Price, Market, Limit, etc.)
-	// Status -- we cannot get this right now?
-
-	// Date/Time
-	// Market
-	// Side
-	// Trigger Price // we dont have this yet
-	// Fill Price //
-	// Position Size
-	// Realized PnL
-	// Fees paid
-	// Type (Next-Price, Market, Limit, etc.)
-	// Status
-
-	// Next Trade, market, liquidation
-
 	return (
 		<Card>
 			<StyledTable
 				palette="primary"
 				columns={[
-					// {
-					// 	Header: (
-					// 		<StyledTableHeader>{t('futures.market.user.trades.table.id')}</StyledTableHeader>
-					// 	),
-					// 	accessor: 'id',
-					// 	Cell: (cellProps: CellProps<FuturesTrade>) => <StyledId>{cellProps.value}</StyledId>,
-					// 	sortable: true,
-					// 	width: 50,
-					// },
 					{
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
@@ -138,7 +97,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<FlexDivCentered>
-								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
 								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
 							</FlexDivCentered>
 						),
@@ -155,7 +113,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<FlexDivCentered>
-								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
 								<StyledPositionSize>{formatCryptoCurrency(cellProps.value)}</StyledPositionSize>
 							</FlexDivCentered>
 						),
@@ -165,22 +122,19 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// {
 					// 	Header: (
 					// 		<StyledTableHeader>
-					// 			{t('futures.market.user.trades.table.leverage')}
+					// 			{t('futures.market.user.trades.table.trade-type')}
 					// 		</StyledTableHeader>
 					// 	),
-					// 	accessor: 'leverage',
+					// 	accessor: 'type',
 					// 	sortType: 'basic',
 					// 	Cell: (cellProps: CellProps<FuturesTrade>) => (
 					// 		<FlexDivCentered>
-					// 			<LeverageSize>{formatNumber(cellProps.value)}x |</LeverageSize>
-					// 			<LeverageSide side={cellProps.row.original.side}>
-					// 				{cellProps.row.original.side}
-					// 			</LeverageSide>
+					// 			{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
+					// 			<StyledPositionSize>{cellProps.value}</StyledPositionSize>
 					// 		</FlexDivCentered>
 					// 	),
 					// 	width: 100,
 					// 	sortable: true,
-					// },
 					{
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
@@ -254,24 +208,23 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortable: false,
 						width: 100,
 					},
-					// {
-					// 	Header: (
-					// 		<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
-					// 	),
-					// 	id: 'status',
-					// 	accessor: 'status',
-					// 	sortType: 'basic',
-					// 	Cell: (cellProps: CellProps<FuturesTrade>) => {
-					// 		return (
-					// 			<FlexDivCentered>
-					// 				{/* {returnStatusSVG(status)} */}
-					// 				<StatusText>{getStatus(cellProps.value)}</StatusText>
-					// 			</FlexDivCentered>
-					// 		);
-					// 	},
-					// 	width: 100,
-					// 	sortable: true,
-					// },
+					{
+						Header: (
+							<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
+						),
+						id: 'status',
+						accessor: 'status',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => {
+							return (
+								<FlexDivCentered>
+									<StatusText>{getStatus(cellProps.value)}</StatusText>
+								</FlexDivCentered>
+							);
+						},
+						width: 100,
+						sortable: true,
+					},
 					{
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -315,26 +268,16 @@ const StyledTableHeader = styled.div`
 	text-transform: capitalize;
 `;
 
-const StyledStatus = styled.span<{ type: string }>`
+const StyledStatus = styled.span<{ status: string }>`
 	font-size: 10px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) =>
+		props.status === TradeStatus.OPEN
+			? props.theme.colors.yellow
+			: props.status === TradeStatus.CLOSED
+			? props.theme.colors.white
+			: props.theme.colors.red};
 	font-family: ${(props) => props.theme.fonts.bold};
 	margin-left: 2px;
-`;
-
-const StyledId = styled.div`
-	${BoldTableText}
-`;
-
-const LeverageSize = styled.div`
-	${BoldTableText}
-`;
-
-const LeverageSide = styled.div<{ side: PositionSide }>`
-${BoldTableText}
-  color: ${(props) =>
-		props.side === PositionSide.LONG ? props.theme.colors.green : props.theme.colors.red};
-  margin-left: 4px;
 	text-transform: uppercase;
 `;
 
@@ -379,15 +322,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.theme.colors.common.primaryGreen};
 `;
 
-const StatusIcon = styled(Svg)<{ status: TradeStatus }>`
-	color: ${(props) =>
-		props.status === TradeStatus.OPEN
-			? props.theme.colors.yellow
-			: props.status === TradeStatus.CLOSED
-			? props.theme.colors.green
-			: props.theme.colors.red};
-`;
-
 const TableNoResults = styled(GridDivCenteredRow)`
 	padding: 50px 0;
 	justify-content: center;
@@ -405,8 +339,4 @@ const StyledExternalLink = styled(ExternalLink)`
 const StyledLinkIcon = styled(Svg)`
 	width: 14px;
 	height: 14px;
-	color: ${(props) => props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
-	}
 `;
