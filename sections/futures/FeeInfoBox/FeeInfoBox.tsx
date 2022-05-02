@@ -60,6 +60,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 									sign: selectedPriceCurrency.sign,
 									minDecimals: 2,
 								}),
+								spaceBeneath: true,
 							},
 							'Next-Price Discount': {
 								value: !!nextPriceDiscount

@@ -6,6 +6,7 @@ type DetailedInfo = {
 	value: string;
 	tooltip?: string;
 	color?: 'green' | 'red' | 'gold';
+	spaceBeneath?: boolean;
 };
 
 type InfoBoxProps = {
@@ -19,16 +20,19 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 	return (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value]) => (
-				<div key={key}>
-					<p className="key">{key}:</p>
-					<p
-						className={`${disabled ? 'value closed' : 'value'}${
-							value.color ? ` ${value.color}` : ''
-						}`}
-					>
-						{disabled ? NO_VALUE : value.value}
-					</p>
-				</div>
+				<>
+					<div key={key}>
+						<p className="key">{key}:</p>
+						<p
+							className={`${disabled ? 'value closed' : 'value'}${
+								value.color ? ` ${value.color}` : ''
+							}`}
+						>
+							{disabled ? NO_VALUE : value.value}
+						</p>
+					</div>
+					{value?.spaceBeneath && <br />}
+				</>
 			))}
 		</InfoBoxContainer>
 	);
