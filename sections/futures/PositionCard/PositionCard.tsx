@@ -71,7 +71,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-
 	const positionHistory = futuresPositions?.find(
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
@@ -110,6 +109,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			liquidationPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 			pnl: pnl,
@@ -128,16 +128,16 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			fees: positionDetails
 				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
 						sign: '$',
-						minDecimals
 				  })
 				: NO_VALUE,
 			avgEntryPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 		};
-	}, [currencyKey, positionDetails, positionHistory, synthsMap, t]);
+	}, [currencyKey, minDecimals, positionDetails, positionHistory, synthsMap, t]);
 
 	return (
 		<>
