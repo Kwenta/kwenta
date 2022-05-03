@@ -73,7 +73,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			: DEFAULT_DATA;
 	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
-	// work here (screenshot 2)
 	return (
 		<TableContainer>
 			<StyledTable

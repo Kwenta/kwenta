@@ -74,7 +74,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const positionHistory = futuresPositions?.find(
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
-	// work here (first screenshot)
+
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
 		const netFunding =
