@@ -129,7 +129,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 			// },
 			{
 				name: FuturesTab.TRADES,
-				label: 'Order History',
+				label: 'Trades',
 				badge: undefined,
 				active: activeTab === FuturesTab.TRADES,
 				icon: <Svg src={OrderHistoryIcon} />,

@@ -14,7 +14,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
 	account?: string | null,
-	options?: UseQueryOptions<FuturesTrade[] | null>
+	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);

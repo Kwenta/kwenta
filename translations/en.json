@@ -790,7 +790,7 @@
 					"tab": "History",
 					"table": {
 						"id": "ID",
-						"position": "position",
+						"trade-size": "trade size",
 						"pnl": "PNL",
 						"status": "status",
 						"date": "date",

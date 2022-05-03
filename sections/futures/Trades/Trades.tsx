@@ -27,20 +27,22 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
-	const historyData = history.map((trade: FuturesTrade) => {
-		return {
-			...trade,
-			value: Number(trade?.price?.div(ETH_UNIT)),
-			amount: Number(trade?.size.div(ETH_UNIT).abs()),
-			time: Number(trade?.timestamp),
-			pnl: trade?.pnl.div(ETH_UNIT),
-			feesPaid: trade?.feesPaid.div(ETH_UNIT),
-			id: trade?.txnHash,
-			asset: marketAsset,
-			// type: trade?.type,
-			status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-		};
-	});
+	const historyData = React.useMemo(() => {
+		return history.map((trade: FuturesTrade) => {
+			return {
+				...trade,
+				value: Number(trade?.price?.div(ETH_UNIT)),
+				amount: Number(trade?.size.div(ETH_UNIT).abs()),
+				time: Number(trade?.timestamp.mul(1000)),
+				pnl: trade?.pnl.div(ETH_UNIT),
+				feesPaid: trade?.feesPaid.div(ETH_UNIT),
+				id: trade?.txnHash,
+				asset: marketAsset,
+				// type: trade?.type,
+				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+			};
+		});
+	}, [history, marketAsset]);
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
@@ -79,7 +81,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							<StyledTableHeader>{t('futures.market.user.trades.table.date')}</StyledTableHeader>
 						),
 						accessor: 'time',
-						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
 								<div>{format(new Date(cellProps.value), 'MM-dd-yy')}</div>
@@ -106,7 +107,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					{
 						Header: (
 							<StyledTableHeader>
-								{t('futures.market.user.trades.table.position')}
+								{t('futures.market.user.trades.table.trade-size')}
 							</StyledTableHeader>
 						),
 						accessor: 'amount',
@@ -134,7 +135,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// 		</FlexDivCentered>
 					// 	),
 					// 	width: 100,
-					// 	sortable: true,
 					{
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
@@ -169,7 +169,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// 		</Price>
 					// 	),
 					// 	width: 100,
-					// 	sortable: true,
 					// },
 					{
 						Header: (
@@ -178,14 +177,14 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'pnl',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) =>
-							cellProps.row.original.size.gt(wei(0)) ? (
+							cellProps.row.original.pnl.eq(wei(0)) ? (
+								<PNL normal={true}>--</PNL>
+							) : (
 								<PNL negative={cellProps.value.lt(wei(0))}>
 									{formatCurrency(Synths.sUSD, cellProps.value, {
 										sign: '$',
 									})}
 								</PNL>
-							) : (
-								<PNL normal={true}>--</PNL>
 							),
 						width: 100,
 						sortable: true,
@@ -205,26 +204,25 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 									  })}
 							</>
 						),
-						sortable: false,
-						width: 100,
-					},
-					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
-						),
-						id: 'status',
-						accessor: 'status',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							return (
-								<FlexDivCentered>
-									<StatusText>{getStatus(cellProps.value)}</StatusText>
-								</FlexDivCentered>
-							);
-						},
 						width: 100,
 						sortable: true,
 					},
+					// {
+					// 	Header: (
+					// 		<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
+					// 	),
+					// 	id: 'status',
+					// 	accessor: 'status',
+					// 	sortType: 'basic',
+					// 	Cell: (cellProps: CellProps<FuturesTrade>) => {
+					// 		return (
+					// 			<FlexDivCentered>
+					// 				<StatusText>{getStatus(cellProps.value)}</StatusText>
+					// 			</FlexDivCentered>
+					// 		);
+					// 	},
+					// 	width: 100,
+					// },
 					{
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -235,8 +233,8 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 								/>
 							</StyledExternalLink>
 						),
-						sortable: false,
 						width: 25,
+						sortable: true,
 					},
 				]}
 				columnsDeps={columnsDeps}
