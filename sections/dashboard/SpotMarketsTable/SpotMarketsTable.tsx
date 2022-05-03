@@ -4,15 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import values from 'lodash/values';
 import { useQueryClient, Query } from 'react-query';
 import { networkState } from 'store/wallet';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { PERIOD_IN_HOURS } from 'constants/period';
 import { Rates } from 'queries/rates/types';
 import Currency from 'components/Currency';
 import { CellProps } from 'react-table';
@@ -22,7 +20,7 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import Table from 'components/Table';
 import { isEurForex } from 'utils/futures';
 
-const useHistoricalRates = (synthNames: CurrencyKey[]) => {
+const useHistoricalRates = (synthNames: string[]) => {
 	const { subgraph } = useSynthetixQueries();
 	const synthCandleQuery = subgraph.useGetDailyCandles(
 		{
@@ -53,17 +51,16 @@ const useHistoricalRates = (synthNames: CurrencyKey[]) => {
 	return historicalRates;
 };
 
-const useHistoricalVolumes = (synthNames: CurrencyKey[]) => {
+const useHistoricalVolumes = (synthNames: string[]) => {
 	const { subgraph } = useSynthetixQueries();
-	const twentyFourHoursAgo = useMemo(
-		() => calculateTimestampForPeriod(PERIOD_IN_HOURS.ONE_DAY),
-		[]
-	);
+
+	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 
 	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
 		{
 			where: {
-				timestamp_gte: twentyFourHoursAgo,
+				timestamp_gte: yesterday,
+				// TODO: fromSynth_in expects array of 'id' but 'name' so the returning is [] now. Should either fix the query or resolve id of synth
 				fromSynth_in: synthNames,
 			},
 		},
@@ -77,10 +74,31 @@ const useHistoricalVolumes = (synthNames: CurrencyKey[]) => {
 			toAddress: true,
 			timestamp: true,
 			gasPrice: true,
+			fromSynth: { name: true, symbol: true, id: true, totalSupply: true },
+			toSynth: { name: true, symbol: true, id: true, totalSupply: true },
 		}
 	);
 
-	return historicalVolumeQuery.isSuccess ? historicalVolumeQuery.data[0] : null;
+	const historicalVolumes = useMemo(() => {
+		const { isSuccess, data } = historicalVolumeQuery;
+		if (!isSuccess) {
+			return {};
+		}
+
+		const queryResult = synthNames.reduce((acc, cur) => {
+			const synthExchange = data
+				?.filter(({ fromSynth }) => cur === fromSynth?.symbol)
+				.reduce((sum, { fromAmountInUSD }) => sum + fromAmountInUSD.toNumber(), 0);
+
+			acc[cur] = synthExchange ?? 0;
+
+			return acc;
+		}, {} as Record<string, number>);
+
+		return queryResult;
+	}, [historicalVolumeQuery, synthNames]);
+
+	return historicalVolumes;
 };
 
 type SpotMarketsTableProps = {
@@ -106,13 +124,11 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			  )
 			: synths;
 
-	const synthNames: CurrencyKey[] = synths.map((synth): CurrencyKey => synth.name);
+	const synthNames: string[] = synths.map((synth): string => synth.name);
 	const historicalRates: Record<string, number> = useHistoricalRates(synthNames);
 	const historicalVolume = useHistoricalVolumes(synthNames);
 
 	let data = useMemo(() => {
-		const volumes = !_.isNil(historicalVolume) ? (historicalVolume.toSynth as any) : {};
-
 		return unfrozenSynths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
@@ -121,7 +137,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const volume = volumes[synth.asset] ?? 0;
+			const volume = historicalVolume[synth.name] ?? 0;
 			const change = historicalRates[synth.name] ?? 0;
 
 			return {
