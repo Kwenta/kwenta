@@ -40,7 +40,11 @@ import { ethers } from 'ethers';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const Trade: React.FC = () => {
+type Props = {
+	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
+};
+
+const Trade: React.FC<Props> = ({ onEditPositionInput }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -122,10 +126,10 @@ const Trade: React.FC = () => {
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
-			setTradeSize(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value);
-			setTradeSizeSUSD(
-				value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString()
-			);
+			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
+			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
+			setTradeSize(size);
+			setTradeSizeSUSD(sizeSUSD);
 		},
 		[marketAssetRate]
 	);
@@ -266,6 +270,10 @@ const Trade: React.FC = () => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
+
+	useEffect(() => {
+		onEditPositionInput({ size: tradeSize, side: leverageSide });
+	}, [leverageSide, tradeSize, onEditPositionInput]);
 
 	return (
 		<Panel>

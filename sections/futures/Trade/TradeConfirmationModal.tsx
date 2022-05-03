@@ -1,23 +1,22 @@
-import { FC, useState, useMemo, useEffect } from 'react';
+import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
 import { gasSpeedState } from 'store/wallet';
-import { walletAddressState } from 'store/wallet';
 
 import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
 import { newGetTransactionPrice } from 'utils/network';
-import { getFuturesMarketContract } from 'queries/futures/utils';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { Synths } from 'constants/currency';
+import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
@@ -25,22 +24,12 @@ import { GasLimitEstimate } from 'constants/network';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
-	market: string | null;
+	market: CurrencyKey | null;
 	tradeSize: string;
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
 	side: PositionSide;
 	l1Fee: Wei | null;
-};
-
-type PositionDetails = {
-	fee: Wei;
-	liquidationPrice: Wei;
-	currentPrice: Wei;
-	margin: Wei;
-	leverage: Wei;
-	side: PositionSide;
-	size: Wei;
 };
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
@@ -53,14 +42,17 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	l1Fee,
 }) => {
 	const { t } = useTranslation();
-	const { synthetixjs, synthsMap } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const [positionDetails, setPositionDetails] = useState<PositionDetails | null>(null);
+	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market, {
+		size: tradeSize,
+		side,
+	});
+
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
 		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
@@ -83,34 +75,21 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		[gasPrice, gasLimit, ethPriceRate, l1Fee]
 	);
 
-	useEffect(() => {
-		const getPositionDetails = async () => {
-			if (!tradeSize || !market || !synthetixjs || !walletAddress) return;
-			try {
-				const FuturesMarketContract = getFuturesMarketContract(market, synthetixjs!.contracts);
-				const newSize = side === PositionSide.LONG ? tradeSize : -tradeSize;
-				const { fee, liqPrice, margin, price, size } = await FuturesMarketContract.postTradeDetails(
-					wei(newSize).toBN(),
-					walletAddress
-				);
-				setPositionDetails({
-					fee: wei(fee),
-					liquidationPrice: wei(liqPrice),
-					margin: wei(margin),
-					currentPrice: wei(price),
-					size: wei(size).abs(),
-					side: wei(size).gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
-					leverage: wei(margin).eq(zeroBN)
+	const positionDetails = useMemo(() => {
+		return potentialTradeDetails
+			? {
+					...potentialTradeDetails,
+					size: potentialTradeDetails.size.abs(),
+					side: potentialTradeDetails.size.gte(zeroBN) ? PositionSide.LONG : PositionSide.SHORT,
+					leverage: potentialTradeDetails.margin.eq(zeroBN)
 						? zeroBN
-						: wei(size).mul(wei(price)).div(wei(margin)).abs(),
-				});
-			} catch (e) {
-				// @ts-ignore
-				console.log(e.message);
-			}
-		};
-		getPositionDetails();
-	}, [market, synthetixjs, tradeSize, walletAddress, side]);
+						: potentialTradeDetails.size
+								.mul(potentialTradeDetails.price)
+								.div(potentialTradeDetails.margin)
+								.abs(),
+			  }
+			: null;
+	}, [potentialTradeDetails]);
 
 	const dataRows = useMemo(
 		() => [
@@ -124,11 +103,11 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 			{ label: 'leverage', value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x` },
 			{
 				label: 'current price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.currentPrice ?? zeroBN, { sign: '$' }),
+				value: formatCurrency(Synths.sUSD, positionDetails?.price ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: 'liquidation price',
-				value: formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+				value: formatCurrency(Synths.sUSD, positionDetails?.liqPrice ?? zeroBN, {
 					sign: '$',
 				}),
 			},
