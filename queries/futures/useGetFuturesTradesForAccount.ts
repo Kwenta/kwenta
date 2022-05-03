@@ -23,7 +23,7 @@ const useGetFuturesTradesForAccount = (
 	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null, account || null),
+		QUERY_KEYS.Futures.TradesAccount(network.id, currencyKey || null, account || null),
 		async () => {
 			if (!currencyKey || !account) return null;
 
