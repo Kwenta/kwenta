@@ -12,8 +12,6 @@ import { getExchangeRatesForCurrencies, isFiatCurrency } from 'utils/currencies'
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
-import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
@@ -24,6 +22,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -33,6 +32,7 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
+	const marketKey = getMarketKey(baseCurrencyKey, network.id);
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
@@ -62,11 +62,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const marketKey = getMarketKey(baseCurrencyKey, network.id);
-	const priceId = synthToCoingeckoPriceId(marketKey);
-	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
-	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
-	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
+	const externalPriceQuery = useExternalPriceQuery(baseCurrencyKey);
+	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS

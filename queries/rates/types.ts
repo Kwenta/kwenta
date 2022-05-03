@@ -59,3 +59,5 @@ export type Price = {
 export type Prices = Price[];
 
 export type Rates = Record<string, Wei>;
+
+export type PriceResponse = Record<string, { usd: number }>;

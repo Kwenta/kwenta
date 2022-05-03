@@ -119,6 +119,7 @@ export const QUERY_KEYS = {
 	CoinGecko: {
 		CoinList: ['cg', 'coinList'],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
+		Price: (priceId: string) => ['cg', 'price', priceId],
 		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 	},
 	Futures: {
