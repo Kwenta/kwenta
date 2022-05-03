@@ -37,7 +37,6 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const [selectedCurrencyKey, setSelectedCurrencyKey] = React.useState<string | null>(null);
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -53,20 +52,19 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 		[walletAddress],
 		gasPrice,
 		{
-			enabled: !!selectedCurrencyKey && !!action,
+			enabled: !!action,
 			onSettled: () => {
 				setAction('');
-				setSelectedCurrencyKey(null);
 			},
 		}
 	);
 
 	React.useEffect(() => {
-		if (!!selectedCurrencyKey && !!action) {
+		if (!!action) {
 			cancelOrExecuteOrderTxn.mutate();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedCurrencyKey, action]);
+	}, [action]);
 
 	React.useEffect(() => {
 		if (cancelOrExecuteOrderTxn.hash) {
@@ -174,7 +172,6 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							<div style={{ display: 'flex' }}>
 								<CancelButton
 									onClick={() => {
-										setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
 										setAction('cancel');
 									}}
 								>
@@ -183,7 +180,6 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 								{cellProps.row.original.isExecutable && (
 									<EditButton
 										onClick={() => {
-											setSelectedCurrencyKey(getDisplayAsset(cellProps.row.original.asset));
 											setAction('execute');
 										}}
 									>
