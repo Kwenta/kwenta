@@ -95,8 +95,8 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(feeCost ?? zeroBN);
-	}, [feeCost, nextPriceFee]);
+		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
+	}, [commitDeposit, nextPriceFee]);
 
 	const dataRows = useMemo(
 		() => [
