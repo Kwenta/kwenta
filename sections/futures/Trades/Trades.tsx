@@ -178,7 +178,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					{
 						Header: (
 							<StyledTableHeader>
-								{t('futures.market.user.trades.table.trade-type')}
+								{t('futures.market.user.trades.table.order-type')}
 							</StyledTableHeader>
 						),
 						accessor: 'type',

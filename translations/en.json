@@ -798,7 +798,7 @@
 						"price": "price",
 						"side": "side",
 						"no-results": "You have no trades yet.",
-						"trade-type": "type",
+						"order-type": "order type",
 						"trade-types": {
 							"exit": "exit",
 							"liquidated": "liquidated",
