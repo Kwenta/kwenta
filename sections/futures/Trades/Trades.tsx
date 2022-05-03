@@ -87,7 +87,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 								<div>{format(new Date(cellProps.value), 'HH:mm:ssaa')}</div>
 							</GridDivCenteredRow>
 						),
-						width: 100,
+						width: 90,
 						sortable: true,
 					},
 					{
@@ -101,7 +101,25 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
 							</FlexDivCentered>
 						),
-						width: 50,
+						width: 60,
+						sortable: true,
+					},
+					{
+						Header: (
+							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
+						),
+						accessor: 'value',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => (
+							<>
+								<Price>
+									{formatCurrency(Synths.sUSD, cellProps.value, {
+										sign: '$',
+									})}
+								</Price>
+							</>
+						),
+						width: 80,
 						sortable: true,
 					},
 					{
@@ -117,7 +135,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 								<StyledPositionSize>{formatCryptoCurrency(cellProps.value)}</StyledPositionSize>
 							</FlexDivCentered>
 						),
-						width: 100,
+						width: 80,
 						sortable: true,
 					},
 					// {
@@ -135,24 +153,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// 		</FlexDivCentered>
 					// 	),
 					// 	width: 100,
-					{
-						Header: (
-							<StyledTableHeader>{t('futures.market.user.trades.table.price')}</StyledTableHeader>
-						),
-						accessor: 'value',
-						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								<Price>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
-										sign: '$',
-									})}
-								</Price>
-							</>
-						),
-						width: 100,
-						sortable: true,
-					},
 					// {
 					// 	Header: (
 					// 		<StyledTableHeader>{t('futures.market.user.trades.table.final')}</StyledTableHeader>
@@ -186,7 +186,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 									})}
 								</PNL>
 							),
-						width: 100,
+						width: 80,
 						sortable: true,
 					},
 					{
@@ -204,7 +204,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 									  })}
 							</>
 						),
-						width: 100,
+						width: 80,
 						sortable: true,
 					},
 					// {
@@ -234,7 +234,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 							</StyledExternalLink>
 						),
 						width: 25,
-						sortable: true,
+						sortable: false,
 					},
 				]}
 				columnsDeps={columnsDeps}
@@ -246,6 +246,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					) : undefined
 				}
 				showPagination={true}
+				pageSize={5}
 			/>
 		</Card>
 	);

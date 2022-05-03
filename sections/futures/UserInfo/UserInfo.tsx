@@ -26,15 +26,14 @@ import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
-import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { FuturesTrade } from 'queries/futures/types';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
+import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -80,7 +79,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
 	);
 
-	const futuresTradesQuery = useGetFuturesTrades(marketAsset, walletAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
 
 	const history: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
