@@ -18,6 +18,7 @@ import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
+import Image from 'next/image';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -185,7 +186,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 														{ensName ? (
 															<>
 																{ensAvatar && (
-																	<img
+																	<Image
 																		src={ensAvatar}
 																		alt={ensName}
 																		width={16}

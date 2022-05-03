@@ -10,19 +10,14 @@ module.exports = {
 	},
 	webpack: (config, options) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
+		config.resolve.alias.https = 'https-browserify';
+		config.resolve.alias.http = 'http-browserify';
+
+		config.resolve.alias.os = 'os-browserify';
 
 		config.module.rules.push({
-			test: /\.(png|jp(e*)g|svg|gif|webp)$/,
-			use: [
-				{
-					loader: 'optimized-images-loader',
-					options: {
-						includeStrategy: 'react',
-						publicPath: `/_next/static/images/`,
-						outputPath: 'static/images',
-					},
-				},
-			],
+			test: /\.svg$/,
+			use: ['@svgr/webpack'],
 		});
 		return config;
 	},
@@ -48,6 +43,6 @@ module.exports = {
 				destination: '/dashboard',
 				permanent: true,
 			},
-		]
+		];
 	},
 };

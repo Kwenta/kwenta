@@ -11,6 +11,7 @@ import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
 import { FlexDivCentered } from 'styles/common';
+import Image from 'next/image';
 
 export type CurrencyIconProps = {
 	currencyKey: string;
@@ -78,7 +79,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				return <Img src={ETHIcon} {...props} />;
 			}
 			case CRYPTO_CURRENCY_MAP.SNX: {
-				return <img src={SNXIcon} {...props} alt="snx-icon" />;
+				return <Image src={SNXIcon} {...props} alt="snx-icon" />;
 			}
 			default:
 				return (
