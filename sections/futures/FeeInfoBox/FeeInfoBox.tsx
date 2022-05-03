@@ -24,18 +24,18 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
-	const nextPriceFee = React.useMemo(() => computeNPFee(nextPriceDetails, sizeDelta), [
-		nextPriceDetails,
-		sizeDelta,
-	]);
+	const { commitDeposit, nextPriceFee } = React.useMemo(
+		() => computeNPFee(nextPriceDetails, sizeDelta),
+		[nextPriceDetails, sizeDelta]
+	);
 
 	const totalDeposit = React.useMemo(() => {
-		return (feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [feeCost, nextPriceDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = React.useMemo(() => {
-		return (nextPriceFee ?? zeroBN).sub(feeCost ?? zeroBN);
-	}, [feeCost, nextPriceFee]);
+		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
+	}, [commitDeposit, nextPriceFee]);
 
 	return (
 		<StyledInfoBox
@@ -51,10 +51,10 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 									: NO_VALUE,
 							},
 							'Commit Deposit': {
-								value: !!feeCost
-									? formatCurrency(selectedPriceCurrency.name, feeCost, {
+								value: !!commitDeposit
+									? formatCurrency(selectedPriceCurrency.name, commitDeposit, {
 											sign: selectedPriceCurrency.sign,
-											minDecimals: feeCost.lt(0.01) ? 4 : 2,
+											minDecimals: commitDeposit.lt(0.01) ? 4 : 2,
 									  })
 									: NO_VALUE,
 							},

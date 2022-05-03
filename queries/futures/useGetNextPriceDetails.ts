@@ -16,6 +16,8 @@ export type NextPriceDetails = {
 	marketSkew: Wei;
 	takerFee: Wei;
 	makerFee: Wei;
+	takerFeeNextPrice: Wei;
+	makerFeeNextPrice: Wei;
 	assetPrice: Wei;
 };
 
@@ -45,11 +47,15 @@ const useGetNextPriceDetails = (
 					marketSkew,
 					takerFee,
 					makerFee,
+					takerFeeNextPrice,
+					makerFeeNextPrice,
 					assetPrice,
 				] = await Promise.all([
 					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketSettings.minKeeperFee(),
 					FuturesMarketContract.marketSkew(),
+					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
 					FuturesMarketContract.assetPrice(),
@@ -61,6 +67,8 @@ const useGetNextPriceDetails = (
 					marketSkew: wei(marketSkew),
 					takerFee: wei(takerFee),
 					makerFee: wei(makerFee),
+					takerFeeNextPrice: wei(takerFeeNextPrice),
+					makerFeeNextPrice: wei(makerFeeNextPrice),
 					assetPrice: wei(assetPrice[0]),
 				};
 			} catch (e) {

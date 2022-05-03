@@ -7,9 +7,14 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 		!details?.assetPrice ||
 		!details?.takerFee ||
 		!details?.makerFee ||
+		!details?.takerFeeNextPrice ||
+		!details?.makerFeeNextPrice ||
 		!sizeDelta
 	) {
-		return undefined;
+		return {
+			commitDeposit: undefined,
+			nextPriceFee: undefined,
+		};
 	}
 
 	const notionalDiff = sizeDelta.mul(details.assetPrice);
@@ -17,7 +22,14 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 		? details.takerFee
 		: details.makerFee;
 
-	return notionalDiff.mul(staticRate).abs();
+	const staticRateNP = sameSide(notionalDiff, details.marketSkew)
+		? details.takerFeeNextPrice
+		: details.makerFeeNextPrice;
+
+	return {
+		commitDeposit: notionalDiff.mul(staticRate).abs(),
+		nextPriceFee: notionalDiff.mul(staticRateNP).abs(),
+	};
 };
 
 export const sameSide = (a: Wei, b: Wei) => {

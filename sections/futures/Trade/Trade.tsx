@@ -1,11 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { useState } from 'react';
 import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';

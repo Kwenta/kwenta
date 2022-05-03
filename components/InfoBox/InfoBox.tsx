@@ -20,8 +20,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 	return (
 		<InfoBoxContainer style={style} className={className}>
 			{Object.entries(details).map(([key, value]) => (
-				<>
-					<div key={key}>
+				<React.Fragment key={key}>
+					<div>
 						<p className="key">{key}:</p>
 						<p
 							className={`${disabled ? 'value closed' : 'value'}${
@@ -32,7 +32,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 						</p>
 					</div>
 					{value?.spaceBeneath && <br />}
-				</>
+				</React.Fragment>
 			))}
 		</InfoBoxContainer>
 	);

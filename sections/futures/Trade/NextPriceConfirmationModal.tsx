@@ -85,14 +85,14 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
 	}, [side, tradeSize, positionSize]);
 
-	const nextPriceFee = useMemo(() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)), [
-		nextPriceDetails,
-		orderDetails,
-	]);
+	const { commitDeposit, nextPriceFee } = useMemo(
+		() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)),
+		[nextPriceDetails, orderDetails]
+	);
 
 	const totalDeposit = useMemo(() => {
-		return (feeCost ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [feeCost, nextPriceDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = useMemo(() => {
 		return (nextPriceFee ?? zeroBN).sub(feeCost ?? zeroBN);
