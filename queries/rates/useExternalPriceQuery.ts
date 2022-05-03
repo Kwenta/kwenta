@@ -8,28 +8,37 @@ import { PriceResponse } from './types';
 import { getMarketKey } from 'utils/futures';
 import { synthToCoingeckoPriceId } from './utils';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
+import { Network, networkState } from 'store/wallet';
+import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
+
+const getCoinGeckoPrice = async (currencyKey: CurrencyKey, network: Network) => {
+	const marketKey = getMarketKey(currencyKey, network.id);
+	const priceId = synthToCoingeckoPriceId(marketKey);
+
+	const response = await axios.get<PriceResponse>(
+		`${CG_BASE_API_URL}/simple/price?ids=${priceId}&vs_currencies=usd`
+	);
+
+	return response.status === 200 ? response.data[priceId].usd : null;
+};
 
 const useExternalPriceQuery = (
-	baseCurrencyKey: string,
+	baseCurrencyKey: CurrencyKey,
 	options?: UseQueryOptions<number | null>
 ) => {
 	const network = useRecoilValue(networkState);
 
-	const marketKey = getMarketKey(baseCurrencyKey, network.id);
-	const priceId = synthToCoingeckoPriceId(marketKey);
-
 	return useQuery<number | null>(
-		QUERY_KEYS.CoinGecko.Price(priceId),
+		QUERY_KEYS.Rates.ExternalPrice(baseCurrencyKey),
 		async () => {
-			const response = await axios.get<PriceResponse>(
-				`${CG_BASE_API_URL}/simple/price?ids=${priceId}&vs_currencies=usd`
-			);
-
-			return response.status === 200 ? response.data[priceId].usd : null;
+			return COMMODITY_SYNTHS.has(baseCurrencyKey)
+				? null
+				: FIAT_SYNTHS.has(baseCurrencyKey)
+				? null
+				: getCoinGeckoPrice(baseCurrencyKey, network);
 		},
 		{
-			enabled: !!priceId,
+			enabled: !!baseCurrencyKey,
 			...options,
 		}
 	);

@@ -32,7 +32,6 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
-	const marketKey = getMarketKey(baseCurrencyKey, network.id);
 	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
@@ -64,6 +63,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 	const externalPriceQuery = useExternalPriceQuery(baseCurrencyKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
+	const marketKey = getMarketKey(baseCurrencyKey, network.id);
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
