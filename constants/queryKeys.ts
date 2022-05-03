@@ -213,12 +213,11 @@ export const QUERY_KEYS = {
 			networkId,
 			walletAddress,
 		],
-		NextPriceDetails: (networkId: NetworkId, currencyKey: string | null) => [
-			'futures',
-			'currentRoundId',
-			networkId,
-			currencyKey,
-		],
+		NextPriceDetails: (
+			networkId: NetworkId,
+			walletAddress: string | null,
+			currencyKey: string | null
+		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 	},
 };
 
