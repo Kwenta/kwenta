@@ -77,7 +77,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 		}, 5 * 1000);
 	};
 
-	console.log('onPositionClose', onPositionClose);
+	// console.log('onPositionClose', onPositionClose);
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 

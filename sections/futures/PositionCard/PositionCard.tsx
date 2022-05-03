@@ -28,12 +28,15 @@ type PositionData = {
 	marketShortName: string;
 	marketLongName: string;
 	marketPrice: string;
+	price24h: number;
 	positionSide: JSX.Element;
 	positionSize: string;
 	leverage: string;
 	liquidationPrice: string;
 	pnl: Wei;
+	realizedPnl: Wei;
 	pnlText: string;
+	realizedPnlText: string;
 	netFunding: Wei;
 	netFundingText: string;
 	fees: string;
@@ -63,8 +66,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
 
+	console.log('futuresPositions =', futuresPositions);
+
+	console.log('positionDetails =', positionDetails);
+
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const realizedPnl = positionDetails?.profitLoss ?? zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
@@ -78,6 +86,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				sign: '$',
 				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
 			}),
+			price24h: currencyKeyRate,
+			// marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -104,11 +114,19 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				  })
 				: NO_VALUE,
 			pnl: pnl,
+			realizedPnl: realizedPnl,
 			pnlText:
 				positionDetails && pnl
 					? `${formatCurrency(Synths.sUSD, pnl, {
 							sign: '$',
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
+					: NO_VALUE,
+			realizedPnlText:
+				positionDetails && realizedPnl
+					? `${formatCurrency(Synths.sUSD, realizedPnl, {
+							sign: '$',
+							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
 					: NO_VALUE,
 			netFunding: netFunding,
@@ -135,7 +153,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<DataCol>
 					<InfoRow>
 						<CurrencySubtitle>{data.marketShortName}</CurrencySubtitle>
-						<StyledValue>{data.marketPrice}</StyledValue>
+						<StyledValue
+						// className={data.price24h > zeroBN ? 'green' : data.price24h < zeroBN ? 'red' : ''}
+						>
+							{data.marketPrice}
+						</StyledValue>
 					</InfoRow>
 					<PositionInfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
@@ -175,11 +197,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						)}
 					</InfoRow>
 					<InfoRow>
-						{/* Realized Pnl */}
 						<StyledSubtitle>{t('futures.market.position-card.r-pnl')}</StyledSubtitle>
 						{positionDetails ? (
-							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
-								{data.pnlText}
+							<StyledValue
+								className={data.pnl > zeroBN ? 'green' : data.realizedPnl < zeroBN ? 'red' : ''}
+							>
+								{data.realizedPnlText}
 							</StyledValue>
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
