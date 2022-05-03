@@ -15,10 +15,16 @@ module.exports = {
 
 		config.resolve.alias.os = 'os-browserify';
 
-		config.module.rules.push({
-			test: /\.svg$/,
-			use: ['@svgr/webpack'],
-		});
+		config.module.rules.push(
+			{
+				test: /\.svg$/,
+				use: ['@svgr/webpack'],
+			},
+			{
+				test: /\.png/,
+				type: 'asset/resource',
+			}
+		);
 		return config;
 	},
 	future: {
