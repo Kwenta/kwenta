@@ -8,6 +8,8 @@ import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/nextPrice';
+import Connector from 'containers/Connector';
+import { getMarketKey } from 'utils/futures';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
@@ -18,7 +20,8 @@ type FeeInfoBoxProps = {
 
 const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey, sizeDelta }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const { network } = Connector.useContainer();
+	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const nextPriceFee = React.useMemo(() => computeNPFee(nextPriceDetails, sizeDelta), [
@@ -31,7 +34,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 	}, [feeCost, nextPriceDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = React.useMemo(() => {
-		return feeCost?.sub(nextPriceFee ?? zeroBN).neg();
+		return (nextPriceFee ?? zeroBN).sub(feeCost ?? zeroBN);
 	}, [feeCost, nextPriceFee]);
 
 	return (
@@ -69,7 +72,11 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 											minDecimals: 2,
 									  })
 									: NO_VALUE,
-								color: 'green',
+								color: nextPriceDiscount.lt(0)
+									? 'green'
+									: nextPriceDiscount.gt(0)
+									? 'red'
+									: undefined,
 							},
 							'Estimated Fees': {
 								value: formatCurrency(
@@ -84,13 +91,12 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 					  }
 					: {
 							Fee: {
-								value:
-									feeCost != null
-										? formatCurrency(selectedPriceCurrency.name, feeCost, {
-												sign: selectedPriceCurrency.sign,
-												minDecimals: feeCost.lt(0.01) ? 4 : 2,
-										  })
-										: NO_VALUE,
+								value: !!feeCost
+									? formatCurrency(selectedPriceCurrency.name, feeCost, {
+											sign: selectedPriceCurrency.sign,
+											minDecimals: feeCost.lt(0.01) ? 4 : 2,
+									  })
+									: NO_VALUE,
 							},
 					  }),
 			}}
