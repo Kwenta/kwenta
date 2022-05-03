@@ -184,7 +184,7 @@ export type FuturesTrade = {
 	side?: PositionSide;
 	pnl: Wei;
 	feesPaid: Wei;
-	// orderType: 'NextPrice' | 'Limit' | 'Market';
+	orderType: 'NextPrice' | 'Limit' | 'Market';
 };
 
 export type FuturesVolumes = {

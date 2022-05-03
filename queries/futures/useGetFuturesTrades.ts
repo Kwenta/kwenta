@@ -49,7 +49,7 @@ const useGetFuturesTrades = (
 						positionClosed: true,
 						pnl: true,
 						feesPaid: true,
-						// orderType: true,
+						orderType: true,
 					}
 				);
 				return response ? mapTrades(response) : null;

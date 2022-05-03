@@ -38,7 +38,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 				feesPaid: trade?.feesPaid.div(ETH_UNIT),
 				id: trade?.txnHash,
 				asset: marketAsset,
-				// type: trade?.type,
+				type: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
 				status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 			};
 		});
@@ -138,38 +138,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						width: 80,
 						sortable: true,
 					},
-					// {
-					// 	Header: (
-					// 		<StyledTableHeader>
-					// 			{t('futures.market.user.trades.table.trade-type')}
-					// 		</StyledTableHeader>
-					// 	),
-					// 	accessor: 'type',
-					// 	sortType: 'basic',
-					// 	Cell: (cellProps: CellProps<FuturesTrade>) => (
-					// 		<FlexDivCentered>
-					// 			{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
-					// 			<StyledPositionSize>{cellProps.value}</StyledPositionSize>
-					// 		</FlexDivCentered>
-					// 	),
-					// 	width: 100,
-					// {
-					// 	Header: (
-					// 		<StyledTableHeader>{t('futures.market.user.trades.table.final')}</StyledTableHeader>
-					// 	),
-					// 	accessor: 'exitPrice',
-					// 	sortType: 'basic',
-					// 	Cell: (cellProps: CellProps<FuturesTrade>) => (
-					// 		<Price>
-					// 			{cellProps.row.original.isOpen
-					// 				? '--'
-					// 				: formatCurrency(Synths.sUSD, cellProps.value, {
-					// 						sign: '$',
-					// 				  })}
-					// 		</Price>
-					// 	),
-					// 	width: 100,
-					// },
 					{
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.trades.table.pnl')}</StyledTableHeader>
@@ -206,6 +174,22 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						width: 80,
 						sortable: true,
+					},
+					{
+						Header: (
+							<StyledTableHeader>
+								{t('futures.market.user.trades.table.trade-type')}
+							</StyledTableHeader>
+						),
+						accessor: 'type',
+						sortType: 'basic',
+						Cell: (cellProps: CellProps<FuturesTrade>) => (
+							<FlexDivCentered>
+								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
+								<StyledPositionSize>{cellProps.value}</StyledPositionSize>
+							</FlexDivCentered>
+						),
+						width: 100,
 					},
 					// {
 					// 	Header: (

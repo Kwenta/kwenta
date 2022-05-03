@@ -360,6 +360,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 			positionClosed,
 			pnl,
 			feesPaid,
+			orderType,
 		}: FuturesTradeResult) => {
 			return {
 				size: new Wei(size, 18, true),
@@ -372,6 +373,7 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
+				orderType: orderType,
 			};
 		}
 	);

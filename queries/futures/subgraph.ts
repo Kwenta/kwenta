@@ -1405,6 +1405,7 @@ export type FuturesTradeResult = {
 	positionClosed: boolean;
 	pnl: Wei;
 	feesPaid: Wei;
+	orderType: FuturesOrderType;
 };
 export type FuturesTradeFields = {
 	id: true;
@@ -1418,6 +1419,7 @@ export type FuturesTradeFields = {
 	positionClosed: true;
 	pnl: true;
 	feesPaid: true;
+	orderType: true;
 };
 export type FuturesTradeArgs<K extends keyof FuturesTradeResult> = {
 	[Property in keyof Pick<FuturesTradeFields, K>]: FuturesTradeFields[Property];
@@ -1492,6 +1494,7 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 			if (obj['positionClosed']) formattedObj['positionClosed'] = obj['positionClosed'];
 			if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
 			if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+			if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
 			return formattedObj as Pick<FuturesTradeResult, K>;
 		});
 		results = results.concat(newResults);
