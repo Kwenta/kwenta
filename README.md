@@ -30,7 +30,7 @@ ENS link: [kwenta.eth](https://app.ens.domains/name/kwenta.eth).
 ### Install dependencies
 
 ```bash
-npm install --legacy-peer-deps
+yarn install
 ```
 
 ### Set up environment variables
@@ -50,7 +50,7 @@ Then, open `.env.local` and add the missing environment variables:
 ### Run
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -58,8 +58,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 ### Build
 
 ```bash
-npm run build
-npm start
+yarn build
+yarn start
 ```
 
 ### End-2-End testing
@@ -71,7 +71,7 @@ The current e2e tests are written to be run on Optimistic Kovan using Chrome as 
 #### Setup
 - Download and install Google Chrome 
 - Setup a test wallet on Optimistic Kovan and fund it with plenty of ETH (to pay for gas) and sUSD
-- Prior to running the tests you must set the environment variables below in the shell from which npm is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress. 
+- Prior to running the tests you must set the environment variables below in the shell from which yarn is started. Unfortunately, at this time other methods to set said environment variables (eg. through `.env.local`) don't work in conjunction with Synpress. 
 
 ```bash
 PRIVATE_KEY=<INSERTPRIVATEKEY>
@@ -91,9 +91,9 @@ A Bash convenience script [has been made available here](https://gist.github.com
 #### Run the tests
 
 ```bash
-npm run build
-npm start
-npm run test:e2e:only:tests
+yarn build
+yarn start
+yarn test:e2e:only:tests
 ```
 
 ## Contributing
