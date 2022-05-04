@@ -736,6 +736,10 @@
 						}
 					}
 				},
+					"next-price": {
+						"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+						"learn-more": "Learn more"
+					},
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order"

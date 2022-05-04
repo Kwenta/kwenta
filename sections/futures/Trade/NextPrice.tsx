@@ -1,17 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
 import { EXTERNAL_LINKS } from 'constants/links';
+import { useTranslation } from 'react-i18next';
 
-const NextPrice: React.FC = () => (
-	<NextPriceContainer>
-		<p className="next-price-description">
-			Next-Price orders are subject to volatility and execute at the very next on-chain price.{' '}
-			<a href={EXTERNAL_LINKS.Trade.NextPriceBlogPost} rel="noreferrer" target="_blank">
-				Learn more ↗
-			</a>
-		</p>
-	</NextPriceContainer>
-);
+const NextPrice: React.FC = () => {
+	const { t } = useTranslation();
+
+	return (
+		<NextPriceContainer>
+			<p className="next-price-description">
+				{t('futures.market.trade.next-price.description')}{' '}
+				<a href={EXTERNAL_LINKS.Trade.NextPriceBlogPost} rel="noreferrer" target="_blank">
+					{t('futures.market.trade.next-price.learn-more')} ↗
+				</a>
+			</p>
+		</NextPriceContainer>
+	);
+};
 
 const NextPriceContainer = styled.div`
 	margin-bottom: 16px;
