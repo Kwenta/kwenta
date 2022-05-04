@@ -105,7 +105,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 			showPagination
 			columns={[
 				{
-					Header: <div>{t('futures.market.user.open-orders.table.market-type')}</div>,
+					Header: (
+						<StyledTableHeader>
+							{t('futures.market.user.open-orders.table.market-type')}
+						</StyledTableHeader>
+					),
 					accessor: 'market',
 					Cell: (cellProps: CellProps<any>) => {
 						return (
@@ -130,10 +134,13 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							</MarketContainer>
 						);
 					},
-					width: 120,
+					sortable: true,
+					width: 50,
 				},
 				{
-					Header: <div>{t('futures.market.user.open-orders.table.side')}</div>,
+					Header: (
+						<StyledTableHeader>{t('futures.market.user.open-orders.table.side')}</StyledTableHeader>
+					),
 					accessor: 'side',
 					Cell: (cellProps: CellProps<any>) => {
 						return (
@@ -142,10 +149,13 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							</div>
 						);
 					},
-					width: 90,
+					sortable: true,
+					width: 50,
 				},
 				{
-					Header: <div>{t('futures.market.user.open-orders.table.size')}</div>,
+					Header: (
+						<StyledTableHeader>{t('futures.market.user.open-orders.table.size')}</StyledTableHeader>
+					),
 					accessor: 'size',
 					Cell: (cellProps: CellProps<any>) => {
 						return (
@@ -156,6 +166,8 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							</div>
 						);
 					},
+					sortable: true,
+					width: 50,
 				},
 				// {
 				// 	Header: <div>{t('futures.market.user.open-orders.table.parameters')}</div>,
@@ -165,7 +177,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 				// 	},
 				// },
 				{
-					Header: <div>{t('futures.market.user.open-orders.table.actions')}</div>,
+					Header: (
+						<StyledTableHeader>
+							{t('futures.market.user.open-orders.table.actions')}
+						</StyledTableHeader>
+					),
 					accessor: 'actions',
 					Cell: (cellProps: CellProps<any>) => {
 						return (
@@ -191,6 +207,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 							</div>
 						);
 					},
+					width: 50,
 				},
 			]}
 		/>
@@ -199,6 +216,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
+`;
+
+const StyledTableHeader = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	text-transform: capitalize;
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
