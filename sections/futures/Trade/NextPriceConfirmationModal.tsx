@@ -35,6 +35,7 @@ type NextPriceConfirmationModalProps = {
 	l1Fee: Wei | null;
 	feeCost: Wei | null;
 	positionSize: Wei | null;
+	isDisclaimerDisplayed: boolean;
 };
 
 const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
@@ -47,6 +48,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	l1Fee,
 	feeCost,
 	positionSize,
+	isDisclaimerDisplayed,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap, network } = Connector.useContainer();
@@ -162,6 +164,11 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 			<NetworkFees>
 				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
 			</NetworkFees>
+			{isDisclaimerDisplayed && (
+				<Disclaimer>
+					{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
+				</Disclaimer>
+			)}
 			<ConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
 				{t('futures.market.trade.confirmation.modal.confirm-order')}
 			</ConfirmTradeButton>
@@ -219,6 +226,13 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+`;
+
+const Disclaimer = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	margin-top: 12px;
+	margin-bottom: 12px;
 `;
 
 export default NextPriceConfirmationModal;

@@ -21,6 +21,7 @@ type LeverageInputProps = {
 	setIsLeverageValueCommitted: (value: boolean) => void;
 	currentPosition: FuturesPosition | null;
 	isMarketClosed: boolean;
+	isDisclaimerDisplayed: boolean;
 };
 
 const LeverageInput: FC<LeverageInputProps> = ({
@@ -29,6 +30,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 	onLeverageChange,
 	setIsLeverageValueCommitted,
 	isMarketClosed,
+	isDisclaimerDisplayed,
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
@@ -54,6 +56,11 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
+			{isDisclaimerDisplayed && (
+				<LeverageDisclaimer>
+					{t('futures.market.trade.input.leverage.disclaimer')}
+				</LeverageDisclaimer>
+			)}
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
@@ -147,6 +154,12 @@ const TextButton = styled.button`
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
+`;
+
+const LeverageDisclaimer = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	margin: 0 8px 12px;
 `;
 
 export default LeverageInput;

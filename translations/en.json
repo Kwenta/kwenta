@@ -690,7 +690,8 @@
 						"sell": "sell",
 						"total-leverage": "Total leverage ≈ {{totalLeverage}}x",
 						"close-position": "100% close position + {{leverageDelta}}x leverage",
-						"partial-close-position": "{{closePositionDelta}}% close position"
+						"partial-close-position": "{{closePositionDelta}}% close position",
+						"disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper."
 					}
 				},
 				"button": {
@@ -742,7 +743,8 @@
 					},
 				"confirmation": {
 					"modal": {
-						"confirm-order": "Confirm order"
+						"confirm-order": "Confirm order",
+						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper."
 					}
 				}
 			},

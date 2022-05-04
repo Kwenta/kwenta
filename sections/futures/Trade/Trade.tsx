@@ -197,6 +197,13 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 			: 'futures.market.trade.button.open-position';
 	}, [position, orderType, isMarketCapReached]);
 
+	const shouldDisplayNextPriceDisclaimer = React.useMemo(
+		() =>
+			wei(leverage || 0).gte(maxLeverageValue.sub(wei(1))) &&
+			wei(leverage || 0).lte(maxLeverageValue),
+		[leverage, maxLeverageValue]
+	);
+
 	useEffect(() => {
 		const getOrderFee = async () => {
 			if (
@@ -337,6 +344,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 				isMarketClosed={isFuturesMarketClosed}
+				isDisclaimerDisplayed={orderType === 1 && shouldDisplayNextPriceDisclaimer}
 			/>
 
 			<PlaceOrderButton
@@ -427,6 +435,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 					onDismiss={() => setIsNextPriceConfirmationModalOpen(false)}
 					feeCost={feeCost}
 					positionSize={position?.position?.size ?? null}
+					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
 			)}
 		</Panel>
