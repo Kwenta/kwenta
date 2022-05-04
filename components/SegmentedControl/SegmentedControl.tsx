@@ -53,7 +53,6 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 					box-shadow: ${(props) => props.theme.colors.selectedTheme.segmented.button.shadow};
 					border: ${(props) => props.theme.colors.selectedTheme.border};
 					color: ${(props) => props.theme.colors.common.primaryWhite};
-					font-weight: 700;
 					border-radius: 6px;
 			  `
 			: css`
