@@ -60,8 +60,9 @@ const useHistoricalVolumes = (synthNames: string[]) => {
 		{
 			where: {
 				timestamp_gte: yesterday,
-				// TODO: fromSynth_in expects array of 'id' but 'name' so the returning is [] now. Should either fix the query or resolve id of synth
-				fromSynth_in: synthNames,
+				// fromSynth_in expects array of 'id' but 'name' so the returning is [] now.
+				// Disable it for now and enable if needed later once either the query is fixed or id of synth is resolved.
+				// fromSynth_in: synthNames,
 			},
 		},
 		{
