@@ -18,13 +18,17 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 	}
 
 	const notionalDiff = sizeDelta.mul(details.assetPrice);
-	const staticRate = sameSide(notionalDiff, details.marketSkew)
-		? details.takerFee
-		: details.makerFee;
 
-	const staticRateNP = sameSide(notionalDiff, details.marketSkew)
-		? details.takerFeeNextPrice
-		: details.makerFeeNextPrice;
+	let staticRate: Wei;
+	let staticRateNP: Wei;
+
+	if (sameSide(notionalDiff, details.marketSkew)) {
+		staticRate = details.takerFee;
+		staticRateNP = details.takerFeeNextPrice;
+	} else {
+		staticRate = details.makerFee;
+		staticRateNP = details.makerFeeNextPrice;
+	}
 
 	return {
 		commitDeposit: notionalDiff.mul(staticRate).abs(),

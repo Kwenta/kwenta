@@ -23,6 +23,7 @@ import { GasLimitEstimate } from 'constants/network';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/nextPrice';
 import { NO_VALUE } from 'constants/placeholder';
+import { getMarketKey } from 'utils/futures';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;
@@ -48,13 +49,13 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	positionSize,
 }) => {
 	const { t } = useTranslation();
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const nextPriceDetailsQuery = useGetNextPriceDetails(market);
+	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(market, network.id));
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
