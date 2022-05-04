@@ -34,7 +34,7 @@ const useGetAverageFundingRateForMarkets = (
 	const { synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network);
 
-	return useQueries<FundingRateResponse[]>(
+	return useQueries(
 		fundingRateInputs.map(({ currencyKey, assetPrice, currentFundingRate }: FundingRateInput) => {
 			return {
 				queryKey: QUERY_KEYS.Futures.FundingRate(

@@ -12,12 +12,16 @@ import UserInfo from '../UserInfo';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
 import TVChartWrapper from '../TvChartWrapper';
+import { FuturesPosition } from 'queries/futures/types';
 
 type MarketInfoProps = {
 	market: string;
+	position: FuturesPosition | null;
+	openOrders: any[];
+	refetch(): void;
 };
 
-const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
+const MarketInfo: FC<MarketInfoProps> = ({ market, position, openOrders, refetch }) => {
 	const { t } = useTranslation();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -47,7 +51,12 @@ const MarketInfo: FC<MarketInfoProps> = ({ market }) => {
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
 			<TVChartWrapper baseCurrencyKey={baseCurrencyKey} />
-			<UserInfo marketAsset={baseCurrencyKey} />
+			<UserInfo
+				marketAsset={baseCurrencyKey}
+				position={position}
+				openOrders={openOrders}
+				refetch={refetch}
+			/>
 		</Container>
 	);
 };
