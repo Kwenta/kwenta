@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -64,6 +64,7 @@ const useHistoricalVolumes = (synthNames: string[]) => {
 				// Disable it for now and enable if needed later once either the query is fixed or id of synth is resolved.
 				// fromSynth_in: synthNames,
 			},
+			first: 999999,
 		},
 		{
 			id: true,
