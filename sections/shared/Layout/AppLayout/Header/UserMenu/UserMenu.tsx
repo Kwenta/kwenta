@@ -123,8 +123,11 @@ const SwitchToL2Button = styled(Button)`
 `;
 
 const CTARow = styled(FlexDiv)`
-	> * {
-		margin-right: 16px;
+	button:first-child {
+		margin-right: 15px;
+	}
+	button:only-child {
+		margin-right: 0px;
 	}
 `;
 
