@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-
+import { border } from 'components/Button';
 interface SegmentedControlProps {
 	values: string[];
 	selectedIndex: number;
@@ -49,11 +49,17 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 	${(props) =>
 		props.isSelected
 			? css`
+				
 					background: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
+					position:relative;
 					box-shadow: ${(props) => props.theme.colors.selectedTheme.segmented.button.shadow};
-					border: ${(props) => props.theme.colors.selectedTheme.border};
-					color: ${(props) => props.theme.colors.common.primaryWhite};
+					border: none;
 					border-radius: 6px;
+					${border}
+					color: ${(props) => props.theme.colors.common.primaryWhite};
+					&::before {
+						border-radius: 6px;
+					}
 			  `
 			: css`
 					background: transparent;
