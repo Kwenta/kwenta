@@ -207,6 +207,17 @@ export const QUERY_KEYS = {
 			networkId,
 			market,
 		],
+		OpenOrders: (networkId: NetworkId, walletAddress: string | null) => [
+			'futures',
+			'openOrders',
+			networkId,
+			walletAddress,
+		],
+		NextPriceDetails: (
+			networkId: NetworkId,
+			walletAddress: string | null,
+			currencyKey: string | null
+		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 	},
 };
 
