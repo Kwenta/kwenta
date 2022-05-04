@@ -119,7 +119,8 @@ const ConnectButton = styled(Button)`
 
 const SwitchToL2Button = styled(Button)`
 	font-size: 13px;
-	color: white;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const CTARow = styled(FlexDiv)`
