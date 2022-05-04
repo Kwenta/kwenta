@@ -33,13 +33,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
 
-	React.useEffect(() => {
-		console.log('sizeDelta', sizeDelta.toString());
-	}, [sizeDelta]);
-
 	const nextPriceDiscount = React.useMemo(() => {
-		console.log('nextPriceFee', nextPriceFee?.toString());
-		console.log('commitDeposit', commitDeposit?.toString());
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceFee]);
 
