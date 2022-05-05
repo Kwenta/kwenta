@@ -43,6 +43,8 @@ const useGetFuturesTrades = (
 						timestamp: true,
 						account: true,
 						asset: true,
+						positionSize: true,
+						positionClosed: true,
 					}
 				);
 				return response ? mapTrades(response) : null;

@@ -250,16 +250,24 @@ export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers?.map(
-		({ timestamp, account, market, size, asset, txHash }: FuturesMarginTransferResult) => {
+		({
+			timestamp,
+			account,
+			market,
+			size,
+			asset,
+			txHash,
+		}: FuturesMarginTransferResult): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
 			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
 				sign: '$',
 			})}`;
+			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
-				timestamp,
+				timestamp: numTimestamp,
 				account,
 				market,
 				size,

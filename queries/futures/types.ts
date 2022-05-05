@@ -109,10 +109,12 @@ export type RawPosition = {
 export type MarginTransfer = {
 	timestamp: number;
 	market: string;
+	account: string;
 	size: Wei;
 	txHash: string;
 	action: string;
 	amount: string;
+	isPositive: boolean;
 	asset: string;
 };
 

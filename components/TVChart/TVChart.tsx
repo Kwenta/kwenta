@@ -9,7 +9,7 @@ import {
 } from '../../public/static/charting_library/charting_library';
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import { ChartPosition } from './types';
 
@@ -48,12 +48,12 @@ export function TVChart({
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
 
 	const { colors } = useContext(ThemeContext);
-	let isL2 = useRecoilValue(isL2State);
+	let network = useRecoilValue(networkState);
 
 	useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeedFactory(isL2),
+			datafeed: DataFeedFactory(network.id),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -108,7 +108,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, network.id]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
