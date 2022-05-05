@@ -815,12 +815,20 @@
 					"tab": "History",
 					"table": {
 						"id": "ID",
-						"position": "position",
-						"leverage": "leverage",
-						"entry": "entry price",
-						"final": "final price",
-						"pnl": "PNL",
-						"status": "status"
+						"trade-size": "trade size",
+						"pnl": "P&L",
+						"status": "status",
+						"date": "date",
+						"fees": "fees",
+						"price": "price",
+						"side": "side",
+						"no-results": "You have no trades yet.",
+						"order-type": "order type",
+						"trade-types": {
+							"exit": "exit",
+							"liquidated": "liquidated",
+							"entry": "entry"
+						}
 					}
 				},
 				"transfers": {
@@ -830,8 +838,7 @@
 						"amount": "amount",
 						"date": "date",
 						"transaction": "transaction",
-						"no-results": "You have no transfer history",
-						"deposit": "Deposit sUSD and start trading"
+						"no-results": "You have no transfer history"
 					}
 				}
 			}

@@ -182,6 +182,13 @@ export type FuturesTrade = {
 	price?: Wei;
 	txnHash: string;
 	timestamp: Wei;
+	positionId?: string;
+	positionSize: Wei;
+	positionClosed: boolean;
+	side?: PositionSide;
+	pnl: Wei;
+	feesPaid: Wei;
+	orderType: 'NextPrice' | 'Limit' | 'Market';
 };
 
 export type FuturesVolumes = {

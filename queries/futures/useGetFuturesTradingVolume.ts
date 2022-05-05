@@ -43,8 +43,12 @@ const useGetFuturesTradingVolume = (
 						timestamp: true,
 						account: true,
 						asset: true,
+						positionId: true,
 						positionSize: true,
 						positionClosed: true,
+						pnl: true,
+						feesPaid: true,
+						orderType: true,
 					}
 				);
 				return response ? calculateTradeVolume(response) : null;

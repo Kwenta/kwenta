@@ -11,8 +11,9 @@ import { FuturesTrade } from './types';
 import { getFuturesTrades } from './subgraph';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
-const useGetFuturesTrades = (
+const useGetFuturesTradesForAccount = (
 	currencyKey: string | undefined,
+	account?: string | null,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -22,9 +23,9 @@ const useGetFuturesTrades = (
 	const isL2 = useRecoilValue(isL2State);
 
 	return useQuery<FuturesTrade[] | null>(
-		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
+		QUERY_KEYS.Futures.TradesAccount(network.id, currencyKey || null, account || null),
 		async () => {
-			if (!currencyKey) return null;
+			if (!currencyKey || !account) return null;
 
 			try {
 				const response = await getFuturesTrades(
@@ -33,6 +34,7 @@ const useGetFuturesTrades = (
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							account: account,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
@@ -58,8 +60,8 @@ const useGetFuturesTrades = (
 				return null;
 			}
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady : isAppReady, ...options }
+		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
 	);
 };
 
-export default useGetFuturesTrades;
+export default useGetFuturesTradesForAccount;

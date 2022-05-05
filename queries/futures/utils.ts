@@ -359,15 +359,32 @@ export const mapTradeHistory = (
 };
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(({ id, timestamp, size, price, asset }: FuturesTradeResult) => {
-		const priceWei = new Wei(price, 18, true);
-		const sizeWei = new Wei(size, 18, true);
-		return {
-			size: sizeWei,
-			asset: asset,
-			price: priceWei,
-			txnHash: id.split('-')[0].toString(),
-			timestamp: timestamp,
-		};
-	});
+	return futuresTrades?.map(
+		({
+			id,
+			timestamp,
+			size,
+			price,
+			asset,
+			positionSize,
+			positionClosed,
+			pnl,
+			feesPaid,
+			orderType,
+		}: FuturesTradeResult) => {
+			return {
+				size: new Wei(size, 18, true),
+				asset: asset,
+				price: new Wei(price, 18, true),
+				txnHash: id.split('-')[0].toString(),
+				timestamp: timestamp,
+				positionSize: new Wei(positionSize, 18, true),
+				positionClosed,
+				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				pnl: new Wei(pnl, 18, true),
+				feesPaid: new Wei(feesPaid, 18, true),
+				orderType: orderType,
+			};
+		}
+	);
 };
