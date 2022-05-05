@@ -164,7 +164,7 @@ const SelectContainer = styled.div`
 	margin-bottom: 16px;
 
 	.react-select__dropdown-indicator {
-		margin-right: 22px;
+		margin-right: 10px;
 	}
 
 	.react-select__option {

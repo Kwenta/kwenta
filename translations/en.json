@@ -690,7 +690,8 @@
 						"sell": "sell",
 						"total-leverage": "Total leverage ≈ {{totalLeverage}}x",
 						"close-position": "100% close position + {{leverageDelta}}x leverage",
-						"partial-close-position": "{{closePositionDelta}}% close position"
+						"partial-close-position": "{{closePositionDelta}}% close position",
+						"disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper."
 					}
 				},
 				"button": {
@@ -706,7 +707,8 @@
 					"open-position": "Open Position",
 					"modify-position": "Modify Position",
 					"deposit-margin-minimum": "Deposit $50 Margin Minimum",
-					"oi-caps-reached": "Open Interest Cap Reached"
+					"oi-caps-reached": "Open Interest Cap Reached",
+					"place-next-price-order": "Place Next-Price Order"
 				},
 				"margin": {
 					"deposit-susd": "Deposit your sUSD to start trading",
@@ -735,9 +737,14 @@
 						}
 					}
 				},
+					"next-price": {
+						"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+						"learn-more": "Learn more"
+					},
 				"confirmation": {
 					"modal": {
-						"confirm-order": "Confirm order"
+						"confirm-order": "Confirm order",
+						"max-leverage-disclaimer": "Note: A next price update could cause your order to exceed maximum leverage resulting in the order being dropped by the keeper."
 					}
 				}
 			},
@@ -784,6 +791,24 @@
 						"fee": "fee",
 						"status": "status",
 						"cancel": "cancel"
+					}
+				},
+				"open-orders": {
+					"tab": "Open Orders",
+					"table": {
+						"market-type": "Market/Type",
+						"side": "Side",
+						"size": "Size",
+						"parameters": "Parameters",
+						"actions": "Actions"
+					},
+					"actions": {
+						"cancel": "Cancel",
+						"edit": "Edit",
+						"execute": "Execute"
+					},
+					"badges": {
+						"expired": "Expired"
 					}
 				},
 				"trades": {

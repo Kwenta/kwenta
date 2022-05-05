@@ -110,10 +110,10 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 			}
 		},
 		subscribeBars: () => {
-			console.log('=====subscribeBars runnning');
+			// do nothing
 		},
 		unsubscribeBars: (subscriberUID) => {
-			console.log('=====unsubscribeBars running');
+			// do nothing
 		},
 		searchSymbols: (
 			userInput: string,
