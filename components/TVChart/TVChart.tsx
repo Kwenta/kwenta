@@ -8,7 +8,7 @@ import {
 } from '../../public/static/charting_library/charting_library';
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
-import { isL2State, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 
 type Props = {
 	baseCurrencyKey: string;
