@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
-import { ExternalLink, FlexDivCentered, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { PositionSide, TradeStatus } from '../types';
 
@@ -46,7 +46,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
-	const getStatus = (status: string) => {
+	/* const getStatus = (status: string) => {
 		switch (status) {
 			case TradeStatus.OPEN:
 				return (
@@ -69,7 +69,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 			default:
 				return null;
 		}
-	};
+	};*/
 
 	return (
 		<Card>
@@ -83,8 +83,8 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'time',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
-								<div>{format(new Date(cellProps.value), 'MM-dd-yy')}</div>
-								<div>{format(new Date(cellProps.value), 'HH:mm:ssaa')}</div>
+								<div>{format(new Date(cellProps.value), 'MM/dd/yy')}</div>
+								<div>{format(new Date(cellProps.value), 'HH:mm:ss aa')}</div>
 							</GridDivCenteredRow>
 						),
 						width: 90,
@@ -97,9 +97,9 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'side',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<FlexDivCentered>
+							<>
 								<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
-							</FlexDivCentered>
+							</>
 						),
 						width: 60,
 						sortable: true,
@@ -112,11 +112,9 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<>
-								<Price>
-									{formatCurrency(Synths.sUSD, cellProps.value, {
-										sign: '$',
-									})}
-								</Price>
+								{formatCurrency(Synths.sUSD, cellProps.value, {
+									sign: '$',
+								})}
 							</>
 						),
 						width: 80,
@@ -131,9 +129,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'amount',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<FlexDivCentered>
-								<StyledPositionSize>{formatCryptoCurrency(cellProps.value)}</StyledPositionSize>
-							</FlexDivCentered>
+							<>{formatCryptoCurrency(cellProps.value)}</>
 						),
 						width: 80,
 						sortable: true,
@@ -184,10 +180,10 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'type',
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<FlexDivCentered>
+							<>
 								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
-								<StyledPositionSize>{cellProps.value}</StyledPositionSize>
-							</FlexDivCentered>
+								{cellProps.value}
+							</>
 						),
 						width: 100,
 					},
@@ -200,9 +196,9 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 					// 	sortType: 'basic',
 					// 	Cell: (cellProps: CellProps<FuturesTrade>) => {
 					// 		return (
-					// 			<FlexDivCentered>
+					// 			<>
 					// 				<StatusText>{getStatus(cellProps.value)}</StatusText>
-					// 			</FlexDivCentered>
+					// 			</>
 					// 		);
 					// 	},
 					// 	width: 100,
@@ -237,37 +233,11 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 };
 export default Trades;
 
-const BoldTableText = css`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
-	text-transform: capitalize;
-`;
-
 const StyledTable = styled(Table)``;
 
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-transform: capitalize;
-`;
-
-const StyledStatus = styled.span<{ status: string }>`
-	font-size: 10px;
-	color: ${(props) =>
-		props.status === TradeStatus.OPEN
-			? props.theme.colors.yellow
-			: props.status === TradeStatus.CLOSED
-			? props.theme.colors.white
-			: props.theme.colors.red};
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-left: 2px;
-	text-transform: uppercase;
-`;
-
-const StyledPositionSize = styled.div`
-	margin-left: 4px;
-	${BoldTableText}
-	text-transform: none;
 `;
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
@@ -286,17 +256,27 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		`}
 `;
 
+/* 
+const StyledStatus = styled.span<{ status: string }>`
+	font-size: 10px;
+	color: ${(props) =>
+		props.status === TradeStatus.OPEN
+			? props.theme.colors.yellow
+			: props.status === TradeStatus.CLOSED
+			? props.theme.colors.white
+			: props.theme.colors.red};
+	font-family: ${(props) => props.theme.fonts.bold};
+	margin-left: 2px;
+	text-transform: uppercase;
+`;
+
 const StatusText = styled.div`
 	${BoldTableText};
 	margin-left: 4px;
 `;
-
-const Price = styled.div`
-	${BoldTableText};
-`;
+*/
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
-	${BoldTableText};
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.common.primaryWhite
@@ -320,6 +300,7 @@ const StyledExternalLink = styled(ExternalLink)`
 `;
 
 const StyledLinkIcon = styled(Svg)`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 14px;
 	height: 14px;
 `;
