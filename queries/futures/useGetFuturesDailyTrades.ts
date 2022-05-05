@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
@@ -10,6 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { DAY_PERIOD } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { getFuturesEndpoint } from './utils';
+import { getFuturesTrades } from './subgraph';
 
 const useGetFuturesDailyTradeStatsForMarket = (
 	currencyKey: string | null,
@@ -27,22 +27,27 @@ const useGetFuturesDailyTradeStatsForMarket = (
 
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-				const response = await request(
+				const response = await getFuturesTrades(
 					futuresEndpoint,
-					gql`
-					query FuturesTradesDailyCount($currencyKey: String!) {
-						futuresTrades(
-							where: { asset: $currencyKey, timestamp_gte: ${minTimestamp} }
-							first: 1000
-						) {
-							id
-						}
+					{
+						first: 999999,
+						where: {
+							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							timestamp_gte: `${minTimestamp}`,
+						},
+					},
+					{
+						size: true,
+						price: true,
+						id: true,
+						timestamp: true,
+						account: true,
+						asset: true,
+						positionSize: true,
+						positionClosed: true,
 					}
-				`,
-					{ currencyKey: ethersUtils.formatBytes32String(currencyKey) }
 				);
-
-				return response ? response.futuresTrades.length : null;
+				return response ? response.length : null;
 			} catch (e) {
 				console.log(e);
 				return null;
