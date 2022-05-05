@@ -109,12 +109,12 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 
 	useEffect(() => {
 		setEntryPrice(marketAssetRate);
-	}, []);
+	}, [marketAssetRate]);
 
 	useEffect(() => {
 		onGainPercentChange(gainPercent);
 		onLossPercentChange(lossPercent);
-	}, [leverageSide]);
+	}, [leverageSide, onGainPercentChange, onLossPercentChange, gainPercent, lossPercent]);
 
 	return (
 		<>
