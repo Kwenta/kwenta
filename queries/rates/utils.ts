@@ -3,6 +3,17 @@ import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
 import { Synths } from 'constants/currency';
+import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { CandleResult } from 'queries/futures/subgraph';
+import { Candle } from './types';
+
+export const getRatesEndpoint = (networkId: number): string => {
+	return networkId === 10
+		? RATES_ENDPOINT_MAINNET
+		: networkId === 69
+		? RATES_ENDPOINT_TESTNET
+		: RATES_ENDPOINT_MAINNET;
+};
 
 export const getMinAndMaxRate = (rates: RateUpdateResult[]): [Wei, Wei] => {
 	if (rates.length === 0) return [wei(0), wei(0)];
@@ -90,4 +101,18 @@ export const synthToCoingeckoPriceId = (synth: any) => {
 	} else {
 		return 'ethereum';
 	}
+};
+
+export const mapCandles = (candles: CandleResult[]): Candle[] => {
+	return candles?.map(({ id, synth, open, high, low, close, timestamp }: CandleResult) => {
+		return {
+			id: id,
+			synth: synth,
+			open: open.toNumber(),
+			high: high.toNumber(),
+			low: low.toNumber(),
+			close: close.toNumber(),
+			timestamp: timestamp.toNumber(),
+		};
+	});
 };

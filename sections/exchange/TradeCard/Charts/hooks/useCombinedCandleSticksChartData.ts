@@ -1,12 +1,8 @@
-import { useMemo } from 'react';
 import orderBy from 'lodash/orderBy';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { CurrencyKey, Synths } from 'constants/currency';
-import { PeriodLabel } from 'constants/period';
 import { Candle } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
-import useSynthetixQueries from '@synthetixio/queries';
 
 export type TempCandle = {
 	id: string;
@@ -15,34 +11,8 @@ export type TempCandle = {
 	high: Wei;
 	low: Wei;
 	close: Wei;
-	timestamp: BigInt;
+	timestamp: Wei;
 	isBase?: boolean;
-};
-
-const useCombinedCandleSticksChartData = ({
-	baseCurrencyKey,
-	quoteCurrencyKey,
-	selectedChartPeriodLabel,
-}: {
-	baseCurrencyKey: CurrencyKey | null;
-	quoteCurrencyKey: CurrencyKey | null;
-	selectedChartPeriodLabel: PeriodLabel;
-}) => {
-	const baseCurrencyIsSUSD = baseCurrencyKey === Synths.sUSD;
-	const quoteCurrencyIsSUSD = quoteCurrencyKey === Synths.sUSD;
-
-	const base = useData(baseCurrencyKey, selectedChartPeriodLabel);
-	const quote = useData(quoteCurrencyKey, selectedChartPeriodLabel);
-
-	const data = useMemo(() => {
-		return combineDataToPair(base.data, quote.data, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
-	}, [base.data, quote.data, baseCurrencyIsSUSD, quoteCurrencyIsSUSD]);
-
-	return {
-		noData: (base.noData && !baseCurrencyIsSUSD) || (quote.noData && !quoteCurrencyIsSUSD),
-		isLoading: (base.isLoading && !baseCurrencyIsSUSD) || (quote.isLoading && !quoteCurrencyIsSUSD),
-		data,
-	};
 };
 
 export const combineDataToPair = (
@@ -100,32 +70,15 @@ export const combineDataToPair = (
 	}, [] as Candle[]);
 };
 
-type ChartDataQuery = {
-	data: Candle[];
-	noData: boolean;
-	isLoading: boolean;
-};
-
-const useData = (
-	currencyKey: CurrencyKey | null,
-	selectedChartPeriodLabel: PeriodLabel
-): ChartDataQuery => {
-	const { useCandlesticksQuery } = useSynthetixQueries();
-	const query = useCandlesticksQuery(currencyKey, selectedChartPeriodLabel.period);
-	const data = query.isSuccess && query.data ? query.data : [];
-	const noData = query.isSuccess && query.data && data.length === 0;
-	return { data, noData, isLoading: query.isLoading };
-};
-
 const toTempCandle = (n: Candle): TempCandle => {
 	return {
 		id: n.id,
 		synth: n.synth,
-		open: wei(n.open.toLocaleString()),
-		high: wei(n.high.toLocaleString()),
-		low: wei(n.low.toLocaleString()),
-		close: wei(n.close.toLocaleString()),
-		timestamp: n.timestamp,
+		open: wei(n.open),
+		high: wei(n.high),
+		low: wei(n.low),
+		close: wei(n.close),
+		timestamp: wei(n.timestamp),
 	};
 };
 
@@ -133,16 +86,10 @@ const fromTempCandle = (n: TempCandle): Candle => {
 	return {
 		id: n.id,
 		synth: n.synth,
-		open: weiToBigInt(n.open),
-		high: weiToBigInt(n.high),
-		low: weiToBigInt(n.low),
-		close: weiToBigInt(n.close),
-		timestamp: n.timestamp,
+		open: n.open.toNumber(),
+		high: n.high.toNumber(),
+		low: n.low.toNumber(),
+		close: n.close.toNumber(),
+		timestamp: n.timestamp.toNumber(),
 	};
 };
-
-const weiToBigInt = (n: Wei): BigInt => {
-	return BigInt(Math.ceil(n.mul(1e18).toNumber()));
-};
-
-export default useCombinedCandleSticksChartData;

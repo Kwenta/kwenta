@@ -250,16 +250,24 @@ export const mapMarginTransfers = (
 	marginTransfers: FuturesMarginTransferResult[]
 ): MarginTransfer[] => {
 	return marginTransfers?.map(
-		({ timestamp, account, market, size, asset, txHash }: FuturesMarginTransferResult) => {
+		({
+			timestamp,
+			account,
+			market,
+			size,
+			asset,
+			txHash,
+		}: FuturesMarginTransferResult): MarginTransfer => {
 			const sizeWei = new Wei(size);
 			const cleanSize = sizeWei.div(ETH_UNIT).abs();
 			const isPositive = sizeWei.gt(0);
 			const amount = `${isPositive ? '+' : '-'}${formatCurrency(Synths.sUSD, cleanSize, {
 				sign: '$',
 			})}`;
+			const numTimestamp = wei(timestamp).toNumber();
 
 			return {
-				timestamp,
+				timestamp: numTimestamp,
 				account,
 				market,
 				size,
@@ -300,6 +308,7 @@ export const mapTradeHistory = (
 					closeTimestamp,
 					totalVolume,
 					trades,
+					avgEntryPrice,
 				}: RawPosition) => {
 					const entryPriceWei = new Wei(entryPrice, 18, true);
 					const exitPriceWei = new Wei(exitPrice || 0, 18, true);
@@ -309,7 +318,7 @@ export const mapTradeHistory = (
 					const marginWei = new Wei(margin, 18, true);
 					const pnlWei = new Wei(pnl, 18, true);
 					const totalVolumeWei = new Wei(totalVolume, 18, true);
-
+					const avgEntryPriceWei = new Wei(avgEntryPrice, 18, true);
 					return {
 						id: Number(id.split('-')[1].toString()),
 						transactionHash: lastTxHash,
@@ -330,6 +339,7 @@ export const mapTradeHistory = (
 						pnl: pnlWei,
 						totalVolume: totalVolumeWei,
 						trades: trades,
+						avgEntryPrice: avgEntryPriceWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)
 							: sizeWei.mul(entryPriceWei).div(marginWei).abs(),
@@ -349,15 +359,32 @@ export const mapTradeHistory = (
 };
 
 export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] => {
-	return futuresTrades?.map(({ id, timestamp, size, price, asset }: FuturesTradeResult) => {
-		const priceWei = new Wei(price, 18, true);
-		const sizeWei = new Wei(size, 18, true);
-		return {
-			size: sizeWei,
-			asset: asset,
-			price: priceWei,
-			txnHash: id.split('-')[0].toString(),
-			timestamp: timestamp,
-		};
-	});
+	return futuresTrades?.map(
+		({
+			id,
+			timestamp,
+			size,
+			price,
+			asset,
+			positionSize,
+			positionClosed,
+			pnl,
+			feesPaid,
+			orderType,
+		}: FuturesTradeResult) => {
+			return {
+				size: new Wei(size, 18, true),
+				asset: asset,
+				price: new Wei(price, 18, true),
+				txnHash: id.split('-')[0].toString(),
+				timestamp: timestamp,
+				positionSize: new Wei(positionSize, 18, true),
+				positionClosed,
+				side: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				pnl: new Wei(pnl, 18, true),
+				feesPaid: new Wei(feesPaid, 18, true),
+				orderType: orderType,
+			};
+		}
+	);
 };

@@ -1,8 +1,9 @@
 import dynamic from 'next/dynamic';
+import { ChartProps } from './TVChart';
 
 // @ts-ignore
-const TVChartContainer = dynamic(() => import('./TVChart').then((mod) => mod.TVChart), {
+const TVChartContainer = dynamic<TVChart>(() => import('./TVChart').then((mod) => mod.TVChart), {
 	ssr: false,
 });
 
-export default (props: any) => <TVChartContainer {...props} />;
+export default (props: ChartProps) => <TVChartContainer {...props} />;
