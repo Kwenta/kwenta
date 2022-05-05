@@ -13,7 +13,7 @@ const handler = nc()
 				'Content-Type': 'application/json',
 			},
 		});
-		return response;
+		// res.send(response.data)
 	});
 
 export default handler;
