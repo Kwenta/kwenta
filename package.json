@@ -54,7 +54,7 @@
 		"immer": "9.0.6",
 		"lodash": "4.17.20",
 		"moment-business-time": "1.1.1",
-		"next": "10.0.0",
+		"next": "^10.2.3",
 		"next-compose-plugins": "2.2.0",
 		"react": "17.0.1",
 		"react-countdown": "2.3.1",
@@ -132,11 +132,7 @@
 		"react-test-renderer": "17.0.1",
 		"typescript": "4.2.4",
 		"url-loader": "4.1.0",
-		"webp-loader": "0.6.0",
-		"webpack": "^5.70.0"
-	},
-	"resolutions": {
-		"webpack": "^5.0.0-beta.30"
+		"webp-loader": "0.6.0"
 	},
 	"husky": {
 		"hooks": {
