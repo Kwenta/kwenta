@@ -6,6 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import request, { gql } from 'graphql-request';
 import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
+import { FUTURES_POSITION_FRAGMENT } from './constants';
 
 const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -21,27 +22,10 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 				const response = await request(
 					futuresEndpoint,
 					gql`
+						${FUTURES_POSITION_FRAGMENT}
 						query userAllPositions($account: String!) {
 							futuresPositions(where: { account: $account }) {
-								id
-								lastTxHash
-								timestamp
-								account
-								market
-								asset
-								margin
-								size
-								feesPaid
-								netFunding
-								isOpen
-								isLiquidated
-								entryPrice
-								exitPrice
-								pnl
-								closeTimestamp
-								openTimestamp
-								totalVolume
-								trades
+								...FuturesPositionFragment
 							}
 						}
 					`,

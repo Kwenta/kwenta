@@ -1,18 +1,26 @@
-import * as React from 'react';
+import { useRef, useContext, useEffect } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 
 import {
 	IChartingLibraryWidget,
+	IPositionLineAdapter,
 	widget,
 } from '../../public/static/charting_library/charting_library';
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import { networkState } from 'store/wallet';
+import { formatNumber } from 'utils/formatters/number';
+import { ChartPosition } from './types';
 
-type Props = {
+export type ChartProps = {
 	baseCurrencyKey: string;
 	quoteCurrencyKey: string;
+	activePosition?: ChartPosition | null;
+	potentialTrade?: ChartPosition | null;
+};
+
+type Props = ChartProps & {
 	interval: string;
 	containerId: string;
 	libraryPath: string;
@@ -32,15 +40,20 @@ export function TVChart({
 	autosize = true,
 	studiesOverrides = {},
 	overrides,
+	activePosition,
+	potentialTrade,
 }: Props) {
-	const _widget = React.useRef<IChartingLibraryWidget | null>(null);
-	const { colors } = React.useContext(ThemeContext);
-	let isL2 = useRecoilValue(isL2State);
+	const _widget = useRef<IChartingLibraryWidget | null>(null);
+	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
+	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
 
-	React.useEffect(() => {
+	const { colors } = useContext(ThemeContext);
+	let network = useRecoilValue(networkState);
+
+	useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeedFactory(isL2),
+			datafeed: DataFeedFactory(network.id),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -95,7 +108,55 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [baseCurrencyKey, quoteCurrencyKey, network.id]);
+
+	useEffect(() => {
+		_widget.current?.onChartReady(() => {
+			_widget.current?.chart().dataReady(() => {
+				_entryLine.current?.remove?.();
+				_liquidationLine.current?.remove?.();
+				_entryLine.current = null;
+				_liquidationLine.current = null;
+
+				const setPositionLines = (position: ChartPosition, active: boolean) => {
+					_entryLine.current = _widget.current
+						?.chart()
+						.createPositionLine()
+						.setText('ENTRY: ' + formatNumber(position.price))
+						.setTooltip('Average entry price')
+						.setQuantity(formatNumber(position.size.abs()))
+						.setPrice(position.price.toNumber())
+						.setExtendLeft(false)
+						.setLineStyle(active ? 0 : 2)
+						.setLineLength(25);
+
+					if (position.liqPrice) {
+						_liquidationLine.current = _widget.current
+							?.chart()
+							.createPositionLine()
+							.setText('LIQUIDATION: ' + formatNumber(position.liqPrice))
+							.setTooltip('Liquidation price')
+							.setQuantity(formatNumber(position.size.abs()))
+							.setPrice(position.liqPrice.toNumber())
+							.setExtendLeft(false)
+							.setLineStyle(active ? 0 : 2)
+							.setLineColor(colors.common.primaryRed)
+							.setBodyBorderColor(colors.common.primaryRed)
+							.setQuantityBackgroundColor(colors.common.primaryRed)
+							.setQuantityBorderColor(colors.common.primaryRed)
+							.setLineLength(25);
+					}
+				};
+
+				// Always show potential over existing
+				if (potentialTrade) {
+					setPositionLines(potentialTrade, false);
+				} else if (activePosition) {
+					setPositionLines(activePosition, true);
+				}
+			});
+		});
+	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
 	return (
 		<Container>

@@ -1,6 +1,7 @@
 import Wei, { WeiSource, wei } from '@synthetixio/wei';
 import axios from 'codegen-graph-ts/build/src/lib/axios';
 import generateGql from 'codegen-graph-ts/build/src/lib/gql';
+
 export type SingleQueryOptions = {
 	id: string;
 	block?:
@@ -118,6 +119,7 @@ export type CandleFilter = {
 	aggregatedPrices_lte?: WeiSource | null;
 	aggregatedPrices_in?: WeiSource[];
 	aggregatedPrices_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type CandleResult = {
 	id: string;
@@ -225,6 +227,135 @@ export const getCandles = async function <K extends keyof CandleResult>(
 	} while (paginationKey && options.first && results.length < options.first);
 	return options.first ? results.slice(0, options.first) : results;
 };
+export type FundingRateUpdateFilter = {
+	id?: string | null;
+	id_not?: string | null;
+	id_gt?: string | null;
+	id_lt?: string | null;
+	id_gte?: string | null;
+	id_lte?: string | null;
+	id_in?: string[];
+	id_not_in?: string[];
+	timestamp?: WeiSource | null;
+	timestamp_not?: WeiSource | null;
+	timestamp_gt?: WeiSource | null;
+	timestamp_lt?: WeiSource | null;
+	timestamp_gte?: WeiSource | null;
+	timestamp_lte?: WeiSource | null;
+	timestamp_in?: WeiSource[];
+	timestamp_not_in?: WeiSource[];
+	market?: string | null;
+	market_not?: string | null;
+	market_in?: string[];
+	market_not_in?: string[];
+	market_contains?: string | null;
+	market_not_contains?: string | null;
+	sequenceLength?: WeiSource | null;
+	sequenceLength_not?: WeiSource | null;
+	sequenceLength_gt?: WeiSource | null;
+	sequenceLength_lt?: WeiSource | null;
+	sequenceLength_gte?: WeiSource | null;
+	sequenceLength_lte?: WeiSource | null;
+	sequenceLength_in?: WeiSource[];
+	sequenceLength_not_in?: WeiSource[];
+	funding?: WeiSource | null;
+	funding_not?: WeiSource | null;
+	funding_gt?: WeiSource | null;
+	funding_lt?: WeiSource | null;
+	funding_gte?: WeiSource | null;
+	funding_lte?: WeiSource | null;
+	funding_in?: WeiSource[];
+	funding_not_in?: WeiSource[];
+	_change_block?: any | null;
+};
+export type FundingRateUpdateResult = {
+	id: string;
+	timestamp: Wei;
+	market: string;
+	sequenceLength: Wei;
+	funding: Wei;
+};
+export type FundingRateUpdateFields = {
+	id: true;
+	timestamp: true;
+	market: true;
+	sequenceLength: true;
+	funding: true;
+};
+export type FundingRateUpdateArgs<K extends keyof FundingRateUpdateResult> = {
+	[Property in keyof Pick<FundingRateUpdateFields, K>]: FundingRateUpdateFields[Property];
+};
+export const getFundingRateUpdateById = async function <K extends keyof FundingRateUpdateResult>(
+	url: string,
+	options: SingleQueryOptions,
+	args: FundingRateUpdateArgs<K>
+): Promise<Pick<FundingRateUpdateResult, K>> {
+	const res = await axios.post(url, {
+		query: generateGql('fundingRateUpdate', options, args),
+	});
+	const r = res.data as any;
+	if (r.errors && r.errors.length) {
+		throw new Error(r.errors[0].message);
+	}
+	const obj = r.data[Object.keys(r.data)[0]] as any;
+	const formattedObj: any = {};
+	if (obj['id']) formattedObj['id'] = obj['id'];
+	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+	if (obj['market']) formattedObj['market'] = obj['market'];
+	if (obj['sequenceLength']) formattedObj['sequenceLength'] = wei(obj['sequenceLength'], 0);
+	if (obj['funding']) formattedObj['funding'] = wei(obj['funding'], 0);
+	return formattedObj as Pick<FundingRateUpdateResult, K>;
+};
+export const getFundingRateUpdates = async function <K extends keyof FundingRateUpdateResult>(
+	url: string,
+	options: MultiQueryOptions<FundingRateUpdateFilter, FundingRateUpdateResult>,
+	args: FundingRateUpdateArgs<K>
+): Promise<Pick<FundingRateUpdateResult, K>[]> {
+	const paginatedOptions: Partial<MultiQueryOptions<
+		FundingRateUpdateFilter,
+		FundingRateUpdateResult
+	>> = { ...options };
+	let paginationKey: keyof FundingRateUpdateFilter | null = null;
+	let paginationValue = '';
+	if (options.first && options.first > MAX_PAGE) {
+		paginatedOptions.first = MAX_PAGE;
+		paginatedOptions.orderBy = options.orderBy || 'id';
+		paginatedOptions.orderDirection = options.orderDirection || 'asc';
+		paginationKey = (paginatedOptions.orderBy +
+			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof FundingRateUpdateFilter;
+		paginatedOptions.where = { ...options.where };
+	}
+	let results: Pick<FundingRateUpdateResult, K>[] = [];
+	do {
+		if (paginationKey && paginationValue)
+			paginatedOptions.where![paginationKey] = paginationValue as any;
+		const res = await axios.post(url, {
+			query: generateGql('fundingRateUpdates', paginatedOptions, args),
+		});
+		const r = res.data as any;
+		if (r.errors && r.errors.length) {
+			throw new Error(r.errors[0].message);
+		}
+		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
+		const newResults = rawResults.map((obj) => {
+			const formattedObj: any = {};
+			if (obj['id']) formattedObj['id'] = obj['id'];
+			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+			if (obj['market']) formattedObj['market'] = obj['market'];
+			if (obj['sequenceLength']) formattedObj['sequenceLength'] = wei(obj['sequenceLength'], 0);
+			if (obj['funding']) formattedObj['funding'] = wei(obj['funding'], 0);
+			return formattedObj as Pick<FundingRateUpdateResult, K>;
+		});
+		results = results.concat(newResults);
+		if (newResults.length < 1000) {
+			break;
+		}
+		if (paginationKey) {
+			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
+		}
+	} while (paginationKey && options.first && results.length < options.first);
+	return options.first ? results.slice(0, options.first) : results;
+};
 export type FuturesCumulativeStatFilter = {
 	id?: string | null;
 	id_not?: string | null;
@@ -266,6 +397,7 @@ export type FuturesCumulativeStatFilter = {
 	averageTradeSize_lte?: WeiSource | null;
 	averageTradeSize_in?: WeiSource[];
 	averageTradeSize_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type FuturesCumulativeStatResult = {
 	id: string;
@@ -393,6 +525,12 @@ export type FuturesMarginTransferFilter = {
 	market_not_in?: string[];
 	market_contains?: string | null;
 	market_not_contains?: string | null;
+	asset?: string | null;
+	asset_not?: string | null;
+	asset_in?: string[];
+	asset_not_in?: string[];
+	asset_contains?: string | null;
+	asset_not_contains?: string | null;
 	size?: WeiSource | null;
 	size_not?: WeiSource | null;
 	size_gt?: WeiSource | null;
@@ -401,14 +539,35 @@ export type FuturesMarginTransferFilter = {
 	size_lte?: WeiSource | null;
 	size_in?: WeiSource[];
 	size_not_in?: WeiSource[];
+	txHash?: string | null;
+	txHash_not?: string | null;
+	txHash_gt?: string | null;
+	txHash_lt?: string | null;
+	txHash_gte?: string | null;
+	txHash_lte?: string | null;
+	txHash_in?: string[];
+	txHash_not_in?: string[];
+	txHash_contains?: string | null;
+	txHash_contains_nocase?: string | null;
+	txHash_not_contains?: string | null;
+	txHash_not_contains_nocase?: string | null;
+	txHash_starts_with?: string | null;
+	txHash_starts_with_nocase?: string | null;
+	txHash_not_starts_with?: string | null;
+	txHash_not_starts_with_nocase?: string | null;
+	txHash_ends_with?: string | null;
+	txHash_ends_with_nocase?: string | null;
+	txHash_not_ends_with?: string | null;
+	txHash_not_ends_with_nocase?: string | null;
+	_change_block?: any | null;
 };
 export type FuturesMarginTransferResult = {
 	id: string;
-	timestamp: number;
+	timestamp: Wei;
 	account: string;
 	market: string;
-	size: Wei;
 	asset: string;
+	size: Wei;
 	txHash: string;
 };
 export type FuturesMarginTransferFields = {
@@ -416,8 +575,8 @@ export type FuturesMarginTransferFields = {
 	timestamp: true;
 	account: true;
 	market: true;
-	size: true;
 	asset: true;
+	size: true;
 	txHash: true;
 };
 export type FuturesMarginTransferArgs<K extends keyof FuturesMarginTransferResult> = {
@@ -443,7 +602,9 @@ export const getFuturesMarginTransferById = async function <
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['account']) formattedObj['account'] = obj['account'];
 	if (obj['market']) formattedObj['market'] = obj['market'];
+	if (obj['asset']) formattedObj['asset'] = obj['asset'];
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+	if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
 	return formattedObj as Pick<FuturesMarginTransferResult, K>;
 };
 export const getFuturesMarginTransfers = async function <
@@ -476,7 +637,6 @@ export const getFuturesMarginTransfers = async function <
 		const res = await axios.post(url, {
 			query: generateGql('futuresMarginTransfers', paginatedOptions, args),
 		});
-
 		const r = res.data as any;
 		if (r.errors && r.errors.length) {
 			throw new Error(r.errors[0].message);
@@ -488,7 +648,9 @@ export const getFuturesMarginTransfers = async function <
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['account']) formattedObj['account'] = obj['account'];
 			if (obj['market']) formattedObj['market'] = obj['market'];
+			if (obj['asset']) formattedObj['asset'] = obj['asset'];
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+			if (obj['txHash']) formattedObj['txHash'] = obj['txHash'];
 			return formattedObj as Pick<FuturesMarginTransferResult, K>;
 		});
 		results = results.concat(newResults);
@@ -536,6 +698,7 @@ export type FuturesMarketFilter = {
 	marketStats_ends_with_nocase?: string | null;
 	marketStats_not_ends_with?: string | null;
 	marketStats_not_ends_with_nocase?: string | null;
+	_change_block?: any | null;
 };
 export type FuturesMarketResult = {
 	id: string;
@@ -649,6 +812,7 @@ export type FuturesOneMinStatFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type FuturesOneMinStatResult = {
 	id: string;
@@ -734,6 +898,175 @@ export const getFuturesOneMinStats = async function <K extends keyof FuturesOneM
 	} while (paginationKey && options.first && results.length < options.first);
 	return options.first ? results.slice(0, options.first) : results;
 };
+export type FuturesOrderFilter = {
+	id?: string | null;
+	id_not?: string | null;
+	id_gt?: string | null;
+	id_lt?: string | null;
+	id_gte?: string | null;
+	id_lte?: string | null;
+	id_in?: string[];
+	id_not_in?: string[];
+	size?: WeiSource | null;
+	size_not?: WeiSource | null;
+	size_gt?: WeiSource | null;
+	size_lt?: WeiSource | null;
+	size_gte?: WeiSource | null;
+	size_lte?: WeiSource | null;
+	size_in?: WeiSource[];
+	size_not_in?: WeiSource[];
+	asset?: string | null;
+	asset_not?: string | null;
+	asset_in?: string[];
+	asset_not_in?: string[];
+	asset_contains?: string | null;
+	asset_not_contains?: string | null;
+	market?: string | null;
+	market_not?: string | null;
+	market_in?: string[];
+	market_not_in?: string[];
+	market_contains?: string | null;
+	market_not_contains?: string | null;
+	account?: string | null;
+	account_not?: string | null;
+	account_in?: string[];
+	account_not_in?: string[];
+	account_contains?: string | null;
+	account_not_contains?: string | null;
+	targetRoundId?: WeiSource | null;
+	targetRoundId_not?: WeiSource | null;
+	targetRoundId_gt?: WeiSource | null;
+	targetRoundId_lt?: WeiSource | null;
+	targetRoundId_gte?: WeiSource | null;
+	targetRoundId_lte?: WeiSource | null;
+	targetRoundId_in?: WeiSource[];
+	targetRoundId_not_in?: WeiSource[];
+	timestamp?: WeiSource | null;
+	timestamp_not?: WeiSource | null;
+	timestamp_gt?: WeiSource | null;
+	timestamp_lt?: WeiSource | null;
+	timestamp_gte?: WeiSource | null;
+	timestamp_lte?: WeiSource | null;
+	timestamp_in?: WeiSource[];
+	timestamp_not_in?: WeiSource[];
+	orderType?: FuturesOrderType | null;
+	orderType_not?: FuturesOrderType | null;
+	orderType_in?: FuturesOrderType[];
+	orderType_not_in?: FuturesOrderType[];
+	status?: FuturesOrderStatus | null;
+	status_not?: FuturesOrderStatus | null;
+	status_in?: FuturesOrderStatus[];
+	status_not_in?: FuturesOrderStatus[];
+};
+
+export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market';
+export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled';
+
+export type FuturesOrderResult = {
+	id: string;
+	size: Wei;
+	asset: string;
+	market: string;
+	account: string;
+	targetRoundId: Wei;
+	timestamp: Wei;
+	orderType: FuturesOrderType;
+	status: FuturesOrderStatus;
+};
+
+export type FuturesOrderFields = {
+	id: true;
+	size: true;
+	asset: true;
+	market: true;
+	account: true;
+	targetRoundId: true;
+	timestamp: true;
+	orderType: true;
+	status: true;
+};
+
+export type FuturesOrderArgs<K extends keyof FuturesOrderResult> = {
+	[Property in keyof Pick<FuturesOrderFields, K>]: FuturesOrderFields[Property];
+};
+export const getFuturesOrderById = async function <K extends keyof FuturesOrderResult>(
+	url: string,
+	options: SingleQueryOptions,
+	args: FuturesOrderArgs<K>
+): Promise<Pick<FuturesOrderResult, K>> {
+	const res = await axios.post(url, {
+		query: generateGql('futuresOrder', options, args),
+	});
+	const r = res.data as any;
+	if (r.errors && r.errors.length) {
+		throw new Error(r.errors[0].message);
+	}
+	const obj = r.data[Object.keys(r.data)[0]] as any;
+	const formattedObj: any = {};
+	if (obj['id']) formattedObj['id'] = obj['id'];
+	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+	if (obj['asset']) formattedObj['asset'] = obj['asset'];
+	if (obj['market']) formattedObj['market'] = obj['market'];
+	if (obj['account']) formattedObj['account'] = obj['account'];
+	if (obj['targetRoundId']) formattedObj['targetRoundId'] = wei(obj['targetRoundId'], 0);
+	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+	if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
+	if (obj['status']) formattedObj['status'] = obj['status'];
+	return formattedObj as Pick<FuturesOrderResult, K>;
+};
+export const getFuturesOrders = async function <K extends keyof FuturesOrderResult>(
+	url: string,
+	options: MultiQueryOptions<FuturesOrderFilter, FuturesOrderResult>,
+	args: FuturesOrderArgs<K>
+): Promise<Pick<FuturesOrderResult, K>[]> {
+	const paginatedOptions: Partial<MultiQueryOptions<FuturesOrderFilter, FuturesOrderResult>> = {
+		...options,
+	};
+	let paginationKey: keyof FuturesOrderFilter | null = null;
+	let paginationValue = '';
+	if (options.first && options.first > MAX_PAGE) {
+		paginatedOptions.first = MAX_PAGE;
+		paginatedOptions.orderBy = options.orderBy || 'id';
+		paginatedOptions.orderDirection = options.orderDirection || 'asc';
+		paginationKey = (paginatedOptions.orderBy +
+			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof FuturesOrderFilter;
+		paginatedOptions.where = { ...options.where };
+	}
+	let results: Pick<FuturesOrderResult, K>[] = [];
+	do {
+		if (paginationKey && paginationValue)
+			paginatedOptions.where![paginationKey] = paginationValue as any;
+		const res = await axios.post(url, {
+			query: generateGql('futuresOrders', paginatedOptions, args),
+		});
+		const r = res.data as any;
+		if (r.errors && r.errors.length) {
+			throw new Error(r.errors[0].message);
+		}
+		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
+		const newResults = rawResults.map((obj) => {
+			const formattedObj: any = {};
+			if (obj['id']) formattedObj['id'] = obj['id'];
+			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
+			if (obj['asset']) formattedObj['asset'] = obj['asset'];
+			if (obj['market']) formattedObj['market'] = obj['market'];
+			if (obj['account']) formattedObj['account'] = obj['account'];
+			if (obj['targetRoundId']) formattedObj['targetRoundId'] = wei(obj['targetRoundId'], 0);
+			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
+			if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
+			if (obj['status']) formattedObj['status'] = obj['status'];
+			return formattedObj as Pick<FuturesOrderResult, K>;
+		});
+		results = results.concat(newResults);
+		if (newResults.length < 1000) {
+			break;
+		}
+		if (paginationKey) {
+			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
+		}
+	} while (paginationKey && options.first && results.length < options.first);
+	return options.first ? results.slice(0, options.first) : results;
+};
 export type FuturesPositionFilter = {
 	id?: string | null;
 	id_not?: string | null;
@@ -749,6 +1082,22 @@ export type FuturesPositionFilter = {
 	lastTxHash_not_in?: string[];
 	lastTxHash_contains?: string | null;
 	lastTxHash_not_contains?: string | null;
+	openTimestamp?: WeiSource | null;
+	openTimestamp_not?: WeiSource | null;
+	openTimestamp_gt?: WeiSource | null;
+	openTimestamp_lt?: WeiSource | null;
+	openTimestamp_gte?: WeiSource | null;
+	openTimestamp_lte?: WeiSource | null;
+	openTimestamp_in?: WeiSource[];
+	openTimestamp_not_in?: WeiSource[];
+	closeTimestamp?: WeiSource | null;
+	closeTimestamp_not?: WeiSource | null;
+	closeTimestamp_gt?: WeiSource | null;
+	closeTimestamp_lt?: WeiSource | null;
+	closeTimestamp_gte?: WeiSource | null;
+	closeTimestamp_lte?: WeiSource | null;
+	closeTimestamp_in?: WeiSource[];
+	closeTimestamp_not_in?: WeiSource[];
 	timestamp?: WeiSource | null;
 	timestamp_not?: WeiSource | null;
 	timestamp_gt?: WeiSource | null;
@@ -783,6 +1132,22 @@ export type FuturesPositionFilter = {
 	isLiquidated_not?: boolean | null;
 	isLiquidated_in?: boolean[];
 	isLiquidated_not_in?: boolean[];
+	trades?: WeiSource | null;
+	trades_not?: WeiSource | null;
+	trades_gt?: WeiSource | null;
+	trades_lt?: WeiSource | null;
+	trades_gte?: WeiSource | null;
+	trades_lte?: WeiSource | null;
+	trades_in?: WeiSource[];
+	trades_not_in?: WeiSource[];
+	totalVolume?: WeiSource | null;
+	totalVolume_not?: WeiSource | null;
+	totalVolume_gt?: WeiSource | null;
+	totalVolume_lt?: WeiSource | null;
+	totalVolume_gte?: WeiSource | null;
+	totalVolume_lte?: WeiSource | null;
+	totalVolume_in?: WeiSource[];
+	totalVolume_not_in?: WeiSource[];
 	size?: WeiSource | null;
 	size_not?: WeiSource | null;
 	size_gt?: WeiSource | null;
@@ -799,6 +1164,14 @@ export type FuturesPositionFilter = {
 	margin_lte?: WeiSource | null;
 	margin_in?: WeiSource[];
 	margin_not_in?: WeiSource[];
+	pnl?: WeiSource | null;
+	pnl_not?: WeiSource | null;
+	pnl_gt?: WeiSource | null;
+	pnl_lt?: WeiSource | null;
+	pnl_gte?: WeiSource | null;
+	pnl_lte?: WeiSource | null;
+	pnl_in?: WeiSource[];
+	pnl_not_in?: WeiSource[];
 	feesPaid?: WeiSource | null;
 	feesPaid_not?: WeiSource | null;
 	feesPaid_gt?: WeiSource | null;
@@ -807,6 +1180,22 @@ export type FuturesPositionFilter = {
 	feesPaid_lte?: WeiSource | null;
 	feesPaid_in?: WeiSource[];
 	feesPaid_not_in?: WeiSource[];
+	netFunding?: WeiSource | null;
+	netFunding_not?: WeiSource | null;
+	netFunding_gt?: WeiSource | null;
+	netFunding_lt?: WeiSource | null;
+	netFunding_gte?: WeiSource | null;
+	netFunding_lte?: WeiSource | null;
+	netFunding_in?: WeiSource[];
+	netFunding_not_in?: WeiSource[];
+	fundingIndex?: WeiSource | null;
+	fundingIndex_not?: WeiSource | null;
+	fundingIndex_gt?: WeiSource | null;
+	fundingIndex_lt?: WeiSource | null;
+	fundingIndex_gte?: WeiSource | null;
+	fundingIndex_lte?: WeiSource | null;
+	fundingIndex_in?: WeiSource[];
+	fundingIndex_not_in?: WeiSource[];
 	entryPrice?: WeiSource | null;
 	entryPrice_not?: WeiSource | null;
 	entryPrice_gt?: WeiSource | null;
@@ -815,6 +1204,22 @@ export type FuturesPositionFilter = {
 	entryPrice_lte?: WeiSource | null;
 	entryPrice_in?: WeiSource[];
 	entryPrice_not_in?: WeiSource[];
+	avgEntryPrice?: WeiSource | null;
+	avgEntryPrice_not?: WeiSource | null;
+	avgEntryPrice_gt?: WeiSource | null;
+	avgEntryPrice_lt?: WeiSource | null;
+	avgEntryPrice_gte?: WeiSource | null;
+	avgEntryPrice_lte?: WeiSource | null;
+	avgEntryPrice_in?: WeiSource[];
+	avgEntryPrice_not_in?: WeiSource[];
+	lastPrice?: WeiSource | null;
+	lastPrice_not?: WeiSource | null;
+	lastPrice_gt?: WeiSource | null;
+	lastPrice_lt?: WeiSource | null;
+	lastPrice_gte?: WeiSource | null;
+	lastPrice_lte?: WeiSource | null;
+	lastPrice_in?: WeiSource[];
+	lastPrice_not_in?: WeiSource[];
 	exitPrice?: WeiSource | null;
 	exitPrice_not?: WeiSource | null;
 	exitPrice_gt?: WeiSource | null;
@@ -823,35 +1228,54 @@ export type FuturesPositionFilter = {
 	exitPrice_lte?: WeiSource | null;
 	exitPrice_in?: WeiSource[];
 	exitPrice_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type FuturesPositionResult = {
 	id: string;
 	lastTxHash: string;
+	openTimestamp: Wei;
+	closeTimestamp: Wei | null;
 	timestamp: Wei;
 	market: string;
 	asset: string;
 	account: string;
 	isOpen: boolean;
 	isLiquidated: boolean;
+	trades: Wei;
+	totalVolume: Wei;
 	size: Wei;
 	margin: Wei;
+	pnl: Wei;
 	feesPaid: Wei;
+	netFunding: Wei;
+	fundingIndex: Wei;
 	entryPrice: Wei;
+	avgEntryPrice: Wei;
+	lastPrice: Wei;
 	exitPrice: Wei | null;
 };
 export type FuturesPositionFields = {
 	id: true;
 	lastTxHash: true;
+	openTimestamp: true;
+	closeTimestamp: true;
 	timestamp: true;
 	market: true;
 	asset: true;
 	account: true;
 	isOpen: true;
 	isLiquidated: true;
+	trades: true;
+	totalVolume: true;
 	size: true;
 	margin: true;
+	pnl: true;
 	feesPaid: true;
+	netFunding: true;
+	fundingIndex: true;
 	entryPrice: true;
+	avgEntryPrice: true;
+	lastPrice: true;
 	exitPrice: true;
 };
 export type FuturesPositionArgs<K extends keyof FuturesPositionResult> = {
@@ -873,16 +1297,25 @@ export const getFuturesPositionById = async function <K extends keyof FuturesPos
 	const formattedObj: any = {};
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['lastTxHash']) formattedObj['lastTxHash'] = obj['lastTxHash'];
+	if (obj['openTimestamp']) formattedObj['openTimestamp'] = wei(obj['openTimestamp'], 0);
+	if (obj['closeTimestamp']) formattedObj['closeTimestamp'] = wei(obj['closeTimestamp'], 0);
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['market']) formattedObj['market'] = obj['market'];
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
 	if (obj['account']) formattedObj['account'] = obj['account'];
 	if (obj['isOpen']) formattedObj['isOpen'] = obj['isOpen'];
 	if (obj['isLiquidated']) formattedObj['isLiquidated'] = obj['isLiquidated'];
+	if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
+	if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 	if (obj['margin']) formattedObj['margin'] = wei(obj['margin'], 0);
+	if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
 	if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+	if (obj['netFunding']) formattedObj['netFunding'] = wei(obj['netFunding'], 0);
+	if (obj['fundingIndex']) formattedObj['fundingIndex'] = wei(obj['fundingIndex'], 0);
 	if (obj['entryPrice']) formattedObj['entryPrice'] = wei(obj['entryPrice'], 0);
+	if (obj['avgEntryPrice']) formattedObj['avgEntryPrice'] = wei(obj['avgEntryPrice'], 0);
+	if (obj['lastPrice']) formattedObj['lastPrice'] = wei(obj['lastPrice'], 0);
 	if (obj['exitPrice']) formattedObj['exitPrice'] = wei(obj['exitPrice'], 0);
 	return formattedObj as Pick<FuturesPositionResult, K>;
 };
@@ -921,16 +1354,25 @@ export const getFuturesPositions = async function <K extends keyof FuturesPositi
 			const formattedObj: any = {};
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['lastTxHash']) formattedObj['lastTxHash'] = obj['lastTxHash'];
+			if (obj['openTimestamp']) formattedObj['openTimestamp'] = wei(obj['openTimestamp'], 0);
+			if (obj['closeTimestamp']) formattedObj['closeTimestamp'] = wei(obj['closeTimestamp'], 0);
 			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['market']) formattedObj['market'] = obj['market'];
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
 			if (obj['account']) formattedObj['account'] = obj['account'];
 			if (obj['isOpen']) formattedObj['isOpen'] = obj['isOpen'];
 			if (obj['isLiquidated']) formattedObj['isLiquidated'] = obj['isLiquidated'];
+			if (obj['trades']) formattedObj['trades'] = wei(obj['trades'], 0);
+			if (obj['totalVolume']) formattedObj['totalVolume'] = wei(obj['totalVolume'], 0);
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 			if (obj['margin']) formattedObj['margin'] = wei(obj['margin'], 0);
+			if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
 			if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+			if (obj['netFunding']) formattedObj['netFunding'] = wei(obj['netFunding'], 0);
+			if (obj['fundingIndex']) formattedObj['fundingIndex'] = wei(obj['fundingIndex'], 0);
 			if (obj['entryPrice']) formattedObj['entryPrice'] = wei(obj['entryPrice'], 0);
+			if (obj['avgEntryPrice']) formattedObj['avgEntryPrice'] = wei(obj['avgEntryPrice'], 0);
+			if (obj['lastPrice']) formattedObj['lastPrice'] = wei(obj['lastPrice'], 0);
 			if (obj['exitPrice']) formattedObj['exitPrice'] = wei(obj['exitPrice'], 0);
 			return formattedObj as Pick<FuturesPositionResult, K>;
 		});
@@ -1007,6 +1449,7 @@ export type FuturesStatFilter = {
 	totalVolume_lte?: WeiSource | null;
 	totalVolume_in?: WeiSource[];
 	totalVolume_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type FuturesStatResult = {
 	id: string;
@@ -1152,6 +1595,43 @@ export type FuturesTradeFilter = {
 	price_lte?: WeiSource | null;
 	price_in?: WeiSource[];
 	price_not_in?: WeiSource[];
+	positionId?: string | null;
+	positionId_not?: string | null;
+	positionId_gt?: string | null;
+	positionId_lt?: string | null;
+	positionId_gte?: string | null;
+	positionId_lte?: string | null;
+	positionId_in?: string[];
+	positionId_not_in?: string[];
+	positionSize?: WeiSource | null;
+	positionSize_not?: WeiSource | null;
+	positionSize_gt?: WeiSource | null;
+	positionSize_lt?: WeiSource | null;
+	positionSize_gte?: WeiSource | null;
+	positionSize_lte?: WeiSource | null;
+	positionSize_in?: WeiSource[];
+	positionSize_not_in?: WeiSource[];
+	positionClosed?: boolean | null;
+	positionClosed_not?: boolean | null;
+	positionClosed_in?: boolean[];
+	positionClosed_not_in?: boolean[];
+	pnl?: WeiSource | null;
+	pnl_not?: WeiSource | null;
+	pnl_gt?: WeiSource | null;
+	pnl_lt?: WeiSource | null;
+	pnl_gte?: WeiSource | null;
+	pnl_lte?: WeiSource | null;
+	pnl_in?: WeiSource[];
+	pnl_not_in?: WeiSource[];
+	feesPaid?: WeiSource | null;
+	feesPaid_not?: WeiSource | null;
+	feesPaid_gt?: WeiSource | null;
+	feesPaid_lt?: WeiSource | null;
+	feesPaid_gte?: WeiSource | null;
+	feesPaid_lte?: WeiSource | null;
+	feesPaid_in?: WeiSource[];
+	feesPaid_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type FuturesTradeResult = {
 	id: string;
@@ -1160,6 +1640,12 @@ export type FuturesTradeResult = {
 	size: Wei;
 	asset: string;
 	price: Wei;
+	positionId: string;
+	positionSize: Wei;
+	positionClosed: boolean;
+	pnl: Wei;
+	feesPaid: Wei;
+	orderType: FuturesOrderType;
 };
 export type FuturesTradeFields = {
 	id: true;
@@ -1168,6 +1654,12 @@ export type FuturesTradeFields = {
 	size: true;
 	asset: true;
 	price: true;
+	positionId: true;
+	positionSize: true;
+	positionClosed: true;
+	pnl: true;
+	feesPaid: true;
+	orderType: true;
 };
 export type FuturesTradeArgs<K extends keyof FuturesTradeResult> = {
 	[Property in keyof Pick<FuturesTradeFields, K>]: FuturesTradeFields[Property];
@@ -1192,6 +1684,11 @@ export const getFuturesTradeById = async function <K extends keyof FuturesTradeR
 	if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 	if (obj['asset']) formattedObj['asset'] = obj['asset'];
 	if (obj['price']) formattedObj['price'] = wei(obj['price'], 0);
+	if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
+	if (obj['positionSize']) formattedObj['positionSize'] = wei(obj['positionSize'], 0);
+	if (obj['positionClosed']) formattedObj['positionClosed'] = obj['positionClosed'];
+	if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
+	if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
 	return formattedObj as Pick<FuturesTradeResult, K>;
 };
 export const getFuturesTrades = async function <K extends keyof FuturesTradeResult>(
@@ -1232,135 +1729,13 @@ export const getFuturesTrades = async function <K extends keyof FuturesTradeResu
 			if (obj['size']) formattedObj['size'] = wei(obj['size'], 0);
 			if (obj['asset']) formattedObj['asset'] = obj['asset'];
 			if (obj['price']) formattedObj['price'] = wei(obj['price'], 0);
+			if (obj['positionId']) formattedObj['positionId'] = obj['positionId'];
+			if (obj['positionSize']) formattedObj['positionSize'] = wei(obj['positionSize'], 0);
+			if (obj['positionClosed']) formattedObj['positionClosed'] = obj['positionClosed'];
+			if (obj['pnl']) formattedObj['pnl'] = wei(obj['pnl'], 0);
+			if (obj['feesPaid']) formattedObj['feesPaid'] = wei(obj['feesPaid'], 0);
+			if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
 			return formattedObj as Pick<FuturesTradeResult, K>;
-		});
-		results = results.concat(newResults);
-		if (newResults.length < 1000) {
-			break;
-		}
-		if (paginationKey) {
-			paginationValue = rawResults[rawResults.length - 1][paginatedOptions.orderBy!];
-		}
-	} while (paginationKey && options.first && results.length < options.first);
-	return options.first ? results.slice(0, options.first) : results;
-};
-export type InversePricingInfoFilter = {
-	id?: string | null;
-	id_not?: string | null;
-	id_gt?: string | null;
-	id_lt?: string | null;
-	id_gte?: string | null;
-	id_lte?: string | null;
-	id_in?: string[];
-	id_not_in?: string[];
-	frozen?: boolean | null;
-	frozen_not?: boolean | null;
-	frozen_in?: boolean[];
-	frozen_not_in?: boolean[];
-	upperLimit?: WeiSource | null;
-	upperLimit_not?: WeiSource | null;
-	upperLimit_gt?: WeiSource | null;
-	upperLimit_lt?: WeiSource | null;
-	upperLimit_gte?: WeiSource | null;
-	upperLimit_lte?: WeiSource | null;
-	upperLimit_in?: WeiSource[];
-	upperLimit_not_in?: WeiSource[];
-	lowerLimit?: WeiSource | null;
-	lowerLimit_not?: WeiSource | null;
-	lowerLimit_gt?: WeiSource | null;
-	lowerLimit_lt?: WeiSource | null;
-	lowerLimit_gte?: WeiSource | null;
-	lowerLimit_lte?: WeiSource | null;
-	lowerLimit_in?: WeiSource[];
-	lowerLimit_not_in?: WeiSource[];
-	entryPoint?: WeiSource | null;
-	entryPoint_not?: WeiSource | null;
-	entryPoint_gt?: WeiSource | null;
-	entryPoint_lt?: WeiSource | null;
-	entryPoint_gte?: WeiSource | null;
-	entryPoint_lte?: WeiSource | null;
-	entryPoint_in?: WeiSource[];
-	entryPoint_not_in?: WeiSource[];
-};
-export type InversePricingInfoResult = {
-	id: string;
-	frozen: boolean;
-	upperLimit: Wei;
-	lowerLimit: Wei;
-	entryPoint: Wei;
-};
-export type InversePricingInfoFields = {
-	id: true;
-	frozen: true;
-	upperLimit: true;
-	lowerLimit: true;
-	entryPoint: true;
-};
-export type InversePricingInfoArgs<K extends keyof InversePricingInfoResult> = {
-	[Property in keyof Pick<InversePricingInfoFields, K>]: InversePricingInfoFields[Property];
-};
-export const getInversePricingInfoById = async function <K extends keyof InversePricingInfoResult>(
-	url: string,
-	options: SingleQueryOptions,
-	args: InversePricingInfoArgs<K>
-): Promise<Pick<InversePricingInfoResult, K>> {
-	const res = await axios.post(url, {
-		query: generateGql('inversePricingInfo', options, args),
-	});
-	const r = res.data as any;
-	if (r.errors && r.errors.length) {
-		throw new Error(r.errors[0].message);
-	}
-	const obj = r.data[Object.keys(r.data)[0]] as any;
-	const formattedObj: any = {};
-	if (obj['id']) formattedObj['id'] = obj['id'];
-	if (obj['frozen']) formattedObj['frozen'] = obj['frozen'];
-	if (obj['upperLimit']) formattedObj['upperLimit'] = wei(obj['upperLimit']);
-	if (obj['lowerLimit']) formattedObj['lowerLimit'] = wei(obj['lowerLimit']);
-	if (obj['entryPoint']) formattedObj['entryPoint'] = wei(obj['entryPoint']);
-	return formattedObj as Pick<InversePricingInfoResult, K>;
-};
-export const getInversePricingInfos = async function <K extends keyof InversePricingInfoResult>(
-	url: string,
-	options: MultiQueryOptions<InversePricingInfoFilter, InversePricingInfoResult>,
-	args: InversePricingInfoArgs<K>
-): Promise<Pick<InversePricingInfoResult, K>[]> {
-	const paginatedOptions: Partial<MultiQueryOptions<
-		InversePricingInfoFilter,
-		InversePricingInfoResult
-	>> = { ...options };
-	let paginationKey: keyof InversePricingInfoFilter | null = null;
-	let paginationValue = '';
-	if (options.first && options.first > MAX_PAGE) {
-		paginatedOptions.first = MAX_PAGE;
-		paginatedOptions.orderBy = options.orderBy || 'id';
-		paginatedOptions.orderDirection = options.orderDirection || 'asc';
-		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection === 'asc'
-				? '_gt'
-				: '_lt')) as keyof InversePricingInfoFilter;
-		paginatedOptions.where = { ...options.where };
-	}
-	let results: Pick<InversePricingInfoResult, K>[] = [];
-	do {
-		if (paginationKey && paginationValue)
-			paginatedOptions.where![paginationKey] = paginationValue as any;
-		const res = await axios.post(url, {
-			query: generateGql('inversePricingInfos', paginatedOptions, args),
-		});
-		const r = res.data as any;
-		if (r.errors && r.errors.length) {
-			throw new Error(r.errors[0].message);
-		}
-		const rawResults = r.data[Object.keys(r.data)[0]] as any[];
-		const newResults = rawResults.map((obj) => {
-			const formattedObj: any = {};
-			if (obj['id']) formattedObj['id'] = obj['id'];
-			if (obj['frozen']) formattedObj['frozen'] = obj['frozen'];
-			if (obj['upperLimit']) formattedObj['upperLimit'] = wei(obj['upperLimit']);
-			if (obj['lowerLimit']) formattedObj['lowerLimit'] = wei(obj['lowerLimit']);
-			if (obj['entryPoint']) formattedObj['entryPoint'] = wei(obj['entryPoint']);
-			return formattedObj as Pick<InversePricingInfoResult, K>;
 		});
 		results = results.concat(newResults);
 		if (newResults.length < 1000) {
@@ -1389,21 +1764,32 @@ export type LatestRateFilter = {
 	rate_lte?: WeiSource | null;
 	rate_in?: WeiSource[];
 	rate_not_in?: WeiSource[];
+	timestamp?: WeiSource | null;
+	timestamp_not?: WeiSource | null;
+	timestamp_gt?: WeiSource | null;
+	timestamp_lt?: WeiSource | null;
+	timestamp_gte?: WeiSource | null;
+	timestamp_lte?: WeiSource | null;
+	timestamp_in?: WeiSource[];
+	timestamp_not_in?: WeiSource[];
 	aggregator?: string | null;
 	aggregator_not?: string | null;
 	aggregator_in?: string[];
 	aggregator_not_in?: string[];
 	aggregator_contains?: string | null;
 	aggregator_not_contains?: string | null;
+	_change_block?: any | null;
 };
 export type LatestRateResult = {
 	id: string;
 	rate: Wei;
+	timestamp: Wei;
 	aggregator: string;
 };
 export type LatestRateFields = {
 	id: true;
 	rate: true;
+	timestamp: true;
 	aggregator: true;
 };
 export type LatestRateArgs<K extends keyof LatestRateResult> = {
@@ -1425,6 +1811,7 @@ export const getLatestRateById = async function <K extends keyof LatestRateResul
 	const formattedObj: any = {};
 	if (obj['id']) formattedObj['id'] = obj['id'];
 	if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
+	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['aggregator']) formattedObj['aggregator'] = obj['aggregator'];
 	return formattedObj as Pick<LatestRateResult, K>;
 };
@@ -1462,6 +1849,7 @@ export const getLatestRates = async function <K extends keyof LatestRateResult>(
 			const formattedObj: any = {};
 			if (obj['id']) formattedObj['id'] = obj['id'];
 			if (obj['rate']) formattedObj['rate'] = wei(obj['rate']);
+			if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 			if (obj['aggregator']) formattedObj['aggregator'] = obj['aggregator'];
 			return formattedObj as Pick<LatestRateResult, K>;
 		});
@@ -1534,6 +1922,7 @@ export type RateUpdateFilter = {
 	timestamp_lte?: WeiSource | null;
 	timestamp_in?: WeiSource[];
 	timestamp_not_in?: WeiSource[];
+	_change_block?: any | null;
 };
 export type RateUpdateResult = {
 	id: string;

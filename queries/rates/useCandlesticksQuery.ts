@@ -1,17 +1,15 @@
-import request, { gql } from 'graphql-request';
 import { ResolutionString } from 'public/static/charting_library/charting_library';
-import { Candle } from './types';
+import { getCandles } from 'queries/futures/subgraph';
+import { getRatesEndpoint, mapCandles } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	resolution: ResolutionString,
-	isL2 = false
+	networkId: number
 ) => {
-	const RATES_ENDPOINT = isL2
-		? 'https://api.thegraph.com/subgraphs/name/kwenta/optimism-latest-rates'
-		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
+	const ratesEndpoint = getRatesEndpoint(networkId);
 
 	const period =
 		resolution === '1'
@@ -26,44 +24,31 @@ export const requestCandlesticks = async (
 			? 86400
 			: 3600;
 
-	const response = request(
-		RATES_ENDPOINT,
-		gql`
-			query candles(
-				$synth: String!
-				$minTimestamp: BigInt!
-				$maxTimestamp: BigInt!
-				$period: BigInt!
-			) {
-				candles(
-					where: {
-						synth: $synth
-						timestamp_gt: $minTimestamp
-						timestamp_lt: $maxTimestamp
-						period: $period
-					}
-					orderBy: id
-					orderDirection: asc
-					first: 1000
-				) {
-					id
-					synth
-					open
-					high
-					low
-					close
-					timestamp
-				}
-			}
-		`,
+	const response = await getCandles(
+		ratesEndpoint,
 		{
-			synth: currencyKey,
-			maxTimestamp: maxTimestamp,
-			minTimestamp: minTimestamp,
-			period: period,
+			first: 999999,
+			where: {
+				synth: `${currencyKey}`,
+				timestamp_gt: `${minTimestamp}`,
+				timestamp_lt: `${maxTimestamp}`,
+				period: `${period}`,
+			},
+		},
+		{
+			id: true,
+			synth: true,
+			open: true,
+			high: true,
+			low: true,
+			close: true,
+			timestamp: true,
+			average: true,
+			period: true,
+			aggregatedPrices: true,
 		}
 	).then((response) => {
-		return response[`candles`] as Candle[];
+		return mapCandles(response);
 	});
 	return response;
 };

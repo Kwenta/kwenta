@@ -6,8 +6,7 @@ import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CANDLES_ENDPOINT } from './constants';
-import { mapLaggedDailyPrices } from './utils';
+import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -18,12 +17,14 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 	const minTimestamp = Math.floor(Date.now() / 1000) - 60 * 60 * 24;
 	const maxTimestamp = minTimestamp + 60 * 60;
 
+	const ratesEndpoint = getRatesEndpoint(network.id);
+
 	return useQuery<any | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
 				const response = await request(
-					CANDLES_ENDPOINT,
+					ratesEndpoint,
 					gql`
 						query candles($synths: [String!]!, $minTimestamp: BigInt!, $maxTimestamp: BigInt!) {
 							candles(

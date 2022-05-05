@@ -43,11 +43,12 @@ import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 type TradeProps = {
-	refetch(): void;
 	position: FuturesPosition | null;
+	refetch(): void;
+	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
 };
 
-const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
+const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -127,10 +128,10 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
-			setTradeSize(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value);
-			setTradeSizeSUSD(
-				value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString()
-			);
+			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
+			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
+			setTradeSize(size);
+			setTradeSizeSUSD(sizeSUSD);
 		},
 		[marketAssetRate]
 	);
@@ -273,6 +274,10 @@ const Trade: React.FC<TradeProps> = ({ refetch, position }) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
+
+	useEffect(() => {
+		onEditPositionInput({ size: tradeSize, side: leverageSide });
+	}, [leverageSide, tradeSize, onEditPositionInput]);
 
 	return (
 		<Panel>
