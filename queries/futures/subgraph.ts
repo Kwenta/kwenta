@@ -1012,10 +1012,7 @@ export const getFuturesOrderById = async function <K extends keyof FuturesOrderR
 	if (obj['timestamp']) formattedObj['timestamp'] = wei(obj['timestamp'], 0);
 	if (obj['orderType']) formattedObj['orderType'] = obj['orderType'];
 	if (obj['status']) formattedObj['status'] = obj['status'];
-	return formattedObj as Pick<FuturesOrderResult, K
-                              
-                              
-                              ;
+	return formattedObj as Pick<FuturesOrderResult, K>;
 };
 export const getFuturesOrders = async function <K extends keyof FuturesOrderResult>(
 	url: string,
@@ -1032,10 +1029,7 @@ export const getFuturesOrders = async function <K extends keyof FuturesOrderResu
 		paginatedOptions.orderBy = options.orderBy || 'id';
 		paginatedOptions.orderDirection = options.orderDirection || 'asc';
 		paginationKey = (paginatedOptions.orderBy +
-			(paginatedOptions.orderDirection 
-       
-       
-'asc' ? '_gt' : '_lt')) as keyof FuturesOrderFilter;
+			(paginatedOptions.orderDirection === 'asc' ? '_gt' : '_lt')) as keyof FuturesOrderFilter;
 		paginatedOptions.where = { ...options.where };
 	}
 	let results: Pick<FuturesOrderResult, K>[] = [];

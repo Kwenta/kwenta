@@ -107,7 +107,7 @@ export type RawPosition = {
 };
 
 export type MarginTransfer = {
-	timestamp: Wei;
+	timestamp: number;
 	market: string;
 	account: string;
 	size: Wei;

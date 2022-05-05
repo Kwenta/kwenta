@@ -54,7 +54,6 @@ const useGetFuturesTradesForAccount = (
 						orderType: true,
 					}
 				);
-				console.log(response);
 				return response ? mapTrades(response) : null;
 			} catch (e) {
 				console.log(e);
