@@ -1,6 +1,3 @@
-export const CANDLES_ENDPOINT =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-latest-rates';
-
 export const RATES_ENDPOINT_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-latest-rates';
 
