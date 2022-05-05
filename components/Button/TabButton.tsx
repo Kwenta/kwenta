@@ -16,11 +16,11 @@ export type TabButtonProps = {
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
 		<StyledButton {...props} isActive={!!active}>
+			{!!icon && <div>{icon}</div>}
 			<div>
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
-			{!!icon && <div>{icon}</div>}
 			{!!badge && <div className="badge">{badge}</div>}
 		</StyledButton>
 	);
@@ -63,9 +63,17 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 		border-radius: 4px;
 	}
 
+	svg:first-child {
+		margin-right: 7px;
+	}
+
 	svg {
-		margin-left: 5px;
-		margin-top: 5px;
+		path {
+			fill: ${(props) =>
+				props.isActive
+					? props.theme.colors.common.primaryWhite
+					: props.theme.colors.common.secondaryGray};
+		}
 	}
 
 	&:disabled {
