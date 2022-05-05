@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
+import { PotentialTrade } from 'sections/futures/types';
 import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
@@ -28,6 +29,7 @@ const Market = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
+	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { network } = Connector.useContainer();
 
@@ -65,11 +67,16 @@ const Market = () => {
 								position={futuresMarketPosition}
 								openOrders={openOrders}
 								refetch={refetch}
+								potentialTrade={potentialTrade}
 							/>
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade refetch={refetch} position={futuresMarketPosition} />
+								<Trade
+									onEditPositionInput={setPotentialTrade}
+									refetch={refetch}
+									position={futuresMarketPosition}
+								/>
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</StyledFullHeightContainer>
