@@ -14,7 +14,8 @@ import { formatNumber } from 'utils/formatters/number';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
-import { getMarketKey, getSynthDescription } from 'utils/futures';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesPositionTableProps = {
@@ -195,6 +196,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'avgEntryPrice',
 						Cell: (cellProps: CellProps<any>) => {
+							const formatOptions = isEurForex(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								: {};
 							return cellProps.row.original.avgEntryPrice === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
@@ -203,6 +207,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									price={cellProps.row.original.avgEntryPrice}
 									sign={'$'}
 									conversionRate={1}
+									formatOptions={formatOptions}
 								/>
 							);
 						},
@@ -216,6 +221,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						),
 						accessor: 'liquidationPrice',
 						Cell: (cellProps: CellProps<any>) => {
+							const formatOptions = isEurForex(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								: {};
 							return cellProps.row.original.liquidationPrice === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
@@ -224,6 +232,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									price={cellProps.row.original.liquidationPrice}
 									sign={'$'}
 									conversionRate={1}
+									formatOptions={formatOptions}
 								/>
 							);
 						},

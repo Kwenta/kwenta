@@ -26,7 +26,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	return (
 		<OrderSizingContainer>
 			<OrderSizingTitle>
-				Amount <span>— Set order size</span>
+				Amount&nbsp; —<span>&nbsp; Set order size</span>
 			</OrderSizingTitle>
 
 			<CustomInput
