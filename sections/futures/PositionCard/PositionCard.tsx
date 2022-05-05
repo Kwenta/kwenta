@@ -4,7 +4,9 @@ import styled, { css } from 'styled-components';
 import { FlexDiv, FlexDivCol } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { useTranslation } from 'react-i18next';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { isFiatCurrency } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
@@ -13,11 +15,12 @@ import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription } from 'utils/futures';
+import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
 import Wei from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import MarketBadge from 'components/Badge/MarketBadge';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -59,7 +62,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	);
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
+
+	const marketKey = getMarketKey(currencyKey, network.id);
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const minDecimals =
+		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
+			? DEFAULT_FIAT_EURO_DECIMALS
+			: undefined;
 
 	const positionHistory = futuresPositions?.find(
 		({ asset, isOpen }) => isOpen && asset === currencyKey
@@ -99,6 +109,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			liquidationPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 			pnl: pnl,
@@ -122,10 +133,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			avgEntryPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 		};
-	}, [currencyKey, positionDetails, positionHistory, synthsMap, t]);
+	}, [currencyKey, minDecimals, positionDetails, positionHistory, synthsMap, t]);
 
 	return (
 		<>

@@ -23,14 +23,18 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	return (
 		<StyledInfoBox
 			details={{
-				'Total Margin': `${formatCurrency(Synths.sUSD, totalMargin, { currencyKey: Synths.sUSD })}`,
-				'Available Margin': `${formatCurrency(Synths.sUSD, availableMargin, {
-					currencyKey: Synths.sUSD,
-				})}`,
-				'Buying Power': `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
-				'Margin Usage': `${formatPercent(marginUsage)}`,
+				'Total Margin': {
+					value: `${formatCurrency(Synths.sUSD, totalMargin, { currencyKey: Synths.sUSD })}`,
+				},
+				'Available Margin': {
+					value: `${formatCurrency(Synths.sUSD, availableMargin, {
+						currencyKey: Synths.sUSD,
+					})}`,
+				},
+				'Buying Power': { value: `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}` },
+				'Margin Usage': { value: `${formatPercent(marginUsage)}` },
 			}}
-			isMarketClosed={isMarketClosed}
+			disabled={isMarketClosed}
 		/>
 	);
 };

@@ -1,4 +1,5 @@
 import { gql } from 'graphql-request';
+import { utils as ethersUtils } from 'ethers';
 
 export const FUTURES_ENDPOINT_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
@@ -34,3 +35,4 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 		trades
 	}
 `;
+export const KWENTA_TRACKING_CODE = ethersUtils.formatBytes32String('KWENTA');

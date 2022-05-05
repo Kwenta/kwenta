@@ -10,7 +10,7 @@ export const requestCandlesticks = async (
 	isL2 = false
 ) => {
 	const RATES_ENDPOINT = isL2
-		? 'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main'
+		? 'https://api.thegraph.com/subgraphs/name/kwenta/optimism-latest-rates'
 		: 'https://api.thegraph.com/subgraphs/name/synthetixio-team/mainnet-main';
 
 	const period =
