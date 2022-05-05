@@ -23,6 +23,7 @@ import { FuturesPosition } from 'queries/futures/types';
 
 import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
@@ -56,12 +57,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id),
-		{
-			refetchInterval: 6000,
-		}
-	);
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const otherFuturesMarkets = futuresMarkets.filter((market) => market.asset !== marketAsset) ?? [];
@@ -146,7 +141,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
-		[activeTab, router, marketAsset, positionHistory?.length, openOrders?.length]
+		[activeTab, router, marketAsset, openOrders?.length]
 	);
 
 	return (
