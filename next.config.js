@@ -8,6 +8,9 @@ module.exports = {
 	env: {
 		GIT_HASH_ID: gitRevision,
 	},
+	images: {
+		disableStaticImages: true,
+	},
 	webpack: (config, options) => {
 		config.resolve.mainFields = ['module', 'browser', 'main'];
 
