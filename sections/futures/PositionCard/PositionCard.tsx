@@ -300,8 +300,9 @@ const StyledSubtitle = styled.p`
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin: 0;
+	text-align: end;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
