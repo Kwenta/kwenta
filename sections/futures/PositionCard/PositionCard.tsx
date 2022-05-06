@@ -263,7 +263,9 @@ const Container = styled.div`
 	margin-bottom: 15px;
 `;
 
-const DataCol = styled(FlexDivCol)``;
+const DataCol = styled(FlexDivCol)`
+	justify-content: space-between;
+`;
 
 const DataColDivider = styled.div`
 	width: 1px;
