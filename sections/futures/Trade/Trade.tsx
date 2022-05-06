@@ -79,8 +79,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 		}, 5 * 1000);
 	};
 
-	// console.log('onPositionClose', onPositionClose);
-
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
