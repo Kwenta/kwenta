@@ -23,26 +23,12 @@ const getCoinGeckoPrice = async (currencyKey: CurrencyKey, network: Network) => 
 };
 
 const getCommodityPrice = async (currencyKey: CurrencyKey, network: Network) => {
-	const response = await fetch('/api/commodityPrice');
-
-	const test = await response.json();
-	console.log(test);
-	return null;
-
-	// if (response.status === 200) {
-	// 	const data = response
-	// 		.json()
-	// 		.then((ret) => {
-	// 			console.log(ret);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// 	console.log(data)
-	// 	return null;
-	// } else {
-	// 	return null;
-	// }
+	const { data: externalPrice } = await axios.get('/api/commodityPrice', {
+		params: {
+			symbol: currencyKey,
+		},
+	});
+	return externalPrice;
 };
 
 const useExternalPriceQuery = (
