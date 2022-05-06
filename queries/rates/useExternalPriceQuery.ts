@@ -22,8 +22,17 @@ const getCoinGeckoPrice = async (currencyKey: CurrencyKey, network: Network) => 
 	return response.status === 200 ? response.data[priceId].usd : null;
 };
 
-const getCommodityPrice = async (currencyKey: CurrencyKey, network: Network) => {
+const getCommodityPrice = async (currencyKey: CurrencyKey) => {
 	const { data: externalPrice } = await axios.get('/api/commodityPrice', {
+		params: {
+			symbol: currencyKey,
+		},
+	});
+	return externalPrice;
+};
+
+const getForexPrice = async (currencyKey: CurrencyKey) => {
+	const { data: externalPrice } = await axios.get('/api/forexPrice', {
 		params: {
 			symbol: currencyKey,
 		},
@@ -41,9 +50,9 @@ const useExternalPriceQuery = (
 		QUERY_KEYS.Rates.ExternalPrice(baseCurrencyKey),
 		async () => {
 			return COMMODITY_SYNTHS.has(baseCurrencyKey)
-				? getCommodityPrice(baseCurrencyKey, network)
+				? getCommodityPrice(baseCurrencyKey)
 				: FIAT_SYNTHS.has(baseCurrencyKey)
-				? null
+				? getForexPrice(baseCurrencyKey)
 				: getCoinGeckoPrice(baseCurrencyKey, network);
 		},
 		{
