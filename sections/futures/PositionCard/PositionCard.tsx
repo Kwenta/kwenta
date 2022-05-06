@@ -254,33 +254,32 @@ export default PositionCard;
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: repeat(5, auto);
+	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 10px;
+	padding: 15px;
 	justify-content: space-between;
 	border-radius: 10px;
 	margin-bottom: 15px;
 `;
 
-const DataCol = styled(FlexDivCol)`
-	width: 300px;
-`;
+const DataCol = styled(FlexDivCol)``;
 
 const DataColDivider = styled.div`
-	content: '';
-	position: relative;
-	z-index: 2;
 	width: 1px;
 	background-color: #2b2a2a;
-	flex-direction: column;
+	margin: 0 15px;
 `;
 
 const InfoRow = styled.div`
 	display: flex;
 	justify-content: space-between;
-	line-height; 16px;
+	line-height: 16px;
+	padding-bottom: 10px;
 
+	:last-child {
+		padding-bottom: 0;
+	}
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -293,18 +292,16 @@ const InfoRow = styled.div`
 const StyledSubtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	font-weight: 400;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	margin-left: 15px;
+	margin: 0;
 `;
 
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	font-weight: 400;
 	color: ${(props) => props.theme.colors.white};
-	margin-right: 15px;
+	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
@@ -314,8 +311,8 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	margin-right: 15px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
