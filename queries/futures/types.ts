@@ -98,6 +98,7 @@ export type RawPosition = {
 	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
+	avgEntryPrice: Wei;
 	exitPrice: Wei;
 	pnl: Wei;
 	pnlWithFeesPaid: Wei;
@@ -108,10 +109,12 @@ export type RawPosition = {
 export type MarginTransfer = {
 	timestamp: number;
 	market: string;
+	account: string;
 	size: Wei;
 	txHash: string;
 	action: string;
 	amount: string;
+	isPositive: boolean;
 	asset: string;
 };
 
@@ -131,6 +134,7 @@ export type PositionHistory = {
 	netFunding: Wei;
 	margin: Wei;
 	entryPrice: Wei;
+	avgEntryPrice: Wei;
 	exitPrice: Wei;
 	leverage: Wei;
 	side: PositionSide;
@@ -178,6 +182,13 @@ export type FuturesTrade = {
 	price?: Wei;
 	txnHash: string;
 	timestamp: Wei;
+	positionId?: string;
+	positionSize: Wei;
+	positionClosed: boolean;
+	side?: PositionSide;
+	pnl: Wei;
+	feesPaid: Wei;
+	orderType: 'NextPrice' | 'Limit' | 'Market';
 };
 
 export type FuturesVolumes = {
@@ -202,4 +213,12 @@ export type FuturesCumulativeStats = {
 export type FundingRateUpdate = {
 	funding: Wei;
 	timestamp: number;
+};
+
+export type FuturesPotentialTradeDetails = {
+	size: Wei;
+	liqPrice: Wei;
+	margin: Wei;
+	price: Wei;
+	fee: Wei;
 };

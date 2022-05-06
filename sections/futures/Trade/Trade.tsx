@@ -1,11 +1,10 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { useState } from 'react';
 import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
@@ -20,11 +19,11 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import LeverageInput from '../LeverageInput';
 import TradeConfirmationModal from './TradeConfirmationModal';
 import { useRouter } from 'next/router';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import MarketsDropdown from './MarketsDropdown';
+import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
@@ -34,17 +33,24 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import NextPrice from './NextPrice';
+import { FuturesPosition } from 'queries/futures/types';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
-import { ethers } from 'ethers';
+import ClosePositionModal from '../PositionCard/ClosePositionModal';
+
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-type PositionCardProps = {
+type TradeProps = {
+	position: FuturesPosition | null;
+	refetch(): void;
+	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
 	currencyKey: string;
 };
 
-const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
+const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, currencyKey }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -63,17 +69,13 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
-	const positionDetails = futuresMarketsPosition?.position ?? null;
+	const positionDetails = position?.position ?? null;
 
 	const onPositionClose = () => {
 		setTimeout(() => {
 			futuresPositionHistoryQuery.refetch();
-			futuresMarketPositionQuery.refetch();
+			refetch();
 		}, 5 * 1000);
 	};
 
@@ -90,6 +92,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
+	const [orderType, setOrderType] = useState(0);
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
@@ -98,6 +101,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
 	const [isWithdrawMarginModalOpen, setIsWithdrawMarginModalOpen] = useState(false);
 	const [isTradeConfirmationModalOpen, setIsTradeConfirmationModalOpen] = useState(false);
+	const [isNextPriceConfirmationModalOpen, setIsNextPriceConfirmationModalOpen] = useState(false);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
@@ -111,8 +115,8 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 		[exchangeRates, marketAsset]
 	);
 
-	const positionLeverage = futuresMarketPositionQuery?.data?.position?.leverage ?? wei(0);
-	const positionSide = futuresMarketPositionQuery?.data?.position?.side;
+	const positionLeverage = position?.position?.leverage ?? wei(0);
+	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 
 	const maxLeverageValue = useMemo(() => {
@@ -139,10 +143,10 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
-			setTradeSize(fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value);
-			setTradeSizeSUSD(
-				value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString()
-			);
+			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
+			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
+			setTradeSize(size);
+			setTradeSizeSUSD(sizeSUSD);
 		},
 		[marketAssetRate]
 	);
@@ -160,19 +164,14 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 	}, [router.events]);
 
 	useEffect(() => {
-		if (Number(tradeSize) && !!futuresMarketsPosition?.remainingMargin) {
-			setLeverage(
-				marketAssetRate
-					.mul(Number(tradeSize))
-					.div(futuresMarketsPosition?.remainingMargin)
-					.toString()
-			);
+		if (Number(tradeSize) && !!position?.remainingMargin) {
+			setLeverage(marketAssetRate.mul(Number(tradeSize)).div(position?.remainingMargin).toString());
 		} else {
 			if (Number(leverage) !== 0) {
 				setLeverage('');
 			}
 		}
-	}, [tradeSize, marketAssetRate, futuresMarketsPosition, leverage]);
+	}, [tradeSize, marketAssetRate, position, leverage]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value);
@@ -190,13 +189,13 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
 					: wei(value)
-							.mul(futuresMarketsPosition?.remainingMargin ?? zeroBN)
+							.mul(position?.remainingMargin ?? zeroBN)
 							.div(marketAssetRate);
 
 				onTradeAmountChange(newTradeSize.toString(), true);
 			}
 		},
-		[futuresMarketsPosition?.remainingMargin, marketAssetRate, onTradeAmountChange]
+		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
 	);
 
 	const sizeDelta = React.useMemo(
@@ -205,14 +204,21 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 	);
 
 	const placeOrderTranslationKey = React.useMemo(() => {
-		if (!!futuresMarketsPosition?.position) return 'futures.market.trade.button.modify-position';
-		return !futuresMarketsPosition?.remainingMargin ||
-			futuresMarketsPosition.remainingMargin.lt('50')
+		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
+		if (!!position?.position) return 'futures.market.trade.button.modify-position';
+		return !position?.remainingMargin || position.remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
-	}, [futuresMarketsPosition, isMarketCapReached]);
+	}, [position, orderType, isMarketCapReached]);
+
+	const shouldDisplayNextPriceDisclaimer = React.useMemo(
+		() =>
+			wei(leverage || 0).gte(maxLeverageValue.sub(wei(1))) &&
+			wei(leverage || 0).lte(maxLeverageValue),
+		[leverage, maxLeverageValue]
+	);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -223,8 +229,8 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted ||
-				!futuresMarketsPosition ||
-				!futuresMarketsPosition.remainingMargin
+				!position ||
+				!position.remainingMargin
 			) {
 				return;
 			}
@@ -244,7 +250,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 		tradeSize,
 		synthetixjs,
 		marketAsset,
-		futuresMarketsPosition,
+		position,
 		leverageSide,
 		walletAddress,
 		isLeverageValueCommitted,
@@ -253,8 +259,8 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
-		'modifyPositionWithTracking',
-		[sizeDelta.toBN(), ethers.utils.formatBytes32String('KWENTA')],
+		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		gasPrice,
 		{
 			enabled:
@@ -272,10 +278,10 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 				txHash: orderTxn.hash,
 				onTxConfirmed: () => {
 					onLeverageChange('');
-					setTimeout(() => {
-						futuresMarketPositionQuery.refetch();
+					setTimeout(async () => {
 						futuresPositionHistoryQuery.refetch();
 						marketQuery.refetch();
+						refetch();
 					}, 5 * 1000);
 				},
 			});
@@ -283,6 +289,10 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
+
+	useEffect(() => {
+		onEditPositionInput({ size: tradeSize, side: leverageSide });
+	}, [leverageSide, tradeSize, onEditPositionInput]);
 
 	return (
 		<Panel>
@@ -295,7 +305,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
-					disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
+					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
 					{t('futures.market.trade.button.withdraw')}
@@ -303,22 +313,30 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 			</MarketActions>
 
 			<MarketInfoBox
-				totalMargin={futuresMarketsPosition?.remainingMargin ?? zeroBN}
-				availableMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+				totalMargin={position?.remainingMargin ?? zeroBN}
+				availableMargin={position?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
-						? futuresMarketsPosition?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
+					position && position?.remainingMargin.gt(zeroBN)
+						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={
-					futuresMarketsPosition && futuresMarketsPosition?.remainingMargin.gt(zeroBN)
-						? futuresMarketsPosition?.remainingMargin
-								?.sub(futuresMarketsPosition?.accessibleMargin)
-								.div(futuresMarketsPosition?.remainingMargin)
+					position && position?.remainingMargin.gt(zeroBN)
+						? position?.remainingMargin
+								?.sub(position?.accessibleMargin)
+								.div(position?.remainingMargin)
 						: zeroBN
 				}
 				isMarketClosed={isFuturesMarketClosed}
 			/>
+
+			<StyledSegmentedControl
+				values={['Market', 'Next-Price']}
+				selectedIndex={orderType}
+				onChange={setOrderType}
+			/>
+
+			{orderType === 1 && <NextPrice />}
 
 			<PositionButtons
 				selected={leverageSide}
@@ -327,7 +345,7 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 			/>
 
 			<OrderSizing
-				disabled={futuresMarketsPosition?.remainingMargin?.lte(zeroBN)}
+				disabled={position?.remainingMargin?.lte(zeroBN)}
 				amount={tradeSize}
 				amountSUSD={tradeSizeSUSD}
 				assetRate={marketAssetRate}
@@ -342,58 +360,72 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 				onLeverageChange={(value) => onLeverageChange(value)}
 				side={leverageSide}
 				setIsLeverageValueCommitted={setIsLeverageValueCommitted}
-				currentPosition={futuresMarketsPosition}
+				currentPosition={position}
 				assetRate={marketAssetRate}
 				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
 				isMarketClosed={isFuturesMarketClosed}
+				isDisclaimerDisplayed={orderType === 1 && shouldDisplayNextPriceDisclaimer}
 			/>
 
-			<PlaceOrderButton
-				variant="primary"
-				fullWidth
-				disabled={
-					!leverage ||
-					Number(leverage) < 0 ||
-					Number(leverage) > maxLeverageValue.toNumber() ||
-					sizeDelta.eq(zeroBN) ||
-					!!error ||
-					placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-					isFuturesMarketClosed ||
-					isMarketCapReached
-				}
-				onClick={() => {
-					setIsTradeConfirmationModalOpen(true);
-				}}
-			>
-				{t(placeOrderTranslationKey)}
-			</PlaceOrderButton>
+			<ManageOrderTitle>
+				Manage&nbsp; —<span>&nbsp; Adjust your position</span>
+			</ManageOrderTitle>
 
-			{(() => onPositionClose) && (
-				<CloseOrderButton
-					isRounded={true}
-					size="sm"
-					variant="danger"
-					onClick={() => setClosePositionModalIsVisible(true)}
-					disabled={!positionDetails || isFuturesMarketClosed}
-					noOutline={true}
+			<ManagePositions>
+				<PlaceOrderButton
+					variant="primary"
+					fullWidth
+					disabled={
+						!leverage ||
+						Number(leverage) < 0 ||
+						Number(leverage) > maxLeverageValue.toNumber() ||
+						sizeDelta.eq(zeroBN) ||
+						!!error ||
+						placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
+						isFuturesMarketClosed ||
+						isMarketCapReached
+					}
+					onClick={() => {
+						orderType === 1
+							? setIsNextPriceConfirmationModalOpen(true)
+							: setIsTradeConfirmationModalOpen(true);
+					}}
 				>
-					{t('futures.market.user.position.close-position')}
-				</CloseOrderButton>
-			)}
+					{t(placeOrderTranslationKey)}
+				</PlaceOrderButton>
+
+				{(() => onPositionClose) && (
+					<CloseOrderButton
+						isRounded={true}
+						size="sm"
+						variant="danger"
+						onClick={() => setClosePositionModalIsVisible(true)}
+						disabled={!positionDetails || isFuturesMarketClosed}
+						noOutline={true}
+					>
+						{t('futures.market.user.position.close-position')}
+					</CloseOrderButton>
+				)}
+			</ManagePositions>
 
 			{(orderTxn.errorMessage || error) && (
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
 			)}
 
-			<FeeInfoBox feeCost={feeCost} />
+			<FeeInfoBox
+				orderType={orderType}
+				feeCost={feeCost}
+				currencyKey={marketAsset}
+				sizeDelta={sizeDelta}
+			/>
 
 			{isDepositMarginModalOpen && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
+							refetch();
 							futuresPositionHistoryQuery.refetch();
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
@@ -406,10 +438,10 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 			{isWithdrawMarginModalOpen && (
 				<WithdrawMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={futuresMarketsPosition?.accessibleMargin ?? zeroBN}
+					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
-							futuresMarketPositionQuery.refetch();
+							refetch();
 							futuresPositionHistoryQuery.refetch();
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
@@ -428,6 +460,21 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 					market={marketAsset}
 					side={leverageSide}
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
+				/>
+			)}
+
+			{isNextPriceConfirmationModalOpen && (
+				<NextPriceConfirmationModal
+					tradeSize={tradeSize}
+					onConfirmOrder={() => orderTxn.mutate()}
+					gasLimit={orderTxn.gasLimit}
+					l1Fee={orderTxn.optimismLayerOneFee}
+					market={marketAsset}
+					side={leverageSide}
+					onDismiss={() => setIsNextPriceConfirmationModalOpen(false)}
+					feeCost={feeCost}
+					positionSize={position?.position?.size ?? null}
+					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
 			)}
 
@@ -460,29 +507,25 @@ const MarketActionButton = styled(Button)`
 	font-size: 15px;
 `;
 
-const PlaceOrderButton = styled(Button)`
+const ManagePositions = styled.div`
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-gap: 15px;
 	margin-bottom: 16px;
+`;
+
+const PlaceOrderButton = styled(Button)`
+	font-size: 16px;
 	height: 55px;
-	width: 45%;
-	font-size: 13px;
 	text-align: center;
 `;
 
-// const CloseOrderButton = styled(Button)`
-// 	margin-bottom: 16px;
-// 	height: 55px;
-// `;
-
 const CloseOrderButton = styled(Button)`
-	margin-bottom: 16px;
+	font-size: 16px;
 	height: 55px;
-	font-size: 13px;
 	background: rgba(239, 104, 104, 0.04);
 	border: 1px solid #ef6868;
 	box-shadow: none;
-	min-width: 100px;
-	width: 45%;
-	padding: 0;
 	transition: all 0s ease-in-out;
 
 	&:hover {
@@ -505,6 +548,17 @@ const ErrorMessage = styled.div`
 	margin-bottom: 16px;
 `;
 
-// const StyledSegmentedControl = styled(SegmentedControl)`
-// 	margin-bottom: 16px;
-// `;
+const StyledSegmentedControl = styled(SegmentedControl)`
+	margin-bottom: 16px;
+`;
+
+const ManageOrderTitle = styled.p`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 12px;
+	margin-bottom: 8px;
+	margin-left: 14px;
+
+	span {
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+	}
+`;

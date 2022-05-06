@@ -1,22 +1,25 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { FlexDivCol, FlexDivRow } from 'styles/common';
+import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { isFiatCurrency } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription } from 'utils/futures';
+import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
 import Wei, { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -54,7 +57,14 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
-	const { synthsMap } = Connector.useContainer();
+	const { synthsMap, network } = Connector.useContainer();
+
+	const marketKey = getMarketKey(currencyKey, network.id);
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const minDecimals =
+		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
+			? DEFAULT_FIAT_EURO_DECIMALS
+			: undefined;
 
 	const positionHistory = futuresPositions?.find(
 		({ asset, isOpen }) => isOpen && asset === currencyKey
@@ -69,7 +79,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
 		const realizedPnl = positionHistory?.pnl ?? zeroBN;
-		const netFundingHistory = positionHistory?.netFunding ?? zeroBN;
+		let netFundingHistory = positionHistory?.netFunding ?? zeroBN;
+		if (netFundingHistory.lt(wei(0.01))) netFundingHistory = wei(1);
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
@@ -111,6 +122,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			liquidationPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 			pnl: pnl,
@@ -142,12 +154,14 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			avgEntryPrice: positionDetails
 				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
 						sign: '$',
+						minDecimals,
 				  })
 				: NO_VALUE,
 		};
 	}, [
 		currencyKey,
 		currencyKeyRate,
+		minDecimals,
 		positionDetails,
 		positionHistory,
 		synthsMap,
@@ -169,7 +183,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					</InfoRow>
 					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
-						<StyledValue>{data.positionSide}</StyledValue>
+						{data.positionSide}
 					</InfoRow>
 					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
@@ -247,12 +261,10 @@ const Container = styled.div`
 	justify-content: space-between;
 	border-radius: 10px;
 	margin-bottom: 15px;
-	/* min-height: 135px; */
-	min-width: 50%;
 `;
 
 const DataCol = styled(FlexDivCol)`
-	min-width: 200px;
+	width: 300px;
 `;
 
 const DataColDivider = styled.div`
@@ -264,7 +276,11 @@ const DataColDivider = styled.div`
 	flex-direction: column;
 `;
 
-const InfoRow = styled(FlexDivRow)`
+const InfoRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	line-height; 16px;
+
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -274,24 +290,21 @@ const InfoRow = styled(FlexDivRow)`
 	}
 `;
 
-const StyledSubtitle = styled.div`
+const StyledSubtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	font-weight: 400;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	padding: 10px;
-	line-height; 16px;
+	margin-left: 15px;
 `;
 
-const StyledValue = styled.div`
+const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	font-weight: 400;
 	color: ${(props) => props.theme.colors.white};
-	padding: 10px;
-	line-height; 16px;
-
+	margin-right: 15px;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
@@ -299,11 +312,10 @@ const StyledValue = styled.div`
 
 const PositionValue = styled.p<{ side: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
+	font-size: 13px;
 	text-transform: uppercase;
-	margin: 0;
+	margin-right: 15px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}

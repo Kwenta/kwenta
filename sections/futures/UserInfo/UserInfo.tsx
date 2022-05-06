@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
@@ -15,22 +15,24 @@ import ProfitCalculator from '../ProfitCalculator';
 import Transfers from '../Transfers';
 
 import ROUTES from 'constants/routes';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { getMarketKey } from 'utils/futures';
-import Connector from 'containers/Connector';
+import OpenOrdersTable from './OpenOrdersTable';
+import { FuturesPosition } from 'queries/futures/types';
 
 import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
-import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { FuturesTrade } from 'queries/futures/types';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -44,20 +46,16 @@ const FutureTabs = Object.values(FuturesTab);
 
 type UserInfoProps = {
 	marketAsset: CurrencyKey;
+	position: FuturesPosition | null;
+	openOrders: any[];
+	refetch(): void;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
 	const router = useRouter();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const { network } = Connector.useContainer();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id),
-		{
-			refetchInterval: 6000,
-		}
-	);
-
+	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const otherFuturesMarkets = futuresMarkets.filter((market) => market.asset !== marketAsset) ?? [];
@@ -65,15 +63,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
-	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
-
 	const marginTransfers = useMemo(
 		() => (marginTransfersQuery.isSuccess ? marginTransfersQuery?.data ?? [] : []),
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
+	);
+
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
+
+	const history: FuturesTrade[] = useMemo(
+		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
+		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);
 
 	const exchangeRates = useMemo(
@@ -85,8 +87,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		() => getExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
 	);
-
-	const positionHistory = futuresPositionHistoryQuery?.data ?? null;
 
 	const tabQuery = useMemo(() => {
 		if (router.query.market) {
@@ -100,6 +100,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 
 	const activeTab = tabQuery != null ? tabQuery : FuturesTab.POSITION;
 
+	const handleOpenProfitCalc = useCallback(() => {
+		setOpenProfitCalcModal(!openProfitCalcModal);
+	}, [openProfitCalcModal]);
+
 	const TABS = useMemo(
 		() => [
 			{
@@ -109,35 +113,33 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				icon: <Svg src={PositionIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
-			// {
-			// 	name: FuturesTab.ORDERS,
-			// 	label: 'Open Orders',
-			// 	badge: undefined,
-			// 	disabled: true,
-			// 	active: activeTab === FuturesTab.ORDERS,
-			// 	icon: <Svg src={OpenPositionsIcon} />,
-			// 	onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
-			// },
-			// {
-			// 	name: FuturesTab.TRADES,
-			// 	label: 'Order History',
-			// 	badge: undefined,
-			// 	disabled: true,
-			// 	active: activeTab === FuturesTab.TRADES,
-			// 	icon: <Svg src={OrderHistoryIcon} />,
-			// 	onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
-			// },
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				badge: openOrders?.length,
+				active: activeTab === FuturesTab.ORDERS,
+				icon: <Svg src={OpenPositionsIcon} />,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
+			},
+			{
+				name: FuturesTab.TRADES,
+				label: 'Trades',
+				badge: undefined,
+				active: activeTab === FuturesTab.TRADES,
+				icon: <Svg src={OrderHistoryIcon} />,
+				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
+			},
 			{
 				name: FuturesTab.TRANSFERS,
 				label: 'Transfers',
 				badge: undefined,
-				disabled: false,
+				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <Svg src={TransfersIcon} />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
-		[activeTab, router, marketAsset]
+		[activeTab, router, marketAsset, openOrders?.length]
 	);
 
 	return (
@@ -162,14 +164,14 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 						key={FuturesTab.CALCULATOR}
 						title="Calculator"
 						icon={<Svg src={calculatorIcon} />}
-						onClick={() => setOpenProfitCalcModal(!openProfitCalcModal)}
+						onClick={handleOpenProfitCalc}
 					/>
 				</TabRight>
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard
-					position={futuresMarketsPosition ?? null}
+					position={position}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
 				/>
@@ -179,13 +181,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				{/* TODO */}
+				<OpenOrdersTable
+					currencyKey={marketAsset}
+					position={position}
+					openOrders={openOrders}
+					refetch={refetch}
+				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades
-					history={positionHistory}
-					isLoading={futuresPositionHistoryQuery.isLoading}
-					isLoaded={futuresPositionHistoryQuery.isFetched}
+					history={history}
+					isLoading={futuresTradesQuery.isLoading}
+					isLoaded={futuresTradesQuery.isFetched}
+					marketAsset={marketAsset}
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>

@@ -9,6 +9,7 @@ export const ROUTES = {
 	Home: {
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
 		Positions: normalizeRoute('/dashboard', 'positions', 'tab'),
+		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 	},
 	Dashboard: {
 		Home: '/dashboard',
