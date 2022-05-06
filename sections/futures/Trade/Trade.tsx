@@ -368,9 +368,8 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 				{t(placeOrderTranslationKey)}
 			</PlaceOrderButton>
 
-			{/* <CloseOrderButton> */}
 			{(() => onPositionClose) && (
-				<CloseButton
+				<CloseOrderButton
 					isRounded={true}
 					size="sm"
 					variant="danger"
@@ -379,9 +378,8 @@ const Trade: React.FC<PositionCardProps> = ({ currencyKey }) => {
 					noOutline={true}
 				>
 					{t('futures.market.user.position.close-position')}
-				</CloseButton>
+				</CloseOrderButton>
 			)}
-			{/* </CloseOrderButton> */}
 
 			{(orderTxn.errorMessage || error) && (
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
@@ -475,7 +473,7 @@ const PlaceOrderButton = styled(Button)`
 // 	height: 55px;
 // `;
 
-const CloseButton = styled(Button)`
+const CloseOrderButton = styled(Button)`
 	margin-bottom: 16px;
 	height: 55px;
 	font-size: 13px;
