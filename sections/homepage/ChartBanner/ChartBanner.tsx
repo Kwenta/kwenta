@@ -20,7 +20,7 @@ const FAQ = () => {
 	return (
 		<StyledStackSection>
 			<ChartGraphicContainer>
-				<ChartBannerImage src={ChartBanner} alt="" webp={true} />
+				<ChartBannerImage src={ChartBanner as any} alt="" webp={true} />
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Home.Overview}>

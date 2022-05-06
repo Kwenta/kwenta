@@ -26,9 +26,6 @@ module.exports = {
 		});
 		return config;
 	},
-	future: {
-		webpack5: true,
-	},
 	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
 	exportPathMap: function (defaultPathMap) {
 		return {
@@ -48,6 +45,6 @@ module.exports = {
 				destination: '/dashboard',
 				permanent: true,
 			},
-		]
+		];
 	},
 };
