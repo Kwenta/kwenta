@@ -395,7 +395,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				{(() => onPositionClose) && (
 					<CloseOrderButton
 						isRounded={true}
-						size="sm"
+						fullWidth
 						variant="danger"
 						onClick={() => setClosePositionModalIsVisible(true)}
 						disabled={!positionDetails || isFuturesMarketClosed}
@@ -516,11 +516,14 @@ const PlaceOrderButton = styled(Button)`
 	font-size: 16px;
 	height: 55px;
 	text-align: center;
+	white-space: normal;
 `;
 
 const CloseOrderButton = styled(Button)`
 	font-size: 16px;
 	height: 55px;
+	text-align: center;
+	white-space: normal;
 	background: rgba(239, 104, 104, 0.04);
 	border: 1px solid #ef6868;
 	box-shadow: none;
