@@ -10,6 +10,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
 import { getMarketKey } from 'utils/futures';
 import { getReasonFromCode } from './utils';
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -75,7 +76,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
 					isSuspended: suspensions[i],
-					marketClosureReason: getReasonFromCode(reasons[i]),
+					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})
 			);
 		},

@@ -111,8 +111,8 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						? true
 						: false
 					: false,
-				isFuturesMarketClosed,
-				futuresClosureReason
+				market.isSuspended,
+				market.marketClosureReason
 			);
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,7 +164,7 @@ const SelectContainer = styled.div`
 	margin-bottom: 16px;
 
 	.react-select__dropdown-indicator {
-		margin-right: 22px;
+		margin-right: 10px;
 	}
 
 	.react-select__option {

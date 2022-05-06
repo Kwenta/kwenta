@@ -53,9 +53,9 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 		return format(actionTime, 'MM/dd/yyyy');
 	}
 
-	console.log(marginTransfers);
 	return (
 		<StyledTable
+			highlightRowsOnHover
 			columns={[
 				{
 					Header: (

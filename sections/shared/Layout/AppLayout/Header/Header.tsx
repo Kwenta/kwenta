@@ -48,8 +48,9 @@ const Container = styled.header<{ isL2: boolean }>`
 		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
 	`};
 	> div {
-		height: ${HEADER_HEIGHT};
-		padding-top: ${HEADER_TOP_PADDING};
+		/* height: ${HEADER_HEIGHT}; */
+		/* padding-top: ${HEADER_TOP_PADDING}; */
+		padding-bottom: 20px;
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;

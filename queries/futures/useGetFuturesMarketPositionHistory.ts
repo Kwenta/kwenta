@@ -10,6 +10,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 import { getDisplayAsset } from 'utils/futures';
+import { FUTURES_POSITION_FRAGMENT } from './constants';
 
 const useGetFuturesMarketPositionHistory = (
 	currencyKey: string | null,
@@ -33,31 +34,14 @@ const useGetFuturesMarketPositionHistory = (
 				const response = await request(
 					futuresEndpoint,
 					gql`
+						${FUTURES_POSITION_FRAGMENT}
 						query marketPositionHistory($market: String!, $account: String!) {
 							futuresPositions(
 								where: { market: $market, account: $account }
 								orderBy: timestamp
 								orderDirection: desc
 							) {
-								id
-								lastTxHash
-								timestamp
-								account
-								market
-								asset
-								margin
-								size
-								feesPaid
-								netFunding
-								isOpen
-								isLiquidated
-								entryPrice
-								exitPrice
-								pnl
-								closeTimestamp
-								openTimestamp
-								totalVolume
-								trades
+								...FuturesPositionFragment
 							}
 						}
 					`,
