@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import values from 'lodash/values';
 import { useQueryClient, Query } from 'react-query';
 import { networkState } from 'store/wallet';
-import { Rates } from 'queries/rates/types';
+import { Price, Rates } from 'queries/rates/types';
 import Currency from 'components/Currency';
 import { CellProps } from 'react-table';
 import ChangePercent from 'components/ChangePercent';
@@ -19,89 +17,10 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import MarketBadge from 'components/Badge/MarketBadge';
 import Table from 'components/Table';
 import { isEurForex } from 'utils/futures';
-
-const useHistoricalRates = (synthNames: string[]) => {
-	const { subgraph } = useSynthetixQueries();
-	const synthCandleQuery = subgraph.useGetDailyCandles(
-		{
-			where: {
-				synth_in: synthNames,
-			},
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-		},
-		{
-			open: true,
-			close: true,
-			synth: true,
-		}
-	);
-
-	const historicalRates: Record<string, number> = useMemo(() => {
-		const { isSuccess, data } = synthCandleQuery;
-		const synthCandle = isSuccess && data ? synthCandleQuery.data : [];
-		return synthNames.reduce((acc, cur) => {
-			const candle = synthCandle?.find((it) => it.synth === cur);
-			if (candle) {
-				acc[candle.synth] = candle.open.sub(candle.close).div(candle.open).toNumber();
-			}
-			return acc;
-		}, {} as Record<string, number>);
-	}, [synthNames, synthCandleQuery]);
-	return historicalRates;
-};
-
-const useHistoricalVolumes = (synthNames: string[]) => {
-	const { subgraph } = useSynthetixQueries();
-
-	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-
-	const historicalVolumeQuery = subgraph.useGetSynthExchanges(
-		{
-			where: {
-				timestamp_gte: yesterday,
-				// fromSynth_in expects array of 'id' but 'name' so the returning is [] now.
-				// Disable it for now and enable if needed later once either the query is fixed or id of synth is resolved.
-				// fromSynth_in: synthNames,
-			},
-			first: 999999,
-		},
-		{
-			id: true,
-			fromAmount: true,
-			fromAmountInUSD: true,
-			toAmount: true,
-			toAmountInUSD: true,
-			feesInUSD: true,
-			toAddress: true,
-			timestamp: true,
-			gasPrice: true,
-			fromSynth: { name: true, symbol: true, id: true, totalSupply: true },
-			toSynth: { name: true, symbol: true, id: true, totalSupply: true },
-		}
-	);
-
-	const historicalVolumes = useMemo(() => {
-		const { isSuccess, data } = historicalVolumeQuery;
-		if (!isSuccess) {
-			return {};
-		}
-
-		const queryResult = synthNames.reduce((acc, cur) => {
-			const synthExchange = data
-				?.filter(({ fromSynth }) => cur === fromSynth?.symbol)
-				.reduce((sum, { fromAmountInUSD }) => sum + fromAmountInUSD.toNumber(), 0);
-
-			acc[cur] = synthExchange ?? 0;
-
-			return acc;
-		}, {} as Record<string, number>);
-
-		return queryResult;
-	}, [historicalVolumeQuery, synthNames]);
-
-	return historicalVolumes;
-};
+import { useRouter } from 'next/router';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import { SynthsVolumes } from 'queries/synths/type';
 
 type SpotMarketsTableProps = {
 	exchangeRates: Rates | null;
@@ -109,8 +28,8 @@ type SpotMarketsTableProps = {
 
 const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const { t } = useTranslation();
+	const router = useRouter();
 	const network = useRecoilValue(networkState);
-
 	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
@@ -127,8 +46,10 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			: synths;
 
 	const synthNames: string[] = synths.map((synth): string => synth.name);
-	const historicalRates: Record<string, number> = useHistoricalRates(synthNames);
-	const historicalVolume = useHistoricalVolumes(synthNames);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+
+	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
+	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	let data = useMemo(() => {
 		return unfrozenSynths.map((synth: Synth) => {
@@ -139,26 +60,31 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const volume = historicalVolume[synth.name] ?? 0;
-			const change = historicalRates[synth.name] ?? 0;
-
+			const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
+			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
+			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
 			return {
 				asset: synth.asset,
 				market: synth.name,
 				synth: synthsMap[synth.asset],
 				description: description,
 				price,
-				change: wei(change).toNumber(),
-				volume: wei(volume),
+				change: (price - pastPrice?.price) / price || '-',
+				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [synthsMap, unfrozenSynths, historicalVolume, historicalRates, exchangeRates, t]);
+	}, [synthsMap, unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
 				showPagination={true}
+				onTableRowClick={(row) => {
+					row.original.market !== 'sUSD'
+						? router.push(`/exchange/${row.original.market}-sUSD`)
+						: router.push(`/exchange/`);
+				}}
 				highlightRowsOnHover
 				sortBy={[
 					{
