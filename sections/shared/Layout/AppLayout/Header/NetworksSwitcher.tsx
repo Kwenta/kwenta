@@ -97,7 +97,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
+				dropdownIndicatorColor={theme.colors.common.primaryWhite}
 				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
@@ -110,9 +110,8 @@ export default NetworksSwitcher;
 
 const Container = styled.div`
 	width: 100%;
-	font-size: 12px;
 	margin-left: 15px;
-	font-family: AkkuratMonoLLWeb-Regular;
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const StyledButton = styled(Button)`
@@ -148,4 +147,18 @@ const StyledCaretDownIcon = styled(Svg)`
 const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};
 	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	:hover {
+		> svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
+	> svg {
+		path {
+			fill: ${(props) => props.theme.colors.common.secondaryGray};
+		}
+	}
 `;
