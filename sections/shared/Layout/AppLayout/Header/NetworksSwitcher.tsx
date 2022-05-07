@@ -96,9 +96,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
-				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.common.primaryWhite}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 			></L2Select>
@@ -111,16 +108,20 @@ export default NetworksSwitcher;
 const Container = styled.div`
 	width: 100%;
 	margin-left: 15px;
-	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const StyledButton = styled(Button)`
 	font-size: 13px;
 	min-width: 0px;
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const L2Select = styled(Select)`
 	width: 137px;
+
+	.react-select__single-value * {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
 
 	.react-select__control {
 		border-radius: 10px;
