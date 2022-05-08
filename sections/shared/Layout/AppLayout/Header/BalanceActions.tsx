@@ -200,13 +200,6 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		}
 	}
 
-	/* .react-select__menu-list {
-		::-webkit-scrollbar {
-			width: 0; /* Remove scrollbar space */
-			background: transparent; /* Optional: just make scrollbar invisible */
-		}
-	} */
-
 	.react-select__value-container {
 		padding: 0px;
 		display: flex;
