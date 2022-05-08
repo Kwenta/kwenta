@@ -25,13 +25,12 @@ function Select<T>(props: Props<T>) {
 				color: colors.common.primaryWhite,
 				cursor: 'pointer',
 				boxShadow: colors.selectedTheme.select.control.shadow,
-
 				border: 'none',
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: 'colors.selectedTheme.button.hover',
+					background: colors.selectedTheme.button.hover,
 				},
 				'&::before': {
 					content: '""',

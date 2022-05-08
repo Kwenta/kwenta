@@ -236,6 +236,7 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 const LabelContainer = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-size: 13px;
+	padding: 10px;
 	> div {
 		align-items: center;
 	}
