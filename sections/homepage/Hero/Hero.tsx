@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
@@ -33,7 +32,11 @@ const Hero = () => {
 				</Link>
 			</CTAContainer>
 			<HeroImageContainer>
-				{/* <HeroImage src={MarketOrderPreview} alt="" webp={true} /> */}
+				<picture>
+					{/* <source srcSet={`${MarketOrderPreview}?webp`} type="image/webp" /> */}
+					<source srcSet={MarketOrderPreview} type="image/png" />
+					<HeroImage src={MarketOrderPreview} />
+				</picture>
 			</HeroImageContainer>
 		</StackSection>
 	);
@@ -65,7 +68,7 @@ const HeroImageContainer = styled(GridDiv)`
 	`}
 `;
 
-const HeroImage = styled(Image)`
+const HeroImage = styled.img`
 	max-width: 1400px;
 	${media.lessThan('md')`
 		width: 1140px;

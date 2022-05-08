@@ -43,25 +43,31 @@ module.exports = withPlugins([
 		webpack: (config, options) => {
 			config.resolve.mainFields = ['module', 'browser', 'main'];
 
-			config.module.rules.push({
-				loader: '@svgr/webpack',
-				options: {
-					prettier: false,
-					svgo: true,
-					svgoConfig: {
-						plugins: [
-							{
-								name: 'preset-default',
-								params: {
-									overrides: { removeViewBox: false },
+			config.module.rules.push(
+				{
+					loader: '@svgr/webpack',
+					options: {
+						prettier: false,
+						svgo: true,
+						svgoConfig: {
+							plugins: [
+								{
+									name: 'preset-default',
+									params: {
+										overrides: { removeViewBox: false },
+									},
 								},
-							},
-						],
+							],
+						},
+						titleProp: true,
 					},
-					titleProp: true,
+					test: /\.svg$/,
 				},
-				test: /\.svg$/,
-			});
+				{
+					test: /\.(png)$/i,
+					loader: 'url-loader',
+				}
+			);
 
 			return config;
 		},

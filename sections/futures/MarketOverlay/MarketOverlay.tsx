@@ -2,7 +2,6 @@ import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
 import { CurrencyKey } from 'constants/currency';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
-import Image from 'next/image';
 import React, { FC } from 'react';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
@@ -30,11 +29,11 @@ const MarketOverlay: FC<{
 					</StyledText>
 				</OverlayContent>
 			</Overlay>
-			{/* <AssetsImage
-				src={StaticChart}
-				alt=""
-				//  webp={true}
-			/> */}
+			<picture>
+				{/* <source srcSet={`${StaticChart}?webp`} type="image/webp" /> */}
+				<source srcSet={StaticChart} type="image/png" />
+				<AssetsImage src={StaticChart} />
+			</picture>
 		</OverlayContainer>
 	);
 };
@@ -69,7 +68,7 @@ const OverlayContent = styled.div`
 	font-weight: 700;
 `;
 
-const AssetsImage = styled(Image)`
+const AssetsImage = styled.img`
 	width: 100%;
 	opacity: 0.08;
 `;

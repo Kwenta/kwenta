@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import Fade from 'assets/svg/marketing/fade.svg';
@@ -61,7 +60,11 @@ const Assets = () => {
 			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
-						{/* <AssetsImage src={AssetCollections} alt="" webp={true} /> */}
+						<picture>
+							{/* <source srcSet={`${AssetCollections}?webp`} type="image/webp" /> */}
+							<source srcSet={AssetCollections} type="image/png" />
+							<AssetsImage src={AssetCollections} />
+						</picture>
 						<Fade />
 					</AssetCollectionWrapper>
 					<Col>
@@ -72,7 +75,11 @@ const Assets = () => {
 			</Media>
 			<Media lessThan="lg">
 				{title}
-				{/* <MobileImage src={AssetCollections} alt="" webp={true} /> */}
+				<picture>
+					{/* <source srcSet={`${AssetCollections}?webp`} type="image/webp" /> */}
+					<source srcSet={AssetCollections} type="image/png" />
+					<MobileImage src={AssetCollections} />
+				</picture>
 				{assetCards}
 			</Media>
 		</Container>
@@ -133,7 +140,7 @@ const AssetCardText = styled(Paragraph)`
 	text-align: center;
 `;
 
-const AssetsImage = styled(Image)`
+const AssetsImage = styled.img`
 	max-width: 500px;
 	width: 100%;
 `;
