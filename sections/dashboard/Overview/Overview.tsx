@@ -8,6 +8,11 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import FuturesMarketsTable from '../FuturesMarketsTable';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import SynthBalances from '../SynthBalances';
+import { wei } from '@synthetixio/wei';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -23,11 +28,23 @@ enum MarketsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const walletAddress = useRecoilValue(walletAddressState);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
@@ -44,6 +61,15 @@ const Overview: FC = () => {
 				},
 			},
 			{
+				name: PositionsTab.SPOT,
+				label: t('dashboard.overview.positions-tabs.spot'),
+				badge: 3,
+				active: activePositionsTab === PositionsTab.SPOT,
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.SPOT);
+				},
+			},
+			{
 				name: PositionsTab.SHORTS,
 				label: t('dashboard.overview.positions-tabs.shorts'),
 				badge: 3,
@@ -51,16 +77,6 @@ const Overview: FC = () => {
 				active: activePositionsTab === PositionsTab.SHORTS,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SHORTS);
-				},
-			},
-			{
-				name: PositionsTab.SPOT,
-				label: t('dashboard.overview.positions-tabs.spot'),
-				badge: 3,
-				disabled: true,
-				active: activePositionsTab === PositionsTab.SPOT,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
 				},
 			},
 		],
@@ -113,9 +129,15 @@ const Overview: FC = () => {
 				/>
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
+			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+				<SynthBalances
+					balances={synthBalances?.balances ?? []}
+					totalUSDBalance={wei(synthBalances?.totalUSDBalance ?? 0)}
+					exchangeRates={exchangeRates}
+				/>
+			</TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}></TabPanel>
+			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
