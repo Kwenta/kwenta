@@ -64,10 +64,19 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	}: ReactSelectOptionProps) => (
 		<ExternalLink href={link} onClick={onClick}>
 			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={17} />}
+				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={14} width={20} />}
 				{t(label)}
 				{postfixIcon &&
-					(postfixIcon === 'Link' ? <Svg src={LinkIcon} /> : <Svg src={SwitchIcon} />)}
+					(postfixIcon === 'Link' ? (
+						<Svg
+							src={LinkIcon}
+							viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+							height={14}
+							width={14}
+						/>
+					) : (
+						<Svg src={SwitchIcon} />
+					))}
 			</LabelContainer>
 		</ExternalLink>
 	);
@@ -98,6 +107,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				optionPadding={'0px'} //override default padding to 0
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
+				menuIsOpen={true}
 			></L2Select>
 		</Container>
 	);
