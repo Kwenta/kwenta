@@ -206,11 +206,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
-								<LinkIcon
-									width={15}
-									height={15}
-									// color={props.theme.colors.common.secondaryGray}
-								/>
+								<StyledLinkIcon />
 							</StyledExternalLink>
 						),
 						width: 25,

@@ -103,7 +103,7 @@ export const WalletActions: FC = () => {
 	const DropdownIndicator = (props: any) => {
 		return (
 			<components.DropdownIndicator {...props}>
-				<CaretDownIcon width={11} color={props.theme.colors.common?.secondaryGray} />
+				<StyledCaretDownIcon />
 			</components.DropdownIndicator>
 		);
 	};
@@ -172,10 +172,10 @@ const WalletOptionsSelect = styled(Select)`
 	}
 `;
 
-// const StyledCaretDownIcon = styled(CaretDownIcon)<{ props: any }>`
-// 	width: 11px;
-// 	color: ${(props) => props.theme.colors.common.secondaryGray};
-// `;
+const StyledCaretDownIcon = styled(CaretDownIcon)`
+	width: 11px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 const LabelContainer = styled(FlexDivRow)`
 	padding: 16px;
