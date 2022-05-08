@@ -66,7 +66,7 @@ const UserMenu: FC = () => {
 			/>
 			<NetworksSwitcher />
 			<WalletActions />
-			<MenuButton
+			{/* <MenuButton
 				onClick={() => {
 					setSettingsModalOpened(!settingsModalOpened);
 				}}
@@ -77,7 +77,7 @@ const UserMenu: FC = () => {
 					width={20}
 					viewBox={`0 0 ${SettingsIcon.width} ${SettingsIcon.height}`}
 				/>
-			</MenuButton>
+			</MenuButton> */}
 		</>
 	);
 
