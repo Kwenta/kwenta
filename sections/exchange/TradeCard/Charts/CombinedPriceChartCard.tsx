@@ -51,7 +51,9 @@ const CombinedPriceChartCard: FC<CombinedPriceChartCardProps> = ({
 				{baseCurrencyKey ? (
 					<ChartData disabledInteraction={disabledInteraction}>
 						<Container {...rest}>
-							<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={quoteCurrencyKey} />
+							{quoteCurrencyKey && (
+								<TVChart baseCurrencyKey={baseCurrencyKey} quoteCurrencyKey={quoteCurrencyKey} />
+							)}
 						</Container>
 					</ChartData>
 				) : (

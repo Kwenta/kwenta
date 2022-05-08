@@ -47,10 +47,15 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		(value: string) => {
 			setGainPercent(value);
 			setExitPrice(
-				value === '' ? '' : wei(value).div(100).add(1).mul(entryPrice).toNumber().toFixed(2)
+				value === ''
+					? ''
+					: (leverageSide === 'long'
+							? wei(value).div(100).add(1).mul(entryPrice).toNumber()
+							: wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber()
+					  ).toFixed(2)
 			);
 		},
-		[entryPrice]
+		[entryPrice, leverageSide]
 	);
 
 	const onStopLossAmountChange = (value: string, fromLeverage: boolean = false) => {
@@ -69,10 +74,15 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		(value: string) => {
 			setLossPercent(value);
 			setStopLoss(
-				value === '' ? '' : wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber().toFixed(2)
+				value === ''
+					? ''
+					: (leverageSide === 'long'
+							? wei(1).sub(wei(value).div(100)).mul(entryPrice).toNumber()
+							: wei(value).div(100).add(1).mul(entryPrice).toNumber()
+					  ).toFixed(2)
 			);
 		},
-		[entryPrice]
+		[entryPrice, leverageSide]
 	);
 
 	const onTradeAmountChange = useCallback(
@@ -99,7 +109,14 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 
 	useEffect(() => {
 		setEntryPrice(marketAssetRate);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		onGainPercentChange(gainPercent);
+		onLossPercentChange(lossPercent);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [leverageSide]);
 
 	return (
 		<>

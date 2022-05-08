@@ -20,8 +20,6 @@ import {
 	ETH_ADDRESS,
 	Synths,
 } from 'constants/currency';
-import { Period } from 'constants/period';
-import { ChartType } from 'constants/chartType';
 
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
@@ -31,8 +29,6 @@ import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
-import PriceChartCard from 'sections/exchange/TradeCard/Charts/PriceChartCard';
-import CombinedPriceChartCard from 'sections/exchange/TradeCard/Charts/CombinedPriceChartCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCard';
 import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
@@ -53,16 +49,8 @@ import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
-import {
-	singleChartPeriodState,
-	baseChartPeriodState,
-	quoteChartPeriodState,
-	baseChartTypeState,
-	quoteChartTypeState,
-} from 'store/app';
 import { isWalletConnectedState, walletAddressState, isL2State, networkState } from 'store/wallet';
 import { ordersState } from 'store/orders';
 
@@ -100,7 +88,6 @@ type ExchangeCardProps = {
 const useExchange = ({
 	defaultBaseCurrencyKey = null,
 	defaultQuoteCurrencyKey = null,
-	showPriceCard = false,
 	showMarketDetailsCard = false,
 	footerCardAttached = false,
 	routingEnabled = false,
@@ -161,22 +148,6 @@ const useExchange = ({
 	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
-
-	const [selectedBaseChartPeriod, setSelectedBaseChartPeriod] = usePersistedRecoilState<Period>(
-		baseChartPeriodState
-	);
-	const [selectedQuoteChartPeriod, setSelectedQuoteChartPeriod] = usePersistedRecoilState<Period>(
-		quoteChartPeriodState
-	);
-	const [selectedSingleChartPeriod, setSelectedSingleChartPeriod] = usePersistedRecoilState<Period>(
-		singleChartPeriodState
-	);
-	const [selectedBaseChartType, setSelectedBaseChartType] = usePersistedRecoilState<ChartType>(
-		baseChartTypeState
-	);
-	const [selectedQuoteChartType, setSelectedQuoteChartType] = usePersistedRecoilState<ChartType>(
-		quoteChartTypeState
-	);
 
 	const wideWidth = useChartWideWidth();
 
@@ -1008,19 +979,6 @@ const useExchange = ({
 			)}
 		</>
 	);
-	const quotePriceChartCard =
-		txProvider === 'synthetix' && showPriceCard ? (
-			<PriceChartCard
-				side="quote"
-				currencyKey={quoteCurrencyKey as CurrencyKey}
-				openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
-				priceRate={quotePriceRate}
-				selectedChartType={selectedQuoteChartType}
-				setSelectedChartType={setSelectedQuoteChartType}
-				selectedChartPeriod={selectedQuoteChartPeriod}
-				setSelectedChartPeriod={setSelectedQuoteChartPeriod}
-			/>
-		) : null;
 
 	const quoteMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
@@ -1125,39 +1083,10 @@ const useExchange = ({
 		</>
 	);
 
-	const basePriceChartCard =
-		txProvider === 'synthetix' && showPriceCard ? (
-			<PriceChartCard
-				side="base"
-				currencyKey={baseCurrencyKey as CurrencyKey}
-				priceRate={basePriceRate}
-				openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
-				alignRight
-				selectedChartType={selectedBaseChartType}
-				setSelectedChartType={setSelectedBaseChartType}
-				selectedChartPeriod={selectedBaseChartPeriod}
-				setSelectedChartPeriod={setSelectedBaseChartPeriod}
-			/>
-		) : null;
-
 	const baseMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
 			<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} />
 		) : null;
-
-	const combinedPriceChartCard = showPriceCard ? (
-		<CombinedPriceChartCard
-			{...{
-				baseCurrencyKey: baseCurrencyKey as CurrencyKey,
-				basePriceRate,
-				quoteCurrencyKey: quoteCurrencyKey as CurrencyKey,
-				quotePriceRate,
-			}}
-			openAfterHoursModalCallback={() => setSelectBalancerTradeModal(true)}
-			selectedChartPeriod={selectedSingleChartPeriod}
-			setSelectedChartPeriod={setSelectedSingleChartPeriod}
-		/>
-	) : null;
 
 	const combinedMarketDetailsCard = showMarketDetailsCard ? (
 		<CombinedMarketDetailsCard
@@ -1272,16 +1201,13 @@ const useExchange = ({
 		baseCurrencyCard,
 		baseCurrencyKey,
 		baseMarketDetailsCard,
-		basePriceChartCard,
 		combinedMarketDetailsCard,
-		combinedPriceChartCard,
 		footerCard,
 		handleCurrencySwap,
 		inverseRate,
 		quoteCurrencyCard,
 		quoteCurrencyKey,
 		quoteMarketDetailsCard,
-		quotePriceChartCard,
 		wideWidth,
 	};
 };

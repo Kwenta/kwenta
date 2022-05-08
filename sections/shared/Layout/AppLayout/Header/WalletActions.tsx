@@ -18,6 +18,7 @@ import { IndicatorSeparator } from 'components/Select/Select';
 
 import getENSName from './UserMenu/getENSName';
 import ConnectionDot from './ConnectionDot';
+import useENS from 'hooks/useENS';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -27,6 +28,8 @@ type ReactSelectOptionProps = {
 };
 
 export const WalletActions: FC = () => {
+	const [address, setAddress] = useState('');
+	const { ensAvatar } = useENS(address);
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const {
@@ -73,7 +76,17 @@ export const WalletActions: FC = () => {
 	}: ReactSelectOptionProps) =>
 		isMenuLabel ? (
 			<>
-				<StyledConnectionDot />
+				{ensAvatar ? (
+					<img
+						src={ensAvatar}
+						alt={ensName}
+						width={16}
+						height={16}
+						style={{ borderRadius: '50%', marginRight: '8px' }}
+					/>
+				) : (
+					<StyledConnectionDot />
+				)}
 				{label}
 			</>
 		) : (
@@ -104,6 +117,7 @@ export const WalletActions: FC = () => {
 			setWalletLabel(truncatedWalletAddress!);
 			signer.getAddress().then((account: string) => {
 				const _account = account;
+				setAddress(account);
 				getENSName(_account, staticMainnetProvider).then((_ensName: string) => {
 					setEns(_ensName);
 					setWalletLabel(_ensName || truncatedWalletAddress!);

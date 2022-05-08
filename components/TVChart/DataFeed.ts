@@ -1,4 +1,3 @@
-import { formatEther } from '@ethersproject/units';
 import { Synths } from 'constants/currency';
 import {
 	HistoryCallback,
@@ -12,6 +11,7 @@ import {
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
+import { getDisplayAsset } from 'utils/futures';
 
 const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
 
@@ -19,11 +19,6 @@ const config = {
 	supports_search: false,
 	supports_group_request: true,
 	supported_resolutions: supportedResolutions,
-};
-
-const formatWei = (weiValue: BigInt) => {
-	const rounded = Number(formatEther(String(weiValue)));
-	return Number(rounded.toFixed(4));
 };
 
 // symbolName name split from BASE:QUOTE
@@ -40,19 +35,19 @@ const fetchCombinedCandleSticks = async (
 	from: number,
 	to: number,
 	resolution: ResolutionString,
-	isL2: boolean
+	networkId: number
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseDataPromise = requestCandlesticks(base, from, to, resolution, isL2);
-	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, isL2);
+	const baseDataPromise = requestCandlesticks(base, from, to, resolution, networkId);
+	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, networkId);
 
 	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	});
 };
 
-const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
+const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
 			setTimeout(() => cb(config), 0);
@@ -62,9 +57,7 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 
 			var symbol_stub = {
 				name: symbolName,
-				description: `${base[0] === 's' ? base.slice(1) : base} / ${
-					quote[0] === 's' ? quote.slice(1) : quote
-				} (Oracle)`,
+				description: `${getDisplayAsset(base)} / ${getDisplayAsset(quote)} (Oracle)`,
 				type: 'crypto',
 				session: '24x7',
 				timezone: 'Etc/UTC',
@@ -93,14 +86,14 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandleSticks(base, quote, from, to, _resolution, isL2).then((bars) => {
+				fetchCombinedCandleSticks(base, quote, from, to, _resolution, networkId).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
-							high: formatWei(b.high),
-							low: formatWei(b.low),
-							open: formatWei(b.open),
-							close: formatWei(b.close),
-							time: Number(b.timestamp) * 1000,
+							high: b.high,
+							low: b.low,
+							open: b.open,
+							close: b.close,
+							time: b.timestamp * 1000,
 						};
 					});
 					onHistoryCallback(chartBars, { noData: !chartBars.length });
@@ -110,10 +103,10 @@ const DataFeedFactory = (isL2: boolean = false): IBasicDataFeed => {
 			}
 		},
 		subscribeBars: () => {
-			console.log('=====subscribeBars runnning');
+			// do nothing
 		},
 		unsubscribeBars: (subscriberUID) => {
-			console.log('=====unsubscribeBars running');
+			// do nothing
 		},
 		searchSymbols: (
 			userInput: string,
