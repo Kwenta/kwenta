@@ -229,7 +229,9 @@ export const calculateFundingRate = (
 	return fundingRate;
 };
 
-export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
+export const getReasonFromCode = (
+	reasonCode?: BigNumber
+): MarketClosureReason | 'unknown' | null => {
 	switch (Number(reasonCode)) {
 		case 1:
 			return 'system-upgrade';
@@ -242,7 +244,8 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 		case 99999:
 			return 'emergency';
 		default:
-			return null;
+			console.log(Number(reasonCode));
+			return 'unknown';
 	}
 };
 

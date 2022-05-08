@@ -644,13 +644,14 @@
 				"avg-entry-price": "Avg. Entry Price"
 			},
 			"state": {
-				"opens-soon": "Opens soon",
-				"closes-soon": "Closes soon",
+				"opens-soon": "opens soon",
+				"closes-soon": "closes soon",
 				"frozen": "paused",
 				"market-closure": "paused",
 				"system-upgrade": "paused",
 				"circuit-breaker": "paused",
-				"emergency": "paused"
+				"emergency": "paused",
+        "unknown": "paused"
 			},
 			"chart": {
 				"overlay-messages": {
@@ -673,7 +674,11 @@
 					"emergency": {
 						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
 						"subtitle": "Reset in progress"
-					}
+					},
+          "unknown": {
+            "title": "Markets are temporarily paused",
+						"subtitle": ""
+          }
 				}
 			},
 			"trade": {
