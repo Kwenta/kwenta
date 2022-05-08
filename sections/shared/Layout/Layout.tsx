@@ -30,7 +30,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 };
 
 const GlobalStyle = createGlobalStyle`
-	${media.greaterThan('mdUp')`
+	/* ${media.greaterThan('mdUp')`
 		@media (prefers-color-scheme: light) {
 			::-webkit-scrollbar {
 				width: 13px;
@@ -46,12 +46,13 @@ const GlobalStyle = createGlobalStyle`
 				box-shadow: inset 0 0 13px 13px #2C2C42;
 				border: solid 3px transparent;
 				border-radius: 16px;
+
 				&:hover {
 					box-shadow: inset 0 0 13px 13px #3B3B5A;
 				}
 			}
 		}
-	`};
+	`}; */
 
 	body {
 		background-color: ${(props) => props.theme.colors.selectedTheme.background};
