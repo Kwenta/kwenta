@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
 import { useRouter } from 'next/router';
 
@@ -74,7 +73,7 @@ const Markets: React.FC = () => {
 					noResultsMessage={
 						futuresMarketsQuery?.isFetched && markets.length === 0 ? (
 							<TableNoResults>
-								<Svg src={NoNotificationIcon} />
+								<NoNotificationIcon />
 								{t('dashboard.transactions.table.no-results')}
 							</TableNoResults>
 						) : undefined

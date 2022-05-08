@@ -3,7 +3,6 @@ import { ethers, utils } from 'ethers';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import { Trans, useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import produce from 'immer';
 
 import ArrowRightIcon from 'assets/svg/app/circle-arrow-right.svg';
@@ -587,7 +586,7 @@ const useShort = ({
 					feeCost={feeCost}
 					quoteCurrencyLabel={t('shorting.common.posting')}
 					baseCurrencyLabel={t('shorting.common.shorting')}
-					icon={<Svg src={ArrowRightIcon} />}
+					icon={<ArrowRightIcon />}
 				/>
 			)}
 			{txApproveModalOpen && (

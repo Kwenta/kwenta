@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
+import Image from 'next/image';
 
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 
@@ -20,7 +20,7 @@ const FAQ = () => {
 	return (
 		<StyledStackSection>
 			<ChartGraphicContainer>
-				<ChartBannerImage src={ChartBanner} alt="" webp={true} />
+				{/* <ChartBannerImage src={ChartBanner} alt="" webp={true} /> */}
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Home.Overview}>
@@ -63,7 +63,7 @@ const StyledSubtext = styled(Subtext)`
 	padding-bottom: 32px;
 `;
 
-const ChartBannerImage = styled(Img)`
+const ChartBannerImage = styled(Image)`
 	max-width: 1440px;
 `;
 

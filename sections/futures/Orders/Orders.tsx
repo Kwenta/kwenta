@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -29,6 +28,7 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { gasPriceInWei } from 'utils/network';
 import { parseGasPriceObject } from 'hooks/useGas';
+import Image from 'next/image';
 
 type OrdersProps = {
 	position: FuturesPosition | null;
@@ -218,7 +218,7 @@ const Orders: React.FC<OrdersProps> = ({
 				noResultsMessage={
 					isLoaded && orders.length === 0 ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
+							<NoNotificationIcon />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined
@@ -274,7 +274,7 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusIcon = styled(Svg)<{ status: OrderStatus }>`
+const StatusIcon = styled(Image)<{ status: OrderStatus }>`
 	color: ${(props) =>
 		props.status === OrderStatus.PENDING
 			? props.theme.colors.yellow

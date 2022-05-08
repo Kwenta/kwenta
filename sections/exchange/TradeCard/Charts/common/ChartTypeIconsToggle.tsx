@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
+import Image from 'next/image';
 
 import AreaIcon from 'assets/svg/app/area.svg';
 import CandlesticksIcon from 'assets/svg/app/candlesticks.svg';
@@ -81,7 +81,7 @@ const Button = styled(ResetButton)`
 	}
 `;
 
-const StyledSvg = styled(Svg)<{ isActive: boolean }>`
+const StyledSvg = styled(Image)<{ isActive: boolean }>`
 	filter: ${(props) =>
 		!props.isActive &&
 		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
