@@ -157,7 +157,7 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 `;
 
 const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
 `;
 
