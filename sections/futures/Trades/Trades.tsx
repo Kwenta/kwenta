@@ -9,7 +9,6 @@ import { format } from 'date-fns';
 import { FuturesTrade } from 'queries/futures/types';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
@@ -207,9 +206,10 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
-								<StyledLinkIcon
-									src={LinkIcon}
-									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
+								<LinkIcon
+									width={15}
+									height={15}
+									// color={props.theme.colors.common.secondaryGray}
 								/>
 							</StyledExternalLink>
 						),
@@ -299,7 +299,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled(LinkIcon)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 14px;
 	height: 14px;
