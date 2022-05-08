@@ -87,7 +87,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 					rgba(127, 212, 130, 0.15) 0%,
 					rgba(71, 122, 73, 0.05) 100%
 				);
-
+				box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
+				&::before {
+					display: none;
+				}
 				&:hover {
 					background: linear-gradient(
 						180deg,
@@ -111,7 +114,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 					rgba(239, 104, 104, 0.15) 0%,
 					rgba(116, 56, 56, 0.05) 100%
 				);
-
+				box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
+				&::before {
+					display: none;
+				}
 				&:hover {
 					background: linear-gradient(
 					180deg,
