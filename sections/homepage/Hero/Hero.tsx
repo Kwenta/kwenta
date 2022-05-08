@@ -33,7 +33,7 @@ const Hero = () => {
 			</CTAContainer>
 			<HeroImageContainer>
 				<picture>
-					{/* <source srcSet={`${MarketOrderPreview}?webp`} type="image/webp" /> */}
+					<source srcSet={`${MarketOrderPreview}?webp`} type="image/webp" />
 					<source srcSet={MarketOrderPreview} type="image/png" />
 					<HeroImage src={MarketOrderPreview} />
 				</picture>

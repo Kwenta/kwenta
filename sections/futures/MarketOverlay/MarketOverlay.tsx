@@ -30,7 +30,7 @@ const MarketOverlay: FC<{
 				</OverlayContent>
 			</Overlay>
 			<picture>
-				{/* <source srcSet={`${StaticChart}?webp`} type="image/webp" /> */}
+				<source srcSet={`${StaticChart}?webp`} type="image/webp" />
 				<source srcSet={StaticChart} type="image/png" />
 				<AssetsImage src={StaticChart} />
 			</picture>

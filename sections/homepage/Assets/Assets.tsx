@@ -61,7 +61,7 @@ const Assets = () => {
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
 						<picture>
-							{/* <source srcSet={`${AssetCollections}?webp`} type="image/webp" /> */}
+							<source srcSet={`${AssetCollections}?webp`} type="image/webp" />
 							<source srcSet={AssetCollections} type="image/png" />
 							<AssetsImage src={AssetCollections} />
 						</picture>
@@ -76,7 +76,7 @@ const Assets = () => {
 			<Media lessThan="lg">
 				{title}
 				<picture>
-					{/* <source srcSet={`${AssetCollections}?webp`} type="image/webp" /> */}
+					<source srcSet={`${AssetCollections}?webp`} type="image/webp" />
 					<source srcSet={AssetCollections} type="image/png" />
 					<MobileImage src={AssetCollections} />
 				</picture>

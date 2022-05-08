@@ -20,7 +20,7 @@ const FAQ = () => {
 		<StyledStackSection>
 			<ChartGraphicContainer>
 				<picture>
-					{/* <source srcSet={`${ChartBanner}?webp`} type="image/webp" /> */}
+					<source srcSet={`${ChartBanner}?webp`} type="image/webp" />
 					<source srcSet={ChartBanner} type="image/png" />
 					<ChartBannerImage src={ChartBanner} />
 				</picture>
