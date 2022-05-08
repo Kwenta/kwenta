@@ -149,7 +149,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 		<Container>
 			{sUSDBalance === zeroBN ? (
 				<StyledWidgetButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
-					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="24px" height="24px" />
+					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
 			) : (
@@ -185,7 +185,7 @@ const Container = styled.div`
 
 const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 	.react-select__control {
-		width: ${(props) => 5 * props.value.label.length + 90}px;
+		width: ${(props) => 5 * props.value.label.length + 80}px;
 	}
 
 	.react-select__group {
@@ -225,18 +225,20 @@ const StyledOptions = styled.div`
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
 	margin-right: 5px;
+	height: auto;
+	width: 20px;
 `;
 
 const StyledLabel = styled.div<{ noPadding: boolean }>`
-	padding-top: 4px;
 	white-space: nowrap;
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	padding: 10px;
 	font-size: 13px;
-	padding: 10px;
+	> div {
+		align-items: center;
+	}
 `;
 
 const StyledButton = styled(Button)`
