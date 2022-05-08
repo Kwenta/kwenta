@@ -17,7 +17,7 @@ const NotificationPending = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<Image width={25} src={Spinner} />
+				<StyledImg width={25} src={Spinner} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
 		</NotificationContainer>
@@ -28,7 +28,7 @@ const NotificationSuccess = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<Image width={35} src={Success} />
+				<StyledImg width={35} src={Success} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
 		</NotificationContainer>
@@ -39,7 +39,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<Image width={35} src={Failure} />
+				<StyledImg width={35} src={Failure} />
 			</IconContainer>
 			<TransactionInfo>
 				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
@@ -58,5 +58,7 @@ const IconContainer = styled(FlexDivRowCentered)`
 
 const TransactionInfo = styled(FlexDivCol)``;
 const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>``;
+
+const StyledImg = styled(Image)``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };

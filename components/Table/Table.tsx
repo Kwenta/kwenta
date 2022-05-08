@@ -124,30 +124,14 @@ export const Table: FC<TableProps> = ({
 										<SortIconContainer>
 											{column.isSorted ? (
 												column.isSortedDesc ? (
-													<SortDownIcon
-														width={5}
-														height={5}
-														// color={props.theme.colors.common.secondaryGray}
-													/>
+													<StyledSortDownIcon />
 												) : (
-													<SortUpIcon
-														width={5}
-														height={5}
-														// color={props.theme.colors.common.secondaryGray}
-													/>
+													<StyledSortUpIcon />
 												)
 											) : (
 												<>
-													<SortUpIcon
-														width={5}
-														height={5}
-														// color={props.theme.colors.common.secondaryGray}
-													/>
-													<SortDownIcon
-														width={5}
-														height={5}
-														// color={props.theme.colors.common.secondaryGray}
-													/>
+													<StyledSortUpIcon />
+													<StyledSortDownIcon />
 												</>
 											)}
 										</SortIconContainer>
@@ -300,6 +284,18 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			${TableBodyRow} {
 			}
 		`}
+`;
+
+const StyledSortDownIcon = styled(SortDownIcon)`
+	width: 5px;
+	height: 5px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
+
+const StyledSortUpIcon = styled(SortUpIcon)`
+	width: 5px;
+	height: 5px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export default Table;
