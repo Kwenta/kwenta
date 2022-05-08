@@ -10,7 +10,6 @@ import { useRecoilValue } from 'recoil';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-import { Svg } from 'react-optimized-image';
 
 import { components } from 'react-select';
 import Select from 'components/Select';
@@ -94,9 +93,9 @@ export const WalletActions: FC = () => {
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Switch' ? (
-						<Svg src={SwitchWalletIcon} height={17} />
+						<SwitchWalletIcon height={17} />
 					) : (
-						<Svg src={DisconnectIcon} height={17} />
+						<DisconnectIcon height={17} />
 					))}
 			</LabelContainer>
 		);
@@ -104,10 +103,7 @@ export const WalletActions: FC = () => {
 	const DropdownIndicator = (props: any) => {
 		return (
 			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon
-					src={CaretDownIcon}
-					viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
-				/>
+				<CaretDownIcon width={11} color={props.theme.colors.common?.secondaryGray} />
 			</components.DropdownIndicator>
 		);
 	};
@@ -176,10 +172,10 @@ const WalletOptionsSelect = styled(Select)`
 	}
 `;
 
-const StyledCaretDownIcon = styled(Svg)`
-	width: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
+// const StyledCaretDownIcon = styled(CaretDownIcon)<{ props: any }>`
+// 	width: 11px;
+// 	color: ${(props) => props.theme.colors.common.secondaryGray};
+// `;
 
 const LabelContainer = styled(FlexDivRow)`
 	padding: 16px;

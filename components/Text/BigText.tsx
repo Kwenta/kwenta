@@ -1,8 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import Heading from './Heading';
-import kwentaLogo from 'assets/svg/earn/KWENTA.svg';
+import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
 
 export const BigText: React.FC<{ white?: boolean; logo?: boolean }> = ({
 	children,
@@ -12,7 +11,7 @@ export const BigText: React.FC<{ white?: boolean; logo?: boolean }> = ({
 	return (
 		<div style={{ display: 'flex', alignItems: 'center' }}>
 			<TitleText $gold={!white}>{children}</TitleText>
-			{logo && <KwentaLogo src={kwentaLogo} />}
+			{logo && <StyledKwentaLogo />}
 		</div>
 	);
 };
@@ -26,7 +25,7 @@ const TitleText = styled(Heading)<{ $gold?: boolean }>`
 		`}
 `;
 
-const KwentaLogo = styled(Svg)`
+const StyledKwentaLogo = styled(KwentaLogo)`
 	margin-left: 8px;
 `;
 

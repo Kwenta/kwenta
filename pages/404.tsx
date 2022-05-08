@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
@@ -21,12 +20,12 @@ const NotFoundPage = () => {
 			</Head>
 			<AppLayout>
 				<Container>
-					<Svg src={CaretLeftXLIcon} />
+					<CaretLeftXLIcon />
 					<Content>
 						<Title>{t('not-found.title')}</Title>
 						<Subtitle>{t('not-found.subtitle')}</Subtitle>
 					</Content>
-					<Svg src={CaretRightXLICon} />
+					<CaretRightXLICon />
 				</Container>
 			</AppLayout>
 		</>

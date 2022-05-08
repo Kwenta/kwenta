@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Img } from 'react-optimized-image';
+import Image from 'next/image';
 import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 import i18n from 'i18n';
 
@@ -17,7 +17,7 @@ const NotificationPending = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<StyledImg width={25} src={Spinner} />
+				<Image width={25} src={Spinner} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
 		</NotificationContainer>
@@ -28,7 +28,7 @@ const NotificationSuccess = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<StyledImg width={35} src={Success} />
+				<Image width={35} src={Success} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
 		</NotificationContainer>
@@ -39,7 +39,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<StyledImg width={35} src={Failure} />
+				<Image width={35} src={Failure} />
 			</IconContainer>
 			<TransactionInfo>
 				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
@@ -58,7 +58,5 @@ const IconContainer = styled(FlexDivRowCentered)`
 
 const TransactionInfo = styled(FlexDivCol)``;
 const TransactionInfoBody = styled.div<{ isFailureMessage?: boolean }>``;
-
-const StyledImg = styled(Img)``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };
