@@ -64,8 +64,8 @@ module.exports = withPlugins([
 					test: /\.svg$/,
 				},
 				{
-					test: /\.(png)$/i,
-					loader: 'url-loader',
+					test: /\.png/,
+					type: 'asset/resource',
 				}
 			);
 
