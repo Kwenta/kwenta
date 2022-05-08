@@ -20,50 +20,71 @@ function interceptStdout(text) {
 // Intercept in dev and prod
 intercept(interceptStdout);
 
-module.exports = {
-	env: {
-		GIT_HASH_ID: gitRevision,
-	},
-	images: {
-		disableStaticImages: true,
-	},
-	webpack: (config, options) => {
-		config.resolve.mainFields = ['module', 'browser', 'main'];
+const withPlugins = require('next-compose-plugins');
+const optimizedImages = require('next-optimized-images');
 
-		config.module.rules.push({
-			test: /\.(png|jp(e*)g|svg|gif|webp)$/,
-			use: [
-				{
-					loader: 'optimized-images-loader',
-					options: {
-						includeStrategy: 'react',
-						publicPath: `/_next/static/images/`,
-						outputPath: 'static/images',
+module.exports = withPlugins([
+	[
+		optimizedImages,
+		{
+			/* config for next-optimized-images (use default) */
+			imagesFolder: 'images',
+			imagePublicPolder: '/_next/static/images',
+			imageOutputPath: '/static/images',
+		},
+	],
+	{
+		env: {
+			GIT_HASH_ID: gitRevision,
+		},
+		images: {
+			disableStaticImages: true,
+		},
+		webpack: (config, options) => {
+			config.resolve.mainFields = ['module', 'browser', 'main'];
+
+			config.module.rules.push({
+				loader: '@svgr/webpack',
+				options: {
+					prettier: false,
+					svgo: true,
+					svgoConfig: {
+						plugins: [
+							{
+								name: 'preset-default',
+								params: {
+									overrides: { removeViewBox: false },
+								},
+							},
+						],
 					},
+					titleProp: true,
 				},
-			],
-		});
-		return config;
+				test: /\.svg$/,
+			});
+
+			return config;
+		},
+		trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
+		exportPathMap: function (defaultPathMap) {
+			return {
+				...defaultPathMap,
+				'/dashboard': {
+					page: '/dashboard/[[...tab]]',
+				},
+				// '/exchange': {
+				// 	page: '/exchange/[[...market]]',
+				// },
+			};
+		},
+		async redirects() {
+			return [
+				{
+					source: '/',
+					destination: '/dashboard',
+					permanent: true,
+				},
+			];
+		},
 	},
-	trailingSlash: !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS,
-	exportPathMap: function (defaultPathMap) {
-		return {
-			...defaultPathMap,
-			'/dashboard': {
-				page: '/dashboard/[[...tab]]',
-			},
-			// '/exchange': {
-			// 	page: '/exchange/[[...market]]',
-			// },
-		};
-	},
-	async redirects() {
-		return [
-			{
-				source: '/',
-				destination: '/dashboard',
-				permanent: true,
-			},
-		];
-	},
-};
+]);
