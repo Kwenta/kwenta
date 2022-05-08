@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
@@ -9,6 +8,10 @@ import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
+
+const ArrowIconComponent = ({ className }: { className: string }) => {
+	return <ArrowIcon className={className} />;
+};
 
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();
@@ -29,7 +32,7 @@ const BasicSwap: FC = () => {
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<Svg src={ArrowIcon} className="arrow" />
+							<ArrowIconComponent className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
 					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>

@@ -1,7 +1,7 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
+import Image from 'next/image';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
@@ -27,7 +27,6 @@ import { MessageButton } from 'sections/exchange/FooterCard/common';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useCurrencyPrice from 'hooks/useCurrencyPrice';
 import { ESTIMATE_VALUE } from 'constants/placeholder';
-import { Svg } from 'react-optimized-image';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -194,7 +193,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								interactive={true}
 							>
 								<TooltipItem>
-									<Svg src={InfoIcon} />
+									<InfoIcon />
 								</TooltipItem>
 							</StyledTooltip>
 						</SummaryItemLabel>
@@ -245,7 +244,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 								interactive={true}
 							>
 								<TooltipItem>
-									<Svg src={InfoIcon} />
+									<InfoIcon />
 								</TooltipItem>
 							</StyledTooltip>
 						</SummaryItemLabel>
@@ -262,7 +261,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
-					<Img
+					<Image
 						src={OneInchImage}
 						width="40"
 						height="40"
@@ -273,7 +272,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txProvider === 'balancer' && (
 				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
-					<Img
+					<Image
 						src={BalancerImage}
 						width="40"
 						height="40"
