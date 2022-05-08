@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import SearchInput from 'components/Input/SearchInput';
 import SearchIconPath from 'assets/svg/app/search.svg';
@@ -17,7 +16,7 @@ export default function Search({ value, onChange, disabled }: Props) {
 	};
 	return (
 		<SearchBar>
-			<StyledSvg src={SearchIconPath} />
+			<StyledSvg />
 			<StyledSearchInput
 				value={value}
 				onChange={handleOnChange}
@@ -28,7 +27,7 @@ export default function Search({ value, onChange, disabled }: Props) {
 	);
 }
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled(SearchIconPath)`
 	position: absolute;
 	left: 12px;
 `;
