@@ -80,12 +80,20 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryGreen};
 			${props.$isActive &&
 			css`
-				border: 1px solid ${props.theme.colors.common.primaryGreen};
+				border: 1px solid rgba(127, 212, 130, 0.7);
 				border-radius: 11px;
-				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
+				background: linear-gradient(
+					180deg,
+					rgba(127, 212, 130, 0.15) 0%,
+					rgba(71, 122, 73, 0.05) 100%
+				);
 
 				&:hover {
-					background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
+					background: linear-gradient(
+						180deg,
+						rgba(127, 212, 130, 0.15) 0%,
+						rgba(71, 122, 73, 0.05) 100%
+					);
 				}
 			`};
 		`};
@@ -96,13 +104,20 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryRed};
 			${props.$isActive &&
 			css`
-				border: 1px solid ${props.theme.colors.common.primaryRed};
+				border: 1px solid rgba(239, 104, 104, 0.7);
 				border-radius: 11px;
-				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
+				background: linear-gradient(
+					180deg,
+					rgba(239, 104, 104, 0.15) 0%,
+					rgba(116, 56, 56, 0.05) 100%
+				);
 
 				&:hover {
-					background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
-				}
+					background: linear-gradient(
+					180deg,
+					rgba(239, 104, 104, 0.15) 0%,
+					rgba(116, 56, 56, 0.05) 100%
+				);
 			`};
 		`};
 
