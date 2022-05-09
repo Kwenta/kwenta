@@ -61,14 +61,6 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 		transform: scale(0.96);
 	}
 
-	&:disabled {
-		border: transparent;
-		background: transparent;
-		&:hover {
-			background: transparent;
-		}
-	}
-
 	> span {
 		position: relative;
 		top: -2px;
