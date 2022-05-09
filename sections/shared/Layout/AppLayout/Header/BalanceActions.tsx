@@ -147,7 +147,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 
 	return (
 		<Container>
-			{sUSDBalance === zeroBN ? (
+			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
 				<StyledWidgetButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="24px" height="24px" />
 					{t('header.balance.get-susd')}
