@@ -79,7 +79,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				<LeverageInputContainer>
 					<StyledInput
 						value={currentLeverage}
-						placeholder="0"
+						placeholder="1"
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
 						onChange={(_, newValue) => {
