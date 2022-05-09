@@ -15,19 +15,16 @@ function Select<T>(props: Props<T>) {
 			}),
 			singleValue: (provided) => ({
 				...provided,
-				color: colors.white,
+				color: colors.common.primaryWhite,
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
-				display: 'flex',
-				alignItems: 'center',
 			}),
 			control: (provided, state) => ({
 				...provided,
-				color: colors.white,
+				color: colors.common.primaryWhite,
 				cursor: 'pointer',
 				boxShadow: colors.selectedTheme.select.control.shadow,
-
 				border: 'none',
 				outline: 'none',
 				minHeight: 'unset',
@@ -55,7 +52,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			menu: (provided, state) => ({
 				...provided,
-				background: colors.selectedTheme.button.background,
+				background: colors.selectedTheme.cell.gradient,
 				border: 'none',
 				outline: 'none',
 				borderRadius: 10,
@@ -69,7 +66,7 @@ function Select<T>(props: Props<T>) {
 				borderRadius: 10,
 				padding: 0,
 				textAlign: 'left',
-				border: colors.selectedTheme.border,
+				border: colors.selectedTheme.cell.outline,
 				borderStyle: 'solid',
 				outline: 'none',
 				'div.react-select__option:first-of-type:hover': {
@@ -84,7 +81,7 @@ function Select<T>(props: Props<T>) {
 			option: (provided, state) => ({
 				...provided,
 				border: 'none',
-				fontFamily: fonts.bold,
+				fontFamily: fonts.regular,
 				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
 				cursor: 'pointer',
 				fontSize: '12px',
@@ -92,7 +89,7 @@ function Select<T>(props: Props<T>) {
 				padding: state.selectProps.optionPadding ?? '6px 8px',
 				borderBottom: colors.selectedTheme.border,
 				'&:hover': {
-					background: colors.selectedTheme.button.hover,
+					background: colors.selectedTheme.cell.hover,
 				},
 				':last-child': {
 					borderBottom: 'none',
@@ -101,15 +98,12 @@ function Select<T>(props: Props<T>) {
 			placeholder: (provided) => ({
 				...provided,
 				fontSize: '12px',
-				color: colors.white,
+				color: colors.common.primaryWhite,
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,
 				transition: 'transform 0.2s ease-in-out',
 				transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
-				'&:hover': {
-					color: state.selectProps.dropdownIndicatorColorHover ?? colors.goldColors.color3,
-				},
 			}),
 			valueContainer: (provided) => ({
 				...provided,

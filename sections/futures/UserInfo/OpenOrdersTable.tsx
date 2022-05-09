@@ -219,7 +219,7 @@ const StyledTable = styled(Table)`
 `;
 
 const StyledTableHeader = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
 `;
 
