@@ -668,8 +668,8 @@
 						"subtitle": "Please check the Synthetix Discord for details."
 					},
 					"circuit-breaker": {
-						"title": "Circuit breaker triggered for {{baseCurrencyKey}}",
-						"subtitle": "Market is temporarily paused"
+						"title": "{{baseCurrencyKey}} market has been temporarily paused",
+						"subtitle": "Circuit breaker triggered"
 					},
 					"emergency": {
 						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
