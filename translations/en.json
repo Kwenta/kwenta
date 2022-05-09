@@ -669,7 +669,7 @@
 					},
 					"circuit-breaker": {
 						"title": "Circuit breaker triggered for {{baseCurrencyKey}}",
-						"subtitle": "Reset in progress"
+						"subtitle": "Market is temporarily paused"
 					},
 					"emergency": {
 						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
