@@ -78,9 +78,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const realizedPnl = positionHistory?.pnl ?? zeroBN;
-		let netFundingHistory = positionHistory?.netFunding ?? zeroBN;
-		if (netFundingHistory.lt(wei(0.01))) netFundingHistory = wei(1);
+		const realizedPnl = positionHistory?.pnl.add(positionHistory?.netFunding) ?? zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
@@ -138,8 +136,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				positionHistory && realizedPnl
 					? `${formatCurrency(Synths.sUSD, realizedPnl, {
 							sign: '$',
-							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(realizedPnl.div(netFundingHistory))})`
+							minDecimals: realizedPnl.abs().lt(0.01) && !realizedPnl.eq(0) ? 4 : 2,
+					  })}`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
