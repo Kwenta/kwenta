@@ -176,14 +176,12 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<PnlContainer>
 									<ChangePercent value={cellProps.row.original.pnlPct} />
 									<div>
-										(
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.pnl}
 											sign={'$'}
 											conversionRate={1}
 										/>
-										)
 									</div>
 								</PnlContainer>
 							);

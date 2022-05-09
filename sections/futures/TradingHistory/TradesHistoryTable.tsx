@@ -185,12 +185,6 @@ const StyledTable = styled(Table)`
 	border: 0px;
 	height: 695px;
 
-	.table-body {
-		::-webkit-scrollbar-thumb {
-			box-shadow: inset 0 0 13px 13px ${(props) => props.theme.colors.selectedTheme.slider.label};
-		}
-	}
-
 	.table-body-row {
 		padding: 0;
 	}

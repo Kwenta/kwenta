@@ -78,6 +78,13 @@ const UniswapModal: FC<UniswapModalProps> = ({
 export default UniswapModal;
 
 const StyledBaseModal = styled(BaseModal)`
+	.card {
+		background-color: transparent;
+		box-shadow: none;
+		&::before {
+			display: none;
+		}
+	}
 	[data-reach-dialog-content] {
 		width: fit-content;
 	}
