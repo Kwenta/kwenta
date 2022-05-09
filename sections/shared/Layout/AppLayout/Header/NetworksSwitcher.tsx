@@ -33,7 +33,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
-	const theme = useTheme();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [

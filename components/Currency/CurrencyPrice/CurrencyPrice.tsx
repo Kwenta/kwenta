@@ -10,7 +10,6 @@ import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
 import { ethers } from 'ethers';
-import { composeInitialProps } from 'react-i18next';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
