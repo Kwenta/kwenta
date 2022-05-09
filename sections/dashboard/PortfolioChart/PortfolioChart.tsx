@@ -21,7 +21,7 @@ const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioCh
 
 	return (
 		<Chart>
-			<PortfolioTitle>Futures Portfolio Value</PortfolioTitle>
+			<PortfolioTitle>Portfolio Value</PortfolioTitle>
 			<PortfolioText
 				currencyKey={Synths.sUSD}
 				price={portfolioValue ?? zeroBN}
