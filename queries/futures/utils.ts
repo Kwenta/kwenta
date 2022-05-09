@@ -240,6 +240,7 @@ export const getReasonFromCode = (
 		case 3:
 		case 55:
 		case 65:
+		case 231:
 			return 'circuit-breaker';
 		case 99999:
 			return 'emergency';

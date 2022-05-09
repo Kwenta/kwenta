@@ -651,7 +651,7 @@
 				"system-upgrade": "paused",
 				"circuit-breaker": "paused",
 				"emergency": "paused",
-        "unknown": "paused"
+				"unknown": "paused"
 			},
 			"chart": {
 				"overlay-messages": {
@@ -675,10 +675,10 @@
 						"title": "Emergency shutdown activated for {{baseCurrencyKey}}",
 						"subtitle": "Reset in progress"
 					},
-          "unknown": {
-            "title": "Markets are temporarily paused",
+					"unknown": {
+						"title": "Markets are temporarily paused",
 						"subtitle": ""
-          }
+					}
 				}
 			},
 			"trade": {
