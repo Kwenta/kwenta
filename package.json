@@ -160,7 +160,7 @@
 		"testEnvironment": "jest-environment-jsdom"
 	},
 	"engines": {
-		"node": ">=14",
-		"npm": ">=7"
+		"node": ">=16",
+		"npm": ">=8"
 	}
 }
