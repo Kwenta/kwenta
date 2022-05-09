@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				positionHistory && realizedPnl
 					? `${formatCurrency(Synths.sUSD, realizedPnl, {
 							sign: '$',
-							minDecimals: realizedPnl.abs().lt(0.01) && !realizedPnl.eq(0) ? 4 : 2,
+							minDecimals: 2,
 					  })}`
 					: NO_VALUE,
 			netFunding: netFunding,
