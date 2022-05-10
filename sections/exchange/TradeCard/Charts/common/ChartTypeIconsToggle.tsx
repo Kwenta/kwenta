@@ -45,9 +45,19 @@ const ChartTypeToggle: FC<ChartTypeToggleProps> = ({
 					}}
 				>
 					{chartType === ChartType.AREA ? (
-						<StyledAreaIcon isActive={chartType === selectedChartType} />
+						<AreaIcon
+							filter={
+								chartType === selectedChartType &&
+								'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'
+							}
+						/>
 					) : (
-						<StyledCandlesticksIcon isActive={chartType === selectedChartType} />
+						<CandlesticksIcon
+							filter={
+								chartType === selectedChartType &&
+								'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'
+							}
+						/>
 					)}
 				</Button>
 			))}
@@ -78,18 +88,6 @@ const Button = styled(ResetButton)`
 	&:last-child {
 		border-radius: 0 50px 50px 0;
 	}
-`;
-
-const StyledAreaIcon = styled(AreaIcon)<{ isActive: boolean }>`
-	filter: ${(props) =>
-		!props.isActive &&
-		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
-`;
-
-const StyledCandlesticksIcon = styled(CandlesticksIcon)<{ isActive: boolean }>`
-	filter: ${(props) =>
-		!props.isActive &&
-		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
 `;
 
 export default ChartTypeToggle;
