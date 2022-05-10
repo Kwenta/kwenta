@@ -148,18 +148,21 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 		};
 	}, [router.events]);
 
-	/*
-	// TODO: Check if commenting this part doesn't break anything.
 	useEffect(() => {
 		if (Number(tradeSize) && !!position?.remainingMargin) {
-			setLeverage(marketAssetRate.mul(Number(tradeSize)).div(position?.remainingMargin).toString());
+			setLeverage(
+				marketAssetRate
+					.mul(Number(tradeSize))
+					.div(position?.remainingMargin)
+					.toString()
+					.substring(0, 4)
+			);
 		} else {
 			if (Number(leverage) !== 0) {
 				setLeverage('');
 			}
 		}
 	}, [tradeSize, marketAssetRate, position, leverage]);
-	*/
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		setTradeSizeSUSD(value === '' || Number(value) === 0 ? '' : value);
