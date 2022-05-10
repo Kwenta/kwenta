@@ -33,7 +33,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	const handleSetMax = () => {
 		const maxOrderSizeUSDValue = Number(maxLeverage.mul(totalMargin)).toFixed(0);
 		onAmountSUSDChange(maxOrderSizeUSDValue);
-		onLeverageChange(Number(maxLeverage).toString());
+		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
 
 	return (
