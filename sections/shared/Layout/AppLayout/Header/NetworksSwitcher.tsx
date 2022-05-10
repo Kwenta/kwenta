@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State, networkState } from 'store/wallet';
@@ -32,7 +32,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState).id === 69 ? 'testnet' : 'mainnet';
 	const networkLabel = 'header.networks-switcher.optimism-' + network;
-	const theme = useTheme();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 
 	const OPTIMISM_OPTIONS = [
@@ -65,11 +64,12 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 			<LabelContainer noPadding={!!prefixIcon}>
 				{prefixIcon === 'Optimism' && (
 					<PrefixIcon>
-						<OptimismIcon width={17} height={17} />
+						<OptimismIcon width={20} height={14} />
 					</PrefixIcon>
 				)}
 				{t(label)}
-				{postfixIcon && (postfixIcon === 'Link' ? <LinkIcon /> : <SwitchIcon />)}
+				{postfixIcon &&
+					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
 			</LabelContainer>
 		</ExternalLink>
 	);
@@ -95,9 +95,6 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				value={{ label: networkLabel, prefixIcon: 'Optimism' }}
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
-				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 			></L2Select>
@@ -109,18 +106,21 @@ export default NetworksSwitcher;
 
 const Container = styled.div`
 	width: 100%;
-	font-size: 12px;
 	margin-left: 15px;
-	font-family: AkkuratMonoLLWeb-Regular;
 `;
 
 const StyledButton = styled(Button)`
 	font-size: 13px;
 	min-width: 0px;
+	font-family: ${(props) => props.theme.fonts.mono};
 `;
 
 const L2Select = styled(Select)`
 	width: 137px;
+
+	.react-select__single-value * {
+		font-family: ${(props) => props.theme.fonts.mono};
+	}
 
 	.react-select__control {
 		border-radius: 10px;
@@ -148,4 +148,18 @@ const StyledCaretDownIcon = styled(CaretDownIcon)`
 const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};
 	font-size: 13px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	:hover {
+		> svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
+	> svg {
+		path {
+			fill: ${(props) => props.theme.colors.common.secondaryGray};
+		}
+	}
 `;

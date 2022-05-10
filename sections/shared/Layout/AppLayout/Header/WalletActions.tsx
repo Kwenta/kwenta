@@ -151,7 +151,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 const Container = styled.div`
 	width: 100%;
 	font-size: 12px;
-	font-family: AkkuratMonoLLWeb-Regular;
+	font-family: ${(props) => props.theme.fonts.mono};
 	margin-left: 15px;
 `;
 
@@ -164,7 +164,7 @@ const WalletOptionsSelect = styled(Select)`
 	}
 
 	.react-select__dropdown-indicator {
-		padding-right: 13px;
+		margin-right: 5px;
 	}
 
 	.react-select__value-container {
@@ -182,6 +182,18 @@ const LabelContainer = styled(FlexDivRow)`
 	font-size: 13px;
 	width: 100%;
 	color: ${(props) => props.theme.colors.white};
+	:hover {
+		> svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
+	> svg {
+		path {
+			fill: ${(props) => props.theme.colors.common.secondaryGray};
+		}
+	}
 `;
 
 export default WalletActions;

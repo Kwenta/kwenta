@@ -303,16 +303,15 @@ const CloseButton = styled(Button)`
 	height: 34px;
 	font-size: 13px;
 	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
+	border: 1px solid rgba(239, 104, 104, 0.5);
 	box-shadow: none;
 	min-width: 100px;
-	width: 110px;
-	padding: 0;
+	padding: 0 10px;
 	transition: all 0s ease-in-out;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.common.primaryRed};
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.black};
 		transform: scale(0.98);
 	}
 
