@@ -3,15 +3,44 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import Currency from '../../../components/Currency';
-import { NO_VALUE } from '../../../constants/placeholder';
-import Connector from '../../../containers/Connector';
+import Currency from 'components/Currency';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
 import { DEFAULT_DATA } from './constants';
 import Table from 'components/Table';
+import { Price } from 'queries/rates/types';
+import * as _ from 'lodash/fp';
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import Wei from '@synthetixio/wei';
+import { formatNumber } from 'utils/formatters/number';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import ChangePercent from 'components/ChangePercent';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
 	synthBalances: SynthBalance[];
+};
+
+type Cell = {
+	synth: CurrencyKey;
+	description: string;
+	balance: Wei;
+	usdBalance: Wei;
+	price: Wei | null;
+	priceChange: number | undefined;
+};
+
+const calculatePriceChange = (current: Wei | null, past: Price | undefined): number | undefined => {
+	if (_.isNil(current)) {
+		return undefined;
+	}
+	const currentPrice = current.toNumber();
+	if (_.isNil(past)) {
+		return currentPrice;
+	}
+	const pastPrice = past.price;
+	const priceChange = (currentPrice - pastPrice) / currentPrice;
+	return priceChange;
 };
 
 const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
@@ -20,20 +49,32 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 }: SynthBalancesTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	console.log('synthBalances ', synthBalances);
+
+	const synthNames = synthBalances.map(({ currencyKey }) => currencyKey);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+
 	let data = useMemo(() => {
+		const dailyPriceChanges: Price[] = dailyPriceChangesQuery?.data ?? [];
 		return synthBalances.length > 0
 			? synthBalances.map((synthBalance: SynthBalance, i: number) => {
-					const { currencyKey } = synthBalance;
+					const { currencyKey, balance, usdBalance } = synthBalance;
+
+					const price = exchangeRates && exchangeRates[currencyKey];
+					const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
 
 					const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
 					return {
 						synth: currencyKey,
 						description,
+
+						balance,
+						usdBalance,
+						price,
+						priceChange: calculatePriceChange(price, pastPrice),
 					};
 			  })
 			: DEFAULT_DATA;
-	}, [synthBalances, synthsMap]);
+	}, [dailyPriceChangesQuery?.data, exchangeRates, synthBalances, synthsMap]);
 
 	return (
 		<TableContainer>
@@ -47,8 +88,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							<TableHeader>{t('dashboard.overview.synth-balances-table.market')}</TableHeader>
 						),
 						accessor: 'market',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.synth === NO_VALUE ? (
+						Cell: (cellProps: CellProps<Cell>) => {
+							return _.isNil(cellProps.row.original.synth) ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<Currency.Name
@@ -61,6 +102,79 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							);
 						},
 						width: 198,
+					},
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.synth-balances-table.amount')}</TableHeader>
+						),
+						accessor: 'amount',
+						Cell: (cellProps: CellProps<Cell>) => {
+							return _.isNil(cellProps.row.original.balance) ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
+							) : (
+								<AmountCol>
+									<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
+								</AmountCol>
+							);
+						},
+						width: 198,
+					},
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.synth-balances-table.value-in-usd')}</TableHeader>
+						),
+						accessor: 'valueInUSD',
+						Cell: (cellProps: CellProps<Cell>) => {
+							return _.isNil(cellProps.row.original.usdBalance) ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
+							) : (
+								<Currency.Price
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.usdBalance}
+									sign={'$'}
+									conversionRate={1}
+								/>
+							);
+						},
+						width: 198,
+					},
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.synth-balances-table.oracle-price')}</TableHeader>
+						),
+						accessor: 'price',
+						Cell: (cellProps: CellProps<Cell>) => {
+							return _.isNil(cellProps.row.original.price) ? (
+								<DefaultCell>{NO_VALUE}</DefaultCell>
+							) : (
+								<Currency.Price
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.price}
+									sign={'$'}
+									conversionRate={1}
+									formatOptions={{ minDecimals: 2 }}
+								/>
+							);
+						},
+						width: 198,
+					},
+					{
+						Header: (
+							<TableHeader>{t('dashboard.overview.synth-balances-table.daily-change')}</TableHeader>
+						),
+						accessor: 'priceChange',
+						Cell: (cellProps: CellProps<any>) => {
+							return _.isNil(cellProps.row.original.priceChange) ? (
+								<DefaultCell>-</DefaultCell>
+							) : (
+								<ChangePercent
+									value={cellProps.row.original.priceChange}
+									decimals={2}
+									className="change-pct"
+								/>
+							);
+						},
+						width: 105,
 					},
 				]}
 			/>
@@ -115,6 +229,10 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const AmountCol = styled.div`
+	justify-self: flex-end;
 `;
 
 export default SynthBalancesTable;
