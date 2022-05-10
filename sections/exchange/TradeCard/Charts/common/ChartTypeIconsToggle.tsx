@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import AreaIcon from 'assets/svg/app/area.svg';
 import CandlesticksIcon from 'assets/svg/app/candlesticks.svg';
@@ -46,9 +45,9 @@ const ChartTypeToggle: FC<ChartTypeToggleProps> = ({
 					}}
 				>
 					{chartType === ChartType.AREA ? (
-						<StyledSvg src={AreaIcon} isActive={chartType === selectedChartType} />
+						<StyledAreaIcon isActive={chartType === selectedChartType} />
 					) : (
-						<StyledSvg src={CandlesticksIcon} isActive={chartType === selectedChartType} />
+						<StyledCandlesticksIcon isActive={chartType === selectedChartType} />
 					)}
 				</Button>
 			))}
@@ -81,7 +80,13 @@ const Button = styled(ResetButton)`
 	}
 `;
 
-const StyledSvg = styled(Image)<{ isActive: boolean }>`
+const StyledAreaIcon = styled(AreaIcon)<{ isActive: boolean }>`
+	filter: ${(props) =>
+		!props.isActive &&
+		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
+`;
+
+const StyledCandlesticksIcon = styled(CandlesticksIcon)<{ isActive: boolean }>`
 	filter: ${(props) =>
 		!props.isActive &&
 		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};

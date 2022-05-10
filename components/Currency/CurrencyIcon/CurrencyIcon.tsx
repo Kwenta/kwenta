@@ -1,6 +1,5 @@
 import React, { FC, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
@@ -75,10 +74,10 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CRYPTO_CURRENCY_MAP.ETH: {
-				return <Image src={ETHIcon} {...props} />;
+				return <ETHIcon {...props} />;
 			}
 			case CRYPTO_CURRENCY_MAP.SNX: {
-				return <Image src={SNXIcon} {...props} alt="snx-icon" />;
+				return <img src={SNXIcon} {...props} alt="snx-icon" />;
 			}
 			default:
 				return (

@@ -1,7 +1,6 @@
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
 
@@ -261,23 +260,13 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			{txProvider === '1inch' && (
 				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
-					<Image
-						src={OneInchImage}
-						width="40"
-						height="40"
-						alt={t('common.dex-aggregators.1inch.title')}
-					/>
+					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
 				</TxProviderContainer>
 			)}
 			{txProvider === 'balancer' && (
 				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
-					<Image
-						src={BalancerImage}
-						width="40"
-						height="40"
-						alt={t('common.dex-aggregators.balancer.title')}
-					/>
+					<BalancerImage width="40" height="40" alt={t('common.dex-aggregators.balancer.title')} />
 				</TxProviderContainer>
 			)}
 			{txError != null && (

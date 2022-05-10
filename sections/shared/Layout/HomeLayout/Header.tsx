@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import Image from 'next/image';
 
 import { HEADER_HEIGHT } from 'constants/ui';
 import ROUTES from 'constants/routes';
@@ -65,7 +64,7 @@ const Header: FC = () => {
 						<FuturesLink href="https://raise.kwenta.io" target="_blank">
 							Kwenta Community Raise now live on Aelin
 						</FuturesLink>
-						<Image src={LinkWhiteIcon} />
+						<LinkWhiteIcon />
 					</>
 				</FuturesBannerLinkWrapper>
 				<DivBorder />

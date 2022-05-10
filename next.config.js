@@ -45,6 +45,7 @@ module.exports = withPlugins([
 
 			config.module.rules.push(
 				{
+					test: /\.svg$/,
 					loader: '@svgr/webpack',
 					options: {
 						prettier: false,
@@ -61,7 +62,6 @@ module.exports = withPlugins([
 						},
 						titleProp: true,
 					},
-					test: /\.svg$/,
 				},
 				{
 					test: /\.png/,

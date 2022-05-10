@@ -1,7 +1,6 @@
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
 import {
 	FlexDiv,
@@ -36,12 +35,12 @@ const L2 = () => {
 		<div>
 			<FlexDivCol>
 				<OptimismTag>Powered by</OptimismTag>
-				<Image src={Optimism} width={184} />
+				<Optimism width={184} />
 			</FlexDivCol>
 			<StyledGridContainer>
 				<FeatureCard>
 					<Golden>
-						<Image src={TransactionSpeedNumber} height={48.5} />
+						<TransactionSpeedNumber height={48.5} />
 					</Golden>
 					<FeatureContentTitle>
 						<Title>{t('homepage.l2.transaction-speed')}</Title>
@@ -49,7 +48,7 @@ const L2 = () => {
 				</FeatureCard>
 				<FeatureCard>
 					<Golden>
-						<Image src={TransactionCostNumber} height={48.5} />
+						<TransactionCostNumber height={48.5} />
 					</Golden>
 					<FeatureContentTitle>
 						<Title>{t('homepage.l2.transaction-cost')}</Title>

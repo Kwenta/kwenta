@@ -28,7 +28,6 @@ import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { gasPriceInWei } from 'utils/network';
 import { parseGasPriceObject } from 'hooks/useGas';
-import Image from 'next/image';
 
 type OrdersProps = {
 	position: FuturesPosition | null;
@@ -92,9 +91,9 @@ const Orders: React.FC<OrdersProps> = ({
 
 	const returnStatusSVG = (isStatusPending: boolean) => {
 		if (isStatusPending) {
-			return <StatusIcon status={OrderStatus.PENDING} src={PendingIcon} />;
+			return <StatusPendingIcon status={OrderStatus.PENDING} />;
 		} else {
-			return <StatusIcon status={OrderStatus.CONFIRMED} src={SuccessIcon} />;
+			return <StatusSuccessIcon status={OrderStatus.CONFIRMED} />;
 		}
 	};
 
@@ -274,7 +273,16 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusIcon = styled(Image)<{ status: OrderStatus }>`
+const StatusPendingIcon = styled(PendingIcon)<{ status: OrderStatus }>`
+	color: ${(props) =>
+		props.status === OrderStatus.PENDING
+			? props.theme.colors.yellow
+			: props.status === OrderStatus.CONFIRMED
+			? props.theme.colors.green
+			: props.theme.colors.red};
+`;
+
+const StatusSuccessIcon = styled(SuccessIcon)<{ status: OrderStatus }>`
 	color: ${(props) =>
 		props.status === OrderStatus.PENDING
 			? props.theme.colors.yellow
