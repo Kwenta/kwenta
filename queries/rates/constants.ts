@@ -10,3 +10,5 @@ export const CG_BASE_API_URL = 'https://api.coingecko.com/api/v3';
 
 export const COMMODITIES_BASE_API_URL =
 	'https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument';
+
+export const FOREX_BASE_API_URL = 'https://api.exchangerate.host/latest';

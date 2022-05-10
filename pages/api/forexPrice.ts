@@ -1,9 +1,10 @@
 import nc from 'next-connect';
 import cors from 'cors';
 import axios from 'axios';
+import { FOREX_BASE_API_URL } from 'queries/rates/constants';
 
 enum Symbols {
-	'USD',
+	USD = 'USD',
 }
 
 type LatestRate = {
@@ -18,8 +19,6 @@ type LatestRate = {
 		[key in Symbols]: number;
 	};
 };
-
-const FOREX_BASE_API_URL = 'https://api.exchangerate.host/latest';
 
 const handler = nc()
 	.use(cors())

@@ -1,6 +1,7 @@
 import nc from 'next-connect';
 import cors from 'cors';
 import axios from 'axios';
+import { COMMODITIES_BASE_API_URL } from 'queries/rates/constants';
 
 type SpreadProfile = {
 	spreadProfile: string;
@@ -19,9 +20,6 @@ type PriceResponse = {
 	ts: number;
 };
 
-const COMMODITIES_BASE_API_URL =
-	'https://forex-data-feed.swissquote.com/public-quotes/bboquotes/instrument';
-
 const handler = nc()
 	.use(cors())
 	.get(async (req, res) => {
@@ -36,7 +34,7 @@ const handler = nc()
 			.map((val: PriceResponse) => {
 				const thisSpread = val.spreadProfilePrices
 					?.filter((spread: any) => spread.spreadProfile === 'Prime')
-					.shift();
+					?.shift();
 				if (thisSpread) {
 					const thisPrice = (thisSpread.ask + thisSpread.bid) / 2;
 					return thisPrice;
