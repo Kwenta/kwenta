@@ -245,7 +245,6 @@ export const getReasonFromCode = (
 		case 99999:
 			return 'emergency';
 		default:
-			console.log(Number(reasonCode));
 			return 'unknown';
 	}
 };
