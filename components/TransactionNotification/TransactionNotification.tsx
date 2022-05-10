@@ -27,7 +27,7 @@ const NotificationSuccess = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<Success width={35} />
+				<Success width={35} height={35} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-confirmed')}</TransactionInfo>
 		</NotificationContainer>
