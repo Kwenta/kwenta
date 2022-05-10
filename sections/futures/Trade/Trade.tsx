@@ -149,6 +149,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 		const handleRouteChange = () => {
 			setTradeSize('');
 			setTradeSizeSUSD('');
+			setLeverage('');
 		};
 		router.events.on('routeChangeStart', handleRouteChange);
 
@@ -171,18 +172,17 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 	const onLeverageChange = React.useCallback(
 		(value: string) => {
 			if (value === '' || Number(value) <= 0) {
-				setLeverage(Number(value) === 0 ? value : '');
 				setTradeSize('');
 				setTradeSizeSUSD('');
+				setLeverage(Number(value) === 0 ? value.substring(0, 4) : '');
 			} else {
-				setLeverage(value);
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
 					: wei(value)
 							.mul(position?.remainingMargin ?? zeroBN)
 							.div(marketAssetRate);
-
 				onTradeAmountChange(newTradeSize.toString(), true);
+				setLeverage(value.substring(0, 4));
 			}
 		},
 		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
