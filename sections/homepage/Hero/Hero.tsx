@@ -22,13 +22,16 @@ const Hero = () => {
 		<StackSection>
 			<LogoNoTextSVG />
 			<Header>{t('homepage.hero.title')}</Header>
+			<ProductDescription>
+				Trade commodities, forex, crypto, and more with up to 10x leverage and deep liquidity.
+			</ProductDescription>
 			<SynthetixContainer>
 				<PoweredBySynthetix />
 			</SynthetixContainer>
 			<CTAContainer>
 				<Link href={ROUTES.Home.Overview}>
-					<Button variant="primary" isRounded={false} size="lg">
-						{t('homepage.nav.start-trading')}
+					<Button variant="primary" isRounded={false} size="md">
+						{t('homepage.nav.trade-now')}
 					</Button>
 				</Link>
 			</CTAContainer>
@@ -40,21 +43,32 @@ const Hero = () => {
 };
 
 const Header = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 48px;
-	line-height: 120%;
+	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	max-width: 636px;
+	font-size: 80px;
+	line-height: 85%;
 	text-align: center;
-	letter-spacing: 0.2px;
-	color: ${(props) => props.theme.colors.white};
+	text-transform: uppercase;
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	text-shadow: 0px 0px 62px rgba(208, 168, 117, 0.35);
 	padding-top: 40px;
 `;
 
+const ProductDescription = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.regular};
+	max-width: 530px;
+	font-size: 24px;
+	line-height: 120%;
+	text-align: center;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	padding-top: 16px;
+`;
 const HeroImageContainer = styled(GridDiv)`
 	width: 100vw;
 	overflow: hidden;
 	display: grid;
 	justify-content: center;
-	margin-top: -40px;
+	margin-top: 97px;
 	min-height: 839px;
 	${media.lessThan('md')`
 		min-height: 684px;
@@ -65,13 +79,13 @@ const HeroImageContainer = styled(GridDiv)`
 	`}
 `;
 
-const HeroImage = styled.img`
-	max-width: 1400px;
+const HeroImage = styled(Img)`
+	max-width: 964px;
 	${media.lessThan('md')`
-		width: 1140px;
+		width: 785px;
 	`}
 	${media.lessThan('sm')`
-		width: 560px;
+		width: 380px;
 	`}
 `;
 

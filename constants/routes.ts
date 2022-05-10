@@ -7,6 +7,7 @@ const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 
 export const ROUTES = {
 	Home: {
+		Root: '/',
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
 		Positions: normalizeRoute('/dashboard', 'positions', 'tab'),
 		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),

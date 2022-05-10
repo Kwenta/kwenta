@@ -18,38 +18,33 @@ import Logo from '../Logo';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
-import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
-import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
 
 const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
-	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
 		() => [
 			{
 				id: 'why',
-				label: t('homepage.nav.why'),
+				label: t('homepage.nav.market'),
 				ref: whyKwentaRef,
 			},
 			{
 				id: 'how',
-				label: t('homepage.nav.how'),
+				label: t('homepage.nav.governance'),
 				ref: howItWorksRef,
 			},
 			{
 				id: 'faq',
-				label: t('homepage.nav.faq'),
+				label: t('homepage.nav.socials'),
 				ref: faqRef,
 			},
 			{
 				id: 'kips',
-				label: t('homepage.nav.kips'),
+				label: t('homepage.nav.blog'),
 				onClick: () => window.open(KIPS_LINK, '_blank'),
 			},
 		],
@@ -58,22 +53,9 @@ const Header: FC = () => {
 
 	return (
 		<>
-			<FuturesBannerContainer>
-				<FuturesBannerLinkWrapper>
-					<>
-						<FuturesLink href="https://raise.kwenta.io" target="_blank">
-							Kwenta Community Raise now live on Aelin
-						</FuturesLink>
-						<LinkWhiteIcon />
-					</>
-				</FuturesBannerLinkWrapper>
-				<DivBorder />
-				<FuturesBordersSvg />
-				<DivBorder />
-			</FuturesBannerContainer>
 			<MobileHiddenView>
 				<Container>
-					<Logo isL2={isL2} />
+					<Logo />
 					<Links>
 						{links.map(({ id, label, ref, onClick }) => (
 							<StyledTextButton
@@ -89,8 +71,8 @@ const Header: FC = () => {
 					<MenuContainer>
 						<UserMenu />
 						<Link href={ROUTES.Home.Overview}>
-							<Button variant="primary" isRounded={false} size="md">
-								{t('homepage.nav.start-trading')}
+							<Button variant="primary" isRounded={false} size="sm">
+								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>
 					</MenuContainer>
@@ -115,44 +97,6 @@ const Container = styled.header`
 		grid-template-columns: auto auto;
 	`}
 `;
-const FuturesBannerContainer = styled.div`
-	height: 65px;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	background: linear-gradient(
-		180deg,
-		${(props) => props.theme.colors.goldColors.color1} 0%,
-		${(props) => props.theme.colors.goldColors.color2} 100%
-	);
-	${media.lessThan('md')`
-		position: relative;
-		top: ${HEADER_HEIGHT};
-		margin-bottom: ${HEADER_HEIGHT};
-	`}
-`;
-
-const FuturesBannerLinkWrapper = styled.div`
-	width: 100%;
-	text-align: center;
-	position: absolute;
-	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
-	color: ${(props) => props.theme.colors.white};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-
-const DivBorder = styled.div`
-	height: 2px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
-	flex-grow: 1;
-`;
-const FuturesLink = styled.a`
-	margin-right: 5px;
-`;
 
 const Links = styled.div`
 	white-space: nowrap;
@@ -163,10 +107,11 @@ const Links = styled.div`
 `;
 
 const StyledTextButton = styled(TextButton)`
-	font-size: 12px;
+	font-size: 15px;
+	line-height: 15px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.silver};
-	margin: 0px 8px;
+	color: ${(props) => props.theme.colors.common.tertiaryGray};
+	margin: 0px 20px;
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}

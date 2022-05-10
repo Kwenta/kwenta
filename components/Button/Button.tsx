@@ -87,6 +87,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 41px;
 			min-width: 157px;
+			font-size: 15px;
 		`};
 
 	${(props) =>

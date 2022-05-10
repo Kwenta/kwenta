@@ -18,7 +18,7 @@ import { isL2State } from 'store/wallet';
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
 
-	const logo = <Logo isL2={isL2} isFutures={true} />;
+	const logo = <Logo />;
 
 	return (
 		<Container isL2={isL2}>

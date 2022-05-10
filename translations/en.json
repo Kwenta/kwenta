@@ -38,15 +38,16 @@
 	"homepage": {
 		"page-title": "Kwenta | derivatives trading with infinite liquidity",
 		"nav": {
-			"start-trading": "Start Trading",
+			"start-trade": "Start Trade",
+			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
-			"why": "Why Kwenta?",
-			"how": "How it Works",
-			"faq": "FAQ",
-			"kips": "KIPs"
+			"market": "Market",
+			"governance": "Governance",
+			"socials": "Socials",
+			"blog": "Blog"
 		},
 		"hero": {
-			"title": "Derivatives trading with zero slippage"
+			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE"
 		},
 		"assets": {
 			"title": "Trade real world assets and derivatives on Ethereum",

@@ -81,7 +81,7 @@ const L2 = () => {
 							{isL2 ? (
 								<Link href={ROUTES.Dashboard.Home}>
 									<Button variant="primary" isRounded={false} size="lg">
-										{t('homepage.nav.start-trading')}
+										{t('homepage.nav.start-trade')}
 									</Button>
 								</Link>
 							) : (
