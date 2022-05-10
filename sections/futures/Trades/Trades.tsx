@@ -84,7 +84,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
 								<div>{format(new Date(cellProps.value), 'MM/dd/yy')}</div>
-								<div>{format(new Date(cellProps.value), 'HH:mm:ss')}</div>
+								<StyledTime>{format(new Date(cellProps.value), 'HH:mm:ss')}</StyledTime>
 							</GridDivCenteredRow>
 						),
 						width: 90,
@@ -238,6 +238,10 @@ const StyledTable = styled(Table)``;
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
+`;
+
+const StyledTime = styled.div`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
