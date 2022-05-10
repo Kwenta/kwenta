@@ -1,5 +1,5 @@
 import { Rates, SynthBalance } from '@synthetixio/queries';
-import { FC, useMemo } from 'react';
+import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
@@ -42,6 +42,9 @@ const calculatePriceChange = (current: Wei | null, past: Price | undefined): num
 	const priceChange = (currentPrice - pastPrice) / currentPrice;
 	return priceChange;
 };
+
+const coalescingRender = <T,>(prop: T, children: ReactElement): ReactElement =>
+	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
 const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 	exchangeRates,
@@ -89,9 +92,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'market',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return _.isNil(cellProps.row.original.synth) ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return coalescingRender<Cell['synth']>(
+								cellProps.row.original.synth,
 								<Currency.Name
 									currencyKey={cellProps.row.original.synth}
 									name={t('common.currency.synthetic-currency-name', {
@@ -109,9 +111,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return _.isNil(cellProps.row.original.balance) ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return coalescingRender<Cell['balance']>(
+								cellProps.row.original.balance,
 								<AmountCol>
 									<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
 								</AmountCol>
@@ -125,9 +126,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'valueInUSD',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return _.isNil(cellProps.row.original.usdBalance) ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return coalescingRender<Cell['usdBalance']>(
+								cellProps.row.original.usdBalance,
 								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.usdBalance}
@@ -144,12 +144,11 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'price',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return _.isNil(cellProps.row.original.price) ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return coalescingRender<Cell['price']>(
+								cellProps.row.original.price,
 								<Currency.Price
 									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.price}
+									price={cellProps.row.original.price!}
 									sign={'$'}
 									conversionRate={1}
 									formatOptions={{ minDecimals: 2 }}
@@ -164,9 +163,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'priceChange',
 						Cell: (cellProps: CellProps<any>) => {
-							return _.isNil(cellProps.row.original.priceChange) ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return coalescingRender<Cell['priceChange']>(
+								cellProps.row.original.priceChange,
 								<ChangePercent
 									value={cellProps.row.original.priceChange}
 									decimals={2}
