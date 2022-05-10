@@ -84,7 +84,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
 								<div>{format(new Date(cellProps.value), 'MM/dd/yy')}</div>
-								<div>{format(new Date(cellProps.value), 'HH:mm:ss aa')}</div>
+								<div>{format(new Date(cellProps.value), 'HH:mm:ss')}</div>
 							</GridDivCenteredRow>
 						),
 						width: 90,
