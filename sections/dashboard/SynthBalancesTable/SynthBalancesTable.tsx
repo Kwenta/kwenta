@@ -94,13 +94,17 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						Cell: (cellProps: CellProps<Cell>) => {
 							return coalescingRender<Cell['synth']>(
 								cellProps.row.original.synth,
-								<Currency.Name
-									currencyKey={cellProps.row.original.synth}
-									name={t('common.currency.synthetic-currency-name', {
-										currencyName: cellProps.row.original.description,
-									})}
-									showIcon={true}
-								/>
+								<MarketContainer>
+									<IconContainer>
+										<StyledCurrencyIcon currencyKey={cellProps.row.original.synth} />
+									</IconContainer>
+									<StyledText>{cellProps.row.original.synth}</StyledText>
+									<StyledValue>
+										{t('common.currency.synthetic-currency-name', {
+											currencyName: cellProps.row.original.description,
+										})}
+									</StyledValue>
+								</MarketContainer>
 							);
 						},
 						width: 198,
