@@ -31,7 +31,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 		return history.map((trade: FuturesTrade) => {
 			return {
 				...trade,
-				side: !trade?.side ? '💀' : trade?.side,
+				// side: !trade?.side ? '💀' : trade?.side,
 				value: Number(trade?.price?.div(ETH_UNIT)),
 				amount: Number(trade?.size.div(ETH_UNIT).abs()),
 				time: Number(trade?.timestamp.mul(1000)),
