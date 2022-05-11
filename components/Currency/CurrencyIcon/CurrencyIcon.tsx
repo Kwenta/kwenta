@@ -33,7 +33,8 @@ export const getSynthIcon = (currencyKey: CurrencyKey) => {
 			parsedCurrencyKey = 'sOIL';
 			break;
 		case 'sAPE':
-			parsedCurrencyKey = 'sAPECOIN'
+			parsedCurrencyKey = 'sAPECOIN';
+			break;
 		default:
 			break;
 	}
