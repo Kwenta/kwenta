@@ -59,7 +59,7 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const totalSynthValue = formatCurrency(
+	const totalSpotBalancesValue = formatCurrency(
 		Synths.sUSD,
 		wei(synthBalances?.totalUSDBalance ?? zeroBN),
 		{
@@ -67,7 +67,7 @@ const Overview: FC = () => {
 		}
 	);
 
-	const totalFuturesValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
+	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
 		sign: '$',
 	});
 
@@ -82,7 +82,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositionQuery?.data?.length,
 				active: activePositionsTab === PositionsTab.FUTURES,
-				detail: totalFuturesValue,
+				detail: totalFuturesPortfolioValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
 				},
@@ -92,7 +92,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.spot'),
 				badge: 3,
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: totalSynthValue,
+				detail: totalSpotBalancesValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
@@ -113,9 +113,9 @@ const Overview: FC = () => {
 			activePositionsTab,
 			futuresPositionQuery?.data?.length,
 			t,
-			totalFuturesValue,
+			totalFuturesPortfolioValue,
 			totalShortsValue,
-			totalSynthValue,
+			totalSpotBalancesValue,
 		]
 	);
 
