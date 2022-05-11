@@ -959,7 +959,7 @@ export type FuturesOrderFilter = {
 	status_not_in?: FuturesOrderStatus[];
 };
 
-export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market';
+export type FuturesOrderType = 'NextPrice' | 'Limit' | 'Market' | 'Liquidation';
 export type FuturesOrderStatus = 'Pending' | 'Filled' | 'Cancelled';
 
 export type FuturesOrderResult = {
