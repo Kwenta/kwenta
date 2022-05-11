@@ -90,7 +90,6 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.SPOT,
 				label: t('dashboard.overview.positions-tabs.spot'),
-				badge: 3,
 				active: activePositionsTab === PositionsTab.SPOT,
 				detail: totalSpotBalancesValue,
 				onClick: () => {
