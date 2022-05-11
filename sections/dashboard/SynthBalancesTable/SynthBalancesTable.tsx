@@ -122,6 +122,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							);
 						},
 						width: 198,
+						sortable: true,
 					},
 					{
 						Header: (
@@ -140,6 +141,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							);
 						},
 						width: 198,
+						sortable: true,
 					},
 					{
 						Header: (
@@ -159,6 +161,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							);
 						},
 						width: 198,
+						sortable: true,
 					},
 					{
 						Header: (
@@ -175,6 +178,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 								/>
 							);
 						},
+						sortable: true,
 						width: 105,
 					},
 				]}
