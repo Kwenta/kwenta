@@ -40,6 +40,11 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 			return t('common.currency.futures-market-gold-short-name');
 		case 'sXAG':
 			return t('common.currency.futures-market-silver-short-name');
+		case 'sAPE':
+		case 'sDYDX':
+			return t('common.currency.futures-market-short-name', {
+				currencyName: getDisplayAsset(synth),
+			});
 		default:
 			return t('common.currency.futures-market-short-name', {
 				currencyName:

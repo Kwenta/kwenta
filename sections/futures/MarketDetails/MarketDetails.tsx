@@ -63,7 +63,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
 	const marketKey = getMarketKey(baseCurrencyKey, network.id);
+	console.log(`marketKey:`, marketKey)
 	const priceId = synthToCoingeckoPriceId(marketKey);
+	console.log(`coingecko id:`, priceId)
 	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
 	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
 	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
