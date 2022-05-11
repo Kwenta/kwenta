@@ -2,10 +2,10 @@ import { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 export const FUTURES_ENDPOINT_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-futures';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
 
 export const FUTURES_ENDPOINT_TESTNET =
-	'https://api.thegraph.com/subgraphs/name/tburm/optimism-kovan-futures';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-kovan-main';
 
 export const DAY_PERIOD = 24;
 
