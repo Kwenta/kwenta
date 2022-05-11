@@ -291,7 +291,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 			}
 			${TableCellHead} {
 				color: ${(props) => props.theme.colors.common.secondaryGray};
-				font-family: ${(props) => props.theme.fonts.mono};
+				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 			}
 			${TableBodyRow} {
