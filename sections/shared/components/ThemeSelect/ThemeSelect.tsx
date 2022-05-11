@@ -1,6 +1,7 @@
 import React from 'react';
 import Select from 'components/Select';
-import { CustomThemeContext } from 'contexts/CustomThemeContext';
+import { useRecoilState } from 'recoil';
+import { currentThemeState } from 'store/ui';
 
 const themes = {
 	light: 'Light',
@@ -9,7 +10,7 @@ const themes = {
 };
 
 const ThemeSelect: React.FC = () => {
-	const { currentTheme, setTheme } = React.useContext(CustomThemeContext);
+	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 
 	const themesObject = React.useMemo(() => {
 		return Object.entries(themes).map(([themeName, themeLabel]) => ({

@@ -48,7 +48,6 @@ const colors = {
 	noNetwork: '#EF6868',
 	transparentBlack: 'rgba(0, 0, 0, 0.5)',
 	common,
-	selectedTheme: themeColors.dark,
 };
 
 export default colors;
