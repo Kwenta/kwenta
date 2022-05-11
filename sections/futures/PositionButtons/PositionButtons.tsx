@@ -57,12 +57,8 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	height: 55px;
 	transition: all 0.1s ease-in-out;
 
-	&:disabled {
-		border: transparent;
-		background: transparent;
-		&:hover {
-			background: transparent;
-		}
+	&:active {
+		transform: scale(0.96);
 	}
 
 	> span {
@@ -76,15 +72,23 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryGreen};
 			${props.$isActive &&
 			css`
-				transform: scale(0.98);
-				color: ${props.theme.colors.common.primaryWhite};
-				border: 2px solid ${props.theme.colors.common.primaryGreen};
+				border: 1px solid rgba(127, 212, 130, 0.7);
 				border-radius: 11px;
-				background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
-				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #7fd48245 0px 0 10px 0px;
-
+				background: linear-gradient(
+					180deg,
+					rgba(127, 212, 130, 0.15) 0%,
+					rgba(71, 122, 73, 0.05) 100%
+				);
+				box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
+				&::before {
+					display: none;
+				}
 				&:hover {
-					background: ${props.theme.colors.selectedTheme.button.active.hover.successBackground};
+					background: linear-gradient(
+						180deg,
+						rgba(127, 212, 130, 0.15) 0%,
+						rgba(71, 122, 73, 0.05) 100%
+					);
 				}
 			`};
 		`};
@@ -95,16 +99,23 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			color: ${props.theme.colors.common.primaryRed};
 			${props.$isActive &&
 			css`
-				transform: scale(0.98);
-				color: ${props.theme.colors.common.primaryWhite};
-				border: 2px solid ${props.theme.colors.common.primaryRed};
+				border: 1px solid rgba(239, 104, 104, 0.7);
 				border-radius: 11px;
-				background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
-				box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #ef53504d 0px 0 10px 0px;
-
-				&:hover {
-					background: ${props.theme.colors.selectedTheme.button.active.hover.dangerBackground};
+				background: linear-gradient(
+					180deg,
+					rgba(239, 104, 104, 0.15) 0%,
+					rgba(116, 56, 56, 0.05) 100%
+				);
+				box-shadow: rgb(239 104 104 / 50%) 0px 0 3px;
+				&::before {
+					display: none;
 				}
+				&:hover {
+					background: linear-gradient(
+					180deg,
+					rgba(239, 104, 104, 0.15) 0%,
+					rgba(116, 56, 56, 0.05) 100%
+				);
 			`};
 		`};
 

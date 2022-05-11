@@ -87,7 +87,6 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 			}
 		}
 
-		border: none;
 		.badge {
 			display: none;
 		}

@@ -130,16 +130,26 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 		(value: string, fromLeverage: boolean = false) => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
+			const leverage =
+				value === ''
+					? ''
+					: marketAssetRate
+							.mul(Number(value))
+							.div(position?.remainingMargin)
+							.toString()
+							.substring(0, 4);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
+			setLeverage(leverage);
 		},
-		[marketAssetRate]
+		[marketAssetRate, position?.remainingMargin]
 	);
 
 	useEffect(() => {
 		const handleRouteChange = () => {
 			setTradeSize('');
 			setTradeSizeSUSD('');
+			setLeverage('');
 		};
 		router.events.on('routeChangeStart', handleRouteChange);
 
@@ -148,36 +158,31 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 		};
 	}, [router.events]);
 
-	useEffect(() => {
-		if (Number(tradeSize) && !!position?.remainingMargin) {
-			setLeverage(marketAssetRate.mul(Number(tradeSize)).div(position?.remainingMargin).toString());
-		} else {
-			if (Number(leverage) !== 0) {
-				setLeverage('');
-			}
-		}
-	}, [tradeSize, marketAssetRate, position, leverage]);
-
 	const onTradeAmountSUSDChange = (value: string) => {
+		const valueIsNull = value === '' || Number(value) === 0;
+		const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
+		const leverage = valueIsNull
+			? ''
+			: wei(value).div(position?.remainingMargin).toString().substring(0, 4);
 		setTradeSizeSUSD(value);
-		setTradeSize(value === '' ? '' : wei(value).div(marketAssetRate).toNumber().toString());
+		setTradeSize(size);
+		setLeverage(leverage);
 	};
 
 	const onLeverageChange = React.useCallback(
 		(value: string) => {
 			if (value === '' || Number(value) <= 0) {
-				setLeverage(Number(value) === 0 ? value : '');
 				setTradeSize('');
 				setTradeSizeSUSD('');
+				setLeverage(Number(value) === 0 ? value.substring(0, 4) : '');
 			} else {
-				setLeverage(value);
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
 					: wei(value)
 							.mul(position?.remainingMargin ?? zeroBN)
 							.div(marketAssetRate);
-
 				onTradeAmountChange(newTradeSize.toString(), true);
+				setLeverage(value.substring(0, 4));
 			}
 		},
 		[position?.remainingMargin, marketAssetRate, onTradeAmountChange]
@@ -336,7 +341,10 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position })
 				assetRate={marketAssetRate}
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
+				onLeverageChange={(value) => onLeverageChange(value)}
 				marketAsset={marketAsset || Synths.sUSD}
+				maxLeverage={maxLeverageValue}
+				totalMargin={position?.remainingMargin ?? zeroBN}
 			/>
 
 			<LeverageInput

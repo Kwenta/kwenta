@@ -130,6 +130,10 @@ const Button = styled.button<ButtonProps>`
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		background: transparent;
 		box-shadow: none;
+		border: ${(props) => props.theme.colors.selectedTheme.border};
+		&::before {
+			display: none;
+		}
 		cursor: not-allowed;
 	}
 `;
