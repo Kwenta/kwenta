@@ -13,8 +13,11 @@ import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
-import { formatCurrency } from '../../../utils/formatters/number';
+import { formatCurrency, zeroBN } from '../../../utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
+import { getMarketKey } from '../../../utils/futures';
+import useGetCurrentPortfolioValue from '../../../queries/futures/useGetCurrentPortfolioValue';
+import Connector from '../../../containers/Connector';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -35,6 +38,11 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
+	const { network } = Connector.useContainer();
+	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
+	const portfolioValue = portfolioValueQuery?.data ?? null;
+
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
@@ -51,7 +59,19 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const total = formatCurrency(Synths.sUSD, wei(synthBalances?.totalUSDBalance ?? 0), {
+	const totalSynthValue = formatCurrency(
+		Synths.sUSD,
+		wei(synthBalances?.totalUSDBalance ?? zeroBN),
+		{
+			sign: '$',
+		}
+	);
+
+	const totalFuturesValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
+		sign: '$',
+	});
+
+	const totalShortsValue = formatCurrency(Synths.sUSD, wei(zeroBN), {
 		sign: '$',
 	});
 
@@ -62,6 +82,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositionQuery?.data?.length,
 				active: activePositionsTab === PositionsTab.FUTURES,
+				detail: totalFuturesValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
 				},
@@ -71,7 +92,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.spot'),
 				badge: 3,
 				active: activePositionsTab === PositionsTab.SPOT,
-				detail: total,
+				detail: totalSynthValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
@@ -82,12 +103,20 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
+				detail: totalShortsValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SHORTS);
 				},
 			},
 		],
-		[activePositionsTab, futuresPositionQuery?.data?.length, t, total]
+		[
+			activePositionsTab,
+			futuresPositionQuery?.data?.length,
+			t,
+			totalFuturesValue,
+			totalShortsValue,
+			totalSynthValue,
+		]
 	);
 
 	const MARKETS_TABS = useMemo(
