@@ -7,7 +7,7 @@ import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositi
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getMarketKey } from 'utils/futures';
-import TvChart from '../TvChart';
+
 import { PotentialTrade } from '../types';
 import TVChart from 'components/TVChart';
 
