@@ -7,7 +7,7 @@ import { CurrencyKey } from 'constants/currency';
 import { appReadyState } from 'store/app';
 import QUERY_KEYS from 'constants/queryKeys';
 
-const useBaseFeeRateQuery = (
+const useExchangeFeeRateQuery = (
 	sourceCurrencyKey: CurrencyKey | null,
 	destinationCurrencyKey: CurrencyKey | null
 ) => {
@@ -15,21 +15,14 @@ const useBaseFeeRateQuery = (
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery(
-		QUERY_KEYS.Synths.BaseFeeRate(sourceCurrencyKey!, destinationCurrencyKey!),
+		QUERY_KEYS.Synths.ExchangeFeeRate(sourceCurrencyKey!, destinationCurrencyKey!),
 		async () => {
-			const { SystemSettings } = synthetixjs!.contracts;
+			const { Exchanger } = synthetixjs!.contracts;
 
-			const sourceCurrencyFeeRate = await SystemSettings.exchangeFeeRate(
-				ethers.utils.formatBytes32String(sourceCurrencyKey as string)
-			);
-
-			const destinationCurrencyFeeRate = await SystemSettings.exchangeFeeRate(
+			return await Exchanger.feeRateForExchange(
+				ethers.utils.formatBytes32String(sourceCurrencyKey as string),
 				ethers.utils.formatBytes32String(destinationCurrencyKey as string)
 			);
-
-			return sourceCurrencyFeeRate || destinationCurrencyFeeRate
-				? sourceCurrencyFeeRate.add(destinationCurrencyFeeRate)
-				: null;
 		},
 		{
 			enabled:
@@ -38,4 +31,4 @@ const useBaseFeeRateQuery = (
 	);
 };
 
-export default useBaseFeeRateQuery;
+export default useExchangeFeeRateQuery;
