@@ -22,8 +22,12 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 					.filter((i: FuturesMarket) => i.asset === currencyKey)
 					.map((i: FuturesMarket) => {
 						return {
-							short: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
-							long: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+							short: i.marketSize.eq(0)
+								? 0
+								: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+							long: i.marketSize.eq(0)
+								? 0
+								: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
 						};
 					})
 			: [

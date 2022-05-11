@@ -21,6 +21,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isReady = isAppReady && !!synthetixjs;
 
+	const disabledMarkets = ['APE', 'DYDX'];
+
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
@@ -46,39 +48,41 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				})
 			);
 
-			return markets.map(
-				(
-					{
-						market,
-						asset,
-						currentFundingRate,
-						feeRates,
-						marketDebt,
-						marketSkew,
-						maxLeverage,
-						marketSize,
-						price,
-					}: FuturesMarket,
-					i: number
-				) => ({
-					market: market,
-					asset: utils.parseBytes32String(asset),
-					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate).mul(-1),
-					feeRates: {
-						makerFee: wei(feeRates.makerFee),
-						takerFee: wei(feeRates.takerFee),
-					},
-					marketDebt: wei(marketDebt),
-					marketSkew: wei(marketSkew),
-					maxLeverage: wei(maxLeverage),
-					marketSize: wei(marketSize),
-					price: wei(price),
-					minInitialMargin: wei(globals.minInitialMargin),
-					isSuspended: suspensions[i],
-					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
-				})
-			);
+			return markets
+				.filter((i: any) => !disabledMarkets.includes(utils.parseBytes32String(i.asset)))
+				.map(
+					(
+						{
+							market,
+							asset,
+							currentFundingRate,
+							feeRates,
+							marketDebt,
+							marketSkew,
+							maxLeverage,
+							marketSize,
+							price,
+						}: FuturesMarket,
+						i: number
+					) => ({
+						market: market,
+						asset: utils.parseBytes32String(asset),
+						assetHex: asset,
+						currentFundingRate: wei(currentFundingRate).mul(-1),
+						feeRates: {
+							makerFee: wei(feeRates.makerFee),
+							takerFee: wei(feeRates.takerFee),
+						},
+						marketDebt: wei(marketDebt),
+						marketSkew: wei(marketSkew),
+						maxLeverage: wei(maxLeverage),
+						marketSize: wei(marketSize),
+						price: wei(price),
+						minInitialMargin: wei(globals.minInitialMargin),
+						isSuspended: suspensions[i],
+						marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
+					})
+				);
 		},
 		{
 			enabled: isWalletConnected ? isL2 && isReady : isReady,
