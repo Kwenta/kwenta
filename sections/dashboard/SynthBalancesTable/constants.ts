@@ -1,7 +1,10 @@
-import { NO_VALUE } from 'constants/placeholder';
-
 export const DEFAULT_DATA = [
 	{
-		synth: NO_VALUE,
+		synth: undefined,
+		description: undefined,
+		balance: undefined,
+		usdBalance: undefined,
+		price: undefined,
+		priceChange: undefined,
 	},
 ];
