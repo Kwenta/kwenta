@@ -4,10 +4,10 @@ import { format, Locale } from 'date-fns';
 import getLocale from './getLocale';
 
 type TimeDisplayProps = {
-	cellProps: any;
+	cellPropsValue: any;
 };
 
-const TimeDisplay: FC<TimeDisplayProps> = ({ cellProps }) => {
+const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue }) => {
 	const [show12hr, setShow12h] = useState<boolean>(false);
 
 	const handleOnClick = () => {
@@ -20,16 +20,13 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ cellProps }) => {
 		? (language.code = navigator.languages[0])
 		: (language.code = navigator.language);
 
-	const date = format(new Date(cellProps.value), 'MM/dd/yy', {
+	const date = format(new Date(cellPropsValue), 'MM/dd/yy', {
 		locale: getLocale(language.code),
 	});
-	const time12hr = new Date(cellProps.value).toLocaleTimeString(language.code);
-	const time24hr = format(new Date(cellProps.value), 'HH:mm:ss', {
+	const time12hr = new Date(cellPropsValue).toLocaleTimeString(language.code);
+	const time24hr = format(new Date(cellPropsValue), 'HH:mm:ss', {
 		locale: getLocale(language.code),
 	});
-
-	format(new Date(cellProps.value), 'MM/dd/yy');
-	format(new Date(cellProps.value), 'HH:mm:ss aa');
 
 	return (
 		<>

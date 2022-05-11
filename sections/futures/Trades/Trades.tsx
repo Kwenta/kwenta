@@ -83,7 +83,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'time',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
-								<TimeDisplay cellProps={cellProps} />
+								<TimeDisplay cellPropsValue={cellProps.value} />
 							</GridDivCenteredRow>
 						),
 						width: 90,
