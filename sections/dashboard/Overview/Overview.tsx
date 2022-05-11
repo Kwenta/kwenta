@@ -11,8 +11,10 @@ import FuturesMarketsTable from '../FuturesMarketsTable';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
-import SynthBalances from '../SynthBalances';
+import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
+import { formatCurrency } from '../../../utils/formatters/number';
+import { Synths } from '@synthetixio/contracts-interface';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -49,6 +51,10 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
+	const total = formatCurrency(Synths.sUSD, wei(synthBalances?.totalUSDBalance ?? 0), {
+		sign: '$',
+	});
+
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
@@ -65,6 +71,7 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.spot'),
 				badge: 3,
 				active: activePositionsTab === PositionsTab.SPOT,
+				detail: total,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
@@ -80,7 +87,7 @@ const Overview: FC = () => {
 				},
 			},
 		],
-		[activePositionsTab, futuresPositionQuery?.data, t]
+		[activePositionsTab, futuresPositionQuery?.data?.length, t, total]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -111,13 +118,14 @@ const Overview: FC = () => {
 			<PortfolioChart futuresMarkets={futuresMarkets} />
 
 			<TabButtonsContainer>
-				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, onClick }) => (
+				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
 						badge={badge}
 						active={active}
 						disabled={disabled}
+						detail={detail}
 						onClick={onClick}
 					/>
 				))}
@@ -130,9 +138,8 @@ const Overview: FC = () => {
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
-				<SynthBalances
-					balances={synthBalances?.balances ?? []}
-					totalUSDBalance={wei(synthBalances?.totalUSDBalance ?? 0)}
+				<SynthBalancesTable
+					synthBalances={synthBalances?.balances ?? []}
 					exchangeRates={exchangeRates}
 				/>
 			</TabPanel>
