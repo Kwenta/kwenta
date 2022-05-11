@@ -135,7 +135,7 @@ const L2Select = styled(Select)`
 	}
 `;
 
-const PrefixIcon = styled.div`
+const PrefixIcon = styled.span`
 	display: flex;
 	padding-right: 6px;
 `;
