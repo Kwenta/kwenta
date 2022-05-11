@@ -13,11 +13,11 @@ import { walletAddressState } from 'store/wallet';
 import useSynthetixQueries from '@synthetixio/queries';
 import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
-import { formatCurrency, zeroBN } from '../../../utils/formatters/number';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
-import { getMarketKey } from '../../../utils/futures';
-import useGetCurrentPortfolioValue from '../../../queries/futures/useGetCurrentPortfolioValue';
-import Connector from '../../../containers/Connector';
+import { getMarketKey } from 'utils/futures';
+import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
+import Connector from 'containers/Connector';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -144,7 +144,11 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			<PortfolioChart futuresMarkets={futuresMarkets} />
+			<PortfolioChart
+				totalFuturesPortfolioValue={portfolioValue ?? zeroBN}
+				totalSpotBalanceValue={synthBalances?.totalUSDBalance ?? zeroBN}
+				totalShortsValue={zeroBN}
+			/>
 
 			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
