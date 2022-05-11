@@ -16,15 +16,21 @@ const StyledText = styled.p<{ $side: PositionProps['side'] }>`
 	${(props) =>
 		props.$side === 'long' &&
 		css`
-			color: #7fd482;
+			color: rgba(127, 212, 130, 0.8);
 			background: rgba(127, 212, 130, 0.1);
+			font-family: ${(props) => props.theme.fonts.monoBold};
+			font-variant: all-small-caps;
+			letter-spacing: 1.4px;
 		`};
 
 	${(props) =>
 		props.$side === 'short' &&
 		css`
-			color: #ef6868;
+			color: rgba(239, 104, 104, 0.8);
 			background: rgba(239, 104, 104, 0.1);
+			font-family: ${(props) => props.theme.fonts.monoBold};
+			font-variant: all-small-caps;
+			letter-spacing: -0.2px;
 		`};
 `;
 

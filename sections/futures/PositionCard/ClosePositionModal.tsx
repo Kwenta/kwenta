@@ -21,6 +21,7 @@ import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { FuturesFilledPosition } from 'queries/futures/types';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -65,8 +66,8 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 
 	const closeTxn = useSynthetixTxn(
 		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
-		'closePosition',
-		[],
+		'closePositionWithTracking',
+		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,
 		{ enabled: !!currencyKey }
 	);
