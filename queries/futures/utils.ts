@@ -383,8 +383,8 @@ export const mapTrades = (futuresTrades: FuturesTradeResult[]): FuturesTrade[] =
 				timestamp: timestamp,
 				positionSize: new Wei(positionSize, 18, true),
 				positionClosed,
-				side: orderType == 'Liquidation' ? null
-					: size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+				side:
+					orderType === 'Liquidation' ? null : size.gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 				pnl: new Wei(pnl, 18, true),
 				feesPaid: new Wei(feesPaid, 18, true),
 				orderType: orderType,
