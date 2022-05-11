@@ -55,7 +55,10 @@ module.exports = withPlugins([
 								{
 									name: 'preset-default',
 									params: {
-										overrides: { removeViewBox: false },
+										overrides: {
+											removeViewBox: false,
+											cleanupIDs: false,
+										},
 									},
 								},
 							],
