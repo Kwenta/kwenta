@@ -23,7 +23,7 @@ type SynthBalancesTableProps = {
 
 type Cell = {
 	synth: CurrencyKey;
-	description: string;
+	description: string | undefined;
 	balance: Wei;
 	usdBalance: Wei;
 	price: Wei | null;
@@ -43,7 +43,7 @@ const calculatePriceChange = (current: Wei | null, past: Price | undefined): num
 	return priceChange;
 };
 
-const coalescingRender = <T,>(prop: T, children: ReactElement): ReactElement =>
+const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 	_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
 const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
@@ -69,7 +69,6 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 					return {
 						synth: currencyKey,
 						description,
-
 						balance,
 						usdBalance,
 						price,
@@ -92,7 +91,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'market',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return coalescingRender<Cell['synth']>(
+							return conditionalRender<Cell['synth']>(
 								cellProps.row.original.synth,
 								<MarketContainer>
 									<IconContainer>
@@ -115,7 +114,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return coalescingRender<Cell['balance']>(
+							return conditionalRender<Cell['balance']>(
 								cellProps.row.original.balance,
 								<AmountCol>
 									<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
@@ -130,7 +129,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'valueInUSD',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return coalescingRender<Cell['usdBalance']>(
+							return conditionalRender<Cell['usdBalance']>(
 								cellProps.row.original.usdBalance,
 								<Currency.Price
 									currencyKey={Synths.sUSD}
@@ -148,7 +147,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'price',
 						Cell: (cellProps: CellProps<Cell>) => {
-							return coalescingRender<Cell['price']>(
+							return conditionalRender<Cell['price']>(
 								cellProps.row.original.price,
 								<Currency.Price
 									currencyKey={Synths.sUSD}
@@ -167,7 +166,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						),
 						accessor: 'priceChange',
 						Cell: (cellProps: CellProps<any>) => {
-							return coalescingRender<Cell['priceChange']>(
+							return conditionalRender<Cell['priceChange']>(
 								cellProps.row.original.priceChange,
 								<ChangePercent
 									value={cellProps.row.original.priceChange}
@@ -183,11 +182,6 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 		</TableContainer>
 	);
 };
-
-const PnlContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-`;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
