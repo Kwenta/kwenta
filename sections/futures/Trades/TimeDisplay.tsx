@@ -32,7 +32,7 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue }) => {
 		<>
 			<div onClick={handleOnClick}>
 				<div>{date}</div>
-				<div style={{ maxWidth: '73px' }}>{show12hr ? time12hr : time24hr}</div>
+				<div>{show12hr ? time12hr : time24hr}</div>
 			</div>
 		</>
 	);
