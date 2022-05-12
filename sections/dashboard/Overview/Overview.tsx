@@ -18,6 +18,7 @@ import { Synths } from '@synthetixio/contracts-interface';
 import { getMarketKey } from 'utils/futures';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import Connector from 'containers/Connector';
+import SpotMarketsTable from '../SpotMarketsTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -130,7 +131,6 @@ const Overview: FC = () => {
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
-				disabled: true,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);
 				},
@@ -177,21 +177,17 @@ const Overview: FC = () => {
 			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
-					<TabButton
-						key={name}
-						title={label}
-						active={active}
-						disabled={disabled}
-						onClick={onClick}
-					/>
+				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={label} active={active} onClick={onClick} />
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
 			</TabPanel>
 
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}></TabPanel>
+			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+				<SpotMarketsTable exchangeRates={exchangeRates} />
+			</TabPanel>
 		</>
 	);
 };

@@ -3,14 +3,13 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
-	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -58,7 +57,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && synths.length > 0, ...options }
+		{ enabled: isAppReady && synths.length > 0, ...options }
 	);
 };
 
