@@ -12,6 +12,7 @@ import { AbsoluteCenteredDiv, FlexDivCentered } from 'styles/common';
 import { StackSection, Subtext } from '../common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
+import Webp from 'components/Webp';
 
 const FAQ = () => {
 	const { t } = useTranslation();
@@ -19,11 +20,7 @@ const FAQ = () => {
 	return (
 		<StyledStackSection>
 			<ChartGraphicContainer>
-				<picture>
-					<source srcSet={`${ChartBanner}?webp`} type="image/webp" />
-					<source srcSet={ChartBanner} type="image/png" />
-					<ChartBannerImage src={ChartBanner} />
-				</picture>
+				<Webp srcOrSrcset={ChartBanner} StyledImg={ChartBannerImage} />
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Home.Overview}>

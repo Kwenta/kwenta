@@ -11,6 +11,7 @@ import media, { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 import { GridContainer, SubHeader } from '../common';
+import Webp from 'components/Webp';
 
 const ASSETS = [
 	{
@@ -60,11 +61,7 @@ const Assets = () => {
 			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
-						<picture>
-							<source srcSet={`${AssetCollections}?webp`} type="image/webp" />
-							<source srcSet={AssetCollections} type="image/png" />
-							<AssetsImage src={AssetCollections} />
-						</picture>
+						<Webp srcOrSrcset={AssetCollections} StyledImg={AssetsImage} />
 						<Fade />
 					</AssetCollectionWrapper>
 					<Col>
@@ -75,11 +72,7 @@ const Assets = () => {
 			</Media>
 			<Media lessThan="lg">
 				{title}
-				<picture>
-					<source srcSet={`${AssetCollections}?webp`} type="image/webp" />
-					<source srcSet={AssetCollections} type="image/png" />
-					<MobileImage src={AssetCollections} />
-				</picture>
+				<Webp srcOrSrcset={AssetCollections} StyledImg={MobileImage} />
 				{assetCards}
 			</Media>
 		</Container>

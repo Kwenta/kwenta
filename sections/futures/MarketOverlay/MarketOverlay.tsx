@@ -1,5 +1,6 @@
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
+import Webp from 'components/Webp';
 import { CurrencyKey } from 'constants/currency';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import React, { FC } from 'react';
@@ -29,11 +30,7 @@ const MarketOverlay: FC<{
 					</StyledText>
 				</OverlayContent>
 			</Overlay>
-			<picture>
-				<source srcSet={`${StaticChart}?webp`} type="image/webp" />
-				<source srcSet={StaticChart} type="image/png" />
-				<AssetsImage src={StaticChart} />
-			</picture>
+			<Webp srcOrSrcset={StaticChart} StyledImg={AssetsImage} />
 		</OverlayContainer>
 	);
 };

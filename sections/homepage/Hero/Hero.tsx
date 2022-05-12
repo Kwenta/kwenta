@@ -13,6 +13,7 @@ import Link from 'next/link';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
+import Webp from 'components/Webp';
 
 const Hero = () => {
 	const { t } = useTranslation();
@@ -32,11 +33,7 @@ const Hero = () => {
 				</Link>
 			</CTAContainer>
 			<HeroImageContainer>
-				<picture>
-					<source srcSet={`${MarketOrderPreview}?webp`} type="image/webp" />
-					<source srcSet={MarketOrderPreview} type="image/png" />
-					<HeroImage src={MarketOrderPreview} />
-				</picture>
+				<Webp srcOrSrcset={MarketOrderPreview} StyledImg={HeroImage} />
 			</HeroImageContainer>
 		</StackSection>
 	);
