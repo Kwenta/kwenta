@@ -102,7 +102,6 @@ const Overview: FC = () => {
 				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
-				detail: totalShortsValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SHORTS);
 				},
@@ -113,7 +112,6 @@ const Overview: FC = () => {
 			futuresPositionQuery?.data?.length,
 			t,
 			totalFuturesPortfolioValue,
-			totalShortsValue,
 			totalSpotBalancesValue,
 		]
 	);
