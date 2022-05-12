@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Synths } from 'constants/currency';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 
 import Connector from 'containers/Connector';
@@ -6,8 +7,9 @@ import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositi
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getMarketKey } from 'utils/futures';
-import TvChartWrapper from '../TvChartWrapper';
+
 import { PotentialTrade } from '../types';
+import TVChart from 'components/TVChart';
 
 type Props = {
 	marketAsset: CurrencyKey;
@@ -54,8 +56,9 @@ export default function PositionChart({ marketAsset, potentialTrade }: Props) {
 	}, [subgraphPosition, futuresMarketsPosition]);
 
 	return (
-		<TvChartWrapper
+		<TVChart
 			baseCurrencyKey={marketAsset}
+			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
 			potentialTrade={
 				potentialTradeDetails?.data
