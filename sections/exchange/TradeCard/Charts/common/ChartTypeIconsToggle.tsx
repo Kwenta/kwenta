@@ -45,19 +45,9 @@ const ChartTypeToggle: FC<ChartTypeToggleProps> = ({
 					}}
 				>
 					{chartType === ChartType.AREA ? (
-						<AreaIcon
-							filter={
-								chartType === selectedChartType &&
-								'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'
-							}
-						/>
+						<StyledAreaIcon isActive={chartType === selectedChartType} />
 					) : (
-						<CandlesticksIcon
-							filter={
-								chartType === selectedChartType &&
-								'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'
-							}
-						/>
+						<StyledCandlesticksIcon isActive={chartType === selectedChartType} />
 					)}
 				</Button>
 			))}
@@ -88,6 +78,25 @@ const Button = styled(ResetButton)`
 	&:last-child {
 		border-radius: 0 50px 50px 0;
 	}
+`;
+
+interface SvgStyledProps {
+	className?: string;
+	isActive: boolean;
+}
+
+const StyledAreaIcon = styled(({ isActive, ...props }) => <AreaIcon {...props} />)<SvgStyledProps>`
+	filter: ${(props) =>
+		!props.isActive &&
+		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
+`;
+
+const StyledCandlesticksIcon = styled(({ isActive, ...props }) => <CandlesticksIcon {...props} />)<
+	SvgStyledProps
+>`
+	filter: ${(props) =>
+		!props.isActive &&
+		'invert(58%) sepia(9%) saturate(1019%) hue-rotate(203deg) brightness(95%) contrast(88%)'};
 `;
 
 export default ChartTypeToggle;
