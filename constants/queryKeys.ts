@@ -228,6 +228,12 @@ export const QUERY_KEYS = {
 			networkId,
 			walletAddress,
 		],
+		LatestUpdate: (networkId: NetworkId, market: string | null) => [
+			'futures',
+			'latestUpdate',
+			networkId,
+			market,
+		],
 		NextPriceDetails: (
 			networkId: NetworkId,
 			walletAddress: string | null,
