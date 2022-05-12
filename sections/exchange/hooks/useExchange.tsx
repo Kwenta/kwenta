@@ -789,7 +789,7 @@ const useExchange = ({
 				(destinationCurrencyKey === 'sBTC' ||
 					destinationCurrencyKey === 'sETH' ||
 					destinationCurrencyKey === 'sEUR');
-			console.log(`submit`, isAtomic);
+
 			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
