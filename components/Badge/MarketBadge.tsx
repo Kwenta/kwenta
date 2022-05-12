@@ -48,7 +48,8 @@ export const MarketBadge: FC<MarketBadgeProps> = ({
 	}
 
 	if (isFuturesMarketClosed) {
-		return <Badge>{t(`futures.market.state.${futuresClosureReason}`)}</Badge>;
+		const reason = futuresClosureReason || 'unknown';
+		return <Badge>{t(`futures.market.state.${reason}`)}</Badge>;
 	}
 
 	if (isMarketTransitioning && isOpen !== null) {

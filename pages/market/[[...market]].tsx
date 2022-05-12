@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
 import { DesktopOnlyView } from 'components/Media';
 
 import {
@@ -53,36 +52,33 @@ const Market = () => {
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
-			<AppLayout>
-				<StyledPageContent>
-					<StyledFullHeightContainer>
-						<DesktopOnlyView>
-							<StyledLeftSideContent>
-								<TradingHistory currencyKey={marketAsset} />
-							</StyledLeftSideContent>
-						</DesktopOnlyView>
-						<StyledMainContent>
-							<MarketInfo
-								market={marketAsset}
-								position={futuresMarketPosition}
-								openOrders={openOrders}
+			<StyledPageContent>
+				<StyledFullHeightContainer>
+					<DesktopOnlyView>
+						<StyledLeftSideContent>
+							<TradingHistory currencyKey={marketAsset} />
+						</StyledLeftSideContent>
+					</DesktopOnlyView>
+					<StyledMainContent>
+						<MarketInfo
+							market={marketAsset}
+							position={futuresMarketPosition}
+							openOrders={openOrders}
+							refetch={refetch}
+							potentialTrade={potentialTrade}
+						/>
+					</StyledMainContent>
+					<DesktopOnlyView>
+						<StyledRightSideContent>
+							<Trade
+								onEditPositionInput={setPotentialTrade}
 								refetch={refetch}
-								potentialTrade={potentialTrade}
-							/>
-						</StyledMainContent>
-						<DesktopOnlyView>
-							<StyledRightSideContent>
-								<Trade
-									onEditPositionInput={setPotentialTrade}
-									refetch={refetch}
-									position={futuresMarketPosition}
-									currencyKey={router.query.market?.[0]!}
-								/>
-							</StyledRightSideContent>
-						</DesktopOnlyView>
-					</StyledFullHeightContainer>
-				</StyledPageContent>
-			</AppLayout>
+								position={futuresMarketPosition}
+							/>			
+						</StyledRightSideContent>
+					</DesktopOnlyView>
+				</StyledFullHeightContainer>
+			</StyledPageContent>
 		</>
 	);
 };

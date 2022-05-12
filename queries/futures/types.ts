@@ -185,10 +185,10 @@ export type FuturesTrade = {
 	positionId?: string;
 	positionSize: Wei;
 	positionClosed: boolean;
-	side?: PositionSide;
+	side?: PositionSide | null;
 	pnl: Wei;
 	feesPaid: Wei;
-	orderType: 'NextPrice' | 'Limit' | 'Market';
+	orderType: 'NextPrice' | 'Limit' | 'Market' | 'Liquidation';
 };
 
 export type FuturesVolumes = {

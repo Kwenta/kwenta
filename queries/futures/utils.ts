@@ -24,6 +24,7 @@ import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { Synths } from '@synthetixio/contracts-interface';
+import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -168,6 +169,16 @@ export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]):
 	return volumes;
 };
 
+export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {
+	const result = SynthTrades.synthExchanges.reduce((acc: any, curr: any) => {
+		acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
+			? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
+			: Number(curr.fromAmountInUSD);
+		return acc;
+	}, {});
+	return result;
+};
+
 export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) => {
 	return futuresTrades.reduce(
 		(acc, stat) => {
@@ -229,7 +240,9 @@ export const calculateFundingRate = (
 	return fundingRate;
 };
 
-export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason | null => {
+export const getReasonFromCode = (
+	reasonCode?: BigNumber
+): MarketClosureReason | 'unknown' | null => {
 	switch (Number(reasonCode)) {
 		case 1:
 			return 'system-upgrade';
@@ -238,11 +251,12 @@ export const getReasonFromCode = (reasonCode?: BigNumber): MarketClosureReason |
 		case 3:
 		case 55:
 		case 65:
+		case 231:
 			return 'circuit-breaker';
 		case 99999:
 			return 'emergency';
 		default:
-			return null;
+			return 'unknown';
 	}
 };
 

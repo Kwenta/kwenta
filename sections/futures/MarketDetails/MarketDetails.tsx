@@ -8,19 +8,18 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import { useRateUpdateQuery } from 'queries/rates/useRateUpdateQuery';
 import { FuturesMarket } from 'queries/futures/types';
-import { getExchangeRatesForCurrencies, isFiatCurrency } from 'utils/currencies';
+import { assetToSynth, isFiatCurrency, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
 import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price } from 'queries/rates/types';
+import { Price, Rates } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getMarketKey, isEurForex } from 'utils/futures';
 import Connector from 'containers/Connector';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -33,19 +32,33 @@ type MarketData = Record<string, { value: string | JSX.Element; color?: string }
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { network } = Connector.useContainer();
-	const exchangeRatesQuery = useExchangeRatesQuery({ refetchInterval: 6000 });
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
 
 	const marketSummary: FuturesMarket | null =
 		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const futureRates = futuresMarketsQuery.isSuccess
+		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
+				const currencyKey = iStandardSynth(asset as CurrencyKey)
+					? asset
+					: assetToSynth(asset as CurrencyKey);
+				acc[currencyKey] = price;
+				return acc;
+		  }, {})
+		: null;
+
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const basePriceRate = React.useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name),
-		[exchangeRates, baseCurrencyKey, selectedPriceCurrency]
+		() =>
+			Number(
+				futureRates?.[
+					iStandardSynth(baseCurrencyKey) ? baseCurrencyKey : assetToSynth(baseCurrencyKey)
+				]
+			) ?? null,
+		[futureRates, baseCurrencyKey]
 	);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
@@ -56,7 +69,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
-	const lastOracleUpdateTime = useRateUpdateQuery({ baseCurrencyKey, basePriceRate });
+	const lastOracleUpdateTime = useRateUpdateQuery({
+		baseCurrencyKey,
+		basePriceRate,
+	});
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
@@ -92,21 +108,22 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[baseCurrencyKey
 				? `${baseCurrencyKey[0] === 's' ? baseCurrencyKey.slice(1) : baseCurrencyKey}-PERP`
 				: '']: {
-				value: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-					sign: '$',
-					minDecimals,
-				}) ? (
-					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
-						<HoverTransform>
-							{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-								sign: '$',
-								minDecimals,
-							})}
-						</HoverTransform>
-					</TimerTooltip>
-				) : (
-					NO_VALUE
-				),
+				value:
+					formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+						sign: '$',
+						minDecimals,
+					}) && lastOracleUpdateTime ? (
+						<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+							<HoverTransform>
+								{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+									sign: '$',
+									minDecimals,
+								})}
+							</HoverTransform>
+						</TimerTooltip>
+					) : (
+						NO_VALUE
+					),
 			},
 			'External Price': {
 				value:

@@ -7,7 +7,7 @@ import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { PositionSide } from '../types';
 import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
-import NumericInput from 'components/Input/NumericInput';
+import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
 import { formatNumber } from 'utils/formatters/number';
 
@@ -77,15 +77,14 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				</SliderRow>
 			) : (
 				<LeverageInputContainer>
-					<NumericInput
-						value={
-							currentLeverage === ''
-								? ''
-								: (Math.round(Number(currentLeverage) * 100) / 100).toString()
-						}
-						onChange={(_, value) => {
-							onLeverageChange(value);
+					<StyledInput
+						value={currentLeverage}
+						placeholder="1"
+						suffix="x"
+						maxValue={maxLeverage.toNumber()}
+						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(true);
+							onLeverageChange(newValue.toString());
 						}}
 					/>
 					{['2', '5', '10'].map((l) => (
@@ -160,6 +159,11 @@ const LeverageDisclaimer = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	margin: 0 8px 12px;
+`;
+
+export const StyledInput = styled(CustomNumericInput)`
+	font-family: ${(props) => props.theme.fonts.mono};
+	text-overflow: ellipsis;
 `;
 
 export default LeverageInput;
