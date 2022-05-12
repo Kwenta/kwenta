@@ -20,12 +20,21 @@ const useBaseFeeRateQuery = (
 		async () => {
 			const { SystemSettings } = synthetixjs!.contracts;
 
-			const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = (await Promise.all([
+			console.log(
 				SystemSettings.exchangeFeeRate(
 					ethers.utils.formatBytes32String(sourceCurrencyKey as string)
+				)
+			);
+			const [sourceCurrencyFeeRate, destinationCurrencyFeeRate] = (await Promise.all([
+				new Wei(
+					SystemSettings.exchangeFeeRate(
+						ethers.utils.formatBytes32String(sourceCurrencyKey as string)
+					)
 				),
-				SystemSettings.exchangeFeeRate(
-					ethers.utils.formatBytes32String(destinationCurrencyKey as string)
+				new Wei(
+					SystemSettings.exchangeFeeRate(
+						ethers.utils.formatBytes32String(destinationCurrencyKey as string)
+					)
 				),
 			])) as [Wei, Wei];
 
