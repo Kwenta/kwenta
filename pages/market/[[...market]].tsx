@@ -74,7 +74,7 @@ const Market = () => {
 								onEditPositionInput={setPotentialTrade}
 								refetch={refetch}
 								position={futuresMarketPosition}
-							/>			
+							/>
 						</StyledRightSideContent>
 					</DesktopOnlyView>
 				</StyledFullHeightContainer>
