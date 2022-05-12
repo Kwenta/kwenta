@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import { format, Locale } from 'date-fns';
 
-import getLocale from './getLocale';
+import getLocale from '../../../utils/formatters/getLocale';
 
 type TimeDisplayProps = {
 	cellPropsValue: any;
