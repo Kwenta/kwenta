@@ -16,14 +16,14 @@ const NotFoundPage = () => {
 			<Head>
 				<title>{t('not-found.page-title')}</title>
 			</Head>
-      <Container>
-        <CaretLeftXLIcon />
-        <Content>
-          <Title>{t('not-found.title')}</Title>
-          <Subtitle>{t('not-found.subtitle')}</Subtitle>
-        </Content>
-        <CaretRightXLICon />
-      </Container>
+			<Container>
+				<CaretLeftXLIcon />
+				<Content>
+					<Title>{t('not-found.title')}</Title>
+					<Subtitle>{t('not-found.subtitle')}</Subtitle>
+				</Content>
+				<CaretRightXLICon />
+			</Container>
 		</>
 	);
 };
