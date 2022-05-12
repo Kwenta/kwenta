@@ -170,12 +170,16 @@ export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]):
 };
 
 export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {
-	const result = SynthTrades.synthExchanges.reduce((acc: any, curr: any) => {
-		acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
-			? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
-			: Number(curr.fromAmountInUSD);
-		return acc;
-	}, {});
+	const result = SynthTrades.synthExchanges
+		.filter((i) => i.fromSynth !== null)
+		.reduce((acc: any, curr: any) => {
+			if (curr.fromSynth.symbol) {
+				acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
+					? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
+					: Number(curr.fromAmountInUSD);
+			}
+			return acc;
+		}, {});
 	return result;
 };
 
