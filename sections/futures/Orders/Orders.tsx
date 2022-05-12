@@ -91,9 +91,9 @@ const Orders: React.FC<OrdersProps> = ({
 
 	const returnStatusSVG = (isStatusPending: boolean) => {
 		if (isStatusPending) {
-			return <StatusPendingIcon status={OrderStatus.PENDING} />;
+			return <StatusPendingIcon />;
 		} else {
-			return <StatusSuccessIcon status={OrderStatus.CONFIRMED} />;
+			return <StatusSuccessIcon />;
 		}
 	};
 
@@ -273,22 +273,12 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusPendingIcon = styled(PendingIcon)<{ status: OrderStatus }>`
-	color: ${(props) =>
-		props.status === OrderStatus.PENDING
-			? props.theme.colors.yellow
-			: props.status === OrderStatus.CONFIRMED
-			? props.theme.colors.green
-			: props.theme.colors.red};
+const StatusPendingIcon = styled(PendingIcon)`
+	color: ${(props) => props.theme.colors.yellow};
 `;
 
-const StatusSuccessIcon = styled(SuccessIcon)<{ status: OrderStatus }>`
-	color: ${(props) =>
-		props.status === OrderStatus.PENDING
-			? props.theme.colors.yellow
-			: props.status === OrderStatus.CONFIRMED
-			? props.theme.colors.green
-			: props.theme.colors.red};
+const StatusSuccessIcon = styled(SuccessIcon)`
+	color: ${(props) => props.theme.colors.green};
 `;
 
 const TableNoResults = styled(GridDivCenteredRow)`
