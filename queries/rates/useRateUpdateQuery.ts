@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import request, { gql } from 'graphql-request';
+import { RATES_ENDPOINT_MAINNET } from './constants';
 
 interface RateUpdate {
 	baseCurrencyKey: string;
@@ -13,12 +14,9 @@ export const useRateUpdateQuery = ({ baseCurrencyKey, basePriceRate }: RateUpdat
 
 	const rateUpdateQuery = async (synth: string) => {
 		if (synth === undefined) return null;
-
-		const RATES_ENDPOINT = 'https://api.thegraph.com/subgraphs/name/synthetixio-team/optimism-main';
-
 		try {
 			const response = await request(
-				RATES_ENDPOINT,
+				RATES_ENDPOINT_MAINNET,
 				gql`
 					query rateUpdates($synth: String!) {
 						rateUpdates(

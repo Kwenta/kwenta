@@ -7,6 +7,12 @@ import { Trans } from 'react-i18next';
 import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
+/**
+ *
+ * We are removing this component from the app because it is too
+ * distracting when markets pause constantly (reason code 231).
+ * Leaving the component here in case we want to bring it back later.
+ */
 const MarketOverlay: FC<{
 	marketClosureReason: MarketClosureReason;
 	baseCurrencyKey: CurrencyKey;

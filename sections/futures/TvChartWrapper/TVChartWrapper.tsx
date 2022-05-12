@@ -11,6 +11,12 @@ type TVChartWrapperProps = {
 	potentialTrade: ChartPosition | null;
 };
 
+/**
+ *
+ * We are removing this component from the app because it is too
+ * distracting when markets pause constantly (reason code 231).
+ * Leaving the component here in case we want to bring it back later.
+ */
 export const TVChartWrapper: FC<TVChartWrapperProps> = ({
 	baseCurrencyKey,
 	activePosition,

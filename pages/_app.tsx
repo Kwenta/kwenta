@@ -15,6 +15,7 @@ import { CustomThemeProvider } from 'contexts/CustomThemeContext';
 import SystemStatus from 'sections/shared/SystemStatus';
 
 import { isSupportedNetworkId } from 'utils/network';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
@@ -48,7 +49,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 				>
 					<Layout>
 						<SystemStatus>
-							<Component {...pageProps} />
+							<AppLayout>
+								<Component {...pageProps} />
+							</AppLayout>
 						</SystemStatus>
 					</Layout>
 					<ReactQueryDevtools />
