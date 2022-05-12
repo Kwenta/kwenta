@@ -2,10 +2,10 @@ import { wei } from '@synthetixio/wei';
 import LinkIcon from 'assets/svg/app/link.svg';
 import Card from 'components/Card';
 import Table from 'components/Table';
+import TimeDisplay from './TimeDisplay';
 import { Synths } from 'constants/currency';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
-import { format } from 'date-fns';
 import { FuturesTrade } from 'queries/futures/types';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,8 +83,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'time',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<GridDivCenteredRow>
-								<div>{format(new Date(cellProps.value), 'MM/dd/yy')}</div>
-								<div>{format(new Date(cellProps.value), 'HH:mm:ss aa')}</div>
+								<TimeDisplay cellPropsValue={cellProps.value} />
 							</GridDivCenteredRow>
 						),
 						width: 90,

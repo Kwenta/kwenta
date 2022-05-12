@@ -15,6 +15,7 @@ import { ThemeProvider } from 'styled-components';
 import SystemStatus from 'sections/shared/SystemStatus';
 
 import { isSupportedNetworkId } from 'utils/network';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import { themes } from 'styles/theme';
 
@@ -55,7 +56,9 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 				>
 					<Layout>
 						<SystemStatus>
-							<Component {...pageProps} />
+							<AppLayout>
+								<Component {...pageProps} />
+							</AppLayout>
 						</SystemStatus>
 					</Layout>
 					<ReactQueryDevtools />
