@@ -73,6 +73,7 @@ export const QUERY_KEYS = {
 			walletAddress,
 			currencyKey,
 		],
+		TradingVolumeForAllSynths: (networkId: NetworkId) => ['synths', 'tradingVolume', networkId],
 	},
 	Collateral: {
 		ShortHistory: (walletAddress: string, networkId: NetworkId) => [
@@ -228,6 +229,12 @@ export const QUERY_KEYS = {
 			'openOrders',
 			networkId,
 			walletAddress,
+		],
+		LatestUpdate: (networkId: NetworkId, market: string | null) => [
+			'futures',
+			'latestUpdate',
+			networkId,
+			market,
 		],
 		NextPriceDetails: (
 			networkId: NetworkId,

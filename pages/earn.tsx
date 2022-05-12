@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
-
 import { PageContent, FullHeightContainer } from 'styles/common';
 
 import Text from 'components/Text';
@@ -18,24 +16,22 @@ const Earn: React.FC = () => {
 			<Head>
 				<title>Earn | Kwenta</title>
 			</Head>
-			<AppLayout>
-				<PageContent>
-					<FullHeightContainer>
-						<MainContainer>
-							<EmptyColumn />
-							<GridsContainer>
-								<PageHeading variant="h4">Liquidity Mining Program</PageHeading>
-								<StyledBody size="large">
-									Earn KWENTA by staking SNX or adding liquidity to the sUSD Curve pool on Optimism.
-								</StyledBody>
-								<StakeGrid />
-								<PoolGrid />
-							</GridsContainer>
-							<Rewards />
-						</MainContainer>
-					</FullHeightContainer>
-				</PageContent>
-			</AppLayout>
+			<PageContent>
+				<FullHeightContainer>
+					<MainContainer>
+						<EmptyColumn />
+						<GridsContainer>
+							<PageHeading variant="h4">Liquidity Mining Program</PageHeading>
+							<StyledBody size="large">
+								Earn KWENTA by staking SNX or adding liquidity to the sUSD Curve pool on Optimism.
+							</StyledBody>
+							<StakeGrid />
+							<PoolGrid />
+						</GridsContainer>
+						<Rewards />
+					</MainContainer>
+				</FullHeightContainer>
+			</PageContent>
 		</>
 	);
 };

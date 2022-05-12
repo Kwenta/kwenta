@@ -15,7 +15,6 @@ import ProfitCalculator from '../ProfitCalculator';
 import Transfers from '../Transfers';
 
 import ROUTES from 'constants/routes';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
@@ -64,7 +63,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
-	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
@@ -176,12 +174,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					position={position}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
-					onPositionClose={() =>
-						setTimeout(() => {
-							futuresPositionHistoryQuery.refetch();
-							refetch();
-						}, 5 * 1000)
-					}
 				/>
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}

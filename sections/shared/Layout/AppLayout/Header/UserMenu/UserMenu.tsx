@@ -19,6 +19,8 @@ import UniswapModal from 'sections/shared/modals/UniswapModal';
 import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
+import { Svg } from 'react-optimized-image';
+import SettingsIcon from 'assets/svg/app/settings.svg';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
@@ -70,7 +72,11 @@ const UserMenu: FC = () => {
 				}}
 				isActive={settingsModalOpened}
 			>
-				<SettingsText>...</SettingsText>
+				<Svg
+					src={SettingsIcon}
+					width={20}
+					viewBox={`0 0 ${SettingsIcon.width} ${SettingsIcon.height}`}
+				/>
 			</MenuButton>
 		</>
 	);
@@ -102,15 +108,6 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
-`;
-
-const SettingsText = styled.p`
-	margin: 0px;
-	margin-bottom: 10px;
-	line-height: 10px;
-	height: 10px;
-	letter-spacing: 2px;
-	text-align: center;
 `;
 
 const ConnectButton = styled(Button)`

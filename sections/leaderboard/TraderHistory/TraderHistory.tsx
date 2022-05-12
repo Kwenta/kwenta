@@ -13,6 +13,7 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FlexDiv } from 'styles/common';
 import router from 'next/router';
 import ROUTES from 'constants/routes';
+import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 
 type TraderHistoryProps = {
 	trader: string;
@@ -98,14 +99,9 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							Header: <TableHeader>{t('leaderboard.trader-history.table.timestamp')}</TableHeader>,
 							accessor: 'openTimestamp',
 							Cell: (cellProps: CellProps<any>) => {
-								const date = new Date(cellProps.row.original.openTimestamp);
-								const dateFmt = date.toLocaleString().split(', ');
-
 								return (
 									<StyledCell>
-										{dateFmt[0]}
-										<br />
-										{dateFmt[1]}
+										<TimeDisplay cellPropsValue={cellProps.row.original.openTimestamp} />
 									</StyledCell>
 								);
 							},
