@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State, networkState } from 'store/wallet';

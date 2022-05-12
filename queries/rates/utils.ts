@@ -5,9 +5,12 @@ import { ethers } from 'ethers';
 import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
 import { CandleResult } from 'queries/futures/subgraph';
 import { Candle } from './types';
+import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 
 export const getRatesEndpoint = (networkId: number): string => {
-	return networkId === 10
+	return networkId === 1 || networkId === 42
+		? SYNTHS_ENDPOINT_MAIN
+		: networkId === 10
 		? RATES_ENDPOINT_MAINNET
 		: networkId === 69
 		? RATES_ENDPOINT_TESTNET
