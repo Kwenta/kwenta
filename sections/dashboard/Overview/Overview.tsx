@@ -8,6 +8,8 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import FuturesMarketsTable from '../FuturesMarketsTable';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import SpotMarketsTable from '../SpotMarketsTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -28,6 +30,9 @@ const Overview: FC = () => {
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
@@ -81,7 +86,6 @@ const Overview: FC = () => {
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
-				disabled: true,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);
 				},
@@ -118,21 +122,17 @@ const Overview: FC = () => {
 			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
-					<TabButton
-						key={name}
-						title={label}
-						active={active}
-						disabled={disabled}
-						onClick={onClick}
-					/>
+				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={label} active={active} onClick={onClick} />
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
 			</TabPanel>
 
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}></TabPanel>
+			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+				<SpotMarketsTable exchangeRates={exchangeRates} />
+			</TabPanel>
 		</>
 	);
 };

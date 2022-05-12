@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
@@ -37,15 +36,13 @@ const Exchange: FC = () => {
 						: t('exchange.page-title')}
 				</title>
 			</Head>
-			<AppLayout>
-				<PageContent>
-					<StyledFullHeightContainer>
-						<MainContent>
-							<BasicSwap />
-						</MainContent>
-					</StyledFullHeightContainer>
-				</PageContent>
-			</AppLayout>
+			<PageContent>
+				<StyledFullHeightContainer>
+					<MainContent>
+						<BasicSwap />
+					</MainContent>
+				</StyledFullHeightContainer>
+			</PageContent>
 		</>
 	);
 };

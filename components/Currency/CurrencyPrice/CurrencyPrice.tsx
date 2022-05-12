@@ -34,10 +34,8 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	formatOptions,
 	...rest
 }) => {
-	const isPositive = price >= 0;
-
 	return (
-		<Container isPositive={isPositive} {...rest}>
+		<Container {...rest}>
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
@@ -54,13 +52,10 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	);
 };
 
-const Container = styled.span<{ isPositive: boolean }>`
+const Container = styled.span`
 	${ContainerRowMixin};
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) =>
-		props.isPositive
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
 const Price = styled.span``;

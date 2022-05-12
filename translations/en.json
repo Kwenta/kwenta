@@ -634,14 +634,15 @@
 				"rate": "24H funding rate"
 			},
 			"position-card": {
-				"position-side": "Position Side",
-				"position-size": "Position Size",
-				"pnl": "Unrealized P&L",
+				"position-side": "Side",
+				"position-size": "Size",
+				"r-pnl": "Realized PnL",
+				"u-pnl": "Unrealized PnL",
 				"leverage": "Leverage",
 				"liquidation-price": "Liq. Price",
 				"net-funding": "Net Funding",
 				"fees": "Fees",
-				"avg-entry-price": "Avg. Entry Price"
+				"avg-entry-price": "Avg. Entry"
 			},
 			"state": {
 				"opens-soon": "opens soon",
