@@ -72,10 +72,6 @@ const Overview: FC = () => {
 		sign: '$',
 	});
 
-	const totalShortsValue = formatCurrency(Synths.sUSD, wei(zeroBN), {
-		sign: '$',
-	});
-
 	const POSITIONS_TABS = useMemo(
 		() => [
 			{
@@ -100,7 +96,6 @@ const Overview: FC = () => {
 			{
 				name: PositionsTab.SHORTS,
 				label: t('dashboard.overview.positions-tabs.shorts'),
-				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
 				onClick: () => {
