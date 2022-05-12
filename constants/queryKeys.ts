@@ -59,13 +59,18 @@ export const QUERY_KEYS = {
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
-		ExchangeFeeRate: (quoteCurrencyKey: CurrencyKey, baseCurrencyKey: CurrencyKey) => [
+		ExchangeFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
 			'synths',
 			'exchangeFeeRate',
-			quoteCurrencyKey,
-			baseCurrencyKey,
+			sourceCurrencyKey,
+			destinationCurrencyKey,
 		],
-		BaseFeeRate: (currencyKey: CurrencyKey) => ['synths', 'baseFeeRate', currencyKey],
+		BaseFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
+			'synths',
+			'baseFeeRate',
+			sourceCurrencyKey,
+			destinationCurrencyKey,
+		],
 		NumEntries: (walletAddress: string, currencyKey: CurrencyKey) => [
 			'synths',
 			'numEntries',
