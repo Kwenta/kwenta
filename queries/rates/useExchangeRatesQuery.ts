@@ -10,7 +10,7 @@ import {
 } from '@synthetixio/queries/build/node/src/currency';
 
 import Connector from 'containers/Connector';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { Rates } from './types';
 
@@ -26,10 +26,6 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
-
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
-	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<Rates>(
 		['rates', 'exchangeRates2', network.id],
@@ -58,7 +54,7 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 			return exchangeRates;
 		},
 		{
-			enabled: isWalletConnected ? isL2 && isReady : isReady,
+			enabled: isAppReady && !!synthetixjs,
 			...options,
 		}
 	);
