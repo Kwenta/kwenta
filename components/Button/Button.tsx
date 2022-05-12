@@ -29,6 +29,7 @@ export const border = css`
 `;
 
 const Button = styled.button<ButtonProps>`
+	height: 41px;
 	cursor: pointer;
 	position: relative;
 	border-radius: 10px;

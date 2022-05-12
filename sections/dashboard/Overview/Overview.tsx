@@ -149,7 +149,7 @@ const Overview: FC = () => {
 				totalShortsValue={zeroBN}
 			/>
 
-			<TabButtonsContainer>
+			<TabButtonsContainer hasDetail={true}>
 				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
 					<TabButton
 						key={name}
@@ -198,12 +198,13 @@ const Overview: FC = () => {
 	);
 };
 
-const TabButtonsContainer = styled.div`
+const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
 
 	& > button {
+		height: ${(props) => (props.hasDetail ? '48px' : '38px')};
 		font-size: 13px;
 
 		&:not(:last-of-type) {
