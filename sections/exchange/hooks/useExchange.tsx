@@ -69,6 +69,8 @@ import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -107,7 +109,6 @@ const useExchange = ({
 		useSynthsBalancesQuery,
 		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
-		useExchangeFeeRateQuery,
 	} = useSynthetixQueries();
 
 	const router = useRouter();
@@ -182,7 +183,10 @@ const useExchange = ({
 		baseCurrencyKey as CurrencyKey
 	);
 
-	const baseFeeRateQuery = useBaseFeeRateQuery(baseCurrencyKey as CurrencyKey);
+	const baseFeeRateQuery = useBaseFeeRateQuery(
+		baseCurrencyKey as CurrencyKey,
+		quoteCurrencyKey as CurrencyKey
+	);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -557,13 +561,15 @@ const useExchange = ({
 		}
 		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
 			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
-			setBaseCurrencyAmount(baseCurrencyAmountNoFee.toString());
+			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+			setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
 		}
 	}, [
 		rate,
 		baseCurrencyKey,
 		quoteCurrencyAmount,
 		baseCurrencyAmount,
+		exchangeFeeRate,
 		txProvider,
 		oneInchQuoteQuery.data,
 		oneInchQuoteQuery.isSuccess,
@@ -574,21 +580,27 @@ const useExchange = ({
 			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
-			const trackingCode = ethers.utils.formatBytes32String('KWENTA');
+			const minAmount = baseCurrencyAmountBN.toBN();
 
 			if (isAtomic) {
-				return [destinationCurrencyKey, sourceAmount, sourceCurrencyKey, trackingCode];
+				return [
+					destinationCurrencyKey,
+					sourceAmount,
+					sourceCurrencyKey,
+					KWENTA_TRACKING_CODE,
+					minAmount,
+				];
 			} else {
 				return [
 					destinationCurrencyKey,
 					sourceAmount,
 					sourceCurrencyKey,
 					walletAddress,
-					trackingCode,
+					KWENTA_TRACKING_CODE,
 				];
 			}
 		},
-		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress]
+		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress, baseCurrencyAmountBN]
 	);
 
 	const getGasEstimateForExchange = useCallback(
@@ -596,11 +608,14 @@ const useExchange = ({
 			try {
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
-					const destinationCurrencyKey = getExchangeParams(true)[0];
+					const destinationCurrencyKey = ethers.utils.parseBytes32String(
+						getExchangeParams(true)[0] as string
+					);
 					const isAtomic =
-						destinationCurrencyKey === 'sBTC' ||
-						destinationCurrencyKey === 'sETH' ||
-						destinationCurrencyKey === 'sEUR';
+						!isL2 &&
+						(destinationCurrencyKey === 'sBTC' ||
+							destinationCurrencyKey === 'sETH' ||
+							destinationCurrencyKey === 'sEUR');
 					const exchangeParams = getExchangeParams(isAtomic);
 
 					let gasEstimate, gasLimitNum, metaTx;
@@ -764,11 +779,16 @@ const useExchange = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const destinationCurrencyKey = getExchangeParams(true)[0];
+			const destinationCurrencyKey = ethers.utils.parseBytes32String(
+				getExchangeParams(true)[0] as string
+			);
+
 			const isAtomic =
-				destinationCurrencyKey === 'sBTC' ||
-				destinationCurrencyKey === 'sETH' ||
-				destinationCurrencyKey === 'sEUR';
+				!isL2 &&
+				(destinationCurrencyKey === 'sBTC' ||
+					destinationCurrencyKey === 'sETH' ||
+					destinationCurrencyKey === 'sEUR');
+
 			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
@@ -867,6 +887,7 @@ const useExchange = ({
 		synthetixjs,
 		gasPriceWei,
 		gasConfig,
+		isL2,
 	]);
 
 	useEffect(() => {

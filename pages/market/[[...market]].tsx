@@ -74,6 +74,7 @@ const Market = () => {
 								onEditPositionInput={setPotentialTrade}
 								refetch={refetch}
 								position={futuresMarketPosition}
+								currencyKey={marketAsset}
 							/>
 						</StyledRightSideContent>
 					</DesktopOnlyView>

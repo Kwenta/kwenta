@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
 
@@ -17,8 +16,8 @@ import MarketsDropdownOption from './MarketsDropdownOption';
 import MarketsDropdownIndicator from './MarketsDropdownIndicator';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { Price } from 'queries/rates/types';
+import { assetToSynth, iStandardSynth } from 'utils/currencies';
+import { Price, Rates } from 'queries/rates/types';
 import { getSynthDescription, isEurForex } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -65,9 +64,7 @@ const DUMMY_PRICE = '';
 const DUMMY_CHANGE = '';
 
 const MarketsDropdown: React.FC<Props> = ({ asset }) => {
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
@@ -81,7 +78,15 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+	const futureRates = futuresMarketsQuery.isSuccess
+		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
+				const currencyKey = iStandardSynth(asset as CurrencyKey)
+					? asset
+					: assetToSynth(asset as CurrencyKey);
+				acc[currencyKey] = price;
+				return acc;
+		  }, {})
+		: null;
 
 	const options = React.useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
@@ -90,11 +95,14 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 		return markets.map((market) => {
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 
-			const basePriceRate = getExchangeRatesForCurrencies(
-				exchangeRates,
-				market.asset,
-				selectedPriceCurrency.name
-			);
+			const basePriceRate =
+				Number(
+					futureRates?.[
+						iStandardSynth(market.asset as CurrencyKey)
+							? market.asset
+							: assetToSynth(market.asset as CurrencyKey)
+					]
+				) ?? null;
 
 			const minDecimals = isEurForex(market.asset) ? DEFAULT_FIAT_EURO_DECIMALS : undefined;
 			return assetToCurrencyOption(
@@ -119,7 +127,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 	}, [
 		dailyPriceChangesQuery?.data,
 		futuresMarketsQuery?.data,
-		exchangeRates,
+		futureRates,
 		selectedPriceCurrency.name,
 		synthsMap,
 		t,
