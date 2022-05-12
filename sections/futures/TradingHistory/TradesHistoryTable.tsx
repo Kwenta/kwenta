@@ -35,6 +35,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						time: Number(trade?.timestamp),
 						id: trade?.txnHash,
 						currencyKey,
+						orderType: trade?.orderType,
 					};
 			  })
 			: [];
@@ -88,29 +89,24 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 							Header: <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
 							accessor: 'Amount',
 							Cell: (cellProps: CellProps<any>) => {
+								const numValue = Math.abs(cellProps.row.original.amount / 1e18);
+								const numDecimals =
+									numValue === 0 ? 2 : numValue < 1 ? 4 : numValue >= 100000 ? 0 : 2;
+
+								const normal = cellProps.row.original.orderType === 'Liquidation';
+								const negative = cellProps.row.original.amount > 0;
+
 								return (
 									<>
-										{cellProps.row.original.amount > 0 ? (
-											<div>
-												<PostiveValue>
-													{cellProps.row.original.amount !== NO_VALUE
-														? formatNumber(Math.abs(cellProps.row.original.amount / 1e18), {
-																minDecimals: 4,
-														  })
-														: NO_VALUE}
-												</PostiveValue>
-											</div>
-										) : (
-											<div>
-												<NegativeValue>
-													{cellProps.row.original.value !== NO_VALUE
-														? formatNumber(Math.abs(cellProps.row.original.amount / 1e18), {
-																minDecimals: 4,
-														  })
-														: NO_VALUE}
-												</NegativeValue>
-											</div>
-										)}
+										<div>
+											<DirectionalValue negative={negative} normal={normal}>
+												{cellProps.row.original.amount !== NO_VALUE
+													? `${formatNumber(numValue, {
+															minDecimals: numDecimals,
+													  })} ${normal ? '💀' : ''}`
+													: NO_VALUE}
+											</DirectionalValue>
+										</div>
 									</>
 								);
 							},
@@ -205,12 +201,11 @@ const TimeValue = styled.p`
 	padding-left: 10px;
 `;
 
-const PostiveValue = styled(PriceValue)`
-	color: ${(props) => props.theme.colors.common.primaryGreen};
-	padding-left: 5px;
-`;
-
-const NegativeValue = styled(PriceValue)`
-	color: ${(props) => props.theme.colors.common.primaryRed};
-	padding-left: 5px;
+const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
+	color: ${(props) =>
+		props.normal
+			? props.theme.colors.common.primaryWhite
+			: props.negative
+			? props.theme.colors.common.primaryRed
+			: props.theme.colors.common.primaryGreen};
 `;

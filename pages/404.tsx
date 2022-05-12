@@ -2,8 +2,6 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import AppLayout from 'sections/shared/Layout/AppLayout';
-
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
 
@@ -18,16 +16,14 @@ const NotFoundPage = () => {
 			<Head>
 				<title>{t('not-found.page-title')}</title>
 			</Head>
-			<AppLayout>
-				<Container>
-					<CaretLeftXLIcon />
-					<Content>
-						<Title>{t('not-found.title')}</Title>
-						<Subtitle>{t('not-found.subtitle')}</Subtitle>
-					</Content>
-					<CaretRightXLICon />
-				</Container>
-			</AppLayout>
+      <Container>
+        <CaretLeftXLIcon />
+        <Content>
+          <Title>{t('not-found.title')}</Title>
+          <Subtitle>{t('not-found.subtitle')}</Subtitle>
+        </Content>
+        <CaretRightXLICon />
+      </Container>
 		</>
 	);
 };
