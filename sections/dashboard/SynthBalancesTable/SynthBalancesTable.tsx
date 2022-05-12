@@ -31,13 +31,10 @@ type Cell = {
 };
 
 const calculatePriceChange = (current: Wei | null, past: Price | undefined): number | undefined => {
-	if (_.isNil(current)) {
+	if (_.isNil(current) || _.isNil(past)) {
 		return undefined;
 	}
 	const currentPrice = current.toNumber();
-	if (_.isNil(past)) {
-		return currentPrice;
-	}
 	const pastPrice = past.price;
 	const priceChange = (currentPrice - pastPrice) / currentPrice;
 	return priceChange;
