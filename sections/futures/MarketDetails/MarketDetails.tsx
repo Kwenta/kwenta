@@ -12,8 +12,6 @@ import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useCoinGeckoPricesQuery from 'queries/coingecko/useCoinGeckoPricesQuery';
-import { synthToCoingeckoPriceId } from './utils';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price, Rates } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
@@ -23,6 +21,7 @@ import Connector from 'containers/Connector';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import _ from 'lodash';
 
@@ -77,11 +76,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
+	const externalPriceQuery = useExternalPriceQuery(baseCurrencyKey);
+	const externalPrice = externalPriceQuery?.data ?? 0;
 	const marketKey = getMarketKey(baseCurrencyKey, network.id);
-	const priceId = synthToCoingeckoPriceId(marketKey);
-	const coinGeckoPricesQuery = useCoinGeckoPricesQuery([priceId]);
-	const coinGeckoPrices = coinGeckoPricesQuery?.data ?? null;
-	const externalPrice = coinGeckoPrices?.[priceId]?.usd ?? 0;
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
