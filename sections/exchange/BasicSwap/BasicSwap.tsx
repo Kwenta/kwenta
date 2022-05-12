@@ -9,10 +9,6 @@ import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
 
-const ArrowIconComponent = ({ className }: { className: string }) => {
-	return <ArrowIcon className={className} />;
-};
-
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();
 	const { quoteCurrencyCard, baseCurrencyCard, footerCard, handleCurrencySwap } = useExchange({
@@ -32,7 +28,7 @@ const BasicSwap: FC = () => {
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<ArrowIconComponent className="arrow" />
+							<ArrowIcon className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
 					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>
