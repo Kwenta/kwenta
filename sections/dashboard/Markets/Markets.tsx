@@ -5,6 +5,8 @@ import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import FuturesMarketsTable from '../FuturesMarketsTable';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import SpotMarketsTable from '../SpotMarketsTable';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -16,6 +18,9 @@ const Markets: FC = () => {
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -33,7 +38,6 @@ const Markets: FC = () => {
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot'),
 				active: activeMarketsTab === MarketsTab.SPOT,
-				disabled: true,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);
 				},
@@ -45,21 +49,17 @@ const Markets: FC = () => {
 	return (
 		<>
 			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, disabled, onClick }) => (
-					<TabButton
-						key={name}
-						title={label}
-						active={active}
-						disabled={disabled}
-						onClick={onClick}
-					/>
+				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={label} active={active} onClick={onClick} />
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
 			</TabPanel>
 
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}></TabPanel>
+			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+				<SpotMarketsTable exchangeRates={exchangeRates} />
+			</TabPanel>
 		</>
 	);
 };
