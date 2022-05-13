@@ -24,6 +24,7 @@ import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { Synths } from '@synthetixio/contracts-interface';
+import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -166,6 +167,20 @@ export const calculateTradeVolumeForAll = (futuresTrades: FuturesTradeResult[]):
 			: (volumes[asset] = volumeAdd);
 	});
 	return volumes;
+};
+
+export const calculateTradeVolumeForAllSynths = (SynthTrades: SynthsTrades): SynthsVolumes => {
+	const result = SynthTrades.synthExchanges
+		.filter((i) => i.fromSynth !== null)
+		.reduce((acc: any, curr: any) => {
+			if (curr.fromSynth.symbol) {
+				acc[curr.fromSynth.symbol] = acc[curr.fromSynth.symbol]
+					? acc[curr.fromSynth.symbol] + Number(curr.fromAmountInUSD)
+					: Number(curr.fromAmountInUSD);
+			}
+			return acc;
+		}, {});
+	return result;
 };
 
 export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) => {

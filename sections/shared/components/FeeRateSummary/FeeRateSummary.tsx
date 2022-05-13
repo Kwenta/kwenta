@@ -34,7 +34,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 							: NO_VALUE}
 					</span>
 					{totalFeeRate != null && baseFeeRate != null ? (
-						totalFeeRate.sub(baseFeeRate).toNumber() > 0 ? (
+						totalFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<DynamicFeeRateTooltip
@@ -44,9 +44,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 									placement="bottom"
 								>
 									<DynamicFeeRateItem>
-										<span>
-											{formatPercent(totalFeeRate.sub(baseFeeRate).toNumber(), { minDecimals: 2 })}
-										</span>
+										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
 										<Svg src={TimerIcon} />
 									</DynamicFeeRateItem>
 								</DynamicFeeRateTooltip>
