@@ -15,6 +15,7 @@ import Wei from '@synthetixio/wei';
 import { formatNumber } from 'utils/formatters/number';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import ChangePercent from 'components/ChangePercent';
+import { isEurForex } from 'utils/futures';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
@@ -153,7 +154,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									price={cellProps.row.original.price!}
 									sign={'$'}
 									conversionRate={1}
-									formatOptions={{ minDecimals: 2 }}
+									formatOptions={{ minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2 }}
 								/>
 							);
 						},
