@@ -1,7 +1,6 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
-import { Svg } from 'react-optimized-image';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -125,26 +124,14 @@ export const Table: FC<TableProps> = ({
 										<SortIconContainer>
 											{column.isSorted ? (
 												column.isSortedDesc ? (
-													<StyledSortDownIcon
-														src={SortDownIcon}
-														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-													/>
+													<StyledSortDownIcon />
 												) : (
-													<StyledSortUpIcon
-														src={SortUpIcon}
-														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-													/>
+													<StyledSortUpIcon />
 												)
 											) : (
 												<>
-													<StyledSortUpIcon
-														src={SortUpIcon}
-														viewBox={`0 0 ${SortUpIcon.width} ${SortUpIcon.height}`}
-													/>
-													<StyledSortDownIcon
-														src={SortDownIcon}
-														viewBox={`0 0 ${SortDownIcon.width} ${SortDownIcon.height}`}
-													/>
+													<StyledSortUpIcon />
+													<StyledSortDownIcon />
 												</>
 											)}
 										</SortIconContainer>
@@ -154,7 +141,7 @@ export const Table: FC<TableProps> = ({
 						</TableRow>
 					))}
 					{isLoading ? (
-						<StyledSpinner src={Spinner} />
+						<StyledSpinner />
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
@@ -203,7 +190,7 @@ const TableContainer = styled.div`
 	//width: 100%;
 `;
 
-const StyledSpinner = styled(Svg)`
+const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;
@@ -299,13 +286,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 		`}
 `;
 
-const StyledSortDownIcon = styled(Svg)`
+const StyledSortDownIcon = styled(SortDownIcon)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
-const StyledSortUpIcon = styled(Svg)`
+const StyledSortUpIcon = styled(SortUpIcon)`
 	width: 5px;
 	height: 5px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};

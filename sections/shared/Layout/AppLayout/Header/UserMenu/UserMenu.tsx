@@ -19,7 +19,6 @@ import UniswapModal from 'sections/shared/modals/UniswapModal';
 import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
-import { Svg } from 'react-optimized-image';
 import SettingsIcon from 'assets/svg/app/settings.svg';
 
 const UserMenu: FC = () => {
@@ -72,11 +71,7 @@ const UserMenu: FC = () => {
 				}}
 				isActive={settingsModalOpened}
 			>
-				<Svg
-					src={SettingsIcon}
-					width={20}
-					viewBox={`0 0 ${SettingsIcon.width} ${SettingsIcon.height}`}
-				/>
+				<SettingsIcon width={20} />
 			</MenuButton>
 		</>
 	);

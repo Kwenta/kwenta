@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import Wei, { wei } from '@synthetixio/wei';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -92,9 +91,9 @@ const Orders: React.FC<OrdersProps> = ({
 
 	const returnStatusSVG = (isStatusPending: boolean) => {
 		if (isStatusPending) {
-			return <StatusIcon status={OrderStatus.PENDING} src={PendingIcon} />;
+			return <StatusPendingIcon />;
 		} else {
-			return <StatusIcon status={OrderStatus.CONFIRMED} src={SuccessIcon} />;
+			return <StatusSuccessIcon />;
 		}
 	};
 
@@ -218,7 +217,7 @@ const Orders: React.FC<OrdersProps> = ({
 				noResultsMessage={
 					isLoaded && orders.length === 0 ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
+							<NoNotificationIcon />
 							{t('dashboard.transactions.table.no-results')}
 						</TableNoResults>
 					) : undefined
@@ -274,13 +273,12 @@ const StatusText = styled.div`
 	margin-left: 4px;
 `;
 
-const StatusIcon = styled(Svg)<{ status: OrderStatus }>`
-	color: ${(props) =>
-		props.status === OrderStatus.PENDING
-			? props.theme.colors.yellow
-			: props.status === OrderStatus.CONFIRMED
-			? props.theme.colors.green
-			: props.theme.colors.red};
+const StatusPendingIcon = styled(PendingIcon)`
+	color: ${(props) => props.theme.colors.yellow};
+`;
+
+const StatusSuccessIcon = styled(SuccessIcon)`
+	color: ${(props) => props.theme.colors.green};
 `;
 
 const TableNoResults = styled(GridDivCenteredRow)`

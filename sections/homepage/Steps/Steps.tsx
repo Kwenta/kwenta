@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { FlexDivCol, FlexDivColCentered, Paragraph } from 'styles/common';
-import Img from 'react-optimized-image';
 
 import StepOne from 'assets/svg/marketing/step-one.svg';
 import StepTwo from 'assets/svg/marketing/step-two.svg';
@@ -17,21 +16,21 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 export const STEPS = [
 	{
 		id: 'step-one',
-		image: <Img src={StepOne} alt="" />,
+		image: <StepOne />,
 		subtitle: 'homepage.steps.one.subtitle',
 		title: 'homepage.steps.one.title',
 		copy: 'homepage.steps.one.copy',
 	},
 	{
 		id: 'step-two',
-		image: <Img src={StepTwo} alt="" />,
+		image: <StepTwo />,
 		subtitle: 'homepage.steps.two.subtitle',
 		title: 'homepage.steps.two.title',
 		copy: 'homepage.steps.two.copy',
 	},
 	{
 		id: 'step-three',
-		image: <Img src={StepThree} alt="" />,
+		image: <StepThree />,
 		subtitle: 'homepage.steps.three.subtitle',
 		title: 'homepage.steps.three.title',
 		copy: 'homepage.steps.three.copy',
