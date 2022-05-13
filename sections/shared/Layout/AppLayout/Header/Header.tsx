@@ -1,17 +1,15 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, HEADER_TOP_PADDING, zIndex } from 'constants/ui';
+import { MobileHiddenView } from 'components/Media';
+import { zIndex } from 'constants/ui';
 
 import { GridDivCol } from 'styles/common';
-import media from 'styles/media';
 
 import Logo from '../../Logo';
 
 import Nav from './Nav';
 import UserMenu from './UserMenu';
-import MobileUserMenu from './MobileUserMenu';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
@@ -29,10 +27,6 @@ const Header: FC = () => {
 				</LogoNav>
 				<UserMenu />
 			</MobileHiddenView>
-			<MobileOnlyView>
-				<LogoNav>{logo}</LogoNav>
-				<MobileUserMenu />
-			</MobileOnlyView>
 		</Container>
 	);
 };
@@ -42,14 +36,8 @@ const Container = styled.header<{ isL2: boolean }>`
 	left: 0;
 	right: 0;
 	z-index: ${zIndex.HEADER};
-	${media.lessThan('md')`
-		position: fixed;
-		background-color: ${(props) => props.theme.colors.black};
-		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
-	`};
+
 	> div {
-		/* height: ${HEADER_HEIGHT}; */
-		/* padding-top: ${HEADER_TOP_PADDING}; */
 		padding-bottom: 20px;
 		display: flex;
 		justify-content: space-between;
