@@ -338,7 +338,7 @@ const MarketDetailsContainer = styled.div`
 	}
 `;
 
-const HoverTransform = styled.div`
+export const HoverTransform = styled.div`
 	:hover {
 		transform: scale(1.03);
 	}
