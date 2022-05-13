@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import Card from 'components/Card';
 import Button from 'components/Button';
@@ -23,7 +22,7 @@ const Hero: FC<Props> = ({ displayReferBox = true }) => {
 			<TopSection>
 				<HeroCard>
 					<BackgroundImageContainer>
-						<BackgroundImage src={Layer2Icon} />
+						<BackgroundImage />
 					</BackgroundImageContainer>
 					<StyledHeaderText small={false}>{t('futures.hero.welcome.title')}</StyledHeaderText>
 					<Card.Body>
@@ -85,7 +84,7 @@ const BackgroundImageContainer = styled.div`
 	text-align: center;
 `;
 
-const BackgroundImage = styled(Svg)`
+const BackgroundImage = styled(Layer2Icon)`
 	margin: 0 auto;
 `;
 

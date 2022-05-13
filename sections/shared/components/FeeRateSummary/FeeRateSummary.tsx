@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { Svg } from 'react-optimized-image';
 
 import { NO_VALUE } from 'constants/placeholder';
 
@@ -45,7 +44,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 								>
 									<DynamicFeeRateItem>
 										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
-										<Svg src={TimerIcon} />
+										<TimerIcon />
 									</DynamicFeeRateItem>
 								</DynamicFeeRateTooltip>
 							</>

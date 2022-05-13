@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 
 import { formatDateWithTime } from 'utils/formatters/date';
 import { formatNumber } from 'utils/formatters/number';
@@ -150,7 +149,7 @@ const ShortingHistoryTable: FC<ShortingHistoryTableProps> = ({
 				noResultsMessage={
 					isLoaded && shortHistory.length === 0 ? (
 						<TableNoResults>
-							<Svg src={NoNotificationIcon} />
+							<NoNotificationIcon />
 							{t('shorting.history.table.no-results')}
 						</TableNoResults>
 					) : undefined

@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import media from 'styles/media';
@@ -18,17 +17,7 @@ export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, ...
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
-			{isPositive ? (
-				<Svg
-					src={ChangePositiveIcon}
-					viewBox={`0 0 ${ChangePositiveIcon.width} ${ChangePositiveIcon.height}`}
-				/>
-			) : (
-				<Svg
-					src={ChangeNegativeIcon}
-					viewBox={`0 0 ${ChangeNegativeIcon.width} ${ChangeNegativeIcon.height}`}
-				/>
-			)}
+			{isPositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
 			{formatPercent(Math.abs(value), { minDecimals: decimals })}
 		</CurrencyChange>
 	);

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 
 import Card from 'components/Card';
@@ -49,7 +48,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ position, isCTA = false }) 
 				<StyledFlexDivRowCentered>
 					<StyledFlexDivRow>
 						<Subtitle>{t('futures.wallet-overview.positions.liquidation')}</Subtitle>
-						{filledPosition.canLiquidatePosition && <StyledSvg src={WarningIcon} />}
+						{filledPosition.canLiquidatePosition && <StyledSvg />}
 					</StyledFlexDivRow>
 					<Data>{formatCurrency(Synths.sUSD, filledPosition.liquidationPrice, { sign: '$' })}</Data>
 				</StyledFlexDivRowCentered>
@@ -101,7 +100,7 @@ const DataPercent = styled(Data)<{ isPositive: boolean }>`
 	color: ${(props) => (props.isPositive ? props.theme.colors.green : props.theme.colors.red)};
 `;
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled(WarningIcon)`
 	margin-left: 4px;
 `;
 
