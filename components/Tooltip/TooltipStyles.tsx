@@ -5,6 +5,7 @@ import styled from 'styled-components';
 interface ToolTipStyleProps {
 	preset?: string;
 	width?: string;
+	height?: string;
 	top?: string;
 	bottom?: string;
 	left?: string;
@@ -12,7 +13,7 @@ interface ToolTipStyleProps {
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
-		height: 56px;
+		height: ${(props) => props.height || '56px'};
 		width: ${(props) => props.width || '189px'};
 		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
@@ -53,6 +54,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			props.preset === 'bottom' &&
 			`
 				bottom: 0;
+				transform: translate(-25%, 125%);
+			`}
+		
+			${(props) =>
+				props.preset === '1h-funding-rate' &&
+				`
+				bottom: 55px;
+				left: -20px;
 				transform: translate(-25%, 125%);
 			`}
 
