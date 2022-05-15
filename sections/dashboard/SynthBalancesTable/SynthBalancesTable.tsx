@@ -1,7 +1,7 @@
 import { Rates, SynthBalance } from '@synthetixio/queries';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CellProps } from 'react-table';
+import { CellProps, Row } from 'react-table';
 import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -11,7 +11,7 @@ import Table from 'components/Table';
 import { Price } from 'queries/rates/types';
 import * as _ from 'lodash/fp';
 import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { formatNumber } from 'utils/formatters/number';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import ChangePercent from 'components/ChangePercent';
@@ -121,6 +121,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						},
 						width: 198,
 						sortable: true,
+						sortType: useMemo(
+							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+								const rowOne = rowA.original.balance ?? wei(0);
+								const rowTwo = rowB.original.balance ?? wei(0);
+								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+							},
+							[]
+						),
 					},
 					{
 						Header: (
@@ -140,6 +148,14 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						},
 						width: 198,
 						sortable: true,
+						sortType: useMemo(
+							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+								const rowOne = rowA.original.usdBalance ?? wei(0);
+								const rowTwo = rowB.original.usdBalance ?? wei(0);
+								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+							},
+							[]
+						),
 					},
 					{
 						Header: (
@@ -160,23 +176,39 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						},
 						width: 198,
 						sortable: true,
+						sortType: useMemo(
+							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+								const rowOne = rowA.original.price ?? wei(0);
+								const rowTwo = rowB.original.price ?? wei(0);
+								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+							},
+							[]
+						),
 					},
 					{
 						Header: (
 							<TableHeader>{t('dashboard.overview.synth-balances-table.daily-change')}</TableHeader>
 						),
 						accessor: 'priceChange',
-						Cell: (cellProps: CellProps<any>) => {
+						Cell: (cellProps: CellProps<Cell>) => {
 							return conditionalRender<Cell['priceChange']>(
 								cellProps.row.original.priceChange,
 								<ChangePercent
-									value={cellProps.row.original.priceChange}
+									value={cellProps.row.original.priceChange!}
 									decimals={2}
 									className="change-pct"
 								/>
 							);
 						},
 						sortable: true,
+						sortType: useMemo(
+							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+								const rowOne = rowA.original.priceChange ?? 0;
+								const rowTwo = rowB.original.priceChange ?? 0;
+								return rowOne > rowTwo ? 1 : -1;
+							},
+							[]
+						),
 						width: 105,
 					},
 				]}
