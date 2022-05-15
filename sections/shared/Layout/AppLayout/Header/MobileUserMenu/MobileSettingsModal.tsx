@@ -111,7 +111,7 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 	${(props) =>
 		props.hasBorder &&
 		css`
-			border-top: 1px solid ${(props) => props.theme.colors.navy};
+			border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
 		`}
 `;
 
@@ -119,10 +119,19 @@ const MenuButtonContainer = styled.div`
 	padding-bottom: 16px;
 `;
 
-const MenuButton = styled(Button).attrs({ variant: 'alt', size: 'xl' })`
+const MenuButton = styled.div<{ isActive: boolean }>`
 	outline: none;
 	width: 100%;
-	font-size: 14px;
+	font-size: 19px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	text-transform: capitalize;
+
+	${(props) =>
+		props.isActive &&
+		css`
+			color: ${(props) => props.theme.colors.common.primaryWhite};
+		`}
 `;
 
 const CurrencySelectContainer = styled.div`
@@ -156,9 +165,8 @@ const StyledConnectionDot = styled(ConnectionDot)`
 
 const Footer = styled.div`
 	${FixedFooterMixin};
-	box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};
+	border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
 	padding: 24px;
-	background-color: ${(props) => props.theme.colors.elderberry};
 	> * {
 		font-size: 14px;
 		width: 100%;

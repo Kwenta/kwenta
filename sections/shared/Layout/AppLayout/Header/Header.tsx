@@ -1,33 +1,31 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-
 import { GridDivCol } from 'styles/common';
 
 import Logo from '../../Logo';
 
 import Nav from './Nav';
 import UserMenu from './UserMenu';
-import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
-
-	const logo = <Logo isL2={isL2} isFutures={true} />;
+	const logo = useMemo(() => <Logo isL2={isL2} isFutures />, [isL2]);
 
 	return (
-		<Container isL2={isL2}>
-			<MobileHiddenView>
+		<MobileHiddenView>
+			<Container isL2={isL2}>
 				<LogoNav>
 					{logo}
 					<Nav />
 				</LogoNav>
 				<UserMenu />
-			</MobileHiddenView>
-		</Container>
+			</Container>
+		</MobileHiddenView>
 	);
 };
 
