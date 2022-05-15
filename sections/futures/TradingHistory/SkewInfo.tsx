@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
-import {HoverTransform} from '../MarketDetails/MarketDetails';
+import { HoverTransform } from '../MarketDetails/MarketDetails';
 import OpenInterestBar from './OpenInterestBar';
 
 type SkewInfoProps = {
