@@ -775,6 +775,7 @@
 				"history-label": "trading history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
+				"skew-tooltip": "Skew is the total of outstanding long and short contracts on either side of the market expressed as a percentage.",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"

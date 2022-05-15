@@ -57,13 +57,22 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 				transform: translate(-25%, 125%);
 			`}
 		
-			${(props) =>
-				props.preset === '1h-funding-rate' &&
-				`
-				bottom: 55px;
-				left: -20px;
-				transform: translate(-25%, 125%);
-			`}
+		${(props) =>
+			props.preset === '1h-funding-rate' &&
+			`
+			bottom: 55px;
+			left: -20px;
+			transform: translate(-25%, 125%);
+		`}
+		
+		${(props) =>
+			props.preset === 'skew' &&
+			`
+			bottom: 0;
+			left: -30px;
+			transform: translate(-25%, 125%);
+			z-index: 2;
+		`}
 
 		${(props) =>
 			props.preset === 'left' &&
