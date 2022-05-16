@@ -1,4 +1,4 @@
-import { FC, useReducer } from 'react';
+import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
@@ -8,61 +8,18 @@ import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 
 import { isL2State, isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
-import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
 
 import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
-import { ROUTES } from 'constants/routes';
 
-import ChevronUp from 'assets/svg/app/chevron-up.svg';
-import ChevronDown from 'assets/svg/app/chevron-down.svg';
+import MobileSubMenu from './MobileSubMenu';
+import { MenuButton, SUB_MENUS } from './common';
 
 type MobileSettingsModalProps = {
 	onDismiss(): void;
-};
-
-const SUB_MENUS = {
-	[ROUTES.Home.Overview]: [
-		{ label: 'Overview' },
-		{ label: 'Positions' },
-		{ label: 'Rewards' },
-		{ label: 'Markets' },
-		{ label: 'Governance' },
-	],
-};
-
-type SubMenuProps = {
-	i18nLabel: string;
-	link: string;
-	onDismiss(): void;
-	defaultOpen?: boolean;
-};
-
-const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, onDismiss, defaultOpen }) => {
-	const { t } = useTranslation();
-	const { asPath } = useRouter();
-	const [isExpanded, toggleExpanded] = useReducer((s) => !s, defaultOpen ?? false);
-
-	return (
-		<>
-			<MenuButton isActive={asPath.includes(link) || isExpanded} onClick={toggleExpanded}>
-				{t(i18nLabel)}
-				{isExpanded ? <ChevronUp /> : <ChevronDown />}
-			</MenuButton>
-			{isExpanded && (
-				<SubMenuContainer onClick={onDismiss}>
-					{SUB_MENUS[link].map(({ label }) => (
-						<Link href="" key={label}>
-							<SubMenuItem>{label}</SubMenuItem>
-						</Link>
-					))}
-				</SubMenuContainer>
-			)}
-		</>
-	);
 };
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
@@ -84,7 +41,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						{SUB_MENUS[link] ? (
-							<SubMenu
+							<MobileSubMenu
 								i18nLabel={i18nLabel}
 								link={link}
 								defaultOpen={asPath.includes(link)}
@@ -100,55 +57,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					</MenuButtonContainer>
 				))}
 			</Container>
-			{/*<Container hasBorder={true}>
-				{OPTIONS.map(({ id, label, SelectComponent }) => (
-					<OptionRow key={id}>
-						<OptionLabel>{t(label)}</OptionLabel>
-						<CurrencySelectContainer>
-							<SelectComponent />
-						</CurrencySelectContainer>
-					</OptionRow>
-				))}
-			</Container>*/}
-			{/*<Footer>
-				{isWalletConnected ? (
-					<>
-						<WalletConnected>
-							<FlexDivCentered>
-								<StyledConnectionDot />
-								{truncatedWalletAddress}
-							</FlexDivCentered>
-							<SwitchWalletButton
-								onClick={() => {
-									onDismiss();
-									connectWallet();
-								}}
-							>
-								{t('common.switch')}
-							</SwitchWalletButton>
-						</WalletConnected>
-						<Button
-							variant="danger"
-							onClick={() => {
-								onDismiss();
-								disconnectWallet();
-							}}
-						>
-							{t('common.wallet.disconnect-wallet')}
-						</Button>
-					</>
-				) : (
-					<Button
-						variant="primary"
-						onClick={() => {
-							onDismiss();
-							connectWallet();
-						}}
-					>
-						{t('common.wallet.connect-wallet')}
-					</Button>
-				)}
-					</Footer>*/}
 		</StyledFullScreenModal>
 	);
 };
@@ -173,41 +81,6 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 
 const MenuButtonContainer = styled.div`
 	/* padding-bottom: 16px; */
-`;
-
-const MenuButton = styled.div<{ isActive: boolean }>`
-	outline: none;
-	width: 100%;
-	font-size: 25px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	text-transform: capitalize;
-	margin-bottom: 30px;
-	display: flex;
-	align-items: center;
-
-	${(props) =>
-		props.isActive &&
-		css`
-			color: ${(props) => props.theme.colors.common.primaryWhite};
-		`}
-
-	svg {
-		margin-left: 15px;
-	}
-`;
-
-const SubMenuContainer = styled.div`
-	box-sizing: border-box;
-	padding-left: 30px;
-	border-left: 3px solid #2b2a2a;
-`;
-
-const SubMenuItem = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 25px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	margin-bottom: 30px;
 `;
 
 const LogoContainer = styled.div`
