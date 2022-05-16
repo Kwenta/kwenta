@@ -17,9 +17,20 @@ import Button from 'components/Button';
 
 import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
+import { ROUTES } from 'constants/routes';
 
 type MobileSettingsModalProps = {
 	onDismiss: () => void;
+};
+
+const SUB_MENUS = {
+	[ROUTES.Home.Overview]: [
+		{ label: 'Overview' },
+		{ label: 'Positions' },
+		{ label: 'Rewards' },
+		{ label: 'Markets' },
+		{ label: 'Governance' },
+	],
 };
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
@@ -36,15 +47,30 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 			<Container>
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
-						<Link href={link}>
-							<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-								{t(i18nLabel)}
-							</MenuButton>
-						</Link>
+						{SUB_MENUS[link] ? (
+							<>
+								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
+									{t(i18nLabel)}
+								</MenuButton>
+								<SubMenuContainer>
+									{SUB_MENUS[link].map(({ label }) => (
+										<Link href="" key={label}>
+											<SubMenuItem>{label}</SubMenuItem>
+										</Link>
+									))}
+								</SubMenuContainer>
+							</>
+						) : (
+							<Link href={link}>
+								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
+									{t(i18nLabel)}
+								</MenuButton>
+							</Link>
+						)}
 					</MenuButtonContainer>
 				))}
 			</Container>
-			<Container hasBorder={true}>
+			{/*<Container hasBorder={true}>
 				{OPTIONS.map(({ id, label, SelectComponent }) => (
 					<OptionRow key={id}>
 						<OptionLabel>{t(label)}</OptionLabel>
@@ -53,8 +79,8 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						</CurrencySelectContainer>
 					</OptionRow>
 				))}
-			</Container>
-			<Footer>
+			</Container>*/}
+			{/*<Footer>
 				{isWalletConnected ? (
 					<>
 						<WalletConnected>
@@ -92,13 +118,13 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						{t('common.wallet.connect-wallet')}
 					</Button>
 				)}
-			</Footer>
+					</Footer>*/}
 		</StyledFullScreenModal>
 	);
 };
 
 const StyledFullScreenModal = styled(FullScreenModal)`
-	border-top: 1px solid ${(props) => props.theme.colors.navy};
+	top: 0;
 
 	[data-reach-dialog-content] {
 		margin: 0;
@@ -116,7 +142,7 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 `;
 
 const MenuButtonContainer = styled.div`
-	padding-bottom: 16px;
+	/* padding-bottom: 16px; */
 `;
 
 const MenuButton = styled.div<{ isActive: boolean }>`
@@ -126,6 +152,7 @@ const MenuButton = styled.div<{ isActive: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
+	margin-bottom: 30px;
 
 	${(props) =>
 		props.isActive &&
@@ -179,6 +206,19 @@ const SwitchWalletButton = styled(TextButton)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.goldColors.color1};
 	text-transform: uppercase;
+`;
+
+const SubMenuContainer = styled.div`
+	box-sizing: border-box;
+	padding-left: 30px;
+	border-left: 3px solid #2b2a2a;
+`;
+
+const SubMenuItem = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 19px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	margin-bottom: 30px;
 `;
 
 export default MobileSettingsModal;

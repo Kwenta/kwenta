@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -18,13 +18,23 @@ import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
 import SettingsIcon from 'assets/svg/app/settings.svg';
 
-const WalletButton = () => {
+type WalletButtonsProps = {
+	settingsModalOpened: boolean;
+	uniswapWidgetOpened: boolean;
+	setSettingsModalOpened: Dispatch<SetStateAction<boolean>>;
+	setUniswapWidgetOpened: Dispatch<SetStateAction<boolean>>;
+};
+
+const WalletButtons: React.FC<WalletButtonsProps> = ({
+	settingsModalOpened,
+	uniswapWidgetOpened,
+	setSettingsModalOpened,
+	setUniswapWidgetOpened,
+}) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
 	const { connectWallet } = Connector.useContainer();
-	const [settingsModalOpened, setSettingsModalOpened] = React.useState<boolean>(false);
-	const [uniswapWidgetOpened, setUniswapWidgetOpened] = React.useState<boolean>(false);
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const walletIsNotConnected = (
@@ -109,4 +119,4 @@ const CTARow = styled(FlexDiv)`
 	}
 `;
 
-export default WalletButton;
+export default WalletButtons;

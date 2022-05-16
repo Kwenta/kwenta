@@ -17,15 +17,15 @@ const Header: FC = () => {
 	const logo = useMemo(() => <Logo isL2={isL2} isFutures />, [isL2]);
 
 	return (
-		<MobileHiddenView>
-			<Container isL2={isL2}>
+		<Container isL2={isL2}>
+			<MobileHiddenView>
 				<LogoNav>
 					{logo}
 					<Nav />
 				</LogoNav>
 				<UserMenu />
-			</Container>
-		</MobileHiddenView>
+			</MobileHiddenView>
+		</Container>
 	);
 };
 

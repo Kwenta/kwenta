@@ -3,11 +3,11 @@ import styled from 'styled-components';
 
 import { FixedFooterMixin } from 'styles/common';
 
+import MobileSettingsModal from './MobileSettingsModal';
+import MobileWalletButton from './MobileWalletButton';
+
 import MenuIcon from 'assets/svg/app/menu.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
-
-import MobileSettingsModal from './MobileSettingsModal';
-import WalletButton from '../UserMenu/WalletButton';
 
 const MobileUserMenu: FC = () => {
 	const [isModalOpen, toggleModalOpen] = useReducer((s) => !s, false);
@@ -16,16 +16,16 @@ const MobileUserMenu: FC = () => {
 	return (
 		<>
 			<MobileFooterContainer>
-				<div onClick={toggleModalOpen}>{isModalOpen ? <CloseIcon /> : <MenuIcon />}</div>
+				<MobileFooterIconContainer onClick={toggleModalOpen}>
+					{isModalOpen ? <CloseIcon /> : <MenuIcon />}
+				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
 					<div className="text">Menu</div>
-					<WalletButton />
+					<MobileWalletButton />
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{settingsModalOpened && (
-				<MobileSettingsModal onDismiss={() => setSettingsModalOpened(false)} />
-			)}
+			{isModalOpen && <MobileSettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 		</>
 	);
 };
@@ -37,14 +37,18 @@ const MobileFooterContainer = styled.div`
 	border-top: 1px solid #2b2a2a;
 	padding: 16px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	z-index: 60;
+`;
+
+const MobileFooterIconContainer = styled.div`
+	width: 25px;
 `;
 
 const MobileFooterSeparator = styled.div`
 	margin: 0 20px;
-	height: 100%;
+	height: 41px;
 	width: 1px;
-	background-color: red;
-	border: 1px solid red;
+	background-color: #2b2a2a;
 `;
 
 const MobileFooterRight = styled.div`
