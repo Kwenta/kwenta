@@ -17,6 +17,9 @@ import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
 import { ROUTES } from 'constants/routes';
 
+import ChevronUp from 'assets/svg/app/chevron-up.svg';
+import ChevronDown from 'assets/svg/app/chevron-down.svg';
+
 type MobileSettingsModalProps = {
 	onDismiss: () => void;
 };
@@ -44,8 +47,9 @@ const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, defaultOpen }) => {
 
 	return (
 		<>
-			<MenuButton isActive={asPath.includes(link)} onClick={toggleExpanded}>
+			<MenuButton isActive={asPath.includes(link) || isExpanded} onClick={toggleExpanded}>
 				{t(i18nLabel)}
+				{isExpanded ? <ChevronUp /> : <ChevronDown />}
 			</MenuButton>
 			{isExpanded && (
 				<SubMenuContainer>
@@ -79,7 +83,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						{SUB_MENUS[link] ? (
-							<SubMenu i18nLabel={i18nLabel} link={link} />
+							<SubMenu i18nLabel={i18nLabel} link={link} defaultOpen={asPath.includes(link)} />
 						) : (
 							<Link href={link}>
 								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
@@ -173,12 +177,18 @@ const MenuButton = styled.div<{ isActive: boolean }>`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
 	margin-bottom: 30px;
+	display: flex;
+	align-items: center;
 
 	${(props) =>
 		props.isActive &&
 		css`
 			color: ${(props) => props.theme.colors.common.primaryWhite};
 		`}
+
+	svg {
+		margin-left: 15px;
+	}
 `;
 
 const SubMenuContainer = styled.div`
