@@ -21,7 +21,7 @@ import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 
 type MobileSettingsModalProps = {
-	onDismiss: () => void;
+	onDismiss(): void;
 };
 
 const SUB_MENUS = {
@@ -37,10 +37,11 @@ const SUB_MENUS = {
 type SubMenuProps = {
 	i18nLabel: string;
 	link: string;
+	onDismiss(): void;
 	defaultOpen?: boolean;
 };
 
-const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, defaultOpen }) => {
+const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, onDismiss, defaultOpen }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
 	const [isExpanded, toggleExpanded] = useReducer((s) => !s, defaultOpen ?? false);
@@ -52,7 +53,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, defaultOpen }) => {
 				{isExpanded ? <ChevronUp /> : <ChevronDown />}
 			</MenuButton>
 			{isExpanded && (
-				<SubMenuContainer>
+				<SubMenuContainer onClick={onDismiss}>
 					{SUB_MENUS[link].map(({ label }) => (
 						<Link href="" key={label}>
 							<SubMenuItem>{label}</SubMenuItem>
@@ -83,7 +84,12 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						{SUB_MENUS[link] ? (
-							<SubMenu i18nLabel={i18nLabel} link={link} defaultOpen={asPath.includes(link)} />
+							<SubMenu
+								i18nLabel={i18nLabel}
+								link={link}
+								defaultOpen={asPath.includes(link)}
+								onDismiss={onDismiss}
+							/>
 						) : (
 							<Link href={link}>
 								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>

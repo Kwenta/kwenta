@@ -1,4 +1,4 @@
-import { FC, useState, useReducer } from 'react';
+import { FC, useReducer } from 'react';
 import styled from 'styled-components';
 
 import { FixedFooterMixin } from 'styles/common';
@@ -11,7 +11,6 @@ import CloseIcon from 'assets/svg/app/close.svg';
 
 const MobileUserMenu: FC = () => {
 	const [isModalOpen, toggleModalOpen] = useReducer((s) => !s, false);
-	const [settingsModalOpened, setSettingsModalOpened] = useState(false);
 
 	return (
 		<>
@@ -25,7 +24,7 @@ const MobileUserMenu: FC = () => {
 					<MobileWalletButton />
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isModalOpen && <MobileSettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
+			{isModalOpen && <MobileSettingsModal onDismiss={toggleModalOpen} />}
 		</>
 	);
 };
