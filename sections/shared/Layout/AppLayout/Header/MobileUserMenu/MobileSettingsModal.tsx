@@ -1,19 +1,17 @@
-import { FC } from 'react';
+import { FC, useReducer } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { FixedFooterMixin, FlexDivCentered, FlexDivRowCentered, TextButton } from 'styles/common';
-
 import Connector from 'containers/Connector';
 
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import { isL2State, isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
 import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
 
 import FullScreenModal from 'components/FullScreenModal';
-import Button from 'components/Button';
+import Logo from 'sections/shared/Layout/Logo';
 
 import { menuLinksState } from '../states';
 import ConnectionDot from '../ConnectionDot';
@@ -33,33 +31,55 @@ const SUB_MENUS = {
 	],
 };
 
+type SubMenuProps = {
+	i18nLabel: string;
+	link: string;
+	defaultOpen?: boolean;
+};
+
+const SubMenu: React.FC<SubMenuProps> = ({ i18nLabel, link, defaultOpen }) => {
+	const { t } = useTranslation();
+	const { asPath } = useRouter();
+	const [isExpanded, toggleExpanded] = useReducer((s) => !s, defaultOpen ?? false);
+
+	return (
+		<>
+			<MenuButton isActive={asPath.includes(link)} onClick={toggleExpanded}>
+				{t(i18nLabel)}
+			</MenuButton>
+			{isExpanded && (
+				<SubMenuContainer>
+					{SUB_MENUS[link].map(({ label }) => (
+						<Link href="" key={label}>
+							<SubMenuItem>{label}</SubMenuItem>
+						</Link>
+					))}
+				</SubMenuContainer>
+			)}
+		</>
+	);
+};
+
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
+	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	// const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const menuLinks = useRecoilValue(menuLinksState);
+	const isL2 = useRecoilValue(isL2State);
 
-	const { connectWallet, disconnectWallet } = Connector.useContainer();
+	// const { connectWallet, disconnectWallet } = Connector.useContainer();
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
 			<Container>
+				<LogoContainer>
+					<Logo isFutures isL2={isL2} />
+				</LogoContainer>
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<MenuButtonContainer key={link}>
 						{SUB_MENUS[link] ? (
-							<>
-								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-									{t(i18nLabel)}
-								</MenuButton>
-								<SubMenuContainer>
-									{SUB_MENUS[link].map(({ label }) => (
-										<Link href="" key={label}>
-											<SubMenuItem>{label}</SubMenuItem>
-										</Link>
-									))}
-								</SubMenuContainer>
-							</>
+							<SubMenu i18nLabel={i18nLabel} link={link} />
 						) : (
 							<Link href={link}>
 								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
@@ -148,7 +168,7 @@ const MenuButtonContainer = styled.div`
 const MenuButton = styled.div<{ isActive: boolean }>`
 	outline: none;
 	width: 100%;
-	font-size: 19px;
+	font-size: 25px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
@@ -161,53 +181,6 @@ const MenuButton = styled.div<{ isActive: boolean }>`
 		`}
 `;
 
-const CurrencySelectContainer = styled.div`
-	width: 100%;
-`;
-
-const OptionLabel = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	padding-bottom: 8px;
-`;
-
-const OptionRow = styled.div`
-	padding-bottom: 16px;
-`;
-
-const WalletConnected = styled(FlexDivRowCentered)`
-	font-family: ${(props) => props.theme.fonts.mono};
-	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
-	border-radius: 4px;
-	margin-bottom: 24px;
-	padding: 0 16px;
-`;
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 12px;
-	width: 12px;
-	height: 12px;
-`;
-
-const Footer = styled.div`
-	${FixedFooterMixin};
-	border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
-	padding: 24px;
-	> * {
-		font-size: 14px;
-		width: 100%;
-		height: 40px;
-	}
-`;
-
-const SwitchWalletButton = styled(TextButton)`
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	text-transform: uppercase;
-`;
-
 const SubMenuContainer = styled.div`
 	box-sizing: border-box;
 	padding-left: 30px;
@@ -216,9 +189,13 @@ const SubMenuContainer = styled.div`
 
 const SubMenuItem = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 19px;
+	font-size: 25px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	margin-bottom: 30px;
+`;
+
+const LogoContainer = styled.div`
+	margin-bottom: 50px;
 `;
 
 export default MobileSettingsModal;
