@@ -10,7 +10,11 @@ import ConnectionDot from '../ConnectionDot';
 import useENS from 'hooks/useENS';
 import Button from 'components/Button';
 
-export const MobileWalletActions: FC = () => {
+type MobileWalletButtonProps = {
+	openSettings(): void;
+};
+
+export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ openSettings }) => {
 	const [address, setAddress] = useState('');
 	const { ensAvatar } = useENS(address);
 	const { signer, staticMainnetProvider } = Connector.useContainer();
@@ -35,7 +39,7 @@ export const MobileWalletActions: FC = () => {
 	}, [signer, truncatedWalletAddress]);
 
 	return (
-		<StyledButton mono>
+		<StyledButton mono onClick={openSettings}>
 			{ensAvatar ? (
 				<img
 					src={ensAvatar}

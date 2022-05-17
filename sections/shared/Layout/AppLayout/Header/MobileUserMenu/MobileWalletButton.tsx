@@ -11,7 +11,12 @@ import ConnectionDot from '../ConnectionDot';
 import { isSupportedNetworkId } from 'utils/network';
 import MobileWalletActions from './MobileWalletActions';
 
-const MobileWalletButton = () => {
+type MobileWalletButtonProps = {
+	openSettings(): void;
+	onDismiss(): void;
+};
+
+const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ openSettings, onDismiss }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
@@ -44,7 +49,7 @@ const MobileWalletButton = () => {
 		</ConnectButton>
 	);
 
-	const walletIsConnectedAndSupported = <MobileWalletActions />;
+	const walletIsConnectedAndSupported = <MobileWalletActions openSettings={openSettings} />;
 
 	return isWalletConnected
 		? isSupportedNetworkId(network.id)

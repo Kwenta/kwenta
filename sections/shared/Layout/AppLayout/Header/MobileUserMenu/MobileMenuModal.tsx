@@ -5,13 +5,7 @@ import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-// import Connector from 'containers/Connector';
-
-import {
-	isL2State,
-	// isWalletConnectedState,
-	// truncatedWalletAddressState
-} from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
@@ -23,19 +17,15 @@ import MobileSubMenu from './MobileSubMenu';
 import { MenuButton, SUB_MENUS } from './common';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 
-type MobileSettingsModalProps = {
+type MobileMenuModalProps = {
 	onDismiss(): void;
 };
 
-export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
+export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	// const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const menuLinks = useRecoilValue(menuLinksState);
 	const isL2 = useRecoilValue(isL2State);
-
-	// const { connectWallet, disconnectWallet } = Connector.useContainer();
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
@@ -44,7 +34,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
 				{menuLinks.map(({ i18nLabel, link }) => (
-					<MenuButtonContainer key={link}>
+					<div key={link}>
 						{SUB_MENUS[link] ? (
 							<MobileSubMenu
 								i18nLabel={i18nLabel}
@@ -60,7 +50,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 								</MenuButton>
 							</Link>
 						)}
-					</MenuButtonContainer>
+					</div>
 				))}
 				<Links isMobile />
 			</Container>
@@ -86,12 +76,8 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 		`}
 `;
 
-const MenuButtonContainer = styled.div`
-	/* padding-bottom: 16px; */
-`;
-
 const LogoContainer = styled.div`
 	margin-bottom: 50px;
 `;
 
-export default MobileSettingsModal;
+export default MobileMenuModal;

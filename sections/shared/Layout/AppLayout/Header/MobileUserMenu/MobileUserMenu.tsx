@@ -1,30 +1,43 @@
-import { FC, useReducer } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 
 import { FixedFooterMixin } from 'styles/common';
-
-import MobileSettingsModal from './MobileSettingsModal';
-import MobileWalletButton from './MobileWalletButton';
-
 import MenuIcon from 'assets/svg/app/menu.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
 
+import MobileSettingsModal from './MobileSettingsModal';
+import MobileWalletButton from './MobileWalletButton';
+import MobileMenuModal from './MobileMenuModal';
+
 const MobileUserMenu: FC = () => {
-	const [isModalOpen, toggleModalOpen] = useReducer((s) => !s, false);
+	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
+
+	const closeModal = () => {
+		setIsOpen(undefined);
+	};
+
+	const toggleMenuOpen = () => {
+		setIsOpen((s) => (!!s ? undefined : 'menu'));
+	};
+
+	const openSettingsModal = () => {
+		setIsOpen('settings');
+	};
 
 	return (
 		<>
 			<MobileFooterContainer>
-				<MobileFooterIconContainer onClick={toggleModalOpen}>
-					{isModalOpen ? <CloseIcon /> : <MenuIcon />}
+				<MobileFooterIconContainer onClick={toggleMenuOpen}>
+					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-					<MobileFooterText>Menu</MobileFooterText>
-					<MobileWalletButton />
+					<MobileFooterText>{isOpen === 'settings' ? 'Settings' : 'Menu'}</MobileFooterText>
+					<MobileWalletButton openSettings={openSettingsModal} onDismiss={closeModal} />
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isModalOpen && <MobileSettingsModal onDismiss={toggleModalOpen} />}
+			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
+			{isOpen === 'settings' && <MobileSettingsModal onDismiss={closeModal} />}
 		</>
 	);
 };
