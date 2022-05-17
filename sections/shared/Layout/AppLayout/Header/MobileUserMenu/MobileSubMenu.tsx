@@ -79,6 +79,7 @@ const SubMenuItem = styled.div<{ isActive?: boolean }>`
 `;
 
 const SubMenuDot = styled.div`
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin-right: 30px;

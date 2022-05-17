@@ -22,6 +22,7 @@ import { menuLinksState } from '../states';
 
 import MobileSubMenu from './MobileSubMenu';
 import { MenuButton, SUB_MENUS } from './common';
+import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 
 type MobileSettingsModalProps = {
 	onDismiss(): void;
@@ -56,6 +57,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							<Link href={link}>
 								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
 									{t(i18nLabel)}
+									<MobileMenuArrow />
 								</MenuButton>
 							</Link>
 						)}
