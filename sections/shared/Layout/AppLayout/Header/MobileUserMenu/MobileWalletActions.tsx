@@ -41,13 +41,7 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ openSettings 
 	return (
 		<StyledButton mono onClick={openSettings}>
 			{ensAvatar ? (
-				<img
-					src={ensAvatar}
-					alt={ensName}
-					width={16}
-					height={16}
-					style={{ borderRadius: '50%', marginRight: '8px' }}
-				/>
+				<StyledImage src={ensAvatar} alt={ensName} width={16} height={16} />
 			) : (
 				<StyledConnectionDot />
 			)}
@@ -62,6 +56,11 @@ const StyledConnectionDot = styled(ConnectionDot)`
 
 const StyledButton = styled(Button)`
 	font-size: 13px;
+`;
+
+const StyledImage = styled.img`
+	border-radius: 50%;
+	margin-right: 8px;
 `;
 
 export default MobileWalletActions;

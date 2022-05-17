@@ -11,7 +11,7 @@ import ChevronDown from 'assets/svg/app/chevron-down.svg';
 
 type MobileSubMenuProps = {
 	i18nLabel: string;
-	link: string;
+	link?: string;
 	onDismiss(): void;
 	defaultOpen?: boolean;
 };
@@ -28,20 +28,24 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 
 	return (
 		<>
-			<MenuButton isActive={asPath.includes(link) || isExpanded} onClick={toggleExpanded}>
+			<MenuButton isActive={link ? asPath.includes(link) : isExpanded} onClick={toggleExpanded}>
 				{t(i18nLabel)}
 				{isExpanded ? <ChevronUp /> : <ChevronDown />}
 			</MenuButton>
 			{isExpanded && (
 				<SubMenuContainer onClick={onDismiss}>
-					{SUB_MENUS[link].map(({ label, link: subLink }) => (
-						<SubMenuItemContainer>
-							<SubMenuDot>·</SubMenuDot>
-							<StyledLink href={`${link}${subLink}`} key={label}>
-								<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
-							</StyledLink>
-						</SubMenuItemContainer>
-					))}
+					{link ? (
+						SUB_MENUS[link].map(({ label, link: subLink }) => (
+							<SubMenuItemContainer>
+								<SubMenuDot>·</SubMenuDot>
+								<StyledLink href={`${link}${subLink}`} key={label}>
+									<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
+								</StyledLink>
+							</SubMenuItemContainer>
+						))
+					) : (
+						<></>
+					)}
 				</SubMenuContainer>
 			)}
 		</>

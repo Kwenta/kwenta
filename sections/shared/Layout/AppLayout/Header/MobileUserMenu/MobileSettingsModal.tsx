@@ -15,13 +15,8 @@ import {
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
-import Links from 'sections/dashboard/Links';
-
-import { menuLinksState } from '../states';
 
 import MobileSubMenu from './MobileSubMenu';
-import { MenuButton, SUB_MENUS } from './common';
-import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 
 type MobileSettingsModalProps = {
 	onDismiss(): void;
@@ -32,7 +27,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const { asPath } = useRouter();
 	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	// const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const menuLinks = useRecoilValue(menuLinksState);
 	const isL2 = useRecoilValue(isL2State);
 
 	// const { connectWallet, disconnectWallet } = Connector.useContainer();
@@ -43,26 +37,19 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				<LogoContainer>
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
-				{menuLinks.map(({ i18nLabel, link }) => (
-					<MenuButtonContainer key={link}>
-						{SUB_MENUS[link] ? (
-							<MobileSubMenu
-								i18nLabel={i18nLabel}
-								link={link}
-								defaultOpen={asPath.includes(link)}
-								onDismiss={onDismiss}
-							/>
-						) : (
-							<Link href={link}>
-								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-									{t(i18nLabel)}
-									<MobileMenuArrow />
-								</MenuButton>
-							</Link>
-						)}
-					</MenuButtonContainer>
-				))}
-				<Links isMobile />
+
+				<MenuButtonContainer>
+					<MobileSubMenu i18nLabel="Wallet" onDismiss={onDismiss} />
+				</MenuButtonContainer>
+				<MenuButtonContainer>
+					<MobileSubMenu i18nLabel="Network" onDismiss={onDismiss} />
+				</MenuButtonContainer>
+				<MenuButtonContainer>
+					<MobileSubMenu i18nLabel="Language" onDismiss={onDismiss} />
+				</MenuButtonContainer>
+				<MenuButtonContainer>
+					<MobileSubMenu i18nLabel="Currency" onDismiss={onDismiss} />
+				</MenuButtonContainer>
 			</Container>
 		</StyledFullScreenModal>
 	);
