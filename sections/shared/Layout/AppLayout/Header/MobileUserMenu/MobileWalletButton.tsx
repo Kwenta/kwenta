@@ -1,13 +1,64 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { useTranslation } from 'react-i18next';
+
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
+import { isWalletConnectedState, networkState } from 'store/wallet';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import ConnectionDot from '../ConnectionDot';
+import { isSupportedNetworkId } from 'utils/network';
+import WalletActions from '../WalletActions';
 
 const MobileWalletButton = () => {
-	return <StyledButton mono>kwenta.eth</StyledButton>;
+	const { t } = useTranslation();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const network = useRecoilValue(networkState);
+	const { connectWallet } = Connector.useContainer();
+	const { switchToL2 } = useNetworkSwitcher();
+
+	const walletIsNotConnected = (
+		<ConnectButton
+			size="sm"
+			variant="outline"
+			onClick={connectWallet}
+			data-testid="connect-wallet"
+			mono
+		>
+			<StyledConnectionDot />
+			{t('common.wallet.connect-wallet')}
+		</ConnectButton>
+	);
+
+	const walletIsConnectedButNotSupported = (
+		<ConnectButton
+			size="sm"
+			variant="outline"
+			data-testid="unsupported-network"
+			mono
+			onClick={switchToL2}
+		>
+			<StyledConnectionDot />
+			{t('common.wallet.unsupported-network')}
+		</ConnectButton>
+	);
+
+	const walletIsConnectedAndSupported = <WalletActions isMobile />;
+
+	return isWalletConnected
+		? isSupportedNetworkId(network.id)
+			? walletIsConnectedAndSupported
+			: walletIsConnectedButNotSupported
+		: walletIsNotConnected;
 };
 
-const StyledButton = styled(Button)`
-	text-transform: none;
+const StyledConnectionDot = styled(ConnectionDot)`
+	margin-right: 6px;
+`;
+
+const ConnectButton = styled(Button)`
+	font-size: 13px;
 `;
 
 export default MobileWalletButton;
