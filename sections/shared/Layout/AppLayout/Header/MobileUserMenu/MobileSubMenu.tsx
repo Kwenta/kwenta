@@ -35,9 +35,12 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			{isExpanded && (
 				<SubMenuContainer onClick={onDismiss}>
 					{SUB_MENUS[link].map(({ label, link: subLink }) => (
-						<Link href={`${link}${subLink}`} key={label}>
-							<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
-						</Link>
+						<SubMenuItemContainer>
+							<SubMenuDot>·</SubMenuDot>
+							<StyledLink href={`${link}${subLink}`} key={label}>
+								<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
+							</StyledLink>
+						</SubMenuItemContainer>
 					))}
 				</SubMenuContainer>
 			)}
@@ -47,21 +50,38 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 
 const SubMenuContainer = styled.div`
 	box-sizing: border-box;
-	padding-left: 30px;
-	border-left: 3px solid #2b2a2a;
+`;
+
+const SubMenuItemContainer = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 20px;
+`;
+
+const StyledLink = styled(Link)`
+	flex-grow: 1;
 `;
 
 const SubMenuItem = styled.div<{ isActive?: boolean }>`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 25px;
+	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-	margin-bottom: 30px;
+	box-sizing: border-box;
+	padding: 15px;
+	background-color: rgba(255, 255, 255, 0.05);
+	border-radius: 8px;
+	width: 100%;
 
 	${(props) =>
 		props.isActive &&
 		css`
 			color: ${(props) => props.theme.colors.common.primaryWhite};
 		`}
+`;
+
+const SubMenuDot = styled.div`
+	font-size: 19px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	margin-right: 30px;
 `;
 
 export default MobileSubMenu;
