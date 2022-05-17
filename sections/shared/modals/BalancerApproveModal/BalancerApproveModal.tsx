@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CurrencyKey } from 'constants/currency';
-import Img from 'react-optimized-image';
 
 import BalancerImage from 'assets/svg/providers/balancer.svg';
 
@@ -29,9 +28,8 @@ export const BalancerApproveModal: FC<BalancerApproveModalProps> = ({
 		>
 			<InnerModalWrap>
 				<IconWrap>
-					<Img
+					<BalancerImage
 						alt={t('common.dex-aggregators.balancer.title')}
-						src={BalancerImage}
 						width="48px"
 						height="48px"
 					/>

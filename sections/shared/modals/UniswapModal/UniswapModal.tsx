@@ -1,6 +1,6 @@
 import { Synths } from '@synthetixio/contracts-interface';
 import { SwapWidget, Theme, TokenInfo } from '@uniswap/widgets';
-import '@uniswap/widgets/dist/fonts.css';
+import '@uniswap/widgets/fonts.css';
 
 import BaseModal from 'components/BaseModal';
 import Connector from 'containers/Connector';

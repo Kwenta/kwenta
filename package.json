@@ -52,11 +52,14 @@
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
+		"imagemin-mozjpeg": "^10.0.0",
 		"immer": "9.0.6",
+		"intercept-stdout": "^0.1.2",
 		"lodash": "4.17.20",
 		"moment-business-time": "1.1.1",
-		"next": "10.0.0",
+		"next": "12.1.6",
 		"next-compose-plugins": "2.2.0",
+		"next-optimized-images": "^2.6.2",
 		"next-connect": "^0.12.2",
 		"react": "17.0.1",
 		"react-countdown": "2.3.1",
@@ -64,7 +67,6 @@
 		"react-i18next": "11.7.0",
 		"react-input-autosize": "3.0.0",
 		"react-is": "^18.0.0",
-		"react-optimized-image": "^0.4.1",
 		"react-query": "3.35.0",
 		"react-redux": "^7.2.8",
 		"react-responsive": "8.2.0",
@@ -89,6 +91,7 @@
 		"@storybook/addon-links": "^6.4.13",
 		"@storybook/react": "^6.4.13",
 		"@svgr/core": "5.5.0",
+		"@svgr/webpack": "6.2.1",
 		"@synthetixio/synpress": "1.1.1",
 		"@testing-library/jest-dom": "5.14.1",
 		"@testing-library/react": "12.1.2",
@@ -129,17 +132,12 @@
 		"imagemin-svgo": "8.0.0",
 		"jest": "27.3.1",
 		"lint-staged": "10.0.10",
-		"optimized-images-loader": "github:clementbalestrat/optimized-images-loader",
 		"pinst": "2.1.4",
 		"prettier": "2.0.5",
 		"react-test-renderer": "17.0.1",
-		"typescript": "4.2.4",
+		"typescript": "4.4.3",
 		"url-loader": "4.1.0",
-		"webp-loader": "0.6.0",
-		"webpack": "^5.70.0"
-	},
-	"resolutions": {
-		"webpack": "^5.0.0-beta.30"
+		"webp-loader": "0.6.0"
 	},
 	"husky": {
 		"hooks": {

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isL2State, networkState } from 'store/wallet';
 import Select from 'components/Select';
-import Img, { Svg } from 'react-optimized-image';
 import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import Button from 'components/Button';
@@ -63,19 +62,14 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	}: ReactSelectOptionProps) => (
 		<ExternalLink href={link} onClick={onClick}>
 			<LabelContainer noPadding={!!prefixIcon}>
-				{prefixIcon === 'Optimism' && <PrefixIcon src={OptimismIcon} height={14} width={20} />}
+				{prefixIcon === 'Optimism' && (
+					<PrefixIcon>
+						<OptimismIcon width={20} height={14} />
+					</PrefixIcon>
+				)}
 				{t(label)}
 				{postfixIcon &&
-					(postfixIcon === 'Link' ? (
-						<Svg
-							src={LinkIcon}
-							viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-							height={14}
-							width={14}
-						/>
-					) : (
-						<Svg src={SwitchIcon} />
-					))}
+					(postfixIcon === 'Link' ? <LinkIcon width={14} height={14} /> : <SwitchIcon />)}
 			</LabelContainer>
 		</ExternalLink>
 	);
@@ -83,10 +77,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 	const DropdownIndicator = (props: any) => {
 		return (
 			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon
-					src={CaretDownIcon}
-					viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
-				/>
+				<StyledCaretDownIcon />
 			</components.DropdownIndicator>
 		);
 	};
@@ -144,11 +135,12 @@ const L2Select = styled(Select)`
 	}
 `;
 
-const PrefixIcon = styled(Img)`
+const PrefixIcon = styled.span`
+	display: flex;
 	padding-right: 6px;
 `;
 
-const StyledCaretDownIcon = styled(Svg)`
+const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;

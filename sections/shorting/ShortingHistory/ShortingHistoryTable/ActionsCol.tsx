@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 import { useRouter } from 'next/router';
 
 import BlockExplorer from 'containers/BlockExplorer';
@@ -29,11 +28,11 @@ const ActionsCol: FC<ActionsColType> = ({ cellProps }) => {
 					router.push(ROUTES.Shorting.ManageShortAddCollateral(`${cellProps.row.original.id}`))
 				}
 			>
-				<StyledLinkIcon src={EditIcon} viewBox={`0 0 ${EditIcon.width} ${EditIcon.height}`} />
+				<StyledEditLinkIcon />
 			</IconButton>
 			{blockExplorerInstance != null && cellProps.row.original.txHash && (
 				<ExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.txHash)}>
-					<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
+					<StyledLinkIcon />
 				</ExternalLink>
 			)}
 		</ActionsContainer>
@@ -51,7 +50,16 @@ const ActionsContainer = styled(GridDivCenteredCol)`
 	}
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledEditLinkIcon = styled(EditIcon)`
+	width: 14px;
+	height: 14px;
+	color: ${(props) => props.theme.colors.blueberry};
+	&:hover {
+		color: ${(props) => props.theme.colors.goldColors.color1};
+	}
+`;
+
+const StyledLinkIcon = styled(LinkIcon)`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};
