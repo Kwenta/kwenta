@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -34,9 +34,9 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			</MenuButton>
 			{isExpanded && (
 				<SubMenuContainer onClick={onDismiss}>
-					{SUB_MENUS[link].map(({ label }) => (
-						<Link href="" key={label}>
-							<SubMenuItem>{label}</SubMenuItem>
+					{SUB_MENUS[link].map(({ label, link: subLink }) => (
+						<Link href={`${link}${subLink}`} key={label}>
+							<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
 						</Link>
 					))}
 				</SubMenuContainer>
@@ -51,11 +51,17 @@ const SubMenuContainer = styled.div`
 	border-left: 3px solid #2b2a2a;
 `;
 
-const SubMenuItem = styled.div`
+const SubMenuItem = styled.div<{ isActive?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 25px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	margin-bottom: 30px;
+
+	${(props) =>
+		props.isActive &&
+		css`
+			color: ${(props) => props.theme.colors.common.primaryWhite};
+		`}
 `;
 
 export default MobileSubMenu;
