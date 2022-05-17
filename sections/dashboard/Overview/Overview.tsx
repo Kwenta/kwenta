@@ -8,7 +8,16 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import FuturesPositionsTable from '../FuturesPositionsTable';
 import FuturesMarketsTable from '../FuturesMarketsTable';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { useRecoilValue } from 'recoil';
+import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import SynthBalancesTable from '../SynthBalancesTable';
+import { wei } from '@synthetixio/wei';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { Synths } from '@synthetixio/contracts-interface';
+import { getMarketKey } from 'utils/futures';
+import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
+import Connector from 'containers/Connector';
 import SpotMarketsTable from '../SpotMarketsTable';
 
 enum PositionsTab {
@@ -25,8 +34,15 @@ enum MarketsTab {
 const Overview: FC = () => {
 	const { t } = useTranslation();
 
+	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+
+	const { network } = Connector.useContainer();
+	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
+	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
@@ -34,8 +50,27 @@ const Overview: FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
+	const walletAddress = useRecoilValue(walletAddressState);
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthBalances =
+		synthsBalancesQuery.isSuccess && synthsBalancesQuery.data != null
+			? synthsBalancesQuery.data
+			: null;
+
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+
+	const totalSpotBalancesValue = formatCurrency(
+		Synths.sUSD,
+		wei(synthBalances?.totalUSDBalance ?? zeroBN),
+		{
+			sign: '$',
+		}
+	);
+
+	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
+		sign: '$',
+	});
 
 	const POSITIONS_TABS = useMemo(
 		() => [
@@ -44,32 +79,37 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.futures'),
 				badge: futuresPositionQuery?.data?.length,
 				active: activePositionsTab === PositionsTab.FUTURES,
+				detail: totalFuturesPortfolioValue,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
 				},
 			},
 			{
+				name: PositionsTab.SPOT,
+				label: t('dashboard.overview.positions-tabs.spot'),
+				active: activePositionsTab === PositionsTab.SPOT,
+				detail: totalSpotBalancesValue,
+				onClick: () => {
+					setActivePositionsTab(PositionsTab.SPOT);
+				},
+			},
+			{
 				name: PositionsTab.SHORTS,
 				label: t('dashboard.overview.positions-tabs.shorts'),
-				badge: 3,
 				disabled: true,
 				active: activePositionsTab === PositionsTab.SHORTS,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SHORTS);
 				},
 			},
-			{
-				name: PositionsTab.SPOT,
-				label: t('dashboard.overview.positions-tabs.spot'),
-				badge: 3,
-				disabled: true,
-				active: activePositionsTab === PositionsTab.SPOT,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
-				},
-			},
 		],
-		[activePositionsTab, futuresPositionQuery?.data, t]
+		[
+			activePositionsTab,
+			futuresPositionQuery?.data?.length,
+			t,
+			totalFuturesPortfolioValue,
+			totalSpotBalancesValue,
+		]
 	);
 
 	const MARKETS_TABS = useMemo(
@@ -96,16 +136,21 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			<PortfolioChart futuresMarkets={futuresMarkets} />
+			<PortfolioChart
+				totalFuturesPortfolioValue={portfolioValue ?? zeroBN}
+				totalSpotBalanceValue={synthBalances?.totalUSDBalance ?? zeroBN}
+				totalShortsValue={zeroBN}
+			/>
 
-			<TabButtonsContainer>
-				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, onClick }) => (
+			<TabButtonsContainer hasDetail={true}>
+				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
 						badge={badge}
 						active={active}
 						disabled={disabled}
+						detail={detail}
 						onClick={onClick}
 					/>
 				))}
@@ -117,9 +162,14 @@ const Overview: FC = () => {
 				/>
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
+			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
+				<SynthBalancesTable
+					synthBalances={synthBalances?.balances ?? []}
+					exchangeRates={exchangeRates}
+				/>
+			</TabPanel>
 
-			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}></TabPanel>
+			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
@@ -137,13 +187,13 @@ const Overview: FC = () => {
 	);
 };
 
-const TabButtonsContainer = styled.div`
+const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
 
 	& > button {
-		height: 38px;
+		height: ${(props) => (props.hasDetail ? '48px' : '38px')};
 		font-size: 13px;
 
 		&:not(:last-of-type) {
