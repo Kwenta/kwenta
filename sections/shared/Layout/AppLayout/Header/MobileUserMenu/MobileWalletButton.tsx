@@ -9,7 +9,7 @@ import { isWalletConnectedState, networkState } from 'store/wallet';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import ConnectionDot from '../ConnectionDot';
 import { isSupportedNetworkId } from 'utils/network';
-import WalletActions from '../WalletActions';
+import MobileWalletActions from './MobileWalletActions';
 
 const MobileWalletButton = () => {
 	const { t } = useTranslation();
@@ -44,7 +44,7 @@ const MobileWalletButton = () => {
 		</ConnectButton>
 	);
 
-	const walletIsConnectedAndSupported = <WalletActions isMobile />;
+	const walletIsConnectedAndSupported = <MobileWalletActions />;
 
 	return isWalletConnected
 		? isSupportedNetworkId(network.id)
