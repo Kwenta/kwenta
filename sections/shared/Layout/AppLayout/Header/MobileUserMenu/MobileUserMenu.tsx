@@ -20,7 +20,7 @@ const MobileUserMenu: FC = () => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-					<div className="text">Menu</div>
+					<MobileFooterText>Menu</MobileFooterText>
 					<MobileWalletButton />
 				</MobileFooterRight>
 			</MobileFooterContainer>
@@ -57,10 +57,13 @@ const MobileFooterRight = styled.div`
 	align-items: center;
 
 	.text {
-		font-size: 19px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-		font-family: ${(props) => props.theme.fonts.bold};
 	}
+`;
+
+const MobileFooterText = styled.div`
+	font-size: 19px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 export default MobileUserMenu;

@@ -5,15 +5,19 @@ import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import Connector from 'containers/Connector';
+// import Connector from 'containers/Connector';
 
-import { isL2State, isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
+import {
+	isL2State,
+	// isWalletConnectedState,
+	// truncatedWalletAddressState
+} from 'store/wallet';
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
 
 import { menuLinksState } from '../states';
-import ConnectionDot from '../ConnectionDot';
+// import ConnectionDot from '../ConnectionDot';
 
 import MobileSubMenu from './MobileSubMenu';
 import { MenuButton, SUB_MENUS } from './common';
