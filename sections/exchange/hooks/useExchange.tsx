@@ -71,6 +71,7 @@ import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -559,21 +560,7 @@ const useExchange = ({
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
-		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
-			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-			setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
-		}
-	}, [
-		rate,
-		baseCurrencyKey,
-		quoteCurrencyAmount,
-		baseCurrencyAmount,
-		exchangeFeeRate,
-		txProvider,
-		oneInchQuoteQuery.data,
-		oneInchQuoteQuery.isSuccess,
-	]);
+	}, [quoteCurrencyAmount, txProvider, oneInchQuoteQuery.data, oneInchQuoteQuery.isSuccess]);
 
 	const getExchangeParams = useCallback(
 		(isAtomic: boolean) => {
@@ -931,7 +918,13 @@ const useExchange = ({
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
+							setBaseCurrencyAmount(
+								baseCurrencyAmountNoFee
+									.sub(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
@@ -1027,7 +1020,13 @@ const useExchange = ({
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
 							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.add(fee).toString());
+							setQuoteCurrencyAmount(
+								quoteCurrencyAmountNoFee
+									.add(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
