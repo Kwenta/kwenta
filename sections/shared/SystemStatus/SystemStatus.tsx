@@ -71,7 +71,7 @@ const SystemStatus: FC<SystemStatusProps> = ({ children }) => {
 			<FullScreenContainer>
 				<StyledPageContent>
 					<Header>
-						<Logo />
+						<Logo isL2={true} />
 					</Header>
 					<Container>
 						<StyledSystemDownIcon />

@@ -7,8 +7,6 @@ import { CenteredModal } from 'sections/shared/modals/common';
 import { FlexDiv, Paragraph } from 'styles/common';
 import media, { breakpoints } from 'styles/media';
 
-import { STEPS } from 'sections/homepage/Steps';
-
 type HowItWorksModalProps = {
 	onDismiss: () => void;
 };
@@ -37,18 +35,7 @@ export const HowItWorksModal: FC<HowItWorksModalProps> = ({ onDismiss }) => {
 								},
 							},
 						]}
-					>
-						{STEPS.map(({ id, image, subtitle, title, copy }) => (
-							<div key={id}>
-								<StepBox>
-									{image}
-									<StepSubtitle>{t(subtitle)}</StepSubtitle>
-								</StepBox>
-								<StepTitle>{t(title)}</StepTitle>
-								<StepCopy>{t(copy)}</StepCopy>
-							</div>
-						))}
-					</Slider>
+					></Slider>
 				</SliderContainer>
 			</Container>
 		</StyledCenteredModal>

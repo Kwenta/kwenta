@@ -79,7 +79,7 @@ const HeroImageContainer = styled(GridDiv)`
 	`}
 `;
 
-const HeroImage = styled(Img)`
+const HeroImage = styled.img`
 	max-width: 964px;
 	${media.lessThan('md')`
 		width: 785px;

@@ -50,7 +50,8 @@
 			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE"
 		},
 		"assets": {
-			"title": "Trade real world assets and derivatives on Ethereum",
+			"title": "TRENDING MARKETS",
+			"description": "Start Trading Synths now",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
@@ -58,8 +59,25 @@
 			"commodity": "Commodities",
 			"short": "Short positions"
 		},
+		"shortlist": {
+			"title": "LEADBOARD",
+			"description": "Overview Of Current Most Profitable Accounts"
+		},
+		"earning": {
+			"title": "EARNINGS",
+			"description": "See What You Can Do With $KWENTA Token"
+		},
+		"learn": {
+			"title": "LEARN MORE",
+			"description": "Explore Endless Possibilities Of Kwenta Exchange"			
+		},
+		"tradenow": {
+			"title": "SYNTHETIC LEVERAGE",
+			"description": "Take Back The Market, Trade Like The Whales"
+		},
 		"features": {
-			"title": "Unique trading features",
+			"title": "FEATURE CALLOUTS",
+			"description": "Exchange Without The Limits Of A Centralised Exchange",
 			"infinite-liquidity": {
 				"title": "Infinite liquidity",
 				"copy": "All trading is peer-to-contract, using the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."

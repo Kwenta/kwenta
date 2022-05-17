@@ -438,3 +438,26 @@ export const SwapCurrenciesButton = styled.button`
 		z-index: 1;
 	}
 `;
+
+export const SmallGoldenHeader = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+	line-height: 100%;
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	font-variant: small-caps;
+	text-align: center;
+	letter-spacing: 0.6em;
+	margin-bottom: 12px;
+`;
+
+export const WhiteHeader = styled.div`
+	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-size: 42px;
+	line-height: 100%;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	text-transform: uppercase;
+	text-align: center;
+	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
+	letter-spacing: 0.05em;
+	width: 525px;
+`;

@@ -8,11 +8,10 @@ import Hero from 'sections/homepage/Hero';
 import Assets from 'sections/homepage/Assets';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import Features from 'sections/homepage/Features';
-import L2 from 'sections/homepage/L2';
-import Benefits from 'sections/homepage/Benefits';
-import Steps from 'sections/homepage/Steps';
-import FAQ from 'sections/homepage/FAQ';
-import ChartBanner from 'sections/homepage/ChartBanner';
+import ShortList from 'sections/homepage/ShortList';
+import Earning from 'sections/homepage/Earning';
+import Learn from 'sections/homepage/Learn';
+import TradeNow from 'sections/homepage/TradeNow';
 
 const HomePage: FC = () => {
 	const { t } = useTranslation();
@@ -28,18 +27,13 @@ const HomePage: FC = () => {
 						<Container>
 							<Hero />
 							<Assets />
+							<ShortList />
+							<Earning />
 							<Features />
-							<L2 />
-							<Benefits />
+							<Learn />
+							<TradeNow />
 						</Container>
 					</DarkContainer>
-					<LightContainer>
-						<Container>
-							<Steps />
-							<FAQ />
-							<ChartBanner />
-						</Container>
-					</LightContainer>
 				</HomeLayout>
 			</WithHomepageContainers>
 		</>

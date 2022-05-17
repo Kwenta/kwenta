@@ -11,11 +11,12 @@ import media from 'styles/media';
 
 import { EXTERNAL_LINKS } from 'constants/links';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
+import Logo from '../Logo';
 
 const Footer: React.FC = () => {
 	return (
 		<FooterContainer>
-			<PoweredBySynthetix />
+			<Logo isL2={false} />
 			<SocialIcons>
 				<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
 					<DiscordLogo />
@@ -27,6 +28,8 @@ const Footer: React.FC = () => {
 					<MediumLogo />
 				</ExternalLink>
 			</SocialIcons>
+			<PoweredBySynthetix />
+			<div>© 2022 kwenta, All Rights Reserved.</div>
 		</FooterContainer>
 	);
 };

@@ -19,70 +19,23 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { GridContainer } from '../common';
 import Webp from 'components/Webp';
 
-const ASSETS = [
-	{
-		id: 'index',
-		label: 'homepage.assets.index',
-	},
-	{
-		id: 'forex',
-		label: 'homepage.assets.forex',
-	},
-	{
-		id: 'equities',
-		label: 'homepage.assets.equities',
-	},
-	{
-		id: 'crypto',
-		label: 'homepage.assets.crypto',
-	},
-	{
-		id: 'commodity',
-		label: 'homepage.assets.commodity',
-	},
-	{
-		id: 'short',
-		label: 'homepage.assets.short',
-	},
-];
-
 const Assets = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = (
 		<>
-			<SmallGoldenHeader>{t('homepage.assets.title')}</SmallGoldenHeader>
-			<WhiteHeader>{t('homepage.assets.description')}</WhiteHeader>
+			<SmallGoldenHeader>{t('homepage.tradenow.title')}</SmallGoldenHeader>
+			<WhiteHeader>{t('homepage.tradenow.description')}</WhiteHeader>
 		</>
-	);
-	const assetCards = (
-		<GridContainer>
-			{ASSETS.map(({ id, label }) => (
-				<AssetCard key={id}>
-					<Bullet />
-					<AssetCardText>{t(label)}</AssetCardText>
-				</AssetCard>
-			))}
-		</GridContainer>
 	);
 
 	return (
 		<Container ref={whyKwentaRef}>
 			<Media greaterThanOrEqual="lg">
-				<FlexDivColCentered>
-					{title}
-					<AssetCollectionWrapper>
-						<Webp srcOrSrcset={AssetCollections} StyledImg={AssetsImage} />
-						<Fade />
-					</AssetCollectionWrapper>
-				</FlexDivColCentered>
+				<FlexDivColCentered>{title}</FlexDivColCentered>
 			</Media>
-			<Media lessThan="lg">
-				{title}
-				<Webp srcOrSrcset={AssetCollections} StyledImg={MobileImage} />
-				{assetCards}
-			</Media>
+			<Media lessThan="lg">{title}</Media>
 		</Container>
 	);
 };

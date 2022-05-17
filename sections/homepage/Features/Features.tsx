@@ -6,10 +6,16 @@ import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
 import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
 
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
+import {
+	FlexDivCentered,
+	FlexDivCol,
+	FlexDivColCentered,
+	SmallGoldenHeader,
+	WhiteHeader,
+} from 'styles/common';
 
 import { Copy, FlexSection, GridContainer, LeftSubHeader, Title } from '../common';
-import media from 'styles/media';
+import media, { Media } from 'styles/media';
 
 const FEATURES = [
 	{
@@ -36,23 +42,19 @@ const FEATURES = [
 const Features = () => {
 	const { t } = useTranslation();
 
+	const title = (
+		<>
+			<SmallGoldenHeader>{t('homepage.features.title')}</SmallGoldenHeader>
+			<WhiteHeader>{t('homepage.features.description')}</WhiteHeader>
+		</>
+	);
+
 	return (
 		<Container>
-			<FlexSection>
-				<StyledLeftSubHeader>{t('homepage.features.title')}</StyledLeftSubHeader>
-				<StyledGridContainer>
-					{FEATURES.map(({ id, title, comingSoon, copy, image }) => (
-						<FeatureCard key={id}>
-							<FeatureIconContainer>{image}</FeatureIconContainer>
-							<FeatureContentTitle>
-								<Title>{t(title)}</Title>
-								{comingSoon && <ComingSoonTag>{t('common.features.coming-soon')}</ComingSoonTag>}
-							</FeatureContentTitle>
-							<Copy>{t(copy)}</Copy>
-						</FeatureCard>
-					))}
-				</StyledGridContainer>
-			</FlexSection>
+			<Media greaterThanOrEqual="lg">
+				<FlexDivColCentered>{title}</FlexDivColCentered>
+			</Media>
+			<Media lessThan="lg">{title}</Media>
 		</Container>
 	);
 };

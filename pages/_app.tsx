@@ -49,9 +49,13 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 				>
 					<Layout>
 						<SystemStatus>
-							<AppLayout>
+							{Component.name !== 'HomePage' ? (
+								<AppLayout>
+									<Component {...pageProps} />
+								</AppLayout>
+							) : (
 								<Component {...pageProps} />
-							</AppLayout>
+							)}
 						</SystemStatus>
 					</Layout>
 					<ReactQueryDevtools />
