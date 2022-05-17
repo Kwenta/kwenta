@@ -394,6 +394,13 @@
 				"notionalValue": "Size",
 				"liquidationPrice": "Liq. Price"
 			},
+			"synth-balances-table": {
+				"market": "Market",
+				"amount": "Amount",
+				"value-in-usd": "Value in USD",
+				"oracle-price": "Oracle Price",
+				"daily-change": "24H Change"
+			},
 			"futures-markets-table": {
 				"market": "Market",
 				"oracle-price": "Oracle Price",
@@ -743,10 +750,10 @@
 						}
 					}
 				},
-					"next-price": {
-						"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
-						"learn-more": "Learn more"
-					},
+				"next-price": {
+					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
+					"learn-more": "Learn more"
+				},
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order",
