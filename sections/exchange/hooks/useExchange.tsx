@@ -141,6 +141,7 @@ const useExchange = ({
 	const [selectQuoteTokenModalOpen, setSelectQuoteTokenModalOpen] = useState<boolean>(false);
 	const [selectBaseTokenModalOpen, setSelectBaseTokenModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
+	const [atomicExchangeSlippage] = useState<string>('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -580,7 +581,7 @@ const useExchange = ({
 			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
-			const minAmount = baseCurrencyAmountBN.toBN();
+			const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 			if (isAtomic) {
 				return [
@@ -600,7 +601,14 @@ const useExchange = ({
 				];
 			}
 		},
-		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress, baseCurrencyAmountBN]
+		[
+			baseCurrencyKey,
+			quoteCurrencyAmountBN,
+			quoteCurrencyKey,
+			walletAddress,
+			baseCurrencyAmountBN,
+			atomicExchangeSlippage,
+		]
 	);
 
 	const getGasEstimateForExchange = useCallback(
@@ -615,7 +623,8 @@ const useExchange = ({
 						!isL2 &&
 						(destinationCurrencyKey === 'sBTC' ||
 							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR');
+							destinationCurrencyKey === 'sEUR' ||
+							destinationCurrencyKey === 'sUSD');
 					const exchangeParams = getExchangeParams(isAtomic);
 
 					let gasEstimate, gasLimitNum, metaTx;
@@ -787,7 +796,8 @@ const useExchange = ({
 				!isL2 &&
 				(destinationCurrencyKey === 'sBTC' ||
 					destinationCurrencyKey === 'sETH' ||
-					destinationCurrencyKey === 'sEUR');
+					destinationCurrencyKey === 'sEUR' ||
+					destinationCurrencyKey === 'sUSD');
 
 			const exchangeParams = getExchangeParams(isAtomic);
 
