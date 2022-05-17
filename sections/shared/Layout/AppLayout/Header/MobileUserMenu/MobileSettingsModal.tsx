@@ -15,6 +15,7 @@ import {
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
+import Links from 'sections/dashboard/Links';
 
 import { menuLinksState } from '../states';
 // import ConnectionDot from '../ConnectionDot';
@@ -60,6 +61,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						)}
 					</MenuButtonContainer>
 				))}
+				<Links isMobile />
 			</Container>
 		</StyledFullScreenModal>
 	);
