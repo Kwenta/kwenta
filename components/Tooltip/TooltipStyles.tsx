@@ -73,6 +73,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			transform: translate(-25%, 125%);
 			z-index: 2;
 		`}
+		
+		${(props) =>
+			props.preset === 'bottom-z-index-2' &&
+			`
+				bottom: 0;
+				transform: translate(-25%, 125%);
+				z-index: 2;
+			`}
 
 		${(props) =>
 			props.preset === 'left' &&

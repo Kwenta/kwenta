@@ -101,7 +101,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.position-side')}
@@ -119,7 +119,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			positionSize: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.position-size')}
@@ -138,7 +138,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			leverage: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
@@ -150,7 +150,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			liquidationPrice: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.liquidation-price')}
@@ -167,7 +167,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			pnl: pnl ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.u-pnl')}
@@ -199,7 +199,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			}),
 			fees: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.fees')}
@@ -215,7 +215,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			avgEntryPrice: positionDetails ? (
 				<StyledTooltip
-					preset="bottom"
+					preset="bottom-z-index-2"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
