@@ -1,4 +1,3 @@
-import { useReducer } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
@@ -14,25 +13,27 @@ type MobileSubMenuProps = {
 	link?: string;
 	onDismiss(): void;
 	defaultOpen?: boolean;
+	active: boolean;
+	onToggle(): void;
 };
 
 const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	i18nLabel,
 	link,
 	onDismiss,
-	defaultOpen,
+	active,
+	onToggle,
 }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const [isExpanded, toggleExpanded] = useReducer((s) => !s, defaultOpen ?? false);
 
 	return (
 		<>
-			<MenuButton isActive={link ? asPath.includes(link) : isExpanded} onClick={toggleExpanded}>
+			<MenuButton isActive={link ? asPath.includes(link) : active} onClick={onToggle}>
 				{t(i18nLabel)}
-				{isExpanded ? <ChevronUp /> : <ChevronDown />}
+				{active ? <ChevronUp /> : <ChevronDown />}
 			</MenuButton>
-			{isExpanded && (
+			{active && (
 				<SubMenuContainer onClick={onDismiss}>
 					{link ? (
 						SUB_MENUS[link].map(({ label, link: subLink }) => (

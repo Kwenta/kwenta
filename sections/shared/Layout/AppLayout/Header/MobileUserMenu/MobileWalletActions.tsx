@@ -11,10 +11,10 @@ import useENS from 'hooks/useENS';
 import Button from 'components/Button';
 
 type MobileWalletButtonProps = {
-	openSettings(): void;
+	toggleModal(): void;
 };
 
-export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ openSettings }) => {
+export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }) => {
 	const [address, setAddress] = useState('');
 	const { ensAvatar } = useENS(address);
 	const { signer, staticMainnetProvider } = Connector.useContainer();
@@ -39,7 +39,7 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ openSettings 
 	}, [signer, truncatedWalletAddress]);
 
 	return (
-		<StyledButton mono onClick={openSettings}>
+		<StyledButton mono onClick={toggleModal}>
 			{ensAvatar ? (
 				<StyledImage src={ensAvatar} alt={ensName} width={16} height={16} />
 			) : (

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
@@ -30,6 +30,12 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const isL2 = useRecoilValue(isL2State);
 
 	// const { connectWallet, disconnectWallet } = Connector.useContainer();
+	type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
+	const [expanded, setExpanded] = useState<SettingCategories>();
+
+	const handleToggle = (category: SettingCategories) => () => {
+		setExpanded((c) => (category === c ? undefined : category));
+	};
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
@@ -39,16 +45,39 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 				</LogoContainer>
 
 				<MenuButtonContainer>
-					<MobileSubMenu i18nLabel="Wallet" onDismiss={onDismiss} />
+					<MobileSubMenu
+						i18nLabel="Wallet"
+						onDismiss={onDismiss}
+						active={expanded === 'wallet'}
+						onToggle={handleToggle('wallet')}
+					/>
 				</MenuButtonContainer>
+
 				<MenuButtonContainer>
-					<MobileSubMenu i18nLabel="Network" onDismiss={onDismiss} />
+					<MobileSubMenu
+						i18nLabel="Network"
+						onDismiss={onDismiss}
+						active={expanded === 'network'}
+						onToggle={handleToggle('network')}
+					/>
 				</MenuButtonContainer>
+
 				<MenuButtonContainer>
-					<MobileSubMenu i18nLabel="Language" onDismiss={onDismiss} />
+					<MobileSubMenu
+						i18nLabel="Language"
+						onDismiss={onDismiss}
+						active={expanded === 'language'}
+						onToggle={handleToggle('language')}
+					/>
 				</MenuButtonContainer>
+
 				<MenuButtonContainer>
-					<MobileSubMenu i18nLabel="Currency" onDismiss={onDismiss} />
+					<MobileSubMenu
+						i18nLabel="Currency"
+						onDismiss={onDismiss}
+						active={expanded === 'currency'}
+						onToggle={handleToggle('language')}
+					/>
 				</MenuButtonContainer>
 			</Container>
 		</StyledFullScreenModal>

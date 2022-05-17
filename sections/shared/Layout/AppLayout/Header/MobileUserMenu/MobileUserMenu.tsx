@@ -16,24 +16,20 @@ const MobileUserMenu: FC = () => {
 		setIsOpen(undefined);
 	};
 
-	const toggleMenuOpen = () => {
-		setIsOpen((s) => (!!s ? undefined : 'menu'));
-	};
-
-	const openSettingsModal = () => {
-		setIsOpen('settings');
+	const toggleModal = (modal: 'menu' | 'settings') => () => {
+		setIsOpen((s) => (!!s ? undefined : modal));
 	};
 
 	return (
 		<>
 			<MobileFooterContainer>
-				<MobileFooterIconContainer onClick={toggleMenuOpen}>
+				<MobileFooterIconContainer onClick={toggleModal('menu')}>
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
 					<MobileFooterText>{isOpen === 'settings' ? 'Settings' : 'Menu'}</MobileFooterText>
-					<MobileWalletButton openSettings={openSettingsModal} onDismiss={closeModal} />
+					<MobileWalletButton toggleModal={toggleModal('settings')} />
 				</MobileFooterRight>
 			</MobileFooterContainer>
 			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
