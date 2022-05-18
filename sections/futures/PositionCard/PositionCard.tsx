@@ -43,10 +43,10 @@ type PositionData = {
 	liquidationPrice: string | JSX.Element;
 	pnl: string | Wei | JSX.Element;
 	realizedPnl: Wei;
-	pnlText: string;
+	pnlText: string | null | JSX.Element;
 	realizedPnlText: string;
-	netFunding: Wei | JSX.Element;
-	netFundingText: string;
+	netFunding: Wei;
+	netFundingText: string | null | JSX.Element;
 	fees: string | JSX.Element;
 	avgEntryPrice: string | JSX.Element;
 };
@@ -179,12 +179,25 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			realizedPnl: realizedPnl,
 			pnlText:
-				positionDetails && pnl
-					? `${formatCurrency(Synths.sUSD, pnl, {
-							sign: '$',
-							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
-					: NO_VALUE,
+				positionDetails && pnl ? (
+					<StyledTooltip
+						preset="bottom-z-index-2"
+						width={'189px'}
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.u-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, pnl, {
+								sign: '$',
+								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+							})} (${formatPercent(
+								positionDetails.profitLoss.div(positionDetails.initialMargin)
+							)})`}
+						</HoverTransform>
+					</StyledTooltip>
+				) : (
+					NO_VALUE
+				),
 			realizedPnlText:
 				positionHistory && realizedPnl
 					? `${formatCurrency(Synths.sUSD, realizedPnl, {
@@ -193,10 +206,19 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					  })}`
 					: NO_VALUE,
 			netFunding: netFunding,
-			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
-				sign: '$',
-				minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
-			}),
+			netFundingText: netFunding ? (
+				<StyledTooltip
+					preset="bottom-z-index-2"
+					width={'189px'}
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.net-funding')}
+				>
+					<HoverTransform>{`${formatCurrency(Synths.sUSD, netFunding, {
+						sign: '$',
+						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
+					})}`}</HoverTransform>
+				</StyledTooltip>
+			) : null,
 			fees: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
