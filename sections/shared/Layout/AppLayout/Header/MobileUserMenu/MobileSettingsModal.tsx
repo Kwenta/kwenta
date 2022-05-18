@@ -62,6 +62,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					return {
 						label: synth.asset,
 						value: synth,
+						sign: synth.sign,
 					};
 				}
 			);
@@ -145,8 +146,9 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						onToggle={handleToggle('currency')}
 						options={currencyOptions.map((option) => ({
 							label: option.label,
+							icon: <div className="currency-icon">{option.sign}</div>,
 							onClick: () => setPriceCurrency(option.value),
-							selected: priceCurrency === option.value,
+							selected: priceCurrency.asset === option.value.asset,
 						}))}
 					/>
 				</MenuButtonContainer>

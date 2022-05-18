@@ -56,7 +56,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 						  ))
 						: options?.map(({ label, icon, onClick, selected, externalLink }) => (
 								<SubMenuItemContainer key={label}>
-									<SubMenuIcon>{icon ?? '·'}</SubMenuIcon>
+									<SubMenuIcon selected={selected}>{icon ?? '·'}</SubMenuIcon>
 									{externalLink ? (
 										<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
 											<SubMenuItem selected={selected}>{label}</SubMenuItem>
@@ -120,7 +120,7 @@ const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
 		`}
 `;
 
-const SubMenuIcon = styled.div`
+const SubMenuIcon = styled.div<{ selected?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
@@ -129,6 +129,18 @@ const SubMenuIcon = styled.div`
 
 	& > div {
 		font-size: 12px;
+	}
+
+	.currency-icon {
+		font-family: ${(props) => props.theme.fonts.regular};
+		font-size: 19px;
+		color: ${(props) => props.theme.colors.common.secondaryGray};
+
+		${(props) =>
+			props.selected &&
+			css`
+				color: ${(props) => props.theme.colors.common.secondaryGold};
+			`}
 	}
 `;
 
