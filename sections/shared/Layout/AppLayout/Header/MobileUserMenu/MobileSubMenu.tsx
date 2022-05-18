@@ -8,6 +8,13 @@ import { SUB_MENUS, MenuButton } from './common';
 import ChevronUp from 'assets/svg/app/chevron-up.svg';
 import ChevronDown from 'assets/svg/app/chevron-down.svg';
 
+type MobileSubMenuOption = {
+	label: string;
+	icon?: React.ReactNode;
+	onClick(): void;
+	selected?: boolean;
+};
+
 type MobileSubMenuProps = {
 	i18nLabel: string;
 	link?: string;
@@ -15,6 +22,7 @@ type MobileSubMenuProps = {
 	defaultOpen?: boolean;
 	active: boolean;
 	onToggle(): void;
+	options?: MobileSubMenuOption[];
 };
 
 const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
@@ -23,6 +31,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 	onDismiss,
 	active,
 	onToggle,
+	options,
 }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
@@ -35,18 +44,25 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 			</MenuButton>
 			{active && (
 				<SubMenuContainer onClick={onDismiss}>
-					{link ? (
-						SUB_MENUS[link].map(({ label, link: subLink }) => (
-							<SubMenuItemContainer key={label}>
-								<SubMenuDot>·</SubMenuDot>
-								<StyledLink href={`${link}${subLink}`} key={label}>
-									<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
-								</StyledLink>
-							</SubMenuItemContainer>
-						))
-					) : (
-						<></>
-					)}
+					{link
+						? SUB_MENUS[link].map(({ label, link: subLink }) => (
+								<SubMenuItemContainer key={label}>
+									<SubMenuDot>·</SubMenuDot>
+									<StyledLink href={`${link}${subLink}`} key={label}>
+										<SubMenuItem active={asPath.includes(subLink)}>{label}</SubMenuItem>
+									</StyledLink>
+								</SubMenuItemContainer>
+						  ))
+						: options?.map(({ label, icon, onClick, selected }) => (
+								<SubMenuContainer key={label}>
+									{icon ?? <SubMenuDot>·</SubMenuDot>}
+									<SubMenuFlex>
+										<SubMenuItem onClick={onClick} selected={selected}>
+											{label}
+										</SubMenuItem>
+									</SubMenuFlex>
+								</SubMenuContainer>
+						  ))}
 				</SubMenuContainer>
 			)}
 		</>
@@ -67,7 +83,11 @@ const StyledLink = styled(Link)`
 	flex-grow: 1;
 `;
 
-const SubMenuItem = styled.div<{ isActive?: boolean }>`
+const SubMenuFlex = styled.div`
+	flex-grow: 1;
+`;
+
+const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
 	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	box-sizing: border-box;
@@ -77,9 +97,15 @@ const SubMenuItem = styled.div<{ isActive?: boolean }>`
 	width: 100%;
 
 	${(props) =>
-		props.isActive &&
+		props.active &&
 		css`
 			color: ${(props) => props.theme.colors.common.primaryWhite};
+		`}
+
+	${(props) =>
+		props.selected &&
+		css`
+			color: ${(props) => props.theme.colors.common.secondaryGold};
 		`}
 `;
 
