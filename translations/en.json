@@ -172,7 +172,7 @@
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
 		"synth-exchange": "Synth Exchange",
 		"currency-card": {
-			"synth-name": "Synth Name",
+			"synth-name": "Synthetic Asset",
 			"amount-placeholder": "0.0000",
 			"wallet-balance": "balance:",
 			"currency-selector": {
