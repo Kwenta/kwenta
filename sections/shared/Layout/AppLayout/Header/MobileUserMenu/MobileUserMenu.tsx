@@ -17,13 +17,25 @@ const MobileUserMenu: FC = () => {
 	};
 
 	const toggleModal = (modal: 'menu' | 'settings') => () => {
-		setIsOpen((s) => (!!s ? undefined : modal));
+		setIsOpen((s) => {
+			if (!!s) {
+				if (s === modal) {
+					return undefined;
+				} else if (s === 'menu') {
+					return 'settings';
+				} else {
+					return 'menu';
+				}
+			} else {
+				return modal;
+			}
+		});
 	};
 
 	return (
 		<>
 			<MobileFooterContainer>
-				<MobileFooterIconContainer onClick={toggleModal('menu')}>
+				<MobileFooterIconContainer onClick={!!isOpen ? closeModal : toggleModal('menu')}>
 					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
