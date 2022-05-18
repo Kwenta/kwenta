@@ -492,7 +492,6 @@ const useExchange = ({
 			: false;
 
 	const handleCurrencySwap = () => {
-		const baseAmount = baseCurrencyAmount;
 		const quoteAmount = quoteCurrencyAmount;
 
 		setCurrencyPair({
@@ -501,7 +500,7 @@ const useExchange = ({
 		});
 
 		setBaseCurrencyAmount(quoteAmount);
-		setQuoteCurrencyAmount(baseAmount);
+		setQuoteCurrencyAmount('');
 
 		if (quoteCurrencyKey != null && baseCurrencyKey != null) {
 			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
@@ -560,7 +559,26 @@ const useExchange = ({
 				setBaseCurrencyAmount(oneInchQuoteQuery.data);
 			}
 		}
-	}, [quoteCurrencyAmount, txProvider, oneInchQuoteQuery.data, oneInchQuoteQuery.isSuccess]);
+		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+			setBaseCurrencyAmount(
+				baseCurrencyAmountNoFee.sub(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+			);
+		}
+		// eslint-disable-next-line
+	}, [quoteCurrencyKey, exchangeFeeRate, oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
+
+	useEffect(() => {
+		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
+			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
+			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+			setQuoteCurrencyAmount(
+				quoteCurrencyAmountNoFee.add(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+			);
+		}
+		// eslint-disable-next-line
+	}, [baseCurrencyKey, exchangeFeeRate]);
 
 	const getExchangeParams = useCallback(
 		(isAtomic: boolean) => {
@@ -913,11 +931,12 @@ const useExchange = ({
 				onAmountChange={async (value) => {
 					if (value === '') {
 						setQuoteCurrencyAmount('');
+						setBaseCurrencyAmount('');
 					} else {
 						setQuoteCurrencyAmount(value);
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setBaseCurrencyAmount(
 								baseCurrencyAmountNoFee
 									.sub(fee)
@@ -934,14 +953,22 @@ const useExchange = ({
 						if (quoteCurrencyKey === 'ETH') {
 							const ETH_TX_BUFFER = 0.1;
 							const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
-							setQuoteCurrencyAmount(balanceWithBuffer.lt(0) ? '0' : balanceWithBuffer.toString());
+							setQuoteCurrencyAmount(
+								balanceWithBuffer.lt(0)
+									? '0'
+									: balanceWithBuffer.toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						} else {
-							setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
+							setQuoteCurrencyAmount(
+								quoteCurrencyBalance.toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						}
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setBaseCurrencyAmount(
+								baseCurrencyAmountNoFee.sub(fee).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						}
 					}
 				}}
@@ -1015,11 +1042,12 @@ const useExchange = ({
 				onAmountChange={async (value) => {
 					if (value === '') {
 						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 					} else {
 						setBaseCurrencyAmount(value);
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
-							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
+							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setQuoteCurrencyAmount(
 								quoteCurrencyAmountNoFee
 									.add(fee)
@@ -1037,8 +1065,10 @@ const useExchange = ({
 
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setQuoteCurrencyAmount(baseCurrencyAmountNoFee.add(fee).toString());
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setQuoteCurrencyAmount(
+								baseCurrencyAmountNoFee.add(fee).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						}
 					}
 				}}
@@ -1060,7 +1090,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1081,7 +1111,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
