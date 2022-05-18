@@ -2,22 +2,17 @@ import { FC, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-// import Link from 'next/link';
-// import { useRouter } from 'next/router';
 
 import Connector from 'containers/Connector';
 
-import {
-	isL2State,
-	// isWalletConnectedState,
-} from 'store/wallet';
+import { isL2State } from 'store/wallet';
 
 import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
 
 import MobileSubMenu from './MobileSubMenu';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import { languageState } from 'store/app';
+import { languageState, priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
 import { Language } from 'translations/constants';
 
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
@@ -38,7 +33,6 @@ type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const [language, setLanguage] = usePersistedRecoilState(languageState);
 
@@ -55,6 +49,25 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 	const { connectWallet, disconnectWallet } = Connector.useContainer();
 	const [expanded, setExpanded] = useState<SettingCategories>();
+
+	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
+
+	const { synthsMap, network } = Connector.useContainer();
+
+	const currencyOptions = useMemo(() => {
+		if (network != null && synthsMap != null) {
+			return PRICE_CURRENCIES.filter((currencyKey) => synthsMap![currencyKey]).map(
+				(currencyKey) => {
+					const synth = synthsMap![currencyKey]!;
+					return {
+						label: synth.asset,
+						value: synth,
+					};
+				}
+			);
+		}
+		return [];
+	}, [network, synthsMap]);
 
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
@@ -130,6 +143,11 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						onDismiss={onDismiss}
 						active={expanded === 'currency'}
 						onToggle={handleToggle('currency')}
+						options={currencyOptions.map((option) => ({
+							label: option.label,
+							onClick: () => setPriceCurrency(option.value),
+							selected: priceCurrency === option.value,
+						}))}
 					/>
 				</MenuButtonContainer>
 			</Container>
