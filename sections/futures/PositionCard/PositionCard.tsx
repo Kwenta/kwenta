@@ -136,7 +136,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			leverage: positionDetails ? (
 				<StyledTooltip
-					preset="bottom-z-index-2"
+					preset="bottom-z-index-2-left-margin"
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
 				>
@@ -239,7 +239,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			),
 			avgEntryPrice: positionDetails ? (
 				<StyledTooltip
-					preset="bottom-z-index-2"
+					preset="bottom-z-index-2-left-margin"
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
 				>
