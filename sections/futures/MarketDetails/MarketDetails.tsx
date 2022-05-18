@@ -128,7 +128,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					) : (
 						<StyledTooltip
 							preset="bottom"
-							width={'189px'}
 							height={'auto'}
 							content={t('exchange.market-details-card.tooltips.external-price')}
 						>
@@ -146,7 +145,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					marketSummary?.price && pastPrice?.price ? (
 						<StyledTooltip
 							preset="bottom"
-							width={'189px'}
 							height={'auto'}
 							content={t('exchange.market-details-card.tooltips.24h-change')}
 						>
@@ -176,7 +174,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: !!futuresTradingVolume ? (
 					<StyledTooltip
 						preset="bottom"
-						width={'189px'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
@@ -194,7 +191,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: !!futuresDailyTradeStats ? (
 					<StyledTooltip
 						preset="bottom"
-						width={'189px'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
@@ -208,7 +204,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate)) ? (
 					<StyledTooltip
 						preset="bottom"
-						width={'189px'}
 						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
@@ -246,7 +241,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: fundingValue ? (
 					<StyledTooltip
 						preset="1h-funding-rate"
-						width={'189px'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>

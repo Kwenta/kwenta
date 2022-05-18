@@ -14,7 +14,7 @@ interface ToolTipStyleProps {
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
 		height: ${(props) => props.height || '56px'};
-		width: ${(props) => props.width || '189px'};
+		width: ${(props) => props.width || '567px'};
 		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-sizing: border-box;
@@ -60,8 +60,9 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 		${(props) =>
 			props.preset === '1h-funding-rate' &&
 			`
-			bottom: 55px;
-			left: -20px;
+			bottom: 20px;
+			z-index: 2;
+			left: -100px;
 			transform: translate(-25%, 125%);
 		`}
 		

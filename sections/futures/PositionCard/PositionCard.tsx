@@ -44,7 +44,7 @@ type PositionData = {
 	pnl: string | Wei | JSX.Element;
 	realizedPnl: Wei;
 	pnlText: string | null | JSX.Element;
-	realizedPnlText: string;
+	realizedPnlText: string | JSX.Element;
 	netFunding: Wei;
 	netFundingText: string | null | JSX.Element;
 	fees: string | JSX.Element;
@@ -102,7 +102,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			positionSide: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.position-side')}
 				>
@@ -120,7 +119,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			positionSize: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.position-size')}
 				>
@@ -139,7 +137,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			leverage: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
 				>
@@ -151,7 +148,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			liquidationPrice: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.liquidation-price')}
 				>
@@ -168,7 +164,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			pnl: pnl ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.u-pnl')}
 				>
@@ -182,7 +177,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				positionDetails && pnl ? (
 					<StyledTooltip
 						preset="bottom-z-index-2"
-						width={'189px'}
 						height={'auto'}
 						content={t('futures.market.position-card.tooltips.u-pnl')}
 					>
@@ -199,17 +193,26 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					NO_VALUE
 				),
 			realizedPnlText:
-				positionHistory && realizedPnl
-					? `${formatCurrency(Synths.sUSD, realizedPnl, {
-							sign: '$',
-							minDecimals: 2,
-					  })}`
-					: NO_VALUE,
+				positionHistory && realizedPnl ? (
+					<StyledTooltip
+						preset="bottom-z-index-2"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.u-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, realizedPnl, {
+								sign: '$',
+								minDecimals: 2,
+							})}`}
+						</HoverTransform>
+					</StyledTooltip>
+				) : (
+					NO_VALUE
+				),
 			netFunding: netFunding,
 			netFundingText: netFunding ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.net-funding')}
 				>
@@ -222,7 +225,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			fees: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.fees')}
 				>
@@ -238,7 +240,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			avgEntryPrice: positionDetails ? (
 				<StyledTooltip
 					preset="bottom-z-index-2"
-					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
 				>
