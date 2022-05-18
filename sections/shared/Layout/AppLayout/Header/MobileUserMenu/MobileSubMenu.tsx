@@ -11,8 +11,9 @@ import ChevronDown from 'assets/svg/app/chevron-down.svg';
 type MobileSubMenuOption = {
 	label: string;
 	icon?: React.ReactNode;
-	onClick(): void;
+	onClick?: () => void;
 	selected?: boolean;
+	externalLink?: string;
 };
 
 type MobileSubMenuProps = {
@@ -53,14 +54,20 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 									</StyledLink>
 								</SubMenuItemContainer>
 						  ))
-						: options?.map(({ label, icon, onClick, selected }) => (
+						: options?.map(({ label, icon, onClick, selected, externalLink }) => (
 								<SubMenuItemContainer key={label}>
 									<SubMenuIcon>{icon ?? '·'}</SubMenuIcon>
-									<SubMenuFlex>
-										<SubMenuItem onClick={onClick} selected={selected}>
-											{label}
-										</SubMenuItem>
-									</SubMenuFlex>
+									{externalLink ? (
+										<SubMenuExternalLink href={externalLink} target="_blank" rel="noreferrer">
+											<SubMenuItem selected={selected}>{label}</SubMenuItem>
+										</SubMenuExternalLink>
+									) : (
+										<SubMenuFlex>
+											<SubMenuItem onClick={onClick} selected={selected}>
+												{label}
+											</SubMenuItem>
+										</SubMenuFlex>
+									)}
 								</SubMenuItemContainer>
 						  ))}
 				</SubMenuContainer>
@@ -84,6 +91,10 @@ const StyledLink = styled(Link)`
 `;
 
 const SubMenuFlex = styled.div`
+	flex-grow: 1;
+`;
+
+const SubMenuExternalLink = styled.a`
 	flex-grow: 1;
 `;
 

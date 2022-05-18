@@ -24,6 +24,7 @@ import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
 import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const lanugageIcons = {
 	en: '🌐',
@@ -102,7 +103,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							{
 								label: 'Bridge ↗',
 								icon: <MobileMenuBridgeIcon />,
-								onClick: () => {},
+								externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
 							},
 						]}
 					/>
