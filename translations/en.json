@@ -655,7 +655,7 @@
 					"position-size": "Notional value of the open position in USD and asset denomination",
 					"u-pnl": "The current unrealized profit or loss on the open position",
 					"leverage": "Denotes individual position leverage, which will vary based on the balance of margin deposited into the market",
-					"liquidation-price": "THe estimated oracle price that will trigger a liquidation",
+					"liquidation-price": "The estimated oracle price that will trigger a liquidation",
 					"net-funding": "Total funding due at the close of the position",
 					"fees": "Net fees paid to open and/or modify the position",
 					"avg-entry-price": "The average price at which the position was opened"

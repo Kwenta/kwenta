@@ -260,6 +260,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 			},
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		baseCurrencyKey,
 		marketSummary,
