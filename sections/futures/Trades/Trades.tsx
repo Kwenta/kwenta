@@ -235,10 +235,6 @@ const StyledTableHeader = styled.div`
 	text-transform: capitalize;
 `;
 
-const StyledTime = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;
 	font-weight: bold;
