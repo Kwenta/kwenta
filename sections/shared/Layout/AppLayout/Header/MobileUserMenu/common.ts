@@ -17,6 +17,9 @@ export const MenuButton = styled.div<{ isActive: boolean }>`
 		props.isActive &&
 		css`
 			color: ${(props) => props.theme.colors.common.primaryWhite};
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
 		`}
 `;
 
