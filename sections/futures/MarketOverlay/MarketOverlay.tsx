@@ -1,10 +1,10 @@
 import StaticChart from 'assets/png/chart/static-chart.png';
 import PausedIcon from 'assets/svg/futures/market-closure/paused-icon.svg';
+import Webp from 'components/Webp';
 import { CurrencyKey } from 'constants/currency';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import React, { FC } from 'react';
 import { Trans } from 'react-i18next';
-import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 /**
@@ -21,7 +21,7 @@ const MarketOverlay: FC<{
 		<OverlayContainer>
 			<Overlay>
 				<OverlayContent>
-					<StyledSvg src={PausedIcon} />
+					<StyledSvg />
 					<StyledText>
 						<Trans
 							i18nKey={`futures.market.chart.overlay-messages.${marketClosureReason}.title`}
@@ -36,7 +36,7 @@ const MarketOverlay: FC<{
 					</StyledText>
 				</OverlayContent>
 			</Overlay>
-			<AssetsImage src={StaticChart} alt="" webp={true} />
+			<Webp srcOrSrcset={StaticChart} StyledImg={AssetsImage} />
 		</OverlayContainer>
 	);
 };
@@ -71,12 +71,12 @@ const OverlayContent = styled.div`
 	font-weight: 700;
 `;
 
-const AssetsImage = styled(Img)`
+const AssetsImage = styled.img`
 	width: 100%;
 	opacity: 0.08;
 `;
 
-const StyledSvg = styled(Svg)`
+const StyledSvg = styled(PausedIcon)`
 	margin: 25px;
 `;
 

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
-import { Svg } from 'react-optimized-image';
 
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
@@ -20,7 +19,7 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
 import { FuturesPosition } from 'queries/futures/types';
 
-import calculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
@@ -110,7 +109,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				name: FuturesTab.POSITION,
 				label: 'Position',
 				active: activeTab === FuturesTab.POSITION,
-				icon: <Svg src={PositionIcon} />,
+				icon: <PositionIcon />,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
 			},
 			{
@@ -118,7 +117,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				label: 'Open Orders',
 				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
-				icon: <Svg src={OpenPositionsIcon} />,
+				icon: <OpenPositionsIcon />,
 				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 			{
@@ -126,7 +125,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				label: 'Trades',
 				badge: undefined,
 				active: activeTab === FuturesTab.TRADES,
-				icon: <Svg src={OrderHistoryIcon} />,
+				icon: <OrderHistoryIcon />,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
 			},
 			{
@@ -135,7 +134,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				badge: undefined,
 				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
-				icon: <Svg src={TransfersIcon} />,
+				icon: <TransfersIcon />,
 				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
@@ -163,7 +162,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					<TabButton
 						key={FuturesTab.CALCULATOR}
 						title="Calculator"
-						icon={<Svg src={calculatorIcon} />}
+						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
 					/>
 				</TabRight>

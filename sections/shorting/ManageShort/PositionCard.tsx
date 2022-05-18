@@ -2,7 +2,6 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { BigNumber } from 'ethers';
 import { wei } from '@synthetixio/wei';
 
@@ -150,7 +149,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 
 	const arrowIcon = (
 		<ArrowIcon>
-			<Svg src={ArrowRightIcon} viewBox={`0 0 ${ArrowRightIcon.width} ${ArrowRightIcon.height}`} />
+			<ArrowRightIcon />
 		</ArrowIcon>
 	);
 
@@ -175,7 +174,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 				{t('shorting.history.manage-short.subtitle')}
 				{blockExplorerInstance != null && short.txHash && (
 					<StyledExternalLink href={blockExplorerInstance.txLink(short.txHash)}>
-						<StyledLinkIcon src={LinkIcon} viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`} />
+						<StyledLinkIcon />
 					</StyledExternalLink>
 				)}
 			</StyledCardHeader>
@@ -290,7 +289,7 @@ const PositionCard: FC<PositionCardProps> = ({ short, inputAmount, activeTab }) 
 								arrow={false}
 							>
 								<InfoTooltipContent>
-									<Svg src={InfoIcon} />
+									<InfoIcon />
 								</InfoTooltipContent>
 							</InfoTooltip>
 						</DataField>
@@ -370,7 +369,7 @@ const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 			: props.theme.colors.white};
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled(LinkIcon)`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
 
 import ChartBanner from 'assets/png/marketing/chart-banner.png';
 
@@ -13,6 +12,7 @@ import { AbsoluteCenteredDiv, FlexDivCentered } from 'styles/common';
 import { StackSection, Subtext } from '../common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
+import Webp from 'components/Webp';
 
 const FAQ = () => {
 	const { t } = useTranslation();
@@ -20,7 +20,7 @@ const FAQ = () => {
 	return (
 		<StyledStackSection>
 			<ChartGraphicContainer>
-				<ChartBannerImage src={ChartBanner} alt="" webp={true} />
+				<Webp srcOrSrcset={ChartBanner} StyledImg={ChartBannerImage} />
 				<OverlayText>
 					<StyledSubtext>{t('homepage.footer.cta.title')}</StyledSubtext>
 					<Link href={ROUTES.Home.Overview}>
@@ -63,7 +63,7 @@ const StyledSubtext = styled(Subtext)`
 	padding-bottom: 32px;
 `;
 
-const ChartBannerImage = styled(Img)`
+const ChartBannerImage = styled.img`
 	max-width: 1440px;
 `;
 

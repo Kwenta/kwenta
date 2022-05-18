@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import media from 'styles/media';
 import { FlexDivRowCentered } from 'styles/common';
@@ -18,12 +17,12 @@ const NotFoundPage = () => {
 				<title>{t('not-found.page-title')}</title>
 			</Head>
 			<Container>
-				<Svg src={CaretLeftXLIcon} />
+				<CaretLeftXLIcon />
 				<Content>
 					<Title>{t('not-found.title')}</Title>
 					<Subtitle>{t('not-found.subtitle')}</Subtitle>
 				</Content>
-				<Svg src={CaretRightXLICon} />
+				<CaretRightXLICon />
 			</Container>
 		</>
 	);
