@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from 'react';
+import { FC, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
@@ -28,7 +28,6 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const isL2 = useRecoilValue(isL2State);
 
 	const [expanded, setExpanded] = useState<string | undefined>();
-	const isActive = useCallback((link: string) => asPath.includes(link), [asPath]);
 
 	const handleToggle = (link: string) => () => {
 		setExpanded((l) => (l === link ? undefined : link));
@@ -44,7 +43,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 					<div key={link}>
 						{SUB_MENUS[link] ? (
 							<MobileSubMenu
-								active={isActive(link) || expanded === link}
+								active={expanded === link}
 								i18nLabel={i18nLabel}
 								link={link}
 								defaultOpen={asPath.includes(link)}

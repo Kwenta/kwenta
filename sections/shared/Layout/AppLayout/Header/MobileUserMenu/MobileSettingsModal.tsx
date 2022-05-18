@@ -1,9 +1,9 @@
 import { FC, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+// import Link from 'next/link';
+// import { useRouter } from 'next/router';
 
 // import Connector from 'containers/Connector';
 
@@ -22,15 +22,15 @@ type MobileSettingsModalProps = {
 	onDismiss(): void;
 };
 
+type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
+
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
-	const { t } = useTranslation();
-	const { asPath } = useRouter();
+	// const { t } = useTranslation();
 	// const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	// const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 	const isL2 = useRecoilValue(isL2State);
 
 	// const { connectWallet, disconnectWallet } = Connector.useContainer();
-	type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
 	const [expanded, setExpanded] = useState<SettingCategories>();
 
 	const handleToggle = (category: SettingCategories) => () => {

@@ -29,7 +29,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 
 	return (
 		<>
-			<MenuButton isActive={link ? asPath.includes(link) : active} onClick={onToggle}>
+			<MenuButton isActive={active} onClick={onToggle}>
 				{t(i18nLabel)}
 				{active ? <ChevronUp /> : <ChevronDown />}
 			</MenuButton>
@@ -37,7 +37,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 				<SubMenuContainer onClick={onDismiss}>
 					{link ? (
 						SUB_MENUS[link].map(({ label, link: subLink }) => (
-							<SubMenuItemContainer>
+							<SubMenuItemContainer key={label}>
 								<SubMenuDot>·</SubMenuDot>
 								<StyledLink href={`${link}${subLink}`} key={label}>
 									<SubMenuItem isActive={asPath.includes(subLink)}>{label}</SubMenuItem>
