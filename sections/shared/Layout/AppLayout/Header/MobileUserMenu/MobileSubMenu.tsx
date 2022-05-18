@@ -47,21 +47,21 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 					{link
 						? SUB_MENUS[link].map(({ label, link: subLink }) => (
 								<SubMenuItemContainer key={label}>
-									<SubMenuDot>·</SubMenuDot>
-									<StyledLink href={`${link}${subLink}`} key={label}>
+									<SubMenuIcon>·</SubMenuIcon>
+									<StyledLink href={`${link}${subLink}`}>
 										<SubMenuItem active={asPath.includes(subLink)}>{label}</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>
 						  ))
 						: options?.map(({ label, icon, onClick, selected }) => (
-								<SubMenuContainer key={label}>
-									{icon ?? <SubMenuDot>·</SubMenuDot>}
+								<SubMenuItemContainer key={label}>
+									<SubMenuIcon>{icon ?? '·'}</SubMenuIcon>
 									<SubMenuFlex>
 										<SubMenuItem onClick={onClick} selected={selected}>
 											{label}
 										</SubMenuItem>
 									</SubMenuFlex>
-								</SubMenuContainer>
+								</SubMenuItemContainer>
 						  ))}
 				</SubMenuContainer>
 			)}
@@ -109,11 +109,16 @@ const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
 		`}
 `;
 
-const SubMenuDot = styled.div`
+const SubMenuIcon = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 19px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-	margin-right: 30px;
+	margin-right: 20px;
+	width: 12px;
+
+	& > div {
+		font-size: 12px;
+	}
 `;
 
 export default MobileSubMenu;

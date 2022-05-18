@@ -8,7 +8,7 @@ export const MenuButton = styled.div<{ isActive: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
-	margin-bottom: 30px;
+	margin-bottom: ${(props) => (props.isActive ? '20px' : '30px')};
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
