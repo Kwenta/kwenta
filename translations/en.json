@@ -196,7 +196,7 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"external-price": "Aggregated market data provided by CoinGecko",
+				"external-price": "Aggregated market price provided by CoinGecko",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24 hours",
