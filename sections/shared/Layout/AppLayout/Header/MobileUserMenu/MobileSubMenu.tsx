@@ -48,7 +48,7 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 						? SUB_MENUS[link].map(({ label, link: subLink }) => (
 								<SubMenuItemContainer key={label}>
 									<SubMenuIcon>·</SubMenuIcon>
-									<StyledLink href={`${link}${subLink}`}>
+									<StyledLink href={subLink}>
 										<SubMenuItem active={asPath.includes(subLink)}>{label}</SubMenuItem>
 									</StyledLink>
 								</SubMenuItemContainer>

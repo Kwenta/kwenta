@@ -25,10 +25,10 @@ export const MenuButton = styled.div<{ isActive: boolean }>`
 
 export const SUB_MENUS = {
 	[ROUTES.Home.Overview]: [
-		{ label: 'Overview', link: '/' },
-		{ label: 'Positions', link: '/positions' },
-		{ label: 'Rewards', link: '/rewards' },
-		{ label: 'Markets', link: '/markets' },
-		{ label: 'Governance', link: '/governance' },
+		{ label: 'Overview', link: '/dashboard/overview' },
+		// { label: 'Positions', link: '/positions' },
+		// { label: 'Rewards', link: '/rewards' },
+		{ label: 'Markets', link: '/dashboard/markets' },
+		// { label: 'Governance', link: '/governance' },
 	],
 };
