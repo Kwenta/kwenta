@@ -178,7 +178,8 @@
 			"currency-selector": {
 				"select-synth": "select synth",
 				"select-token": "select token"
-			}
+			},
+			"max-button": "max"
 		},
 		"market-details-card": {
 			"title": "Market Details",

@@ -966,18 +966,22 @@ const useExchange = ({
 							setQuoteCurrencyAmount(
 								balanceWithBuffer.lt(0)
 									? '0'
-									: balanceWithBuffer.toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+									: balanceWithBuffer.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
 							);
 						} else {
 							setQuoteCurrencyAmount(
-								quoteCurrencyBalance.toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+								quoteCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
 							);
 						}
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setBaseCurrencyAmount(
-								baseCurrencyAmountNoFee.sub(fee).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+								baseCurrencyAmountNoFee
+									.sub(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
 							);
 						}
 					}
@@ -1071,13 +1075,19 @@ const useExchange = ({
 				walletBalance={baseCurrencyBalance}
 				onBalanceClick={async () => {
 					if (baseCurrencyBalance != null) {
-						setBaseCurrencyAmount(baseCurrencyBalance.toString());
+						setBaseCurrencyAmount(
+							baseCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+						);
 
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setQuoteCurrencyAmount(
-								baseCurrencyAmountNoFee.add(fee).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+								baseCurrencyAmountNoFee
+									.add(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
 							);
 						}
 					}
