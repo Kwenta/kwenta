@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components';
 
 import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { HoverTransform } from '../MarketDetails/MarketDetails';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isFiatCurrency } from 'utils/currencies';
@@ -36,17 +38,17 @@ type PositionData = {
 	marketPrice: string;
 	price24h: Wei;
 	positionSide: JSX.Element;
-	positionSize: string;
-	leverage: string;
-	liquidationPrice: string;
-	pnl: Wei;
+	positionSize: string | React.ReactNode;
+	leverage: string | React.ReactNode;
+	liquidationPrice: string | JSX.Element;
+	pnl: string | Wei | JSX.Element;
 	realizedPnl: Wei;
-	pnlText: string;
-	realizedPnlText: string;
+	pnlText: string | null | JSX.Element;
+	realizedPnlText: string | JSX.Element;
 	netFunding: Wei;
-	netFundingText: string;
-	fees: string;
-	avgEntryPrice: string;
+	netFundingText: string | null | JSX.Element;
+	fees: string | JSX.Element;
+	avgEntryPrice: string | JSX.Element;
 };
 
 const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
@@ -98,63 +100,149 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			}),
 			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
-				<PositionValue
-					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.position-side')}
 				>
-					{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-				</PositionValue>
+					<HoverTransform>
+						<PositionValue
+							side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+						>
+							{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+						</PositionValue>
+					</HoverTransform>
+				</PositionCardTooltip>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			),
-			positionSize: positionDetails
-				? `${formatNumber(positionDetails.size ?? 0, {
-						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-				  })} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
-						sign: '$',
-						minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-				  })})`
-				: NO_VALUE,
-			leverage: positionDetails
-				? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'
-				: NO_VALUE,
-			liquidationPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-						sign: '$',
-						minDecimals,
-				  })
-				: NO_VALUE,
-			pnl: pnl,
+			positionSize: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.position-size')}
+				>
+					<HoverTransform>
+						{`${formatNumber(positionDetails.size ?? 0, {
+							minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+						})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
+							sign: '$',
+							minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
+						})})`}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			leverage: positionDetails ? (
+				<LeftMarginTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.leverage')}
+				>
+					<HoverTransform>{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}</HoverTransform>
+				</LeftMarginTooltip>
+			) : (
+				NO_VALUE
+			),
+			liquidationPrice: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.liquidation-price')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+							sign: '$',
+							minDecimals,
+						})}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			pnl: pnl ?? NO_VALUE,
 			realizedPnl: realizedPnl,
 			pnlText:
-				positionDetails && pnl
-					? `${formatCurrency(Synths.sUSD, pnl, {
-							sign: '$',
-							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
-					: NO_VALUE,
+				positionDetails && pnl ? (
+					<PositionCardTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.u-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, pnl, {
+								sign: '$',
+								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+							})} (${formatPercent(
+								positionDetails.profitLoss.div(positionDetails.initialMargin)
+							)})`}
+						</HoverTransform>
+					</PositionCardTooltip>
+				) : (
+					NO_VALUE
+				),
 			realizedPnlText:
-				positionHistory && realizedPnl
-					? `${formatCurrency(Synths.sUSD, realizedPnl, {
-							sign: '$',
-							minDecimals: 2,
-					  })}`
-					: NO_VALUE,
+				positionHistory && realizedPnl ? (
+					<PositionCardTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.r-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, realizedPnl, {
+								sign: '$',
+								minDecimals: 2,
+							})}`}
+						</HoverTransform>
+					</PositionCardTooltip>
+				) : (
+					NO_VALUE
+				),
 			netFunding: netFunding,
-			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
-				sign: '$',
-				minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
-			}),
-			fees: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+			netFundingText: netFunding ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.net-funding')}
+				>
+					<HoverTransform>{`${formatCurrency(Synths.sUSD, netFunding, {
 						sign: '$',
-				  })
-				: NO_VALUE,
-			avgEntryPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-						sign: '$',
-						minDecimals,
-				  })
-				: NO_VALUE,
+						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
+					})}`}</HoverTransform>
+				</PositionCardTooltip>
+			) : null,
+			fees: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.fees')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+							sign: '$',
+						})}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			avgEntryPrice: positionDetails ? (
+				<LeftMarginTooltip
+					preset="bottom-z-index-2-left-margin"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.avg-entry-price')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+							sign: '$',
+							minDecimals,
+						})}
+					</HoverTransform>
+				</LeftMarginTooltip>
+			) : (
+				NO_VALUE
+			),
 		};
 	}, [
 		currencyKey,
@@ -295,6 +383,15 @@ const StyledSubtitle = styled.p`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
 	margin: 0;
+`;
+
+const PositionCardTooltip = styled(StyledTooltip)`
+	z-index: 2;
+`;
+
+const LeftMarginTooltip = styled(StyledTooltip)`
+	left: -60px;
+	z-index: 2;
 `;
 
 const StyledValue = styled.p`
