@@ -21,7 +21,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 		box-sizing: border-box;
 		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 		border-radius: 10px;
-		padding: 0.75rem;
+		padding: 0.75em;
 		position: absolute;
 		top: ${(props) => props.top};
 		bottom: ${(props) => props.bottom};
@@ -57,41 +57,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 				bottom: 0;
 				transform: translate(-25%, 125%);
 			`}
-		
-		${(props) =>
-			props.preset === '1h-funding-rate' &&
-			`
-			bottom: 20px;
-			z-index: 2;
-			left: -100px;
-			transform: translate(-25%, 125%);
-		`}
-		
-		${(props) =>
-			props.preset === 'skew' &&
-			`
-			bottom: 0;
-			left: -30px;
-			transform: translate(-25%, 125%);
-			z-index: 2;
-		`}
-		
-		${(props) =>
-			props.preset === 'bottom-z-index-2-left-margin' &&
-			`
-			bottom: 0;
-			left: -60px;
-			transform: translate(-25%, 125%);
-			z-index: 2;
-		`}
-		
-		${(props) =>
-			props.preset === 'bottom-z-index-2' &&
-			`
-				bottom: 0;
-				transform: translate(-25%, 125%);
-				z-index: 2;
-			`}
+
 
 		${(props) =>
 			props.preset === 'left' &&

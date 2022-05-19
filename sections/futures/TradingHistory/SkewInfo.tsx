@@ -44,8 +44,8 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 		<SkewContainer>
 			<SkewHeader>
 				<SkewValue>{formatPercent(data[0].short, { minDecimals: 0 })}</SkewValue>
-				<StyledTooltip
-					preset="skew"
+				<SkewTooltip
+					preset="bottom"
 					width={'189px'}
 					height={'auto'}
 					content={t('futures.market.history.skew-tooltip')}
@@ -53,7 +53,7 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 					<HoverTransform>
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</HoverTransform>
-				</StyledTooltip>
+				</SkewTooltip>
 				<SkewValue>{formatPercent(data[0].long, { minDecimals: 0 })}</SkewValue>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
@@ -62,6 +62,11 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 };
 
 export default SkewInfo;
+
+const SkewTooltip = styled(StyledTooltip)`
+	left: -30px;
+	z-index: 2;
+`;
 
 const SkewContainer = styled.div`
 	display: flex;
