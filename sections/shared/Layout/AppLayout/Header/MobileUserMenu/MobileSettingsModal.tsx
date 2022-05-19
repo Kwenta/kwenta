@@ -18,8 +18,9 @@ import { Language } from 'translations/constants';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
-import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
+import MobileSwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
 const lanugageIcons = {
 	en: '🌐',
@@ -51,8 +52,8 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 	const [expanded, setExpanded] = useState<SettingCategories>();
 
 	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
-
 	const { synthsMap, network } = Connector.useContainer();
+	const { switchToL1, switchToL2 } = useNetworkSwitcher();
 
 	const currencyOptions = useMemo(() => {
 		if (network != null && synthsMap != null) {
@@ -110,9 +111,9 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 						onToggle={handleToggle('network')}
 						options={[
 							{
-								label: 'Switch to L1',
+								label: isL2 ? 'Switch to L1' : 'Switch to L2',
 								icon: <MobileSwitchToL1Icon />,
-								onClick: () => {},
+								onClick: isL2 ? switchToL1 : switchToL2,
 							},
 							{
 								label: 'Bridge ↗',

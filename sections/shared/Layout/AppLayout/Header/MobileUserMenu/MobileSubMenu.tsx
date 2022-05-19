@@ -131,6 +131,12 @@ const SubMenuIcon = styled.div<{ selected?: boolean }>`
 		font-size: 12px;
 	}
 
+	& > svg {
+		path {
+			fill: ${(props) => props.theme.colors.common.secondaryGray};
+		}
+	}
+
 	.currency-icon {
 		font-family: ${(props) => props.theme.fonts.regular};
 		font-size: 19px;
