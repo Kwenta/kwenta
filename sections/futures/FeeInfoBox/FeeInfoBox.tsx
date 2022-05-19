@@ -12,6 +12,7 @@ import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
@@ -51,9 +52,17 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		sizeDelta,
 	]);
 
-	const tooltip = dynamicFee?.gt(0)
-		? 'Dynamic fees are currently in effect and may vary based on market conditions during the execution round'
-		: '';
+	const tooltip = () => (
+		<StyledTooltip
+			preset="left"
+			width="450px"
+			content={
+				'Dynamic fees are currently in effect and may vary based on market conditions during the execution round'
+			}
+		>
+			<StyledTimerIcon />
+		</StyledTooltip>
+	);
 
 	return orderType === 1 ? (
 		<StyledInfoBox
@@ -99,32 +108,30 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 							sign: selectedPriceCurrency.sign,
 						}
 					),
-					tooltip,
-					icon: <TimerIcon />,
+					tooltip: dynamicFee?.gt(0) ? tooltip() : null,
 				},
 			}}
 		/>
 	) : (
 		<StyledContainer>
-			<p className="key">
+			<div className="key">
 				Fee: {formatPercent(staticRate ?? zeroBN)}
 				{dynamicFee?.gt(0) && (
 					<>
 						{'+'}
-						<span className="yellow">
-							{formatPercent(dynamicFee)} <TimerIcon />
-						</span>
+						<span className="yellow">{formatPercent(dynamicFee)}</span>
+						{tooltip()}
 					</>
 				)}
-			</p>
-			<p className="value">
+			</div>
+			<div className="value">
 				{!!feeCost
 					? formatCurrency(selectedPriceCurrency.name, feeCost, {
 							sign: selectedPriceCurrency.sign,
 							minDecimals: feeCost.lt(0.01) ? 4 : 2,
 					  })
 					: NO_VALUE}
-			</p>
+			</div>
 		</StyledContainer>
 	);
 };
@@ -146,7 +153,6 @@ const StyledContainer = styled.div`
 	.key {
 		color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
 		font-size: 12px;
-		text-transform: capitalize;
 	}
 
 	.value {
@@ -158,6 +164,10 @@ const StyledContainer = styled.div`
 	.yellow {
 		color: ${(props) => props.theme.colors.yellow};
 	}
+`;
+
+const StyledTimerIcon = styled(TimerIcon)`
+	margin-left: 5px;
 `;
 
 export default FeeInfoBox;

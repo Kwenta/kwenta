@@ -1,12 +1,10 @@
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import React from 'react';
 import styled from 'styled-components';
 
 type DetailedInfo = {
 	value: string;
-	tooltip?: string;
-	icon?: JSX.Element;
+	tooltip?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold';
 	spaceBeneath?: boolean;
 };
@@ -27,12 +25,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 						<p className="key">
 							<div>
 								{key}
-								{value.tooltip && (
-									<StyledTooltip preset="bottom" width={'450px'} content={value.tooltip}>
-										{' '}
-										{value.icon}
-									</StyledTooltip>
-								)}
+								{value.tooltip}
 							</div>
 						</p>
 						<p

@@ -7,7 +7,6 @@ interface ToolTipProps {
 	content?: any;
 	children?: React.ReactNode;
 	width?: string;
-	height?: string;
 	preset?: string;
 	top?: string;
 	bottom?: string;
