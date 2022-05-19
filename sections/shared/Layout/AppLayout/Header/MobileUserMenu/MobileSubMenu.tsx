@@ -96,6 +96,7 @@ const SubMenuFlex = styled.div`
 
 const SubMenuExternalLink = styled.a`
 	flex-grow: 1;
+	text-decoration: none;
 `;
 
 const SubMenuItem = styled.div<{ active?: boolean; selected?: boolean }>`
