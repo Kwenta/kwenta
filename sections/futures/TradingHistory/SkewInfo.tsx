@@ -46,7 +46,7 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 				<SkewValue>{formatPercent(data[0].short, { minDecimals: 0 })}</SkewValue>
 				<SkewTooltip
 					preset="bottom"
-					width={'189px'}
+					width={'310px'}
 					height={'auto'}
 					content={t('futures.market.history.skew-tooltip')}
 				>

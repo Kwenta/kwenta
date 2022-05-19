@@ -199,7 +199,7 @@
 				"external-price": "Aggregated market price provided by CoinGecko",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
-				"24h-trades": "Total amount of trades on selected pair within the past 24 hours",
+				"24h-trades": "Total amount of trades on selected pair within the past 24h",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
 			}
 		},
@@ -659,10 +659,10 @@
 				"avg-entry-price": "Avg. Entry",
 				"tooltips": {
 					"position-side": "Direction of current trade",
-					"position-size": "Notional value of the open position in USD and asset denomination",
+					"position-size": "Notional value of the open position",
 					"u-pnl": "The current unrealized profit or loss on the open position",
-					"r-pnl": "Refers to profit or loss achieved by closing some or all of a position",
-					"leverage": "Denotes individual position leverage, which will vary based on the balance of margin deposited into the market",
+					"r-pnl": "Profit or loss achieved by closing some or all of a position",
+					"leverage": "Individual position leverage which will vary based on the balance of margin deposited into the market",
 					"liquidation-price": "The estimated oracle price that will trigger a liquidation",
 					"net-funding": "Total funding due at the close of the position",
 					"fees": "Net fees paid to open and/or modify the position",
@@ -783,7 +783,7 @@
 				"history-label": "trading history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
-				"skew-tooltip": "Skew is the total of outstanding long and short contracts on either side of the market expressed as a percentage.",
+				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
 				"amount-label": "amount",
 				"price-label": "price",
 				"time-label": "time"
