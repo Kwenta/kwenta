@@ -22,12 +22,9 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 			{Object.entries(details).map(([key, value]) => (
 				<React.Fragment key={key}>
 					<div>
-						<p className="key">
-							<div>
-								{key}
-								{value.tooltip}
-							</div>
-						</p>
+						<div className="key">
+							{key}:{value.tooltip}
+						</div>
 						<p
 							className={`${disabled ? 'value closed' : 'value'}${
 								value.color ? ` ${value.color}` : ''

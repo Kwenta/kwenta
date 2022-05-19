@@ -10,6 +10,7 @@ import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeMarketFee, computeNPFee } from 'utils/costCalculations';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import { useTranslation } from 'react-i18next';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
@@ -33,6 +34,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 	const { network } = Connector.useContainer();
 	const costDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
 	const costDetails = costDetailsQuery.data;
+	const { t } = useTranslation();
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(
 		() => computeNPFee(costDetails, sizeDelta),
@@ -56,9 +58,8 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		<StyledTooltip
 			preset="left"
 			width="450px"
-			content={
-				'Dynamic fees are currently in effect and may vary based on market conditions during the execution round'
-			}
+			content={t('futures.market.trade.cost-basis.tooltip')}
+			style={{ textTransform: 'none' }}
 		>
 			<StyledTimerIcon />
 		</StyledTooltip>
