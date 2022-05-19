@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import LinkIcon from 'assets/svg/app/link.svg';
+import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import Table from 'components/Table';
 import TimeDisplay from './TimeDisplay';
@@ -291,11 +291,22 @@ const TableNoResults = styled(GridDivCenteredRow)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
+	padding: 10px;
+	&:hover {
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
 `;
 
 const StyledLinkIcon = styled(LinkIcon)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 14px;
 	height: 14px;
+
+	path {
+		fill: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;
