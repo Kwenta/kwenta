@@ -38,8 +38,8 @@ type PositionData = {
 	marketPrice: string;
 	price24h: Wei;
 	positionSide: JSX.Element;
-	positionSize: string | JSX.Element;
-	leverage: string | JSX.Element;
+	positionSize: string | React.ReactNode;
+	leverage: string | React.ReactNode;
 	liquidationPrice: string | JSX.Element;
 	pnl: string | Wei | JSX.Element;
 	realizedPnl: Wei;

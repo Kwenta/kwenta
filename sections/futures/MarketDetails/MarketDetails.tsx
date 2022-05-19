@@ -240,7 +240,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			[fundingTitle]: {
 				value: fundingValue ? (
 					<OneHrFundingRateTooltip
-						preset="1h-funding-rate"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
@@ -289,9 +288,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 };
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	bottom: 20px;
+	bottom: -145px;
 	z-index: 2;
-	left: -100px;
+	left: -200px;
 `;
 
 const MarketDetailsContainer = styled.div`
