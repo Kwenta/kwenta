@@ -13,9 +13,10 @@ import MobileWalletActions from './MobileWalletActions';
 
 type MobileWalletButtonProps = {
 	toggleModal(): void;
+	closeModal(): void;
 };
 
-const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) => {
+const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, closeModal }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
@@ -26,7 +27,10 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal }) 
 		<ConnectButton
 			size="sm"
 			variant="outline"
-			onClick={connectWallet}
+			onClick={() => {
+				closeModal();
+				connectWallet();
+			}}
 			data-testid="connect-wallet"
 			mono
 		>

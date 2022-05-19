@@ -41,7 +41,7 @@ const MobileUserMenu: FC = () => {
 				<MobileFooterSeparator />
 				<MobileFooterRight>
 					<MobileFooterText>{isOpen === 'settings' ? 'Settings' : 'Menu'}</MobileFooterText>
-					<MobileWalletButton toggleModal={toggleModal('settings')} />
+					<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
 				</MobileFooterRight>
 			</MobileFooterContainer>
 			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
@@ -57,7 +57,7 @@ const MobileFooterContainer = styled.div`
 	border-top: 1px solid #2b2a2a;
 	padding: 16px 20px;
 	background-color: ${(props) => props.theme.colors.selectedTheme.background};
-	z-index: 60;
+	z-index: 51;
 `;
 
 const MobileFooterIconContainer = styled.div`
