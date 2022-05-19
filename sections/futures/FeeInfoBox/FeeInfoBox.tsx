@@ -51,6 +51,10 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		sizeDelta,
 	]);
 
+	const tooltip = dynamicFee?.gt(0)
+		? 'Dynamic fees are currently in effect and may vary based on market conditions during the execution round'
+		: '';
+
 	return orderType === 1 ? (
 		<StyledInfoBox
 			details={{
@@ -95,6 +99,8 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 							sign: selectedPriceCurrency.sign,
 						}
 					),
+					tooltip,
+					icon: <TimerIcon />,
 				},
 			}}
 		/>

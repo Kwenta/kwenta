@@ -16,7 +16,7 @@ interface ToolTipProps {
 }
 
 const StyledTooltip = (props: ToolTipProps) => {
-	const [activeMouse, setActiveMouse] = useState(false);
+	const [activeMouse, setActiveMouse] = useState(true);
 
 	const openToolTip = () => {
 		setActiveMouse(true);
