@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -27,7 +28,6 @@ import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
-import FeeInfoBox from '../FeeInfoBox';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { getFuturesMarketContract } from 'queries/futures/utils';
@@ -40,6 +40,7 @@ import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import FeeInfoBox from '../FeeInfoBox';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -94,6 +95,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
+	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
@@ -240,7 +242,12 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 			try {
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
+				const volatilityFee = await synthetixjs!.contracts.Exchanger.dynamicFeeRateForExchange(
+					ethers.utils.formatBytes32String('sUSD'),
+					ethers.utils.formatBytes32String(marketAsset as string)
+				);
 				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
+				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -423,6 +430,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				feeCost={feeCost}
 				currencyKey={marketAsset}
 				sizeDelta={sizeDelta}
+				dynamicFee={dynamicFee}
 			/>
 
 			{isDepositMarginModalOpen && (
