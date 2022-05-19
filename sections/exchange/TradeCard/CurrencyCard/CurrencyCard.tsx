@@ -26,7 +26,6 @@ import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import Wei, { wei } from '@synthetixio/wei';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
@@ -108,18 +107,14 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						>
 							<FlexDivRowCentered>
 								<CurrencyAmount
-									value={
-										isBase && Number(amount) > 0
-											? Number(amount).toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
-											: amount
-									}
+									value={amount}
 									onChange={(_, value) => onAmountChange(value)}
 									placeholder={t('exchange.currency-card.amount-placeholder')}
 									data-testid="currency-amount"
 								/>
 								{!isBase && (
 									<MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}>
-										<CapitalizedText>max</CapitalizedText>
+										<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
 									</MaxButton>
 								)}
 							</FlexDivRowCentered>
