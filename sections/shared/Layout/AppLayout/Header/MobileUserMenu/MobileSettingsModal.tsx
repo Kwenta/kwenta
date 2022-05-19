@@ -18,7 +18,7 @@ import { Language } from 'translations/constants';
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
-import MobileSwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
+import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
