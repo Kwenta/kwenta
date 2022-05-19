@@ -183,12 +183,22 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					NO_VALUE
 				),
 			realizedPnlText:
-				positionHistory && realizedPnl
-					? `${formatCurrency(Synths.sUSD, realizedPnl, {
-							sign: '$',
-							minDecimals: 2,
-					  })}`
-					: NO_VALUE,
+				positionHistory && realizedPnl ? (
+					<PositionCardTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.r-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, realizedPnl, {
+								sign: '$',
+								minDecimals: 2,
+							})}`}
+						</HoverTransform>
+					</PositionCardTooltip>
+				) : (
+					NO_VALUE
+				),
 			netFunding: netFunding,
 			netFundingText: netFunding ? (
 				<PositionCardTooltip
