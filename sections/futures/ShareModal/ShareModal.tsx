@@ -28,6 +28,23 @@ const currencyIconStyle = {
 	margin: '-0.3vw 0.5vw 0vw 0vw',
 };
 
+const getFontFamily = (props: any) => {
+	/**
+	 * @todo `open-at` and `close-at` must use the `GT America` font-family
+	 */
+	if (props.className === 'open-at-header' || props.className === 'created-on-header')
+		return props.theme.fonts.regular;
+	if (
+		props.className === 'open-at-date' ||
+		props.className === 'avg-open-price' ||
+		props.className === 'created-on-date' ||
+		props.className === 'current-price'
+	)
+		return props.theme.fonts.monoBold;
+	if (props.className === 'open-at-time' || props.className === 'created-on-time')
+		return props.theme.fonts.mono;
+};
+
 const ShareModal: FC<ShareModalProps> = ({
 	position,
 	marketAsset,
@@ -36,8 +53,10 @@ const ShareModal: FC<ShareModalProps> = ({
 	futuresPositionHistory,
 }) => {
 	let avgEntryPrice: string = '',
-		openAt: string = '',
-		createdOn: string = '';
+		openAtDate: string = '',
+		openAtTime: string = '',
+		createdOnDate: string = '',
+		createdOnTime: string = '';
 
 	if (futuresPositionHistory.length > 0) {
 		avgEntryPrice = futuresPositionHistory[0]?.avgEntryPrice.toNumber().toFixed(2);
@@ -45,8 +64,10 @@ const ShareModal: FC<ShareModalProps> = ({
 		const openTimestamp = futuresPositionHistory[0]?.openTimestamp;
 		const closeTimestamp = futuresPositionHistory[0]?.timestamp;
 
-		openAt = format(openTimestamp, 'PP', { locale: getLocale() });
-		createdOn = format(closeTimestamp, 'PP', { locale: getLocale() });
+		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
+		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
+		createdOnDate = format(closeTimestamp, 'PP', { locale: getLocale() });
+		createdOnTime = format(closeTimestamp, 'HH:mm:ss', { locale: getLocale() });
 	}
 
 	const { t } = useTranslation();
@@ -115,22 +136,52 @@ const ShareModal: FC<ShareModalProps> = ({
 							<StyledAmount className={side}>{amount()}</StyledAmount>
 						</AmountContainer>
 						<TopLeftContainer>
-							<div style={{ fontSize: '0.56vw' }}>{`OPEN AT`}</div>
-							<div style={{ fontSize: '1.125vw' }}>{openAt}</div>
-							<div style={{ fontSize: '0.73vw' }}>{`23:21:33`}</div>
+							<ContainerText className="open-at-header">{`OPEN AT`}</ContainerText>
+							<ContainerText
+								className="open-at-date"
+								style={{ fontSize: '1.13vw', color: '#FFFF' }}
+							>
+								{openAtDate.toUpperCase()}
+							</ContainerText>
+							<ContainerText
+								className="open-at-time"
+								style={{ fontSize: '0.73vw', letterSpacing: '0.7px' }}
+							>
+								{openAtTime}
+							</ContainerText>
 						</TopLeftContainer>
 						<TopRightContainer>
-							<div style={{ fontSize: '0.56vw' }}>{`CREATED ON`}</div>
-							<div style={{ fontSize: '1.125vw' }}>{createdOn}</div>
-							<div style={{ fontSize: '0.73vw' }}>{`23:21:33`}</div>
+							<ContainerText className="created-on-header">{`CREATED ON`}</ContainerText>
+							<ContainerText
+								className="created-on-date"
+								style={{ fontSize: '1.13vw', color: '#FFFF' }}
+							>
+								{createdOnDate.toUpperCase()}
+							</ContainerText>
+							<ContainerText
+								className="created-on-time"
+								style={{ fontSize: '0.73vw', letterSpacing: '0.7px' }}
+							>
+								{createdOnTime}
+							</ContainerText>
 						</TopRightContainer>
 						<BottomLeftContainer>
-							<div style={{ fontSize: '0.56vw' }}>{`AVG OPEN PRICE`}</div>
-							<div style={{ fontSize: '1.125vw' }}>{avgEntryPrice}</div>
+							<ContainerText>{`AVG OPEN PRICE`}</ContainerText>
+							<ContainerText
+								className="avg-open-price"
+								style={{ fontSize: '1.13vw', color: '#FFFF' }}
+							>
+								{avgEntryPrice}
+							</ContainerText>
 						</BottomLeftContainer>
 						<BottomRightContainer>
-							<div style={{ fontSize: '0.56vw' }}>{`CURRENT PRICE`}</div>
-							<div style={{ fontSize: '1.125vw' }}>{marketAssetRate.toFixed(2)}</div>
+							<ContainerText>{`CURRENT PRICE`}</ContainerText>
+							<ContainerText
+								className="current-price"
+								style={{ fontSize: '1.13vw', color: '#FFFF' }}
+							>
+								{marketAssetRate.toFixed(2)}
+							</ContainerText>
 						</BottomRightContainer>
 					</PNLGraphic>
 				</ModalWindow>
@@ -138,6 +189,13 @@ const ShareModal: FC<ShareModalProps> = ({
 		</>
 	);
 };
+
+const ContainerText = styled.div`
+	font-size: 0.56vw;
+	color: #999999;
+
+	font-family: ${(props) => getFontFamily(props)};
+`;
 
 const TopRightContainer = styled.div`
 	position: absolute;
