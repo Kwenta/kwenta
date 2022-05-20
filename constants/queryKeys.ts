@@ -246,11 +246,6 @@ export const QUERY_KEYS = {
 			walletAddress: string | null,
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
-		MarketPriceDetails: (
-			networkId: NetworkId,
-			walletAddress: string | null,
-			currencyKey: string | null
-		) => ['futures', 'marketPrice', networkId, walletAddress, currencyKey],
 	},
 };
 

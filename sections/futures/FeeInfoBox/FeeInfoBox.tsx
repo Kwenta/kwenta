@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 import Wei, { WeiSource } from '@synthetixio/wei';
 
@@ -55,13 +55,14 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		sizeDelta,
 	]);
 
-	const tooltip = () => (
+	const ToolTip: FC = (props) => (
 		<StyledTooltip
 			preset="left"
 			width="450px"
 			content={t('futures.market.trade.cost-basis.tooltip')}
 			style={{ textTransform: 'none' }}
 		>
+			{props.children}
 			<StyledTimerIcon />
 		</StyledTooltip>
 	);
@@ -71,8 +72,10 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 			{formatPercent(staticRate ?? zeroBN)}
 			{dynamicFee?.gt(0) && (
 				<>
-					+<StyledDynamicFee className="yellow">{formatPercent(dynamicFee)}</StyledDynamicFee>
-					{tooltip()}
+					{' + '}
+					<ToolTip>
+						<StyledDynamicFee>{formatPercent(dynamicFee)}</StyledDynamicFee>
+					</ToolTip>
 				</>
 			)}
 		</>
@@ -128,7 +131,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 										sign: selectedPriceCurrency.sign,
 									}
 								),
-								tooltip: dynamicFee?.gt(0) ? tooltip() : null,
+								tooltip: dynamicFee?.gt(0) ? <ToolTip /> : null,
 							},
 					  }
 					: {
@@ -153,6 +156,7 @@ const StyledInfoBox = styled(InfoBox)`
 
 const StyledDynamicFee = styled.span`
 	color: ${(props) => props.theme.colors.yellow};
+	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`

@@ -23,7 +23,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 				<React.Fragment key={key}>
 					<div>
 						<div className="key">
-							{key}:{value.tooltip}
+							{key}: {value.tooltip}
 						</div>
 						<p
 							className={`${disabled ? 'value closed' : 'value'}${
