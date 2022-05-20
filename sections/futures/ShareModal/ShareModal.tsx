@@ -126,7 +126,10 @@ const ShareModal: FC<ShareModalProps> = ({
 						</div>
 						<AmountContainer>
 							<StyledPositionType>
-								<CurrencyIcon style={currencyIconStyle} currencyKey={marketAsset} />
+								<CurrencyIcon
+									style={currencyIconStyle}
+									currencyKey={(marketAsset[0] !== 's' ? 's' : '') + marketAsset}
+								/>
 								<StyledPositionDetails>{`${marketAsset__RemovedSChar}-PERP`}</StyledPositionDetails>
 								<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
 								<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>
