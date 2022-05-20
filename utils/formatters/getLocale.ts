@@ -81,10 +81,15 @@ import {
 	zhTW,
 } from 'date-fns/locale';
 
-function getLocale(languageCode: string) {
-	let locale_: Locale = enUS;
+function getLocale() {
+	let locale_: Locale = enUS,
+		language: Locale = { code: '' };
 
-	switch (languageCode) {
+	navigator.languages !== undefined
+		? (language.code = navigator.languages[0])
+		: (language.code = navigator.language);
+
+	switch (language.code) {
 		case 'af':
 			locale_ = af;
 			break;

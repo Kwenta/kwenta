@@ -233,7 +233,9 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 				<ShareModal
 					position={position}
 					marketAsset={marketAsset}
+					marketAssetRate={marketAssetRate}
 					setOpenShareModal={setOpenShareModal}
+					futuresPositionHistory={futuresPositionHistory}
 				/>
 			)}
 		</>
