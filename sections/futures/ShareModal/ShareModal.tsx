@@ -9,7 +9,6 @@ import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { CurrencyKey } from 'constants/currency';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 
-import PNLGraphicSVG from 'assets/svg/futures/pnl-graphic.svg';
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 
 type ShareModalProps = {
@@ -19,6 +18,11 @@ type ShareModalProps = {
 };
 
 const lineSeparatorStyle = { margin: '0px 0.7vw 0px 0.7vw' };
+const currencyIconStyle = {
+	height: '1.94vw',
+	width: 'auto',
+	margin: '-0.3vw 0.5vw 0vw 0vw',
+};
 
 const ShareModal: FC<ShareModalProps> = ({ position, marketAsset, setOpenShareModal }) => {
 	const { t } = useTranslation();
@@ -56,14 +60,7 @@ const ShareModal: FC<ShareModalProps> = ({ position, marketAsset, setOpenShareMo
 						/>
 						<AmountContainer>
 							<StyledPositionType>
-								<CurrencyIcon
-									style={{
-										height: '1.94vw',
-										width: 'auto',
-										margin: '-0.3vw 0.5vw 0vw 0vw',
-									}}
-									currencyKey={marketAsset}
-								/>
+								<CurrencyIcon style={currencyIconStyle} currencyKey={marketAsset} />
 								<StyledPositionDetails>{`${marketAsset}-PERP`}</StyledPositionDetails>
 								<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
 								<StyledPositionSide>{side.toUpperCase()}</StyledPositionSide>
