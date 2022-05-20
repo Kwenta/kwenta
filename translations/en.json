@@ -738,7 +738,7 @@
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
 					"modify-position": "Modify Position",
-					"deposit-margin-minimum": "Deposit $50 Margin Minimum",
+					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next-Price Order"
 				},
