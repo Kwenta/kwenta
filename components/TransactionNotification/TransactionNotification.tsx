@@ -16,7 +16,7 @@ const NotificationPending = () => {
 	return (
 		<NotificationContainer>
 			<IconContainer>
-				<Spinner width={25} />
+				<Spinner width={35} height={35} />
 			</IconContainer>
 			<TransactionInfo>{i18n.t('common.transaction.transaction-sent')}</TransactionInfo>
 		</NotificationContainer>
