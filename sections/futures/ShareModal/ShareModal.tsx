@@ -27,16 +27,20 @@ const currencyIconStyle = {
 const ShareModal: FC<ShareModalProps> = ({ position, marketAsset, setOpenShareModal }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
-	const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
 
 	const amount = () => {
-		return pnl.gt(0)
-			? `${pnl.toNumber().toPrecision(2)}%`
-			: pnl.eq(0)
-			? `+0.00%`
-			: `${pnl.toNumber().toPrecision(2)}%`;
+		const roiChange = positionDetails?.roiChange.mul(100);
+		console.log('roiChange: ', roiChange?.toString());
+
+		if (roiChange) {
+			return roiChange.gt(0)
+				? `${roiChange.toNumber().toPrecision(3)}%`
+				: roiChange.eq(0)
+				? `+0.00%`
+				: `${roiChange.toNumber().toPrecision(3)}%`;
+		}
 	};
 
 	return (
