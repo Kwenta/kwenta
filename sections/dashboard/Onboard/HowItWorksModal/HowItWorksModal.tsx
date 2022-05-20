@@ -108,34 +108,4 @@ const SubHeader = styled(Paragraph)`
 	`}
 `;
 
-const StepBox = styled.div`
-	position: relative;
-	margin-bottom: 20px;
-`;
-
-const StepSubtitle = styled(Paragraph)`
-	font-size: 16px;
-	line-height: 120%;
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	font-family: ${(props) => props.theme.fonts.bold};
-	position: absolute;
-	bottom: 2px;
-`;
-
-const StepTitle = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
-	padding-bottom: 12px;
-	line-height: 19.2px;
-`;
-
-const StepCopy = styled(Paragraph)`
-	color: ${(props) => props.theme.colors.silver};
-	${media.lessThan('md')`
-		font-size: 14px;
-		line-height: 20px;
-	`}
-`;
-
 export default HowItWorksModal;

@@ -61,34 +61,86 @@
 		},
 		"shortlist": {
 			"title": "LEADBOARD",
-			"description": "Overview Of Current Most Profitable Accounts"
+			"description": "Overview Of Current Most Profitable Accounts",
+			"stats": {
+				"title": "Last 24H Stats",
+				"copy": "Access to decentralized trading tools"
+			}
 		},
 		"earning": {
 			"title": "EARNINGS",
-			"description": "See What You Can Do With $KWENTA Token"
+			"description": "See What You Can Do With $KWENTA Token",
+			"stake-to-earn": {
+				"title": "stake to earn",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
+			},
+			"trade-to-earn": {
+				"title": "trade to earn",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
+			},
+			"vote-and-govern": {
+				"title": "vote and govern",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
+			},
+			"how-to-trade": "How to trade",
+			"stake-kwenta": "Stake KWENTA"
 		},
 		"learn": {
 			"title": "LEARN MORE",
-			"description": "Explore Endless Possibilities Of Kwenta Exchange"			
+			"description": "Explore Endless Possibilities Of Kwenta Exchange",
+			"how-to-trade": {
+				"title": "Learn How To Trade On Kwenta",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
+			},
+			"how-to-stake": {
+				"title": "Learn how to start earning with Kwenta",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
+			},
+			"how-governance": {
+				"title": "How Governance Works",
+				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
+			},
+			"faq": "FAQ"
 		},
 		"tradenow": {
 			"title": "SYNTHETIC LEVERAGE",
-			"description": "Take Back The Market, Trade Like The Whales"
+			"description": "Take Back The Market, Trade Like The Whales",
+			"categories": "Commodities, Forex, Crypto and more."
 		},
 		"features": {
 			"title": "FEATURE CALLOUTS",
 			"description": "Exchange Without The Limits Of A Centralised Exchange",
-			"infinite-liquidity": {
-				"title": "Infinite liquidity",
-				"copy": "All trading is peer-to-contract, using the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."
+			"blazing-fast": {
+				"title": "Blazing Fast",
+				"copy": "Lorem ipsum dolor sit amet."
+			},
+			"low-gas-fees": {
+				"title": "Low Gas Fees",
+				"copy": "Lorem ipsum dolor sit amet."
+			},
+			"unique-assets": {
+				"title": "Unique Assets",
+				"copy": "Lorem ipsum dolor sit amet."
+			},
+			"permissionless": {
+				"title": "Permissionless",
+				"copy": "Lorem ipsum dolor sit amet."
+			},
+			"mobile": {
+				"title": "Mobile",
+				"copy": "Lorem ipsum dolor sit amet."
+			},
+			"easy-ramping": {
+				"title": "Easy Ramping",
+				"copy": "Lorem ipsum dolor sit amet."
 			},
 			"zero-slippage": {
 				"title": "Zero slippage",
-				"copy": "Infinite liquidity means that traders never have to worry about moving the orderbook and being affected by slippage."
+				"copy": "Lorem ipsum dolor sit amet."
 			},
-			"synthetic-futures": {
-				"title": "Synthetic futures",
-				"copy": "Once futures is built on the Synthetix protocol, it will soon be supported on Kwenta, offering perpetual future contracts on a non-custodial, permissionless platform."
+			"partners": {
+				"title": "Partners & Backers",
+				"copy": "We're backed by industry leaders and DeFi natives."				
 			}
 		},
 		"l2": {
@@ -1160,7 +1212,7 @@
 			"limit": "limit order"
 		},
 		"features": {
-			"coming-soon": "Coming Soon"
+			"coming-soon": "Soon"
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",

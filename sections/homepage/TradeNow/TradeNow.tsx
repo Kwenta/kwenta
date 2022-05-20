@@ -2,32 +2,32 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import AssetCollections from 'assets/png/marketing/asset-collections.png';
-import Fade from 'assets/svg/marketing/fade.svg';
-
-import {
-	FlexDivCentered,
-	FlexDivColCentered,
-	Paragraph,
-	SmallGoldenHeader,
-	WhiteHeader,
-} from 'styles/common';
+import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
-import { GridContainer } from '../common';
-import Webp from 'components/Webp';
+import Link from 'next/link';
+import Button from 'components/Button';
+import ROUTES from 'constants/routes';
 
-const Assets = () => {
+const TradeNow = () => {
 	const { t } = useTranslation();
 	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = (
-		<>
+		<TransparentCard>
 			<SmallGoldenHeader>{t('homepage.tradenow.title')}</SmallGoldenHeader>
-			<WhiteHeader>{t('homepage.tradenow.description')}</WhiteHeader>
-		</>
+			<BigWhiteHeader>{t('homepage.tradenow.description')}</BigWhiteHeader>
+			<GrayDescription>{t('homepage.tradenow.categories')}</GrayDescription>
+			<CTAContainer>
+				<Link href={ROUTES.Home.Overview}>
+					<Button variant="primary" isRounded={false} size="md">
+						{t('homepage.nav.trade-now')}
+					</Button>
+				</Link>
+			</CTAContainer>
+		</TransparentCard>
 	);
 
 	return (
@@ -40,6 +40,15 @@ const Assets = () => {
 	);
 };
 
+const TransparentCard = styled.div`
+	padding: 140px 303px;
+	box-sizing: border-box;
+	text-align: center;
+	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	border-radius: 15px;
+`;
 const Container = styled.div`
 	padding-top: 80px;
 	${media.lessThan('md')`
@@ -48,66 +57,22 @@ const Container = styled.div`
 	padding-bottom: 150px;
 `;
 
-const AssetCollectionWrapper = styled.div`
-	margin-top: 20px;
-	position: relative;
-	flex-shrink: 0;
-	svg {
-		display: none;
-		${media.between('lg', 'xl')`
-			display: unset;
-			position: absolute;
-			left: -50px;
-			top: -120px;
-			pointer-events: none;
-		`}
-	}
-`;
-
-const Col = styled.div`
-	display: grid;
-	grid-gap: 80px;
-`;
-
-const AssetCard = styled(FlexDivCentered)`
-	background: ${(props) => props.theme.colors.elderberry};
-	border: ${(props) => `1px solid ${props.theme.colors.black}`};
-	box-sizing: border-box;
-	border-radius: 3px;
-	padding: 16px;
-`;
-
-const AssetCardText = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.white};
-	margin: 0px 0px 0px 16px;
+const GrayDescription = styled(Paragraph)`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-size: 24px;
+	line-height: 120%;
 	text-align: center;
+	margin-top: 30px;
 `;
 
-const AssetsImage = styled.img`
-	max-width: 500px;
-	width: 100%;
+const CTAContainer = styled.div`
+	margin: 50px 0px 0px 0;
+	z-index: 1;
 `;
 
-const MobileImage = styled(AssetsImage)`
-	margin: 0 auto;
-	display: block;
-	margin-top: 50px;
-	margin-bottom: 80px;
-	${media.lessThan('sm')`
-		width: 100%;
-		margin-bottom: 60px;
-	`}
+const BigWhiteHeader = styled(WhiteHeader)`
+	font-size: 60px;
+	width: 600px;
 `;
 
-export const Bullet = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background: ${(props) => props.theme.colors.gold};
-`;
-
-export default Assets;
+export default TradeNow;

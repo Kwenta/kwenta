@@ -459,5 +459,5 @@ export const WhiteHeader = styled.div`
 	text-align: center;
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
 	letter-spacing: 0.05em;
-	width: 525px;
+	width: 550px;
 `;

@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import i18n from 'i18n';

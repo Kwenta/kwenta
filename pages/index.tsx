@@ -51,10 +51,4 @@ const DarkContainer = styled.div`
 	padding: 100px 20px 0 20px;
 `;
 
-const LightContainer = styled.div`
-	width: 100%;
-	background: ${(props) => props.theme.colors.elderberry};
-	padding: 0 20px;
-`;
-
 export default HomePage;

@@ -37,6 +37,7 @@ type TableProps = {
 	hideHeaders?: boolean;
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
+	showShortList?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -54,6 +55,7 @@ export const Table: FC<TableProps> = ({
 	hiddenColumns = [],
 	hideHeaders,
 	highlightRowsOnHover,
+	showShortList,
 	sortBy = [],
 }) => {
 	const memoizedColumns = useMemo(
@@ -90,7 +92,13 @@ export const Table: FC<TableProps> = ({
 			columns: memoizedColumns,
 			data,
 			initialState: {
-				pageSize: showPagination ? (pageSize ? pageSize : MAX_PAGE_ROWS) : data.length,
+				pageSize: showPagination
+					? pageSize
+						? pageSize
+						: MAX_PAGE_ROWS
+					: showShortList
+					? pageSize ?? 5
+					: data.length,
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
@@ -169,7 +177,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
