@@ -1,5 +1,4 @@
-/* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
@@ -8,10 +7,11 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
 
-import PositionCard from '../PositionCard';
 import Trades from '../Trades';
-import ProfitCalculator from '../ProfitCalculator';
 import Transfers from '../Transfers';
+import ShareModal from '../ShareModal';
+import PositionCard from '../PositionCard';
+import ProfitCalculator from '../ProfitCalculator';
 
 import ROUTES from 'constants/routes';
 import { CurrencyKey, Synths } from 'constants/currency';
@@ -19,11 +19,6 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
 import { FuturesPosition } from 'queries/futures/types';
 
-import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
-import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
-import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
-import PositionIcon from 'assets/svg/futures/icon-position.svg';
-import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -33,12 +28,20 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
+import PositionIcon from 'assets/svg/futures/icon-position.svg';
+import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
+import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
+
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
 	TRADES = 'trades',
 	CALCULATOR = 'calculator',
 	TRANSFERS = 'transfers',
+	SHARE = 'share',
 }
 
 const FutureTabs = Object.values(FuturesTab);
@@ -62,6 +65,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
+	const [openShareModal, setOpenShareModal] = useState<boolean>(false);
+	const [hasOpenPosition, setHasOpenPosition] = useState<boolean>(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
 	const marginTransfersQuery = useGetFuturesMarginTransfers(marketAsset);
@@ -103,6 +108,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 		setOpenProfitCalcModal(!openProfitCalcModal);
 	}, [openProfitCalcModal]);
 
+	const handleOpenShareModal = useCallback(() => {
+		setOpenShareModal(!openShareModal);
+	}, [openShareModal]);
+
 	const TABS = useMemo(
 		() => [
 			{
@@ -141,6 +150,10 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 		[activeTab, router, marketAsset, openOrders?.length]
 	);
 
+	useEffect(() => {
+		setHasOpenPosition(futuresPositionHistory.length > 0);
+	}, [futuresPositionHistory.length]);
+
 	return (
 		<>
 			<TabButtonsContainer>
@@ -164,6 +177,13 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 						title="Calculator"
 						icon={<CalculatorIcon />}
 						onClick={handleOpenProfitCalc}
+					/>
+					<TabButton
+						key={FuturesTab.SHARE}
+						title="Share"
+						disabled={!hasOpenPosition}
+						icon={<UploadIcon />}
+						onClick={handleOpenShareModal}
 					/>
 				</TabRight>
 			</TabButtonsContainer>
@@ -202,20 +222,27 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					isLoaded={marginTransfersQuery.isFetched}
 				/>
 			</TabPanel>
-			{openProfitCalcModal ? (
+			{openProfitCalcModal && (
 				<ProfitCalculator
 					marketAsset={marketAsset}
 					marketAssetRate={marketAssetRate}
 					setOpenProfitCalcModal={setOpenProfitCalcModal}
 				/>
-			) : null}
+			)}
+			{openShareModal && (
+				<ShareModal
+					position={position}
+					marketAsset={marketAsset}
+					setOpenShareModal={setOpenShareModal}
+				/>
+			)}
 		</>
 	);
 };
 
 const TabButtonsContainer = styled.div`
 	display: grid;
-	grid-gap: 0rem;
+	grid-gap: 12px;
 	grid-template-columns: repeat(2, 1fr);
 
 	margin-top: 16px;
@@ -242,6 +269,8 @@ const TabRight = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: right;
+
+	grid-gap: 12px;
 `;
 
 export default UserInfo;

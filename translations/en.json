@@ -873,6 +873,12 @@
 						"at": "at"
 					}
 				}
+			},
+			"share": {
+				"title": "Share",
+				"something": {
+					"something-else": "some text"
+				}
 			}
 		}
 	},
