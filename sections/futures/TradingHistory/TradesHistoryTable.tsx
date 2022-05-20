@@ -206,6 +206,6 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 		props.normal
 			? props.theme.colors.common.primaryWhite
 			: props.negative
-			? props.theme.colors.common.primaryRed
-			: props.theme.colors.common.primaryGreen};
+			? props.theme.colors.common.primaryGreen
+			: props.theme.colors.common.primaryRed};
 `;
