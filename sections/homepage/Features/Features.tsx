@@ -19,45 +19,45 @@ import { Copy, GridContainer, Title } from '../common';
 
 const FEATURES = [
 	{
-		id: 'blazing-fast',
+		key: 'blazing-fast',
 		title: 'homepage.features.blazing-fast.title',
 		copy: 'homepage.features.blazing-fast.copy',
 		image: <InfiniteLiquidityIcon />,
 	},
 	{
-		id: 'low-gas-fees',
+		key: 'low-gas-fees',
 		title: 'homepage.features.low-gas-fees.title',
 		copy: 'homepage.features.low-gas-fees.copy',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'unique-assets',
+		key: 'unique-assets',
 		title: 'homepage.features.unique-assets.title',
 		copy: 'homepage.features.unique-assets.copy',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'permissionless',
+		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'mobile',
+		key: 'mobile',
 		title: 'homepage.features.mobile.title',
 		copy: 'homepage.features.mobile.copy',
 		image: <FuturesIcon />,
 		comingSoon: true,
 	},
 	{
-		id: 'easy-ramping',
+		key: 'easy-ramping',
 		title: 'homepage.features.easy-ramping.title',
 		copy: 'homepage.features.easy-ramping.copy',
 		image: <FuturesIcon />,
 		comingSoon: true,
 	},
 	{
-		id: 'zero-slippage',
+		key: 'zero-slippage',
 		title: 'homepage.features.zero-slippage.title',
 		copy: 'homepage.features.zero-slippage.copy',
 		image: <SlippageIcon />,
@@ -66,67 +66,67 @@ const FEATURES = [
 
 const PARTNERS = [
 	{
-		id: 'synthetix',
+		key: 'synthetix',
 		image: <InfiniteLiquidityIcon />,
 	},
 	{
-		id: 'lyra',
+		key: 'lyra',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'aelin',
+		key: 'aelin',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'thales',
+		key: 'thales',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'defi-captial',
+		key: 'defi-captial',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'optimism',
+		key: 'optimism',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'synthman',
+		key: 'synthman',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'polychian',
+		key: 'polychian',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'synthetix',
+		key: 'synthetix',
 		image: <InfiniteLiquidityIcon />,
 	},
 	{
-		id: 'lyra',
+		key: 'lyra',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'aelin',
+		key: 'aelin',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'thales',
+		key: 'thales',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'defi-captial',
+		key: 'defi-captial',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'optimism',
+		key: 'optimism',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'synthman',
+		key: 'synthman',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'polychian',
+		key: 'polychian',
 		image: <SlippageIcon />,
 	},
 ];
@@ -152,8 +152,8 @@ const Features = () => {
 		<Container>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
 			<StyledGridContainer>
-				{FEATURES.map(({ id, title, comingSoon, copy, image }) => (
-					<FeatureCard key={id}>
+				{FEATURES.map(({ key, title, comingSoon, copy, image }) => (
+					<FeatureCard key={key}>
 						<FeatureIconContainer>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
 							<FeatureContentTitle>

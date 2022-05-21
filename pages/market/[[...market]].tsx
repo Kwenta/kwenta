@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -23,8 +23,15 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import { getMarketKey } from 'utils/futures';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import Connector from 'containers/Connector';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Market = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type MarketComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -83,6 +90,8 @@ const Market = () => {
 		</>
 	);
 };
+
+Market.layout = AppLayout;
 
 export default Market;
 

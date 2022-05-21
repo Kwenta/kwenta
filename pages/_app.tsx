@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, ReactElement, ReactNode } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
@@ -30,9 +30,23 @@ import '../i18n';
 import Layout from 'sections/shared/Layout';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import Connector from 'containers/Connector';
+import { NextPage } from 'next';
 
-const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
+type NextPageWithLayout = NextPage & {
+	layout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout;
+};
+
+const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { provider, signer, network } = Connector.useContainer();
+	const getLayout =
+		Component.layout === undefined
+			? (page: ReactElement) => <>{page}</>
+			: (page: ReactElement) => <AppLayout>{page}</AppLayout>;
+
 	return (
 		<>
 			<MediaContextProvider>
@@ -48,15 +62,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 					}
 				>
 					<Layout>
-						<SystemStatus>
-							{Component.name !== 'HomePage' ? (
-								<AppLayout>
-									<Component {...pageProps} />
-								</AppLayout>
-							) : (
-								<Component {...pageProps} />
-							)}
-						</SystemStatus>
+						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 					</Layout>
 					<ReactQueryDevtools />
 				</SynthetixQueryContextProvider>

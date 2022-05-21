@@ -25,7 +25,7 @@ const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
+	const { whyKwentaRef, howItWorksRef, faqRef } = SmoothScroll.useContainer();
 	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
@@ -51,7 +51,8 @@ const Header: FC = () => {
 				onClick: () => window.open(KIPS_LINK, '_blank'),
 			},
 		],
-		[t, whyKwentaRef, howItWorksRef, faqRef]
+		// eslint-disable-next-line
+		[t]
 	);
 
 	return (
@@ -60,13 +61,8 @@ const Header: FC = () => {
 				<Container>
 					<Logo isL2={isL2} isHomePage={true} />
 					<Links>
-						{links.map(({ id, label, ref, onClick }) => (
-							<StyledTextButton
-								key={id}
-								onClick={() => {
-									ref ? scrollToRef(ref) : onClick?.();
-								}}
-							>
+						{links.map(({ id, label, onClick }) => (
+							<StyledTextButton key={id} onClick={() => {}}>
 								{label}
 							</StyledTextButton>
 						))}

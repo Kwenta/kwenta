@@ -13,7 +13,13 @@ import Earning from 'sections/homepage/Earning';
 import Learn from 'sections/homepage/Learn';
 import TradeNow from 'sections/homepage/TradeNow';
 
-const HomePage: FC = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
+
+const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
 
 	return (
