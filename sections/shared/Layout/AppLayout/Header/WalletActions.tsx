@@ -109,8 +109,8 @@ export const WalletActions: FC = () => {
 	};
 
 	useEffect(() => {
+		setWalletLabel(truncatedWalletAddress!);
 		if (signer) {
-			setWalletLabel(truncatedWalletAddress!);
 			signer.getAddress().then((account: string) => {
 				const _account = account;
 				setAddress(account);

@@ -1,80 +1,87 @@
-import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import onboard from 'bnc-onboard';
-import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
+import { init } from '@web3-onboard/react';
+import injectedModule from '@web3-onboard/injected-wallets';
+import ledgerModule from '@web3-onboard/ledger';
+import coinbaseWalletModule from '@web3-onboard/coinbase';
+import trezorModule from '@web3-onboard/trezor';
+import walletConnectModule from '@web3-onboard/walletconnect';
+import gnosisModule from '@web3-onboard/gnosis';
+import portisModule from '@web3-onboard/portis';
+import torusModule from '@web3-onboard/torus';
+
 import { getInfuraRpcURL } from 'utils/infura';
-import { Network } from 'store/wallet';
+import { SUPPORTED_NETWORKS } from 'constants/network';
+import { NetworkId } from '@synthetixio/contracts-interface';
 
-export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
-	const infuraRpc = getInfuraRpcURL(network.id);
+const EMAIL = 'info@synthetix.io';
+const APP_URL = 'https://www.synthetix.io';
 
-	return onboard({
-		dappId: process.env.NEXT_PUBLIC_BN_ONBOARD_API_KEY,
-		hideBranding: true,
-		networkId: Number(network.id),
-		subscriptions,
-		darkMode: true,
-		walletSelect: {
-			wallets: [
-				{
-					name: 'Browser Wallet',
-					iconSrc: '/images/wallet-icons/browserWallet.svg',
-					type: 'injected',
-					link: 'https://metamask.io',
-					wallet: async (helpers) => {
-						const { createModernProviderInterface } = helpers;
-						const provider = window.ethereum;
-						return {
-							provider,
-							interface: provider ? createModernProviderInterface(provider) : null,
-						};
-					},
-					preferred: true,
-					desktop: true,
-					mobile: true,
-				},
-				{
-					walletName: 'ledger',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'lattice',
-					appName: 'Kwenta',
-					rpcUrl: infuraRpc,
-				},
-				{
-					walletName: 'trezor',
-					appUrl: 'https://www.synthetix.io',
-					email: 'info@synthetix.io',
-					rpcUrl: infuraRpc,
-					preferred: true,
-				},
-				{
-					walletName: 'walletConnect',
-					rpc: Object.values(NetworkIdByName).reduce((acc, id) => {
-						acc[id] = getInfuraRpcURL(id);
-						return acc;
-					}, {} as Record<string, string>),
-					preferred: true,
-				},
-				{ walletName: 'imToken', rpcUrl: infuraRpc, preferred: true },
-				{
-					walletName: 'portis',
-					apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID,
-				},
-				{ walletName: 'gnosis', rpcUrl: infuraRpc },
-				{ walletName: 'trust', rpcUrl: infuraRpc },
-				{ walletName: 'walletLink', rpcUrl: infuraRpc, preferred: true },
-				{ walletName: 'torus' },
-				{ walletName: 'status' },
-				{ walletName: 'authereum' },
-				{ walletName: 'tally' },
-			],
-		},
-		walletCheck: [
-			{ checkName: 'derivationPath' },
-			{ checkName: 'accounts' },
-			{ checkName: 'connect' },
-		],
-	});
+const injected = injectedModule();
+const ledger = ledgerModule();
+const coinbase = coinbaseWalletModule({ darkMode: true });
+const trezor = trezorModule({ email: EMAIL, appUrl: APP_URL });
+const walletConnect = walletConnectModule();
+const gnosis = gnosisModule();
+const portis = portisModule({ apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID || '' });
+const torus = torusModule();
+
+export const WEB3ONBOARD_SUPPORTED_NETWORKS: Record<string, string> = {
+	1: '1',
+	5: '5',
+	10: 'a',
+	42: '2a',
+	// TODO: Update the following chain id value once blocknative adds the Optimism Kovan chain to the supported chains.
+	// Ticket: https://github.com/blocknative/web3-onboard/issues/1006
+	69: '69',
+	31337: '',
 };
+
+export const formatChain = (id: NetworkId) => {
+	return '0x' + WEB3ONBOARD_SUPPORTED_NETWORKS[id];
+};
+
+export const initOnboard = init({
+	wallets: [injected, ledger, coinbase, trezor, walletConnect, gnosis, portis, torus],
+	chains: [
+		{
+			id: formatChain(SUPPORTED_NETWORKS[0] as NetworkId),
+			token: 'ETH',
+			label: 'Ethereum Mainnet',
+			rpcUrl: getInfuraRpcURL(1),
+		},
+		{
+			id: formatChain(SUPPORTED_NETWORKS[1] as NetworkId),
+			token: 'ETH',
+			label: 'Optimism',
+			rpcUrl: getInfuraRpcURL(10),
+		},
+		{
+			id: formatChain(SUPPORTED_NETWORKS[2] as NetworkId),
+			token: 'KOV',
+			label: 'Kovan',
+			rpcUrl: getInfuraRpcURL(42),
+		},
+		{
+			id: formatChain(SUPPORTED_NETWORKS[3] as NetworkId),
+			token: 'KOR',
+			label: 'Optimism Kovan',
+			rpcUrl: getInfuraRpcURL(69),
+		},
+	],
+	appMetadata: {
+		name: 'Kwenta',
+		icon: '/images/favicon.svg',
+		logo: '/images/kwenta-web3onboard.png',
+		description:
+			'Gain exposure to cryptocurrencies, forex, equities, indices, and commodities on Ethereum with zero slippage.',
+		gettingStartedGuide: 'https://kwenta.io/',
+		explore: 'https://kwenta.io/',
+		recommendedInjectedWallets: [{ name: 'MetaMask', url: 'https://metamask.io' }],
+	},
+	// TODO: Do not display the web3-onboard account center UI.
+	accountCenter: {
+		desktop: {
+			//enabled: false,
+			position: 'bottomLeft',
+		},
+	},
+});
