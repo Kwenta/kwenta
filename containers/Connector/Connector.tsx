@@ -134,7 +134,6 @@ const useConnector = () => {
 		// @ts-ignore
 		setNetwork(snxjs.network, useOvm);
 		setProvider(provider);
-		setSigner(provider.signer);
 		setSynthetixjs(snxjs);
 	};
 
@@ -145,15 +144,14 @@ const useConnector = () => {
 		// Update network, provider, signer and synthetixjs states
 		const chainId = primaryWallet.chains[0].id;
 		const newNetwork = web3OnboardChainIdToNetwork(chainId);
-		console.log(newNetwork); // TODO: remove
 		if (newNetwork) {
 			if (isSupportedNetworkId(newNetwork.id as NetworkId)) {
 				const provider = loadProvider({
 					newNetwork,
 					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-					provider: isWalletConnected ? window.ethereum : undefined,
+					provider: primaryWallet.provider,
 				});
-				const signer = provider.signer;
+				const signer = provider.getSigner();
 				const useOvm = getIsOVM(newNetwork.id);
 				const snxjs = synthetix({
 					provider,
@@ -174,8 +172,6 @@ const useConnector = () => {
 					setTransactionNotifier(new TransactionNotifier(provider));
 				}
 			}
-		} else {
-			initWalletState();
 		}
 	};
 
@@ -215,15 +211,16 @@ const useConnector = () => {
 	const switchToChain = async (newNetwork: Network) => {
 		if (onboard) {
 			const success = await onboard.setChain({ chainId: formatChain(newNetwork.id) });
+
 			if (success) {
 				// Update the app state
 				if (isSupportedNetworkId(newNetwork.id as NetworkId)) {
 					const provider = loadProvider({
 						newNetwork,
 						infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-						provider: isWalletConnected ? window.ethereum : undefined,
+						provider: wallet?.provider,
 					});
-					const signer = provider.signer;
+					const signer = provider.getSigner();
 					const useOvm = getIsOVM(newNetwork.id);
 					const snxjs = synthetix({
 						provider,
@@ -232,7 +229,7 @@ const useConnector = () => {
 						useOvm,
 					});
 
-					console.log('SWITCHING to', newNetwork, useOvm); // TODO: remove
+					console.log('SWITCHING to', newNetwork, useOvm, provider, signer, useOvm); // TODO: remove
 
 					// @ts-ignore
 					setNetwork(newNetwork, useOvm);

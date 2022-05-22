@@ -23,14 +23,9 @@ const useNetworkSwitcher = () => {
 			}
 			setNetworkError(null);
 
-			console.log('SWITCHING TO L1');
-			const l1ChainId = L2_TO_L1_NETWORK_MAPPER[network.id] as NetworkId;
-			const l1ChainName = INFURA_SUPPORTED_NETWORKS[l1ChainId] as NetworkName;
-			console.log(l1ChainId, l1ChainName); // TODO: remove
-			switchToChain({
-				id: l1ChainId,
-				name: l1ChainName,
-			});
+			const id = L2_TO_L1_NETWORK_MAPPER[network.id] as NetworkId;
+			const name = INFURA_SUPPORTED_NETWORKS[id] as NetworkName;
+			switchToChain({ id, name });
 		} catch (e) {
 			setNetworkError(e.message);
 		}
@@ -44,19 +39,20 @@ const useNetworkSwitcher = () => {
 			}
 			setNetworkError(null);
 
-			console.log('SWITCHING TO L2');
-			const l2ChainIdStr = Object.keys(L2_TO_L1_NETWORK_MAPPER).find(
-				(k) => L2_TO_L1_NETWORK_MAPPER[k] === network.id
+			const idStr = Object.keys(L2_TO_L1_NETWORK_MAPPER).find(
+				(k) => L2_TO_L1_NETWORK_MAPPER[k].toString() === network.id.toString()
 			);
-			console.log(l2ChainIdStr, L2_TO_L1_NETWORK_MAPPER, network.id);
-			if (l2ChainIdStr) {
-				const l2ChainId = +l2ChainIdStr as NetworkId;
-				const l2ChainName = INFURA_SUPPORTED_NETWORKS[l2ChainId] as NetworkName;
-				console.log(l2ChainName); // TODO: remove
-				switchToChain({
-					id: l2ChainId,
-					name: l2ChainName,
-				});
+			if (idStr) {
+				const id = +idStr as NetworkId;
+				const name = INFURA_SUPPORTED_NETWORKS[id] as NetworkName;
+				switchToChain({ id, name });
+			} else {
+				// If the web3-onboard is not equivalent to any infura chain id, return null
+				console.log(
+					"Can't find an equivalent for this web3-onboard chain id:",
+					network.id,
+					L2_TO_L1_NETWORK_MAPPER
+				);
 			}
 		} catch (e) {
 			setNetworkError(e.message);
