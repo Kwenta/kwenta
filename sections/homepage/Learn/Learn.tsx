@@ -14,6 +14,9 @@ import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
 import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
 import { Copy, Title } from '../common';
+import Link from 'next/link';
+import ROUTES from 'constants/routes';
+import Button from 'components/Button';
 
 const LEARNS = [
 	{
@@ -59,12 +62,21 @@ const Learn = () => {
 			<StyledFlexDivRow>
 				{LEARNS.map(({ key, title, copy, image }) => (
 					<FeatureCard key={key} className={key}>
-						<FeatureIconContainer>{image}</FeatureIconContainer>
+						<FeatureIconContainer className={key}>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
-							<FeatureContentTitle>
-								<FeatureTitle>{t(title)}</FeatureTitle>
-							</FeatureContentTitle>
+							{/* <FeatureContentTitle > */}
+							<FeatureTitle className={key}>{t(title)}</FeatureTitle>
+							{/* </FeatureContentTitle> */}
 							<FeatureCopy>{t(copy)}</FeatureCopy>
+							<Link href={ROUTES.Home.Overview}>
+								{key !== 'faq' ? (
+									<StyledButton variant="primary" isRounded={false} size="sm">
+										{t('homepage.learn.title')}
+									</StyledButton>
+								) : (
+									<></>
+								)}
+							</Link>
 						</FeatureContentContainer>
 					</FeatureCard>
 				))}
@@ -73,12 +85,21 @@ const Learn = () => {
 	);
 };
 
+const StyledButton = styled(Button)`
+	width: 148px;
+	height: 40px;
+	background: linear-gradient(180deg, #282727 0%, #191818 100%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	border-radius: 12px;
+`;
+
 const FeatureCopy = styled(Copy)`
 	font-size: 15px;
 	line-height: 150%;
 	letter-spacing: -0.03em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-	width: 183px;
+	margin-bottom: 46px;
 `;
 
 const FeatureTitle = styled(Title)`
@@ -88,7 +109,24 @@ const FeatureTitle = styled(Title)`
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.white};
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
-	width: 150px;
+	width: 203px;
+	padding-bottom: 20px;
+
+	&.how-to-stake,
+	&.how-governance {
+		width: 252px;
+	}
+
+	&.how-to-trade {
+		margin-top: 0px;
+		width: 203px;
+	}
+
+	&.faq {
+		padding-bottom: 0px;
+		margin: 5px;
+		margin-left: 0px;
+	}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
@@ -111,23 +149,25 @@ const FeatureCard = styled(FlexDivRow)`
 	padding: 32px 80px 32px 32px;
 	height: 380px;
 
-	&.how-to-stake {
-		width: 373px;
-	}
-
+	&.how-to-stake,
 	&.how-governance {
 		width: 373px;
-		grid-area: row2-start / col2-start / third-line / 3;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
 	}
 
 	&.how-to-trade {
 		width: 766px;
 		height: 280px;
+		display: flex;
+		flex-direction: row-reverse;
 	}
 
 	&.faq {
 		width: 766px;
 		height: 100px;
+		flex-direction: row-reverse;
 	}
 `;
 
@@ -140,11 +180,8 @@ const FeatureIconContainer = styled.div`
 `;
 
 const FeatureContentContainer = styled(FlexDivCol)`
-	margin-left: 20px;
-`;
-
-const FeatureContentTitle = styled(FlexDivRow)`
-	padding-bottom: 12px;
+	margin-left: 10px;
+	width: 313px;
 `;
 
 export default Learn;

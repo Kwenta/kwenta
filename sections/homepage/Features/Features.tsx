@@ -151,7 +151,7 @@ const Features = () => {
 	return (
 		<Container>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
-			<StyledGridContainer>
+			<StyledFlexDivRow>
 				{FEATURES.map(({ key, title, comingSoon, copy, image }) => (
 					<FeatureCard key={key}>
 						<FeatureIconContainer>{image}</FeatureIconContainer>
@@ -164,7 +164,7 @@ const Features = () => {
 						</FeatureContentContainer>
 					</FeatureCard>
 				))}
-			</StyledGridContainer>
+			</StyledFlexDivRow>
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<IconGridContainer>
 				{PARTNERS.map(({ key, image }) => (
@@ -193,10 +193,13 @@ const FeatureTitle = styled(Title)`
 	width: 150px;
 `;
 
-const StyledGridContainer = styled(GridContainer)`
-	grid-template-columns: repeat(2, auto);
-	grid-gap: 20px 20px;
+const StyledFlexDivRow = styled(FlexDivRow)`
+	margin: auto;
 	margin-top: 60px;
+	gap: 20px 20px;
+	width: 766px;
+	flex-wrap: wrap;
+	justify-content: center;
 `;
 
 const IconGridContainer = styled(GridContainer)`

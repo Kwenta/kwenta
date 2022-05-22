@@ -4,7 +4,13 @@ import styled from 'styled-components';
 
 import StatsSvg from 'assets/svg/futures/stats.svg';
 
-import { FlexDiv, FlexDivColCentered, SmallGoldenHeader, WhiteHeader } from 'styles/common';
+import {
+	FlexDiv,
+	FlexDivColCentered,
+	FlexDivRow,
+	SmallGoldenHeader,
+	WhiteHeader,
+} from 'styles/common';
 
 import media, { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
@@ -161,7 +167,7 @@ const Assets = () => {
 						))}
 					</TabButtonsContainer>
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-						<StatsCardContainer>
+						<StyledFlexDivRow>
 							{PERPS.map(({ asset, description, price, volume, priceChange, image, icon }) => (
 								<StatsCard>
 									<FlexDiv>
@@ -206,10 +212,10 @@ const Assets = () => {
 									</StatsValueContainer>
 								</StatsCard>
 							))}
-						</StatsCardContainer>
+						</StyledFlexDivRow>
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-						<StatsCardContainer>
+						<StyledFlexDivRow>
 							{SPOTS.map(({ asset, market, description, price, volume, change, image, icon }) => (
 								<StatsCard>
 									<FlexDiv>
@@ -254,7 +260,7 @@ const Assets = () => {
 									</StatsValueContainer>
 								</StatsCard>
 							))}
-						</StatsCardContainer>
+						</StyledFlexDivRow>
 					</TabPanel>
 				</FlexDivColCentered>
 			</Media>
@@ -305,9 +311,14 @@ const StatsValue = styled.div`
 	letter-spacing: -0.04em;
 	white-space: pre;
 `;
-const StatsCardContainer = styled(GridContainer)`
+
+const StyledFlexDivRow = styled(FlexDivRow)`
+	margin: auto;
 	margin-top: 40px;
-	grid-template-columns: repeat(4, auto);
+	gap: 20px 20px;
+	width: 1160px;
+	flex-wrap: wrap;
+	justify-content: center;
 `;
 
 const StatsCard = styled(GridContainer)`
