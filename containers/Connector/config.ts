@@ -77,11 +77,9 @@ export const initOnboard = init({
 		explore: 'https://kwenta.io/',
 		recommendedInjectedWallets: [{ name: 'MetaMask', url: 'https://metamask.io' }],
 	},
-	// TODO: Do not display the web3-onboard account center UI.
 	accountCenter: {
 		desktop: {
-			//enabled: false,
-			position: 'bottomLeft',
+			enabled: false,
 		},
 	},
 });
