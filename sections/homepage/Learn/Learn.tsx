@@ -13,29 +13,29 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
 import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
-import { Copy, GridContainer, Title } from '../common';
+import { Copy, Title } from '../common';
 
 const LEARNS = [
 	{
-		id: 'how-to-trade',
+		key: 'how-to-trade',
 		title: 'homepage.learn.how-to-trade.title',
 		copy: 'homepage.learn.how-to-trade.copy',
 		image: <InfiniteLiquidityIcon />,
 	},
 	{
-		id: 'how-to-stake',
+		key: 'how-to-stake',
 		title: 'homepage.learn.how-to-stake.title',
 		copy: 'homepage.learn.how-to-stake.copy',
 		image: <SlippageIcon />,
 	},
 	{
-		id: 'how-governance',
+		key: 'how-governance',
 		title: 'homepage.learn.how-governance.title',
 		copy: 'homepage.learn.how-governance.copy',
 		image: <FuturesIcon />,
 	},
 	{
-		id: 'faq',
+		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
 		image: <FuturesIcon />,
@@ -56,9 +56,9 @@ const Learn = () => {
 	return (
 		<Container ref={whyKwentaRef}>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
-			<StyledGridContainer>
-				{LEARNS.map(({ id, title, copy, image }) => (
-					<FeatureCard key={id}>
+			<StyledFlexDivRow>
+				{LEARNS.map(({ key, title, copy, image }) => (
+					<FeatureCard key={key} className={key}>
 						<FeatureIconContainer>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
 							<FeatureContentTitle>
@@ -68,7 +68,7 @@ const Learn = () => {
 						</FeatureContentContainer>
 					</FeatureCard>
 				))}
-			</StyledGridContainer>
+			</StyledFlexDivRow>
 		</Container>
 	);
 };
@@ -91,10 +91,12 @@ const FeatureTitle = styled(Title)`
 	width: 150px;
 `;
 
-const StyledGridContainer = styled(GridContainer)`
-	grid-template-columns: repeat(1, auto);
-	grid-gap: 20px 20px;
+const StyledFlexDivRow = styled(FlexDivRow)`
+	margin: auto;
 	margin-top: 60px;
+	gap: 20px 20px;
+	width: 766px;
+	flex-wrap: wrap;
 `;
 
 const Container = styled.div`
@@ -107,8 +109,26 @@ const FeatureCard = styled(FlexDivRow)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
 	padding: 32px 80px 32px 32px;
-	width: 373px;
 	height: 380px;
+
+	&.how-to-stake {
+		width: 373px;
+	}
+
+	&.how-governance {
+		width: 373px;
+		grid-area: row2-start / col2-start / third-line / 3;
+	}
+
+	&.how-to-trade {
+		width: 766px;
+		height: 280px;
+	}
+
+	&.faq {
+		width: 766px;
+		height: 100px;
+	}
 `;
 
 const FeatureIconContainer = styled.div`
