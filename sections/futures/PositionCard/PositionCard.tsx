@@ -261,9 +261,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
-						<StyledValue
-							className={data.price24h > zeroBN ? 'green' : data.price24h < zeroBN ? 'red' : ''}
-						>
+						<StyledValue>
 							{data.marketPrice}
 						</StyledValue>
 					</InfoRow>
