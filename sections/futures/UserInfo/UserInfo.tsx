@@ -52,14 +52,22 @@ type UserInfoProps = {
 
 const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
 	const router = useRouter();
-	const { useExchangeRatesQuery } = useSynthetixQueries();
-	const exchangeRatesQuery = useExchangeRatesQuery();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const futuresMarketsQuery = useGetFuturesMarkets();
+
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+	const exchangeRatesQuery = useExchangeRatesQuery({
+		refetchInterval: 6000,
+	});
+
+	const futuresMarketsQuery = useGetFuturesMarkets({
+		refetchInterval: 6000,
+	});
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const otherFuturesMarkets = futuresMarkets.filter((market) => market.asset !== marketAsset) ?? [];
 
-	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	const futuresPositionQuery = useGetFuturesPositionForAccount({
+		refetchInterval: 6000,
+	});
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
