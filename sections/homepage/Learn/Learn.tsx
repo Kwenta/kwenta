@@ -10,10 +10,11 @@ import {
 	WhiteHeader,
 } from 'styles/common';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
-import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
-import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
+import FaqIcon from 'assets/svg/learn/faq.svg';
+import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
+import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
+import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
 import { Copy, Title } from '../common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
@@ -24,25 +25,25 @@ const LEARNS = [
 		key: 'how-to-trade',
 		title: 'homepage.learn.how-to-trade.title',
 		copy: 'homepage.learn.how-to-trade.copy',
-		image: <InfiniteLiquidityIcon />,
+		image: <HowToTradeIcon />,
 	},
 	{
 		key: 'how-to-stake',
 		title: 'homepage.learn.how-to-stake.title',
 		copy: 'homepage.learn.how-to-stake.copy',
-		image: <SlippageIcon />,
+		image: <HowToStakeIcon />,
 	},
 	{
 		key: 'how-governance',
 		title: 'homepage.learn.how-governance.title',
 		copy: 'homepage.learn.how-governance.copy',
-		image: <FuturesIcon />,
+		image: <HowGovernanceIcon />,
 	},
 	{
 		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
-		image: <FuturesIcon />,
+		image: <FaqIcon />,
 	},
 ];
 
@@ -65,9 +66,14 @@ const Learn = () => {
 					<FeatureCard key={key} className={key}>
 						<FeatureIconContainer className={key}>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
-							{/* <FeatureContentTitle > */}
-							<FeatureTitle className={key}>{t(title)}</FeatureTitle>
-							{/* </FeatureContentTitle> */}
+							{key !== 'faq' ? (
+								<FeatureTitle className={key}>{t(title)}</FeatureTitle>
+							) : (
+								<FeatureTitle className={key}>
+									{t(title)}
+									<ArrowUpRightIcon />
+								</FeatureTitle>
+							)}
 							<FeatureCopy>{t(copy)}</FeatureCopy>
 							<Link href={ROUTES.Home.Overview}>
 								{key !== 'faq' ? (
@@ -90,11 +96,6 @@ const Learn = () => {
 const StyledButton = styled(Button)`
 	width: 148px;
 	height: 40px;
-	background: linear-gradient(180deg, #282727 0%, #191818 100%);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 12px;
 	display: flex;
 	align-items: center;
 	padding: 0px 30px;
@@ -133,6 +134,11 @@ const FeatureTitle = styled(Title)`
 		margin: 5px;
 		margin-left: 0px;
 	}
+
+	svg {
+		width: 20px;
+		height: 20px;
+	}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
@@ -168,6 +174,8 @@ const FeatureCard = styled(FlexDivRow)`
 		height: 280px;
 		display: flex;
 		flex-direction: row-reverse;
+		justify-content: space-between;
+		padding-right: 40px;
 	}
 
 	&.faq {
@@ -178,10 +186,34 @@ const FeatureCard = styled(FlexDivRow)`
 `;
 
 const FeatureIconContainer = styled.div`
-	padding-bottom: 40px;
-	svg {
+	display: flex;
+	align-items: center;
+	width: 64px;
+	height: 64px;
+
+	&.faq {
 		width: 64px;
 		height: 64px;
+		padding-bottom: 15px;
+	}
+
+	&.how-to-stake {
+		width: 154px;
+		height: 100px;
+		margin-bottom: 15px;
+		padding-left: 10px;
+	}
+
+	&.how-governance {
+		width: 156px;
+		height: 100px;
+		margin-bottom: 40px;
+		padding-left: 10px;
+	}
+
+	&.how-to-trade {
+		width: 332px;
+		height: 200px;
 	}
 `;
 

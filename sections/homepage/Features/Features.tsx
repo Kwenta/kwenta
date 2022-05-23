@@ -2,9 +2,21 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
-import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
-import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
+import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
+import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
+import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
+import PermissionlessIcon from 'assets/svg/features/permissionless.svg';
+import MobileIcon from 'assets/svg/features/mobile.svg';
+import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
+import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg';
+import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
+import LyraIcon from 'assets/svg/partners/lyra.svg';
+import AelinIcon from 'assets/svg/partners/aelin.svg';
+import ThalesIcon from 'assets/svg/partners/thales.svg';
+import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import DefinanceIcon from 'assets/svg/partners/definance.svg';
+import PolyChainIcon from 'assets/svg/partners/polychain.svg';
+import SpartanIcon from 'assets/svg/partners/spartan.svg';
 
 import {
 	FlexDivCentered,
@@ -22,112 +34,80 @@ const FEATURES = [
 		key: 'blazing-fast',
 		title: 'homepage.features.blazing-fast.title',
 		copy: 'homepage.features.blazing-fast.copy',
-		image: <InfiniteLiquidityIcon />,
+		image: <BlazingFastIcon />,
 	},
 	{
 		key: 'low-gas-fees',
 		title: 'homepage.features.low-gas-fees.title',
 		copy: 'homepage.features.low-gas-fees.copy',
-		image: <SlippageIcon />,
+		image: <LowGasFeeIcon />,
 	},
 	{
 		key: 'unique-assets',
 		title: 'homepage.features.unique-assets.title',
 		copy: 'homepage.features.unique-assets.copy',
-		image: <FuturesIcon />,
+		image: <UniqueAssetsIcon />,
 	},
 	{
 		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
-		image: <FuturesIcon />,
+		image: <PermissionlessIcon />,
 	},
 	{
 		key: 'mobile',
 		title: 'homepage.features.mobile.title',
 		copy: 'homepage.features.mobile.copy',
-		image: <FuturesIcon />,
+		image: <MobileIcon />,
 		comingSoon: true,
 	},
 	{
 		key: 'easy-ramping',
 		title: 'homepage.features.easy-ramping.title',
 		copy: 'homepage.features.easy-ramping.copy',
-		image: <FuturesIcon />,
+		image: <EasyRampingIcon />,
 		comingSoon: true,
 	},
 	{
 		key: 'zero-slippage',
 		title: 'homepage.features.zero-slippage.title',
 		copy: 'homepage.features.zero-slippage.copy',
-		image: <SlippageIcon />,
+		image: <ZeroSlippageIcon />,
 	},
 ];
 
 const PARTNERS = [
 	{
 		key: 'synthetix',
-		image: <InfiniteLiquidityIcon />,
+		image: <SynthetixIcon />,
 	},
 	{
 		key: 'lyra',
-		image: <SlippageIcon />,
+		image: <LyraIcon />,
 	},
 	{
 		key: 'aelin',
-		image: <FuturesIcon />,
+		image: <AelinIcon />,
 	},
 	{
 		key: 'thales',
-		image: <FuturesIcon />,
+		image: <ThalesIcon />,
 	},
 	{
-		key: 'defi-captial',
-		image: <FuturesIcon />,
-	},
-	{
-		key: 'optimism',
-		image: <FuturesIcon />,
-	},
-	{
-		key: 'synthman',
-		image: <SlippageIcon />,
-	},
-	{
-		key: 'polychian',
-		image: <SlippageIcon />,
-	},
-	{
-		key: 'synthetix',
-		image: <InfiniteLiquidityIcon />,
-	},
-	{
-		key: 'lyra',
-		image: <SlippageIcon />,
-	},
-	{
-		key: 'aelin',
-		image: <FuturesIcon />,
-	},
-	{
-		key: 'thales',
-		image: <FuturesIcon />,
-	},
-	{
-		key: 'defi-captial',
-		image: <FuturesIcon />,
+		key: 'definance',
+		image: <DefinanceIcon />,
 	},
 	{
 		key: 'optimism',
-		image: <FuturesIcon />,
+		image: <OptimismIcon />,
 	},
 	{
-		key: 'synthman',
-		image: <SlippageIcon />,
+		key: 'spartan',
+		image: <SpartanIcon />,
 	},
 	{
 		key: 'polychian',
-		image: <SlippageIcon />,
+		image: <PolyChainIcon />,
 	},
 ];
 
@@ -168,7 +148,7 @@ const Features = () => {
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<IconGridContainer>
 				{PARTNERS.map(({ key, image }) => (
-					<FeatureIconContainer key={key}>{image}</FeatureIconContainer>
+					<>{image}</>
 				))}
 			</IconGridContainer>
 		</Container>
@@ -206,6 +186,10 @@ const IconGridContainer = styled(GridContainer)`
 	grid-template-columns: repeat(4, auto);
 	grid-gap: 20px 200px;
 	margin-top: 60px;
+	svg {
+		width: 120px;
+		height: 64px;
+	}
 `;
 
 const Container = styled.div`

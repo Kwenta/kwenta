@@ -13,10 +13,10 @@ import {
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { Copy, Title } from '../common';
 
-import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
-import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
-import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
+import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
+import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
+import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
@@ -27,19 +27,19 @@ const EARNINGS = [
 		id: 'stake-to-earn',
 		title: 'homepage.earning.stake-to-earn.title',
 		copy: 'homepage.earning.stake-to-earn.copy',
-		image: <InfiniteLiquidityIcon />,
+		image: <StakeToEarnIcon />,
 	},
 	{
 		id: 'trade-to-earn',
 		title: 'homepage.earning.trade-to-earn.title',
 		copy: 'homepage.earning.trade-to-earn.copy',
-		image: <SlippageIcon />,
+		image: <TradeToEarnIcon />,
 	},
 	{
 		id: 'vote-and-govern',
 		title: 'homepage.earning.vote-and-govern.title',
 		copy: 'homepage.earning.vote-and-govern.copy',
-		image: <FuturesIcon />,
+		image: <VoteNGovernIcon />,
 	},
 ];
 
