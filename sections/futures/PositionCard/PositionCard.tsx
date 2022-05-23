@@ -80,7 +80,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const realizedPnl = positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ?? zeroBN;
+		const realizedPnl =
+			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
+			zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
