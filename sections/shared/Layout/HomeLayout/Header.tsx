@@ -92,7 +92,6 @@ const Header: FC = () => {
 
 const Container = styled.header`
 	height: ${HEADER_HEIGHT};
-	line-height: ${HEADER_HEIGHT};
 	padding: 0px 20px;
 	display: grid;
 	align-items: center;
