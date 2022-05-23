@@ -34,6 +34,10 @@ import { Synth } from '@synthetixio/contracts-interface';
 import _ from 'lodash';
 import { SynthsVolumes } from 'queries/synths/type';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+import { DAY_PERIOD } from 'queries/rates/constants';
+import { ResolutionString } from 'public/static/charting_library/charting_library';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -57,9 +61,27 @@ const Assets = () => {
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
+	const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
+	const priceFeed = requestCandlesticks(
+		'sETH',
+		minTimestamp,
+		undefined,
+		'60' as ResolutionString,
+		10,
+		true
+	).then((bars) => {
+		return bars.map((b) => {
+			return {
+				average: b.average,
+				time: b.timestamp * 1000,
+			};
+		});
+	});
+
 	const MARKETS_TABS = useMemo(
 		() => [
 			{
+				key: 'leverage',
 				name: MarketsTab.FUTURES,
 				label: t('dashboard.overview.markets-tabs.leverage').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.FUTURES,
@@ -68,6 +90,7 @@ const Assets = () => {
 				},
 			},
 			{
+				key: 'spot',
 				name: MarketsTab.SPOT,
 				label: t('dashboard.overview.markets-tabs.spot').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.SPOT,
@@ -76,6 +99,7 @@ const Assets = () => {
 				},
 			},
 			{
+				key: 'short',
 				name: MarketsTab.SHORT,
 				label: t('dashboard.overview.markets-tabs.short').replace('Markets', ''),
 				active: false,
@@ -94,7 +118,7 @@ const Assets = () => {
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 
 			return {
-				asset: market.asset,
+				key: market.asset,
 				description: description.split(' ')[0],
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
@@ -141,7 +165,7 @@ const Assets = () => {
 			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
 
 			return {
-				asset: synth.asset,
+				key: synth.asset,
 				market: synth.name,
 				description: description.split(' ')[1],
 				price,
@@ -176,13 +200,13 @@ const Assets = () => {
 					</TabButtonsContainer>
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{PERPS.map(({ asset, description, price, volume, priceChange, image, icon }) => (
-								<StatsCard>
-									<GridSvg className="bg" objectFit="cover" layout="fill" />
+							{PERPS.map(({ key, description, price, volume, priceChange, image, icon }) => (
+								<StatsCard key={key}>
+									<GridSvg className="bg" objectfit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
 										<StatsNameContainer>
-											<AssetName>{asset}</AssetName>
+											<AssetName>{key}</AssetName>
 											<AssetDescription>{description}</AssetDescription>
 										</StatsNameContainer>
 									</FlexDiv>
@@ -197,7 +221,7 @@ const Assets = () => {
 									</AssetPrice>
 									<StatsValueContainer>
 										<StatsValue>
-											CHG:{' '}
+											{'CHG    '}
 											{priceChange === 0 ? (
 												<>-</>
 											) : (
@@ -205,7 +229,7 @@ const Assets = () => {
 											)}
 										</StatsValue>
 										<StatsValue>
-											VOL:{' '}
+											{'VOL    '}
 											{volume === 0 ? (
 												<>-</>
 											) : (
@@ -225,13 +249,13 @@ const Assets = () => {
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{SPOTS.map(({ asset, description, price, volume, change, image, icon }) => (
-								<StatsCard>
-									<GridSvg className="bg" objectFit="cover" layout="fill" />
+							{SPOTS.map(({ key, description, price, volume, change, image, icon }) => (
+								<StatsCard key={key}>
+									<GridSvg className="bg" objectfit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
 										<StatsNameContainer>
-											<AssetName>{asset}</AssetName>
+											<AssetName>{key}</AssetName>
 											<AssetDescription>{description}</AssetDescription>
 										</StatsNameContainer>
 									</FlexDiv>
@@ -246,7 +270,7 @@ const Assets = () => {
 									</AssetPrice>
 									<StatsValueContainer>
 										<StatsValue>
-											CHG:{'    '}
+											{'CHG    '}
 											{change === 0 ? (
 												<>-</>
 											) : (
@@ -254,7 +278,7 @@ const Assets = () => {
 											)}
 										</StatsValue>
 										<StatsValue>
-											VOL:{'    '}
+											{'VOL    '}
 											{volume === 0 ? (
 												<>-</>
 											) : (

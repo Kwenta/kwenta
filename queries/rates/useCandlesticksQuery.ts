@@ -1,13 +1,14 @@
 import { ResolutionString } from 'public/static/charting_library/charting_library';
 import { getCandles } from 'queries/futures/subgraph';
-import { getRatesEndpoint, mapCandles } from './utils';
+import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	resolution: ResolutionString,
-	networkId: number
+	networkId: number,
+	priceChart?: boolean | null
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
 
@@ -24,10 +25,11 @@ export const requestCandlesticks = async (
 			? 86400
 			: 3600;
 
+	const first = priceChart ? 24 : 999999;
 	const response = await getCandles(
 		ratesEndpoint,
 		{
-			first: 999999,
+			first: first,
 			where: {
 				synth: `${currencyKey}`,
 				timestamp_gt: `${minTimestamp}`,
@@ -48,7 +50,7 @@ export const requestCandlesticks = async (
 			aggregatedPrices: true,
 		}
 	).then((response) => {
-		return mapCandles(response);
+		return priceChart ? mapPriceChart(response) : mapCandles(response);
 	});
 	return response;
 };

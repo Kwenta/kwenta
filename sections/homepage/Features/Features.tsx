@@ -148,7 +148,7 @@ const Features = () => {
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<IconGridContainer>
 				{PARTNERS.map(({ key, image }) => (
-					<>{image}</>
+					<span key={key}>{image}</span>
 				))}
 			</IconGridContainer>
 		</Container>
