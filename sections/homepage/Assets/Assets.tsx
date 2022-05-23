@@ -25,7 +25,6 @@ import { Price } from 'queries/rates/types';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { CurrencyKey, Synths } from 'constants/currency';
-import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import { values } from 'lodash';
 import { Query, useQueryClient } from 'react-query';
@@ -38,6 +37,7 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot',
+	SHORT = 'short',
 }
 
 const Assets = () => {
@@ -60,7 +60,7 @@ const Assets = () => {
 		() => [
 			{
 				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures').replace('Markets', ''),
+				label: t('dashboard.overview.markets-tabs.leverage').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.FUTURES,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.FUTURES);
@@ -73,6 +73,11 @@ const Assets = () => {
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);
 				},
+			},
+			{
+				name: MarketsTab.SHORT,
+				label: t('dashboard.overview.markets-tabs.short').replace('Markets', ''),
+				active: false,
 			},
 		],
 		[activeMarketsTab, t]
@@ -163,7 +168,9 @@ const Assets = () => {
 					{title}
 					<TabButtonsContainer>
 						{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-							<StyledTabButton key={name} title={label} active={active} onClick={onClick} />
+							<MarketSwitcher key={name} className={name} isActive={active} onClick={onClick}>
+								{label}
+							</MarketSwitcher>
 						))}
 					</TabButtonsContainer>
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
@@ -216,7 +223,7 @@ const Assets = () => {
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{SPOTS.map(({ asset, market, description, price, volume, change, image, icon }) => (
+							{SPOTS.map(({ asset, description, price, volume, change, image, icon }) => (
 								<StatsCard>
 									<FlexDiv>
 										{icon}
@@ -350,19 +357,41 @@ const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 40px;
 	margin-bottom: 35px;
-
-	& > button {
-		height: 38px;
-		font-size: 13px;
-
-		&:not(:last-of-type) {
-			margin-right: 10px;
-		}
-	}
+	width: 225px;
+	height: 28px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 134px;
+	background: #1d1d1d;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0px -1.34783px 0px rgba(255, 255, 255, 0.08),
+		inset 0px 9.43478px 10.7826px rgba(0, 0, 0, 0.25);
 `;
 
-const StyledTabButton = styled(TabButton)`
-	border: none;
+const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
+	cursor: pointer;
+	height: 28px;
+	font-size: 13px;
+	width: 88px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: ${(props) => (props.isActive ? '100px' : '134px')};
+	color: ${(props) => (props.isActive ? props.theme.colors.common.primaryWhite : '#787878')};
+	background: ${(props) =>
+		props.isActive ? 'linear-gradient(180deg, #BE9562 0%, #A07141 100%)' : null};
+	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+	font-family: ${(props) => props.theme.fonts.bold};
+	padding: 12px 16px;
+	box-shadow: ${(props) =>
+		props.isActive
+			? '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03)'
+			: null};
+	border: ${(props) => (props.isActive ? '1px solid rgba(255, 255, 255, 0.15)' : null)};
+
+	&.short {
+		cursor: not-allowed;
+	}
 `;
 
 export default Assets;

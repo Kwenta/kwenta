@@ -496,7 +496,9 @@
 			},
 			"markets-tabs": {
 				"futures": "Futures Markets",
-				"spot": "Spot Markets"
+				"spot": "Spot Markets",
+				"short": "Short Markets",
+				"leverage": "Leverage Markets"
 			}
 		},
 		"deprecated": {
