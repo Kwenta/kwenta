@@ -57,8 +57,9 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 
 	const ToolTip: FC = (props) => (
 		<StyledTooltip
-			preset="left"
-			width="450px"
+			height={'auto'}
+			preset="bottom"
+			width="300px"
 			content={t('futures.market.trade.cost-basis.tooltip')}
 			style={{ textTransform: 'none' }}
 		>
