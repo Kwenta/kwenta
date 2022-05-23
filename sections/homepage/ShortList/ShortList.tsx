@@ -14,7 +14,7 @@ import useENS from 'hooks/useENS';
 import { Synths } from '@synthetixio/contracts-interface';
 import Currency from 'components/Currency';
 import { Copy, Title } from '../common';
-import StatsSvg from 'assets/svg/futures/stats.svg';
+import GridSvg from 'assets/svg/app/grid.svg';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import Loader from 'components/Loader';
@@ -184,12 +184,12 @@ const ShortList = () => {
 							})
 						)}
 					</StatsValue>
-					<StatsSvg />
+					<GridSvg />
 				</StatsCard>
 				<StatsCard>
 					<StatsName>Liquidity</StatsName>
 					<StatsValue>$12,463,401.91</StatsValue>
-					<StatsSvg />
+					<GridSvg />
 				</StatsCard>
 				<StatsCard>
 					<StatsName>Total Daily Trades</StatsName>
@@ -200,7 +200,7 @@ const ShortList = () => {
 							formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
 						)}
 					</StatsValue>
-					<StatsSvg />
+					<GridSvg />
 				</StatsCard>
 			</StatsCardContainer>
 		</Container>
@@ -209,12 +209,15 @@ const ShortList = () => {
 
 const StatsName = styled.div`
 	font-size: 15px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
+
 const StatsValue = styled.div`
 	font-size: 32px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin-top: 14px;
 `;
+
 const StatsCardContainer = styled(FlexDivRow)`
 	margin-top: 40px;
 	justify-content: center;
@@ -229,6 +232,12 @@ const StatsCard = styled(FlexDivColCentered)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
 	padding: 45px;
+	padding-bottom: 0px;
+	justify-conent: flex-end;
+	svg {
+		width: 307px;
+		height: 79px;
+	}
 `;
 
 const StyledTable = styled(Table)`

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import StatsSvg from 'assets/svg/futures/stats.svg';
+import GridSvg from 'assets/svg/app/grid.svg';
 
 import {
 	FlexDiv,
@@ -177,6 +178,7 @@ const Assets = () => {
 						<StyledFlexDivRow>
 							{PERPS.map(({ asset, description, price, volume, priceChange, image, icon }) => (
 								<StatsCard>
+									<GridSvg className="bg" objectFit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
 										<StatsNameContainer>
@@ -225,6 +227,7 @@ const Assets = () => {
 						<StyledFlexDivRow>
 							{SPOTS.map(({ asset, description, price, volume, change, image, icon }) => (
 								<StatsCard>
+									<GridSvg className="bg" objectFit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
 										<StatsNameContainer>
@@ -337,6 +340,15 @@ const StatsCard = styled(GridContainer)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
 	padding: 20px;
+
+	svg.bg {
+		position: absolute;
+		z-index: 10;
+		margin-top: 15px;
+		margin-left: -20px;
+		width: 275px;
+		height: 140px;
+	}
 `;
 
 const Container = styled.div`

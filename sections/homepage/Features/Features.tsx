@@ -193,7 +193,7 @@ const IconGridContainer = styled(GridContainer)`
 `;
 
 const Container = styled.div`
-	margin-bottom: 150px;
+	margin-bottom: 250px;
 `;
 
 const FeatureCard = styled(FlexDivRow)`
