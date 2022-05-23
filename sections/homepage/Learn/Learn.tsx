@@ -13,6 +13,7 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
 import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import { Copy, Title } from '../common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
@@ -70,8 +71,9 @@ const Learn = () => {
 							<FeatureCopy>{t(copy)}</FeatureCopy>
 							<Link href={ROUTES.Home.Overview}>
 								{key !== 'faq' ? (
-									<StyledButton variant="primary" isRounded={false} size="sm">
+									<StyledButton isRounded={false} size="sm">
 										{t('homepage.learn.title')}
+										<ArrowUpRightIcon />
 									</StyledButton>
 								) : (
 									<></>
@@ -93,6 +95,9 @@ const StyledButton = styled(Button)`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	padding: 0px 30px;
 `;
 
 const FeatureCopy = styled(Copy)`

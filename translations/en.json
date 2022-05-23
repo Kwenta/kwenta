@@ -47,7 +47,8 @@
 			"blog": "Blog"
 		},
 		"hero": {
-			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE"
+			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>10x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "TRENDING MARKETS",
@@ -69,7 +70,7 @@
 		},
 		"earning": {
 			"title": "EARNINGS",
-			"description": "See What You Can Do With $KWENTA Token",
+			"description": "See What You Can Do With <0>$KWENTA</0> Token",
 			"stake-to-earn": {
 				"title": "stake to earn",
 				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
@@ -82,7 +83,7 @@
 				"title": "vote and govern",
 				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
 			},
-			"how-to-trade": "How to trade",
+			"how-to-earn": "How to earn",
 			"stake-kwenta": "Stake KWENTA"
 		},
 		"learn": {

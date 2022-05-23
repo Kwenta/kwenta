@@ -249,6 +249,7 @@ const ComingSoonTag = styled(FlexDivCentered)`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 8px;
+	border: 1px solid #9c6c3c;
 `;
 
 const SectionFeatureTitle = styled(FeatureTitle)`

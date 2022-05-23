@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
@@ -23,7 +23,7 @@ const Hero = () => {
 			<LogoNoTextSVG />
 			<Header>{t('homepage.hero.title')}</Header>
 			<ProductDescription>
-				Trade commodities, forex, crypto, and more with up to 10x leverage and deep liquidity.
+				<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
 			</ProductDescription>
 			<SynthetixContainer>
 				<PoweredBySynthetix />
@@ -41,6 +41,10 @@ const Hero = () => {
 		</StackSection>
 	);
 };
+
+const Emphasis = styled.b`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+`;
 
 const Header = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.compressedBlack};

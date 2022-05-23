@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import {
@@ -16,6 +16,8 @@ import { Copy, GridContainer, Title } from '../common';
 import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
 import FuturesIcon from 'assets/svg/marketing/icon-futures.svg';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
+
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
 import Button from 'components/Button';
@@ -48,7 +50,9 @@ const Earning = () => {
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.earning.title')}</SmallGoldenHeader>
-			<WhiteHeader>{t('homepage.earning.description')}</WhiteHeader>
+			<WhiteHeader>
+				<Trans i18nKey={'homepage.earning.description'} components={[<Emphasis />]} />
+			</WhiteHeader>
 		</>
 	);
 
@@ -87,14 +91,25 @@ const Earning = () => {
 					</Button>
 				</Link>
 				<Link href={ROUTES.Home.Overview}>
-					<Button variant="primary" isRounded={false} size="md">
-						{t('homepage.earning.how-to-trade')}
-					</Button>
+					<StyledButton isRounded={false} size="md">
+						{t('homepage.earning.how-to-earn')}
+						<ArrowUpRightIcon />
+					</StyledButton>
 				</Link>
 			</CTAContainer>
 		</Container>
 	);
 };
+
+const Emphasis = styled.b`
+	color: ${(props) => props.theme.colors.common.primaryGold};
+`;
+
+const StyledButton = styled(Button)`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`;
 
 const StatsName = styled.div`
 	font-size: 15px;
