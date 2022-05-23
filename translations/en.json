@@ -792,7 +792,8 @@
 						"side": "Side",
 						"leverage": "Leverage",
 						"ROI": "ROI",
-						"fee": "fee"
+						"fee": "Protocol Fee",
+						"gas-fee": "Network Gas Fee"
 					}
 				},
 				"orders": {
