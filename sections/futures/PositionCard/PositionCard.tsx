@@ -54,9 +54,7 @@ type PositionData = {
 const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
-	const futuresPositionsQuery = useGetFuturesPositionForAccount({
-		refetchInterval: 6000,
-	});
+	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
