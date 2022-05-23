@@ -9,12 +9,11 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
 import { gasSpeedState } from 'store/wallet';
 
-import { FlexDivCol, FlexDivCentered } from 'styles/common';
+import { FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
 import { newGetTransactionPrice } from 'utils/network';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
@@ -52,11 +51,6 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		size: tradeSize,
 		side,
 	});
-
-	// const gasPrices = useMemo(
-	// 	() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-	// 	[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	// );
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -147,9 +141,6 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 					<Value>{value}</Value>
 				</Row>
 			))}
-			{/* <NetworkFees>
-				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-			</NetworkFees> */}
 			<ConfirmTradeButton
 				variant="primary"
 				isRounded
@@ -188,22 +179,6 @@ const Value = styled.div`
 	font-size: 12px;
 	margin-top: 6px;
 `;
-
-// const NetworkFees = styled(FlexDivCol)`
-// 	margin-top: 12px;
-// `;
-
-// const StyledGasPriceSelect = styled(GasPriceSelect)`
-// 	display: flex;
-// 	justify-content: space-between;
-// 	width: auto;
-// 	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-// 	color: ${(props) => props.theme.colors.common.secondaryGray};
-// 	font-size: 12px;
-// 	font-family: ${(props) => props.theme.fonts.regular};
-// 	text-transform: capitalize;
-// 	margin-bottom: 8px;
-// `;
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
