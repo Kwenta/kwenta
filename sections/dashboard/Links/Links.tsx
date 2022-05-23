@@ -38,6 +38,10 @@ const LinkContainer = styled.div<{ isMobile?: boolean }>`
 			margin-top: 0;
 			margin-left: 0;
 
+			a {
+				outline: none;
+			}
+
 			a:not(:last-child) {
 				margin-right: 30px;
 			}
