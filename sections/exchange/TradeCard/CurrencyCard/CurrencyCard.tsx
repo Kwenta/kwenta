@@ -114,7 +114,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								/>
 								{!isBase && (
 									<MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}>
-										<CapitalizedText>max</CapitalizedText>
+										<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
 									</MaxButton>
 								)}
 							</FlexDivRowCentered>
