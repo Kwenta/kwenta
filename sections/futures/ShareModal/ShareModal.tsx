@@ -1,7 +1,10 @@
-import { FC, useCallback, useRef, useState } from 'react';
+import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { toPng } from 'html-to-image';
+import axios from 'axios';
+import useSWR from 'swr';
+// import { getBlobFromImageElement, copyBlobToClipboard } from 'copy-image-clipboard';
 
 import Button from 'components/Button';
 import BaseModal from 'components/BaseModal';
@@ -21,6 +24,16 @@ type ShareModalProps = {
 	futuresPositionHistory: PositionHistory[];
 };
 
+const fetcher = async (url: any) => {
+	const res = await fetch(url);
+	const data = await res.json();
+
+	if (res.status !== 200) {
+		throw new Error(data.message);
+	}
+	return data;
+};
+
 const ShareModal: FC<ShareModalProps> = ({
 	position,
 	marketAsset,
@@ -29,37 +42,56 @@ const ShareModal: FC<ShareModalProps> = ({
 	futuresPositionHistory,
 }) => {
 	const { t } = useTranslation();
-	const ref = useRef<HTMLDivElement>(null);
 	const [imagePathName, setImagePathName] = useState<string>('');
+	const { data, error } = useSWR(() => `/api/handleShare`, fetcher);
 
 	const positionDetails = position?.position ?? null;
 
-	const onDownloadImage = useCallback(() => {
-		if (ref.current === null) {
-			return;
+	// const onCopyImage = () => {
+	// 	const node: any = document.getElementById('pnl-graphic');
+
+	// 	if (node) {
+	// 		getBlobFromImageElement(node)
+	// 			.then((blob) => {
+	// 				return copyBlobToClipboard(blob);
+	// 			})
+	// 			.then(() => {
+	// 				console.log('Blob Copied');
+	// 			})
+	// 			.catch((e) => {
+	// 				console.log('Error: ', e.message);
+	// 			});
+	// 	}
+	// };
+
+	const handleShare = () => {
+		let node = document.getElementById('pnl-graphic');
+		if (node) {
+			toPng(node, { cacheBust: true })
+				.then((dataUrl: any) => {
+					axios
+						.post('http://localhost:3000/api/handleShare', {
+							dataUrl: dataUrl,
+						})
+						.then((res: any) => {
+							const url = 'https://v2.beta.kwenta.io';
+							const via = 'kwenta_io';
+							const text = 'this works!';
+							if (data !== undefined) {
+								console.log('data is undefined!');
+							}
+							const twitterURL = `https://twitter.com/intent/tweet?&text=${text}&url=${url}&via=${via}`;
+							window.open(twitterURL, 'twitter');
+						})
+						.catch((err: any) => {
+							console.log(err, 'Error trying to tweet');
+						});
+				})
+				.catch((err: any) => {
+					console.log(err);
+				});
 		}
-
-		toPng(ref.current, { cacheBust: true })
-			.then((dataUrl: any) => {
-				const link = document.createElement('a');
-
-				link.download = 'my-image-name.png';
-				link.href = dataUrl;
-
-				link.click();
-
-				const pathName = link.pathname;
-				setImagePathName(pathName);
-				console.log('pathName', pathName);
-			})
-			.catch((err: any) => {
-				console.log(err);
-			});
-
-		/**
-		 * @todo Share to twitter and other socials
-		 */
-	}, [ref]);
+	};
 
 	return (
 		<>
@@ -69,7 +101,7 @@ const ShareModal: FC<ShareModalProps> = ({
 				title={t('futures.modals.share.title')}
 			>
 				<ModalWindow>
-					<PNLGraphic ref={ref}>
+					<PNLGraphic id="pnl-graphic">
 						<div
 							style={{
 								position: 'relative',
@@ -108,7 +140,7 @@ const ShareModal: FC<ShareModalProps> = ({
 						<Button
 							variant="primary"
 							isRounded={true}
-							onClick={onDownloadImage}
+							onClick={handleShare}
 							size="sm"
 							disabled={false}
 						>
