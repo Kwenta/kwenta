@@ -90,7 +90,8 @@ const StyledButton = styled(Button)`
 	height: 40px;
 	background: linear-gradient(180deg, #282727 0%, #191818 100%);
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08),
+		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 12px;
 `;
 
