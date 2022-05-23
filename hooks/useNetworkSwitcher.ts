@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
-import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
-import { INFURA_SUPPORTED_NETWORKS } from 'utils/infura';
-import { NetworkId, NetworkName } from '@synthetixio/contracts-interface';
+import {
+	MAP_L1_TO_L2_NETWORKS,
+	MAP_L2_TO_L1_NETWORKS,
+	NETWORK_TO_WEB3_ONBOARD,
+} from 'containers/Connector/config';
 
 const useNetworkSwitcher = () => {
 	const [, setNetworkError] = useState<string | null>(null);
@@ -23,9 +25,8 @@ const useNetworkSwitcher = () => {
 			}
 			setNetworkError(null);
 
-			const id = L2_TO_L1_NETWORK_MAPPER[network.id] as NetworkId;
-			const name = INFURA_SUPPORTED_NETWORKS[id] as NetworkName;
-			switchToChain({ id, name });
+			const networkId = NETWORK_TO_WEB3_ONBOARD[network.id];
+			switchToChain(MAP_L2_TO_L1_NETWORKS[networkId]);
 		} catch (e) {
 			setNetworkError(e.message);
 		}
@@ -39,21 +40,8 @@ const useNetworkSwitcher = () => {
 			}
 			setNetworkError(null);
 
-			const idStr = Object.keys(L2_TO_L1_NETWORK_MAPPER).find(
-				(k) => L2_TO_L1_NETWORK_MAPPER[k].toString() === network.id.toString()
-			);
-			if (idStr) {
-				const id = +idStr as NetworkId;
-				const name = INFURA_SUPPORTED_NETWORKS[id] as NetworkName;
-				switchToChain({ id, name });
-			} else {
-				// If the web3-onboard is not equivalent to any infura chain id, return null
-				console.log(
-					"Can't find an equivalent for this web3-onboard chain id:",
-					network.id,
-					L2_TO_L1_NETWORK_MAPPER
-				);
-			}
+			const networkId = NETWORK_TO_WEB3_ONBOARD[network.id];
+			switchToChain(MAP_L1_TO_L2_NETWORKS[networkId]);
 		} catch (e) {
 			setNetworkError(e.message);
 		}

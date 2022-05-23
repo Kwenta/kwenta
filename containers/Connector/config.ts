@@ -9,8 +9,7 @@ import portisModule from '@web3-onboard/portis';
 import torusModule from '@web3-onboard/torus';
 
 import { getInfuraRpcURL } from 'utils/infura';
-import { SUPPORTED_NETWORKS } from 'constants/network';
-import { NetworkId } from '@synthetixio/contracts-interface';
+import { Network } from 'store/wallet';
 
 const EMAIL = 'info@synthetix.io';
 const APP_URL = 'https://www.synthetix.io';
@@ -24,44 +23,57 @@ const gnosis = gnosisModule();
 const portis = portisModule({ apiKey: process.env.NEXT_PUBLIC_PORTIS_APP_ID || '' });
 const torus = torusModule();
 
-export const WEB3ONBOARD_SUPPORTED_NETWORKS: Record<string, string> = {
-	1: '1',
-	5: '5',
-	10: 'a',
-	42: '2a',
-	// TODO: Update the following chain id value once blocknative adds the Optimism Kovan chain to the supported chains.
-	// Ticket: https://github.com/blocknative/web3-onboard/issues/1006
-	69: '69',
-	31337: '',
+// Convert web3-onboard chain ids to synthetix networks
+export const WEB3_ONBOARD_TO_NETWORK: { [key: string]: Network } = {
+	'0x1': { id: 1, name: 'mainnet' }, // Ethereum (mainnet)
+	'0xa': { id: 10, name: 'mainnet-ovm', useOvm: true }, // Optimism (mainnet)
+	'0x2a': { id: 42, name: 'kovan' }, // Ethereum Kovan (testnet)
+	'0x45': { id: 69, name: 'kovan-ovm', useOvm: true }, // Optimism Kovan (testnet)
 };
 
-export const formatChain = (id: NetworkId) => {
-	return '0x' + WEB3ONBOARD_SUPPORTED_NETWORKS[id];
+// Convert synthetix networks chains ids to web3-onboard chain ids
+export const NETWORK_TO_WEB3_ONBOARD: { [key: string]: string } = {
+	1: '0x1', // Ethereum (mainnet)
+	10: '0xa', // Optimism (mainnet)
+	42: '0x2a', // Ethereum Kovan (testnet)
+	69: '0x45', // Optimism Kovan (testnet)
+};
+
+// Map web3-onboard L1 chain ids to L2 chain ids
+export const MAP_L1_TO_L2_NETWORKS: any = {
+	'0x1': '0xa',
+	'0x2a': '0x45',
+};
+
+// Map web3-onboard L2 chain ids to L2 chain ids
+export const MAP_L2_TO_L1_NETWORKS: any = {
+	'0xa': '0x1',
+	'0x45': '0x2a',
 };
 
 export const initOnboard = init({
 	wallets: [injected, ledger, coinbase, trezor, walletConnect, gnosis, portis, torus],
 	chains: [
 		{
-			id: formatChain(SUPPORTED_NETWORKS[0] as NetworkId),
+			id: '0x1',
 			token: 'ETH',
-			label: 'Ethereum Mainnet',
+			label: 'Ethereum',
 			rpcUrl: getInfuraRpcURL(1),
 		},
 		{
-			id: formatChain(SUPPORTED_NETWORKS[1] as NetworkId),
+			id: '0xa',
 			token: 'ETH',
 			label: 'Optimism',
 			rpcUrl: getInfuraRpcURL(10),
 		},
 		{
-			id: formatChain(SUPPORTED_NETWORKS[2] as NetworkId),
+			id: '0x2a',
 			token: 'KOV',
-			label: 'Kovan',
+			label: 'Ethereum Kovan',
 			rpcUrl: getInfuraRpcURL(42),
 		},
 		{
-			id: formatChain(SUPPORTED_NETWORKS[3] as NetworkId),
+			id: '0x45',
 			token: 'KOR',
 			label: 'Optimism Kovan',
 			rpcUrl: getInfuraRpcURL(69),

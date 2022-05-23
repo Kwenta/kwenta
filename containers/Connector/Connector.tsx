@@ -8,23 +8,22 @@ import { loadProvider } from '@synthetixio/providers';
 
 import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, SynthetixJS, synthetix, NetworkName } from '@synthetixio/contracts-interface';
+import { NetworkId, SynthetixJS, synthetix } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
 
 import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
 import { appReadyState } from 'store/app';
-import { walletAddressState, networkState, isWalletConnectedState, Network } from 'store/wallet';
+import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
 
 import { OnboardAPI, WalletState } from '@web3-onboard/core';
 import { useConnectWallet } from '@web3-onboard/react';
-import { initOnboard, WEB3ONBOARD_SUPPORTED_NETWORKS, formatChain } from './config';
+import { initOnboard, WEB3_ONBOARD_TO_NETWORK } from './config';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
 import { invert, keyBy } from 'lodash';
 import { useMemo } from 'react';
-import { INFURA_SUPPORTED_NETWORKS } from 'utils/infura';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -97,29 +96,6 @@ const useConnector = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const web3OnboardChainIdToNetwork = (id: string): Network | null => {
-		// Remove the 0x prefix from the chain id
-		const web3OnboardChainId = id.split('0x')[1];
-
-		// Find the infura chain id equivalent to the web3-onboard chain id
-		const infuraChaindIdStr = (Object.keys(WEB3ONBOARD_SUPPORTED_NETWORKS) as Array<string>).find(
-			(k) => WEB3ONBOARD_SUPPORTED_NETWORKS[k] === web3OnboardChainId
-		);
-		if (infuraChaindIdStr) {
-			// Return a Network object corresponding to the web3-onboard chain id
-			const chainId = +infuraChaindIdStr as NetworkId;
-			const chainName = INFURA_SUPPORTED_NETWORKS[chainId] as NetworkName;
-			return {
-				id: chainId,
-				name: chainName,
-			};
-		}
-
-		// If the web3-onboard is not equivalent to any infura chain id, return null
-		console.log("Can't find an equivalent for this web3-onboard chain id:", id);
-		return null;
-	};
-
 	const initWalletState = async () => {
 		// TODO: need to verify we support the network
 		const networkId = await getDefaultNetworkId(isWalletConnected);
@@ -143,34 +119,33 @@ const useConnector = () => {
 
 		// Update network, provider, signer and synthetixjs states
 		const chainId = primaryWallet.chains[0].id;
-		const newNetwork = web3OnboardChainIdToNetwork(chainId);
-		if (newNetwork) {
-			if (isSupportedNetworkId(newNetwork.id as NetworkId)) {
-				const provider = loadProvider({
-					newNetwork,
-					infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-					provider: primaryWallet.provider,
-				});
-				const signer = provider.getSigner();
-				const useOvm = getIsOVM(newNetwork.id);
-				const snxjs = synthetix({
-					provider,
-					networkId: newNetwork.id,
-					signer,
-					useOvm,
-				});
+		const newNetwork = WEB3_ONBOARD_TO_NETWORK[chainId];
+		const networkId = newNetwork.id;
+		if (isSupportedNetworkId(networkId as NetworkId)) {
+			const provider = loadProvider({
+				networkId,
+				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+				provider: primaryWallet.provider,
+			});
+			const signer = provider.getSigner();
+			const useOvm = getIsOVM(networkId);
+			const snxjs = synthetix({
+				provider,
+				networkId,
+				signer,
+				useOvm,
+			});
 
-				// @ts-ignore
-				setNetwork(newNetwork, useOvm);
-				setProvider(provider);
-				setSigner(signer);
-				setSynthetixjs(snxjs);
+			// @ts-ignore
+			setNetwork(newNetwork);
+			setProvider(provider);
+			setSigner(signer);
+			setSynthetixjs(snxjs);
 
-				if (transactionNotifier) {
-					transactionNotifier.setProvider(provider);
-				} else {
-					setTransactionNotifier(new TransactionNotifier(provider));
-				}
+			if (transactionNotifier) {
+				transactionNotifier.setProvider(provider);
+			} else {
+				setTransactionNotifier(new TransactionNotifier(provider));
 			}
 		}
 	};
@@ -208,31 +183,31 @@ const useConnector = () => {
 		await connectWallet();
 	};
 
-	const switchToChain = async (newNetwork: Network) => {
+	const switchToChain = async (chainId: string) => {
 		if (onboard) {
-			const success = await onboard.setChain({ chainId: formatChain(newNetwork.id) });
+			const success = await onboard.setChain({ chainId });
 
 			if (success) {
 				// Update the app state
-				if (isSupportedNetworkId(newNetwork.id as NetworkId)) {
+				const newNetwork = WEB3_ONBOARD_TO_NETWORK[chainId];
+				const networkId = newNetwork.id;
+				if (isSupportedNetworkId(networkId as NetworkId)) {
 					const provider = loadProvider({
-						newNetwork,
+						chainId,
 						infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
 						provider: wallet?.provider,
 					});
 					const signer = provider.getSigner();
-					const useOvm = getIsOVM(newNetwork.id);
+					const useOvm = getIsOVM(networkId);
 					const snxjs = synthetix({
 						provider,
-						networkId: newNetwork.id,
+						networkId,
 						signer,
 						useOvm,
 					});
 
-					console.log('SWITCHING to', newNetwork, useOvm, provider, signer, useOvm); // TODO: remove
-
 					// @ts-ignore
-					setNetwork(newNetwork, useOvm);
+					setNetwork(newNetwork);
 					setProvider(provider);
 					setSigner(signer);
 					setSynthetixjs(snxjs);
