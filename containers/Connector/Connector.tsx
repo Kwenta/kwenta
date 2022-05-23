@@ -64,6 +64,17 @@ const useConnector = () => {
 	useEffect(() => {
 		if (isAppReady && network) {
 			setOnboard(initOnboard);
+
+			// Subscribe to chain events to update network and ui states
+			if (onboard) {
+				const state = onboard.state.select('wallets');
+				state.subscribe((update) => {
+					const updatedNetworkId = update[0].chains[0].id;
+					const updatedWallet = update[0].accounts[0].address;
+					updateNetworkState(updatedNetworkId, updatedWallet);
+					resetCachedUI();
+				});
+			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isAppReady, network]);
