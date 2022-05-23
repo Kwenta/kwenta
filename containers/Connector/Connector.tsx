@@ -18,7 +18,7 @@ import { walletAddressState, networkState, isWalletConnectedState } from 'store/
 
 import { OnboardAPI } from '@web3-onboard/core';
 import { useConnectWallet } from '@web3-onboard/react';
-import { initOnboard, NETWORK_TO_WEB3_ONBOARD, WEB3_ONBOARD_TO_NETWORK } from './config';
+import { initOnboard, WEB3_ONBOARD_TO_NETWORK } from './config';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
 import { synthToContractName } from 'utils/currencies';
