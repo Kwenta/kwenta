@@ -16,6 +16,8 @@ import media from 'styles/media';
 
 import Logo from '../Logo';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
+import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
@@ -31,23 +33,26 @@ const Header: FC = () => {
 	const links = useMemo(
 		() => [
 			{
-				id: 'why',
+				id: 'market',
 				label: t('homepage.nav.market'),
 				ref: whyKwentaRef,
 			},
 			{
-				id: 'how',
+				id: 'governance',
 				label: t('homepage.nav.governance'),
 				ref: howItWorksRef,
+				icon: <CaretDownGrayIcon />,
 			},
 			{
-				id: 'faq',
+				id: 'socials',
 				label: t('homepage.nav.socials'),
 				ref: faqRef,
+				icon: <CaretDownGrayIcon />,
 			},
 			{
-				id: 'kips',
+				id: 'blogs',
 				label: t('homepage.nav.blog'),
+				icon: <ArrowUpRightIcon />,
 				onClick: () => window.open(KIPS_LINK, '_blank'),
 			},
 		],
@@ -61,9 +66,10 @@ const Header: FC = () => {
 				<Container>
 					<Logo isL2={isL2} isHomePage={true} />
 					<Links>
-						{links.map(({ id, label, onClick }) => (
+						{links.map(({ id, label, icon, onClick }) => (
 							<StyledTextButton key={id} onClick={() => {}}>
 								{label}
+								{icon}
 							</StyledTextButton>
 						))}
 					</Links>
@@ -98,6 +104,8 @@ const Container = styled.header`
 `;
 
 const Links = styled.div`
+	display: flex;
+	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
 	${media.lessThan('md')`
@@ -106,6 +114,9 @@ const Links = styled.div`
 `;
 
 const StyledTextButton = styled(TextButton)`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 	font-size: 15px;
 	line-height: 15px;
 	font-family: ${(props) => props.theme.fonts.bold};
@@ -113,6 +124,9 @@ const StyledTextButton = styled(TextButton)`
 	margin: 0px 20px;
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
+	}
+	svg {
+		margin-left: 5px;
 	}
 `;
 
