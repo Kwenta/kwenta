@@ -24,6 +24,7 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -32,6 +33,7 @@ type MarketDetailsProps = {
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
+	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
 	const futuresMarketsQuery = useGetFuturesMarkets({ refetchInterval: 6000 });
@@ -121,24 +123,44 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			},
 			'External Price': {
 				value:
-					externalPrice === 0
-						? '-'
-						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-								sign: '$',
-								minDecimals,
-						  }),
+					externalPrice === 0 ? (
+						'-'
+					) : (
+						<StyledTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('exchange.market-details-card.tooltips.external-price')}
+						>
+							<HoverTransform>
+								{formatCurrency(selectedPriceCurrency.name, externalPrice, {
+									sign: '$',
+									minDecimals,
+								})}
+							</HoverTransform>
+						</StyledTooltip>
+					),
 			},
 			'24H Change': {
 				value:
-					marketSummary?.price && pastPrice?.price
-						? `${formatCurrency(
-								selectedPriceCurrency.name,
-								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-								{ sign: '$', minDecimals }
-						  )} (${formatPercent(
-								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
-						  )})`
-						: NO_VALUE,
+					marketSummary?.price && pastPrice?.price ? (
+						<StyledTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('exchange.market-details-card.tooltips.24h-change')}
+						>
+							<HoverTransform>
+								{`${formatCurrency(
+									selectedPriceCurrency.name,
+									marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+									{ sign: '$', minDecimals }
+								)} (${formatPercent(
+									marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+								)})`}
+							</HoverTransform>
+						</StyledTooltip>
+					) : (
+						NO_VALUE
+					),
 				color:
 					marketSummary?.price && pastPrice?.price
 						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
@@ -149,20 +171,39 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						: undefined,
 			},
 			'24H Volume': {
-				value: !!futuresTradingVolume
-					? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-							sign: '$',
-					  })
-					: NO_VALUE,
+				value: !!futuresTradingVolume ? (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.24h-vol')}
+					>
+						<HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+								sign: '$',
+							})}
+						</HoverTransform>
+					</StyledTooltip>
+				) : (
+					NO_VALUE
+				),
 			},
 			'24H Trades': {
-				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
+				value: !!futuresDailyTradeStats ? (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.24h-trades')}
+					>
+						<HoverTransform>{`${futuresDailyTradeStats ?? 0}`}</HoverTransform>
+					</StyledTooltip>
+				) : (
+					NO_VALUE
+				),
 			},
 			'Open Interest': {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate)) ? (
 					<StyledTooltip
 						preset="bottom"
-						width={'189px'}
 						content={`Long: ${formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary.marketSize
@@ -197,10 +238,22 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				),
 			},
 			[fundingTitle]: {
-				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
+				value: fundingValue ? (
+					<OneHrFundingRateTooltip
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
+					>
+						<HoverTransform>
+							{formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })}
+						</HoverTransform>
+					</OneHrFundingRateTooltip>
+				) : (
+					NO_VALUE
+				),
 				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 			},
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		baseCurrencyKey,
 		marketSummary,
@@ -233,6 +286,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		</MarketDetailsContainer>
 	);
 };
+
+const OneHrFundingRateTooltip = styled(StyledTooltip)`
+	bottom: -145px;
+	z-index: 2;
+	left: -200px;
+`;
 
 const MarketDetailsContainer = styled.div`
 	width: 100%;
@@ -279,7 +338,7 @@ const MarketDetailsContainer = styled.div`
 	}
 `;
 
-const HoverTransform = styled.div`
+export const HoverTransform = styled.div`
 	:hover {
 		transform: scale(1.03);
 	}
