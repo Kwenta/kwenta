@@ -53,10 +53,10 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 		side,
 	});
 
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
-	);
+	// const gasPrices = useMemo(
+	// 	() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
+	// 	[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	// );
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -119,8 +119,15 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 				label: 'protocol fee',
 				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
 			},
+			{
+				label: 'network gas fee',
+				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee ?? zeroBN, {
+					sign: '$',
+					minDecimals: 2,
+				}),
+			},
 		],
-		[positionDetails, market, synthsMap]
+		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
 	);
 
 	const handleConfirmOrder = async () => {
@@ -140,9 +147,9 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 					<Value>{value}</Value>
 				</Row>
 			))}
-			<NetworkFees>
+			{/* <NetworkFees>
 				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-			</NetworkFees>
+			</NetworkFees> */}
 			<ConfirmTradeButton
 				variant="primary"
 				isRounded
@@ -182,22 +189,21 @@ const Value = styled.div`
 	margin-top: 6px;
 `;
 
-const NetworkFees = styled(FlexDivCol)`
-	margin-top: 12px;
-`;
+// const NetworkFees = styled(FlexDivCol)`
+// 	margin-top: 12px;
+// `;
 
-const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
-	margin-bottom: 8px;
-`;
+// const StyledGasPriceSelect = styled(GasPriceSelect)`
+// 	display: flex;
+// 	justify-content: space-between;
+// 	width: auto;
+// 	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
+// 	color: ${(props) => props.theme.colors.common.secondaryGray};
+// 	font-size: 12px;
+// 	font-family: ${(props) => props.theme.fonts.regular};
+// 	text-transform: capitalize;
+// 	margin-bottom: 8px;
+// `;
 
 const ConfirmTradeButton = styled(Button)`
 	margin-top: 24px;
