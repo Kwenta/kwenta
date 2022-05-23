@@ -116,7 +116,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 				value: formatCurrency(Synths.sUSD, positionDetails?.margin ?? zeroBN, { sign: '$' }),
 			},
 			{
-				label: 'fee',
+				label: 'protocol fee',
 				value: formatCurrency(Synths.sUSD, positionDetails?.fee ?? zeroBN, { sign: '$' }),
 			},
 		],
