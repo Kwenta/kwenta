@@ -11,7 +11,7 @@ import {
 	WhiteHeader,
 } from 'styles/common';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-import { Copy, GridContainer, Title } from '../common';
+import { Copy, Title } from '../common';
 
 import SlippageIcon from 'assets/svg/marketing/icon-slippage.svg';
 import InfiniteLiquidityIcon from 'assets/svg/marketing/icon-infinite-liquidity.svg';
@@ -59,7 +59,7 @@ const Earning = () => {
 	return (
 		<Container ref={whyKwentaRef}>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
-			<StyledGridContainer>
+			<StyledFlexContainer>
 				{EARNINGS.map(({ id, title, copy, image }) => (
 					<FeatureCard key={id}>
 						<FeatureIconContainer>{image}</FeatureIconContainer>
@@ -69,7 +69,7 @@ const Earning = () => {
 						<CenteredCopy>{t(copy)}</CenteredCopy>
 					</FeatureCard>
 				))}
-			</StyledGridContainer>
+			</StyledFlexContainer>
 			<StatsCardContainer>
 				<StatsCard>
 					<StatsValue>120%</StatsValue>
@@ -109,6 +109,7 @@ const StyledButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-transform: none;
 `;
 
 const StatsName = styled.div`
@@ -125,16 +126,21 @@ const StatsValue = styled.div`
 	margin-bottom: 10px;
 `;
 const StatsCardContainer = styled(FlexDivRow)`
-	margin-top: 80px;
+	margin: 80px 0px;
 	justify-content: center;
-	column-gap: 150px;
+	width: 1160px;
 	border-top: 1px solid #3d3c3c;
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
-	width: 308px;
-	height: 191px;
-	padding: 45px;
+	width: 386.67px;
+	padding: 10px 45px;
+	margin-top: 40px;
+
+	&.mid {
+		border-left: 1px solid #3d3c3c;
+		border-right: 1px solid #3d3c3c;
+	}
 `;
 const CenteredCopy = styled(Copy)`
 	font-size: 15px;
@@ -153,15 +159,16 @@ const CenteredTitle = styled(Title)`
 const Container = styled.div`
 	padding-top: 80px;
 	padding-bottom: 150px;
+	margin-bottom: 100px;
 `;
 
-const StyledGridContainer = styled(GridContainer)`
-	grid-template-columns: repeat(3, auto);
-	grid-column-gap: 125px;
+const StyledFlexContainer = styled(FlexDivRow)`
+	width: 1160px;
 `;
 
 const FeatureCard = styled(FlexDivCol)`
 	margin-top: 90px;
+	padding: 0px 40px;
 `;
 
 const FeatureIconContainer = styled.div`
@@ -180,11 +187,11 @@ const FeatureContentTitle = styled(FlexDivCentered)`
 `;
 
 const CTAContainer = styled.div`
-	margin: 50px 0px 0px 0;
-	z-index: 1;
+	margin-top: 120px;
 	display: flex;
 	justify-content: center;
 	gap: 20px;
+	width: 1160px;
 `;
 
 export default Earning;
