@@ -21,6 +21,10 @@ import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
 import Button from 'components/Button';
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
+import Loader from 'components/Loader';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { Synths } from 'constants/currency';
 
 const EARNINGS = [
 	{
@@ -56,6 +60,7 @@ const Earning = () => {
 		</>
 	);
 
+	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
 		<Container ref={whyKwentaRef}>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
@@ -72,7 +77,16 @@ const Earning = () => {
 			</StyledFlexContainer>
 			<StatsCardContainer>
 				<StatsCard>
-					<StatsValue>120%</StatsValue>
+					<StatsValue>
+						{totalTradeStats.isLoading ? (
+							<Loader />
+						) : (
+							formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
+								sign: '$',
+								minDecimals: 0,
+							})
+						)}
+					</StatsValue>
 					<StatsName>Trading Volume</StatsName>
 				</StatsCard>
 				<StatsCard className="mid">
@@ -80,7 +94,13 @@ const Earning = () => {
 					<StatsName>Liquidity</StatsName>
 				</StatsCard>
 				<StatsCard>
-					<StatsValue>$1,322,220.92</StatsValue>
+					<StatsValue>
+						{totalTradeStats.isLoading ? (
+							<Loader />
+						) : (
+							formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
+						)}
+					</StatsValue>
 					<StatsName>Total Daily Trades</StatsName>
 				</StatsCard>
 			</StatsCardContainer>

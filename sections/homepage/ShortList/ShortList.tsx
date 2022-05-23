@@ -15,6 +15,9 @@ import { Synths } from '@synthetixio/contracts-interface';
 import Currency from 'components/Currency';
 import { Copy, Title } from '../common';
 import StatsSvg from 'assets/svg/futures/stats.svg';
+import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import Loader from 'components/Loader';
 
 type Stat = {
 	pnl: Wei;
@@ -84,6 +87,8 @@ const ShortList = () => {
 			<SectionFeatureCopy>{t('homepage.shortlist.stats.copy')}</SectionFeatureCopy>
 		</>
 	);
+
+	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
 	return (
 		<Container ref={whyKwentaRef}>
@@ -169,7 +174,16 @@ const ShortList = () => {
 			<StatsCardContainer>
 				<StatsCard>
 					<StatsName>Trading Volume</StatsName>
-					<StatsValue>$1,463,401.91</StatsValue>
+					<StatsValue>
+						{dailyTradeStats.isLoading ? (
+							<Loader />
+						) : (
+							formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
+								sign: '$',
+								minDecimals: 0,
+							})
+						)}
+					</StatsValue>
 					<StatsSvg />
 				</StatsCard>
 				<StatsCard>
@@ -179,7 +193,13 @@ const ShortList = () => {
 				</StatsCard>
 				<StatsCard>
 					<StatsName>Total Daily Trades</StatsName>
-					<StatsValue>$12,463,401.91</StatsValue>
+					<StatsValue>
+						{dailyTradeStats.isLoading ? (
+							<Loader />
+						) : (
+							formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
+						)}
+					</StatsValue>
 					<StatsSvg />
 				</StatsCard>
 			</StatsCardContainer>
