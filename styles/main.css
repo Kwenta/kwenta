@@ -43,6 +43,10 @@
 	position: relative;
 }
 
+html {
+	scrollbar-width: none;
+}
+
 body {
 	font-family: 'AkkuratLLWeb-Regular', -apple-system, BlinkMacSystemFont, sans-serif;
 	-webkit-font-smoothing: antialiased;
@@ -53,14 +57,15 @@ body {
 	min-height: 100vh;
 	scroll-behavior: smooth;
 	font-size: 12px;
-	scrollbar-width: none;
+
 	-ms-overflow-style: none;
-	overflow: auto;
+	overflow-y: scroll;
 }
 
 ::-webkit-scrollbar {
 	display: none;
-    width: 0;
+	width: 0;
+	height: 0;
 }
 
 ul {
