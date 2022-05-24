@@ -5,13 +5,13 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import WithHomepageContainers from 'sections/homepage/containers';
 import Hero from 'sections/homepage/Hero';
-import Assets from 'sections/homepage/Assets';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import Features from 'sections/homepage/Features';
 import ShortList from 'sections/homepage/ShortList';
 import Earning from 'sections/homepage/Earning';
 import Learn from 'sections/homepage/Learn';
 import TradeNow from 'sections/homepage/TradeNow';
+import dynamic from 'next/dynamic';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -21,6 +21,9 @@ type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
 
 const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
+	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
+		ssr: false,
+	});
 
 	return (
 		<>

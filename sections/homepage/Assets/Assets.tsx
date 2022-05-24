@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-
-import StatsSvg from 'assets/svg/futures/stats.svg';
 import GridSvg from 'assets/svg/app/grid.svg';
+import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 
 import {
 	FlexDiv,
@@ -35,8 +34,6 @@ import _ from 'lodash';
 import { SynthsVolumes } from 'queries/synths/type';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { DAY_PERIOD } from 'queries/rates/constants';
 import { ResolutionString } from 'public/static/charting_library/charting_library';
 
 enum MarketsTab {
@@ -44,6 +41,87 @@ enum MarketsTab {
 	SPOT = 'spot',
 	SHORT = 'short',
 }
+
+type PriceChartProps = {
+	asset: string;
+	postive: boolean;
+};
+
+export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
+	const chartRef = useRef('0');
+
+	useEffect(() => {
+		const chart = createChart(chartRef.current, {
+			width: 160,
+			height: 64,
+			rightPriceScale: {
+				visible: false,
+			},
+			leftPriceScale: {
+				visible: false,
+			},
+			layout: {
+				background: { type: ColorType.Solid, color: '#00000000' },
+			},
+			timeScale: {
+				visible: false,
+				barSpacing: 4,
+			},
+			grid: {
+				vertLines: {
+					visible: false,
+				},
+				horzLines: {
+					visible: false,
+				},
+			},
+			handleScale: {
+				mouseWheel: false,
+			},
+			crosshair: {
+				vertLine: {
+					visible: false,
+				},
+				horzLine: {
+					visible: false,
+				},
+			},
+		});
+
+		const areaSeries = chart.addAreaSeries({
+			topColor: postive ? 'rgba(127, 212, 130, 0.1)' : 'rgba(255, 71, 71, 0.1)',
+			bottomColor: postive ? 'rgba(127, 212, 130, 0.4)' : 'rgba(255, 71, 71, 0.4)',
+			lineColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(239, 104, 104, 1)',
+			priceLineVisible: false,
+			crosshairMarkerVisible: false,
+			lineStyle: 0,
+			lineWidth: 2,
+		});
+
+		requestCandlesticks(
+			asset,
+			Math.floor((new Date().getTime() - 25 * 3600 * 1000) / 1000),
+			undefined,
+			'60' as ResolutionString,
+			10,
+			true
+		)
+			.then((bars) => {
+				return bars.map((b) => {
+					return {
+						value: b.average,
+						time: b.timestamp as UTCTimestamp,
+					};
+				});
+			})
+			.then((results) => {
+				return areaSeries.setData(results);
+			});
+			// eslint-disable-next-line
+	}, []);
+
+	return <div ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></div>;
+};
 
 const Assets = () => {
 	const { t } = useTranslation();
@@ -60,23 +138,6 @@ const Assets = () => {
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
-
-	const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
-	const priceFeed = requestCandlesticks(
-		'sETH',
-		minTimestamp,
-		undefined,
-		'60' as ResolutionString,
-		10,
-		true
-	).then((bars) => {
-		return bars.map((b) => {
-			return {
-				average: b.average,
-				time: b.timestamp * 1000,
-			};
-		});
-	});
 
 	const MARKETS_TABS = useMemo(
 		() => [
@@ -116,14 +177,18 @@ const Assets = () => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
-
 			return {
 				key: market.asset,
 				description: description.split(' ')[0],
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
 				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || 0,
-				image: <StatsSvg />,
+				image: (
+					<PriceChart
+						asset={market.asset}
+						postive={market.price.toNumber() - pastPrice?.price >= 0}
+					/>
+				),
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
 				),
@@ -171,7 +236,7 @@ const Assets = () => {
 				price,
 				change: price !== 0 ? (price - pastPrice?.price) / price || 0 : 0,
 				volume: !_.isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) : 0,
-				image: <StatsSvg />,
+				image: <PriceChart asset={synth.asset} postive={price - pastPrice?.price >= 0} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
 				),
@@ -302,11 +367,9 @@ const Assets = () => {
 	);
 };
 
-const ChartContainer = styled.span`
-	display: flex;
-	align-items: center;
-	height: 32px;
-	width: 80px;
+const ChartContainer = styled.div`
+	margin-left: -65px;
+	margin-top: -10px;
 `;
 
 const StatsValueContainer = styled.div`
@@ -364,6 +427,7 @@ const StatsCard = styled(GridContainer)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
 	padding: 20px;
+	grid-row-gap: 5px;
 
 	svg.bg {
 		position: absolute;
