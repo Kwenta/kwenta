@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
 import { zeroBN } from './formatters/number';
 
@@ -45,20 +45,16 @@ export const computeMarketFee = (details: NextPriceDetails | null | undefined, s
 		!details?.makerFee ||
 		!sizeDelta
 	) {
-		return { staticRate: zeroBN };
+		return zeroBN as WeiSource;
 	}
 
 	const notionalDiff = sizeDelta.mul(details.assetPrice);
 
-	let staticRate: Wei;
-
 	if (sameSide(notionalDiff, details.marketSkew)) {
-		staticRate = details.takerFee;
+		return details.takerFee as WeiSource;
 	} else {
-		staticRate = details.makerFee;
+		return details.makerFee as WeiSource;
 	}
-
-	return { staticRate };
 };
 
 export const sameSide = (a: Wei, b: Wei) => {

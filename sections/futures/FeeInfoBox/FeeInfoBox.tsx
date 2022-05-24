@@ -50,7 +50,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceFee]);
 
-	const { staticRate } = React.useMemo(() => computeMarketFee(costDetails, sizeDelta), [
+	const staticRate = React.useMemo(() => computeMarketFee(costDetails, sizeDelta), [
 		costDetails,
 		sizeDelta,
 	]);
