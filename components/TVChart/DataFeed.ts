@@ -92,7 +92,10 @@ function subscribeLastCandle(
 	}
 }
 
-const DataFeedFactory = (networkId: number): IBasicDataFeed => {
+const DataFeedFactory = (
+	networkId: number,
+	onSubscribe: (intervalId: number) => void
+): IBasicDataFeed => {
 	return {
 		onReady: (cb: OnReadyCallback) => {
 			setTimeout(() => cb(config), 0);
@@ -154,14 +157,11 @@ const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 			listenerGuid: string
 		) => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
-
-			// create a polling interval
-			const timerId = setInterval(() => {
+			const intervalId = setInterval(() => {
 				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
-			}, 10000);
+			}, 5000);
 
-			// clear all other polling
-			for (var i = 0; i < timerId; i++) clearInterval(i);
+			onSubscribe(intervalId);
 		},
 		unsubscribeBars: (subscriberUID) => {},
 		searchSymbols: (

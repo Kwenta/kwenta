@@ -1,4 +1,4 @@
-import { useRef, useContext, useEffect } from 'react';
+import { useRef, useContext, useEffect, useCallback, useState } from 'react';
 import styled, { ThemeContext } from 'styled-components';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 
@@ -43,6 +43,8 @@ export function TVChart({
 	activePosition,
 	potentialTrade,
 }: Props) {
+	const [lastSubscription, setLastSubscription] = useState(0);
+	const [intervalId, setIntervalId] = useState(0);
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
@@ -53,7 +55,7 @@ export function TVChart({
 	useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
-			datafeed: DataFeedFactory(network.id),
+			datafeed: DataFeedFactory(network.id, onSubscribe),
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
@@ -158,13 +160,22 @@ export function TVChart({
 		});
 	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
+	const onSubscribe = useCallback(
+		(newIntervalId: number) => {
+			setLastSubscription(newIntervalId);
+		},
+		[setLastSubscription]
+	);
+
 	useEffect(() => {
-		const newDataFeed = DataFeedFactory(network.id);
+		clearInterval(intervalId);
+		setIntervalId(lastSubscription);
+		const newDataFeed = DataFeedFactory(network.id, onSubscribe);
 		if (_widget.current) {
 			// @ts-ignore
 			_widget.current._options.datafeed = newDataFeed;
 		}
-	}, [network]);
+	}, [intervalId, lastSubscription, onSubscribe, network.id]);
 
 	return (
 		<Container>
