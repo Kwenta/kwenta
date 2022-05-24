@@ -1,17 +1,17 @@
 // import fs from 'fs';
 // import path from 'path';
-// import ba64 from 'ba64';
 
 export default function (req: any, res: any) {
 	const dataUrl = req.body.dataUrl;
 
-	// ba64.writeImage('myimage', dataUrl, (err: any) => {
-	// 	if (err) {
-	// 		console.log('Write image error', err);
-	// 	}
-	// 	console.log('Image saved successfully');
-	// });
+	// writeImage(dataUrl);
+	// console.log('Image saved successfully');
+	// const imagePath = getImagePath();
+	// const imageUrl = getImageUrl(imagePath);
 
-	res.setHeader('Content-Type', 'image/png');
+	// res.setHeader('Content-Type', 'image/png');
+	// res.send(imageUrl);
+
+	res.setHeader('Content-Type', 'text');
 	res.send(dataUrl);
 }
