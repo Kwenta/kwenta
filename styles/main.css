@@ -51,10 +51,16 @@ body {
 	margin: 0;
 	position: relative;
 	min-height: 100vh;
+	scroll-behavior: smooth;
 	font-size: 12px;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	overflow: auto;
+}
+
+::-webkit-scrollbar {
+	display: none;
+    width: 0;
 }
 
 ul {
