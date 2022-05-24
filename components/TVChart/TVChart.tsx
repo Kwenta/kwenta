@@ -158,6 +158,14 @@ export function TVChart({
 		});
 	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
+	useEffect(() => {
+		const newDataFeed = DataFeedFactory(network.id);
+		if (_widget.current) {
+			// @ts-ignore
+			_widget.current._options.datafeed = newDataFeed;
+		}
+	}, [network]);
+
 	return (
 		<Container>
 			<ChartBody id={containerId} />

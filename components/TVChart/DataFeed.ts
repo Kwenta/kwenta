@@ -7,6 +7,7 @@ import {
 	PeriodParams,
 	ResolutionString,
 	SearchSymbolsCallback,
+	SubscribeBarsCallback,
 } from 'public/static/charting_library/charting_library';
 
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
@@ -29,7 +30,7 @@ const splitBaseQuote = (symbolName: string) => {
 	return { base, quote };
 };
 
-const fetchCombinedCandleSticks = async (
+const fetchCombinedCandles = async (
 	base: string,
 	quote: string,
 	from: number,
@@ -46,6 +47,58 @@ const fetchCombinedCandleSticks = async (
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
 	});
 };
+
+const fetchLastCandle = async (
+	base: string,
+	quote: string,
+	resolution: ResolutionString,
+	networkId: number
+) => {
+	const baseCurrencyIsSUSD = base === Synths.sUSD;
+	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
+	const to = Math.floor(Date.now() / 1000);
+	const from = 0;
+
+	const baseDataPromise = requestCandlesticks(base, from, to, resolution, networkId, 1, 'desc');
+	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, networkId, 1, 'desc');
+
+	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
+		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
+	});
+};
+
+function subscribeLastCandle(
+	base: string,
+	quote: string,
+	resolution: ResolutionString,
+	networkId: number,
+	onTick: SubscribeBarsCallback,
+	listenerGuid: string
+): void {
+	const timerId = setTimeout(() => {
+		subscribeLastCandle(base, quote, resolution, networkId, onTick, listenerGuid);
+	}, 20000);
+
+	// clear all other polling
+	for (var i = 0; i < timerId; i++) clearTimeout(i);
+
+	try {
+		fetchLastCandle(base, quote, resolution, networkId).then((bars) => {
+			const chartBar = bars.map((b) => {
+				return {
+					high: b.high,
+					low: b.low,
+					open: b.open,
+					close: b.close,
+					time: b.timestamp * 1000,
+				};
+			})[0];
+			if (chartBar) onTick(chartBar);
+		});
+	} catch (err) {
+		console.log(err);
+	}
+}
 
 const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 	return {
@@ -86,7 +139,7 @@ const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 
 			try {
-				fetchCombinedCandleSticks(base, quote, from, to, _resolution, networkId).then((bars) => {
+				fetchCombinedCandles(base, quote, from, to, _resolution, networkId).then((bars) => {
 					const chartBars = bars.map((b) => {
 						return {
 							high: b.high,
@@ -102,12 +155,16 @@ const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 				onErrorCallback(err);
 			}
 		},
-		subscribeBars: () => {
-			// do nothing
+		subscribeBars: (
+			symbolInfo: LibrarySymbolInfo,
+			_resolution: ResolutionString,
+			onTick: SubscribeBarsCallback,
+			listenerGuid: string
+		) => {
+			const { base, quote } = splitBaseQuote(symbolInfo.name);
+			subscribeLastCandle(base, quote, _resolution, networkId, onTick, listenerGuid);
 		},
-		unsubscribeBars: (subscriberUID) => {
-			// do nothing
-		},
+		unsubscribeBars: (subscriberUID) => {},
 		searchSymbols: (
 			userInput: string,
 			exchange: string,

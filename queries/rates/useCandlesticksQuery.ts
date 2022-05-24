@@ -7,7 +7,9 @@ export const requestCandlesticks = async (
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
 	resolution: ResolutionString,
-	networkId: number
+	networkId: number,
+	limit?: number,
+	orderDirection: 'asc' | 'desc' | undefined = 'asc'
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
 
@@ -27,13 +29,15 @@ export const requestCandlesticks = async (
 	const response = await getCandles(
 		ratesEndpoint,
 		{
-			first: 999999,
+			first: limit ? limit : 999999,
 			where: {
 				synth: `${currencyKey}`,
 				timestamp_gt: `${minTimestamp}`,
 				timestamp_lt: `${maxTimestamp}`,
 				period: `${period}`,
 			},
+			orderBy: 'timestamp',
+			orderDirection: orderDirection,
 		},
 		{
 			id: true,
