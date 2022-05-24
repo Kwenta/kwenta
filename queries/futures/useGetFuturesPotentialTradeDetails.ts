@@ -41,6 +41,8 @@ const useGetFuturesPotentialTradeDetails = (
 				margin: wei(margin),
 				price: wei(price),
 				size: wei(size),
+				leverage: wei(trade.leverage),
+				notionalValue: wei(size).mul(wei(price)),
 			};
 		},
 		{

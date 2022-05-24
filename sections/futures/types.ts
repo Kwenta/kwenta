@@ -73,4 +73,5 @@ export type Trade = {
 export type PotentialTrade = {
 	size: string;
 	side: PositionSide;
+	leverage: string;
 };

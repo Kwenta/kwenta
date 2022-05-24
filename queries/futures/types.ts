@@ -222,4 +222,6 @@ export type FuturesPotentialTradeDetails = {
 	margin: Wei;
 	price: Wei;
 	fee: Wei;
+	leverage: Wei;
+	notionalValue: Wei;
 };

@@ -47,7 +47,7 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 type TradeProps = {
 	position: FuturesPosition | null;
 	refetch(): void;
-	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
+	onEditPositionInput: (position: { size: string; side: PositionSide; leverage: string }) => void;
 	currencyKey: string;
 };
 
@@ -301,8 +301,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	}, [orderTxn.hash]);
 
 	useEffect(() => {
-		onEditPositionInput({ size: tradeSize, side: leverageSide });
-	}, [leverageSide, tradeSize, onEditPositionInput]);
+		onEditPositionInput({ size: tradeSize, side: leverageSide, leverage: leverage });
+	}, [leverageSide, leverage, tradeSize, onEditPositionInput]);
 
 	return (
 		<Panel>
@@ -473,6 +473,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
 					side={leverageSide}
+					leverage={leverage}
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
 				/>
 			)}
