@@ -60,7 +60,7 @@ const useGetFuturesTrades = (
 		},
 		{
 			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
-			refetchInterval: 1500,
+			refetchInterval: 15000,
 			...options,
 		}
 	);

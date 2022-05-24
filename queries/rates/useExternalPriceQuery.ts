@@ -57,7 +57,7 @@ const useExternalPriceQuery = (
 		},
 		{
 			enabled: !!baseCurrencyKey,
-			refetchInterval: 6000,
+			refetchInterval: 60000,
 			...options,
 		}
 	);
