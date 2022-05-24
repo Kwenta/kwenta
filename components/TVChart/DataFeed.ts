@@ -72,16 +72,8 @@ function subscribeLastCandle(
 	quote: string,
 	resolution: ResolutionString,
 	networkId: number,
-	onTick: SubscribeBarsCallback,
-	listenerGuid: string
+	onTick: SubscribeBarsCallback
 ): void {
-	const timerId = setTimeout(() => {
-		subscribeLastCandle(base, quote, resolution, networkId, onTick, listenerGuid);
-	}, 20000);
-
-	// clear all other polling
-	for (var i = 0; i < timerId; i++) clearTimeout(i);
-
 	try {
 		fetchLastCandle(base, quote, resolution, networkId).then((bars) => {
 			const chartBar = bars.map((b) => {
@@ -162,7 +154,14 @@ const DataFeedFactory = (networkId: number): IBasicDataFeed => {
 			listenerGuid: string
 		) => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
-			subscribeLastCandle(base, quote, _resolution, networkId, onTick, listenerGuid);
+
+			// create a polling interval
+			const timerId = setInterval(() => {
+				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
+			}, 10000);
+
+			// clear all other polling
+			for (var i = 0; i < timerId; i++) clearInterval(i);
 		},
 		unsubscribeBars: (subscriberUID) => {},
 		searchSymbols: (
