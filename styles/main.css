@@ -59,13 +59,25 @@ body {
 	font-size: 12px;
 
 	-ms-overflow-style: none;
-	overflow-y: scroll;
+	scrollbar-width: none;
+	overflow: auto;
 }
 
 ::-webkit-scrollbar {
 	display: none;
 	width: 0;
 	height: 0;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: none;
+}
+::-webkit-scrollbar-thumb {
+	background: outline;
+	-webkit-box-shadow: none;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: none;
 }
 
 ul {
