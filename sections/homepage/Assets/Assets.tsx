@@ -117,7 +117,7 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 			.then((results) => {
 				return areaSeries.setData(results);
 			});
-			// eslint-disable-next-line
+		// eslint-disable-next-line
 	}, []);
 
 	return <div ref={(chartRef as unknown) as React.RefObject<HTMLDivElement>}></div>;
