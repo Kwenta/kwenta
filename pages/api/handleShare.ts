@@ -5,7 +5,6 @@ export default function (req: any, res: any) {
 	const dataUrl = req.body.dataUrl;
 
 	// writeImage(dataUrl);
-	// console.log('Image saved successfully');
 	// const imagePath = getImagePath();
 	// const imageUrl = getImageUrl(imagePath);
 
