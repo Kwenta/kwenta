@@ -773,6 +773,9 @@
 					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
 				},
+				"cost-basis": {
+					"tooltip": "Dynamic fees are currently in effect and may vary based on market conditions during the execution round"
+				},
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order",
