@@ -185,7 +185,7 @@ export const Table: FC<TableProps> = ({
 };
 
 const TableContainer = styled.div`
-	overflow-x: auto;
+	/* overflow-x: auto; */
 	//display: block;
 	//width: 100%;
 `;
@@ -200,9 +200,8 @@ export const TableRow = styled.div`
 `;
 
 const TableBody = styled.div`
-	//width: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
+	/* overflow-y: scroll;
+	overflow-x: hidden; */
 	min-width: fit-content;
 `;
 
