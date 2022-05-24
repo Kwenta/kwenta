@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled, { css } from 'styled-components';
-import { Svg } from 'react-optimized-image';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
@@ -29,7 +28,7 @@ const BasicSwap: FC = () => {
 					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
-							<Svg src={ArrowIcon} className="arrow" />
+							<ArrowIcon className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
 					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>

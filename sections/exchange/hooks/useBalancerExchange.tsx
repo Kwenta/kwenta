@@ -8,7 +8,6 @@ import { SOR } from '@balancer-labs/sor';
 import { BigNumber } from 'bignumber.js';
 import { NetworkId, NetworkIdByName } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
@@ -683,7 +682,7 @@ const useBalancerExchange = ({
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
 					feeCost={feeAmountInBaseCurrency}
-					icon={<Svg src={ArrowsIcon} />}
+					icon={<ArrowsIcon />}
 				/>
 			)}
 			{approveModalOpen && (

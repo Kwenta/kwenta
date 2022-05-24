@@ -10,7 +10,6 @@ import { useRecoilValue } from 'recoil';
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-import { Svg } from 'react-optimized-image';
 
 import { components } from 'react-select';
 import Select from 'components/Select';
@@ -94,9 +93,9 @@ export const WalletActions: FC = () => {
 				{t(label)}
 				{postfixIcon &&
 					(postfixIcon === 'Switch' ? (
-						<Svg src={SwitchWalletIcon} height={17} />
+						<SwitchWalletIcon height={17} />
 					) : (
-						<Svg src={DisconnectIcon} height={17} />
+						<DisconnectIcon height={17} />
 					))}
 			</LabelContainer>
 		);
@@ -104,10 +103,7 @@ export const WalletActions: FC = () => {
 	const DropdownIndicator = (props: any) => {
 		return (
 			<components.DropdownIndicator {...props}>
-				<StyledCaretDownIcon
-					src={CaretDownIcon}
-					viewBox={`0 0 ${CaretDownIcon.width} ${CaretDownIcon.height}`}
-				/>
+				<StyledCaretDownIcon />
 			</components.DropdownIndicator>
 		);
 	};
@@ -155,7 +151,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 const Container = styled.div`
 	width: 100%;
 	font-size: 12px;
-	font-family: AkkuratMonoLLWeb-Regular;
+	font-family: ${(props) => props.theme.fonts.mono};
 	margin-left: 15px;
 `;
 
@@ -168,7 +164,7 @@ const WalletOptionsSelect = styled(Select)`
 	}
 
 	.react-select__dropdown-indicator {
-		padding-right: 13px;
+		margin-right: 5px;
 	}
 
 	.react-select__value-container {
@@ -176,7 +172,7 @@ const WalletOptionsSelect = styled(Select)`
 	}
 `;
 
-const StyledCaretDownIcon = styled(Svg)`
+const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
@@ -186,6 +182,18 @@ const LabelContainer = styled(FlexDivRow)`
 	font-size: 13px;
 	width: 100%;
 	color: ${(props) => props.theme.colors.white};
+	:hover {
+		> svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
+	> svg {
+		path {
+			fill: ${(props) => props.theme.colors.common.secondaryGray};
+		}
+	}
 `;
 
 export default WalletActions;

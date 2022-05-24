@@ -2,7 +2,6 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { Svg } from 'react-optimized-image';
 
 import { NO_VALUE } from 'constants/placeholder';
 
@@ -34,7 +33,7 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 							: NO_VALUE}
 					</span>
 					{totalFeeRate != null && baseFeeRate != null ? (
-						totalFeeRate.sub(baseFeeRate).toNumber() > 0 ? (
+						totalFeeRate.sub(baseFeeRate).gt(0) ? (
 							<>
 								<DynamicFeeLabel>+</DynamicFeeLabel>
 								<DynamicFeeRateTooltip
@@ -44,10 +43,8 @@ const FeeRateSummaryItem: FC<FeeRateSummaryItemProps> = ({ totalFeeRate, baseFee
 									placement="bottom"
 								>
 									<DynamicFeeRateItem>
-										<span>
-											{formatPercent(totalFeeRate.sub(baseFeeRate).toNumber(), { minDecimals: 2 })}
-										</span>
-										<Svg src={TimerIcon} />
+										<span>{formatPercent(totalFeeRate.sub(baseFeeRate), { minDecimals: 2 })}</span>
+										<TimerIcon />
 									</DynamicFeeRateItem>
 								</DynamicFeeRateTooltip>
 							</>

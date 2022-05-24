@@ -5,6 +5,7 @@ import styled from 'styled-components';
 interface ToolTipStyleProps {
 	preset?: string;
 	width?: string;
+	height?: string;
 	top?: string;
 	bottom?: string;
 	left?: string;
@@ -12,8 +13,9 @@ interface ToolTipStyleProps {
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
-		height: 56px;
-		width: ${(props) => props.width || '189px'};
+		height: ${(props) => props.height || '56px'};
+		width: max-content;
+		max-width: ${(props) => props.width || '472.5px'};
 		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-sizing: border-box;
@@ -55,6 +57,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 				bottom: 0;
 				transform: translate(-25%, 125%);
 			`}
+
 
 		${(props) =>
 			props.preset === 'left' &&

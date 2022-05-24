@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { ExternalLink, Paragraph } from 'styles/common';
 import media from 'styles/media';
 import { useTranslation } from 'react-i18next';
-import { Img } from 'react-optimized-image';
 
 import Branding from 'assets/svg/providers/1inch.svg';
 
@@ -14,7 +13,7 @@ const PoweredBy1Inch = () => {
 		<Container>
 			<Text>{t('common.powered-by')}</Text>
 			<StyledExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
-				<Img src={Branding} height={20} />
+				<Branding height={20} />
 			</StyledExternalLink>
 		</Container>
 	);

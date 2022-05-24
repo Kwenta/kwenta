@@ -1,5 +1,4 @@
 import React, { FC, useState } from 'react';
-import Img, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
@@ -32,6 +31,9 @@ export const getSynthIcon = (currencyKey: CurrencyKey) => {
 		case 'sWTI':
 			parsedCurrencyKey = 'sOIL';
 			break;
+		case 'sAPE':
+			parsedCurrencyKey = 'sAPECOIN';
+			break;
 		default:
 			break;
 	}
@@ -44,7 +46,7 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 		<CurrencyIcon {...props} />
 		{!props.isDeprecated ? null : (
 			<DeprecatedXIconContainer>
-				<Svg src={DeprecatedXIcon} />
+				<DeprecatedXIcon />
 			</DeprecatedXIconContainer>
 		)}
 	</Container>
@@ -75,7 +77,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CRYPTO_CURRENCY_MAP.ETH: {
-				return <Img src={ETHIcon} {...props} />;
+				return <ETHIcon {...props} />;
 			}
 			case CRYPTO_CURRENCY_MAP.SNX: {
 				return <img src={SNXIcon} {...props} alt="snx-icon" />;

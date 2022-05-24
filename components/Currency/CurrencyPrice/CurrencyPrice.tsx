@@ -54,7 +54,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 const Container = styled.span`
 	${ContainerRowMixin};
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 
 const Price = styled.span``;

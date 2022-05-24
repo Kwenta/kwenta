@@ -2,7 +2,6 @@ import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import { Svg } from 'react-optimized-image';
 
 import { formatCurrency } from 'utils/formatters/number';
 
@@ -139,10 +138,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					Cell: (cellProps: CellProps<SynthTradesExchangeResult>) =>
 						blockExplorerInstance != null && cellProps.row.original.hash ? (
 							<StyledExternalLink href={blockExplorerInstance.txLink(cellProps.row.original.hash)}>
-								<StyledLinkIcon
-									src={LinkIcon}
-									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-								/>
+								<StyledLinkIcon />
 							</StyledExternalLink>
 						) : (
 							NO_VALUE
@@ -158,7 +154,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 			noResultsMessage={
 				isLoaded && trades.length === 0 ? (
 					<TableNoResults>
-						<Svg src={NoNotificationIcon} />
+						<NoNotificationIcon />
 						{t('dashboard.transactions.table.no-results')}
 					</TableNoResults>
 				) : undefined
@@ -172,7 +168,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled(LinkIcon)`
 	width: 14px;
 	height: 14px;
 	color: ${(props) => props.theme.colors.blueberry};

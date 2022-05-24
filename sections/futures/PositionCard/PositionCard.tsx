@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { FlexDiv, FlexDivCol } from 'styles/common';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { HoverTransform } from '../MarketDetails/MarketDetails';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isFiatCurrency } from 'utils/currencies';
 import { Synths } from 'constants/currency';
-import Button from 'components/Button';
 import { FuturesPosition, PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
-import ClosePositionModal from './ClosePositionModal';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
-import Wei from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
-import MarketBadge from 'components/Badge/MarketBadge';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 
 type PositionCardProps = {
@@ -34,32 +35,28 @@ type PositionData = {
 	currencyIconKey: string;
 	marketShortName: string;
 	marketLongName: string;
+	marketPrice: string;
+	price24h: Wei;
 	positionSide: JSX.Element;
-	positionSize: string;
-	leverage: string;
-	liquidationPrice: string;
-	pnl: Wei;
-	pnlText: string;
+	positionSize: string | React.ReactNode;
+	leverage: string | React.ReactNode;
+	liquidationPrice: string | JSX.Element;
+	pnl: string | Wei | JSX.Element;
+	realizedPnl: Wei;
+	pnlText: string | null | JSX.Element;
+	realizedPnlText: string | JSX.Element;
 	netFunding: Wei;
-	netFundingText: string;
-	fees: string;
-	avgEntryPrice: string;
+	netFundingText: string | null | JSX.Element;
+	fees: string | JSX.Element;
+	avgEntryPrice: string | JSX.Element;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({
-	currencyKey,
-	position,
-	currencyKeyRate,
-	onPositionClose,
-	dashboard,
-}) => {
+const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
-	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
-		currencyKey as CurrencyKey
-	);
+	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
+
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
 	const { synthsMap, network } = Connector.useContainer();
@@ -75,10 +72,21 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
 
+	const futuresMarketsQuery = useGetFuturesMarkets();
+
+	const dailyPriceChangesQuery = useLaggedDailyPrice(
+		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+	);
+
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const realizedPnl = positionHistory?.pnl.add(positionHistory?.netFunding) ?? zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
+		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
+		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
+		const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
+		const pastPriceWei = pastPrice?.price ?? zeroBN;
 
 		return {
 			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
@@ -86,112 +94,191 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
 				: 'Select a market',
 			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
+			marketPrice: formatCurrency(Synths.sUSD, currencyKeyRate, {
+				sign: '$',
+				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
+			}),
+			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
-				<PositionValue
-					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.position-side')}
 				>
-					{positionDetails.side === 'long' ? PositionSide.LONG + ' ↗' : PositionSide.SHORT + ' ↘'}
-				</PositionValue>
+					<HoverTransform>
+						<PositionValue
+							side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+						>
+							{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+						</PositionValue>
+					</HoverTransform>
+				</PositionCardTooltip>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			),
-			positionSize: positionDetails
-				? `${formatNumber(positionDetails.size ?? 0, {
-						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-				  })} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
-						sign: '$',
-						minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-				  })})`
-				: NO_VALUE,
-			leverage: positionDetails
-				? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'
-				: NO_VALUE,
-			liquidationPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-						sign: '$',
-						minDecimals,
-				  })
-				: NO_VALUE,
-			pnl: pnl,
-			pnlText:
-				positionDetails && pnl
-					? `${formatCurrency(Synths.sUSD, pnl, {
+			positionSize: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.position-size')}
+				>
+					<HoverTransform>
+						{`${formatNumber(positionDetails.size ?? 0, {
+							minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+						})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
 							sign: '$',
-							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(positionDetails.profitLoss.div(positionDetails.initialMargin))})`
-					: NO_VALUE,
+							minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
+						})})`}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			leverage: positionDetails ? (
+				<LeftMarginTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.leverage')}
+				>
+					<HoverTransform>{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}</HoverTransform>
+				</LeftMarginTooltip>
+			) : (
+				NO_VALUE
+			),
+			liquidationPrice: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.liquidation-price')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+							sign: '$',
+							minDecimals,
+						})}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			pnl: pnl ?? NO_VALUE,
+			realizedPnl: realizedPnl,
+			pnlText:
+				positionDetails && pnl ? (
+					<PositionCardTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.u-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, pnl, {
+								sign: '$',
+								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+							})} (${formatPercent(
+								positionDetails.profitLoss.div(positionDetails.initialMargin)
+							)})`}
+						</HoverTransform>
+					</PositionCardTooltip>
+				) : (
+					NO_VALUE
+				),
+			realizedPnlText:
+				positionHistory && realizedPnl ? (
+					<PositionCardTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('futures.market.position-card.tooltips.r-pnl')}
+					>
+						<HoverTransform>
+							{`${formatCurrency(Synths.sUSD, realizedPnl, {
+								sign: '$',
+								minDecimals: 2,
+							})}`}
+						</HoverTransform>
+					</PositionCardTooltip>
+				) : (
+					NO_VALUE
+				),
 			netFunding: netFunding,
-			netFundingText: formatCurrency(Synths.sUSD, netFunding, {
-				sign: '$',
-				minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
-			}),
-			fees: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+			netFundingText: netFunding ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.net-funding')}
+				>
+					<HoverTransform>{`${formatCurrency(Synths.sUSD, netFunding, {
 						sign: '$',
-				  })
-				: NO_VALUE,
-			avgEntryPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-						sign: '$',
-						minDecimals,
-				  })
-				: NO_VALUE,
+						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
+					})}`}</HoverTransform>
+				</PositionCardTooltip>
+			) : null,
+			fees: positionDetails ? (
+				<PositionCardTooltip
+					preset="bottom"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.fees')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+							sign: '$',
+						})}
+					</HoverTransform>
+				</PositionCardTooltip>
+			) : (
+				NO_VALUE
+			),
+			avgEntryPrice: positionDetails ? (
+				<LeftMarginTooltip
+					preset="bottom-z-index-2-left-margin"
+					height={'auto'}
+					content={t('futures.market.position-card.tooltips.avg-entry-price')}
+				>
+					<HoverTransform>
+						{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+							sign: '$',
+							minDecimals,
+						})}
+					</HoverTransform>
+				</LeftMarginTooltip>
+			) : (
+				NO_VALUE
+			),
 		};
-	}, [currencyKey, minDecimals, positionDetails, positionHistory, synthsMap, t]);
+	}, [
+		currencyKey,
+		currencyKeyRate,
+		minDecimals,
+		positionDetails,
+		positionHistory,
+		synthsMap,
+		dailyPriceChangesQuery,
+		t,
+	]);
 
 	return (
 		<>
 			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
 				<DataCol>
-					<InfoCol>
-						<CurrencyInfo>
-							<StyledCurrencyIcon currencyKey={data.currencyIconKey} />
-							<div>
-								<CurrencySubtitle>
-									{data.marketShortName}
-									<MarketBadge
-										currencyKey={currencyKey as CurrencyKey}
-										isFuturesMarketClosed={isFuturesMarketClosed}
-										futuresClosureReason={futuresClosureReason}
-									/>
-								</CurrencySubtitle>
-								<StyledValue>{data.marketLongName}</StyledValue>
-							</div>
-						</CurrencyInfo>
-					</InfoCol>
-					<PositionInfoCol>
+					<InfoRow>
+						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
+						<StyledValue
+							className={data.price24h > zeroBN ? 'green' : data.price24h < zeroBN ? 'red' : ''}
+						>
+							{data.marketPrice}
+						</StyledValue>
+					</InfoRow>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
 						{data.positionSide}
-					</PositionInfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
+					</InfoRow>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
 						<StyledValue>{data.positionSize}</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.pnl')}</StyledSubtitle>
-						{positionDetails ? (
-							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
-								{data.pnlText}
-							</StyledValue>
-						) : (
-							<StyledValue>{NO_VALUE}</StyledValue>
-						)}
-					</InfoCol>
+					</InfoRow>
 				</DataCol>
+				<DataColDivider />
 				<DataCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
-						<StyledValue>{data.leverage}</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
-						<StyledValue>{data.liquidationPrice}</StyledValue>
-					</InfoCol>
-				</DataCol>
-				<DataCol>
-					<InfoCol>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
 						{positionDetails ? (
 							<StyledValue
@@ -204,41 +291,48 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
 						)}
-					</InfoCol>
-					<InfoCol>
-						<StyledSubtitle>{t('futures.market.position-card.fees')}</StyledSubtitle>
-						<StyledValue>{data.fees}</StyledValue>
-					</InfoCol>
+					</InfoRow>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.r-pnl')}</StyledSubtitle>
+						{positionDetails ? (
+							<StyledValue
+								className={
+									data.realizedPnl > zeroBN ? 'green' : data.realizedPnl < zeroBN ? 'red' : ''
+								}
+							>
+								{data.realizedPnlText}
+							</StyledValue>
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
+					</InfoRow>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
+						<StyledValue>{data.liquidationPrice}</StyledValue>
+					</InfoRow>
 				</DataCol>
+				<DataColDivider />
 				<DataCol>
-					<InfoCol>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
+						<StyledValue>{data.leverage}</StyledValue>
+					</InfoRow>
+					<InfoRow>
+						<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+						{positionDetails ? (
+							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
+								{data.pnlText}
+							</StyledValue>
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
+					</InfoRow>
+					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
-					</InfoCol>
-					<InfoCol>
-						{onPositionClose && (
-							<CloseButton
-								isRounded={true}
-								size="sm"
-								variant="danger"
-								onClick={() => setClosePositionModalIsVisible(true)}
-								disabled={!positionDetails || isFuturesMarketClosed}
-								noOutline={true}
-							>
-								{t('futures.market.user.position.close-position')}
-							</CloseButton>
-						)}
-					</InfoCol>
+					</InfoRow>
 				</DataCol>
 			</Container>
-			{closePositionModalIsVisible && onPositionClose && (
-				<ClosePositionModal
-					position={positionDetails}
-					currencyKey={currencyKey}
-					onPositionClose={onPositionClose}
-					onDismiss={() => setClosePositionModalIsVisible(false)}
-				/>
-			)}
 		</>
 	);
 };
@@ -246,33 +340,34 @@ export default PositionCard;
 
 const Container = styled.div`
 	display: grid;
-	grid-template-columns: repeat(5, auto);
+	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	padding: 20px 80px 20px 18px;
+	padding: 15px;
 	justify-content: space-between;
 	border-radius: 10px;
 	margin-bottom: 15px;
-	/* min-height: 135px; */
 `;
 
-const StyledCurrencyIcon = styled(CurrencyIcon)`
-	width: 30px;
-	height: 30px;
-	margin-right: 15px;
-
-	${Container}#closed & {
-		opacity: 0.3;
-	}
+const DataCol = styled(FlexDivCol)`
+	justify-content: space-between;
 `;
 
-const DataCol = styled(FlexDivCol)``;
+const DataColDivider = styled.div`
+	width: 1px;
+	background-color: #2b2a2a;
+	margin: 0 15px;
+`;
 
-const InfoCol = styled(FlexDivCol)`
-	&:nth-of-type(odd) {
-		margin-bottom: 18px;
+const InfoRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+	line-height: 16px;
+	padding-bottom: 10px;
+
+	:last-child {
+		padding-bottom: 0;
 	}
-
 	.green {
 		color: ${(props) => props.theme.colors.common.primaryGreen};
 	}
@@ -282,65 +377,40 @@ const InfoCol = styled(FlexDivCol)`
 	}
 `;
 
-const StyledSubtitle = styled.div`
-	font-family: ${(props) => props.theme.fonts.regular};
+const StyledSubtitle = styled.p`
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
+	margin: 0;
 `;
 
-const StyledValue = styled.div`
-	font-family: ${(props) => props.theme.fonts.mono};
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
+const PositionCardTooltip = styled(StyledTooltip)`
+	z-index: 2;
+`;
 
+const LeftMarginTooltip = styled(StyledTooltip)`
+	left: -60px;
+	z-index: 2;
+`;
+
+const StyledValue = styled.p`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	margin: 0;
+	text-align: end;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;
 
-const CloseButton = styled(Button)`
-	height: 34px;
-	font-size: 13px;
-	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
-	box-shadow: none;
-	min-width: 100px;
-	width: 110px;
-	padding: 0;
-	transition: all 0s ease-in-out;
-
-	&:hover {
-		background: ${(props) => props.theme.colors.common.primaryRed};
-		color: ${(props) => props.theme.colors.white};
-		transform: scale(0.98);
-	}
-
-	&:disabled {
-		border: ${(props) => props.theme.colors.selectedTheme.border};
-		background: transparent;
-		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		transform: none;
-	}
-`;
-
-const CurrencySubtitle = styled(StyledSubtitle)`
-	text-transform: initial;
-	display: flex;
-	align-items: center;
-`;
-
-const PositionInfoCol = styled(InfoCol)`
-	padding-left: 45px;
-`;
-
 const PositionValue = styled.p<{ side: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 12px;
+	font-size: 13px;
 	text-transform: uppercase;
-	margin: 0;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
-
+	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
@@ -356,8 +426,4 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
-
-const CurrencyInfo = styled(FlexDiv)`
-	align-items: flex-start;
 `;

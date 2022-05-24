@@ -6,7 +6,7 @@ import {
 	IChartingLibraryWidget,
 	IPositionLineAdapter,
 	widget,
-} from '../../public/static/charting_library/charting_library';
+} from '../../public/static/charting_library';
 import DataFeedFactory from './DataFeed';
 import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';

@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import { GridDivCenteredCol, resetButtonCSS } from 'styles/common';
 
@@ -35,13 +34,10 @@ const Pagination: FC<PaginationProps> = ({
 		<PaginationContainer>
 			<span>
 				<ArrowButton onClick={() => setPage(0)} disabled={!canPreviousPage}>
-					<Svg
-						src={LeftEndArrowIcon}
-						viewBox={`0 0 ${LeftEndArrowIcon.width} ${LeftEndArrowIcon.height}`}
-					/>
+					<LeftEndArrowIcon />
 				</ArrowButton>
 				<ArrowButton onClick={() => previousPage()} disabled={!canPreviousPage}>
-					<Svg src={LeftArrowIcon} viewBox={`0 0 ${LeftArrowIcon.width} ${LeftArrowIcon.height}`} />
+					<LeftArrowIcon />
 				</ArrowButton>
 			</span>
 			<PageInfo>
@@ -50,16 +46,10 @@ const Pagination: FC<PaginationProps> = ({
 			</PageInfo>
 			<span>
 				<ArrowButton onClick={() => nextPage()} disabled={!canNextPage}>
-					<Svg
-						src={RightArrowIcon}
-						viewBox={`0 0 ${RightArrowIcon.width} ${RightArrowIcon.height}`}
-					/>
+					<RightArrowIcon />
 				</ArrowButton>
 				<ArrowButton onClick={() => setPage(pageCount - 1)} disabled={!canNextPage}>
-					<Svg
-						src={RightEndArrowIcon}
-						viewBox={`0 0 ${RightEndArrowIcon.width} ${RightEndArrowIcon.height}`}
-					/>
+					<RightEndArrowIcon />
 				</ArrowButton>
 			</span>
 		</PaginationContainer>

@@ -20,6 +20,7 @@ export const QUERY_KEYS = {
 		],
 		MarketCap: (currencyKey: string) => ['marketCap', currencyKey],
 		ExchangeRates: ['rates', 'exchangeRates'],
+		ExternalPrice: (currencyKey: string) => ['rates', 'externalPrice', currencyKey],
 		Candlesticks: (currencyKey: string, period: Period) => [
 			'rates',
 			'candlesticks',
@@ -59,19 +60,25 @@ export const QUERY_KEYS = {
 	Synths: {
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
-		ExchangeFeeRate: (quoteCurrencyKey: CurrencyKey, baseCurrencyKey: CurrencyKey) => [
+		ExchangeFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
 			'synths',
 			'exchangeFeeRate',
-			quoteCurrencyKey,
-			baseCurrencyKey,
+			sourceCurrencyKey,
+			destinationCurrencyKey,
 		],
-		BaseFeeRate: (currencyKey: CurrencyKey) => ['synths', 'baseFeeRate', currencyKey],
+		BaseFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
+			'synths',
+			'baseFeeRate',
+			sourceCurrencyKey,
+			destinationCurrencyKey,
+		],
 		NumEntries: (walletAddress: string, currencyKey: CurrencyKey) => [
 			'synths',
 			'numEntries',
 			walletAddress,
 			currencyKey,
 		],
+		TradingVolumeForAllSynths: (networkId: NetworkId) => ['synths', 'tradingVolume', networkId],
 	},
 	Collateral: {
 		ShortHistory: (walletAddress: string, networkId: NetworkId) => [
@@ -120,6 +127,7 @@ export const QUERY_KEYS = {
 	CoinGecko: {
 		CoinList: ['cg', 'coinList'],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
+		Price: (priceId: string) => ['cg', 'price', priceId],
 		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
 	},
 	Futures: {
@@ -226,6 +234,12 @@ export const QUERY_KEYS = {
 			'openOrders',
 			networkId,
 			walletAddress,
+		],
+		LatestUpdate: (networkId: NetworkId, market: string | null) => [
+			'futures',
+			'latestUpdate',
+			networkId,
+			market,
 		],
 		NextPriceDetails: (
 			networkId: NetworkId,

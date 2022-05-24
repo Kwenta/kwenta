@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img, { Svg } from 'react-optimized-image';
 
 import AssetCollections from 'assets/png/marketing/asset-collections.png';
 import Fade from 'assets/svg/marketing/fade.svg';
@@ -12,6 +11,7 @@ import media, { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 import { GridContainer, SubHeader } from '../common';
+import Webp from 'components/Webp';
 
 const ASSETS = [
 	{
@@ -61,8 +61,8 @@ const Assets = () => {
 			<Media greaterThanOrEqual="lg">
 				<FlexDivRowCentered>
 					<AssetCollectionWrapper>
-						<AssetsImage src={AssetCollections} alt="" webp={true} />
-						<Svg src={Fade} />
+						<Webp srcOrSrcset={AssetCollections} StyledImg={AssetsImage} />
+						<Fade />
 					</AssetCollectionWrapper>
 					<Col>
 						{title}
@@ -72,7 +72,7 @@ const Assets = () => {
 			</Media>
 			<Media lessThan="lg">
 				{title}
-				<MobileImage src={AssetCollections} alt="" webp={true} />
+				<Webp srcOrSrcset={AssetCollections} StyledImg={MobileImage} />
 				{assetCards}
 			</Media>
 		</Container>
@@ -133,7 +133,7 @@ const AssetCardText = styled(Paragraph)`
 	text-align: center;
 `;
 
-const AssetsImage = styled(Img)`
+const AssetsImage = styled.img`
 	max-width: 500px;
 	width: 100%;
 `;

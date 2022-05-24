@@ -2,12 +2,16 @@ import { RateUpdates, Candles, Prices } from './types';
 import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
 import { ethers } from 'ethers';
+import { Synths } from 'constants/currency';
 import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
 import { CandleResult } from 'queries/futures/subgraph';
 import { Candle } from './types';
+import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 
 export const getRatesEndpoint = (networkId: number): string => {
-	return networkId === 10
+	return networkId === 1 || networkId === 42
+		? SYNTHS_ENDPOINT_MAIN
+		: networkId === 10
 		? RATES_ENDPOINT_MAINNET
 		: networkId === 69
 		? RATES_ENDPOINT_TESTNET
@@ -62,6 +66,44 @@ export const mapLaggedDailyPrices = (prices: Candles): Prices => {
 			price: Number(candle.average),
 		};
 	});
+};
+
+const markets = [
+	Synths.sETH,
+	Synths.sBTC,
+	Synths.sLINK,
+	Synths.sSOL,
+	Synths.sAVAX,
+	Synths.sMATIC,
+	Synths.sAAVE,
+	Synths.sUNI,
+	Synths.sEUR,
+	'sXAU',
+	'sXAG',
+	'sWTI',
+] as const;
+
+const map: Record<typeof markets[number], string> = {
+	[Synths.sETH]: 'ethereum',
+	[Synths.sBTC]: 'bitcoin',
+	[Synths.sLINK]: 'chainlink',
+	[Synths.sSOL]: 'solana',
+	[Synths.sAVAX]: 'avalanche-2',
+	[Synths.sMATIC]: 'matic-network',
+	[Synths.sAAVE]: 'aave',
+	[Synths.sUNI]: 'uniswap',
+	[Synths.sEUR]: 'euro',
+	sXAU: '',
+	sXAG: '',
+	sWTI: '',
+};
+
+export const synthToCoingeckoPriceId = (synth: any) => {
+	if (markets.includes(synth)) {
+		return map[synth as typeof markets[number]];
+	} else {
+		return 'ethereum';
+	}
 };
 
 export const mapCandles = (candles: CandleResult[]): Candle[] => {
