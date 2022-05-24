@@ -11,7 +11,7 @@ import {
 } from 'styles/common';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
-import FaqIcon from 'assets/svg/learn/faq.svg';
+import FaqIcon from 'assets/png/learn/faq.png';
 import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
 import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
 import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
@@ -43,7 +43,7 @@ const LEARNS = [
 		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
-		image: <FaqIcon />,
+		image: <img src={FaqIcon} />,
 	},
 ];
 
@@ -158,7 +158,7 @@ const FeatureCard = styled(FlexDivRow)`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
-	padding: 32px 80px 32px 32px;
+	padding: 32px 32px 32px 32px;
 	height: 380px;
 
 	&.how-to-stake,
@@ -175,7 +175,6 @@ const FeatureCard = styled(FlexDivRow)`
 		display: flex;
 		flex-direction: row-reverse;
 		justify-content: space-between;
-		padding-right: 40px;
 	}
 
 	&.faq {
@@ -192,9 +191,12 @@ const FeatureIconContainer = styled.div`
 	height: 64px;
 
 	&.faq {
-		width: 64px;
-		height: 64px;
 		padding-bottom: 15px;
+	}
+
+	img {
+		width: 60px;
+		height: 60px;
 	}
 
 	&.how-to-stake {
@@ -220,6 +222,7 @@ const FeatureIconContainer = styled.div`
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 10px;
 	width: 313px;
+	justify-content: space-between;
 `;
 
 export default Learn;

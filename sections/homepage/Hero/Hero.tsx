@@ -64,7 +64,7 @@ const ProductDescription = styled(Paragraph)`
 	font-size: 24px;
 	line-height: 120%;
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: #bdbdbd;
 	padding-top: 16px;
 `;
 const HeroImageContainer = styled(GridDiv)`
@@ -91,10 +91,10 @@ const HeroImage = styled.img`
 	${media.lessThan('sm')`
 		width: 380px;
 	`}
-	background: linear-gradient(180deg, #C9975A 100%, #94F2FF 0%);
+	background: linear-gradient(180deg, #C9975A 0%, #94F2FF 100%);
+	border: 1px solid;
 	border-radius: 20px;
-	border-width: 1px;
-	border-style: solid;	
+	border: 1px solid;
 `;
 
 const SynthetixContainer = styled.div`

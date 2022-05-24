@@ -22,12 +22,13 @@ import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
+import router from 'next/router';
 
 const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef, howItWorksRef, faqRef } = SmoothScroll.useContainer();
+	const { howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
 	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
@@ -35,7 +36,10 @@ const Header: FC = () => {
 			{
 				id: 'market',
 				label: t('homepage.nav.market'),
-				ref: whyKwentaRef,
+				onClick: () => {
+					console.log(`market on landing page`);
+					return router.push(`/market/sETH`);
+				},
 			},
 			{
 				id: 'governance',
@@ -66,8 +70,13 @@ const Header: FC = () => {
 				<Container>
 					<Logo isL2={isL2} isHomePage={true} />
 					<Links>
-						{links.map(({ id, label, icon, onClick }) => (
-							<StyledTextButton key={id} onClick={() => {}}>
+						{links.map(({ id, label, ref, icon, onClick }) => (
+							<StyledTextButton
+								key={id}
+								onClick={() => {
+									ref ? scrollToRef(ref) : onClick?.();
+								}}
+							>
 								{label}
 								{icon}
 							</StyledTextButton>

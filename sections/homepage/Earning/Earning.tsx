@@ -57,6 +57,7 @@ const Earning = () => {
 			<WhiteHeader>
 				<Trans i18nKey={'homepage.earning.description'} components={[<Emphasis />]} />
 			</WhiteHeader>
+			<GrayCopy>{t('homepage.earning.copy')}</GrayCopy>
 		</>
 	);
 
@@ -76,7 +77,7 @@ const Earning = () => {
 				))}
 			</StyledFlexContainer>
 			<StatsCardContainer>
-				<StatsCard>
+				<StatsCard className="first">
 					<StatsValue>
 						{totalTradeStats.isLoading ? (
 							<Loader />
@@ -87,11 +88,7 @@ const Earning = () => {
 							})
 						)}
 					</StatsValue>
-					<StatsName>Trading Volume</StatsName>
-				</StatsCard>
-				<StatsCard className="mid">
-					<StatsValue>+20%</StatsValue>
-					<StatsName>Liquidity</StatsName>
+					<StatsName>{t('homepage.earning.stats.volume')}</StatsName>
 				</StatsCard>
 				<StatsCard>
 					<StatsValue>
@@ -101,17 +98,17 @@ const Earning = () => {
 							formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
 						)}
 					</StatsValue>
-					<StatsName>Total Daily Trades</StatsName>
+					<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
 				</StatsCard>
 			</StatsCardContainer>
 			<CTAContainer>
 				<Link href={ROUTES.Home.Overview}>
-					<Button variant="primary" isRounded={false} size="md">
+					<Button variant="primary" isRounded={false} size="md" disabled>
 						{t('homepage.earning.stake-kwenta')}
 					</Button>
 				</Link>
 				<Link href={ROUTES.Home.Overview}>
-					<StyledButton isRounded={false} size="md">
+					<StyledButton isRounded={false} size="md" disabled>
 						{t('homepage.earning.how-to-earn')}
 						<ArrowUpRightIcon />
 					</StyledButton>
@@ -120,6 +117,15 @@ const Earning = () => {
 		</Container>
 	);
 };
+
+const GrayCopy = styled(Copy)`
+	margin-top: 17px;
+	text-align: center;
+	width: 446px;
+	font-size: 18px;
+	line-height: 100%;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
 
 const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryGold};
@@ -153,12 +159,11 @@ const StatsCardContainer = styled(FlexDivRow)`
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
-	width: 386.67px;
+	width: 580px;
 	padding: 10px 45px;
 	margin-top: 40px;
 
-	&.mid {
-		border-left: 1px solid #3d3c3c;
+	&.first {
 		border-right: 1px solid #3d3c3c;
 	}
 `;

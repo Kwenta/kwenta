@@ -444,10 +444,10 @@ export const SmallGoldenHeader = styled(Paragraph)`
 	font-size: 14px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryGold};
-	font-variant: small-caps;
+	text-transform: uppercase;
 	text-align: center;
-	letter-spacing: 0.6em;
-	margin-bottom: 12px;
+	letter-spacing: 0.65em;
+	margin-bottom: 20px;
 `;
 
 export const WhiteHeader = styled.div`

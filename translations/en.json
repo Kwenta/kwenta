@@ -36,7 +36,7 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta | derivatives trading with infinite liquidity",
+		"page-title": "Kwenta | Derivatives Trading with Infinite Liquidity",
 		"nav": {
 			"start-trade": "Start Trade",
 			"trade-now": "Trade now",
@@ -61,16 +61,20 @@
 			"short": "Short positions"
 		},
 		"shortlist": {
-			"title": "LEADBOARD",
+			"title": "Leaderboard",
 			"description": "Overview Of Current Most Profitable Accounts",
 			"stats": {
 				"title": "Last 24H Stats",
-				"copy": "Access to decentralized trading tools"
+				"copy": "Access to decentralized trading tools",
+				"volume": "Trading Volume",
+				"trades": "Total Daily Trades",
+				"open-interest": "Open Interest"
 			}
 		},
 		"earning": {
-			"title": "EARNINGS",
+			"title": "Earnings",
 			"description": "See What You Can Do With <0>$KWENTA</0> Token",
+			"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.",
 			"stake-to-earn": {
 				"title": "stake to earn",
 				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
@@ -84,7 +88,11 @@
 				"copy": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt dualis."
 			},
 			"how-to-earn": "How to earn",
-			"stake-kwenta": "Stake KWENTA"
+			"stake-kwenta": "Stake KWENTA",
+			"stats": {
+				"volume": "Total Trading Volume",
+				"trades": "Total Trades"
+			}
 		},
 		"learn": {
 			"title": "Learn More",
@@ -497,8 +505,7 @@
 			"markets-tabs": {
 				"futures": "Futures Markets",
 				"spot": "Spot Markets",
-				"short": "Short Markets",
-				"leverage": "Leverage Markets"
+				"synths": "Synths Markets"
 			}
 		},
 		"deprecated": {

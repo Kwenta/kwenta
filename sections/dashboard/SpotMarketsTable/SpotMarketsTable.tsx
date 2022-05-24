@@ -63,6 +63,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
 			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
+			console.log(`spot market table:`, synth.asset, price, pastPrice?.price);
 			return {
 				asset: synth.asset,
 				market: synth.name,

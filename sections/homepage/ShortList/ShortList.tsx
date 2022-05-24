@@ -18,6 +18,7 @@ import GridSvg from 'assets/svg/app/grid.svg';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import Loader from 'components/Loader';
+import { truncateAddress } from 'utils/formatters/string';
 
 type Stat = {
 	pnl: Wei;
@@ -63,8 +64,8 @@ const ShortList = () => {
 				)
 				.map((stat: FuturesStat, i: number) => ({
 					rank: i + 1,
-					address: stat.account,
 					trader: stat.account,
+					traderShort: truncateAddress(stat.account),
 					totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
 					totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 					liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
@@ -109,7 +110,7 @@ const ShortList = () => {
 						Cell: (cellProps: CellProps<any>) => (
 							<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
 						),
-						width: 40,
+						width: 65,
 					},
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
@@ -132,12 +133,12 @@ const ShortList = () => {
 											{ensName}
 										</>
 									) : (
-										cellProps.row.original.trader
+										cellProps.row.original.traderShort
 									)}
 								</StyledTrader>
 							);
 						},
-						width: 225,
+						width: 150,
 					},
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
@@ -145,7 +146,7 @@ const ShortList = () => {
 						Cell: (cellProps: CellProps<any>) => (
 							<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
 						),
-						width: 75,
+						width: 100,
 					},
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
@@ -153,7 +154,7 @@ const ShortList = () => {
 						Cell: (cellProps: CellProps<any>) => (
 							<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
 						),
-						width: 75,
+						width: 100,
 					},
 					{
 						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
@@ -173,7 +174,7 @@ const ShortList = () => {
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<StatsCardContainer>
 				<StatsCard>
-					<StatsName>Trading Volume</StatsName>
+					<StatsName>{t('homepage.shortlist.stats.volume')}</StatsName>
 					<StatsValue>
 						{dailyTradeStats.isLoading ? (
 							<Loader />
@@ -187,12 +188,12 @@ const ShortList = () => {
 					<GridSvg />
 				</StatsCard>
 				<StatsCard>
-					<StatsName>Liquidity</StatsName>
+					<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
 					<StatsValue>$12,463,401.91</StatsValue>
 					<GridSvg />
 				</StatsCard>
 				<StatsCard>
-					<StatsName>Total Daily Trades</StatsName>
+					<StatsName>{t('homepage.shortlist.stats.trades')}</StatsName>
 					<StatsValue>
 						{dailyTradeStats.isLoading ? (
 							<Loader />
@@ -276,7 +277,6 @@ const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	font-size: 13px;
-	text-transform: uppercase;
 `;
 
 export const Bullet = styled.span`

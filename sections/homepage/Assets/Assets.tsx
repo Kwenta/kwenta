@@ -39,7 +39,6 @@ import { ResolutionString } from 'public/static/charting_library/charting_librar
 enum MarketsTab {
 	FUTURES = 'futures',
 	SPOT = 'spot',
-	SHORT = 'short',
 }
 
 type PriceChartProps = {
@@ -97,8 +96,8 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 		});
 
 		const areaSeries = chart.addAreaSeries({
-			topColor: postive ? 'rgba(127, 212, 130, 0.1)' : 'rgba(255, 71, 71, 0.1)',
-			bottomColor: postive ? 'rgba(127, 212, 130, 0.4)' : 'rgba(255, 71, 71, 0.4)',
+			topColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(255, 71, 71, 1)',
+			bottomColor: postive ? 'rgba(127, 212, 130, 0.1)' : 'rgba(255, 71, 71, 0.1)',
 			lineColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(239, 104, 104, 1)',
 			priceLineVisible: false,
 			crosshairMarkerVisible: false,
@@ -147,31 +146,42 @@ const Assets = () => {
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
+	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
+	const queryCache = useQueryClient().getQueryCache();
+	// KM-NOTE: come back and delete
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
+
+	const unfrozenSynths =
+		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
+			? synths.filter(
+					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
+			  )
+			: synths;
+
+	const synthNames: string[] = synths.map((synth): string => synth.name);
+	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
+	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
+
 	const MARKETS_TABS = useMemo(
 		() => [
 			{
-				key: 'leverage',
+				key: 'futures',
 				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.leverage').replace('Markets', ''),
+				label: t('dashboard.overview.markets-tabs.futures').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.FUTURES,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.FUTURES);
 				},
 			},
 			{
-				key: 'spot',
+				key: 'synths',
 				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot').replace('Markets', ''),
+				label: t('dashboard.overview.markets-tabs.synths').replace('Markets', ''),
 				active: activeMarketsTab === MarketsTab.SPOT,
 				onClick: () => {
 					setActiveMarketsTab(MarketsTab.SPOT);
 				},
-			},
-			{
-				key: 'short',
-				name: MarketsTab.SHORT,
-				label: t('dashboard.overview.markets-tabs.short').replace('Markets', ''),
-				active: false,
 			},
 		],
 		[activeMarketsTab, t]
@@ -187,6 +197,7 @@ const Assets = () => {
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
 			return {
 				key: market.asset,
+				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
 				description: description.split(' ')[0],
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
@@ -205,26 +216,10 @@ const Assets = () => {
 		// eslint-disable-next-line
 	}, [synthsMap, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
 
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-
-	const queryCache = useQueryClient().getQueryCache();
-	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
-
-	const unfrozenSynths =
-		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
-			? synths.filter(
-					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
-			  )
-			: synths;
-
-	const synthNames: string[] = synths.map((synth): string => synth.name);
-	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
-
-	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
-
 	const SPOTS = useMemo(() => {
+		const spotDailyPriceChanges = spotDailyPriceChangesQuery?.data ?? [];
+		const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
+
 		return unfrozenSynths.map((synth: Synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
@@ -233,17 +228,15 @@ const Assets = () => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const dailyPriceChanges = spotDailyPriceChangesQuery?.data ?? [];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
-			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
-
+			const pastPrice = spotDailyPriceChanges.find((price: Price) => price.synth === synth.name);
+			// console.log(`landing page:`, synth.asset, price, pastPrice?.price);
 			return {
 				key: synth.asset,
 				market: synth.name,
 				description: description.split(' ')[1],
 				price,
 				change: price !== 0 ? (price - pastPrice?.price) / price || 0 : 0,
-				volume: !_.isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) : 0,
+				volume: !_.isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
 				image: <PriceChart asset={synth.asset} postive={price - pastPrice?.price >= 0} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
@@ -273,16 +266,16 @@ const Assets = () => {
 					</TabButtonsContainer>
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{PERPS.map(({ key, description, price, volume, priceChange, image, icon }) => (
+							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCard key={key}>
 									<GridSvg className="bg" objectfit="cover" layout="fill" />
-									<FlexDiv>
+									<StatsIconContainer>
 										{icon}
 										<StatsNameContainer>
-											<AssetName>{key}</AssetName>
+											<AssetName>{name}</AssetName>
 											<AssetDescription>{description}</AssetDescription>
 										</StatsNameContainer>
-									</FlexDiv>
+									</StatsIconContainer>
 									<ChartContainer>{image}</ChartContainer>
 									<AssetPrice>
 										<Currency.Price
@@ -322,13 +315,13 @@ const Assets = () => {
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
-							{SPOTS.map(({ key, description, price, volume, change, image, icon }) => (
+							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
 								<StatsCard key={key}>
 									<GridSvg className="bg" objectfit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
 										<StatsNameContainer>
-											<AssetName>{key}</AssetName>
+											<AssetName>{market}</AssetName>
 											<AssetDescription>{description}</AssetDescription>
 										</StatsNameContainer>
 									</FlexDiv>
@@ -375,6 +368,11 @@ const Assets = () => {
 	);
 };
 
+const StatsIconContainer = styled(FlexDiv)`
+	justify-content: flex-start;
+	padding-left: 5px;
+`;
+
 const ChartContainer = styled.div`
 	margin-left: -65px;
 	margin-top: -20px;
@@ -385,6 +383,7 @@ const StatsValueContainer = styled.div`
 	flex-direction: column;
 	width: 100px;
 	font-size: 13px;
+	align-self: flex-end;
 `;
 
 const StatsNameContainer = styled.div`
@@ -399,10 +398,11 @@ const AssetName = styled.div`
 
 const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	align-self: center;
+	align-self: flex-end;
 	font-size: 20px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	width: 120px;
+	padding-left: 5px;
 `;
 
 const AssetDescription = styled.div`
@@ -434,12 +434,12 @@ const StatsCard = styled(GridContainer)`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
-	padding: 20px 24px;
+	padding: 16px 20px;
 
 	svg.bg {
 		position: absolute;
 		z-index: 10;
-		margin-top: 15px;
+		margin-top: 16px;
 		margin-left: -20px;
 		width: 275px;
 		height: 140px;
@@ -464,7 +464,7 @@ const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 40px;
 	margin-bottom: 35px;
-	width: 225px;
+	width: 150px;
 	height: 28px;
 	justify-content: center;
 	align-items: center;

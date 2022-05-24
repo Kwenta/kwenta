@@ -45,7 +45,6 @@ const Footer: React.FC = () => {
 						<p>Perpetuals</p>
 						<p>Shorting</p>
 						<p>Spot Trading</p>
-						<p>Staking</p>
 					</ListContainer>
 					<ListContainer>
 						<ListTitle>Community</ListTitle>
@@ -53,7 +52,6 @@ const Footer: React.FC = () => {
 						<p>Dev DAO</p>
 						<p>Marketing DAO</p>
 						<p>KIPs</p>
-						<p>Branding</p>
 					</ListContainer>
 				</MultiListContainer>
 				<PowerContainer>
@@ -80,6 +78,7 @@ const ListTitle = styled.div`
 	font-size: 15px;
 	line-height: 150%;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+	text-transform: uppercase;
 `;
 
 const PowerContainer = styled.div`
@@ -90,7 +89,7 @@ const PowerContainer = styled.div`
 	padding-top: 45px;
 	border-top-width: 1px;
 	border-top-style: solid;
-	birder-top-color: 0px 0px 50px rgba(181, 138, 88, 0.5);
+	border-top-color: #3d3c3c;
 `;
 
 const MultiListContainer = styled.div`

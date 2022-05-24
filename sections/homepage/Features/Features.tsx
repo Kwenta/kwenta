@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
 import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
 import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
-import PermissionlessIcon from 'assets/svg/features/permissionless.svg';
+import PermissionlessIcon from 'assets/png/features/permissionless.png';
 import MobileIcon from 'assets/svg/features/mobile.svg';
 import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
 import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg';
@@ -14,20 +14,18 @@ import LyraIcon from 'assets/svg/partners/lyra.svg';
 import AelinIcon from 'assets/svg/partners/aelin.svg';
 import ThalesIcon from 'assets/svg/partners/thales.svg';
 import OptimismIcon from 'assets/svg/partners/optimism.svg';
-import DefinanceIcon from 'assets/svg/partners/definance.svg';
-import PolyChainIcon from 'assets/svg/partners/polychain.svg';
-import SpartanIcon from 'assets/svg/partners/spartan.svg';
 
 import {
 	FlexDivCentered,
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
+	FlexDivRowCentered,
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
 
-import { Copy, GridContainer, Title } from '../common';
+import { Copy, Title } from '../common';
 
 const FEATURES = [
 	{
@@ -52,7 +50,7 @@ const FEATURES = [
 		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
-		image: <PermissionlessIcon />,
+		image: <img src={PermissionlessIcon} />,
 	},
 	{
 		key: 'mobile',
@@ -94,20 +92,8 @@ const PARTNERS = [
 		image: <ThalesIcon />,
 	},
 	{
-		key: 'definance',
-		image: <DefinanceIcon />,
-	},
-	{
 		key: 'optimism',
 		image: <OptimismIcon />,
-	},
-	{
-		key: 'spartan',
-		image: <SpartanIcon />,
-	},
-	{
-		key: 'polychian',
-		image: <PolyChainIcon />,
 	},
 ];
 
@@ -182,9 +168,11 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	justify-content: center;
 `;
 
-const IconGridContainer = styled(GridContainer)`
-	grid-template-columns: repeat(4, auto);
-	grid-gap: 20px 200px;
+const IconGridContainer = styled(FlexDivRowCentered)`
+	justify-content: center;
+	flex-wrap: wrap;
+	column-gap: 250px;
+	row-gap: 50px;
 	margin-top: 60px;
 	svg {
 		width: 120px;
@@ -193,7 +181,7 @@ const IconGridContainer = styled(GridContainer)`
 `;
 
 const Container = styled.div`
-	margin-bottom: 250px;
+	margin-bottom: 350px;
 `;
 
 const FeatureCard = styled(FlexDivRow)`
@@ -208,6 +196,7 @@ const FeatureCard = styled(FlexDivRow)`
 
 const FeatureIconContainer = styled.div`
 	padding-bottom: 40px;
+	img,
 	svg {
 		width: 64px;
 		height: 64px;
