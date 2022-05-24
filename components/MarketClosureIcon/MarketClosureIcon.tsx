@@ -1,6 +1,4 @@
 import React, { FC } from 'react';
-import { Svg } from 'react-optimized-image';
-
 import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
 import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';
 // import LimitResetIcon from 'assets/svg/app/market-closure/limit-reset.svg';
@@ -24,41 +22,17 @@ export const MarketClosureIcon: FC<MarketClosureIconProps> = ({
 		className: 'market-closure-icon',
 	};
 
-	const defaultIcon = (
-		<Svg
-			{...sharedProps}
-			src={MarketPauseIcon}
-			viewBox={`0 0 ${MarketPauseIcon.width} ${MarketPauseIcon.height}`}
-		/>
-	);
+	const defaultIcon = <MarketPauseIcon {...sharedProps} />;
 
 	switch (marketClosureReason) {
 		case 'frozen':
-			return (
-				<Svg
-					{...sharedProps}
-					src={FrozenIcon}
-					viewBox={`0 0 ${FrozenIcon.width} ${FrozenIcon.height}`}
-				/>
-			);
+			return <FrozenIcon {...sharedProps} />;
 		case 'market-closure':
 			return defaultIcon;
 		case 'circuit-breaker':
-			return (
-				<Svg
-					{...sharedProps}
-					src={CircuitBreakerIcon}
-					viewBox={`0 0 ${CircuitBreakerIcon.width} ${CircuitBreakerIcon.height}`}
-				/>
-			);
+			return <CircuitBreakerIcon {...sharedProps} />;
 		case 'emergency':
-			return (
-				<Svg
-					{...sharedProps}
-					src={EmergencyShutdownIcon}
-					viewBox={`0 0 ${EmergencyShutdownIcon.width} ${EmergencyShutdownIcon.height}`}
-				/>
-			);
+			return <EmergencyShutdownIcon {...sharedProps} />;
 		default:
 			return defaultIcon;
 	}

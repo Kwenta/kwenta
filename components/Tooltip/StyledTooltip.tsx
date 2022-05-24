@@ -7,11 +7,13 @@ interface ToolTipProps {
 	content?: any;
 	children?: React.ReactNode;
 	width?: string;
+	height?: string;
 	preset?: string;
 	top?: string;
 	bottom?: string;
 	left?: string;
 	right?: string;
+	style?: React.CSSProperties;
 }
 
 const StyledTooltip = (props: ToolTipProps) => {
@@ -28,7 +30,7 @@ const StyledTooltip = (props: ToolTipProps) => {
 		<ToolTipWrapper onMouseEnter={openToolTip} onMouseLeave={closeToolTip}>
 			{props.children}
 			{activeMouse && (
-				<Tooltip {...props}>
+				<Tooltip {...props} style={props.style}>
 					<p>{props.content}</p>
 				</Tooltip>
 			)}

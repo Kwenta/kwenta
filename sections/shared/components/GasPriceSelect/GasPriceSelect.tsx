@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { Svg } from 'react-optimized-image';
 import Wei from '@synthetixio/wei';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -66,7 +65,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 							>
 								<GasPriceItem>
 									{gasPriceItem}
-									<Svg src={InfoIcon} />
+									<InfoIcon />
 								</GasPriceItem>
 							</GasPriceCostTooltip>
 						) : (

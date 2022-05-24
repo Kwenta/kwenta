@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Img from 'react-optimized-image';
 
 import P2CIcon from 'assets/svg/marketing/icon-p2c.svg';
 import PermissionlessIcon from 'assets/svg/marketing/icon-permissionless.svg';
@@ -16,19 +15,19 @@ import { StackSection, CenterSubHeader, Title, Copy } from '../common';
 const BENEFITS = [
 	{
 		id: 'peer-to-contract',
-		image: <Img src={P2CIcon} alt="" />,
+		image: <P2CIcon />,
 		title: 'homepage.benefits.peer-to-contract.title',
 		copy: 'homepage.benefits.peer-to-contract.copy',
 	},
 	{
 		id: 'trading-pair',
-		image: <Img src={RestrictionsIcon} alt="" />,
+		image: <RestrictionsIcon />,
 		title: 'homepage.benefits.trading-pair.title',
 		copy: 'homepage.benefits.trading-pair.copy',
 	},
 	{
 		id: 'permissionless',
-		image: <Img src={PermissionlessIcon} alt="" />,
+		image: <PermissionlessIcon />,
 		title: 'homepage.benefits.permissionless.title',
 		copy: 'homepage.benefits.permissionless.copy',
 	},
@@ -52,11 +51,6 @@ const Benefits = () => {
 		</StackSection>
 	);
 };
-
-export const ResponsiveImage = styled(Img)`
-	width: 100%;
-	max-width: 1200px;
-`;
 
 const StyledCenterSubHeader = styled(CenterSubHeader)`
 	padding-bottom: 56px;

@@ -6,7 +6,6 @@ import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
@@ -72,6 +71,7 @@ import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -142,6 +142,7 @@ const useExchange = ({
 	const [selectQuoteTokenModalOpen, setSelectQuoteTokenModalOpen] = useState<boolean>(false);
 	const [selectBaseTokenModalOpen, setSelectBaseTokenModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
+	const [atomicExchangeSlippage] = useState<string>('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -492,7 +493,6 @@ const useExchange = ({
 			: false;
 
 	const handleCurrencySwap = () => {
-		const baseAmount = baseCurrencyAmount;
 		const quoteAmount = quoteCurrencyAmount;
 
 		setCurrencyPair({
@@ -501,7 +501,7 @@ const useExchange = ({
 		});
 
 		setBaseCurrencyAmount(quoteAmount);
-		setQuoteCurrencyAmount(baseAmount);
+		setQuoteCurrencyAmount('');
 
 		if (quoteCurrencyKey != null && baseCurrencyKey != null) {
 			routeToMarketPair(quoteCurrencyKey, baseCurrencyKey);
@@ -562,26 +562,31 @@ const useExchange = ({
 		}
 		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
 			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
-			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-			setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
+			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+			setBaseCurrencyAmount(
+				baseCurrencyAmountNoFee.sub(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+			);
 		}
-	}, [
-		rate,
-		baseCurrencyKey,
-		quoteCurrencyAmount,
-		baseCurrencyAmount,
-		exchangeFeeRate,
-		txProvider,
-		oneInchQuoteQuery.data,
-		oneInchQuoteQuery.isSuccess,
-	]);
+		// eslint-disable-next-line
+	}, [quoteCurrencyKey, exchangeFeeRate, oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
+
+	useEffect(() => {
+		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
+			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
+			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+			setQuoteCurrencyAmount(
+				quoteCurrencyAmountNoFee.add(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+			);
+		}
+		// eslint-disable-next-line
+	}, [baseCurrencyKey, exchangeFeeRate]);
 
 	const getExchangeParams = useCallback(
 		(isAtomic: boolean) => {
 			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
-			const minAmount = baseCurrencyAmountBN.toBN();
+			const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 			if (isAtomic) {
 				return [
@@ -601,7 +606,14 @@ const useExchange = ({
 				];
 			}
 		},
-		[baseCurrencyKey, quoteCurrencyAmountBN, quoteCurrencyKey, walletAddress, baseCurrencyAmountBN]
+		[
+			baseCurrencyKey,
+			quoteCurrencyAmountBN,
+			quoteCurrencyKey,
+			walletAddress,
+			baseCurrencyAmountBN,
+			atomicExchangeSlippage,
+		]
 	);
 
 	const getGasEstimateForExchange = useCallback(
@@ -616,7 +628,8 @@ const useExchange = ({
 						!isL2 &&
 						(destinationCurrencyKey === 'sBTC' ||
 							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR');
+							destinationCurrencyKey === 'sEUR' ||
+							destinationCurrencyKey === 'sUSD');
 					const exchangeParams = getExchangeParams(isAtomic);
 
 					let gasEstimate, gasLimitNum, metaTx;
@@ -788,7 +801,8 @@ const useExchange = ({
 				!isL2 &&
 				(destinationCurrencyKey === 'sBTC' ||
 					destinationCurrencyKey === 'sETH' ||
-					destinationCurrencyKey === 'sEUR');
+					destinationCurrencyKey === 'sEUR' ||
+					destinationCurrencyKey === 'sUSD');
 
 			const exchangeParams = getExchangeParams(isAtomic);
 
@@ -927,12 +941,19 @@ const useExchange = ({
 				onAmountChange={async (value) => {
 					if (value === '') {
 						setQuoteCurrencyAmount('');
+						setBaseCurrencyAmount('');
 					} else {
 						setQuoteCurrencyAmount(value);
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setBaseCurrencyAmount(
+								baseCurrencyAmountNoFee
+									.sub(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
@@ -942,14 +963,26 @@ const useExchange = ({
 						if (quoteCurrencyKey === 'ETH') {
 							const ETH_TX_BUFFER = 0.1;
 							const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
-							setQuoteCurrencyAmount(balanceWithBuffer.lt(0) ? '0' : balanceWithBuffer.toString());
+							setQuoteCurrencyAmount(
+								balanceWithBuffer.lt(0)
+									? '0'
+									: balanceWithBuffer.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						} else {
-							setQuoteCurrencyAmount(quoteCurrencyBalance.toString());
+							setQuoteCurrencyAmount(
+								quoteCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+							);
 						}
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setBaseCurrencyAmount(baseCurrencyAmountNoFee.sub(fee).toString());
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setBaseCurrencyAmount(
+								baseCurrencyAmountNoFee
+									.sub(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
@@ -1023,24 +1056,39 @@ const useExchange = ({
 				onAmountChange={async (value) => {
 					if (value === '') {
 						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 					} else {
 						setBaseCurrencyAmount(value);
 						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
-							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setQuoteCurrencyAmount(quoteCurrencyAmountNoFee.add(fee).toString());
+							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setQuoteCurrencyAmount(
+								quoteCurrencyAmountNoFee
+									.add(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
 				walletBalance={baseCurrencyBalance}
 				onBalanceClick={async () => {
 					if (baseCurrencyBalance != null) {
-						setBaseCurrencyAmount(baseCurrencyBalance.toString());
+						setBaseCurrencyAmount(
+							baseCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+						);
 
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 1);
-							setQuoteCurrencyAmount(baseCurrencyAmountNoFee.add(fee).toString());
+							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+							setQuoteCurrencyAmount(
+								baseCurrencyAmountNoFee
+									.add(fee)
+									.toNumber()
+									.toFixed(DEFAULT_CRYPTO_DECIMALS)
+									.toString()
+							);
 						}
 					}
 				}}
@@ -1062,7 +1110,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseCurrencyModalOpen(false)}
 					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1083,7 +1131,7 @@ const useExchange = ({
 				<SelectCurrencyModal
 					onDismiss={() => setSelectBaseTokenModalOpen(false)}
 					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
+						setQuoteCurrencyAmount('');
 						// @ts-ignore
 						setCurrencyPair((pair) => ({
 							base: currencyKey,
@@ -1189,7 +1237,7 @@ const useExchange = ({
 					txProvider={txProvider}
 					quoteCurrencyLabel={t('exchange.common.from')}
 					baseCurrencyLabel={t('exchange.common.into')}
-					icon={<Svg src={ArrowsIcon} />}
+					icon={<ArrowsIcon />}
 				/>
 			)}
 			{txApproveModalOpen && (

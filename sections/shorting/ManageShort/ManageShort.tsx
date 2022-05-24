@@ -1,7 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
-import { Svg } from 'react-optimized-image';
 import { useTranslation } from 'react-i18next';
 import castArray from 'lodash/castArray';
 import add from 'date-fns/add';
@@ -146,7 +145,7 @@ const ManageShort: FC = () => {
 			) : (
 				<>
 					<IconButton onClick={() => router.push(ROUTES.Shorting.Home)}>
-						<StyledBackIcon src={BackIcon} viewBox={`0 0 ${BackIcon.width} ${BackIcon.height}`} />
+						<StyledBackIcon />
 					</IconButton>
 					<ManageShortTitle>
 						{t('shorting.history.manage-short.title', { loanId: short.id })}
@@ -228,7 +227,7 @@ const ManageShortTitle = styled(CardTitle)`
 	color: ${(props) => props.theme.colors.white};
 `;
 
-const StyledBackIcon = styled(Svg)`
+const StyledBackIcon = styled(BackIcon)`
 	width: 18px;
 	height: 18px;
 	color: ${(props) => props.theme.colors.blueberry};

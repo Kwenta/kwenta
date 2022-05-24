@@ -39,6 +39,7 @@ const useGetFuturesPositionForAccount = (options?: UseQueryOptions<any>) => {
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress,
+			refetchInterval: 5000,
 			...options,
 		}
 	);

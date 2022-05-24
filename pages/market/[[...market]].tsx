@@ -33,13 +33,12 @@ const Market = () => {
 	const { network } = Connector.useContainer();
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id),
-		{ refetchInterval: 6000 }
+		getMarketKey(marketAsset, network.id)
 	);
 
 	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
 
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset, { refetchInterval: 6000 });
+	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
 	const openOrders = openOrdersQuery?.data ?? [];
 
 	const refetch = useCallback(() => {

@@ -1,5 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import LinkIcon from 'assets/svg/app/link.svg';
+import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
 import Table from 'components/Table';
 import TimeDisplay from './TimeDisplay';
@@ -9,7 +9,6 @@ import BlockExplorer from 'containers/BlockExplorer';
 import { FuturesTrade } from 'queries/futures/types';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Svg } from 'react-optimized-image';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
@@ -206,10 +205,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
 							<StyledExternalLink href={blockExplorerInstance?.txLink(cellProps.value)}>
-								<StyledLinkIcon
-									src={LinkIcon}
-									viewBox={`0 0 ${LinkIcon.width} ${LinkIcon.height}`}
-								/>
+								<StyledLinkIcon />
 							</StyledExternalLink>
 						),
 						width: 25,
@@ -295,11 +291,22 @@ const TableNoResults = styled(GridDivCenteredRow)`
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
+	padding: 10px;
+	&:hover {
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.common.primaryWhite};
+			}
+		}
+	}
 `;
 
-const StyledLinkIcon = styled(Svg)`
+const StyledLinkIcon = styled(LinkIcon)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 14px;
 	height: 14px;
+
+	path {
+		fill: ${(props) => props.theme.colors.common.secondaryGray};
+	}
 `;

@@ -1,30 +1,25 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { FuturesMarket } from 'queries/futures/types';
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
 import { zeroBN } from 'utils/formatters/number';
-import { getMarketKey } from 'utils/futures';
-import Connector from 'containers/Connector';
+import Wei from '@synthetixio/wei';
 
 type PortfolioChartProps = {
-	futuresMarkets: FuturesMarket[];
+	totalFuturesPortfolioValue: Wei;
+	totalSpotBalanceValue: Wei;
+	totalShortsValue: Wei;
 };
 
-const PortfolioChart: FC<PortfolioChartProps> = ({ futuresMarkets }: PortfolioChartProps) => {
-	const { network } = Connector.useContainer();
-
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
-	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
-	const portfolioValue = portfolioValueQuery?.data ?? null;
-
+const PortfolioChart: FC<PortfolioChartProps> = (props: PortfolioChartProps) => {
+	const { totalFuturesPortfolioValue, totalSpotBalanceValue, totalShortsValue } = props;
+	const total = totalFuturesPortfolioValue.add(totalSpotBalanceValue).add(totalShortsValue);
 	return (
 		<Chart>
-			<PortfolioTitle>Futures Portfolio Value</PortfolioTitle>
+			<PortfolioTitle>Portfolio Value</PortfolioTitle>
 			<PortfolioText
 				currencyKey={Synths.sUSD}
-				price={portfolioValue ?? zeroBN}
+				price={total ?? zeroBN}
 				sign={'$'}
 				conversionRate={1}
 			/>
