@@ -58,7 +58,11 @@ const useGetFuturesTrades = (
 				return null;
 			}
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady : isAppReady, ...options }
+		{
+			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
+			refetchInterval: 15000,
+			...options,
+		}
 	);
 };
 

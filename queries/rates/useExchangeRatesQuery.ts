@@ -55,6 +55,7 @@ const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 		},
 		{
 			enabled: isAppReady && !!synthetixjs,
+			refetchInterval: 60000,
 			...options,
 		}
 	);

@@ -36,7 +36,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
-	const futuresMarketsQuery = useGetFuturesMarkets({ refetchInterval: 6000 });
+	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
 
 	const marketSummary: FuturesMarket | null =
