@@ -62,7 +62,6 @@ const MenuLinks = styled.ul`
 `;
 
 const MenuLinkItem = styled.li<{ isActive: boolean }>`
-	/* padding-right: 20px; */
 	a {
 		${linkCSS};
 		padding: 8px 10px;
