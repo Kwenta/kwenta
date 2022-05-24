@@ -258,7 +258,7 @@ const SortIconContainer = styled.span`
 const ReactTable = styled.div<{ palette: TablePalette }>`
 	width: 100%;
 	height: 100%;
-	overflow-x: auto;
+	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
