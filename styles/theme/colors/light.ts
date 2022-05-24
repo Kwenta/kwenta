@@ -1,21 +1,21 @@
 import common from './common';
 
 const lightTheme = {
-	background: '#F9F9F9',
+	background: '#F2F2F2',
 	border: '1px solid rgba(0, 0, 0, 0.1)',
 	button: {
 		background:
-			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%)',
-		hover: 'initial',
+			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%);',
+		hover: '#e6e6e6',
 		shadow:
 			'0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
-		text: '#000000',
+		text: '#052822',
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',
 			textShadow: '0px 1px 2px rgba(0, 0, 0, 0.5)',
 		},
-		secondary: { text: '#C9975B' },
+		secondary: { text: '#7D7D7F' },
 		danger: { text: '#EF6868' },
 		active: {
 			shadow: 'inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
@@ -29,14 +29,14 @@ const lightTheme = {
 				dangerBorder: 'rgba(239, 104, 104, 0.2)',
 			},
 		},
-		disabled: { text: '#555555', background: '#272727' },
+		disabled: { text: '#B3B3B3', background: '#272727' },
 		tab: {
 			badge: {
 				background: '#E4B378',
 				text: common.secondaryGray,
 				shadow: 'inset 0px 0.8px 0px rgba(255, 255, 255, 0.6)',
 			},
-			disabled: { border: '1px solid #353333', text: '#353333' },
+			disabled: { border: '1px solid #353333', text: '#B3B3B3' },
 		},
 	},
 	input: {
