@@ -56,9 +56,17 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 			height: 64,
 			rightPriceScale: {
 				visible: false,
+				scaleMargins: {
+					top: 0.5,
+					bottom: 0,
+				},
 			},
 			leftPriceScale: {
 				visible: false,
+				scaleMargins: {
+					top: 0.5,
+					bottom: 0,
+				},
 			},
 			layout: {
 				background: { type: ColorType.Solid, color: '#00000000' },
@@ -369,7 +377,7 @@ const Assets = () => {
 
 const ChartContainer = styled.div`
 	margin-left: -65px;
-	margin-top: -10px;
+	margin-top: -20px;
 `;
 
 const StatsValueContainer = styled.div`
