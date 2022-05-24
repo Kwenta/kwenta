@@ -1,5 +1,6 @@
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
+// import ba64 from 'ba64';
 
 export default function (req: any, res: any) {
 	const dataUrl = req.body.dataUrl;
@@ -12,5 +13,5 @@ export default function (req: any, res: any) {
 	// });
 
 	res.setHeader('Content-Type', 'image/png');
-	res.send('success');
+	res.send(dataUrl);
 }

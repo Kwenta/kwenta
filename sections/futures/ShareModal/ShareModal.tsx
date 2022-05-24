@@ -1,10 +1,8 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { toPng } from 'html-to-image';
 import axios from 'axios';
-import useSWR from 'swr';
-// import { getBlobFromImageElement, copyBlobToClipboard } from 'copy-image-clipboard';
 
 import Button from 'components/Button';
 import BaseModal from 'components/BaseModal';
@@ -24,15 +22,24 @@ type ShareModalProps = {
 	futuresPositionHistory: PositionHistory[];
 };
 
-const fetcher = async (url: any) => {
-	const res = await fetch(url);
-	const data = await res.json();
+function downloadPng(dataUrl: string) {
+	const link = document.createElement('a');
 
-	if (res.status !== 200) {
-		throw new Error(data.message);
-	}
-	return data;
-};
+	link.download = 'my-pnl-on-kwenta.png';
+	link.href = dataUrl;
+	link.pathname = 'assets/png/' + link.download;
+	link.click();
+}
+
+function createTweet() {
+	const url = 'https://v2.beta.kwenta.io';
+	const via = 'kwenta_io';
+	const text =
+		'Enjoy trading perpetual futures with low fees and up to 10x leverage on synthetic assets!';
+	const twitterURL = `https://twitter.com/intent/tweet?&text=${text}&url=${url}&via=${via}`;
+
+	window.open(twitterURL, 'twitter');
+}
 
 const ShareModal: FC<ShareModalProps> = ({
 	position,
@@ -42,30 +49,11 @@ const ShareModal: FC<ShareModalProps> = ({
 	futuresPositionHistory,
 }) => {
 	const { t } = useTranslation();
-	const [imagePathName, setImagePathName] = useState<string>('');
-	const { data, error } = useSWR(() => `/api/handleShare`, fetcher);
-
 	const positionDetails = position?.position ?? null;
-
-	// const onCopyImage = () => {
-	// 	const node: any = document.getElementById('pnl-graphic');
-
-	// 	if (node) {
-	// 		getBlobFromImageElement(node)
-	// 			.then((blob) => {
-	// 				return copyBlobToClipboard(blob);
-	// 			})
-	// 			.then(() => {
-	// 				console.log('Blob Copied');
-	// 			})
-	// 			.catch((e) => {
-	// 				console.log('Error: ', e.message);
-	// 			});
-	// 	}
-	// };
 
 	const handleShare = () => {
 		let node = document.getElementById('pnl-graphic');
+
 		if (node) {
 			toPng(node, { cacheBust: true })
 				.then((dataUrl: any) => {
@@ -74,18 +62,13 @@ const ShareModal: FC<ShareModalProps> = ({
 							dataUrl: dataUrl,
 						})
 						.then((res: any) => {
-							const url = 'https://v2.beta.kwenta.io';
-							const via = 'kwenta_io';
-							const text = 'this works!';
-							if (data !== undefined) {
-								console.log('data is undefined!');
-							}
-							const twitterURL = `https://twitter.com/intent/tweet?&text=${text}&url=${url}&via=${via}`;
-							window.open(twitterURL, 'twitter');
+							// Step 1: download image
+							downloadPng(dataUrl);
+
+							// Step 2: share image to socials
+							createTweet();
 						})
-						.catch((err: any) => {
-							console.log(err, 'Error trying to tweet');
-						});
+						.catch((err: any) => console.log(err, 'Error trying to tweet'));
 				})
 				.catch((err: any) => {
 					console.log(err);
