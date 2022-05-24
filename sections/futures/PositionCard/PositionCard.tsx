@@ -287,6 +287,8 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		t,
 		showPotentialTrade,
 		previewData.positionSide,
+		previewData.positionSize,
+		previewData.notionalValue,
 		previewData?.leverage,
 		previewData?.liquidationPrice,
 		previewData.avgEntryPrice,

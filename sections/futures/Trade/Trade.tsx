@@ -10,7 +10,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
-import { PositionSide } from '../types';
+import { PositionSide, PotentialTrade } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -49,9 +49,16 @@ type TradeProps = {
 	refetch(): void;
 	onEditPositionInput: (position: { size: string; side: PositionSide; leverage: string }) => void;
 	currencyKey: string;
+	potentialTrade: PotentialTrade | null;
 };
 
-const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, currencyKey }) => {
+const Trade: React.FC<TradeProps> = ({
+	refetch,
+	onEditPositionInput,
+	position,
+	currencyKey,
+	potentialTrade,
+}) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -338,6 +345,9 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 						: zeroBN
 				}
 				isMarketClosed={isFuturesMarketClosed}
+				potentialTrade={potentialTrade}
+				tradeSizeSUSD={tradeSizeSUSD}
+				maxLeverageValue={maxLeverageValue}
 			/>
 
 			<StyledSegmentedControl

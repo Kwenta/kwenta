@@ -4,7 +4,8 @@ import styled from 'styled-components';
 
 type DetailedInfo = {
 	value: string;
-	tooltip?: React.ReactNode;
+	keyNode?: React.ReactNode;
+	valueNode?: React.ReactNode;
 	color?: 'green' | 'red' | 'gold';
 	spaceBeneath?: boolean;
 };
@@ -23,7 +24,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 				<React.Fragment key={key}>
 					<div>
 						<div className="key">
-							{key}: {value.tooltip}
+							{key}: {value.keyNode}
 						</div>
 						<p
 							className={`${disabled ? 'value closed' : 'value'}${
@@ -31,6 +32,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }
 							}`}
 						>
 							{disabled ? NO_VALUE : value.value}
+							{value.valueNode}
 						</p>
 					</div>
 					{value?.spaceBeneath && <br />}
@@ -64,7 +66,7 @@ const InfoBoxContainer = styled.div`
 
 		.value {
 			color: ${(props) => props.theme.colors.common.primaryWhite};
-			font-family: ${(props) => props.theme.fonts.mono};
+			font-family: ${(props) => props.theme.fonts.regular};
 			font-size: 12px;
 		}
 
