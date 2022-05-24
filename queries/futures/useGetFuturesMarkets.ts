@@ -82,6 +82,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 		},
 		{
 			enabled: isWalletConnected ? isL2 && isReady : isReady,
+			refetchInterval: 15000,
 			...options,
 		}
 	);

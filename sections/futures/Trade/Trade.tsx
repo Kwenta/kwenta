@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { ethers } from 'ethers';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -94,6 +95,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
+	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [isLeverageValueCommitted, setIsLeverageValueCommitted] = useState<boolean>(true);
 
 	const [isDepositMarginModalOpen, setIsDepositMarginModalOpen] = useState(false);
@@ -240,7 +242,12 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 			try {
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
+				const volatilityFee = await synthetixjs!.contracts.Exchanger.dynamicFeeRateForExchange(
+					ethers.utils.formatBytes32String('sUSD'),
+					ethers.utils.formatBytes32String(marketAsset as string)
+				);
 				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
+				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
 				console.log(e);
@@ -423,6 +430,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				feeCost={feeCost}
 				currencyKey={marketAsset}
 				sizeDelta={sizeDelta}
+				dynamicFee={dynamicFee}
 			/>
 
 			{isDepositMarginModalOpen && (

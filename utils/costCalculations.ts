@@ -1,5 +1,6 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei, { wei, WeiSource } from '@synthetixio/wei';
 import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
+import { zeroBN } from './formatters/number';
 
 export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
 	if (
@@ -34,6 +35,26 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 		commitDeposit: notionalDiff.mul(staticRate).abs(),
 		nextPriceFee: notionalDiff.mul(staticRateNP).abs(),
 	};
+};
+
+export const computeMarketFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
+	if (
+		!details?.marketSkew ||
+		!details?.assetPrice ||
+		!details?.takerFee ||
+		!details?.makerFee ||
+		!sizeDelta
+	) {
+		return zeroBN as WeiSource;
+	}
+
+	const notionalDiff = sizeDelta.mul(details.assetPrice);
+
+	if (sameSide(notionalDiff, details.marketSkew)) {
+		return details.takerFee as WeiSource;
+	} else {
+		return details.makerFee as WeiSource;
+	}
 };
 
 export const sameSide = (a: Wei, b: Wei) => {
