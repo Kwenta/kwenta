@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
@@ -106,6 +106,17 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const handleOpenProfitCalc = useCallback(() => {
 		setOpenProfitCalcModal(!openProfitCalcModal);
 	}, [openProfitCalcModal]);
+
+	const refetchTrades = useCallback(() => {
+		futuresTradesQuery.refetch();
+		marginTransfersQuery.refetch();
+	}, [futuresTradesQuery, marginTransfersQuery]);
+
+	useEffect(() => {
+		refetchTrades();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [position]);
 
 	const TABS = useMemo(
 		() => [
