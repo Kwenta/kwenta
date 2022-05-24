@@ -45,6 +45,7 @@ const useGetFuturesPositionForMarket = (
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && !!market && !!synthetixjs,
+			refetchInterval: 5000,
 			...options,
 		}
 	);
