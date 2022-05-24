@@ -45,8 +45,8 @@ const StyledButton = styled(Button)`
 	.title {
 		color: ${(props) =>
 			props.isActive
-				? props.theme.colors.common.primaryWhite
-				: props.theme.colors.common.secondaryGray};
+				? props.theme.colors.selectedTheme.button.text
+				: props.theme.colors.selectedTheme.button.secondary.text};
 	}
 
 	&:disabled {
