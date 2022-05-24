@@ -34,6 +34,7 @@ const StyledButton = styled(Button)`
 	background: ${(props) =>
 		props.isActive ? props.theme.colors.selectedTheme.button.background : 'transparent'};
 	box-shadow: none;
+	border-radius: 100px;
 
 	p {
 		margin: 0;
