@@ -896,7 +896,13 @@
 			},
 			"share": {
 				"title": "Share",
-				"button": "Share"
+				"tweet-text": "<PLACEHOLDER_TEXT>",
+				"buttons": {
+					"tweet-my-pnl": "Share",
+					"copy": "Copy",
+					"copied": "Copied!",
+					"copying": "Copying..."
+				}
 			}
 		}
 	},

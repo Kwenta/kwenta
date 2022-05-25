@@ -5,29 +5,37 @@ import styled from 'styled-components';
 import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
 
-type PositioMetadataProps = {
+type PositionMetadataProps = {
 	futuresPositionHistory: PositionHistory[];
 	marketAssetRate: number;
 };
 
+const timeStyle = { fontSize: '0.83vw' };
+const headerStyle = { fontSize: '0.83vw', letterSpacing: '0.008vw' };
+const valueStyle = { fontSize: '1.23vw', color: '#FFFF' };
+
 const getFontFamily = (props: any) => {
-	/**
-	 * @todo `open-at` and `close-at` must use the `GT America` font-family
-	 */
-	if (props.className === 'open-at-header' || props.className === 'created-on-header')
-		return props.theme.fonts.regular;
+	if (
+		props.className === 'open-at-header' ||
+		props.className === 'avg-open-header' ||
+		props.className === 'created-on-header' ||
+		props.className === 'current-price-header'
+	)
+		return props.theme.fonts.compressedMedium;
+
 	if (
 		props.className === 'open-at-date' ||
 		props.className === 'avg-open-price' ||
 		props.className === 'created-on-date' ||
 		props.className === 'current-price'
 	)
-		return props.theme.fonts.monoBold;
+		return props.theme.fonts.bold;
+
 	if (props.className === 'open-at-time' || props.className === 'created-on-time')
-		return props.theme.fonts.mono;
+		return props.theme.fonts.regular;
 };
 
-const PositionMetadata: FC<PositioMetadataProps> = ({
+const PositionMetadata: FC<PositionMetadataProps> = ({
 	futuresPositionHistory,
 	marketAssetRate,
 }) => {
@@ -41,49 +49,50 @@ const PositionMetadata: FC<PositioMetadataProps> = ({
 		avgEntryPrice = futuresPositionHistory[0]?.avgEntryPrice.toNumber().toFixed(2);
 
 		const openTimestamp = futuresPositionHistory[0]?.openTimestamp;
-		const closeTimestamp = futuresPositionHistory[0]?.timestamp;
+		const currentTimestamp = new Date().getTime();
 
 		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
 		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
-		createdOnDate = format(closeTimestamp, 'PP', { locale: getLocale() });
-		createdOnTime = format(closeTimestamp, 'HH:mm:ss', { locale: getLocale() });
+		createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
+		createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
 	}
 
 	return (
 		<>
 			<TopLeftContainer>
-				<ContainerText className="open-at-header">{`OPEN AT`}</ContainerText>
-				<ContainerText className="open-at-date" style={{ fontSize: '1.13vw', color: '#FFFF' }}>
+				<ContainerText className="open-at-header" style={headerStyle}>{`OPEN AT`}</ContainerText>
+				<ContainerText className="open-at-date" style={valueStyle}>
 					{openAtDate.toUpperCase()}
 				</ContainerText>
-				<ContainerText
-					className="open-at-time"
-					style={{ fontSize: '0.73vw', letterSpacing: '0.7px' }}
-				>
+				<ContainerText className="open-at-time" style={timeStyle}>
 					{openAtTime}
 				</ContainerText>
 			</TopLeftContainer>
 			<TopRightContainer>
-				<ContainerText className="created-on-header">{`CREATED ON`}</ContainerText>
-				<ContainerText className="created-on-date" style={{ fontSize: '1.13vw', color: '#FFFF' }}>
+				<ContainerText className="created-on-header" style={headerStyle}>
+					{`CREATED ON`}
+				</ContainerText>
+				<ContainerText className="created-on-date" style={valueStyle}>
 					{createdOnDate.toUpperCase()}
 				</ContainerText>
-				<ContainerText
-					className="created-on-time"
-					style={{ fontSize: '0.73vw', letterSpacing: '0.7px' }}
-				>
+				<ContainerText className="created-on-time" style={timeStyle}>
 					{createdOnTime}
 				</ContainerText>
 			</TopRightContainer>
 			<BottomLeftContainer>
-				<ContainerText>{`AVG OPEN PRICE`}</ContainerText>
-				<ContainerText className="avg-open-price" style={{ fontSize: '1.13vw', color: '#FFFF' }}>
+				<ContainerText
+					className="avg-open-header"
+					style={headerStyle}
+				>{`AVG OPEN PRICE`}</ContainerText>
+				<ContainerText className="avg-open-price" style={valueStyle}>
 					{avgEntryPrice}
 				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
-				<ContainerText>{`CURRENT PRICE`}</ContainerText>
-				<ContainerText className="current-price" style={{ fontSize: '1.13vw', color: '#FFFF' }}>
+				<ContainerText className="avg-open-header" style={headerStyle}>
+					{`CURRENT PRICE`}
+				</ContainerText>
+				<ContainerText className="current-price" style={valueStyle}>
 					{marketAssetRate.toFixed(2)}
 				</ContainerText>
 			</BottomRightContainer>
@@ -92,7 +101,8 @@ const PositionMetadata: FC<PositioMetadataProps> = ({
 };
 
 const ContainerText = styled.div`
-	font-size: 0.56vw;
+	font-size: 0.82vw;
+	font-weight: 100;
 	color: #999999;
 
 	font-family: ${(props) => getFontFamily(props)};

@@ -50,7 +50,7 @@ const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) =>
 					<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
 					<StyledPositionLeverage>{`${leverage}`}</StyledPositionLeverage>
 				</StyledPositionType>
-				<StyledAmount className={side}>{amount()}</StyledAmount>
+				<StyledAmount className={`${amount()}`}>{amount()}</StyledAmount>
 			</Container>
 		</>
 	);
@@ -94,13 +94,13 @@ const StyledAmount = styled.div`
 
 	font-size: 4.8vw;
 	font-weight: 700;
-	color: ${(props) => (props.className && parseFloat(props.className) > 0 ? '#ff0420' : '#7fd482')};
+	color: ${(props) => (props.className && parseFloat(props.className) > 0 ? '#7fd482' : '#ff0420')};
 
 	text-shadow: 0px 0px 3.99vw
 		${(props) =>
 			props.className && parseFloat(props.className) > 0
-				? 'rgb(255, 4, 32, 0.35)'
-				: 'rgba(127, 212, 130, 0.35)'};
+				? 'rgba(127, 212, 130, 0.35)'
+				: 'rgb(255, 4, 32, 0.35)'};
 `;
 
 const Container = styled.div`
