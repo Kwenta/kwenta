@@ -32,3 +32,7 @@ export const SUB_MENUS = {
 		// { label: 'Governance', link: '/governance' },
 	],
 };
+
+export const lanugageIcons = {
+	en: '🌐',
+};

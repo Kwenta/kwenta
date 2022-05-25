@@ -12,7 +12,7 @@ import Logo from 'sections/shared/Layout/Logo';
 
 import MobileSubMenu from './MobileSubMenu';
 import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import { languageState, priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
+import { languageState } from 'store/app';
 import { Language } from 'translations/constants';
 
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
@@ -21,10 +21,7 @@ import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
 import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
 import { EXTERNAL_LINKS } from 'constants/links';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-
-const lanugageIcons = {
-	en: '🌐',
-};
+import { lanugageIcons } from './common';
 
 type MobileSettingsModalProps = {
 	onDismiss(): void;
@@ -50,26 +47,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 	const { connectWallet, disconnectWallet } = Connector.useContainer();
 	const [expanded, setExpanded] = useState<SettingCategories>();
-
-	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);
-	const { synthsMap, network } = Connector.useContainer();
 	const { switchToL1, switchToL2 } = useNetworkSwitcher();
-
-	const currencyOptions = useMemo(() => {
-		if (network != null && synthsMap != null) {
-			return PRICE_CURRENCIES.filter((currencyKey) => synthsMap![currencyKey]).map(
-				(currencyKey) => {
-					const synth = synthsMap![currencyKey]!;
-					return {
-						label: synth.asset,
-						value: synth,
-						sign: synth.sign,
-					};
-				}
-			);
-		}
-		return [];
-	}, [network, synthsMap]);
 
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
@@ -135,21 +113,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 							icon: <div>{lanugageIcons[option.value as Language]}</div>,
 							selected: languages[language] === option.value,
 							onClick: () => setLanguage(option.value as Language),
-						}))}
-					/>
-				</MenuButtonContainer>
-
-				<MenuButtonContainer>
-					<MobileSubMenu
-						i18nLabel="Currency"
-						onDismiss={onDismiss}
-						active={expanded === 'currency'}
-						onToggle={handleToggle('currency')}
-						options={currencyOptions.map((option) => ({
-							label: option.label,
-							icon: <div className="currency-icon">{option.sign}</div>,
-							onClick: () => setPriceCurrency(option.value),
-							selected: priceCurrency.asset === option.value.asset,
 						}))}
 					/>
 				</MenuButtonContainer>
