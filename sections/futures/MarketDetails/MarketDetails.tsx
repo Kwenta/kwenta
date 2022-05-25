@@ -247,7 +247,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				const colorClass = color || '';
 
 				return (
-					<div key={key}>
+					<div key={key} style={{ cursor: 'help' }}>
 						<p className="heading">{key}</p>
 						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
 					</div>

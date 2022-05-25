@@ -379,6 +379,7 @@ const StyledSubtitle = styled.p`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
 	margin: 0;
+	cursor: help;
 `;
 
 const PositionCardTooltip = styled(StyledTooltip)`

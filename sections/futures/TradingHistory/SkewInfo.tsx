@@ -50,9 +50,7 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 					height={'auto'}
 					content={t('futures.market.history.skew-tooltip')}
 				>
-					<HoverTransform>
-						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
-					</HoverTransform>
+					<SkewLabel style={{ cursor: 'help' }}>{t('futures.market.history.skew-label')}</SkewLabel>
 				</SkewTooltip>
 				<SkewValue>{formatPercent(data[0].long, { minDecimals: 0 })}</SkewValue>
 			</SkewHeader>
