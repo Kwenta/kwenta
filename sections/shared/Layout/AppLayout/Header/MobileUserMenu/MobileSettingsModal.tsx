@@ -62,18 +62,18 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 				<MenuButtonContainer>
 					<MobileSubMenu
-						i18nLabel="Wallet"
+						i18nLabel={t('mobile-menu.wallet')}
 						onDismiss={onDismiss}
 						active={expanded === 'wallet'}
 						onToggle={handleToggle('wallet')}
 						options={[
 							{
-								label: 'Switch',
+								label: t('mobile-menu.switch'),
 								icon: <MobileSwitchWalletIcon />,
 								onClick: connectWallet,
 							},
 							{
-								label: 'Disconnect',
+								label: t('mobile-menu.disconnect'),
 								icon: <MobileMenuDisconnectIcon />,
 								onClick: disconnectWallet,
 							},
@@ -83,18 +83,18 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 				<MenuButtonContainer>
 					<MobileSubMenu
-						i18nLabel="Network"
+						i18nLabel={t('mobile-menu.network')}
 						onDismiss={onDismiss}
 						active={expanded === 'network'}
 						onToggle={handleToggle('network')}
 						options={[
 							{
-								label: isL2 ? 'Switch to L1' : 'Switch to L2',
+								label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
 								icon: <MobileSwitchToL1Icon />,
 								onClick: isL2 ? switchToL1 : switchToL2,
 							},
 							{
-								label: 'Bridge ↗',
+								label: `${t('mobile-menu.bridge')} ↗`,
 								icon: <MobileMenuBridgeIcon />,
 								externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
 							},
@@ -104,7 +104,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 
 				<MenuButtonContainer>
 					<MobileSubMenu
-						i18nLabel="Language"
+						i18nLabel={t('mobile-menu.language')}
 						onDismiss={onDismiss}
 						active={expanded === 'language'}
 						onToggle={handleToggle('language')}
