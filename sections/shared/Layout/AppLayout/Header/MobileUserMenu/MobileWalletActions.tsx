@@ -56,6 +56,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 
 const StyledButton = styled(Button)`
 	font-size: 13px;
+	text-transform: lowercase;
 `;
 
 const StyledImage = styled.img`
