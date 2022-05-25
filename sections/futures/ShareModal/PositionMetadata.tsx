@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { FC, useLayoutEffect, useState } from 'react';
 import { format } from 'date-fns';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
@@ -39,6 +40,9 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 	futuresPositionHistory,
 	marketAssetRate,
 }) => {
+	const { t } = useTranslation();
+	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
+
 	let avgEntryPrice: string = '',
 		openAtDate: string = '',
 		openAtTime: string = '',
@@ -49,7 +53,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		avgEntryPrice = futuresPositionHistory[0]?.avgEntryPrice.toNumber().toFixed(2);
 
 		const openTimestamp = futuresPositionHistory[0]?.openTimestamp;
-		const currentTimestamp = new Date().getTime();
+		// const currentTimestamp = new Date().getTime();
 
 		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
 		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
@@ -57,10 +61,17 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
 	}
 
+	useLayoutEffect(() => {
+		const now = new Date().getTime();
+		setCurrentTimestamp(now);
+	}, []);
+
 	return (
 		<>
 			<TopLeftContainer>
-				<ContainerText className="open-at-header" style={headerStyle}>{`OPEN AT`}</ContainerText>
+				<ContainerText className="open-at-header" style={headerStyle}>
+					{t('futures.modals.share.position-metadata.open-at')}
+				</ContainerText>
 				<ContainerText className="open-at-date" style={valueStyle}>
 					{openAtDate.toUpperCase()}
 				</ContainerText>
@@ -70,7 +81,7 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 			</TopLeftContainer>
 			<TopRightContainer>
 				<ContainerText className="created-on-header" style={headerStyle}>
-					{`CREATED ON`}
+					{t('futures.modals.share.position-metadata.created-on')}
 				</ContainerText>
 				<ContainerText className="created-on-date" style={valueStyle}>
 					{createdOnDate.toUpperCase()}
@@ -80,17 +91,16 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 				</ContainerText>
 			</TopRightContainer>
 			<BottomLeftContainer>
-				<ContainerText
-					className="avg-open-header"
-					style={headerStyle}
-				>{`AVG OPEN PRICE`}</ContainerText>
+				<ContainerText className="avg-open-header" style={headerStyle}>
+					{t('futures.modals.share.position-metadata.avg-open-price')}
+				</ContainerText>
 				<ContainerText className="avg-open-price" style={valueStyle}>
 					{avgEntryPrice}
 				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
 				<ContainerText className="avg-open-header" style={headerStyle}>
-					{`CURRENT PRICE`}
+					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
 				<ContainerText className="current-price" style={valueStyle}>
 					{marketAssetRate.toFixed(2)}
@@ -104,6 +114,8 @@ const ContainerText = styled.div`
 	font-size: 0.82vw;
 	font-weight: 100;
 	color: #999999;
+
+	text-transform: uppercase;
 
 	font-family: ${(props) => getFontFamily(props)};
 `;

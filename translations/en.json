@@ -906,6 +906,12 @@
 					"copy": "Copy",
 					"copied": "Copied!",
 					"copying": "Copying..."
+				},
+				"position-metadata": {
+					"open-at": "open at",
+					"created-on": "created on",
+					"avg-open-price": "avg open price",
+					"current-price": "current price"
 				}
 			}
 		}
