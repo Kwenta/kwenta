@@ -4,7 +4,7 @@ const lightTheme = {
 	background: '#F2F2F2',
 	border: '1px solid rgba(0, 0, 0, 0.1)',
 	red: '#FF4747',
-	green: '#6BB36E',
+	green: '#329b36',
 	button: {
 		background:
 			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%)',
