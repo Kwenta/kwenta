@@ -15,7 +15,71 @@ import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
 	const { t } = useTranslation();
-
+	const DOC_LINKS = [
+		{
+			title: t('homepage.footer.about-kwenta.title'),
+			links: [
+				{
+					name: t('homepage.footer.about-kwenta.docs'),
+					link: EXTERNAL_LINKS.Docs.DocsRoot,
+				},
+				{
+					name: t('homepage.footer.about-kwenta.news'),
+					link: EXTERNAL_LINKS.Social.Mirror,
+				},
+				{
+					name: t('homepage.footer.about-kwenta.faq'),
+					link: '',
+				},
+				{
+					name: t('homepage.footer.about-kwenta.dao-roles'),
+					link: EXTERNAL_LINKS.Docs.DaoRoles,
+				},
+			],
+		},
+		{
+			title: t('homepage.footer.use-kwenta.title'),
+			links: [
+				{
+					name: t('homepage.footer.use-kwenta.how-to'),
+					link: EXTERNAL_LINKS.Docs.DocsRoot,
+				},
+				{
+					name: t('homepage.footer.use-kwenta.perps'),
+					link: EXTERNAL_LINKS.Docs.Perpetuals,
+				},
+				{
+					name: t('homepage.footer.use-kwenta.short'),
+					link: EXTERNAL_LINKS.Docs.Shorting,
+				},
+				{
+					name: t('homepage.footer.use-kwenta.spot'),
+					link: EXTERNAL_LINKS.Docs.Spot,
+				},
+			],
+		},
+		{
+			title: t('homepage.footer.community.title'),
+			links: [
+				{
+					name: t('homepage.footer.community.governance'),
+					link: EXTERNAL_LINKS.Docs.Governance,
+				},
+				{
+					name: t('homepage.footer.community.dev-dao'),
+					link: EXTERNAL_LINKS.Docs.DevDao,
+				},
+				{
+					name: t('homepage.footer.community.marketing-dao'),
+					link: EXTERNAL_LINKS.Docs.MarketingDao,
+				},
+				{
+					name: t('homepage.footer.community.kips'),
+					link: EXTERNAL_LINKS.Kips.Home,
+				},
+			],
+		},
+	];
 	return (
 		<Container>
 			<StyledGridContainer>
@@ -34,28 +98,16 @@ const Footer: React.FC = () => {
 					</SocialIcons>
 				</LogoFooter>
 				<MultiListContainer>
-					<ListContainer>
-						<ListTitle>Meet KWENTA</ListTitle>
-						<p>About Kwenta</p>
-						<p>Docs</p>
-						<p>News</p>
-						<p>FAQ</p>
-						<p>DAO Roles</p>
-					</ListContainer>
-					<ListContainer>
-						<ListTitle>Use KWENTA</ListTitle>
-						<p>How to use Kwenta</p>
-						<p>Perpetuals</p>
-						<p>Shorting</p>
-						<p>Spot Trading</p>
-					</ListContainer>
-					<ListContainer>
-						<ListTitle>Community</ListTitle>
-						<p>Governance</p>
-						<p>Dev DAO</p>
-						<p>Marketing DAO</p>
-						<p>KIPs</p>
-					</ListContainer>
+					{DOC_LINKS.map(({ title, links }) => (
+						<ListContainer>
+							<ListTitle>{title}</ListTitle>
+							{links.map(({ name, link }) => (
+								<StyledLink href={link} target="_blank">
+									<p>{name}</p>
+								</StyledLink>
+							))}
+						</ListContainer>
+					))}
 				</MultiListContainer>
 				<PowerContainer>
 					<PoweredBySynthetix />
@@ -65,6 +117,10 @@ const Footer: React.FC = () => {
 		</Container>
 	);
 };
+
+const StyledLink = styled.a`
+	cursor: pointer;
+`;
 
 const CopyRight = styled.div`
 	font-size: 12px;

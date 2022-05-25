@@ -243,8 +243,29 @@
 		"footer": {
 			"cta": {
 				"title": "Start trading today",
-				"button": "View Exchange",
-				"copyright": "© 2022 kwenta, All Rights Reserved."
+				"button": "View Exchange"
+			},
+			"copyright": "© 2022 kwenta, All Rights Reserved.",
+			"about-kwenta": {
+				"title": "About Kwenta",
+				"docs": "Docs",
+				"news": "News",
+				"faq": "FAQ",
+				"dao-roles": "DAO Roles"
+			},
+			"use-kwenta": {
+				"title": "Use KWENTA",
+				"how-to": "How to use Kwenta",
+				"perps": "Perpetuals",
+				"short": "Shorting",
+				"spot": "Spot Trading"
+			},
+			"community": {
+				"title": "Community",
+				"governance": "Governance",
+				"dev-dao": "Dev DAO",
+				"marketing-dao": "Marketing DAO",
+				"kips": "KIPs"
 			}
 		}
 	},

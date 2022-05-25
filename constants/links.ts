@@ -30,6 +30,13 @@ export const EXTERNAL_LINKS = {
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 		HowToTrade: 'https://docs.kwenta.io/products/futures',
 		Governance: 'https://docs.kwenta.io/dao/governance-framework',
+		DaoRoles: 'https://docs.kwenta.io/dao/dao-roles',
+		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
+		Perpetuals: 'https://docs.kwenta.io/products/futures',
+		Shorting: ' https://docs.kwenta.io/products/what-is-shorting',
+		Spot: 'https://docs.kwenta.io/products/swaps ',
+		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
+		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
