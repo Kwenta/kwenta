@@ -1,41 +1,86 @@
-import React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
+import Wei, { WeiSource } from '@synthetixio/wei';
 
 import InfoBox from 'components/InfoBox';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { computeNPFee } from 'utils/nextPrice';
+
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
+import { useTranslation } from 'react-i18next';
+
+import TimerIcon from 'assets/svg/app/timer.svg';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
 	orderType: number;
 	feeCost: Wei | null;
+	dynamicFee: Wei | WeiSource | null;
 	sizeDelta: Wei;
 };
 
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey, sizeDelta }) => {
+const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
+	orderType,
+	feeCost,
+	dynamicFee,
+	currencyKey,
+	sizeDelta,
+}) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { network } = Connector.useContainer();
-	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
-	const nextPriceDetails = nextPriceDetailsQuery.data;
+	const costDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
+	const costDetails = costDetailsQuery.data;
+	const { t } = useTranslation();
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(
-		() => computeNPFee(nextPriceDetails, sizeDelta),
-		[nextPriceDetails, sizeDelta]
+		() => computeNPFee(costDetails, sizeDelta),
+		[costDetails, sizeDelta]
 	);
 
 	const totalDeposit = React.useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(costDetails?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, costDetails?.keeperDeposit]);
 
 	const nextPriceDiscount = React.useMemo(() => {
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceFee]);
+
+	const staticRate = React.useMemo(() => computeMarketFee(costDetails, sizeDelta), [
+		costDetails,
+		sizeDelta,
+	]);
+
+	const ToolTip: FC = (props) => (
+		<StyledTooltip
+			height={'auto'}
+			preset="bottom"
+			width="300px"
+			content={t('futures.market.trade.cost-basis.tooltip')}
+			style={{ textTransform: 'none' }}
+		>
+			{props.children}
+			<StyledTimerIcon />
+		</StyledTooltip>
+	);
+
+	const marketCostTooltip = (
+		<>
+			{formatPercent(staticRate ?? zeroBN)}
+			{dynamicFee?.gt(0) && (
+				<>
+					{' + '}
+					<ToolTip>
+						<StyledDynamicFee>{formatPercent(dynamicFee)}</StyledDynamicFee>
+					</ToolTip>
+				</>
+			)}
+		</>
+	);
 
 	return (
 		<StyledInfoBox
@@ -43,8 +88,8 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 				...(orderType === 1
 					? {
 							'Keeper Deposit': {
-								value: !!nextPriceDetails?.keeperDeposit
-									? formatCurrency(selectedPriceCurrency.name, nextPriceDetails.keeperDeposit, {
+								value: !!costDetails?.keeperDeposit
+									? formatCurrency(selectedPriceCurrency.name, costDetails.keeperDeposit, {
 											sign: selectedPriceCurrency.sign,
 											minDecimals: 2,
 									  })
@@ -87,6 +132,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 										sign: selectedPriceCurrency.sign,
 									}
 								),
+								tooltip: dynamicFee?.gt(0) ? <ToolTip /> : null,
 							},
 					  }
 					: {
@@ -97,6 +143,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 											minDecimals: feeCost.lt(0.01) ? 4 : 2,
 									  })
 									: NO_VALUE,
+								tooltip: marketCostTooltip,
 							},
 					  }),
 			}}
@@ -106,6 +153,15 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ orderType, feeCost, currencyKey
 
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
+`;
+
+const StyledDynamicFee = styled.span`
+	color: ${(props) => props.theme.colors.yellow};
+	margin-left: 5px;
+`;
+
+const StyledTimerIcon = styled(TimerIcon)`
+	margin-left: 5px;
 `;
 
 export default FeeInfoBox;

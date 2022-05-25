@@ -21,7 +21,7 @@ import { zeroBN, formatCurrency } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { GasLimitEstimate } from 'constants/network';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { computeNPFee } from 'utils/nextPrice';
+import { computeNPFee } from 'utils/costCalculations';
 import { NO_VALUE } from 'constants/placeholder';
 import { getMarketKey } from 'utils/futures';
 
