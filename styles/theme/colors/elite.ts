@@ -5,6 +5,7 @@ const eliteTheme = {
 	border: '1px solid rgba(255, 255, 255, 0.1)',
 	button: {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
+		fill: '#E6E6E6',
 		hover: 'linear-gradient(180deg, #4F463D 0%, #332F2D 100%)',
 		shadow: '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
 		text: common.primaryWhite,
@@ -72,6 +73,7 @@ const eliteTheme = {
 		},
 	},
 	cell: {
+		fill: '#EBEBEB',
 		gradient: 'linear-gradient(180deg, #1E1D1D 0%, #1b1a1a 100%)',
 		hover: '#222222',
 		outline: '#2B2A2A',

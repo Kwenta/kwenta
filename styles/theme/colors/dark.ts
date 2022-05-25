@@ -5,6 +5,7 @@ const darkTheme = {
 	border: '1px solid #2B2A2A',
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
+		fill: '#E6E6E6',
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
 		shadow:
 			'rgb(0 0 0 / 25%) 0px 2px 2px, rgb(255 255 255 / 10%) 0px 1px 0px inset, rgb(255 255 255 / 3%) 0px 0px 20px inset',
@@ -67,6 +68,7 @@ const darkTheme = {
 		},
 	},
 	cell: {
+		fill: 'rgba(255, 255, 255, 0.01);',
 		gradient: 'linear-gradient(180deg, #1E1D1D 0%, #1b1a1a 100%)',
 		hover: '#222222',
 		outline: '#2B2A2A',
