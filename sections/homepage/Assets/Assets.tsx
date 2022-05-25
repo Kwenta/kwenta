@@ -136,33 +136,6 @@ const Assets = () => {
 	const { synthsMap } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
-	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	const synthList = futuresMarkets.map(({ asset }) => asset);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
-
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
-
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-	const queryCache = useQueryClient().getQueryCache();
-	// KM-NOTE: come back and delete
-	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
-
-	const unfrozenSynths =
-		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
-			? synths.filter(
-					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
-			  )
-			: synths;
-
-	const synthNames: string[] = synths.map((synth): string => synth.name);
-	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
-	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
-
 	const MARKETS_TABS = useMemo(
 		() => [
 			{
@@ -186,6 +159,32 @@ const Assets = () => {
 		],
 		[activeMarketsTab, t]
 	);
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const synthList = futuresMarkets.map(({ asset }) => asset);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+
+	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
+	const queryCache = useQueryClient().getQueryCache();
+	// KM-NOTE: come back and delete
+	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
+
+	const unfrozenSynths =
+		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
+			? synths.filter(
+					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
+			  )
+			: synths;
+
+	const synthNames: string[] = synths.map((synth): string => synth.name);
+	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
+	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
@@ -228,8 +227,11 @@ const Assets = () => {
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
-			const pastPrice = spotDailyPriceChanges.find((price: Price) => price.synth === synth.name);
-			// console.log(`landing page:`, synth.asset, price, pastPrice?.price);
+
+			const pastPrice = spotDailyPriceChanges.find((price: Price) => {
+				return price.synth === synth.asset || price.synth === synth.name;
+			});
+
 			return {
 				key: synth.asset,
 				market: synth.name,
