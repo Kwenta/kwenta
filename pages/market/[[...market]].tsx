@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { DesktopOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 import {
 	PageContent,
@@ -23,6 +23,7 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import { getMarketKey } from 'utils/futures';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import Connector from 'containers/Connector';
+import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 
 const Market = () => {
 	const { t } = useTranslation();
@@ -51,34 +52,39 @@ const Market = () => {
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
-			<StyledPageContent>
-				<StyledFullHeightContainer>
-					<DesktopOnlyView>
-						<StyledLeftSideContent>
-							<TradingHistory currencyKey={marketAsset} />
-						</StyledLeftSideContent>
-					</DesktopOnlyView>
-					<StyledMainContent>
-						<MarketInfo
-							market={marketAsset}
-							position={futuresMarketPosition}
-							openOrders={openOrders}
-							refetch={refetch}
-							potentialTrade={potentialTrade}
-						/>
-					</StyledMainContent>
-					<DesktopOnlyView>
-						<StyledRightSideContent>
-							<Trade
-								onEditPositionInput={setPotentialTrade}
-								refetch={refetch}
+			<MobileHiddenView>
+				<StyledPageContent>
+					<StyledFullHeightContainer>
+						<DesktopOnlyView>
+							<StyledLeftSideContent>
+								<TradingHistory currencyKey={marketAsset} />
+							</StyledLeftSideContent>
+						</DesktopOnlyView>
+						<StyledMainContent>
+							<MarketInfo
+								market={marketAsset}
 								position={futuresMarketPosition}
-								currencyKey={marketAsset}
+								openOrders={openOrders}
+								refetch={refetch}
+								potentialTrade={potentialTrade}
 							/>
-						</StyledRightSideContent>
-					</DesktopOnlyView>
-				</StyledFullHeightContainer>
-			</StyledPageContent>
+						</StyledMainContent>
+						<DesktopOnlyView>
+							<StyledRightSideContent>
+								<Trade
+									onEditPositionInput={setPotentialTrade}
+									refetch={refetch}
+									position={futuresMarketPosition}
+									currencyKey={marketAsset}
+								/>
+							</StyledRightSideContent>
+						</DesktopOnlyView>
+					</StyledFullHeightContainer>
+				</StyledPageContent>
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<MobileTrade />
+			</MobileOnlyView>
 		</>
 	);
 };
