@@ -81,6 +81,10 @@ const lightTheme = {
 		title: common.secondaryGray,
 		value: '#000000',
 	},
+	icon: {
+		fill: '#787878',
+		hover: '#171002',
+	},
 };
 
 export default lightTheme;

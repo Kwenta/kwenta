@@ -85,6 +85,10 @@ const eliteTheme = {
 		title: common.secondaryGray,
 		value: common.primaryWhite,
 	},
+	icon: {
+		fill: '',
+		hover: '',
+	},
 };
 
 export default eliteTheme;
