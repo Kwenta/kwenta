@@ -7,8 +7,9 @@ import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
 
 type PositionMetadataProps = {
-	futuresPositionHistory: PositionHistory[];
+	marketAsset: string;
 	marketAssetRate: number;
+	futuresPositionHistory: PositionHistory[];
 };
 
 const timeStyle = { fontSize: '0.83vw' };
@@ -18,7 +19,7 @@ const headerStyle = { fontSize: '0.83vw', letterSpacing: '0.008vw' };
 const getFontFamily = (props: any) => {
 	const fontFamilyObj: any = {
 		time: props.theme.fonts.regular,
-		header: props.theme.compressedMedium,
+		header: props.theme.fonts.compressedMedium,
 		'date-or-price': props.theme.fonts.bold,
 	};
 
@@ -28,8 +29,9 @@ const getFontFamily = (props: any) => {
 };
 
 const PositionMetadata: FC<PositionMetadataProps> = ({
-	futuresPositionHistory,
+	marketAsset,
 	marketAssetRate,
+	futuresPositionHistory,
 }) => {
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
@@ -41,9 +43,13 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		createdOnTime: string = '';
 
 	if (futuresPositionHistory.length > 0) {
-		avgEntryPrice = futuresPositionHistory[0]?.avgEntryPrice.toNumber().toFixed(2);
+		const currentPosition = futuresPositionHistory.filter(
+			(obj: PositionHistory) => obj.asset === marketAsset
+		);
 
-		const openTimestamp = futuresPositionHistory[0]?.openTimestamp;
+		avgEntryPrice = currentPosition[0].avgEntryPrice.toNumber().toFixed(2);
+
+		const openTimestamp = currentPosition[0].openTimestamp;
 
 		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
 		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });

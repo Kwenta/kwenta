@@ -70,6 +70,7 @@ const ShareModal: FC<ShareModalProps> = ({
 						</div>
 						<AmountContainer marketAsset={marketAsset} position={position} />
 						<PositionMetadata
+							marketAsset={marketAsset}
 							marketAssetRate={marketAssetRate}
 							futuresPositionHistory={futuresPositionHistory}
 						/>
