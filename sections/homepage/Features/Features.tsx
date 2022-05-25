@@ -134,7 +134,7 @@ const Features = () => {
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<IconGridContainer>
 				{PARTNERS.map(({ key, image }) => (
-					<span key={key}>{image}</span>
+					<PartnerIconContainer key={key}>{image}</PartnerIconContainer>
 				))}
 			</IconGridContainer>
 		</Container>
@@ -144,9 +144,9 @@ const Features = () => {
 const FeatureCopy = styled(Copy)`
 	font-size: 15px;
 	line-height: 150%;
-	letter-spacing: -0.03em;
+	letter-spacing: -0.04em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-	width: 183px;
+	width: 250px;
 `;
 
 const FeatureTitle = styled(Title)`
@@ -163,7 +163,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	margin: auto;
 	margin-top: 60px;
 	gap: 20px 20px;
-	width: 766px;
+	width: 826px;
 	flex-wrap: wrap;
 	justify-content: center;
 `;
@@ -190,10 +190,16 @@ const FeatureCard = styled(FlexDivRow)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
 	padding: 32px 80px 32px 32px;
-	width: 373px;
-	height: 120px;
+	width: 403px;
+	height: 135px;
 `;
 
+const PartnerIconContainer = styled.span`
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+`;
 const FeatureIconContainer = styled.div`
 	padding-bottom: 40px;
 	img,

@@ -29,6 +29,7 @@ export const EXTERNAL_LINKS = {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 		HowToTrade: 'https://docs.kwenta.io/products/futures',
+		Governance: 'https://docs.kwenta.io/dao/governance-framework',
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
@@ -38,6 +39,6 @@ export const EXTERNAL_LINKS = {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
 	},
 	Kips: {
-		Home: 'https://github.com/Kwenta/KIPs',
+		Home: 'https://kips.kwenta.io/all-kip/',
 	},
 };

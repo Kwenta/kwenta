@@ -11,8 +11,11 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import Logo from '../Logo';
 import { GridContainer } from 'sections/homepage/common';
+import { useTranslation } from 'react-i18next';
 
 const Footer: React.FC = () => {
+	const { t } = useTranslation();
+
 	return (
 		<Container>
 			<StyledGridContainer>
@@ -56,7 +59,7 @@ const Footer: React.FC = () => {
 				</MultiListContainer>
 				<PowerContainer>
 					<PoweredBySynthetix />
-					<CopyRight>© 2022 kwenta, All Rights Reserved.</CopyRight>
+					<CopyRight>{t('homepage.footer.copyright')}</CopyRight>
 				</PowerContainer>
 			</StyledGridContainer>
 		</Container>

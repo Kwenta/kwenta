@@ -9,7 +9,6 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import FaqIcon from 'assets/png/learn/faq.png';
 import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
@@ -32,24 +31,26 @@ const LEARNS = [
 		title: 'homepage.learn.how-to-stake.title',
 		copy: 'homepage.learn.how-to-stake.copy',
 		image: <HowToStakeIcon />,
+		onClick: () => {},
 	},
 	{
 		key: 'how-governance',
 		title: 'homepage.learn.how-governance.title',
 		copy: 'homepage.learn.how-governance.copy',
 		image: <HowGovernanceIcon />,
+		onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank'),
 	},
 	{
 		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
 		image: <img src={FaqIcon} />,
+		onClick: () => {},
 	},
 ];
 
 const Learn = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = (
 		<>
@@ -59,7 +60,7 @@ const Learn = () => {
 	);
 
 	return (
-		<Container ref={whyKwentaRef}>
+		<Container>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
 			<StyledFlexDivRow>
 				{LEARNS.map(({ key, title, copy, image, onClick }) => (
@@ -76,7 +77,12 @@ const Learn = () => {
 							)}
 							<FeatureCopy>{t(copy)}</FeatureCopy>
 							{key !== 'faq' ? (
-								<StyledButton isRounded={false} size="sm" onClick={onClick}>
+								<StyledButton
+									isRounded={false}
+									size="sm"
+									onClick={onClick}
+									disabled={key === 'how-to-stake'}
+								>
 									{t('homepage.learn.title')}
 									<ArrowUpRightIcon />
 								</StyledButton>
@@ -102,9 +108,10 @@ const StyledButton = styled(Button)`
 const FeatureCopy = styled(Copy)`
 	font-size: 15px;
 	line-height: 150%;
-	letter-spacing: -0.03em;
+	letter-spacing: -0.04em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-	margin-bottom: 46px;
+	margin-bottom: 36px;
+	width: 280px;
 `;
 
 const FeatureTitle = styled(Title)`
@@ -207,7 +214,7 @@ const FeatureIconContainer = styled.div`
 	&.how-governance {
 		width: 156px;
 		height: 100px;
-		margin-bottom: 40px;
+		margin-bottom: 15px;
 		padding-left: 10px;
 	}
 

@@ -14,7 +14,6 @@ import { GridDivCenteredCol, TextButton } from 'styles/common';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import router from 'next/router';
@@ -22,7 +21,6 @@ import { EXTERNAL_LINKS } from 'constants/links';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
 	const isL2 = useRecoilValue(isL2State);
 
 	const links = useMemo(
@@ -30,21 +28,19 @@ const Header: FC = () => {
 			{
 				id: 'market',
 				label: t('homepage.nav.markets'),
-				onClick: () => {
-					return router.push(ROUTES.Markets.Home);
-				},
+				onClick: () => router.push(ROUTES.Markets.Home),
 			},
 			{
 				id: 'governance',
 				label: t('homepage.nav.governance'),
-				ref: howItWorksRef,
 				icon: <CaretDownGrayIcon />,
+				onClick: () => window.open(EXTERNAL_LINKS.Kips.Home),
 			},
 			{
 				id: 'socials',
 				label: t('homepage.nav.socials'),
-				ref: faqRef,
 				icon: <CaretDownGrayIcon />,
+				onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter),
 			},
 			{
 				id: 'blogs',
@@ -63,13 +59,8 @@ const Header: FC = () => {
 				<Container>
 					<Logo isL2={isL2} isHomePage={true} />
 					<Links>
-						{links.map(({ id, label, ref, icon, onClick }) => (
-							<StyledTextButton
-								key={id}
-								onClick={() => {
-									ref ? scrollToRef(ref) : onClick?.();
-								}}
-							>
+						{links.map(({ id, label, icon, onClick }) => (
+							<StyledTextButton key={id} onClick={onClick}>
 								{label}
 								{icon}
 							</StyledTextButton>

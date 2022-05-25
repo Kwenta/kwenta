@@ -10,7 +10,6 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { Copy, Title } from '../common';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
@@ -49,7 +48,6 @@ const EARNINGS = [
 
 const Earning = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = (
 		<>
@@ -63,7 +61,7 @@ const Earning = () => {
 
 	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
-		<Container ref={whyKwentaRef}>
+		<Container>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
 			<StyledFlexContainer>
 				{EARNINGS.map(({ id, title, copy, image }) => (
