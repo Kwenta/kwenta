@@ -14,13 +14,16 @@ import LyraIcon from 'assets/svg/partners/lyra.svg';
 import AelinIcon from 'assets/svg/partners/aelin.svg';
 import ThalesIcon from 'assets/svg/partners/thales.svg';
 import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import GraphIcon from 'assets/svg/partners/graph.svg';
+import HopIcon from 'assets/svg/partners/hop.svg';
+import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
 
 import {
 	FlexDivCentered,
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
-	FlexDivRowCentered,
+	GridDiv,
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
@@ -95,6 +98,18 @@ const PARTNERS = [
 		key: 'optimism',
 		image: <OptimismIcon />,
 	},
+	{
+		key: 'graph',
+		image: <GraphIcon />,
+	},
+	{
+		key: 'hop',
+		image: <HopIcon />,
+	},
+	{
+		key: 'chainlink',
+		image: <ChainLinkIcon />,
+	},
 ];
 
 const Features = () => {
@@ -134,7 +149,9 @@ const Features = () => {
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<IconGridContainer>
 				{PARTNERS.map(({ key, image }) => (
-					<PartnerIconContainer key={key}>{image}</PartnerIconContainer>
+					<PartnerIconContainer key={key} className={key}>
+						{image}
+					</PartnerIconContainer>
 				))}
 			</IconGridContainer>
 		</Container>
@@ -168,14 +185,13 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	justify-content: center;
 `;
 
-const IconGridContainer = styled(FlexDivRowCentered)`
-	justify-content: center;
-	flex-wrap: wrap;
-	column-gap: 250px;
-	row-gap: 50px;
-	margin-top: 60px;
+const IconGridContainer = styled(GridDiv)`
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 80px 20px;
+	margin-top: 80px;
 	svg {
-		width: 120px;
+		width: 128px;
 		height: 64px;
 	}
 `;
@@ -194,12 +210,29 @@ const FeatureCard = styled(FlexDivRow)`
 	height: 135px;
 `;
 
-const PartnerIconContainer = styled.span`
+const PartnerIconContainer = styled.div`
+	place-self: center;
 	svg {
-		width: 100%;
-		height: 100%;
+		width: 128px;
+		height: 64px;
 	}
 `;
+
+// &.chainlink {
+// 	width: 15%;
+// 	height: 15%;
+// }
+
+// &.hop {
+// 	width: 10%;
+// 	height: 10%;
+// }
+
+// &.graph {
+// 	width: 4%;
+// 	height: 4%;
+// }
+
 const FeatureIconContainer = styled.div`
 	padding-bottom: 40px;
 	img,

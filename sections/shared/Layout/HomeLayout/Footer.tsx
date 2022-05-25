@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
 	const { t } = useTranslation();
 	const DOC_LINKS = [
 		{
-			title: t('homepage.footer.about-kwenta.title'),
+			key: t('homepage.footer.about-kwenta.title'),
 			links: [
 				{
 					name: t('homepage.footer.about-kwenta.docs'),
@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
 			],
 		},
 		{
-			title: t('homepage.footer.use-kwenta.title'),
+			key: t('homepage.footer.use-kwenta.title'),
 			links: [
 				{
 					name: t('homepage.footer.use-kwenta.how-to'),
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
 			],
 		},
 		{
-			title: t('homepage.footer.community.title'),
+			key: t('homepage.footer.community.title'),
 			links: [
 				{
 					name: t('homepage.footer.community.governance'),
@@ -98,9 +98,9 @@ const Footer: React.FC = () => {
 					</SocialIcons>
 				</LogoFooter>
 				<MultiListContainer>
-					{DOC_LINKS.map(({ title, links }) => (
-						<ListContainer>
-							<ListTitle>{title}</ListTitle>
+					{DOC_LINKS.map(({ key, links }) => (
+						<ListContainer key={key}>
+							<ListTitle>{key}</ListTitle>
 							{links.map(({ name, link }) => (
 								<StyledLink href={link} target="_blank">
 									<p>{name}</p>
