@@ -815,7 +815,8 @@
 						"side": "Side",
 						"leverage": "Leverage",
 						"ROI": "ROI",
-						"fee": "fee"
+						"fee": "Protocol Fee",
+						"gas-fee": "Network Gas Fee"
 					}
 				},
 				"orders": {
@@ -1169,7 +1170,7 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"gas-price": "gas price",
+				"gas-price": "Network Gas Fee",
 				"max-fee": "max fee",
 				"average": "Average",
 				"fast": "Fast",
