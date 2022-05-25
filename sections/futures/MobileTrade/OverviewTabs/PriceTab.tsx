@@ -1,7 +1,12 @@
 import React from 'react';
+import TVChart from 'components/TVChart';
 
-const PriceTab = () => {
-	return <div />;
+const PriceTab: React.FC = () => {
+	return (
+		<div>
+			<TVChart baseCurrencyKey="sUSD" quoteCurrencyKey="sETH" />
+		</div>
+	);
 };
 
 export default PriceTab;

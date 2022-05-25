@@ -1,26 +1,54 @@
-import TabButton from 'components/Button/TabButton';
 import React from 'react';
+import styled from 'styled-components';
+
+import TabButton from 'components/Button/TabButton';
+
+import OpenPositionTab from './OpenPositionTab';
+import OrdersTab from './OrdersTab';
+import TradesTab from './TradesTab';
+import TransfersTab from './TransfersTab';
 
 const TABS = [
 	{
 		title: 'Open Position',
-		component: <div />,
+		component: <OpenPositionTab />,
+	},
+	{
+		title: 'Orders',
+		component: <OrdersTab />,
+	},
+	{
+		title: 'Trades',
+		component: <TradesTab />,
+	},
+	{
+		title: 'Transfers',
+		component: <TransfersTab />,
 	},
 ];
 
-const LowerTab: React.FC = () => {
+const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
 		<div>
-			<div>
+			<TabButtonsContainer>
 				{TABS.map(({ title }, i) => (
-					<TabButton key={title} title={title} onClick={() => setActiveTab(i)} />
+					<TabButton
+						key={title}
+						title={title}
+						active={activeTab === i}
+						onClick={() => setActiveTab(i)}
+					/>
 				))}
-			</div>
+			</TabButtonsContainer>
 			<div>{TABS[activeTab].component}</div>
 		</div>
 	);
 };
 
-export default LowerTab;
+const TabButtonsContainer = styled.div`
+	display: flex;
+`;
+
+export default UserTabs;
