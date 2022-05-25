@@ -12,28 +12,19 @@ type PositionMetadataProps = {
 };
 
 const timeStyle = { fontSize: '0.83vw' };
-const headerStyle = { fontSize: '0.83vw', letterSpacing: '0.008vw' };
 const valueStyle = { fontSize: '1.23vw', color: '#FFFF' };
+const headerStyle = { fontSize: '0.83vw', letterSpacing: '0.008vw' };
 
 const getFontFamily = (props: any) => {
-	if (
-		props.className === 'open-at-header' ||
-		props.className === 'avg-open-header' ||
-		props.className === 'created-on-header' ||
-		props.className === 'current-price-header'
-	)
-		return props.theme.fonts.compressedMedium;
+	const fontFamilyObj: any = {
+		time: props.theme.fonts.regular,
+		header: props.theme.compressedMedium,
+		'date-or-price': props.theme.fonts.bold,
+	};
 
-	if (
-		props.className === 'open-at-date' ||
-		props.className === 'avg-open-price' ||
-		props.className === 'created-on-date' ||
-		props.className === 'current-price'
-	)
-		return props.theme.fonts.bold;
-
-	if (props.className === 'open-at-time' || props.className === 'created-on-time')
-		return props.theme.fonts.regular;
+	for (const key of Object.keys(fontFamilyObj)) {
+		if (key === props.className) return fontFamilyObj[props.className];
+	}
 };
 
 const PositionMetadata: FC<PositionMetadataProps> = ({
@@ -53,7 +44,6 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		avgEntryPrice = futuresPositionHistory[0]?.avgEntryPrice.toNumber().toFixed(2);
 
 		const openTimestamp = futuresPositionHistory[0]?.openTimestamp;
-		// const currentTimestamp = new Date().getTime();
 
 		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
 		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
@@ -69,40 +59,40 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 	return (
 		<>
 			<TopLeftContainer>
-				<ContainerText className="open-at-header" style={headerStyle}>
+				<ContainerText className="header" style={headerStyle}>
 					{t('futures.modals.share.position-metadata.open-at')}
 				</ContainerText>
-				<ContainerText className="open-at-date" style={valueStyle}>
+				<ContainerText className="date-or-price" style={valueStyle}>
 					{openAtDate.toUpperCase()}
 				</ContainerText>
-				<ContainerText className="open-at-time" style={timeStyle}>
+				<ContainerText className="time" style={timeStyle}>
 					{openAtTime}
 				</ContainerText>
 			</TopLeftContainer>
 			<TopRightContainer>
-				<ContainerText className="created-on-header" style={headerStyle}>
+				<ContainerText className="header" style={headerStyle}>
 					{t('futures.modals.share.position-metadata.created-on')}
 				</ContainerText>
-				<ContainerText className="created-on-date" style={valueStyle}>
+				<ContainerText className="date-or-price" style={valueStyle}>
 					{createdOnDate.toUpperCase()}
 				</ContainerText>
-				<ContainerText className="created-on-time" style={timeStyle}>
+				<ContainerText className="time" style={timeStyle}>
 					{createdOnTime}
 				</ContainerText>
 			</TopRightContainer>
 			<BottomLeftContainer>
-				<ContainerText className="avg-open-header" style={headerStyle}>
+				<ContainerText className="header" style={headerStyle}>
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
-				<ContainerText className="avg-open-price" style={valueStyle}>
+				<ContainerText className="date-or-price" style={valueStyle}>
 					{avgEntryPrice}
 				</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
-				<ContainerText className="avg-open-header" style={headerStyle}>
+				<ContainerText className="header" style={headerStyle}>
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="current-price" style={valueStyle}>
+				<ContainerText className="date-or-price" style={valueStyle}>
 					{marketAssetRate.toFixed(2)}
 				</ContainerText>
 			</BottomRightContainer>
