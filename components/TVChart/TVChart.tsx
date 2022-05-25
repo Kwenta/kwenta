@@ -175,7 +175,7 @@ export function TVChart({
 			// @ts-ignore
 			_widget.current._options.datafeed = newDataFeed;
 		}
-	}, [intervalId, lastSubscription, onSubscribe, network.id]);
+	}, [lastSubscription, onSubscribe, network.id]);
 
 	return (
 		<Container>

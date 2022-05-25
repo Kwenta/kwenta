@@ -159,7 +159,7 @@ const DataFeedFactory = (
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 			const intervalId = setInterval(() => {
 				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
-			}, 5000);
+			}, 10000);
 
 			onSubscribe(intervalId);
 		},
