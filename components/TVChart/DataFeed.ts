@@ -153,7 +153,7 @@ const DataFeedFactory = (
 		subscribeBars: (
 			symbolInfo: LibrarySymbolInfo,
 			_resolution: ResolutionString,
-			onTick: SubscribeBarsCallback,
+			onTick: SubscribeBarsCallback
 		) => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
 			const intervalId = setInterval(() => {
