@@ -7,7 +7,7 @@ import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from '
 import media, { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import useGetStats from 'queries/futures/useGetStats';
-import { FuturesStat } from 'queries/futures/types';
+import { FuturesMarket, FuturesStat } from 'queries/futures/types';
 import Wei, { wei } from '@synthetixio/wei';
 import Table from 'components/Table';
 import useENS from 'hooks/useENS';
@@ -19,6 +19,7 @@ import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTrad
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import Loader from 'components/Loader';
 import { truncateAddress } from 'utils/formatters/string';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 
 type Stat = {
 	pnl: Wei;
@@ -90,6 +91,14 @@ const ShortList = () => {
 	);
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
+
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const openInterest = useMemo(() => {
+		const futuresMarkets = futuresMarketsQuery?.data ?? [];
+		return futuresMarkets
+			.map((market: FuturesMarket) => market.marketSize.mul(market.price).toNumber())
+			.reduce((total: number, openInterest: number) => total + openInterest, 0);
+	}, [futuresMarketsQuery?.data]);
 
 	return (
 		<Container ref={whyKwentaRef}>
@@ -189,7 +198,16 @@ const ShortList = () => {
 				</StatsCard>
 				<StatsCard>
 					<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
-					<StatsValue>$12,463,401.91</StatsValue>
+					<StatsValue>
+						{futuresMarketsQuery.isLoading ? (
+							<Loader />
+						) : (
+							formatCurrency(Synths.sUSD, openInterest ?? 0, {
+								sign: '$',
+								minDecimals: 0,
+							})
+						)}
+					</StatsValue>
 					<GridSvg />
 				</StatsCard>
 				<StatsCard>
