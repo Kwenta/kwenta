@@ -2,24 +2,34 @@ import TabButton from 'components/Button/TabButton';
 import React from 'react';
 import styled from 'styled-components';
 
-const tabMap = {
-	account: '1',
-	price: '2',
-	trades: '3',
-	stats: '4',
-};
-
-type AccTabs = keyof typeof tabMap;
+const TABS = [
+	{
+		title: 'Account',
+		component: <div />,
+	},
+	{
+		title: 'Price',
+		component: <div />,
+	},
+	{
+		title: 'Trades',
+		component: <div />,
+	},
+	{
+		title: 'Stats',
+		component: <div />,
+	},
+];
 
 const MainTab = () => {
-	const [activeTab, setActiveTab] = React.useState<AccTabs>('account');
+	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
 		<MainTabContainer>
-			{tabMap[activeTab]}
+			{TABS[activeTab].component}
 			<MainTabButtonsContainer>
-				{Object.entries(tabMap).map(([tab, value]) => (
-					<TabButton key={tab} title={tab} onClick={() => setActiveTab(tab as AccTabs)} />
+				{TABS.map(({ title }, i) => (
+					<TabButton key={title} title={title} onClick={() => setActiveTab(i)} />
 				))}
 			</MainTabButtonsContainer>
 		</MainTabContainer>
