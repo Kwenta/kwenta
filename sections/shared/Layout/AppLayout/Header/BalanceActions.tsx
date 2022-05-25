@@ -192,7 +192,7 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.common.primaryWhite};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;
@@ -227,7 +227,7 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 13px;
 	padding: 10px;
 	> div {
