@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import MainTab from './MainTab';
-import LowerTab from './LowerTab';
+import MainTab from './OverviewTabs';
+import LowerTab from './UserTabs';
 import { SectionSeparator } from './common';
 
 const MobileTrade = () => {
