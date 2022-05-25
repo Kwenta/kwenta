@@ -59,7 +59,11 @@ const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryO
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress, ...options }
+		{
+			enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress,
+			refetchInterval: 5000,
+			...options,
+		}
 	);
 };
 
