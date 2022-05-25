@@ -52,7 +52,7 @@ function Select<T>(props: Props<T>) {
 			}),
 			menu: (provided, state) => ({
 				...provided,
-				background: colors.selectedTheme.cell.gradient,
+				background: colors.selectedTheme.cell.fill,
 				border: 'none',
 				outline: 'none',
 				borderRadius: 10,
@@ -66,7 +66,8 @@ function Select<T>(props: Props<T>) {
 				borderRadius: 10,
 				padding: 0,
 				textAlign: 'left',
-				border: colors.selectedTheme.cell.outline,
+				border: colors.selectedTheme.border,
+				borderWidth: '1px',
 				borderStyle: 'solid',
 				outline: 'none',
 				'div.react-select__option:first-of-type:hover': {

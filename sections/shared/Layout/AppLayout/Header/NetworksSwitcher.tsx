@@ -149,17 +149,17 @@ const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	:hover {
 		> svg {
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
 			}
 		}
 	}
 	> svg {
 		path {
-			fill: ${(props) => props.theme.colors.common.secondaryGray};
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 		}
 	}
 `;
