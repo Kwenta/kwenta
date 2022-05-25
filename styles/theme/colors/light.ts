@@ -5,6 +5,7 @@ const lightTheme = {
 	border: '1px solid rgba(0, 0, 0, 0.1)',
 	red: '#FF4747',
 	green: '#329b36',
+	black: '#171002',
 	button: {
 		background:
 			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%)',
@@ -12,7 +13,7 @@ const lightTheme = {
 		hover: '#e6e6e6',
 		shadow:
 			'0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08), inset 0px 0px 20px rgba(255, 255, 255, 0.03)',
-		text: '#052822',
+		text: '#171002',
 		primary: {
 			background: 'linear-gradient(180deg, #BE9461 0%, #9C6C3C 100%)',
 			hover: 'linear-gradient(180deg, #E4B378 0%, #B98C55 100%)',
@@ -73,8 +74,8 @@ const lightTheme = {
 	cell: {
 		fill: '#EDEDED',
 		gradient: 'linear-gradient(180deg, #1E1D1D 0%, #1b1a1a 100%)',
-		hover: '#222222',
-		outline: '#2B2A2A',
+		hover: '#E6E6E6',
+		outline: 'grey',
 	},
 	text: {
 		title: common.secondaryGray,

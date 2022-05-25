@@ -5,6 +5,7 @@ const eliteTheme = {
 	border: '1px solid rgba(255, 255, 255, 0.1)',
 	red: '',
 	green: '',
+	black: '#171002',
 	button: {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
 		fill: '#E6E6E6',
