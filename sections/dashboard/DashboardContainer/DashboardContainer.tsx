@@ -11,10 +11,11 @@ import Markets from '../Markets';
 import Overview from '../Overview';
 import StakingInfo from '../StakingInfo';
 import { MainContent, LeftSideContent, RightSideContent } from 'styles/common';
+import Histories from '../Histories';
 
 enum Tab {
 	Overview = 'overview',
-	Positions = 'positions',
+	Histories = 'histories',
 	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
@@ -48,11 +49,10 @@ const DashboardContainer: FC = () => {
 				onClick: () => router.push(ROUTES.Home.Overview),
 			},
 			{
-				name: Tab.Positions,
-				label: t('futures-dashboard.tabs.nav.positions'),
-				active: activeTab === Tab.Positions,
-				disabled: true,
-				onClick: () => {},
+				name: Tab.Histories,
+				label: t('futures-dashboard.tabs.nav.histories'),
+				active: activeTab === Tab.Histories,
+				onClick: () => router.push(ROUTES.Home.Histories),
 			},
 			{
 				name: Tab.Rewards,
@@ -123,6 +123,9 @@ const DashboardContainer: FC = () => {
 			<MainContent>
 				<TabPanel name={Tab.Overview} activeTab={activeTab}>
 					<Overview />
+				</TabPanel>
+				<TabPanel name={Tab.Histories} activeTab={activeTab}>
+					<Histories />
 				</TabPanel>
 				<TabPanel name={Tab.Markets} activeTab={activeTab}>
 					<Markets />
