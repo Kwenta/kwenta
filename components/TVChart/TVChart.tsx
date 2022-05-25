@@ -175,6 +175,7 @@ export function TVChart({
 			// @ts-ignore
 			_widget.current._options.datafeed = newDataFeed;
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [lastSubscription, onSubscribe, network.id]);
 
 	return (
