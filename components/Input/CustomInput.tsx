@@ -11,6 +11,7 @@ type CustomInputProps = {
 	disabled?: boolean;
 	id?: string;
 	defaultValue?: any;
+	dataTestId?: string;
 };
 
 const INVALID_CHARS = ['-', '+', 'e'];
@@ -25,6 +26,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 	disabled,
 	id,
 	defaultValue,
+	dataTestId,
 }) => {
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		onChange(e, e.target.value.replace(/,/g, '.').replace(/[e+-]/gi, ''));
@@ -45,6 +47,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 				}}
 				id={id}
 				defaultValue={defaultValue}
+				data-testid={dataTestId}
 			/>
 			{typeof right === 'string' ? <span>{right}</span> : right}
 		</CustomInputContainer>
