@@ -2,7 +2,7 @@ const fontStyles = {
 	regular: `AkkuratLLWeb-Regular`,
 	bold: `AkkuratLLWeb-Bold`,
 	black: `AkkuratLLWeb-Black`,
-	mono: `AkkuratMonoLLWeb-Regular`,
+	mono: `AkkuratLLWeb-Regular`,
 	monoBold: `AkkuratMonoLLWeb-Bold`,
 };
 

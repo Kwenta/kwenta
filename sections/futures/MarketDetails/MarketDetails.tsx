@@ -110,12 +110,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						minDecimals,
 					}) && lastOracleUpdateTime ? (
 						<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
-							<HoverTransform>
-								{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-									sign: '$',
-									minDecimals,
-								})}
-							</HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+								sign: '$',
+								minDecimals,
+							})}
 						</TimerTooltip>
 					) : (
 						NO_VALUE
@@ -131,12 +129,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 							height={'auto'}
 							content={t('exchange.market-details-card.tooltips.external-price')}
 						>
-							<HoverTransform>
-								{formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-								})}
-							</HoverTransform>
+							{formatCurrency(selectedPriceCurrency.name, externalPrice, {
+								sign: '$',
+								minDecimals,
+							})}
 						</StyledTooltip>
 					),
 			},
@@ -148,15 +144,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 							height={'auto'}
 							content={t('exchange.market-details-card.tooltips.24h-change')}
 						>
-							<HoverTransform>
-								{`${formatCurrency(
-									selectedPriceCurrency.name,
-									marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-									{ sign: '$', minDecimals }
-								)} (${formatPercent(
-									marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
-								)})`}
-							</HoverTransform>
+							{`${formatCurrency(
+								selectedPriceCurrency.name,
+								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+								{ sign: '$', minDecimals }
+							)} (${formatPercent(
+								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+							)})`}
 						</StyledTooltip>
 					) : (
 						NO_VALUE
@@ -177,11 +171,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
-						<HoverTransform>
-							{formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-								sign: '$',
-							})}
-						</HoverTransform>
+						{formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+							sign: '$',
+						})}
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -194,7 +186,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
-						<HoverTransform>{`${futuresDailyTradeStats ?? 0}`}</HoverTransform>
+						{`${futuresDailyTradeStats ?? 0}`}
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -204,34 +196,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate)) ? (
 					<StyledTooltip
 						preset="bottom"
-						content={`Long: ${formatCurrency(
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.open-interest')}
+					>
+						{formatCurrency(
 							selectedPriceCurrency.name,
-							marketSummary.marketSize
-								.add(marketSummary.marketSkew)
-								.div('2')
-								.abs()
-								.mul(basePriceRate)
-								.toNumber(),
+							marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
 							{ sign: '$' }
 						)}
-						Short: ${formatCurrency(
-							selectedPriceCurrency.name,
-							marketSummary.marketSize
-								.sub(marketSummary.marketSkew)
-								.div('2')
-								.abs()
-								.mul(basePriceRate)
-								.toNumber(),
-							{ sign: '$' }
-						)}`}
-					>
-						<HoverTransform>
-							{formatCurrency(
-								selectedPriceCurrency.name,
-								marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
-								{ sign: '$' }
-							)}
-						</HoverTransform>
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -243,9 +215,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
-						<HoverTransform>
-							{formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })}
-						</HoverTransform>
+						{formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })}
 					</OneHrFundingRateTooltip>
 				) : (
 					NO_VALUE
@@ -340,7 +310,7 @@ const MarketDetailsContainer = styled.div`
 
 export const HoverTransform = styled.div`
 	:hover {
-		transform: scale(1.03);
+		transform: scale(1);
 	}
 `;
 
