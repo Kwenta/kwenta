@@ -309,6 +309,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-deposit"
 					disabled={isFuturesMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
 				>

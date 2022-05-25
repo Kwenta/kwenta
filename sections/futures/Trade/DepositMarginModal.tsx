@@ -123,6 +123,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				dataTestId="funtures-market-trade-deposite-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
@@ -135,7 +136,12 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
 			</MinimumAmountDisclaimer>
 
-			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => depositTxn.mutate()}>
+			<MarginActionButton
+				data-testid="funtures-market-trade-deposite-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={() => depositTxn.mutate()}
+			>
 				{t('futures.market.trade.margin.modal.deposit.button')}
 			</MarginActionButton>
 
