@@ -36,11 +36,11 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 	const { t } = useTranslation();
 	const [currentTimestamp, setCurrentTimestamp] = useState<number>(0);
 
-	let avgEntryPrice: string = '',
-		openAtDate: string = '',
-		openAtTime: string = '',
-		createdOnDate: string = '',
-		createdOnTime: string = '';
+	let avgEntryPrice = '',
+		openAtDate = '',
+		openAtTime = '',
+		createdOnDate = '',
+		createdOnTime = '';
 
 	if (futuresPositionHistory.length > 0) {
 		const currentPosition = futuresPositionHistory.filter(
@@ -113,6 +113,8 @@ const ContainerText = styled.div`
 
 	text-transform: uppercase;
 
+	width: 100%;
+
 	font-family: ${(props) => getFontFamily(props)};
 `;
 
@@ -120,6 +122,8 @@ const TopRightContainer = styled.div`
 	position: absolute;
 	display: flex;
 	flex-direction: column;
+
+	width: 100%;
 
 	bottom: 5.5vw;
 	left: 12.02vw;
@@ -130,6 +134,8 @@ const TopLeftContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 
+	width: 100%;
+
 	bottom: 5.5vw;
 	left: 2.02vw;
 `;
@@ -139,6 +145,8 @@ const BottomRightContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 
+	width: 100%;
+
 	bottom: 2vw;
 	left: 12.02vw;
 `;
@@ -147,6 +155,8 @@ const BottomLeftContainer = styled.div`
 	position: absolute;
 	display: flex;
 	flex-direction: column;
+
+	width: 100%;
 
 	bottom: 2vw;
 	left: 2.02vw;
