@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 import { FlexDivCol } from 'styles/common';
@@ -23,6 +23,7 @@ import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { PotentialTrade } from '../types';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import PreviewArrow from 'components/PreviewArrow';
 
 type PositionCardProps = {
 	currencyKey: string;
@@ -54,20 +55,15 @@ type PositionData = {
 };
 
 type PositionPreviewData = {
+	sizeIsNotZero: boolean;
 	positionSide: string;
 	positionSize: Wei;
 	leverage: Wei;
 	liquidationPrice: Wei;
 	avgEntryPrice: Wei;
 	notionalValue: Wei;
+	showStatus: boolean;
 };
-
-const PreviewArrow: React.FC = (props) => (
-	<>
-		<StyledArrow />
-		<StyledPreviewGold>{props.children}</StyledPreviewGold>
-	</>
-);
 
 const PositionCard: React.FC<PositionCardProps> = ({
 	currencyKey,
@@ -83,7 +79,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
 	const { synthsMap, network } = Connector.useContainer();
-	const [showPotentialTrade, setShowPotentialTrade] = React.useState(false);
 
 	const marketKey = getMarketKey(currencyKey, network.id);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -126,20 +121,34 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			return {} as PositionPreviewData;
 		}
 
-		const size: Wei =
-			positionDetails.side === 'long'
-				? positionDetails.size.add(previewTradeData?.size)
-				: positionDetails.size.sub(previewTradeData?.size);
-		const side = size?.gt(0) ? PositionSide.LONG : PositionSide.SHORT;
+		const size: Wei = previewTradeData?.size;
+		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+
+		const getPotentialLeverage = () => {
+			if (positionDetails.side !== potentialTrade?.side) {
+				return positionDetails.leverage.sub(potentialTrade?.leverage).abs();
+			} else {
+				return positionDetails.leverage.add(potentialTrade?.leverage).abs();
+			}
+		};
+
 		return {
-			positionSide: side,
-			positionSize: size,
+			sizeIsNotZero: size && !size?.eq(0),
+			positionSide: newSide,
+			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage: previewTradeData.leverage,
+			leverage: getPotentialLeverage(),
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
+			showStatus: previewTradeData.showStatus,
 		};
-	}, [positionDetails, previewTradeData, modifiedAverage]);
+	}, [
+		positionDetails,
+		previewTradeData,
+		modifiedAverage,
+		potentialTrade?.side,
+		potentialTrade?.leverage,
+	]);
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
@@ -169,8 +178,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 				>
 					{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-					{showPotentialTrade && previewData.positionSide !== positionDetails.side && (
-						<PreviewArrow>
+					{previewData.positionSide !== positionDetails.side && (
+						<PreviewArrow
+							showPreview={
+								previewData.sizeIsNotZero &&
+								previewData.positionSide !== positionDetails.side &&
+								!previewData.showStatus
+							}
+						>
 							<PositionValue side={previewData.positionSide as PositionSide}>
 								{previewData.positionSide}
 							</PositionValue>
@@ -188,16 +203,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						sign: '$',
 						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
 					})})`}
-					{showPotentialTrade && previewData.positionSize && (
-						<PreviewArrow>
-							{`${formatNumber(previewData.positionSize ?? 0, {
-								minDecimals: 4,
-							})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
-								sign: '$',
-								minDecimals: 2,
-							})})`}
-						</PreviewArrow>
-					)}
+					<PreviewArrow showPreview={previewData.positionSize && previewData.sizeIsNotZero}>
+						{`${formatNumber(previewData.positionSize ?? 0, {
+							minDecimals: 4,
+						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
+							sign: '$',
+							minDecimals: 2,
+						})})`}
+					</PreviewArrow>
 				</>
 			) : (
 				NO_VALUE
@@ -205,9 +218,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			leverage: positionDetails ? (
 				<>
 					{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
-					{showPotentialTrade && (
-						<PreviewArrow>{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}</PreviewArrow>
-					)}
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
+						</PreviewArrow>
+					}
 				</>
 			) : (
 				NO_VALUE
@@ -218,14 +233,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						sign: '$',
 						minDecimals,
 					})}
-					{showPotentialTrade && (
-						<PreviewArrow>
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatCurrency(Synths.sUSD, previewData?.liquidationPrice ?? zeroBN, {
 								sign: '$',
 								minDecimals,
 							})}
 						</PreviewArrow>
-					)}
+					}
 				</>
 			) : (
 				NO_VALUE
@@ -264,14 +279,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						sign: '$',
 						minDecimals,
 					})}
-					{showPotentialTrade && (
-						<PreviewArrow>
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatCurrency(Synths.sUSD, previewData.avgEntryPrice ?? zeroBN, {
 								sign: '$',
 								minDecimals,
 							})}
 						</PreviewArrow>
-					)}
+					}
 				</>
 			) : (
 				NO_VALUE
@@ -285,8 +300,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		currencyKey,
 		synthsMap,
 		t,
-		showPotentialTrade,
 		previewData.positionSide,
+		previewData.sizeIsNotZero,
+		previewData.showStatus,
 		previewData.positionSize,
 		previewData.notionalValue,
 		previewData?.leverage,
@@ -294,14 +310,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		previewData.avgEntryPrice,
 		minDecimals,
 	]);
-
-	useEffect(() => {
-		if (previewTradeData && !previewTradeData.size.eq(0)) {
-			setShowPotentialTrade(true);
-		} else {
-			setShowPotentialTrade(false);
-		}
-	}, [previewTradeData]);
 
 	return (
 		<>
@@ -507,20 +515,6 @@ const PositionCardTooltip = styled(StyledTooltip)`
 const LeftMarginTooltip = styled(StyledTooltip)`
 	left: -60px;
 	z-index: 2;
-`;
-
-const StyledArrow = styled.span`
-	::before {
-		content: '➞';
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-		font-size: 12px;
-		padding: 0px 3px;
-		font-family: ${(props) => props.theme.fonts.bold};
-	}
-`;
-
-const StyledPreviewGold = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
 `;
 
 const StyledValue = styled.p`

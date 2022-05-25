@@ -1,17 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
 import InfoBox from 'components/InfoBox';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { Synths } from '@synthetixio/contracts-interface';
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
 import { PotentialTrade } from '../types';
-
-const PreviewArrow: React.FC = (props) => (
-	<>
-		<StyledArrow />
-		<StyledPreviewGold>{props.children}</StyledPreviewGold>
-	</>
-);
+import PreviewArrow from 'components/PreviewArrow';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 type MarketInfoBoxProps = {
 	totalMargin: Wei;
@@ -20,8 +15,8 @@ type MarketInfoBoxProps = {
 	marginUsage: Wei;
 	isMarketClosed: boolean;
 	potentialTrade: PotentialTrade | null;
-	tradeSizeSUSD: string;
 	maxLeverageValue: Wei;
+	currencyKey: string;
 };
 
 const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
@@ -31,37 +26,37 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	marginUsage,
 	isMarketClosed,
 	potentialTrade,
-	tradeSizeSUSD,
 	maxLeverageValue,
+	currencyKey,
 }) => {
-	const [showPotentialTrade, setShowPotentialTrade] = React.useState(false);
+	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(
+		currencyKey as CurrencyKey,
+		potentialTrade
+	);
+
+	const previewTrade = potentialTradeDetails.data ?? null;
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(potentialTrade?.size || zeroBN);
-		const sizeSUSD = wei(tradeSizeSUSD || zeroBN);
-		const potentialTotalMargin = totalMargin?.sub(sizeSUSD) || zeroBN;
-		const potentialAvailableMargin = availableMargin?.sub(sizeSUSD) || zeroBN;
+		const potentialAvailableMargin =
+			previewTrade?.margin?.sub(previewTrade?.minInitialMargin) || zeroBN;
+		const potentialBuyingPower = previewTrade?.margin?.mul(maxLeverageValue);
 		const potentialMarginUsage =
-			potentialTotalMargin?.sub(potentialAvailableMargin) && !potentialTotalMargin.eq(0)
-				? potentialTotalMargin?.sub(potentialAvailableMargin).div(potentialTotalMargin)
-				: zeroBN;
+			previewTrade?.margin.sub(potentialAvailableMargin).div(previewTrade?.margin).abs() || zeroBN;
 
 		return {
-			showPreview: !size.eq(0),
-			// totalMargin: potentialTotalMargin.gt(0) ? potentialTotalMargin : zeroBN,
-			availableMargin: potentialAvailableMargin.gt(0) ? potentialAvailableMargin : zeroBN,
-			buyingPower: potentialTotalMargin.gt(0) ? potentialTotalMargin : zeroBN,
-			marginUsage: potentialMarginUsage.gt(0) ? potentialMarginUsage : zeroBN,
+			showPreview: size && !size.eq(0),
+			totalMargin: previewTrade?.margin || zeroBN,
+			availableMargin: potentialAvailableMargin, // potentialAvailableMargin.gt(0) ? : zeroBN,
+			buyingPower: potentialBuyingPower, // potentialTotalMargin.gt(0) ? : zeroBN,
+			marginUsage: potentialMarginUsage, // potentialMarginUsage.gt(0) ? : zeroBN,
 		};
-	}, [totalMargin, availableMargin, potentialTrade?.size, tradeSizeSUSD]);
-
-	useEffect(() => {
-		if (previewTradeData.showPreview) {
-			setShowPotentialTrade(true);
-		} else {
-			setShowPotentialTrade(false);
-		}
-	}, [previewTradeData.showPreview]);
+	}, [
+		potentialTrade?.size,
+		previewTrade?.margin,
+		previewTrade?.minInitialMargin,
+		maxLeverageValue,
+	]);
 
 	return (
 		<StyledInfoBox
@@ -71,34 +66,44 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 						currencyKey: Synths.sUSD,
 						sign: '$',
 					})}`,
-				},
-				'Available Margin': {
-					value: `${formatCurrency(Synths.sUSD, availableMargin, {
-						currencyKey: showPotentialTrade ? undefined : Synths.sUSD,
-						sign: '$',
-					})}`,
-					valueNode: showPotentialTrade ? (
-						<PreviewArrow>
-							{formatCurrency(Synths.sUSD, previewTradeData.availableMargin, {
+					valueNode: (
+						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+							{formatCurrency(Synths.sUSD, previewTradeData?.totalMargin, {
 								currencyKey: Synths.sUSD,
 								sign: '$',
 							})}
 						</PreviewArrow>
-					) : null,
+					),
+				},
+				'Available Margin': {
+					value: `${formatCurrency(Synths.sUSD, availableMargin, {
+						currencyKey: previewTradeData.showPreview ? undefined : Synths.sUSD,
+						sign: '$',
+					})}`,
+					valueNode: (
+						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+							{formatCurrency(Synths.sUSD, previewTradeData?.availableMargin, {
+								currencyKey: Synths.sUSD,
+								sign: '$',
+							})}
+						</PreviewArrow>
+					),
 				},
 				'Buying Power': {
 					value: `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
-					valueNode: showPotentialTrade ? (
-						<PreviewArrow>
-							{formatCurrency(Synths.sUSD, previewTradeData.buyingPower, { sign: '$' })}
+					valueNode: previewTradeData?.buyingPower && (
+						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+							{formatCurrency(Synths.sUSD, previewTradeData?.buyingPower, { sign: '$' })}
 						</PreviewArrow>
-					) : null,
+					),
 				},
 				'Margin Usage': {
 					value: `${formatPercent(marginUsage)}`,
-					valueNode: showPotentialTrade ? (
-						<PreviewArrow>{formatPercent(previewTradeData.marginUsage)}</PreviewArrow>
-					) : null,
+					valueNode: (
+						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
+							{formatPercent(previewTradeData?.marginUsage)}
+						</PreviewArrow>
+					),
 				},
 			}}
 			disabled={isMarketClosed}
@@ -112,20 +117,6 @@ const StyledInfoBox = styled(InfoBox)`
 	.value {
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
-`;
-
-const StyledArrow = styled.span`
-	::before {
-		content: '➞';
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-		font-size: 12px;
-		padding: 0px 3px;
-		font-family: ${(props) => props.theme.fonts.bold};
-	}
-`;
-
-const StyledPreviewGold = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
 `;
 
 export default MarketInfoBox;

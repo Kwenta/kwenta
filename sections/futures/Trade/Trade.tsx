@@ -41,6 +41,7 @@ import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -77,8 +78,14 @@ const Trade: React.FC<TradeProps> = ({
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-
 	const positionDetails = position?.position ?? null;
+
+	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(
+		router.query.market?.[0] as CurrencyKey,
+		potentialTrade
+	);
+
+	const previewTrade = potentialTradeDetails.data ?? null;
 
 	const onPositionClose = () => {
 		setTimeout(() => {
@@ -346,8 +353,8 @@ const Trade: React.FC<TradeProps> = ({
 				}
 				isMarketClosed={isFuturesMarketClosed}
 				potentialTrade={potentialTrade}
-				tradeSizeSUSD={tradeSizeSUSD}
 				maxLeverageValue={maxLeverageValue}
+				currencyKey={marketAsset}
 			/>
 
 			<StyledSegmentedControl
@@ -431,8 +438,8 @@ const Trade: React.FC<TradeProps> = ({
 				)}
 			</ManagePositions>
 
-			{(orderTxn.errorMessage || error) && (
-				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
+			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+				<ErrorMessage>{orderTxn.errorMessage || error || previewTrade?.statusMessage}</ErrorMessage>
 			)}
 
 			<FeeInfoBox
@@ -571,7 +578,7 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.red};
 	font-size: 12px;
 	margin-bottom: 16px;
 `;

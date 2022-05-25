@@ -8,9 +8,16 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesMarketContract } from './utils';
 import { FuturesPotentialTradeDetails } from './types';
-import { PotentialTrade } from 'sections/futures/types';
+import {
+	PotentialTrade,
+	PotentialTradeStatus,
+	POTENTIAL_TRADE_STATUS_TO_MESSAGE,
+} from 'sections/futures/types';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
+
+const SUCCESS = 'Success';
+const UNKNOWN = 'Unknown';
 
 const useGetFuturesPotentialTradeDetails = (
 	marketAsset: CurrencyKey | null,
@@ -23,27 +30,59 @@ const useGetFuturesPotentialTradeDetails = (
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
+	const getStatusMessage = (status: PotentialTradeStatus): string => {
+		if (typeof status !== 'number') {
+			return UNKNOWN;
+		}
+
+		if (status === 0) {
+			return SUCCESS;
+		} else if (PotentialTradeStatus[status]) {
+			return POTENTIAL_TRADE_STATUS_TO_MESSAGE[PotentialTradeStatus[status]];
+		} else {
+			return UNKNOWN;
+		}
+	};
+
 	return useQuery<FuturesPotentialTradeDetails | null>(
 		QUERY_KEYS.Futures.PotentialTrade(network.id, marketAsset || null, trade, walletAddress || ''),
 		async () => {
 			if (!marketAsset || !trade || !trade.size?.length) return null;
 
+			const {
+				contracts: { FuturesMarketData },
+			} = synthetixjs!;
+
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 			const newSize = trade.side === 'long' ? +trade.size : -trade.size;
-			const { fee, liqPrice, margin, price, size } = await FuturesMarketContract.postTradeDetails(
-				wei(newSize).toBN(),
-				walletAddress
-			);
 
-			return {
+			const [
+				assetPrice,
+				globals,
+				{ fee, liqPrice, margin, price, size, status },
+			] = await Promise.all([
+				await FuturesMarketContract.assetPrice(),
+				await FuturesMarketData.globals(),
+				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), walletAddress),
+			]);
+
+			const ftrade = {
 				fee: wei(fee),
 				liqPrice: wei(liqPrice),
 				margin: wei(margin),
 				price: wei(price),
+				currentPrice: wei(assetPrice.price),
+				currentPriceInvalid: assetPrice.invalid,
 				size: wei(size),
 				leverage: wei(trade.leverage),
 				notionalValue: wei(size).mul(wei(price)),
+				minInitialMargin: wei(globals.minInitialMargin),
+				status: status,
+				showStatus: status > 0, // 0 is success
+				statusMessage: getStatusMessage(status),
 			};
+
+			return ftrade;
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && !!marketAsset && !!synthetixjs,
