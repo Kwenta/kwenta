@@ -103,6 +103,15 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
+	circle {
+		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	}
+
+	:hover {
+		circle {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		}
+	}
 `;
 
 const ConnectButton = styled(Button)`
