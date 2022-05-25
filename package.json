@@ -48,7 +48,7 @@
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
 		"ethcall": "3.2.0",
-		"ethers": "5.5.0",
+		"ethers": "5.6.8",
 		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
