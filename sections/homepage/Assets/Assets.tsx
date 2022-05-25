@@ -35,6 +35,7 @@ import { SynthsVolumes } from 'queries/synths/type';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { ResolutionString } from 'public/static/charting_library/charting_library';
+import router from 'next/router';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -269,7 +270,10 @@ const Assets = () => {
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-								<StatsCard key={key}>
+								<StatsCard key={key} onClick={() => {
+									console.log(`link`, `/market/${key}`);
+									router.push(`/market/${key}`);
+								}}>
 									<GridSvg className="bg" objectfit="cover" layout="fill" />
 									<StatsIconContainer>
 										{icon}
@@ -318,7 +322,11 @@ const Assets = () => {
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<StatsCard key={key}>
+								<StatsCard key={key}  onClick={() => {
+									market !== 'sUSD'
+									? router.push(`/exchange/${market}-sUSD`)
+									: router.push(`/exchange/`);
+								}}>
 									<GridSvg className="bg" objectfit="cover" layout="fill" />
 									<FlexDiv>
 										{icon}
@@ -429,6 +437,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 `;
 
 const StatsCard = styled(GridContainer)`
+	cursor: pointer;
 	grid-template-columns: repeat(2, auto);
 	width: 275px;
 	height: 140px;
