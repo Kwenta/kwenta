@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
 						<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
 							<DiscordLogo />
 						</ExternalLink>
-						<ExternalLink href={EXTERNAL_LINKS.Social.Medium}>
+						<ExternalLink href={EXTERNAL_LINKS.Social.Mirror}>
 							<MediumLogo />
 						</ExternalLink>
 					</SocialIcons>
@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
 						<ListTitle>Meet KWENTA</ListTitle>
 						<p>About Kwenta</p>
 						<p>Docs</p>
-						<p>Blog</p>
+						<p>News</p>
 						<p>FAQ</p>
 						<p>DAO Roles</p>
 					</ListContainer>

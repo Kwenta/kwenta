@@ -16,8 +16,8 @@ export const EXTERNAL_LINKS = {
 	},
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
-		Medium: 'https://blog.kwenta.io/',
-		Discord: 'https://discord.gg/kwenta',
+		Mirror: 'https://mirror.xyz/kwenta.eth',
+		Discord: 'https://www.discord.gg/kwenta',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
 	TokenLists: {
@@ -28,6 +28,7 @@ export const EXTERNAL_LINKS = {
 	Docs: {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
+		HowToTrade: 'https://docs.kwenta.io/products/futures',
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
@@ -35,5 +36,8 @@ export const EXTERNAL_LINKS = {
 	},
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
+	},
+	Kips: {
+		Home: 'https://github.com/Kwenta/KIPs',
 	},
 };

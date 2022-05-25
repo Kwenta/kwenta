@@ -2,8 +2,6 @@ import { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-
-import { HEADER_HEIGHT } from 'constants/ui';
 import ROUTES from 'constants/routes';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
@@ -11,9 +9,6 @@ import Button from 'components/Button';
 
 import UserMenu from '../AppLayout/Header/UserMenu';
 import AppHeader from '../AppLayout/Header';
-
-import media from 'styles/media';
-
 import Logo from '../Logo';
 import { GridDivCenteredCol, TextButton } from 'styles/common';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
@@ -23,8 +18,7 @@ import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import router from 'next/router';
-
-const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -35,10 +29,9 @@ const Header: FC = () => {
 		() => [
 			{
 				id: 'market',
-				label: t('homepage.nav.market'),
+				label: t('homepage.nav.markets'),
 				onClick: () => {
-					console.log(`market on landing page`);
-					return router.push(`/market/sETH`);
+					return router.push(ROUTES.Markets.Home);
 				},
 			},
 			{
@@ -57,7 +50,7 @@ const Header: FC = () => {
 				id: 'blogs',
 				label: t('homepage.nav.blog'),
 				icon: <ArrowUpRightIcon />,
-				onClick: () => window.open(KIPS_LINK, '_blank'),
+				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
 			},
 		],
 		// eslint-disable-next-line
@@ -100,15 +93,10 @@ const Header: FC = () => {
 };
 
 const Container = styled.header`
-	height: ${HEADER_HEIGHT};
-	padding: 0px 20px;
 	display: grid;
 	align-items: center;
 	width: 100%;
 	grid-template-columns: 1fr 1fr 1fr;
-	${media.lessThan('md')`
-		grid-template-columns: auto auto;
-	`}
 `;
 
 const Links = styled.div`
@@ -116,9 +104,6 @@ const Links = styled.div`
 	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
-	${media.lessThan('md')`
-		display: none;
-	`}
 `;
 
 const StyledTextButton = styled(TextButton)`

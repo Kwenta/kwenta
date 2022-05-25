@@ -16,9 +16,8 @@ import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
 import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
 import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
 import { Copy, Title } from '../common';
-import Link from 'next/link';
-import ROUTES from 'constants/routes';
 import Button from 'components/Button';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const LEARNS = [
 	{
@@ -26,6 +25,7 @@ const LEARNS = [
 		title: 'homepage.learn.how-to-trade.title',
 		copy: 'homepage.learn.how-to-trade.copy',
 		image: <HowToTradeIcon />,
+		onClick: () => window.open(EXTERNAL_LINKS.Docs.HowToTrade, '_blank'),
 	},
 	{
 		key: 'how-to-stake',
@@ -62,7 +62,7 @@ const Learn = () => {
 		<Container ref={whyKwentaRef}>
 			<FlexDivColCentered>{title}</FlexDivColCentered>
 			<StyledFlexDivRow>
-				{LEARNS.map(({ key, title, copy, image }) => (
+				{LEARNS.map(({ key, title, copy, image, onClick }) => (
 					<FeatureCard key={key} className={key}>
 						<FeatureIconContainer className={key}>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
@@ -75,16 +75,14 @@ const Learn = () => {
 								</FeatureTitle>
 							)}
 							<FeatureCopy>{t(copy)}</FeatureCopy>
-							<Link href={ROUTES.Home.Overview}>
-								{key !== 'faq' ? (
-									<StyledButton isRounded={false} size="sm">
-										{t('homepage.learn.title')}
-										<ArrowUpRightIcon />
-									</StyledButton>
-								) : (
-									<></>
-								)}
-							</Link>
+							{key !== 'faq' ? (
+								<StyledButton isRounded={false} size="sm" onClick={onClick}>
+									{t('homepage.learn.title')}
+									<ArrowUpRightIcon />
+								</StyledButton>
+							) : (
+								<></>
+							)}
 						</FeatureContentContainer>
 					</FeatureCard>
 				))}
