@@ -42,7 +42,7 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 		text-align: center;
 		color: ${(props) =>
 			props.isActive
-				? props.theme.colors.common.primaryWhite
+				? props.theme.colors.selectedTheme.button.text
 				: props.theme.colors.common.secondaryGray};
 	}
 	.detail {

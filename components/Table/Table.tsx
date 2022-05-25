@@ -216,7 +216,7 @@ const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	}
 
 	&:nth-child(odd) {
-		background-color: rgba(255, 255, 255, 0.01);
+		background-color: ${(props) => props.theme.colors.selectedTheme.cell.fill};
 	}
 
 	${(props) =>

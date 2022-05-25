@@ -159,7 +159,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							return cellProps.row.original.leverage === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
-								<p>{formatNumber(cellProps.row.original.leverage ?? 0)}x</p>
+								<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
 							);
 						},
 						width: 90,
@@ -266,7 +266,9 @@ const StyledValue = styled.div`
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.p`
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
 
 const TableContainer = styled.div``;
 
@@ -282,6 +284,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const MarketContainer = styled.div`
