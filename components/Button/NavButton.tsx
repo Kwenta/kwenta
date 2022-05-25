@@ -32,7 +32,7 @@ const StyledButton = styled(Button)`
 
 	border: transparent;
 	background: ${(props) =>
-		props.isActive ? props.theme.colors.selectedTheme.button.background : 'transparent'};
+		props.isActive ? props.theme.colors.selectedTheme.button.fill : 'transparent'};
 	box-shadow: none;
 	border-radius: 100px;
 
