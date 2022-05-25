@@ -3,6 +3,8 @@ import common from './common';
 const darkTheme = {
 	background: '#131212',
 	border: '1px solid #2B2A2A',
+	red: '#EF6868',
+	green: '#7FD482',
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		fill: '#E6E6E6',
