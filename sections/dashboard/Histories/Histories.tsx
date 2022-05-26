@@ -22,7 +22,7 @@ const Histories: FC = () => {
 				name: HistoriesTab.FUTURES,
 				label: t('dashboard.overview.histories-tabs.futures'),
 				active: activeMarketsTab === HistoriesTab.FUTURES,
-				disabled: false,
+				disabled: true,
 				onClick: () => {
 					setActiveMarketsTab(HistoriesTab.FUTURES);
 				},
