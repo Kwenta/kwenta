@@ -43,7 +43,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
 
-	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey, { refetchInterval: 6000 });
+	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(

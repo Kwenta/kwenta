@@ -773,6 +773,9 @@
 					"description": "Next-Price orders are subject to volatility and execute at the very next on-chain price.",
 					"learn-more": "Learn more"
 				},
+				"cost-basis": {
+					"tooltip": "Dynamic fees are currently in effect and may vary based on market conditions during the execution round"
+				},
 				"confirmation": {
 					"modal": {
 						"confirm-order": "Confirm order",
@@ -812,7 +815,8 @@
 						"side": "Side",
 						"leverage": "Leverage",
 						"ROI": "ROI",
-						"fee": "fee"
+						"fee": "Protocol Fee",
+						"gas-fee": "Network Gas Fee"
 					}
 				},
 				"orders": {
@@ -1166,7 +1170,7 @@
 		"switch": "switch",
 		"summary": {
 			"gas-prices": {
-				"gas-price": "gas price",
+				"gas-price": "Network Gas Fee",
 				"max-fee": "max fee",
 				"average": "Average",
 				"fast": "Fast",

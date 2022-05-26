@@ -80,7 +80,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
-		const realizedPnl = positionHistory?.pnl.add(positionHistory?.netFunding) ?? zeroBN;
+		const realizedPnl =
+			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
+			zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
@@ -174,9 +176,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							{`${formatCurrency(Synths.sUSD, pnl, {
 								sign: '$',
 								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-							})} (${formatPercent(
-								positionDetails.profitLoss.div(positionDetails.initialMargin)
-							)})`}
+							})} (${formatPercent(pnl.div(positionDetails.initialMargin))})`}
 						</HoverTransform>
 					</PositionCardTooltip>
 				) : (
@@ -261,11 +261,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
-						<StyledValue
-							className={data.price24h > zeroBN ? 'green' : data.price24h < zeroBN ? 'red' : ''}
-						>
-							{data.marketPrice}
-						</StyledValue>
+						<StyledValue>{data.marketPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>

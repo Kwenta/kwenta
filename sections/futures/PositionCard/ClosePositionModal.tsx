@@ -11,7 +11,6 @@ import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { PositionSide } from '../types';
 import { Synths } from 'constants/currency';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
@@ -50,11 +49,6 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
 		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
-
-	const gasPrices = useMemo(
-		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
-		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
 	);
 
 	const ethPriceRate = useMemo(
@@ -129,8 +123,14 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				label: t('futures.market.user.position.modal-close.fee'),
 				value: formatCurrency(Synths.sUSD, orderFee, { sign: '$' }),
 			},
+			{
+				label: t('futures.market.user.position.modal-close.gas-fee'),
+				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee ?? zeroBN, {
+					sign: '$',
+				}),
+			},
 		];
-	}, [position, currencyKey, t, orderFee]);
+	}, [position, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
@@ -161,9 +161,6 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 						</ValueColumn>
 					</Row>
 				))}
-				<NetworkFees>
-					<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-				</NetworkFees>
 				<StyledButton
 					variant="primary"
 					isRounded
@@ -193,10 +190,6 @@ const Row = styled(FlexDivCentered)`
 	justify-content: space-between;
 `;
 
-const NetworkFees = styled(FlexDivCol)`
-	margin-top: 12px;
-`;
-
 const Label = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.common.secondaryGray};
@@ -222,17 +215,4 @@ const StyledButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
-`;
-
-const StyledGasPriceSelect = styled(GasPriceSelect)`
-	padding: 5px 0;
-	display: flex;
-	justify-content: space-between;
-	width: auto;
-	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.regular};
-	text-transform: capitalize;
-	margin-bottom: 8px;
 `;

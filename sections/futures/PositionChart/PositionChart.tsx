@@ -24,7 +24,7 @@ export default function PositionChart({ marketAsset, potentialTrade }: Props) {
 	);
 	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(marketAsset, potentialTrade);
 
-	const futuresPositionsQuery = useGetFuturesPositionForAccount({ refetchInterval: 5000 });
+	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
