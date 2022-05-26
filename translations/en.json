@@ -519,7 +519,8 @@
 				"accrued-interest": "Accrued Interest"
 			}
 		},
-		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
+		"deprecated": "Shorting has been disabled; you can short using Futures or manage your existing positions below.",
+		"visit-futures": "Visit Futures"
 
 	},
 	"not-found": {
