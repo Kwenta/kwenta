@@ -49,6 +49,7 @@ const UserTabs: React.FC = () => {
 
 const TabButtonsContainer = styled.div`
 	display: flex;
+	margin-bottom: 15px;
 `;
 
 export default UserTabs;
