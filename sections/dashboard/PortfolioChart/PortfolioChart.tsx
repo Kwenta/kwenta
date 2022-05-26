@@ -44,7 +44,7 @@ const PortfolioTitle = styled.p`
 	margin-bottom: 10px;
 `;
 const PortfolioText = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 27px;
 	font-weight: bold;
