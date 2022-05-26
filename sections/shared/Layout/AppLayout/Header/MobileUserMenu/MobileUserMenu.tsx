@@ -8,10 +8,8 @@ import CloseIcon from 'assets/svg/app/close.svg';
 import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 import MobileMenuModal from './MobileMenuModal';
-import { useTranslation } from 'react-i18next';
 
 const MobileUserMenu: FC = () => {
-	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 
 	const closeModal = () => {
@@ -42,9 +40,6 @@ const MobileUserMenu: FC = () => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-					<MobileFooterText>
-						{isOpen === 'settings' ? t('mobile-menu.title-settings') : t('mobile-menu.title-menu')}
-					</MobileFooterText>
 					<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
 				</MobileFooterRight>
 			</MobileFooterContainer>
@@ -78,14 +73,8 @@ const MobileFooterSeparator = styled.div`
 const MobileFooterRight = styled.div`
 	display: flex;
 	flex-grow: 1;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
-`;
-
-const MobileFooterText = styled.div`
-	font-size: 19px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 export default MobileUserMenu;
