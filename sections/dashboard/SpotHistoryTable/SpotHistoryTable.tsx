@@ -221,7 +221,7 @@ const StyledExternalLink = styled(ExternalLink)`
 const StyledLinkIcon = styled(LinkIcon)`
 	width: 14px;
 	height: 14px;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	&:hover {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
@@ -241,6 +241,7 @@ const IconContainer = styled.div`
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
+	font-family: ${(props) => props.theme.fonts.regular};
 
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
