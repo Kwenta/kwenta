@@ -427,6 +427,11 @@
 				"to": "To",
 				"usd-value": "USD Value"
 			},
+			"positions-tabs": {
+				"futures": "Futures Positions",
+				"shorts": "Shorts",
+				"spot": "Spot Balances"
+			},
 			"markets-tabs": {
 				"futures": "Futures Markets",
 				"spot": "Spot Markets"

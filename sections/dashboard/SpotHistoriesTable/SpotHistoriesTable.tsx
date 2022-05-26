@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, ReactElement } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -71,10 +71,13 @@ const SpotMarketsTable: FC = () => {
 		() =>
 			trades.filter((trade) => {
 				const activeSynths = synths.map((synth) => synth.name);
-				return activeSynths.indexOf(trade.fromSynth?.symbol as CurrencyKey) !== -1;
+				return activeSynths.includes(trade.fromSynth?.symbol as CurrencyKey);
 			}),
 		[trades, synths]
 	);
+
+	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
+		_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 
 	return (
 		<TableContainer>
@@ -93,7 +96,10 @@ const SpotMarketsTable: FC = () => {
 						Header: <TableHeader>{t('dashboard.overview.histories-table.date-time')}</TableHeader>,
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
-							return <TimeDisplay cellPropsValue={cellProps.row.original.timestamp.toNumber()} />;
+							return conditionalRender(
+								cellProps.row.original.timestamp,
+								<TimeDisplay cellPropsValue={cellProps.row.original.timestamp.toNumber()} />
+							);
 						},
 						width: 190,
 					},
@@ -101,7 +107,8 @@ const SpotMarketsTable: FC = () => {
 						Header: <TableHeader>{t('dashboard.overview.histories-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
-							return (
+							return conditionalRender(
+								cellProps.row.original.fromSynth && cellProps.row.original.fromAmount,
 								<SynthContainer>
 									{cellProps.row.original.fromSynth?.symbol && (
 										<>
@@ -130,7 +137,8 @@ const SpotMarketsTable: FC = () => {
 						Header: <TableHeader>{t('dashboard.overview.histories-table.to')}</TableHeader>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
-							return (
+							return conditionalRender(
+								cellProps.row.original.toSynth && cellProps.row.original.toAmount,
 								<SynthContainer>
 									{cellProps.row.original.toSynth?.symbol && (
 										<>
@@ -160,9 +168,8 @@ const SpotMarketsTable: FC = () => {
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
-							return _.isNil(currencyKey) ? (
-								NO_VALUE
-							) : (
+							return conditionalRender(
+								currencyKey,
 								<Currency.Price
 									currencyKey={currencyKey}
 									price={cellProps.row.original.toAmountInUSD}
@@ -204,6 +211,8 @@ const SpotMarketsTable: FC = () => {
 		</TableContainer>
 	);
 };
+
+const DefaultCell = styled.p``;
 
 const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
