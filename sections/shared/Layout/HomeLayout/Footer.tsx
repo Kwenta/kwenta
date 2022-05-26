@@ -17,64 +17,79 @@ const Footer: React.FC = () => {
 	const { t } = useTranslation();
 	const DOC_LINKS = [
 		{
-			key: t('homepage.footer.about-kwenta.title'),
+			key: 'about-kwenta',
+			title: t('homepage.footer.about-kwenta.title'),
 			links: [
 				{
-					name: t('homepage.footer.about-kwenta.docs'),
+					key: 'docs',
+					title: t('homepage.footer.about-kwenta.docs'),
 					link: EXTERNAL_LINKS.Docs.DocsRoot,
 				},
 				{
-					name: t('homepage.footer.about-kwenta.news'),
+					key: 'news',
+					title: t('homepage.footer.about-kwenta.news'),
 					link: EXTERNAL_LINKS.Social.Mirror,
 				},
 				{
-					name: t('homepage.footer.about-kwenta.faq'),
+					key: 'faq',
+					title: t('homepage.footer.about-kwenta.faq'),
 					link: '',
 				},
 				{
-					name: t('homepage.footer.about-kwenta.dao-roles'),
+					key: 'dao-roles',
+					title: t('homepage.footer.about-kwenta.dao-roles'),
 					link: EXTERNAL_LINKS.Docs.DaoRoles,
 				},
 			],
 		},
 		{
-			key: t('homepage.footer.use-kwenta.title'),
+			key: 'use-kwenta',
+			title: t('homepage.footer.use-kwenta.title'),
 			links: [
 				{
-					name: t('homepage.footer.use-kwenta.how-to'),
+					key: 'how-to',
+					title: t('homepage.footer.use-kwenta.how-to'),
 					link: EXTERNAL_LINKS.Docs.DocsRoot,
 				},
 				{
-					name: t('homepage.footer.use-kwenta.perps'),
+					key: 'preps',
+					title: t('homepage.footer.use-kwenta.perps'),
 					link: EXTERNAL_LINKS.Docs.Perpetuals,
 				},
 				{
-					name: t('homepage.footer.use-kwenta.short'),
+					key: 'short',
+					title: t('homepage.footer.use-kwenta.short'),
 					link: EXTERNAL_LINKS.Docs.Shorting,
 				},
 				{
-					name: t('homepage.footer.use-kwenta.spot'),
+					key: 'spot',
+					title: t('homepage.footer.use-kwenta.spot'),
 					link: EXTERNAL_LINKS.Docs.Spot,
 				},
 			],
 		},
 		{
-			key: t('homepage.footer.community.title'),
+			key: 'community',
+			title: t('homepage.footer.community.title'),
 			links: [
 				{
-					name: t('homepage.footer.community.governance'),
+					key: 'governance',
+					title: t('homepage.footer.community.governance'),
 					link: EXTERNAL_LINKS.Docs.Governance,
 				},
 				{
-					name: t('homepage.footer.community.dev-dao'),
+					key: 'dev-dao',
+					title: t('homepage.footer.community.dev-dao'),
 					link: EXTERNAL_LINKS.Docs.DevDao,
 				},
 				{
-					name: t('homepage.footer.community.marketing-dao'),
+					key: 'marketing-dao',
+					title: t('homepage.footer.community.marketing-dao'),
 					link: EXTERNAL_LINKS.Docs.MarketingDao,
 				},
 				{
-					name: t('homepage.footer.community.kips'),
+					key: 'kips',
+					title: t('homepage.footer.community.kips'),
 					link: EXTERNAL_LINKS.Kips.Home,
 				},
 			],
@@ -98,12 +113,12 @@ const Footer: React.FC = () => {
 					</SocialIcons>
 				</LogoFooter>
 				<MultiListContainer>
-					{DOC_LINKS.map(({ key, links }) => (
+					{DOC_LINKS.map(({ key, title, links }) => (
 						<ListContainer key={key}>
-							<ListTitle>{key}</ListTitle>
-							{links.map(({ name, link }) => (
-								<StyledLink href={link} target="_blank">
-									<p>{name}</p>
+							<ListTitle>{title}</ListTitle>
+							{links.map(({ key, title, link }) => (
+								<StyledLink key={key} href={link} target="_blank">
+									<p>{title}</p>
 								</StyledLink>
 							))}
 						</ListContainer>
