@@ -135,7 +135,7 @@ jobs:
 
       - name: Archive build
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v3
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: build
           path: build.tar.gz
