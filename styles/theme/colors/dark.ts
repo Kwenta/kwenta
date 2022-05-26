@@ -6,6 +6,7 @@ const darkTheme = {
 	red: '#EF6868',
 	green: '#7FD482',
 	black: '#171002',
+	gray: '#787878',
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		fill: '#E6E6E6',
