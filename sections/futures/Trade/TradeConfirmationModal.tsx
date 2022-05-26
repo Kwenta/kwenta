@@ -167,7 +167,7 @@ const Row = styled(FlexDivCentered)`
 `;
 
 const Label = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;

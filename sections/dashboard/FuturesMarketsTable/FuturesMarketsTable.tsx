@@ -303,7 +303,7 @@ const IconContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	grid-column: 2;
@@ -317,7 +317,7 @@ const TableContainer = styled.div`
 	margin-bottom: '40px';
 
 	.paused {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -325,7 +325,9 @@ const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
 
-const TableHeader = styled.div``;
+const TableHeader = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 
 const StyledText = styled.div`
 	display: flex;

@@ -174,7 +174,7 @@ const WalletOptionsSelect = styled(Select)`
 
 const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const LabelContainer = styled(FlexDivRow)`
@@ -191,7 +191,7 @@ const LabelContainer = styled(FlexDivRow)`
 	}
 	> svg {
 		path {
-			fill: ${(props) => props.theme.colors.common.secondaryGray};
+			fill: ${(props) => props.theme.colors.selectedTheme.gray};
 		}
 	}
 `;

@@ -316,7 +316,7 @@ const ArrowsIconContainer = styled.div`
 
 const Subtitle = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	padding-bottom: 48px;
 `;
 
@@ -329,7 +329,7 @@ const SummaryItem = styled(FlexDivRowCentered)`
 `;
 
 const SummaryItemLabel = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const SummaryItemValue = styled.div`

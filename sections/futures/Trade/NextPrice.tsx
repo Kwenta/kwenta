@@ -22,7 +22,7 @@ const NextPriceContainer = styled.div`
 	margin-bottom: 16px;
 
 	.next-price-description {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		margin: 0 8px;
 
 		a {

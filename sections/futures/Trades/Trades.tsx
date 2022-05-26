@@ -302,11 +302,11 @@ const StyledExternalLink = styled(ExternalLink)`
 `;
 
 const StyledLinkIcon = styled(LinkIcon)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	width: 14px;
 	height: 14px;
 
 	path {
-		fill: ${(props) => props.theme.colors.common.secondaryGray};
+		fill: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;

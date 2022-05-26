@@ -334,7 +334,7 @@ const MarketDetailsContainer = styled.div`
 	}
 
 	.paused {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 

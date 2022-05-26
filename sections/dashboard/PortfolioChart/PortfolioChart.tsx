@@ -35,7 +35,7 @@ const Chart = styled.div`
 `;
 
 const PortfolioTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 16px;
 	font-weight: bold;

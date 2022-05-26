@@ -81,7 +81,7 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.closed {
-			color: ${(props) => props.theme.colors.common.secondaryGray};
+			color: ${(props) => props.theme.colors.selectedTheme.gray};
 		}
 
 		&:not(:last-of-type) {

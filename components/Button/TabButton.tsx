@@ -43,10 +43,10 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 		color: ${(props) =>
 			props.isActive
 				? props.theme.colors.selectedTheme.button.text
-				: props.theme.colors.common.secondaryGray};
+				: props.theme.colors.selectedTheme.gray};
 	}
 	.detail {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		margin-top: 2px;
 	}
 	.badge {
@@ -72,7 +72,7 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 			fill: ${(props) =>
 				props.isActive
 					? props.theme.colors.common.primaryWhite
-					: props.theme.colors.common.secondaryGray};
+					: props.theme.colors.selectedTheme.gray};
 		}
 	}
 

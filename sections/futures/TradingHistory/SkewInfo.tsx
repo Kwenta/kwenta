@@ -92,7 +92,7 @@ const SkewContainer = styled.div`
 
 	.heading {
 		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		width: 292px;
 	}
 
@@ -112,7 +112,7 @@ const SkewHeader = styled.div`
 
 const SkewLabel = styled(CapitalizedText)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const SkewValue = styled(NumericValue)`

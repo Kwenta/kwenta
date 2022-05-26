@@ -122,7 +122,7 @@ const LeverageTitle = styled.div`
 	text-transform: capitalize;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -149,7 +149,7 @@ const TextButton = styled.button`
 	text-decoration: underline;
 	font-size: 11px;
 	line-height: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
@@ -157,7 +157,7 @@ const TextButton = styled.button`
 
 const LeverageDisclaimer = styled.div`
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin: 0 8px 12px;
 `;
 

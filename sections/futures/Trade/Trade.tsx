@@ -560,7 +560,7 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	margin-bottom: 16px;
 `;
@@ -576,6 +576,6 @@ const ManageOrderTitle = styled.p`
 	margin-left: 14px;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;

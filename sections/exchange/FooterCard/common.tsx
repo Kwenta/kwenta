@@ -37,7 +37,7 @@ export const SummaryItem = styled.div`
 
 export const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 `;

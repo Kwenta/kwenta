@@ -307,7 +307,7 @@ export const CurrencyCardsSelector = styled.div`
 	position: absolute;
 	padding: 6px;
 	border-radius: 4px;
-	background: ${(props) => props.theme.colors.common.secondaryGray};
+	background: ${(props) => props.theme.colors.selectedTheme.gray};
 	border: 2px solid ${(props) => props.theme.colors.black};
 	left: 50%;
 	top: 50%;

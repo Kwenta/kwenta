@@ -74,7 +74,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 		color: ${(props) =>
 			props.isActive
 				? props.theme.colors.selectedTheme.button.text
-				: props.theme.colors.selectedTheme.button.secondary.text};
+				: props.theme.colors.selectedTheme.gray};
 		&:hover {
 			background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 		}

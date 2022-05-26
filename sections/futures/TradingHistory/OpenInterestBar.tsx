@@ -44,7 +44,7 @@ const LongOI = styled.div`
 `;
 
 const ZeroOI = styled.div`
-	background-color: ${(props) => props.theme.colors.common.secondaryGray};
+	background-color: ${(props) => props.theme.colors.selectedTheme.gray};
 	width: 100%;
 	height: 9px;
 `;

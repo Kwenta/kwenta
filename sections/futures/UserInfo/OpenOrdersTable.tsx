@@ -235,7 +235,7 @@ const IconContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	grid-column: 2;
@@ -258,13 +258,13 @@ const MarketContainer = styled.div`
 `;
 
 const EditButton = styled.button`
-	border: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gray};
 	height: 28px;
 	box-sizing: border-box;
 	border-radius: 14px;
 	cursor: pointer;
 	background-color: transparent;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	padding-left: 12px;

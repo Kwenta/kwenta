@@ -59,7 +59,7 @@ const Amount = styled.span`
 	color: ${(props) => props.theme.colors.white};
 `;
 const TotalValue = styled.span`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export default CurrencyAmount;

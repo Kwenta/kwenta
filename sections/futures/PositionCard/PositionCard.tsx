@@ -378,7 +378,7 @@ const InfoRow = styled.div`
 const StyledSubtitle = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
 	margin: 0;
 `;
@@ -399,7 +399,7 @@ const StyledValue = styled.p`
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -410,7 +410,7 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin: 0;
 	${Container}#closed & {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 
 	${(props) =>

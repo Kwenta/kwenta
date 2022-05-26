@@ -173,7 +173,7 @@ const HistoryLabel = styled(CapitalizedText)`
 `;
 
 const LastTradesLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 const TableContainer = styled.div``;
 

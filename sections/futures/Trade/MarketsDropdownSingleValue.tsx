@@ -48,7 +48,7 @@ export const SingleValueContainer = styled(FlexDivCentered)`
 		font-size: 12.5px;
 		line-height: 12.5px;
 		margin: 0;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 

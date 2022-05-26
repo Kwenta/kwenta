@@ -142,7 +142,7 @@ const PrefixIcon = styled.span`
 
 const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`

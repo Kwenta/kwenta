@@ -85,7 +85,7 @@ const Symbol = styled.div`
 `;
 
 const Name = styled.span`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const CurrencyIconContainer = styled.span`

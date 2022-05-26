@@ -14,7 +14,7 @@ export const ConvertContainer = styled.div`
 `;
 
 export const Title = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 14px;
 
 	&:not(:first-of-type) {

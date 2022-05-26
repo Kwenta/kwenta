@@ -174,7 +174,7 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 
 export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
-		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
+		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
 	span {
 		color: ${(props) => props.theme.colors.common.primaryWhite};
 	}
@@ -207,7 +207,7 @@ const MinimumAmountDisclaimer = styled.div`
 
 export const ErrorMessage = styled.div`
 	margin-top: 16px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export const GasFeeContainer = styled(FlexDivRowCentered)`

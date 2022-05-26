@@ -57,7 +57,7 @@ const Pagination: FC<PaginationProps> = ({
 };
 
 const PageInfo = styled.span`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const PaginationContainer = styled(GridDivCenteredCol)`

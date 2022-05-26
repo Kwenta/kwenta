@@ -188,7 +188,7 @@ const TableTitle = styled.div`
 
 const TitleText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 
 	&:hover {
 		text-decoration: underline;
@@ -205,7 +205,7 @@ const TitleSeparator = styled.div`
 	margin-left: 10px;
 	margin-right: 10px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const TraderText = styled.a`
@@ -219,7 +219,7 @@ const TraderText = styled.a`
 
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`

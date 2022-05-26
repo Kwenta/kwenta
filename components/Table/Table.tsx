@@ -277,7 +277,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				font-family: ${(props) => props.theme.fonts.mono};
 			}
 			${TableCellHead} {
-				color: ${(props) => props.theme.colors.common.secondaryGray};
+				color: ${(props) => props.theme.colors.selectedTheme.gray};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 			}
@@ -289,13 +289,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 const StyledSortDownIcon = styled(SortDownIcon)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledSortUpIcon = styled(SortUpIcon)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export default Table;
