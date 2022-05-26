@@ -98,7 +98,9 @@ const SpotHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
-								<TimeDisplay cellPropsValue={cellProps.row.original.timestamp.toNumber()} />
+								<TimeDisplay
+									cellPropsValue={cellProps.row.original.timestamp.mul(1000).toNumber()}
+								/>
 							);
 						},
 						width: 190,
