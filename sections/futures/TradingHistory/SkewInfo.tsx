@@ -1,12 +1,18 @@
+import { Rates } from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import * as _ from 'lodash/fp';
 import { FuturesMarket } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CapitalizedText, NumericValue } from 'styles/common';
-import { formatPercent } from 'utils/formatters/number';
-import { HoverTransform } from '../MarketDetails/MarketDetails';
+import { formatCurrency, formatPercent } from 'utils/formatters/number';
+import { getMarketKey } from 'utils/futures';
 import OpenInterestBar from './OpenInterestBar';
 
 type SkewInfoProps = {
@@ -15,10 +21,14 @@ type SkewInfoProps = {
 
 const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
+
+	const { network } = Connector.useContainer();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 
+	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const futuresMarkets = useMemo(() => futuresMarketsQuery?.data ?? [], [futuresMarketsQuery]);
 	const data = useMemo(() => {
-		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets.length > 0
 			? futuresMarkets
 					.filter((i: FuturesMarket) => i.asset === currencyKey)
@@ -38,7 +48,47 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 						long: 0,
 					},
 			  ];
-	}, [futuresMarketsQuery, currencyKey]);
+	}, [futuresMarkets, currencyKey]);
+
+	// Use 'sETH' as default as it's used in market route in routes.ts
+	const baseCurrencyKey = currencyKey ?? 'sETH';
+
+	const marketSummary: FuturesMarket | undefined = futuresMarkets.find(
+		({ asset }) => asset === baseCurrencyKey
+	);
+
+	const futureRates = futuresMarketsQuery.isSuccess
+		? futuresMarkets.reduce((acc: Rates, { asset, price }) => {
+				const key = getMarketKey(asset, network.id);
+				acc[key] = price;
+				return acc;
+		  }, {})
+		: null;
+
+	const basePriceRate = React.useMemo(
+		() => _.defaultTo(0, Number(futureRates?.[getMarketKey(baseCurrencyKey, network.id)])),
+		[futureRates, baseCurrencyKey, network.id]
+	);
+	const long = formatCurrency(
+		selectedPriceCurrency.name,
+		marketSummary?.marketSize
+			.add(marketSummary?.marketSkew ?? new Wei(0))
+			.div('2')
+			.abs()
+			.mul(basePriceRate)
+			.toNumber() ?? 0,
+		{ sign: '$' }
+	);
+	const short = formatCurrency(
+		selectedPriceCurrency.name,
+		marketSummary?.marketSize
+			.sub(marketSummary?.marketSkew ?? new Wei(0))
+			.div('2')
+			.abs()
+			.mul(basePriceRate)
+			.toNumber() ?? 0,
+		{ sign: '$' }
+	);
 
 	return (
 		<SkewContainer>
@@ -55,11 +105,35 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 				<SkewValue>{formatPercent(data[0].long, { minDecimals: 0 })}</SkewValue>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
+			<OpenInterestRow>
+				<p className="red">{short}</p>
+				<p className="green">{long}</p>
+			</OpenInterestRow>
 		</SkewContainer>
 	);
 };
 
 export default SkewInfo;
+
+const OpenInterestRow = styled.div`
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	line-height: 16px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+
+	:last-child {
+		padding-bottom: 0;
+	}
+	.green {
+		color: ${(props) => props.theme.colors.common.primaryGreen};
+	}
+
+	.red {
+		color: ${(props) => props.theme.colors.common.primaryRed};
+	}
+`;
 
 const SkewTooltip = styled(StyledTooltip)`
 	left: -30px;
@@ -73,7 +147,7 @@ const SkewContainer = styled.div`
 	align-items: center;
 
 	width: 100%;
-	height: 55px;
+	height: auto;
 	padding: 10px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
