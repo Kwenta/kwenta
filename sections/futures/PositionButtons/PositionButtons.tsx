@@ -69,7 +69,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 			${props.$isActive &&
 			css`
 				border: 1px solid rgba(127, 212, 130, 0.7);
@@ -96,7 +96,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 			${props.$isActive &&
 			css`
 				border: 1px solid rgba(239, 104, 104, 0.7);

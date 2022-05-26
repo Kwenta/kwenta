@@ -69,11 +69,11 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.red {
-			color: ${(props) => props.theme.colors.common.primaryRed};
+			color: ${(props) => props.theme.colors.selectedTheme.red};
 		}
 
 		.green {
-			color: ${(props) => props.theme.colors.common.primaryGreen};
+			color: ${(props) => props.theme.colors.selectedTheme.green};
 		}
 
 		.gold {

@@ -32,13 +32,13 @@ const OIContainer = styled.div`
 `;
 
 const ShortOI = styled.div<{ skew: { long: number; short: number }[] }>`
-	background-color: ${(props) => props.theme.colors.common.primaryRed};
+	background-color: ${(props) => props.theme.colors.selectedTheme.red};
 	height: 9px;
 	width: ${(props) => formatPercent(props.skew[0].short, { minDecimals: 0 })};
 `;
 
 const LongOI = styled.div`
-	background-color: ${(props) => props.theme.colors.common.primaryGreen};
+	background-color: ${(props) => props.theme.colors.selectedTheme.green};
 	width: 100%;
 	height: 9px;
 `;

@@ -83,11 +83,11 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 	}
 
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 `;
 

@@ -152,8 +152,8 @@ const StyledExternalLink = styled(ExternalLink)`
 const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 	color: ${(props: any) =>
 		props.isPositive
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 `;
 
 const StyledTableHeader = styled.div`

@@ -546,7 +546,7 @@ const CloseOrderButton = styled(Button)`
 	transition: all 0s ease-in-out;
 
 	&:hover {
-		background: ${(props) => props.theme.colors.common.primaryRed};
+		background: ${(props) => props.theme.colors.selectedTheme.red};
 		color: ${(props) => props.theme.colors.white};
 		transform: scale(0.98);
 	}

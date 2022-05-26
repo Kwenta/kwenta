@@ -241,13 +241,13 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 		`}
 
 	${(props) =>
 		props.side === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`}
 `;
 
@@ -276,8 +276,8 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 		props.normal
 			? props.theme.colors.common.primaryWhite
 			: props.negative
-			? props.theme.colors.common.primaryRed
-			: props.theme.colors.common.primaryGreen};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.green};
 `;
 
 const TableNoResults = styled(GridDivCenteredRow)`

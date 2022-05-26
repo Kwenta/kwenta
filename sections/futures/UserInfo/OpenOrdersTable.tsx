@@ -272,13 +272,13 @@ const EditButton = styled.button`
 `;
 
 const CancelButton = styled(EditButton)`
-	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
-	color: ${(props) => props.theme.colors.common.primaryRed};
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
+	color: ${(props) => props.theme.colors.selectedTheme.red};
 	margin-right: 8px;
 `;
 
 const ExpiredBadge = styled(Badge)`
-	background: ${(props) => props.theme.colors.common.primaryRed};
+	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
 `;

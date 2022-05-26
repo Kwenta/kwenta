@@ -79,7 +79,7 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'danger' &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`};
 
 	${(props) =>

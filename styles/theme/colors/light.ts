@@ -3,8 +3,8 @@ import common from './common';
 const lightTheme = {
 	background: '#F2F2F2',
 	border: '1px solid rgba(0, 0, 0, 0.1)',
-	red: '#FF4747',
-	green: '#329b36',
+	red: '#A80300',
+	green: '#1D5D1F',
 	black: '#171002',
 	gray: '#515151',
 	button: {
@@ -83,7 +83,7 @@ const lightTheme = {
 		value: '#000000',
 	},
 	icon: {
-		fill: '#787878',
+		fill: '#515151',
 		hover: '#171002',
 	},
 };
