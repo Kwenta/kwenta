@@ -167,7 +167,7 @@ const ManageShort: FC = () => {
 					<TabsContainer>
 						<TabPanelsContainer interactionDisabled={interactionDisabled}>
 							{TABS.map(({ name }) => (
-								<TabPanel key={name} name={name} activeTab={activeTab}>
+								<TabPanel key={name} name={name} activeTab={ShortingTab.ClosePosition}>
 									<ManageShortAction
 										tab={name}
 										isActive={name === activeTab}
