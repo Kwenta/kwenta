@@ -13,6 +13,7 @@ import {
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { getDisplayAsset } from 'utils/futures';
+import { resolutionToSeconds } from './utils';
 
 const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
 
@@ -40,8 +41,20 @@ const fetchCombinedCandles = async (
 ) => {
 	const baseCurrencyIsSUSD = base === Synths.sUSD;
 	const quoteCurrencyIsSUSD = quote === Synths.sUSD;
-	const baseDataPromise = requestCandlesticks(base, from, to, resolution, networkId);
-	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, networkId);
+	const baseDataPromise = requestCandlesticks(
+		base,
+		from,
+		to,
+		resolutionToSeconds(resolution),
+		networkId
+	);
+	const quoteDataPromise = requestCandlesticks(
+		quote,
+		from,
+		to,
+		resolutionToSeconds(resolution),
+		networkId
+	);
 
 	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
@@ -59,8 +72,24 @@ const fetchLastCandle = async (
 	const to = Math.floor(Date.now() / 1000);
 	const from = 0;
 
-	const baseDataPromise = requestCandlesticks(base, from, to, resolution, networkId, 1, 'desc');
-	const quoteDataPromise = requestCandlesticks(quote, from, to, resolution, networkId, 1, 'desc');
+	const baseDataPromise = requestCandlesticks(
+		base,
+		from,
+		to,
+		resolutionToSeconds(resolution),
+		networkId,
+		1,
+		'desc'
+	);
+	const quoteDataPromise = requestCandlesticks(
+		quote,
+		from,
+		to,
+		resolutionToSeconds(resolution),
+		networkId,
+		1,
+		'desc'
+	);
 
 	return Promise.all([baseDataPromise, quoteDataPromise]).then(([baseData, quoteData]) => {
 		return combineDataToPair(baseData, quoteData, baseCurrencyIsSUSD, quoteCurrencyIsSUSD);
@@ -85,7 +114,29 @@ function subscribeLastCandle(
 					time: b.timestamp * 1000,
 				};
 			})[0];
-			if (chartBar) onTick(chartBar);
+			if (chartBar) {
+				const resolutionMs = resolutionToSeconds(resolution) * 1000;
+				console.log('Raw bar: ', chartBar, Date.now());
+				if (Date.now() - chartBar.time > resolutionMs * 2.1) {
+					console.log('Stale: ', {
+						high: chartBar.close,
+						low: chartBar.close,
+						open: chartBar.close,
+						close: chartBar.close,
+						time: (Math.floor(Date.now() / resolutionMs) - 1) * resolutionMs,
+					});
+					onTick({
+						high: chartBar.close,
+						low: chartBar.close,
+						open: chartBar.close,
+						close: chartBar.close,
+						time: (Math.floor(Date.now() / resolutionMs) - 1) * resolutionMs,
+					});
+				} else {
+					console.log('Not stale: ', chartBar);
+					onTick(chartBar);
+				}
+			}
 		});
 	} catch (err) {
 		console.log(err);
@@ -156,6 +207,41 @@ const DataFeedFactory = (
 			onTick: SubscribeBarsCallback
 		) => {
 			const { base, quote } = splitBaseQuote(symbolInfo.name);
+
+			// fill in gaps from last candle to now
+			fetchLastCandle(base, quote, _resolution, networkId).then((bars) => {
+				const chartBar = bars.map((b) => {
+					return {
+						high: b.high,
+						low: b.low,
+						open: b.open,
+						close: b.close,
+						time: b.timestamp * 1000,
+					};
+				})[0];
+				if (chartBar) {
+					const resolutionMs = resolutionToSeconds(_resolution) * 1000;
+					if (Date.now() - chartBar.time > resolutionMs) {
+						for (
+							var ts = chartBar.time + resolutionMs;
+							ts < Math.floor(ts / resolutionMs) * resolutionMs - resolutionMs;
+							ts += resolutionMs
+						) {
+							onTick({
+								high: chartBar.close,
+								low: chartBar.close,
+								open: chartBar.close,
+								close: chartBar.close,
+								time: Math.floor(ts / resolutionMs) * resolutionMs,
+							});
+						}
+					} else {
+						onTick(chartBar);
+					}
+				}
+			});
+
+			// subscribe to new candles
 			const intervalId = setInterval(() => {
 				subscribeLastCandle(base, quote, _resolution, networkId, onTick);
 			}, 10000);

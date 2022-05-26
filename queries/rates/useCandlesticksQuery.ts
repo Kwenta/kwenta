@@ -1,4 +1,3 @@
-import { ResolutionString } from 'public/static/charting_library/charting_library';
 import { getCandles } from 'queries/futures/subgraph';
 import { getRatesEndpoint, mapCandles } from './utils';
 
@@ -6,25 +5,12 @@ export const requestCandlesticks = async (
 	currencyKey: string | null,
 	minTimestamp: number,
 	maxTimestamp = Math.floor(Date.now() / 1000),
-	resolution: ResolutionString,
+	period: number,
 	networkId: number,
 	limit?: number,
 	orderDirection: 'asc' | 'desc' | undefined = 'asc'
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
-
-	const period =
-		resolution === '1'
-			? 60
-			: resolution === '5'
-			? 300
-			: resolution === '15'
-			? 900
-			: resolution === '60'
-			? 3600
-			: resolution === '1D'
-			? 86400
-			: 3600;
 
 	const response = await getCandles(
 		ratesEndpoint,
