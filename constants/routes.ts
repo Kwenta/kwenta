@@ -8,7 +8,7 @@ const normalizeRoute = (baseURL: string, path: string, queryParam: string) =>
 export const ROUTES = {
 	Home: {
 		Overview: normalizeRoute('/dashboard', 'overview', 'tab'),
-		Histories: normalizeRoute('/dashboard', 'histories', 'tab'),
+		History: normalizeRoute('/dashboard', 'history', 'tab'),
 		Markets: normalizeRoute('/dashboard', 'markets', 'tab'),
 	},
 	Dashboard: {

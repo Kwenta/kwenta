@@ -417,11 +417,11 @@
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
-			"histories-tabs": {
+			"history-tabs": {
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
-			"histories-table": {
+			"history-table": {
 				"date-time": "Date/Time",
 				"from": "From",
 				"to": "To",
@@ -1075,7 +1075,7 @@
 		"tabs": {
 			"nav": {
 				"overview": "Overview",
-				"histories": "Histories",
+				"history": "History",
 				"rewards": "Rewards",
 				"markets": "Markets",
 				"governance": "Governance",

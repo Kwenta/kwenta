@@ -21,7 +21,7 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import * as _ from 'lodash/fp';
 import { isFiatCurrency } from 'utils/currencies';
 
-const SpotMarketsTable: FC = () => {
+const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { subgraph } = useSynthetixQueries();
@@ -93,7 +93,7 @@ const SpotMarketsTable: FC = () => {
 				]}
 				columns={[
 					{
-						Header: <TableHeader>{t('dashboard.overview.histories-table.date-time')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.history-table.date-time')}</TableHeader>,
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							return conditionalRender(
@@ -104,7 +104,7 @@ const SpotMarketsTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.histories-table.from')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.history-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							return conditionalRender(
@@ -134,7 +134,7 @@ const SpotMarketsTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.histories-table.to')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.history-table.to')}</TableHeader>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							return conditionalRender(
@@ -164,7 +164,7 @@ const SpotMarketsTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.histories-table.usd-value')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.history-table.usd-value')}</TableHeader>,
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
@@ -270,4 +270,4 @@ const SynthContainer = styled.div`
 	margin-left: -4px;
 `;
 
-export default SpotMarketsTable;
+export default SpotHistoryTable;
