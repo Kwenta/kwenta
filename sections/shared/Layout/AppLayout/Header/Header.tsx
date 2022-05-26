@@ -1,24 +1,20 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
 
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, HEADER_TOP_PADDING, zIndex } from 'constants/ui';
-
+import { MobileHiddenView } from 'components/Media';
+import { zIndex } from 'constants/ui';
 import { GridDivCol } from 'styles/common';
-import media from 'styles/media';
 
 import Logo from '../../Logo';
 
 import Nav from './Nav';
 import UserMenu from './UserMenu';
-import MobileUserMenu from './MobileUserMenu';
-import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
-
-	const logo = <Logo isL2={isL2} isFutures={true} />;
+	const logo = useMemo(() => <Logo isL2={isL2} isFutures />, [isL2]);
 
 	return (
 		<Container isL2={isL2}>
@@ -29,10 +25,6 @@ const Header: FC = () => {
 				</LogoNav>
 				<UserMenu />
 			</MobileHiddenView>
-			<MobileOnlyView>
-				<LogoNav>{logo}</LogoNav>
-				<MobileUserMenu />
-			</MobileOnlyView>
 		</Container>
 	);
 };
@@ -42,14 +34,8 @@ const Container = styled.header<{ isL2: boolean }>`
 	left: 0;
 	right: 0;
 	z-index: ${zIndex.HEADER};
-	${media.lessThan('md')`
-		position: fixed;
-		background-color: ${(props) => props.theme.colors.black};
-		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
-	`};
+
 	> div {
-		/* height: ${HEADER_HEIGHT}; */
-		/* padding-top: ${HEADER_TOP_PADDING}; */
 		padding-bottom: 20px;
 		display: flex;
 		justify-content: space-between;
