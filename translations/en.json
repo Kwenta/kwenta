@@ -417,10 +417,15 @@
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
-			"positions-tabs": {
-				"futures": "Futures Positions",
-				"shorts": "Shorts",
-				"spot": "Spot Balances"
+			"histories-tabs": {
+				"futures": "Futures History",
+				"spot": "Spot History"
+			},
+			"histories-table": {
+				"date-time": "Date/Time",
+				"from": "From",
+				"to": "To",
+				"usd-value": "USD Value"
 			},
 			"markets-tabs": {
 				"futures": "Futures Markets",

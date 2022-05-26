@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
+import SpotHistoriesTable from '../SpotHistoriesTable';
+import Transactions from '../Transactions';
 
 enum HistoriesTab {
 	FUTURES = 'futures',
@@ -18,16 +20,16 @@ const Histories: FC = () => {
 		() => [
 			{
 				name: HistoriesTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures'),
+				label: t('dashboard.overview.histories-tabs.futures'),
 				active: activeMarketsTab === HistoriesTab.FUTURES,
-				disabled: true,
+				disabled: false,
 				onClick: () => {
 					setActiveMarketsTab(HistoriesTab.FUTURES);
 				},
 			},
 			{
 				name: HistoriesTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot'),
+				label: t('dashboard.overview.histories-tabs.spot'),
 				active: activeMarketsTab === HistoriesTab.SPOT,
 				onClick: () => {
 					setActiveMarketsTab(HistoriesTab.SPOT);
@@ -52,7 +54,9 @@ const Histories: FC = () => {
 			</TabButtonsContainer>
 			<TabPanel name={HistoriesTab.FUTURES} activeTab={activeMarketsTab}></TabPanel>
 
-			<TabPanel name={HistoriesTab.SPOT} activeTab={activeMarketsTab}></TabPanel>
+			<TabPanel name={HistoriesTab.SPOT} activeTab={activeMarketsTab}>
+				<SpotHistoriesTable />
+			</TabPanel>
 		</>
 	);
 };
