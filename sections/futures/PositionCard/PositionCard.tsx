@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { HoverTransform } from '../MarketDetails/MarketDetails';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isFiatCurrency } from 'utils/currencies';
@@ -144,49 +143,31 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					  })
 					: NO_VALUE,
 			netFunding: netFunding,
-			netFundingText: netFunding ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.net-funding')}
-				>
-					<HoverTransform>{`${formatCurrency(Synths.sUSD, netFunding, {
+			netFundingText: netFunding
+				? `${formatCurrency(Synths.sUSD, netFunding, {
 						sign: '$',
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
-					})}`}</HoverTransform>
-				</PositionCardTooltip>
-			) : null,
+				  })}`
+				: null,
 			fees: positionDetails ? (
 				<PositionCardTooltip
 					preset="bottom"
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.fees')}
 				>
-					<HoverTransform>
-						{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-							sign: '$',
-						})}
-					</HoverTransform>
+					{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+						sign: '$',
+					})}
 				</PositionCardTooltip>
 			) : (
 				NO_VALUE
 			),
-			avgEntryPrice: positionDetails ? (
-				<LeftMarginTooltip
-					preset="bottom-z-index-2-left-margin"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.avg-entry-price')}
-				>
-					<HoverTransform>
-						{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-							sign: '$',
-							minDecimals,
-						})}
-					</HoverTransform>
-				</LeftMarginTooltip>
-			) : (
-				NO_VALUE
-			),
+			avgEntryPrice: positionDetails
+				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+						sign: '$',
+						minDecimals,
+				  })
+				: NO_VALUE,
 		};
 	}, [
 		currencyKey,
@@ -231,7 +212,13 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.net-funding')}
+						>
+							<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
+						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
 								className={
@@ -304,7 +291,13 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						)}
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
+						<LeftMarginTooltip
+							preset="bottom-z-index-2-left-margin"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.avg-entry-price')}
+						>
+							<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
+						</LeftMarginTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>

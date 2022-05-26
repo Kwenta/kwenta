@@ -6,7 +6,6 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-
 import { FuturesMarket } from 'queries/futures/types';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -348,12 +347,6 @@ const MarketDetailsContainer = styled.div`
 
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
-	}
-`;
-
-export const HoverTransform = styled.div`
-	:hover {
-		transform: scale(1);
 	}
 `;
 
