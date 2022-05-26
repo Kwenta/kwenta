@@ -111,7 +111,6 @@ const ManageShort: FC = () => {
 			: [];
 	}, [t, activeTab, router, short?.id]);
 
-	const leftTabs = useMemo(() => TABS.filter((tab) => !tab.isClosePosition), [TABS]);
 	const closeTab = useMemo(() => TABS.find((tab) => tab.isClosePosition), [TABS]);
 
 	const nextInteractionDate = useMemo(
@@ -154,11 +153,6 @@ const ManageShort: FC = () => {
 					<PositionCard short={short} inputAmount={inputAmount} activeTab={activeTab} />
 					<FlexDivRow>
 						<StyledTabList>
-							{leftTabs.map(({ name, label, active, onClick }) => (
-								<StyledTabButton key={name} name={name} active={active} onClick={onClick}>
-									{label}
-								</StyledTabButton>
-							))}
 							{closeTab != null ? (
 								<CloseTabButton
 									name={closeTab.name}
@@ -213,8 +207,6 @@ const ManageShort: FC = () => {
 };
 
 const Container = styled.div``;
-
-const StyledTabButton = styled(TabButton)``;
 
 const CloseTabButton = styled(TabButton)<{ active: boolean }>`
 	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.red)};
