@@ -14,10 +14,12 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
-import { NO_VALUE } from '../../../constants/placeholder';
-import BlockExplorer from '../../../containers/BlockExplorer';
-import { ExternalLink } from '../../../styles/common';
+import { NO_VALUE } from 'constants/placeholder';
+import BlockExplorer from 'containers/BlockExplorer';
+import { ExternalLink } from 'styles/common';
 import LinkIcon from 'assets/svg/app/link.svg';
+import * as _ from 'lodash/fp';
+import { isFiatCurrency } from 'utils/currencies';
 
 const SpotMarketsTable: FC = () => {
 	const { t } = useTranslation();
@@ -157,12 +159,26 @@ const SpotMarketsTable: FC = () => {
 						Header: <TableHeader>{t('dashboard.overview.histories-table.usd-value')}</TableHeader>,
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
-							return (
+							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
+							return _.isNil(currencyKey) ? (
+								NO_VALUE
+							) : (
 								<Currency.Price
-									currencyKey={cellProps.row.original.toSynth?.symbol as CurrencyKey}
+									currencyKey={currencyKey}
 									price={cellProps.row.original.toAmountInUSD}
 									sign={selectedPriceCurrency.sign}
 									conversionRate={selectPriceCurrencyRate}
+									formatOptions={
+										isFiatCurrency(currencyKey)
+											? {
+													currencyKey: undefined,
+													sign: selectedPriceCurrency.sign,
+											  }
+											: {
+													currencyKey: selectedPriceCurrency.sign,
+													sign: undefined,
+											  }
+									}
 								/>
 							);
 						},
