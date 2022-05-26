@@ -176,9 +176,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							{`${formatCurrency(Synths.sUSD, pnl, {
 								sign: '$',
 								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-							})} (${formatPercent(
-								positionDetails.profitLoss.div(positionDetails.initialMargin)
-							)})`}
+							})} (${formatPercent(pnl.div(positionDetails.initialMargin))})`}
 						</HoverTransform>
 					</PositionCardTooltip>
 				) : (
