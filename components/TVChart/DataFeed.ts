@@ -116,15 +116,7 @@ function subscribeLastCandle(
 			})[0];
 			if (chartBar) {
 				const resolutionMs = resolutionToSeconds(resolution) * 1000;
-				console.log('Raw bar: ', chartBar, Date.now());
 				if (Date.now() - chartBar.time > resolutionMs * 2.1) {
-					console.log('Stale: ', {
-						high: chartBar.close,
-						low: chartBar.close,
-						open: chartBar.close,
-						close: chartBar.close,
-						time: (Math.floor(Date.now() / resolutionMs) - 1) * resolutionMs,
-					});
 					onTick({
 						high: chartBar.close,
 						low: chartBar.close,
@@ -133,7 +125,6 @@ function subscribeLastCandle(
 						time: (Math.floor(Date.now() / resolutionMs) - 1) * resolutionMs,
 					});
 				} else {
-					console.log('Not stale: ', chartBar);
 					onTick(chartBar);
 				}
 			}
