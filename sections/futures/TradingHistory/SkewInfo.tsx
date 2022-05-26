@@ -100,7 +100,9 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 					height={'auto'}
 					content={t('futures.market.history.skew-tooltip')}
 				>
-					<SkewLabel style={{ cursor: 'help' }}>{t('futures.market.history.skew-label')}</SkewLabel>
+					<WithCursor cursor="help">
+						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
+					</WithCursor>
 				</SkewTooltip>
 				<SkewValue>{formatPercent(data[0].long, { minDecimals: 0 })}</SkewValue>
 			</SkewHeader>
@@ -114,6 +116,10 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 };
 
 export default SkewInfo;
+
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`;
 
 const OpenInterestRow = styled.div`
 	display: flex;

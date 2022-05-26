@@ -24,7 +24,6 @@ import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useMemo } from '@storybook/react/node_modules/@storybook/addons';
 
 type MarketDetailsProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -289,15 +288,22 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 
 				return enableTooltip(
 					key,
-					<div key={key} style={{ cursor: 'help' }}>
-						<p className="heading">{key}</p>
-						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
-					</div>
+					<WithCursor cursor="help">
+						<div key={key}>
+							<p className="heading">{key}</p>
+							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
+						</div>
+					</WithCursor>
 				);
 			})}
 		</MarketDetailsContainer>
 	);
 };
+
+// Extend type of cursor to accept different style of cursor. Currently accept only 'help'
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
 	bottom: -145px;
