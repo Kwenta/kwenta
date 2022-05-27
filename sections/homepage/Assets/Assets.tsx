@@ -110,8 +110,10 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 			asset,
 			Math.floor((new Date().getTime() - 25 * 3600 * 1000) / 1000),
 			undefined,
-			'60' as ResolutionString,
+			3600,
 			10,
+			24,
+			'asc',
 			true
 		)
 			.then((bars) => {
