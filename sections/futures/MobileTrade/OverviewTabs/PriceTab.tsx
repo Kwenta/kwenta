@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 import TVChart from 'components/TVChart';
+import { Pane } from '../common';
 
 const PriceTab: React.FC = () => {
 	return (
-		<StyledPane>
+		<StyledPane noPadding>
 			<TVChart baseCurrencyKey="sUSD" quoteCurrencyKey="sETH" />
 		</StyledPane>
 	);
 };
 
-const StyledPane = styled.div`
+const StyledPane = styled(Pane)`
 	#tv_chart_container {
 		min-height: 301px;
 		max-height: 301px;

@@ -1,11 +1,11 @@
 import React from 'react';
-import { SectionHeader } from '../common';
+import { Pane, SectionHeader } from '../common';
 
 const TradesTab: React.FC = () => {
 	return (
-		<div>
+		<Pane>
 			<SectionHeader>Trade History</SectionHeader>
-		</div>
+		</Pane>
 	);
 };
 export default TradesTab;

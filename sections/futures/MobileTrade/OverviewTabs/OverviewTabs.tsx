@@ -31,8 +31,8 @@ const OverviewTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
-		<MainTabContainer>
-			<div className="pane">{TABS[activeTab].component}</div>
+		<div>
+			{TABS[activeTab].component}
 			<MainTabButtonsContainer>
 				{TABS.map(({ title }, i) => (
 					<TabButton
@@ -43,15 +43,9 @@ const OverviewTabs: React.FC = () => {
 					/>
 				))}
 			</MainTabButtonsContainer>
-		</MainTabContainer>
+		</div>
 	);
 };
-
-const MainTabContainer = styled.div`
-	.pane {
-		min-height: 313px;
-	}
-`;
 
 const MainTabButtonsContainer = styled.div`
 	display: flex;
