@@ -155,7 +155,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 `;
 
 const Container = styled.div`
-	margin-bottom: 150px;
+	margin-bottom: 140px;
 `;
 
 const FeatureCard = styled(FlexDivRow)`

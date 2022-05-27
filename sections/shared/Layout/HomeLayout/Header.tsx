@@ -5,7 +5,7 @@ import Link from 'next/link';
 import ROUTES from 'constants/routes';
 
 import DiscordLogo from 'assets/svg/social/discord.svg';
-import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
+import MirrorLogo from 'assets/svg/social/mirror.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
@@ -38,7 +38,7 @@ const Header: FC = () => {
 			},
 			{
 				id: 'governance',
-				label: t('homepage.nav.governance'),
+				label: t('homepage.nav.governance.title'),
 				icon: <CaretDownGrayIcon />,
 				show: () => {
 					setIsSocialsShown(false);
@@ -47,7 +47,7 @@ const Header: FC = () => {
 			},
 			{
 				id: 'socials',
-				label: t('homepage.nav.socials'),
+				label: t('homepage.nav.socials.title'),
 				icon: <CaretDownGrayIcon />,
 				show: () => {
 					setIsGovernanceShown(false);
@@ -66,25 +66,31 @@ const Header: FC = () => {
 	);
 
 	const GOVERNANCE = [
-		{ label: 'Doc', onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank') },
-		{ label: 'KIPs', onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank') },
+		{
+			label: t('homepage.nav.governance.overview'),
+			onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank'),
+		},
+		{
+			label: t('homepage.nav.governance.kips'),
+			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
+		},
 	];
 
 	const SOCIALS = [
 		{
-			label: 'Discord',
+			label: t('homepage.nav.socials.discord'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Discord, '_blank'),
 			icon: <DiscordLogo />,
 		},
 		{
-			label: 'Twitter',
+			label: t('homepage.nav.socials.twitter'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
 		},
 		{
-			label: 'Mirror',
+			label: t('homepage.nav.socials.mirror'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
-			icon: <MediumLogo />,
+			icon: <MirrorLogo />,
 		},
 	];
 

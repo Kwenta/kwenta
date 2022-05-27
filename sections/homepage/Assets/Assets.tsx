@@ -12,7 +12,7 @@ import {
 	WhiteHeader,
 } from 'styles/common';
 
-import media, { Media } from 'styles/media';
+import { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { GridContainer } from '../common';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
@@ -34,7 +34,6 @@ import _ from 'lodash';
 import { SynthsVolumes } from 'queries/synths/type';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { ResolutionString } from 'public/static/charting_library/charting_library';
 import router from 'next/router';
 
 enum MarketsTab {
@@ -466,11 +465,7 @@ const StatsCard = styled(GridContainer)`
 `;
 
 const Container = styled.div`
-	padding-top: 80px;
-	${media.lessThan('md')`
-		padding-top: 40px;
-	`}
-	padding-bottom: 150px;
+	margin-bottom: 140px;
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`

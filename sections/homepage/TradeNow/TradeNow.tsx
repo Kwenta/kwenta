@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media, { Media } from 'styles/media';
+import { Media } from 'styles/media';
 
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
@@ -50,11 +50,7 @@ const TransparentCard = styled.div`
 	border-radius: 15px;
 `;
 const Container = styled.div`
-	padding-top: 80px;
-	${media.lessThan('md')`
-		padding-top: 40px;
-	`}
-	padding-bottom: 150px;
+	margin-bottom: 140px;
 `;
 
 const GrayDescription = styled(Paragraph)`

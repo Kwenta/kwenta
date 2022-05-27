@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 
 import DiscordLogo from 'assets/svg/social/discord.svg';
-import MediumLogo from 'assets/svg/marketing/medium-icon.svg';
+import MirrorLogo from 'assets/svg/social/mirror.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -96,40 +96,38 @@ const Footer: React.FC = () => {
 		},
 	];
 	return (
-		<Container>
-			<StyledGridContainer>
-				<LogoFooter>
-					<Logo isL2={false} />
-					<SocialIcons>
-						<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
-							<TwitterLogo />
-						</ExternalLink>
-						<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
-							<DiscordLogo />
-						</ExternalLink>
-						<ExternalLink href={EXTERNAL_LINKS.Social.Mirror}>
-							<MediumLogo />
-						</ExternalLink>
-					</SocialIcons>
-				</LogoFooter>
-				<MultiListContainer>
-					{DOC_LINKS.map(({ key, title, links }) => (
-						<ListContainer key={key}>
-							<ListTitle>{title}</ListTitle>
-							{links.map(({ key, title, link }) => (
-								<StyledLink key={key} href={link} target="_blank">
-									<p>{title}</p>
-								</StyledLink>
-							))}
-						</ListContainer>
-					))}
-				</MultiListContainer>
-				<PowerContainer>
-					<PoweredBySynthetix />
-					<CopyRight>{t('homepage.footer.copyright')}</CopyRight>
-				</PowerContainer>
-			</StyledGridContainer>
-		</Container>
+		<StyledGridContainer>
+			<LogoFooter>
+				<Logo isL2={false} />
+				<SocialIcons>
+					<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
+						<TwitterLogo />
+					</ExternalLink>
+					<ExternalLink href={EXTERNAL_LINKS.Social.Discord}>
+						<DiscordLogo />
+					</ExternalLink>
+					<ExternalLink href={EXTERNAL_LINKS.Social.Mirror}>
+						<MirrorLogo />
+					</ExternalLink>
+				</SocialIcons>
+			</LogoFooter>
+			<MultiListContainer>
+				{DOC_LINKS.map(({ key, title, links }) => (
+					<ListContainer key={key}>
+						<ListTitle>{title}</ListTitle>
+						{links.map(({ key, title, link }) => (
+							<StyledLink key={key} href={link} target="_blank">
+								<p>{title}</p>
+							</StyledLink>
+						))}
+					</ListContainer>
+				))}
+			</MultiListContainer>
+			<PowerContainer>
+				<PoweredBySynthetix />
+				<CopyRight>{t('homepage.footer.copyright')}</CopyRight>
+			</PowerContainer>
+		</StyledGridContainer>
 	);
 };
 
@@ -164,6 +162,7 @@ const PowerContainer = styled.div`
 	border-top-width: 1px;
 	border-top-style: solid;
 	border-top-color: #3d3c3c;
+	margin-bottom: 50px;
 `;
 
 const MultiListContainer = styled.div`
@@ -174,7 +173,7 @@ const MultiListContainer = styled.div`
 	padding-left: 40px;
 	padding-right: 40px;
 	margin-top: 80px;
-	margin-bottom: 50px;
+	margin-bottom: 42.5px;
 `;
 
 const ListContainer = styled.div`
@@ -192,10 +191,6 @@ const LogoFooter = styled.div`
 	width: 1280px;
 	padding-left: 40px;
 	padding-right: 40px;
-`;
-
-const Container = styled.div`
-	margin-bottom: 50px;
 `;
 
 const StyledGridContainer = styled(GridContainer)`

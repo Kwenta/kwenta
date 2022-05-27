@@ -42,8 +42,17 @@
 			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
 			"markets": "Markets",
-			"governance": "Governance",
-			"socials": "Socials",
+			"governance": {
+				"title": "Governance",
+				"overview": "Overview",
+				"kips": "KIPs"
+			},
+			"socials": {
+				"title": "Socials",
+				"discord": "Discord",
+				"mirror": "Mirror",
+				"twitter": "Twitter"
+			},
 			"blog": "Blog"
 		},
 		"hero": {

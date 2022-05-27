@@ -183,7 +183,8 @@ const CenteredTitle = styled(Title)`
 
 const BackgroundContainer = styled.div`
 	background: linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
-	background-size: 2400px 1020px;
+	background-size: 2400px 1145px;
+	padding-bottom: 125px;
 	margin-left: -1000px;
 	margin-right: -1000px;
 	display: flex;
@@ -191,9 +192,7 @@ const BackgroundContainer = styled.div`
 `;
 const Container = styled.div`
 	width: 1160px;
-	padding-top: 80px;
-	padding-bottom: 100px;
-	margin-bottom: 150px;
+	margin-top: 125px;
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`

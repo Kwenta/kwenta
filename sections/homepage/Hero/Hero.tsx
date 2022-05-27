@@ -74,14 +74,7 @@ const HeroImageContainer = styled(GridDiv)`
 	display: grid;
 	justify-content: center;
 	margin-top: 97px;
-	min-height: 839px;
-	${media.lessThan('md')`
-		min-height: 684px;
-	`}
-	${media.lessThan('sm')`
-		margin-top: 0;
-		min-height: 338px;
-	`}
+	margin-bottom: 201px;
 `;
 
 const HeroImage = styled.img`

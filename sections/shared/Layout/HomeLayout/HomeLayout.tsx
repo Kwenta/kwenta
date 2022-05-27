@@ -30,7 +30,7 @@ const BlueBlurImageHero = styled.div`
 	position: absolute;
 	width: 201.37px;
 	height: 220.5px;
-	left: 2.01px;
+	left: 302.01px;
 	top: 600px;
 
 	background: #02e1ff;
@@ -43,8 +43,8 @@ const GoldenBlurImageHero = styled.div`
 	position: absolute;
 	width: 550.34px;
 	height: 493px;
-	left: 604.83px;
-	top: 800px;
+	left: 904.83px;
+	top: 700px;
 
 	background: #c9975a;
 	opacity: 0.3;
@@ -53,9 +53,9 @@ const GoldenBlurImageHero = styled.div`
 
 const BlueBlurImageShortList = styled.div`
 	position: absolute;
-	width: 151.37px;
-	height: 220.5px;
-	left: 300px;
+	width: 121.37px;
+	height: 180.5px;
+	left: 600px;
 	top: 3400px;
 
 	background: #02e1ff;
@@ -66,9 +66,9 @@ const BlueBlurImageShortList = styled.div`
 
 const GoldenBlurImageShortList = styled.div`
 	position: absolute;
-	width: 350.34px;
-	height: 493px;
-	left: 604.83px;
+	width: 300.34px;
+	height: 453px;
+	left: 1204.83px;
 	top: 3300px;
 
 	background: #c9975a;
@@ -80,8 +80,8 @@ const BlueBlurImageEarning = styled.div`
 	position: absolute;
 	width: 151.37px;
 	height: 220.5px;
-	left: 100px;
-	top: 4400px;
+	left: 200px;
+	top: 4000px;
 
 	background: #02e1ff;
 	opacity: 0.5;
@@ -93,8 +93,8 @@ const GoldenBlurImageEarning = styled.div`
 	position: absolute;
 	width: 350.34px;
 	height: 493px;
-	left: 154.83px;
-	top: 4300px;
+	left: 254.83px;
+	top: 3700px;
 
 	background: #c9975a;
 	opacity: 0.3;
@@ -104,9 +104,9 @@ const GoldenBlurImageEarning = styled.div`
 const BlueBlurImageTradeNow = styled.div`
 	position: absolute;
 	width: 201.37px;
-	height: 220.5px;
-	left: 100px;
-	top: 8000px;
+	height: 270.5px;
+	left: 400px;
+	top: 7500px;
 
 	background: #02e1ff;
 	opacity: 0.5;
@@ -118,8 +118,8 @@ const GoldenBlurImageTradeNow = styled.div`
 	position: absolute;
 	width: 350.34px;
 	height: 493px;
-	left: 1154.83px;
-	top: 7900px;
+	left: 1404.83px;
+	top: 7400px;
 
 	background: #c9975a;
 	opacity: 0.3;

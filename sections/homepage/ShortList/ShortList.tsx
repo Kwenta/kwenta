@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { CellProps } from 'react-table';
 
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media, { Media } from 'styles/media';
+import { Media } from 'styles/media';
 import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import useGetStats from 'queries/futures/useGetStats';
 import { FuturesMarket, FuturesStat } from 'queries/futures/types';
@@ -284,11 +284,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 `;
 
 const Container = styled.div`
-	padding-top: 80px;
-	${media.lessThan('md')`
-		padding-top: 40px;
-	`}
-	padding-bottom: 150px;
+	margin-bottom: 125px;
 `;
 
 const TableHeader = styled.div`
