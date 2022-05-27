@@ -192,16 +192,15 @@ const TableHeader = styled(CapitalizedText)`
 
 const PriceValue = styled(NumericValue)`
 	font-size: 11px;
-	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-decoration: underline;
-	padding-left: 10px;
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
+	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.common.primaryWhite
