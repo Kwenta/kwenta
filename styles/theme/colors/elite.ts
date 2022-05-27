@@ -7,6 +7,7 @@ const eliteTheme = {
 	green: '',
 	black: '#171002',
 	gray: '#787878',
+	table: '#EDEDED',
 	button: {
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
 		fill: '#E6E6E6',

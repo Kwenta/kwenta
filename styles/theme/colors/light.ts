@@ -7,6 +7,7 @@ const lightTheme = {
 	green: '#1D5D1F',
 	black: '#171002',
 	gray: '#515151',
+	table: '#EDEDED',
 	button: {
 		background:
 			'linear-gradient(180deg, rgba(231, 231, 231, 0.5) 0%, rgba(203, 203, 203, 0.5) 100%)',

@@ -7,6 +7,7 @@ const darkTheme = {
 	green: '#7FD482',
 	black: '#171002',
 	gray: '#787878',
+	table: 'rgba(255, 255, 255, 0.01)',
 	button: {
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		fill: '#E6E6E6',
