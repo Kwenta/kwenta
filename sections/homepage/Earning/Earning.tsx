@@ -61,58 +61,60 @@ const Earning = () => {
 
 	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
-		<Container>
-			<FlexDivColCentered>{title}</FlexDivColCentered>
-			<StyledFlexContainer>
-				{EARNINGS.map(({ id, title, copy, image }) => (
-					<FeatureCard key={id}>
-						<FeatureIconContainer>{image}</FeatureIconContainer>
-						<FeatureContentTitle>
-							<CenteredTitle>{t(title)}</CenteredTitle>
-						</FeatureContentTitle>
-						<CenteredCopy>{t(copy)}</CenteredCopy>
-					</FeatureCard>
-				))}
-			</StyledFlexContainer>
-			<StatsCardContainer>
-				<StatsCard className="first">
-					<StatsValue>
-						{totalTradeStats.isLoading ? (
-							<Loader />
-						) : (
-							formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
-								sign: '$',
-								minDecimals: 0,
-							})
-						)}
-					</StatsValue>
-					<StatsName>{t('homepage.earning.stats.volume')}</StatsName>
-				</StatsCard>
-				<StatsCard>
-					<StatsValue>
-						{totalTradeStats.isLoading ? (
-							<Loader />
-						) : (
-							formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
-						)}
-					</StatsValue>
-					<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
-				</StatsCard>
-			</StatsCardContainer>
-			<CTAContainer>
-				<Link href={ROUTES.Home.Overview}>
-					<Button variant="primary" isRounded={false} size="md" disabled>
-						{t('homepage.earning.stake-kwenta')}
-					</Button>
-				</Link>
-				<Link href={ROUTES.Home.Overview}>
-					<StyledButton isRounded={false} size="md" disabled>
-						{t('homepage.earning.how-to-earn')}
-						<ArrowUpRightIcon />
-					</StyledButton>
-				</Link>
-			</CTAContainer>
-		</Container>
+		<BackgroundContainer>
+			<Container>
+				<FlexDivColCentered>{title}</FlexDivColCentered>
+				<StyledFlexContainer>
+					{EARNINGS.map(({ id, title, copy, image }) => (
+						<FeatureCard key={id}>
+							<FeatureIconContainer>{image}</FeatureIconContainer>
+							<FeatureContentTitle>
+								<CenteredTitle>{t(title)}</CenteredTitle>
+							</FeatureContentTitle>
+							<CenteredCopy>{t(copy)}</CenteredCopy>
+						</FeatureCard>
+					))}
+				</StyledFlexContainer>
+				<StatsCardContainer>
+					<StatsCard className="first">
+						<StatsValue>
+							{totalTradeStats.isLoading ? (
+								<Loader />
+							) : (
+								formatCurrency(Synths.sUSD, totalTradeStats.data?.totalVolume || zeroBN, {
+									sign: '$',
+									minDecimals: 0,
+								})
+							)}
+						</StatsValue>
+						<StatsName>{t('homepage.earning.stats.volume')}</StatsName>
+					</StatsCard>
+					<StatsCard>
+						<StatsValue>
+							{totalTradeStats.isLoading ? (
+								<Loader />
+							) : (
+								formatNumber(totalTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
+							)}
+						</StatsValue>
+						<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
+					</StatsCard>
+				</StatsCardContainer>
+				<CTAContainer>
+					<Link href={ROUTES.Home.Overview}>
+						<Button variant="primary" isRounded={false} size="md" disabled>
+							{t('homepage.earning.stake-kwenta')}
+						</Button>
+					</Link>
+					<Link href={ROUTES.Home.Overview}>
+						<StyledButton isRounded={false} size="md" disabled>
+							{t('homepage.earning.how-to-earn')}
+							<ArrowUpRightIcon />
+						</StyledButton>
+					</Link>
+				</CTAContainer>
+			</Container>
+		</BackgroundContainer>
 	);
 };
 
@@ -179,14 +181,24 @@ const CenteredTitle = styled(Title)`
 	font-size: 24px;
 `;
 
+const BackgroundContainer = styled.div`
+	background: linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+	background-size: 2400px 1020px;
+	margin-left: -1000px;
+	margin-right: -1000px;
+	display: flex;
+	justify-content: center;
+`;
 const Container = styled.div`
+	width: 1160px;
 	padding-top: 80px;
-	padding-bottom: 150px;
-	margin-bottom: 100px;
+	padding-bottom: 100px;
+	margin-bottom: 150px;
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`
 	width: 1160px;
+	justify-content: center;
 `;
 
 const FeatureCard = styled(FlexDivCol)`

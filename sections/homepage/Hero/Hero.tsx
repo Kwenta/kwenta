@@ -67,6 +67,7 @@ const ProductDescription = styled(Paragraph)`
 	color: #bdbdbd;
 	padding-top: 16px;
 `;
+
 const HeroImageContainer = styled(GridDiv)`
 	width: 100vw;
 	overflow: hidden;
