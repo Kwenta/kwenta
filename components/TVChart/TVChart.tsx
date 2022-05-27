@@ -21,7 +21,7 @@ export type ChartProps = {
 	potentialTrade?: ChartPosition | null;
 };
 
-type Props = ChartProps & {
+export type Props = ChartProps & {
 	interval: string;
 	containerId: string;
 	libraryPath: string;
@@ -40,7 +40,6 @@ export function TVChart({
 	fullscreen = false,
 	autosize = true,
 	studiesOverrides = {},
-	overrides,
 	activePosition,
 	potentialTrade,
 }: Props) {
@@ -53,6 +52,12 @@ export function TVChart({
 	const { colors } = useContext(ThemeContext);
 	let network = useRecoilValue(networkState);
 
+	const DEFAULT_OVERRIDES = {
+		'paneProperties.background': colors.selectedTheme.background,
+		'chartProperties.background': colors.selectedTheme.background,
+		'paneProperties.backgroundType': 'solid',
+	};
+
 	useEffect(() => {
 		const widgetOptions = {
 			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
@@ -63,7 +68,6 @@ export function TVChart({
 			locale: 'en',
 			enabled_features: ['hide_left_toolbar_by_default'],
 			disabled_features: [
-				'use_localstorage_for_settings',
 				'header_compare',
 				'study_templates',
 				'header_symbol_search',
@@ -78,10 +82,7 @@ export function TVChart({
 			loading_screen: {
 				backgroundColor: colors.selectedTheme.background,
 			},
-			overrides: overrides ?? {
-				'paneProperties.background': colors.selectedTheme.background,
-				'paneProperties.backgroundType': 'solid',
-			},
+			overrides: DEFAULT_OVERRIDES,
 			toolbar_bg: colors.selectedTheme.background,
 			time_frames: [
 				{ text: '4H', resolution: '5', description: '4 hours' },
@@ -105,6 +106,10 @@ export function TVChart({
 		// @ts-ignore complains about `container` item missing
 		const tvWidget = new widget(widgetOptions);
 		_widget.current = tvWidget;
+
+		_widget.current?.onChartReady(() => {
+			_widget.current?.applyOverrides(DEFAULT_OVERRIDES);
+		});
 
 		return () => {
 			clearExistingWidget();
@@ -162,8 +167,6 @@ export function TVChart({
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
-			console.log(_widget.current?.chart());
-
 			const symbolInterval = _widget.current?.symbolInterval();
 			_widget.current?.setSymbol(
 				baseCurrencyKey + ':' + quoteCurrencyKey,
