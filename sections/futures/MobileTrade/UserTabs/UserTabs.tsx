@@ -31,7 +31,7 @@ const UserTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
-		<div>
+		<UserTabsContainer>
 			<TabButtonsContainer>
 				{TABS.map(({ title }, i) => (
 					<TabButton
@@ -43,12 +43,17 @@ const UserTabs: React.FC = () => {
 				))}
 			</TabButtonsContainer>
 			<div>{TABS[activeTab].component}</div>
-		</div>
+		</UserTabsContainer>
 	);
 };
 
+const UserTabsContainer = styled.div`
+	padding: 0 15px;
+`;
+
 const TabButtonsContainer = styled.div`
 	display: flex;
+	justify-content: space-between;
 	margin-bottom: 15px;
 `;
 

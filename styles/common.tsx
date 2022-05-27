@@ -194,6 +194,12 @@ export const FullScreenContainer = styled(FlexDiv)`
 	padding: 25px 25px 0;
 `;
 
+export const MobileScreenContainer = styled.div`
+	width: 100%;
+	height: 100vh;
+	overflow-y: scroll;
+`;
+
 export const Tooltip = styled(Tippy)`
 	background-color: ${(props) => props.theme.colors.cellGradient};
 	border: 0.5px solid ${(props) => props.theme.colors.navy};

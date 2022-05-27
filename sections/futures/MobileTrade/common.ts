@@ -11,5 +11,5 @@ export const SectionHeader = styled.div`
 export const SectionSeparator = styled.div`
 	height: 1px;
 	background-color: #2b2a2a;
-	margin: 15px 0;
+	margin: 15px;
 `;

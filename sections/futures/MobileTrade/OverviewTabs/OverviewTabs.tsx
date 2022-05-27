@@ -56,9 +56,13 @@ const MainTabContainer = styled.div`
 const MainTabButtonsContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
+	padding: 0 15px;
 
 	& > button {
-		max-width: 83px;
+		flex: 1;
+		&:not(:last-child) {
+			margin-right: 10px;
+		}
 	}
 `;
 

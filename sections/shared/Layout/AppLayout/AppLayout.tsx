@@ -1,10 +1,10 @@
 import { FC } from 'react';
 
-import { FullScreenContainer } from 'styles/common';
+import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 import Header from './Header';
 import NotificationContainer from 'constants/NotificationContainer';
-import { MobileOnlyView } from 'components/Media';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobileUserMenu from './Header/MobileUserMenu';
 
 type AppLayoutProps = {
@@ -12,14 +12,21 @@ type AppLayoutProps = {
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => (
-	<FullScreenContainer>
-		<Header />
-		{children}
-		<NotificationContainer />
+	<>
+		<MobileHiddenView>
+			<FullScreenContainer>
+				<Header />
+				{children}
+				<NotificationContainer />
+			</FullScreenContainer>
+		</MobileHiddenView>
 		<MobileOnlyView>
-			<MobileUserMenu />
+			<MobileScreenContainer>
+				{children}
+				<MobileUserMenu />
+			</MobileScreenContainer>
 		</MobileOnlyView>
-	</FullScreenContainer>
+	</>
 );
 
 export default AppLayout;
