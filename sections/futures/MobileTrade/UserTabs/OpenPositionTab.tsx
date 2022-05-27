@@ -11,7 +11,6 @@ import LeverageInput from 'sections/futures/LeverageInput';
 const OpenPositionTab: React.FC = () => {
 	const [orderType, setOrderType] = React.useState(0);
 	const [positionSide, setPositionSide] = React.useState(PositionSide.LONG);
-	// const [tradeSize, setTradeSize] = React.useState('');
 
 	return (
 		<div>
@@ -44,7 +43,6 @@ const OpenPositionTab: React.FC = () => {
 				assetRate={zeroBN}
 				onLeverageChange={() => {}}
 				setIsLeverageValueCommitted={() => {}}
-				currentPosition={null}
 				isMarketClosed={false}
 				isDisclaimerDisplayed={false}
 			/>

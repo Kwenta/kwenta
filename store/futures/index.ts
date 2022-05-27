@@ -1,13 +1,11 @@
-// TODO: This file is meant to create a state layer for the futures page.
-// It aims to do the following:
-// - Prevent multiple requests for the same futures data.
-// - Enable updating the futures page state without network refetches (optimistic updates).
-// - Enable creating mobile versions of components with the same data.
+import { atom, selector } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
 
-import { atom } from 'recoil';
 import { getFuturesKey } from 'store/utils';
 import { FuturesPosition } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
+import { Rates } from 'queries/rates/types';
+import { zeroBN } from 'utils/formatters/number';
 
 export const currentMarketState = atom<string | null>({
 	key: getFuturesKey('currentMarket'),
@@ -29,7 +27,47 @@ export const tradeSizeSUSDState = atom({
 	default: '',
 });
 
-export const positionSideState = atom<PositionSide>({
-	key: getFuturesKey('positionSide'),
+export const leverageState = atom({
+	key: getFuturesKey('leverage'),
+	default: '',
+});
+
+export const leverageSideState = atom<PositionSide>({
+	key: getFuturesKey('leverageSide'),
 	default: PositionSide.LONG,
+});
+
+export const ratesState = atom<Rates | null>({
+	key: getFuturesKey('rates'),
+	default: null,
+});
+
+export const orderTypeState = atom({
+	key: getFuturesKey('orderType'),
+	default: 0,
+});
+
+export const feeCostState = atom<Wei | null>({
+	key: getFuturesKey('feeCost'),
+	default: null,
+});
+
+export const dynamicFeeState = atom({
+	key: getFuturesKey('dynamicFee'),
+	default: null,
+});
+
+export const leverageValueCommitedState = atom({
+	key: getFuturesKey('leverageValueCommited'),
+	default: true,
+});
+
+export const sizeDeltaState = selector({
+	key: getFuturesKey('sizeDelta'),
+	get: ({ get }) => {
+		const tradeSize = get(tradeSizeState);
+		const leverageSide = get(leverageSideState);
+
+		return tradeSize ? wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize) : zeroBN;
+	},
 });

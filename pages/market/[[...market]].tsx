@@ -83,7 +83,7 @@ const Market = () => {
 				</StyledPageContent>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<MobileTrade />
+				<MobileTrade position={futuresMarketPosition} />
 			</MobileOnlyView>
 		</>
 	);

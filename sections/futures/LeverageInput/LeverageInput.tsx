@@ -5,7 +5,6 @@ import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import { PositionSide } from '../types';
-import { FuturesPosition } from 'queries/futures/types';
 import LeverageSlider from '../LeverageSlider';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
@@ -19,7 +18,6 @@ type LeverageInputProps = {
 	assetRate: Wei;
 	onLeverageChange: (value: string) => void;
 	setIsLeverageValueCommitted: (value: boolean) => void;
-	currentPosition: FuturesPosition | null;
 	isMarketClosed: boolean;
 	isDisclaimerDisplayed: boolean;
 };

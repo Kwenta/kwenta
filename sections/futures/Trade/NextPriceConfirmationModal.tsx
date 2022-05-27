@@ -33,7 +33,6 @@ type NextPriceConfirmationModalProps = {
 	onConfirmOrder: () => void;
 	side: PositionSide;
 	l1Fee: Wei | null;
-	feeCost: Wei | null;
 	positionSize: Wei | null;
 	isDisclaimerDisplayed: boolean;
 };
@@ -46,7 +45,6 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
-	feeCost,
 	positionSize,
 	isDisclaimerDisplayed,
 }) => {

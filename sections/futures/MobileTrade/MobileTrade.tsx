@@ -4,8 +4,13 @@ import styled from 'styled-components';
 import MainTab from './OverviewTabs';
 import LowerTab from './UserTabs';
 import { SectionSeparator } from './common';
+import { FuturesPosition } from 'queries/futures/types';
 
-const MobileTrade = () => {
+type MobileTradeProps = {
+	position: FuturesPosition | null;
+};
+
+const MobileTrade: React.FC<MobileTradeProps> = () => {
 	return (
 		<MobileTradeContainer>
 			<MainTab />
