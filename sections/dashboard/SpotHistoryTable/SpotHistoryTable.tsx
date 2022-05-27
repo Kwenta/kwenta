@@ -88,7 +88,7 @@ const SpotHistoryTable: FC = () => {
 				sortBy={[
 					{
 						id: 'dateTime',
-						desc: true,
+						asec: true,
 					},
 				]}
 				columns={[
