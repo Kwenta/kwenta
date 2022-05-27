@@ -12,6 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import { ChartPosition } from './types';
+import { DEFAULT_RESOLUTION } from './constants';
 
 export type ChartProps = {
 	baseCurrencyKey: string;
@@ -33,7 +34,7 @@ type Props = ChartProps & {
 export function TVChart({
 	baseCurrencyKey,
 	quoteCurrencyKey,
-	interval = '15',
+	interval = DEFAULT_RESOLUTION,
 	containerId = 'tv_chart_container',
 	libraryPath = '/static/charting_library/',
 	fullscreen = false,
@@ -59,7 +60,6 @@ export function TVChart({
 			interval: interval,
 			container: containerId,
 			library_path: libraryPath,
-
 			locale: 'en',
 			enabled_features: ['hide_left_toolbar_by_default'],
 			disabled_features: [
@@ -110,7 +110,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey, network.id]);
+	}, [network.id]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
@@ -160,6 +160,19 @@ export function TVChart({
 		});
 	}, [activePosition, potentialTrade, colors.common.primaryRed]);
 
+	useEffect(() => {
+		_widget.current?.onChartReady(() => {
+			console.log(_widget.current?.chart());
+
+			const symbolInterval = _widget.current?.symbolInterval();
+			_widget.current?.setSymbol(
+				baseCurrencyKey + ':' + quoteCurrencyKey,
+				symbolInterval?.interval ?? DEFAULT_RESOLUTION,
+				() => {}
+			);
+		});
+	}, [baseCurrencyKey, quoteCurrencyKey]);
+
 	const onSubscribe = useCallback(
 		(newIntervalId: number) => {
 			setLastSubscription(newIntervalId);
@@ -170,11 +183,9 @@ export function TVChart({
 	useEffect(() => {
 		clearInterval(intervalId);
 		setIntervalId(lastSubscription);
-		const newDataFeed = DataFeedFactory(network.id, onSubscribe);
-		if (_widget.current) {
-			// @ts-ignore
-			_widget.current._options.datafeed = newDataFeed;
-		}
+		_widget.current?.onChartReady(() => {
+			_widget.current?.chart()?.resetData();
+		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [lastSubscription, onSubscribe, network.id]);
 
