@@ -15,7 +15,7 @@ export type TabButtonProps = {
 
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
-		<StyledButton {...props} isActive={!!active}>
+		<StyledButton {...props} isActive={!!active} noOutline={true}>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<p className="title">{title}</p>
@@ -27,12 +27,12 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 };
 
 const StyledButton = styled(Button)<{ isActive: boolean }>`
-	height: initial;
 	display: flex;
-	align-items: center;
+	align-items: baseline;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
+
 	p {
 		margin: 0;
 		font-size: 13px;
