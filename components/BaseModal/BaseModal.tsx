@@ -71,7 +71,7 @@ const StyledCard = styled(Card)`
 	border-radius: 10px;
 	position: relative;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	${border}
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const StyledCardHeader = styled(Card.Header)`
