@@ -3,10 +3,9 @@ import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 
-import { CurrencyKey, Synths } from 'constants/currency';
+import { Synths } from 'constants/currency';
 
 import { zeroBN } from 'utils/formatters/number';
-import { PositionSide } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { walletAddressState } from 'store/wallet';
@@ -14,8 +13,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 
 import LeverageInput from '../LeverageInput';
 import TradeConfirmationModal from './TradeConfirmationModal';
-import { useRouter } from 'next/router';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import MarketsDropdown from './MarketsDropdown';
 import SegmentedControl from 'components/SegmentedControl';
@@ -27,42 +24,49 @@ import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
-import { FuturesPosition } from 'queries/futures/types';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import {
-	feeCostState,
 	leverageSideState,
 	leverageState,
-	leverageValueCommitedState,
 	orderTypeState,
+	positionState,
 	sizeDeltaState,
-	tradeSizeState,
-	tradeSizeSUSDState,
 } from 'store/futures';
 import useFuturesData from 'hooks/useFuturesData';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 
 type TradeProps = {
-	position: FuturesPosition | null;
 	refetch(): void;
-	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
 	currencyKey: string;
 };
 
 type ModalList = 'deposit' | 'withdraw' | 'trade' | 'next-price' | 'close-position';
 
-const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, currencyKey }) => {
+const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const router = useRouter();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
-	const marketQuery = useGetFuturesMarkets();
-	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+	const position = useRecoilValue(positionState);
+
+	const {
+		onLeverageChange,
+		onTradeAmountChange,
+		onTradeAmountSUSDChange,
+		placeOrderTranslationKey,
+		maxLeverageValue,
+		error,
+		dynamicFee,
+		isMarketCapReached,
+		shouldDisplayNextPriceDisclaimer,
+		isFuturesMarketClosed,
+		marketAsset,
+		marketQuery,
+		market,
+	} = useFuturesData();
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
 
@@ -80,33 +84,15 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const leverage = useRecoilValue(leverageState);
-	const tradeSize = useRecoilValue(tradeSizeState);
-	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const feeCost = useRecoilValue(feeCostState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommitedState);
 
 	const [openModal, setOpenModal] = useState<ModalList | null>(null);
 
-	const {
-		onLeverageChange,
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		placeOrderTranslationKey,
-		maxLeverageValue,
-		marketAssetRate,
-		error,
-		dynamicFee,
-		isMarketCapReached,
-		shouldDisplayNextPriceDisclaimer,
-		isFuturesMarketClosed,
-	} = useFuturesData({ position });
-
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
 	const orderTxn = useSynthetixTxn(
 		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
@@ -118,7 +104,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				!!marketAsset &&
 				!!leverage &&
 				Number(leverage) >= 0 &&
-				maxLeverageValue.gte(Number(leverage)) &&
+				maxLeverageValue.gte(leverage) &&
 				!sizeDelta.eq(zeroBN),
 		}
 	);
@@ -141,12 +127,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
 
-	useEffect(() => {
-		onEditPositionInput({ size: tradeSize, side: leverageSide });
-	}, [leverageSide, tradeSize, onEditPositionInput]);
-
 	return (
-		<Panel>
+		<div>
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 
 			<MarketActions
@@ -160,12 +142,12 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				totalMargin={position?.remainingMargin ?? zeroBN}
 				availableMargin={position?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					position && position?.remainingMargin.gt(zeroBN)
+					position?.remainingMargin.gt(zeroBN)
 						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={
-					position && position?.remainingMargin.gt(zeroBN)
+					position?.remainingMargin.gt(zeroBN)
 						? position?.remainingMargin
 								?.sub(position?.accessibleMargin)
 								.div(position?.remainingMargin)
@@ -190,25 +172,17 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 			<OrderSizing
 				disabled={position?.remainingMargin?.lte(zeroBN)}
-				amount={tradeSize}
-				amountSUSD={tradeSizeSUSD}
-				assetRate={marketAssetRate}
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
-				onLeverageChange={(value) => onLeverageChange(value)}
+				onLeverageChange={onLeverageChange}
 				marketAsset={marketAsset || Synths.sUSD}
 				maxLeverage={maxLeverageValue}
 				totalMargin={position?.remainingMargin ?? zeroBN}
 			/>
 
 			<LeverageInput
-				currentLeverage={leverage}
 				maxLeverage={maxLeverageValue}
-				onLeverageChange={(value) => onLeverageChange(value)}
-				side={leverageSide}
-				setIsLeverageValueCommitted={setIsLeverageValueCommitted}
-				assetRate={marketAssetRate}
-				currentTradeSize={tradeSize ? Number(tradeSize) : 0}
+				onLeverageChange={onLeverageChange}
 				isMarketClosed={isFuturesMarketClosed}
 				isDisclaimerDisplayed={orderType === 1 && shouldDisplayNextPriceDisclaimer}
 			/>
@@ -229,13 +203,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
 			)}
 
-			<FeeInfoBox
-				orderType={orderType}
-				feeCost={feeCost}
-				currencyKey={marketAsset}
-				sizeDelta={sizeDelta}
-				dynamicFee={dynamicFee}
-			/>
+			<FeeInfoBox currencyKey={marketAsset} dynamicFee={dynamicFee} />
 
 			{openModal === 'deposit' && (
 				<DepositMarginModal
@@ -271,24 +239,20 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 			{openModal === 'trade' && (
 				<TradeConfirmationModal
-					tradeSize={tradeSize}
 					onConfirmOrder={() => orderTxn.mutate()}
 					gasLimit={orderTxn.gasLimit}
 					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
-					side={leverageSide}
 					onDismiss={() => setOpenModal(null)}
 				/>
 			)}
 
 			{openModal === 'next-price' && (
 				<NextPriceConfirmationModal
-					tradeSize={tradeSize}
 					onConfirmOrder={() => orderTxn.mutate()}
 					gasLimit={orderTxn.gasLimit}
 					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
-					side={leverageSide}
 					onDismiss={() => setOpenModal(null)}
 					positionSize={position?.position?.size ?? null}
 					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
@@ -303,15 +267,11 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 					onDismiss={() => setOpenModal(null)}
 				/>
 			)}
-		</Panel>
+		</div>
 	);
 };
-export default Trade;
 
-const Panel = styled.div`
-	height: 100%;
-	padding-bottom: 48px;
-`;
+export default Trade;
 
 const ErrorMessage = styled.div`
 	color: ${(props) => props.theme.colors.common.secondaryGray};

@@ -8,38 +8,40 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { getMarketKey } from 'utils/futures';
 
-import { PotentialTrade } from '../types';
 import TVChart from 'components/TVChart';
+import { useRecoilValue } from 'recoil';
+import { tradeSizeState } from 'store/futures';
 
 type Props = {
 	marketAsset: CurrencyKey;
-	potentialTrade: PotentialTrade | null;
 };
 
-export default function PositionChart({ marketAsset, potentialTrade }: Props) {
+export default function PositionChart({ marketAsset }: Props) {
 	const { network } = Connector.useContainer();
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
 		getMarketKey(marketAsset, network.id)
 	);
-	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(marketAsset, potentialTrade);
+	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(marketAsset);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
+	const tradeSize = useRecoilValue(tradeSizeState);
+
 	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && potentialTradeDetails.data && potentialTrade) {
-			const totalSize = subgraphPosition.size.add(potentialTrade.size);
+		if (subgraphPosition && potentialTradeDetails.data && !!tradeSize) {
+			const totalSize = subgraphPosition.size.add(tradeSize);
 
 			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = potentialTradeDetails.data.price.mul(potentialTrade.size);
+			const newValue = potentialTradeDetails.data.price.mul(tradeSize);
 			const totalValue = existingValue.add(newValue);
 			return totalValue.div(totalSize);
 		}
 		return null;
-	}, [subgraphPosition, potentialTradeDetails.data, potentialTrade]);
+	}, [subgraphPosition, potentialTradeDetails.data, tradeSize]);
 
 	const activePosition = useMemo(() => {
 		if (!futuresMarketsPosition?.position) {

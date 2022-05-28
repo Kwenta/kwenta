@@ -24,18 +24,14 @@ import { GasLimitEstimate } from 'constants/network';
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
 	market: CurrencyKey | null;
-	tradeSize: string;
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
-	side: PositionSide;
 	l1Fee: Wei | null;
 };
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	onDismiss,
 	market,
-	tradeSize,
-	side,
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
@@ -47,10 +43,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market, {
-		size: tradeSize,
-		side,
-	});
+	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

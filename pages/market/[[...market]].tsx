@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useRecoilState } from 'recoil';
 
 import { DesktopOnlyView, MobileHiddenView, MobileOnlyView } from 'components/Media';
 
@@ -16,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import { PotentialTrade } from 'sections/futures/types';
 import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
@@ -24,18 +24,25 @@ import { getMarketKey } from 'utils/futures';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import Connector from 'containers/Connector';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import { positionState } from 'store/futures';
 
 const Market = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+	const [, setPosition] = useRecoilState(positionState);
 
-	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { network } = Connector.useContainer();
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
 		getMarketKey(marketAsset, network.id)
 	);
+
+	useEffect(() => {
+		if (futuresMarketPositionQuery.data) {
+			setPosition(futuresMarketPositionQuery.data);
+		}
+	}, [futuresMarketPositionQuery.data, setPosition]);
 
 	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
 
@@ -53,7 +60,7 @@ const Market = () => {
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
 			<MobileHiddenView>
-				<StyledPageContent>
+				<PageContent>
 					<StyledFullHeightContainer>
 						<DesktopOnlyView>
 							<StyledLeftSideContent>
@@ -66,21 +73,15 @@ const Market = () => {
 								position={futuresMarketPosition}
 								openOrders={openOrders}
 								refetch={refetch}
-								potentialTrade={potentialTrade}
 							/>
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade
-									onEditPositionInput={setPotentialTrade}
-									refetch={refetch}
-									position={futuresMarketPosition}
-									currencyKey={marketAsset}
-								/>
+								<Trade refetch={refetch} currencyKey={marketAsset} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</StyledFullHeightContainer>
-				</StyledPageContent>
+				</PageContent>
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<MobileTrade position={futuresMarketPosition} />
@@ -90,8 +91,6 @@ const Market = () => {
 };
 
 export default Market;
-
-const StyledPageContent = styled(PageContent)``;
 
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	display: grid;

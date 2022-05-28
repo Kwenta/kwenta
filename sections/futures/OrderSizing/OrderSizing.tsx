@@ -5,11 +5,10 @@ import Wei from '@synthetixio/wei';
 import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
 import { FlexDivRow } from 'styles/common';
+import { tradeSizeState, tradeSizeSUSDState } from 'store/futures';
+import { useRecoilValue } from 'recoil';
 
 type OrderSizingProps = {
-	assetRate: Wei;
-	amount: string;
-	amountSUSD: string;
 	disabled?: boolean;
 	onAmountChange: (value: string) => void;
 	onAmountSUSDChange: (value: string) => void;
@@ -21,8 +20,6 @@ type OrderSizingProps = {
 
 const OrderSizing: React.FC<OrderSizingProps> = ({
 	marketAsset,
-	amount,
-	amountSUSD,
 	disabled,
 	onAmountChange,
 	onAmountSUSDChange,
@@ -30,6 +27,9 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	maxLeverage,
 	totalMargin,
 }) => {
+	const tradeSize = useRecoilValue(tradeSizeState);
+	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+
 	const handleSetMax = () => {
 		const maxOrderSizeUSDValue = Number(maxLeverage.mul(totalMargin)).toFixed(0);
 		onAmountSUSDChange(maxOrderSizeUSDValue);
@@ -48,7 +48,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			<CustomInput
 				disabled={disabled}
 				right={marketAsset || Synths.sUSD}
-				value={amount}
+				value={tradeSize}
 				placeholder="0.0"
 				onChange={(_, v) => onAmountChange(v)}
 				style={{
@@ -62,7 +62,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			<CustomInput
 				disabled={disabled}
 				right={Synths.sUSD}
-				value={amountSUSD}
+				value={tradeSizeSUSD}
 				placeholder="0.0"
 				onChange={(_, v) => onAmountSUSDChange(v)}
 				style={{

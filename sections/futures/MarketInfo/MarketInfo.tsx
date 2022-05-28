@@ -13,23 +13,15 @@ import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
 import { FuturesPosition } from 'queries/futures/types';
 import PositionChart from '../PositionChart';
-import { PotentialTrade } from '../types';
 
 type MarketInfoProps = {
 	market: string;
 	position: FuturesPosition | null;
 	openOrders: any[];
-	potentialTrade: PotentialTrade | null;
 	refetch(): void;
 };
 
-const MarketInfo: FC<MarketInfoProps> = ({
-	market,
-	position,
-	openOrders,
-	refetch,
-	potentialTrade,
-}) => {
+const MarketInfo: FC<MarketInfoProps> = ({ market, position, openOrders, refetch }) => {
 	const { t } = useTranslation();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -58,7 +50,7 @@ const MarketInfo: FC<MarketInfoProps> = ({
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<PositionChart marketAsset={baseCurrencyKey} potentialTrade={potentialTrade} />
+			<PositionChart marketAsset={baseCurrencyKey} />
 			<UserInfo
 				marketAsset={baseCurrencyKey}
 				position={position}

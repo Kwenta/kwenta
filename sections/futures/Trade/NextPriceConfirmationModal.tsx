@@ -24,14 +24,13 @@ import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/costCalculations';
 import { NO_VALUE } from 'constants/placeholder';
 import { getMarketKey } from 'utils/futures';
+import { leverageSideState, tradeSizeState } from 'store/futures';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;
 	market: string | null;
-	tradeSize: string;
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
-	side: PositionSide;
 	l1Fee: Wei | null;
 	positionSize: Wei | null;
 	isDisclaimerDisplayed: boolean;
@@ -40,8 +39,6 @@ type NextPriceConfirmationModalProps = {
 const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	onDismiss,
 	market,
-	tradeSize,
-	side,
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
@@ -56,6 +53,9 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(market, network.id));
+
+	const tradeSize = useRecoilValue(tradeSizeState);
+	const leverageSide = useRecoilValue(leverageSideState);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -81,10 +81,10 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	);
 
 	const orderDetails = useMemo(() => {
-		const newSize = side === PositionSide.LONG ? tradeSize : -tradeSize;
+		const newSize = leverageSide === PositionSide.LONG ? tradeSize : -tradeSize;
 
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
-	}, [side, tradeSize, positionSize]);
+	}, [leverageSide, tradeSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
 		() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)),
@@ -101,7 +101,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 
 	const dataRows = useMemo(
 		() => [
-			{ label: 'Side', value: (side ?? PositionSide.LONG).toUpperCase() },
+			{ label: 'Side', value: (leverageSide ?? PositionSide.LONG).toUpperCase() },
 			{
 				label: 'Size',
 				value: formatCurrency(market || '', orderDetails.size ?? zeroBN, {
@@ -134,7 +134,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 			orderDetails,
 			market,
 			synthsMap,
-			side,
+			leverageSide,
 			nextPriceDiscount,
 			totalDeposit,
 			selectedPriceCurrency.name,

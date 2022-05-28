@@ -15,27 +15,23 @@ import { useTranslation } from 'react-i18next';
 import TimerIcon from 'assets/svg/app/timer.svg';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+import { useRecoilValue } from 'recoil';
+import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
 
 type FeeInfoBoxProps = {
 	currencyKey: string | null;
-	orderType: number;
-	feeCost: Wei | null;
 	dynamicFee: Wei | WeiSource | null;
-	sizeDelta: Wei;
 };
 
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
-	orderType,
-	feeCost,
-	dynamicFee,
-	currencyKey,
-	sizeDelta,
-}) => {
+const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee, currencyKey }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { network } = Connector.useContainer();
 	const costDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
 	const costDetails = costDetailsQuery.data;
 	const { t } = useTranslation();
+	const orderType = useRecoilValue(orderTypeState);
+	const feeCost = useRecoilValue(feeCostState);
+	const sizeDelta = useRecoilValue(sizeDeltaState);
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(
 		() => computeNPFee(costDetails, sizeDelta),

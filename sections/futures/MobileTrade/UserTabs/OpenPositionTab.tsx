@@ -24,25 +24,17 @@ const OpenPositionTab: React.FC = () => {
 
 			<OrderSizing
 				marketAsset="sETH"
-				amount={''}
 				onAmountChange={() => {}}
 				onAmountSUSDChange={() => {}}
 				onLeverageChange={() => {}}
-				assetRate={zeroBN}
-				amountSUSD={''}
 				maxLeverage={zeroBN}
 				totalMargin={zeroBN}
 				disabled={false}
 			/>
 
 			<LeverageInput
-				currentLeverage=""
-				currentTradeSize={0}
 				maxLeverage={zeroBN}
-				side={positionSide}
-				assetRate={zeroBN}
 				onLeverageChange={() => {}}
-				setIsLeverageValueCommitted={() => {}}
 				isMarketClosed={false}
 				isDisclaimerDisplayed={false}
 			/>

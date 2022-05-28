@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { FuturesPosition } from 'queries/futures/types';
 import { walletAddressState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
@@ -15,6 +14,7 @@ import {
 	leverageState,
 	leverageValueCommitedState,
 	orderTypeState,
+	positionState,
 	sizeDeltaState,
 	tradeSizeState,
 	tradeSizeSUSDState,
@@ -27,13 +27,9 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
 import useFuturesMarketClosed from './useFuturesMarketClosed';
 
-type UseFuturesDataArgs = {
-	position: FuturesPosition | null;
-};
-
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-const useFuturesData = ({ position }: UseFuturesDataArgs) => {
+const useFuturesData = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
@@ -41,22 +37,20 @@ const useFuturesData = ({ position }: UseFuturesDataArgs) => {
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const marketQuery = useGetFuturesMarkets();
-	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
-	const [error, setError] = useState<string | null>(null);
-
 	const [leverage, setLeverage] = useRecoilState(leverageState);
-
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
 	const [, setTradeSizeSUSD] = useRecoilState(tradeSizeSUSDState);
+	const [, setFeeCost] = useRecoilState(feeCostState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const orderType = useRecoilValue(orderTypeState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
-
-	const [, setFeeCost] = useRecoilState(feeCostState);
-	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const isLeverageValueCommitted = useRecoilValue(leverageValueCommitedState);
+
+	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 
@@ -70,13 +64,14 @@ const useFuturesData = ({ position }: UseFuturesDataArgs) => {
 		[exchangeRates, marketAsset]
 	);
 
+	const position = useRecoilValue(positionState);
+
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 
 	const maxLeverageValue = useMemo(() => {
-		if (!positionLeverage) return marketMaxLeverage;
-		if (positionLeverage.eq(wei(0))) return marketMaxLeverage;
+		if (!positionLeverage || positionLeverage.eq(wei(0))) return marketMaxLeverage;
 		if (positionSide === leverageSide) {
 			return marketMaxLeverage?.sub(positionLeverage);
 		} else {
@@ -121,6 +116,7 @@ const useFuturesData = ({ position }: UseFuturesDataArgs) => {
 			setTradeSizeSUSD('');
 			setLeverage('');
 		};
+
 		router.events.on('routeChangeStart', handleRouteChange);
 
 		return () => {
@@ -184,19 +180,20 @@ const useFuturesData = ({ position }: UseFuturesDataArgs) => {
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted ||
-				!position ||
-				!position.remainingMargin
+				!position?.remainingMargin
 			) {
 				return;
 			}
 			try {
 				setError(null);
 				const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-				const volatilityFee = await synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
-					ethers.utils.formatBytes32String('sUSD'),
-					ethers.utils.formatBytes32String(marketAsset as string)
-				);
-				const orderFee = await FuturesMarketContract.orderFee(sizeDelta.toBN());
+				const [volatilityFee, orderFee] = await Promise.all([
+					synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
+						ethers.utils.formatBytes32String('sUSD'),
+						ethers.utils.formatBytes32String(marketAsset as string)
+					),
+					FuturesMarketContract.orderFee(sizeDelta.toBN()),
+				]);
 				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
@@ -241,6 +238,9 @@ const useFuturesData = ({ position }: UseFuturesDataArgs) => {
 		isMarketCapReached,
 		shouldDisplayNextPriceDisclaimer,
 		isFuturesMarketClosed,
+		marketAsset,
+		marketQuery,
+		market,
 	};
 };
 

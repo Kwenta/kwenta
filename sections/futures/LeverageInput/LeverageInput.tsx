@@ -4,34 +4,30 @@ import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { PositionSide } from '../types';
 import LeverageSlider from '../LeverageSlider';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
 import { formatNumber } from 'utils/formatters/number';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { leverageState, leverageValueCommitedState } from 'store/futures';
 
 type LeverageInputProps = {
-	currentLeverage: string;
-	currentTradeSize: number;
 	maxLeverage: Wei;
-	side: PositionSide;
-	assetRate: Wei;
 	onLeverageChange: (value: string) => void;
-	setIsLeverageValueCommitted: (value: boolean) => void;
 	isMarketClosed: boolean;
 	isDisclaimerDisplayed: boolean;
 };
 
 const LeverageInput: FC<LeverageInputProps> = ({
-	currentLeverage,
 	maxLeverage,
 	onLeverageChange,
-	setIsLeverageValueCommitted,
 	isMarketClosed,
 	isDisclaimerDisplayed,
 }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
+	const leverage = useRecoilValue(leverageState);
+	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommitedState);
 
 	const modeButton = useMemo(() => {
 		return (
@@ -65,7 +61,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 						disabled={maxLeverage.lte(0)}
 						minValue={0}
 						maxValue={maxLeverage.toNumber()}
-						value={currentLeverage ? Number(currentLeverage) : 0}
+						value={leverage ? Number(leverage) : 0}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue.toString());
@@ -76,7 +72,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			) : (
 				<LeverageInputContainer>
 					<StyledInput
-						value={currentLeverage}
+						value={leverage}
 						placeholder="1"
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
