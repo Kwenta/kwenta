@@ -58,14 +58,10 @@ const assetToCurrencyOption = (
 	futuresClosureReason,
 });
 
-type Props = {
-	asset: string;
-};
-
 const DUMMY_PRICE = '';
 const DUMMY_CHANGE = '';
 
-const MarketsDropdown: React.FC<Props> = () => {
+const MarketsDropdown: React.FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []

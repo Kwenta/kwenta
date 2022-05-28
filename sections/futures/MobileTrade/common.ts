@@ -6,6 +6,7 @@ export const SectionHeader = styled.div`
 	text-transform: uppercase;
 	font-size: 13px;
 	text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
+	margin-bottom: 15px;
 `;
 
 export const SectionSeparator = styled.div`

@@ -198,6 +198,7 @@ export const MobileScreenContainer = styled.div`
 	width: 100%;
 	height: 100vh;
 	overflow-y: scroll;
+	padding-bottom: 80px;
 `;
 
 export const Tooltip = styled(Tippy)`

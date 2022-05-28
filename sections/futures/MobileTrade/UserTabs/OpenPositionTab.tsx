@@ -1,16 +1,33 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRecoilState } from 'recoil';
 
 import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from 'sections/futures/PositionButtons';
-import { PositionSide } from 'sections/futures/types';
 import OrderSizing from 'sections/futures/OrderSizing';
-import { zeroBN } from 'utils/formatters/number';
 import LeverageInput from 'sections/futures/LeverageInput';
 
+import { leverageSideState, orderTypeState } from 'store/futures';
+import useFuturesData from 'hooks/useFuturesData';
+import ManagePosition from 'sections/futures/Trade/ManagePosition';
+import FeeInfoBox from 'sections/futures/FeeInfoBox';
+
 const OpenPositionTab: React.FC = () => {
-	const [orderType, setOrderType] = React.useState(0);
-	const [positionSide, setPositionSide] = React.useState(PositionSide.LONG);
+	const [orderType, setOrderType] = useRecoilState(orderTypeState);
+	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
+
+	const {
+		onTradeAmountChange,
+		onTradeAmountSUSDChange,
+		onLeverageChange,
+		maxLeverageValue,
+		isFuturesMarketClosed,
+		isMarketCapReached,
+		shouldDisplayNextPriceDisclaimer,
+		placeOrderTranslationKey,
+		dynamicFee,
+		error,
+	} = useFuturesData();
 
 	return (
 		<div>
@@ -20,23 +37,33 @@ const OpenPositionTab: React.FC = () => {
 				onChange={setOrderType}
 			/>
 
-			<PositionButtons selected={positionSide} onSelect={setPositionSide} isMarketClosed={false} />
+			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} isMarketClosed={false} />
 
 			<OrderSizing
-				marketAsset="sETH"
-				onAmountChange={() => {}}
-				onAmountSUSDChange={() => {}}
-				onLeverageChange={() => {}}
-				maxLeverage={zeroBN}
-				disabled={false}
+				onAmountChange={onTradeAmountChange}
+				onAmountSUSDChange={onTradeAmountSUSDChange}
+				onLeverageChange={onLeverageChange}
+				maxLeverage={maxLeverageValue}
 			/>
 
 			<LeverageInput
-				maxLeverage={zeroBN}
-				onLeverageChange={() => {}}
-				isMarketClosed={false}
-				isDisclaimerDisplayed={false}
+				maxLeverage={maxLeverageValue}
+				onLeverageChange={onLeverageChange}
+				isMarketClosed={isFuturesMarketClosed}
+				isDisclaimerDisplayed={orderType === 1 && shouldDisplayNextPriceDisclaimer}
 			/>
+
+			<ManagePosition
+				marketCapReached={isMarketCapReached}
+				maxLeverageValue={maxLeverageValue}
+				translationKey={placeOrderTranslationKey}
+				openConfirmationModal={() => {}}
+				openClosePositionModal={() => {}}
+				error={error}
+				marketClosed={isFuturesMarketClosed}
+			/>
+
+			<FeeInfoBox dynamicFee={dynamicFee} />
 		</div>
 	);
 };

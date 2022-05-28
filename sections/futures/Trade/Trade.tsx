@@ -121,7 +121,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 
 	return (
 		<div>
-			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
+			<MarketsDropdown />
 
 			<MarketActions
 				openDepositModal={() => setOpenModal('deposit')}
@@ -149,7 +149,6 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
 				onLeverageChange={onLeverageChange}
-				marketAsset={marketAsset || Synths.sUSD}
 				maxLeverage={maxLeverageValue}
 			/>
 
