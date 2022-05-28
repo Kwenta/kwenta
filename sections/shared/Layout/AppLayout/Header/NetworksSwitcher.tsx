@@ -97,6 +97,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				optionPadding={'0px'} //override default padding to 0
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
+				noOutline={true}
 			></L2Select>
 		</Container>
 	);

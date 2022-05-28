@@ -139,6 +139,7 @@ export const WalletActions: FC = () => {
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
+				noOutline={true}
 			></WalletOptionsSelect>
 		</Container>
 	);

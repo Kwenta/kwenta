@@ -148,7 +148,11 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	return (
 		<Container>
 			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
-				<StyledWidgetButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
+				<StyledWidgetButton
+					textTransform="none"
+					onClick={() => setShowUniswapWidget(true)}
+					noOutline={true}
+				>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
@@ -170,6 +174,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 						IndicatorSeparator: () => null,
 					}}
 					isSearchable={false}
+					noOutline={true}
 				></BalanceSelect>
 			)}
 		</Container>
@@ -237,6 +242,7 @@ const LabelContainer = styled(FlexDivRowCentered)`
 
 const StyledButton = styled(Button)`
 	width: 100%;
+	height: 41px;
 	font-size: 13px;
 	margin-top: 15px;
 	align-items: center;
