@@ -22,26 +22,22 @@ import {
 	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
-import { positionState } from 'store/futures';
+import { currentMarketState, positionState } from 'store/futures';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
 	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	market: string | null;
 };
 
 const PLACEHOLDER = '$0.00';
 const ZERO_WEI = wei(0);
 
-const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
-	onDismiss,
-	onTxConfirmed,
-	market,
-}) => {
+const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss, onTxConfirmed }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [isDisabled, setDisabled] = React.useState<boolean>(true);

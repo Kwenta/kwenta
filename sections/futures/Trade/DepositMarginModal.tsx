@@ -17,12 +17,12 @@ import { newGetTransactionPrice } from 'utils/network';
 import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { currentMarketState } from 'store/futures';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
 	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	market: string | null;
 };
 
 const PLACEHOLDER = '$0.00';
@@ -32,11 +32,11 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
 	sUSDBalance,
-	market,
 }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [isDisabled, setDisabled] = React.useState<boolean>(true);

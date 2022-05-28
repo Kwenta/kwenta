@@ -17,7 +17,6 @@ import ROUTES from 'constants/routes';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
-import { FuturesPosition } from 'queries/futures/types';
 
 import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
 import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
@@ -32,6 +31,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import { positionState } from 'store/futures';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -45,14 +45,14 @@ const FutureTabs = Object.values(FuturesTab);
 
 type UserInfoProps = {
 	marketAsset: CurrencyKey;
-	position: FuturesPosition | null;
 	openOrders: any[];
 	refetch(): void;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, openOrders, refetch }) => {
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
+	const position = useRecoilValue(positionState);
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery({
@@ -184,23 +184,14 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard
-					position={position}
-					currencyKey={marketAsset}
-					currencyKeyRate={marketAssetRate}
-				/>
+				<PositionCard currencyKey={marketAsset} currencyKeyRate={marketAssetRate} />
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}
 					futuresPositionHistory={futuresPositionHistory}
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable
-					currencyKey={marketAsset}
-					position={position}
-					openOrders={openOrders}
-					refetch={refetch}
-				/>
+				<OpenOrdersTable openOrders={openOrders} refetch={refetch} />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades

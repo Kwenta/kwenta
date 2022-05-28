@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
 
 import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +10,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isFiatCurrency } from 'utils/currencies';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, PositionSide } from 'queries/futures/types';
+import { PositionSide } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
@@ -22,10 +23,10 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { positionState } from 'store/futures';
 
 type PositionCardProps = {
 	currencyKey: string;
-	position: FuturesPosition | null;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
@@ -51,8 +52,9 @@ type PositionData = {
 	avgEntryPrice: string | JSX.Element;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, currencyKeyRate }) => {
+const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRate }) => {
 	const { t } = useTranslation();
+	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position ?? null;
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);

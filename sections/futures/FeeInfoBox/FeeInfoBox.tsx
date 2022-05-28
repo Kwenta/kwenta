@@ -8,8 +8,6 @@ import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import { useTranslation } from 'react-i18next';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
@@ -19,14 +17,12 @@ import { useRecoilValue } from 'recoil';
 import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
 
 type FeeInfoBoxProps = {
-	currencyKey: string | null;
 	dynamicFee: Wei | WeiSource | null;
 };
 
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee, currencyKey }) => {
+const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { network } = Connector.useContainer();
-	const costDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
+	const costDetailsQuery = useGetNextPriceDetails();
 	const costDetails = costDetailsQuery.data;
 	const { t } = useTranslation();
 	const orderType = useRecoilValue(orderTypeState);

@@ -8,12 +8,10 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesMarketContract } from './utils';
 import { FuturesPotentialTradeDetails } from './types';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { wei } from '@synthetixio/wei';
-import { leverageSideState, tradeSizeState } from 'store/futures';
+import { currentMarketState, leverageSideState, tradeSizeState } from 'store/futures';
 
 const useGetFuturesPotentialTradeDetails = (
-	marketAsset: CurrencyKey | null,
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -24,6 +22,7 @@ const useGetFuturesPotentialTradeDetails = (
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
+	const marketAsset = useRecoilValue(currentMarketState);
 
 	return useQuery<FuturesPotentialTradeDetails | null>(
 		QUERY_KEYS.Futures.PotentialTrade(

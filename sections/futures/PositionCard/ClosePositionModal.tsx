@@ -20,19 +20,14 @@ import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { positionState } from 'store/futures';
+import { currentMarketState, positionState } from 'store/futures';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
 	onPositionClose: () => void;
-	currencyKey: string;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({
-	onDismiss,
-	currencyKey,
-	onPositionClose,
-}) => {
+const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, onPositionClose }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -43,6 +38,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
 
@@ -59,7 +55,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
+		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,

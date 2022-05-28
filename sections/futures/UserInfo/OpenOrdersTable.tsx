@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Table from 'components/Table';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { CellProps } from 'react-table';
 import Currency from 'components/Currency';
 import { getDisplayAsset } from 'utils/futures';
@@ -14,36 +13,31 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { FuturesPosition } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
+import { currentMarketState, positionState } from 'store/futures';
 
 type OpenOrdersTableProps = {
-	currencyKey: CurrencyKey;
-	position: FuturesPosition | null;
 	openOrders: any[];
 	refetch(): void;
 };
 
-const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
-	currencyKey,
-	position,
-	openOrders,
-	refetch,
-}) => {
+const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ openOrders, refetch }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const position = useRecoilValue(positionState);
+	const currencyKey = useRecoilValue(currentMarketState);
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
 
-	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const nextPriceDetailsQuery = useGetNextPriceDetails();
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(

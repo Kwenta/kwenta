@@ -20,10 +20,10 @@ import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { GasLimitEstimate } from 'constants/network';
+import { currentMarketState } from 'store/futures';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
-	market: CurrencyKey | null;
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
 	l1Fee: Wei | null;
@@ -31,7 +31,6 @@ type TradeConfirmationModalProps = {
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	onDismiss,
-	market,
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
@@ -39,11 +38,12 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market);
+	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

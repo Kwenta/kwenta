@@ -1,28 +1,19 @@
 import { useMemo } from 'react';
 import { Synths } from 'constants/currency';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 
-import Connector from 'containers/Connector';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import { getMarketKey } from 'utils/futures';
 
 import TVChart from 'components/TVChart';
 import { useRecoilValue } from 'recoil';
-import { tradeSizeState } from 'store/futures';
+import { currentMarketState, tradeSizeState } from 'store/futures';
 
-type Props = {
-	marketAsset: CurrencyKey;
-};
+export default function PositionChart() {
+	const marketAsset = useRecoilValue(currentMarketState);
 
-export default function PositionChart({ marketAsset }: Props) {
-	const { network } = Connector.useContainer();
-
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
-	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(marketAsset);
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
+	const potentialTradeDetails = useGetFuturesPotentialTradeDetails();
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
@@ -59,7 +50,7 @@ export default function PositionChart({ marketAsset }: Props) {
 
 	return (
 		<TVChart
-			baseCurrencyKey={marketAsset}
+			baseCurrencyKey={marketAsset as string}
 			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
 			potentialTrade={

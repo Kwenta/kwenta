@@ -20,23 +20,20 @@ import Trade from 'sections/futures/Trade';
 import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import { getMarketKey } from 'utils/futures';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import Connector from 'containers/Connector';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import { positionState } from 'store/futures';
+import { positionState, currentMarketState } from 'store/futures';
 
 const Market = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const [, setPosition] = useRecoilState(positionState);
 
-	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
-	const { network } = Connector.useContainer();
+	const marketAsset = router.query.market?.[0] as CurrencyKey;
 
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
+	const [, setCurrentMarket] = useRecoilState(currentMarketState);
+
+	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
 
 	useEffect(() => {
 		if (futuresMarketPositionQuery.data) {
@@ -44,9 +41,11 @@ const Market = () => {
 		}
 	}, [futuresMarketPositionQuery.data, setPosition]);
 
-	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
+	useEffect(() => {
+		if (marketAsset) setCurrentMarket(marketAsset);
+	}, [setCurrentMarket, marketAsset]);
 
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
+	const openOrdersQuery = useGetFuturesOpenOrders();
 	const openOrders = openOrdersQuery?.data ?? [];
 
 	const refetch = useCallback(() => {
@@ -68,23 +67,18 @@ const Market = () => {
 							</StyledLeftSideContent>
 						</DesktopOnlyView>
 						<StyledMainContent>
-							<MarketInfo
-								market={marketAsset}
-								position={futuresMarketPosition}
-								openOrders={openOrders}
-								refetch={refetch}
-							/>
+							<MarketInfo market={marketAsset} openOrders={openOrders} refetch={refetch} />
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade refetch={refetch} currencyKey={marketAsset} />
+								<Trade refetch={refetch} />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</StyledFullHeightContainer>
 				</PageContent>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<MobileTrade position={futuresMarketPosition} />
+				<MobileTrade />
 			</MobileOnlyView>
 		</>
 	);

@@ -25,18 +25,23 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
-import { leverageSideState, leverageState, orderTypeState, sizeDeltaState } from 'store/futures';
+import {
+	currentMarketState,
+	leverageSideState,
+	leverageState,
+	orderTypeState,
+	sizeDeltaState,
+} from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 
 type TradeProps = {
 	refetch(): void;
-	currencyKey: string;
 };
 
 type ModalList = 'deposit' | 'withdraw' | 'trade' | 'next-price' | 'close-position';
 
-const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
+const Trade: React.FC<TradeProps> = ({ refetch }) => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
@@ -53,11 +58,10 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 		isMarketCapReached,
 		shouldDisplayNextPriceDisclaimer,
 		isFuturesMarketClosed,
-		marketAsset,
 		marketQuery,
 	} = useFuturesData();
 
-	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
+	const futuresPositionHistoryQuery = useGetFuturesPositionHistory();
 
 	const onPositionClose = () => {
 		setTimeout(() => {
@@ -73,6 +77,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 	const leverage = useRecoilValue(leverageState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const marketAsset = useRecoilValue(currentMarketState);
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
@@ -169,7 +174,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
 			)}
 
-			<FeeInfoBox currencyKey={marketAsset} dynamicFee={dynamicFee} />
+			<FeeInfoBox dynamicFee={dynamicFee} />
 
 			{openModal === 'deposit' && (
 				<DepositMarginModal
@@ -181,7 +186,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
 					}}
-					market={marketAsset}
 					onDismiss={() => setOpenModal(null)}
 				/>
 			)}
@@ -196,7 +200,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 							synthsBalancesQuery.refetch();
 						}, 5 * 1000);
 					}}
-					market={marketAsset}
 					onDismiss={() => setOpenModal(null)}
 				/>
 			)}
@@ -206,7 +209,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 					onConfirmOrder={() => orderTxn.mutate()}
 					gasLimit={orderTxn.gasLimit}
 					l1Fee={orderTxn.optimismLayerOneFee}
-					market={marketAsset}
 					onDismiss={() => setOpenModal(null)}
 				/>
 			)}
@@ -216,7 +218,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 					onConfirmOrder={() => orderTxn.mutate()}
 					gasLimit={orderTxn.gasLimit}
 					l1Fee={orderTxn.optimismLayerOneFee}
-					market={marketAsset}
 					onDismiss={() => setOpenModal(null)}
 					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
@@ -224,7 +225,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 
 			{openModal === 'close-position' && (
 				<ClosePositionModal
-					currencyKey={currencyKey}
 					onPositionClose={onPositionClose}
 					onDismiss={() => setOpenModal(null)}
 				/>

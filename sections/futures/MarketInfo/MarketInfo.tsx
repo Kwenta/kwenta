@@ -11,17 +11,15 @@ import { formatCurrency } from 'utils/formatters/number';
 import UserInfo from '../UserInfo';
 import { CurrencyKey } from 'constants/currency';
 import MarketDetails from '../MarketDetails';
-import { FuturesPosition } from 'queries/futures/types';
 import PositionChart from '../PositionChart';
 
 type MarketInfoProps = {
 	market: string;
-	position: FuturesPosition | null;
 	openOrders: any[];
 	refetch(): void;
 };
 
-const MarketInfo: FC<MarketInfoProps> = ({ market, position, openOrders, refetch }) => {
+const MarketInfo: FC<MarketInfoProps> = ({ market, openOrders, refetch }) => {
 	const { t } = useTranslation();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -50,13 +48,8 @@ const MarketInfo: FC<MarketInfoProps> = ({ market, position, openOrders, refetch
 				</title>
 			</Head>
 			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
-			<PositionChart marketAsset={baseCurrencyKey} />
-			<UserInfo
-				marketAsset={baseCurrencyKey}
-				position={position}
-				openOrders={openOrders}
-				refetch={refetch}
-			/>
+			<PositionChart />
+			<UserInfo marketAsset={baseCurrencyKey} openOrders={openOrders} refetch={refetch} />
 		</Container>
 	);
 };

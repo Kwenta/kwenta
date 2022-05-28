@@ -12,14 +12,16 @@ import Wei from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'utils/futures';
+import { currentMarketState } from 'store/futures';
 
-const useGetFuturesOpenOrders = (currencyKey: string | null, options?: UseQueryOptions<any>) => {
+const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 	const { synthetixjs } = Connector.useContainer();
+	const currencyKey = useRecoilValue(currentMarketState);
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
