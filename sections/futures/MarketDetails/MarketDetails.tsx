@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
@@ -25,22 +24,22 @@ import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-
-type MarketDetailsProps = {
-	baseCurrencyKey: CurrencyKey;
-};
+import { currentMarketState } from 'store/futures';
+import { useRecoilValue } from 'recoil';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
-const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
+const MarketDetails: React.FC = () => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
+	const marketAsset = useRecoilValue(currentMarketState);
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
+	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
 	const marketSummary: FuturesMarket | null =
-		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
+		futuresMarketsQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
 
 	const futureRates = futuresMarketsQuery.isSuccess
 		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
@@ -53,12 +52,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
 	const basePriceRate = React.useMemo(
-		() => _.defaultTo(Number(futureRates?.[getMarketKey(baseCurrencyKey, network.id)]), 0),
-		[futureRates, baseCurrencyKey, network.id]
+		() => _.defaultTo(Number(futureRates?.[getMarketKey(marketAsset, network.id)]), 0),
+		[futureRates, marketAsset, network.id]
 	);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
-		baseCurrencyKey,
+		marketAsset,
 		basePriceRate,
 		PERIOD_IN_SECONDS[Period.ONE_HOUR],
 		marketSummary?.currentFundingRate.toNumber()
@@ -66,7 +65,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
-		baseCurrencyKey,
+		baseCurrencyKey: marketAsset,
 	});
 
 	const lastOracleUpdateTime: Date = React.useMemo(
@@ -75,12 +74,12 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
-	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
+	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const externalPriceQuery = useExternalPriceQuery(baseCurrencyKey);
+	const externalPriceQuery = useExternalPriceQuery(marketAsset);
 	const externalPrice = externalPriceQuery?.data ?? 0;
-	const marketKey = getMarketKey(baseCurrencyKey, network.id);
+	const marketKey = getMarketKey(marketAsset, network.id);
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
@@ -91,7 +90,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 
-	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
+	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === marketAsset);
 
 	const data: MarketData = React.useMemo(() => {
 		const fundingTitle = `${
@@ -103,7 +102,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				: avgFundingRate;
 
 		return {
-			[baseCurrencyKey ? `${getDisplayAsset(baseCurrencyKey)}-PERP` : '']: {
+			[marketAsset ? `${getDisplayAsset(marketAsset)}-PERP` : '']: {
 				value:
 					formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
@@ -255,7 +254,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
-		baseCurrencyKey,
+		marketAsset,
 		marketSummary,
 		basePriceRate,
 		futuresTradingVolume,

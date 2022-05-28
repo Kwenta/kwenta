@@ -21,6 +21,8 @@ import { Price, Rates } from 'queries/rates/types';
 import { getSynthDescription, isEurForex } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { useRecoilValue } from 'recoil';
+import { currentMarketState } from 'store/futures';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -63,15 +65,15 @@ type Props = {
 const DUMMY_PRICE = '';
 const DUMMY_CHANGE = '';
 
-const MarketsDropdown: React.FC<Props> = ({ asset }) => {
+const MarketsDropdown: React.FC<Props> = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
 
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
-		asset as CurrencyKey
-	);
+	const asset = useRecoilValue(currentMarketState);
+
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(asset);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
@@ -114,11 +116,7 @@ const MarketsDropdown: React.FC<Props> = ({ asset }) => {
 						? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
 						: zeroBN
 				),
-				basePriceRate && pastPrice?.price
-					? wei(basePriceRate).lt(pastPrice?.price)
-						? true
-						: false
-					: false,
+				basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
 				market.isSuspended,
 				market.marketClosureReason
 			);

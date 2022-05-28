@@ -47,7 +47,7 @@ const MarketInfo: FC<MarketInfoProps> = ({ market, openOrders, refetch }) => {
 						: t('futures.market.page-title')}
 				</title>
 			</Head>
-			<MarketDetails baseCurrencyKey={baseCurrencyKey} />
+			<MarketDetails />
 			<PositionChart />
 			<UserInfo marketAsset={baseCurrencyKey} openOrders={openOrders} refetch={refetch} />
 		</Container>

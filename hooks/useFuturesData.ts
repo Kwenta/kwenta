@@ -5,10 +5,11 @@ import { walletAddressState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import {
+	currentMarketState,
 	feeCostState,
 	leverageSideState,
 	leverageState,
@@ -35,7 +36,7 @@ const useFuturesData = () => {
 	const router = useRouter();
 	const { synthetixjs, network } = Connector.useContainer();
 
-	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
+	const marketAsset = useRecoilValue(currentMarketState);
 	const marketQuery = useGetFuturesMarkets();
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));

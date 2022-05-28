@@ -6,9 +6,9 @@ import { FuturesPosition } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
+import { Synths, CurrencyKey } from 'constants/currency';
 
-export const currentMarketState = atom<string>({
+export const currentMarketState = atom<CurrencyKey>({
 	key: getFuturesKey('currentMarket'),
 	default: Synths.sETH,
 });
