@@ -24,7 +24,7 @@ import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/costCalculations';
 import { NO_VALUE } from 'constants/placeholder';
 import { getMarketKey } from 'utils/futures';
-import { leverageSideState, tradeSizeState } from 'store/futures';
+import { leverageSideState, positionState, tradeSizeState } from 'store/futures';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;
@@ -32,7 +32,6 @@ type NextPriceConfirmationModalProps = {
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
 	l1Fee: Wei | null;
-	positionSize: Wei | null;
 	isDisclaimerDisplayed: boolean;
 };
 
@@ -42,7 +41,6 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
-	positionSize,
 	isDisclaimerDisplayed,
 }) => {
 	const { t } = useTranslation();
@@ -56,6 +54,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
+	const position = useRecoilValue(positionState);
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -79,6 +78,8 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
 		[gasPrice, gasLimit, ethPriceRate, l1Fee]
 	);
+
+	const positionSize = position?.position?.size ?? zeroBN;
 
 	const orderDetails = useMemo(() => {
 		const newSize = leverageSide === PositionSide.LONG ? tradeSize : -tradeSize;

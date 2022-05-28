@@ -22,12 +22,12 @@ import {
 	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
+import { positionState } from 'store/futures';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
 	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	accessibleMargin: Wei;
 	market: string | null;
 };
 
@@ -37,7 +37,6 @@ const ZERO_WEI = wei(0);
 const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	onDismiss,
 	onTxConfirmed,
-	accessibleMargin,
 	market,
 }) => {
 	const { t } = useTranslation();
@@ -63,6 +62,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const position = useRecoilValue(positionState);
+	const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI;
 
 	const computedAmount = React.useMemo(
 		() =>

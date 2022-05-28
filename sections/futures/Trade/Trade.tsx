@@ -25,13 +25,7 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
-import {
-	leverageSideState,
-	leverageState,
-	orderTypeState,
-	positionState,
-	sizeDeltaState,
-} from 'store/futures';
+import { leverageSideState, leverageState, orderTypeState, sizeDeltaState } from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 
@@ -47,8 +41,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-
-	const position = useRecoilValue(positionState);
 
 	const {
 		onLeverageChange,
@@ -182,7 +174,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 			{openModal === 'deposit' && (
 				<DepositMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
 							refetch();
@@ -198,7 +189,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 			{openModal === 'withdraw' && (
 				<WithdrawMarginModal
 					sUSDBalance={sUSDBalance}
-					accessibleMargin={position?.accessibleMargin ?? zeroBN}
 					onTxConfirmed={() => {
 						setTimeout(() => {
 							refetch();
@@ -228,7 +218,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
 					onDismiss={() => setOpenModal(null)}
-					positionSize={position?.position?.size ?? null}
 					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
 			)}

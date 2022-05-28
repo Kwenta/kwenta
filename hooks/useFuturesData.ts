@@ -54,10 +54,7 @@ const useFuturesData = () => {
 
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 
-	const exchangeRates = useMemo(
-		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
-		[exchangeRatesQuery.isSuccess, exchangeRatesQuery.data]
-	);
+	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
 	const marketAssetRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),

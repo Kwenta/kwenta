@@ -22,7 +22,6 @@ type DepositMarginModalProps = {
 	onDismiss(): void;
 	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	accessibleMargin: Wei;
 	market: string | null;
 };
 
