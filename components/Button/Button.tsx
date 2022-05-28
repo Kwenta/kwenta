@@ -12,6 +12,9 @@ type ButtonProps = {
 };
 
 export const border = css`
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -29,7 +32,7 @@ export const border = css`
 `;
 
 const Button = styled.button<ButtonProps>`
-	height: 41px;
+	height: auto;
 	cursor: pointer;
 	position: relative;
 	border-radius: 10px;
@@ -40,10 +43,8 @@ const Button = styled.button<ButtonProps>`
 	white-space: nowrap;
 	font-size: 17px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	border: none;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	${border}
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
@@ -97,11 +98,9 @@ const Button = styled.button<ButtonProps>`
 		`};
 
 	${(props) =>
-		props.noOutline &&
+		!props.noOutline &&
 		css`
-			&::before {
-				background: none;
-			}
+			${border}
 		`};
 
 	${(props) =>
