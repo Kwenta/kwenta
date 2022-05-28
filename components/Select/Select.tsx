@@ -4,7 +4,7 @@ import { ThemeContext } from 'styled-components';
 
 export const IndicatorSeparator: FC = () => null;
 
-function Select<T>(props: Props<T>) {
+function Select<T>(props: Props<T> & { noOutline?: boolean }) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
@@ -24,7 +24,7 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				color: colors.selectedTheme.button.text,
 				cursor: 'pointer',
-				boxShadow: colors.selectedTheme.select.control.shadow,
+				boxShadow: !props.noOutline ? colors.selectedTheme.select.control.shadow : 'none',
 				border: 'none',
 				outline: 'none',
 				minHeight: 'unset',
@@ -32,7 +32,7 @@ function Select<T>(props: Props<T>) {
 				'&:hover': {
 					background: colors.selectedTheme.button.hover,
 				},
-				'&::before': {
+				'&::before': !props.noOutline && {
 					content: '""',
 					position: 'absolute',
 					top: 0,
@@ -47,7 +47,9 @@ function Select<T>(props: Props<T>) {
 					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
-				background: colors.selectedTheme.button.background,
+				background: props.noOutline
+					? colors.selectedTheme.button.fill
+					: colors.selectedTheme.button.background,
 				borderRadius: 10,
 			}),
 			menu: (provided, state) => ({
