@@ -4,7 +4,7 @@ import { ThemeContext } from 'styled-components';
 
 export const IndicatorSeparator: FC = () => null;
 
-function Select<T>(props: Props<T> & { noOutline?: boolean }) {
+function Select<T>(props: Props<T>) {
 	const { colors, fonts } = useContext(ThemeContext);
 
 	const computedStyles = useMemo(() => {
@@ -114,7 +114,7 @@ function Select<T>(props: Props<T> & { noOutline?: boolean }) {
 			}),
 		};
 		return styles;
-	}, [colors, fonts]);
+	}, [colors, fonts, props]);
 
 	return (
 		<ReactSelect
