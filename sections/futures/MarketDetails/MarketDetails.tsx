@@ -296,7 +296,7 @@ const OneHrFundingRateTooltip = styled(StyledTooltip)`
 const MarketDetailsContainer = styled.div`
 	width: 100%;
 	height: 55px;
-	padding: 12px 45px 10px 15px;
+	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
 
@@ -321,7 +321,7 @@ const MarketDetailsContainer = styled.div`
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
+		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
 
