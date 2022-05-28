@@ -4,22 +4,22 @@ import styled from 'styled-components';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { zeroBN } from 'utils/formatters/number';
-import { FuturesPosition } from 'queries/futures/types';
+import { useRecoilValue } from 'recoil';
+import { positionState } from 'store/futures';
 
 type MarketActionsProps = {
 	marketClosed: boolean;
 	openDepositModal(): void;
 	openWithdrawModal(): void;
-	position: FuturesPosition | null;
 };
 
 const MarketActions: React.FC<MarketActionsProps> = ({
 	marketClosed,
 	openDepositModal,
 	openWithdrawModal,
-	position,
 }) => {
 	const { t } = useTranslation();
+	const position = useRecoilValue(positionState);
 
 	return (
 		<MarketActionsContainer>

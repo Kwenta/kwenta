@@ -5,8 +5,9 @@ import Wei from '@synthetixio/wei';
 import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
 import { FlexDivRow } from 'styles/common';
-import { tradeSizeState, tradeSizeSUSDState } from 'store/futures';
+import { positionState, tradeSizeState, tradeSizeSUSDState } from 'store/futures';
 import { useRecoilValue } from 'recoil';
+import { zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	disabled?: boolean;
@@ -15,7 +16,6 @@ type OrderSizingProps = {
 	onLeverageChange: (value: string) => void;
 	marketAsset: string | null;
 	maxLeverage: Wei;
-	totalMargin: Wei;
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({
@@ -25,16 +25,22 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	onAmountSUSDChange,
 	onLeverageChange,
 	maxLeverage,
-	totalMargin,
 }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+	const position = useRecoilValue(positionState);
 
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(maxLeverage.mul(totalMargin)).toFixed(0);
+		const maxOrderSizeUSDValue = Number(
+			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
+		).toFixed(0);
 		onAmountSUSDChange(maxOrderSizeUSDValue);
 		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
+
+	const isDisabled = React.useMemo(() => {
+		return position?.remainingMargin.lte(0) || disabled;
+	}, [position, disabled]);
 
 	return (
 		<OrderSizingContainer>
@@ -46,7 +52,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			</OrderSizingRow>
 
 			<CustomInput
-				disabled={disabled}
+				disabled={isDisabled}
 				right={marketAsset || Synths.sUSD}
 				value={tradeSize}
 				placeholder="0.0"
@@ -60,7 +66,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			/>
 
 			<CustomInput
-				disabled={disabled}
+				disabled={isDisabled}
 				right={Synths.sUSD}
 				value={tradeSizeSUSD}
 				placeholder="0.0"

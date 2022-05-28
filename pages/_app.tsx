@@ -54,7 +54,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 							</AppLayout>
 						</SystemStatus>
 					</Layout>
-					{/* <ReactQueryDevtools /> */}
+					<ReactQueryDevtools />
 				</SynthetixQueryContextProvider>
 			</MediaContextProvider>
 		</>

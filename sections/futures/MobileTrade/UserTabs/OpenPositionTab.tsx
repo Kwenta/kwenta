@@ -28,7 +28,6 @@ const OpenPositionTab: React.FC = () => {
 				onAmountSUSDChange={() => {}}
 				onLeverageChange={() => {}}
 				maxLeverage={zeroBN}
-				totalMargin={zeroBN}
 				disabled={false}
 			/>
 

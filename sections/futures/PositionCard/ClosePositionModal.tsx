@@ -18,20 +18,18 @@ import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
-import { FuturesFilledPosition } from 'queries/futures/types';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { positionState } from 'store/futures';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
-	position: FuturesFilledPosition | null;
 	onPositionClose: () => void;
 	currencyKey: string;
 };
 
 const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	onDismiss,
-	position,
 	currencyKey,
 	onPositionClose,
 }) => {
@@ -45,6 +43,8 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const position = useRecoilValue(positionState);
+	const positionDetails = position?.position;
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -77,7 +77,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
 	);
 
-	const positionSize = position?.size ?? wei(0);
+	const positionSize = positionDetails?.size ?? wei(0);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -99,25 +99,25 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	}, [synthetixjs, currencyKey, positionSize]);
 
 	const dataRows = useMemo(() => {
-		if (!position || !currencyKey) return [];
+		if (!positionDetails || !currencyKey) return [];
 		return [
 			{
 				label: t('futures.market.user.position.modal-close.side'),
-				value: (position?.side ?? PositionSide.LONG).toUpperCase(),
+				value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase(),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.size'),
-				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
+				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
 					sign: synthToAsset(currencyKey as CurrencyKey),
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.leverage'),
-				value: `${formatNumber(position?.leverage ?? zeroBN)}x`,
+				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
 			{
 				label: t('futures.market.user.position.modal-close.ROI'),
-				value: formatCurrency(Synths.sUSD, position?.roi ?? zeroBN, { sign: '$' }),
+				value: formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: t('futures.market.user.position.modal-close.fee'),
@@ -130,7 +130,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				}),
 			},
 		];
-	}, [position, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {

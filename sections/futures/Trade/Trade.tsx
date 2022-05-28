@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Synths } from 'constants/currency';
 
 import { zeroBN } from 'utils/formatters/number';
-import { useRecoilState } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import { walletAddressState } from 'store/wallet';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import SegmentedControl from 'components/SegmentedControl';
+import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useFuturesData from 'hooks/useFuturesData';
 
 import LeverageInput from '../LeverageInput';
 import TradeConfirmationModal from './TradeConfirmationModal';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import MarketsDropdown from './MarketsDropdown';
-import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
@@ -33,7 +32,6 @@ import {
 	positionState,
 	sizeDeltaState,
 } from 'store/futures';
-import useFuturesData from 'hooks/useFuturesData';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 
@@ -65,12 +63,9 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 		isFuturesMarketClosed,
 		marketAsset,
 		marketQuery,
-		market,
 	} = useFuturesData();
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-
-	const positionDetails = position?.position ?? null;
 
 	const onPositionClose = () => {
 		setTimeout(() => {
@@ -135,26 +130,9 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 				openDepositModal={() => setOpenModal('deposit')}
 				openWithdrawModal={() => setOpenModal('withdraw')}
 				marketClosed={isFuturesMarketClosed}
-				position={position}
 			/>
 
-			<MarketInfoBox
-				totalMargin={position?.remainingMargin ?? zeroBN}
-				availableMargin={position?.accessibleMargin ?? zeroBN}
-				buyingPower={
-					position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
-						: zeroBN
-				}
-				marginUsage={
-					position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin
-								?.sub(position?.accessibleMargin)
-								.div(position?.remainingMargin)
-						: zeroBN
-				}
-				isMarketClosed={isFuturesMarketClosed}
-			/>
+			<MarketInfoBox maxLeverage={maxLeverageValue} isMarketClosed={isFuturesMarketClosed} />
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}
@@ -171,13 +149,11 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 			/>
 
 			<OrderSizing
-				disabled={position?.remainingMargin?.lte(zeroBN)}
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
 				onLeverageChange={onLeverageChange}
 				marketAsset={marketAsset || Synths.sUSD}
 				maxLeverage={maxLeverageValue}
-				totalMargin={position?.remainingMargin ?? zeroBN}
 			/>
 
 			<LeverageInput
@@ -195,8 +171,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 				openClosePositionModal={() => setOpenModal('close-position')}
 				marketClosed={isFuturesMarketClosed}
 				error={error}
-				onPositionClose={onPositionClose}
-				positionDetails={positionDetails}
 			/>
 
 			{(orderTxn.errorMessage || error) && (
@@ -261,7 +235,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, currencyKey }) => {
 
 			{openModal === 'close-position' && (
 				<ClosePositionModal
-					position={positionDetails}
 					currencyKey={currencyKey}
 					onPositionClose={onPositionClose}
 					onDismiss={() => setOpenModal(null)}

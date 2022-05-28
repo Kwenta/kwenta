@@ -4,10 +4,9 @@ import Wei from '@synthetixio/wei';
 
 import Button from 'components/Button';
 import { useRecoilValue } from 'recoil';
-import { leverageState, sizeDeltaState } from 'store/futures';
+import { leverageState, positionState, sizeDeltaState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
-import { FuturesFilledPosition } from 'queries/futures/types';
 
 type ManagePositionProps = {
 	translationKey: string;
@@ -16,9 +15,7 @@ type ManagePositionProps = {
 	error: string | null;
 	openConfirmationModal(): void;
 	openClosePositionModal(): void;
-	onPositionClose(): void;
 	marketClosed: boolean;
-	positionDetails: FuturesFilledPosition | null;
 };
 
 const ManagePosition: React.FC<ManagePositionProps> = ({
@@ -29,11 +26,12 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	openClosePositionModal,
 	error,
 	marketClosed,
-	positionDetails,
 }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const position = useRecoilValue(positionState);
+	const positionDetails = position?.position;
 
 	return (
 		<div>
