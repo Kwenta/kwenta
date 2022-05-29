@@ -5,15 +5,12 @@ import styled from 'styled-components';
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import { Media } from 'styles/media';
 
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-
 import Link from 'next/link';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
 
 const TradeNow = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef } = SmoothScroll.useContainer();
 
 	const title = (
 		<TransparentCard>
@@ -31,7 +28,7 @@ const TradeNow = () => {
 	);
 
 	return (
-		<Container ref={whyKwentaRef}>
+		<Container>
 			<Media greaterThanOrEqual="lg">
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 			</Media>

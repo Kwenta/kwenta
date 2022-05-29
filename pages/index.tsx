@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 
 import styled from 'styled-components';
-import WithHomepageContainers from 'sections/homepage/containers';
 import Hero from 'sections/homepage/Hero';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import Features from 'sections/homepage/Features';
@@ -30,33 +29,24 @@ const HomePage: HomePageComponent = () => {
 			<Head>
 				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<WithHomepageContainers>
-				<HomeLayout>
-					<DarkContainer>
-						<Container>
-							<Hero />
-							<Assets />
-							<ShortList />
-							<Earning />
-							<Features />
-							<Learn />
-							<TradeNow />
-						</Container>
-					</DarkContainer>
-				</HomeLayout>
-			</WithHomepageContainers>
+			<HomeLayout>
+				<Container>
+					<Hero />
+					<Assets />
+					<ShortList />
+					<Earning />
+					<Features />
+					<Learn />
+					<TradeNow />
+				</Container>
+			</HomeLayout>
 		</>
 	);
 };
 
 export const Container = styled.div`
-	max-width: 1200px;
 	width: 100%;
 	margin: 0 auto;
-`;
-
-const DarkContainer = styled.div`
-	width: 100%;
 	padding: 100px 20px 0 20px;
 `;
 

@@ -78,7 +78,7 @@ const HeroImageContainer = styled(GridDiv)`
 `;
 
 const HeroImage = styled.img`
-	width: 964px;
+	width: 960px;
 	${media.lessThan('md')`
 		width: 785px;
 	`}
@@ -88,7 +88,6 @@ const HeroImage = styled.img`
 	background: linear-gradient(180deg, #C9975A 0%, #94F2FF 100%);
 	border: 1px solid;
 	border-radius: 20px;
-	border: 1px solid;
 `;
 
 const SynthetixContainer = styled.div`

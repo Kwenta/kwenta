@@ -7,10 +7,11 @@ import {
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
+	GridDiv,
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import { Copy, Title } from '../common';
+import { Copy, StackSection, Title } from '../common';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
@@ -61,7 +62,7 @@ const Earning = () => {
 
 	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
-		<BackgroundContainer>
+		<StackSection>
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<StyledFlexContainer>
@@ -114,7 +115,7 @@ const Earning = () => {
 					</Link>
 				</CTAContainer>
 			</Container>
-		</BackgroundContainer>
+		</StackSection>
 	);
 };
 
@@ -154,8 +155,8 @@ const StatsValue = styled.div`
 const StatsCardContainer = styled(FlexDivRow)`
 	margin: 80px 0px;
 	justify-content: center;
-	width: 1160px;
 	border-top: 1px solid #3d3c3c;
+	width: 1160px;
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
@@ -181,18 +182,12 @@ const CenteredTitle = styled(Title)`
 	font-size: 24px;
 `;
 
-const BackgroundContainer = styled.div`
+const Container = styled(GridDiv)`
+	width: 100vw;
 	background: linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
-	background-size: 2400px 1145px;
-	padding-bottom: 125px;
-	margin-left: -1000px;
-	margin-right: -1000px;
-	display: flex;
+	overflow: hidden;
 	justify-content: center;
-`;
-const Container = styled.div`
-	width: 1160px;
-	margin-top: 125px;
+	padding: 110px 0px;
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`
@@ -221,7 +216,7 @@ const FeatureContentTitle = styled(FlexDivCentered)`
 `;
 
 const CTAContainer = styled.div`
-	margin-top: 120px;
+	margin-top: 28.5px;
 	display: flex;
 	justify-content: center;
 	gap: 20px;

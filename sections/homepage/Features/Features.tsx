@@ -23,7 +23,7 @@ import {
 	FlexDivCol,
 	FlexDivColCentered,
 	FlexDivRow,
-	GridDiv,
+	GridDivCentered,
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
@@ -185,9 +185,11 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	justify-content: center;
 `;
 
-const IconGridContainer = styled(GridDiv)`
+const IconGridContainer = styled(GridDivCentered)`
+	place-items: center;
+	justify-content: center;
 	grid-template-rows: 1fr 1fr;
-	grid-template-columns: repeat(4, 1fr);
+	grid-template-columns: repeat(4, 280px);
 	gap: 80px 20px;
 	margin-top: 80px;
 	svg {
@@ -197,8 +199,7 @@ const IconGridContainer = styled(GridDiv)`
 `;
 
 const Container = styled.div`
-	margin-top: 125px;
-	margin-bottom: 140px;
+	margin: 140px 0px;
 `;
 
 const FeatureCard = styled(FlexDivRow)`
@@ -218,21 +219,6 @@ const PartnerIconContainer = styled.div`
 		height: 64px;
 	}
 `;
-
-// &.chainlink {
-// 	width: 15%;
-// 	height: 15%;
-// }
-
-// &.hop {
-// 	width: 10%;
-// 	height: 10%;
-// }
-
-// &.graph {
-// 	width: 4%;
-// 	height: 4%;
-// }
 
 const FeatureIconContainer = styled.div`
 	padding-bottom: 40px;

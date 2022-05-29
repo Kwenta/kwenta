@@ -188,7 +188,6 @@ export const BottomShadow = styled.div`
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
-	height: 100vh;
 	position: relative;
 	overflow-y: overlay;
 	padding: 25px 25px 0;

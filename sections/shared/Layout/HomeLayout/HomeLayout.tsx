@@ -118,7 +118,7 @@ const GoldenBlurImageTradeNow = styled.div`
 	position: absolute;
 	width: 350.34px;
 	height: 493px;
-	left: 1404.83px;
+	left: 1204.83px;
 	top: 7400px;
 
 	background: #c9975a;

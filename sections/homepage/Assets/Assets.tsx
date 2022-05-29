@@ -13,7 +13,6 @@ import {
 } from 'styles/common';
 
 import { Media } from 'styles/media';
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import { GridContainer } from '../common';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
@@ -134,7 +133,6 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 
 const Assets = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef } = SmoothScroll.useContainer();
 	const { synthsMap } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
@@ -257,7 +255,7 @@ const Assets = () => {
 	);
 
 	return (
-		<Container ref={whyKwentaRef}>
+		<Container>
 			<Media greaterThanOrEqual="lg">
 				<FlexDivColCentered>
 					{title}

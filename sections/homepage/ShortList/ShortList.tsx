@@ -5,7 +5,6 @@ import { CellProps } from 'react-table';
 
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import { Media } from 'styles/media';
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 import useGetStats from 'queries/futures/useGetStats';
 import { FuturesMarket, FuturesStat } from 'queries/futures/types';
 import Wei, { wei } from '@synthetixio/wei';
@@ -30,7 +29,6 @@ type Stat = {
 
 const ShortList = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef } = SmoothScroll.useContainer();
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
@@ -101,7 +99,7 @@ const ShortList = () => {
 	}, [futuresMarketsQuery?.data]);
 
 	return (
-		<Container ref={whyKwentaRef}>
+		<Container>
 			<Media greaterThanOrEqual="lg">
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 			</Media>
@@ -262,6 +260,7 @@ const StatsCard = styled(FlexDivColCentered)`
 const StyledTable = styled(Table)`
 	margin-top: 60px;
 	font-size: 15px;
+	width: 1160px;
 `;
 
 const Medal = styled.span`
@@ -283,8 +282,9 @@ const ColorCodedPrice = styled(Currency.Price)`
 	font-size: 15px;
 `;
 
-const Container = styled.div`
-	margin-bottom: 125px;
+const Container = styled(FlexDivColCentered)`
+	margin-bottom: 140px;
+	justify-content: center;
 `;
 
 const TableHeader = styled.div`
