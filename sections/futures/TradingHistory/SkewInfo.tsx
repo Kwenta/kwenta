@@ -128,6 +128,7 @@ const OpenInterestRow = styled.div`
 	line-height: 16px;
 	padding-bottom: 10px;
 	padding-top: 10px;
+	font-family: ${(props) => props.theme.fonts.mono};
 
 	:last-child {
 		padding-bottom: 0;
