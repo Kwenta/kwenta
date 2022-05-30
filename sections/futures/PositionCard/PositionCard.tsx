@@ -194,7 +194,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-side')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.position-side')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{data.positionSide}
 					</InfoRow>
@@ -204,7 +206,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.position-size')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.position-size')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
@@ -217,7 +221,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.net-funding')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.net-funding')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
@@ -237,7 +243,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.r-pnl')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.r-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.r-pnl')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
@@ -257,7 +265,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.liquidation-price')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.liquidation-price')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
@@ -270,7 +280,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.leverage')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.leverage')}
+							</StyledSubtitleWithCursor>
 						</LeftMarginTooltip>
 						<StyledValue>{data.leverage}</StyledValue>
 					</InfoRow>
@@ -296,7 +308,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.avg-entry-price')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.avg-entry-price')}
+							</StyledSubtitleWithCursor>
 						</LeftMarginTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
@@ -347,6 +361,14 @@ const InfoRow = styled.div`
 `;
 
 const StyledSubtitle = styled.p`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	text-transform: capitalize;
+	margin: 0;
+`;
+
+const StyledSubtitleWithCursor = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
