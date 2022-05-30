@@ -41,8 +41,8 @@ export default class FuturesPage extends Page {
 		return cy.findByTestId('futures-market-trade-button-deposit');
 	}
 
-	enterMarginOf100sUSD() {
-		return cy.findByTestId('funtures-market-trade-deposite-margin-input').type('100');
+	enterMarginInsUSD(margin) {
+		return cy.findByTestId('funtures-market-trade-deposite-margin-input').type(margin.toString());
 	}
 
 	getDepositeMarginBtn() {
