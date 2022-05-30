@@ -34,7 +34,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			margin-left: 3px;
 			font-size: 13px;
 			text-align: left;
-			font-family: ${(props) => props.theme.fonts.mono};
+			font-family: ${(props) => props.theme.fonts.regular};
 			font-style: normal;
 			font-weight: 400;
 			line-height: 150%;
