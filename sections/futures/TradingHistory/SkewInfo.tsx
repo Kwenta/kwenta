@@ -1,7 +1,4 @@
-import { Rates } from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import * as _ from 'lodash/fp';
 import { FuturesMarket } from 'queries/futures/types';
@@ -12,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
-import { getMarketKey } from 'utils/futures';
 import OpenInterestBar from './OpenInterestBar';
 
 type SkewInfoProps = {
@@ -22,7 +18,6 @@ type SkewInfoProps = {
 const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 	const { t } = useTranslation();
 
-	const { network } = Connector.useContainer();
 	const futuresMarketsQuery = useGetFuturesMarkets();
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -33,6 +28,7 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 			? futuresMarkets
 					.filter((i: FuturesMarket) => i.asset === currencyKey)
 					.map((i: FuturesMarket) => {
+						const basePriceRate = _.defaultTo(0, Number(i.price));
 						return {
 							short: i.marketSize.eq(0)
 								? 0
@@ -40,55 +36,26 @@ const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
 							long: i.marketSize.eq(0)
 								? 0
 								: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+							shortValue: i.marketSize.eq(0)
+								? 0
+								: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+							longValue: i.marketSize.eq(0)
+								? 0
+								: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
 						};
 					})
 			: [
 					{
 						short: 0,
 						long: 0,
+						shortValue: 0,
+						longValue: 0,
 					},
 			  ];
 	}, [futuresMarkets, currencyKey]);
 
-	// Use 'sETH' as default as it's used in market route in routes.ts
-	const baseCurrencyKey = currencyKey ?? 'sETH';
-
-	const marketSummary: FuturesMarket | undefined = futuresMarkets.find(
-		({ asset }) => asset === baseCurrencyKey
-	);
-
-	const futureRates = futuresMarketsQuery.isSuccess
-		? futuresMarkets.reduce((acc: Rates, { asset, price }) => {
-				const key = getMarketKey(asset, network.id);
-				acc[key] = price;
-				return acc;
-		  }, {})
-		: null;
-
-	const basePriceRate = React.useMemo(
-		() => _.defaultTo(0, Number(futureRates?.[getMarketKey(baseCurrencyKey, network.id)])),
-		[futureRates, baseCurrencyKey, network.id]
-	);
-	const long = formatCurrency(
-		selectedPriceCurrency.name,
-		marketSummary?.marketSize
-			.add(marketSummary?.marketSkew ?? new Wei(0))
-			.div('2')
-			.abs()
-			.mul(basePriceRate)
-			.toNumber() ?? 0,
-		{ sign: '$' }
-	);
-	const short = formatCurrency(
-		selectedPriceCurrency.name,
-		marketSummary?.marketSize
-			.sub(marketSummary?.marketSkew ?? new Wei(0))
-			.div('2')
-			.abs()
-			.mul(basePriceRate)
-			.toNumber() ?? 0,
-		{ sign: '$' }
-	);
+	const long = formatCurrency(selectedPriceCurrency.name, data[0].longValue, { sign: '$' });
+	const short = formatCurrency(selectedPriceCurrency.name, data[0].shortValue, { sign: '$' });
 
 	return (
 		<SkewContainer>
