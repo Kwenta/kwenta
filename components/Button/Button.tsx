@@ -54,7 +54,10 @@ const Button = styled.button<ButtonProps>`
 	transition: all 0.1s ease-in-out;
 
 	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+		background: ${(props) =>
+			props.noOutline
+				? props.theme.colors.selectedTheme.button.fillHover
+				: props.theme.colors.selectedTheme.button.hover};
 	}
 
 	${(props) =>
@@ -70,9 +73,6 @@ const Button = styled.button<ButtonProps>`
 		props.variant === 'primary' &&
 		css`
 			background: ${props.theme.colors.selectedTheme.button.primary.background};
-			color: ${props.theme.colors.common.primaryWhite};
-			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
-
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.primary.hover};
 			}
