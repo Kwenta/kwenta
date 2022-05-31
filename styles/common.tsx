@@ -192,6 +192,8 @@ export const FullScreenContainer = styled(FlexDiv)`
 	position: relative;
 	overflow-y: overlay;
 	padding: 25px 25px 0;
+	margin: 0 auto;
+	max-width: 1800px;
 `;
 
 export const Tooltip = styled(Tippy)`
