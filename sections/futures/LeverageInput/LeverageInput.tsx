@@ -143,6 +143,7 @@ const LeverageButton = styled(Button)`
 	padding: 0;
 	font-size: 13px;
 	height: 46px;
+	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
 const TextButton = styled.button`
