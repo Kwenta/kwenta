@@ -46,7 +46,7 @@ const StyledButton = styled(Button)`
 		color: ${(props) =>
 			props.isActive
 				? props.theme.colors.selectedTheme.button.text
-				: props.theme.colors.selectedTheme.button.secondary.text};
+				: props.theme.colors.selectedTheme.gray};
 	}
 
 	&:disabled {
