@@ -3,7 +3,6 @@ import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useInterval from 'hooks/useInterval';
-import { NumericValue } from 'styles/common';
 
 interface ToolTipProps {
 	startTimeDate: Date | undefined;
