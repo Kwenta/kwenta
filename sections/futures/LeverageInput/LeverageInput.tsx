@@ -118,7 +118,7 @@ const LeverageRow = styled(FlexDivRow)`
 
 const LeverageTitle = styled.div`
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 
 	span {
@@ -141,8 +141,8 @@ const LeverageInputContainer = styled.div`
 
 const LeverageButton = styled(Button)`
 	padding: 0;
-	font-weight: 700;
 	font-size: 13px;
+	height: 46px;
 `;
 
 const TextButton = styled.button`

@@ -80,7 +80,7 @@ const OrderSizingContainer = styled.div`
 `;
 
 const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 
 	span {

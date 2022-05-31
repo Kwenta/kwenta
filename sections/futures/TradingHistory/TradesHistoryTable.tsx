@@ -169,7 +169,7 @@ const HistoryLabelContainer = styled(FlexDivRowCentered)`
 `;
 
 const HistoryLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const LastTradesLabel = styled(CapitalizedText)`
@@ -192,11 +192,13 @@ const TableHeader = styled(CapitalizedText)`
 
 const PriceValue = styled(NumericValue)`
 	font-size: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-decoration: underline;
 	padding-left: 10px;
 `;
@@ -204,7 +206,7 @@ const TimeValue = styled.p`
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.common.primaryWhite
+			? props.theme.colors.selectedTheme.button.text
 			: props.negative
 			? props.theme.colors.selectedTheme.green
 			: props.theme.colors.selectedTheme.red};

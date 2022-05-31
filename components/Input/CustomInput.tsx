@@ -66,14 +66,13 @@ const CustomInputContainer = styled.div`
 	input {
 		display: flex;
 		flex: 1;
-
 		margin-right: 4px;
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 18px;
 		line-height: 22px;
 		background-color: transparent;
 		border: none;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		width: 100%;
 
 		&:focus {

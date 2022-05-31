@@ -59,13 +59,13 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		font-size: 15px;
-		${(props) =>
+		/* ${(props) =>
 			props.$isSelected &&
 			css`
 				color: ${(props) => props.theme.colors.common.secondaryGold};
-			`}
+			`} */
 	}
 
 	.change {
