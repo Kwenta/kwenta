@@ -128,9 +128,9 @@ const DashboardContainer: FC = () => {
 					<Markets />
 				</TabPanel>
 			</MainContent>
-			<StyledRightSideContent>
+			{/* <StyledRightSideContent>
 				<StakingInfo />
-			</StyledRightSideContent>
+			</StyledRightSideContent> */}
 		</>
 	);
 };
