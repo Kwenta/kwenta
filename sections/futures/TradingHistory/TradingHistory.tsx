@@ -11,7 +11,7 @@ const TradingHistory: React.FC<TradeHistoryInfoProps> = ({ currencyKey }) => {
 	return (
 		<Panel>
 			<SkewInfo currencyKey={currencyKey} />
-			<TradesHistoryTable currencyKey={currencyKey} numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
+			<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
 		</Panel>
 	);
 };

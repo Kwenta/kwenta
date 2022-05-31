@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { wei } from '@synthetixio/wei';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -29,7 +29,11 @@ import { useRecoilValue } from 'recoil';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
-const MarketDetails: React.FC = () => {
+type MarketDetailsProps = {
+	mobile?: boolean;
+};
+
+const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 	const { network } = Connector.useContainer();
 
@@ -271,7 +275,7 @@ const MarketDetails: React.FC = () => {
 	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
 
 	return (
-		<MarketDetailsContainer>
+		<MarketDetailsContainer mobile={mobile}>
 			{Object.entries(data).map(([key, { value, color }]) => {
 				const colorClass = color || '';
 
@@ -292,7 +296,7 @@ const OneHrFundingRateTooltip = styled(StyledTooltip)`
 	left: -200px;
 `;
 
-const MarketDetailsContainer = styled.div`
+const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	height: 55px;
 	padding: 12px 45px 10px 15px;
@@ -335,6 +339,20 @@ const MarketDetailsContainer = styled.div`
 	.paused {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			height: auto;
+			padding: 15px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 20px 0;
+
+			.heading {
+				margin-bottom: 2px;
+			}
+		`}
 `;
 
 export const HoverTransform = styled.div`
