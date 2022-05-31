@@ -10,6 +10,7 @@ const lightTheme = {
 	gray: '#515151',
 	table: '#EDEDED',
 	button: {
+		border: 'rgb(0 0 0 / 10%)',
 		fill: '#e0e0e0',
 		fillHover: '#e0e0e0',
 		background:

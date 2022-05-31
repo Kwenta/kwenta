@@ -10,6 +10,7 @@ const eliteTheme = {
 	gray: '#787878',
 	table: '#EDEDED',
 	button: {
+		border: '',
 		fill: '#E6E6E6',
 		fillHover: '#2B2A2A',
 		background: 'linear-gradient(180deg, #39332D 0%, #2D2A28 100%)',
