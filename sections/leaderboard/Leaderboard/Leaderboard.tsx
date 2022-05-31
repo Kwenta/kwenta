@@ -18,6 +18,7 @@ import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
+import useENSs from 'hooks/useENSs';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -41,6 +42,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+
+	const traders = useMemo(
+		() =>
+			stats.map((stat: FuturesStat) => {
+				return stat.account;
+			}) ?? [],
+		[stats]
+	);
+	const ensInfo = useENSs(traders);
+	// console.log(ensInfo)
 
 	useMemo(() => {
 		if (router.query.tab) {
@@ -175,7 +186,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
-											const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+											// const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+											let ensName = '';
+											let ensAvatar;
 											return (
 												<StyledOrderType
 													onClick={() => onClickTrader(cellProps.row.original.trader, ensName)}
