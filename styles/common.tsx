@@ -188,9 +188,9 @@ export const BottomShadow = styled.div`
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
-	height: 100vh;
+	height: auto;
 	position: relative;
-	overflow-y: overlay;
+	overflow-y: visible;
 	padding: 25px 25px 0;
 	margin: 0 auto;
 	max-width: 1800px;
@@ -272,7 +272,7 @@ export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
-	height: 100vh;
+	height: auto;
 	position: relative;
 `;
 
