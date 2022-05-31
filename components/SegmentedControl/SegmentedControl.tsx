@@ -49,7 +49,7 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 	${(props) =>
 		props.isSelected
 			? css`
-					background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+					background: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 					position: relative;
 					box-shadow: ${(props) => props.theme.colors.selectedTheme.segmented.button.shadow};
 					border: ${(props) => props.theme.colors.selectedTheme.border};
