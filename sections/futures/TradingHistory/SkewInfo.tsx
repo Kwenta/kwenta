@@ -107,7 +107,7 @@ const SkewHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 `;
 
 const SkewLabel = styled(CapitalizedText)`
