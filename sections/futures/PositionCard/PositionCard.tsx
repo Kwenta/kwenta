@@ -376,7 +376,7 @@ const InfoRow = styled.div`
 `;
 
 const StyledSubtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
