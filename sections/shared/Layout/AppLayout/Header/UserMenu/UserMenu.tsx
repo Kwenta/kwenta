@@ -35,6 +35,7 @@ const UserMenu: FC = () => {
 			<ConnectButton
 				size="sm"
 				variant="outline"
+				noOutline={true}
 				onClick={connectWallet}
 				data-testid="connect-wallet"
 				mono
@@ -105,7 +106,6 @@ const MenuButton = styled(Button)`
 	align-items: center;
 	margin-left: 15px;
 	height: 41px;
-	border: none;
 	circle {
 		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 	}
