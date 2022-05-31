@@ -9,6 +9,7 @@ const lightTheme = {
 	white: '#F2F2F2',
 	gray: '#515151',
 	table: '#EDEDED',
+	gold: '#E4B378',
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
 		fill: '#e8e8e8',

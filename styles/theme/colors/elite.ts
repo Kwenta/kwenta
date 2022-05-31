@@ -9,6 +9,7 @@ const eliteTheme = {
 	white: '',
 	gray: '#787878',
 	table: '#EDEDED',
+	gold: '#E4B378',
 	button: {
 		border: '',
 		fill: '#E6E6E6',
