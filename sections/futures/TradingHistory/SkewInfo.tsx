@@ -99,7 +99,7 @@ const SkewContainer = styled.div`
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 
@@ -117,6 +117,6 @@ const SkewLabel = styled(CapitalizedText)`
 
 const SkewValue = styled(NumericValue)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
