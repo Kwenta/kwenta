@@ -48,6 +48,13 @@ const DashboardContainer: FC = () => {
 				onClick: () => router.push(ROUTES.Home.Overview),
 			},
 			{
+				name: Tab.Markets,
+				label: t('futures-dashboard.tabs.nav.markets'),
+				active: activeTab === Tab.Markets,
+				disabled: false,
+				onClick: () => router.push(ROUTES.Home.Markets),
+			},
+			{
 				name: Tab.Positions,
 				label: t('futures-dashboard.tabs.nav.positions'),
 				active: activeTab === Tab.Positions,
@@ -60,13 +67,6 @@ const DashboardContainer: FC = () => {
 				active: activeTab === Tab.Rewards,
 				disabled: true,
 				onClick: () => {},
-			},
-			{
-				name: Tab.Markets,
-				label: t('futures-dashboard.tabs.nav.markets'),
-				active: activeTab === Tab.Markets,
-				disabled: false,
-				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				name: Tab.Governance,
