@@ -53,9 +53,12 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 				: props.theme.colors.selectedTheme.gray};
 	}
 	.detail {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-		margin-top: 2px;
-		font-size: 15px;
+		color: ${(props) =>
+			props.isActive
+				? props.theme.colors.selectedTheme.gold
+				: props.theme.colors.selectedTheme.gray};
+		margin-top: 4px;
+		font-size: 18px;
 		font-family: ${(props) => props.theme.fonts.monoBold};
 	}
 	.badge {
