@@ -287,13 +287,13 @@ export const MainContent = styled(FlexDiv)`
 export const RightSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const Table = styled.table.attrs({
