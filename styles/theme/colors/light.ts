@@ -6,6 +6,7 @@ const lightTheme = {
 	red: '#A80300',
 	green: '#1D5D1F',
 	black: '#171002',
+	white: '#F2F2F2',
 	gray: '#515151',
 	table: '#EDEDED',
 	button: {

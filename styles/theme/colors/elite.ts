@@ -6,6 +6,7 @@ const eliteTheme = {
 	red: '',
 	green: '',
 	black: '#171002',
+	white: '',
 	gray: '#787878',
 	table: '#EDEDED',
 	button: {

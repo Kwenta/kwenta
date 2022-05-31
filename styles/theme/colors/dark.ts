@@ -6,6 +6,7 @@ const darkTheme = {
 	red: '#EF6868',
 	green: '#7FD482',
 	black: '#171002',
+	white: '#ECE8E3',
 	gray: '#787878',
 	table: 'rgba(255, 255, 255, 0.01)',
 	button: {
