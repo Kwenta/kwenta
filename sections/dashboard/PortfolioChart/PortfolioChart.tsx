@@ -36,7 +36,7 @@ const Chart = styled.div`
 
 const PortfolioTitle = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	margin-top: 26px;
 	margin-left: 26px;
@@ -44,7 +44,8 @@ const PortfolioTitle = styled.p`
 `;
 const PortfolioText = styled(Currency.Price)`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.monoBold};
+	letter-spacing: -1.2px;
 	font-size: 27px;
 	margin-left: 26px;
 	margin-top: 0;
