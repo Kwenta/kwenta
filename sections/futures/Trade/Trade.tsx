@@ -316,6 +316,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-withdraw"
 					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 				>
