@@ -1,6 +1,7 @@
 import React, { FC, useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
+import { border } from 'components/Button';
 
 export const IndicatorSeparator: FC = () => null;
 
@@ -19,18 +20,22 @@ function Select<T>(props: Props<T>) {
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
+				margin: 0,
+				maxWidth: 'unset',
 			}),
 			control: (provided, state) => ({
 				...provided,
 				color: colors.selectedTheme.button.text,
 				cursor: 'pointer',
-				boxShadow: !props.noOutline ? colors.selectedTheme.select.control.shadow : 'none',
-				border: 'none',
+				boxShadow: props.noOutline ? 'none' : colors.selectedTheme.button.shadow,
+				border: props.noOutline ? colors.selectedTheme.border : 'none',
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: colors.selectedTheme.button.hover,
+					background: props.noOutline
+						? colors.selectedTheme.button.fillHover
+						: colors.selectedTheme.button.hover,
 				},
 				'&::before': !props.noOutline && {
 					content: '""',
@@ -39,11 +44,13 @@ function Select<T>(props: Props<T>) {
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: '10px',
-					padding: '1px',
-					background: 'rgb(255 255 255 / 10%)',
+					borderRadius: 10,
+					padding: 1,
+					background: colors.selectedTheme.button.border,
 					WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
 					WebkitMaskComposite: 'xor',
+					maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+					mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
 					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
@@ -85,7 +92,7 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				border: 'none',
 				fontFamily: fonts.regular,
-				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
+				color: state.isSelected ? colors.common.secondaryGold : colors.selectedTheme.button.text,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',
@@ -101,7 +108,7 @@ function Select<T>(props: Props<T>) {
 			placeholder: (provided) => ({
 				...provided,
 				fontSize: '12px',
-				color: colors.common.primaryWhite,
+				color: colors.selectedTheme.button.text,
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,
