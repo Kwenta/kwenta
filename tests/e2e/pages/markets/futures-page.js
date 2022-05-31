@@ -41,20 +41,23 @@ export default class FuturesPage extends Page {
 		return cy.findByTestId('futures-market-trade-button-deposit');
 	}
 
-	enterMarginInsUSD(margin) {
+	getWithdrawBtn() {
+		return cy.findByTestId('futures-market-trade-button-withdraw');
+	}
+
+	enterDepositeMarginInsUSD(margin) {
 		return cy.findByTestId('funtures-market-trade-deposite-margin-input').type(margin.toString());
+	}
+
+	enterWithdrawMarginInsUSD(margin) {
+		return cy.findByTestId('funtures-market-trade-withdraw-margin-input').type(margin.toString());
 	}
 
 	getDepositeMarginBtn() {
 		return cy.findByTestId('funtures-market-trade-deposite-margin-button');
 	}
 
-	assertDepositeMargin() {
-		cy.findByText('Total Margin')
-			.first()
-			.invoke('val')
-			.then((value) => {
-				expect(value).to.equal(0);
-			});
+	getWithdrawMarginBtn() {
+		return cy.findByTestId('funtures-market-trade-withdraw-margin-button');
 	}
 }
