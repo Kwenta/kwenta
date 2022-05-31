@@ -64,8 +64,8 @@ const MenuLinks = styled.ul`
 const MenuLinkItem = styled.li<{ isActive: boolean }>`
 	a {
 		${linkCSS};
-		padding: 8px 10px;
-		margin-right: 4px;
+		padding: 8px 13px;
+		margin-right: 2px;
 		font-family: ${(props) => props.theme.fonts.bold};
 		font-size: 15px;
 		text-transform: capitalize;
@@ -76,7 +76,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 				? props.theme.colors.selectedTheme.button.text
 				: props.theme.colors.selectedTheme.gray};
 		&:hover {
-			background: ${(props) => props.theme.colors.selectedTheme.button.hover};
+			background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
 		}
 	}
 `;
