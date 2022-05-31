@@ -56,7 +56,6 @@ const Content = styled.div`
 const Title = styled.h1`
 	font-size: 120px;
 	margin: 0;
-	font-weight: normal;
 	line-height: normal;
 	${media.lessThan('sm')`
 		font-size: 80px;
@@ -67,7 +66,6 @@ const Subtitle = styled.h2`
 	margin: 0;
 	font-size: 20px;
 	line-height: normal;
-	font-weight: normal;
 	${media.lessThan('sm')`
 		font-size: 14px;
 	`}

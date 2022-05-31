@@ -68,7 +68,6 @@ const OverlayContent = styled.div`
 	justify-content: center;
 	align-items: center;
 	height: 100%;
-	font-weight: 700;
 `;
 
 const AssetsImage = styled.img`

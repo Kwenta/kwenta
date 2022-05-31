@@ -196,7 +196,6 @@ const StyledTableHeader = styled.div`
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;
-	font-weight: bold;
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`

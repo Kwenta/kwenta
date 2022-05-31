@@ -69,7 +69,6 @@ export const CompareRatioToggle = styled(FlexDiv)`
 
 export const CompareRatioToggleType = styled.div<{ isActive: boolean }>`
 	cursor: pointer;
-	font-weight: bold;
 	border-bottom: 2px solid ${(props) => (props.isActive ? '#b68b58' : 'transparent')};
 	color: ${(props) => (props.isActive ? props.theme.colors.white : 'inherit')};
 	text-transform: uppercase;

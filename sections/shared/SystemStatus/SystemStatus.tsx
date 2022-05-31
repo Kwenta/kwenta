@@ -127,7 +127,6 @@ const StyledSystemDownIcon = styled(SystemDownIcon)`
 const titleCSS = css`
 	font-size: 20px;
 	margin: 0;
-	font-weight: normal;
 	line-height: normal;
 
 	font-family: ${(props) => props.theme.fonts.mono};
