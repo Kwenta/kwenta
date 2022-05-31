@@ -3,6 +3,7 @@ import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import useInterval from 'hooks/useInterval';
+import { NumericValue } from 'styles/common';
 
 interface ToolTipProps {
 	startTimeDate: Date | undefined;
@@ -77,10 +78,10 @@ const TimerTooltip = (props: ToolTipProps) => {
 			{activeMouse && (
 				<Tooltip {...props}>
 					<Container>
-						<p>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</p>
+						<span>{t(`exchange.market-details-card.timer-tooltip.last-update`)}</span>
 						<p>
 							{`${formatTimeUnit(minutes)}:${formatTimeUnit(seconds)} `}
-							{t(timeUnitsFormat)}
+							<span>{t(timeUnitsFormat)}</span>
 						</p>
 					</Container>
 				</Tooltip>
@@ -91,4 +92,11 @@ const TimerTooltip = (props: ToolTipProps) => {
 
 export default TimerTooltip;
 
-const Container = styled.div``;
+const Container = styled.div`
+	p {
+		font-family: ${(props) => props.theme.fonts.mono};
+		span {
+			font-family: ${(props) => props.theme.fonts.regular};
+		}
+	}
+`;
