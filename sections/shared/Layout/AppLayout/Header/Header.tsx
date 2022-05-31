@@ -57,7 +57,6 @@ const Container = styled.header<{ isL2: boolean }>`
 const LogoNav = styled.div`
 	display: flex;
 	align-items: center;
-	margin-left: 10px;
 `;
 
 const StyledLogo = styled(Logo)``;

@@ -40,6 +40,7 @@ const LogoContainer = styled.span`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
+	margin-right: 20px;
 `;
 
 export default Logo;
