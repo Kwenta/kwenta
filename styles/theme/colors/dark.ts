@@ -58,7 +58,7 @@ const darkTheme = {
 	segmented: {
 		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(33, 33, 33, 0.1) 100%)',
 		button: {
-			background: 'linear-gradient(180deg, rgba(36, 36, 36, 0.08) 0%, rgba(88, 88, 88, 0.1) 100%)',
+			background: '#2f2f2f',
 			shadow:
 				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09)',
 			inactive: { color: '#787878' },
