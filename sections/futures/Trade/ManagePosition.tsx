@@ -1,17 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
 
 import Button from 'components/Button';
 import { useRecoilValue } from 'recoil';
-import { leverageState, positionState, sizeDeltaState } from 'store/futures';
+import { leverageState, maxLeverageState, positionState, sizeDeltaState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
 
 type ManagePositionProps = {
 	translationKey: string;
 	marketCapReached: boolean;
-	maxLeverageValue: Wei;
 	error: string | null;
 	openConfirmationModal(): void;
 	openClosePositionModal(): void;
@@ -21,7 +19,6 @@ type ManagePositionProps = {
 const ManagePosition: React.FC<ManagePositionProps> = ({
 	translationKey,
 	marketCapReached,
-	maxLeverageValue,
 	openConfirmationModal,
 	openClosePositionModal,
 	error,
@@ -31,6 +28,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const position = useRecoilValue(positionState);
+	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const positionDetails = position?.position;
 
 	return (

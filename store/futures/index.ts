@@ -2,11 +2,13 @@ import { atom, selector } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { getFuturesKey } from 'store/utils';
-import { FuturesPosition } from 'queries/futures/types';
+import { FuturesMarket, FuturesPosition } from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
 import { Synths, CurrencyKey } from 'constants/currency';
+
+const DEFAULT_MAX_LEVERAGE = wei(10);
 
 export const currentMarketState = atom<CurrencyKey>({
 	key: getFuturesKey('currentMarket'),
@@ -70,5 +72,40 @@ export const sizeDeltaState = selector({
 		const leverageSide = get(leverageSideState);
 
 		return tradeSize ? wei(leverageSide === PositionSide.LONG ? tradeSize : -tradeSize) : zeroBN;
+	},
+});
+
+export const marketInfoState = atom<FuturesMarket | undefined>({
+	key: getFuturesKey('marketInfo'),
+	default: undefined,
+});
+
+export const maxLeverageState = selector({
+	key: getFuturesKey('maxLeverage'),
+	get: ({ get }) => {
+		const position = get(positionState);
+		const market = get(marketInfoState);
+		const leverageSide = get(leverageSideState);
+
+		const positionLeverage = position?.position?.leverage ?? wei(0);
+		const positionSide = position?.position?.side;
+		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+
+		if (!positionLeverage || positionLeverage.eq(wei(0))) return marketMaxLeverage;
+		if (positionSide === leverageSide) {
+			return marketMaxLeverage?.sub(positionLeverage);
+		} else {
+			return positionLeverage.add(marketMaxLeverage);
+		}
+	},
+});
+
+export const nextPriceDisclaimerState = selector({
+	key: getFuturesKey('nextPriceDisclaimer'),
+	get: ({ get }) => {
+		const leverage = get(leverageState);
+		const maxLeverage = get(maxLeverageState);
+
+		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
 	},
 });

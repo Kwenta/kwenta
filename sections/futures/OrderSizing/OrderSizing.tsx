@@ -1,12 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
 
 import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
 import { FlexDivRow } from 'styles/common';
 import {
 	currentMarketState,
+	maxLeverageState,
 	positionState,
 	tradeSizeState,
 	tradeSizeSUSDState,
@@ -19,7 +19,6 @@ type OrderSizingProps = {
 	onAmountChange: (value: string) => void;
 	onAmountSUSDChange: (value: string) => void;
 	onLeverageChange: (value: string) => void;
-	maxLeverage: Wei;
 };
 
 const OrderSizing: React.FC<OrderSizingProps> = ({
@@ -27,12 +26,12 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	onAmountChange,
 	onAmountSUSDChange,
 	onLeverageChange,
-	maxLeverage,
 }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
+	const maxLeverage = useRecoilValue(maxLeverageState);
 
 	const handleSetMax = () => {
 		const maxOrderSizeUSDValue = Number(

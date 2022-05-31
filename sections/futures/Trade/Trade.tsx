@@ -56,7 +56,6 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 		error,
 		dynamicFee,
 		isMarketCapReached,
-		shouldDisplayNextPriceDisclaimer,
 		isFuturesMarketClosed,
 		marketQuery,
 	} = useFuturesData();
@@ -129,7 +128,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 				marketClosed={isFuturesMarketClosed}
 			/>
 
-			<MarketInfoBox maxLeverage={maxLeverageValue} isMarketClosed={isFuturesMarketClosed} />
+			<MarketInfoBox isMarketClosed={isFuturesMarketClosed} />
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}
@@ -149,20 +148,13 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 				onAmountChange={onTradeAmountChange}
 				onAmountSUSDChange={onTradeAmountSUSDChange}
 				onLeverageChange={onLeverageChange}
-				maxLeverage={maxLeverageValue}
 			/>
 
-			<LeverageInput
-				maxLeverage={maxLeverageValue}
-				onLeverageChange={onLeverageChange}
-				isMarketClosed={isFuturesMarketClosed}
-				isDisclaimerDisplayed={orderType === 1 && shouldDisplayNextPriceDisclaimer}
-			/>
+			<LeverageInput onLeverageChange={onLeverageChange} isMarketClosed={isFuturesMarketClosed} />
 
 			<ManagePosition
 				translationKey={placeOrderTranslationKey}
 				marketCapReached={isMarketCapReached}
-				maxLeverageValue={maxLeverageValue}
 				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
 				openClosePositionModal={() => setOpenModal('close-position')}
 				marketClosed={isFuturesMarketClosed}
@@ -218,7 +210,6 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 					gasLimit={orderTxn.gasLimit}
 					l1Fee={orderTxn.optimismLayerOneFee}
 					onDismiss={() => setOpenModal(null)}
-					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
 			)}
 

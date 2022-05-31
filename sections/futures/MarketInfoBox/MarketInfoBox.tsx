@@ -1,18 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
 import InfoBox from 'components/InfoBox';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
 import { useRecoilValue } from 'recoil';
-import { positionState } from 'store/futures';
+import { maxLeverageState, positionState } from 'store/futures';
 
 type MarketInfoBoxProps = {
-	maxLeverage?: Wei;
 	isMarketClosed: boolean;
 };
 
-const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({ maxLeverage, isMarketClosed }) => {
+const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({ isMarketClosed }) => {
+	const maxLeverage = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const details = React.useMemo(
 		() => ({

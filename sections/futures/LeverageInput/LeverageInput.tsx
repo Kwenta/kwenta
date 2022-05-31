@@ -1,7 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Wei from '@synthetixio/wei';
 
 import { FlexDivCol, FlexDivRow } from 'styles/common';
 import LeverageSlider from '../LeverageSlider';
@@ -9,24 +8,26 @@ import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
 import { formatNumber } from 'utils/formatters/number';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { leverageState, leverageValueCommitedState } from 'store/futures';
+import {
+	leverageState,
+	leverageValueCommitedState,
+	maxLeverageState,
+	nextPriceDisclaimerState,
+	orderTypeState,
+} from 'store/futures';
 
 type LeverageInputProps = {
-	maxLeverage: Wei;
 	onLeverageChange: (value: string) => void;
 	isMarketClosed: boolean;
-	isDisclaimerDisplayed: boolean;
 };
 
-const LeverageInput: FC<LeverageInputProps> = ({
-	maxLeverage,
-	onLeverageChange,
-	isMarketClosed,
-	isDisclaimerDisplayed,
-}) => {
+const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange, isMarketClosed }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const leverage = useRecoilValue(leverageState);
+	const maxLeverage = useRecoilValue(maxLeverageState);
+	const orderType = useRecoilValue(orderTypeState);
+	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommitedState);
 
 	const modeButton = useMemo(() => {
@@ -50,7 +51,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{isDisclaimerDisplayed && (
+			{orderType === 1 && isDisclaimerDisplayed && (
 				<LeverageDisclaimer>
 					{t('futures.market.trade.input.leverage.disclaimer')}
 				</LeverageDisclaimer>

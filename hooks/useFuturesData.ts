@@ -14,6 +14,8 @@ import {
 	leverageSideState,
 	leverageState,
 	leverageValueCommitedState,
+	marketInfoState,
+	maxLeverageState,
 	orderTypeState,
 	positionState,
 	sizeDeltaState,
@@ -41,14 +43,16 @@ const useFuturesData = () => {
 	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
-	const [leverage, setLeverage] = useRecoilState(leverageState);
+	const [, setLeverage] = useRecoilState(leverageState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
 	const [, setTradeSizeSUSD] = useRecoilState(tradeSizeSUSDState);
 	const [, setFeeCost] = useRecoilState(feeCostState);
+	const [, setMarketInfo] = useRecoilState(marketInfoState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const orderType = useRecoilValue(orderTypeState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const isLeverageValueCommitted = useRecoilValue(leverageValueCommitedState);
+	const maxLeverageValue = useRecoilValue(maxLeverageState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -67,15 +71,6 @@ const useFuturesData = () => {
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
-
-	const maxLeverageValue = useMemo(() => {
-		if (!positionLeverage || positionLeverage.eq(wei(0))) return marketMaxLeverage;
-		if (positionSide === leverageSide) {
-			return marketMaxLeverage?.sub(positionLeverage);
-		} else {
-			return positionLeverage.add(marketMaxLeverage);
-		}
-	}, [positionLeverage, positionSide, leverageSide, marketMaxLeverage]);
 
 	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
 	const marketSize = market?.marketSize ?? wei(0);
@@ -213,12 +208,11 @@ const useFuturesData = () => {
 		setFeeCost,
 	]);
 
-	const shouldDisplayNextPriceDisclaimer = React.useMemo(
-		() =>
-			wei(leverage || 0).gte(maxLeverageValue.sub(wei(1))) &&
-			wei(leverage || 0).lte(maxLeverageValue),
-		[leverage, maxLeverageValue]
-	);
+	useEffect(() => {
+		if (market) {
+			setMarketInfo(market);
+		}
+	}, [market, setMarketInfo]);
 
 	return {
 		onLeverageChange,
@@ -234,7 +228,6 @@ const useFuturesData = () => {
 		error,
 		dynamicFee,
 		isMarketCapReached,
-		shouldDisplayNextPriceDisclaimer,
 		isFuturesMarketClosed,
 		marketAsset,
 		marketQuery,

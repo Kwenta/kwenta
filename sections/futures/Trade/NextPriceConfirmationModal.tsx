@@ -26,6 +26,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import {
 	currentMarketState,
 	leverageSideState,
+	nextPriceDisclaimerState,
 	positionState,
 	tradeSizeState,
 } from 'store/futures';
@@ -35,7 +36,6 @@ type NextPriceConfirmationModalProps = {
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
 	l1Fee: Wei | null;
-	isDisclaimerDisplayed: boolean;
 };
 
 const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
@@ -43,11 +43,11 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
-	isDisclaimerDisplayed,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
