@@ -76,7 +76,7 @@ const MenuLinkItem = styled.li<{ isActive: boolean }>`
 				? props.theme.colors.selectedTheme.button.text
 				: props.theme.colors.selectedTheme.gray};
 		&:hover {
-			background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 		}
 	}
 `;
