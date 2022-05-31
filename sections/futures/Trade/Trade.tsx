@@ -311,12 +311,14 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				<MarketActionButton
 					disabled={isFuturesMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
+					noOutline={true}
 				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
 					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
+					noOutline={true}
 				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
@@ -519,6 +521,13 @@ const MarketActions = styled.div`
 
 const MarketActionButton = styled(Button)`
 	font-size: 15px;
+	height: 40px;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+
+	&:hover {
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	}
 `;
 
 const ManagePositions = styled.div`
@@ -570,7 +579,7 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 `;
 
 const ManageOrderTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-bottom: 8px;
 	margin-left: 14px;
