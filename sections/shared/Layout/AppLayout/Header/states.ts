@@ -10,7 +10,7 @@ export const menuLinksState = selector<MenuLink[]>({
 		const isL2Kovan = get(isL2KovanState);
 
 		return MENU_LINKS.filter((menuLink: MenuLink) =>
-			isL2Mainnet && isL2Kovan
+			isL2Mainnet || isL2Kovan
 				? menuLink.link
 				: menuLink.link !== ROUTES.Markets.Home && menuLink.link !== ROUTES.Leaderboard.Home
 		);
