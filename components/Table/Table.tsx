@@ -184,24 +184,16 @@ export const Table: FC<TableProps> = ({
 	);
 };
 
-const TableContainer = styled.div`
-	/* overflow-x: auto; */
-	//display: block;
-	//width: 100%;
-`;
+const TableContainer = styled.div``;
 
 const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;
 
-export const TableRow = styled.div`
-	//display: none;
-`;
+export const TableRow = styled.div``;
 
 const TableBody = styled.div`
-	/* overflow-y: scroll;
-	overflow-x: hidden; */
 	min-width: fit-content;
 `;
 
