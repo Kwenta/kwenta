@@ -287,6 +287,7 @@ const StyledText = styled.div`
 	grid-row: 1;
 	margin-bottom: -4px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const MarketContainer = styled.div`
