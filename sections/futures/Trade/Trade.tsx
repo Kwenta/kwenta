@@ -526,6 +526,7 @@ const MarketActionButton = styled(Button)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 
 	&:hover:enabled {
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.fill};
 	}
 `;
