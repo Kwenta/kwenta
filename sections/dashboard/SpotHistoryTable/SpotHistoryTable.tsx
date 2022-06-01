@@ -98,9 +98,11 @@ const SpotHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
-								<TimeDisplay
-									cellPropsValue={cellProps.row.original.timestamp.mul(1000).toNumber()}
-								/>
+								<StyledTimeDisplay>
+									<TimeDisplay
+										cellPropsValue={cellProps.row.original.timestamp.mul(1000).toNumber()}
+									/>
+								</StyledTimeDisplay>
 							);
 						},
 						width: 190,
@@ -218,6 +220,12 @@ const DefaultCell = styled.p``;
 
 const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;
+`;
+
+const StyledTimeDisplay = styled.div`
+	div {
+		margin-left: 2px;
+	}
 `;
 
 const StyledLinkIcon = styled(LinkIcon)`
