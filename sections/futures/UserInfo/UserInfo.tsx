@@ -238,6 +238,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					isLoaded={marginTransfersQuery.isFetched}
 				/>
 			</TabPanel>
+
 			{openProfitCalcModal && (
 				<ProfitCalculator
 					marketAsset={marketAsset}
@@ -260,11 +261,15 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 
 const TabButtonsContainer = styled.div`
 	display: grid;
-	grid-gap: 12px;
+	grid-gap: 15px;
 	grid-template-columns: repeat(2, 1fr);
 
 	margin-top: 16px;
 	margin-bottom: 16px;
+
+	@media (max-width: 1182px) {
+		grid-template-columns: repeat(1, 1fr);
+	}
 
 	& > button {
 		height: 38px;
@@ -278,17 +283,18 @@ const TabButtonsContainer = styled.div`
 
 const TabLeft = styled.div`
 	display: flex;
-	flex-direction: row;
 	justify-content: left;
 	grid-gap: 12px;
 `;
 
 const TabRight = styled.div`
 	display: flex;
-	flex-direction: row;
 	justify-content: right;
-
 	grid-gap: 12px;
+
+	@media (max-width: 1182px) {
+		justify-content: left;
+	}
 `;
 
 export default UserInfo;
