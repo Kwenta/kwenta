@@ -31,12 +31,12 @@
 		"@reach/accordion": "0.15.1",
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
-		"@synthetixio/assets": "2.0.12",
+		"@synthetixio/assets": "2.0.13",
 		"@synthetixio/contracts-interface": "2.68.2",
 		"@synthetixio/optimism-networks": "2.68.2",
 		"@synthetixio/providers": "2.68.2",
-		"@synthetixio/queries": "2.68.2",
-		"@synthetixio/transaction-notifier": "2.68.2",
+		"@synthetixio/queries": "2.71.0",
+		"@synthetixio/transaction-notifier": "2.70.1",
 		"@synthetixio/wei": "2.68.2",
 		"@tippyjs/react": "4.1.0",
 		"@uniswap/widgets": "^1.0.0",
@@ -80,7 +80,6 @@
 		"styled-components": "5.1.1",
 		"styled-media-query": "2.1.2",
 		"synthetix": "2.68.2",
-		"synthetix-data": "2.1.42",
 		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
