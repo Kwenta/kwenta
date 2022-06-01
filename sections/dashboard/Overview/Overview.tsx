@@ -14,7 +14,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { Synths } from '@synthetixio/contracts-interface';
+import { NetworkIdByName, Synths } from '@synthetixio/contracts-interface';
 import { getMarketKey } from 'utils/futures';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import Connector from 'containers/Connector';
@@ -40,6 +40,7 @@ const Overview: FC = () => {
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const { network } = Connector.useContainer();
+	console.log('network in overview: ', network);
 	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
@@ -73,39 +74,62 @@ const Overview: FC = () => {
 	});
 
 	const POSITIONS_TABS = useMemo(
-		() => [
-			{
-				name: PositionsTab.FUTURES,
-				label: t('dashboard.overview.positions-tabs.futures'),
-				badge: futuresPositionQuery?.data?.length,
-				active: activePositionsTab === PositionsTab.FUTURES,
-				detail: totalFuturesPortfolioValue,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.FUTURES);
-				},
-			},
-			{
-				name: PositionsTab.SPOT,
-				label: t('dashboard.overview.positions-tabs.spot'),
-				active: activePositionsTab === PositionsTab.SPOT,
-				detail: totalSpotBalancesValue,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SPOT);
-				},
-			},
-			{
-				name: PositionsTab.SHORTS,
-				label: t('dashboard.overview.positions-tabs.shorts'),
-				disabled: true,
-				active: activePositionsTab === PositionsTab.SHORTS,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SHORTS);
-				},
-			},
-		],
+		() =>
+			network.id === NetworkIdByName['mainnet-ovm'] || network.id === NetworkIdByName['kovan-ovm']
+				? [
+						{
+							name: PositionsTab.FUTURES,
+							label: t('dashboard.overview.positions-tabs.futures'),
+							badge: futuresPositionQuery?.data?.length,
+							active: activePositionsTab === PositionsTab.FUTURES,
+							detail: totalFuturesPortfolioValue,
+							onClick: () => {
+								setActivePositionsTab(PositionsTab.FUTURES);
+							},
+						},
+						{
+							name: PositionsTab.SPOT,
+							label: t('dashboard.overview.positions-tabs.spot'),
+							active: activePositionsTab === PositionsTab.SPOT,
+							detail: totalSpotBalancesValue,
+							onClick: () => {
+								setActivePositionsTab(PositionsTab.SPOT);
+							},
+						},
+						{
+							name: PositionsTab.SHORTS,
+							label: t('dashboard.overview.positions-tabs.shorts'),
+							disabled: true,
+							active: activePositionsTab === PositionsTab.SHORTS,
+							onClick: () => {
+								setActivePositionsTab(PositionsTab.SHORTS);
+							},
+						},
+				  ]
+				: [
+						{
+							name: PositionsTab.SPOT,
+							label: t('dashboard.overview.positions-tabs.spot'),
+							active: activePositionsTab === PositionsTab.SPOT,
+							detail: totalSpotBalancesValue,
+							onClick: () => {
+								setActivePositionsTab(PositionsTab.SPOT);
+							},
+						},
+						{
+							name: PositionsTab.SHORTS,
+							label: t('dashboard.overview.positions-tabs.shorts'),
+							disabled: true,
+							active: activePositionsTab === PositionsTab.SHORTS,
+							onClick: () => {
+								setActivePositionsTab(PositionsTab.SHORTS);
+							},
+						},
+				  ],
 		[
 			activePositionsTab,
 			futuresPositionQuery?.data?.length,
+			network.id,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,
@@ -113,25 +137,37 @@ const Overview: FC = () => {
 	);
 
 	const MARKETS_TABS = useMemo(
-		() => [
-			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures'),
-				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.FUTURES);
-				},
-			},
-			{
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot'),
-				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.SPOT);
-				},
-			},
-		],
-		[activeMarketsTab, t]
+		() =>
+			network.id === NetworkIdByName['mainnet-ovm'] || network.id === NetworkIdByName['kovan-ovm']
+				? [
+						{
+							name: MarketsTab.FUTURES,
+							label: t('dashboard.overview.markets-tabs.futures'),
+							active: activeMarketsTab === MarketsTab.FUTURES,
+							onClick: () => {
+								setActiveMarketsTab(MarketsTab.FUTURES);
+							},
+						},
+						{
+							name: MarketsTab.SPOT,
+							label: t('dashboard.overview.markets-tabs.spot'),
+							active: activeMarketsTab === MarketsTab.SPOT,
+							onClick: () => {
+								setActiveMarketsTab(MarketsTab.SPOT);
+							},
+						},
+				  ]
+				: [
+						{
+							name: MarketsTab.SPOT,
+							label: t('dashboard.overview.markets-tabs.spot'),
+							active: activeMarketsTab === MarketsTab.SPOT,
+							onClick: () => {
+								setActiveMarketsTab(MarketsTab.SPOT);
+							},
+						},
+				  ],
+		[activeMarketsTab, network.id, t]
 	);
 
 	return (

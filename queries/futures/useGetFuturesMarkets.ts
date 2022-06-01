@@ -34,7 +34,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			} = synthetixjs!;
 
 			const [markets, globals] = await Promise.all([
-				FuturesMarketData.allMarketSummaries(),
+				FuturesMarketData?.allMarketSummaries(),
 				FuturesMarketData.globals(),
 			]);
 
