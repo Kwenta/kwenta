@@ -1,3 +1,4 @@
+import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
@@ -124,9 +125,13 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	);
 
 	const NoOptionsMessage: FC<any> = (props) => {
+		const { network } = Connector.useContainer();
 		return (
 			<components.NoOptionsMessage {...props}>
-				<span>{t('header.balance.no-accessible-margin')}</span>
+				{(network.id === NetworkIdByName['mainnet-ovm'] ||
+					network.id === NetworkIdByName['kovan-ovm']) && (
+					<span>{t('header.balance.no-accessible-margin')}</span>
+				)}
 				<UniswapButton />
 			</components.NoOptionsMessage>
 		);
