@@ -99,15 +99,6 @@ const Overview: FC = () => {
 								setActivePositionsTab(PositionsTab.SPOT);
 							},
 						},
-						{
-							name: PositionsTab.SHORTS,
-							label: t('dashboard.overview.positions-tabs.shorts'),
-							disabled: true,
-							active: activePositionsTab === PositionsTab.SHORTS,
-							onClick: () => {
-								setActivePositionsTab(PositionsTab.SHORTS);
-							},
-						},
 				  ]
 				: [
 						{
@@ -117,15 +108,6 @@ const Overview: FC = () => {
 							detail: totalSpotBalancesValue,
 							onClick: () => {
 								setActivePositionsTab(PositionsTab.SPOT);
-							},
-						},
-						{
-							name: PositionsTab.SHORTS,
-							label: t('dashboard.overview.positions-tabs.shorts'),
-							disabled: true,
-							active: activePositionsTab === PositionsTab.SHORTS,
-							onClick: () => {
-								setActivePositionsTab(PositionsTab.SHORTS);
 							},
 						},
 				  ],
@@ -182,13 +164,12 @@ const Overview: FC = () => {
 			/>
 
 			<TabButtonsContainer hasDetail={true}>
-				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
+				{POSITIONS_TABS.map(({ name, label, badge, active, detail, onClick }) => (
 					<TabButton
 						key={name}
 						title={label}
 						badge={badge}
 						active={active}
-						disabled={disabled}
 						detail={detail}
 						onClick={onClick}
 					/>
@@ -207,8 +188,6 @@ const Overview: FC = () => {
 					exchangeRates={exchangeRates}
 				/>
 			</TabPanel>
-
-			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
 
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
