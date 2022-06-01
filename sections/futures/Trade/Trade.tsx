@@ -27,7 +27,6 @@ import MarketsDropdown from './MarketsDropdown';
 import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
-import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
@@ -42,6 +41,8 @@ import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
+import NextPriceInfoBox from '../MarketInfoBox/NextPriceInfoBox';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -51,6 +52,8 @@ type TradeProps = {
 	onEditPositionInput: (position: { size: string; side: PositionSide; leverage: string }) => void;
 	currencyKey: string;
 	potentialTrade: PotentialTrade | null;
+	orderType: number;
+	setOrderType: (orderType: number) => void;
 };
 
 const Trade: React.FC<TradeProps> = ({
@@ -59,6 +62,8 @@ const Trade: React.FC<TradeProps> = ({
 	position,
 	currencyKey,
 	potentialTrade,
+	orderType,
+	setOrderType,
 }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -105,7 +110,6 @@ const Trade: React.FC<TradeProps> = ({
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
-	const [orderType, setOrderType] = useState(0);
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
@@ -298,17 +302,25 @@ const Trade: React.FC<TradeProps> = ({
 
 	useEffect(() => {
 		if (orderTxn.hash) {
-			monitorTransaction({
-				txHash: orderTxn.hash,
-				onTxConfirmed: () => {
-					onLeverageChange('');
-					setTimeout(async () => {
-						futuresPositionHistoryQuery.refetch();
-						marketQuery.refetch();
-						refetch();
-					}, 5 * 1000);
-				},
-			});
+			try {
+				monitorTransaction({
+					txHash: orderTxn.hash,
+					onTxConfirmed: () => {
+						onLeverageChange('');
+						setTimeout(async () => {
+							futuresPositionHistoryQuery.refetch();
+							marketQuery.refetch();
+							refetch();
+						}, 5 * 1000);
+					},
+					onTxFailed: (failureMessage) => {
+						orderTxn.errorMessage = 'Something went wrong.';
+					},
+				});
+			} catch (e) {
+				console.log(e);
+				debugger;
+			}
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -336,26 +348,24 @@ const Trade: React.FC<TradeProps> = ({
 				</MarketActionButton>
 			</MarketActions>
 
-			<MarketInfoBox
-				totalMargin={position?.remainingMargin ?? zeroBN}
-				availableMargin={position?.accessibleMargin ?? zeroBN}
-				buyingPower={
-					position && position?.accessibleMargin.gt(zeroBN)
-						? position?.accessibleMargin?.mul(market?.maxLeverage ?? zeroBN)
-						: zeroBN
-				}
-				marginUsage={
-					position && position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin
-								?.sub(position?.accessibleMargin)
-								.div(position?.remainingMargin)
-						: zeroBN
-				}
-				isMarketClosed={isFuturesMarketClosed}
-				potentialTrade={potentialTrade}
-				maxLeverageValue={maxLeverageValue}
-				currencyKey={marketAsset}
-			/>
+			{orderType === 1 ? (
+				<NextPriceInfoBox
+					position={position}
+					isMarketClosed={isFuturesMarketClosed}
+					tradeSize={tradeSize ? wei(tradeSize) : zeroBN}
+					marketMaxLeverage={market?.maxLeverage}
+					side={leverageSide}
+					currencyKey={marketAsset}
+				/>
+			) : (
+				<MarketInfoBox
+					position={position}
+					isMarketClosed={isFuturesMarketClosed}
+					potentialTrade={potentialTrade}
+					marketMaxLeverage={market?.maxLeverage}
+					currencyKey={marketAsset}
+				/>
+			)}
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}

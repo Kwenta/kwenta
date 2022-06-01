@@ -30,6 +30,7 @@ type PositionCardProps = {
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
 	potentialTrade: PotentialTrade | null;
+	isNextPriceOrder: boolean;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
 };
@@ -70,6 +71,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	position,
 	currencyKeyRate,
 	potentialTrade,
+	isNextPriceOrder,
 }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
@@ -124,20 +126,15 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		const size: Wei = previewTradeData?.size;
 		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
 
-		const getPotentialLeverage = () => {
-			if (positionDetails.side !== potentialTrade?.side) {
-				return positionDetails.leverage.sub(potentialTrade?.leverage).abs();
-			} else {
-				return positionDetails.leverage.add(potentialTrade?.leverage).abs();
-			}
-		};
-
 		return {
 			sizeIsNotZero: size && !size?.eq(0),
 			positionSide: newSide,
 			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage: getPotentialLeverage(),
+			leverage:
+				positionDetails.side !== potentialTrade?.side
+					? positionDetails.leverage.sub(potentialTrade?.leverage).abs()
+					: positionDetails.leverage.add(potentialTrade?.leverage).abs(),
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
 			showStatus: previewTradeData.showStatus,
@@ -203,7 +200,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						sign: '$',
 						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
 					})})`}
-					<PreviewArrow showPreview={previewData.positionSize && previewData.sizeIsNotZero}>
+					<PreviewArrow
+						showPreview={
+							previewData.positionSize &&
+							previewData.sizeIsNotZero &&
+							!previewData.showStatus &&
+							!isNextPriceOrder
+						}
+					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
 							minDecimals: 4,
 						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
@@ -219,7 +223,11 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<>
 					{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
 					{
-						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+						<PreviewArrow
+							showPreview={
+								previewData.sizeIsNotZero && !previewData.showStatus && !isNextPriceOrder
+							}
+						>
 							{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
 						</PreviewArrow>
 					}
@@ -308,6 +316,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		previewData?.leverage,
 		previewData?.liquidationPrice,
 		previewData.avgEntryPrice,
+		isNextPriceOrder,
 		minDecimals,
 	]);
 

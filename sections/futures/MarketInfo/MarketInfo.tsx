@@ -20,6 +20,7 @@ type MarketInfoProps = {
 	position: FuturesPosition | null;
 	openOrders: any[];
 	potentialTrade: PotentialTrade | null;
+	orderType: number;
 	refetch(): void;
 };
 
@@ -29,6 +30,7 @@ const MarketInfo: FC<MarketInfoProps> = ({
 	openOrders,
 	refetch,
 	potentialTrade,
+	orderType,
 }) => {
 	const { t } = useTranslation();
 	const { useExchangeRatesQuery } = useSynthetixQueries();
@@ -65,6 +67,7 @@ const MarketInfo: FC<MarketInfoProps> = ({
 				openOrders={openOrders}
 				refetch={refetch}
 				potentialTrade={potentialTrade}
+				orderType={orderType}
 			/>
 		</Container>
 	);

@@ -222,12 +222,11 @@ export type FuturesPotentialTradeDetails = {
 	liqPrice: Wei;
 	margin: Wei;
 	price: Wei;
-	currentPrice: Wei;
-	currentPriceInvalid: Wei;
 	fee: Wei;
 	leverage: Wei;
 	notionalValue: Wei;
 	minInitialMargin: Wei;
+	side: PositionSide;
 	status: PotentialTradeStatus;
 	showStatus: boolean;
 	statusMessage: string;

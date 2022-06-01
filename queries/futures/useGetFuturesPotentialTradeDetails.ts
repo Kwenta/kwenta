@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
@@ -47,7 +46,7 @@ const useGetFuturesPotentialTradeDetails = (
 	return useQuery<FuturesPotentialTradeDetails | null>(
 		QUERY_KEYS.Futures.PotentialTrade(network.id, marketAsset || null, trade, walletAddress || ''),
 		async () => {
-			if (!marketAsset || !trade || !trade.size?.length) return null;
+			if (!marketAsset || !trade || !trade.size?.length || !isL2) return null;
 
 			const {
 				contracts: { FuturesMarketData },
@@ -56,33 +55,25 @@ const useGetFuturesPotentialTradeDetails = (
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
 			const newSize = trade.side === 'long' ? +trade.size : -trade.size;
 
-			const [
-				assetPrice,
-				globals,
-				{ fee, liqPrice, margin, price, size, status },
-			] = await Promise.all([
-				await FuturesMarketContract.assetPrice(),
+			const [globals, { fee, liqPrice, margin, price, size, status }] = await Promise.all([
 				await FuturesMarketData.globals(),
 				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), walletAddress),
 			]);
 
-			const ftrade = {
+			return {
 				fee: wei(fee),
 				liqPrice: wei(liqPrice),
 				margin: wei(margin),
 				price: wei(price),
-				currentPrice: wei(assetPrice.price),
-				currentPriceInvalid: assetPrice.invalid,
 				size: wei(size),
+				side: trade.side,
 				leverage: wei(trade.leverage),
 				notionalValue: wei(size).mul(wei(price)),
 				minInitialMargin: wei(globals.minInitialMargin),
-				status: status,
+				status,
 				showStatus: status > 0, // 0 is success
 				statusMessage: getStatusMessage(status),
 			};
-
-			return ftrade;
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && !!marketAsset && !!synthetixjs,

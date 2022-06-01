@@ -7,28 +7,35 @@ import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
 import { PotentialTrade } from '../types';
 import PreviewArrow from 'components/PreviewArrow';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import { FuturesPosition, FuturesPotentialTradeDetails } from 'queries/futures/types';
 
 type MarketInfoBoxProps = {
-	totalMargin: Wei;
-	availableMargin: Wei;
-	buyingPower: Wei;
-	marginUsage: Wei;
+	position: FuturesPosition | null;
 	isMarketClosed: boolean;
 	potentialTrade: PotentialTrade | null;
-	maxLeverageValue: Wei;
+	marketMaxLeverage: Wei | undefined;
 	currencyKey: string;
 };
 
 const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
-	totalMargin,
-	availableMargin,
-	buyingPower,
-	marginUsage,
+	position,
 	isMarketClosed,
 	potentialTrade,
-	maxLeverageValue,
+	marketMaxLeverage,
 	currencyKey,
 }) => {
+	const totalMargin = position?.remainingMargin ?? zeroBN;
+	const availableMargin = position?.accessibleMargin ?? zeroBN;
+	const buyingPower =
+		position && position?.accessibleMargin.gt(zeroBN)
+			? position?.accessibleMargin?.mul(marketMaxLeverage ?? zeroBN)
+			: zeroBN;
+
+	const marginUsage =
+		position && position?.remainingMargin.gt(zeroBN)
+			? position?.remainingMargin?.sub(position?.accessibleMargin).div(position?.remainingMargin)
+			: zeroBN;
+
 	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(
 		currencyKey as CurrencyKey,
 		potentialTrade
@@ -36,27 +43,39 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 
 	const previewTrade = potentialTradeDetails.data ?? null;
 
+	const getPotentialAvailableMargin = (
+		previewTrade: FuturesPotentialTradeDetails | null,
+		marketMaxLeverage: Wei | undefined
+	) => {
+		let inaccessible;
+
+		inaccessible = previewTrade?.notionalValue.div(marketMaxLeverage).abs() ?? zeroBN;
+
+		// If the user has a position open, we'll enforce a min initial margin requirement.
+		if (inaccessible.gt(0)) {
+			if (inaccessible.lt(previewTrade?.minInitialMargin ?? zeroBN)) {
+				inaccessible = previewTrade?.minInitialMargin ?? zeroBN;
+			}
+		}
+
+		return previewTrade?.margin?.sub(inaccessible).abs() ?? zeroBN;
+	};
+
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(potentialTrade?.size || zeroBN);
-		const potentialAvailableMargin =
-			previewTrade?.margin?.sub(previewTrade?.minInitialMargin) || zeroBN;
-		const potentialBuyingPower = previewTrade?.margin?.mul(maxLeverageValue);
-		const potentialMarginUsage =
-			previewTrade?.margin.sub(potentialAvailableMargin).div(previewTrade?.margin).abs() || zeroBN;
+		const potentialAvailableMargin = getPotentialAvailableMargin(previewTrade, marketMaxLeverage);
+		const potentialBuyingPower = potentialAvailableMargin?.mul(marketMaxLeverage).abs() ?? zeroBN;
+		const enumeratorMarginUsage = previewTrade?.margin?.sub(potentialAvailableMargin);
+		const potentialMarginUsage = enumeratorMarginUsage?.div(previewTrade?.margin)?.abs() ?? zeroBN;
 
 		return {
 			showPreview: size && !size.eq(0),
 			totalMargin: previewTrade?.margin || zeroBN,
-			availableMargin: potentialAvailableMargin, // potentialAvailableMargin.gt(0) ? : zeroBN,
-			buyingPower: potentialBuyingPower, // potentialTotalMargin.gt(0) ? : zeroBN,
-			marginUsage: potentialMarginUsage, // potentialMarginUsage.gt(0) ? : zeroBN,
+			availableMargin: potentialAvailableMargin.gt(0) ? potentialAvailableMargin : zeroBN,
+			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
+			marginUsage: potentialMarginUsage.gt(0) ? potentialMarginUsage : zeroBN,
 		};
-	}, [
-		potentialTrade?.size,
-		previewTrade?.margin,
-		previewTrade?.minInitialMargin,
-		maxLeverageValue,
-	]);
+	}, [potentialTrade?.size, previewTrade, marketMaxLeverage]);
 
 	return (
 		<StyledInfoBox
@@ -66,34 +85,30 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 						currencyKey: Synths.sUSD,
 						sign: '$',
 					})}`,
-					valueNode: (
-						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
-							{formatCurrency(Synths.sUSD, previewTradeData?.totalMargin, {
-								currencyKey: Synths.sUSD,
-								sign: '$',
-							})}
-						</PreviewArrow>
-					),
 				},
 				'Available Margin': {
 					value: `${formatCurrency(Synths.sUSD, availableMargin, {
-						currencyKey: previewTradeData.showPreview ? undefined : Synths.sUSD,
+						currencyKey: undefined,
 						sign: '$',
 					})}`,
 					valueNode: (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
 							{formatCurrency(Synths.sUSD, previewTradeData?.availableMargin, {
-								currencyKey: Synths.sUSD,
 								sign: '$',
 							})}
 						</PreviewArrow>
 					),
 				},
 				'Buying Power': {
-					value: `${formatCurrency(Synths.sUSD, buyingPower, { sign: '$' })}`,
+					value: `${formatCurrency(Synths.sUSD, buyingPower, {
+						currencyKey: undefined,
+						sign: '$',
+					})}`,
 					valueNode: previewTradeData?.buyingPower && (
 						<PreviewArrow showPreview={previewTradeData.showPreview && !previewTrade?.showStatus}>
-							{formatCurrency(Synths.sUSD, previewTradeData?.buyingPower, { sign: '$' })}
+							{formatCurrency(Synths.sUSD, previewTradeData?.buyingPower, {
+								sign: '$',
+							})}
 						</PreviewArrow>
 					),
 				},
