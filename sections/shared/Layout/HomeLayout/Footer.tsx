@@ -57,11 +57,6 @@ const Footer: React.FC = () => {
 					link: EXTERNAL_LINKS.Docs.Perpetuals,
 				},
 				{
-					key: 'short',
-					title: t('homepage.footer.use-kwenta.short'),
-					link: EXTERNAL_LINKS.Docs.Shorting,
-				},
-				{
 					key: 'spot',
 					title: t('homepage.footer.use-kwenta.spot'),
 					link: EXTERNAL_LINKS.Docs.Spot,

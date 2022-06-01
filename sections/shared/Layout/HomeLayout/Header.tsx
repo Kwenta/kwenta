@@ -34,7 +34,7 @@ const Header: FC = () => {
 			{
 				key: 'market',
 				label: t('homepage.nav.markets'),
-				onClick: () => router.push(ROUTES.Markets.Home),
+				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				key: 'governance',
