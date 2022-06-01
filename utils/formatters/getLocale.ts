@@ -330,6 +330,9 @@ function getLocale() {
 		case 'zh-tw':
 			locale_ = zhTW;
 			break;
+
+		default:
+			console.error('Locale could not be detected.');
 	}
 
 	return locale_;
