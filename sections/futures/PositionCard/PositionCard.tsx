@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import { FlexDivCol } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { HoverTransform } from '../MarketDetails/MarketDetails';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { isFiatCurrency } from 'utils/currencies';
@@ -102,147 +101,73 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 			}),
 			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.position-side')}
+				<PositionValue
+					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 				>
-					<HoverTransform>
-						<PositionValue
-							side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-						>
-							{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
-						</PositionValue>
-					</HoverTransform>
-				</PositionCardTooltip>
+					{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+				</PositionValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			),
-			positionSize: positionDetails ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.position-size')}
-				>
-					<HoverTransform>
-						{`${formatNumber(positionDetails.size ?? 0, {
-							minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-						})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
-							sign: '$',
-							minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-						})})`}
-					</HoverTransform>
-				</PositionCardTooltip>
-			) : (
-				NO_VALUE
-			),
-			leverage: positionDetails ? (
-				<LeftMarginTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.leverage')}
-				>
-					<HoverTransform>{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}</HoverTransform>
-				</LeftMarginTooltip>
-			) : (
-				NO_VALUE
-			),
-			liquidationPrice: positionDetails ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.liquidation-price')}
-				>
-					<HoverTransform>
-						{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
-							sign: '$',
-							minDecimals,
-						})}
-					</HoverTransform>
-				</PositionCardTooltip>
-			) : (
-				NO_VALUE
-			),
+			positionSize: positionDetails
+				? `${formatNumber(positionDetails.size ?? 0, {
+						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
+				  })} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
+						sign: '$',
+						minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
+				  })})`
+				: NO_VALUE,
+			leverage: positionDetails
+				? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'
+				: NO_VALUE,
+			liquidationPrice: positionDetails
+				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+						sign: '$',
+						minDecimals,
+				  })
+				: NO_VALUE,
 			pnl: pnl ?? NO_VALUE,
 			realizedPnl: realizedPnl,
 			pnlText:
-				positionDetails && pnl ? (
-					<PositionCardTooltip
-						preset="bottom"
-						height={'auto'}
-						content={t('futures.market.position-card.tooltips.u-pnl')}
-					>
-						<HoverTransform>
-							{`${formatCurrency(Synths.sUSD, pnl, {
-								sign: '$',
-								minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-							})} (${formatPercent(pnl.div(positionDetails.initialMargin))})`}
-						</HoverTransform>
-					</PositionCardTooltip>
-				) : (
-					NO_VALUE
-				),
+				positionDetails && pnl
+					? `${formatCurrency(Synths.sUSD, pnl, {
+							sign: '$',
+							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
+					  })} (${formatPercent(pnl.div(positionDetails.initialMargin))})`
+					: NO_VALUE,
 			realizedPnlText:
-				positionHistory && realizedPnl ? (
-					<PositionCardTooltip
-						preset="bottom"
-						height={'auto'}
-						content={t('futures.market.position-card.tooltips.r-pnl')}
-					>
-						<HoverTransform>
-							{`${formatCurrency(Synths.sUSD, realizedPnl, {
-								sign: '$',
-								minDecimals: 2,
-							})}`}
-						</HoverTransform>
-					</PositionCardTooltip>
-				) : (
-					NO_VALUE
-				),
+				positionHistory && realizedPnl
+					? formatCurrency(Synths.sUSD, realizedPnl, {
+							sign: '$',
+							minDecimals: 2,
+					  })
+					: NO_VALUE,
 			netFunding: netFunding,
-			netFundingText: netFunding ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.net-funding')}
-				>
-					<HoverTransform>{`${formatCurrency(Synths.sUSD, netFunding, {
+			netFundingText: netFunding
+				? `${formatCurrency(Synths.sUSD, netFunding, {
 						sign: '$',
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
-					})}`}</HoverTransform>
-				</PositionCardTooltip>
-			) : null,
+				  })}`
+				: null,
 			fees: positionDetails ? (
 				<PositionCardTooltip
 					preset="bottom"
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.fees')}
 				>
-					<HoverTransform>
-						{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
-							sign: '$',
-						})}
-					</HoverTransform>
+					{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+						sign: '$',
+					})}
 				</PositionCardTooltip>
 			) : (
 				NO_VALUE
 			),
-			avgEntryPrice: positionDetails ? (
-				<LeftMarginTooltip
-					preset="bottom-z-index-2-left-margin"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.avg-entry-price')}
-				>
-					<HoverTransform>
-						{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-							sign: '$',
-							minDecimals,
-						})}
-					</HoverTransform>
-				</LeftMarginTooltip>
-			) : (
-				NO_VALUE
-			),
+			avgEntryPrice: positionDetails
+				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+						sign: '$',
+						minDecimals,
+				  })
+				: NO_VALUE,
 		};
 	}, [
 		currencyKey,
@@ -264,18 +189,42 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						<StyledValue>{data.marketPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.position-side')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.position-side')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.position-side')}
+							</StyledSubtitleWithCursor>
+						</PositionCardTooltip>
 						{data.positionSide}
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.position-size')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.position-size')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.position-size')}
+							</StyledSubtitleWithCursor>
+						</PositionCardTooltip>
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
 				</DataCol>
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.net-funding')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.net-funding')}
+							</StyledSubtitleWithCursor>
+						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
 								className={
@@ -289,7 +238,15 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						)}
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.r-pnl')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.r-pnl')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.r-pnl')}
+							</StyledSubtitleWithCursor>
+						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue
 								className={
@@ -303,18 +260,40 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						)}
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.liquidation-price')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.liquidation-price')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.liquidation-price')}
+							</StyledSubtitleWithCursor>
+						</PositionCardTooltip>
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
 				<DataColDivider />
 				<DataCol>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
+						<LeftMarginTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.leverage')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.leverage')}
+							</StyledSubtitleWithCursor>
+						</LeftMarginTooltip>
 						<StyledValue>{data.leverage}</StyledValue>
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.u-pnl')}
+						>
+							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
 								{data.pnlText}
@@ -324,7 +303,15 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						)}
 					</InfoRow>
 					<InfoRow>
-						<StyledSubtitle>{t('futures.market.position-card.avg-entry-price')}</StyledSubtitle>
+						<LeftMarginTooltip
+							preset="bottom-z-index-2-left-margin"
+							height={'auto'}
+							content={t('futures.market.position-card.tooltips.avg-entry-price')}
+						>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.avg-entry-price')}
+							</StyledSubtitleWithCursor>
+						</LeftMarginTooltip>
 						<StyledValue>{data.avgEntryPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
@@ -379,6 +366,15 @@ const StyledSubtitle = styled.p`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	text-transform: capitalize;
 	margin: 0;
+`;
+
+const StyledSubtitleWithCursor = styled.p`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	text-transform: capitalize;
+	margin: 0;
+	cursor: help;
 `;
 
 const PositionCardTooltip = styled(StyledTooltip)`

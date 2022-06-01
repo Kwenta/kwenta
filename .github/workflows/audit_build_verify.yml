@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Audit dependencies
         run: npm audit --audit-level=critical
@@ -35,14 +35,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
+        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd # pin@v3
         with:
           path: |
             .npm-cache
@@ -91,14 +91,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
+        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd # pin@v3
         with:
           path: |
             .npm-cache
@@ -119,7 +119,7 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Cache next.js build cache
-        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
+        uses: actions/cache@30f413bfed0a2bc738fdfd409e5a9e96b24545fd # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
