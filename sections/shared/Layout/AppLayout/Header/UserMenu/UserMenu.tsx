@@ -48,10 +48,10 @@ const UserMenu: FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<CTARow>
-			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
+			<SwitchToL2Button variant="secondary" onClick={switchToL2} noOutline={true}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+			<ConnectButton size="sm" data-testid="unsupported-network" mono noOutline={true}>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
