@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
 				{
 					key: 'faq',
 					title: t('homepage.footer.about-kwenta.faq'),
-					link: '',
+					link: EXTERNAL_LINKS.Docs.Faq,
 				},
 				{
 					key: 'dao-roles',
@@ -65,6 +65,11 @@ const Footer: React.FC = () => {
 					key: 'spot',
 					title: t('homepage.footer.use-kwenta.spot'),
 					link: EXTERNAL_LINKS.Docs.Spot,
+				},
+				{
+					key: 'legacy',
+					title: t('homepage.footer.use-kwenta.legacy'),
+					link: EXTERNAL_LINKS.Trading.Legacy,
 				},
 			],
 		},

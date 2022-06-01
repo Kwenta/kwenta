@@ -45,7 +45,7 @@ const LEARNS = [
 		title: 'homepage.learn.faq',
 		copy: '',
 		image: <img src={FaqIcon} />,
-		onClick: () => {},
+		onClick: () => window.open(EXTERNAL_LINKS.Docs.Faq, '_blank'),
 	},
 ];
 
@@ -70,7 +70,7 @@ const Learn = () => {
 							{key !== 'faq' ? (
 								<FeatureTitle className={key}>{t(title)}</FeatureTitle>
 							) : (
-								<FeatureTitle className={key}>
+								<FeatureTitle className={key} onClick={onClick}>
 									{t(title)}
 									<ArrowUpRightIcon />
 								</FeatureTitle>
@@ -138,6 +138,7 @@ const FeatureTitle = styled(Title)`
 		padding-bottom: 0px;
 		margin: 5px;
 		margin-left: 0px;
+		cursor: pointer;
 	}
 
 	svg {

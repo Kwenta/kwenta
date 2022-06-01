@@ -267,7 +267,8 @@
 				"how-to": "How to use Kwenta",
 				"perps": "Perpetuals",
 				"short": "Shorting",
-				"spot": "Spot Trading"
+				"spot": "Spot Trading",
+				"legacy": "Legacy Exchange"
 			},
 			"community": {
 				"title": "Community",

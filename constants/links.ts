@@ -4,6 +4,7 @@ export const PROD_HOSTNAME = 'kwenta.io';
 
 export const EXTERNAL_LINKS = {
 	Trading: {
+		Legacy: 'https://kwenta.io/exchange',
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,
@@ -37,6 +38,7 @@ export const EXTERNAL_LINKS = {
 		Spot: 'https://docs.kwenta.io/products/swaps ',
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
+		Faq: 'https://docs.kwenta.io/resources/faq',
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
