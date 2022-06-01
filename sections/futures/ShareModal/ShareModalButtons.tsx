@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import { toPng } from 'html-to-image';
+import styled from 'styled-components';
+
 import { useTranslation } from 'react-i18next';
 
 import Button from 'components/Button';
@@ -8,9 +9,8 @@ import Button from 'components/Button';
 import TwitterIcon from 'assets/svg/social/twitter.svg';
 
 function createTweet(text: any) {
-	const url = 'https://v2.beta.kwenta.io';
 	const via = 'kwenta_io';
-	const twitterURL = `https://twitter.com/intent/tweet?&text=${text}&url=${url}&=${via}`;
+	const twitterURL = `https://twitter.com/intent/tweet?&text=${text}&=${via}`;
 
 	window.open(twitterURL, 'twitter');
 }
@@ -20,9 +20,8 @@ const ShareModalButtons = () => {
 	const [copied, setCopied] = useState<boolean>(false);
 	const [fetchingImage, setFetchingImage] = useState<boolean>(false);
 
-	const handleShare = () => {
-		const text = t('futures.modals.share.tweet-text');
-		createTweet(text);
+	const handleShare = async () => {
+		createTweet(t('futures.modals.share.tweet-text'));
 	};
 
 	const handleCopyImageToClipboard = async () => {

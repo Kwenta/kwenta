@@ -900,7 +900,7 @@
 			},
 			"share": {
 				"title": "Share",
-				"tweet-text": "<PLACEHOLDER_TEXT>",
+				"tweet-text": "Come trade on https://kwenta.io!",
 				"buttons": {
 					"tweet-my-pnl": "Share",
 					"copy": "Copy",
