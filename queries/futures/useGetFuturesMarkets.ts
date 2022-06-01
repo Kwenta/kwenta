@@ -3,7 +3,12 @@ import { useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import {
+	isL2KovanState,
+	isL2MainnetState,
+	isWalletConnectedState,
+	networkState,
+} from 'store/wallet';
 
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
@@ -18,13 +23,14 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const { synthetixjs } = Connector.useContainer();
 
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const isL2 = useRecoilValue(isL2State);
+	const isL2Mainnet = useRecoilValue(isL2MainnetState);
+	const isL2Kovan = useRecoilValue(isL2KovanState);
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
-			if (isWalletConnected && !isL2) {
+			if (isWalletConnected && (!isL2Mainnet || !isL2Kovan) && !isAppReady) {
 				return null;
 			}
 
@@ -34,7 +40,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			} = synthetixjs!;
 
 			const [markets, globals] = await Promise.all([
-				FuturesMarketData?.allMarketSummaries(),
+				FuturesMarketData.allMarketSummaries(),
 				FuturesMarketData.globals(),
 			]);
 
@@ -81,7 +87,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			);
 		},
 		{
-			enabled: isWalletConnected ? isL2 && isReady : isReady,
+			enabled: isWalletConnected ? (isL2Mainnet || isL2Kovan) && isReady : isReady,
 			refetchInterval: 15000,
 			...options,
 		}

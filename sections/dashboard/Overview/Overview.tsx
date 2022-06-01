@@ -36,11 +36,14 @@ const Overview: FC = () => {
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
+	const { network } = Connector.useContainer();
+
+	const isL2MainnetOrL2Kovan =
+		network.id === NetworkIdByName['mainnet-ovm'] || network.id === NetworkIdByName['kovan-ovm'];
+
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const { network } = Connector.useContainer();
-	console.log('network in overview: ', network);
 	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
@@ -75,7 +78,7 @@ const Overview: FC = () => {
 
 	const POSITIONS_TABS = useMemo(
 		() =>
-			network.id === NetworkIdByName['mainnet-ovm'] || network.id === NetworkIdByName['kovan-ovm']
+			isL2MainnetOrL2Kovan
 				? [
 						{
 							name: PositionsTab.FUTURES,
@@ -129,7 +132,7 @@ const Overview: FC = () => {
 		[
 			activePositionsTab,
 			futuresPositionQuery?.data?.length,
-			network.id,
+			isL2MainnetOrL2Kovan,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,
@@ -138,7 +141,7 @@ const Overview: FC = () => {
 
 	const MARKETS_TABS = useMemo(
 		() =>
-			network.id === NetworkIdByName['mainnet-ovm'] || network.id === NetworkIdByName['kovan-ovm']
+			isL2MainnetOrL2Kovan
 				? [
 						{
 							name: MarketsTab.FUTURES,
@@ -167,7 +170,7 @@ const Overview: FC = () => {
 							},
 						},
 				  ],
-		[activeMarketsTab, network.id, t]
+		[activeMarketsTab, isL2MainnetOrL2Kovan, t]
 	);
 
 	return (
