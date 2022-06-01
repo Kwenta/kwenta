@@ -30,7 +30,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
-			if (isWalletConnected && (!isL2Mainnet || !isL2Kovan) && !isAppReady) {
+			if (isWalletConnected && !isL2Mainnet && !isL2Kovan && !isAppReady) {
 				return null;
 			}
 
