@@ -49,7 +49,7 @@ const darkTheme = {
 		},
 	},
 	input: {
-		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
+		background: '#151515',
 		secondary: {
 			background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
 		},

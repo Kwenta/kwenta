@@ -57,7 +57,7 @@ const CustomInputContainer = styled.div`
 	justify-content: space-between;
 	box-sizing: border-box;
 	height: 46px;
-	background: ${(props) => props.theme.colors.selectedTheme.input.background};
+	background: ${(props) => props.theme.colors.selectedTheme.input.secondary.background};
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.input.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;

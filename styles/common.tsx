@@ -125,7 +125,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 			? css`
 					cursor: pointer;
 					&:hover {
-						background-color: ${(props) => props.theme.colors.black};
+						background-color: ${(props) => props.theme.colors.selectedTheme.cell.hover};
 					}
 			  `
 			: css`
@@ -406,9 +406,7 @@ export const SwapCurrenciesButton = styled.button`
 	justify-content: center;
 	z-index: ${zIndex.BASE};
 	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	cursor: pointer;
 	${border}
 	transition-duration: 0.1s;
@@ -438,5 +436,8 @@ export const SwapCurrenciesButton = styled.button`
 		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
 		z-index: 1;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
 	}
 `;

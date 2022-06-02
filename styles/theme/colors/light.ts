@@ -50,7 +50,7 @@ const lightTheme = {
 		},
 	},
 	input: {
-		background: 'transparent',
+		background: '#cbcbcb',
 		secondary: {
 			background: 'transparent',
 		},

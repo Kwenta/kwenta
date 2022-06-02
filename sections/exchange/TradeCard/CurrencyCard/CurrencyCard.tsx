@@ -220,7 +220,7 @@ const InputContainer = styled(FlexDivCol)`
 
 const InputLabel = styled.div`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.common.primaryGold};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	line-height: 0.75em;
@@ -278,14 +278,14 @@ const CurrencySelector = styled.div<{
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
-	background: ${(props) => props.theme.colors.inputGradient};
+	background: ${(props) => props.theme.colors.selectedTheme.input.background};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.inputHighlight};
 	border-radius: 8px;
 	height: 84px;
 	width: 290px;
 	position: relative;
+
 	${(props) =>
 		props.disableInput &&
 		css`
@@ -311,7 +311,7 @@ const CurrencyAmountValue = styled.div`
 	line-height: 1.25em;
 	width: 150px;
 	overflow: hidden;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const Slippage = styled.div`
@@ -356,7 +356,7 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 	${(props) =>
 		props.insufficientBalance &&
 		css`
-			color: ${props.theme.colors.red};
+			color: ${props.theme.colors.selectedTheme.red};
 		`}
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;

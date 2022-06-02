@@ -15,7 +15,7 @@ export const border = css`
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	border: none;
-	&:hover {
+	&:hover:enabled {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 	}
 
