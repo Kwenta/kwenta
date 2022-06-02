@@ -174,7 +174,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	}, [router.events]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
-		const valueIsNull = value === '' || Number(value) === 0;
+		const valueIsNull = marketAssetRate.eq(0) || value === '' || Number(value) === 0;
 		const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
 		const leverage = valueIsNull
 			? ''
