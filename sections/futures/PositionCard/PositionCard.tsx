@@ -241,6 +241,22 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						<PositionCardTooltip
 							preset="bottom"
 							height={'auto'}
+							content={t('futures.market.position-card.tooltips.u-pnl')}
+						>
+							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+						</PositionCardTooltip>
+						{positionDetails ? (
+							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
+								{data.pnlText}
+							</StyledValue>
+						) : (
+							<StyledValue>{NO_VALUE}</StyledValue>
+						)}
+					</InfoRow>
+					<InfoRow>
+						<PositionCardTooltip
+							preset="bottom"
+							height={'auto'}
 							content={t('futures.market.position-card.tooltips.r-pnl')}
 						>
 							<StyledSubtitleWithCursor>
@@ -258,18 +274,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						) : (
 							<StyledValue>{NO_VALUE}</StyledValue>
 						)}
-					</InfoRow>
-					<InfoRow>
-						<PositionCardTooltip
-							preset="bottom"
-							height={'auto'}
-							content={t('futures.market.position-card.tooltips.liquidation-price')}
-						>
-							<StyledSubtitleWithCursor>
-								{t('futures.market.position-card.liquidation-price')}
-							</StyledSubtitleWithCursor>
-						</PositionCardTooltip>
-						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
 				<DataColDivider />
@@ -290,17 +294,13 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 						<PositionCardTooltip
 							preset="bottom"
 							height={'auto'}
-							content={t('futures.market.position-card.tooltips.u-pnl')}
+							content={t('futures.market.position-card.tooltips.liquidation-price')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.liquidation-price')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
-						{positionDetails ? (
-							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
-								{data.pnlText}
-							</StyledValue>
-						) : (
-							<StyledValue>{NO_VALUE}</StyledValue>
-						)}
+						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<LeftMarginTooltip
