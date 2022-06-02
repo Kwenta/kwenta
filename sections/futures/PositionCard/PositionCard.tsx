@@ -146,12 +146,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
 					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
-
-			// ? `${formatCurrency(Synths.sUSD, realizedPnl, {
-			// 		sign: '$',
-			// 		minDecimals: 2,
-			//   })
-			// : NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
 				? `${formatCurrency(Synths.sUSD, netFunding, {
