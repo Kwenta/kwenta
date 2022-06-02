@@ -187,13 +187,13 @@ const StyledTableHeader = styled.div`
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 	align-items: center;
 `;
 
 const StyledCurrencyKey = styled.span`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-right: 10px;
 `;
 

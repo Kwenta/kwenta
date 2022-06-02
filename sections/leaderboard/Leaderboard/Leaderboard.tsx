@@ -279,7 +279,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.green
 			: props.price < 0
 			? props.theme.colors.red
-			: props.theme.colors.white};
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 const SearchContainer = styled.div`
@@ -314,13 +314,13 @@ const TableHeader = styled.div`
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 	align-items: center;
 `;
 
 const StyledTrader = styled.a`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 
 	&:hover {

@@ -137,7 +137,7 @@ const FuturesBannerLinkWrapper = styled.div`
 	text-align: center;
 	position: absolute;
 	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	display: flex;

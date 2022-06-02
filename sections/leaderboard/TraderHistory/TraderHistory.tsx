@@ -197,7 +197,7 @@ const TitleText = styled.a`
 `;
 
 const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 `;
 
@@ -210,7 +210,7 @@ const TitleSeparator = styled.div`
 
 const TraderText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 
 	&:hover {
 		text-decoration: underline;
@@ -235,7 +235,7 @@ const CurrencyInfo = styled(FlexDiv)`
 const StyledSubtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 `;
 
@@ -246,7 +246,7 @@ const ColorCodedPrice = styled(Currency.Price)`
 			? props.theme.colors.green
 			: props.price < 0
 			? props.theme.colors.red
-			: props.theme.colors.white};
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 export default TraderHistory;

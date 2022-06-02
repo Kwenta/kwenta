@@ -81,7 +81,7 @@ const StyledSvg = styled(PausedIcon)`
 
 const StyledText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 24px;
 	padding-bottom: 10px;
 `;

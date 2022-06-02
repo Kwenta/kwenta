@@ -407,7 +407,7 @@ const PositionValue = styled.p<{ side: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
 	${Container}#closed & {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

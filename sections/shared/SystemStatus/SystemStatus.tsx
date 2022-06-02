@@ -135,7 +135,7 @@ const titleCSS = css`
 const Title = styled.h1`
 	${titleCSS};
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-bottom: 15px;
 	line-height: 28px;
 `;

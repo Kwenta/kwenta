@@ -249,7 +249,7 @@ const CurrencySelector = styled.div<{
 	font-size: 18px;
 	line-height: 1em;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
@@ -358,7 +358,7 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 		css`
 			color: ${props.theme.colors.red};
 		`}
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledLoader = styled(Loader)`

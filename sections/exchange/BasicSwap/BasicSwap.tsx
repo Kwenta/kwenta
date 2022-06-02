@@ -42,7 +42,7 @@ const BasicSwap: FC = () => {
 export default BasicSwap;
 
 const ExchangeTitle = styled(BoldText)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 30px;
 	margin-bottom: 1.5em;
 	text-align: center;

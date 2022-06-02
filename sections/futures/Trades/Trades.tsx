@@ -233,7 +233,7 @@ const StyledExternalLink = styled(ExternalLink)`
 	&:hover {
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.text};
 			}
 		}
 	}

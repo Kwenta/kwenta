@@ -37,7 +37,7 @@ export const CurrencyFeeReclaim: FC<CurrencyFeeReclaimProps> = ({ currencyKey })
 };
 
 const Container = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding: 12px 16px;
 	border-bottom: 1px solid ${(props) => props.theme.colors.navy};
 `;

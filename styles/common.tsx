@@ -205,7 +205,7 @@ export const Tooltip = styled(Tippy)`
 export const InfoTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.navy};
 	}
@@ -261,7 +261,7 @@ export const IconButton = styled.button`
 export const CenteredMessage = styled.div`
 	${absoluteCenteredCSS};
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: center;
 	display: grid;
@@ -331,7 +331,7 @@ export const DropdownSelection = styled.span.attrs({
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: uppercase;
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color3};
@@ -398,7 +398,7 @@ export const ExchangeCardsWithSelector = styled.div`
 `;
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	height: 32px;
 	width: 32px;
 	display: flex;

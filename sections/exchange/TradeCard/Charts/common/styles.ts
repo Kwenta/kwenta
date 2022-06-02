@@ -25,7 +25,7 @@ export const LinkTag = styled.span`
 export const CurrencyLabel = styled.div`
 	font-size: 14px;
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	display: flex;
 	align-items: center;
@@ -34,7 +34,7 @@ export const CurrencyLabel = styled.div`
 
 export const CurrencyPrice = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export const Actions = styled(FlexDiv)<{ reverseChildren?: boolean }>`
@@ -62,12 +62,13 @@ export const ChartBody = styled.div<{ paddingTop?: string }>`
 
 export const StyledTextButton = styled(TextButton)<{ isActive: boolean; isDisabled: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
+	color: ${(props) =>
+		props.isActive ? props.theme.colors.selectedTheme.button.text : props.theme.colors.blueberry};
 	opacity: ${(props) => (props.isDisabled ? 0.2 : 1)};
 	border-bottom: 2px solid
 		${(props) => (props.isActive ? props.theme.colors.goldColors.color1 : 'transparent')};
 	&:hover {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 
@@ -80,7 +81,7 @@ export const TooltipContentStyle = styled.div`
 `;
 
 export const ItemStyle = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding: 3px 5px;
 `;
 
@@ -95,7 +96,7 @@ export const OverlayMessage = styled(GridDivCenteredRow)`
 
 export const OverlayMessageTitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 14px;
 	padding-top: 10px;
 	padding-bottom: 5px;
@@ -112,7 +113,7 @@ export const OverlayTimer = styled.div`
 
 export const NoData = styled.div`
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export const CurrencyLabelWithDot = styled(CurrencyLabel)`

@@ -198,7 +198,7 @@ const StyledAccordion = styled(Accordion)`
 	}
 	[data-reach-accordion-button] {
 		${resetButtonCSS};
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		font-size: 32px;
 		width: 100%;
 		text-align: left;
@@ -213,7 +213,7 @@ const StyledAccordion = styled(Accordion)`
 		`}
 	}
 	[data-reach-accordion-panel] {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		font-size: 16px;
 		line-height: 22px;
 		padding-top: 8px;

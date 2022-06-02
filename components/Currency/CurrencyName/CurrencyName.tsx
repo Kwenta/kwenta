@@ -77,7 +77,7 @@ const NameAndSymbol = styled.span`
 `;
 
 const Symbol = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	display: flex;

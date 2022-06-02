@@ -80,7 +80,7 @@ const FinishTime = styled.div`
 `;
 
 const ClosedLabel = styled(CountdownTime)`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 30px;
 `;

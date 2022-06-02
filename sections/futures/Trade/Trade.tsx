@@ -557,7 +557,7 @@ const CloseOrderButton = styled(Button)`
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.red};
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		transform: scale(0.98);
 	}
 

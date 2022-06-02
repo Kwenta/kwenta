@@ -232,7 +232,7 @@ const CategoryButton = styled(Button)`
 		props.isActive &&
 		css`
 			transform: scale(0.99);
-			color: ${props.theme.colors.common.primaryWhite};
+			color: ${props.theme.colors.selectedTheme.button.text};
 			border: 2px solid ${props.theme.colors.common.primaryGold};
 			border-radius: 11px;
 			background: ${props.theme.colors.selectedTheme.button.hover};
@@ -257,7 +257,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export default SelectCurrencyModal;

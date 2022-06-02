@@ -37,7 +37,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 			font-style: normal;
 			line-height: 150%;
 			white-space: pre-line;
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 
 		${(props) =>

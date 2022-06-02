@@ -123,7 +123,7 @@ const ConnectButton = styled(Button)`
 
 const SwitchToL2Button = styled(Button)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 

@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { PositionSide } from '../types';
 
 function textColor(props: any) {
-	if (!props.className || props.className === 'row-name') return props.theme.colors.white;
+	if (!props.className || props.className === 'row-name')
+		return props.theme.colors.selectedTheme.button.text;
 	if (props.className === 'long') return '#7FD482';
 	if (props.className === 'short') return '#EF6868';
 	if (props.className === 'gray-font-color') return '#787878';

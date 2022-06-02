@@ -63,7 +63,7 @@ const LegendBox = styled.div<{ stroke: string; background: string }>`
 
 const LegendLabel = styled.div`
 	margin-top: 12px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const strokeColor = (asset: string) => {
