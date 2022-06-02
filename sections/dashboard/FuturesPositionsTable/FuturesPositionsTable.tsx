@@ -61,9 +61,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
 						liquidationPrice: position?.position?.liquidationPrice,
 						pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-						pnlPct: position?.position?.profitLoss.div(
-							position?.position?.initialMargin.mul(position?.position?.initialLeverage)
-						),
+						pnlPct: position?.position?.profitLoss
+							.add(position?.position?.accruedFunding)
+							.div(position?.position?.initialMargin),
 						margin: position.accessibleMargin,
 						leverage: position?.position?.leverage,
 						isSuspended: market?.isSuspended,

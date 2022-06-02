@@ -200,10 +200,10 @@ const TimeValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-decoration: underline;
-	padding-left: 10px;
 `;
 
 const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boolean }>`
+	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
 			? props.theme.colors.selectedTheme.button.text

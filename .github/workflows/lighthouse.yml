@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # pin@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Run lighthouse
         run: |
@@ -29,7 +29,7 @@ jobs:
         continue-on-error: true
 
       - name: Archive lighthouse artifacts
-        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074 # pin@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v2
         # run on lighthouse fail
         if: always()
         with:

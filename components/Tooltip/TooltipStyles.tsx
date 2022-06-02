@@ -27,13 +27,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 		bottom: ${(props) => props.bottom};
 		left: ${(props) => props.left};
 		right: ${(props) => props.right};
+		z-index: 2;
 
 		p, span {
 			margin: auto;
 			margin-left: 3px;
-			font-size: 12px;
+			font-size: 13px;
 			text-align: left;
-			font-family: ${(props) => props.theme.fonts.mono};
+			font-family: ${(props) => props.theme.fonts.regular};
 			font-style: normal;
 			line-height: 150%;
 			white-space: pre-line;
