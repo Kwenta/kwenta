@@ -11,7 +11,6 @@ import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
 
-import UserMenu from '../AppLayout/Header/UserMenu';
 import AppHeader from '../AppLayout/Header';
 import Logo from '../Logo';
 import { FlexDivRowCentered, GridDivCenteredCol, TextButton } from 'styles/common';
@@ -145,7 +144,6 @@ const Header: FC = () => {
 						))}
 					</Links>
 					<MenuContainer>
-						<UserMenu />
 						<Link href={ROUTES.Home.Overview}>
 							<Button variant="primary" isRounded={false} size="sm">
 								{t('homepage.nav.start-trade')}
