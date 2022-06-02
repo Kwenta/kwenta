@@ -186,8 +186,6 @@ export const Table: FC<TableProps> = ({
 
 const TableContainer = styled.div`
 	overflow-x: auto;
-	//display: block;
-	//width: 100%;
 `;
 
 const StyledSpinner = styled(Spinner)`
@@ -195,12 +193,9 @@ const StyledSpinner = styled(Spinner)`
 	margin: 30px auto;
 `;
 
-export const TableRow = styled.div`
-	//display: none;
-`;
+export const TableRow = styled.div``;
 
 const TableBody = styled.div`
-	//width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 	min-width: fit-content;
@@ -240,7 +235,6 @@ const TableCell = styled(FlexDivCentered)`
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
-	//probably shouldn't be extending the tableCell styles to then overwrite them
 	&:first-child {
 		padding-left: 18px;
 	}
@@ -271,7 +265,7 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				max-height: calc(100% - ${CARD_HEIGHT});
 			}
 			${TableCell} {
-				color: ${(props) => props.theme.colors.common.primaryWhite};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
