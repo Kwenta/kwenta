@@ -67,9 +67,11 @@ const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertica
 		border-radius: 4px;
 	}
 
-	svg:first-child {
-		margin-right: 7px;
-	}
+	${(props) =>
+		!props.vertical &&
+		css`
+			margin-right: 7px;
+		`}
 
 	svg {
 		path {

@@ -27,7 +27,7 @@ const TABS = [
 	{
 		title: 'Trades',
 		component: <TradesTab />,
-		icon: <OrderHistoryIcon />,
+		icon: <OrderHistoryIcon width={18} height={18} />,
 	},
 	{
 		title: 'Stats',
