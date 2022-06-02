@@ -18,6 +18,7 @@ import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
+import useResolveENS from 'hooks/useResolveENS';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -32,7 +33,7 @@ type Stat = {
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
-	const [searchTerm, setSearchTerm] = useState<string | undefined>();
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
@@ -41,6 +42,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+
+	const addressOrENS = useResolveENS(searchTerm)?.toLowerCase() ?? searchTerm;
 
 	useMemo(() => {
 		if (router.query.tab) {
@@ -85,9 +88,9 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
 			.filter((i: { trader: string }) =>
-				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
+				searchTerm?.length ? i.trader.toLowerCase().includes(addressOrENS) : true
 			);
-	}, [stats, searchTerm, pnlMap]);
+	}, [stats, searchTerm, pnlMap, addressOrENS]);
 
 	if (compact) {
 		const ownPosition = data.findIndex((i: { address: string }) => {
