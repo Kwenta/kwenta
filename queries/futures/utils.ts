@@ -318,6 +318,9 @@ export const mapTradeHistory = (
 					size,
 					feesPaid,
 					netFunding,
+					netTransfers,
+					totalDeposits,
+					initialMargin,
 					margin,
 					entryPrice,
 					exitPrice,
@@ -333,6 +336,9 @@ export const mapTradeHistory = (
 					const sizeWei = new Wei(size, 18, true);
 					const feesWei = new Wei(feesPaid || 0, 18, true);
 					const netFundingWei = new Wei(netFunding || 0, 18, true);
+					const netTransfersWei = new Wei(netTransfers || 0, 18, true);
+					const totalDepositsWei = new Wei(totalDeposits || 0, 18, true);
+					const initialMarginWei = new Wei(initialMargin, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					const pnlWei = new Wei(pnl, 18, true);
 					const totalVolumeWei = new Wei(totalVolume, 18, true);
@@ -351,6 +357,9 @@ export const mapTradeHistory = (
 						size: sizeWei.abs(),
 						feesPaid: feesWei,
 						netFunding: netFundingWei,
+						netTransfers: netTransfersWei,
+						totalDeposits: totalDepositsWei,
+						initialMargin: initialMarginWei,
 						margin: marginWei,
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,

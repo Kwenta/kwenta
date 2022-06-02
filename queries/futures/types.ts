@@ -96,6 +96,9 @@ export type RawPosition = {
 	size: Wei;
 	feesPaid: Wei;
 	netFunding: Wei;
+	netTransfers: Wei;
+	totalDeposits: Wei;
+	initialMargin: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	avgEntryPrice: Wei;
@@ -132,6 +135,9 @@ export type PositionHistory = {
 	size: Wei;
 	feesPaid: Wei;
 	netFunding: Wei;
+	netTransfers: Wei;
+	totalDeposits: Wei;
+	initialMargin: Wei;
 	margin: Wei;
 	entryPrice: Wei;
 	avgEntryPrice: Wei;

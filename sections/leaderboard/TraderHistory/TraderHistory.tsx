@@ -47,6 +47,13 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 				feesPaid: stat.feesPaid,
 				netFunding: stat.netFunding,
 				pnl: stat.pnl.sub(stat.feesPaid).add(stat.netFunding),
+				pnlPct: `(${stat.pnl
+					.sub(stat.feesPaid)
+					.add(stat.netFunding)
+					.div(stat.initialMargin.add(stat.totalDeposits))
+					.mul(100)
+					.toNumber()
+					.toFixed(2)}%)`,
 				totalVolume: stat.totalVolume,
 				trades: stat.trades,
 				side: stat.side,
@@ -158,12 +165,25 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign={'$'}
-									conversionRate={1}
-								/>
+								<div>
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+									<StyledValue
+										color={
+											cellProps.row.original.pnl.gt(0)
+												? 'green'
+												: cellProps.row.original.pnl.lt(0)
+												? 'red'
+												: ''
+										}
+									>
+										{cellProps.row.original.pnlPct}
+									</StyledValue>
+								</div>
 							),
 							width: compact ? 40 : 100,
 							sortType: 'basic',
@@ -197,7 +217,7 @@ const TitleText = styled.a`
 `;
 
 const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 	display: flex;
 `;
 
@@ -243,10 +263,23 @@ const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.green
+			? props.theme.colors.common.primaryGreen
 			: props.price < 0
-			? props.theme.colors.red
-			: props.theme.colors.white};
+			? props.theme.colors.common.primaryRed
+			: props.theme.colors.common.primaryWhite};
+`;
+
+const StyledValue = styled.div`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	color: ${(props) =>
+		props.color === 'green'
+			? props.theme.colors.common.primaryGreen
+			: props.color === 'red'
+			? props.theme.colors.common.primaryRed
+			: props.theme.colors.common.primaryWhite};
+	margin: 0;
+	text-align: end;
 `;
 
 export default TraderHistory;
