@@ -26,11 +26,12 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 	const isL2Kovan = useRecoilValue(isL2KovanState);
 	const isReady = isAppReady && !!synthetixjs;
+	const isL2MainnetOrL2Kovan = isL2Mainnet || isL2Kovan;
 
 	return useQuery<FuturesMarket[]>(
 		QUERY_KEYS.Futures.Markets(network.id),
 		async () => {
-			if (isWalletConnected && !isL2Mainnet && !isL2Kovan && !isAppReady) {
+			if (isWalletConnected && !isL2MainnetOrL2Kovan && !isAppReady && !synthetixjs) {
 				return null;
 			}
 
@@ -87,7 +88,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			);
 		},
 		{
-			enabled: isWalletConnected ? (isL2Mainnet || isL2Kovan) && isReady : isReady,
+			enabled: isWalletConnected ? isL2MainnetOrL2Kovan && isReady : isReady,
 			refetchInterval: 15000,
 			...options,
 		}
