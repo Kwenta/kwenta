@@ -11,6 +11,7 @@ import { leverageSideState, orderTypeState } from 'store/futures';
 import useFuturesData from 'hooks/useFuturesData';
 import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import FeeInfoBox from 'sections/futures/FeeInfoBox';
+import NextPrice from 'sections/futures/Trade/NextPrice';
 
 const OpenPositionTab: React.FC = () => {
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
@@ -34,6 +35,8 @@ const OpenPositionTab: React.FC = () => {
 				values={['Market', 'Next-Price']}
 				onChange={setOrderType}
 			/>
+
+			{orderType === 1 && <NextPrice />}
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} isMarketClosed={false} />
 

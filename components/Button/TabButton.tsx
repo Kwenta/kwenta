@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from './Button';
 
 export type TabButtonProps = {
@@ -11,22 +11,26 @@ export type TabButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
+	gold?: boolean;
+	vertical?: boolean;
 };
 
 const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
 		<StyledButton {...props} isActive={!!active}>
-			{!!icon && <div>{icon}</div>}
-			<div>
-				<p className="title">{title}</p>
-				{detail && <p className="detail">{detail}</p>}
+			<div className="orientation">
+				{!!icon && <div>{icon}</div>}
+				<div>
+					<p className="title">{title}</p>
+					{detail && <p className="detail">{detail}</p>}
+				</div>
+				{!!badge && <div className="badge">{badge}</div>}
 			</div>
-			{!!badge && <div className="badge">{badge}</div>}
 		</StyledButton>
 	);
 };
 
-const StyledButton = styled(Button)<{ isActive: boolean }>`
+const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertical?: boolean }>`
 	height: initial;
 	display: flex;
 	align-items: center;
@@ -91,5 +95,24 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 			display: none;
 		}
 	}
+
+	${(props) =>
+		props.isActive &&
+		props.gold &&
+		css`
+			&:before {
+				background: ${(props) => props.theme.colors.common.secondaryGold};
+			}
+		`}
+
+	${(props) =>
+		props.vertical &&
+		css`
+			.orientation {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+		`}
 `;
 export default TabButton;

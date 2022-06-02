@@ -8,22 +8,31 @@ import PriceTab from './PriceTab';
 import StatsTab from './StatsTab';
 import TradesTab from './TradesTab';
 
+import AccountIcon from 'assets/svg/app/account.svg';
+import PriceIcon from 'assets/svg/app/price.svg';
+import StatsIcon from 'assets/svg/app/stats.svg';
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+
 const TABS = [
 	{
 		title: 'Account',
 		component: <AccountTab />,
+		icon: <AccountIcon />,
 	},
 	{
 		title: 'Price',
 		component: <PriceTab />,
+		icon: <PriceIcon />,
 	},
 	{
 		title: 'Trades',
 		component: <TradesTab />,
+		icon: <OrderHistoryIcon />,
 	},
 	{
 		title: 'Stats',
 		component: <StatsTab />,
+		icon: <StatsIcon />,
 	},
 ];
 
@@ -34,12 +43,14 @@ const OverviewTabs: React.FC = () => {
 		<div>
 			{TABS[activeTab].component}
 			<MainTabButtonsContainer>
-				{TABS.map(({ title }, i) => (
+				{TABS.map(({ title, icon }, i) => (
 					<TabButton
 						key={title}
 						title={title}
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
+						icon={icon}
+						gold
 					/>
 				))}
 			</MainTabButtonsContainer>

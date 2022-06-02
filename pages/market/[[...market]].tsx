@@ -22,24 +22,17 @@ import { CurrencyKey } from 'constants/currency';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import { positionState, currentMarketState } from 'store/futures';
+import { currentMarketState } from 'store/futures';
 
 const Market = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const [, setPosition] = useRecoilState(positionState);
 
 	const marketAsset = router.query.market?.[0] as CurrencyKey;
 
 	const [, setCurrentMarket] = useRecoilState(currentMarketState);
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
-
-	useEffect(() => {
-		if (futuresMarketPositionQuery.data) {
-			setPosition(futuresMarketPositionQuery.data);
-		}
-	}, [futuresMarketPositionQuery.data, setPosition]);
 
 	useEffect(() => {
 		if (marketAsset) setCurrentMarket(marketAsset);

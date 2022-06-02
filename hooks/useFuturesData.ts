@@ -119,13 +119,15 @@ const useFuturesData = () => {
 
 	const onTradeAmountSUSDChange = (value: string) => {
 		const valueIsNull = value === '' || Number(value) === 0;
-		const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
-		const leverage = valueIsNull
-			? ''
-			: wei(value).div(position?.remainingMargin).toString().substring(0, 4);
-		setTradeSizeSUSD(value);
-		setTradeSize(size);
-		setLeverage(leverage);
+		if (marketAssetRate.gt(0)) {
+			const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
+			const leverage = valueIsNull
+				? ''
+				: wei(value).div(position?.remainingMargin).toString().substring(0, 4);
+			setTradeSizeSUSD(value);
+			setTradeSize(size);
+			setLeverage(leverage);
+		}
 	};
 
 	const onLeverageChange = React.useCallback(
