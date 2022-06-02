@@ -1,6 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { border } from 'components/Button';
+
 interface SegmentedControlProps {
 	values: string[];
 	selectedIndex: number;

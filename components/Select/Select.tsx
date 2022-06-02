@@ -1,8 +1,6 @@
 import React, { FC, useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
-import { border } from 'components/Button';
-
 export const IndicatorSeparator: FC = () => null;
 
 function Select<T>(props: Props<T>) {

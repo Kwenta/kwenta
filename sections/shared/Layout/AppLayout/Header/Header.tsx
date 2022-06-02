@@ -2,9 +2,8 @@ import { FC } from 'react';
 import styled from 'styled-components';
 
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { HEADER_HEIGHT, HEADER_TOP_PADDING, zIndex } from 'constants/ui';
+import { zIndex } from 'constants/ui';
 
-import { GridDivCol } from 'styles/common';
 import media from 'styles/media';
 
 import Logo from '../../Logo';

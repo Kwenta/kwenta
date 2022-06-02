@@ -9,8 +9,8 @@ import NavButton from 'components/Button/NavButton';
 import Links from '../Links';
 import Markets from '../Markets';
 import Overview from '../Overview';
-import StakingInfo from '../StakingInfo';
-import { MainContent, LeftSideContent, RightSideContent } from 'styles/common';
+// import StakingInfo from '../StakingInfo';
+import { MainContent, LeftSideContent } from 'styles/common';
 
 enum Tab {
 	Overview = 'overview',
@@ -135,11 +135,11 @@ const DashboardContainer: FC = () => {
 	);
 };
 
-const StyledRightSideContent = styled(RightSideContent)`
+/* const StyledRightSideContent = styled(RightSideContent)`
 	display: flex;
 	flex-direction: row;
 	justify-content: end;
-`;
+`; */
 
 const StyledTabList = styled(TabList)`
 	display: flex;
