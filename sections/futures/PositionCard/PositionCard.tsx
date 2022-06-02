@@ -189,7 +189,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 		dailyPriceChangesQuery,
 		t,
 	]);
-	console.log(data);
 
 	return (
 		<>
