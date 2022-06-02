@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from 'react';
+import { FC, useState, useMemo, useEffect } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { TabPanel } from 'components/Tab';
@@ -19,11 +19,12 @@ import { getMarketKey } from 'utils/futures';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import Connector from 'containers/Connector';
 import SpotMarketsTable from '../SpotMarketsTable';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
 enum PositionsTab {
 	FUTURES = 'futures',
-	SHORTS = 'shorts',
 	SPOT = 'spot',
+	SWITCH = 'switch',
 }
 
 enum MarketsTab {
@@ -61,8 +62,20 @@ const Overview: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
+		isL2MainnetOrL2Kovan ? PositionsTab.FUTURES : PositionsTab.SPOT
+	);
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+
+	useEffect(() => {
+		if (isL2MainnetOrL2Kovan) {
+			setActivePositionsTab(PositionsTab.FUTURES);
+		} else {
+			setActivePositionsTab(PositionsTab.SPOT);
+		}
+	}, [isL2MainnetOrL2Kovan]);
+
+	const { switchToL2 } = useNetworkSwitcher();
 
 	const totalSpotBalancesValue = formatCurrency(
 		Synths.sUSD,
@@ -110,11 +123,19 @@ const Overview: FC = () => {
 								setActivePositionsTab(PositionsTab.SPOT);
 							},
 						},
+						{
+							name: PositionsTab.SWITCH,
+							label: t('dashboard.overview.positions-tabs.switch-to-l2'),
+							active: true,
+							detail: '',
+							onClick: switchToL2,
+						},
 				  ],
 		[
 			activePositionsTab,
 			futuresPositionQuery?.data?.length,
 			isL2MainnetOrL2Kovan,
+			switchToL2,
 			t,
 			totalFuturesPortfolioValue,
 			totalSpotBalancesValue,

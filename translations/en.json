@@ -420,7 +420,8 @@
 			"positions-tabs": {
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
-				"spot": "Spot Balances"
+				"spot": "Spot Balances",
+				"switch-to-l2": "Switch to L2 to access Perpetual Futures"
 			},
 			"markets-tabs": {
 				"futures": "Futures Markets",
