@@ -4,15 +4,13 @@ import InfoBox from 'components/InfoBox';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
 import { useRecoilValue } from 'recoil';
-import { maxLeverageState, positionState } from 'store/futures';
+import { marketInfoState, maxLeverageState, positionState } from 'store/futures';
 
-type MarketInfoBoxProps = {
-	isMarketClosed: boolean;
-};
-
-const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({ isMarketClosed }) => {
+const MarketInfoBox: React.FC = () => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
+	const marketInfo = useRecoilValue(marketInfoState);
+
 	const details = React.useMemo(
 		() => ({
 			totalMargin: position?.remainingMargin ?? zeroBN,
@@ -45,7 +43,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({ isMarketClosed }) => {
 				},
 				'Margin Usage': { value: `${formatPercent(details.marginUsage)}` },
 			}}
-			disabled={isMarketClosed}
+			disabled={marketInfo?.isSuspended}
 		/>
 	);
 };

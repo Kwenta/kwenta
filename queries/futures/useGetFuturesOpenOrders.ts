@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { utils as ethersUtils } from 'ethers';
 
 import { appReadyState } from 'store/app';
@@ -12,7 +12,7 @@ import Wei from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
 import Connector from 'containers/Connector';
 import { getDisplayAsset } from 'utils/futures';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, openOrdersState } from 'store/futures';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -22,6 +22,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const futuresEndpoint = getFuturesEndpoint(network);
 	const { synthetixjs } = Connector.useContainer();
 	const currencyKey = useRecoilValue(currentMarketState);
+	const [, setOpenOrders] = useRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
@@ -48,7 +49,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 					{ account: walletAddress, market: marketAddress }
 				);
 
-				return response
+				const openOrders = response
 					? response.futuresOrders.map((o: any) => ({
 							...o,
 							asset: ethersUtils.parseBytes32String(o.asset),
@@ -56,6 +57,10 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							size: new Wei(o.size).div(ETH_UNIT),
 					  }))
 					: [];
+
+				setOpenOrders(openOrders);
+
+				return openOrders;
 			} catch (e) {
 				console.log(e);
 				return null;

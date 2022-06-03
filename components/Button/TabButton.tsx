@@ -15,9 +15,18 @@ export type TabButtonProps = {
 	vertical?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({
+	title,
+	detail,
+	badge,
+	active,
+	icon,
+	gold,
+	vertical,
+	...props
+}) => {
 	return (
-		<StyledButton {...props} isActive={!!active}>
+		<StyledButton active={active} gold={gold} vertical={vertical} {...props}>
 			<div className="orientation">
 				{!!icon && <div>{icon}</div>}
 				<div>
@@ -30,29 +39,33 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 	);
 };
 
-const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertical?: boolean }>`
+const StyledButton = styled(Button)<{ active?: boolean; gold?: boolean; vertical?: boolean }>`
 	height: initial;
 	display: flex;
 	align-items: center;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
+
 	p {
 		margin: 0;
 		font-size: 13px;
 		text-align: left;
 	}
+
 	.title {
 		text-align: center;
 		color: ${(props) =>
-			props.isActive
+			props.active
 				? props.theme.colors.common.primaryWhite
 				: props.theme.colors.common.secondaryGray};
 	}
+
 	.detail {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 		margin-top: 2px;
 	}
+
 	.badge {
 		height: 16px;
 		width: fit-content;
@@ -67,16 +80,11 @@ const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertica
 		border-radius: 4px;
 	}
 
-	${(props) =>
-		!props.vertical &&
-		css`
-			margin-right: 7px;
-		`}
-
 	svg {
+		margin-right: ${(props) => (props.vertical ? '0' : '7px')};
 		path {
 			fill: ${(props) =>
-				props.isActive
+				props.active
 					? props.theme.colors.common.primaryWhite
 					: props.theme.colors.common.secondaryGray};
 		}
@@ -99,7 +107,7 @@ const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertica
 	}
 
 	${(props) =>
-		props.isActive &&
+		props.active &&
 		props.gold &&
 		css`
 			&:before {
@@ -107,14 +115,10 @@ const StyledButton = styled(Button)<{ isActive: boolean; gold?: boolean; vertica
 			}
 		`}
 
-	${(props) =>
-		props.vertical &&
-		css`
-			.orientation {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-			}
-		`}
+	.orientation {
+		display: flex;
+		flex-direction: ${(props) => (props.vertical ? 'column' : 'row')};
+		align-items: center;
+	}
 `;
 export default TabButton;

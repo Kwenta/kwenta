@@ -18,21 +18,17 @@ import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState } from 'store/futures';
+import RefetchContext from 'contexts/RefetchContext';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
-	onTxConfirmed(): void;
 	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
 const MIN_DEPOSIT_AMOUNT = wei('50');
 
-const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
-	onDismiss,
-	onTxConfirmed,
-	sUSDBalance,
-}) => {
+const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -44,6 +40,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { handleRefetch } = React.useContext(RefetchContext);
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -96,7 +93,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			monitorTransaction({
 				txHash: depositTxn.hash,
 				onTxConfirmed: () => {
-					onTxConfirmed();
+					handleRefetch('margin-change');
 					onDismiss();
 				},
 			});

@@ -5,29 +5,25 @@ import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { zeroBN } from 'utils/formatters/number';
 import { useRecoilValue } from 'recoil';
-import { positionState } from 'store/futures';
+import { marketInfoState, positionState } from 'store/futures';
 
 type MarketActionsProps = {
-	marketClosed: boolean;
 	openDepositModal(): void;
 	openWithdrawModal(): void;
 };
 
-const MarketActions: React.FC<MarketActionsProps> = ({
-	marketClosed,
-	openDepositModal,
-	openWithdrawModal,
-}) => {
+const MarketActions: React.FC<MarketActionsProps> = ({ openDepositModal, openWithdrawModal }) => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	return (
 		<MarketActionsContainer>
-			<MarketActionButton disabled={marketClosed} onClick={openDepositModal}>
+			<MarketActionButton disabled={marketInfo?.isSuspended} onClick={openDepositModal}>
 				{t('futures.market.trade.button.deposit')}
 			</MarketActionButton>
 			<MarketActionButton
-				disabled={position?.remainingMargin?.lte(zeroBN) || marketClosed}
+				disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
 				onClick={openWithdrawModal}
 			>
 				{t('futures.market.trade.button.withdraw')}

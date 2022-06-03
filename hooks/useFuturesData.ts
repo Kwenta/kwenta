@@ -6,7 +6,6 @@ import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import { Synths } from 'constants/currency';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import {
 	currentMarketState,
@@ -28,7 +27,6 @@ import { PositionSide } from 'sections/futures/types';
 import { ethers } from 'ethers';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
-import useFuturesMarketClosed from './useFuturesMarketClosed';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -39,25 +37,22 @@ const useFuturesData = () => {
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const marketAsset = useRecoilValue(currentMarketState);
-	const marketQuery = useGetFuturesMarkets();
-	const market = marketQuery?.data?.find(({ asset }) => asset === marketAsset);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const [, setLeverage] = useRecoilState(leverageState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
 	const [, setTradeSizeSUSD] = useRecoilState(tradeSizeSUSDState);
 	const [, setFeeCost] = useRecoilState(feeCostState);
-	const [, setMarketInfo] = useRecoilState(marketInfoState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const orderType = useRecoilValue(orderTypeState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const isLeverageValueCommitted = useRecoilValue(leverageValueCommitedState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
+	const position = useRecoilValue(positionState);
+	const market = useRecoilValue(marketInfoState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
-
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
 
 	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
@@ -65,8 +60,6 @@ const useFuturesData = () => {
 		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
 		[exchangeRates, marketAsset]
 	);
-
-	const position = useRecoilValue(positionState);
 
 	const positionLeverage = position?.position?.leverage ?? wei(0);
 	const positionSide = position?.position?.side;
@@ -210,12 +203,6 @@ const useFuturesData = () => {
 		setFeeCost,
 	]);
 
-	useEffect(() => {
-		if (market) {
-			setMarketInfo(market);
-		}
-	}, [market, setMarketInfo]);
-
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
@@ -230,9 +217,7 @@ const useFuturesData = () => {
 		error,
 		dynamicFee,
 		isMarketCapReached,
-		isFuturesMarketClosed,
 		marketAsset,
-		marketQuery,
 		market,
 	};
 };

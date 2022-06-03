@@ -3,19 +3,18 @@ import { FuturesMarket } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { currentMarketState } from 'store/futures';
 import styled from 'styled-components';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatPercent } from 'utils/formatters/number';
 import { HoverTransform } from '../MarketDetails/MarketDetails';
 import OpenInterestBar from './OpenInterestBar';
 
-type SkewInfoProps = {
-	currencyKey: string | undefined;
-};
-
-const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
+const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const currencyKey = useRecoilValue(currentMarketState);
 
 	const data = useMemo(() => {
 		const futuresMarkets = futuresMarketsQuery?.data ?? [];

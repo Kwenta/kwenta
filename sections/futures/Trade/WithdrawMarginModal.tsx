@@ -23,17 +23,17 @@ import {
 	MarginActionButton,
 } from './DepositMarginModal';
 import { currentMarketState, positionState } from 'store/futures';
+import RefetchContext from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
-	onTxConfirmed(): void;
 	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
 const ZERO_WEI = wei(0);
 
-const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss, onTxConfirmed }) => {
+const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -46,6 +46,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss, on
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const { handleRefetch } = React.useContext(RefetchContext);
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -94,7 +96,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss, on
 			monitorTransaction({
 				txHash: withdrawTxn.hash,
 				onTxConfirmed: () => {
-					onTxConfirmed();
+					handleRefetch('margin-change');
 					onDismiss();
 				},
 			});

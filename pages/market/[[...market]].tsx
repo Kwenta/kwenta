@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -19,10 +19,9 @@ import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
 import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { currentMarketState } from 'store/futures';
+import { RefetchProvider } from 'contexts/RefetchContext';
 
 const Market = () => {
 	const { t } = useTranslation();
@@ -32,22 +31,12 @@ const Market = () => {
 
 	const [, setCurrentMarket] = useRecoilState(currentMarketState);
 
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
-
 	useEffect(() => {
 		if (marketAsset) setCurrentMarket(marketAsset);
 	}, [setCurrentMarket, marketAsset]);
 
-	const openOrdersQuery = useGetFuturesOpenOrders();
-	const openOrders = openOrdersQuery?.data ?? [];
-
-	const refetch = useCallback(() => {
-		futuresMarketPositionQuery.refetch();
-		openOrdersQuery.refetch();
-	}, [futuresMarketPositionQuery, openOrdersQuery]);
-
 	return (
-		<>
+		<RefetchProvider>
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
@@ -56,15 +45,15 @@ const Market = () => {
 					<StyledFullHeightContainer>
 						<DesktopOnlyView>
 							<StyledLeftSideContent>
-								<TradingHistory currencyKey={marketAsset} />
+								<TradingHistory />
 							</StyledLeftSideContent>
 						</DesktopOnlyView>
 						<StyledMainContent>
-							<MarketInfo market={marketAsset} openOrders={openOrders} refetch={refetch} />
+							<MarketInfo />
 						</StyledMainContent>
 						<DesktopOnlyView>
 							<StyledRightSideContent>
-								<Trade refetch={refetch} />
+								<Trade />
 							</StyledRightSideContent>
 						</DesktopOnlyView>
 					</StyledFullHeightContainer>
@@ -73,7 +62,7 @@ const Market = () => {
 			<MobileOnlyView>
 				<MobileTrade />
 			</MobileOnlyView>
-		</>
+		</RefetchProvider>
 	);
 };
 

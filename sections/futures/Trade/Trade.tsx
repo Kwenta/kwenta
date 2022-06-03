@@ -9,7 +9,6 @@ import { zeroBN } from 'utils/formatters/number';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import SegmentedControl from 'components/SegmentedControl';
-import useGetFuturesPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useFuturesData from 'hooks/useFuturesData';
 
@@ -34,18 +33,16 @@ import {
 } from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
-
-type TradeProps = {
-	refetch(): void;
-};
+import RefetchContext from 'contexts/RefetchContext';
 
 type ModalList = 'deposit' | 'withdraw' | 'trade' | 'next-price' | 'close-position';
 
-const Trade: React.FC<TradeProps> = ({ refetch }) => {
+const Trade: React.FC = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { handleRefetch } = React.useContext(RefetchContext);
 
 	const {
 		onLeverageChange,
@@ -56,18 +53,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 		error,
 		dynamicFee,
 		isMarketCapReached,
-		isFuturesMarketClosed,
-		marketQuery,
 	} = useFuturesData();
-
-	const futuresPositionHistoryQuery = useGetFuturesPositionHistory();
-
-	const onPositionClose = () => {
-		setTimeout(() => {
-			futuresPositionHistoryQuery.refetch();
-			refetch();
-		}, 5 * 1000);
-	};
 
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
@@ -106,11 +92,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 				txHash: orderTxn.hash,
 				onTxConfirmed: () => {
 					onLeverageChange('');
-					setTimeout(async () => {
-						futuresPositionHistoryQuery.refetch();
-						marketQuery.refetch();
-						refetch();
-					}, 5 * 1000);
+					handleRefetch('modify-position');
 				},
 			});
 		}
@@ -125,10 +107,9 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 			<MarketActions
 				openDepositModal={() => setOpenModal('deposit')}
 				openWithdrawModal={() => setOpenModal('withdraw')}
-				marketClosed={isFuturesMarketClosed}
 			/>
 
-			<MarketInfoBox isMarketClosed={isFuturesMarketClosed} />
+			<MarketInfoBox />
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}
@@ -138,11 +119,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 
 			{orderType === 1 && <NextPrice />}
 
-			<PositionButtons
-				selected={leverageSide}
-				onSelect={setLeverageSide}
-				isMarketClosed={isFuturesMarketClosed}
-			/>
+			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
 			<OrderSizing
 				onAmountChange={onTradeAmountChange}
@@ -150,14 +127,13 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 				onLeverageChange={onLeverageChange}
 			/>
 
-			<LeverageInput onLeverageChange={onLeverageChange} isMarketClosed={isFuturesMarketClosed} />
+			<LeverageInput onLeverageChange={onLeverageChange} />
 
 			<ManagePosition
 				translationKey={placeOrderTranslationKey}
 				marketCapReached={isMarketCapReached}
 				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
 				openClosePositionModal={() => setOpenModal('close-position')}
-				marketClosed={isFuturesMarketClosed}
 				error={error}
 			/>
 
@@ -168,31 +144,11 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 			<FeeInfoBox dynamicFee={dynamicFee} />
 
 			{openModal === 'deposit' && (
-				<DepositMarginModal
-					sUSDBalance={sUSDBalance}
-					onTxConfirmed={() => {
-						setTimeout(() => {
-							refetch();
-							futuresPositionHistoryQuery.refetch();
-							synthsBalancesQuery.refetch();
-						}, 5 * 1000);
-					}}
-					onDismiss={() => setOpenModal(null)}
-				/>
+				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
 			{openModal === 'withdraw' && (
-				<WithdrawMarginModal
-					sUSDBalance={sUSDBalance}
-					onTxConfirmed={() => {
-						setTimeout(() => {
-							refetch();
-							futuresPositionHistoryQuery.refetch();
-							synthsBalancesQuery.refetch();
-						}, 5 * 1000);
-					}}
-					onDismiss={() => setOpenModal(null)}
-				/>
+				<WithdrawMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
 			{openModal === 'trade' && (
@@ -214,10 +170,7 @@ const Trade: React.FC<TradeProps> = ({ refetch }) => {
 			)}
 
 			{openModal === 'close-position' && (
-				<ClosePositionModal
-					onPositionClose={onPositionClose}
-					onDismiss={() => setOpenModal(null)}
-				/>
+				<ClosePositionModal onDismiss={() => setOpenModal(null)} />
 			)}
 		</div>
 	);

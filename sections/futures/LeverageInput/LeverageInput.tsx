@@ -11,6 +11,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageState,
 	leverageValueCommitedState,
+	marketInfoState,
 	maxLeverageState,
 	nextPriceDisclaimerState,
 	orderTypeState,
@@ -18,10 +19,9 @@ import {
 
 type LeverageInputProps = {
 	onLeverageChange: (value: string) => void;
-	isMarketClosed: boolean;
 };
 
-const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange, isMarketClosed }) => {
+const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const leverage = useRecoilValue(leverageState);
@@ -29,6 +29,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange, isMarketClose
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommitedState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	const modeButton = useMemo(() => {
 		return (
@@ -89,7 +90,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange, isMarketClose
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(Number(l)) || isMarketClosed}
+							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>
 							{l}x
 						</LeverageButton>

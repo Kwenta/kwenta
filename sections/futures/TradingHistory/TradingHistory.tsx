@@ -3,14 +3,10 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import TradesHistoryTable from './TradesHistoryTable';
 import SkewInfo from './SkewInfo';
 
-type TradeHistoryInfoProps = {
-	currencyKey: string | undefined;
-};
-
-const TradingHistory: React.FC<TradeHistoryInfoProps> = ({ currencyKey }) => {
+const TradingHistory: React.FC = () => {
 	return (
 		<Panel>
-			<SkewInfo currencyKey={currencyKey} />
+			<SkewInfo />
 			<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
 		</Panel>
 	);

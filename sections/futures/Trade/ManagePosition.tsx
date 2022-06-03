@@ -3,7 +3,13 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { useRecoilValue } from 'recoil';
-import { leverageState, maxLeverageState, positionState, sizeDeltaState } from 'store/futures';
+import {
+	leverageState,
+	marketInfoState,
+	maxLeverageState,
+	positionState,
+	sizeDeltaState,
+} from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +19,6 @@ type ManagePositionProps = {
 	error: string | null;
 	openConfirmationModal(): void;
 	openClosePositionModal(): void;
-	marketClosed: boolean;
 };
 
 const ManagePosition: React.FC<ManagePositionProps> = ({
@@ -22,13 +27,13 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	openConfirmationModal,
 	openClosePositionModal,
 	error,
-	marketClosed,
 }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const positionDetails = position?.position;
 
 	return (
@@ -48,7 +53,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 						sizeDelta.eq(zeroBN) ||
 						!!error ||
 						translationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-						marketClosed ||
+						marketInfo?.isSuspended ||
 						marketCapReached
 					}
 					onClick={openConfirmationModal}
@@ -61,7 +66,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 					fullWidth
 					variant="danger"
 					onClick={openClosePositionModal}
-					disabled={!positionDetails || marketClosed}
+					disabled={!positionDetails || marketInfo?.isSuspended}
 					noOutline={true}
 				>
 					{t('futures.market.user.position.close-position')}

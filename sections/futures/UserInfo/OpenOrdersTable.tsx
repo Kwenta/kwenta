@@ -15,14 +15,10 @@ import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
-import { currentMarketState, positionState } from 'store/futures';
+import { currentMarketState, openOrdersState, positionState } from 'store/futures';
+import RefetchContext from 'contexts/RefetchContext';
 
-type OpenOrdersTableProps = {
-	openOrders: any[];
-	refetch(): void;
-};
-
-const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ openOrders, refetch }) => {
+const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
@@ -30,6 +26,9 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ openOrders, refetch }
 	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
+	const openOrders = useRecoilValue(openOrdersState);
+
+	const { handleRefetch } = React.useContext(RefetchContext);
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
@@ -65,9 +64,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({ openOrders, refetch }
 			monitorTransaction({
 				txHash: cancelOrExecuteOrderTxn.hash,
 				onTxConfirmed: () => {
-					setTimeout(async () => {
-						refetch();
-					}, 5 * 1000);
+					handleRefetch('new-order');
 				},
 			});
 		}

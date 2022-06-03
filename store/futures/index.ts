@@ -65,6 +65,11 @@ export const leverageValueCommitedState = atom({
 	default: true,
 });
 
+export const openOrdersState = atom<any[]>({
+	key: getFuturesKey('openOrders'),
+	default: [],
+});
+
 export const sizeDeltaState = selector({
 	key: getFuturesKey('sizeDelta'),
 	get: ({ get }) => {

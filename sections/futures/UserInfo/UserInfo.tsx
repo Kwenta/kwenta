@@ -14,7 +14,7 @@ import ProfitCalculator from '../ProfitCalculator';
 import Transfers from '../Transfers';
 
 import ROUTES from 'constants/routes';
-import { CurrencyKey, Synths } from 'constants/currency';
+import { Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
 
@@ -31,7 +31,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import { positionState } from 'store/futures';
+import { currentMarketState, openOrdersState, positionState } from 'store/futures';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -43,16 +43,12 @@ enum FuturesTab {
 
 const FutureTabs = Object.values(FuturesTab);
 
-type UserInfoProps = {
-	marketAsset: CurrencyKey;
-	openOrders: any[];
-	refetch(): void;
-};
-
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, openOrders, refetch }) => {
+const UserInfo: React.FC = () => {
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
+	const marketAsset = useRecoilValue(currentMarketState);
+	const openOrders = useRecoilValue(openOrdersState);
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery({
@@ -191,7 +187,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, openOrders, refetch })
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
-				<OpenOrdersTable openOrders={openOrders} refetch={refetch} />
+				<OpenOrdersTable />
 			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades

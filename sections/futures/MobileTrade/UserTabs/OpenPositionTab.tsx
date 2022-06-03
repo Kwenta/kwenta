@@ -21,7 +21,6 @@ const OpenPositionTab: React.FC = () => {
 		onTradeAmountChange,
 		onTradeAmountSUSDChange,
 		onLeverageChange,
-		isFuturesMarketClosed,
 		isMarketCapReached,
 		placeOrderTranslationKey,
 		dynamicFee,
@@ -38,7 +37,7 @@ const OpenPositionTab: React.FC = () => {
 
 			{orderType === 1 && <NextPrice />}
 
-			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} isMarketClosed={false} />
+			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
 			<OrderSizing
 				onAmountChange={onTradeAmountChange}
@@ -46,7 +45,7 @@ const OpenPositionTab: React.FC = () => {
 				onLeverageChange={onLeverageChange}
 			/>
 
-			<LeverageInput onLeverageChange={onLeverageChange} isMarketClosed={isFuturesMarketClosed} />
+			<LeverageInput onLeverageChange={onLeverageChange} />
 
 			<ManagePosition
 				marketCapReached={isMarketCapReached}
@@ -54,7 +53,6 @@ const OpenPositionTab: React.FC = () => {
 				openConfirmationModal={() => {}}
 				openClosePositionModal={() => {}}
 				error={error}
-				marketClosed={isFuturesMarketClosed}
 			/>
 
 			<FeeInfoBox dynamicFee={dynamicFee} />

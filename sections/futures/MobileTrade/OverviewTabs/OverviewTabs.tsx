@@ -51,6 +51,7 @@ const OverviewTabs: React.FC = () => {
 						onClick={() => setActiveTab(i)}
 						icon={icon}
 						gold
+						vertical
 					/>
 				))}
 			</MainTabButtonsContainer>

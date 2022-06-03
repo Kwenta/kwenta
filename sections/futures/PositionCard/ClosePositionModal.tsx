@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect, useState } from 'react';
+import { FC, useMemo, useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -21,13 +21,13 @@ import { gasSpeedState } from 'store/wallet';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { currentMarketState, positionState } from 'store/futures';
+import RefetchContext from 'contexts/RefetchContext';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
-	onPositionClose: () => void;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, onPositionClose }) => {
+const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -41,6 +41,8 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, onPosition
 	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
+
+	const { handleRefetch } = useContext(RefetchContext);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -134,7 +136,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss, onPosition
 				txHash: closeTxn.hash,
 				onTxConfirmed: () => {
 					onDismiss();
-					onPositionClose();
+					handleRefetch('close-position');
 				},
 			});
 		}
