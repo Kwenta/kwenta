@@ -6,7 +6,7 @@ import BaseModal from 'components/BaseModal';
 
 import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
-import ShareModalButtons from './ShareModalButtons';
+import ShareModalButton from './ShareModalButton';
 
 import { CurrencyKey } from 'constants/currency';
 import { FuturesPosition, PositionHistory } from 'queries/futures/types';
@@ -75,7 +75,7 @@ const ShareModal: FC<ShareModalProps> = ({
 							futuresPositionHistory={futuresPositionHistory}
 						/>
 					</PNLGraphic>
-					<ShareModalButtons />
+					<ShareModalButton />
 				</ModalWindow>
 			</BaseModal>
 		</>
