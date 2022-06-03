@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Table from 'components/Table';
 import { CellProps } from 'react-table';
 import Currency from 'components/Currency';
-import { getDisplayAsset } from 'utils/futures';
+import { getDisplayAsset, getMarketKey } from 'utils/futures';
 import { wei } from '@synthetixio/wei';
 import { PositionSide } from '../types';
 import PositionType from 'components/Text/PositionType';
@@ -17,11 +17,14 @@ import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
 import { currentMarketState, openOrdersState, positionState } from 'store/futures';
 import RefetchContext from 'contexts/RefetchContext';
+import Connector from 'containers/Connector';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
+	const { network } = Connector.useContainer();
+
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
@@ -78,6 +81,7 @@ const OpenOrdersTable: React.FC = () => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getDisplayAsset(order.asset) + '-PERP',
+			marketKey: getMarketKey(order.asset, network.id),
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
@@ -87,7 +91,7 @@ const OpenOrdersTable: React.FC = () => {
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, position, nextPriceDetails?.currentRoundId]);
+	}, [openOrders, position, nextPriceDetails?.currentRoundId, network.id]);
 
 	return (
 		<StyledTable
@@ -106,12 +110,7 @@ const OpenOrdersTable: React.FC = () => {
 						return (
 							<MarketContainer>
 								<IconContainer>
-									<StyledCurrencyIcon
-										currencyKey={
-											(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-											cellProps.row.original.asset
-										}
-									/>
+									<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
 								</IconContainer>
 								<StyledText>
 									{cellProps.row.original.market}
@@ -160,13 +159,6 @@ const OpenOrdersTable: React.FC = () => {
 					sortable: true,
 					width: 50,
 				},
-				// {
-				// 	Header: <div>{t('futures.market.user.open-orders.table.parameters')}</div>,
-				// 	accessor: 'parameters',
-				// 	Cell: (cellProps: CellProps<any>) => {
-				// 		return <div>-</div>;
-				// 	},
-				// },
 				{
 					Header: (
 						<StyledTableHeader>
@@ -193,8 +185,6 @@ const OpenOrdersTable: React.FC = () => {
 										{t('futures.market.user.open-orders.actions.execute')}
 									</EditButton>
 								)}
-								{/* TODO: This will probably be used for other order types. */}
-								{/*<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>*/}
 							</div>
 						);
 					},

@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
@@ -11,6 +12,9 @@ import { SectionHeader } from '../common';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import RefetchContext from 'contexts/RefetchContext';
+import Table from 'components/Table';
+import { CellProps } from 'react-table';
+import PositionType from 'components/Text/PositionType';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -86,8 +90,85 @@ const OrdersTab: React.FC = () => {
 	return (
 		<div>
 			<SectionHeader>Orders</SectionHeader>
+			<StyledTable
+				data={data}
+				columns={[
+					{
+						Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
+						accessor: 'side/type',
+						Cell: (cellProps: CellProps<any>) => (
+							<div>
+								<PositionType side={cellProps.row.original.side} />
+								<div>{cellProps.row.original.orderType}</div>
+							</div>
+						),
+					},
+					{
+						Header: <StyledTableHeader>Size</StyledTableHeader>,
+						accessor: 'size',
+						Cell: (cellProps: CellProps<any>) => <div></div>,
+					},
+					{
+						Header: (
+							<StyledTableHeader>
+								{t('futures.market.user.open-orders.table.actions')}
+							</StyledTableHeader>
+						),
+						accessor: 'actions',
+						Cell: (cellProps: CellProps<any>) => {
+							return (
+								<div style={{ display: 'flex' }}>
+									<CancelButton
+										onClick={() => {
+											setAction('cancel');
+										}}
+									>
+										{t('futures.market.user.open-orders.actions.cancel')}
+									</CancelButton>
+									{cellProps.row.original.isExecutable && (
+										<EditButton
+											onClick={() => {
+												setAction('execute');
+											}}
+										>
+											{t('futures.market.user.open-orders.actions.execute')}
+										</EditButton>
+									)}
+								</div>
+							);
+						},
+					},
+				]}
+			/>
 		</div>
 	);
 };
+
+const StyledTable = styled(Table)``;
+
+const StyledTableHeader = styled.div`
+	font-family: ${(props) => props.theme.fonts.regular};
+	text-transform: capitalize;
+`;
+
+const EditButton = styled.button`
+	border: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
+	height: 28px;
+	box-sizing: border-box;
+	border-radius: 14px;
+	cursor: pointer;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 12px;
+	padding-left: 12px;
+	padding-right: 12px;
+`;
+
+const CancelButton = styled(EditButton)`
+	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
+	color: ${(props) => props.theme.colors.common.primaryRed};
+	margin-right: 8px;
+`;
 
 export default OrdersTab;
