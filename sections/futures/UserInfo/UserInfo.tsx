@@ -17,7 +17,7 @@ import ROUTES from 'constants/routes';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import OpenOrdersTable from './OpenOrdersTable';
-import { FuturesPosition } from 'queries/futures/types';
+import { FuturesPosition, PositionHistory } from 'queries/futures/types';
 
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
@@ -69,7 +69,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
-	const [openShareModal, setOpenShareModal] = useState<boolean>(false);
+	const [showShareModal, setShowShareModal] = useState<boolean>(false);
 	const [hasOpenPosition, setHasOpenPosition] = useState<boolean>(false);
 	const [openProfitCalcModal, setOpenProfitCalcModal] = useState<boolean>(false);
 
@@ -113,8 +113,8 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	}, [openProfitCalcModal]);
 
 	const handleOpenShareModal = useCallback(() => {
-		setOpenShareModal(!openShareModal);
-	}, [openShareModal]);
+		setShowShareModal(!showShareModal);
+	}, [showShareModal]);
 
 	const refetchTrades = useCallback(() => {
 		futuresTradesQuery.refetch();
@@ -166,8 +166,16 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	);
 
 	useEffect(() => {
-		setHasOpenPosition(futuresPositionHistory.length > 0);
-	}, [futuresPositionHistory.length]);
+		let currentPosition: PositionHistory[] = [];
+
+		if (futuresPositionHistory.length > 0) {
+			currentPosition = futuresPositionHistory.filter(
+				(obj: PositionHistory) => obj.asset === marketAsset
+			);
+
+			setHasOpenPosition(currentPosition.length === 0 ? false : true);
+		}
+	}, [futuresPositionHistory, marketAsset]);
 
 	return (
 		<>
@@ -245,12 +253,12 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					setOpenProfitCalcModal={setOpenProfitCalcModal}
 				/>
 			)}
-			{openShareModal && (
+			{showShareModal && (
 				<ShareModal
 					position={position}
 					marketAsset={marketAsset}
 					marketAssetRate={marketAssetRate}
-					setOpenShareModal={setOpenShareModal}
+					setShowShareModal={setShowShareModal}
 					futuresPositionHistory={futuresPositionHistory}
 				/>
 			)}

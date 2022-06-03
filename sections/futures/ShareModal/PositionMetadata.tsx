@@ -42,20 +42,18 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		createdOnDate = '',
 		createdOnTime = '';
 
-	if (futuresPositionHistory.length > 0) {
-		const currentPosition = futuresPositionHistory.filter(
-			(obj: PositionHistory) => obj.asset === marketAsset
-		);
+	const currentPosition = futuresPositionHistory.filter(
+		(obj: PositionHistory) => obj.asset === marketAsset
+	);
 
-		avgEntryPrice = currentPosition[0].avgEntryPrice.toNumber().toFixed(2);
+	avgEntryPrice = currentPosition[0].avgEntryPrice.toNumber().toFixed(2);
 
-		const openTimestamp = currentPosition[0].openTimestamp;
+	const openTimestamp = currentPosition[0].openTimestamp;
 
-		openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
-		openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
-		createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
-		createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
-	}
+	openAtDate = format(openTimestamp, 'PP', { locale: getLocale() });
+	openAtTime = format(openTimestamp, 'HH:mm:ss', { locale: getLocale() });
+	createdOnDate = format(currentTimestamp, 'PP', { locale: getLocale() });
+	createdOnTime = format(currentTimestamp, 'HH:mm:ss', { locale: getLocale() });
 
 	useLayoutEffect(() => {
 		const now = new Date().getTime();

@@ -17,7 +17,7 @@ type ShareModalProps = {
 	position: FuturesPosition | null;
 	marketAsset: CurrencyKey;
 	marketAssetRate: number;
-	setOpenShareModal: React.Dispatch<React.SetStateAction<boolean>>;
+	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 	futuresPositionHistory: PositionHistory[];
 };
 
@@ -25,7 +25,7 @@ const ShareModal: FC<ShareModalProps> = ({
 	position,
 	marketAsset,
 	marketAssetRate,
-	setOpenShareModal,
+	setShowShareModal,
 	futuresPositionHistory,
 }) => {
 	const { t } = useTranslation();
@@ -34,7 +34,7 @@ const ShareModal: FC<ShareModalProps> = ({
 	return (
 		<>
 			<BaseModal
-				onDismiss={() => setOpenShareModal(false)}
+				onDismiss={() => setShowShareModal(false)}
 				isOpen={true}
 				title={t('futures.modals.share.title')}
 			>
