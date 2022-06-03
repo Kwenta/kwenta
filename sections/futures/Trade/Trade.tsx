@@ -174,7 +174,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	}, [router.events]);
 
 	const onTradeAmountSUSDChange = (value: string) => {
-		const valueIsNull = value === '' || Number(value) === 0;
+		const valueIsNull = marketAssetRate.eq(0) || value === '' || Number(value) === 0;
 		const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
 		const leverage = valueIsNull
 			? ''
@@ -326,8 +326,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				totalMargin={position?.remainingMargin ?? zeroBN}
 				availableMargin={position?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					position && position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
+					position && position?.accessibleMargin.gt(zeroBN)
+						? position?.accessibleMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={

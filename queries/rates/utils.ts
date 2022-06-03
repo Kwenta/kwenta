@@ -81,6 +81,8 @@ const markets = [
 	'sXAU',
 	'sXAG',
 	'sWTI',
+	'sDYDX',
+	'sAPE',
 ] as const;
 
 const map: Record<typeof markets[number], string> = {
@@ -96,6 +98,8 @@ const map: Record<typeof markets[number], string> = {
 	sXAU: '',
 	sXAG: '',
 	sWTI: '',
+	sDYDX: 'dydx',
+	sAPE: 'apecoin',
 };
 
 export const synthToCoingeckoPriceId = (synth: any) => {
