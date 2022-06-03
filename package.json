@@ -37,7 +37,7 @@
 		"@synthetixio/providers": "2.71.2",
 		"@synthetixio/queries": "2.71.2",
 		"@synthetixio/transaction-notifier": "2.71.2",
-		"@synthetixio/wei": "2.70.1",
+		"@synthetixio/wei": "2.71.2",
 		"@tippyjs/react": "4.1.0",
 		"@uniswap/widgets": "^1.0.0",
 		"axios": "0.21.1",
