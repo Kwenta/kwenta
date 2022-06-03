@@ -17,7 +17,6 @@ import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
-import useENS from 'hooks/useENS';
 import useENSs from 'hooks/useENSs';
 
 type LeaderboardProps = {
@@ -50,8 +49,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			}) ?? [],
 		[stats]
 	);
-	const ensInfo = useENSs(traders);
-	// console.log(ensInfo)
+	const ensInfoQuery = useENSs(traders);
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? [], [ensInfoQuery]);
 
 	useMemo(() => {
 		if (router.query.tab) {
@@ -80,25 +79,26 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	let data = useMemo(() => {
 		return stats
-			.sort(
-				(a: FuturesStat, b: FuturesStat) =>
-					(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
-			)
 			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
 				address: stat.account,
 				trader: stat.account,
-				traderShort: ensInfo[i]
+				traderShort: truncateAddress(stat.account),
+				traderEns: ensInfo[i]
 					? ensInfo[i].endsWith('.eth')
 						? ensInfo[i]
 						: truncateAddress(ensInfo[i])
-					: truncateAddress(stat.account),
+					: null,
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
 				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
+			.sort(
+				(a: FuturesStat, b: FuturesStat) =>
+					(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
+			)
 			.filter((i: { trader: string }) =>
 				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
 			);
@@ -158,7 +158,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 					<StyledTable
 						compact={compact}
 						showPagination={true}
-						isLoading={statsQuery.isLoading}
+						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
 						data={data}
 						pageSize={20}
 						hideHeaders={compact}
@@ -190,12 +190,16 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
-											// const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
-											let ensName = '';
+											let ensName;
 											let ensAvatar;
 											return (
 												<StyledOrderType
-													onClick={() => onClickTrader(cellProps.row.original.trader, ensName)}
+													onClick={() =>
+														onClickTrader(
+															cellProps.row.original.trader,
+															cellProps.row.original.traderEns
+														)
+													}
 												>
 													{compact && cellProps.row.original.rank + '. '}
 													<StyledTrader>
@@ -213,10 +217,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 																{ensName}
 															</>
 														) : (
-															cellProps.row.original.traderShort
+															cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
 														)}
 													</StyledTrader>
-													{getMedal(cellProps.row.index + 1)}
+													{getMedal(cellProps.row.original.rank)}
 												</StyledOrderType>
 											);
 										},

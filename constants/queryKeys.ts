@@ -36,6 +36,7 @@ export const QUERY_KEYS = {
 	},
 	Network: {
 		EthGasPrice: ['network', 'ethGasPrice'],
+		ENSNames: (addresses: string[]) => ['network', 'ensNames', addresses],
 	},
 	WalletBalances: {
 		Synths: (walletAddress: string, networkId: NetworkId) => [
