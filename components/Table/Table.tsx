@@ -184,25 +184,16 @@ export const Table: FC<TableProps> = ({
 	);
 };
 
-const TableContainer = styled.div`
-	overflow-x: auto;
-	//display: block;
-	//width: 100%;
-`;
+const TableContainer = styled.div``;
 
 const StyledSpinner = styled(Spinner)`
 	display: block;
 	margin: 30px auto;
 `;
 
-export const TableRow = styled.div`
-	//display: none;
-`;
+export const TableRow = styled.div``;
 
 const TableBody = styled.div`
-	//width: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
 	min-width: fit-content;
 `;
 
@@ -259,7 +250,7 @@ const SortIconContainer = styled.span`
 const ReactTable = styled.div<{ palette: TablePalette }>`
 	width: 100%;
 	height: 100%;
-	overflow-x: auto;
+	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;

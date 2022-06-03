@@ -3,7 +3,6 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
-import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
@@ -28,6 +27,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
@@ -58,7 +58,6 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery({
 		refetchInterval: 15000,
 	});

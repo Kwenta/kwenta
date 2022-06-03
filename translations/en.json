@@ -197,11 +197,13 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"external-price": "Aggregated market price provided by CoinGecko",
+				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
+				"open-interest":"Total notional value on all outstanding positions of the selected market",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
+				
 			}
 		},
 		"price-chart-card": {
