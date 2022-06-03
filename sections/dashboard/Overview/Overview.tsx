@@ -65,13 +65,17 @@ const Overview: FC = () => {
 	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(
 		isL2MainnetOrL2Kovan ? PositionsTab.FUTURES : PositionsTab.SPOT
 	);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(
+		isL2MainnetOrL2Kovan ? MarketsTab.FUTURES : MarketsTab.SPOT
+	);
 
 	useEffect(() => {
 		if (isL2MainnetOrL2Kovan) {
 			setActivePositionsTab(PositionsTab.FUTURES);
+			setActiveMarketsTab(MarketsTab.FUTURES);
 		} else {
 			setActivePositionsTab(PositionsTab.SPOT);
+			setActiveMarketsTab(MarketsTab.SPOT);
 		}
 	}, [isL2MainnetOrL2Kovan]);
 
