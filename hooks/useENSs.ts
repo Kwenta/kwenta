@@ -44,30 +44,6 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 			...options,
 		}
 	);
-	// useEffect(() => {
-	// 	const ReverseLookup = new Contract(
-	// 		ENS_REVERSE_LOOKUP,
-	// 		reverseRecordsAbi,
-	// 		staticMainnetProvider
-	// 	);
-
-	// 	(async () => {
-	// 		if (addresses.length > 0) {
-	// 			let ensPromises = [];
-	// 			for (let i = 0; i < addresses.length; i += ADDRESSES_PER_LOOKUP) {
-	// 				const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP);
-	// 				const ensNamesPromise = ReverseLookup.getNames(addressesToLookup);
-	// 				ensPromises.push(ensNamesPromise);
-	// 			}
-
-	// 			const ensPromiseResult = await Promise.all(ensPromises);
-	// 			const newEnsInfo = ensPromiseResult.flat(1).map((val: string, ind: number) => {
-	// 				return val !== '' ? val : addresses[ind];
-	// 			});
-	// 			setEnsInfo(newEnsInfo);
-	// 		}
-	// 	})();
-	// }, [addresses, staticMainnetProvider]);
 };
 
 export default useENSs;
