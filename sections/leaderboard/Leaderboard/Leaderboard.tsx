@@ -19,6 +19,7 @@ import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
 import useENSAvatar from 'hooks/useENSAvatar';
+import Connector from 'containers/Connector';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -37,6 +38,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
+	const { staticMainnetProvider } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -95,10 +97,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.sort(
-				(a: FuturesStat, b: FuturesStat) =>
-					(b?.pnl || 0) - (a?.pnl || 0)
-			)
+			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
 			.map((stat: FuturesStat, i: number) => ({
 				rank: i + 1,
 				...stat,
@@ -194,7 +193,10 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
-											const avatar = useENSAvatar(cellProps.row.original.traderEns);
+											const avatar = useENSAvatar(
+												staticMainnetProvider,
+												cellProps.row.original.traderEns
+											);
 											return (
 												<StyledOrderType
 													onClick={() =>
@@ -216,7 +218,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 																		height={16}
 																		style={{ borderRadius: '50%', marginRight: '8px' }}
 																		// @ts-ignore
-																		onError={(err) => err.target.style.display = 'none' }
+																		onError={(err) => (err.target.style.display = 'none')}
 																	/>
 																)}
 																{cellProps.row.original.traderEns}
