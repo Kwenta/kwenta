@@ -1,53 +1,38 @@
 import Connector from 'containers/Connector';
+import { Contract } from 'ethers';
 import { useEffect, useState } from 'react';
+import { ENS_REVERSE_LOOKUP } from 'constants/address';
+import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
 
-type ENSInfo = {
-	address: string | null;
-	ensName: string | null;
-	ensAvatar: string | null;
-};
+const ADDRESSES_PER_LOOKUP = 1500;
 
-const useENSs = (addresses: string[]): ENSInfo[] | null => {
-	const [ensInfo, setEnsInfo] = useState<ENSInfo[] | null>(null);
+const useENSs = (addresses: string[]): string[] => {
+	const [ensInfo, setEnsInfo] = useState<string[]>(addresses);
 	const { staticMainnetProvider } = Connector.useContainer();
 
 	useEffect(() => {
-		let mounted = true;
-
-		const getEns = async (address: string) => {
-			var name;
-			var avatar;
-			if (address) {
-				const name = await staticMainnetProvider.lookupAddress(address);
-				if (name && mounted) {
-					avatar = await staticMainnetProvider.getAvatar(name);
-				}
-			}
-
-			return {
-				address: address,
-				ensName: name,
-				ensAvatar: avatar,
-			};
-		};
+		const ReverseLookup = new Contract(
+			ENS_REVERSE_LOOKUP,
+			reverseRecordsAbi,
+			staticMainnetProvider
+		);
 
 		(async () => {
 			if (addresses.length > 0) {
-				console.log('Addresses: ', addresses);
-				const ensPromises = addresses.map((address) => {
-					return getEns(address);
+				let ensPromises = [];
+				for (let i = 0; i < addresses.length; i += ADDRESSES_PER_LOOKUP) {
+					const addressesToLookup = addresses.slice(i, i + ADDRESSES_PER_LOOKUP);
+					const ensNamesPromise = ReverseLookup.getNames(addressesToLookup);
+					ensPromises.push(ensNamesPromise);
+				}
+
+				const ensPromiseResult = await Promise.all(ensPromises);
+				const newEnsInfo = ensPromiseResult.flat(1).map((val: string, ind: number) => {
+					return val !== '' ? val : addresses[ind];
 				});
-				console.log('Promises: ', ensPromises);
-				const newEnsInfo = await Promise.all(ensPromises);
-				console.log('Info: ', newEnsInfo);
-				// setEnsInfo(newEnsInfo ?? null);
+				setEnsInfo(newEnsInfo);
 			}
 		})();
-
-		return () => {
-			mounted = false;
-			setEnsInfo(null);
-		};
 	}, [addresses, staticMainnetProvider]);
 
 	return ensInfo;

@@ -88,7 +88,11 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 				rank: i + 1,
 				address: stat.account,
 				trader: stat.account,
-				traderShort: truncateAddress(stat.account),
+				traderShort: ensInfo[i]
+					? ensInfo[i].endsWith('.eth')
+						? ensInfo[i]
+						: truncateAddress(ensInfo[i])
+					: truncateAddress(stat.account),
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
 				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
@@ -98,7 +102,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			.filter((i: { trader: string }) =>
 				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
 			);
-	}, [stats, searchTerm, pnlMap]);
+	}, [stats, searchTerm, pnlMap, ensInfo]);
 
 	if (compact) {
 		const ownPosition = data.findIndex((i: { address: string }) => {
