@@ -18,6 +18,7 @@ import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
+import useENSAvatar from 'hooks/useENSAvatar';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -80,7 +81,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	let data = useMemo(() => {
 		return stats
 			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
 				address: stat.account,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
@@ -97,8 +97,12 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			}))
 			.sort(
 				(a: FuturesStat, b: FuturesStat) =>
-					(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
+					(b?.pnl || 0) - (a?.pnl || 0)
 			)
+			.map((stat: FuturesStat, i: number) => ({
+				rank: i + 1,
+				...stat,
+			}))
 			.filter((i: { trader: string }) =>
 				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
 			);
@@ -190,8 +194,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
-											let ensName;
-											let ensAvatar;
+											const avatar = useENSAvatar(cellProps.row.original.traderEns);
 											return (
 												<StyledOrderType
 													onClick={() =>
@@ -203,18 +206,20 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 												>
 													{compact && cellProps.row.original.rank + '. '}
 													<StyledTrader>
-														{ensName ? (
+														{avatar ? (
 															<>
-																{ensAvatar && (
+																{!avatar.isLoading && avatar.data && (
 																	<img
-																		src={ensAvatar}
-																		alt={ensName}
+																		src={avatar.data}
+																		alt={''}
 																		width={16}
 																		height={16}
 																		style={{ borderRadius: '50%', marginRight: '8px' }}
+																		// @ts-ignore
+																		onError={(err) => err.target.style.display = 'none' }
 																	/>
 																)}
-																{ensName}
+																{cellProps.row.original.traderEns}
 															</>
 														) : (
 															cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
