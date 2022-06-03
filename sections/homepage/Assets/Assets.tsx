@@ -42,10 +42,9 @@ enum MarketsTab {
 
 type PriceChartProps = {
 	asset: string;
-	postive: boolean;
 };
 
-export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
+export const PriceChart = ({ asset }: PriceChartProps) => {
 	const chartRef = useRef('0');
 
 	useEffect(() => {
@@ -94,16 +93,6 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 			},
 		});
 
-		const areaSeries = chart.addAreaSeries({
-			topColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(255, 71, 71, 1)',
-			bottomColor: postive ? 'rgba(127, 212, 130, 0.1)' : 'rgba(255, 71, 71, 0.1)',
-			lineColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(239, 104, 104, 1)',
-			priceLineVisible: false,
-			crosshairMarkerVisible: false,
-			lineStyle: 0,
-			lineWidth: 2,
-		});
-
 		requestCandlesticks(
 			asset,
 			Math.floor((new Date().getTime() - 25 * 3600 * 1000) / 1000),
@@ -115,15 +104,32 @@ export const PriceChart = ({ asset, postive = true }: PriceChartProps) => {
 			true
 		)
 			.then((bars) => {
-				return bars.map((b) => {
+				let postive = false;
+				if (bars !== undefined) {
+					const first = bars[0]?.average ?? 0;
+					const last = bars[23]?.average ?? 0;
+					postive = last - first >= 0;
+				}
+				const results = bars.map((b) => {
 					return {
 						value: b.average,
 						time: b.timestamp as UTCTimestamp,
 					};
 				});
+				return { results, postive };
 			})
-			.then((results) => {
-				return areaSeries.setData(results);
+			.then(({ results, postive }) => {
+				chart
+					.addAreaSeries({
+						topColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(255, 71, 71, 1)',
+						bottomColor: postive ? 'rgba(127, 212, 130, 0.1)' : 'rgba(255, 71, 71, 0.1)',
+						lineColor: postive ? 'rgba(127, 212, 130, 1)' : 'rgba(239, 104, 104, 1)',
+						priceLineVisible: false,
+						crosshairMarkerVisible: false,
+						lineStyle: 0,
+						lineWidth: 2,
+					})
+					.setData(results);
 			});
 		// eslint-disable-next-line
 	}, []);
@@ -193,7 +199,9 @@ const Assets = () => {
 		return futuresMarkets.map((market: FuturesMarket, i: number) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
+			const pastPrice = dailyPriceChanges.find(
+				(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
+			);
 			return {
 				key: market.asset,
 				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
@@ -201,12 +209,7 @@ const Assets = () => {
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
 				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || 0,
-				image: (
-					<PriceChart
-						asset={market.asset}
-						postive={market.price.toNumber() - pastPrice?.price >= 0}
-					/>
-				),
+				image: <PriceChart asset={market.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
 				),
@@ -239,7 +242,7 @@ const Assets = () => {
 				price,
 				change: price !== 0 ? (price - pastPrice?.price) / price || 0 : 0,
 				volume: !_.isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
-				image: <PriceChart asset={synth.asset} postive={price - pastPrice?.price >= 0} />,
+				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
 				),
