@@ -93,22 +93,33 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 			},
 		});
 
-		requestCandlesticks(
-			asset,
-			Math.floor((new Date().getTime() - 25 * 3600 * 1000) / 1000),
-			undefined,
-			3600,
-			10,
-			24,
-			'asc',
-			true
-		)
-			.then((bars) => {
+		Promise.all([
+			requestCandlesticks(
+				asset,
+				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
+				undefined,
+				60,
+				10,
+				1,
+				'desc',
+				true
+			),
+			requestCandlesticks(
+				asset,
+				Math.floor(Date.now() / 1000) - 60 * 60 * 24,
+				undefined,
+				3600,
+				10,
+				24,
+				'asc',
+				true
+			),
+		])
+			.then(([currentPrice, bars]) => {
 				let postive = false;
 				if (bars !== undefined) {
 					const first = bars[0]?.average ?? 0;
-					const last = bars[23]?.average ?? 0;
-					postive = last - first >= 0;
+					postive = (currentPrice[0]?.average ?? 0) - first >= 0;
 				}
 				const results = bars.map((b) => {
 					return {
