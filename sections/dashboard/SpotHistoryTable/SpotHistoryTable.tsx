@@ -10,7 +10,6 @@ import Currency from 'components/Currency';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { walletAddressState } from 'store/wallet';
-import useSynthetixQueries from '@synthetixio/queries';
 import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
@@ -20,48 +19,26 @@ import { ExternalLink } from 'styles/common';
 import LinkIcon from 'assets/svg/app/link.svg';
 import * as _ from 'lodash/fp';
 import { isFiatCurrency } from 'utils/currencies';
+import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+
+type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
+	timestamp: number;
+};
 
 const SpotHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
-	const { subgraph } = useSynthetixQueries();
 
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
-	const walletTradesQuery = subgraph.useGetSynthExchanges(
-		{
-			first: 1000,
-			where: {
-				account: walletAddress,
-			},
-			orderBy: 'timestamp',
-			orderDirection: 'desc',
-		},
-		{
-			id: true,
-			fromAmount: true,
-			fromAmountInUSD: true,
-			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
-			fromSynth: { name: true, symbol: true, id: true },
-			// @ts-ignore TODO @DEV there seems to be a type issue from the queries library. Noah is aware of it
-			toSynth: { name: true, symbol: true, id: true },
-			toAmount: true,
-			toAmountInUSD: true,
-			feesInUSD: true,
-			toAddress: true,
-			timestamp: true,
-			gasPrice: true,
-		}
-	);
+	const walletTradesQuery = useGetWalletTrades(walletAddress!);
 	const { synthsMap } = Connector.useContainer();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-	// const synths = useMemo(() => synthetixjs!.synths || [], [synthetixjs]);
 	const trades = useMemo(() => {
-		const t = walletTradesQuery.data || [];
+		const t = walletTradesQuery.data?.synthExchanges ?? [];
 
-		//TODO: move to parsing library
-		return t.map((trade) => ({
+		return t.map((trade: any) => ({
 			...trade,
 			hash: trade.id.split('-')[0],
 		}));
@@ -69,7 +46,7 @@ const SpotHistoryTable: FC = () => {
 
 	const filteredHistoricalTrades = useMemo(
 		() =>
-			trades.filter((trade) => {
+			trades.filter((trade: any) => {
 				const activeSynths = synths.map((synth) => synth.name);
 				return activeSynths.includes(trade.fromSynth?.symbol as CurrencyKey);
 			}),
@@ -95,13 +72,11 @@ const SpotHistoryTable: FC = () => {
 					{
 						Header: <TableHeader>{t('dashboard.overview.history-table.date-time')}</TableHeader>,
 						accessor: 'dateTime',
-						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
+						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
-									<TimeDisplay
-										cellPropsValue={cellProps.row.original.timestamp.mul(1000).toNumber()}
-									/>
+									<TimeDisplay cellPropsValue={cellProps.row.original.timestamp * 1000} />
 								</StyledTimeDisplay>
 							);
 						},
@@ -110,7 +85,7 @@ const SpotHistoryTable: FC = () => {
 					{
 						Header: <TableHeader>{t('dashboard.overview.history-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
-						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
+						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
 								cellProps.row.original.fromSynth && cellProps.row.original.fromAmount,
 								<SynthContainer>
@@ -140,7 +115,7 @@ const SpotHistoryTable: FC = () => {
 					{
 						Header: <TableHeader>{t('dashboard.overview.history-table.to')}</TableHeader>,
 						accessor: 'toAmount',
-						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
+						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
 								cellProps.row.original.toSynth && cellProps.row.original.toAmount,
 								<SynthContainer>
@@ -170,7 +145,7 @@ const SpotHistoryTable: FC = () => {
 					{
 						Header: <TableHeader>{t('dashboard.overview.history-table.usd-value')}</TableHeader>,
 						accessor: 'amount',
-						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) => {
+						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
 							return conditionalRender(
 								currencyKey,
@@ -197,7 +172,7 @@ const SpotHistoryTable: FC = () => {
 					},
 					{
 						id: 'link',
-						Cell: (cellProps: CellProps<SynthTradesExchangeResult>) =>
+						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) =>
 							blockExplorerInstance != null && cellProps.row.original.hash ? (
 								<StyledExternalLink
 									href={blockExplorerInstance.txLink(cellProps.row.original.hash)}
