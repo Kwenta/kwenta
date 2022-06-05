@@ -162,6 +162,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 					</Row>
 				))}
 				<StyledButton
+					data-testid="trade-close-position-confirm-order-button"
 					variant="primary"
 					isRounded
 					size="lg"
