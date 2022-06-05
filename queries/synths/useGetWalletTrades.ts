@@ -61,7 +61,7 @@ const useGetWalletTrades = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady, ...options }
+		{ enabled: isAppReady && Boolean(walletAddress), ...options }
 	);
 };
 
