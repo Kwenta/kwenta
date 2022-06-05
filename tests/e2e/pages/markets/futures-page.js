@@ -37,7 +37,7 @@ export default class FuturesPage extends Page {
 		const walletButton = this.header.getWalletButton();
 		return walletButton.invoke('text');
 	}
-	getDepositeBtn() {
+	getDepositBtn() {
 		return cy.findByTestId('futures-market-trade-button-deposit');
 	}
 
@@ -45,19 +45,43 @@ export default class FuturesPage extends Page {
 		return cy.findByTestId('futures-market-trade-button-withdraw');
 	}
 
-	enterDepositeMarginInsUSD(margin) {
-		return cy.findByTestId('funtures-market-trade-deposite-margin-input').type(margin.toString());
+	enterDepositMarginInsUSD(margin) {
+		return cy.findByTestId('funtures-market-trade-deposit-margin-input').type(margin.toString());
 	}
 
 	enterWithdrawMarginInsUSD(margin) {
 		return cy.findByTestId('funtures-market-trade-withdraw-margin-input').type(margin.toString());
 	}
 
-	getDepositeMarginBtn() {
-		return cy.findByTestId('funtures-market-trade-deposite-margin-button');
+	getDepositMarginBtn() {
+		return cy.findByTestId('funtures-market-trade-deposit-margin-button');
 	}
 
 	getWithdrawMarginBtn() {
 		return cy.findByTestId('funtures-market-trade-withdraw-margin-button');
+	}
+
+	getWithdrawMarginMaxBtn() {
+		return cy.findByTestId('funtures-market-trade-withdraw-max-button');
+	}
+
+	getLongBtn() {
+		return cy.findByTestId('position-side-long-button');
+	}
+
+	getOpenPositionBtn() {
+		return cy.findByTestId('trade-open-position-button');
+	}
+
+	getClosePositionBtn() {
+		return cy.findByTestId('trade-close-position-button');
+	}
+
+	enterAmountInsUSD(amount) {
+		return cy.findByTestId('set-order-size-amount-susd').type(amount.toString());
+	}
+
+	getOpenPositionConfirmOrderBtn() {
+		return cy.findByTestId('trade-open-position-confirm-order-button');
 	}
 }

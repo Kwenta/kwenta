@@ -388,6 +388,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 			<ManagePositions>
 				<PlaceOrderButton
+					data-testid="trade-open-position-button"
 					variant="primary"
 					fullWidth
 					disabled={
@@ -411,6 +412,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 				{(() => onPositionClose) && (
 					<CloseOrderButton
+						data-testid="trade-close-position-button"
 						isRounded={true}
 						fullWidth
 						variant="danger"

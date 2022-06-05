@@ -78,6 +78,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			) : (
 				<LeverageInputContainer>
 					<StyledInput
+						data-testid="leverage-input-1x"
 						value={currentLeverage}
 						placeholder="1"
 						suffix="x"
