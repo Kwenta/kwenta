@@ -84,4 +84,16 @@ export default class FuturesPage extends Page {
 	getOpenPositionConfirmOrderBtn() {
 		return cy.findByTestId('trade-open-position-confirm-order-button');
 	}
+
+	getClosePositionConfirmOrderBtn() {
+		return cy.findByTestId('trade-close-position-confirm-order-button');
+	}
+
+	getPositionCardLeverageValue() {
+		return cy.findByTestId('position-card-leverage-value');
+	}
+
+	getPositionCardSideValue() {
+		return cy.findByTestId('position-card-side-value');
+	}
 }
