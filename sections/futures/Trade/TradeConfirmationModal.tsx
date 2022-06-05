@@ -142,6 +142,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 				</Row>
 			))}
 			<ConfirmTradeButton
+				data-testid="trade-open-position-confirm-order-button"
 				variant="primary"
 				isRounded
 				onClick={handleConfirmOrder}

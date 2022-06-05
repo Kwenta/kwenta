@@ -146,7 +146,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 					setAmount(v);
 				}}
 				right={
-					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+					<MaxButton data-testid="funtures-market-trade-withdraw-max-button" onClick={handleSetMax}>
+						{t('futures.market.trade.margin.modal.max')}
+					</MaxButton>
 				}
 			/>
 

@@ -109,6 +109,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 				>
 					<HoverTransform>
 						<PositionValue
+							data-testid="position-card-side-value"
 							side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 						>
 							{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -124,7 +125,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.position-size')}
 				>
-					<HoverTransform>
+					<HoverTransform data-testid="position-card-size-value">
 						{`${formatNumber(positionDetails.size ?? 0, {
 							minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
 						})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
@@ -142,7 +143,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 					height={'auto'}
 					content={t('futures.market.position-card.tooltips.leverage')}
 				>
-					<HoverTransform>{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}</HoverTransform>
+					<HoverTransform data-testid="position-card-leverage-value">
+						{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
+					</HoverTransform>
 				</LeftMarginTooltip>
 			) : (
 				NO_VALUE

@@ -18,6 +18,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
+				data-testid="position-side-long-button"
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
