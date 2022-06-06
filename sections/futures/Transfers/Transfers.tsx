@@ -1,11 +1,11 @@
 import Table from 'components/Table';
 import BlockExplorer from 'containers/BlockExplorer';
-import { differenceInSeconds, format } from 'date-fns';
 import { MarginTransfer } from 'queries/futures/types';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { timePresentation } from 'utils/formatters/date';
 import { truncateAddress } from 'utils/formatters/string';
 
 type TransferProps = {
@@ -18,40 +18,6 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 	const { t } = useTranslation();
 	const { blockExplorerInstance } = BlockExplorer.useContainer();
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
-
-	function timePresentation(timestamp: string) {
-		const actionTime = new Date(Number(timestamp) * 1000);
-		const seconds = differenceInSeconds(new Date(), actionTime);
-		if (seconds < 60) {
-			return t('common.time.n-sec-ago', { timeDelta: seconds });
-		}
-
-		if (seconds < 3600) {
-			return t('common.time.n-min-ago', {
-				timeDelta: Math.floor(seconds / 60),
-			});
-		}
-
-		if (seconds < 86400) {
-			return t('common.time.n-hr-ago', {
-				timeDelta: Math.floor(seconds / 3600),
-			});
-		}
-
-		if (seconds < 604800) {
-			return t('common.time.n-day-ago', {
-				timeDelta: Math.floor(seconds / 86400),
-			});
-		}
-
-		if (seconds < 2419200) {
-			return t('common.time.n-week-ago', {
-				timeDelta: Math.floor(seconds / 604800),
-			});
-		}
-
-		return format(actionTime, 'MM/dd/yyyy');
-	}
 
 	return (
 		<StyledTable
@@ -84,7 +50,9 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 						<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
 					),
 					accessor: 'timestamp',
-					Cell: (cellProps: any) => <DefaultCell>{timePresentation(cellProps.value)}</DefaultCell>,
+					Cell: (cellProps: any) => (
+						<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
+					),
 					width: 50,
 				},
 				{
