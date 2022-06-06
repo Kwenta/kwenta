@@ -13,6 +13,7 @@ export type TabButtonProps = {
 	noOutline?: boolean;
 	gold?: boolean;
 	vertical?: boolean;
+	nofill?: boolean;
 };
 
 const TabButton: React.FC<TabButtonProps> = ({
@@ -23,10 +24,11 @@ const TabButton: React.FC<TabButtonProps> = ({
 	icon,
 	gold,
 	vertical,
+	nofill,
 	...props
 }) => {
 	return (
-		<StyledButton active={active} gold={gold} vertical={vertical} {...props}>
+		<StyledButton active={active} gold={gold} vertical={vertical} nofill={nofill} {...props}>
 			<div className="orientation">
 				{!!icon && <div>{icon}</div>}
 				<div>
@@ -39,7 +41,12 @@ const TabButton: React.FC<TabButtonProps> = ({
 	);
 };
 
-const StyledButton = styled(Button)<{ active?: boolean; gold?: boolean; vertical?: boolean }>`
+const StyledButton = styled(Button)<{
+	active?: boolean;
+	gold?: boolean;
+	vertical?: boolean;
+	nofill?: boolean;
+}>`
 	height: initial;
 	display: flex;
 	align-items: center;
@@ -83,10 +90,21 @@ const StyledButton = styled(Button)<{ active?: boolean; gold?: boolean; vertical
 	svg {
 		margin-right: ${(props) => (props.vertical ? '0' : '7px')};
 		path {
-			fill: ${(props) =>
-				props.active
-					? props.theme.colors.common.primaryWhite
-					: props.theme.colors.common.secondaryGray};
+			${(props) =>
+				!props.nofill &&
+				css`
+					fill: ${props.active
+						? props.theme.colors.common.primaryWhite
+						: props.theme.colors.common.secondaryGray};
+				`}
+
+			${(props) =>
+				props.nofill &&
+				css`
+					stroke: ${props.active
+						? props.theme.colors.common.primaryWhite
+						: props.theme.colors.common.secondaryGray};
+				`}
 		}
 	}
 

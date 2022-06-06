@@ -23,6 +23,7 @@ const TABS = [
 		title: 'Price',
 		component: <PriceTab />,
 		icon: <PriceIcon />,
+		nofill: true,
 	},
 	{
 		title: 'Trades',
@@ -33,6 +34,7 @@ const TABS = [
 		title: 'Stats',
 		component: <StatsTab />,
 		icon: <StatsIcon />,
+		nofill: true,
 	},
 ];
 
@@ -43,7 +45,7 @@ const OverviewTabs: React.FC = () => {
 		<div>
 			{TABS[activeTab].component}
 			<MainTabButtonsContainer>
-				{TABS.map(({ title, icon }, i) => (
+				{TABS.map(({ title, icon, nofill }, i) => (
 					<TabButton
 						key={title}
 						title={title}
@@ -52,6 +54,7 @@ const OverviewTabs: React.FC = () => {
 						icon={icon}
 						gold
 						vertical
+						nofill={nofill}
 					/>
 				))}
 			</MainTabButtonsContainer>
