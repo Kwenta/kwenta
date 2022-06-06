@@ -207,6 +207,7 @@ export type FuturesStat = {
 	liquidations: number;
 	totalTrades: number;
 	totalVolume: number;
+	pnl?: number;
 };
 
 export type FuturesCumulativeStats = {
