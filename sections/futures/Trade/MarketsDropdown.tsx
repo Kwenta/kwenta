@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,11 @@ const assetToCurrencyOption = (
 const DUMMY_PRICE = '';
 const DUMMY_CHANGE = '';
 
-const MarketsDropdown: React.FC = () => {
+type MarketsDropdownProps = {
+	mobile?: boolean;
+};
+
+const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
@@ -129,7 +133,7 @@ const MarketsDropdown: React.FC = () => {
 	]);
 
 	return (
-		<SelectContainer>
+		<SelectContainer mobile={mobile}>
 			<Select
 				instanceId={`markets-dropdown-${asset}`}
 				controlHeight={55}
@@ -155,14 +159,14 @@ const MarketsDropdown: React.FC = () => {
 				components={{
 					SingleValue: MarketsDropdownSingleValue,
 					Option: MarketsDropdownOption,
-					DropdownIndicator: MarketsDropdownIndicator,
+					DropdownIndicator: !mobile ? MarketsDropdownIndicator : undefined,
 				}}
 			/>
 		</SelectContainer>
 	);
 };
 
-const SelectContainer = styled.div`
+const SelectContainer = styled.div<{ mobile?: boolean }>`
 	margin-bottom: 16px;
 
 	.react-select__dropdown-indicator {
@@ -172,6 +176,18 @@ const SelectContainer = styled.div`
 	.react-select__option {
 		padding: 0;
 	}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			.react-select__control {
+				border-radius: 0;
+			}
+
+			.react-select__control::before {
+				border-radius: 0;
+			}
+		`}
 `;
 
 export default MarketsDropdown;

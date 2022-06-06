@@ -31,6 +31,8 @@ const OpenPositionTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = React.useContext(RefetchContext);
 
+	const [modalOpen, setModalOpen] = React.useState(false);
+
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -107,7 +109,7 @@ const OpenPositionTab: React.FC = () => {
 			<ManagePosition
 				marketCapReached={isMarketCapReached}
 				translationKey={placeOrderTranslationKey}
-				openConfirmationModal={() => {}}
+				openConfirmationModal={() => setModalOpen(true)}
 				openClosePositionModal={() => {}}
 				error={error}
 			/>
@@ -115,6 +117,7 @@ const OpenPositionTab: React.FC = () => {
 			<FeeInfoBox dynamicFee={dynamicFee} />
 
 			<MobileTradeConfirmationModal
+				open={modalOpen}
 				gasLimit={orderTxn.gasLimit}
 				l1Fee={orderTxn.optimismLayerOneFee}
 			/>

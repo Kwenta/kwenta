@@ -19,11 +19,13 @@ import Wei from '@synthetixio/wei';
 import { GasLimitEstimate } from 'constants/network';
 
 type MobileTradeConfirmationModalProps = {
+	open: boolean;
 	gasLimit: GasLimitEstimate;
 	l1Fee: Wei | null;
 };
 
 const MobileTradeConfirmationModal: React.FC<MobileTradeConfirmationModalProps> = ({
+	open,
 	gasLimit,
 	l1Fee,
 }) => {
@@ -110,7 +112,7 @@ const MobileTradeConfirmationModal: React.FC<MobileTradeConfirmationModalProps> 
 	);
 
 	return (
-		<StyledModal isOpen>
+		<StyledModal isOpen={open}>
 			<Foreground>
 				{dataRows.map(({ label, value }) => (
 					<Row key={label}>
@@ -127,6 +129,11 @@ const StyledModal = styled(FullScreenModal)`
 	background-color: transparent;
 	top: initial;
 	bottom: 74px;
+
+	& > div {
+		margin: 0;
+		width: 100%;
+	}
 `;
 
 const Foreground = styled.div`
@@ -147,6 +154,11 @@ const Row = styled.div`
 	}
 
 	.value {
+		color: ${(props) => props.theme.colors.common.primaryWhite};
+	}
+
+	&:not(:first-of-type) {
+		padding-top: 11.5px;
 	}
 
 	&:not(:last-of-type) {
