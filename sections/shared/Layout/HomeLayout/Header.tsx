@@ -144,7 +144,7 @@ const Header: FC = () => {
 						))}
 					</Links>
 					<MenuContainer>
-						<Link href={ROUTES.Home.Overview}>
+						<Link href={ROUTES.Markets.Home}>
 							<Button variant="primary" isRounded={false} size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
