@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import Wei from '@synthetixio/wei';
 
@@ -31,14 +31,21 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const [customGasPrice] = useRecoilState(customGasPriceState);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isMainnet = useRecoilValue(isMainnetState);
+	const isL2 = useRecoilValue(isL2State);
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const gasPriceItem = hasCustomGasPrice ? (
-		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
-	) : (
-		<span data-testid="gas-price">{formatNumber(gasPrice ?? 0, { minDecimals: 4 })}</span>
+	const formatGasPrice = (price: number) => {
+		const formattedPrice = formatNumber(price, { minDecimals: 4 });
+		return isL2
+			? formatCurrency(selectedPriceCurrency.name as CurrencyKey, formattedPrice, { sign: '$' })
+			: `${formattedPrice} Gwei`;
+	};
+	const gasPriceItem = (
+		<span data-testid="gas-price">
+			{formatGasPrice(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0)}
+		</span>
 	);
 
 	return (
@@ -51,7 +58,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 			<SummaryItemValue>
 				{gasPrice != null ? (
 					<>
-						{transactionFee != null ? (
+						{!isL2 && transactionFee != null ? (
 							<GasPriceCostTooltip
 								content={
 									<span>
