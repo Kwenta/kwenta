@@ -3,9 +3,13 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
 
+import { currentThemeState } from 'store/ui';
+import { useRecoilValue } from 'recoil';
+
 import LogoSvg from 'assets/svg/brand/logo.svg';
 import LogoSvgL2 from 'assets/svg/brand/logol2.svg';
-import LogoSvgBeta from 'assets/svg/brand/logo-beta.svg';
+import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
+import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
 
 type LogoProps = {
 	isL2: boolean;
@@ -13,8 +17,14 @@ type LogoProps = {
 };
 
 const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
+	const currentTheme = useRecoilValue(currentThemeState);
 	if (isFutures) {
-		return <LogoSvgBeta />;
+		if (currentTheme === 'dark') {
+			return <LogoSvgBetaDark />;
+		}
+		if (currentTheme === 'light') {
+			return <LogoSvgBetaLight />;
+		}
 	}
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
 };
