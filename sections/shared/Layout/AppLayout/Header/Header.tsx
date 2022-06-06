@@ -17,9 +17,12 @@ import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
 import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { useTranslation } from 'react-i18next';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
+	const { t } = useTranslation();
 
 	const logo = <Logo isL2={isL2} />;
 
@@ -28,8 +31,8 @@ const Header: FC = () => {
 			<FuturesBannerContainer>
 				<FuturesBannerLinkWrapper>
 					<>
-						<FuturesLink href="https://v2.beta.kwenta.io/" target="_blank">
-							Perpetual Futures Beta available now
+						<FuturesLink href={EXTERNAL_LINKS.KwentaV2.Home} target="_blank">
+							{t('header.banner.futures-v2')}
 						</FuturesLink>
 						<Img src={LinkWhiteIcon} />
 					</>
