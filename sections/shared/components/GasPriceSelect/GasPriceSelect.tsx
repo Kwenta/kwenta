@@ -11,12 +11,11 @@ import { NO_VALUE } from 'constants/placeholder';
 import InfoIcon from 'assets/svg/app/info.svg';
 
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
-
+import { Synths } from 'constants/currency';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices } from '@synthetixio/queries';
-import { CurrencyKey } from 'constants/currency';
+
 import { parseGasPriceObject } from 'hooks/useGas';
 
 type GasPriceSelectProps = {
@@ -36,15 +35,13 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const formatGasPrice = (price: number) => {
-		const formattedPrice = formatNumber(price, { minDecimals: 4 });
-		return isL2
-			? formatCurrency(selectedPriceCurrency.name as CurrencyKey, formattedPrice, { sign: '$' })
-			: `${formattedPrice} Gwei`;
-	};
 	const gasPriceItem = (
 		<span data-testid="gas-price">
-			{formatGasPrice(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0)}
+			{isL2
+				? formatCurrency(Synths.sUSD, transactionFee ?? 0, { sign: '$', maxDecimals: 1 })
+				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
+						minDecimals: 4,
+				  })} Gwei`}
 		</span>
 	);
 
@@ -55,34 +52,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
-			<SummaryItemValue>
-				{gasPrice != null ? (
-					<>
-						{!isL2 && transactionFee != null ? (
-							<GasPriceCostTooltip
-								content={
-									<span>
-										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
-											sign: selectedPriceCurrency.sign,
-											maxDecimals: 1,
-										})}
-									</span>
-								}
-								arrow={false}
-							>
-								<GasPriceItem>
-									{gasPriceItem}
-									<InfoIcon />
-								</GasPriceItem>
-							</GasPriceCostTooltip>
-						) : (
-							gasPriceItem
-						)}
-					</>
-				) : (
-					NO_VALUE
-				)}
-			</SummaryItemValue>
+			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
 		</SummaryItem>
 	);
 };

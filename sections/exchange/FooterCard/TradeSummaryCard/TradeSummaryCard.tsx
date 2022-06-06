@@ -22,7 +22,6 @@ import { SummaryItems, SummaryItem, SummaryItemLabel, SummaryItemValue } from '.
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
-
 import { GasPrices } from '@synthetixio/queries';
 import PoweredBy1Inch from 'components/PoweredBy1Inch';
 import { Synth } from '@synthetixio/contracts-interface';
@@ -81,16 +80,16 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const summaryItems = (
 		<SummaryItems attached={attached}>
 			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-			<SummaryItem>
-				{
+			{isCreateShort && (
+				<SummaryItem>
 					<>
 						<SummaryItemLabel>{t('shorting.common.interestRate')}</SummaryItemLabel>
 						<SummaryItemValue data-testid="short-interest-rate">
 							{formatPercent((shortInterestRate ?? 0).toString())}
 						</SummaryItemValue>
 					</>
-				}
-			</SummaryItem>
+				</SummaryItem>
+			)}
 			{showFee && (
 				<>
 					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
