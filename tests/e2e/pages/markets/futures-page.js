@@ -49,10 +49,6 @@ export default class FuturesPage extends Page {
 		return cy.findByTestId('funtures-market-trade-deposit-margin-input').type(margin.toString());
 	}
 
-	enterWithdrawMarginInsUSD(margin) {
-		return cy.findByTestId('funtures-market-trade-withdraw-margin-input').type(margin.toString());
-	}
-
 	getDepositMarginBtn() {
 		return cy.findByTestId('funtures-market-trade-deposit-margin-button');
 	}
@@ -75,6 +71,22 @@ export default class FuturesPage extends Page {
 
 	getClosePositionBtn() {
 		return cy.findByTestId('trade-close-position-button');
+	}
+
+	openPositionBtnShouldBeDisabled() {
+		cy.get('[data-testid = "trade-open-position-button"]').should('be.disabled');
+	}
+
+	OpenPostiionBtnShouldBeEnabled() {
+		cy.get('[data-testid = "trade-open-position-button"]').should('not.be.disabled');
+	}
+
+	closePositionBtnShouldBeDisabled() {
+		cy.get('[data-testid = "trade-close-position-button"]').should('be.disabled');
+	}
+
+	closePositionBtnShouldBeEnabled() {
+		cy.get('[data-testid = "trade-close-position-button"]').should('not.be.disabled');
 	}
 
 	enterAmountInsUSD(amount) {
