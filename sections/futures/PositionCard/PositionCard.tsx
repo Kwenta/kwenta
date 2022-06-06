@@ -292,7 +292,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, position, curr
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.u-pnl')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
@@ -369,9 +371,9 @@ const StyledSubtitle = styled.p`
 `;
 
 const StyledSubtitleWithCursor = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
 	margin: 0;
 	cursor: help;
@@ -389,7 +391,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
