@@ -326,8 +326,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				totalMargin={position?.remainingMargin ?? zeroBN}
 				availableMargin={position?.accessibleMargin ?? zeroBN}
 				buyingPower={
-					position && position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin?.mul(market?.maxLeverage ?? zeroBN)
+					position && position?.accessibleMargin.gt(zeroBN)
+						? position?.accessibleMargin?.mul(market?.maxLeverage ?? zeroBN)
 						: zeroBN
 				}
 				marginUsage={
