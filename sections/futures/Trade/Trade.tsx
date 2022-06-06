@@ -390,6 +390,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				<PlaceOrderButton
 					variant="primary"
 					fullWidth
+					noOutline={true}
 					disabled={
 						!leverage ||
 						Number(leverage) < 0 ||
@@ -551,13 +552,13 @@ const CloseOrderButton = styled(Button)`
 	text-align: center;
 	white-space: normal;
 	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
-	box-shadow: none;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	transition: all 0s ease-in-out;
+	box-shadow: none;
 
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.red};
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 		transform: scale(0.98);
 	}
 
