@@ -12,7 +12,7 @@ const goldColors = {
 };
 
 export const themeColors = {
-	elite: eliteTheme,
+	// elite: eliteTheme,
 	dark: darkTheme,
 	light: lightTheme,
 };

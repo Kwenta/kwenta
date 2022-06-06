@@ -6,7 +6,7 @@ import { currentThemeState } from 'store/ui';
 const themes = {
 	light: 'Light',
 	dark: 'Dark',
-	elite: 'Elite',
+	// elite: 'Elite',
 };
 
 const ThemeSelect: React.FC = () => {

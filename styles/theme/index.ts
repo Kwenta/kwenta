@@ -23,7 +23,7 @@ export type ThemeInterface = ReturnType<typeof wrapTheme>;
 export const themes = {
 	light: wrapTheme('light'),
 	dark: wrapTheme('dark'),
-	elite: wrapTheme('elite'),
+	// elite: wrapTheme('elite'),
 };
 
 export default theme;
