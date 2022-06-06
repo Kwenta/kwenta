@@ -19,6 +19,8 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import Loader from 'components/Loader';
 import { truncateAddress } from 'utils/formatters/string';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { useRouter } from 'next/router';
+import ROUTES from 'constants/routes';
 
 type Stat = {
 	pnl: Wei;
@@ -29,6 +31,7 @@ type Stat = {
 
 const ShortList = () => {
 	const { t } = useTranslation();
+
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
 	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
@@ -40,6 +43,11 @@ const ShortList = () => {
 		};
 		return acc;
 	}, {});
+
+	const router = useRouter();
+	const onClickTrader = (trader: string) => {
+		router.push(ROUTES.Leaderboard.Trader(trader));
+	};
 
 	const getMedal = (position: number) => {
 		switch (position) {
@@ -107,6 +115,7 @@ const ShortList = () => {
 				showPagination={true}
 				isLoading={statsQuery.isLoading}
 				showShortList={true}
+				onTableRowClick={(row) => onClickTrader(row.original.trader)}
 				data={data}
 				pageSize={5}
 				hideHeaders={false}
