@@ -67,6 +67,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 	const otherFuturesMarkets = futuresMarkets.filter((market) => market.asset !== marketAsset) ?? [];
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const [showShareModal, setShowShareModal] = useState<boolean>(false);

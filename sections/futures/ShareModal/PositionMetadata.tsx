@@ -12,9 +12,47 @@ type PositionMetadataProps = {
 	futuresPositionHistory: PositionHistory[];
 };
 
-const timeStyle = { fontSize: '0.83vw' };
-const valueStyle = { fontSize: '1.23vw', color: '#FFFF' };
-const headerStyle = { fontSize: '0.83vw', letterSpacing: '0.008vw' };
+function getColor(props: any) {
+	let color = '';
+
+	switch (props.className) {
+		case 'header':
+			color = props.theme.colors.common.tertiaryGray;
+			break;
+		case 'time':
+			color = props.theme.colors.common.tertiaryGray;
+			break;
+		case 'date-or-price':
+			color = props.theme.colors.white;
+			break;
+
+		default:
+			color = props.theme.colors.common.tertiaryGray;
+	}
+
+	return color;
+}
+
+function getFontSize(props: any) {
+	let fontSize = '';
+
+	switch (props.className) {
+		case 'header':
+			fontSize = '0.83vw';
+			break;
+		case 'time':
+			fontSize = '0.83vw';
+			break;
+		case 'date-or-price':
+			fontSize = '1.23vw';
+			break;
+
+		default:
+			fontSize = '0.83vw';
+	}
+
+	return fontSize;
+}
 
 const getFontFamily = (props: any) => {
 	const fontFamilyObj: any = {
@@ -63,51 +101,78 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 	return (
 		<>
 			<TopLeftContainer>
-				<ContainerText className="header" style={headerStyle}>
+				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.open-at')}
 				</ContainerText>
-				<ContainerText className="date-or-price" style={valueStyle}>
-					{openAtDate.toUpperCase()}
-				</ContainerText>
-				<ContainerText className="time" style={timeStyle}>
-					{openAtTime}
-				</ContainerText>
+				<ContainerText className="date-or-price">{openAtDate.toUpperCase()}</ContainerText>
+				<ContainerText className="time">{openAtTime}</ContainerText>
 			</TopLeftContainer>
 			<TopRightContainer>
-				<ContainerText className="header" style={headerStyle}>
+				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.created-on')}
 				</ContainerText>
-				<ContainerText className="date-or-price" style={valueStyle}>
-					{createdOnDate.toUpperCase()}
-				</ContainerText>
-				<ContainerText className="time" style={timeStyle}>
-					{createdOnTime}
-				</ContainerText>
+				<ContainerText className="date-or-price">{createdOnDate.toUpperCase()}</ContainerText>
+				<ContainerText className="time">{createdOnTime}</ContainerText>
 			</TopRightContainer>
 			<BottomLeftContainer>
-				<ContainerText className="header" style={headerStyle}>
+				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.avg-open-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price" style={valueStyle}>
-					{avgEntryPrice}
-				</ContainerText>
+				<ContainerText className="date-or-price">{avgEntryPrice}</ContainerText>
 			</BottomLeftContainer>
 			<BottomRightContainer>
-				<ContainerText className="header" style={headerStyle}>
+				<ContainerText className="header">
 					{t('futures.modals.share.position-metadata.current-price')}
 				</ContainerText>
-				<ContainerText className="date-or-price" style={valueStyle}>
-					{marketAssetRate.toFixed(2)}
-				</ContainerText>
+				<ContainerText className="date-or-price">{marketAssetRate.toFixed(2)}</ContainerText>
 			</BottomRightContainer>
 		</>
 	);
 };
 
-const ContainerText = styled.div`
-	font-size: 0.82vw;
+const ContainerTextTime = styled.div`
+	font-size: 0.83vw;
 	font-weight: 100;
+	letter-spacing: 0.008vw;
 	color: #999999;
+
+	text-transform: uppercase;
+
+	width: 100%;
+
+	font-family: ${(props) => getFontFamily(props)};
+`;
+
+const ContainerTextValue = styled.div`
+	font-size: 1.23vw;
+	font-weight: 100;
+	letter-spacing: 0.008vw;
+	color: ${(props) => props.theme.colors.white};
+
+	text-transform: uppercase;
+
+	width: 100%;
+
+	font-family: ${(props) => getFontFamily(props)};
+`;
+
+const ContainerTextHeader = styled.div`
+	font-size: 0.83vw;
+	font-weight: 100;
+	letter-spacing: 0.008vw;
+	color: #999999;
+
+	text-transform: uppercase;
+
+	width: 100%;
+
+	font-family: ${(props) => getFontFamily(props)};
+`;
+
+const ContainerText = styled.div`
+	font-size: ${(props) => getFontSize(props)};
+	font-weight: 100;
+	color: ${(props) => getColor(props)};
 
 	text-transform: uppercase;
 

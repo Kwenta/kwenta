@@ -6,6 +6,7 @@ import { FuturesPosition } from 'queries/futures/types';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
 import { PositionSide } from '../types';
+import { getDisplayAsset, getMarketAssetFromKey } from 'utils/futures';
 
 type AmountContainerProps = {
 	marketAsset: CurrencyKey;
@@ -20,7 +21,7 @@ const currencyIconStyle = {
 };
 
 const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) => {
-	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
+	const marketAsset__RemovedSChar = getDisplayAsset(marketAsset);
 	const positionDetails = position?.position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
 	const side = positionDetails?.side === 'long' ? PositionSide.LONG : PositionSide.SHORT;
@@ -42,7 +43,7 @@ const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) =>
 				<StyledPositionType>
 					<CurrencyIcon
 						style={currencyIconStyle}
-						currencyKey={(marketAsset[0] !== 's' ? 's' : '') + marketAsset}
+						currencyKey={getMarketAssetFromKey(marketAsset, 10)}
 					/>
 					<StyledPositionDetails>{`${marketAsset__RemovedSChar}-PERP`}</StyledPositionDetails>
 					<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
@@ -56,11 +57,10 @@ const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) =>
 	);
 };
 
-/** @todo Import and use correct fonts from Figma design */
 const StyledPositionLeverage = styled.div`
 	display: flex;
 	flex-direction: column;
-	color: #c9975b;
+	color: ${(props) => props.theme.colors.common.primaryGold};
 
 	font-size: 1.07vw;
 `;
@@ -68,7 +68,8 @@ const StyledPositionLeverage = styled.div`
 const StyledPositionSide = styled.div`
 	display: flex;
 	flex-direction: column;
-	color: ${(props) => (props.className === 'long' ? '#7fd482' : '#ff0420')};
+	color: ${(props) =>
+		props.className === 'long' ? props.theme.colors.green : props.theme.colors.red};
 
 	font-size: 1.07vw;
 `;
@@ -79,7 +80,7 @@ const StyledPositionDetails = styled.div`
 
 	font-size: 1.07vw;
 
-	color: #ffff;
+	color: ${(props) => props.theme.colors.white};
 `;
 
 const StyledPositionType = styled.div`
@@ -87,14 +88,16 @@ const StyledPositionType = styled.div`
 	flex-direction: row;
 `;
 
-/** @todo Import and use correct fonts from Figma design */
 const StyledAmount = styled.div`
 	position: absolute;
 	margin-top: -0.05vw;
 
 	font-size: 4.8vw;
 	font-weight: 700;
-	color: ${(props) => (props.className && parseFloat(props.className) > 0 ? '#7fd482' : '#ff0420')};
+	color: ${(props) =>
+		props.className && parseFloat(props.className) > 0
+			? props.theme.colors.green
+			: props.theme.colors.red};
 
 	text-shadow: 0px 0px 3.99vw
 		${(props) =>

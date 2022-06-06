@@ -29,7 +29,6 @@ const ShareModal: FC<ShareModalProps> = ({
 	futuresPositionHistory,
 }) => {
 	const { t } = useTranslation();
-	const positionDetails = position?.position ?? null;
 
 	return (
 		<>
@@ -40,34 +39,9 @@ const ShareModal: FC<ShareModalProps> = ({
 			>
 				<ModalWindow>
 					<PNLGraphic id="pnl-graphic">
-						<div
-							style={{
-								position: 'relative',
-								borderRadius: '10px',
-								boxShadow: `0 0 ${
-									positionDetails?.roiChange.gt(0)
-										? positionDetails?.roiChange
-												.mul(10) // base
-												.mul(1.99) // scaling factor
-												.toNumber()
-												.toFixed(2)
-										: 0
-								}px #c9975b`,
-							}}
-						>
-							<img
-								width={'100%'}
-								height={'auto'}
-								src={PNLGraphicPNG}
-								aria-label="pnl-graphic"
-								style={{
-									position: 'relative',
-									borderRadius: '10px',
-									border: '0px solid #c9975b',
-									boxShadow: '0 0 0.1px #c9975b',
-								}}
-							/>
-						</div>
+						<PNLImageFrame>
+							<PNLImage src={PNLGraphicPNG} aria-label="pnl-graphic" />
+						</PNLImageFrame>
 						<AmountContainer marketAsset={marketAsset} position={position} />
 						<PositionMetadata
 							marketAsset={marketAsset}
@@ -82,12 +56,29 @@ const ShareModal: FC<ShareModalProps> = ({
 	);
 };
 
+const PNLImageFrame = styled.div`
+	position: relative;
+	border-radius: 10px;
+`;
+
+const PNLImage = styled.img`
+	position: relative;
+
+	width: 100%;
+	height: auto;
+
+	border-radius: 10px;
+	border: 0px solid ${(props) => props.theme.colors.common.primaryGold};
+	box-shadow: 0 0 0.5px ${(props) => props.theme.colors.common.primaryGold};
+`;
+
 const PNLGraphic = styled.div`
 	position: relative;
 `;
 
 const ModalWindow = styled.div`
 	padding: 0px 25px;
+	box-shadow: 0 0 0.1px ${(props) => props.theme.colors.common.primaryGold};
 `;
 
 export default ShareModal;

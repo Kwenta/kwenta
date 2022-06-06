@@ -41,7 +41,6 @@
 	font-family: 'GT-America-Compressed-Medium';
 	src: url('/fonts/GT-America-Compressed-Medium.woff2') format('woff2'),
 		url('/fonts/GT-America-Compressed-Medium.woff') format('woff');
-	font-display: monospace;
 }
 
 
