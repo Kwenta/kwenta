@@ -54,7 +54,7 @@ function getFontSize(props: any) {
 	return fontSize;
 }
 
-const getFontFamily = (props: any) => {
+function getFontFamily(props: any) {
 	const fontFamilyObj: any = {
 		time: props.theme.fonts.regular,
 		header: props.theme.fonts.compressedMedium,
@@ -64,7 +64,7 @@ const getFontFamily = (props: any) => {
 	for (const key of Object.keys(fontFamilyObj)) {
 		if (key === props.className) return fontFamilyObj[props.className];
 	}
-};
+}
 
 const PositionMetadata: FC<PositionMetadataProps> = ({
 	marketAsset,
@@ -129,45 +129,6 @@ const PositionMetadata: FC<PositionMetadataProps> = ({
 		</>
 	);
 };
-
-const ContainerTextTime = styled.div`
-	font-size: 0.83vw;
-	font-weight: 100;
-	letter-spacing: 0.008vw;
-	color: #999999;
-
-	text-transform: uppercase;
-
-	width: 100%;
-
-	font-family: ${(props) => getFontFamily(props)};
-`;
-
-const ContainerTextValue = styled.div`
-	font-size: 1.23vw;
-	font-weight: 100;
-	letter-spacing: 0.008vw;
-	color: ${(props) => props.theme.colors.white};
-
-	text-transform: uppercase;
-
-	width: 100%;
-
-	font-family: ${(props) => getFontFamily(props)};
-`;
-
-const ContainerTextHeader = styled.div`
-	font-size: 0.83vw;
-	font-weight: 100;
-	letter-spacing: 0.008vw;
-	color: #999999;
-
-	text-transform: uppercase;
-
-	width: 100%;
-
-	font-family: ${(props) => getFontFamily(props)};
-`;
 
 const ContainerText = styled.div`
 	font-size: ${(props) => getFontSize(props)};
