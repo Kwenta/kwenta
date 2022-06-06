@@ -30,7 +30,6 @@ type PositionCardProps = {
 	position: FuturesPosition | null;
 	currencyKeyRate: number;
 	potentialTrade: PotentialTrade | null;
-	isNextPriceOrder: boolean;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
 };
@@ -71,7 +70,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 	position,
 	currencyKeyRate,
 	potentialTrade,
-	isNextPriceOrder,
 }) => {
 	const { t } = useTranslation();
 	const positionDetails = position?.position ?? null;
@@ -202,10 +200,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					})})`}
 					<PreviewArrow
 						showPreview={
-							previewData.positionSize &&
-							previewData.sizeIsNotZero &&
-							!previewData.showStatus &&
-							!isNextPriceOrder
+							previewData.positionSize && previewData.sizeIsNotZero && !previewData.showStatus
 						}
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
@@ -223,11 +218,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 				<>
 					{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
 					{
-						<PreviewArrow
-							showPreview={
-								previewData.sizeIsNotZero && !previewData.showStatus && !isNextPriceOrder
-							}
-						>
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
 							{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
 						</PreviewArrow>
 					}
@@ -316,7 +307,6 @@ const PositionCard: React.FC<PositionCardProps> = ({
 		previewData?.leverage,
 		previewData?.liquidationPrice,
 		previewData.avgEntryPrice,
-		isNextPriceOrder,
 		minDecimals,
 	]);
 

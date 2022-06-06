@@ -49,7 +49,6 @@ type UserInfoProps = {
 	position: FuturesPosition | null;
 	potentialTrade: PotentialTrade | null;
 	openOrders: any[];
-	orderType: number;
 	refetch(): void;
 };
 
@@ -59,7 +58,6 @@ const UserInfo: React.FC<UserInfoProps> = ({
 	potentialTrade,
 	openOrders,
 	refetch,
-	orderType,
 }) => {
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -198,7 +196,6 @@ const UserInfo: React.FC<UserInfoProps> = ({
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
 					potentialTrade={potentialTrade}
-					isNextPriceOrder={orderType === 1}
 				/>
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}

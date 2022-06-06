@@ -29,7 +29,6 @@ const Market = () => {
 	const router = useRouter();
 
 	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
-	const [orderType, setOrderType] = useState(0);
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { network } = Connector.useContainer();
 
@@ -66,7 +65,6 @@ const Market = () => {
 							openOrders={openOrders}
 							refetch={refetch}
 							potentialTrade={potentialTrade}
-							orderType={orderType}
 						/>
 					</StyledMainContent>
 					<DesktopOnlyView>
@@ -77,8 +75,6 @@ const Market = () => {
 								refetch={refetch}
 								position={futuresMarketPosition}
 								currencyKey={marketAsset}
-								orderType={orderType}
-								setOrderType={setOrderType}
 							/>
 						</StyledRightSideContent>
 					</DesktopOnlyView>

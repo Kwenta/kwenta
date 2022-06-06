@@ -42,7 +42,6 @@ import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
-import NextPriceInfoBox from '../MarketInfoBox/NextPriceInfoBox';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -52,8 +51,6 @@ type TradeProps = {
 	onEditPositionInput: (position: { size: string; side: PositionSide; leverage: string }) => void;
 	currencyKey: string;
 	potentialTrade: PotentialTrade | null;
-	orderType: number;
-	setOrderType: (orderType: number) => void;
 };
 
 const Trade: React.FC<TradeProps> = ({
@@ -62,8 +59,6 @@ const Trade: React.FC<TradeProps> = ({
 	position,
 	currencyKey,
 	potentialTrade,
-	orderType,
-	setOrderType,
 }) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -75,6 +70,7 @@ const Trade: React.FC<TradeProps> = ({
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+	const [orderType, setOrderType] = useState(0);
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
@@ -348,24 +344,16 @@ const Trade: React.FC<TradeProps> = ({
 				</MarketActionButton>
 			</MarketActions>
 
-			{orderType === 1 ? (
-				<NextPriceInfoBox
-					position={position}
-					isMarketClosed={isFuturesMarketClosed}
-					tradeSize={tradeSize ? wei(tradeSize) : zeroBN}
-					marketMaxLeverage={market?.maxLeverage}
-					side={leverageSide}
-					currencyKey={marketAsset}
-				/>
-			) : (
-				<MarketInfoBox
-					position={position}
-					isMarketClosed={isFuturesMarketClosed}
-					potentialTrade={potentialTrade}
-					marketMaxLeverage={market?.maxLeverage}
-					currencyKey={marketAsset}
-				/>
-			)}
+			<MarketInfoBox
+				position={position}
+				isMarketClosed={isFuturesMarketClosed}
+				potentialTrade={potentialTrade}
+				marketMaxLeverage={market?.maxLeverage}
+				currencyKey={marketAsset}
+				tradeSize={tradeSize ? wei(tradeSize) : zeroBN}
+				side={leverageSide}
+				orderType={orderType}
+			/>
 
 			<StyledSegmentedControl
 				values={['Market', 'Next-Price']}
