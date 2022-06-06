@@ -20,7 +20,9 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<LogoNoTextSVG />
+			<LogoContainer>
+				<LogoNoTextSVG />
+			</LogoContainer>
 			<Header>{t('homepage.hero.title')}</Header>
 			<ProductDescription>
 				<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
@@ -42,6 +44,14 @@ const Hero = () => {
 	);
 };
 
+const LogoContainer = styled.div`
+	${media.lessThan('sm')`
+	svg {
+		width: 107px;
+	}
+`}
+`;
+
 const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
@@ -56,6 +66,11 @@ const Header = styled(Paragraph)`
 	color: ${(props) => props.theme.colors.common.primaryGold};
 	text-shadow: 0px 0px 62px rgba(208, 168, 117, 0.35);
 	padding-top: 40px;
+	${media.lessThan('sm')`
+		font-size: 40px;
+		width: 346px;
+		padding-top: 10px;
+	`}
 `;
 
 const ProductDescription = styled(Paragraph)`
@@ -66,6 +81,10 @@ const ProductDescription = styled(Paragraph)`
 	text-align: center;
 	color: #bdbdbd;
 	padding-top: 16px;
+	${media.lessThan('sm')`
+		font-size: 16px;
+		width: 346px;
+	`}
 `;
 
 const HeroImageContainer = styled(GridDiv)`
@@ -75,6 +94,9 @@ const HeroImageContainer = styled(GridDiv)`
 	justify-content: center;
 	margin-top: 97px;
 	margin-bottom: 201px;
+	${media.lessThan('sm')`
+		margin-bottom: 101px;
+	`}
 `;
 
 const HeroImage = styled.img`
@@ -83,7 +105,7 @@ const HeroImage = styled.img`
 		width: 785px;
 	`}
 	${media.lessThan('sm')`
-		width: 380px;
+		width: 345px;
 	`}
 	background: linear-gradient(180deg, #C9975A 0%, #94F2FF 100%);
 	border: 1px solid;
@@ -92,6 +114,9 @@ const HeroImage = styled.img`
 
 const SynthetixContainer = styled.div`
 	margin: 25px 0px 0px 0;
+	${media.lessThan('sm')`
+		display: none;
+	`}
 `;
 
 const CTAContainer = styled.div`

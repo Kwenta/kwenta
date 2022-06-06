@@ -1033,7 +1033,9 @@
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
 				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)"
+				"percent-pnl": "PnL (%)",
+				"trader-trade": "Trader/Trades",
+				"rank-mobile": "#"
 			}
 		},
 		"trader-history": {

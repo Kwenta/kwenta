@@ -29,6 +29,7 @@ import {
 } from 'styles/common';
 
 import { Copy, Title } from '../common';
+import media from 'styles/media';
 
 const FEATURES = [
 	{
@@ -164,6 +165,9 @@ const FeatureCopy = styled(Copy)`
 	letter-spacing: -0.04em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 250px;
+	${media.lessThan('sm')`
+		width: 183px;
+	`}
 `;
 
 const FeatureTitle = styled(Title)`
@@ -174,6 +178,9 @@ const FeatureTitle = styled(Title)`
 	color: ${(props) => props.theme.colors.white};
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
 	width: 150px;
+	${media.lessThan('sm')`
+		font-size: 20px;
+	`}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
@@ -183,6 +190,10 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	width: 826px;
 	flex-wrap: wrap;
 	justify-content: center;
+	${media.lessThan('sm')`
+		flex-direction: column;
+		width: 305px;
+	`}
 `;
 
 const IconGridContainer = styled(GridDivCentered)`
@@ -196,6 +207,10 @@ const IconGridContainer = styled(GridDivCentered)`
 		width: 128px;
 		height: 64px;
 	}
+	${media.lessThan('sm')`
+		grid-template-rows: 1fr 1fr 1fr 1fr;
+		grid-template-columns: repeat(2, 140px);
+	`}
 `;
 
 const Container = styled.div`
@@ -210,6 +225,12 @@ const FeatureCard = styled(FlexDivRow)`
 	padding: 32px 80px 32px 32px;
 	width: 403px;
 	height: 135px;
+	${media.lessThan('sm')`
+		width: 305px;
+		height: auto;
+		align-items: center; 
+		padding: 20px 40px 20px 20px;
+	`}
 `;
 
 const PartnerIconContainer = styled.div`
@@ -227,10 +248,18 @@ const FeatureIconContainer = styled.div`
 		width: 64px;
 		height: 64px;
 	}
+	${media.lessThan('sm')`
+		padding-bottom: 0px;
+	`}
 `;
 
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 20px;
+	${media.lessThan('sm')`
+		width: 305px;
+		height: auto;
+		padding-top: 0px;
+	`}
 `;
 
 const FeatureContentTitle = styled(FlexDivRow)`
@@ -249,6 +278,9 @@ const ComingSoonTag = styled(FlexDivCentered)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 8px;
 	border: 1px solid #9c6c3c;
+	${media.lessThan('sm')`
+		margin-left: -16px;
+	`}
 `;
 
 const SectionFeatureTitle = styled(FeatureTitle)`

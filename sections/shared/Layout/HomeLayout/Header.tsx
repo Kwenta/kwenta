@@ -11,9 +11,8 @@ import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
 
-import AppHeader from '../AppLayout/Header';
 import Logo from '../Logo';
-import { FlexDivRowCentered, GridDivCenteredCol, TextButton } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol, TextButton } from 'styles/common';
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 
@@ -21,6 +20,8 @@ import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 import router from 'next/router';
 import { EXTERNAL_LINKS } from 'constants/links';
+import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
+import media from 'styles/media';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -31,12 +32,12 @@ const Header: FC = () => {
 	const LINKS = useMemo(
 		() => [
 			{
-				key: 'market',
+				id: 'market',
 				label: t('homepage.nav.markets'),
 				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
-				key: 'governance',
+				id: 'governance',
 				label: t('homepage.nav.governance.title'),
 				icon: <CaretDownGrayIcon />,
 				show: () => {
@@ -45,7 +46,7 @@ const Header: FC = () => {
 				},
 			},
 			{
-				key: 'socials',
+				id: 'socials',
 				label: t('homepage.nav.socials.title'),
 				icon: <CaretDownGrayIcon />,
 				show: () => {
@@ -54,7 +55,7 @@ const Header: FC = () => {
 				},
 			},
 			{
-				key: 'blogs',
+				id: 'blogs',
 				label: t('homepage.nav.blog'),
 				icon: <ArrowUpRightIcon />,
 				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
@@ -66,12 +67,12 @@ const Header: FC = () => {
 
 	const GOVERNANCE = [
 		{
-			key: 'overview',
+			id: 'overview',
 			label: t('homepage.nav.governance.overview'),
 			onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank'),
 		},
 		{
-			key: 'kips',
+			id: 'kips',
 			label: t('homepage.nav.governance.kips'),
 			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
 		},
@@ -79,19 +80,19 @@ const Header: FC = () => {
 
 	const SOCIALS = [
 		{
-			key: 'discord',
+			id: 'discord',
 			label: t('homepage.nav.socials.discord'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Discord, '_blank'),
 			icon: <DiscordLogo />,
 		},
 		{
-			key: 'twitter',
+			id: 'twitter',
 			label: t('homepage.nav.socials.twitter'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
 		},
 		{
-			key: 'mirror',
+			id: 'mirror',
 			label: t('homepage.nav.socials.mirror'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
 			icon: <MirrorLogo />,
@@ -105,35 +106,34 @@ const Header: FC = () => {
 					<LogoContainer>
 						<Logo isL2={isL2} isHomePage={true} />
 					</LogoContainer>
-
 					<Links>
-						{LINKS.map(({ key, label, icon, onClick, show }) => (
-							<StyledTextButton key={key} onClick={onClick} onMouseEnter={show}>
+						{LINKS.map(({ id, label, icon, onClick, show }) => (
+							<StyledTextButton key={id} onClick={onClick} onMouseEnter={show}>
 								<FlexDivRowCentered>
 									{label}
 									{icon}
 								</FlexDivRowCentered>
-								{key === 'governance' && isGovernanceShown && (
+								{id === 'governance' && isGovernanceShown && (
 									<StyledMenu
 										onMouseLeave={() => {
 											setIsGovernanceShown(false);
 										}}
 									>
-										{GOVERNANCE.map(({ key, label, onClick }) => (
-											<StyledMenuItem key={key} onClick={onClick}>
+										{GOVERNANCE.map(({ id, label, onClick }) => (
+											<StyledMenuItem key={id} onClick={onClick}>
 												{label}
 											</StyledMenuItem>
 										))}
 									</StyledMenu>
 								)}
-								{key === 'socials' && isSocialsShown && (
+								{id === 'socials' && isSocialsShown && (
 									<StyledMenu
 										onMouseLeave={() => {
 											setIsSocialsShown(false);
 										}}
 									>
-										{SOCIALS.map(({ key, label, onClick, icon }) => (
-											<StyledMenuItem key={key} onClick={onClick}>
+										{SOCIALS.map(({ id, label, onClick, icon }) => (
+											<StyledMenuItem key={id} onClick={onClick}>
 												{icon}
 												{label}
 											</StyledMenuItem>
@@ -153,14 +153,26 @@ const Header: FC = () => {
 				</Container>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<AppHeader />
+				<MobileContainer>
+					<LogoContainer>
+						<Logo isL2={isL2} isHomePage={true} />
+					</LogoContainer>
+					<MobileUserMenu />
+				</MobileContainer>
 			</MobileOnlyView>
 		</>
 	);
 };
 
+const MobileContainer = styled(FlexDivRow)`
+	justify-content: space-between;
+`;
+
 const LogoContainer = styled.div`
 	padding-top: 8px;
+	${media.lessThan('md')`
+		padding-top: 0px;
+	`}
 `;
 
 const StyledMenu = styled.div`

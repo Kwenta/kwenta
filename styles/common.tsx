@@ -191,6 +191,10 @@ export const FullScreenContainer = styled(FlexDiv)`
 	position: relative;
 	overflow-y: overlay;
 	padding: 25px 25px 0;
+
+	${media.lessThan('sm')`
+		padding: 20px 15px 0;
+	`};
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -447,6 +451,10 @@ export const SmallGoldenHeader = styled(Paragraph)`
 	text-align: center;
 	letter-spacing: 0.65em;
 	margin-bottom: 20px;
+	${media.lessThan('sm')`
+		font-size: 12px;
+		margin-bottom: 12px;
+	`}
 `;
 
 export const WhiteHeader = styled.div`
@@ -459,4 +467,8 @@ export const WhiteHeader = styled.div`
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
 	letter-spacing: 0.05em;
 	width: 550px;
+	${media.lessThan('sm')`
+		font-size: 32px;
+		width: 296px;
+	`}
 `;

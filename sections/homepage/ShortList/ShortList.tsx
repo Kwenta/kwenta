@@ -3,8 +3,14 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
 
-import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import { Media } from 'styles/media';
+import {
+	FlexDivCol,
+	FlexDivColCentered,
+	FlexDivRow,
+	SmallGoldenHeader,
+	WhiteHeader,
+} from 'styles/common';
+import media, { Media } from 'styles/media';
 import useGetStats from 'queries/futures/useGetStats';
 import { FuturesMarket, FuturesStat } from 'queries/futures/types';
 import Wei, { wei } from '@synthetixio/wei';
@@ -108,85 +114,150 @@ const ShortList = () => {
 
 	return (
 		<Container>
-			<Media greaterThanOrEqual="lg">
-				<FlexDivColCentered>{title}</FlexDivColCentered>
-			</Media>
-			<StyledTable
-				showPagination={true}
-				isLoading={statsQuery.isLoading}
-				showShortList={true}
-				onTableRowClick={(row) => onClickTrader(row.original.trader)}
-				data={data}
-				pageSize={5}
-				hideHeaders={false}
-				columns={[
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-						accessor: 'rank',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
-						),
-						width: 65,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-						accessor: 'trader',
-						Cell: (cellProps: CellProps<any>) => {
-							const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
-							return (
-								<StyledTrader>
-									{ensName ? (
-										<>
-											{ensAvatar && (
-												<img
-													src={ensAvatar}
-													alt={ensName}
-													width={16}
-													height={16}
-													style={{ borderRadius: '50%', marginRight: '8px' }}
-												/>
-											)}
-											{ensName}
-										</>
-									) : (
-										cellProps.row.original.traderShort
-									)}
-								</StyledTrader>
-							);
+			<FlexDivColCentered>{title}</FlexDivColCentered>
+			<Media greaterThan="sm">
+				<StyledTable
+					showPagination={true}
+					isLoading={statsQuery.isLoading}
+					showShortList={true}
+					onTableRowClick={(row) => onClickTrader(row.original.trader)}
+					data={data}
+					pageSize={5}
+					hideHeaders={false}
+					columns={[
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+							accessor: 'rank',
+							Cell: (cellProps: CellProps<any>) => (
+								<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
+							),
+							width: 65,
 						},
-						width: 150,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-						accessor: 'totalTrades',
-						Cell: (cellProps: CellProps<any>) => (
-							<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-						accessor: 'liquidations',
-						Cell: (cellProps: CellProps<any>) => (
-							<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-						accessor: 'pnl',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: 125,
-					},
-				]}
-			/>
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+							accessor: 'trader',
+							Cell: (cellProps: CellProps<any>) => {
+								const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+								return (
+									<StyledTrader>
+										{ensName ? (
+											<>
+												{ensAvatar && (
+													<img
+														src={ensAvatar}
+														alt={ensName}
+														width={16}
+														height={16}
+														style={{ borderRadius: '50%', marginRight: '8px' }}
+													/>
+												)}
+												{ensName}
+											</>
+										) : (
+											cellProps.row.original.traderShort
+										)}
+									</StyledTrader>
+								);
+							},
+							width: 150,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
+							accessor: 'totalTrades',
+							Cell: (cellProps: CellProps<any>) => (
+								<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
+							),
+							width: 100,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
+							accessor: 'liquidations',
+							Cell: (cellProps: CellProps<any>) => (
+								<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
+							),
+							width: 100,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => (
+								<ColorCodedPrice
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.pnl}
+									sign={'$'}
+									conversionRate={1}
+								/>
+							),
+							width: 125,
+						},
+					]}
+				/>
+			</Media>
+			<Media lessThan="sm">
+				<StyledTable
+					showPagination={true}
+					isLoading={statsQuery.isLoading}
+					showShortList={true}
+					onTableRowClick={(row) => onClickTrader(row.original.trader)}
+					data={data}
+					pageSize={5}
+					hideHeaders={false}
+					columns={[
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>,
+							accessor: 'rank',
+							Cell: (cellProps: CellProps<any>) => (
+								<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
+							),
+							width: 45,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.trader-trade')}</TableHeader>,
+							accessor: 'trader',
+							Cell: (cellProps: CellProps<any>) => {
+								const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+								return (
+									<CombinedContaier>
+										<StyledTrader>
+											{ensName ? (
+												<>
+													{ensAvatar && (
+														<img
+															src={ensAvatar}
+															alt={ensName}
+															width={16}
+															height={16}
+															style={{ borderRadius: '50%', marginRight: '8px' }}
+														/>
+													)}
+													{ensName}
+												</>
+											) : (
+												cellProps.row.original.traderShort
+											)}
+										</StyledTrader>
+										<GrayCell>{cellProps.row.original.totalTrades}</GrayCell>
+									</CombinedContaier>
+								);
+							},
+							width: 150,
+						},
+						{
+							Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+							accessor: 'pnl',
+							Cell: (cellProps: CellProps<any>) => (
+								<ColorCodedPrice
+									currencyKey={Synths.sUSD}
+									price={cellProps.row.original.pnl}
+									sign={'$'}
+									conversionRate={1}
+								/>
+							),
+							width: 125,
+						},
+					]}
+				/>
+			</Media>
 			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
 			<StatsCardContainer>
 				<StatsCard>
@@ -233,6 +304,15 @@ const ShortList = () => {
 	);
 };
 
+const GrayCell = styled.div`
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-size: 13px;
+`;
+
+const CombinedContaier = styled(FlexDivCol)`
+	justify-content: right;
+`;
+
 const StatsName = styled.div`
 	font-size: 15px;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
@@ -248,6 +328,13 @@ const StatsCardContainer = styled(FlexDivRow)`
 	margin-top: 40px;
 	justify-content: center;
 	column-gap: 20px;
+	${media.lessThan('sm')`
+		flex-direction: column;
+		margin: auto;
+		padding: 0px;
+		row-gap: 15px;
+		margin-top: 30px;
+	`}
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
@@ -270,6 +357,9 @@ const StyledTable = styled(Table)`
 	margin-top: 60px;
 	font-size: 15px;
 	width: 1160px;
+	${media.lessThan('sm')`
+		width: 345px;
+	`}
 `;
 
 const Medal = styled.span`
@@ -294,6 +384,9 @@ const ColorCodedPrice = styled(Currency.Price)`
 const Container = styled(FlexDivColCentered)`
 	margin-bottom: 140px;
 	justify-content: center;
+	${media.lessThan('sm')`
+		margin-bottom: 100px;
+	`}
 `;
 
 const TableHeader = styled.div`
@@ -313,7 +406,7 @@ export const Bullet = styled.span`
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
-	width: 40px;
+	width: 45px;
 `;
 
 const StyledTrader = styled.a`

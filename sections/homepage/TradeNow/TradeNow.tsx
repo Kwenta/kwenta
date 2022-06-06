@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import { Media } from 'styles/media';
+import media from 'styles/media';
 
 import Link from 'next/link';
 import Button from 'components/Button';
@@ -29,10 +29,7 @@ const TradeNow = () => {
 
 	return (
 		<Container>
-			<Media greaterThanOrEqual="lg">
-				<FlexDivColCentered>{title}</FlexDivColCentered>
-			</Media>
-			<Media lessThan="lg">{title}</Media>
+			<FlexDivColCentered>{title}</FlexDivColCentered>
 		</Container>
 	);
 };
@@ -45,6 +42,10 @@ const TransparentCard = styled.div`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
+	${media.lessThan('sm')`
+		width: 345px;
+		padding: 80px 20px;
+	`};
 `;
 const Container = styled.div`
 	margin-bottom: 140px;
@@ -56,6 +57,10 @@ const GrayDescription = styled(Paragraph)`
 	line-height: 120%;
 	text-align: center;
 	margin-top: 30px;
+
+	${media.lessThan('sm')`
+		font-size: 16px;
+	`};
 `;
 
 const CTAContainer = styled.div`
@@ -66,6 +71,9 @@ const CTAContainer = styled.div`
 const BigWhiteHeader = styled(WhiteHeader)`
 	font-size: 60px;
 	width: 600px;
+	${media.lessThan('sm')`
+		font-size: 40px;
+	`};
 `;
 
 export default TradeNow;

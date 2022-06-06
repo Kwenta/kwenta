@@ -77,7 +77,11 @@ const MenuButton = styled.button<{ isActive: boolean }>`
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}
-	padding: 5px;
+	padding: 0px;
+	svg {
+		height: 18px;
+		width: 18px;
+	}
 `;
 
 export default MobileUserMenu;

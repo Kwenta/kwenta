@@ -11,6 +11,7 @@ import Earning from 'sections/homepage/Earning';
 import Learn from 'sections/homepage/Learn';
 import TradeNow from 'sections/homepage/TradeNow';
 import dynamic from 'next/dynamic';
+import media from 'styles/media';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -48,6 +49,9 @@ export const Container = styled.div`
 	width: 100%;
 	margin: 0 auto;
 	padding: 100px 20px 0 20px;
+	${media.lessThan('md')`
+		padding: 50px 15px 0 15px;
+	`}
 `;
 
 export default HomePage;

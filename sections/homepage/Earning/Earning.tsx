@@ -25,6 +25,7 @@ import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativ
 import Loader from 'components/Loader';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
+import media, { Media } from 'styles/media';
 
 const EARNINGS = [
 	{
@@ -65,17 +66,32 @@ const Earning = () => {
 		<StackSection>
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-				<StyledFlexContainer>
-					{EARNINGS.map(({ id, title, copy, image }) => (
-						<FeatureCard key={id}>
-							<FeatureIconContainer>{image}</FeatureIconContainer>
-							<FeatureContentTitle>
-								<CenteredTitle>{t(title)}</CenteredTitle>
-							</FeatureContentTitle>
-							<CenteredCopy>{t(copy)}</CenteredCopy>
-						</FeatureCard>
-					))}
-				</StyledFlexContainer>
+				<Media greaterThan="sm">
+					<StyledFlexContainer>
+						{EARNINGS.map(({ id, title, copy, image }) => (
+							<FeatureCard key={id}>
+								<FeatureIconContainer>{image}</FeatureIconContainer>
+								<FeatureContentTitle>
+									<CenteredTitle>{t(title)}</CenteredTitle>
+								</FeatureContentTitle>
+								<CenteredCopy>{t(copy)}</CenteredCopy>
+							</FeatureCard>
+						))}
+					</StyledFlexContainer>
+				</Media>
+				<Media lessThan="sm">
+					<StyledFlexDivColCentered>
+						{EARNINGS.map(({ id, title, copy, image }) => (
+							<FeatureCard key={id}>
+								<FeatureIconContainer>{image}</FeatureIconContainer>
+								<FeatureContentTitle>
+									<CenteredTitle>{t(title)}</CenteredTitle>
+								</FeatureContentTitle>
+								<CenteredCopy>{t(copy)}</CenteredCopy>
+							</FeatureCard>
+						))}
+					</StyledFlexDivColCentered>
+				</Media>
 				<StatsCardContainer>
 					<StatsCard className="first">
 						<StatsValue>
@@ -119,6 +135,12 @@ const Earning = () => {
 	);
 };
 
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	width: 405px;
+	margin: auto;
+	padding: 0px;
+`;
+
 const GrayCopy = styled(Copy)`
 	margin-top: 17px;
 	text-align: center;
@@ -126,6 +148,11 @@ const GrayCopy = styled(Copy)`
 	font-size: 18px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+	${media.lessThan('sm')`
+		font-size: 16px;
+		width: 336px;
+		margin-bottom: 60px;
+	`}
 `;
 
 const Emphasis = styled.b`
@@ -144,19 +171,32 @@ const StatsName = styled.div`
 	letter-spacing: -0.02em;
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+	${media.lessThan('sm')`
+		font-size: 11px;
+	`}
 `;
+
 const StatsValue = styled.div`
 	font-size: 40px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin-top: 14px;
 	margin-bottom: 10px;
+	${media.lessThan('sm')`
+		font-size: 24px;
+	`}
 `;
+
 const StatsCardContainer = styled(FlexDivRow)`
 	margin: 80px 0px;
 	justify-content: center;
 	border-top: 1px solid #3d3c3c;
 	width: 1160px;
+	${media.lessThan('sm')`
+		width: 345px;
+		margin: 60px auto;
+		padding: 0px;
+	`}
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
@@ -188,6 +228,9 @@ const Container = styled(GridDiv)`
 	overflow: hidden;
 	justify-content: center;
 	padding: 110px 0px;
+	${media.lessThan('sm')`
+		padding-top: 100px;
+	`}
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`
@@ -198,6 +241,9 @@ const StyledFlexContainer = styled(FlexDivRow)`
 const FeatureCard = styled(FlexDivCol)`
 	margin-top: 90px;
 	padding: 0px 40px;
+	${media.lessThan('sm')`
+		margin-top: 40px;
+	`}
 `;
 
 const FeatureIconContainer = styled.div`
@@ -221,6 +267,12 @@ const CTAContainer = styled.div`
 	justify-content: center;
 	gap: 20px;
 	width: 1160px;
+	${media.lessThan('sm')`
+		flex-direction: column;
+		width: 200px;
+		margin: auto;
+		padding: 0px;
+	`}
 `;
 
 export default Earning;
