@@ -13,7 +13,6 @@ type AmountContainerProps = {
 	position: FuturesPosition | null;
 };
 
-const lineSeparatorStyle = { margin: '0px 0.7vw 0px 0.7vw' };
 const currencyIconStyle = {
 	height: '1.94vw',
 	width: 'auto',
@@ -46,9 +45,9 @@ const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) =>
 						currencyKey={getMarketAssetFromKey(marketAsset, 10)}
 					/>
 					<StyledPositionDetails>{`${marketAsset__RemovedSChar}-PERP`}</StyledPositionDetails>
-					<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
+					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
 					<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>
-					<StyledPositionDetails style={lineSeparatorStyle}>{`|`}</StyledPositionDetails>
+					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
 					<StyledPositionLeverage>{`${leverage}`}</StyledPositionLeverage>
 				</StyledPositionType>
 				<StyledAmount className={`${amount()}`}>{amount()}</StyledAmount>
@@ -75,6 +74,8 @@ const StyledPositionSide = styled.div`
 `;
 
 const StyledPositionDetails = styled.div`
+	margin: ${(props) => (props.className === 'line-separator' ? '0vw 0.7vw 0vw 0.7vw' : '')};
+
 	display: flex;
 	flex-direction: column;
 
