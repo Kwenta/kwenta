@@ -3,8 +3,9 @@ import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
-import TransactionNotifier from 'containers/TransactionNotifier';
+import { CellProps } from 'react-table';
 import { wei } from '@synthetixio/wei';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import { positionState, currentMarketState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
@@ -13,8 +14,8 @@ import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import RefetchContext from 'contexts/RefetchContext';
 import Table from 'components/Table';
-import { CellProps } from 'react-table';
 import PositionType from 'components/Text/PositionType';
+import { formatCurrency } from 'utils/formatters/number';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -102,11 +103,18 @@ const OrdersTab: React.FC = () => {
 								<div>{cellProps.row.original.orderType}</div>
 							</div>
 						),
+						width: 100,
 					},
 					{
 						Header: <StyledTableHeader>Size</StyledTableHeader>,
 						accessor: 'size',
-						Cell: (cellProps: CellProps<any>) => <div></div>,
+						Cell: (cellProps: CellProps<any>) => (
+							<div>
+								{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
+									sign: cellProps.row.original.asset,
+								})}
+							</div>
+						),
 					},
 					{
 						Header: (
@@ -137,6 +145,7 @@ const OrdersTab: React.FC = () => {
 								</div>
 							);
 						},
+						width: 100,
 					},
 				]}
 			/>

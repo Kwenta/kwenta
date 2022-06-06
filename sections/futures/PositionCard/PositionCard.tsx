@@ -23,13 +23,13 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { positionState } from 'store/futures';
+import { currentMarketState, positionState } from 'store/futures';
 
 type PositionCardProps = {
-	currencyKey: string;
 	currencyKeyRate: number;
 	onPositionClose?: () => void;
 	dashboard?: boolean;
+	mobile?: boolean;
 };
 
 type PositionData = {
@@ -52,9 +52,11 @@ type PositionData = {
 	avgEntryPrice: string | JSX.Element;
 };
 
-const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRate }) => {
+const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
+	const currencyKey = useRecoilValue(currentMarketState);
+
 	const positionDetails = position?.position ?? null;
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
@@ -259,7 +261,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRat
 
 	return (
 		<>
-			<Container id={isFuturesMarketClosed ? 'closed' : undefined}>
+			<Container id={isFuturesMarketClosed ? 'closed' : undefined} mobile={mobile}>
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{data.marketShortName}</StyledSubtitle>
@@ -274,7 +276,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRat
 						<StyledValue>{data.positionSize}</StyledValue>
 					</InfoRow>
 				</DataCol>
-				<DataColDivider />
+				<DataColDivider mobile={mobile} />
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.net-funding')}</StyledSubtitle>
@@ -309,7 +311,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRat
 						<StyledValue>{data.liquidationPrice}</StyledValue>
 					</InfoRow>
 				</DataCol>
-				<DataColDivider />
+				<DataColDivider mobile={mobile} />
 				<DataCol>
 					<InfoRow>
 						<StyledSubtitle>{t('futures.market.position-card.leverage')}</StyledSubtitle>
@@ -336,7 +338,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKey, currencyKeyRat
 };
 export default PositionCard;
 
-const Container = styled.div`
+const Container = styled.div<{ mobile?: boolean }>`
 	display: grid;
 	grid-template-columns: 1fr 30px 1fr 30px 1fr;
 	background-color: transparent;
@@ -345,16 +347,31 @@ const Container = styled.div`
 	justify-content: space-between;
 	border-radius: 10px;
 	margin-bottom: 15px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			display: flex;
+			flex-direction: column;
+		`}
 `;
 
 const DataCol = styled(FlexDivCol)`
 	justify-content: space-between;
 `;
 
-const DataColDivider = styled.div`
+const DataColDivider = styled.div<{ mobile?: boolean }>`
 	width: 1px;
 	background-color: #2b2a2a;
 	margin: 0 15px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			height: 1px;
+			width: 100%;
+			margin: 15px 0;
+		`}
 `;
 
 const InfoRow = styled.div`

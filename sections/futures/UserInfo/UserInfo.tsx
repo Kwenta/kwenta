@@ -180,7 +180,7 @@ const UserInfo: React.FC = () => {
 			</TabButtonsContainer>
 
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
-				<PositionCard currencyKey={marketAsset} currencyKeyRate={marketAssetRate} />
+				<PositionCard currencyKeyRate={marketAssetRate} />
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}
 					futuresPositionHistory={futuresPositionHistory}
