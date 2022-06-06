@@ -18,7 +18,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { Price, Rates } from 'queries/rates/types';
-import { getSynthDescription, isEurForex } from 'utils/futures';
+import { getDisplayAsset, getSynthDescription, isEurForex } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { useRecoilValue } from 'recoil';
@@ -32,34 +32,28 @@ export type MarketsCurrencyOption = {
 	value: CurrencyKey;
 	label: string;
 	description: string;
-	price: string;
-	change: string;
+	price?: string;
+	change?: string;
 	negativeChange: boolean;
-	isFuturesMarketClosed: boolean;
-	futuresClosureReason: FuturesClosureReason;
+	isMarketClosed: boolean;
+	closureReason: FuturesClosureReason;
 };
 
-const assetToCurrencyOption = (
-	asset: string,
-	description: string,
-	price: string,
-	change: string,
-	negativeChange: boolean,
-	isFuturesMarketClosed: boolean,
-	futuresClosureReason: FuturesClosureReason
-): MarketsCurrencyOption => ({
-	value: asset as CurrencyKey,
-	label: `${asset[0] === 's' ? asset.slice(1) : asset}-PERP`,
-	description,
-	price,
-	change,
-	negativeChange,
-	isFuturesMarketClosed,
-	futuresClosureReason,
-});
+type AssetToCurrencyOptionArgs = {
+	asset: string;
+	description: string;
+	price?: string;
+	change?: string;
+	negativeChange: boolean;
+	isMarketClosed: boolean;
+	closureReason: FuturesClosureReason;
+};
 
-const DUMMY_PRICE = '';
-const DUMMY_CHANGE = '';
+const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
+	value: args.asset as CurrencyKey,
+	label: `${getDisplayAsset(args.asset)}-PERP`,
+	...args,
+});
 
 type MarketsDropdownProps = {
 	mobile?: boolean;
@@ -70,6 +64,10 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
+
+	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
+		dailyPriceChangesQuery,
+	]);
 
 	const asset = useRecoilValue(currentMarketState);
 
@@ -90,46 +88,59 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		  }, {})
 		: null;
 
+	const getBasePriceRate = React.useCallback(
+		(asset: CurrencyKey) => {
+			return Number(futureRates?.[iStandardSynth(asset) ? asset : assetToSynth(asset)]) ?? null;
+		},
+		[futureRates]
+	);
+
+	const getPastPrice = React.useCallback(
+		(asset: string) => dailyPriceChanges.find((price: Price) => price.synth === asset),
+		[dailyPriceChanges]
+	);
+
+	const selectedBasePriceRate = getBasePriceRate(asset);
+	const selectedPastPrice = getPastPrice(asset);
+
+	const getMinDecimals = React.useCallback(
+		(asset: string) => (isEurForex(asset) ? DEFAULT_FIAT_EURO_DECIMALS : undefined),
+		[]
+	);
+
 	const options = React.useMemo(() => {
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const markets = futuresMarketsQuery?.data ?? [];
 
 		return markets.map((market) => {
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
+			const pastPrice = getPastPrice(market.asset);
+			const basePriceRate = getBasePriceRate(market.asset as CurrencyKey);
 
-			const basePriceRate =
-				Number(
-					futureRates?.[
-						iStandardSynth(market.asset as CurrencyKey)
-							? market.asset
-							: assetToSynth(market.asset as CurrencyKey)
-					]
-				) ?? null;
-
-			const minDecimals = isEurForex(market.asset) ? DEFAULT_FIAT_EURO_DECIMALS : undefined;
-			return assetToCurrencyOption(
-				market.asset,
-				getSynthDescription(market.asset, synthsMap, t),
-				formatCurrency(selectedPriceCurrency.name, basePriceRate, { sign: '$', minDecimals }),
-				formatPercent(
+			return assetToCurrencyOption({
+				asset: market.asset,
+				description: getSynthDescription(market.asset, synthsMap, t),
+				price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+					sign: '$',
+					minDecimals: getMinDecimals(market.asset),
+				}),
+				change: formatPercent(
 					basePriceRate && pastPrice?.price
 						? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
 						: zeroBN
 				),
-				basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
-				market.isSuspended,
-				market.marketClosureReason
-			);
+				negativeChange:
+					basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
+				isMarketClosed: market.isSuspended,
+				closureReason: market.marketClosureReason,
+			});
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
-		dailyPriceChangesQuery?.data,
 		futuresMarketsQuery?.data,
-		futureRates,
 		selectedPriceCurrency.name,
 		synthsMap,
 		t,
-		isFuturesMarketClosed,
+		getBasePriceRate,
+		getPastPrice,
+		getMinDecimals,
 	]);
 
 	return (
@@ -145,15 +156,32 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 						router.push(ROUTES.Markets.MarketPair(x.value));
 					}
 				}}
-				value={assetToCurrencyOption(
+				value={assetToCurrencyOption({
 					asset,
-					getSynthDescription(asset, synthsMap, t),
-					DUMMY_PRICE,
-					DUMMY_CHANGE,
-					false,
-					isFuturesMarketClosed,
-					futuresClosureReason
-				)}
+					description: getSynthDescription(asset, synthsMap, t),
+					price: mobile
+						? formatCurrency(selectedPriceCurrency.name, selectedBasePriceRate, {
+								sign: '$',
+								minDecimals: getMinDecimals(asset),
+						  })
+						: undefined,
+					change: mobile
+						? formatPercent(
+								selectedBasePriceRate && selectedPastPrice?.price
+									? wei(selectedBasePriceRate)
+											.sub(selectedPastPrice?.price)
+											.div(selectedBasePriceRate)
+									: zeroBN
+						  )
+						: undefined,
+					negativeChange: mobile
+						? selectedBasePriceRate && selectedPastPrice?.price
+							? wei(selectedBasePriceRate).lt(selectedPastPrice?.price)
+							: false
+						: false,
+					isMarketClosed: isFuturesMarketClosed,
+					closureReason: futuresClosureReason,
+				})}
 				options={options}
 				isSearchable={false}
 				components={{
