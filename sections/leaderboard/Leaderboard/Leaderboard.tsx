@@ -104,9 +104,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 			}))
 			.filter((i: { trader: string; traderEns: string }) =>
 				searchTerm?.length
-					? searchTerm?.endsWith('.eth')
-						? i.traderEns.toLowerCase().includes(searchTerm.toLowerCase())
-						: i.trader.toLowerCase().includes(searchTerm.toLowerCase())
+					? i.trader.toLowerCase().includes(searchTerm) ||
+					  i.traderEns?.toLowerCase().includes(searchTerm)
 					: true
 			);
 	}, [stats, searchTerm, pnlMap, ensInfo]);
