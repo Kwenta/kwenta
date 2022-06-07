@@ -216,7 +216,8 @@ const Container = styled.div``;
 const StyledTabButton = styled(TabButton)``;
 
 const CloseTabButton = styled(TabButton)<{ active: boolean }>`
-	color: ${(props) => (props.active ? props.theme.colors.white : props.theme.colors.red)};
+	color: ${(props) =>
+		props.active ? props.theme.colors.selectedTheme.button.text : props.theme.colors.red};
 	margin-left: auto;
 `;
 
@@ -224,7 +225,7 @@ const ManageShortTitle = styled(CardTitle)`
 	margin-bottom: 12px;
 	padding: 15px 0 10px 0;
 	font-size: 26px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledBackIcon = styled(BackIcon)`

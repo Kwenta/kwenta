@@ -45,31 +45,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 
 	const columnsDeps = useMemo(() => [historyData], [historyData]);
 
-	/* const getStatus = (status: string) => {
-		switch (status) {
-			case TradeStatus.OPEN:
-				return (
-					<StyledStatus status={status}>
-						{t('futures.market.user.trades.table.trade-types.entry')}
-					</StyledStatus>
-				);
-			case TradeStatus.CLOSED:
-				return (
-					<StyledStatus status={status}>
-						{t('futures.market.user.trades.table.trade-types.exit')}
-					</StyledStatus>
-				);
-			case TradeStatus.LIQUIDATED:
-				return (
-					<StyledStatus status={status}>
-						{t('futures.market.user.trades.table.trade-types.liquidated')}
-					</StyledStatus>
-				);
-			default:
-				return null;
-		}
-	};*/
-
 	return (
 		<Card>
 			<StyledTable
@@ -185,22 +160,6 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						width: 100,
 					},
-					// {
-					// 	Header: (
-					// 		<StyledTableHeader>{t('futures.market.user.trades.table.status')}</StyledTableHeader>
-					// 	),
-					// 	id: 'status',
-					// 	accessor: 'status',
-					// 	sortType: 'basic',
-					// 	Cell: (cellProps: CellProps<FuturesTrade>) => {
-					// 		return (
-					// 			<>
-					// 				<StatusText>{getStatus(cellProps.value)}</StatusText>
-					// 			</>
-					// 		);
-					// 	},
-					// 	width: 100,
-					// },
 					{
 						accessor: 'txnHash',
 						Cell: (cellProps: CellProps<FuturesTrade>) => (
@@ -237,47 +196,26 @@ const StyledTableHeader = styled.div`
 
 const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;
-	font-weight: bold;
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 		`}
 
 	${(props) =>
 		props.side === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`}
 `;
-
-/* 
-const StyledStatus = styled.span<{ status: string }>`
-	font-size: 10px;
-	color: ${(props) =>
-		props.status === TradeStatus.OPEN
-			? props.theme.colors.yellow
-			: props.status === TradeStatus.CLOSED
-			? props.theme.colors.white
-			: props.theme.colors.red};
-	font-family: ${(props) => props.theme.fonts.bold};
-	margin-left: 2px;
-	text-transform: uppercase;
-`;
-
-const StatusText = styled.div`
-	${BoldTableText};
-	margin-left: 4px;
-`;
-*/
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.common.primaryWhite
+			? props.theme.colors.selectedTheme.button.text
 			: props.negative
-			? props.theme.colors.common.primaryRed
-			: props.theme.colors.common.primaryGreen};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.green};
 `;
 
 const TableNoResults = styled(GridDivCenteredRow)`
@@ -286,7 +224,7 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	margin-top: -2px;
 	justify-items: center;
 	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 16px;
 `;
 
@@ -295,18 +233,18 @@ const StyledExternalLink = styled(ExternalLink)`
 	&:hover {
 		svg {
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${(props) => props.theme.colors.selectedTheme.button.text};
 			}
 		}
 	}
 `;
 
 const StyledLinkIcon = styled(LinkIcon)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	width: 14px;
 	height: 14px;
 
 	path {
-		fill: ${(props) => props.theme.colors.common.secondaryGray};
+		fill: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;

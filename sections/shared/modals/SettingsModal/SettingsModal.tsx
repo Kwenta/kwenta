@@ -44,7 +44,7 @@ const Options = styled.div``;
 
 const OptionLabel = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 `;
 

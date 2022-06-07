@@ -208,7 +208,7 @@ const TableTitle = styled.div`
 
 const TitleText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 
 	&:hover {
 		text-decoration: underline;
@@ -217,7 +217,7 @@ const TitleText = styled.a`
 `;
 
 const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 `;
 
@@ -225,12 +225,12 @@ const TitleSeparator = styled.div`
 	margin-left: 10px;
 	margin-right: 10px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const TraderText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 
 	&:hover {
 		text-decoration: underline;
@@ -239,7 +239,7 @@ const TraderText = styled.a`
 
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
@@ -255,7 +255,7 @@ const CurrencyInfo = styled(FlexDiv)`
 const StyledSubtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 `;
 
@@ -263,10 +263,10 @@ const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.common.primaryGreen
+			? props.theme.colors.selectedTheme.green
 			: props.price < 0
-			? props.theme.colors.common.primaryRed
-			: props.theme.colors.common.primaryWhite};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledValue = styled.div`
@@ -274,11 +274,11 @@ const StyledValue = styled.div`
 	font-size: 13px;
 	color: ${(props) =>
 		props.color === 'green'
-			? props.theme.colors.common.primaryGreen
-			: props.color === 'red'
-			? props.theme.colors.common.primaryRed
-			: props.theme.colors.common.primaryWhite};
-	margin: 0;
+			? props.theme.colors.selectedTheme.green
+			: props.price === 'red
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
+  margin: 0;
 	text-align: end;
 `;
 

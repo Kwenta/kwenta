@@ -13,7 +13,7 @@ export const RowsHeader = styled(FlexDivRow)`
 	text-transform: uppercase;
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding: 0 16px 9px 16px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export const MenuModal = styled(BaseModal)`

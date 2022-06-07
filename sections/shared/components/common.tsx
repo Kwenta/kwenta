@@ -34,13 +34,13 @@ export const SummaryItem = styled.div`
 
 export const SummaryItemLabel = styled.div`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 `;
 
 export const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	${numericValueCSS};
 	max-width: 100px;
 	overflow: hidden;

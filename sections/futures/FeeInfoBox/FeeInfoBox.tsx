@@ -132,7 +132,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 										sign: selectedPriceCurrency.sign,
 									}
 								),
-								tooltip: dynamicFee?.gt(0) ? <ToolTip /> : null,
+								keyNode: dynamicFee?.gt(0) ? <ToolTip /> : null,
 							},
 					  }
 					: {
@@ -143,7 +143,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 											minDecimals: feeCost.lt(0.01) ? 4 : 2,
 									  })
 									: NO_VALUE,
-								tooltip: marketCostTooltip,
+								keyNode: marketCostTooltip,
 							},
 					  }),
 			}}
