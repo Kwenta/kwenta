@@ -333,7 +333,7 @@ const MarketDetailsContainer = styled.div`
 	}
 
 	.heading {
-		font-size: 12px;
+		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.text.title};
 	}
 
