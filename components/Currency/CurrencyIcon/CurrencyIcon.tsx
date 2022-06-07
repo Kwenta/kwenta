@@ -146,9 +146,10 @@ const DeprecatedXIconContainer = styled.div`
 
 const Placeholder = styled(FlexDivCentered)<{ isDeprecated?: boolean }>`
 	border-radius: 100%;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	border: 2px solid
-		${(props) => (props.isDeprecated ? props.theme.colors.red : props.theme.colors.white)};
+		${(props) =>
+			props.isDeprecated ? props.theme.colors.red : props.theme.colors.selectedTheme.button.text};
 	font-size: 7px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;

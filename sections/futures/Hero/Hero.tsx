@@ -127,7 +127,7 @@ const StyledBodyText = styled.div`
 const StyledBodySubtitle = styled(StyledBodyText)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	margin-bottom: 20px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledCardRow = styled(FlexDivRowCentered)``;

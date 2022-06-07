@@ -232,7 +232,7 @@ export default Orders;
 const BoldTableText = css`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 `;
 

@@ -174,9 +174,9 @@ export const BalanceContainer = styled(FlexDivRowCentered)`
 
 export const BalanceText = styled.p<{ $gold?: boolean }>`
 	color: ${(props) =>
-		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.common.secondaryGray};
+		props.$gold ? props.theme.colors.common.primaryGold : props.theme.colors.selectedTheme.gray};
 	span {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 
@@ -194,20 +194,20 @@ export const MaxButton = styled.button`
 	font-size: 13px;
 	line-height: 13px;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	cursor: pointer;
 `;
 
 const MinimumAmountDisclaimer = styled.div`
 	font-size: 12px;
 	margin-top: 8px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-align: center;
 `;
 
 export const ErrorMessage = styled.div`
 	margin-top: 16px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export const GasFeeContainer = styled(FlexDivRowCentered)`

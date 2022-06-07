@@ -148,7 +148,11 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	return (
 		<Container>
 			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
-				<StyledWidgetButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
+				<StyledWidgetButton
+					textTransform="none"
+					onClick={() => setShowUniswapWidget(true)}
+					noOutline={true}
+				>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
 				</StyledWidgetButton>
@@ -170,6 +174,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 						IndicatorSeparator: () => null,
 					}}
 					isSearchable={false}
+					noOutline={true}
 				></BalanceSelect>
 			)}
 		</Container>
@@ -192,7 +197,7 @@ const BalanceSelect = styled(Select)<{ value: { label: string } }>`
 		padding: 20px;
 
 		.react-select__group-heading {
-			color: ${(props) => props.theme.colors.common.primaryWhite};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 			font-size: 12px;
 			padding: 0;
 			margin-bottom: 15px;
@@ -227,7 +232,7 @@ const StyledLabel = styled.div<{ noPadding: boolean }>`
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 13px;
 	padding: 10px;
 	> div {
@@ -237,6 +242,7 @@ const LabelContainer = styled(FlexDivRowCentered)`
 
 const StyledButton = styled(Button)`
 	width: 100%;
+	height: 41px;
 	font-size: 13px;
 	margin-top: 15px;
 	align-items: center;

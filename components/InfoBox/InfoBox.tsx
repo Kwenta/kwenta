@@ -59,23 +59,23 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.key {
-			color: ${(props) => props.theme.colors.selectedTheme.input.placeholder};
-			font-size: 12px;
+			color: ${(props) => props.theme.colors.selectedTheme.text.title};
+			font-size: 13px;
 			text-transform: capitalize;
 		}
 
 		.value {
-			color: ${(props) => props.theme.colors.common.primaryWhite};
-			font-family: ${(props) => props.theme.fonts.regular};
-			font-size: 12px;
+			color: ${(props) => props.theme.colors.selectedTheme.text.value};
+			font-family: ${(props) => props.theme.fonts.mono};
+			font-size: 13px;
 		}
 
 		.red {
-			color: ${(props) => props.theme.colors.common.primaryRed};
+			color: ${(props) => props.theme.colors.selectedTheme.red};
 		}
 
 		.green {
-			color: ${(props) => props.theme.colors.common.primaryGreen};
+			color: ${(props) => props.theme.colors.selectedTheme.green};
 		}
 
 		.gold {
@@ -83,7 +83,7 @@ const InfoBoxContainer = styled.div`
 		}
 
 		.closed {
-			color: ${(props) => props.theme.colors.common.secondaryGray};
+			color: ${(props) => props.theme.colors.selectedTheme.gray};
 		}
 
 		&:not(:last-of-type) {

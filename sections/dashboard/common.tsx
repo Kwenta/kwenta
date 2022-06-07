@@ -4,7 +4,7 @@ import Text from 'components/Text';
 export const CardTitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export const ConvertContainer = styled.div`
@@ -14,7 +14,7 @@ export const ConvertContainer = styled.div`
 `;
 
 export const Title = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 14px;
 
 	&:not(:first-of-type) {

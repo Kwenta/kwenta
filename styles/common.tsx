@@ -125,7 +125,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 			? css`
 					cursor: pointer;
 					&:hover {
-						background-color: ${(props) => props.theme.colors.black};
+						background-color: ${(props) => props.theme.colors.selectedTheme.cell.hover};
 					}
 			  `
 			: css`
@@ -188,10 +188,12 @@ export const BottomShadow = styled.div`
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
-	height: 100vh;
+	height: auto;
 	position: relative;
-	overflow-y: overlay;
+	overflow-y: visible;
 	padding: 25px 25px 0;
+	margin: 0 auto;
+	max-width: 1800px;
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -203,7 +205,7 @@ export const Tooltip = styled(Tippy)`
 export const InfoTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.navy};
 	}
@@ -259,7 +261,7 @@ export const IconButton = styled.button`
 export const CenteredMessage = styled.div`
 	${absoluteCenteredCSS};
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: center;
 	display: grid;
@@ -270,7 +272,7 @@ export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
-	height: 100vh;
+	height: auto;
 	position: relative;
 `;
 
@@ -285,13 +287,13 @@ export const MainContent = styled(FlexDiv)`
 export const RightSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const Table = styled.table.attrs({
@@ -307,7 +309,7 @@ export const CurrencyCardsSelector = styled.div`
 	position: absolute;
 	padding: 6px;
 	border-radius: 4px;
-	background: ${(props) => props.theme.colors.common.secondaryGray};
+	background: ${(props) => props.theme.colors.selectedTheme.gray};
 	border: 2px solid ${(props) => props.theme.colors.black};
 	left: 50%;
 	top: 50%;
@@ -329,7 +331,7 @@ export const DropdownSelection = styled.span.attrs({
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: uppercase;
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color3};
@@ -396,7 +398,7 @@ export const ExchangeCardsWithSelector = styled.div`
 `;
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	height: 32px;
 	width: 32px;
 	display: flex;
@@ -404,9 +406,7 @@ export const SwapCurrenciesButton = styled.button`
 	justify-content: center;
 	z-index: ${zIndex.BASE};
 	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	cursor: pointer;
 	${border}
 	transition-duration: 0.1s;
@@ -436,5 +436,8 @@ export const SwapCurrenciesButton = styled.button`
 		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
 		z-index: 1;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
 	}
 `;

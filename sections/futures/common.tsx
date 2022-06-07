@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { FlexDivRowCentered } from 'styles/common';
 
 export const Title = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 14px;
 	text-transform: capitalize;
@@ -10,7 +10,7 @@ export const Title = styled.div`
 `;
 
 export const Subheader = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	text-transform: capitalize;
@@ -24,7 +24,7 @@ export const Subtitle = styled.div`
 `;
 
 export const Data = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 `;

@@ -132,7 +132,7 @@ const TableRow = styled.tr`
 const TableRowHead = styled(TableRow)``;
 
 const TableCell = styled.td`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	&:last-child {
 		text-align: right;
 	}

@@ -333,12 +333,14 @@ const Trade: React.FC<TradeProps> = ({
 				<MarketActionButton
 					disabled={isFuturesMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
+					noOutline={true}
 				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
 					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
+					noOutline={true}
 				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>
@@ -403,6 +405,7 @@ const Trade: React.FC<TradeProps> = ({
 				<PlaceOrderButton
 					variant="primary"
 					fullWidth
+					noOutline={true}
 					disabled={
 						!leverage ||
 						Number(leverage) < 0 ||
@@ -535,6 +538,14 @@ const MarketActions = styled.div`
 
 const MarketActionButton = styled(Button)`
 	font-size: 15px;
+	height: 40px;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+
+	&:hover:enabled {
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.fill};
+	}
 `;
 
 const ManagePositions = styled.div`
@@ -557,13 +568,13 @@ const CloseOrderButton = styled(Button)`
 	text-align: center;
 	white-space: normal;
 	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
-	box-shadow: none;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	transition: all 0s ease-in-out;
+	box-shadow: none;
 
 	&:hover {
-		background: ${(props) => props.theme.colors.common.primaryRed};
-		color: ${(props) => props.theme.colors.white};
+		background: ${(props) => props.theme.colors.selectedTheme.red};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 		transform: scale(0.98);
 	}
 
@@ -576,7 +587,7 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.red};
+	color: ${(props) => props.theme.colors.selectedTheme.red};
 	font-size: 12px;
 	margin-bottom: 16px;
 `;
@@ -586,12 +597,12 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 `;
 
 const ManageOrderTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-bottom: 8px;
 	margin-left: 14px;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;

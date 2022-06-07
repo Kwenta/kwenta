@@ -6,7 +6,6 @@ import CrossIcon from 'assets/svg/app/cross.svg';
 
 import Card from 'components/Card';
 import { resetButtonCSS } from 'styles/common';
-import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import media from 'styles/media';
 
@@ -71,7 +70,7 @@ const StyledCard = styled(Card)`
 	border-radius: 10px;
 	position: relative;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
-	${border}
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const StyledCardHeader = styled(Card.Header)`
@@ -94,9 +93,9 @@ const DismissButton = styled.button`
 	${resetButtonCSS};
 	position: absolute;
 	right: 20px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	&:hover {
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 

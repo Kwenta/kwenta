@@ -3,6 +3,8 @@ import { atom } from 'recoil';
 
 import { DEFAULT_SORT_OPTION } from 'sections/dashboard/TrendingSynths/constants';
 import { SHORT_C_RATIO } from 'sections/shorting/ShortingCard/components/CRatioSelector/constants';
+import { localStorageEffect } from 'store/effects';
+import { ThemeName } from 'styles/theme';
 
 import { getUIKey } from '../utils';
 
@@ -29,4 +31,10 @@ export const shortCRatioState = atom<number>({
 export const customShortCRatioState = atom<string>({
 	key: getUIKey('customShortCRatio'),
 	default: '',
+});
+
+export const currentThemeState = atom<ThemeName>({
+	key: getUIKey('currentTheme'),
+	default: 'dark',
+	effects: [localStorageEffect('currentTheme')],
 });

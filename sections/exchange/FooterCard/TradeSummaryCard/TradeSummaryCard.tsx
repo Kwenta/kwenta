@@ -156,7 +156,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 export const ErrorTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.red};
 	}
