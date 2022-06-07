@@ -51,7 +51,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 
 	return isReady ? (
-		<ThemeProvider theme={theme}>
+		<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
 					value={

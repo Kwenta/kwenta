@@ -53,7 +53,7 @@ const Header = styled(Paragraph)`
 	line-height: 85%;
 	text-align: center;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	color: ${(props) => props.theme.colors.common.primaryGold};
 	text-shadow: 0px 0px 62px rgba(208, 168, 117, 0.35);
 	padding-top: 40px;
 `;
