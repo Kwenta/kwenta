@@ -1,4 +1,3 @@
-/* eslint-disable ui-testing/no-hard-wait */
 import FuturesPage from '../pages/markets/futures-page';
 
 const futures = new FuturesPage();
@@ -39,7 +38,6 @@ describe('Futures Page', () => {
 
 					futures.OpenPostiionBtnShouldBeEnabled();
 					futures.closePositionBtnShouldBeDisabled();
-
 					cy.findByTestId('leverage-input')
 						.invoke('val')
 						.then((leverageInput) => {
