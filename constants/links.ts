@@ -29,4 +29,8 @@ export const EXTERNAL_LINKS = {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 	},
+	KwentaV2: {
+		Home: 'https://v2.beta.kwenta.io/',
+		Exchange: 'https://v2.beta.kwenta.io/exchange',
+	},
 };
