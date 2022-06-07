@@ -1,3 +1,4 @@
+/* eslint-disable ui-testing/no-hard-wait */
 import FuturesPage from '../pages/markets/futures-page';
 
 const futures = new FuturesPage();
@@ -38,25 +39,15 @@ describe('Futures Page', () => {
 
 					futures.OpenPostiionBtnShouldBeEnabled();
 					futures.closePositionBtnShouldBeDisabled();
+
 					cy.findByTestId('leverage-input')
 						.invoke('val')
 						.then((leverageInput) => {
 							futures.getOpenPositionBtn().click();
 							futures.getOpenPositionConfirmOrderBtn().click();
 							futures.confirmMetamaskTransaction();
-
-							futures
-								.getPositionCardLeverageValue()
-								.invoke('text')
-								.then((leverageValue) => {
-									expect(leverageValue).to.eq(`${leverageInput}x`);
-								});
-							futures
-								.getPositionCardSideValue()
-								.invoke('text')
-								.then((sideValue) => {
-									expect(sideValue).to.eq(`long`);
-								});
+							futures.getPositionCardLeverageValue().should('have.text', `${leverageInput}x`);
+							futures.getPositionCardSideValue().should('have.text', 'long');
 						});
 
 					//Close Position
