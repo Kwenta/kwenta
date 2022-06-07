@@ -60,14 +60,14 @@ const InfoBoxContainer = styled.div`
 
 		.key {
 			color: ${(props) => props.theme.colors.selectedTheme.text.title};
-			font-size: 12px;
+			font-size: 13px;
 			text-transform: capitalize;
 		}
 
 		.value {
 			color: ${(props) => props.theme.colors.selectedTheme.text.value};
-			font-family: ${(props) => props.theme.fonts.regular};
-			font-size: 12px;
+			font-family: ${(props) => props.theme.fonts.mono};
+			font-size: 13px;
 		}
 
 		.red {
