@@ -121,6 +121,7 @@ const OpenPositionTab: React.FC = () => {
 				closeDrawer={() => setModalOpen(false)}
 				gasLimit={orderTxn.gasLimit}
 				l1Fee={orderTxn.optimismLayerOneFee}
+				onConfirmOrder={() => orderTxn.mutate()}
 			/>
 		</div>
 	);

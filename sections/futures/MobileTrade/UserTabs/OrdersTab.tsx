@@ -16,6 +16,7 @@ import RefetchContext from 'contexts/RefetchContext';
 import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
+import OrderDrawer from '../drawers/OrderDrawer';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -29,6 +30,7 @@ const OrdersTab: React.FC = () => {
 
 	const { handleRefetch } = React.useContext(RefetchContext);
 
+	const [selectedOrder, setSelectedOrder] = React.useState<any>();
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -91,8 +93,12 @@ const OrdersTab: React.FC = () => {
 	return (
 		<div>
 			<SectionHeader>Orders</SectionHeader>
+
 			<StyledTable
 				data={data}
+				onTableRowClick={(row) => {
+					setSelectedOrder(row.original);
+				}}
 				columns={[
 					{
 						Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
@@ -148,6 +154,13 @@ const OrdersTab: React.FC = () => {
 						width: 100,
 					},
 				]}
+			/>
+
+			<OrderDrawer
+				open={!!selectedOrder}
+				order={selectedOrder}
+				closeDrawer={() => setSelectedOrder(undefined)}
+				setAction={setAction}
 			/>
 		</div>
 	);

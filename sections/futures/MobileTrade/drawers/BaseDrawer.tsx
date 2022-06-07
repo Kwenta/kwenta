@@ -12,9 +12,10 @@ type BaseDrawerProps = {
 	items: DrawerItem[];
 	open: boolean;
 	closeDrawer(): void;
+	buttons?: React.ReactNode;
 };
 
-const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items }) => (
+const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, buttons }) => (
 	<StyledModal isOpen={open}>
 		<Background onClick={closeDrawer}>
 			<Foreground>
@@ -24,6 +25,7 @@ const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items }) => 
 						<div className="value">{value}</div>
 					</Row>
 				))}
+				{buttons && <ButtonsContainer>{buttons}</ButtonsContainer>}
 			</Foreground>
 		</Background>
 	</StyledModal>
@@ -92,6 +94,12 @@ const Row = styled.div`
 	&:not(:last-of-type) {
 		border-bottom: 1px solid #2b2a2a;
 	}
+`;
+
+const ButtonsContainer = styled.div`
+	width: 100%;
+	display: flex;
+	padding: 15px 0;
 `;
 
 export default BaseDrawer;

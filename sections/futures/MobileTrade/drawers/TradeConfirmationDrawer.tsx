@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
-
+import styled from 'styled-components';
 import { Synths, CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
@@ -13,15 +15,16 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 import { PositionSide } from 'sections/futures/types';
-import Wei from '@synthetixio/wei';
 import { GasLimitEstimate } from 'constants/network';
 import BaseDrawer from './BaseDrawer';
+import Button from 'components/Button';
 
 type TradeConfirmationDrawerProps = {
 	open: boolean;
 	closeDrawer(): void;
 	gasLimit: GasLimitEstimate;
 	l1Fee: Wei | null;
+	onConfirmOrder(): void;
 };
 
 const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
@@ -29,6 +32,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 	closeDrawer,
 	gasLimit,
 	l1Fee,
+	onConfirmOrder,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
@@ -112,7 +116,34 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
 	);
 
-	return <BaseDrawer open={open} closeDrawer={closeDrawer} items={dataRows} />;
+	return (
+		<BaseDrawer
+			open={open}
+			closeDrawer={closeDrawer}
+			items={dataRows}
+			buttons={
+				<ConfirmTradeButton
+					variant="primary"
+					isRounded
+					onClick={() => {
+						onConfirmOrder();
+						closeDrawer();
+					}}
+					disabled={!positionDetails}
+				>
+					{t('futures.market.trade.confirmation.modal.confirm-order')}
+				</ConfirmTradeButton>
+			}
+		/>
+	);
 };
+
+const ConfirmTradeButton = styled(Button)`
+	margin-top: 24px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	height: 45px;
+`;
 
 export default TradeConfirmationDrawer;
