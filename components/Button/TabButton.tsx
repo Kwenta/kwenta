@@ -91,17 +91,8 @@ const StyledButton = styled(Button)<{
 		margin-right: ${(props) => (props.vertical ? '0' : '7px')};
 		path {
 			${(props) =>
-				!props.nofill &&
 				css`
-					fill: ${props.active
-						? props.theme.colors.common.primaryWhite
-						: props.theme.colors.common.secondaryGray};
-				`}
-
-			${(props) =>
-				props.nofill &&
-				css`
-					stroke: ${props.active
+					${props.nofill ? 'stroke' : 'fill'}: ${props.active
 						? props.theme.colors.common.primaryWhite
 						: props.theme.colors.common.secondaryGray};
 				`}
