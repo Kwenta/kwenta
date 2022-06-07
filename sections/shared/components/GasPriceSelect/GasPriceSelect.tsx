@@ -34,7 +34,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 			{isL2
 				? formatCurrency(Synths.sUSD, transactionFee ?? 0, { sign: '$', maxDecimals: 1 })
 				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
-						minDecimals: 4,
+						minDecimals: 2,
 				  })} Gwei`}
 		</span>
 	);
