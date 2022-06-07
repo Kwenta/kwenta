@@ -1,18 +1,13 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
 import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import Wei from '@synthetixio/wei';
 
 import { NO_VALUE } from 'constants/placeholder';
 
-import InfoIcon from 'assets/svg/app/info.svg';
-
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices } from '@synthetixio/queries';
 
@@ -28,7 +23,6 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const { t } = useTranslation();
 	const [gasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice] = useRecoilState(customGasPriceState);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isMainnet = useRecoilValue(isMainnetState);
 	const isL2 = useRecoilValue(isL2State);
 
@@ -56,32 +50,5 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 		</SummaryItem>
 	);
 };
-
-const GasPriceTooltip = styled(Tippy)`
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 4px;
-	width: 155px;
-	.tippy-content {
-		padding: 0;
-	}
-`;
-
-const GasPriceCostTooltip = styled(GasPriceTooltip)`
-	width: auto;
-	font-size: 12px;
-	.tippy-content {
-		padding: 5px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
-`;
-
-const GasPriceItem = styled.span`
-	display: inline-flex;
-	align-items: center;
-	cursor: pointer;
-	svg {
-		margin-left: 5px;
-	}
-`;
 
 export default GasPriceSelect;
