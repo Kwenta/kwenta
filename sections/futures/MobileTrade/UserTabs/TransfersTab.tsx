@@ -71,6 +71,7 @@ const TransfersTab: React.FC = () => {
 				) : undefined
 			}
 			showPagination={true}
+			pageSize={5}
 		/>
 	);
 };
