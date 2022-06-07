@@ -71,6 +71,7 @@ const Market = () => {
 						<StyledRightSideContent>
 							<Trade
 								onEditPositionInput={setPotentialTrade}
+								potentialTrade={potentialTrade}
 								refetch={refetch}
 								position={futuresMarketPosition}
 								currencyKey={marketAsset}

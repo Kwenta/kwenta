@@ -42,7 +42,7 @@ export const Container = styled.span<{ isPositive?: boolean | null }>`
 			? props.isPositive
 				? props.theme.colors.green
 				: props.theme.colors.red
-			: props.theme.colors.white};
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 export default ProfitLoss;

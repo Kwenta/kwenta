@@ -128,7 +128,7 @@ const AssetCardText = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0px 0px 0px 16px;
 	text-align: center;
 `;

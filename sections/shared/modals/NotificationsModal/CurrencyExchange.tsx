@@ -69,7 +69,7 @@ export const CurrencyExchange: FC<CurrencyExchangeProps> = ({ order }) => {
 };
 
 const Container = styled(FlexDivRowCentered)`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StatusIconMixin = `

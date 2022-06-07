@@ -9,7 +9,7 @@ export const SubHeader = styled(Paragraph)`
 	line-height: 120%;
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	${media.lessThan('md')`
 		font-size: 32px;
 		text-align: center;
@@ -56,7 +56,7 @@ export const Title = styled(Paragraph)`
 	font-size: 16px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: left;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export const Copy = styled(Paragraph)`
@@ -73,5 +73,5 @@ export const Subtext = styled(Paragraph)`
 	line-height: 120%;
 	text-align: center;
 	letter-spacing: 0.2px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;

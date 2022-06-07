@@ -16,7 +16,7 @@ const StyledText = styled.p<{ $side: PositionProps['side'] }>`
 	${(props) =>
 		props.$side === 'long' &&
 		css`
-			color: rgba(127, 212, 130, 0.8);
+			color: ${(props) => props.theme.colors.selectedTheme.green};
 			background: rgba(127, 212, 130, 0.1);
 			font-family: ${(props) => props.theme.fonts.monoBold};
 			font-variant: all-small-caps;
@@ -26,7 +26,7 @@ const StyledText = styled.p<{ $side: PositionProps['side'] }>`
 	${(props) =>
 		props.$side === 'short' &&
 		css`
-			color: rgba(239, 104, 104, 0.8);
+			color: ${(props) => props.theme.colors.selectedTheme.red};
 			background: rgba(239, 104, 104, 0.1);
 			font-family: ${(props) => props.theme.fonts.monoBold};
 			font-variant: all-small-caps;

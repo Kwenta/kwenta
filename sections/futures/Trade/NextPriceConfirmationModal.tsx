@@ -190,7 +190,7 @@ const Row = styled(FlexDivCentered)`
 `;
 
 const Label = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -198,7 +198,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-top: 6px;
 `;
@@ -213,7 +213,7 @@ const StyledGasPriceSelect = styled(GasPriceSelect)`
 	justify-content: space-between;
 	width: auto;
 	border-bottom: 1px solid ${(props) => props.theme.colors.selectedTheme.border};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
@@ -230,7 +230,7 @@ const ConfirmTradeButton = styled(Button)`
 
 const Disclaimer = styled.div`
 	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-top: 12px;
 	margin-bottom: 12px;
 `;

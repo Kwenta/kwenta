@@ -61,14 +61,14 @@ const GlobalStyle = createGlobalStyle`
 
 	a {
 		${linkCSS};
-		color: ${(props) => props.theme.colors.white};
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 
 	/* blocknative onboard style overrides */
 	.bn-onboard-custom {
 		&&& {
 			font-family: ${(props) => props.theme.fonts.regular};
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 			
 		}
 		&&.bn-onboard-modal {
@@ -83,7 +83,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-selected-wallet {
 			background-color: ${(props) => props.theme.colors.navy};
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 		&&.bn-onboard-modal-content {
 			background-color: ${(props) => props.theme.colors.elderberry};
@@ -93,7 +93,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-select-wallet-info {
 			cursor: pointer;
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 		&&.bn-onboard-dark-mode-background-hover {
 			&:hover {
@@ -102,12 +102,12 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-prepare-button {
 			border-radius: 2px;
-			color: ${(props) => props.theme.colors.white} ;
+			color: ${(props) => props.theme.colors.selectedTheme.button.text} ;
 			background-color: ${(props) => props.theme.colors.elderberry} ;
 			border: 1px solid ${(props) => props.theme.colors.navy} ;
 		}
 		.bn-onboard-clickable {
-			color: ${(props) => props.theme.colors.white} !important;
+			color: ${(props) => props.theme.colors.selectedTheme.button.text} !important;
 		}		
 	}
 `;
