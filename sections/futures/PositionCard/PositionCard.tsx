@@ -129,21 +129,12 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			positionSide: newSide,
 			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage:
-				positionDetails.side !== potentialTrade?.side
-					? positionDetails.leverage.sub(potentialTrade?.leverage).abs()
-					: positionDetails.leverage.add(potentialTrade?.leverage).abs(),
+			leverage: previewTradeData.notionalValue.div(previewTradeData.margin),
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
 			showStatus: previewTradeData.showStatus,
 		};
-	}, [
-		positionDetails,
-		previewTradeData,
-		modifiedAverage,
-		potentialTrade?.side,
-		potentialTrade?.leverage,
-	]);
+	}, [positionDetails, previewTradeData, modifiedAverage]);
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;

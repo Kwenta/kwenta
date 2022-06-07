@@ -89,7 +89,10 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 			}
 		}
 
-		return previewTrade?.margin?.sub(inaccessible).abs() ?? zeroBN;
+		// check if available margin will be less than 0
+		return previewTrade?.margin?.sub(inaccessible).gt(0)
+			? previewTrade?.margin?.sub(inaccessible).abs()
+			: zeroBN;
 	};
 
 	const previewAvailableMargin = React.useMemo(() => {
