@@ -666,10 +666,10 @@
 				"r-pnl": "Realized PnL",
 				"u-pnl": "Unrealized PnL",
 				"leverage": "Leverage",
-				"liquidation-price": "Liq. Price",
+				"liquidation-price": "Liq Price",
 				"net-funding": "Net Funding",
 				"fees": "Fees",
-				"avg-entry-price": "Avg. Entry",
+				"avg-entry-price": "Avg Entry",
 				"tooltips": {
 					"position-side": "Direction of current trade",
 					"position-size": "Notional value of the open position",
