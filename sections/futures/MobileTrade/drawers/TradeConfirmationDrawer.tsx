@@ -139,7 +139,6 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 };
 
 const ConfirmTradeButton = styled(Button)`
-	margin-top: 24px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

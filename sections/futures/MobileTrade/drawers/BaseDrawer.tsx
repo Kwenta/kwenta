@@ -99,7 +99,7 @@ const Row = styled.div`
 const ButtonsContainer = styled.div`
 	width: 100%;
 	display: flex;
-	padding: 15px 0;
+	margin-top: 5px;
 `;
 
 export default BaseDrawer;
