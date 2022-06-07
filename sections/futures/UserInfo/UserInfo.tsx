@@ -28,6 +28,7 @@ import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { PotentialTrade } from '../types';
 
 import UploadIcon from 'assets/svg/futures/upload-icon.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
@@ -50,11 +51,18 @@ const FutureTabs = Object.values(FuturesTab);
 type UserInfoProps = {
 	marketAsset: CurrencyKey;
 	position: FuturesPosition | null;
+	potentialTrade: PotentialTrade | null;
 	openOrders: any[];
 	refetch(): void;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
+const UserInfo: React.FC<UserInfoProps> = ({
+	marketAsset,
+	position,
+	potentialTrade,
+	openOrders,
+	refetch,
+}) => {
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 
@@ -217,6 +225,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					position={position}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
+					potentialTrade={potentialTrade}
 				/>
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}

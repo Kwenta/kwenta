@@ -48,7 +48,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
 			props.$currentMark === props.minValue &&
 			css`
 				&:nth-child(5) {
-					color: ${(props) => props.theme.colors.common.primaryWhite};
+					color: ${(props) => props.theme.colors.selectedTheme.button.text};
 				}
 			`}
 
@@ -57,7 +57,7 @@ const StyledSlider = styled(Slider)<{ $currentMark: number }>`
 			props.$currentMark === props.maxValue &&
 			css`
 				&:nth-child(7) {
-					color: ${(props) => props.theme.colors.common.primaryWhite};
+					color: ${(props) => props.theme.colors.selectedTheme.button.text};
 				}
 			`}
 	}

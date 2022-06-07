@@ -366,7 +366,7 @@ const DataField = styled(FlexDivRowCentered)<{ isPositive?: boolean | null }>`
 			? props.isPositive
 				? props.theme.colors.green
 				: props.theme.colors.red
-			: props.theme.colors.white};
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledLinkIcon = styled(LinkIcon)`

@@ -55,7 +55,7 @@ const Subtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 20px;
 	line-height: 24px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-align: center;
 	margin-bottom: 33px;
 `;

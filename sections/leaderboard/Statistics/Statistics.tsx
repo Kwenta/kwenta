@@ -168,7 +168,7 @@ const Label = styled.div`
 `;
 
 const Value = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 32px;
 	line-height: 38px;

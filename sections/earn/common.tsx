@@ -26,14 +26,14 @@ export const BigText = styled(Text.Heading)<{ $gold?: boolean }>`
 `;
 
 export const Title = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 14px;
 	margin-bottom: 5px;
 `;
 
 export const Description = styled(Text.Body)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledKwentaLogo = styled(KwentaLogo)`
@@ -57,7 +57,7 @@ export const GridHeading = styled(Text.Heading)`
 `;
 
 export const StyledBody = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-bottom: 40px;
 `;
 
@@ -67,7 +67,7 @@ export const StyledButton = styled(Button)`
 `;
 
 export const DollarValue = styled(BigText)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export const ColumnInner = styled.div`

@@ -83,7 +83,7 @@ const SummaryItemLabel = styled.div`
 `;
 
 const SummaryItemValue = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	${numericValueCSS};
 `;
 

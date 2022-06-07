@@ -103,7 +103,7 @@ const ComingSoonTag = styled(FlexDivCentered)`
 	height: 24px;
 	background: ${(props) => props.theme.colors.gold};
 	border-radius: 50px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin-left: 16px;

@@ -45,7 +45,7 @@ const Header = styled(Paragraph)`
 	line-height: 120%;
 	text-align: center;
 	letter-spacing: 0.2px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-top: 40px;
 `;
 

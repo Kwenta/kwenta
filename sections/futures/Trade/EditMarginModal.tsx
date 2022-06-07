@@ -223,7 +223,7 @@ const ActionTabsRow = styled(FlexDiv)`
 const ActionTab = styled(TextButton)<{ isSelected: boolean }>`
 	margin-left: 8px;
 	padding: 0 2px 2px 2px;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.regular};
 	&:disabled {
 		opacity: 0.2;
@@ -232,7 +232,7 @@ const ActionTab = styled(TextButton)<{ isSelected: boolean }>`
 	${(props) =>
 		props.isSelected &&
 		css`
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 			border-bottom: 2px solid ${(props) => props.theme.colors.goldColors.color2};
 		`};
 `;

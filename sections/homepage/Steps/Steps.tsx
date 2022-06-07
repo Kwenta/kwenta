@@ -118,7 +118,7 @@ const StepTitle = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 32px;
 	line-height: 41px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding: 20px 0 40px 0;
 `;
 

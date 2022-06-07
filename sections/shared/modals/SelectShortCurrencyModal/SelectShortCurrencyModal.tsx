@@ -138,7 +138,7 @@ export const Title = styled.div`
 
 export const Total = styled.div`
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding-bottom: 10px;
 `;

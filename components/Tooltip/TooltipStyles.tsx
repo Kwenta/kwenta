@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 // base styles for each component that make up the tooltip.
 
@@ -13,15 +13,14 @@ interface ToolTipStyleProps {
 }
 
 export const Tooltip = styled.div<ToolTipStyleProps>`
-		height: ${(props) => props.height || '56px'};
 		width: max-content;
 		max-width: ${(props) => props.width || '472.5px'};
-		background: linear-gradient(180deg, #1E1D1D 0%, #161515 100%);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+		background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+		border: ${(props) => props.theme.colors.selectedTheme.border};
 		box-sizing: border-box;
-		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-		border-radius: 10px;
-		padding: 0.75em;
+		border-radius: 8px;
+		padding: 0 10px;
+		margin: 0;
 		position: absolute;
 		top: ${(props) => props.top};
 		bottom: ${(props) => props.bottom};
@@ -30,21 +29,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 		z-index: 2;
 
 		p, span {
-			margin: auto;
-			margin-left: 3px;
 			font-size: 13px;
-			text-align: left;
 			font-family: ${(props) => props.theme.fonts.regular};
-			font-style: normal;
-			font-weight: 400;
-			line-height: 150%;
-			white-space: pre-line;
-			color: ${(props) => props.theme.colors.white};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 
 		${(props) =>
 			props.preset === 'top' &&
-			`
+			css`
 				top: 0;
 				left: 50%;
 				transform: translate(-50%, -150%);
@@ -54,7 +46,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 
 		${(props) =>
 			props.preset === 'bottom' &&
-			`
+			css`
 				bottom: 0;
 				transform: translate(-25%, 125%);
 			`}
@@ -62,14 +54,14 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 
 		${(props) =>
 			props.preset === 'left' &&
-			`
+			css`
 				left: 0;
 				transform: translate(-105%, -80%);
 			`}
 
 		${(props) =>
 			props.preset === 'right' &&
-			`
+			css`
 				right: 0;
 				transform: translate(105%, -80%);
 			`}

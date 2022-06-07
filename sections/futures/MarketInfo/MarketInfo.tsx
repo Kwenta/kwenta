@@ -64,6 +64,7 @@ const MarketInfo: FC<MarketInfoProps> = ({
 				position={position}
 				openOrders={openOrders}
 				refetch={refetch}
+				potentialTrade={potentialTrade}
 			/>
 		</Container>
 	);
