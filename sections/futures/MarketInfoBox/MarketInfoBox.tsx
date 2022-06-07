@@ -15,8 +15,8 @@ const MarketInfoBox: React.FC = () => {
 		() => ({
 			totalMargin: position?.remainingMargin ?? zeroBN,
 			availableMargin: position?.accessibleMargin ?? zeroBN,
-			buyingPower: position?.remainingMargin.gt(zeroBN)
-				? position?.remainingMargin?.mul(maxLeverage ?? zeroBN)
+			buyingPower: position?.accessibleMargin.gt(zeroBN)
+				? position?.accessibleMargin?.mul(maxLeverage ?? zeroBN)
 				: zeroBN,
 			marginUsage: position?.remainingMargin.gt(zeroBN)
 				? position?.remainingMargin?.sub(position?.accessibleMargin).div(position?.remainingMargin)

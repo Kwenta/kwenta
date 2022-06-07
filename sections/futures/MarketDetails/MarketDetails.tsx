@@ -5,7 +5,6 @@ import { wei } from '@synthetixio/wei';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-
 import { FuturesMarket } from 'queries/futures/types';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -96,74 +95,126 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === marketAsset);
 
+	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
+	const fundingTitle = React.useMemo(
+		() =>
+			`${
+				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
+			} Funding Rate`,
+		[fundingRateQuery, avgFundingRate, marketSummary]
+	);
+
+	const enableTooltip = (key: string, children: React.ReactElement) => {
+		switch (key) {
+			case 'External Price':
+				return (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.external-price')}
+					>
+						{children}
+					</StyledTooltip>
+				);
+			case '24H Change':
+				return (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.24h-change')}
+					>
+						{children}
+					</StyledTooltip>
+				);
+			case '24H Volume':
+				return (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.24h-vol')}
+					>
+						{children}
+					</StyledTooltip>
+				);
+			case '24H Trades':
+				return (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.24h-trades')}
+					>
+						{children}
+					</StyledTooltip>
+				);
+			case 'Open Interest':
+				return (
+					<StyledTooltip
+						preset="bottom"
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.open-interest')}
+					>
+						{children}
+					</StyledTooltip>
+				);
+			case assetName:
+				return (
+					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+						{children}
+					</TimerTooltip>
+				);
+			case fundingTitle:
+				return (
+					<OneHrFundingRateTooltip
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
+					>
+						{children}
+					</OneHrFundingRateTooltip>
+				);
+			default:
+				return children;
+		}
+	};
+
 	const data: MarketData = React.useMemo(() => {
-		const fundingTitle = `${
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
-		} Funding Rate`;
 		const fundingValue =
 			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
 				? marketSummary?.currentFundingRate
 				: avgFundingRate;
 
 		return {
-			[marketAsset ? `${getDisplayAsset(marketAsset)}-PERP` : '']: {
+			[assetName]: {
 				value:
 					formatCurrency(selectedPriceCurrency.name, basePriceRate, {
 						sign: '$',
 						minDecimals,
-					}) && lastOracleUpdateTime ? (
-						<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
-							<HoverTransform>
-								{formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-									sign: '$',
-									minDecimals,
-								})}
-							</HoverTransform>
-						</TimerTooltip>
-					) : (
-						NO_VALUE
-					),
+					}) && lastOracleUpdateTime
+						? formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+								sign: '$',
+								minDecimals,
+						  })
+						: NO_VALUE,
 			},
 			'External Price': {
 				value:
-					externalPrice === 0 ? (
-						'-'
-					) : (
-						<StyledTooltip
-							preset="bottom"
-							height={'auto'}
-							content={t('exchange.market-details-card.tooltips.external-price')}
-						>
-							<HoverTransform>
-								{formatCurrency(selectedPriceCurrency.name, externalPrice, {
-									sign: '$',
-									minDecimals,
-								})}
-							</HoverTransform>
-						</StyledTooltip>
-					),
+					externalPrice === 0
+						? '-'
+						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
+								sign: '$',
+								minDecimals,
+						  }),
 			},
 			'24H Change': {
 				value:
-					marketSummary?.price && pastPrice?.price ? (
-						<StyledTooltip
-							preset="bottom"
-							height={'auto'}
-							content={t('exchange.market-details-card.tooltips.24h-change')}
-						>
-							<HoverTransform>
-								{`${formatCurrency(
-									selectedPriceCurrency.name,
-									marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
-									{ sign: '$', minDecimals }
-								)} (${formatPercent(
-									marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
-								)})`}
-							</HoverTransform>
-						</StyledTooltip>
-					) : (
-						NO_VALUE
-					),
+					marketSummary?.price && pastPrice?.price
+						? `${formatCurrency(
+								selectedPriceCurrency.name,
+								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+								{ sign: '$', minDecimals }
+						  )} (${formatPercent(
+								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+						  )})`
+						: NO_VALUE,
 				color:
 					marketSummary?.price && pastPrice?.price
 						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
@@ -174,21 +225,11 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						: undefined,
 			},
 			'24H Volume': {
-				value: !!futuresTradingVolume ? (
-					<StyledTooltip
-						preset="bottom"
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-vol')}
-					>
-						<HoverTransform>
-							{formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-								sign: '$',
-							})}
-						</HoverTransform>
-					</StyledTooltip>
-				) : (
-					NO_VALUE
-				),
+				value: !!futuresTradingVolume
+					? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
+							sign: '$',
+					  })
+					: NO_VALUE,
 			},
 			'24H Trades': {
 				value: !!futuresDailyTradeStats ? (
@@ -197,7 +238,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
-						<HoverTransform>{`${futuresDailyTradeStats ?? 0}`}</HoverTransform>
+						{`${futuresDailyTradeStats ?? 0}`}
 					</StyledTooltip>
 				) : (
 					NO_VALUE
@@ -207,52 +248,21 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				value: marketSummary?.marketSize?.mul(wei(basePriceRate)) ? (
 					<StyledTooltip
 						preset="bottom"
-						content={`Long: ${formatCurrency(
+						height={'auto'}
+						content={t('exchange.market-details-card.tooltips.open-interest')}
+					>
+						{formatCurrency(
 							selectedPriceCurrency.name,
-							marketSummary.marketSize
-								.add(marketSummary.marketSkew)
-								.div('2')
-								.abs()
-								.mul(basePriceRate)
-								.toNumber(),
+							marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
 							{ sign: '$' }
 						)}
-						Short: ${formatCurrency(
-							selectedPriceCurrency.name,
-							marketSummary.marketSize
-								.sub(marketSummary.marketSkew)
-								.div('2')
-								.abs()
-								.mul(basePriceRate)
-								.toNumber(),
-							{ sign: '$' }
-						)}`}
-					>
-						<HoverTransform>
-							{formatCurrency(
-								selectedPriceCurrency.name,
-								marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
-								{ sign: '$' }
-							)}
-						</HoverTransform>
 					</StyledTooltip>
 				) : (
 					NO_VALUE
 				),
 			},
 			[fundingTitle]: {
-				value: fundingValue ? (
-					<OneHrFundingRateTooltip
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
-					>
-						<HoverTransform>
-							{formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 })}
-						</HoverTransform>
-					</OneHrFundingRateTooltip>
-				) : (
-					NO_VALUE
-				),
+				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
 				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
 			},
 		};
@@ -279,16 +289,24 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			{Object.entries(data).map(([key, { value, color }]) => {
 				const colorClass = color || '';
 
-				return (
-					<div key={key}>
-						<p className="heading">{key}</p>
-						<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
-					</div>
+				return enableTooltip(
+					key,
+					<WithCursor cursor="help">
+						<div key={key}>
+							<p className="heading">{key}</p>
+							<span className={`value ${colorClass} ${pausedClass}`}>{value}</span>
+						</div>
+					</WithCursor>
 				);
 			})}
 		</MarketDetailsContainer>
 	);
 };
+
+// Extend type of cursor to accept different style of cursor. Currently accept only 'help'
+const WithCursor = styled.div<{ cursor: 'help' }>`
+	cursor: ${(props) => props.cursor};
+`;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
 	bottom: -145px;
@@ -353,12 +371,6 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 				margin-bottom: 2px;
 			}
 		`}
-`;
-
-export const HoverTransform = styled.div`
-	:hover {
-		transform: scale(1.03);
-	}
 `;
 
 export default MarketDetails;
