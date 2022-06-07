@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import router from 'next/router';
-import { FC, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
