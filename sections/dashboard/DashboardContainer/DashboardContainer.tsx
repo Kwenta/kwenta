@@ -12,7 +12,6 @@ import Overview from '../Overview';
 import { MainContent, LeftSideContent } from 'styles/common';
 import History from '../History';
 
-
 enum Tab {
 	Overview = 'overview',
 	History = 'history',
@@ -134,7 +133,6 @@ const DashboardContainer: FC = () => {
 		</>
 	);
 };
-
 
 const StyledTabList = styled(TabList)`
 	display: flex;
