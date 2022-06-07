@@ -307,9 +307,9 @@ const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.green
+			? props.theme.colors.selectedTheme.green
 			: props.price < 0
-			? props.theme.colors.red
+			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.button.text};
 `;
 
