@@ -10,7 +10,7 @@ import { CurrencyKey, Synths } from 'constants/currency';
 
 import Button from 'components/Button';
 import { zeroBN } from 'utils/formatters/number';
-import { PositionSide } from '../types';
+import { PositionSide, PotentialTrade } from '../types';
 import { useRecoilState } from 'recoil';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -27,7 +27,6 @@ import MarketsDropdown from './MarketsDropdown';
 import SegmentedControl from 'components/SegmentedControl';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
-import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
@@ -41,17 +40,26 @@ import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 type TradeProps = {
 	position: FuturesPosition | null;
 	refetch(): void;
-	onEditPositionInput: (position: { size: string; side: PositionSide }) => void;
+	onEditPositionInput: (position: { size: string; side: PositionSide; leverage: string }) => void;
 	currencyKey: string;
+	potentialTrade: PotentialTrade | null;
 };
 
-const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, currencyKey }) => {
+const Trade: React.FC<TradeProps> = ({
+	refetch,
+	onEditPositionInput,
+	position,
+	currencyKey,
+	potentialTrade,
+}) => {
 	const { t } = useTranslation();
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { useSynthsBalancesQuery, useEthGasPriceQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -62,6 +70,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+	const [orderType, setOrderType] = useState(0);
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketAsset);
@@ -70,8 +79,14 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
 	const futuresPositionHistoryQuery = useGetFuturesPositionHistory(marketAsset);
-
 	const positionDetails = position?.position ?? null;
+
+	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(
+		router.query.market?.[0] as CurrencyKey,
+		potentialTrade
+	);
+
+	const previewTrade = potentialTradeDetails.data ?? null;
 
 	const onPositionClose = () => {
 		setTimeout(() => {
@@ -91,7 +106,6 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 	const [tradeSize, setTradeSize] = useState('');
 	const [tradeSizeSUSD, setTradeSizeSUSD] = useState('');
 	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
-	const [orderType, setOrderType] = useState(0);
 
 	const [gasSpeed] = useRecoilState(gasSpeedState);
 	const [feeCost, setFeeCost] = useState<Wei | null>(null);
@@ -284,25 +298,33 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 
 	useEffect(() => {
 		if (orderTxn.hash) {
-			monitorTransaction({
-				txHash: orderTxn.hash,
-				onTxConfirmed: () => {
-					onLeverageChange('');
-					setTimeout(async () => {
-						futuresPositionHistoryQuery.refetch();
-						marketQuery.refetch();
-						refetch();
-					}, 5 * 1000);
-				},
-			});
+			try {
+				monitorTransaction({
+					txHash: orderTxn.hash,
+					onTxConfirmed: () => {
+						onLeverageChange('');
+						setTimeout(async () => {
+							futuresPositionHistoryQuery.refetch();
+							marketQuery.refetch();
+							refetch();
+						}, 5 * 1000);
+					},
+					onTxFailed: (failureMessage) => {
+						orderTxn.errorMessage = 'Something went wrong.';
+					},
+				});
+			} catch (e) {
+				console.log(e);
+				debugger;
+			}
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [orderTxn.hash]);
 
 	useEffect(() => {
-		onEditPositionInput({ size: tradeSize, side: leverageSide });
-	}, [leverageSide, tradeSize, onEditPositionInput]);
+		onEditPositionInput({ size: tradeSize, side: leverageSide, leverage: leverage });
+	}, [leverageSide, leverage, tradeSize, onEditPositionInput]);
 
 	return (
 		<Panel>
@@ -323,21 +345,14 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 			</MarketActions>
 
 			<MarketInfoBox
-				totalMargin={position?.remainingMargin ?? zeroBN}
-				availableMargin={position?.accessibleMargin ?? zeroBN}
-				buyingPower={
-					position && position?.accessibleMargin.gt(zeroBN)
-						? position?.accessibleMargin?.mul(market?.maxLeverage ?? zeroBN)
-						: zeroBN
-				}
-				marginUsage={
-					position && position?.remainingMargin.gt(zeroBN)
-						? position?.remainingMargin
-								?.sub(position?.accessibleMargin)
-								.div(position?.remainingMargin)
-						: zeroBN
-				}
+				position={position}
 				isMarketClosed={isFuturesMarketClosed}
+				potentialTrade={potentialTrade}
+				marketMaxLeverage={market?.maxLeverage}
+				currencyKey={marketAsset}
+				tradeSize={tradeSize ? wei(tradeSize) : zeroBN}
+				side={leverageSide}
+				orderType={orderType}
 			/>
 
 			<StyledSegmentedControl
@@ -421,8 +436,8 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 				)}
 			</ManagePositions>
 
-			{(orderTxn.errorMessage || error) && (
-				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
+			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+				<ErrorMessage>{orderTxn.errorMessage || error || previewTrade?.statusMessage}</ErrorMessage>
 			)}
 
 			<FeeInfoBox
@@ -473,6 +488,7 @@ const Trade: React.FC<TradeProps> = ({ refetch, onEditPositionInput, position, c
 					l1Fee={orderTxn.optimismLayerOneFee}
 					market={marketAsset}
 					side={leverageSide}
+					leverage={leverage}
 					onDismiss={() => setIsTradeConfirmationModalOpen(false)}
 				/>
 			)}
@@ -560,7 +576,7 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.red};
 	font-size: 12px;
 	margin-bottom: 16px;
 `;
