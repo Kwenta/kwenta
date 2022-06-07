@@ -1,10 +1,10 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
 
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesMarketPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
-import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 

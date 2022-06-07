@@ -25,7 +25,7 @@ import { gasSpeedState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import RefetchContext from 'contexts/RefetchContext';
-import MobileTradeConfirmationModal from '../MobileTradeConfirmationModal';
+import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
 
 const OpenPositionTab: React.FC = () => {
 	const { monitorTransaction } = TransactionNotifier.useContainer();
@@ -116,8 +116,9 @@ const OpenPositionTab: React.FC = () => {
 
 			<FeeInfoBox dynamicFee={dynamicFee} />
 
-			<MobileTradeConfirmationModal
+			<TradeConfirmationDrawer
 				open={modalOpen}
+				closeDrawer={() => setModalOpen(false)}
 				gasLimit={orderTxn.gasLimit}
 				l1Fee={orderTxn.optimismLayerOneFee}
 			/>

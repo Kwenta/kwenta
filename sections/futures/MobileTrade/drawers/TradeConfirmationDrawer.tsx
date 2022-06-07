@@ -1,7 +1,5 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
 
-import FullScreenModal from 'components/FullScreenModal';
 import { Synths, CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Connector from 'containers/Connector';
@@ -14,18 +12,21 @@ import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
-import { PositionSide } from '../types';
+import { PositionSide } from 'sections/futures/types';
 import Wei from '@synthetixio/wei';
 import { GasLimitEstimate } from 'constants/network';
+import BaseDrawer from './BaseDrawer';
 
-type MobileTradeConfirmationModalProps = {
+type TradeConfirmationDrawerProps = {
 	open: boolean;
+	closeDrawer(): void;
 	gasLimit: GasLimitEstimate;
 	l1Fee: Wei | null;
 };
 
-const MobileTradeConfirmationModal: React.FC<MobileTradeConfirmationModalProps> = ({
+const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 	open,
+	closeDrawer,
 	gasLimit,
 	l1Fee,
 }) => {
@@ -111,59 +112,7 @@ const MobileTradeConfirmationModal: React.FC<MobileTradeConfirmationModalProps> 
 		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
 	);
 
-	return (
-		<StyledModal isOpen={open}>
-			<Foreground>
-				{dataRows.map(({ label, value }) => (
-					<Row key={label}>
-						<div className="key">{label}</div>
-						<div className="value">{value}</div>
-					</Row>
-				))}
-			</Foreground>
-		</StyledModal>
-	);
+	return <BaseDrawer open={open} closeDrawer={closeDrawer} items={dataRows} />;
 };
 
-const StyledModal = styled(FullScreenModal)`
-	background-color: transparent;
-	top: initial;
-	bottom: 74px;
-
-	& > div {
-		margin: 0;
-		width: 100%;
-	}
-`;
-
-const Foreground = styled.div`
-	background: linear-gradient(180deg, #1e1d1d 0%, #161515 100%);
-	padding: 15px;
-	border-radius: 8px 8px 0 0;
-`;
-
-const Row = styled.div`
-	display: flex;
-	box-sizing: border-box;
-	justify-content: space-between;
-	padding-bottom: 11.5px;
-
-	.key {
-		text-transform: capitalize;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-	}
-
-	.value {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-	}
-
-	&:not(:first-of-type) {
-		padding-top: 11.5px;
-	}
-
-	&:not(:last-of-type) {
-		border-bottom: 1px solid #2b2a2a;
-	}
-`;
-
-export default MobileTradeConfirmationModal;
+export default TradeConfirmationDrawer;
