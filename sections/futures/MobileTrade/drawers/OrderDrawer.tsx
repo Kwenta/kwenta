@@ -46,12 +46,12 @@ const OrderDrawer: React.FC<OrderDrawerProps> = ({ open, order, closeDrawer, set
 			closeDrawer={closeDrawer}
 			items={items}
 			buttons={
-				<>
+				<div>
 					{order?.isExecutable && (
 						<ExecuteButton onClick={() => setAction('execute')}>Execute</ExecuteButton>
 					)}
 					<CancelOrderButton onClick={() => setAction('cancel')}>Cancel</CancelOrderButton>
-				</>
+				</div>
 			}
 		/>
 	);

@@ -144,6 +144,7 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 45px;
+	width: 100%;
 `;
 
 export default TradeConfirmationDrawer;
