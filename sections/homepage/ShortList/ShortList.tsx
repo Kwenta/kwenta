@@ -1,26 +1,26 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { CellProps } from 'react-table';
+import Wei, { wei } from '@synthetixio/wei';
+import { Synths } from '@synthetixio/contracts-interface';
 
+import GridSvg from 'assets/svg/app/grid.svg';
+import Table from 'components/Table';
+import Currency from 'components/Currency';
+import Loader from 'components/Loader';
+import ROUTES from 'constants/routes';
+import useENS from 'hooks/useENS';
+import useGetStats from 'queries/futures/useGetStats';
+import { FuturesStat } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import { Media } from 'styles/media';
-import useGetStats from 'queries/futures/useGetStats';
-import { FuturesMarket, FuturesStat } from 'queries/futures/types';
-import Wei, { wei } from '@synthetixio/wei';
-import Table from 'components/Table';
-import useENS from 'hooks/useENS';
-import { Synths } from '@synthetixio/contracts-interface';
-import Currency from 'components/Currency';
-import { Copy, Title } from '../common';
-import GridSvg from 'assets/svg/app/grid.svg';
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import Loader from 'components/Loader';
 import { truncateAddress } from 'utils/formatters/string';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { useRouter } from 'next/router';
-import ROUTES from 'constants/routes';
+import { Copy, Title } from '../common';
 
 type Stat = {
 	pnl: Wei;
@@ -34,15 +34,19 @@ const ShortList = () => {
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
-	const pnlMap = stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
-		acc[stat.account] = {
-			pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
-			liquidations: new Wei(stat.liquidations ?? 0),
-			totalTrades: new Wei(stat.totalTrades ?? 0),
-			totalVolume: wei(stat.totalVolume ?? 0, 18, true),
-		};
-		return acc;
-	}, {});
+	const pnlMap = useMemo(
+		() =>
+			stats.reduce((acc: Record<string, Stat>, stat: FuturesStat) => {
+				acc[stat.account] = {
+					pnl: wei(stat.pnlWithFeesPaid ?? 0, 18, true),
+					liquidations: new Wei(stat.liquidations ?? 0),
+					totalTrades: new Wei(stat.totalTrades ?? 0),
+					totalVolume: wei(stat.totalVolume ?? 0, 18, true),
+				};
+				return acc;
+			}, {}),
+		[stats]
+	);
 
 	const router = useRouter();
 	const onClickTrader = (trader: string) => {
@@ -102,8 +106,8 @@ const ShortList = () => {
 	const openInterest = useMemo(() => {
 		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets
-			.map((market: FuturesMarket) => market.marketSize.mul(market.price).toNumber())
-			.reduce((total: number, openInterest: number) => total + openInterest, 0);
+			.map((market) => market.marketSize.mul(market.price).toNumber())
+			.reduce((total, openInterest) => total + openInterest, 0);
 	}, [futuresMarketsQuery?.data]);
 
 	return (

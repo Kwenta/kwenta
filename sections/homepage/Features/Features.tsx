@@ -17,7 +17,6 @@ import OptimismIcon from 'assets/svg/partners/optimism.svg';
 import GraphIcon from 'assets/svg/partners/graph.svg';
 import HopIcon from 'assets/svg/partners/hop.svg';
 import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
-
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -27,7 +26,6 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-
 import { Copy, Title } from '../common';
 
 const FEATURES = [

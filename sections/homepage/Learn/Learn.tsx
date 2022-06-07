@@ -2,6 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
+import FaqIcon from 'assets/png/learn/faq.png';
+import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
+import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
+import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
+import Button from 'components/Button';
+import { EXTERNAL_LINKS } from 'constants/links';
 import {
 	FlexDivCol,
 	FlexDivColCentered,
@@ -9,14 +16,7 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
-import FaqIcon from 'assets/png/learn/faq.png';
-import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
-import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
-import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
 import { Copy, Title } from '../common';
-import Button from 'components/Button';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 const LEARNS = [
 	{
