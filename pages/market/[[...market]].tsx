@@ -53,11 +53,10 @@ const Market = () => {
 			</Head>
 			<StyledPageContent>
 				<StyledFullHeightContainer>
-					<DesktopOnlyView>
-						<StyledLeftSideContent>
-							<TradingHistory currencyKey={marketAsset} />
-						</StyledLeftSideContent>
-					</DesktopOnlyView>
+					<StyledLeftSideContent>
+						<TradingHistory currencyKey={marketAsset} />
+					</StyledLeftSideContent>
+
 					<StyledMainContent>
 						<MarketInfo
 							market={marketAsset}
@@ -67,16 +66,15 @@ const Market = () => {
 							potentialTrade={potentialTrade}
 						/>
 					</StyledMainContent>
-					<DesktopOnlyView>
-						<StyledRightSideContent>
-							<Trade
-								onEditPositionInput={setPotentialTrade}
-								refetch={refetch}
-								position={futuresMarketPosition}
-								currencyKey={marketAsset}
-							/>
-						</StyledRightSideContent>
-					</DesktopOnlyView>
+
+					<StyledRightSideContent>
+						<Trade
+							onEditPositionInput={setPotentialTrade}
+							refetch={refetch}
+							position={futuresMarketPosition}
+							currencyKey={marketAsset}
+						/>
+					</StyledRightSideContent>
 				</StyledFullHeightContainer>
 			</StyledPageContent>
 		</>
@@ -87,15 +85,7 @@ export default Market;
 
 const StyledPageContent = styled(PageContent)``;
 
-const StyledFullHeightContainer = styled(FullHeightContainer)`
-	display: grid;
-	grid-template-columns: 20% 60% 20%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
-`;
-
 const StyledMainContent = styled(MainContent)`
-	max-width: unset;
 	margin: unset;
 `;
 
@@ -105,4 +95,26 @@ const StyledRightSideContent = styled(RightSideContent)`
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
+`;
+
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	display: grid;
+	grid-template-columns: 20% 60% 20%;
+	column-gap: 15px;
+	width: calc(100% - 30px);
+
+	@media (min-width: 1725px) {
+		display: grid;
+		grid-template-columns: 400px 1fr 400px;
+		column-gap: 15px;
+		width: 100%;
+	}
+
+	@media (max-width: 1200px) {
+		${StyledLeftSideContent} {
+			display: none;
+		}
+		grid-template-columns: 70% 30%;
+		width: calc(100% - 15px);
+	}
 `;
