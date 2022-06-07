@@ -87,6 +87,7 @@ const StyledPageContent = styled(PageContent)``;
 
 const StyledMainContent = styled(MainContent)`
 	margin: unset;
+	max-width: unset;
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`

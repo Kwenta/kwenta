@@ -280,6 +280,7 @@ export const MainContent = styled(FlexDiv)`
 	flex-grow: 1;
 	flex-direction: column;
 	margin: 0 auto;
+	max-width: 915px;
 `;
 
 export const RightSideContent = styled.div`
