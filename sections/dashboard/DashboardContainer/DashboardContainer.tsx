@@ -9,12 +9,12 @@ import NavButton from 'components/Button/NavButton';
 import Links from '../Links';
 import Markets from '../Markets';
 import Overview from '../Overview';
-// import StakingInfo from '../StakingInfo';
 import { MainContent, LeftSideContent } from 'styles/common';
+import History from '../History';
 
 enum Tab {
 	Overview = 'overview',
-	Positions = 'positions',
+	History = 'history',
 	Rewards = 'rewards',
 	Markets = 'markets',
 	Governance = 'governance',
@@ -48,18 +48,10 @@ const DashboardContainer: FC = () => {
 				onClick: () => router.push(ROUTES.Home.Overview),
 			},
 			{
-				name: Tab.Markets,
-				label: t('futures-dashboard.tabs.nav.markets'),
-				active: activeTab === Tab.Markets,
-				disabled: false,
-				onClick: () => router.push(ROUTES.Home.Markets),
-			},
-			{
-				name: Tab.Positions,
-				label: t('futures-dashboard.tabs.nav.positions'),
-				active: activeTab === Tab.Positions,
-				disabled: true,
-				onClick: () => {},
+				name: Tab.History,
+				label: t('futures-dashboard.tabs.nav.history'),
+				active: activeTab === Tab.History,
+				onClick: () => router.push(ROUTES.Home.History),
 			},
 			{
 				name: Tab.Rewards,
@@ -67,6 +59,13 @@ const DashboardContainer: FC = () => {
 				active: activeTab === Tab.Rewards,
 				disabled: true,
 				onClick: () => {},
+			},
+			{
+				name: Tab.Markets,
+				label: t('futures-dashboard.tabs.nav.markets'),
+				active: activeTab === Tab.Markets,
+				disabled: false,
+				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				name: Tab.Governance,
@@ -124,22 +123,16 @@ const DashboardContainer: FC = () => {
 				<TabPanel name={Tab.Overview} activeTab={activeTab}>
 					<Overview />
 				</TabPanel>
+				<TabPanel name={Tab.History} activeTab={activeTab}>
+					<History />
+				</TabPanel>
 				<TabPanel name={Tab.Markets} activeTab={activeTab}>
 					<Markets />
 				</TabPanel>
 			</MainContent>
-			{/* <StyledRightSideContent>
-				<StakingInfo />
-			</StyledRightSideContent> */}
 		</>
 	);
 };
-
-/* const StyledRightSideContent = styled(RightSideContent)`
-	display: flex;
-	flex-direction: row;
-	justify-content: end;
-`; */
 
 const StyledTabList = styled(TabList)`
 	display: flex;
