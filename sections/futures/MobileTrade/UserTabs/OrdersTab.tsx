@@ -17,6 +17,7 @@ import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
 import OrderDrawer from '../drawers/OrderDrawer';
+import { GridDivCenteredRow } from 'styles/common';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -154,6 +155,11 @@ const OrdersTab: React.FC = () => {
 						width: 100,
 					},
 				]}
+				noResultsMessage={
+					openOrders.length === 0 ? (
+						<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
+					) : undefined
+				}
 			/>
 
 			<OrderDrawer
@@ -191,6 +197,16 @@ const CancelButton = styled(EditButton)`
 	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
 	color: ${(props) => props.theme.colors.common.primaryRed};
 	margin-right: 8px;
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 16px;
 `;
 
 export default OrdersTab;
