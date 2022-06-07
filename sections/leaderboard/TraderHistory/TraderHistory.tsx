@@ -275,10 +275,10 @@ const StyledValue = styled.div`
 	color: ${(props) =>
 		props.color === 'green'
 			? props.theme.colors.selectedTheme.green
-			: props.price === 'red
+			: props.color === 'red'
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.button.text};
-  margin: 0;
+	margin: 0;
 	text-align: end;
 `;
 
