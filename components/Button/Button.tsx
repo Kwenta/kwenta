@@ -56,7 +56,7 @@ const Button = styled.button<ButtonProps>`
 	&:hover {
 		background: ${(props) =>
 			props.noOutline
-				? props.theme.colors.selectedTheme.button.fillHover
+				? props.theme.colors.selectedTheme.button.fill
 				: props.theme.colors.selectedTheme.button.hover};
 	}
 
