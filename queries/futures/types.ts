@@ -1,5 +1,6 @@
 import Wei from '@synthetixio/wei';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { PotentialTradeStatus } from 'sections/futures/types';
 
 export type PositionDetail = {
 	remainingMargin: Wei;
@@ -222,4 +223,11 @@ export type FuturesPotentialTradeDetails = {
 	margin: Wei;
 	price: Wei;
 	fee: Wei;
+	leverage: Wei;
+	notionalValue: Wei;
+	minInitialMargin: Wei;
+	side: PositionSide;
+	status: PotentialTradeStatus;
+	showStatus: boolean;
+	statusMessage: string;
 };

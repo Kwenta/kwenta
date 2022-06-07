@@ -192,7 +192,7 @@ const Col = styled.div`
 `;
 
 const ColTitle = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 	text-align: center;
 `;

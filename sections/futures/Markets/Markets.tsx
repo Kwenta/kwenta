@@ -108,7 +108,7 @@ const StyledTableHeader = styled.div`
 `;
 
 const StyledMarketName = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
 	margin-left: 10px;

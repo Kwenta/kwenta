@@ -98,7 +98,7 @@ const SubHeader = styled(Paragraph)`
 	line-height: 120%;
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-right: 40px;
 	${media.lessThan('md')`
 		font-size: 20px;

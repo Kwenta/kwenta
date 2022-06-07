@@ -240,7 +240,7 @@ const ContainerEmptyState = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding: 24px 32px;
@@ -258,7 +258,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledBottomShadow = styled(BottomShadow)`

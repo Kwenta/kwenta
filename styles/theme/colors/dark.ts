@@ -3,7 +3,17 @@ import common from './common';
 const darkTheme = {
 	background: '#131212',
 	border: '1px solid #2B2A2A',
+	red: '#EF6868',
+	green: '#7FD482',
+	black: '#171002',
+	white: '#ECE8E3',
+	gray: '#787878',
+	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
+	gold: '#E4B378',
 	button: {
+		border: 'rgb(255 255 255 / 10%)',
+		fill: '#252525',
+		fillHover: '#2B2A2A',
 		background: 'linear-gradient(180deg, #282727 0%, #191818 100%)',
 		hover: 'linear-gradient(180deg, #383838 0%, #383838 0.01%, #1E1E1E 100%)',
 		shadow:
@@ -39,7 +49,7 @@ const darkTheme = {
 		},
 	},
 	input: {
-		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
+		background: '#151515',
 		secondary: {
 			background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
 		},
@@ -49,7 +59,7 @@ const darkTheme = {
 	segmented: {
 		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(33, 33, 33, 0.1) 100%)',
 		button: {
-			background: 'linear-gradient(180deg, rgba(36, 36, 36, 0.08) 0%, rgba(88, 88, 88, 0.1) 100%)',
+			background: '#2f2f2f',
 			shadow:
 				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09)',
 			inactive: { color: '#787878' },
@@ -67,9 +77,18 @@ const darkTheme = {
 		},
 	},
 	cell: {
+		fill: '#1E1D1D;',
 		gradient: 'linear-gradient(180deg, #1E1D1D 0%, #1b1a1a 100%)',
 		hover: '#222222',
 		outline: '#2B2A2A',
+	},
+	text: {
+		title: common.secondaryGray,
+		value: common.primaryWhite,
+	},
+	icon: {
+		fill: '#787878',
+		hover: '#ECE8E3',
 	},
 };
 

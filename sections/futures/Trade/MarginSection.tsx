@@ -69,7 +69,7 @@ const AvailableMargin = styled.div`
 
 const MarginBalance = styled.div`
 	margin-top: 4px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
 `;

@@ -423,7 +423,7 @@ const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	align-self: flex-end;
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	width: 120px;
 	padding-left: 5px;
 `;

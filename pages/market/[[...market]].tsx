@@ -78,6 +78,7 @@ const Market: MarketComponent = () => {
 						<StyledRightSideContent>
 							<Trade
 								onEditPositionInput={setPotentialTrade}
+								potentialTrade={potentialTrade}
 								refetch={refetch}
 								position={futuresMarketPosition}
 								currencyKey={marketAsset}

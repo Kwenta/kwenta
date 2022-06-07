@@ -65,7 +65,7 @@ const ErrorText = styled.div`
 `;
 
 const SubText = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding: 20px 0;
 `;
 

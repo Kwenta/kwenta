@@ -307,10 +307,10 @@ const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.green
+			? props.theme.colors.selectedTheme.green
 			: props.price < 0
-			? props.theme.colors.red
-			: props.theme.colors.white};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 const SearchContainer = styled.div`
@@ -336,22 +336,22 @@ const TableTitle = styled.div`
 
 const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 	align-items: center;
 `;
 
 const StyledTrader = styled.a`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 
 	&:hover {

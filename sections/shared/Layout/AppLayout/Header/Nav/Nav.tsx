@@ -62,18 +62,21 @@ const MenuLinks = styled.ul`
 `;
 
 const MenuLinkItem = styled.li<{ isActive: boolean }>`
-	padding-right: 20px;
 	a {
 		${linkCSS};
+		padding: 8px 13px;
+		margin-right: 2px;
 		font-family: ${(props) => props.theme.fonts.bold};
 		font-size: 15px;
 		text-transform: capitalize;
+		border-radius: 100px;
+		background: transparent;
 		color: ${(props) =>
 			props.isActive
-				? props.theme.colors.common.primaryGold
-				: props.theme.colors.common.secondaryGray};
+				? props.theme.colors.selectedTheme.button.text
+				: props.theme.colors.selectedTheme.gray};
 		&:hover {
-			color: ${(props) => props.theme.colors.white};
+			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 		}
 	}
 `;

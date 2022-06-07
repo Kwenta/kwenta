@@ -14,7 +14,7 @@ import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
-import { FlexDivRowCentered, GridDivCenteredCol, TextButton } from 'styles/common';
+import { FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import { isL2State } from 'store/wallet';
 import AppHeader from '../AppLayout/Header';
 import Logo from '../Logo';
@@ -22,36 +22,26 @@ import Logo from '../Logo';
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const [isGovernanceShown, setIsGovernanceShown] = useState(false);
-	const [isSocialsShown, setIsSocialsShown] = useState(false);
 
 	const LINKS = useMemo(
 		() => [
 			{
-				key: 'market',
+				id: 'market',
 				label: t('homepage.nav.markets'),
 				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
-				key: 'governance',
+				id: 'governance',
 				label: t('homepage.nav.governance.title'),
 				icon: <CaretDownGrayIcon />,
-				show: () => {
-					setIsSocialsShown(false);
-					setIsGovernanceShown(true);
-				},
 			},
 			{
-				key: 'socials',
+				id: 'socials',
 				label: t('homepage.nav.socials.title'),
 				icon: <CaretDownGrayIcon />,
-				show: () => {
-					setIsGovernanceShown(false);
-					setIsSocialsShown(true);
-				},
 			},
 			{
-				key: 'blogs',
+				id: 'blogs',
 				label: t('homepage.nav.blog'),
 				icon: <ArrowUpRightIcon />,
 				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
@@ -63,12 +53,12 @@ const Header: FC = () => {
 
 	const GOVERNANCE = [
 		{
-			key: 'overview',
+			id: 'overview',
 			label: t('homepage.nav.governance.overview'),
 			onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank'),
 		},
 		{
-			key: 'kips',
+			id: 'kips',
 			label: t('homepage.nav.governance.kips'),
 			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
 		},
@@ -76,19 +66,19 @@ const Header: FC = () => {
 
 	const SOCIALS = [
 		{
-			key: 'discord',
+			id: 'discord',
 			label: t('homepage.nav.socials.discord'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Discord, '_blank'),
 			icon: <DiscordLogo />,
 		},
 		{
-			key: 'twitter',
+			id: 'twitter',
 			label: t('homepage.nav.socials.twitter'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
 			icon: <TwitterLogo />,
 		},
 		{
-			key: 'mirror',
+			id: 'mirror',
 			label: t('homepage.nav.socials.mirror'),
 			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
 			icon: <MirrorLogo />,
@@ -104,39 +94,27 @@ const Header: FC = () => {
 					</LogoContainer>
 
 					<Links>
-						{LINKS.map(({ key, label, icon, onClick, show }) => (
-							<StyledTextButton key={key} onClick={onClick} onMouseEnter={show}>
+						{LINKS.map(({ id, label, icon, onClick }) => (
+							<StyledTextButton key={id} className={id} onClick={onClick}>
 								<FlexDivRowCentered>
 									{label}
 									{icon}
 								</FlexDivRowCentered>
-								{key === 'governance' && isGovernanceShown && (
-									<StyledMenu
-										onMouseLeave={() => {
-											setIsGovernanceShown(false);
-										}}
-									>
-										{GOVERNANCE.map(({ key, label, onClick }) => (
-											<StyledMenuItem key={key} onClick={onClick}>
-												{label}
-											</StyledMenuItem>
-										))}
-									</StyledMenu>
-								)}
-								{key === 'socials' && isSocialsShown && (
-									<StyledMenu
-										onMouseLeave={() => {
-											setIsSocialsShown(false);
-										}}
-									>
-										{SOCIALS.map(({ key, label, onClick, icon }) => (
-											<StyledMenuItem key={key} onClick={onClick}>
-												{icon}
-												{label}
-											</StyledMenuItem>
-										))}
-									</StyledMenu>
-								)}
+								<StyledMenu className="governance">
+									{GOVERNANCE.map(({ id, label, onClick }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
+								<StyledMenu className="socials">
+									{SOCIALS.map(({ id, label, onClick, icon }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{icon}
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
 							</StyledTextButton>
 						))}
 					</Links>
@@ -172,6 +150,22 @@ const StyledMenu = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+
+	&.governance {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
+
+	&.socials {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
 `;
 
 const StyledMenuItem = styled.p`
@@ -213,7 +207,7 @@ const Links = styled.div`
 	padding-top: 10px;
 `;
 
-const StyledTextButton = styled(TextButton)`
+const StyledTextButton = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -221,10 +215,21 @@ const StyledTextButton = styled(TextButton)`
 	line-height: 15px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.tertiaryGray};
-	margin: 0px 20px;
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
+	cursor: pointer;
+
+	&.governance:hover {
+		> div.governance {
+			visibility: visible;
+		}
 	}
+
+	&.socials:hover {
+		> div.socials {
+			visibility: visible;
+		}
+	}
+
+	margin: 0px 20px;
 	svg {
 		margin-left: 5px;
 	}

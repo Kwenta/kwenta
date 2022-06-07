@@ -128,7 +128,7 @@ const StyledTable = styled(Table)`
 `;
 
 const DefaultCell = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledActionCell = styled(DefaultCell)`
@@ -136,13 +136,13 @@ const StyledActionCell = styled(DefaultCell)`
 `;
 
 const StyledTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 16px;
 	margin: 0;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-decoration: underline;
 	&:hover {
 		text-decoration: underline;
@@ -152,8 +152,8 @@ const StyledExternalLink = styled(ExternalLink)`
 const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 	color: ${(props: any) =>
 		props.isPositive
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 `;
 
 const StyledTableHeader = styled.div`
