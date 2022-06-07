@@ -95,6 +95,7 @@ const OpenInterestRow = styled.div`
 	line-height: 16px;
 	padding-bottom: 10px;
 	padding-top: 10px;
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 
 	:last-child {
@@ -137,14 +138,14 @@ const SkewContainer = styled.div`
 	}
 
 	.heading {
-		font-size: 12px;
+		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		width: 292px;
 	}
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
+		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
@@ -159,10 +160,12 @@ const SkewHeader = styled.div`
 const SkewLabel = styled(CapitalizedText)`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	font-size: 13px;
 `;
 
 const SkewValue = styled(NumericValue)`
 	text-align: center;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;

@@ -163,6 +163,7 @@ const HistoryContainer = styled.div`
 `;
 
 const HistoryLabelContainer = styled(FlexDivRowCentered)`
+	font-size: 13px;
 	justify-content: space-between;
 	padding: 12px 18px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
@@ -187,16 +188,18 @@ const StyledTable = styled(Table)`
 `;
 
 const TableHeader = styled(CapitalizedText)`
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 `;
 
 const PriceValue = styled(NumericValue)`
-	font-size: 11px;
+	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-decoration: underline;
