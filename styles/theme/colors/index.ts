@@ -1,6 +1,6 @@
 import common from './common';
 
-import eliteTheme from './elite';
+// import eliteTheme from './elite';
 import darkTheme from './dark';
 import lightTheme from './light';
 

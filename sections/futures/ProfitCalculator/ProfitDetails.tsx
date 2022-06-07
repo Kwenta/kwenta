@@ -4,7 +4,6 @@ import { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 
 import { PositionSide } from '../types';
-import { props } from 'lodash/fp';
 
 function textColor(props: any) {
 	if (!props.className || props.className === 'row-name')
