@@ -27,7 +27,7 @@ const PositionDetails = () => {
 
 	return position ? (
 		<PositionDetailsContainer>
-			<SectionHeader>Position</SectionHeader>
+			<SectionHeader>Open Position</SectionHeader>
 			<PositionCard mobile currencyKeyRate={marketAssetRate} />
 		</PositionDetailsContainer>
 	) : (

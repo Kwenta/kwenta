@@ -10,7 +10,7 @@ import TransfersTab from './TransfersTab';
 
 const TABS = [
 	{
-		title: 'Open Position',
+		title: 'Position',
 		component: <OpenPositionTab />,
 	},
 	{
