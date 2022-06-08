@@ -60,7 +60,7 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
 			)}
 			{settingsModalOpened && (
-				<MobileSettingsModal onDismiss={() => setSettingsModalOpened(false)} />
+				<MobileSettingsModal homepage={homepage} onDismiss={() => setSettingsModalOpened(false)} />
 			)}
 		</>
 	);

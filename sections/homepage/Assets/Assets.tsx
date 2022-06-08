@@ -30,6 +30,7 @@ import Connector from 'containers/Connector';
 import { getSynthDescription } from 'utils/futures';
 import { CurrencyKey, Synths } from 'constants/currency';
 import { GridContainer } from '../common';
+import Slider from 'react-slick';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -262,6 +263,15 @@ const Assets = () => {
 		</>
 	);
 
+	const settings = {
+		dots: true,
+		infinite: true,
+		slidesToShow: 1,
+		slidesToScroll: 15,
+		speed: 500,
+		initialSlide: 0,
+	};
+
 	return (
 		<Container>
 			<FlexDivColCentered>
@@ -276,55 +286,58 @@ const Assets = () => {
 				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 					<StyledFlexDivRow>
 						{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-							<StatsCard
-								key={key}
-								onClick={() => {
-									console.log(`link`, `/market/${key}`);
-									router.push(`/market/${key}`);
-								}}
-							>
-								<GridSvg className="bg" objectfit="cover" layout="fill" />
-								<StatsIconContainer>
-									{icon}
-									<StatsNameContainer>
-										<AssetName>{name}</AssetName>
-										<AssetDescription>{description}</AssetDescription>
-									</StatsNameContainer>
-								</StatsIconContainer>
-								<ChartContainer>{image}</ChartContainer>
-								<AssetPrice>
-									<Currency.Price
-										currencyKey={Synths.sUSD}
-										price={price}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								</AssetPrice>
-								<StatsValueContainer>
-									<StatsValue>
-										{'CHG    '}
-										{priceChange === 0 ? (
-											<>-</>
-										) : (
-											<ChangePercent value={priceChange} decimals={1} className="change-pct" />
-										)}
-									</StatsValue>
-									<StatsValue>
-										{'VOL    '}
-										{volume === 0 ? (
-											<>-</>
-										) : (
+							<Slider {...settings}>
+								<>
+									<StatsCard
+										key={key}
+										onClick={() => {
+											router.push(`/market/${key}`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{name}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
 											<Currency.Price
 												currencyKey={Synths.sUSD}
-												price={volume}
+												price={price}
 												sign={'$'}
 												conversionRate={1}
-												formatOptions={{ minDecimals: 0 }}
 											/>
-										)}
-									</StatsValue>
-								</StatsValueContainer>
-							</StatsCard>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{priceChange === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={priceChange} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</>
+							</Slider>
 						))}
 					</StyledFlexDivRow>
 				</TabPanel>
@@ -397,6 +410,7 @@ const StatsIconContainer = styled(FlexDiv)`
 const ChartContainer = styled.div`
 	margin-left: -65px;
 	margin-top: -20px;
+	overflow-x: hidden;
 `;
 
 const StatsValueContainer = styled.div`
@@ -447,7 +461,9 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	justify-content: center;
 
 	${media.lessThan('sm')`
-		width: 99999px;
+		flex-wrap: nowrap;
+		overflow-x: hidden;
+		max-width: 100vw;
 	`}
 `;
 

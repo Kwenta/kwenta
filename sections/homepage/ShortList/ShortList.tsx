@@ -399,14 +399,6 @@ const TableHeader = styled.div`
 	font-size: 13px;
 `;
 
-export const Bullet = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background: ${(props) => props.theme.colors.gold};
-`;
-
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
@@ -441,6 +433,9 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
+	${media.lessThan('sm')`
+		width: 385px;
+	`}
 `;
 
 const SectionFeatureCopy = styled(FeatureCopy)`
@@ -448,6 +443,9 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	text-align: center;
 	width: 500px;
 	font-size: 18px;
+	${media.lessThan('sm')`
+		width: 385px;
+	`}
 `;
 
 export default ShortList;

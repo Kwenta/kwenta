@@ -169,6 +169,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 		row-gap: 20px;
 		display: flex;
 		flex-direction: column;
+		width: 355px;
 	`}
 `;
 

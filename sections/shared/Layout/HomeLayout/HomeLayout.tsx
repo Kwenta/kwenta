@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { FullScreenContainer } from 'styles/common';
+import { Media } from 'styles/media';
 import Footer from './Footer';
-
 import Header from './Header';
 
 type HomeLayoutProps = {
@@ -11,18 +11,26 @@ type HomeLayoutProps = {
 
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<FullScreenContainer>
-		<BlueBlurImageHero />
-		<GoldenBlurImageHero />
-		<BlueBlurImageShortList />
-		<GoldenBlurImageShortList />
-		<BlueBlurImageEarning />
-		<GoldenBlurImageEarning />
-		<BlueBlurImageTradeNow />
-		<GoldenBlurImageTradeNow />
-		<GlobalStyle />
-		<Header />
-		{children}
-		<Footer />
+		<Media greaterThan="sm">
+			<BlueBlurImageHero />
+			<GoldenBlurImageHero />
+			<BlueBlurImageShortList />
+			<GoldenBlurImageShortList />
+			<BlueBlurImageEarning />
+			<GoldenBlurImageEarning />
+			<BlueBlurImageTradeNow />
+			<GoldenBlurImageTradeNow />
+			<GlobalStyle />
+			<Header />
+			{children}
+			<Footer />
+		</Media>
+		<Media lessThan="sm">
+			<GlobalStyle />
+			<Header />
+			{children}
+			<Footer />
+		</Media>
 	</FullScreenContainer>
 );
 

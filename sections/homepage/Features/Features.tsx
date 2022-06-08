@@ -285,6 +285,9 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
+	${media.lessThan('sm')`
+		width: 385px;
+	`}
 `;
 
 const SectionFeatureCopy = styled(FeatureCopy)`
@@ -292,6 +295,9 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	text-align: center;
 	width: 500px;
 	font-size: 18px;
+	${media.lessThan('sm')`
+		width: 385px;
+	`}
 `;
 
 export default Features;
