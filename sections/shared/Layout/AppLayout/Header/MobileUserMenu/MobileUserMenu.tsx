@@ -73,7 +73,8 @@ const Menu = styled.div`
 
 const MenuButton = styled.button<{ isActive: boolean }>`
 	${resetButtonCSS};
-	color: ${(props) => (props.isActive ? props.theme.colors.white : props.theme.colors.blueberry)};
+	color: ${(props) =>
+		props.isActive ? props.theme.colors.selectedTheme.button.text : props.theme.colors.blueberry};
 	&:hover {
 		color: ${(props) => props.theme.colors.white};
 	}

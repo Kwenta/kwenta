@@ -1,9 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components';
-import GridSvg from 'assets/svg/app/grid.svg';
+import router from 'next/router';
+import values from 'lodash/values';
+import isNil from 'lodash/isNil';
 import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 
+import GridSvg from 'assets/svg/app/grid.svg';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -11,29 +15,21 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-
 import media from 'styles/media';
-import { GridContainer } from '../common';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { FuturesMarket, FuturesVolumes } from 'queries/futures/types';
-import Connector from 'containers/Connector';
-import { getSynthDescription } from 'utils/futures';
+import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { Price } from 'queries/rates/types';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
-import { CurrencyKey, Synths } from 'constants/currency';
 import { TabPanel } from 'components/Tab';
-import { values } from 'lodash';
-import { Query, useQueryClient } from 'react-query';
-import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { Synth } from '@synthetixio/contracts-interface';
-import _ from 'lodash';
-import { SynthsVolumes } from 'queries/synths/type';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import router from 'next/router';
+import Connector from 'containers/Connector';
+import { getSynthDescription } from 'utils/futures';
+import { CurrencyKey, Synths } from 'constants/currency';
+import { GridContainer } from '../common';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -121,12 +117,10 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 					const first = bars[0]?.average ?? 0;
 					postive = (currentPrice[0]?.average ?? 0) - first >= 0;
 				}
-				const results = bars.map((b) => {
-					return {
-						value: b.average,
-						time: b.timestamp as UTCTimestamp,
-					};
-				});
+				const results = bars.map((b) => ({
+					value: b.average,
+					time: b.timestamp as UTCTimestamp,
+				}));
 				return { results, postive };
 			})
 			.then(({ results, postive }) => {
@@ -192,22 +186,22 @@ const Assets = () => {
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', 10]);
 
 	const unfrozenSynths =
-		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
+		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'
 			? synths.filter(
 					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
 			  )
 			: synths;
 
-	const synthNames: string[] = synths.map((synth): string => synth.name);
+	const synthNames = synths.map((synth) => synth.name);
 	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
 	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
+		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
-		return futuresMarkets.map((market: FuturesMarket, i: number) => {
+		return futuresMarkets.map((market, i) => {
 			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find(
@@ -231,16 +225,16 @@ const Assets = () => {
 
 	const SPOTS = useMemo(() => {
 		const spotDailyPriceChanges = spotDailyPriceChangesQuery?.data ?? [];
-		const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
+		const synthVolumes = synthVolumesQuery?.data ?? {};
 
-		return unfrozenSynths.map((synth: Synth) => {
+		return unfrozenSynths.map((synth) => {
 			const description = synth.description
 				? t('common.currency.synthetic-currency-name', {
 						currencyName: synth.description,
 				  })
 				: '';
 			const rate = exchangeRates && exchangeRates[synth.name];
-			const price = _.isNil(rate) ? 0 : rate.toNumber();
+			const price = isNil(rate) ? 0 : rate.toNumber();
 
 			const pastPrice = spotDailyPriceChanges.find((price: Price) => {
 				return price.synth === synth.asset || price.synth === synth.name;
@@ -252,7 +246,7 @@ const Assets = () => {
 				description: description.split(' ')[1],
 				price,
 				change: price !== 0 ? (price - pastPrice?.price) / price || 0 : 0,
-				volume: !_.isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
+				volume: !isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(synth.asset[0] !== 's' ? 's' : '') + synth.asset} />
@@ -427,7 +421,7 @@ const AssetPrice = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	align-self: flex-end;
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	width: 120px;
 	padding-left: 5px;
 `;
@@ -516,7 +510,10 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 	align-items: center;
 	justify-content: center;
 	border-radius: ${(props) => (props.isActive ? '100px' : '134px')};
-	color: ${(props) => (props.isActive ? props.theme.colors.common.primaryWhite : '#787878')};
+	color: ${(props) =>
+		props.isActive
+			? props.theme.colors.common.primaryWhite
+			: props.theme.colors.common.secondaryGray};
 	background: ${(props) =>
 		props.isActive ? 'linear-gradient(180deg, #BE9562 0%, #A07141 100%)' : null};
 	text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);

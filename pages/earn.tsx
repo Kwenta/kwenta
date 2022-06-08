@@ -42,7 +42,7 @@ const PageHeading = styled(Text.Heading)`
 `;
 
 const StyledBody = styled(Text.Body)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin-bottom: 40px;
 `;
 

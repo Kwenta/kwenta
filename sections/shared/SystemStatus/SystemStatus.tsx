@@ -124,7 +124,6 @@ const StyledSystemDownIcon = styled(SystemDownIcon)`
 const titleCSS = css`
 	font-size: 20px;
 	margin: 0;
-	font-weight: normal;
 	line-height: normal;
 
 	font-family: ${(props) => props.theme.fonts.mono};
@@ -133,7 +132,7 @@ const titleCSS = css`
 const Title = styled.h1`
 	${titleCSS};
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-bottom: 15px;
 	line-height: 28px;
 `;

@@ -16,19 +16,21 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 			/>
 			<CurrencyMeta $isSelected={props.isSelected}>
 				<div>
-					<CurrencyLabel>
+					<StyledCurrencyLabel>
 						{props.data.label}
 						<MarketBadge
 							currencyKey={props.data.value}
 							isFuturesMarketClosed={props.data.isFuturesMarketClosed}
 							futuresClosureReason={props.data.futuresClosureReason}
 						/>
-					</CurrencyLabel>
+					</StyledCurrencyLabel>
 					<p className="name">{props.data.description}</p>
 				</div>
 			</CurrencyMeta>
 			<div>
-				<p className="price">{props.data.price}</p>
+				<p className={props.data.negativeChange ? 'price red' : 'price green'}>
+					{props.data.price}
+				</p>
 				<p className={props.data.negativeChange ? `change red` : 'change green'}>
 					{props.data.change}
 				</p>
@@ -37,6 +39,9 @@ const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (pro
 	</components.Option>
 );
 
+const StyledCurrencyLabel = styled(CurrencyLabel)`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 	flex: 1;
 	margin-left: 12px;
@@ -44,8 +49,8 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 	${(props) =>
 		props.$isSelected &&
 		css`
-			${CurrencyLabel} {
-				color: ${(props) => props.theme.colors.common.secondaryGold};
+			${StyledCurrencyLabel} {
+				color: ${(props) => props.theme.colors.selectedTheme.button.text};
 			}
 		`}
 `;
@@ -59,13 +64,8 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	.price {
 		font-family: ${(props) => props.theme.fonts.mono};
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		font-size: 15px;
-		${(props) =>
-			props.$isSelected &&
-			css`
-				color: ${(props) => props.theme.colors.common.secondaryGold};
-			`}
 	}
 
 	.change {
@@ -80,14 +80,21 @@ const OptionDetailsContainer = styled(SingleValueContainer)<{ $isSelected: boole
 
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.05);
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		${StyledCurrencyLabel} {
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
+		.name {
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
 	}
 
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 `;
 

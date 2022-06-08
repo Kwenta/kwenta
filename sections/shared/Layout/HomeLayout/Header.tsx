@@ -1,33 +1,28 @@
-import { FC, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
-import ROUTES from 'constants/routes';
+import router from 'next/router';
+import { FC, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
+import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-
+import ROUTES from 'constants/routes';
+import { EXTERNAL_LINKS } from 'constants/links';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
-
-import Logo from '../Logo';
-import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol, TextButton } from 'styles/common';
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
-import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
-
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
-import router from 'next/router';
-import { EXTERNAL_LINKS } from 'constants/links';
-import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
+import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import media from 'styles/media';
+import { isL2State } from 'store/wallet';
+import Logo from '../Logo';
+import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const [isGovernanceShown, setIsGovernanceShown] = useState(false);
-	const [isSocialsShown, setIsSocialsShown] = useState(false);
 
 	const LINKS = useMemo(
 		() => [
@@ -40,19 +35,11 @@ const Header: FC = () => {
 				id: 'governance',
 				label: t('homepage.nav.governance.title'),
 				icon: <CaretDownGrayIcon />,
-				show: () => {
-					setIsSocialsShown(false);
-					setIsGovernanceShown(true);
-				},
 			},
 			{
 				id: 'socials',
 				label: t('homepage.nav.socials.title'),
 				icon: <CaretDownGrayIcon />,
-				show: () => {
-					setIsGovernanceShown(false);
-					setIsSocialsShown(true);
-				},
 			},
 			{
 				id: 'blogs',
@@ -107,39 +94,27 @@ const Header: FC = () => {
 						<Logo isL2={isL2} isHomePage={true} />
 					</LogoContainer>
 					<Links>
-						{LINKS.map(({ id, label, icon, onClick, show }) => (
-							<StyledTextButton key={id} onClick={onClick} onMouseEnter={show}>
+						{LINKS.map(({ id, label, icon, onClick }) => (
+							<StyledTextButton key={id} className={id} onClick={onClick}>
 								<FlexDivRowCentered>
 									{label}
 									{icon}
 								</FlexDivRowCentered>
-								{id === 'governance' && isGovernanceShown && (
-									<StyledMenu
-										onMouseLeave={() => {
-											setIsGovernanceShown(false);
-										}}
-									>
-										{GOVERNANCE.map(({ id, label, onClick }) => (
-											<StyledMenuItem key={id} onClick={onClick}>
-												{label}
-											</StyledMenuItem>
-										))}
-									</StyledMenu>
-								)}
-								{id === 'socials' && isSocialsShown && (
-									<StyledMenu
-										onMouseLeave={() => {
-											setIsSocialsShown(false);
-										}}
-									>
-										{SOCIALS.map(({ id, label, onClick, icon }) => (
-											<StyledMenuItem key={id} onClick={onClick}>
-												{icon}
-												{label}
-											</StyledMenuItem>
-										))}
-									</StyledMenu>
-								)}
+								<StyledMenu className="governance">
+									{GOVERNANCE.map(({ id, label, onClick }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
+								<StyledMenu className="socials">
+									{SOCIALS.map(({ id, label, onClick, icon }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{icon}
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
 							</StyledTextButton>
 						))}
 					</Links>
@@ -187,6 +162,22 @@ const StyledMenu = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+
+	&.governance {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
+
+	&.socials {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
 `;
 
 const StyledMenuItem = styled.p`
@@ -228,7 +219,7 @@ const Links = styled.div`
 	padding-top: 10px;
 `;
 
-const StyledTextButton = styled(TextButton)`
+const StyledTextButton = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -236,10 +227,21 @@ const StyledTextButton = styled(TextButton)`
 	line-height: 15px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.tertiaryGray};
-	margin: 0px 20px;
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
+	cursor: pointer;
+
+	&.governance:hover {
+		> div.governance {
+			visibility: visible;
+		}
 	}
+
+	&.socials:hover {
+		> div.socials {
+			visibility: visible;
+		}
+	}
+
+	margin: 0px 20px;
 	svg {
 		margin-left: 5px;
 	}

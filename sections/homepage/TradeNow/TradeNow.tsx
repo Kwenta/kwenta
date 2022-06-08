@@ -1,13 +1,12 @@
+import Link from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import media from 'styles/media';
-
-import Link from 'next/link';
 import Button from 'components/Button';
 import ROUTES from 'constants/routes';
+import { FlexDivColCentered, Paragraph, SmallGoldenHeader, WhiteHeader } from 'styles/common';
+import media from 'styles/media';
 
 const TradeNow = () => {
 	const { t } = useTranslation();

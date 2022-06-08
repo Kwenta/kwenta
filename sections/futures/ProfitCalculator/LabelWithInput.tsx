@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import CustomInput from 'components/Input/CustomInput';
+import { props } from 'lodash/fp';
 
 type LabelWithInputProps = {
 	disabled?: boolean;
@@ -43,14 +44,11 @@ const LabelText = styled.p`
 	height: 12px;
 	left: 479px;
 	top: 329px;
-
 	margin-left: 12.1px;
-
-	font-weight: 400;
 	font-size: 12px;
 	line-height: 12px;
 
-	color: #ece8e3;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export default LabelWithInput;

@@ -1,18 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import { FlexDivCentered, ExternalLink } from 'styles/common';
+import { useTranslation } from 'react-i18next';
 
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
 import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-
 import { EXTERNAL_LINKS } from 'constants/links';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
-import Logo from '../Logo';
+import { FlexDivCentered, ExternalLink } from 'styles/common';
 import { GridContainer } from 'sections/homepage/common';
-import { useTranslation } from 'react-i18next';
 import media from 'styles/media';
+import Logo from '../Logo';
 
 const Footer: React.FC = () => {
 	const { t } = useTranslation();

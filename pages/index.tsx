@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { useTranslation } from 'react-i18next';
-
 import styled from 'styled-components';
+
 import Hero from 'sections/homepage/Hero';
 import HomeLayout from 'sections/shared/Layout/HomeLayout';
 import Features from 'sections/homepage/Features';
@@ -10,7 +11,6 @@ import ShortList from 'sections/homepage/ShortList';
 import Earning from 'sections/homepage/Earning';
 import Learn from 'sections/homepage/Learn';
 import TradeNow from 'sections/homepage/TradeNow';
-import dynamic from 'next/dynamic';
 import media from 'styles/media';
 
 type AppLayoutProps = {

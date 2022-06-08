@@ -17,7 +17,6 @@ import OptimismIcon from 'assets/svg/partners/optimism.svg';
 import GraphIcon from 'assets/svg/partners/graph.svg';
 import HopIcon from 'assets/svg/partners/hop.svg';
 import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
-
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -27,7 +26,6 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-
 import { Copy, Title } from '../common';
 import media from 'styles/media';
 
@@ -269,7 +267,7 @@ const FeatureContentTitle = styled(FlexDivRow)`
 const ComingSoonTag = styled(FlexDivCentered)`
 	width: 50px;
 	height: 24px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin-left: 16px;
