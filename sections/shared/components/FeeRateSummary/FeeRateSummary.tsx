@@ -63,7 +63,7 @@ export const FeeRateItem = styled.span`
 `;
 
 export const DynamicFeeLabel = styled.span`
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export const DynamicFeeRateTooltip = styled(Tippy)`
@@ -77,13 +77,16 @@ export const DynamicFeeRateTooltip = styled(Tippy)`
 `;
 
 export const DynamicFeeRateItem = styled.span`
-	color: #ffdf6d;
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	cursor: pointer;
 	svg {
 		margin-left: 3px;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.gold};
+		}
 	}
 `;
 
