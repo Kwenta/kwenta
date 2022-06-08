@@ -909,6 +909,18 @@
 						"at": "at"
 					}
 				}
+			},
+			"share": {
+				"title": "Share",
+				"buttons": {
+					"download": "Download"
+				},
+				"position-metadata": {
+					"open-at": "open at",
+					"created-on": "created on",
+					"avg-open-price": "avg open price",
+					"current-price": "current price"
+				}
 			}
 		}
 	},
