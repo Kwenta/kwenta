@@ -157,7 +157,7 @@ const OrdersTab: React.FC = () => {
 				]}
 				noResultsMessage={
 					openOrders.length === 0 ? (
-						<TableNoResults>{t('futures.market.user.transfers.table.no-results')}</TableNoResults>
+						<TableNoResults>You have no open orders.</TableNoResults>
 					) : undefined
 				}
 			/>
