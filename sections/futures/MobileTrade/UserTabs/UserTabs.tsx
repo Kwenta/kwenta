@@ -14,7 +14,7 @@ const TABS = [
 		component: <OpenPositionTab />,
 	},
 	{
-		title: 'Orders',
+		title: 'Open Orders',
 		component: <OrdersTab />,
 	},
 	{
