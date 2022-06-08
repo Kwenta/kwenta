@@ -195,7 +195,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						}
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
-							minDecimals: 4,
+							minDecimals: 2,
 						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
 							sign: '$',
 							minDecimals: 2,
