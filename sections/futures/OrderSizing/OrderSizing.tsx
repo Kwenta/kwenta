@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import Wei from '@synthetixio/wei';
 
 import { Synths } from 'constants/currency';
@@ -31,7 +30,6 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 	maxLeverage,
 	totalMargin,
 }) => {
-	const { t } = useTranslation();
 	const handleSetMax = () => {
 		const maxOrderSizeUSDValue = Number(maxLeverage.mul(totalMargin)).toFixed(0);
 		onAmountSUSDChange(maxOrderSizeUSDValue);

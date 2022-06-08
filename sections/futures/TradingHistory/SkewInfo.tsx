@@ -113,6 +113,7 @@ const OpenInterestRow = styled.div`
 const SkewTooltip = styled(StyledTooltip)`
 	left: -30px;
 	z-index: 2;
+	padding: 10px;
 `;
 
 const SkewContainer = styled.div`
