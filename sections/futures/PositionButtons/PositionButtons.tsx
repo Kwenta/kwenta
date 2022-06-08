@@ -55,7 +55,6 @@ const PositionButtonsContainer = styled.div`
 const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	font-size: 16px;
 	height: 55px;
-	transition: all 0.1s ease-in-out;
 
 	&:active {
 		transform: scale(0.96);
@@ -69,10 +68,10 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 			${props.$isActive &&
 			css`
-				border: 1px solid rgba(127, 212, 130, 0.7);
+				border: 1px solid ${(props) => props.theme.colors.selectedTheme.green};
 				border-radius: 11px;
 				background: linear-gradient(
 					180deg,
@@ -80,6 +79,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 					rgba(71, 122, 73, 0.05) 100%
 				);
 				box-shadow: rgb(127 212 130 / 50%) 0px 0 3px;
+
 				&::before {
 					display: none;
 				}
@@ -96,7 +96,7 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 	${(props) =>
 		props.$position === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 			${props.$isActive &&
 			css`
 				border: 1px solid rgba(239, 104, 104, 0.7);
@@ -119,11 +119,11 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 			`};
 		`};
 
-	${(props) =>
+	/* ${(props) =>
 		props.$isActive &&
 		css`
 			text-shadow: ${props.theme.colors.selectedTheme.button.active.textShadow};
-		`};
+		`}; */
 `;
 
 export default PositionButtons;

@@ -32,8 +32,9 @@ const StyledButton = styled(Button)`
 
 	border: transparent;
 	background: ${(props) =>
-		props.isActive ? props.theme.colors.selectedTheme.button.background : 'transparent'};
+		props.isActive ? props.theme.colors.selectedTheme.button.fill : 'transparent'};
 	box-shadow: none;
+	border-radius: 100px;
 
 	p {
 		margin: 0;
@@ -44,8 +45,8 @@ const StyledButton = styled(Button)`
 	.title {
 		color: ${(props) =>
 			props.isActive
-				? props.theme.colors.common.primaryWhite
-				: props.theme.colors.common.secondaryGray};
+				? props.theme.colors.selectedTheme.button.text
+				: props.theme.colors.selectedTheme.gray};
 	}
 
 	&:disabled {

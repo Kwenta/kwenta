@@ -28,13 +28,20 @@ const CurrencyChange = styled.span<{ isPositive: boolean }>`
 	align-items: center;
 	color: ${(props) =>
 		props.isPositive
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 	font-family: ${(props) => props.theme.fonts.mono};
+
 	svg {
 		margin-right: 5px;
 		width: 10px;
 		height: 10px;
+		path {
+			fill: ${(props) =>
+				props.isPositive
+					? props.theme.colors.selectedTheme.green
+					: props.theme.colors.selectedTheme.red};
+		}
 	}
 
 	${media.lessThan('md')`

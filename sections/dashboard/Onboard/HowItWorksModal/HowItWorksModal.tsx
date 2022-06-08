@@ -111,7 +111,7 @@ const SubHeader = styled(Paragraph)`
 	line-height: 120%;
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-right: 40px;
 	${media.lessThan('md')`
 		font-size: 20px;
@@ -138,7 +138,7 @@ const StepSubtitle = styled(Paragraph)`
 const StepTitle = styled(Paragraph)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-bottom: 12px;
 	line-height: 19.2px;
 `;

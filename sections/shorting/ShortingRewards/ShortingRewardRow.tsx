@@ -225,7 +225,7 @@ const RewardsAmount = styled.span`
 `;
 
 const RewardsAmountContainer = styled(FlexDivCentered)`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export default ShortingRewardRow;

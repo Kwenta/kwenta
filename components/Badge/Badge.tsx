@@ -6,7 +6,7 @@ const Badge = styled.span`
 	padding: 2px 3px 1px 5px;
 	text-align: center;
 	font-family: ${(props) => props.theme.fonts.black};
-	background: ${(props) => props.theme.colors.common.primaryRed};
+	background: ${(props) => props.theme.colors.selectedTheme.red};
 	border-radius: 100px;
 	letter-spacing: 1px;
 	margin-left: 4px;

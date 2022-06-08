@@ -236,9 +236,6 @@ const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
 	margin-bottom: 16px;
 
 	& > button {
-		height: ${(props) => (props.hasDetail ? '48px' : '38px')};
-		font-size: 13px;
-
 		&:not(:last-of-type) {
 			margin-right: 14px;
 		}
