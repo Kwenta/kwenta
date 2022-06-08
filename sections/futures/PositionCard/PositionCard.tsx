@@ -510,7 +510,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 `;
 
 const StyledValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
