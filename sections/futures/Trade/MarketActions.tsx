@@ -6,29 +6,47 @@ import { useTranslation } from 'react-i18next';
 import { zeroBN } from 'utils/formatters/number';
 import { useRecoilValue } from 'recoil';
 import { marketInfoState, positionState } from 'store/futures';
+import DepositMarginModal from './DepositMarginModal';
+import WithdrawMarginModal from './WithdrawMarginModal';
+import useSynthetixQueries from '@synthetixio/queries';
+import { walletAddressState } from 'store/wallet';
+import { Synths } from 'constants/currency';
 
-type MarketActionsProps = {
-	openDepositModal(): void;
-	openWithdrawModal(): void;
-};
-
-const MarketActions: React.FC<MarketActionsProps> = ({ openDepositModal, openWithdrawModal }) => {
+const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const walletAddress = useRecoilValue(walletAddressState);
+	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
+
+	const { useSynthsBalancesQuery } = useSynthetixQueries();
+	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	return (
-		<MarketActionsContainer>
-			<MarketActionButton disabled={marketInfo?.isSuspended} onClick={openDepositModal}>
-				{t('futures.market.trade.button.deposit')}
-			</MarketActionButton>
-			<MarketActionButton
-				disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
-				onClick={openWithdrawModal}
-			>
-				{t('futures.market.trade.button.withdraw')}
-			</MarketActionButton>
-		</MarketActionsContainer>
+		<>
+			<MarketActionsContainer>
+				<MarketActionButton
+					disabled={marketInfo?.isSuspended}
+					onClick={() => setOpenModal('deposit')}
+				>
+					{t('futures.market.trade.button.deposit')}
+				</MarketActionButton>
+				<MarketActionButton
+					disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
+					onClick={() => setOpenModal('withdraw')}
+				>
+					{t('futures.market.trade.button.withdraw')}
+				</MarketActionButton>
+			</MarketActionsContainer>
+			{openModal === 'deposit' && (
+				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+			)}
+
+			{openModal === 'withdraw' && (
+				<WithdrawMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
+			)}
+		</>
 	);
 };
 

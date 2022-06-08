@@ -1,7 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRouter } from 'next/router';
-import { walletAddressState } from 'store/wallet';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
@@ -21,12 +25,13 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
-import Wei, { wei } from '@synthetixio/wei';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { PositionSide } from 'sections/futures/types';
-import { ethers } from 'ethers';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import RefetchContext from 'contexts/RefetchContext';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -35,11 +40,16 @@ const useFuturesData = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { synthetixjs, network } = Connector.useContainer();
+	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { handleRefetch } = React.useContext(RefetchContext);
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
 
-	const [, setLeverage] = useRecoilState(leverageState);
+	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	const [leverage, setLeverage] = useRecoilState(leverageState);
 	const [tradeSize, setTradeSize] = useRecoilState(tradeSizeState);
 	const [, setTradeSizeSUSD] = useRecoilState(tradeSizeSUSDState);
 	const [, setFeeCost] = useRecoilState(feeCostState);
@@ -50,6 +60,7 @@ const useFuturesData = () => {
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
+	const gasSpeed = useRecoilValue(gasSpeedState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -68,6 +79,8 @@ const useFuturesData = () => {
 	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
 	const marketSize = market?.marketSize ?? wei(0);
 	const marketSkew = market?.marketSkew ?? wei(0);
+
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed];
 
 	const isMarketCapReached = useMemo(
 		() =>
@@ -149,6 +162,35 @@ const useFuturesData = () => {
 		]
 	);
 
+	const orderTxn = useSynthetixTxn(
+		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
+		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
+		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
+		gasPrice,
+		{
+			enabled:
+				!!marketAsset &&
+				!!leverage &&
+				Number(leverage) >= 0 &&
+				maxLeverageValue.gte(leverage) &&
+				!sizeDelta.eq(zeroBN),
+		}
+	);
+
+	useEffect(() => {
+		if (orderTxn.hash) {
+			monitorTransaction({
+				txHash: orderTxn.hash,
+				onTxConfirmed: () => {
+					onLeverageChange('');
+					handleRefetch('modify-position');
+				},
+			});
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [orderTxn.hash]);
+
 	const placeOrderTranslationKey = React.useMemo(() => {
 		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
@@ -219,6 +261,7 @@ const useFuturesData = () => {
 		isMarketCapReached,
 		marketAsset,
 		market,
+		orderTxn,
 	};
 };
 
