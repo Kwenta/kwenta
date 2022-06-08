@@ -1,96 +1,127 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
+import router from 'next/router';
+import { FC, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { HEADER_HEIGHT } from 'constants/ui';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
+import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
+import DiscordLogo from 'assets/svg/social/discord.svg';
+import MirrorLogo from 'assets/svg/social/mirror.svg';
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import ROUTES from 'constants/routes';
-
+import { EXTERNAL_LINKS } from 'constants/links';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
-
-import UserMenu from '../AppLayout/Header/UserMenu';
-import AppHeader from '../AppLayout/Header';
-
-import media from 'styles/media';
-
-import Logo from '../Logo';
-import { GridDivCenteredCol, TextButton } from 'styles/common';
-
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-import { useRecoilValue } from 'recoil';
+import { FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import { isL2State } from 'store/wallet';
-import FuturesBordersSvg from 'assets/svg/app/futures-borders.svg';
-import LinkWhiteIcon from 'assets/svg/app/link-white.svg';
-
-const KIPS_LINK = 'https://github.com/Kwenta/KIPs';
+import AppHeader from '../AppLayout/Header';
+import Logo from '../Logo';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
-	const { whyKwentaRef, howItWorksRef, faqRef, scrollToRef } = SmoothScroll.useContainer();
 	const isL2 = useRecoilValue(isL2State);
 
-	const links = useMemo(
+	const LINKS = useMemo(
 		() => [
 			{
-				id: 'why',
-				label: t('homepage.nav.why'),
-				ref: whyKwentaRef,
+				id: 'market',
+				label: t('homepage.nav.markets'),
+				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
-				id: 'how',
-				label: t('homepage.nav.how'),
-				ref: howItWorksRef,
+				id: 'governance',
+				label: t('homepage.nav.governance.title'),
+				icon: <CaretDownGrayIcon />,
 			},
 			{
-				id: 'faq',
-				label: t('homepage.nav.faq'),
-				ref: faqRef,
+				id: 'socials',
+				label: t('homepage.nav.socials.title'),
+				icon: <CaretDownGrayIcon />,
 			},
 			{
-				id: 'kips',
-				label: t('homepage.nav.kips'),
-				onClick: () => window.open(KIPS_LINK, '_blank'),
+				id: 'blogs',
+				label: t('homepage.nav.blog'),
+				icon: <ArrowUpRightIcon />,
+				onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
 			},
 		],
-		[t, whyKwentaRef, howItWorksRef, faqRef]
+		// eslint-disable-next-line
+		[t]
 	);
+
+	const GOVERNANCE = [
+		{
+			id: 'overview',
+			label: t('homepage.nav.governance.overview'),
+			onClick: () => window.open(EXTERNAL_LINKS.Docs.Governance, '_blank'),
+		},
+		{
+			id: 'kips',
+			label: t('homepage.nav.governance.kips'),
+			onClick: () => window.open(EXTERNAL_LINKS.Kips.Home, '_blank'),
+		},
+	];
+
+	const SOCIALS = [
+		{
+			id: 'discord',
+			label: t('homepage.nav.socials.discord'),
+			onClick: () => window.open(EXTERNAL_LINKS.Social.Discord, '_blank'),
+			icon: <DiscordLogo />,
+		},
+		{
+			id: 'twitter',
+			label: t('homepage.nav.socials.twitter'),
+			onClick: () => window.open(EXTERNAL_LINKS.Social.Twitter, '_blank'),
+			icon: <TwitterLogo />,
+		},
+		{
+			id: 'mirror',
+			label: t('homepage.nav.socials.mirror'),
+			onClick: () => window.open(EXTERNAL_LINKS.Social.Mirror, '_blank'),
+			icon: <MirrorLogo />,
+		},
+	];
 
 	return (
 		<>
-			<FuturesBannerContainer>
-				<FuturesBannerLinkWrapper>
-					<>
-						<FuturesLink href="https://raise.kwenta.io" target="_blank">
-							Kwenta Community Raise now live on Aelin
-						</FuturesLink>
-						<LinkWhiteIcon />
-					</>
-				</FuturesBannerLinkWrapper>
-				<DivBorder />
-				<FuturesBordersSvg />
-				<DivBorder />
-			</FuturesBannerContainer>
 			<MobileHiddenView>
 				<Container>
-					<Logo isL2={isL2} />
+					<LogoContainer>
+						<Logo isL2={isL2} isHomePage={true} />
+					</LogoContainer>
+
 					<Links>
-						{links.map(({ id, label, ref, onClick }) => (
-							<StyledTextButton
-								key={id}
-								onClick={() => {
-									ref ? scrollToRef(ref) : onClick?.();
-								}}
-							>
-								{label}
+						{LINKS.map(({ id, label, icon, onClick }) => (
+							<StyledTextButton key={id} className={id} onClick={onClick}>
+								<FlexDivRowCentered>
+									{label}
+									{icon}
+								</FlexDivRowCentered>
+								<StyledMenu className="governance">
+									{GOVERNANCE.map(({ id, label, onClick }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
+								<StyledMenu className="socials">
+									{SOCIALS.map(({ id, label, onClick, icon }) => (
+										<StyledMenuItem key={id} onClick={onClick}>
+											{icon}
+											{label}
+										</StyledMenuItem>
+									))}
+								</StyledMenu>
 							</StyledTextButton>
 						))}
 					</Links>
 					<MenuContainer>
-						<UserMenu />
-						<Link href={ROUTES.Home.Overview}>
-							<Button variant="primary" isRounded={false} size="md">
-								{t('homepage.nav.start-trading')}
+						<Link href={ROUTES.Markets.Home}>
+							<Button variant="primary" isRounded={false} size="sm">
+								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>
 					</MenuContainer>
@@ -103,72 +134,104 @@ const Header: FC = () => {
 	);
 };
 
-const Container = styled.header`
-	height: ${HEADER_HEIGHT};
-	line-height: ${HEADER_HEIGHT};
-	padding: 0px 20px;
-	display: grid;
+const LogoContainer = styled.div`
+	padding-top: 8px;
+`;
+
+const StyledMenu = styled.div`
+	position: absolute;
+	background: linear-gradient(180deg, #1e1d1d 0%, #161515 100%);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
+	width: 120px;
+	margin: auto;
+	padding: 10px 0px;
+	margin-top: 35px;
+	display: flex;
+	flex-direction: column;
 	align-items: center;
+
+	&.governance {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
+
+	&.socials {
+		visibility: hidden;
+		transition: visibility 0.1s;
+		:hover {
+			visibility: visible;
+		}
+	}
+`;
+
+const StyledMenuItem = styled.p`
+	font-family: ${(props) => props.theme.fonts.bold};
+	cursor: pointer;
+	width: 90px;
+	font-size: 15px;
+	height: 30px;
+	color: ${(props) => props.theme.colors.common.secondaryGray};
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin: 0px;
+	&:hover {
+		color: ${(props) => props.theme.colors.common.primaryWhite};
+	}
+	svg {
+		margin-right: 10px;
+		width: 15px;
+		height: 15px;
+	}
+`;
+
+const Container = styled.header`
+	display: grid;
+	align-items: start;
 	width: 100%;
 	grid-template-columns: 1fr 1fr 1fr;
-	${media.lessThan('md')`
-		grid-template-columns: auto auto;
-	`}
-`;
-const FuturesBannerContainer = styled.div`
-	height: 65px;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	background: linear-gradient(
-		180deg,
-		${(props) => props.theme.colors.goldColors.color1} 0%,
-		${(props) => props.theme.colors.goldColors.color2} 100%
-	);
-	${media.lessThan('md')`
-		position: relative;
-		top: ${HEADER_HEIGHT};
-		margin-bottom: ${HEADER_HEIGHT};
-	`}
-`;
-
-const FuturesBannerLinkWrapper = styled.div`
-	width: 100%;
-	text-align: center;
-	position: absolute;
-	text-shadow: 0px 1px 2px ${(props) => props.theme.colors.transparentBlack};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;
-
-const DivBorder = styled.div`
-	height: 2px;
-	background: ${(props) => props.theme.colors.goldColors.color1};
-	flex-grow: 1;
-`;
-const FuturesLink = styled.a`
-	margin-right: 5px;
 `;
 
 const Links = styled.div`
+	display: flex;
+	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
-	${media.lessThan('md')`
-		display: none;
-	`}
+	padding-top: 10px;
 `;
 
-const StyledTextButton = styled(TextButton)`
-	font-size: 12px;
+const StyledTextButton = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: 15px;
+	line-height: 15px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.silver};
-	margin: 0px 8px;
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.common.tertiaryGray};
+	cursor: pointer;
+
+	&.governance:hover {
+		> div.governance {
+			visibility: visible;
+		}
+	}
+
+	&.socials:hover {
+		> div.socials {
+			visibility: visible;
+		}
+	}
+
+	margin: 0px 20px;
+	svg {
+		margin-left: 5px;
 	}
 `;
 

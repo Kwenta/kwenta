@@ -1,23 +1,20 @@
-import { FC, useMemo } from 'react';
+import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
-
-import { MediaContextProvider } from 'styles/media';
-
-import WithAppContainers from 'containers';
-
+import { NextPage } from 'next';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { ThemeProvider } from 'styled-components';
 
+import { MediaContextProvider } from 'styles/media';
+import { themes } from 'styles/theme';
+import WithAppContainers from 'containers';
 import SystemStatus from 'sections/shared/SystemStatus';
-
 import { isSupportedNetworkId } from 'utils/network';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-
-import { themes } from 'styles/theme';
 
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
@@ -30,18 +27,31 @@ import 'tippy.js/dist/tippy.css';
 import '../i18n';
 
 import Layout from 'sections/shared/Layout';
-import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
+
 import Connector from 'containers/Connector';
 import { currentThemeState } from 'store/ui';
 
-const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
+type NextPageWithLayout = NextPage & {
+	layout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+	Component: NextPageWithLayout;
+};
+
+const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { provider, signer, network } = Connector.useContainer();
+	const getLayout =
+		Component.layout === undefined
+			? (page: ReactElement) => <>{page}</>
+			: (page: ReactElement) => <AppLayout>{page}</AppLayout>;
+
 	const currentTheme = useRecoilValue(currentThemeState);
 	const theme = useMemo(() => themes[currentTheme], [currentTheme]);
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 
 	return isReady ? (
-		<ThemeProvider theme={theme}>
+		<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
 			<MediaContextProvider>
 				<SynthetixQueryContextProvider
 					value={
@@ -55,11 +65,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }) => {
 					}
 				>
 					<Layout>
-						<SystemStatus>
-							<AppLayout>
-								<Component {...pageProps} />
-							</AppLayout>
-						</SystemStatus>
+						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 					</Layout>
 					<ReactQueryDevtools />
 				</SynthetixQueryContextProvider>

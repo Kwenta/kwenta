@@ -14,10 +14,12 @@ import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
 type LogoProps = {
 	isL2: boolean;
 	isFutures?: boolean;
+	isHomePage?: boolean;
 };
 
-const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
+const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => {
 	const currentTheme = useRecoilValue(currentThemeState);
+
 	if (isFutures) {
 		if (currentTheme === 'dark') {
 			return <LogoSvgBetaDark />;
@@ -26,12 +28,15 @@ const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 			return <LogoSvgBetaLight />;
 		}
 	}
+	if (isHomePage) {
+		return <LogoSvg />;
+	}
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
 };
 
 const Logo: FC<LogoProps> = (props) => {
 	return (
-		<Link href={ROUTES.Home.Overview}>
+		<Link href={ROUTES.Home.Root}>
 			<LogoContainer>
 				<SvgLogo {...props} />
 			</LogoContainer>
@@ -43,6 +48,8 @@ const LogoContainer = styled.span`
 	display: flex;
 	align-items: center;
 	cursor: pointer;
+	height: 18px;
+	width: 122px;
 	margin-right: 20px;
 `;
 
