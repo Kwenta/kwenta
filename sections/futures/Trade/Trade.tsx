@@ -403,9 +403,8 @@ const Trade: React.FC<TradeProps> = ({
 
 			<ManagePositions>
 				<PlaceOrderButton
-					variant="primary"
+					noOutline
 					fullWidth
-					noOutline={true}
 					disabled={
 						!leverage ||
 						Number(leverage) < 0 ||
