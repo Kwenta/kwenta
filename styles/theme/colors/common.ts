@@ -6,8 +6,8 @@ const common = {
 	primaryRed: '#EF6868',
 	primaryGreen: '#7FD482',
 	secondaryGray: '#787878',
+	tertiaryGray: '#999999',
 	secondaryGold: '#E4B378',
-	tertiaryGray: '#C3C0BA',
 };
 
 export default common;

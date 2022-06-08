@@ -5,6 +5,7 @@ const fontStyles = {
 	mono: `AkkuratMonoLLWeb-Regular`,
 	monoBold: `AkkuratMonoLLWeb-Bold`,
 	compressedBlack: `GT-America-Compressed-Black`,
+	compressedMedium: `GT-America-Compressed-Medium`,
 };
 
 export default fontStyles;
