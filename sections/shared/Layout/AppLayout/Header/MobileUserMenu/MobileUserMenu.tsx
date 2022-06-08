@@ -15,7 +15,11 @@ import NotificationsModal from 'sections/shared/modals/NotificationsModal';
 
 import MobileSettingsModal from './MobileSettingsModal';
 
-const MobileUserMenu: FC = () => {
+type MobileUserMenuProps = {
+	homepage?: boolean | null;
+};
+
+const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
@@ -27,7 +31,7 @@ const MobileUserMenu: FC = () => {
 		<>
 			<Container>
 				<Menu style={{ paddingRight: 0 }}>
-					{isWalletConnected && (
+					{!homepage && isWalletConnected && (
 						<MenuButton
 							onClick={() => {
 								setNotificationsModalOpened(!notificationsModalOpened);
