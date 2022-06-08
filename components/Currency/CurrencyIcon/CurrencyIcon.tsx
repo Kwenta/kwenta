@@ -18,6 +18,7 @@ export type CurrencyIconProps = {
 	width?: string;
 	height?: string;
 	isDeprecated?: boolean;
+	style?: any;
 };
 
 export const SNXIcon =
@@ -43,7 +44,7 @@ export const getSynthIcon = (currencyKey: CurrencyKey) => {
 
 const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
-		<CurrencyIcon {...props} />
+		<CurrencyIcon style={props.style} {...props} />
 		{!props.isDeprecated ? null : (
 			<DeprecatedXIconContainer>
 				<DeprecatedXIcon />

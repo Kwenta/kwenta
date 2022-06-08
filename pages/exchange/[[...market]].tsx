@@ -9,8 +9,15 @@ import { formatCurrency } from 'utils/formatters/number';
 import { CurrencyKey } from 'constants/currency';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Exchange: FC = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
 	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = useExchange({
 		showPriceCard: true,
@@ -46,6 +53,8 @@ const Exchange: FC = () => {
 		</>
 	);
 };
+
+Exchange.layout = AppLayout;
 
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	padding-top: 14px;

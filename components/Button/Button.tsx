@@ -61,6 +61,12 @@ const Button = styled.button<ButtonProps>`
 	}
 
 	${(props) =>
+		!props.noOutline &&
+		css`
+			${border}
+		`};
+
+	${(props) =>
 		props.mono
 			? css`
 					font-family: ${props.theme.fonts.mono};
@@ -73,6 +79,7 @@ const Button = styled.button<ButtonProps>`
 		props.variant === 'primary' &&
 		css`
 			background: ${props.theme.colors.selectedTheme.button.primary.background};
+			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
 			&:hover {
 				background: ${props.theme.colors.selectedTheme.button.primary.hover};
 			}
@@ -95,6 +102,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 41px;
 			min-width: 157px;
+			font-size: 15px;
 		`};
 
 	${(props) =>
@@ -102,12 +110,6 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 50px;
 			min-width: 200px;
-		`};
-
-	${(props) =>
-		!props.noOutline &&
-		css`
-			${border}
 		`};
 
 	${(props) =>
