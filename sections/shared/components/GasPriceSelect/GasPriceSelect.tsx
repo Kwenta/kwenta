@@ -46,7 +46,9 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
-			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
+			<SummaryItemValue>
+				{gasPrice != null && transactionFee != null ? gasPriceItem : NO_VALUE}
+			</SummaryItemValue>
 		</SummaryItem>
 	);
 };
