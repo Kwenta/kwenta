@@ -156,12 +156,15 @@ const StyledInfoBox = styled(InfoBox)`
 `;
 
 const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
 	margin-left: 5px;
+	path {
+		fill: ${(props) => props.theme.colors.selectedTheme.gold};
+	}
 `;
 
 export default FeeInfoBox;
