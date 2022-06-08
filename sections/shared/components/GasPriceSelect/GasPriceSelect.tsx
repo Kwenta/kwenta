@@ -12,6 +12,7 @@ import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices } from '@synthetixio/queries';
 
 import { parseGasPriceObject } from 'hooks/useGas';
+import { useMemo } from 'react';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
@@ -26,13 +27,19 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const isMainnet = useRecoilValue(isMainnetState);
 	const isL2 = useRecoilValue(isL2State);
 
+	const formattedTransactionFee = useMemo(() => {
+		return transactionFee
+			? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+			: NO_VALUE;
+	}, [transactionFee]);
+
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
 	const gasPriceItem = (
 		<span data-testid="gas-price">
 			{isL2
-				? formatCurrency(Synths.sUSD, transactionFee ?? 0, { sign: '$', maxDecimals: 1 })
+				? formattedTransactionFee
 				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
 						minDecimals: 2,
 				  })} Gwei`}
@@ -46,9 +53,7 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
-			<SummaryItemValue>
-				{gasPrice != null && transactionFee != null ? gasPriceItem : NO_VALUE}
-			</SummaryItemValue>
+			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
 		</SummaryItem>
 	);
 };
