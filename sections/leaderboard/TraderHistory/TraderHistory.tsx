@@ -37,27 +37,32 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	let data = useMemo(() => {
 		return positions
 			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
-			.map((stat: PositionHistory, i: number) => ({
-				rank: i + 1,
-				currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
-				marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
-				openTimestamp: stat.openTimestamp,
-				asset: stat.asset,
-				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-				feesPaid: stat.feesPaid,
-				netFunding: stat.netFunding,
-				pnl: stat.pnl.sub(stat.feesPaid).add(stat.netFunding),
-				pnlPct: `(${stat.pnl
-					.sub(stat.feesPaid)
-					.add(stat.netFunding)
-					.div(stat.initialMargin.add(stat.totalDeposits))
-					.mul(100)
-					.toNumber()
-					.toFixed(2)}%)`,
-				totalVolume: stat.totalVolume,
-				trades: stat.trades,
-				side: stat.side,
-			}))
+			.map((stat: PositionHistory, i: number) => {
+				const pnlAfterFees = stat.pnl.sub(stat.feesPaid).add(stat.netFunding);
+				const actualPnl = pnlAfterFees.lt(stat.initialMargin.add(stat.totalDeposits).mul(-1))
+					? stat.initialMargin.add(stat.totalDeposits).mul(-1)
+					: pnlAfterFees;
+
+				return {
+					rank: i + 1,
+					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
+					marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
+					openTimestamp: stat.openTimestamp,
+					asset: stat.asset,
+					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+					feesPaid: stat.feesPaid,
+					netFunding: stat.netFunding,
+					pnl: actualPnl,
+					pnlPct: `(${actualPnl
+						.div(stat.initialMargin.add(stat.totalDeposits))
+						.mul(100)
+						.toNumber()
+						.toFixed(2)}%)`,
+					totalVolume: stat.totalVolume,
+					trades: stat.trades,
+					side: stat.side,
+				};
+			})
 			.filter((i: { marketShortName: string; status: string }) =>
 				searchTerm?.length
 					? i.marketShortName.toLowerCase().includes(searchTerm) ||
