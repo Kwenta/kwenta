@@ -2,8 +2,7 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Svg } from 'react-optimized-image';
-import { AnimateSharedLayout, AnimatePresence, motion } from 'framer-motion';
-
+import { EXTERNAL_LINKS } from 'constants/links';
 import ArrowsIcon from 'assets/svg/app/arrows.svg';
 import { zIndex } from 'constants/ui';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -25,6 +24,7 @@ import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { CurrencyKey } from 'constants/currency';
 import { DEFAULT_WIDTH } from 'sections/exchange/TradeCard/constants';
+import Banner from 'sections/shared/Layout/AppLayout/Header/Banner';
 
 const ExchangePage = () => {
 	const { t } = useTranslation();
@@ -37,9 +37,6 @@ const ExchangePage = () => {
 		baseCurrencyCard,
 		handleCurrencySwap,
 		footerCard,
-		combinedPriceChartCard,
-		combinedMarketDetailsCard,
-		wideWidth,
 	} = useExchange({
 		showPriceCard: true,
 		showMarketDetailsCard: true,
@@ -75,6 +72,10 @@ const ExchangePage = () => {
 							</SwapCurrenciesButtonContainer>
 
 							<PageWidthContainer>
+								<Banner
+									copy={t('header.banner.exchange-v2')}
+									link={EXTERNAL_LINKS.KwentaV2.Exchange}
+								/>
 								<DesktopCardsContainer>
 									<LeftCardContainer data-testid="left-side">{quoteCurrencyCard}</LeftCardContainer>
 									<RightCardContainer data-testid="right-side">
@@ -85,38 +86,12 @@ const ExchangePage = () => {
 
 							<PageWidthContainer>{footerCard}</PageWidthContainer>
 
-							<AnimateSharedLayout>
-								<ChartsContainer>
-									<AnimatePresence>
-										<motion.div
-											layout
-											initial={{ width: wideWidth }}
-											animate={{ width: DEFAULT_WIDTH }}
-											exit={{ width: wideWidth }}
-											transition={{ ease: 'easeOut' }}
-										>
-											{combinedPriceChartCard}
-										</motion.div>
-									</AnimatePresence>
-								</ChartsContainer>
-
-								<ChartsContainer>
-									<motion.div
-										layout
-										initial={{ width: wideWidth }}
-										animate={{ width: DEFAULT_WIDTH }}
-										exit={{ width: wideWidth }}
-										transition={{ ease: 'easeOut' }}
-									>
-										{combinedMarketDetailsCard}
-									</motion.div>
-								</ChartsContainer>
-							</AnimateSharedLayout>
 							<GitIDFooter />
 						</DesktopContainer>
 					</DesktopOnlyView>
 					<MobileOrTabletView>
 						<MobileContainer>
+							<Banner copy={t('header.banner.exchange-v2')} link={EXTERNAL_LINKS.KwentaV2.Home} />
 							{quoteCurrencyCard}
 							<VerticalSpacer>
 								<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
@@ -125,11 +100,6 @@ const ExchangePage = () => {
 							</VerticalSpacer>
 							{baseCurrencyCard}
 							<FooterContainer>{footerCard}</FooterContainer>
-							<>
-								{combinedPriceChartCard}
-								<FooterSpacer />
-								{combinedMarketDetailsCard}
-							</>
 							<GitIDFooter />
 						</MobileContainer>
 					</MobileOrTabletView>
@@ -161,10 +131,6 @@ const StyledPageContent = styled(PageContent)`
 	}
 `;
 
-const ChartsContainer = styled.div`
-	margin: 0 auto 30px;
-`;
-
 const PageWidthContainer = styled.div`
 	width: ${DEFAULT_WIDTH}px;
 	margin: 0 auto;
@@ -186,7 +152,7 @@ const DesktopCardsContainer = styled.div`
 
 const SwapCurrenciesButtonContainer = styled.div`
 	align-self: flex-start;
-	margin-top: 37px;
+	margin-top: 142px;
 	position: absolute;
 	left: calc(50% - 16px);
 	z-index: ${zIndex.BASE + 10};
@@ -217,10 +183,6 @@ const VerticalSpacer = styled.div`
 		transform: translate(-50%, -50%) rotate(90deg);
 		border: 2px solid ${(props) => props.theme.colors.black};
 	}
-`;
-
-const FooterSpacer = styled.div`
-	margin-top: 20px;
 `;
 
 export default ExchangePage;
