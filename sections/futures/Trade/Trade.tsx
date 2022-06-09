@@ -331,6 +331,7 @@ const Trade: React.FC<TradeProps> = ({
 			<MarketsDropdown asset={marketAsset || Synths.sUSD} />
 			<MarketActions>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-deposit"
 					disabled={isFuturesMarketClosed}
 					onClick={() => setIsDepositMarginModalOpen(true)}
 					noOutline={true}
@@ -338,6 +339,7 @@ const Trade: React.FC<TradeProps> = ({
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-withdraw"
 					disabled={position?.remainingMargin?.lte(zeroBN) || isFuturesMarketClosed}
 					onClick={() => setIsWithdrawMarginModalOpen(true)}
 					noOutline={true}
@@ -403,6 +405,7 @@ const Trade: React.FC<TradeProps> = ({
 
 			<ManagePositions>
 				<PlaceOrderButton
+					data-testid="trade-open-position-button"
 					variant="primary"
 					fullWidth
 					noOutline={true}
@@ -427,6 +430,7 @@ const Trade: React.FC<TradeProps> = ({
 
 				{(() => onPositionClose) && (
 					<CloseOrderButton
+						data-testid="trade-close-position-button"
 						isRounded={true}
 						fullWidth
 						variant="danger"

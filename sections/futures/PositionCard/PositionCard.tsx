@@ -323,7 +323,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								{t('futures.market.position-card.position-side')}
 							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
-						{data.positionSide}
+						<div data-testid="position-card-side-value">{data.positionSide}</div>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
@@ -413,7 +413,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 								{t('futures.market.position-card.leverage')}
 							</StyledSubtitleWithCursor>
 						</LeftMarginTooltip>
-						<StyledValue>{data.leverage}</StyledValue>
+						<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
