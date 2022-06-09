@@ -222,13 +222,9 @@ const TabButtonsContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: 16px;
 
-	& > button {
-		height: 38px;
+	button {
+		height: 33px;
 		font-size: 13px;
-
-		&:not(:last-of-type) {
-			margin-right: 14px;
-		}
 	}
 `;
 
