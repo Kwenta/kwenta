@@ -199,7 +199,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						}
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
-							minDecimals: 4,
+							minDecimals: 2,
 						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
 							sign: '$',
 							minDecimals: 2,
@@ -368,7 +368,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.u-pnl')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
@@ -512,7 +514,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 `;
 
 const StyledValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;

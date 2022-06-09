@@ -15,9 +15,6 @@ export const border = css`
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	border: none;
-	&:hover {
-		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
-	}
 
 	&::before {
 		content: '';
@@ -49,31 +46,11 @@ const Button = styled.button<ButtonProps>`
 	white-space: nowrap;
 	font-size: 17px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
-	border: ${(props) => props.theme.colors.selectedTheme.border};
 	transition: all 0.1s ease-in-out;
-
+	${border}
 	&:hover {
-		background: ${(props) =>
-			props.noOutline
-				? props.theme.colors.selectedTheme.button.fill
-				: props.theme.colors.selectedTheme.button.hover};
+		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 	}
-
-	${(props) =>
-		!props.noOutline &&
-		css`
-			${border}
-		`};
-
-	${(props) =>
-		props.mono
-			? css`
-					font-family: ${props.theme.fonts.mono};
-			  `
-			: css`
-					font-family: ${props.theme.fonts.bold};
-			  `};
 
 	${(props) =>
 		props.variant === 'primary' &&
@@ -84,6 +61,29 @@ const Button = styled.button<ButtonProps>`
 				background: ${props.theme.colors.selectedTheme.button.primary.hover};
 			}
 		`};
+
+	${(props) =>
+		props.noOutline &&
+		css`
+			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+			border: ${(props) => props.theme.colors.selectedTheme.border};
+			box-shadow: none;
+			&:hover {
+				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			}
+			&::before {
+				display: none;
+			}
+		`};
+
+	${(props) =>
+		props.mono
+			? css`
+					font-family: ${props.theme.fonts.mono};
+			  `
+			: css`
+					font-family: ${props.theme.fonts.bold};
+			  `};
 
 	${(props) =>
 		props.variant === 'secondary' &&

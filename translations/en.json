@@ -909,7 +909,7 @@
 				}
 			},
 			"history": {
-				"history-label": "trading history",
+				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
 				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",

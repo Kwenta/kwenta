@@ -403,9 +403,8 @@ const Trade: React.FC<TradeProps> = ({
 
 			<ManagePositions>
 				<PlaceOrderButton
-					variant="primary"
+					noOutline
 					fullWidth
-					noOutline={true}
 					disabled={
 						!leverage ||
 						Number(leverage) < 0 ||
@@ -626,7 +625,7 @@ const StyledSegmentedControl = styled(SegmentedControl)`
 
 const ManageOrderTitle = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 12px;
+	font-size: 13px;
 	margin-bottom: 8px;
 	margin-left: 14px;
 
