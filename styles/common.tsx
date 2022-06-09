@@ -193,7 +193,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 	overflow-y: visible;
 	padding: 25px 25px 0;
 	margin: 0 auto;
-	max-width: 1800px;
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -279,9 +278,9 @@ export const FullHeightContainer = styled(FlexDiv)`
 export const MainContent = styled(FlexDiv)`
 	position: relative;
 	flex-grow: 1;
-	max-width: 915px;
 	flex-direction: column;
 	margin: 0 auto;
+	max-width: 915px;
 `;
 
 export const RightSideContent = styled.div`
