@@ -1054,8 +1054,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)"
+				"total-pnl": "PnL"
 			}
 		},
 		"trader-history": {
@@ -1066,7 +1065,7 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized PnL ($)"
+				"total-pnl": "Realized PnL"
 			}
 		},
 		"statistics": {
