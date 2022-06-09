@@ -56,4 +56,8 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	return <RefetchContext.Provider value={{ handleRefetch }}>{children}</RefetchContext.Provider>;
 };
 
+export const useRefetchContext = () => {
+	return React.useContext(RefetchContext);
+};
+
 export default RefetchContext;

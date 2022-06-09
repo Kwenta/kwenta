@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect, useState, useContext } from 'react';
+import { FC, useMemo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ import { gasSpeedState } from 'store/wallet';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { currentMarketState, positionState } from 'store/futures';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -42,7 +42,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
 
-	const { handleRefetch } = useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

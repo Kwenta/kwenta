@@ -12,7 +12,7 @@ import { getDisplayAsset } from 'utils/futures';
 import { SectionHeader } from '../common';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
@@ -29,7 +29,7 @@ const OrdersTab: React.FC = () => {
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 
-	const { handleRefetch } = React.useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const [selectedOrder, setSelectedOrder] = React.useState<any>();
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');

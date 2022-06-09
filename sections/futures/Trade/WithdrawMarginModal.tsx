@@ -23,7 +23,7 @@ import {
 	MarginActionButton,
 } from './DepositMarginModal';
 import { currentMarketState, positionState } from 'store/futures';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
@@ -47,7 +47,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const { handleRefetch } = React.useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

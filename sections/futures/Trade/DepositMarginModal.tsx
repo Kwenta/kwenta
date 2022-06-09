@@ -18,7 +18,7 @@ import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState } from 'store/futures';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -40,7 +40,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { handleRefetch } = React.useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

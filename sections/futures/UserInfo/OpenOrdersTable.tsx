@@ -1,22 +1,23 @@
 import React from 'react';
 import styled from 'styled-components';
-import Table from 'components/Table';
+import { useRecoilValue } from 'recoil';
 import { CellProps } from 'react-table';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useTranslation } from 'react-i18next';
+import { wei } from '@synthetixio/wei';
+
+import Table from 'components/Table';
 import Currency from 'components/Currency';
 import { getDisplayAsset, getMarketKey } from 'utils/futures';
-import { wei } from '@synthetixio/wei';
 import { PositionSide } from '../types';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
-import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
 import { currentMarketState, openOrdersState, positionState } from 'store/futures';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import Connector from 'containers/Connector';
 
 const OpenOrdersTable: React.FC = () => {
@@ -31,7 +32,7 @@ const OpenOrdersTable: React.FC = () => {
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 
-	const { handleRefetch } = React.useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 

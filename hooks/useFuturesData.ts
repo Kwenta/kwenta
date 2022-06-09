@@ -31,7 +31,7 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import TransactionNotifier from 'containers/TransactionNotifier';
-import RefetchContext from 'contexts/RefetchContext';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -42,7 +42,7 @@ const useFuturesData = () => {
 	const { synthetixjs, network } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = React.useContext(RefetchContext);
+	const { handleRefetch } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
