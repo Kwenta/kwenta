@@ -166,10 +166,7 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	width: 766px;
 	flex-wrap: wrap;
 	${media.lessThan('sm')`
-		row-gap: 20px;
-		display: flex;
-		flex-direction: column;
-		width: 355px;
+		width: 325px;
 	`}
 `;
 
