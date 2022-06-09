@@ -30,7 +30,7 @@ export const EXTERNAL_LINKS = {
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
 	},
 	KwentaV2: {
-		Home: 'https://v2.beta.kwenta.io/',
-		Exchange: 'https://v2.beta.kwenta.io/exchange',
+		Home: 'https://kwenta.io/',
+		Exchange: 'https://kwenta.io/exchange',
 	},
 };
