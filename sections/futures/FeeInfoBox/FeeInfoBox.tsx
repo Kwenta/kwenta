@@ -56,7 +56,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 	]);
 
 	const ToolTip: FC = (props) => (
-		<StyledTooltip
+		<DynamicStyledToolTip
 			height={'auto'}
 			preset="bottom"
 			width="300px"
@@ -65,7 +65,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		>
 			{props.children}
 			<StyledTimerIcon />
-		</StyledTooltip>
+		</DynamicStyledToolTip>
 	);
 
 	const marketCostTooltip = (
@@ -153,6 +153,10 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 
 const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
+`;
+
+const DynamicStyledToolTip = styled(StyledTooltip)`
+	padding: 10px;
 `;
 
 const StyledDynamicFee = styled.span`
