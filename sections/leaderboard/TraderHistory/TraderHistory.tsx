@@ -170,7 +170,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<div>
+								<PnlContainer>
 									<ColorCodedPrice
 										currencyKey={Synths.sUSD}
 										price={cellProps.row.original.pnl}
@@ -188,7 +188,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 									>
 										{cellProps.row.original.pnlPct}
 									</StyledValue>
-								</div>
+								</PnlContainer>
 							),
 							width: compact ? 40 : 100,
 							sortType: 'basic',
@@ -262,6 +262,12 @@ const StyledSubtitle = styled.div`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
+`;
+
+const PnlContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `;
 
 const ColorCodedPrice = styled(Currency.Price)`
