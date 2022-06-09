@@ -70,6 +70,7 @@ const Trade: React.FC<TradeProps> = ({
 	const { synthetixjs, network } = Connector.useContainer();
 
 	const [closePositionModalIsVisible, setClosePositionModalIsVisible] = useState<boolean>(false);
+	const [nextPriceCloseModalIsVisible, setNextPriceCloseModalIsVisible] = useState<boolean>(false);
 	const [orderType, setOrderType] = useState(0);
 
 	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
@@ -160,7 +161,7 @@ const Trade: React.FC<TradeProps> = ({
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === ''
+				value === '' || !position?.remainingMargin
 					? ''
 					: marketAssetRate
 							.mul(Number(value))
@@ -289,7 +290,6 @@ const Trade: React.FC<TradeProps> = ({
 		{
 			enabled:
 				!!marketAsset &&
-				!!leverage &&
 				Number(leverage) >= 0 &&
 				maxLeverageValue.gte(Number(leverage)) &&
 				!sizeDelta.eq(zeroBN),
@@ -430,7 +430,20 @@ const Trade: React.FC<TradeProps> = ({
 						isRounded={true}
 						fullWidth
 						variant="danger"
-						onClick={() => setClosePositionModalIsVisible(true)}
+						onClick={() => {
+							if (orderType === 1 && position?.position?.size) {
+								const newTradeSize = position.position.size;
+								const newLeverageSide =
+									position.position.side === PositionSide.LONG
+										? PositionSide.SHORT
+										: PositionSide.LONG;
+								setLeverageSide(newLeverageSide);
+								setTradeSize(newTradeSize.toString());
+								setNextPriceCloseModalIsVisible(true);
+							} else {
+								setClosePositionModalIsVisible(true);
+							}
+						}}
 						disabled={!positionDetails || isFuturesMarketClosed}
 						noOutline={true}
 					>
@@ -517,6 +530,21 @@ const Trade: React.FC<TradeProps> = ({
 					currencyKey={currencyKey}
 					onPositionClose={onPositionClose}
 					onDismiss={() => setClosePositionModalIsVisible(false)}
+				/>
+			)}
+
+			{nextPriceCloseModalIsVisible && onPositionClose && (
+				<NextPriceConfirmationModal
+					tradeSize={tradeSize}
+					onConfirmOrder={() => orderTxn.mutate()}
+					gasLimit={orderTxn.gasLimit}
+					l1Fee={orderTxn.optimismLayerOneFee}
+					market={marketAsset}
+					side={leverageSide}
+					onDismiss={() => setNextPriceCloseModalIsVisible(false)}
+					feeCost={feeCost}
+					positionSize={position?.position?.size ?? null}
+					isDisclaimerDisplayed={shouldDisplayNextPriceDisclaimer}
 				/>
 			)}
 		</Panel>
