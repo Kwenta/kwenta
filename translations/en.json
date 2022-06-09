@@ -26,7 +26,7 @@
 		},
 		"banner": {
 			"exchange-v2": "This version of the exchange is outdated; please exchange synths using the new exchange on Kwenta",
-			"futures-v2": "Perpetual Futures Beta available now"
+			"futures-v2": "This version of the exchange is outdated; please visit Kwenta.io"
 		}
 	},
 	"homepage": {
