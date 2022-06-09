@@ -265,6 +265,7 @@ const Assets = () => {
 
 	var settings = {
 		infinite: true,
+		speed: 500,
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		swipeToSlide: true,
@@ -543,8 +544,8 @@ const SliderContainer = styled.div`
 
 const StatsCardContainer = styled.div`
 	margin: auto;
-	margin-left: 15px;
-	margin-right: 20px;
+	margin-left: 10px;
+	margin-right: 10px;
 `;
 
 const StyledSlider = styled(Slider)`
@@ -638,6 +639,8 @@ const StatsCard = styled(GridContainer)`
 
 	${media.lessThan('sm')`
 		grid-template-columns: repeat(2, 110px);
+		width: 290px;
+		height: 150px;
 		border-width: 1.5px;
 		border-style: solid;
 	`}
@@ -670,7 +673,7 @@ const TabButtonsContainer = styled.div`
 	${media.lessThan('sm')`
 		margin: auto;
 		margin-top: 40px;
-		margin-bottom: 35px;
+		margin-bottom: 40px;
 	`}
 `;
 

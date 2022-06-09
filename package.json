@@ -2,7 +2,7 @@
 	"name": "kwenta",
 	"version": "2.45.2",
 	"scripts": {
-		"dev": "set NODE_OPTIONS=--max-old-space-size=8192 && next",
+		"dev": "next",
 		"build": "next build",
 		"start": "next start",
 		"export": "next export",
