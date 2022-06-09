@@ -14,12 +14,9 @@ import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
-import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import { leverageSideState, orderTypeState } from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
-
-type ModalList = 'trade' | 'next-price' | 'close-position';
 
 const Trade: React.FC = () => {
 	const {
@@ -35,7 +32,7 @@ const Trade: React.FC = () => {
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openModal, setOpenModal] = useState<ModalList | null>(null);
+	const [openModal, setOpenModal] = useState<'trade' | 'next-price' | null>(null);
 
 	return (
 		<div>
@@ -67,7 +64,6 @@ const Trade: React.FC = () => {
 				translationKey={placeOrderTranslationKey}
 				marketCapReached={isMarketCapReached}
 				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
-				openClosePositionModal={() => setOpenModal('close-position')}
 				error={error}
 			/>
 
@@ -93,10 +89,6 @@ const Trade: React.FC = () => {
 					l1Fee={orderTxn.optimismLayerOneFee}
 					onDismiss={() => setOpenModal(null)}
 				/>
-			)}
-
-			{openModal === 'close-position' && (
-				<ClosePositionModal onDismiss={() => setOpenModal(null)} />
 			)}
 		</div>
 	);

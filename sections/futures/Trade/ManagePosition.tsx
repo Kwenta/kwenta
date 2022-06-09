@@ -12,20 +12,19 @@ import {
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
+import ClosePositionModal from '../PositionCard/ClosePositionModal';
 
 type ManagePositionProps = {
 	translationKey: string;
 	marketCapReached: boolean;
 	error: string | null;
 	openConfirmationModal(): void;
-	openClosePositionModal(): void;
 };
 
 const ManagePosition: React.FC<ManagePositionProps> = ({
 	translationKey,
 	marketCapReached,
 	openConfirmationModal,
-	openClosePositionModal,
 	error,
 }) => {
 	const { t } = useTranslation();
@@ -35,44 +34,49 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const positionDetails = position?.position;
+	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 
 	return (
-		<div>
-			<ManageOrderTitle>
-				Manage&nbsp; —<span>&nbsp; Adjust your position</span>
-			</ManageOrderTitle>
+		<>
+			<div>
+				<ManageOrderTitle>
+					Manage&nbsp; —<span>&nbsp; Adjust your position</span>
+				</ManageOrderTitle>
 
-			<ManagePositionContainer>
-				<PlaceOrderButton
-					variant="primary"
-					fullWidth
-					disabled={
-						!leverage ||
-						Number(leverage) < 0 ||
-						Number(leverage) > maxLeverageValue.toNumber() ||
-						sizeDelta.eq(zeroBN) ||
-						!!error ||
-						translationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
-						marketInfo?.isSuspended ||
-						marketCapReached
-					}
-					onClick={openConfirmationModal}
-				>
-					{t(translationKey)}
-				</PlaceOrderButton>
+				<ManagePositionContainer>
+					<PlaceOrderButton
+						variant="primary"
+						fullWidth
+						disabled={
+							!leverage ||
+							Number(leverage) < 0 ||
+							Number(leverage) > maxLeverageValue.toNumber() ||
+							sizeDelta.eq(zeroBN) ||
+							!!error ||
+							translationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
+							marketInfo?.isSuspended ||
+							marketCapReached
+						}
+						onClick={openConfirmationModal}
+					>
+						{t(translationKey)}
+					</PlaceOrderButton>
 
-				<CloseOrderButton
-					isRounded={true}
-					fullWidth
-					variant="danger"
-					onClick={openClosePositionModal}
-					disabled={!positionDetails || marketInfo?.isSuspended}
-					noOutline={true}
-				>
-					{t('futures.market.user.position.close-position')}
-				</CloseOrderButton>
-			</ManagePositionContainer>
-		</div>
+					<CloseOrderButton
+						isRounded
+						fullWidth
+						variant="danger"
+						onClick={() => setCancelModalOpen(true)}
+						disabled={!positionDetails || marketInfo?.isSuspended}
+						noOutline
+					>
+						{t('futures.market.user.position.close-position')}
+					</CloseOrderButton>
+				</ManagePositionContainer>
+			</div>
+
+			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
+		</>
 	);
 };
 

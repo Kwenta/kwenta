@@ -55,7 +55,6 @@ const OpenPositionTab: React.FC = () => {
 				marketCapReached={isMarketCapReached}
 				translationKey={placeOrderTranslationKey}
 				openConfirmationModal={() => setModalOpen(true)}
-				openClosePositionModal={() => {}}
 				error={error}
 			/>
 

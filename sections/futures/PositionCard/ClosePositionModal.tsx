@@ -54,7 +54,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const closeTxn = useSynthetixTxn(
 		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
