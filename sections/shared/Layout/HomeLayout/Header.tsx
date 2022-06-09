@@ -141,6 +141,7 @@ const Header: FC = () => {
 
 const MobileContainer = styled(FlexDivRow)`
 	justify-content: space-between;
+	align-items: center;
 `;
 
 const LogoContainer = styled.div`
