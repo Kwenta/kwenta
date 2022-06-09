@@ -117,7 +117,7 @@ const Features = () => {
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.features.title')}</SmallGoldenHeader>
-			<WhiteHeader>{t('homepage.features.description')}</WhiteHeader>
+			<BigWhiteHeader>{t('homepage.features.description')}</BigWhiteHeader>
 		</>
 	);
 
@@ -296,7 +296,13 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	width: 500px;
 	font-size: 18px;
 	${media.lessThan('sm')`
-		width: 385px;
+		width: 333px;
+	`}
+`;
+
+const BigWhiteHeader = styled(WhiteHeader)`
+	${media.lessThan('sm')`
+		width: 336px;
 	`}
 `;
 

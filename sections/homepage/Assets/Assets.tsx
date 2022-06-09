@@ -265,10 +265,10 @@ const Assets = () => {
 
 	var settings = {
 		infinite: true,
-		speed: 500,
+		speed: 0,
 		slidesToShow: 1,
 		slidesToScroll: 1,
-		swipeToSlide: true,
+		fade: true,
 		initialSlide: 1,
 	};
 
@@ -415,62 +415,54 @@ const Assets = () => {
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-								<Slider {...settings}>
-									<>
-										<StatsCard
-											key={key}
-											onClick={() => {
-												router.push(`/market/${key}`);
-											}}
-										>
-											<GridSvg className="bg" objectfit="cover" layout="fill" />
-											<StatsIconContainer>
-												{icon}
-												<StatsNameContainer>
-													<AssetName>{name}</AssetName>
-													<AssetDescription>{description}</AssetDescription>
-												</StatsNameContainer>
-											</StatsIconContainer>
-											<ChartContainer>{image}</ChartContainer>
-											<AssetPrice>
+								<StatsCard
+									key={key}
+									onClick={() => {
+										router.push(`/market/${key}`);
+									}}
+								>
+									<GridSvg className="bg" objectfit="cover" layout="fill" />
+									<StatsIconContainer>
+										{icon}
+										<StatsNameContainer>
+											<AssetName>{name}</AssetName>
+											<AssetDescription>{description}</AssetDescription>
+										</StatsNameContainer>
+									</StatsIconContainer>
+									<ChartContainer>{image}</ChartContainer>
+									<AssetPrice>
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={price}
+											sign={'$'}
+											conversionRate={1}
+										/>
+									</AssetPrice>
+									<StatsValueContainer>
+										<StatsValue>
+											{'CHG    '}
+											{priceChange === 0 ? (
+												<>-</>
+											) : (
+												<ChangePercent value={priceChange} decimals={1} className="change-pct" />
+											)}
+										</StatsValue>
+										<StatsValue>
+											{'VOL    '}
+											{volume === 0 ? (
+												<>-</>
+											) : (
 												<Currency.Price
 													currencyKey={Synths.sUSD}
-													price={price}
+													price={volume}
 													sign={'$'}
 													conversionRate={1}
+													formatOptions={{ minDecimals: 0 }}
 												/>
-											</AssetPrice>
-											<StatsValueContainer>
-												<StatsValue>
-													{'CHG    '}
-													{priceChange === 0 ? (
-														<>-</>
-													) : (
-														<ChangePercent
-															value={priceChange}
-															decimals={1}
-															className="change-pct"
-														/>
-													)}
-												</StatsValue>
-												<StatsValue>
-													{'VOL    '}
-													{volume === 0 ? (
-														<>-</>
-													) : (
-														<Currency.Price
-															currencyKey={Synths.sUSD}
-															price={volume}
-															sign={'$'}
-															conversionRate={1}
-															formatOptions={{ minDecimals: 0 }}
-														/>
-													)}
-												</StatsValue>
-											</StatsValueContainer>
-										</StatsCard>
-									</>
-								</Slider>
+											)}
+										</StatsValue>
+									</StatsValueContainer>
+								</StatsCard>
 							))}
 						</StyledFlexDivRow>
 					</TabPanel>
@@ -543,9 +535,9 @@ const SliderContainer = styled.div`
 `;
 
 const StatsCardContainer = styled.div`
-	margin: auto;
-	margin-left: 10px;
-	margin-right: 10px;
+	display: flex !important;
+	justify-content: center !important;
+	align-items: center !important;
 `;
 
 const StyledSlider = styled(Slider)`

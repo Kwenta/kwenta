@@ -473,6 +473,7 @@ export const WhiteHeader = styled.div`
 	width: 550px;
 	${media.lessThan('sm')`
 		font-size: 32px;
-		width: 296px;
+		width: 306px;
+		text-shadow: none;
 	`}
 `;
