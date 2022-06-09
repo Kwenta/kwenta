@@ -4,6 +4,7 @@ const fontStyles = {
 	black: `AkkuratLLWeb-Black`,
 	mono: `AkkuratMonoLLWeb-Regular`,
 	monoBold: `AkkuratMonoLLWeb-Bold`,
+	compressedBlack: `GT-America-Compressed-Black`,
 	compressedMedium: `GT-America-Compressed-Medium`,
 };
 

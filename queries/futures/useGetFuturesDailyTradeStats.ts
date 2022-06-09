@@ -9,6 +9,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
+import { DAY_PERIOD } from './constants';
 
 const PAGE_SIZE = 500;
 
@@ -23,7 +24,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 		existing: FuturesOneMinuteStat[]
 	): Promise<FuturesOneMinuteStat[]> => {
 		try {
-			const minTimestamp = calculateTimestampForPeriod(24);
+			const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
 			const response = await request(
 				futuresEndpoint,
 				gql`
