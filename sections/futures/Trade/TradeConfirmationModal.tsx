@@ -29,6 +29,7 @@ type TradeConfirmationModalProps = {
 	onConfirmOrder: () => void;
 	side: PositionSide;
 	l1Fee: Wei | null;
+	leverage: string;
 };
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
@@ -39,6 +40,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
+	leverage,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
@@ -50,6 +52,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market, {
 		size: tradeSize,
 		side,
+		leverage,
 	});
 
 	const exchangeRates = useMemo(

@@ -66,15 +66,17 @@ const Market = () => {
 							potentialTrade={potentialTrade}
 						/>
 					</StyledMainContent>
-
-					<StyledRightSideContent>
-						<Trade
-							onEditPositionInput={setPotentialTrade}
-							refetch={refetch}
-							position={futuresMarketPosition}
-							currencyKey={marketAsset}
-						/>
-					</StyledRightSideContent>
+					<DesktopOnlyView>
+						<StyledRightSideContent>
+							<Trade
+								onEditPositionInput={setPotentialTrade}
+								potentialTrade={potentialTrade}
+								refetch={refetch}
+								position={futuresMarketPosition}
+								currencyKey={marketAsset}
+							/>
+						</StyledRightSideContent>
+					</DesktopOnlyView>
 				</StyledFullHeightContainer>
 			</StyledPageContent>
 		</>

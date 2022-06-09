@@ -3,7 +3,6 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
-import useSynthetixQueries from '@synthetixio/queries';
 
 import { TabPanel } from 'components/Tab';
 import TabButton from 'components/Button/TabButton';
@@ -32,6 +31,8 @@ import { FuturesTrade } from 'queries/futures/types';
 import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { PotentialTrade } from '../types';
 
 enum FuturesTab {
 	POSITION = 'position',
@@ -46,15 +47,21 @@ const FutureTabs = Object.values(FuturesTab);
 type UserInfoProps = {
 	marketAsset: CurrencyKey;
 	position: FuturesPosition | null;
+	potentialTrade: PotentialTrade | null;
 	openOrders: any[];
 	refetch(): void;
 };
 
-const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, refetch }) => {
+const UserInfo: React.FC<UserInfoProps> = ({
+	marketAsset,
+	position,
+	potentialTrade,
+	openOrders,
+	refetch,
+}) => {
 	const router = useRouter();
 	const walletAddress = useRecoilValue(walletAddressState);
 
-	const { useExchangeRatesQuery } = useSynthetixQueries();
 	const exchangeRatesQuery = useExchangeRatesQuery({
 		refetchInterval: 15000,
 	});
@@ -188,6 +195,7 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset, position, openOrders, 
 					position={position}
 					currencyKey={marketAsset}
 					currencyKeyRate={marketAssetRate}
+					potentialTrade={potentialTrade}
 				/>
 				<FuturesPositionsTable
 					futuresMarkets={otherFuturesMarkets}

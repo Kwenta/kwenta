@@ -211,14 +211,14 @@ const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	}
 
 	&:nth-child(odd) {
-		background-color: ${(props) => props.theme.colors.selectedTheme.table};
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 
 	${(props) =>
 		props.$highlightRowsOnHover &&
 		css`
 			&:hover {
-				background-color: rgba(255, 255, 255, 0.1);
+				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
 			}
 		`}
 `;

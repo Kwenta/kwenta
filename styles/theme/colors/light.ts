@@ -8,7 +8,7 @@ const lightTheme = {
 	black: '#171002',
 	white: '#F2F2F2',
 	gray: '#515151',
-	table: '#EDEDED',
+	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
