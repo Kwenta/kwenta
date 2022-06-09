@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import FullScreenModal from 'components/FullScreenModal';
+import CrossIcon from 'assets/svg/app/cross.svg';
+import { resetButtonCSS } from 'styles/common';
 
 type DrawerItem = {
 	label: string;
@@ -19,6 +21,11 @@ const BaseDrawer: React.FC<BaseDrawerProps> = ({ open, closeDrawer, items, butto
 	<StyledModal isOpen={open}>
 		<Background onClick={closeDrawer}>
 			<Foreground>
+				<CloseButtonRow>
+					<CloseButton onClick={closeDrawer}>
+						<CrossIcon />
+					</CloseButton>
+				</CloseButtonRow>
 				{items.map(({ label, value }) => (
 					<Row key={label}>
 						<div className="key">{label}</div>
@@ -100,6 +107,17 @@ const ButtonsContainer = styled.div`
 	width: 100%;
 	display: flex;
 	margin-top: 5px;
+`;
+
+const CloseButtonRow = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+`;
+
+const CloseButton = styled.button`
+	${resetButtonCSS};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 export default BaseDrawer;
