@@ -11,6 +11,7 @@ export const SummaryItems = styled.div<{ attached?: boolean }>`
 	grid-auto-flow: column;
 	flex-grow: 1;
 	padding-left: 32px;
+	justify-content: space-between;
 	${media.lessThan('md')`
 		grid-auto-flow: unset;
 		grid-template-columns: auto auto;

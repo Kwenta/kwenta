@@ -357,7 +357,7 @@
 		"summary-info": {
 			"gas-price-gwei": "gas price (GWEI)",
 			"max-fee-gwei": "Max Fee (GWEI)",
-			"fee": "fee",
+			"fee": "Exchange fee",
 			"fee-cost": "fee cost",
 			"button": {
 				"approve": "approve",
