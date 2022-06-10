@@ -2,25 +2,9 @@ import { FC, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import Link from 'next/link';
-import router, { useRouter } from 'next/router';
 
-import {
-	FixedFooterMixin,
-	FlexDivCentered,
-	FlexDivCol,
-	FlexDivRow,
-	FlexDivRowCentered,
-	TextButton,
-} from 'styles/common';
 import Connector from 'containers/Connector';
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
-import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
 import FullScreenModal from 'components/FullScreenModal';
-import Button from 'components/Button';
-import { menuLinksState } from '../states';
-import ConnectionDot from '../ConnectionDot';
-import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { isL2State } from 'store/wallet';
 
@@ -68,7 +52,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, on
 	const handleToggle = (category: SettingCategories) => () => {
 		setExpanded((c) => (category === c ? undefined : category));
 	};
-	
+
 	return (
 		<StyledFullScreenModal isOpen={true}>
 			<Container>
@@ -76,7 +60,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, on
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
 
-				{!homepage && 
+				{!homepage && (
 					<>
 						<MenuButtonContainer>
 							<MobileSubMenu
@@ -119,7 +103,8 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, on
 								]}
 							/>
 						</MenuButtonContainer>
-				</>}
+					</>
+				)}
 
 				<MenuButtonContainer>
 					<MobileSubMenu
@@ -139,91 +124,6 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, on
 		</StyledFullScreenModal>
 	);
 };
-
-const StyleFlexDivCol = styled(FlexDivCol)`
-	justify-content: space-between;
-	align-items: center;
-	height: 580px;
-`;
-
-const SocialItem = styled.div`
-	padding: 10px;
-	&:hover {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-	}
-`;
-
-const StyleFlexDivRow = styled(FlexDivRow)`
-	color: ${(props) => props.theme.colors.common.tertiaryGray};
-	justify-content: center;
-	align-items: center;
-	column-gap: 30px;
-	margin-top: 51px;
-`;
-
-const StyledMenu = styled.div`
-	padding: 10px 0px;
-	margin-top: 15px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-`;
-
-const StyledMenuItem = styled.p`
-	font-family: ${(props) => props.theme.fonts.bold};
-	cursor: pointer;
-	width: 90px;
-	font-size: 15px;
-	height: 30px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: flex-start;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	margin: 0px;
-
-	&:hover {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
-	}
-
-	svg {
-		margin-right: 10px;
-		width: 15px;
-		height: 15px;
-	}
-`;
-
-const Links = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-content: space-between;
-	padding-top: 10px;
-`;
-
-const StyledTextButton = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	font-size: 17px;
-	line-height: 140%;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.common.tertiaryGray};
-	cursor: pointer;
-	margin: 0px 20px;
-	padding: 24px 0px;
-	border-bottom: 1px solid #3d3c3c;
-
-	svg {
-		margin-left: 10px;
-	}
-
-	> .governance {
-		width: 330px;
-	}
-`;
 
 const StyledFullScreenModal = styled(FullScreenModal)`
 	top: 0;

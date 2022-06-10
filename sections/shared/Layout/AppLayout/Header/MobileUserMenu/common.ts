@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import ROUTES from 'constants/routes';
+import { EXTERNAL_LINKS } from 'constants/links';
 
 export const MenuButton = styled.div<{ isActive: boolean }>`
 	outline: none;
@@ -30,6 +31,10 @@ export const SUB_MENUS = {
 		// { label: 'Rewards', link: '/rewards' },
 		{ label: 'Markets', link: '/dashboard/markets' },
 		// { label: 'Governance', link: '/governance' },
+	],
+	[ROUTES.Home.Root]: [
+		{ label: 'Overview', link: EXTERNAL_LINKS.Docs.Governance },
+		{ label: 'KIPs', link: EXTERNAL_LINKS.Kips.Home },
 	],
 };
 

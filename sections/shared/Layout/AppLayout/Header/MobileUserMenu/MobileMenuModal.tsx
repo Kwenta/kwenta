@@ -11,20 +11,21 @@ import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
 import Links from 'sections/dashboard/Links';
 
-import { menuLinksState } from '../states';
+import { homepageMenuLinksState, menuLinksState } from '../states';
 
 import MobileSubMenu from './MobileSubMenu';
 import { MenuButton, SUB_MENUS } from './common';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 
 type MobileMenuModalProps = {
+	homepage?: boolean;
 	onDismiss(): void;
 };
 
-export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
+export const MobileMenuModal: FC<MobileMenuModalProps> = ({ homepage, onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const menuLinks = useRecoilValue(menuLinksState);
+	const menuLinks = useRecoilValue(homepage ? homepageMenuLinksState : menuLinksState);
 	const isL2 = useRecoilValue(isL2State);
 
 	const [expanded, setExpanded] = useState<string | undefined>();
@@ -37,7 +38,7 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 		<StyledFullScreenModal isOpen={true}>
 			<Container>
 				<LogoContainer>
-					<Logo isFutures isL2={isL2} />
+					<Logo isHomePage={homepage} isFutures isL2={isL2} />
 				</LogoContainer>
 				{menuLinks.map(({ i18nLabel, link }) => (
 					<div key={link}>

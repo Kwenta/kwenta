@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 
-import { FixedFooterMixin, FlexDivCentered, FlexDivRowCentered } from 'styles/common';
+import { FixedFooterMixin } from 'styles/common';
 import MenuIcon from 'assets/svg/app/menu.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
 
@@ -48,16 +48,15 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-				{homepage 
-				?
-				<Link href={ROUTES.Markets.Home}>
-						<Button variant="primary" isRounded={false} size="sm">
-							{t('homepage.nav.start-trade')}
-						</Button>
-				  </Link>
-				:
-					<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
-				}
+					{homepage ? (
+						<Link href={ROUTES.Markets.Home}>
+							<Button variant="primary" isRounded={false} size="sm">
+								{t('homepage.nav.start-trade')}
+							</Button>
+						</Link>
+					) : (
+						<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
+					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
 			{isOpen === 'menu' && <MobileMenuModal homepage={homepage} onDismiss={closeModal} />}

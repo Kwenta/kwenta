@@ -19,6 +19,9 @@ type LogoProps = {
 
 const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => {
 	const currentTheme = useRecoilValue(currentThemeState);
+	if (isHomePage) {
+		return <LogoSvg />;
+	}
 
 	if (isFutures) {
 		if (currentTheme === 'dark') {
@@ -28,9 +31,7 @@ const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => 
 			return <LogoSvgBetaLight />;
 		}
 	}
-	if (isHomePage) {
-		return <LogoSvg />;
-	}
+
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
 };
 

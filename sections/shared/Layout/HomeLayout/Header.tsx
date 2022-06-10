@@ -147,7 +147,8 @@ const MobileContainer = styled(FlexDivRow)`
 const LogoContainer = styled.div`
 	padding-top: 8px;
 	${media.lessThan('md')`
-		padding-top: 0px;
+		padding-top: 4px;
+		padding-left:17px;
 	`}
 `;
 
