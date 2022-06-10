@@ -1,92 +1,97 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { isWalletConnectedState } from 'store/wallet';
-import { hasOrdersNotificationState } from 'store/ui';
-import { resetButtonCSS } from 'styles/common';
-
-import NotificationIcon from 'assets/svg/app/notification.svg';
-import NotificationAlertIcon from 'assets/svg/app/notification-alert.svg';
+import { FixedFooterMixin, FlexDivCentered, FlexDivRowCentered } from 'styles/common';
 import MenuIcon from 'assets/svg/app/menu.svg';
-import CrossIcon from 'assets/svg/app/cross.svg';
-
-import NotificationsModal from 'sections/shared/modals/NotificationsModal';
+import CloseIcon from 'assets/svg/app/close.svg';
 
 import MobileSettingsModal from './MobileSettingsModal';
+import MobileWalletButton from './MobileWalletButton';
+import MobileMenuModal from './MobileMenuModal';
+import ROUTES from 'constants/routes';
+import Link from 'next/link';
+import Button from 'components/Button';
+import { useTranslation } from 'react-i18next';
 
 type MobileUserMenuProps = {
-	homepage?: boolean | null;
+	homepage?: boolean;
 };
 
 const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
-	const [notificationsModalOpened, setNotificationsModalOpened] = useState<boolean>(false);
-	const [hasOrdersNotification, setHasOrdersNotification] = useRecoilState(
-		hasOrdersNotificationState
-	);
+	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
+	const { t } = useTranslation();
+	const closeModal = () => {
+		setIsOpen(undefined);
+	};
+
+	const toggleModal = (modal: 'menu' | 'settings') => () => {
+		setIsOpen((s) => {
+			if (!!s) {
+				if (s === modal) {
+					return undefined;
+				} else if (s === 'menu') {
+					return 'settings';
+				} else {
+					return 'menu';
+				}
+			} else {
+				return modal;
+			}
+		});
+	};
 
 	return (
 		<>
-			<Container>
-				<Menu style={{ paddingRight: 0 }}>
-					{!homepage && isWalletConnected && (
-						<MenuButton
-							onClick={() => {
-								setNotificationsModalOpened(!notificationsModalOpened);
-								setSettingsModalOpened(false);
-								if (hasOrdersNotification) {
-									setHasOrdersNotification(false);
-								}
-							}}
-							isActive={notificationsModalOpened}
-						>
-							{hasOrdersNotification ? <NotificationAlertIcon /> : <NotificationIcon />}
-						</MenuButton>
-					)}
-					<MenuButton
-						onClick={() => {
-							setSettingsModalOpened(!settingsModalOpened);
-							setNotificationsModalOpened(false);
-						}}
-						isActive={settingsModalOpened}
-					>
-						{settingsModalOpened ? <CrossIcon /> : <MenuIcon />}
-					</MenuButton>
-				</Menu>
-			</Container>
-			{notificationsModalOpened && (
-				<NotificationsModal onDismiss={() => setNotificationsModalOpened(false)} />
-			)}
-			{settingsModalOpened && (
-				<MobileSettingsModal homepage={homepage} onDismiss={() => setSettingsModalOpened(false)} />
-			)}
+			<MobileFooterContainer>
+				<MobileFooterIconContainer onClick={!!isOpen ? closeModal : toggleModal('menu')}>
+					{!!isOpen ? <CloseIcon /> : <MenuIcon />}
+				</MobileFooterIconContainer>
+				<MobileFooterSeparator />
+				<MobileFooterRight>
+				{homepage 
+				?
+				<Link href={ROUTES.Markets.Home}>
+						<Button variant="primary" isRounded={false} size="sm">
+							{t('homepage.nav.start-trade')}
+						</Button>
+				  </Link>
+				:
+					<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
+				}
+				</MobileFooterRight>
+			</MobileFooterContainer>
+			{isOpen === 'menu' && <MobileMenuModal homepage={homepage} onDismiss={closeModal} />}
+			{isOpen === 'settings' && <MobileSettingsModal homepage={homepage} onDismiss={closeModal} />}
 		</>
 	);
 };
 
-const Container = styled.div``;
-
-const Menu = styled.div`
-	padding-right: 26px;
-	display: grid;
-	grid-gap: 10px;
-	grid-auto-flow: column;
+const MobileFooterContainer = styled.div`
+	${FixedFooterMixin};
+	display: flex;
+	align-items: center;
+	border-top: 1px solid #2b2a2a;
+	padding: 16px 20px;
+	background-color: ${(props) => props.theme.colors.selectedTheme.background};
+	z-index: 51;
 `;
 
-const MenuButton = styled.button<{ isActive: boolean }>`
-	${resetButtonCSS};
-	color: ${(props) =>
-		props.isActive ? props.theme.colors.selectedTheme.button.text : props.theme.colors.blueberry};
-	&:hover {
-		color: ${(props) => props.theme.colors.white};
-	}
-	padding: 0px;
-	svg {
-		height: 18px;
-		width: 18px;
-	}
+const MobileFooterIconContainer = styled.div`
+	width: 25px;
+`;
+
+const MobileFooterSeparator = styled.div`
+	margin: 0 20px;
+	height: 41px;
+	width: 1px;
+	background-color: #2b2a2a;
+`;
+
+const MobileFooterRight = styled.div`
+	display: flex;
+	flex-grow: 1;
+	justify-content: flex-end;
+	align-items: center;
 `;
 
 export default MobileUserMenu;

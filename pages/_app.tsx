@@ -67,7 +67,7 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 					<Layout>
 						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
 					</Layout>
-					<ReactQueryDevtools />
+					{/* <ReactQueryDevtools /> */}
 				</SynthetixQueryContextProvider>
 			</MediaContextProvider>
 		</ThemeProvider>
