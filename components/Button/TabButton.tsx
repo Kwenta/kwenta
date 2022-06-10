@@ -29,8 +29,8 @@ const TabButton: React.FC<TabButtonProps> = ({
 }) => {
 	return (
 		<StyledButton {...props} {...{ active, gold, vertical, nofill }} noOutline>
-			<div className="orientation">
-				{!!icon && <div>{icon}</div>}
+			{!!icon && <div>{icon}</div>}
+			<div>
 				<div className="title-container">
 					<p className="title">{title}</p>
 					{!!badge && <div className="badge">{badge}</div>}
@@ -130,10 +130,12 @@ const StyledButton = styled(Button)<{
 			}
 		`}
 
-	.orientation {
-		display: flex;
-		flex-direction: ${(props) => (props.vertical ? 'column' : 'row')};
-		align-items: center;
-	}
+	${(props) =>
+		props.vertical &&
+		css`
+			display: flex;
+			flex-direction: ${props.vertical ? 'column' : 'row'};
+			align-items: center;
+		`}
 `;
 export default TabButton;
