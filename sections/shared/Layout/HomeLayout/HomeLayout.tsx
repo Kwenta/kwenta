@@ -11,7 +11,7 @@ type HomeLayoutProps = {
 
 const HomeLayout: FC<HomeLayoutProps> = ({ children }) => (
 	<FullScreenContainer>
-		<Media greaterThan="sm">
+		<Media greaterThanOrEqual="sm">
 			<BlueBlurImageHero />
 			<GoldenBlurImageHero />
 			<BlueBlurImageShortList />
