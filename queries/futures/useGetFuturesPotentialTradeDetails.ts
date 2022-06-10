@@ -58,7 +58,10 @@ const useGetFuturesPotentialTradeDetails = (
 			walletAddress || ''
 		),
 		async () => {
-			if (!marketAsset || !tradeSize || !isL2) return null;
+			if (!marketAsset || !tradeSize || !isL2) {
+				setPotentialTradeDetails(null);
+				return null;
+			}
 
 			const {
 				contracts: { FuturesMarketData },

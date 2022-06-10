@@ -29,8 +29,8 @@ const TabButton: React.FC<TabButtonProps> = ({
 }) => {
 	return (
 		<StyledButton {...props} {...{ active, gold, vertical, nofill }} noOutline>
-			{!!icon && <div>{icon}</div>}
-			<div>
+			<div className="orientation">
+				{!!icon && <div>{icon}</div>}
 				<div className="title-container">
 					<p className="title">{title}</p>
 					{!!badge && <div className="badge">{badge}</div>}
@@ -67,16 +67,14 @@ const StyledButton = styled(Button)<{
 	.title {
 		text-align: center;
 		color: ${(props) =>
-			props.isActive
+			props.active
 				? props.theme.colors.selectedTheme.button.text
 				: props.theme.colors.selectedTheme.gray};
 	}
 
 	.detail {
 		color: ${(props) =>
-			props.isActive
-				? props.theme.colors.selectedTheme.gold
-				: props.theme.colors.selectedTheme.gray};
+			props.active ? props.theme.colors.selectedTheme.gold : props.theme.colors.selectedTheme.gray};
 		margin-top: 4px;
 		font-size: 18px;
 		font-family: ${(props) => props.theme.fonts.monoBold};
