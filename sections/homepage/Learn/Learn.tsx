@@ -71,14 +71,16 @@ const Learn = () => {
 							{key !== 'faq' ? (
 								<>
 									<FeatureTitle className={key}>{t(title)}</FeatureTitle>
-									<FeatureCopy>{t(copy)}</FeatureCopy>
+									<FeatureCopy className={key}>{t(copy)}</FeatureCopy>
 									<StyledButton
 										isRounded={false}
 										size="sm"
 										onClick={onClick}
 										disabled={key === 'how-to-stake'}
 									>
-										{t('homepage.learn.title')}
+										{key === 'how-to-stake'
+											? t('homepage.learn.coming-soon')
+											: t('homepage.learn.title')}
 										<ArrowUpRightIcon />
 									</StyledButton>
 								</>
@@ -111,6 +113,10 @@ const FeatureCopy = styled(Copy)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	margin-bottom: 36px;
 	width: 280px;
+
+	&.how-to-trade {
+		width: 300px;
+	}
 
 	${media.lessThan('sm')`
 		text-align: center;

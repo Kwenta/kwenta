@@ -223,6 +223,7 @@ const FeatureCard = styled(FlexDivRow)`
 	padding: 32px 80px 32px 32px;
 	width: 403px;
 	height: 135px;
+
 	${media.lessThan('sm')`
 		width: 305px;
 		height: auto;
@@ -276,6 +277,8 @@ const ComingSoonTag = styled(FlexDivCentered)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 8px;
 	border: 1px solid #9c6c3c;
+	cursor: default;
+
 	${media.lessThan('sm')`
 		margin-left: -16px;
 	`}

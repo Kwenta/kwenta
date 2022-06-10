@@ -342,7 +342,7 @@ const StatsCardContainer = styled(FlexDivRow)`
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
-	width: 308px;
+	width: 291px;
 	height: 191px;
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
@@ -354,6 +354,7 @@ const StatsCard = styled(FlexDivColCentered)`
 	svg {
 		width: 307px;
 		height: 79px;
+		background-size: cover;
 	}
 `;
 

@@ -82,7 +82,7 @@
 		},
 		"earning": {
 			"title": "Earnings",
-			"description": "See What You Can Do With <0>$KWENTA</0> Token",
+			"description": "See What You Can Do With The <0>$KWENTA</0> Token",
 			"copy": "Stake to earn, receive trading bonuses and participate in Kwenta DAO governance.",
 			"stake-to-earn": {
 				"title": "stake to earn",
@@ -97,7 +97,7 @@
 				"copy": "Token-managed governance empowers the community to help steer the Kwenta Exchange"
 			},
 			"how-to-earn": "How to earn",
-			"stake-kwenta": "Stake KWENTA",
+			"stake-kwenta": "Coming Soon",
 			"stats": {
 				"volume": "Total Trading Volume",
 				"trades": "Total Trades"
@@ -105,10 +105,11 @@
 		},
 		"learn": {
 			"title": "Learn More",
-			"description": "Explore Endless Possibilities Of Kwenta Exchange",
+			"coming-soon": "coming-soon",
+			"description": "Explore Endless Possibilities Of The Kwenta Exchange",
 			"how-to-trade": {
 				"title": "Learn How To Trade On Kwenta",
-				"copy": "Trading made easy, trade like a pro!"
+				"copy": "Learn about the many features of kwenta; up to 10x leverage, near instant transactions, liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
@@ -126,7 +127,7 @@
 			"categories": "Commodities, Forex, Crypto and more."
 		},
 		"features": {
-			"title": "FEATURE CALLOUTS",
+			"title": "FEATURE",
 			"description": "Trading Without The Limits Of A Centralised Exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
