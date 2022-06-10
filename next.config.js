@@ -89,5 +89,9 @@ module.exports = withPlugins([
 				},
 			};
 		},
+		compiler: {
+			// ssr and displayName are configured by default
+			styledComponents: true,
+		},
 	},
 ]);
