@@ -33,7 +33,7 @@ const UserMenu: FC = () => {
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [uniswapWidgetOpened, setUniswapWidgetOpened] = useState<boolean>(false);
 	const [toggleTheme, setToggleTheme] = useState<boolean>(true);
-	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
+	const [, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
 
 	const ThemeIcon = toggleTheme ? SunIcon : MoonIcon;
