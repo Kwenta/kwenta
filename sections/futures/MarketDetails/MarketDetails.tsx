@@ -108,53 +108,53 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		switch (key) {
 			case 'External Price':
 				return (
-					<StyledTooltip
+					<MarketDetailsTooltip
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
 					>
 						{children}
-					</StyledTooltip>
+					</MarketDetailsTooltip>
 				);
 			case '24H Change':
 				return (
-					<StyledTooltip
+					<MarketDetailsTooltip
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
 					>
 						{children}
-					</StyledTooltip>
+					</MarketDetailsTooltip>
 				);
 			case '24H Volume':
 				return (
-					<StyledTooltip
+					<MarketDetailsTooltip
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
 						{children}
-					</StyledTooltip>
+					</MarketDetailsTooltip>
 				);
 			case '24H Trades':
 				return (
-					<StyledTooltip
+					<MarketDetailsTooltip
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
 						{children}
-					</StyledTooltip>
+					</MarketDetailsTooltip>
 				);
 			case 'Open Interest':
 				return (
-					<StyledTooltip
+					<MarketDetailsTooltip
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
 					>
 						{children}
-					</StyledTooltip>
+					</MarketDetailsTooltip>
 				);
 			case assetName:
 				return (
@@ -232,34 +232,16 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					: NO_VALUE,
 			},
 			'24H Trades': {
-				value: !!futuresDailyTradeStats ? (
-					<StyledTooltip
-						preset="bottom"
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.24h-trades')}
-					>
-						{`${futuresDailyTradeStats ?? 0}`}
-					</StyledTooltip>
-				) : (
-					NO_VALUE
-				),
+				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
 			},
 			'Open Interest': {
-				value: marketSummary?.marketSize?.mul(wei(basePriceRate)) ? (
-					<StyledTooltip
-						preset="bottom"
-						height={'auto'}
-						content={t('exchange.market-details-card.tooltips.open-interest')}
-					>
-						{formatCurrency(
+				value: marketSummary?.marketSize?.mul(wei(basePriceRate))
+					? formatCurrency(
 							selectedPriceCurrency.name,
 							marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
 							{ sign: '$' }
-						)}
-					</StyledTooltip>
-				) : (
-					NO_VALUE
-				),
+					  )
+					: NO_VALUE,
 			},
 			[fundingTitle]: {
 				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
@@ -309,15 +291,21 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 `;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	bottom: -145px;
+	bottom: -115px;
 	z-index: 2;
 	left: -200px;
+	padding: 10px;
+`;
+
+const MarketDetailsTooltip = styled(StyledTooltip)`
+	z-index: 2;
+	padding: 10px;
 `;
 
 const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	height: 55px;
-	padding: 12px 45px 10px 15px;
+	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
 
@@ -336,26 +324,26 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	}
 
 	.heading {
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.text.title};
 	}
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
 
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 
 	.paused {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 
 	${(props) =>

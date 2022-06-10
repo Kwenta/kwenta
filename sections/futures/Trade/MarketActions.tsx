@@ -29,12 +29,14 @@ const MarketActions: React.FC = () => {
 				<MarketActionButton
 					disabled={marketInfo?.isSuspended}
 					onClick={() => setOpenModal('deposit')}
+					noOutline
 				>
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
 					disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
 					onClick={() => setOpenModal('withdraw')}
+					noOutline
 				>
 					{t('futures.market.trade.button.withdraw')}
 				</MarketActionButton>

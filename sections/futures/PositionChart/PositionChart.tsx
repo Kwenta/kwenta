@@ -3,17 +3,17 @@ import { Synths } from 'constants/currency';
 
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 import TVChart from 'components/TVChart';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState, tradeSizeState } from 'store/futures';
+import { currentMarketState, potentialTradeDetailsState, tradeSizeState } from 'store/futures';
 
 export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
 
 	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
-	const potentialTradeDetails = useGetFuturesPotentialTradeDetails();
+
+	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
@@ -23,16 +23,16 @@ export default function PositionChart() {
 	const tradeSize = useRecoilValue(tradeSizeState);
 
 	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && potentialTradeDetails.data && !!tradeSize) {
+		if (subgraphPosition && previewTrade && !!tradeSize) {
 			const totalSize = subgraphPosition.size.add(tradeSize);
 
 			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = potentialTradeDetails.data.price.mul(tradeSize);
+			const newValue = previewTrade.price.mul(tradeSize);
 			const totalValue = existingValue.add(newValue);
 			return totalValue.div(totalSize);
 		}
 		return null;
-	}, [subgraphPosition, potentialTradeDetails.data, tradeSize]);
+	}, [subgraphPosition, previewTrade, tradeSize]);
 
 	const activePosition = useMemo(() => {
 		if (!futuresMarketsPosition?.position) {
@@ -54,11 +54,11 @@ export default function PositionChart() {
 			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
 			potentialTrade={
-				potentialTradeDetails?.data
+				previewTrade
 					? {
-							price: modifiedAverage || potentialTradeDetails.data.price,
-							liqPrice: potentialTradeDetails.data.liqPrice,
-							size: potentialTradeDetails.data.size,
+							price: modifiedAverage || previewTrade.price,
+							liqPrice: previewTrade.liqPrice,
+							size: previewTrade.size,
 					  }
 					: null
 			}

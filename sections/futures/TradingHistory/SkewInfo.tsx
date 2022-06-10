@@ -94,23 +94,25 @@ const OpenInterestRow = styled.div`
 	line-height: 16px;
 	padding-bottom: 10px;
 	padding-top: 10px;
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 
 	:last-child {
 		padding-bottom: 0;
 	}
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 `;
 
 const SkewTooltip = styled(StyledTooltip)`
 	left: -30px;
 	z-index: 2;
+	padding: 10px;
 `;
 
 const SkewContainer = styled.div`
@@ -136,15 +138,15 @@ const SkewContainer = styled.div`
 	}
 
 	.heading {
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 		width: 292px;
 	}
 
 	.value {
 		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	}
 `;
 
@@ -152,16 +154,18 @@ const SkewHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 `;
 
 const SkewLabel = styled(CapitalizedText)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	font-size: 13px;
 `;
 
 const SkewValue = styled(NumericValue)`
 	text-align: center;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;

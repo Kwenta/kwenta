@@ -12,7 +12,6 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
 import { newGetTransactionPrice } from 'utils/network';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths, CurrencyKey } from 'constants/currency';
@@ -20,7 +19,7 @@ import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { GasLimitEstimate } from 'constants/network';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
@@ -43,7 +42,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails();
+	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -160,7 +159,7 @@ const Row = styled(FlexDivCentered)`
 `;
 
 const Label = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -168,7 +167,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-top: 6px;
 `;

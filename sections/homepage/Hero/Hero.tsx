@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
@@ -22,13 +22,16 @@ const Hero = () => {
 		<StackSection>
 			<LogoNoTextSVG />
 			<Header>{t('homepage.hero.title')}</Header>
+			<ProductDescription>
+				<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
+			</ProductDescription>
 			<SynthetixContainer>
 				<PoweredBySynthetix />
 			</SynthetixContainer>
 			<CTAContainer>
-				<Link href={ROUTES.Home.Overview}>
-					<Button variant="primary" isRounded={false} size="lg">
-						{t('homepage.nav.start-trading')}
+				<Link href={ROUTES.Markets.Home}>
+					<Button variant="primary" isRounded={false} size="md">
+						{t('homepage.nav.trade-now')}
 					</Button>
 				</Link>
 			</CTAContainer>
@@ -39,14 +42,30 @@ const Hero = () => {
 	);
 };
 
+const Emphasis = styled.b`
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+`;
+
 const Header = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 48px;
+	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	max-width: 636px;
+	font-size: 80px;
+	line-height: 85%;
+	text-align: center;
+	text-transform: uppercase;
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	text-shadow: 0px 0px 62px rgba(208, 168, 117, 0.35);
+	padding-top: 40px;
+`;
+
+const ProductDescription = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.regular};
+	max-width: 530px;
+	font-size: 24px;
 	line-height: 120%;
 	text-align: center;
-	letter-spacing: 0.2px;
-	color: ${(props) => props.theme.colors.white};
-	padding-top: 40px;
+	color: #bdbdbd;
+	padding-top: 16px;
 `;
 
 const HeroImageContainer = styled(GridDiv)`
@@ -54,25 +73,21 @@ const HeroImageContainer = styled(GridDiv)`
 	overflow: hidden;
 	display: grid;
 	justify-content: center;
-	margin-top: -40px;
-	min-height: 839px;
-	${media.lessThan('md')`
-		min-height: 684px;
-	`}
-	${media.lessThan('sm')`
-		margin-top: 0;
-		min-height: 338px;
-	`}
+	margin-top: 97px;
+	margin-bottom: 201px;
 `;
 
 const HeroImage = styled.img`
-	max-width: 1400px;
+	width: 960px;
 	${media.lessThan('md')`
-		width: 1140px;
+		width: 785px;
 	`}
 	${media.lessThan('sm')`
-		width: 560px;
+		width: 380px;
 	`}
+	background: linear-gradient(180deg, #C9975A 0%, #94F2FF 100%);
+	border: 1px solid;
+	border-radius: 20px;
 `;
 
 const SynthetixContainer = styled.div`

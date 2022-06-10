@@ -7,6 +7,7 @@ import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositio
 import useGetFuturesMarketPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
 
@@ -27,6 +28,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionQuery = useGetFuturesPositionForMarket();
 	const positionHistoryQuery = useGetFuturesMarketPositionHistory();
 	const marketQuery = useGetFuturesMarket();
+	useGetFuturesPotentialTradeDetails();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {

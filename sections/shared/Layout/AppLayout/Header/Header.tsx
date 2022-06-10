@@ -1,10 +1,9 @@
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-import { GridDivCol } from 'styles/common';
 
 import Logo from '../../Logo';
 
@@ -14,13 +13,12 @@ import { isL2State } from 'store/wallet';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
-	const logo = useMemo(() => <Logo isL2={isL2} isFutures />, [isL2]);
 
 	return (
 		<Container isL2={isL2}>
 			<MobileHiddenView>
 				<LogoNav>
-					{logo}
+					<StyledLogo isL2={isL2} isFutures={true} />
 					<Nav />
 				</LogoNav>
 				<UserMenu />
@@ -39,14 +37,14 @@ const Container = styled.header<{ isL2: boolean }>`
 		padding-bottom: 20px;
 		display: flex;
 		justify-content: space-between;
-		align-items: flex-start;
 	}
 `;
 
-const LogoNav = styled(GridDivCol)`
-	padding-top: 8px;
-	grid-gap: 24px;
-	align-items: start;
+const LogoNav = styled.div`
+	display: flex;
+	align-items: center;
 `;
+
+const StyledLogo = styled(Logo)``;
 
 export default Header;

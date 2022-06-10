@@ -28,14 +28,15 @@ const TabButton: React.FC<TabButtonProps> = ({
 	...props
 }) => {
 	return (
-		<StyledButton active={active} gold={gold} vertical={vertical} nofill={nofill} {...props}>
-			<div className="orientation">
-				{!!icon && <div>{icon}</div>}
-				<div>
+		<StyledButton {...props} {...{ active, gold, vertical, nofill }} noOutline>
+			{!!icon && <div>{icon}</div>}
+			<div>
+				<div className="title-container">
 					<p className="title">{title}</p>
-					{detail && <p className="detail">{detail}</p>}
+					{!!badge && <div className="badge">{badge}</div>}
 				</div>
-				{!!badge && <div className="badge">{badge}</div>}
+
+				{detail && <p className="detail">{detail}</p>}
 			</div>
 		</StyledButton>
 	);
@@ -53,24 +54,32 @@ const StyledButton = styled(Button)<{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
-
+	background-color: ${(props) => !props.active && 'transparent'};
 	p {
 		margin: 0;
 		font-size: 13px;
 		text-align: left;
 	}
-
+	.title-container {
+		display: flex;
+		flex-direction: row;
+	}
 	.title {
 		text-align: center;
 		color: ${(props) =>
-			props.active
-				? props.theme.colors.common.primaryWhite
-				: props.theme.colors.common.secondaryGray};
+			props.isActive
+				? props.theme.colors.selectedTheme.button.text
+				: props.theme.colors.selectedTheme.gray};
 	}
 
 	.detail {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
-		margin-top: 2px;
+		color: ${(props) =>
+			props.isActive
+				? props.theme.colors.selectedTheme.gold
+				: props.theme.colors.selectedTheme.gray};
+		margin-top: 4px;
+		font-size: 18px;
+		font-family: ${(props) => props.theme.fonts.monoBold};
 	}
 
 	.badge {
@@ -80,10 +89,9 @@ const StyledButton = styled(Button)<{
 		padding-left: 4px;
 		padding-right: 4px;
 		margin-left: 7px;
-		font-size: 12px;
-		color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.text};
+		font-size: 13px;
+		color: ${(props) => props.theme.colors.selectedTheme.black};
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.background};
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.button.tab.badge.shadow};
 		border-radius: 4px;
 	}
 
@@ -93,8 +101,8 @@ const StyledButton = styled(Button)<{
 			${(props) =>
 				css`
 					${props.nofill ? 'stroke' : 'fill'}: ${props.active
-						? props.theme.colors.common.primaryWhite
-						: props.theme.colors.common.secondaryGray};
+						? props.theme.colors.selectedTheme.button.text
+						: props.theme.colors.selectedTheme.gray};
 				`}
 		}
 	}

@@ -21,6 +21,7 @@ import {
 	maxLeverageState,
 	orderTypeState,
 	positionState,
+	potentialTradeDetailsState,
 	sizeDeltaState,
 	tradeSizeState,
 	tradeSizeSUSDState,
@@ -245,6 +246,8 @@ const useFuturesData = () => {
 		setFeeCost,
 	]);
 
+	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
@@ -262,6 +265,7 @@ const useFuturesData = () => {
 		marketAsset,
 		market,
 		orderTxn,
+		previewTrade,
 	};
 };
 

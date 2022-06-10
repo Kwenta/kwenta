@@ -125,7 +125,7 @@ export const SelectableCurrencyRow = styled(FlexDivRowCentered)<{ isSelectable: 
 			? css`
 					cursor: pointer;
 					&:hover {
-						background-color: ${(props) => props.theme.colors.black};
+						background-color: ${(props) => props.theme.colors.selectedTheme.cell.hover};
 					}
 			  `
 			: css`
@@ -188,10 +188,11 @@ export const BottomShadow = styled.div`
 export const FullScreenContainer = styled(FlexDiv)`
 	flex-flow: column;
 	width: 100%;
-	height: 100vh;
+	height: auto;
 	position: relative;
-	overflow-y: overlay;
+	overflow-y: visible;
 	padding: 25px 25px 0;
+	margin: 0 auto;
 `;
 
 export const MobileScreenContainer = styled.div`
@@ -210,7 +211,7 @@ export const Tooltip = styled(Tippy)`
 export const InfoTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.navy};
 	}
@@ -266,7 +267,7 @@ export const IconButton = styled.button`
 export const CenteredMessage = styled.div`
 	${absoluteCenteredCSS};
 	font-size: 14px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 	text-align: center;
 	display: grid;
@@ -277,28 +278,28 @@ export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
 	flex-grow: 1;
-	height: 100vh;
+	height: auto;
 	position: relative;
 `;
 
 export const MainContent = styled(FlexDiv)`
 	position: relative;
 	flex-grow: 1;
-	max-width: 915px;
 	flex-direction: column;
 	margin: 0 auto;
+	max-width: 915px;
 `;
 
 export const RightSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const LeftSideContent = styled.div`
 	background-color: transparent;
 	position: relative;
-	height: 100%;
+	height: auto;
 `;
 
 export const Table = styled.table.attrs({
@@ -314,7 +315,7 @@ export const CurrencyCardsSelector = styled.div`
 	position: absolute;
 	padding: 6px;
 	border-radius: 4px;
-	background: ${(props) => props.theme.colors.common.secondaryGray};
+	background: ${(props) => props.theme.colors.selectedTheme.gray};
 	border: 2px solid ${(props) => props.theme.colors.black};
 	left: 50%;
 	top: 50%;
@@ -336,7 +337,7 @@ export const DropdownSelection = styled.span.attrs({
 	font-family: ${(props) => props.theme.fonts.bold};
 	padding-left: 5px;
 	cursor: pointer;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: uppercase;
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color3};
@@ -403,7 +404,7 @@ export const ExchangeCardsWithSelector = styled.div`
 `;
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	height: 32px;
 	width: 32px;
 	display: flex;
@@ -411,9 +412,7 @@ export const SwapCurrenciesButton = styled.button`
 	justify-content: center;
 	z-index: ${zIndex.BASE};
 	border-radius: 50%;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	box-sizing: border-box;
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	cursor: pointer;
 	${border}
 	transition-duration: 0.1s;
@@ -443,5 +442,31 @@ export const SwapCurrenciesButton = styled.button`
 		transition-duration: 0.12s;
 		transition-timing-function: ease-in-out;
 		z-index: 1;
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
 	}
+`;
+
+export const SmallGoldenHeader = styled(Paragraph)`
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-size: 14px;
+	line-height: 100%;
+	color: ${(props) => props.theme.colors.common.primaryGold};
+	text-transform: uppercase;
+	text-align: center;
+	letter-spacing: 0.65em;
+	margin-bottom: 20px;
+`;
+
+export const WhiteHeader = styled.div`
+	font-family: ${(props) => props.theme.fonts.compressedBlack};
+	font-size: 42px;
+	line-height: 100%;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	text-transform: uppercase;
+	text-align: center;
+	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
+	letter-spacing: 0.05em;
+	width: 550px;
 `;

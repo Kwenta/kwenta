@@ -159,7 +159,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 							return cellProps.row.original.leverage === NO_VALUE ? (
 								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
-								<p>{formatNumber(cellProps.row.original.leverage ?? 0)}x</p>
+								<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
 							);
 						},
 						width: 90,
@@ -259,14 +259,16 @@ const IconContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	grid-column: 2;
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.p`
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
 
 const TableContainer = styled.div``;
 
@@ -274,7 +276,9 @@ const StyledTable = styled(Table)`
 	/* margin-top: 20px; */
 `;
 
-const TableHeader = styled.div``;
+const TableHeader = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+`;
 
 const StyledText = styled.div`
 	display: flex;
@@ -282,6 +286,8 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const MarketContainer = styled.div`

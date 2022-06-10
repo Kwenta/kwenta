@@ -2,7 +2,11 @@ import { atom, selector } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { getFuturesKey } from 'store/utils';
-import { FuturesMarket, FuturesPosition } from 'queries/futures/types';
+import {
+	FuturesMarket,
+	FuturesPosition,
+	FuturesPotentialTradeDetails,
+} from 'queries/futures/types';
 import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
@@ -113,4 +117,9 @@ export const nextPriceDisclaimerState = selector({
 
 		return wei(leverage || 0).gte(maxLeverage.sub(wei(1))) && wei(leverage || 0).lte(maxLeverage);
 	},
+});
+
+export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
+	key: getFuturesKey('potentialTradeDetails'),
+	default: null,
 });

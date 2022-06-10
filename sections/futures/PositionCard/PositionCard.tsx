@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
@@ -22,7 +22,8 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { currentMarketState, positionState } from 'store/futures';
+import { currentMarketState, positionState, potentialTradeDetailsState } from 'store/futures';
+import PreviewArrow from 'components/PreviewArrow';
 
 type PositionCardProps = {
 	currencyKeyRate: number;
@@ -51,6 +52,17 @@ type PositionData = {
 	avgEntryPrice: string | JSX.Element;
 };
 
+type PositionPreviewData = {
+	sizeIsNotZero: boolean;
+	positionSide: string;
+	positionSize: Wei;
+	leverage: Wei;
+	liquidationPrice: Wei;
+	avgEntryPrice: Wei;
+	notionalValue: Wei;
+	showStatus: boolean;
+};
+
 const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
@@ -59,6 +71,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 	const positionDetails = position?.position ?? null;
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
+
+	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
@@ -81,11 +95,49 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
 	);
 
+	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
+
+	const modifiedAverage = useMemo(() => {
+		if (positionHistory && previewTradeData && potentialTrade) {
+			const totalSize = positionHistory.size.add(potentialTrade.size);
+
+			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
+			const newValue = previewTradeData.price.mul(potentialTrade.size);
+			const totalValue = existingValue.add(newValue);
+			return totalValue.div(totalSize);
+		}
+		return null;
+	}, [positionHistory, previewTradeData, potentialTrade]);
+
+	const previewData: PositionPreviewData = React.useMemo(() => {
+		if (positionDetails === null || previewTradeData === null) {
+			return {} as PositionPreviewData;
+		}
+
+		const size: Wei = previewTradeData?.size;
+		const newSide = size?.gt(zeroBN) ? PositionSide.LONG : PositionSide.SHORT;
+
+		return {
+			sizeIsNotZero: size && !size?.eq(0),
+			positionSide: newSide,
+			positionSize: size?.abs(),
+			notionalValue: previewTradeData.notionalValue,
+			leverage: previewTradeData.notionalValue.div(previewTradeData.margin),
+			liquidationPrice: previewTradeData.liqPrice,
+			avgEntryPrice: modifiedAverage || zeroBN,
+			showStatus: previewTradeData.showStatus,
+		};
+	}, [positionDetails, previewTradeData, modifiedAverage]);
+
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const pnlPct = pnl.abs().gt(0) ? pnl.div(positionDetails?.initialMargin) : zeroBN;
 		const realizedPnl =
 			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
 			zeroBN;
+		const realizedPnlPct = realizedPnl.abs().gt(0)
+			? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
+			: zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
@@ -109,27 +161,77 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
 				>
 					{positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
+					{previewData.positionSide !== positionDetails.side && (
+						<PreviewArrow
+							showPreview={
+								previewData.sizeIsNotZero &&
+								previewData.positionSide !== positionDetails.side &&
+								!previewData.showStatus
+							}
+						>
+							<PositionValue side={previewData.positionSide as PositionSide}>
+								{previewData.positionSide}
+							</PositionValue>
+						</PreviewArrow>
+					)}
 				</PositionValue>
 			) : (
 				<StyledValue>{NO_VALUE}</StyledValue>
 			),
-			positionSize: positionDetails
-				? `${formatNumber(positionDetails.size ?? 0, {
+			positionSize: positionDetails ? (
+				<>
+					{`${formatNumber(positionDetails.size ?? 0, {
 						minDecimals: positionDetails.size.abs().lt(0.01) ? 4 : 2,
-				  })} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue.abs() ?? zeroBN, {
+					})} (${formatCurrency(Synths.sUSD, positionDetails.notionalValue?.abs() ?? zeroBN, {
 						sign: '$',
-						minDecimals: positionDetails.notionalValue.abs().lt(0.01) ? 4 : 2,
-				  })})`
-				: NO_VALUE,
-			leverage: positionDetails
-				? formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'
-				: NO_VALUE,
-			liquidationPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
+						minDecimals: positionDetails.notionalValue?.abs()?.lt(0.01) ? 4 : 2,
+					})})`}
+					<PreviewArrow
+						showPreview={
+							previewData.positionSize && previewData.sizeIsNotZero && !previewData.showStatus
+						}
+					>
+						{`${formatNumber(previewData.positionSize ?? 0, {
+							minDecimals: 2,
+						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
+							sign: '$',
+							minDecimals: 2,
+						})})`}
+					</PreviewArrow>
+				</>
+			) : (
+				NO_VALUE
+			),
+			leverage: positionDetails ? (
+				<>
+					{formatNumber(positionDetails?.leverage ?? zeroBN) + 'x'}
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatNumber(previewData?.leverage ?? zeroBN) + 'x'}
+						</PreviewArrow>
+					}
+				</>
+			) : (
+				NO_VALUE
+			),
+			liquidationPrice: positionDetails ? (
+				<>
+					{formatCurrency(Synths.sUSD, positionDetails?.liquidationPrice ?? zeroBN, {
 						sign: '$',
 						minDecimals,
-				  })
-				: NO_VALUE,
+					})}
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatCurrency(Synths.sUSD, previewData?.liquidationPrice ?? zeroBN, {
+								sign: '$',
+								minDecimals,
+							})}
+						</PreviewArrow>
+					}
+				</>
+			) : (
+				NO_VALUE
+			),
 			pnl: pnl ?? NO_VALUE,
 			realizedPnl: realizedPnl,
 			pnlText:
@@ -137,14 +239,14 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 					? `${formatCurrency(Synths.sUSD, pnl, {
 							sign: '$',
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(pnl.div(positionDetails.initialMargin))})`
+					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
 				positionHistory && realizedPnl
-					? formatCurrency(Synths.sUSD, realizedPnl, {
+					? `${formatCurrency(Synths.sUSD, realizedPnl, {
 							sign: '$',
-							minDecimals: 2,
-					  })
+							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
+					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
@@ -153,35 +255,47 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 						minDecimals: netFunding.abs().lt(0.01) ? 4 : 2,
 				  })}`
 				: null,
-			fees: positionDetails ? (
-				<PositionCardTooltip
-					preset="bottom"
-					height={'auto'}
-					content={t('futures.market.position-card.tooltips.fees')}
-				>
-					{formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
+			fees: positionDetails
+				? formatCurrency(Synths.sUSD, positionHistory?.feesPaid ?? zeroBN, {
 						sign: '$',
+				  })
+				: NO_VALUE,
+			avgEntryPrice: positionDetails ? (
+				<>
+					{formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
+						sign: '$',
+						minDecimals,
 					})}
-				</PositionCardTooltip>
+					{
+						<PreviewArrow showPreview={previewData.sizeIsNotZero && !previewData.showStatus}>
+							{formatCurrency(Synths.sUSD, previewData.avgEntryPrice ?? zeroBN, {
+								sign: '$',
+								minDecimals,
+							})}
+						</PreviewArrow>
+					}
+				</>
 			) : (
 				NO_VALUE
 			),
-			avgEntryPrice: positionDetails
-				? formatCurrency(Synths.sUSD, positionHistory?.entryPrice ?? zeroBN, {
-						sign: '$',
-						minDecimals,
-				  })
-				: NO_VALUE,
 		};
 	}, [
-		currencyKey,
-		currencyKeyRate,
-		minDecimals,
 		positionDetails,
 		positionHistory,
+		currencyKeyRate,
+		dailyPriceChangesQuery?.data,
+		currencyKey,
 		synthsMap,
-		dailyPriceChangesQuery,
 		t,
+		previewData.positionSide,
+		previewData.sizeIsNotZero,
+		previewData.showStatus,
+		previewData.positionSize,
+		previewData.notionalValue,
+		previewData?.leverage,
+		previewData?.liquidationPrice,
+		previewData.avgEntryPrice,
+		minDecimals,
 	]);
 
 	return (
@@ -247,7 +361,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.u-pnl')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
@@ -371,26 +487,26 @@ const InfoRow = styled.div`
 		padding-bottom: 0;
 	}
 	.green {
-		color: ${(props) => props.theme.colors.common.primaryGreen};
+		color: ${(props) => props.theme.colors.selectedTheme.green};
 	}
 
 	.red {
-		color: ${(props) => props.theme.colors.common.primaryRed};
+		color: ${(props) => props.theme.colors.selectedTheme.red};
 	}
 `;
 
 const StyledSubtitle = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
 	margin: 0;
 `;
 
 const StyledSubtitleWithCursor = styled.p`
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	text-transform: capitalize;
 	margin: 0;
 	cursor: help;
@@ -408,33 +524,33 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 const StyledValue = styled.p`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
 	text-align: end;
 	${Container}#closed & {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
-const PositionValue = styled.p<{ side: PositionSide }>`
+const PositionValue = styled.span<{ side?: PositionSide }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 13px;
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
 	${Container}#closed & {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
-			color: ${props.theme.colors.common.primaryGreen};
+			color: ${props.theme.colors.selectedTheme.green};
 		`}
 
 	${(props) =>
 		props.side === PositionSide.SHORT &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`}
 `;

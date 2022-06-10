@@ -1,8 +1,8 @@
 import { FC, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { format, Locale } from 'date-fns';
+import { format } from 'date-fns';
 
-import getLocale from '../../../utils/formatters/getLocale';
+import getLocale from 'utils/formatters/getLocale';
 
 type TimeDisplayProps = {
 	cellPropsValue: any;
@@ -16,18 +16,12 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue, horizontal }) => {
 		setShow12h(!show12hr);
 	};
 
-	let language: Locale = { code: '' };
-
-	navigator.languages !== undefined
-		? (language.code = navigator.languages[0])
-		: (language.code = navigator.language);
-
 	const date = format(new Date(cellPropsValue), 'MM/dd/yy', {
-		locale: getLocale(language.code),
+		locale: getLocale(),
 	});
-	const time12hr = new Date(cellPropsValue).toLocaleTimeString(language.code);
+	const time12hr = new Date(cellPropsValue).toLocaleTimeString(getLocale().code);
 	const time24hr = format(new Date(cellPropsValue), 'HH:mm:ss', {
-		locale: getLocale(language.code),
+		locale: getLocale(),
 	});
 
 	return (

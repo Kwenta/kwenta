@@ -46,7 +46,7 @@ export const NoBalancesContainer = styled(GridDivCentered)`
 `;
 
 export const Message = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;

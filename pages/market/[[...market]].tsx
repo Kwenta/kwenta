@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -22,8 +22,15 @@ import { CurrencyKey } from 'constants/currency';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { currentMarketState } from 'store/futures';
 import { RefetchProvider } from 'contexts/RefetchContext';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Market = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type MarketComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -43,11 +50,9 @@ const Market = () => {
 			<MobileHiddenView>
 				<PageContent>
 					<StyledFullHeightContainer>
-						<DesktopOnlyView>
-							<StyledLeftSideContent>
-								<TradingHistory />
-							</StyledLeftSideContent>
-						</DesktopOnlyView>
+						<StyledLeftSideContent>
+							<TradingHistory />
+						</StyledLeftSideContent>
 						<StyledMainContent>
 							<MarketInfo />
 						</StyledMainContent>
@@ -66,18 +71,13 @@ const Market = () => {
 	);
 };
 
+Market.layout = AppLayout;
+
 export default Market;
 
-const StyledFullHeightContainer = styled(FullHeightContainer)`
-	display: grid;
-	grid-template-columns: 20% 60% 20%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
-`;
-
 const StyledMainContent = styled(MainContent)`
-	max-width: unset;
 	margin: unset;
+	max-width: unset;
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`
@@ -86,4 +86,24 @@ const StyledRightSideContent = styled(RightSideContent)`
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
+`;
+
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	display: grid;
+	grid-template-columns: 20% 60% 20%;
+	column-gap: 15px;
+	width: calc(100% - 30px);
+	@media (min-width: 1725px) {
+		display: grid;
+		grid-template-columns: 400px 1fr 400px;
+		column-gap: 15px;
+		width: 100%;
+	}
+	@media (max-width: 1200px) {
+		${StyledLeftSideContent} {
+			display: none;
+		}
+		grid-template-columns: 70% 30%;
+		width: calc(100% - 15px);
+	}
 `;

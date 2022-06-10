@@ -10,13 +10,13 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 import MarketsDropdown from './MarketsDropdown';
 import PositionButtons from '../PositionButtons';
 import OrderSizing from '../OrderSizing';
-import MarketInfoBox from '../MarketInfoBox/MarketInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import { leverageSideState, orderTypeState } from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
+import MarketInfoBox from '../MarketInfoBox';
 
 const Trade: React.FC = () => {
 	const {
@@ -28,6 +28,7 @@ const Trade: React.FC = () => {
 		dynamicFee,
 		isMarketCapReached,
 		orderTxn,
+		previewTrade,
 	} = useFuturesData();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
@@ -67,8 +68,8 @@ const Trade: React.FC = () => {
 				error={error}
 			/>
 
-			{(orderTxn.errorMessage || error) && (
-				<ErrorMessage>{orderTxn.errorMessage || error}</ErrorMessage>
+			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+				<ErrorMessage>{orderTxn.errorMessage || error || previewTrade?.statusMessage}</ErrorMessage>
 			)}
 
 			<FeeInfoBox dynamicFee={dynamicFee} />
@@ -97,7 +98,7 @@ const Trade: React.FC = () => {
 export default Trade;
 
 const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.red};
 	font-size: 12px;
 	margin-bottom: 16px;
 `;

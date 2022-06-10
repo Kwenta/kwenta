@@ -48,7 +48,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 	]);
 
 	const ToolTip: FC = (props) => (
-		<StyledTooltip
+		<DynamicStyledToolTip
 			height={'auto'}
 			preset="bottom"
 			width="300px"
@@ -57,7 +57,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 		>
 			{props.children}
 			<StyledTimerIcon />
-		</StyledTooltip>
+		</DynamicStyledToolTip>
 	);
 
 	const marketCostTooltip = (
@@ -124,7 +124,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 										sign: selectedPriceCurrency.sign,
 									}
 								),
-								tooltip: dynamicFee?.gt(0) ? <ToolTip /> : null,
+								keyNode: dynamicFee?.gt(0) ? <ToolTip /> : null,
 							},
 					  }
 					: {
@@ -135,7 +135,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 											minDecimals: feeCost.lt(0.01) ? 4 : 2,
 									  })
 									: NO_VALUE,
-								tooltip: marketCostTooltip,
+								keyNode: marketCostTooltip,
 							},
 					  }),
 			}}
@@ -147,13 +147,20 @@ const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
 `;
 
+const DynamicStyledToolTip = styled(StyledTooltip)`
+	padding: 10px;
+`;
+
 const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
 	margin-left: 5px;
+	path {
+		fill: ${(props) => props.theme.colors.selectedTheme.gold};
+	}
 `;
 
 export default FeeInfoBox;

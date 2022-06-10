@@ -6,10 +6,9 @@ import Wei from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
@@ -42,7 +41,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails();
+	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

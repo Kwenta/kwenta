@@ -110,7 +110,7 @@ const BalanceItemTitle = styled.div`
 `;
 
 const BalanceItemAmount = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const Subtitle = styled.div`
@@ -124,7 +124,7 @@ const Actions = styled(FlexDivColCentered)`
 `;
 
 const Message = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 14px;
 	font-family: ${(props) => props.theme.fonts.bold};
 	flex-grow: 1;
@@ -143,7 +143,7 @@ export const TooltipItem = styled.span`
 `;
 
 const Title = styled.div<{ topPad?: boolean }>`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-bottom: 12px;
 	${(props) => (!props.topPad ? '' : 'margin-top: 24px;')}
