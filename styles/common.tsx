@@ -283,9 +283,9 @@ export const FullHeightContainer = styled(FlexDiv)`
 export const MainContent = styled(FlexDiv)`
 	position: relative;
 	flex-grow: 1;
-	max-width: 915px;
 	flex-direction: column;
 	margin: 0 auto;
+	max-width: 915px;
 `;
 
 export const RightSideContent = styled.div`

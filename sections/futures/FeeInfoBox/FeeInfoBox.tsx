@@ -56,7 +56,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 	]);
 
 	const ToolTip: FC = (props) => (
-		<StyledTooltip
+		<DynamicStyledToolTip
 			height={'auto'}
 			preset="bottom"
 			width="300px"
@@ -65,7 +65,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
 		>
 			{props.children}
 			<StyledTimerIcon />
-		</StyledTooltip>
+		</DynamicStyledToolTip>
 	);
 
 	const marketCostTooltip = (
@@ -155,13 +155,20 @@ const StyledInfoBox = styled(InfoBox)`
 	margin-bottom: 16px;
 `;
 
+const DynamicStyledToolTip = styled(StyledTooltip)`
+	padding: 10px;
+`;
+
 const StyledDynamicFee = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 	margin-left: 5px;
 `;
 
 const StyledTimerIcon = styled(TimerIcon)`
 	margin-left: 5px;
+	path {
+		fill: ${(props) => props.theme.colors.selectedTheme.gold};
+	}
 `;
 
 export default FeeInfoBox;

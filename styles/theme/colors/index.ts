@@ -1,6 +1,5 @@
 import common from './common';
 
-import eliteTheme from './elite';
 import darkTheme from './dark';
 import lightTheme from './light';
 
@@ -12,7 +11,6 @@ const goldColors = {
 };
 
 export const themeColors = {
-	// elite: eliteTheme,
 	dark: darkTheme,
 	light: lightTheme,
 };
