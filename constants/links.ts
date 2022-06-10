@@ -4,7 +4,7 @@ export const PROD_HOSTNAME = 'kwenta.io';
 
 export const EXTERNAL_LINKS = {
 	Trading: {
-		Legacy: 'https://kwenta.io/exchange',
+		Legacy: 'https://legacy.kwenta.io/exchange',
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,

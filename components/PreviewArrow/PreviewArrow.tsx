@@ -28,14 +28,14 @@ const StyledArrow = styled.span`
 	::before {
 		content: '➞';
 		color: ${(props) => props.theme.colors.common.secondaryGray};
-		font-size: 12px;
+		font-size: 13px;
 		padding: 0px 3px;
 		font-family: ${(props) => props.theme.fonts.bold};
 	}
 `;
 
 const StyledPreviewGold = styled.span`
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 `;
 
 export default PreviewArrow;

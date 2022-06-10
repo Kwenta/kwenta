@@ -82,21 +82,19 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 	}, [cancelOrExecuteOrderTxn.hash]);
 
 	const data = React.useMemo(() => {
-		const positionSize = position?.position?.notionalValue ?? wei(0);
-
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getDisplayAsset(order.asset) + '-PERP',
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: order.size,
-			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
+			size: order.size.abs(),
+			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId) ||
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, position, nextPriceDetails?.currentRoundId]);
+	}, [openOrders, nextPriceDetails?.currentRoundId]);
 
 	return (
 		<StyledTable

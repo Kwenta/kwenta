@@ -909,7 +909,7 @@
 				}
 			},
 			"history": {
-				"history-label": "trading history",
+				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
 				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
@@ -934,14 +934,20 @@
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
 					"manage-position": "manage position",
-					"modal-close": {
+					"modal": {
 						"title": "Close position",
 						"size": "Size",
 						"side": "Side",
 						"leverage": "Leverage",
 						"ROI": "ROI",
 						"fee": "Protocol Fee",
-						"gas-fee": "Network Gas Fee"
+						"fee-total": "Total Fees",
+						"gas-fee": "Network Gas Fee",
+						"order-type": "Order Type",
+						"market-order": "Market",
+						"next-price-order": "Next-Price",
+						"deposit": "Total Deposit",
+						"np-discount": "Next-Price Discount"
 					}
 				},
 				"orders": {
@@ -1054,8 +1060,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)"
+				"total-pnl": "PnL"
 			}
 		},
 		"trader-history": {
@@ -1066,7 +1071,7 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized PnL ($)"
+				"total-pnl": "Realized PnL"
 			}
 		},
 		"statistics": {

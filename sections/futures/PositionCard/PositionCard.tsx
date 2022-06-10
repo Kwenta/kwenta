@@ -138,9 +138,13 @@ const PositionCard: React.FC<PositionCardProps> = ({
 
 	const data: PositionData = React.useMemo(() => {
 		const pnl = positionDetails?.profitLoss.add(positionDetails?.accruedFunding) ?? zeroBN;
+		const pnlPct = pnl.abs().gt(0) ? pnl.div(positionDetails?.initialMargin) : zeroBN;
 		const realizedPnl =
 			positionHistory?.pnl.add(positionHistory?.netFunding).sub(positionHistory?.feesPaid) ??
 			zeroBN;
+		const realizedPnlPct = realizedPnl.abs().gt(0)
+			? realizedPnl.div(positionHistory?.initialMargin.add(positionHistory?.totalDeposits))
+			: zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
@@ -195,7 +199,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 						}
 					>
 						{`${formatNumber(previewData.positionSize ?? 0, {
-							minDecimals: 4,
+							minDecimals: 2,
 						})} (${formatCurrency(Synths.sUSD, previewData.notionalValue?.abs() ?? zeroBN, {
 							sign: '$',
 							minDecimals: 2,
@@ -242,14 +246,14 @@ const PositionCard: React.FC<PositionCardProps> = ({
 					? `${formatCurrency(Synths.sUSD, pnl, {
 							sign: '$',
 							minDecimals: pnl.abs().lt(0.01) ? 4 : 2,
-					  })} (${formatPercent(pnl.div(positionDetails.initialMargin))})`
+					  })} (${formatPercent(pnlPct)})`
 					: NO_VALUE,
 			realizedPnlText:
 				positionHistory && realizedPnl
-					? formatCurrency(Synths.sUSD, realizedPnl, {
+					? `${formatCurrency(Synths.sUSD, realizedPnl, {
 							sign: '$',
-							minDecimals: 2,
-					  })
+							minDecimals: realizedPnl.abs().lt(0.01) ? 4 : 2,
+					  })} (${formatPercent(realizedPnlPct)})`
 					: NO_VALUE,
 			netFunding: netFunding,
 			netFundingText: netFunding
@@ -364,7 +368,9 @@ const PositionCard: React.FC<PositionCardProps> = ({
 							height={'auto'}
 							content={t('futures.market.position-card.tooltips.u-pnl')}
 						>
-							<StyledSubtitle>{t('futures.market.position-card.u-pnl')}</StyledSubtitle>
+							<StyledSubtitleWithCursor>
+								{t('futures.market.position-card.u-pnl')}
+							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
 						{positionDetails ? (
 							<StyledValue className={data.pnl > zeroBN ? 'green' : data.pnl < zeroBN ? 'red' : ''}>
@@ -508,7 +514,7 @@ const LeftMarginTooltip = styled(StyledTooltip)`
 `;
 
 const StyledValue = styled.p`
-	font-family: ${(props) => props.theme.fonts.regular};
+	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	margin: 0;
