@@ -54,7 +54,7 @@ import { isWalletConnectedState, walletAddressState, isL2State, networkState } f
 import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import { zeroBN } from 'utils/formatters/number';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 
 import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 
@@ -564,7 +564,7 @@ const useExchange = ({
 			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
 			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setBaseCurrencyAmount(
-				baseCurrencyAmountNoFee.sub(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
 			);
 		}
 		// eslint-disable-next-line
@@ -575,7 +575,7 @@ const useExchange = ({
 			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
 			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setQuoteCurrencyAmount(
-				quoteCurrencyAmountNoFee.add(fee).toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+				truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
 			);
 		}
 		// eslint-disable-next-line
@@ -948,11 +948,7 @@ const useExchange = ({
 							const baseCurrencyAmountNoFee = wei(value).mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setBaseCurrencyAmount(
-								baseCurrencyAmountNoFee
-									.sub(fee)
-									.toNumber()
-									.toFixed(DEFAULT_CRYPTO_DECIMALS)
-									.toString()
+								truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
 							);
 						}
 					}
@@ -966,22 +962,18 @@ const useExchange = ({
 							setQuoteCurrencyAmount(
 								balanceWithBuffer.lt(0)
 									? '0'
-									: balanceWithBuffer.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+									: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS)
 							);
 						} else {
 							setQuoteCurrencyAmount(
-								quoteCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
+								truncateNumbers(quoteCurrencyBalance, DEFAULT_CRYPTO_DECIMALS)
 							);
 						}
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setBaseCurrencyAmount(
-								baseCurrencyAmountNoFee
-									.sub(fee)
-									.toNumber()
-									.toFixed(DEFAULT_CRYPTO_DECIMALS)
-									.toString()
+								truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
 							);
 						}
 					}
@@ -1063,11 +1055,7 @@ const useExchange = ({
 							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
 							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setQuoteCurrencyAmount(
-								quoteCurrencyAmountNoFee
-									.add(fee)
-									.toNumber()
-									.toFixed(DEFAULT_CRYPTO_DECIMALS)
-									.toString()
+								truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
 							);
 						}
 					}
@@ -1075,19 +1063,13 @@ const useExchange = ({
 				walletBalance={baseCurrencyBalance}
 				onBalanceClick={async () => {
 					if (baseCurrencyBalance != null) {
-						setBaseCurrencyAmount(
-							baseCurrencyBalance.toNumber().toFixed(DEFAULT_CRYPTO_DECIMALS).toString()
-						);
+						setBaseCurrencyAmount(truncateNumbers(baseCurrencyBalance, DEFAULT_CRYPTO_DECIMALS));
 
 						if (txProvider === 'synthetix') {
 							const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
 							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 							setQuoteCurrencyAmount(
-								baseCurrencyAmountNoFee
-									.add(fee)
-									.toNumber()
-									.toFixed(DEFAULT_CRYPTO_DECIMALS)
-									.toString()
+								truncateNumbers(baseCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
 							);
 						}
 					}
