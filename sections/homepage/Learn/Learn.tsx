@@ -226,7 +226,7 @@ const FeatureCard = styled(FlexDivRow)`
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			height: 390px;
+			height: 460px;
 		}
 	
 		&.faq {
