@@ -212,7 +212,9 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 				border-radius: 0;
 			}
 
-			.react-select__control::before {
+			.react-select__control::before,
+			.react-select__menu,
+			.react-select__menu-list {
 				border-radius: 0;
 			}
 		`}

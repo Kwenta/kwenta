@@ -42,6 +42,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			<ConnectButton
 				size="sm"
 				variant="outline"
+				noOutline
 				onClick={connectWallet}
 				data-testid="connect-wallet"
 				mono
