@@ -6,10 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { PositionSide } from '../types';
 
 function textColor(props: any) {
-	if (!props.className || props.className === 'row-name') return props.theme.colors.white;
-	if (props.className === 'long') return '#7FD482';
-	if (props.className === 'short') return '#EF6868';
-	if (props.className === 'gray-font-color') return '#787878';
+	if (!props.className || props.className === 'row-name')
+		return props.theme.colors.selectedTheme.button.text;
+	if (props.className === 'long') return props.theme.colors.selectedTheme.green;
+	if (props.className === 'short') return props.theme.colors.selectedTheme.red;
+	if (props.className === 'gray-font-color') return props.theme.colors.selectedTheme.gray;
 }
 
 type ProfitDetailsProps = {
@@ -115,7 +116,7 @@ const StyledProfitDetails = styled.div`
 	grid-gap: 0rem;
 	grid-template-columns: repeat(2, 1fr);
 
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	border-radius: 6px;
 

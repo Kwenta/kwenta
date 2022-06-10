@@ -1,5 +1,5 @@
 import { getCandles } from 'queries/futures/subgraph';
-import { getRatesEndpoint, mapCandles } from './utils';
+import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
 
 export const requestCandlesticks = async (
 	currencyKey: string | null,
@@ -8,7 +8,8 @@ export const requestCandlesticks = async (
 	period: number,
 	networkId: number,
 	limit?: number,
-	orderDirection: 'asc' | 'desc' | undefined = 'asc'
+	orderDirection: 'asc' | 'desc' | undefined = 'asc',
+	priceChart?: boolean | null
 ) => {
 	const ratesEndpoint = getRatesEndpoint(networkId);
 
@@ -38,7 +39,7 @@ export const requestCandlesticks = async (
 			aggregatedPrices: true,
 		}
 	).then((response) => {
-		return mapCandles(response);
+		return priceChart ? mapPriceChart(response) : mapCandles(response);
 	});
 	return response;
 };

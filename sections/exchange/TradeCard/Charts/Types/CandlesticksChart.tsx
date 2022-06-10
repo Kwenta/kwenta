@@ -41,7 +41,7 @@ const CandlesticksChart: FC<CandlesticksChartProps> = ({
 
 	const fontStyle = {
 		fontSize: '12px',
-		fill: theme.colors.white,
+		fill: theme.colors.selectedTheme.button.text,
 		fontFamily: theme.fonts.mono,
 	};
 

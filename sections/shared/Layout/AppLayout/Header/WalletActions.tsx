@@ -139,6 +139,7 @@ export const WalletActions: FC = () => {
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
+				noOutline={true}
 			></WalletOptionsSelect>
 		</Container>
 	);
@@ -174,24 +175,24 @@ const WalletOptionsSelect = styled(Select)`
 
 const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const LabelContainer = styled(FlexDivRow)`
 	padding: 16px;
 	font-size: 13px;
 	width: 100%;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	:hover {
 		> svg {
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
 			}
 		}
 	}
 	> svg {
 		path {
-			fill: ${(props) => props.theme.colors.common.secondaryGray};
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 		}
 	}
 `;

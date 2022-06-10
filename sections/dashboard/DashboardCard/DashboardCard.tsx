@@ -192,7 +192,7 @@ const Title = styled(BoldText)`
 
 const StyledCurrencyPrice = styled(Currency.Price)`
 	font-size: 20px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledTabList = styled(TabList)`

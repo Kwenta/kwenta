@@ -12,6 +12,10 @@ type ButtonProps = {
 };
 
 export const border = css`
+	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	border: none;
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -21,15 +25,17 @@ export const border = css`
 		bottom: 0;
 		border-radius: 10px;
 		padding: 1px;
-		background: rgb(255 255 255 / 10%);
+		background: ${(props) => props.theme.colors.selectedTheme.button.border};
 		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		-webkit-mask-composite: xor;
+		mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
 		mask-composite: exclude;
 	}
 `;
 
 const Button = styled.button<ButtonProps>`
-	height: 41px;
+	height: auto;
 	cursor: pointer;
 	position: relative;
 	border-radius: 10px;
@@ -39,15 +45,36 @@ const Button = styled.button<ButtonProps>`
 	outline: none;
 	white-space: nowrap;
 	font-size: 17px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	border: none;
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	transition: all 0.1s ease-in-out;
 	${border}
-
 	&:hover {
 		background: ${(props) => props.theme.colors.selectedTheme.button.hover};
 	}
+
+	${(props) =>
+		props.variant === 'primary' &&
+		css`
+			background: ${props.theme.colors.selectedTheme.button.primary.background};
+			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
+			&:hover {
+				background: ${props.theme.colors.selectedTheme.button.primary.hover};
+			}
+		`};
+
+	${(props) =>
+		props.noOutline &&
+		css`
+			background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+			border: ${(props) => props.theme.colors.selectedTheme.border};
+			box-shadow: none;
+			&:hover {
+				background: ${(props) => props.theme.colors.selectedTheme.button.fillHover};
+			}
+			&::before {
+				display: none;
+			}
+		`};
 
 	${(props) =>
 		props.mono
@@ -59,18 +86,6 @@ const Button = styled.button<ButtonProps>`
 			  `};
 
 	${(props) =>
-		props.variant === 'primary' &&
-		css`
-			background: ${props.theme.colors.selectedTheme.button.primary.background};
-			color: ${props.theme.colors.common.primaryWhite};
-			text-shadow: ${props.theme.colors.selectedTheme.button.primary.textShadow};
-
-			&:hover {
-				background: ${props.theme.colors.selectedTheme.button.primary.hover};
-			}
-		`};
-
-	${(props) =>
 		props.variant === 'secondary' &&
 		css`
 			color: ${props.theme.colors.selectedTheme.button.secondary.text};
@@ -79,7 +94,7 @@ const Button = styled.button<ButtonProps>`
 	${(props) =>
 		props.variant === 'danger' &&
 		css`
-			color: ${props.theme.colors.common.primaryRed};
+			color: ${props.theme.colors.selectedTheme.red};
 		`};
 
 	${(props) =>
@@ -87,6 +102,7 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 41px;
 			min-width: 157px;
+			font-size: 15px;
 		`};
 
 	${(props) =>
@@ -94,14 +110,6 @@ const Button = styled.button<ButtonProps>`
 		css`
 			height: 50px;
 			min-width: 200px;
-		`};
-
-	${(props) =>
-		props.noOutline &&
-		css`
-			&::before {
-				background: none;
-			}
 		`};
 
 	${(props) =>
@@ -128,13 +136,14 @@ const Button = styled.button<ButtonProps>`
 
 	&:disabled {
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
-		background: ${(props) => props.theme.colors.selectedTheme.button.disabled.background};
+		background: transparent;
 		box-shadow: none;
+		text-shadow: none;
 		border: ${(props) => props.theme.colors.selectedTheme.border};
+		cursor: not-allowed;
 		&::before {
 			display: none;
 		}
-		cursor: not-allowed;
 	}
 `;
 

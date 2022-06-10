@@ -5,8 +5,15 @@ import styled from 'styled-components';
 
 import { PageContent, FullHeightContainer } from 'styles/common';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Futures: FC = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type DashboardComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
 
 	return (
@@ -23,8 +30,10 @@ const Futures: FC = () => {
 	);
 };
 
+Dashboard.layout = AppLayout;
+
 const StyledFullHeightContainer = styled(FullHeightContainer)`
 	padding-top: 14px;
 `;
 
-export default Futures;
+export default Dashboard;

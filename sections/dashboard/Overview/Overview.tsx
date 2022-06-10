@@ -80,6 +80,7 @@ const Overview: FC = () => {
 				badge: futuresPositionQuery?.data?.length,
 				active: activePositionsTab === PositionsTab.FUTURES,
 				detail: totalFuturesPortfolioValue,
+				disabled: false,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.FUTURES);
 				},
@@ -89,19 +90,20 @@ const Overview: FC = () => {
 				label: t('dashboard.overview.positions-tabs.spot'),
 				active: activePositionsTab === PositionsTab.SPOT,
 				detail: totalSpotBalancesValue,
+				disabled: false,
 				onClick: () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
 			},
-			{
-				name: PositionsTab.SHORTS,
-				label: t('dashboard.overview.positions-tabs.shorts'),
-				disabled: true,
-				active: activePositionsTab === PositionsTab.SHORTS,
-				onClick: () => {
-					setActivePositionsTab(PositionsTab.SHORTS);
-				},
-			},
+			// {
+			// 	name: PositionsTab.SHORTS,
+			// 	label: t('dashboard.overview.positions-tabs.shorts'),
+			// 	disabled: true,
+			// 	active: activePositionsTab === PositionsTab.SHORTS,
+			// 	onClick: () => {
+			// 		setActivePositionsTab(PositionsTab.SHORTS);
+			// 	},
+			// },
 		],
 		[
 			activePositionsTab,
@@ -169,7 +171,7 @@ const Overview: FC = () => {
 				/>
 			</TabPanel>
 
-			<TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel>
+			{/* <TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel> */}
 
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
@@ -193,9 +195,6 @@ const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
 	margin-bottom: 16px;
 
 	& > button {
-		height: ${(props) => (props.hasDetail ? '48px' : '38px')};
-		font-size: 13px;
-
 		&:not(:last-of-type) {
 			margin-right: 14px;
 		}

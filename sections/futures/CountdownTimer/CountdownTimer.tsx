@@ -70,7 +70,6 @@ const Container = styled.div`
 const CountdownTime = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
 	font-size: 34px;
-	font-weight: 300;
 	color: #fff;
 	line-height: 38px;
 	margin-bottom: 12px;
@@ -81,7 +80,7 @@ const FinishTime = styled.div`
 `;
 
 const ClosedLabel = styled(CountdownTime)`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 30px;
 `;

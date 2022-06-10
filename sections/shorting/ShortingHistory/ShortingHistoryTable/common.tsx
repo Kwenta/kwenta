@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const StyledCurrencyKey = styled.span`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-left: 10px;
 `;
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -23,8 +23,15 @@ import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import { getMarketKey } from 'utils/futures';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import Connector from 'containers/Connector';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Market = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type MarketComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
@@ -53,11 +60,9 @@ const Market = () => {
 			</Head>
 			<StyledPageContent>
 				<StyledFullHeightContainer>
-					<DesktopOnlyView>
-						<StyledLeftSideContent>
-							<TradingHistory currencyKey={marketAsset} />
-						</StyledLeftSideContent>
-					</DesktopOnlyView>
+					<StyledLeftSideContent>
+						<TradingHistory currencyKey={marketAsset} />
+					</StyledLeftSideContent>
 					<StyledMainContent>
 						<MarketInfo
 							market={marketAsset}
@@ -71,6 +76,7 @@ const Market = () => {
 						<StyledRightSideContent>
 							<Trade
 								onEditPositionInput={setPotentialTrade}
+								potentialTrade={potentialTrade}
 								refetch={refetch}
 								position={futuresMarketPosition}
 								currencyKey={marketAsset}
@@ -83,20 +89,15 @@ const Market = () => {
 	);
 };
 
+Market.layout = AppLayout;
+
 export default Market;
 
 const StyledPageContent = styled(PageContent)``;
 
-const StyledFullHeightContainer = styled(FullHeightContainer)`
-	display: grid;
-	grid-template-columns: 20% 60% 20%;
-	column-gap: 15px;
-	width: calc(100% - 30px);
-`;
-
 const StyledMainContent = styled(MainContent)`
-	max-width: unset;
 	margin: unset;
+	max-width: unset;
 `;
 
 const StyledRightSideContent = styled(RightSideContent)`
@@ -105,4 +106,24 @@ const StyledRightSideContent = styled(RightSideContent)`
 
 const StyledLeftSideContent = styled(LeftSideContent)`
 	width: 100%;
+`;
+
+const StyledFullHeightContainer = styled(FullHeightContainer)`
+	display: grid;
+	grid-template-columns: 20% 60% 20%;
+	column-gap: 15px;
+	width: calc(100% - 30px);
+	@media (min-width: 1725px) {
+		display: grid;
+		grid-template-columns: 400px 1fr 400px;
+		column-gap: 15px;
+		width: 100%;
+	}
+	@media (max-width: 1200px) {
+		${StyledLeftSideContent} {
+			display: none;
+		}
+		grid-template-columns: 70% 30%;
+		width: calc(100% - 15px);
+	}
 `;

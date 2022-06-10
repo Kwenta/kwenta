@@ -21,9 +21,12 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 		account
 		market
 		asset
+		initialMargin
 		margin
 		size
 		feesPaid
+		totalDeposits
+		netTransfers
 		netFunding
 		isOpen
 		isLiquidated

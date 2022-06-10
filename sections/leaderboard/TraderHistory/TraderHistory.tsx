@@ -37,20 +37,32 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	let data = useMemo(() => {
 		return positions
 			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
-			.map((stat: PositionHistory, i: number) => ({
-				rank: i + 1,
-				currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
-				marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
-				openTimestamp: stat.openTimestamp,
-				asset: stat.asset,
-				status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
-				feesPaid: stat.feesPaid,
-				netFunding: stat.netFunding,
-				pnl: stat.pnl.sub(stat.feesPaid).add(stat.netFunding),
-				totalVolume: stat.totalVolume,
-				trades: stat.trades,
-				side: stat.side,
-			}))
+			.map((stat: PositionHistory, i: number) => {
+				const pnlAfterFees = stat.pnl.sub(stat.feesPaid).add(stat.netFunding);
+				const actualPnl = pnlAfterFees.lt(stat.initialMargin.add(stat.totalDeposits).mul(-1))
+					? stat.initialMargin.add(stat.totalDeposits).mul(-1)
+					: pnlAfterFees;
+
+				return {
+					rank: i + 1,
+					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
+					marketShortName: (stat.asset[0] === 's' ? stat.asset.slice(1) : stat.asset) + '-PERP',
+					openTimestamp: stat.openTimestamp,
+					asset: stat.asset,
+					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
+					feesPaid: stat.feesPaid,
+					netFunding: stat.netFunding,
+					pnl: actualPnl,
+					pnlPct: `(${actualPnl
+						.div(stat.initialMargin.add(stat.totalDeposits))
+						.mul(100)
+						.toNumber()
+						.toFixed(2)}%)`,
+					totalVolume: stat.totalVolume,
+					trades: stat.trades,
+					side: stat.side,
+				};
+			})
 			.filter((i: { marketShortName: string; status: string }) =>
 				searchTerm?.length
 					? i.marketShortName.toLowerCase().includes(searchTerm) ||
@@ -158,12 +170,25 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 							Header: <TableHeader>{t('leaderboard.trader-history.table.total-pnl')}</TableHeader>,
 							accessor: 'pnl',
 							Cell: (cellProps: CellProps<any>) => (
-								<ColorCodedPrice
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign={'$'}
-									conversionRate={1}
-								/>
+								<PnlContainer>
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+									<StyledValue
+										color={
+											cellProps.row.original.pnl.gt(0)
+												? 'green'
+												: cellProps.row.original.pnl.lt(0)
+												? 'red'
+												: ''
+										}
+									>
+										{cellProps.row.original.pnlPct}
+									</StyledValue>
+								</PnlContainer>
 							),
 							width: compact ? 40 : 100,
 							sortType: 'basic',
@@ -188,7 +213,7 @@ const TableTitle = styled.div`
 
 const TitleText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 
 	&:hover {
 		text-decoration: underline;
@@ -197,7 +222,7 @@ const TitleText = styled.a`
 `;
 
 const StyledCell = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 `;
 
@@ -205,12 +230,12 @@ const TitleSeparator = styled.div`
 	margin-left: 10px;
 	margin-right: 10px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const TraderText = styled.a`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 
 	&:hover {
 		text-decoration: underline;
@@ -219,7 +244,7 @@ const TraderText = styled.a`
 
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledCurrencyIcon = styled(CurrencyIcon)`
@@ -235,18 +260,37 @@ const CurrencyInfo = styled(FlexDiv)`
 const StyledSubtitle = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
+`;
+
+const PnlContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `;
 
 const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.green
+			? props.theme.colors.selectedTheme.green
 			: props.price < 0
-			? props.theme.colors.red
-			: props.theme.colors.white};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
+`;
+
+const StyledValue = styled.div`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 13px;
+	color: ${(props) =>
+		props.color === 'green'
+			? props.theme.colors.selectedTheme.green
+			: props.color === 'red'
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
+	margin: 0;
+	text-align: end;
 `;
 
 export default TraderHistory;

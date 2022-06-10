@@ -163,17 +163,18 @@ const HistoryContainer = styled.div`
 `;
 
 const HistoryLabelContainer = styled(FlexDivRowCentered)`
+	font-size: 13px;
 	justify-content: space-between;
 	padding: 12px 18px;
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 
 const HistoryLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const LastTradesLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 const TableContainer = styled.div``;
 
@@ -187,15 +188,20 @@ const StyledTable = styled(Table)`
 `;
 
 const TableHeader = styled(CapitalizedText)`
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
 `;
 
 const PriceValue = styled(NumericValue)`
-	font-size: 11px;
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	padding-left: 5px;
 `;
 
 const TimeValue = styled.p`
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-decoration: underline;
 `;
 
@@ -203,8 +209,8 @@ const DirectionalValue = styled(PriceValue)<{ negative?: boolean; normal?: boole
 	padding-left: 4px;
 	color: ${(props) =>
 		props.normal
-			? props.theme.colors.common.primaryWhite
+			? props.theme.colors.selectedTheme.button.text
 			: props.negative
-			? props.theme.colors.common.primaryGreen
-			: props.theme.colors.common.primaryRed};
+			? props.theme.colors.selectedTheme.green
+			: props.theme.colors.selectedTheme.red};
 `;

@@ -142,7 +142,7 @@ const OptionRow = styled.div`
 const WalletConnected = styled(FlexDivRowCentered)`
 	font-family: ${(props) => props.theme.fonts.mono};
 	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	border-radius: 4px;
 	margin-bottom: 24px;
 	padding: 0 16px;

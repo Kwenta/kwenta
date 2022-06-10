@@ -148,7 +148,7 @@ const Golden = styled.div`
 `;
 
 const Emphasis = styled.b`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 const StyledGridContainer = styled(GridContainer)`

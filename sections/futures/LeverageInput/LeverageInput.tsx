@@ -117,12 +117,12 @@ const LeverageRow = styled(FlexDivRow)`
 `;
 
 const LeverageTitle = styled.div`
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	text-transform: capitalize;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -141,23 +141,24 @@ const LeverageInputContainer = styled.div`
 
 const LeverageButton = styled(Button)`
 	padding: 0;
-	font-weight: 700;
 	font-size: 13px;
+	height: 46px;
+	font-family: ${(props) => props.theme.fonts.monoBold};
 `;
 
 const TextButton = styled.button`
 	text-decoration: underline;
-	font-size: 11px;
+	font-size: 13px;
 	line-height: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
 `;
 
 const LeverageDisclaimer = styled.div`
-	font-size: 12px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	font-size: 13px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	margin: 0 8px 12px;
 `;
 

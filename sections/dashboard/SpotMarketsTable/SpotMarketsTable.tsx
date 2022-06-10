@@ -205,7 +205,7 @@ const IconContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	grid-column: 2;
@@ -219,7 +219,7 @@ const TableContainer = styled.div`
 	margin-bottom: '40px';
 
 	.paused {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -235,6 +235,8 @@ const StyledText = styled.div`
 	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const MarketContainer = styled.div`

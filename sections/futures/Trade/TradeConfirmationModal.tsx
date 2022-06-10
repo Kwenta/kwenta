@@ -29,6 +29,7 @@ type TradeConfirmationModalProps = {
 	onConfirmOrder: () => void;
 	side: PositionSide;
 	l1Fee: Wei | null;
+	leverage: string;
 };
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
@@ -39,6 +40,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
+	leverage,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
@@ -50,6 +52,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market, {
 		size: tradeSize,
 		side,
+		leverage,
 	});
 
 	const exchangeRates = useMemo(
@@ -167,7 +170,7 @@ const Row = styled(FlexDivCentered)`
 `;
 
 const Label = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -175,7 +178,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-top: 6px;
 `;

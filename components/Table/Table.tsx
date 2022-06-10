@@ -37,6 +37,7 @@ type TableProps = {
 	hideHeaders?: boolean;
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
+	showShortList?: boolean;
 };
 
 export const Table: FC<TableProps> = ({
@@ -54,6 +55,7 @@ export const Table: FC<TableProps> = ({
 	hiddenColumns = [],
 	hideHeaders,
 	highlightRowsOnHover,
+	showShortList,
 	sortBy = [],
 }) => {
 	const memoizedColumns = useMemo(
@@ -90,7 +92,13 @@ export const Table: FC<TableProps> = ({
 			columns: memoizedColumns,
 			data,
 			initialState: {
-				pageSize: showPagination ? (pageSize ? pageSize : MAX_PAGE_ROWS) : data.length,
+				pageSize: showPagination
+					? pageSize
+						? pageSize
+						: MAX_PAGE_ROWS
+					: showShortList
+					? pageSize ?? 5
+					: data.length,
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
@@ -169,7 +177,7 @@ export const Table: FC<TableProps> = ({
 					{!!noResultsMessage && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
-			{showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
+			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
 				<Pagination
 					pageIndex={pageIndex}
 					pageCount={pageCount}
@@ -186,8 +194,6 @@ export const Table: FC<TableProps> = ({
 
 const TableContainer = styled.div`
 	overflow-x: auto;
-	//display: block;
-	//width: 100%;
 `;
 
 const StyledSpinner = styled(Spinner)`
@@ -195,12 +201,9 @@ const StyledSpinner = styled(Spinner)`
 	margin: 30px auto;
 `;
 
-export const TableRow = styled.div`
-	//display: none;
-`;
+export const TableRow = styled.div``;
 
 const TableBody = styled.div`
-	//width: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 	min-width: fit-content;
@@ -216,14 +219,14 @@ const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
 	}
 
 	&:nth-child(odd) {
-		background-color: rgba(255, 255, 255, 0.01);
+		background-color: ${(props) => props.theme.colors.selectedTheme.table.fill};
 	}
 
 	${(props) =>
 		props.$highlightRowsOnHover &&
 		css`
 			&:hover {
-				background-color: rgba(255, 255, 255, 0.1);
+				background-color: ${(props) => props.theme.colors.selectedTheme.table.hover};
 			}
 		`}
 `;
@@ -240,7 +243,6 @@ const TableCell = styled(FlexDivCentered)`
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	user-select: none;
-	//probably shouldn't be extending the tableCell styles to then overwrite them
 	&:first-child {
 		padding-left: 18px;
 	}
@@ -259,7 +261,7 @@ const SortIconContainer = styled.span`
 const ReactTable = styled.div<{ palette: TablePalette }>`
 	width: 100%;
 	height: 100%;
-	overflow-x: auto;
+	overflow: auto;
 	position: relative;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
@@ -271,13 +273,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 				max-height: calc(100% - ${CARD_HEIGHT});
 			}
 			${TableCell} {
-				color: ${(props) => props.theme.colors.common.primaryWhite};
+				color: ${(props) => props.theme.colors.selectedTheme.button.text};
 				font-size: 12px;
 				height: ${CARD_HEIGHT};
 				font-family: ${(props) => props.theme.fonts.mono};
 			}
 			${TableCellHead} {
-				color: ${(props) => props.theme.colors.common.secondaryGray};
+				color: ${(props) => props.theme.colors.selectedTheme.gray};
 				font-family: ${(props) => props.theme.fonts.regular};
 				border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 			}
@@ -289,13 +291,13 @@ const ReactTable = styled.div<{ palette: TablePalette }>`
 const StyledSortDownIcon = styled(SortDownIcon)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledSortUpIcon = styled(SortUpIcon)`
 	width: 5px;
 	height: 5px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 export default Table;

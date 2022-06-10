@@ -22,8 +22,6 @@ import { SummaryItems, SummaryItem, SummaryItemLabel, SummaryItemValue } from '.
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
-
-import TotalTradePriceSummaryItem from './TotalTradePriceSummaryItem';
 import { GasPrices } from '@synthetixio/queries';
 import PoweredBy1Inch from 'components/PoweredBy1Inch';
 import { Synth } from '@synthetixio/contracts-interface';
@@ -82,18 +80,16 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const summaryItems = (
 		<SummaryItems attached={attached}>
 			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-			<SummaryItem>
-				{isCreateShort ? (
+			{isCreateShort && (
+				<SummaryItem>
 					<>
 						<SummaryItemLabel>{t('shorting.common.interestRate')}</SummaryItemLabel>
 						<SummaryItemValue data-testid="short-interest-rate">
 							{formatPercent((shortInterestRate ?? 0).toString())}
 						</SummaryItemValue>
 					</>
-				) : (
-					<TotalTradePriceSummaryItem totalTradePrice={totalTradePrice} />
-				)}
-			</SummaryItem>
+				</SummaryItem>
+			)}
 			{showFee && (
 				<>
 					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
@@ -156,7 +152,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 export const ErrorTooltip = styled(Tippy)`
 	font-size: 12px;
 	background-color: ${(props) => props.theme.colors.red};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	.tippy-arrow {
 		color: ${(props) => props.theme.colors.red};
 	}

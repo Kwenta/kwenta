@@ -15,7 +15,21 @@ import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useC
 import { getDisplayAsset } from 'utils/futures';
 import { resolutionToSeconds } from './utils';
 
-const supportedResolutions = ['1', '5', '15', '60', '1D'] as ResolutionString[];
+const supportedResolutions = [
+	'1',
+	'5',
+	'15',
+	'30',
+	'60',
+	'120',
+	'240',
+	'480',
+	'720',
+	'1D',
+	'3D',
+	'7D',
+	'30D',
+] as ResolutionString[];
 
 const config = {
 	supports_search: false,
