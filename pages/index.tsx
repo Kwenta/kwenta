@@ -1,25 +1,53 @@
 import { FC } from 'react';
 import Head from 'next/head';
+import dynamic from 'next/dynamic';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
-import { PageContent, FullHeightContainer } from 'styles/common';
-import DashboardContainer from 'sections/dashboard/DashboardContainer';
+import Hero from 'sections/homepage/Hero';
+import HomeLayout from 'sections/shared/Layout/HomeLayout';
+import Features from 'sections/homepage/Features';
+import ShortList from 'sections/homepage/ShortList';
+import Earning from 'sections/homepage/Earning';
+import Learn from 'sections/homepage/Learn';
+import TradeNow from 'sections/homepage/TradeNow';
 
-const Futures: FC = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type HomePageComponent = FC & { layout?: FC<AppLayoutProps> };
+
+const HomePage: HomePageComponent = () => {
 	const { t } = useTranslation();
+	const Assets = dynamic(() => import('../sections/homepage/Assets'), {
+		ssr: false,
+	});
 
 	return (
 		<>
 			<Head>
-				<title>{t('futures.page-title')}</title>
+				<title>{t('homepage.page-title')}</title>
 			</Head>
-			<PageContent>
-				<FullHeightContainer>
-					<DashboardContainer />
-				</FullHeightContainer>
-			</PageContent>
+			<HomeLayout>
+				<Container>
+					<Hero />
+					<Assets />
+					<ShortList />
+					<Earning />
+					<Features />
+					<Learn />
+					<TradeNow />
+				</Container>
+			</HomeLayout>
 		</>
 	);
 };
 
-export default Futures;
+export const Container = styled.div`
+	width: 100%;
+	margin: 0 auto;
+	padding: 100px 20px 0 20px;
+`;
+
+export default HomePage;

@@ -132,6 +132,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					return (
 						<CategoryButton
 							variant="secondary"
+							noOutline={true}
 							isActive={isActive}
 							disabled={noItem}
 							onClick={() => {
@@ -193,7 +194,7 @@ const StyledCenteredModal = styled(CenteredModal)`
 	}
 	.card-body {
 		height: 80vh;
-		padding: 16px 0;
+		padding: 0px;
 		overflow: hidden;
 	}
 `;
@@ -221,26 +222,16 @@ const CategoryFilters = styled.div`
 `;
 
 const CategoryButton = styled(Button)`
+	height: 30px;
 	text-transform: uppercase;
-	font-family: ${(props) => props.theme.fonts.bold};
 	font-size: 12px;
-	transition: all 0.1s ease-in-out;
 
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	color: ${(props) => props.theme.colors.common.primaryGold};
 	${(props) =>
 		props.isActive &&
 		css`
-			transform: scale(0.99);
-			color: ${props.theme.colors.common.primaryWhite};
-			border: 2px solid ${props.theme.colors.common.primaryGold};
-			border-radius: 11px;
-			background: ${props.theme.colors.selectedTheme.button.hover};
-			box-shadow: inset rgb(0 0 0 / 30%) 0px 0 20px, #7fd48245 0px 0 10px 0px;
-
-			&:hover {
-				background: ${props.theme.colors.selectedTheme.button.hover};
-			}
+			color: ${props.theme.colors.selectedTheme.button.text};
+			background: ${props.theme.colors.selectedTheme.button.fill};
+			/* background: transparent */
 		`};
 	${(props) =>
 		props.disabled &&
@@ -257,7 +248,7 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	text-align: center;
 	margin: 24px 0px;
 	height: 50px;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export default SelectCurrencyModal;

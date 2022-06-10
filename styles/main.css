@@ -37,10 +37,30 @@
 	font-display: monospace;
 }
 
+@font-face {
+	font-family: 'GT-America-Compressed-Black';
+	src: url('/fonts/GT-America-Compressed-Black.woff2') format('woff2'),
+		url('/fonts/GT-America-Compressed-Black.woff') format('woff');
+	font-display: monospace;
+}
+
+@font-face {
+	font-family: 'GT-America-Compressed-Medium';
+	src: url('/fonts/GT-America-Compressed-Medium.woff2') format('woff2'),
+		url('/fonts/GT-America-Compressed-Medium.woff') format('woff');
+}
+
 #__next {
 	width: 100%;
 	height: 100%;
 	position: relative;
+}
+* {
+	scroll-behavior: smooth;
+  }
+
+html {
+	scrollbar-width: none;
 }
 
 body {
@@ -51,8 +71,17 @@ body {
 	margin: 0;
 	position: relative;
 	min-height: 100vh;
-	scroll-behavior: smooth;
 	font-size: 12px;
+
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	overflow: auto;
+}
+
+::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
 }
 
 ul {

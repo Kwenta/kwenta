@@ -1,23 +1,18 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-import { customGasPriceState, gasSpeedState, isMainnetState } from 'store/wallet';
+import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import Wei from '@synthetixio/wei';
 
 import { NO_VALUE } from 'constants/placeholder';
 
-import InfoIcon from 'assets/svg/app/info.svg';
-
 import { formatCurrency, formatNumber } from 'utils/formatters/number';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
+import { Synths } from 'constants/currency';
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices } from '@synthetixio/queries';
-import { CurrencyKey } from 'constants/currency';
+
 import { parseGasPriceObject } from 'hooks/useGas';
+import { useMemo } from 'react';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;
@@ -29,16 +24,26 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 	const { t } = useTranslation();
 	const [gasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
 	const [customGasPrice] = useRecoilState(customGasPriceState);
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isMainnet = useRecoilValue(isMainnetState);
+	const isL2 = useRecoilValue(isL2State);
+
+	const formattedTransactionFee = useMemo(() => {
+		return transactionFee
+			? formatCurrency(Synths.sUSD, transactionFee, { sign: '$', maxDecimals: 1 })
+			: NO_VALUE;
+	}, [transactionFee]);
 
 	const hasCustomGasPrice = customGasPrice !== '';
 	const gasPrice = gasPrices ? parseGasPriceObject(gasPrices[gasSpeed]) : null;
 
-	const gasPriceItem = hasCustomGasPrice ? (
-		<span data-testid="gas-price">{formatNumber(customGasPrice, { minDecimals: 4 })}</span>
-	) : (
-		<span data-testid="gas-price">{formatNumber(gasPrice ?? 0, { minDecimals: 4 })}</span>
+	const gasPriceItem = (
+		<span data-testid="gas-price">
+			{isL2
+				? formattedTransactionFee
+				: `${formatNumber(hasCustomGasPrice ? +customGasPrice : gasPrice ?? 0, {
+						minDecimals: 2,
+				  })} Gwei`}
+		</span>
 	);
 
 	return (
@@ -48,63 +53,9 @@ const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ..
 					? t('common.summary.gas-prices.max-fee')
 					: t('common.summary.gas-prices.gas-price')}
 			</SummaryItemLabel>
-			<SummaryItemValue>
-				{gasPrice != null ? (
-					<>
-						{transactionFee != null ? (
-							<GasPriceCostTooltip
-								content={
-									<span>
-										{formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee, {
-											sign: selectedPriceCurrency.sign,
-											maxDecimals: 1,
-										})}
-									</span>
-								}
-								arrow={false}
-							>
-								<GasPriceItem>
-									{gasPriceItem}
-									<InfoIcon />
-								</GasPriceItem>
-							</GasPriceCostTooltip>
-						) : (
-							gasPriceItem
-						)}
-					</>
-				) : (
-					NO_VALUE
-				)}
-			</SummaryItemValue>
+			<SummaryItemValue>{gasPrice != null ? gasPriceItem : NO_VALUE}</SummaryItemValue>
 		</SummaryItem>
 	);
 };
-
-const GasPriceTooltip = styled(Tippy)`
-	border: ${(props) => props.theme.colors.selectedTheme.border};
-	border-radius: 4px;
-	width: 155px;
-	.tippy-content {
-		padding: 0;
-	}
-`;
-
-const GasPriceCostTooltip = styled(GasPriceTooltip)`
-	width: auto;
-	font-size: 12px;
-	.tippy-content {
-		padding: 5px;
-		font-family: ${(props) => props.theme.fonts.mono};
-	}
-`;
-
-const GasPriceItem = styled.span`
-	display: inline-flex;
-	align-items: center;
-	cursor: pointer;
-	svg {
-		margin-left: 5px;
-	}
-`;
 
 export default GasPriceSelect;

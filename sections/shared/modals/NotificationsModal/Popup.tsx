@@ -129,7 +129,7 @@ const ViewAllButtonContainer = styled.div`
 `;
 const ViewAllButton = styled(TextButton)`
 	text-transform: capitalize;
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.bold};
 `;
 const StyledNoResults = styled(NoResults)`

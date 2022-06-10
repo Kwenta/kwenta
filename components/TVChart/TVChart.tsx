@@ -13,6 +13,7 @@ import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
 import { ChartPosition } from './types';
 import { DEFAULT_RESOLUTION } from './constants';
+import { currentThemeState } from 'store/ui';
 
 export type ChartProps = {
 	baseCurrencyKey: string;
@@ -45,6 +46,7 @@ export function TVChart({
 }: Props) {
 	const [lastSubscription, setLastSubscription] = useState(0);
 	const [intervalId, setIntervalId] = useState(0);
+	const currentTheme = useRecoilValue(currentThemeState);
 	const _widget = useRef<IChartingLibraryWidget | null>(null);
 	const _entryLine = useRef<IPositionLineAdapter | null | undefined>(null);
 	const _liquidationLine = useRef<IPositionLineAdapter | null | undefined>(null);
@@ -115,7 +117,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id]);
+	}, [baseCurrencyKey, quoteCurrencyKey, network.id, currentTheme]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {

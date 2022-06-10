@@ -1,7 +1,6 @@
 import React, { FC, useContext, useMemo } from 'react';
 import ReactSelect, { Props, StylesConfig } from 'react-select';
 import { ThemeContext } from 'styled-components';
-
 export const IndicatorSeparator: FC = () => null;
 
 function Select<T>(props: Props<T>) {
@@ -15,44 +14,52 @@ function Select<T>(props: Props<T>) {
 			}),
 			singleValue: (provided) => ({
 				...provided,
-				color: colors.common.primaryWhite,
+				color: colors.selectedTheme.button.text,
 				boxShadow: 'none',
 				fontSize: '12px',
 				border: 'none',
+				margin: 0,
+				maxWidth: 'unset',
 			}),
 			control: (provided, state) => ({
 				...provided,
-				color: colors.common.primaryWhite,
+				color: colors.selectedTheme.button.text,
 				cursor: 'pointer',
-				boxShadow: colors.selectedTheme.select.control.shadow,
-				border: 'none',
+				boxShadow: props.noOutline ? 'none' : colors.selectedTheme.button.shadow,
+				border: props.noOutline ? colors.selectedTheme.border : 'none',
 				outline: 'none',
 				minHeight: 'unset',
 				height: state.selectProps.controlHeight ?? 'unset',
 				'&:hover': {
-					background: colors.selectedTheme.button.hover,
+					background: props.noOutline
+						? colors.selectedTheme.button.fillHover
+						: colors.selectedTheme.button.hover,
 				},
-				'&::before': {
+				'&::before': !props.noOutline && {
 					content: '""',
 					position: 'absolute',
 					top: 0,
 					left: 0,
 					right: 0,
 					bottom: 0,
-					borderRadius: '10px',
-					padding: '1px',
-					background: 'rgb(255 255 255 / 10%)',
+					borderRadius: 10,
+					padding: 1,
+					background: colors.selectedTheme.button.border,
 					WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
 					WebkitMaskComposite: 'xor',
+					maskImage: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+					mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
 					maskComposite: 'exclude',
 				},
 				fontSize: '12px',
-				background: colors.selectedTheme.button.background,
+				background: props.noOutline
+					? colors.selectedTheme.button.fill
+					: colors.selectedTheme.button.background,
 				borderRadius: 10,
 			}),
 			menu: (provided, state) => ({
 				...provided,
-				background: colors.selectedTheme.cell.gradient,
+				background: colors.selectedTheme.cell.fill,
 				border: 'none',
 				outline: 'none',
 				borderRadius: 10,
@@ -66,7 +73,8 @@ function Select<T>(props: Props<T>) {
 				borderRadius: 10,
 				padding: 0,
 				textAlign: 'left',
-				border: colors.selectedTheme.cell.outline,
+				border: colors.selectedTheme.border,
+				borderWidth: '1px',
 				borderStyle: 'solid',
 				outline: 'none',
 				'div.react-select__option:first-of-type:hover': {
@@ -82,7 +90,7 @@ function Select<T>(props: Props<T>) {
 				...provided,
 				border: 'none',
 				fontFamily: fonts.regular,
-				color: state.isSelected ? colors.common.secondaryGold : colors.common.primaryWhite,
+				color: state.isSelected ? colors.common.secondaryGold : colors.selectedTheme.button.text,
 				cursor: 'pointer',
 				fontSize: '12px',
 				backgroundColor: 'transparent',
@@ -98,7 +106,7 @@ function Select<T>(props: Props<T>) {
 			placeholder: (provided) => ({
 				...provided,
 				fontSize: '12px',
-				color: colors.common.primaryWhite,
+				color: colors.selectedTheme.button.text,
 			}),
 			dropdownIndicator: (provided, state) => ({
 				...provided,
@@ -111,7 +119,7 @@ function Select<T>(props: Props<T>) {
 			}),
 		};
 		return styles;
-	}, [colors, fonts]);
+	}, [colors, fonts, props]);
 
 	return (
 		<ReactSelect

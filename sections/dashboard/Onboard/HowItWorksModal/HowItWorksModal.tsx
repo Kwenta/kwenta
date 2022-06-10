@@ -7,8 +7,6 @@ import { CenteredModal } from 'sections/shared/modals/common';
 import { FlexDiv, Paragraph } from 'styles/common';
 import media, { breakpoints } from 'styles/media';
 
-import { STEPS } from 'sections/homepage/Steps';
-
 type HowItWorksModalProps = {
 	onDismiss: () => void;
 };
@@ -37,18 +35,7 @@ export const HowItWorksModal: FC<HowItWorksModalProps> = ({ onDismiss }) => {
 								},
 							},
 						]}
-					>
-						{STEPS.map(({ id, image, subtitle, title, copy }) => (
-							<div key={id}>
-								<StepBox>
-									{image}
-									<StepSubtitle>{t(subtitle)}</StepSubtitle>
-								</StepBox>
-								<StepTitle>{t(title)}</StepTitle>
-								<StepCopy>{t(copy)}</StepCopy>
-							</div>
-						))}
-					</Slider>
+					></Slider>
 				</SliderContainer>
 			</Container>
 		</StyledCenteredModal>
@@ -111,43 +98,13 @@ const SubHeader = styled(Paragraph)`
 	line-height: 120%;
 	letter-spacing: 0.2px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	padding-right: 40px;
 	${media.lessThan('md')`
 		font-size: 20px;
 		text-align: center;
 		padding-bottom: 40px;
 		padding-right: 0;
-	`}
-`;
-
-const StepBox = styled.div`
-	position: relative;
-	margin-bottom: 20px;
-`;
-
-const StepSubtitle = styled(Paragraph)`
-	font-size: 16px;
-	line-height: 120%;
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	font-family: ${(props) => props.theme.fonts.bold};
-	position: absolute;
-	bottom: 2px;
-`;
-
-const StepTitle = styled(Paragraph)`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 16px;
-	color: ${(props) => props.theme.colors.white};
-	padding-bottom: 12px;
-	line-height: 19.2px;
-`;
-
-const StepCopy = styled(Paragraph)`
-	color: ${(props) => props.theme.colors.silver};
-	${media.lessThan('md')`
-		font-size: 14px;
-		line-height: 20px;
 	`}
 `;
 

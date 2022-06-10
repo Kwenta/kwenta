@@ -84,7 +84,9 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			<StyledButton size="sm">{t('header.networks-switcher.l2')}</StyledButton>
+			<StyledButton noOutline={true} size="sm">
+				{t('header.networks-switcher.l2')}
+			</StyledButton>
 		</Container>
 	) : (
 		<Container>
@@ -97,6 +99,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				optionPadding={'0px'} //override default padding to 0
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
+				noOutline={true}
 			></L2Select>
 		</Container>
 	);
@@ -142,24 +145,24 @@ const PrefixIcon = styled.span`
 
 const StyledCaretDownIcon = styled(CaretDownIcon)`
 	width: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const LabelContainer = styled(FlexDivRowCentered)<{ noPadding: boolean }>`
 	padding: ${(props) => !props.noPadding && '16px'};
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	:hover {
 		> svg {
 			path {
-				fill: ${(props) => props.theme.colors.common.primaryWhite};
+				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
 			}
 		}
 	}
 	> svg {
 		path {
-			fill: ${(props) => props.theme.colors.common.secondaryGray};
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
 		}
 	}
 `;

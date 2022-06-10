@@ -3,8 +3,15 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
+import AppLayout from 'sections/shared/Layout/AppLayout';
 
-const Futures: FC = () => {
+type AppLayoutProps = {
+	children: React.ReactNode;
+};
+
+type LeaderComponent = FC & { layout: FC<AppLayoutProps> };
+
+const Leader: LeaderComponent = () => {
 	const { t } = useTranslation();
 
 	return (
@@ -23,4 +30,6 @@ const Futures: FC = () => {
 	);
 };
 
-export default Futures;
+Leader.layout = AppLayout;
+
+export default Leader;

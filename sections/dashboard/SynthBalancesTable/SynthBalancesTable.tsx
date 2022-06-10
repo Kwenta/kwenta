@@ -229,14 +229,16 @@ const IconContainer = styled.div`
 `;
 
 const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-family: ${(props) => props.theme.fonts.regular};
 	font-size: 12px;
 	grid-column: 2;
 	grid-row: 2;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.p`
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
 
 const TableContainer = styled.div``;
 
@@ -252,6 +254,8 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	margin-bottom: -4px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-family: ${(props) => props.theme.fonts.bold};
 `;
 
 const MarketContainer = styled.div`
@@ -263,6 +267,7 @@ const MarketContainer = styled.div`
 
 const AmountCol = styled.div`
 	justify-self: flex-end;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
 export default SynthBalancesTable;

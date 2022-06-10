@@ -4,6 +4,7 @@ export const PROD_HOSTNAME = 'kwenta.io';
 
 export const EXTERNAL_LINKS = {
 	Trading: {
+		Legacy: 'https://legacy.kwenta.io/exchange',
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,
@@ -16,7 +17,7 @@ export const EXTERNAL_LINKS = {
 	},
 	Social: {
 		Twitter: 'https://twitter.com/kwenta_io',
-		Medium: 'https://blog.kwenta.io/',
+		Mirror: 'https://mirror.xyz/kwenta.eth',
 		Discord: 'https://discord.gg/kwenta',
 		GitHub: 'https://github.com/kwenta/kwenta',
 	},
@@ -28,6 +29,16 @@ export const EXTERNAL_LINKS = {
 	Docs: {
 		DocsRoot: 'https://docs.kwenta.io/',
 		FeeReclamation: 'https://docs.kwenta.io/resources/fee-reclamation',
+		HowToTrade: 'https://docs.kwenta.io/products/futures',
+		Governance: 'https://docs.kwenta.io/dao/governance-framework',
+		DaoRoles: 'https://docs.kwenta.io/dao/dao-roles',
+		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
+		Perpetuals: 'https://docs.kwenta.io/products/futures',
+		Shorting: ' https://docs.kwenta.io/products/what-is-shorting',
+		Spot: 'https://docs.kwenta.io/products/swaps ',
+		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
+		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
+		Faq: 'https://docs.kwenta.io/resources/faq',
 	},
 	Explorer: {
 		Optimism: 'https://optimistic.etherscan.io/tx',
@@ -35,5 +46,8 @@ export const EXTERNAL_LINKS = {
 	},
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
+	},
+	Kips: {
+		Home: 'https://kips.kwenta.io/all-kip/',
 	},
 };

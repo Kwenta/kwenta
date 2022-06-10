@@ -18,16 +18,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@81bfc289f5947eca8a3358341c874cb4f4697b64 # pin@codeql-bundle-20220322
+        uses: github/codeql-action/init@27ea8f8fe5977c00f5b37e076ab846c5bd783b96 # pin@codeql-bundle-20220322
         with:
           queries: security-and-quality
           languages: javascript
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@81bfc289f5947eca8a3358341c874cb4f4697b64 # pin@codeql-bundle-20220322
+        uses: github/codeql-action/autobuild@27ea8f8fe5977c00f5b37e076ab846c5bd783b96 # pin@codeql-bundle-20220322
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@81bfc289f5947eca8a3358341c874cb4f4697b64 # pin@codeql-bundle-20220322
+        uses: github/codeql-action/analyze@27ea8f8fe5977c00f5b37e076ab846c5bd783b96 # pin@codeql-bundle-20220322

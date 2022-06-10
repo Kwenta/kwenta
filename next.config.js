@@ -78,22 +78,16 @@ module.exports = withPlugins([
 		exportPathMap: function (defaultPathMap) {
 			return {
 				...defaultPathMap,
+				'/': {
+					page: '/',
+				},
 				'/dashboard': {
 					page: '/dashboard/[[...tab]]',
 				},
-				// '/exchange': {
-				// 	page: '/exchange/[[...market]]',
-				// },
-			};
-		},
-		async redirects() {
-			return [
-				{
-					source: '/',
-					destination: '/dashboard',
-					permanent: true,
+				'/exchange': {
+					page: '/exchange/[[...market]]',
 				},
-			];
+			};
 		},
 	},
 ]);

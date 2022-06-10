@@ -17,7 +17,9 @@ import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
-import useENS from 'hooks/useENS';
+import useENSs from 'hooks/useENSs';
+import useENSAvatar from 'hooks/useENSAvatar';
+import Connector from 'containers/Connector';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -32,15 +34,26 @@ type Stat = {
 
 const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { t } = useTranslation();
-	const [searchTerm, setSearchTerm] = useState<string | undefined>();
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [selectedTrader, setSelectedTrader] = useState('');
 	const [traderENSName, setTraderENSName] = useState<string | null>(null);
 	const router = useRouter();
+	const { staticMainnetProvider } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
+
+	const traders = useMemo(
+		() =>
+			stats.map((stat: FuturesStat) => {
+				return stat.account;
+			}) ?? [],
+		[stats]
+	);
+	const ensInfoQuery = useENSs(traders);
+	const ensInfo = useMemo(() => ensInfoQuery.data ?? [], [ensInfoQuery]);
 
 	useMemo(() => {
 		if (router.query.tab) {
@@ -69,25 +82,33 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 
 	let data = useMemo(() => {
 		return stats
-			.sort(
-				(a: FuturesStat, b: FuturesStat) =>
-					(pnlMap[b.account]?.pnl || 0) - (pnlMap[a.account]?.pnl || 0)
-			)
 			.map((stat: FuturesStat, i: number) => ({
-				rank: i + 1,
 				address: stat.account,
 				trader: stat.account,
 				traderShort: truncateAddress(stat.account),
+				traderEns: ensInfo[i]
+					? ensInfo[i].endsWith('.eth')
+						? ensInfo[i]
+						: truncateAddress(ensInfo[i])
+					: null,
 				totalTrades: (pnlMap[stat.account]?.totalTrades ?? wei(0)).toNumber(),
 				totalVolume: (pnlMap[stat.account]?.totalVolume ?? wei(0)).toNumber(),
 				liquidations: (pnlMap[stat.account]?.liquidations ?? wei(0)).toNumber(),
 				'24h': 80000,
 				pnl: (pnlMap[stat.account]?.pnl ?? wei(0)).toNumber(),
 			}))
-			.filter((i: { trader: string }) =>
-				searchTerm?.length ? i.trader.toLowerCase().includes(searchTerm) : true
+			.sort((a: FuturesStat, b: FuturesStat) => (b?.pnl || 0) - (a?.pnl || 0))
+			.map((stat: FuturesStat, i: number) => ({
+				rank: i + 1,
+				...stat,
+			}))
+			.filter((i: { trader: string; traderEns: string }) =>
+				searchTerm?.length
+					? i.trader.toLowerCase().includes(searchTerm) ||
+					  i.traderEns?.toLowerCase().includes(searchTerm)
+					: true
 			);
-	}, [stats, searchTerm, pnlMap]);
+	}, [stats, searchTerm, pnlMap, ensInfo]);
 
 	if (compact) {
 		const ownPosition = data.findIndex((i: { address: string }) => {
@@ -143,7 +164,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 					<StyledTable
 						compact={compact}
 						showPagination={true}
-						isLoading={statsQuery.isLoading}
+						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
 						data={data}
 						pageSize={20}
 						hideHeaders={compact}
@@ -175,31 +196,41 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
-											const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+											const avatar = useENSAvatar(
+												staticMainnetProvider,
+												cellProps.row.original.traderEns
+											);
 											return (
 												<StyledOrderType
-													onClick={() => onClickTrader(cellProps.row.original.trader, ensName)}
+													onClick={() =>
+														onClickTrader(
+															cellProps.row.original.trader,
+															cellProps.row.original.traderEns
+														)
+													}
 												>
 													{compact && cellProps.row.original.rank + '. '}
 													<StyledTrader>
-														{ensName ? (
+														{avatar ? (
 															<>
-																{ensAvatar && (
+																{!avatar.isLoading && avatar.data && (
 																	<img
-																		src={ensAvatar}
-																		alt={ensName}
+																		src={avatar.data}
+																		alt={''}
 																		width={16}
 																		height={16}
 																		style={{ borderRadius: '50%', marginRight: '8px' }}
+																		// @ts-ignore
+																		onError={(err) => (err.target.style.display = 'none')}
 																	/>
 																)}
-																{ensName}
+																{cellProps.row.original.traderEns}
 															</>
 														) : (
-															cellProps.row.original.traderShort
+															cellProps.row.original.traderEns ?? cellProps.row.original.traderShort
 														)}
 													</StyledTrader>
-													{getMedal(cellProps.row.index + 1)}
+													{getMedal(cellProps.row.original.rank)}
 												</StyledOrderType>
 											);
 										},
@@ -276,10 +307,10 @@ const ColorCodedPrice = styled(Currency.Price)`
 	align-items: right;
 	color: ${(props) =>
 		props.price > 0
-			? props.theme.colors.green
+			? props.theme.colors.selectedTheme.green
 			: props.price < 0
-			? props.theme.colors.red
-			: props.theme.colors.white};
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.button.text};
 `;
 
 const SearchContainer = styled.div`
@@ -305,22 +336,22 @@ const TableTitle = styled.div`
 
 const TitleText = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const TableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 `;
 
 const StyledOrderType = styled.div`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 	align-items: center;
 `;
 
 const StyledTrader = styled.a`
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	display: flex;
 
 	&:hover {

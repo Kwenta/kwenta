@@ -80,11 +80,11 @@ const OrderSizingContainer = styled.div`
 `;
 
 const OrderSizingTitle = styled.div`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 12px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 13px;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
@@ -97,9 +97,9 @@ const OrderSizingRow = styled(FlexDivRow)`
 
 const MaxButton = styled.button`
 	text-decoration: underline;
-	font-size: 11px;
+	font-size: 13px;
 	line-height: 11px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	background-color: transparent;
 	border: none;
 	cursor: pointer;

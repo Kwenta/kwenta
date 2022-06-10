@@ -35,6 +35,7 @@ const UserMenu: FC = () => {
 			<ConnectButton
 				size="sm"
 				variant="outline"
+				noOutline={true}
 				onClick={connectWallet}
 				data-testid="connect-wallet"
 				mono
@@ -47,10 +48,10 @@ const UserMenu: FC = () => {
 
 	const walletIsConnectedButNotSupported = (
 		<CTARow>
-			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
+			<SwitchToL2Button variant="secondary" onClick={switchToL2} noOutline={true}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+			<ConnectButton size="sm" data-testid="unsupported-network" mono noOutline={true}>
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
@@ -70,6 +71,7 @@ const UserMenu: FC = () => {
 					setSettingsModalOpened(!settingsModalOpened);
 				}}
 				isActive={settingsModalOpened}
+				noOutline={true}
 			>
 				<SettingsIcon width={20} />
 			</MenuButton>
@@ -103,6 +105,16 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
+	height: 41px;
+	circle {
+		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	}
+
+	:hover {
+		circle {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		}
+	}
 `;
 
 const ConnectButton = styled(Button)`
@@ -111,7 +123,7 @@ const ConnectButton = styled(Button)`
 
 const SwitchToL2Button = styled(Button)`
 	font-size: 13px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 

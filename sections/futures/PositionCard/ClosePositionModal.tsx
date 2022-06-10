@@ -102,29 +102,33 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		if (!position || !currencyKey) return [];
 		return [
 			{
-				label: t('futures.market.user.position.modal-close.side'),
+				label: t('futures.market.user.position.modal.order-type'),
+				value: t('futures.market.user.position.modal.market-order'),
+			},
+			{
+				label: t('futures.market.user.position.modal.side'),
 				value: (position?.side ?? PositionSide.LONG).toUpperCase(),
 			},
 			{
-				label: t('futures.market.user.position.modal-close.size'),
+				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
 					sign: synthToAsset(currencyKey as CurrencyKey),
 				}),
 			},
 			{
-				label: t('futures.market.user.position.modal-close.leverage'),
+				label: t('futures.market.user.position.modal.leverage'),
 				value: `${formatNumber(position?.leverage ?? zeroBN)}x`,
 			},
 			{
-				label: t('futures.market.user.position.modal-close.ROI'),
+				label: t('futures.market.user.position.modal.ROI'),
 				value: formatCurrency(Synths.sUSD, position?.roi ?? zeroBN, { sign: '$' }),
 			},
 			{
-				label: t('futures.market.user.position.modal-close.fee'),
+				label: t('futures.market.user.position.modal.fee'),
 				value: formatCurrency(Synths.sUSD, orderFee, { sign: '$' }),
 			},
 			{
-				label: t('futures.market.user.position.modal-close.gas-fee'),
+				label: t('futures.market.user.position.modal.gas-fee'),
 				value: formatCurrency(selectedPriceCurrency.name as CurrencyKey, transactionFee ?? zeroBN, {
 					sign: '$',
 				}),
@@ -150,7 +154,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		<StyledBaseModal
 			onDismiss={onDismiss}
 			isOpen={true}
-			title={t('futures.market.user.position.modal-close.title')}
+			title={t('futures.market.user.position.modal.title')}
 		>
 			<>
 				{dataRows.map(({ label, value }, i) => (
@@ -168,7 +172,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 					onClick={() => closeTxn.mutate()}
 					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal-close.title')}
+					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
 				</StyledButton>
 			</>
 		</StyledBaseModal>
@@ -192,7 +196,7 @@ const Row = styled(FlexDivCentered)`
 
 const Label = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 12px;
 	text-transform: capitalize;
 	margin-top: 6px;
@@ -200,7 +204,7 @@ const Label = styled.div`
 
 const Value = styled.div`
 	font-family: ${(props) => props.theme.fonts.mono};
-	color: ${(props) => props.theme.colors.white};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-size: 12px;
 	margin-top: 6px;
 `;

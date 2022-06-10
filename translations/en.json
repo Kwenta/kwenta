@@ -36,20 +36,32 @@
 		}
 	},
 	"homepage": {
-		"page-title": "Kwenta | derivatives trading with infinite liquidity",
+		"page-title": "Kwenta | Derivatives Trading with Infinite Liquidity",
 		"nav": {
-			"start-trading": "Start Trading",
+			"start-trade": "Start Trading",
+			"trade-now": "Trade now",
 			"wallet": "Connect Wallet",
-			"why": "Why Kwenta?",
-			"how": "How it Works",
-			"faq": "FAQ",
-			"kips": "KIPs"
+			"markets": "Markets",
+			"governance": {
+				"title": "Governance",
+				"overview": "Overview",
+				"kips": "KIPs"
+			},
+			"socials": {
+				"title": "Socials",
+				"discord": "Discord",
+				"mirror": "Mirror",
+				"twitter": "Twitter"
+			},
+			"blog": "Blog"
 		},
 		"hero": {
-			"title": "Derivatives trading with zero slippage"
+			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
-			"title": "Trade real world assets and derivatives on Ethereum",
+			"title": "TRENDING MARKETS",
+			"description": "Start Trading Synths now",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
@@ -57,19 +69,96 @@
 			"commodity": "Commodities",
 			"short": "Short positions"
 		},
+		"shortlist": {
+			"title": "Leaderboard",
+			"description": "Overview Of Current Most Profitable Accounts",
+			"stats": {
+				"title": "Last 24H Stats",
+				"copy": "Access to decentralized trading tools",
+				"volume": "Trading Volume",
+				"trades": "Total Daily Trades",
+				"open-interest": "Open Interest"
+			}
+		},
+		"earning": {
+			"title": "Earnings",
+			"description": "See What You Can Do With <0>$KWENTA</0> Token",
+			"copy": "Stake to earn, receive trading bonuses and participate in Kwenta DAO governance.",
+			"stake-to-earn": {
+				"title": "stake to earn",
+				"copy": "Staking $KWENTA earns weekly rewards which includes protocol fees and inflationary rewards"
+			},
+			"trade-to-earn": {
+				"title": "trade to earn",
+				"copy": "Stakers who trade actively will receive increased staking rewards"
+			},
+			"vote-and-govern": {
+				"title": "vote & govern",
+				"copy": "Token-managed governance empowers the community to help steer the Kwenta Exchange"
+			},
+			"how-to-earn": "How to earn",
+			"stake-kwenta": "Stake KWENTA",
+			"stats": {
+				"volume": "Total Trading Volume",
+				"trades": "Total Trades"
+			}
+		},
+		"learn": {
+			"title": "Learn More",
+			"description": "Explore Endless Possibilities Of Kwenta Exchange",
+			"how-to-trade": {
+				"title": "Learn How To Trade On Kwenta",
+				"copy": "Trading made easy, trade like a pro!"
+			},
+			"how-to-stake": {
+				"title": "Learn how to start earning with Kwenta",
+				"copy": "Earn the Kwenta token by participating in staking or incentives"
+			},
+			"how-governance": {
+				"title": "How Governance Works",
+				"copy": "Kwenta is governed, built, and maintained by its community. Learn more about how governance works, and how to get involved."
+			},
+			"faq": "FAQ"
+		},
+		"tradenow": {
+			"title": "SYNTHETIC LEVERAGE",
+			"description": "Take Back The Market, Trade Like A Whale",
+			"categories": "Commodities, Forex, Crypto and more."
+		},
 		"features": {
-			"title": "Unique trading features",
-			"infinite-liquidity": {
-				"title": "Infinite liquidity",
-				"copy": "All trading is peer-to-contract, using the Synthetix protocol’s pooled liquidity model. This means no counterparty matching, and essentially infinite liquidity for traders."
+			"title": "FEATURE CALLOUTS",
+			"description": "Trading Without The Limits Of A Centralised Exchange",
+			"blazing-fast": {
+				"title": "Blazing Fast",
+				"copy": "Near-instant trade confirmations using Layer 2 scalability"
+			},
+			"low-gas-fees": {
+				"title": "Low Gas Fees",
+				"copy": "Transaction costs on Layer 2 are one-tenth of L1"
+			},
+			"unique-assets": {
+				"title": "Unique Assets",
+				"copy": "Trade a variety of digital and traditional assets with low trading fees"
+			},
+			"permissionless": {
+				"title": "Permissionless",
+				"copy": "A full on-chain DeFi futures trading experience"
+			},
+			"mobile": {
+				"title": "Mobile",
+				"copy": "Manage your trades at home or on the go"
+			},
+			"easy-ramping": {
+				"title": "Easy Ramping",
+				"copy": "Deposit any asset to get started"
 			},
 			"zero-slippage": {
 				"title": "Zero slippage",
-				"copy": "Infinite liquidity means that traders never have to worry about moving the orderbook and being affected by slippage."
+				"copy": "Trade any available market with little to no slippage regardless of size"
 			},
-			"synthetic-futures": {
-				"title": "Synthetic futures",
-				"copy": "Once futures is built on the Synthetix protocol, it will soon be supported on Kwenta, offering perpetual future contracts on a non-custodial, permissionless platform."
+			"partners": {
+				"title": "Kwenta Ecosystem",
+				"copy": "Collaborating with industry leaders to deliver the best trading experience in DeFi."				
 			}
 		},
 		"l2": {
@@ -164,6 +253,29 @@
 			"cta": {
 				"title": "Start trading today",
 				"button": "View Exchange"
+			},
+			"copyright": "© 2022 kwenta, All Rights Reserved.",
+			"about-kwenta": {
+				"title": "About Kwenta",
+				"docs": "Docs",
+				"news": "News",
+				"faq": "FAQ",
+				"dao-roles": "DAO Roles"
+			},
+			"use-kwenta": {
+				"title": "Use KWENTA",
+				"how-to": "How to use Kwenta",
+				"perps": "Perpetuals",
+				"short": "Shorting",
+				"spot": "Spot Trading",
+				"legacy": "Legacy Exchange"
+			},
+			"community": {
+				"title": "Community",
+				"governance": "Governance",
+				"dev-dao": "Dev DAO",
+				"marketing-dao": "Marketing DAO",
+				"kips": "KIPs"
 			}
 		}
 	},
@@ -197,11 +309,13 @@
 				"seconds-ago": "sec ago"
 			},
 			"tooltips": {
-				"external-price": "Aggregated market price provided by CoinGecko",
+				"external-price": "Aggregated market price provided by external sources (Coingecko, Forex Market, etc.)",
 				"24h-change": "Total change in asset value within the past 24 hours",
 				"24h-vol": "Total trade volume within the past 24 hours",
 				"24h-trades": "Total amount of trades on selected pair within the past 24h",
+				"open-interest":"Total notional value on all outstanding positions of the selected market",
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
+				
 			}
 		},
 		"price-chart-card": {
@@ -243,7 +357,7 @@
 		"summary-info": {
 			"gas-price-gwei": "gas price (GWEI)",
 			"max-fee-gwei": "Max Fee (GWEI)",
-			"fee": "fee",
+			"fee": "Exchange fee",
 			"fee-cost": "fee cost",
 			"button": {
 				"approve": "approve",
@@ -417,6 +531,16 @@
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
+			"history-tabs": {
+				"futures": "Futures History",
+				"spot": "Spot History"
+			},
+			"history-table": {
+				"date-time": "Date/Time",
+				"from": "From",
+				"to": "To",
+				"usd-value": "USD Value"
+			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
@@ -424,7 +548,8 @@
 			},
 			"markets-tabs": {
 				"futures": "Futures Markets",
-				"spot": "Spot Markets"
+				"spot": "Spot Markets",
+				"synths": "Synths Markets"
 			}
 		},
 		"deprecated": {
@@ -654,10 +779,10 @@
 				"r-pnl": "Realized PnL",
 				"u-pnl": "Unrealized PnL",
 				"leverage": "Leverage",
-				"liquidation-price": "Liq. Price",
+				"liquidation-price": "Liq Price",
 				"net-funding": "Net Funding",
 				"fees": "Fees",
-				"avg-entry-price": "Avg. Entry",
+				"avg-entry-price": "Avg Entry",
 				"tooltips": {
 					"position-side": "Direction of current trade",
 					"position-size": "Notional value of the open position",
@@ -784,7 +909,7 @@
 				}
 			},
 			"history": {
-				"history-label": "trading history",
+				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
 				"skew-label": "skew",
 				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
@@ -809,14 +934,20 @@
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
 					"close-position": "close position",
 					"manage-position": "manage position",
-					"modal-close": {
+					"modal": {
 						"title": "Close position",
 						"size": "Size",
 						"side": "Side",
 						"leverage": "Leverage",
 						"ROI": "ROI",
 						"fee": "Protocol Fee",
-						"gas-fee": "Network Gas Fee"
+						"fee-total": "Total Fees",
+						"gas-fee": "Network Gas Fee",
+						"order-type": "Order Type",
+						"market-order": "Market",
+						"next-price-order": "Next-Price",
+						"deposit": "Total Deposit",
+						"np-discount": "Next-Price Discount"
 					}
 				},
 				"orders": {
@@ -897,6 +1028,18 @@
 						"at": "at"
 					}
 				}
+			},
+			"share": {
+				"title": "Share",
+				"buttons": {
+					"download": "Download"
+				},
+				"position-metadata": {
+					"open-at": "open at",
+					"created-on": "created on",
+					"avg-open-price": "avg open price",
+					"current-price": "current price"
+				}
 			}
 		}
 	},
@@ -917,8 +1060,7 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL ($)",
-				"percent-pnl": "PnL (%)"
+				"total-pnl": "PnL"
 			}
 		},
 		"trader-history": {
@@ -929,7 +1071,7 @@
 				"liquidated": "Liquidated",
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
-				"total-pnl": "Realized PnL ($)"
+				"total-pnl": "Realized PnL"
 			}
 		},
 		"statistics": {
@@ -1009,7 +1151,8 @@
 			"title": "settings",
 			"options": {
 				"currency": "currency",
-				"language": "language"
+				"language": "language",
+				"theme": "theme"
 			}
 		},
 		"wallet": {
@@ -1065,7 +1208,7 @@
 		"tabs": {
 			"nav": {
 				"overview": "Overview",
-				"positions": "Positions",
+				"history": "History",
 				"rewards": "Rewards",
 				"markets": "Markets",
 				"governance": "Governance",
@@ -1145,7 +1288,7 @@
 			"limit": "limit order"
 		},
 		"features": {
-			"coming-soon": "Coming Soon"
+			"coming-soon": "Soon"
 		},
 		"wallet": {
 			"connect-wallet": "connect wallet",

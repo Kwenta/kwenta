@@ -81,6 +81,8 @@ const markets = [
 	'sXAU',
 	'sXAG',
 	'sWTI',
+	'sDYDX',
+	'sAPE',
 ] as const;
 
 const map: Record<typeof markets[number], string> = {
@@ -96,6 +98,8 @@ const map: Record<typeof markets[number], string> = {
 	sXAU: '',
 	sXAG: '',
 	sWTI: '',
+	sDYDX: 'dydx',
+	sAPE: 'apecoin',
 };
 
 export const synthToCoingeckoPriceId = (synth: any) => {
@@ -115,6 +119,21 @@ export const mapCandles = (candles: CandleResult[]): Candle[] => {
 			high: high.toNumber(),
 			low: low.toNumber(),
 			close: close.toNumber(),
+			timestamp: timestamp.toNumber(),
+		};
+	});
+};
+
+export const mapPriceChart = (candles: CandleResult[]): Candle[] => {
+	return candles?.map(({ id, synth, open, high, low, close, average, timestamp }: CandleResult) => {
+		return {
+			id: id,
+			synth: synth,
+			open: open.toNumber(),
+			high: high.toNumber(),
+			low: low.toNumber(),
+			close: close.toNumber(),
+			average: average.toNumber(),
 			timestamp: timestamp.toNumber(),
 		};
 	});
