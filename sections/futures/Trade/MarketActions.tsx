@@ -63,4 +63,12 @@ const MarketActionsContainer = styled.div`
 
 const MarketActionButton = styled(Button)`
 	font-size: 15px;
+	height: 40px;
+	background-color: transparent;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+
+	&:hover:enabled {
+		color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.fill};
+	}
 `;

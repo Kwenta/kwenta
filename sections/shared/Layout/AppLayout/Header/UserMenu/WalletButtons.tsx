@@ -77,6 +77,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 					setSettingsModalOpened(!settingsModalOpened);
 				}}
 				isActive={settingsModalOpened}
+				noOutline
 			>
 				<SettingsIcon width={20} />
 			</MenuButton>
@@ -98,6 +99,16 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
+	height: 41px;
+	circle {
+		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	}
+
+	:hover {
+		circle {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		}
+	}
 `;
 
 const ConnectButton = styled(Button)`
