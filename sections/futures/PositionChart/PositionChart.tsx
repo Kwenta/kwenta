@@ -2,23 +2,25 @@ import { useMemo } from 'react';
 import { Synths } from 'constants/currency';
 
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 
 import TVChart from 'components/TVChart';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState, potentialTradeDetailsState, tradeSizeState } from 'store/futures';
+import {
+	currentMarketState,
+	positionState,
+	potentialTradeDetailsState,
+	tradeSizeState,
+} from 'store/futures';
 
 export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
-
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket();
+	const position = useRecoilValue(positionState);
 
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 
@@ -35,18 +37,18 @@ export default function PositionChart() {
 	}, [subgraphPosition, previewTrade, tradeSize]);
 
 	const activePosition = useMemo(() => {
-		if (!futuresMarketsPosition?.position) {
+		if (!position?.position) {
 			return null;
 		}
 
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice || futuresMarketsPosition.position.lastPrice,
-			size: futuresMarketsPosition.position.size,
-			liqPrice: futuresMarketsPosition.position?.liquidationPrice,
+			price: subgraphPosition?.avgEntryPrice || position.position.lastPrice,
+			size: position.position.size,
+			liqPrice: position.position?.liquidationPrice,
 		};
-	}, [subgraphPosition, futuresMarketsPosition]);
+	}, [subgraphPosition, position]);
 
 	return (
 		<TVChart
