@@ -1,0 +1,18 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/" 
+    open-pull-requests-limit: 3
+    target-branch: "dev"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 3
+    target-branch: "dev"
+    labels:
+      - "npm"
+      - "dependencies"
