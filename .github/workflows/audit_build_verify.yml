@@ -3,12 +3,12 @@ name: Kwenta CI
 on:
   push:
   pull_request:
-    branches: [master, dev, v2, v2-dev]
+    branches: [main, dev]
 
 jobs:
   audit:
-    # run only on master/dev/v2/v2-dev branch and pull requests
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
+    # run only on main/dev branch and pull requests
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
@@ -63,21 +63,21 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Lint
-        # run only on master/dev/v2/v2-dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
+        # run only on main/dev branch and pull requests
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run lint:sarif
 
       - name: Upload lint results
-        # run if lint failed and only on master/dev/v2/v2-dev branch and pull requests
-        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev')
+        # run if lint failed and only on main/dev branch and pull requests
+        if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
         uses: github/codeql-action/upload-sarif@27ea8f8fe5977c00f5b37e076ab846c5bd783b96 # pin@codeql-bundle-20220322
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Unit tests
-        # run only on master/dev/v2/v2-dev branch and pull requests
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
+        # run only on main/dev branch and pull requests
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run test:unit
 
   build:
@@ -134,7 +134,7 @@ jobs:
         run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request' || github.ref == 'refs/heads/v2' || github.ref == 'refs/heads/v2-dev'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
         with:
           name: build
