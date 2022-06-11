@@ -11,7 +11,6 @@ export type TabButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
-	gold?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
 };
@@ -22,13 +21,12 @@ const TabButton: React.FC<TabButtonProps> = ({
 	badge,
 	active,
 	icon,
-	gold,
 	vertical,
 	nofill,
 	...props
 }) => {
 	return (
-		<StyledButton {...props} {...{ active, gold, vertical, nofill }} noOutline>
+		<StyledButton {...props} {...{ active, vertical, nofill }} noOutline>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<div className="title-container">
@@ -44,7 +42,6 @@ const TabButton: React.FC<TabButtonProps> = ({
 
 const StyledButton = styled(Button)<{
 	active?: boolean;
-	gold?: boolean;
 	vertical?: boolean;
 	nofill?: boolean;
 }>`
@@ -120,15 +117,6 @@ const StyledButton = styled(Button)<{
 			display: none;
 		}
 	}
-
-	${(props) =>
-		props.active &&
-		props.gold &&
-		css`
-			&:before {
-				background: ${(props) => props.theme.colors.common.secondaryGold};
-			}
-		`}
 
 	${(props) =>
 		props.vertical &&

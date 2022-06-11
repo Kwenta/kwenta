@@ -52,7 +52,6 @@ const OverviewTabs: React.FC = () => {
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
 						icon={icon}
-						gold
 						vertical
 						nofill={nofill}
 					/>

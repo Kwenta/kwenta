@@ -1,12 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+
 import TVChart from 'components/TVChart';
+import { currentMarketState } from 'store/futures';
+import { Synths } from 'constants/currency';
 import { Pane } from '../common';
 
 const PriceTab: React.FC = () => {
+	const marketAsset = useRecoilValue(currentMarketState);
+
 	return (
 		<StyledPane noPadding>
-			<TVChart baseCurrencyKey="sUSD" quoteCurrencyKey="sETH" />
+			<TVChart baseCurrencyKey={marketAsset} quoteCurrencyKey={Synths.sUSD} />
 		</StyledPane>
 	);
 };

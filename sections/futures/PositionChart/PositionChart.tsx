@@ -50,7 +50,7 @@ export default function PositionChart() {
 
 	return (
 		<TVChart
-			baseCurrencyKey={marketAsset as string}
+			baseCurrencyKey={marketAsset}
 			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
 			potentialTrade={

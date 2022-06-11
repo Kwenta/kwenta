@@ -39,7 +39,6 @@ const UserTabs: React.FC = () => {
 						title={title}
 						active={activeTab === i}
 						onClick={() => setActiveTab(i)}
-						gold
 					/>
 				))}
 			</TabButtonsContainer>
