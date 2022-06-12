@@ -541,6 +541,16 @@
 				"to": "To",
 				"usd-value": "USD Value"
 			},
+			"futures-history-table": {
+				"size": "Size",
+				"pnl": "P&L",
+				"date-time": "Date/Time",
+				"fees": "Fees",
+				"price": "Price",
+				"side": "Side",
+				"market": "Market",
+				"order-type": "Type"
+			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
 				"shorts": "Shorts",
