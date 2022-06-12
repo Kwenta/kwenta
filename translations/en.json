@@ -535,7 +535,7 @@
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
-			"history-table": {
+			"spot-history-table": {
 				"date-time": "Date/Time",
 				"from": "From",
 				"to": "To",

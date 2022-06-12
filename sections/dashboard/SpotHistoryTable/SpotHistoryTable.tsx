@@ -70,7 +70,9 @@ const SpotHistoryTable: FC = () => {
 				]}
 				columns={[
 					{
-						Header: <TableHeader>{t('dashboard.overview.history-table.date-time')}</TableHeader>,
+						Header: (
+							<TableHeader>{t('dashboard.overview.spot-history-table.date-time')}</TableHeader>
+						),
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -83,7 +85,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.history-table.from')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-history-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -113,7 +115,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.history-table.to')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-history-table.to')}</TableHeader>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -143,7 +145,9 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.history-table.usd-value')}</TableHeader>,
+						Header: (
+							<TableHeader>{t('dashboard.overview.spot-history-table.usd-value')}</TableHeader>
+						),
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							const currencyKey = cellProps.row.original.toSynth?.symbol as CurrencyKey;
