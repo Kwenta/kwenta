@@ -11,7 +11,7 @@ import Table from 'components/Table';
 import { isL2State, walletAddressState } from 'store/wallet';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 import { NO_VALUE } from 'constants/placeholder';
-import { FlexDiv } from 'styles/common';
+import { GridDivCenteredRow } from 'styles/common';
 import * as _ from 'lodash/fp';
 import useGetAllFuturesTradesForAccount from '../../../queries/futures/useGetAllFuturesTradesForAccount';
 import { utils as ethersUtils } from 'ethers';
@@ -67,6 +67,16 @@ const FuturesHistoryTable: FC = () => {
 			<StyledTable
 				data={isL2 ? filteredHistoricalTrades : []}
 				showPagination={true}
+				noResultsMessage={
+					!isL2 ? (
+						<>
+							<TableNoResults>
+								{t('dashboard.overview.futures-history-table.no-results')}
+								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+							</TableNoResults>
+						</>
+					) : undefined
+				}
 				highlightRowsOnHover
 				sortBy={[{ id: 'dateTime', asec: true }]}
 				columns={[
@@ -200,21 +210,10 @@ const FuturesHistoryTable: FC = () => {
 					},
 				]}
 			/>
-			{!isL2 ? (
-				<CTARow>
-					<StyledLink>
-						<h3 onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</h3>
-					</StyledLink>
-				</CTARow>
-			) : null}
 		</TableContainer>
 	);
 };
 const DefaultCell = styled.p``;
-const StyledLink = styled.h3`
-	text-decoration: underline;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-`;
 const StyledTimeDisplay = styled.div`
 	div {
 		margin-left: 2px;
@@ -272,12 +271,6 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		`}
 `;
 
-const CTARow = styled(FlexDiv)`
-	> * {
-		margin-right: 16px;
-	}
-`;
-
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 	color: ${(props) =>
 		props.normal
@@ -285,6 +278,22 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 20px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	div {
+		text-decoration: underline;
+		font-size: 16px;
+		font-family: ${(props) => props.theme.fonts.regular};
+	}
 `;
 
 export default FuturesHistoryTable;

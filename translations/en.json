@@ -549,7 +549,8 @@
 				"price": "Price",
 				"side": "Side",
 				"market": "Market",
-				"order-type": "Type"
+				"order-type": "Type",
+				"no-results": "Perpetual Futures are available on Optimism L2"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
