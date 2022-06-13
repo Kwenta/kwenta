@@ -2,17 +2,21 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
+	leverageSideState,
 	leverageState,
 	marketInfoState,
 	maxLeverageState,
+	orderTypeState,
 	positionState,
 	sizeDeltaState,
+	tradeSizeState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
+import { PositionSide } from 'queries/futures/types';
 
 type ManagePositionProps = {
 	translationKey: string;
@@ -34,6 +38,9 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const positionDetails = position?.position;
+	const orderType = useRecoilValue(orderTypeState);
+	const [, setLeverageSide] = useRecoilState(leverageSideState);
+	const [, setTradeSize] = useRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 
 	return (
@@ -66,7 +73,20 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 						isRounded
 						fullWidth
 						variant="danger"
-						onClick={() => setCancelModalOpen(true)}
+						onClick={() => {
+							if (orderType === 1 && position?.position?.size) {
+								const newTradeSize = position.position.size;
+								const newLeverageSide =
+									position.position.side === PositionSide.LONG
+										? PositionSide.SHORT
+										: PositionSide.LONG;
+								setLeverageSide(newLeverageSide);
+								setTradeSize(newTradeSize.toString());
+								openConfirmationModal();
+							} else {
+								setCancelModalOpen(true);
+							}
+						}}
 						disabled={!positionDetails || marketInfo?.isSuspended}
 						noOutline
 					>

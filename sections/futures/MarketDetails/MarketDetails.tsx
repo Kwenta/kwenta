@@ -1,5 +1,8 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import { wei } from '@synthetixio/wei';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -21,10 +24,8 @@ import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
 import { currentMarketState } from 'store/futures';
-import { useRecoilValue } from 'recoil';
+import media from 'styles/media';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -291,10 +292,12 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 `;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	bottom: -115px;
-	z-index: 2;
-	left: -200px;
-	padding: 10px;
+	${media.greaterThan('sm')`
+		bottom: -115px;
+		z-index: 2;
+		left: -200px;
+		padding: 10px;
+	`}
 `;
 
 const MarketDetailsTooltip = styled(StyledTooltip)`

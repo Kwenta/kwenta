@@ -96,7 +96,7 @@ const useFuturesData = () => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === ''
+				value === '' || !position?.remainingMargin
 					? ''
 					: marketAssetRate
 							.mul(Number(value))
