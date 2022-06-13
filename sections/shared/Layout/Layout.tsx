@@ -68,7 +68,7 @@ const GlobalStyle = createGlobalStyle`
 	.bn-onboard-custom {
 		&&& {
 			font-family: ${(props) => props.theme.fonts.regular};
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 			
 		}
 		&&.bn-onboard-modal {
@@ -83,7 +83,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-selected-wallet {
 			background-color: ${(props) => props.theme.colors.navy};
-			color: ${(props) => props.theme.colors.common.primaryWhite };
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 		}
 		&&.bn-onboard-modal-content {
 			background-color: ${(props) => props.theme.colors.elderberry};
