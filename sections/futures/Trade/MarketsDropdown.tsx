@@ -208,6 +208,11 @@ const SelectContainer = styled.div<{ mobile?: boolean }>`
 	${(props) =>
 		props.mobile &&
 		css`
+			position: absolute;
+			width: 100%;
+			top: 0;
+			z-index: 5;
+
 			.react-select__control {
 				border-radius: 0;
 			}

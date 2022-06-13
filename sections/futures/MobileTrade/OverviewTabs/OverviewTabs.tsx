@@ -42,7 +42,7 @@ const OverviewTabs: React.FC = () => {
 	const [activeTab, setActiveTab] = React.useState(0);
 
 	return (
-		<div>
+		<OverviewTabsContainer>
 			{TABS[activeTab].component}
 			<MainTabButtonsContainer>
 				{TABS.map(({ title, icon, nofill }, i) => (
@@ -57,9 +57,13 @@ const OverviewTabs: React.FC = () => {
 					/>
 				))}
 			</MainTabButtonsContainer>
-		</div>
+		</OverviewTabsContainer>
 	);
 };
+
+const OverviewTabsContainer = styled.div`
+	margin-top: 55px;
+`;
 
 const MainTabButtonsContainer = styled.div`
 	display: flex;
