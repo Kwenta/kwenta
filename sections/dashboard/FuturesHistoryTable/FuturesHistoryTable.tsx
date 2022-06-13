@@ -11,19 +11,25 @@ import Table from 'components/Table';
 import { isL2State, walletAddressState } from 'store/wallet';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 import { NO_VALUE } from 'constants/placeholder';
-import { ExternalLink } from 'styles/common';
-import LinkIcon from 'assets/svg/app/link.svg';
+import { FlexDiv } from 'styles/common';
 import * as _ from 'lodash/fp';
 import useGetAllFuturesTradesForAccount from '../../../queries/futures/useGetAllFuturesTradesForAccount';
 import { utils as ethersUtils } from 'ethers';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade, PositionSide } from 'queries/futures/types';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+import { wei } from '@synthetixio/wei';
+import { ETH_UNIT } from 'constants/network';
+import React from 'react';
+import { TradeStatus } from 'sections/futures/types';
 
 const FuturesHistoryTable: FC = () => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
 	const trades: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
@@ -33,18 +39,33 @@ const FuturesHistoryTable: FC = () => {
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const filteredHistoricalTrades = useMemo(
 		() =>
-			trades.filter((trade: any) => {
-				const activeSynths = synths.map((synth) => ethersUtils.formatBytes32String(synth.name));
-				return activeSynths.includes(trade.asset as CurrencyKey);
-			}),
+			trades
+				.filter((trade: any) => {
+					const activeSynths = synths.map((synth) => ethersUtils.formatBytes32String(synth.name));
+					return activeSynths.includes(trade.asset as CurrencyKey);
+				})
+				.map((trade: FuturesTrade) => {
+					return {
+						...trade,
+						price: Number(trade?.price?.div(ETH_UNIT)),
+						size: Number(trade?.size.div(ETH_UNIT).abs()),
+						timestamp: Number(trade?.timestamp.mul(1000)),
+						pnl: trade?.pnl.div(ETH_UNIT),
+						feesPaid: trade?.feesPaid.div(ETH_UNIT),
+						id: trade?.txnHash,
+						orderType: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
+						status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+					};
+				}),
 		[trades, synths]
 	);
+
 	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
 		_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
 	return (
 		<TableContainer>
 			<StyledTable
-				data={filteredHistoricalTrades}
+				data={isL2 ? filteredHistoricalTrades : []}
 				showPagination={true}
 				highlightRowsOnHover
 				sortBy={[{ id: 'dateTime', asec: true }]}
@@ -58,9 +79,7 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.timestamp,
 								<StyledTimeDisplay>
-									<TimeDisplay
-										cellPropsValue={cellProps.row.original.timestamp.toNumber() * 1000}
-									/>
+									<TimeDisplay cellPropsValue={cellProps.row.original.timestamp} />
 								</StyledTimeDisplay>
 							);
 						},
@@ -95,9 +114,9 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.side,
-								<PositionValue side={cellProps.row.original.side!}>
-									{cellProps.row.original.side}
-								</PositionValue>
+								<>
+									<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
+								</>
 							);
 						},
 						width: 120,
@@ -108,15 +127,10 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.size,
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.size}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
-								/>
+								<>{formatCryptoCurrency(cellProps.value)}</>
 							);
 						},
-						width: 250,
+						width: 120,
 					},
 					{
 						Header: (
@@ -126,15 +140,14 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.price,
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.price!}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
-								/>
+								<>
+									{formatCurrency(Synths.sUSD, cellProps.value, {
+										sign: '$',
+									})}
+								</>
 							);
 						},
-						width: 300,
+						width: 120,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.pnl')}</TableHeader>,
@@ -142,15 +155,18 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.pnl,
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.pnl}
-									sign={selectedPriceCurrency.sign}
-									conversionRate={selectPriceCurrencyRate}
-								/>
+								cellProps.row.original.pnl.eq(wei(0)) ? (
+									<PNL normal={true}>--</PNL>
+								) : (
+									<PNL negative={cellProps.value.lt(wei(0))}>
+										{formatCurrency(Synths.sUSD, cellProps.value, {
+											sign: '$',
+										})}
+									</PNL>
+								)
 							);
 						},
-						width: 250,
+						width: 120,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.fees')}</TableHeader>,
@@ -166,7 +182,7 @@ const FuturesHistoryTable: FC = () => {
 								/>
 							);
 						},
-						width: 250,
+						width: 120,
 					},
 					{
 						Header: (
@@ -184,24 +200,24 @@ const FuturesHistoryTable: FC = () => {
 					},
 				]}
 			/>
+			{!isL2 ? (
+				<CTARow>
+					<StyledLink>
+						<h3 onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</h3>
+					</StyledLink>
+				</CTARow>
+			) : null}
 		</TableContainer>
 	);
 };
 const DefaultCell = styled.p``;
-const StyledExternalLink = styled(ExternalLink)`
-	margin-left: auto;
+const StyledLink = styled.h3`
+	text-decoration: underline;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
 `;
 const StyledTimeDisplay = styled.div`
 	div {
 		margin-left: 2px;
-	}
-`;
-const StyledLinkIcon = styled(LinkIcon)`
-	width: 14px;
-	height: 14px;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	&:hover {
-		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
 `;
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -241,13 +257,8 @@ const SynthContainer = styled.div`
 	margin-left: -4px;
 `;
 
-const PositionValue = styled.span<{ side?: PositionSide }>`
-	font-family: ${(props) => props.theme.fonts.bold};
-	font-size: 13px;
+const StyledPositionSide = styled.div<{ side: PositionSide }>`
 	text-transform: uppercase;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	margin: 0;
-
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
@@ -260,4 +271,20 @@ const PositionValue = styled.span<{ side?: PositionSide }>`
 			color: ${props.theme.colors.selectedTheme.red};
 		`}
 `;
+
+const CTARow = styled(FlexDiv)`
+	> * {
+		margin-right: 16px;
+	}
+`;
+
+const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
+	color: ${(props) =>
+		props.normal
+			? props.theme.colors.selectedTheme.button.text
+			: props.negative
+			? props.theme.colors.selectedTheme.red
+			: props.theme.colors.selectedTheme.green};
+`;
+
 export default FuturesHistoryTable;
