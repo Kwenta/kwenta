@@ -32,11 +32,14 @@ const UserMenu: FC = () => {
 	const { connectWallet } = Connector.useContainer();
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [uniswapWidgetOpened, setUniswapWidgetOpened] = useState<boolean>(false);
-	const [toggleTheme, setToggleTheme] = useState<boolean>(true);
-	const [, setTheme] = useRecoilState(currentThemeState);
+	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const ThemeIcon = toggleTheme ? SunIcon : MoonIcon;
+	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
+
+	const toggleTheme = () => {
+		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+	};
 
 	const walletIsNotConnected = (
 		<CTARow>
@@ -76,8 +79,7 @@ const UserMenu: FC = () => {
 			<WalletActions />
 			<MenuButton
 				onClick={() => {
-					setToggleTheme(!toggleTheme);
-					setTheme(toggleTheme ? 'light' : 'dark');
+					toggleTheme();
 				}}
 				isActive={settingsModalOpened}
 				noOutline={true}
