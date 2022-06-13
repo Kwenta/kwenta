@@ -145,22 +145,6 @@
 			"pre-commit": "npm run lint"
 		}
 	},
-	"jest": {
-		"roots": [
-			"<rootDir>"
-		],
-		"modulePaths": [
-			"<rootDir>"
-		],
-		"moduleDirectories": [
-			"node_modules"
-		],
-		"globalSetup": "./test-setup/global.js",
-		"setupFilesAfterEnv": [
-			"./test-setup/setup.js"
-		],
-		"testEnvironment": "jest-environment-jsdom"
-	},
 	"engines": {
 		"node": ">=16",
 		"npm": ">=8"
