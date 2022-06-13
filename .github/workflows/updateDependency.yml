@@ -12,9 +12,9 @@ jobs:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - uses: actions/setup-node@v3
         with:
-          node-version: '14.17.1'
+          node-version: '16.15.1'
       - name: npm update
-        run: npm install -g npm@7.19.0
+        run: npm install -g npm@8.11.0
       - name: Update @synthetixio/contracts-interface dependency
         run: |
           npm install --legacy-peer-deps --no-audit

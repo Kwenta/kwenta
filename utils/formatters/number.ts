@@ -33,6 +33,14 @@ export const getDecimalPlaces = (value: WeiSource) => (value.toString().split('.
 
 export const zeroBN = wei(0);
 
+export const truncateNumbers = (value: WeiSource, maxDecimalDigits: number) => {
+	if (value.toString().includes('.')) {
+		const parts = value.toString().split('.');
+		return parts[0] + '.' + parts[1].slice(0, maxDecimalDigits);
+	}
+	return value.toString();
+};
+
 /**
  * ethers utils.commify method will reduce the decimals of a number to one digit if those decimals are zero.
  * This helper is used to reverse this behavior in order to display the specified decmials in the output.
