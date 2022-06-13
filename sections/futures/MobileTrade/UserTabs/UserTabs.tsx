@@ -49,6 +49,7 @@ const UserTabs: React.FC = () => {
 
 const UserTabsContainer = styled.div`
 	padding: 0 15px;
+	min-height: 390px;
 `;
 
 const TabButtonsContainer = styled.div`

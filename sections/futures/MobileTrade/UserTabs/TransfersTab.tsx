@@ -8,6 +8,7 @@ import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTra
 import { GridDivCenteredRow } from 'styles/common';
 import Table from 'components/Table';
 import { timePresentation } from 'utils/formatters/date';
+import { SectionHeader } from '../common';
 
 const TransfersTab: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -24,55 +25,63 @@ const TransfersTab: React.FC = () => {
 	const columnsDeps = React.useMemo(() => [marginTransfers], [marginTransfers]);
 
 	return (
-		<StyledTable
-			highlightRowsOnHover
-			columns={[
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.action')}</StyledTableHeader>
-					),
-					accessor: 'action',
-					Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.amount')}</StyledTableHeader>
-					),
-					accessor: 'amount',
-					sortType: 'basic',
-					Cell: (cellProps: any) => (
-						<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
-							{cellProps.value}
-						</StyledAmountCell>
-					),
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
-					),
-					accessor: 'timestamp',
-					Cell: (cellProps: any) => (
-						<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
-					),
-					width: 50,
-				},
-			]}
-			data={marginTransfers}
-			columnsDeps={columnsDeps}
-			isLoading={isLoading && !isLoaded}
-			noResultsMessage={
-				marginTransfers?.length === 0 ? (
-					<TableNoResults>
-						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
-					</TableNoResults>
-				) : undefined
-			}
-			showPagination={true}
-			pageSize={5}
-		/>
+		<div>
+			<SectionHeader>Transfers</SectionHeader>
+
+			<StyledTable
+				highlightRowsOnHover
+				columns={[
+					{
+						Header: (
+							<StyledTableHeader>
+								{t('futures.market.user.transfers.table.action')}
+							</StyledTableHeader>
+						),
+						accessor: 'action',
+						Cell: (cellProps: any) => <StyledActionCell>{cellProps.value}</StyledActionCell>,
+						width: 50,
+					},
+					{
+						Header: (
+							<StyledTableHeader>
+								{t('futures.market.user.transfers.table.amount')}
+							</StyledTableHeader>
+						),
+						accessor: 'amount',
+						sortType: 'basic',
+						Cell: (cellProps: any) => (
+							<StyledAmountCell isPositive={cellProps.row.original.isPositive}>
+								{cellProps.value}
+							</StyledAmountCell>
+						),
+						sortable: true,
+						width: 50,
+					},
+					{
+						Header: (
+							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
+						),
+						accessor: 'timestamp',
+						Cell: (cellProps: any) => (
+							<DefaultCell>{timePresentation(cellProps.value, t)}</DefaultCell>
+						),
+						width: 50,
+					},
+				]}
+				data={marginTransfers}
+				columnsDeps={columnsDeps}
+				isLoading={isLoading && !isLoaded}
+				noResultsMessage={
+					marginTransfers?.length === 0 ? (
+						<TableNoResults>
+							<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
+						</TableNoResults>
+					) : undefined
+				}
+				showPagination={true}
+				pageSize={5}
+			/>
+		</div>
 	);
 };
 
