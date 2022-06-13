@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import { Synths, CurrencyKey } from '@synthetixio/contracts-interface';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
@@ -15,6 +14,7 @@ import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 import { PositionSide } from 'sections/futures/types';
 import { GasLimitEstimate } from 'constants/network';
+import { Synths, CurrencyKey } from 'constants/currency';
 import BaseDrawer from './BaseDrawer';
 import Button from 'components/Button';
 

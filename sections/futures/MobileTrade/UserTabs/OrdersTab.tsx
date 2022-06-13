@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
 import { CellProps } from 'react-table';
 import { wei } from '@synthetixio/wei';
+
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { positionState, currentMarketState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
@@ -32,7 +33,7 @@ const OrdersTab: React.FC = () => {
 	const { handleRefetch } = useRefetchContext();
 
 	const [selectedOrder, setSelectedOrder] = React.useState<any>();
-	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
+	const [action, setAction] = React.useState<'cancel' | 'execute' | null>(null);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -49,7 +50,7 @@ const OrdersTab: React.FC = () => {
 		{
 			enabled: !!action,
 			onSettled: () => {
-				setAction('');
+				setAction(null);
 			},
 		}
 	);
