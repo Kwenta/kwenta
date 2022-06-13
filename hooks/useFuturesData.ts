@@ -16,7 +16,7 @@ import {
 	feeCostState,
 	leverageSideState,
 	leverageState,
-	leverageValueCommitedState,
+	leverageValueCommittedState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
@@ -57,7 +57,7 @@ const useFuturesData = () => {
 	const leverageSide = useRecoilValue(leverageSideState);
 	const orderType = useRecoilValue(orderTypeState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
-	const isLeverageValueCommitted = useRecoilValue(leverageValueCommitedState);
+	const isLeverageValueCommitted = useRecoilValue(leverageValueCommittedState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);

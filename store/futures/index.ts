@@ -64,8 +64,8 @@ export const dynamicFeeState = atom({
 	default: null,
 });
 
-export const leverageValueCommitedState = atom({
-	key: getFuturesKey('leverageValueCommited'),
+export const leverageValueCommittedState = atom({
+	key: getFuturesKey('leverageValueCommitted'),
 	default: true,
 });
 

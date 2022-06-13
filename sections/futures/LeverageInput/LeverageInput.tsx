@@ -10,7 +10,7 @@ import { formatNumber } from 'utils/formatters/number';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageState,
-	leverageValueCommitedState,
+	leverageValueCommittedState,
 	marketInfoState,
 	maxLeverageState,
 	nextPriceDisclaimerState,
@@ -28,7 +28,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
-	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommitedState);
+	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommittedState);
 	const marketInfo = useRecoilValue(marketInfoState);
 
 	const modeButton = useMemo(() => {
