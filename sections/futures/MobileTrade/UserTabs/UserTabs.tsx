@@ -18,7 +18,7 @@ const TABS = [
 		component: <OrdersTab />,
 	},
 	{
-		title: 'Trades',
+		title: 'My Trades',
 		component: <TradesTab />,
 	},
 	{

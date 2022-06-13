@@ -24,6 +24,7 @@ import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { currentMarketState, positionState, potentialTradeDetailsState } from 'store/futures';
 import PreviewArrow from 'components/PreviewArrow';
+import media from 'styles/media';
 
 type PositionCardProps = {
 	currencyKeyRate: number;
@@ -517,8 +518,10 @@ const PositionCardTooltip = styled(StyledTooltip)`
 `;
 
 const LeftMarginTooltip = styled(StyledTooltip)`
-	left: -60px;
-	z-index: 2;
+	${media.greaterThan('sm')`
+		left: -60px;
+		z-index: 2;
+	`}
 `;
 
 const StyledValue = styled.p`
