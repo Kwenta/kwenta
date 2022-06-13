@@ -67,9 +67,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 		<HistoryContainer>
 			<HistoryLabelContainer>
 				<HistoryLabel>{t('futures.market.history.history-label')}</HistoryLabel>
-				<LastTradesLabel>
-					{t('futures.market.history.last-n-trades', { numberOfTrades: numberOfTrades })}
-				</LastTradesLabel>
+				<LastTradesLabel>{t('futures.market.history.last-trades')}</LastTradesLabel>
 			</HistoryLabelContainer>
 			<TableContainer>
 				<StyledTable
