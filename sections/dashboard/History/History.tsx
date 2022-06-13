@@ -14,7 +14,7 @@ enum HistoryTab {
 const History: FC = () => {
 	const { t } = useTranslation();
 
-	const [activeMarketsTab, setActiveMarketsTab] = useState<HistoryTab>(HistoryTab.SPOT);
+	const [activeMarketsTab, setActiveMarketsTab] = useState<HistoryTab>(HistoryTab.FUTURES);
 
 	const HISTORY_TABS = useMemo(
 		() => [
