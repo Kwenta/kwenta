@@ -66,7 +66,6 @@ const FuturesHistoryTable: FC = () => {
 		<TableContainer>
 			<StyledTable
 				data={isL2 ? filteredHistoricalTrades : []}
-				showPagination={true}
 				noResultsMessage={
 					!isL2 ? (
 						<>
