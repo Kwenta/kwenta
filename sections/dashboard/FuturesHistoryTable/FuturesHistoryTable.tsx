@@ -93,7 +93,7 @@ const FuturesHistoryTable: FC = () => {
 								</StyledTimeDisplay>
 							);
 						},
-						width: 120,
+						width: 100,
 					},
 					{
 						Header: (
@@ -116,7 +116,7 @@ const FuturesHistoryTable: FC = () => {
 								</SynthContainer>
 							);
 						},
-						width: 120,
+						width: 100,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.side')}</TableHeader>,
@@ -129,7 +129,7 @@ const FuturesHistoryTable: FC = () => {
 								</>
 							);
 						},
-						width: 120,
+						width: 80,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.size')}</TableHeader>,
@@ -140,7 +140,7 @@ const FuturesHistoryTable: FC = () => {
 								<>{formatCryptoCurrency(cellProps.value)}</>
 							);
 						},
-						width: 120,
+						width: 100,
 					},
 					{
 						Header: (
