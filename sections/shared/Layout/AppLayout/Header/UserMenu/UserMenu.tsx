@@ -1,7 +1,9 @@
 import { FC, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { currentThemeState } from 'store/ui';
+
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 
 import Connector from 'containers/Connector';
@@ -19,7 +21,9 @@ import UniswapModal from 'sections/shared/modals/UniswapModal';
 import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
-import SettingsIcon from 'assets/svg/app/settings.svg';
+
+import SunIcon from 'assets/svg/app/sun.svg';
+import MoonIcon from 'assets/svg/app/moon.svg';
 
 const UserMenu: FC = () => {
 	const { t } = useTranslation();
@@ -28,7 +32,14 @@ const UserMenu: FC = () => {
 	const { connectWallet } = Connector.useContainer();
 	const [settingsModalOpened, setSettingsModalOpened] = useState<boolean>(false);
 	const [uniswapWidgetOpened, setUniswapWidgetOpened] = useState<boolean>(false);
+	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
+
+	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
+
+	const toggleTheme = () => {
+		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+	};
 
 	const walletIsNotConnected = (
 		<CTARow>
@@ -68,12 +79,12 @@ const UserMenu: FC = () => {
 			<WalletActions />
 			<MenuButton
 				onClick={() => {
-					setSettingsModalOpened(!settingsModalOpened);
+					toggleTheme();
 				}}
 				isActive={settingsModalOpened}
 				noOutline={true}
 			>
-				<SettingsIcon width={20} />
+				<ThemeIcon width={20} />
 			</MenuButton>
 		</>
 	);
