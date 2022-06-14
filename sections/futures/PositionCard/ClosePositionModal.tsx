@@ -181,7 +181,7 @@ export default ClosePositionModal;
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 400px;
+		max-width: 400px;
 	}
 	.card-body {
 		padding: 28px;
