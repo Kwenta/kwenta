@@ -136,7 +136,7 @@ const UserInfo: React.FC = () => {
 			},
 			{
 				name: FuturesTab.ORDERS,
-				label: 'Open Orders',
+				label: 'Orders',
 				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,

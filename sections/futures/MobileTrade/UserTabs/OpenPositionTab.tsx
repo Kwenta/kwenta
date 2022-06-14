@@ -56,6 +56,7 @@ const OpenPositionTab: React.FC = () => {
 				translationKey={placeOrderTranslationKey}
 				openConfirmationModal={() => setModalOpen(true)}
 				error={error}
+				orderError={orderTxn.errorMessage}
 			/>
 
 			<FeeInfoBox dynamicFee={dynamicFee} />

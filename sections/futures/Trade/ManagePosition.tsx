@@ -10,6 +10,7 @@ import {
 	maxLeverageState,
 	orderTypeState,
 	positionState,
+	potentialTradeDetailsState,
 	sizeDeltaState,
 	tradeSizeState,
 } from 'store/futures';
@@ -22,6 +23,7 @@ type ManagePositionProps = {
 	translationKey: string;
 	marketCapReached: boolean;
 	error: string | null;
+	orderError: string | null;
 	openConfirmationModal(): void;
 };
 
@@ -30,6 +32,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	marketCapReached,
 	openConfirmationModal,
 	error,
+	orderError,
 }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
@@ -37,6 +40,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const position = useRecoilValue(positionState);
 	const maxLeverageValue = useRecoilValue(maxLeverageState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionDetails = position?.position;
 	const orderType = useRecoilValue(orderTypeState);
 	const [, setLeverageSide] = useRecoilState(leverageSideState);
@@ -95,6 +99,10 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 				</ManagePositionContainer>
 			</div>
 
+			{(orderError || error || previewTrade?.showStatus) && (
+				<ErrorMessage>{orderError || error || previewTrade?.statusMessage}</ErrorMessage>
+			)}
+
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
 		</>
 	);
@@ -147,6 +155,12 @@ const ManageOrderTitle = styled.p`
 	span {
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
+`;
+
+const ErrorMessage = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.red};
+	font-size: 12px;
+	margin-bottom: 16px;
 `;
 
 export default ManagePosition;

@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import SegmentedControl from 'components/SegmentedControl';
 import useFuturesData from 'hooks/useFuturesData';
+import { leverageSideState, orderTypeState } from 'store/futures';
 
 import LeverageInput from '../LeverageInput';
 import TradeConfirmationModal from './TradeConfirmationModal';
@@ -13,7 +14,6 @@ import OrderSizing from '../OrderSizing';
 import FeeInfoBox from '../FeeInfoBox';
 import NextPrice from './NextPrice';
 import NextPriceConfirmationModal from './NextPriceConfirmationModal';
-import { leverageSideState, orderTypeState } from 'store/futures';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketInfoBox from '../MarketInfoBox';
@@ -28,7 +28,6 @@ const Trade: React.FC = () => {
 		dynamicFee,
 		isMarketCapReached,
 		orderTxn,
-		previewTrade,
 	} = useFuturesData();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
@@ -66,11 +65,8 @@ const Trade: React.FC = () => {
 				marketCapReached={isMarketCapReached}
 				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
 				error={error}
+				orderError={orderTxn.errorMessage}
 			/>
-
-			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
-				<ErrorMessage>{orderTxn.errorMessage || error || previewTrade?.statusMessage}</ErrorMessage>
-			)}
 
 			<FeeInfoBox dynamicFee={dynamicFee} />
 
@@ -96,12 +92,6 @@ const Trade: React.FC = () => {
 };
 
 export default Trade;
-
-const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-	font-size: 12px;
-	margin-bottom: 16px;
-`;
 
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;

@@ -14,11 +14,11 @@ const TABS = [
 		component: <OpenPositionTab />,
 	},
 	{
-		title: 'Open Orders',
+		title: 'Orders',
 		component: <OrdersTab />,
 	},
 	{
-		title: 'My Trades',
+		title: 'Trades',
 		component: <TradesTab />,
 	},
 	{

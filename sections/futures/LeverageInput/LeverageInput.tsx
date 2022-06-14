@@ -15,6 +15,7 @@ import {
 	maxLeverageState,
 	nextPriceDisclaimerState,
 	orderTypeState,
+	positionState,
 } from 'store/futures';
 
 type LeverageInputProps = {
@@ -30,6 +31,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
 	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommittedState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const position = useRecoilValue(positionState);
 
 	const modeButton = useMemo(() => {
 		return (
@@ -42,6 +44,10 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 			</TextButton>
 		);
 	}, [mode]);
+
+	const isDisabled = useMemo(() => {
+		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
+	}, [position]);
 
 	return (
 		<LeverageInputWrapper>
@@ -60,7 +66,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
-						disabled={maxLeverage.lte(0)}
+						disabled={isDisabled}
 						minValue={0}
 						maxValue={maxLeverage.toNumber()}
 						value={leverage ? Number(leverage) : 0}
@@ -82,6 +88,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 							setIsLeverageValueCommitted(true);
 							onLeverageChange(newValue.toString());
 						}}
+						disabled={isDisabled}
 					/>
 					{['2', '5', '10'].map((l) => (
 						<LeverageButton
