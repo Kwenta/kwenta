@@ -1,5 +1,5 @@
 {
-	"extends": ["react-app"],
+	"extends": ["react-app", "plugin:@next/next/recommended"],
 	"plugins": ["prettier"],
 	"rules": {
 		"react/react-in-jsx-scope": "off",
