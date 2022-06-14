@@ -35,14 +35,12 @@ const UserMenu: FC = () => {
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
 
-	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
-
 	const toggleTheme = () => {
 		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
 	};
 
 	const walletIsNotConnected = (
-		<CTARow>
+		<>
 			<ConnectButton
 				size="sm"
 				variant="outline"
@@ -54,11 +52,11 @@ const UserMenu: FC = () => {
 				<StyledConnectionDot />
 				{t('common.wallet.connect-wallet')}
 			</ConnectButton>
-		</CTARow>
+		</>
 	);
 
 	const walletIsConnectedButNotSupported = (
-		<CTARow>
+		<>
 			<SwitchToL2Button variant="secondary" onClick={switchToL2} noOutline={true}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
@@ -66,7 +64,7 @@ const UserMenu: FC = () => {
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
-		</CTARow>
+		</>
 	);
 
 	const walletIsConnectedAndSupported = (
@@ -84,7 +82,11 @@ const UserMenu: FC = () => {
 				isActive={settingsModalOpened}
 				noOutline={true}
 			>
-				<ThemeIcon width={20} />
+				{currentTheme === 'dark' ? (
+					<SunIcon width={15} height={15} className="sun-icon" />
+				) : (
+					<MoonIcon className="moon-icon" />
+				)}
 			</MenuButton>
 		</>
 	);
@@ -92,13 +94,11 @@ const UserMenu: FC = () => {
 	return (
 		<>
 			<Container>
-				<FlexDivCentered>
-					{isWalletConnected
-						? isSupportedNetworkId(network.id)
-							? walletIsConnectedAndSupported
-							: walletIsConnectedButNotSupported
-						: walletIsNotConnected}
-				</FlexDivCentered>
+				{isWalletConnected
+					? isSupportedNetworkId(network.id)
+						? walletIsConnectedAndSupported
+						: walletIsConnectedButNotSupported
+					: walletIsNotConnected}
 			</Container>
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 			{uniswapWidgetOpened && <UniswapModal onDismiss={() => setUniswapWidgetOpened(false)} />}
@@ -106,24 +106,34 @@ const UserMenu: FC = () => {
 	);
 };
 
-const Container = styled.div``;
+const Container = styled.div`
+	display: grid;
+	grid-gap: 15px;
+	grid-auto-flow: column;
+`;
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
 `;
 
 const MenuButton = styled(Button)`
-	display: flex;
-	align-items: center;
-	margin-left: 15px;
+	display: grid;
+	place-items: center;
 	height: 41px;
-	circle {
-		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	width: 41px;
+	padding: 0px;
+
+	svg {
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+		}
 	}
 
 	:hover {
-		circle {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+			}
 		}
 	}
 `;
@@ -136,15 +146,6 @@ const SwitchToL2Button = styled(Button)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	font-family: ${(props) => props.theme.fonts.mono};
-`;
-
-const CTARow = styled(FlexDiv)`
-	button:first-child {
-		margin-right: 15px;
-	}
-	button:only-child {
-		margin-right: 0px;
-	}
 `;
 
 export default UserMenu;
