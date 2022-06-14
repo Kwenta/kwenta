@@ -13,6 +13,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
+	skip: number,
 	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -30,6 +31,7 @@ const useGetFuturesTrades = (
 				const response = await getFuturesTrades(
 					futuresEndpoint,
 					{
+						skip: skip,
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
