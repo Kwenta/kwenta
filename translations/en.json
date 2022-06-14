@@ -1035,7 +1035,7 @@
 					"download": "Download"
 				},
 				"position-metadata": {
-					"open-at": "open at",
+					"open-at": "opened on",
 					"created-on": "created on",
 					"avg-open-price": "avg open price",
 					"current-price": "current price"
