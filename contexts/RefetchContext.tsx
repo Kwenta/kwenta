@@ -4,7 +4,6 @@ import useSynthetixQueries from '@synthetixio/queries';
 
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesMarketPositionHistory from 'queries/futures/useGetFuturesMarketPositionHistory';
 import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
@@ -26,7 +25,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
-	const positionHistoryQuery = useGetFuturesMarketPositionHistory();
 	const marketQuery = useGetFuturesMarket();
 	useGetFuturesPotentialTradeDetails();
 
@@ -35,7 +33,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 			switch (refetchType) {
 				case 'modify-position':
 					marketQuery.refetch();
-					positionHistoryQuery.refetch();
 					openOrdersQuery.refetch();
 					break;
 				case 'new-order':
@@ -48,7 +45,6 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'margin-change':
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
-					positionHistoryQuery.refetch();
 					synthsBalancesQuery.refetch();
 					break;
 			}
