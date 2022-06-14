@@ -130,7 +130,6 @@
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
 		"jest": "27.3.1",
-		"lint-staged": "10.0.10",
 		"pinst": "2.1.4",
 		"prettier": "2.0.5",
 		"react-test-renderer": "17.0.1",
