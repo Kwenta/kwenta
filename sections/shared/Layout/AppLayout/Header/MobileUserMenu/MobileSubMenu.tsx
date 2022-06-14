@@ -39,10 +39,10 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 
 	return (
 		<>
-			<MenuButton isActive={active} onClick={onToggle}>
+			<SubMenuButton isActive={active} onClick={onToggle}>
 				{t(i18nLabel)}
 				{active ? <ChevronUp /> : <ChevronDown />}
-			</MenuButton>
+			</SubMenuButton>
 			{active && (
 				<SubMenuContainer onClick={onDismiss}>
 					{link
@@ -75,6 +75,14 @@ const MobileSubMenu: React.FC<MobileSubMenuProps> = ({
 		</>
 	);
 };
+
+const SubMenuButton = styled(MenuButton)`
+	${(props) =>
+		props.isActive &&
+		css`
+			margin-bottom: 20px;
+		`}
+`;
 
 const SubMenuContainer = styled.div`
 	box-sizing: border-box;
