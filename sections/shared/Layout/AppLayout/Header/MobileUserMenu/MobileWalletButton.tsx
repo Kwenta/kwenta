@@ -27,6 +27,7 @@ const MobileWalletButton: React.FC<MobileWalletButtonProps> = ({ toggleModal, cl
 		<ConnectButton
 			size="sm"
 			variant="outline"
+			noOutline
 			onClick={() => {
 				closeModal();
 				connectWallet();
