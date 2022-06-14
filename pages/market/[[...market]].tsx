@@ -1,9 +1,10 @@
-import { useState, useCallback, FC } from 'react';
+import { useEffect, FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useRecoilState } from 'recoil';
 
-import { DesktopOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 import {
 	PageContent,
@@ -16,13 +17,11 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import { PotentialTrade } from 'sections/futures/types';
 import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import { getMarketKey } from 'utils/futures';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import Connector from 'containers/Connector';
+import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import { currentMarketState } from 'store/futures';
+import { RefetchProvider } from 'contexts/RefetchContext';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
 type AppLayoutProps = {
@@ -35,65 +34,46 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
-	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
-	const { network } = Connector.useContainer();
+	const marketAsset = router.query.market?.[0] as CurrencyKey;
 
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
+	const [, setCurrentMarket] = useRecoilState(currentMarketState);
 
-	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
-
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
-	const openOrders = openOrdersQuery?.data ?? [];
-
-	const refetch = useCallback(() => {
-		futuresMarketPositionQuery.refetch();
-		openOrdersQuery.refetch();
-	}, [futuresMarketPositionQuery, openOrdersQuery]);
+	useEffect(() => {
+		if (marketAsset) setCurrentMarket(marketAsset);
+	}, [setCurrentMarket, marketAsset]);
 
 	return (
-		<>
+		<RefetchProvider>
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
-			<StyledPageContent>
-				<StyledFullHeightContainer>
-					<StyledLeftSideContent>
-						<TradingHistory currencyKey={marketAsset} />
-					</StyledLeftSideContent>
-					<StyledMainContent>
-						<MarketInfo
-							market={marketAsset}
-							position={futuresMarketPosition}
-							openOrders={openOrders}
-							refetch={refetch}
-							potentialTrade={potentialTrade}
-						/>
-					</StyledMainContent>
-					<DesktopOnlyView>
-						<StyledRightSideContent>
-							<Trade
-								onEditPositionInput={setPotentialTrade}
-								potentialTrade={potentialTrade}
-								refetch={refetch}
-								position={futuresMarketPosition}
-								currencyKey={marketAsset}
-							/>
-						</StyledRightSideContent>
-					</DesktopOnlyView>
-				</StyledFullHeightContainer>
-			</StyledPageContent>
-		</>
+			<MobileHiddenView>
+				<PageContent>
+					<StyledFullHeightContainer>
+						<StyledLeftSideContent>
+							<TradingHistory />
+						</StyledLeftSideContent>
+						<StyledMainContent>
+							<MarketInfo />
+						</StyledMainContent>
+						<DesktopOnlyView>
+							<StyledRightSideContent>
+								<Trade />
+							</StyledRightSideContent>
+						</DesktopOnlyView>
+					</StyledFullHeightContainer>
+				</PageContent>
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<MobileTrade />
+			</MobileOnlyView>
+		</RefetchProvider>
 	);
 };
 
 Market.layout = AppLayout;
 
 export default Market;
-
-const StyledPageContent = styled(PageContent)``;
 
 const StyledMainContent = styled(MainContent)`
 	margin: unset;

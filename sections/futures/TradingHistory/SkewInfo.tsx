@@ -6,19 +6,18 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { currentMarketState } from 'store/futures';
 import styled from 'styled-components';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 import OpenInterestBar from './OpenInterestBar';
 
-type SkewInfoProps = {
-	currencyKey: string | undefined;
-};
-
-const SkewInfo: React.FC<SkewInfoProps> = ({ currencyKey }) => {
+const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
+	const currencyKey = useRecoilValue(currentMarketState);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 

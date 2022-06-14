@@ -52,6 +52,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			<ConnectButton
 				size="sm"
 				variant="outline"
+				noOutline
 				onClick={connectWallet}
 				data-testid="connect-wallet"
 				mono
@@ -87,7 +88,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 					toggleTheme();
 				}}
 				isActive={settingsModalOpened}
-				noOutline={true}
+				noOutline
 			>
 				<ThemeIcon width={20} />
 			</MenuButton>
@@ -109,6 +110,16 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
+	height: 41px;
+	circle {
+		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	}
+
+	:hover {
+		circle {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		}
+	}
 `;
 
 const ConnectButton = styled(Button)`

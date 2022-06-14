@@ -9,6 +9,7 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from './utils';
+import { currentMarketState } from 'store/futures';
 
 export type NextPriceDetails = {
 	keeperDeposit: Wei;
@@ -21,14 +22,12 @@ export type NextPriceDetails = {
 	assetPrice: Wei;
 };
 
-const useGetNextPriceDetails = (
-	currencyKey: string | null,
-	options?: UseQueryOptions<NextPriceDetails | null>
-) => {
+const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const currencyKey = useRecoilValue(currentMarketState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<NextPriceDetails | null>(
