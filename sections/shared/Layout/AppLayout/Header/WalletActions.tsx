@@ -153,7 +153,6 @@ const Container = styled.div`
 	width: 100%;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.mono};
-	margin-left: 15px;
 `;
 
 const WalletOptionsSelect = styled(Select)`
