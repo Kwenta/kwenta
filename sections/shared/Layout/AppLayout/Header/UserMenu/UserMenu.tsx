@@ -11,7 +11,6 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 
 import { isWalletConnectedState, networkState } from 'store/wallet';
-import { FlexDiv, FlexDivCentered } from 'styles/common';
 
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 
@@ -75,19 +74,6 @@ const UserMenu: FC = () => {
 			/>
 			<NetworksSwitcher />
 			<WalletActions />
-			<MenuButton
-				onClick={() => {
-					toggleTheme();
-				}}
-				isActive={settingsModalOpened}
-				noOutline={true}
-			>
-				{currentTheme === 'dark' ? (
-					<SunIcon width={15} height={15} className="sun-icon" />
-				) : (
-					<MoonIcon className="moon-icon" />
-				)}
-			</MenuButton>
 		</>
 	);
 
@@ -99,6 +85,19 @@ const UserMenu: FC = () => {
 						? walletIsConnectedAndSupported
 						: walletIsConnectedButNotSupported
 					: walletIsNotConnected}
+				<MenuButton
+					onClick={() => {
+						toggleTheme();
+					}}
+					isActive={settingsModalOpened}
+					noOutline={true}
+				>
+					{currentTheme === 'dark' ? (
+						<SunIcon width={15} height={15} className="sun-icon" />
+					) : (
+						<MoonIcon className="moon-icon" />
+					)}
+				</MenuButton>
 			</Container>
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 			{uniswapWidgetOpened && <UniswapModal onDismiss={() => setUniswapWidgetOpened(false)} />}
