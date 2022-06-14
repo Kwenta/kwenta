@@ -3,7 +3,12 @@
 	"plugins": ["prettier"],
 	"rules": {
 		"react/react-in-jsx-scope": "off",
-		"prettier/prettier": "error",
+		"prettier/prettier": [
+			"error",
+			{
+				"endOfLine": "auto"
+			}
+		],
 		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],
 		"comma-dangle": [
 			"error",
@@ -17,6 +22,7 @@
 		],
 		"jsx-a11y/anchor-is-valid": "off",
 		"jsx-a11y/alt-text": "off",
-		"import/no-anonymous-default-export": "off"
+		"import/no-anonymous-default-export": "off",
+		"@next/next/no-img-element": "off"
 	}
 }

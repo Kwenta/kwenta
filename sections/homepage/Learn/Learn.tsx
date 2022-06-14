@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import FaqIcon from 'assets/png/learn/faq.png';
@@ -44,7 +45,7 @@ const LEARNS = [
 		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
-		image: <img src={FaqIcon} />,
+		image: <Image src={FaqIcon} width={60} height={60} />,
 		onClick: () => window.open(EXTERNAL_LINKS.Docs.Faq, '_blank'),
 	},
 ];
@@ -198,11 +199,6 @@ const FeatureIconContainer = styled.div`
 
 	&.faq {
 		padding-bottom: 15px;
-	}
-
-	img {
-		width: 60px;
-		height: 60px;
 	}
 
 	&.how-to-stake {
