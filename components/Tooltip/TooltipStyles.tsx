@@ -20,7 +20,7 @@ export const Tooltip = styled.div<ToolTipStyleProps>`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
 	border-radius: 8px;
-	padding: 0 10px;
+	padding: 10px;
 	margin: 0;
 	position: absolute;
 	top: ${(props) => props.top};
