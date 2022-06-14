@@ -90,7 +90,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const getBasePriceRate = React.useCallback(
 		(asset: CurrencyKey) => {
-			return Number(futureRates?.[iStandardSynth(asset) ? asset : assetToSynth(asset)]) ?? null;
+			return Number(futureRates?.[iStandardSynth(asset) ? asset : assetToSynth(asset)] ?? 0);
 		},
 		[futureRates]
 	);
