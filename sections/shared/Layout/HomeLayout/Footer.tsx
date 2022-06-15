@@ -160,6 +160,7 @@ const PowerContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	width: 1280px;
 	padding-top: 45px;
 	border-top: 1px solid #3d3c3c;
