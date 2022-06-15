@@ -12,7 +12,6 @@ import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
 import { newGetTransactionPrice } from 'utils/network';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths, CurrencyKey } from 'constants/currency';
@@ -20,40 +19,30 @@ import Connector from 'containers/Connector';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { PositionSide } from '../types';
 import { GasLimitEstimate } from 'constants/network';
+import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
-	market: CurrencyKey | null;
-	tradeSize: string;
 	gasLimit: GasLimitEstimate;
 	onConfirmOrder: () => void;
-	side: PositionSide;
 	l1Fee: Wei | null;
-	leverage: string;
 };
 
 const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	onDismiss,
-	market,
-	tradeSize,
-	side,
 	gasLimit,
 	onConfirmOrder,
 	l1Fee,
-	leverage,
 }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useExchangeRatesQuery, useEthGasPriceQuery } = useSynthetixQueries();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const { data: potentialTradeDetails } = useGetFuturesPotentialTradeDetails(market, {
-		size: tradeSize,
-		side,
-		leverage,
-	});
+	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),

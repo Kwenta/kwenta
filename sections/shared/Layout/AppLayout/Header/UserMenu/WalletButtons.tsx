@@ -1,8 +1,10 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+
+import { currentThemeState } from 'store/ui';
 
 import Connector from 'containers/Connector';
 
@@ -17,6 +19,8 @@ import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
 import SettingsIcon from 'assets/svg/app/settings.svg';
+import SunIcon from 'assets/svg/app/sun.svg';
+import MoonIcon from 'assets/svg/app/moon.svg';
 
 type WalletButtonsProps = {
 	settingsModalOpened: boolean;
@@ -28,20 +32,27 @@ type WalletButtonsProps = {
 const WalletButtons: React.FC<WalletButtonsProps> = ({
 	settingsModalOpened,
 	uniswapWidgetOpened,
-	setSettingsModalOpened,
 	setUniswapWidgetOpened,
 }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
 	const { connectWallet } = Connector.useContainer();
+	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
+
+	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
+
+	const toggleTheme = () => {
+		setTheme((curr) => (curr === 'light' ? 'dark' : 'light'));
+	};
 
 	const walletIsNotConnected = (
 		<CTARow>
 			<ConnectButton
 				size="sm"
 				variant="outline"
+				noOutline
 				onClick={connectWallet}
 				data-testid="connect-wallet"
 				mono
@@ -74,11 +85,12 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			<WalletActions />
 			<MenuButton
 				onClick={() => {
-					setSettingsModalOpened(!settingsModalOpened);
+					toggleTheme();
 				}}
 				isActive={settingsModalOpened}
+				noOutline
 			>
-				<SettingsIcon width={20} />
+				<ThemeIcon width={20} />
 			</MenuButton>
 		</>
 	);
@@ -98,6 +110,16 @@ const MenuButton = styled(Button)`
 	display: flex;
 	align-items: center;
 	margin-left: 15px;
+	height: 41px;
+	circle {
+		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	}
+
+	:hover {
+		circle {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		}
+	}
 `;
 
 const ConnectButton = styled(Button)`

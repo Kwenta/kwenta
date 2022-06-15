@@ -39,7 +39,7 @@ export const MobileWalletActions: FC<MobileWalletButtonProps> = ({ toggleModal }
 	}, [signer, truncatedWalletAddress]);
 
 	return (
-		<StyledButton mono onClick={toggleModal}>
+		<StyledButton mono noOutline onClick={toggleModal}>
 			{ensAvatar ? (
 				<StyledImage src={ensAvatar} alt={ensName} width={16} height={16} />
 			) : (
@@ -57,6 +57,7 @@ const StyledConnectionDot = styled(ConnectionDot)`
 const StyledButton = styled(Button)`
 	font-size: 13px;
 	text-transform: lowercase;
+	height: 41px;
 `;
 
 const StyledImage = styled.img`

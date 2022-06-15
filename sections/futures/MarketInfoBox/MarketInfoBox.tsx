@@ -1,46 +1,39 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import Wei, { wei } from '@synthetixio/wei';
 import InfoBox from 'components/InfoBox';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-import { PositionSide, PotentialTrade } from '../types';
+import { useRecoilValue } from 'recoil';
+import {
+	leverageSideState,
+	marketInfoState,
+	maxLeverageState,
+	orderTypeState,
+	positionState,
+	potentialTradeDetailsState,
+	tradeSizeState,
+} from 'store/futures';
+import Wei, { wei } from '@synthetixio/wei';
+import { Synths } from 'constants/currency';
+import { PositionSide } from '../types';
 import PreviewArrow from 'components/PreviewArrow';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import { FuturesPosition, FuturesPotentialTradeDetails } from 'queries/futures/types';
+import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/costCalculations';
-import { getMarketKey } from 'utils/futures';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
-type MarketInfoBoxProps = {
-	position: FuturesPosition | null;
-	isMarketClosed: boolean;
-	potentialTrade: PotentialTrade | null;
-	marketMaxLeverage: Wei | undefined;
-	currencyKey: string;
-	tradeSize: Wei;
-	side: PositionSide;
-	orderType: number;
-};
+const MarketInfoBox: React.FC = () => {
+	const maxLeverage = useRecoilValue(maxLeverageState);
+	const position = useRecoilValue(positionState);
+	const marketInfo = useRecoilValue(marketInfoState);
+	const orderType = useRecoilValue(orderTypeState);
+	const leverageSide = useRecoilValue(leverageSideState);
+	const tradeSize = useRecoilValue(tradeSizeState);
 
-const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
-	position,
-	isMarketClosed,
-	potentialTrade,
-	marketMaxLeverage,
-	currencyKey,
-	tradeSize,
-	side,
-	orderType,
-}) => {
-	const network = useRecoilValue(networkState);
 	const totalMargin = position?.remainingMargin ?? zeroBN;
 	const availableMargin = position?.accessibleMargin ?? zeroBN;
+
 	const buyingPower =
 		position && position?.accessibleMargin.gt(zeroBN)
-			? position?.accessibleMargin?.mul(marketMaxLeverage ?? zeroBN)
+			? position?.accessibleMargin?.mul(maxLeverage ?? zeroBN)
 			: zeroBN;
 
 	const marginUsage =
@@ -48,22 +41,19 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 			? position?.remainingMargin?.sub(position?.accessibleMargin).div(position?.remainingMargin)
 			: zeroBN;
 
-	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(
-		currencyKey as CurrencyKey,
-		potentialTrade
-	);
+	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
-	const previewTrade = potentialTradeDetails.data ?? null;
 	const isNextPriceOrder = orderType === 1;
-	const nextPriceDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
+	const nextPriceDetailsQuery = useGetNextPriceDetails();
 	const nextPriceDetails = nextPriceDetailsQuery?.data;
 
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
-		const newSize = side === PositionSide.LONG ? tradeSize : -tradeSize;
+		const newSize =
+			leverageSide === PositionSide.LONG ? wei(tradeSize || 0) : wei(tradeSize || 0).neg();
 		return { newSize, size: (positionSize ?? zeroBN).add(newSize).abs() };
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [side, positionSize]);
+	}, [leverageSide, positionSize]);
 
 	const { commitDeposit } = useMemo(
 		() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)),
@@ -96,18 +86,18 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 	};
 
 	const previewAvailableMargin = React.useMemo(() => {
-		const potentialAvailableMargin = getPotentialAvailableMargin(previewTrade, marketMaxLeverage);
+		const potentialAvailableMargin = getPotentialAvailableMargin(previewTrade, maxLeverage);
 		return isNextPriceOrder
 			? potentialAvailableMargin?.sub(totalDeposit) ?? zeroBN
 			: potentialAvailableMargin;
-	}, [previewTrade, marketMaxLeverage, isNextPriceOrder, totalDeposit]);
+	}, [previewTrade, maxLeverage, isNextPriceOrder, totalDeposit]);
 
 	const previewTradeData = React.useMemo(() => {
-		const size = wei(potentialTrade?.size || zeroBN);
+		const size = wei(tradeSize || zeroBN);
 		const potentialMarginUsage =
 			previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ?? zeroBN;
 		const potentialBuyingPower =
-			previewAvailableMargin?.mul(marketMaxLeverage ?? zeroBN)?.abs() ?? zeroBN;
+			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
 		return {
 			showPreview: size && !size.eq(0),
@@ -116,7 +106,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 			buyingPower: potentialBuyingPower.gt(0) ? potentialBuyingPower : zeroBN,
 			marginUsage: potentialMarginUsage.gt(1) ? wei(1) : potentialMarginUsage,
 		};
-	}, [potentialTrade?.size, previewTrade?.margin, previewAvailableMargin, marketMaxLeverage]);
+	}, [tradeSize, previewTrade?.margin, previewAvailableMargin, maxLeverage]);
 
 	return (
 		<StyledInfoBox
@@ -162,7 +152,7 @@ const MarketInfoBox: React.FC<MarketInfoBoxProps> = ({
 					),
 				},
 			}}
-			disabled={isMarketClosed}
+			disabled={marketInfo?.isSuspended}
 		/>
 	);
 };

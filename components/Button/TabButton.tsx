@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from './Button';
 
 export type TabButtonProps = {
@@ -11,11 +11,22 @@ export type TabButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
+	vertical?: boolean;
+	nofill?: boolean;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({
+	title,
+	detail,
+	badge,
+	active,
+	icon,
+	vertical,
+	nofill,
+	...props
+}) => {
 	return (
-		<StyledButton {...props} isActive={!!active} noOutline={true}>
+		<StyledButton {...props} {...{ active, vertical, nofill }} noOutline>
 			{!!icon && <div>{icon}</div>}
 			<div>
 				<div className="title-container">
@@ -29,13 +40,18 @@ const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ico
 	);
 };
 
-const StyledButton = styled(Button)<{ isActive: boolean }>`
+const StyledButton = styled(Button)<{
+	active?: boolean;
+	vertical?: boolean;
+	nofill?: boolean;
+}>`
+	height: initial;
 	display: flex;
 	align-items: center;
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
-	background-color: ${(props) => !props.isActive && 'transparent'};
+	background-color: ${(props) => !props.active && 'transparent'};
 	p {
 		margin: 0;
 		font-size: 13px;
@@ -48,19 +64,19 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 	.title {
 		text-align: center;
 		color: ${(props) =>
-			props.isActive
+			props.active
 				? props.theme.colors.selectedTheme.button.text
 				: props.theme.colors.selectedTheme.gray};
 	}
+
 	.detail {
 		color: ${(props) =>
-			props.isActive
-				? props.theme.colors.selectedTheme.gold
-				: props.theme.colors.selectedTheme.gray};
+			props.active ? props.theme.colors.selectedTheme.gold : props.theme.colors.selectedTheme.gray};
 		margin-top: 4px;
 		font-size: 18px;
 		font-family: ${(props) => props.theme.fonts.monoBold};
 	}
+
 	.badge {
 		height: 16px;
 		width: fit-content;
@@ -74,16 +90,15 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 		border-radius: 4px;
 	}
 
-	svg:first-child {
-		margin-right: 7px;
-	}
-
 	svg {
+		margin-right: ${(props) => (props.vertical ? '0' : '7px')};
 		path {
-			fill: ${(props) =>
-				props.isActive
-					? props.theme.colors.selectedTheme.button.text
-					: props.theme.colors.selectedTheme.gray};
+			${(props) =>
+				css`
+					${props.nofill ? 'stroke' : 'fill'}: ${props.active
+						? props.theme.colors.selectedTheme.button.text
+						: props.theme.colors.selectedTheme.gray};
+				`}
 		}
 	}
 
@@ -102,5 +117,13 @@ const StyledButton = styled(Button)<{ isActive: boolean }>`
 			display: none;
 		}
 	}
+
+	${(props) =>
+		props.vertical &&
+		css`
+			display: flex;
+			flex-direction: ${props.vertical ? 'column' : 'row'};
+			align-items: center;
+		`}
 `;
 export default TabButton;
