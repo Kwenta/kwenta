@@ -51,6 +51,7 @@ const CurrencyMeta = styled(FlexDivCentered)<{ $isSelected: boolean }>`
 		css`
 			${StyledCurrencyLabel} {
 				color: ${(props) => props.theme.colors.selectedTheme.button.text};
+				font-family: ${(props) => props.theme.fonts.bold};
 			}
 		`}
 `;
