@@ -2,9 +2,7 @@ import { FC, useMemo, ReactElement } from 'react';
 import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { CurrencyKey, Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
-import values from 'lodash/values';
+import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
@@ -35,29 +33,23 @@ const FuturesHistoryTable: FC = () => {
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);
-	const { synthsMap } = Connector.useContainer();
-	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
-	const filteredHistoricalTrades = useMemo(
+
+	const mappedHistoricalTrades = useMemo(
 		() =>
-			trades
-				.filter((trade: any) => {
-					const activeSynths = synths.map((synth) => ethersUtils.formatBytes32String(synth.name));
-					return activeSynths.includes(trade.asset as CurrencyKey);
-				})
-				.map((trade: FuturesTrade) => {
-					return {
-						...trade,
-						price: Number(trade?.price?.div(ETH_UNIT)),
-						size: Number(trade?.size.div(ETH_UNIT).abs()),
-						timestamp: Number(trade?.timestamp.mul(1000)),
-						pnl: trade?.pnl.div(ETH_UNIT),
-						feesPaid: trade?.feesPaid.div(ETH_UNIT),
-						id: trade?.txnHash,
-						orderType: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
-						status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
-					};
-				}),
-		[trades, synths]
+			trades.map((trade: FuturesTrade) => {
+				return {
+					...trade,
+					price: Number(trade?.price?.div(ETH_UNIT)),
+					size: Number(trade?.size.div(ETH_UNIT).abs()),
+					timestamp: Number(trade?.timestamp.mul(1000)),
+					pnl: trade?.pnl.div(ETH_UNIT),
+					feesPaid: trade?.feesPaid.div(ETH_UNIT),
+					id: trade?.txnHash,
+					orderType: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
+					status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+				};
+			}),
+		[trades]
 	);
 
 	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
@@ -65,7 +57,7 @@ const FuturesHistoryTable: FC = () => {
 	return (
 		<TableContainer>
 			<StyledTable
-				data={isL2 ? filteredHistoricalTrades : []}
+				data={isL2 ? mappedHistoricalTrades : []}
 				showPagination={true}
 				noResultsMessage={
 					!isL2 ? (
