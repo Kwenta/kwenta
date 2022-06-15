@@ -18,7 +18,7 @@ export const LanguageSelect: FC = () => {
 	const languageOptions = useMemo(
 		() =>
 			Object.entries(languages).map(([langCode, langLabel]) => ({
-				value: langCode,
+				value: langCode as Language,
 				label: langLabel,
 			})),
 		[languages]

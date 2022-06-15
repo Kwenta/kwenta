@@ -185,11 +185,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 					</ProfitCalcGrid>
 					{/* BUTTONS */}
 					<div style={{ marginTop: '20px' }} />
-					<PositionButtons
-						isMarketClosed={false}
-						selected={leverageSide}
-						onSelect={setLeverageSide}
-					/>
+					<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 					{/* STATS row of 3 */}
 					<StatsGrid>
 						<PnLs

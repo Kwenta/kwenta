@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
@@ -7,20 +7,20 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesMarketContract } from './utils';
 import { FuturesPotentialTradeDetails } from './types';
-import {
-	PotentialTrade,
-	PotentialTradeStatus,
-	POTENTIAL_TRADE_STATUS_TO_MESSAGE,
-} from 'sections/futures/types';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
 import { wei } from '@synthetixio/wei';
+import {
+	currentMarketState,
+	leverageSideState,
+	leverageState,
+	potentialTradeDetailsState,
+	tradeSizeState,
+} from 'store/futures';
 
 const SUCCESS = 'Success';
 const UNKNOWN = 'Unknown';
 
 const useGetFuturesPotentialTradeDetails = (
-	marketAsset: CurrencyKey | null,
-	trade: PotentialTrade | null,
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -28,6 +28,13 @@ const useGetFuturesPotentialTradeDetails = (
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
+
+	const tradeSize = useRecoilValue(tradeSizeState);
+	const leverageSide = useRecoilValue(leverageSideState);
+	const leverage = useRecoilValue(leverageState);
+	const marketAsset = useRecoilValue(currentMarketState);
+
+	const [, setPotentialTradeDetails] = useRecoilState(potentialTradeDetailsState);
 
 	const getStatusMessage = (status: PotentialTradeStatus): string => {
 		if (typeof status !== 'number') {
@@ -44,36 +51,48 @@ const useGetFuturesPotentialTradeDetails = (
 	};
 
 	return useQuery<FuturesPotentialTradeDetails | null>(
-		QUERY_KEYS.Futures.PotentialTrade(network.id, marketAsset || null, trade, walletAddress || ''),
+		QUERY_KEYS.Futures.PotentialTrade(
+			network.id,
+			marketAsset || null,
+			tradeSize,
+			walletAddress || ''
+		),
 		async () => {
-			if (!marketAsset || !trade || !trade.size?.length || !isL2) return null;
+			if (!marketAsset || !tradeSize || !isL2) {
+				setPotentialTradeDetails(null);
+				return null;
+			}
 
 			const {
 				contracts: { FuturesMarketData },
 			} = synthetixjs!;
 
 			const FuturesMarketContract = getFuturesMarketContract(marketAsset, synthetixjs!.contracts);
-			const newSize = trade.side === 'long' ? +trade.size : -trade.size;
+			const newSize = leverageSide === 'long' ? tradeSize : -tradeSize;
 
 			const [globals, { fee, liqPrice, margin, price, size, status }] = await Promise.all([
 				await FuturesMarketData.globals(),
 				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), walletAddress),
 			]);
 
-			return {
+			const potentialTradeDetails = {
 				fee: wei(fee),
 				liqPrice: wei(liqPrice),
 				margin: wei(margin),
 				price: wei(price),
 				size: wei(size),
-				side: trade.side,
-				leverage: wei(trade.leverage),
+				side: leverageSide,
+				leverage: wei(leverage),
 				notionalValue: wei(size).mul(wei(price)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				status,
 				showStatus: status > 0, // 0 is success
 				statusMessage: getStatusMessage(status),
 			};
+
+			setPotentialTradeDetails(potentialTradeDetails);
+
+			return potentialTradeDetails;
 		},
 		{
 			enabled: isAppReady && isL2 && !!walletAddress && !!marketAsset && !!synthetixjs,

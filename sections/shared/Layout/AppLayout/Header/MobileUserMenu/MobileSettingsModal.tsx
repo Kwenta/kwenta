@@ -1,104 +1,128 @@
-import { FC } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-
-import { FixedFooterMixin, FlexDivCentered, FlexDivRowCentered, TextButton } from 'styles/common';
 
 import Connector from 'containers/Connector';
 
-import { isWalletConnectedState, truncatedWalletAddressState } from 'store/wallet';
-import { OPTIONS } from 'sections/shared/modals/SettingsModal/constants';
+import { isL2State } from 'store/wallet';
 
 import FullScreenModal from 'components/FullScreenModal';
-import Button from 'components/Button';
+import Logo from 'sections/shared/Layout/Logo';
 
-import { menuLinksState } from '../states';
-import ConnectionDot from '../ConnectionDot';
+import MobileSubMenu from './MobileSubMenu';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { languageState } from 'store/app';
+import { Language } from 'translations/constants';
+
+import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
+import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
+import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
+import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
+import { EXTERNAL_LINKS } from 'constants/links';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { lanugageIcons } from './common';
 
 type MobileSettingsModalProps = {
-	onDismiss: () => void;
+	onDismiss(): void;
 };
+
+type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
 
 export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { asPath } = useRouter();
-	const isWalletConnected = useRecoilValue(isWalletConnectedState);
-	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
-	const menuLinks = useRecoilValue(menuLinksState);
+	const isL2 = useRecoilValue(isL2State);
+	const [language, setLanguage] = usePersistedRecoilState(languageState);
+
+	const languages = t('languages', { returnObjects: true }) as Record<Language, string>;
+
+	const languageOptions = useMemo(
+		() =>
+			Object.entries(languages).map(([langCode, langLabel]) => ({
+				value: langCode,
+				label: langLabel,
+			})),
+		[languages]
+	);
 
 	const { connectWallet, disconnectWallet } = Connector.useContainer();
+	const [expanded, setExpanded] = useState<SettingCategories>();
+	const { switchToL1, switchToL2 } = useNetworkSwitcher();
+
+	const handleToggle = (category: SettingCategories) => () => {
+		setExpanded((c) => (category === c ? undefined : category));
+	};
 
 	return (
 		<StyledFullScreenModal isOpen={true}>
 			<Container>
-				{menuLinks.map(({ i18nLabel, link }) => (
-					<MenuButtonContainer key={link}>
-						<Link href={link}>
-							<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-								{t(i18nLabel)}
-							</MenuButton>
-						</Link>
-					</MenuButtonContainer>
-				))}
+				<LogoContainer>
+					<Logo isFutures isL2={isL2} />
+				</LogoContainer>
+
+				<MenuButtonContainer>
+					<MobileSubMenu
+						i18nLabel={t('mobile-menu.wallet')}
+						onDismiss={onDismiss}
+						active={expanded === 'wallet'}
+						onToggle={handleToggle('wallet')}
+						options={[
+							{
+								label: t('mobile-menu.switch'),
+								icon: <MobileSwitchWalletIcon />,
+								onClick: connectWallet,
+							},
+							{
+								label: t('mobile-menu.disconnect'),
+								icon: <MobileMenuDisconnectIcon />,
+								onClick: disconnectWallet,
+							},
+						]}
+					/>
+				</MenuButtonContainer>
+
+				<MenuButtonContainer>
+					<MobileSubMenu
+						i18nLabel={t('mobile-menu.network')}
+						onDismiss={onDismiss}
+						active={expanded === 'network'}
+						onToggle={handleToggle('network')}
+						options={[
+							{
+								label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
+								icon: <MobileSwitchToL1Icon />,
+								onClick: isL2 ? switchToL1 : switchToL2,
+							},
+							{
+								label: `${t('mobile-menu.bridge')} ↗`,
+								icon: <MobileMenuBridgeIcon />,
+								externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
+							},
+						]}
+					/>
+				</MenuButtonContainer>
+
+				<MenuButtonContainer>
+					<MobileSubMenu
+						i18nLabel={t('mobile-menu.language')}
+						onDismiss={onDismiss}
+						active={expanded === 'language'}
+						onToggle={handleToggle('language')}
+						options={languageOptions.map((option) => ({
+							label: option.label,
+							icon: <div>{lanugageIcons[option.value as Language]}</div>,
+							selected: languages[language] === option.value,
+							onClick: () => setLanguage(option.value as Language),
+						}))}
+					/>
+				</MenuButtonContainer>
 			</Container>
-			<Container hasBorder={true}>
-				{OPTIONS.map(({ id, label, SelectComponent }) => (
-					<OptionRow key={id}>
-						<OptionLabel>{t(label)}</OptionLabel>
-						<CurrencySelectContainer>
-							<SelectComponent />
-						</CurrencySelectContainer>
-					</OptionRow>
-				))}
-			</Container>
-			<Footer>
-				{isWalletConnected ? (
-					<>
-						<WalletConnected>
-							<FlexDivCentered>
-								<StyledConnectionDot />
-								{truncatedWalletAddress}
-							</FlexDivCentered>
-							<SwitchWalletButton
-								onClick={() => {
-									onDismiss();
-									connectWallet();
-								}}
-							>
-								{t('common.switch')}
-							</SwitchWalletButton>
-						</WalletConnected>
-						<Button
-							variant="danger"
-							onClick={() => {
-								onDismiss();
-								disconnectWallet();
-							}}
-						>
-							{t('common.wallet.disconnect-wallet')}
-						</Button>
-					</>
-				) : (
-					<Button
-						variant="primary"
-						onClick={() => {
-							onDismiss();
-							connectWallet();
-						}}
-					>
-						{t('common.wallet.connect-wallet')}
-					</Button>
-				)}
-			</Footer>
 		</StyledFullScreenModal>
 	);
 };
 
 const StyledFullScreenModal = styled(FullScreenModal)`
-	border-top: 1px solid ${(props) => props.theme.colors.navy};
+	top: 0;
 
 	[data-reach-dialog-content] {
 		margin: 0;
@@ -111,66 +135,16 @@ const Container = styled.div<{ hasBorder?: boolean }>`
 	${(props) =>
 		props.hasBorder &&
 		css`
-			border-top: 1px solid ${(props) => props.theme.colors.navy};
+			border-top: 1px solid ${(props) => props.theme.colors.common.secondaryGray};
 		`}
 `;
 
 const MenuButtonContainer = styled.div`
-	padding-bottom: 16px;
+	/* padding-bottom: 16px; */
 `;
 
-const MenuButton = styled(Button).attrs({ variant: 'alt', size: 'xl' })`
-	outline: none;
-	width: 100%;
-	font-size: 14px;
-`;
-
-const CurrencySelectContainer = styled.div`
-	width: 100%;
-`;
-
-const OptionLabel = styled.div`
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-transform: capitalize;
-	padding-bottom: 8px;
-`;
-
-const OptionRow = styled.div`
-	padding-bottom: 16px;
-`;
-
-const WalletConnected = styled(FlexDivRowCentered)`
-	font-family: ${(props) => props.theme.fonts.mono};
-	background-color: ${(props) => props.theme.colors.navy};
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	border-radius: 4px;
-	margin-bottom: 24px;
-	padding: 0 16px;
-`;
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 12px;
-	width: 12px;
-	height: 12px;
-`;
-
-const Footer = styled.div`
-	${FixedFooterMixin};
-	box-shadow: 0 -8px 8px 0 ${(props) => props.theme.colors.black};
-	padding: 24px;
-	background-color: ${(props) => props.theme.colors.elderberry};
-	> * {
-		font-size: 14px;
-		width: 100%;
-		height: 40px;
-	}
-`;
-
-const SwitchWalletButton = styled(TextButton)`
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.goldColors.color1};
-	text-transform: uppercase;
+const LogoContainer = styled.div`
+	margin-bottom: 50px;
 `;
 
 export default MobileSettingsModal;
