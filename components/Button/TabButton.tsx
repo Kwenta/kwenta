@@ -51,7 +51,10 @@ const StyledButton = styled(Button)<{
 	padding-top: 10px;
 	padding-bottom: 10px;
 	justify-content: center;
-	background-color: ${(props) => !props.active && 'transparent'};
+	background-color: ${(props) =>
+		props.active
+			? props.theme.colors.selectedTheme.tab.background.active
+			: props.theme.colors.selectedTheme.tab.background.inactive};
 	p {
 		margin: 0;
 		font-size: 13px;

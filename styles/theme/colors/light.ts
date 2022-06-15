@@ -11,6 +11,7 @@ const lightTheme = {
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
 	badge: { background: '#A80300', text: 'white' },
+	tab: { background: { active: 'transparent', inactive: '#e8e8e8' } },
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
 		fill: '#e8e8e8',
