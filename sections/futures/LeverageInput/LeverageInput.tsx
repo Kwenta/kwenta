@@ -47,7 +47,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 
 	const isDisabled = useMemo(() => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
-	}, [position]);
+	}, [position, maxLeverage]);
 
 	return (
 		<LeverageInputWrapper>

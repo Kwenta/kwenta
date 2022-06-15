@@ -11,7 +11,6 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 
 import { isWalletConnectedState, networkState } from 'store/wallet';
-import { FlexDiv } from 'styles/common';
 
 import WalletActions from '../WalletActions';
 import ConnectionDot from '../ConnectionDot';
@@ -47,7 +46,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 	};
 
 	const walletIsNotConnected = (
-		<CTARow>
+		<>
 			<ConnectButton
 				size="sm"
 				variant="outline"
@@ -59,11 +58,11 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 				<StyledConnectionDot />
 				{t('common.wallet.connect-wallet')}
 			</ConnectButton>
-		</CTARow>
+		</>
 	);
 
 	const walletIsConnectedButNotSupported = (
-		<CTARow>
+		<>
 			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
@@ -71,7 +70,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 				<StyledConnectionDot />
 				{t('common.wallet.unsupported-network')}
 			</ConnectButton>
-		</CTARow>
+		</>
 	);
 
 	const walletIsConnectedAndSupported = (
@@ -82,6 +81,16 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			/>
 			<NetworksSwitcher />
 			<WalletActions />
+		</>
+	);
+
+	return (
+		<>
+			{isWalletConnected
+				? isSupportedNetworkId(network.id)
+					? walletIsConnectedAndSupported
+					: walletIsConnectedButNotSupported
+				: walletIsNotConnected}
 			<MenuButton
 				onClick={() => {
 					toggleTheme();
@@ -93,12 +102,6 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			</MenuButton>
 		</>
 	);
-
-	return isWalletConnected
-		? isSupportedNetworkId(network.id)
-			? walletIsConnectedAndSupported
-			: walletIsConnectedButNotSupported
-		: walletIsNotConnected;
 };
 
 const StyledConnectionDot = styled(ConnectionDot)`
@@ -106,17 +109,23 @@ const StyledConnectionDot = styled(ConnectionDot)`
 `;
 
 const MenuButton = styled(Button)`
-	display: flex;
-	align-items: center;
-	margin-left: 15px;
+	display: grid;
+	place-items: center;
 	height: 41px;
-	circle {
-		fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+	width: 41px;
+	padding: 0px;
+
+	svg {
+		path {
+			fill: ${(props) => props.theme.colors.selectedTheme.icon.fill};
+		}
 	}
 
 	:hover {
-		circle {
-			fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+		svg {
+			path {
+				fill: ${(props) => props.theme.colors.selectedTheme.icon.hover};
+			}
 		}
 	}
 `;
@@ -129,15 +138,6 @@ const SwitchToL2Button = styled(Button)`
 	font-size: 13px;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	font-family: ${(props) => props.theme.fonts.mono};
-`;
-
-const CTARow = styled(FlexDiv)`
-	button:first-child {
-		margin-right: 15px;
-	}
-	button:only-child {
-		margin-right: 0px;
-	}
 `;
 
 export default WalletButtons;
