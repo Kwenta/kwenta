@@ -5,7 +5,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import TwitterIcon from '../../../assets/svg/social/twitter-2.svg';
 import DiscordIcon from '../../../assets/svg/social/discord-2.svg';
 import GitbookIcon from '../../../assets/svg/gitbook.svg';
-import MirrorIcon from '../../../assets/svg/social/mirror.svg';
+import MirrorIcon from '../../../assets/svg/social/mirror-2.svg';
 
 type LinksProps = {
 	isMobile?: boolean;
