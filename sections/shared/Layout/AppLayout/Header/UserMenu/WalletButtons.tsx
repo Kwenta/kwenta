@@ -18,7 +18,6 @@ import ConnectionDot from '../ConnectionDot';
 import BalanceActions from '../BalanceActions';
 import NetworksSwitcher from '../NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
-import SettingsIcon from 'assets/svg/app/settings.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import MoonIcon from 'assets/svg/app/moon.svg';
 

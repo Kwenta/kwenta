@@ -156,7 +156,6 @@ const StyledConnectionDot = styled(ConnectionDot)`
 const Container = styled.div<{ isMobile?: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.mono};
-	margin-left: 15px;
 
 	${(props) =>
 		!props.isMobile &&
