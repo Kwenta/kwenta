@@ -1,6 +1,6 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import { FlexDivRow } from 'styles/common';
 
 import Connector from 'containers/Connector';
@@ -26,7 +26,11 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-export const WalletActions: FC = () => {
+type WalletActionsProps = {
+	isMobile?: boolean;
+};
+
+export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const [address, setAddress] = useState('');
 	const { ensAvatar } = useENS(address);
 	const { t } = useTranslation();
@@ -124,7 +128,7 @@ export const WalletActions: FC = () => {
 	}, [signer, truncatedWalletAddress]);
 
 	return (
-		<Container>
+		<Container isMobile={isMobile}>
 			<WalletOptionsSelect
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
@@ -139,8 +143,8 @@ export const WalletActions: FC = () => {
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
-				noOutline={true}
-			></WalletOptionsSelect>
+				noOutline
+			/>
 		</Container>
 	);
 };
@@ -149,10 +153,15 @@ const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
 `;
 
-const Container = styled.div`
-	width: 100%;
+const Container = styled.div<{ isMobile?: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.mono};
+
+	${(props) =>
+		!props.isMobile &&
+		css`
+			width: 100%;
+		`};
 `;
 
 const WalletOptionsSelect = styled(Select)`

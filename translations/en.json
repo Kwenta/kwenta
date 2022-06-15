@@ -1364,5 +1364,18 @@
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
 		"min": "min"
+	},
+	"mobile-menu": {
+		"currency": "Currency",
+		"cancel": "Cancel",
+		"wallet": "Wallet",
+		"network": "Network",
+		"language": "Language",
+		"connect": "Connect",
+		"disconnect": "Disconnect",
+		"switch": "Switch",
+		"switch-to-l1": "Switch to L1",
+		"switch-to-l2": "Switch to L2",
+		"bridge": "Bridge"
 	}
 }
