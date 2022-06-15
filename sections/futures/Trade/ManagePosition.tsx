@@ -56,8 +56,8 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 
 				<ManagePositionContainer>
 					<PlaceOrderButton
-						variant="primary"
-						fullWidth
+						noOutline
+						fullWidth={true}
 						disabled={
 							!leverage ||
 							Number(leverage) < 0 ||
@@ -74,8 +74,8 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 					</PlaceOrderButton>
 
 					<CloseOrderButton
-						isRounded
-						fullWidth
+						fullWidth={true}
+						noOutline={true}
 						variant="danger"
 						onClick={() => {
 							if (orderType === 1 && position?.position?.size) {
@@ -92,7 +92,6 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 							}
 						}}
 						disabled={!positionDetails || marketInfo?.isSuspended}
-						noOutline
 					>
 						{t('futures.market.user.position.close-position')}
 					</CloseOrderButton>
@@ -128,14 +127,12 @@ const CloseOrderButton = styled(Button)`
 	text-align: center;
 	white-space: normal;
 	background: rgba(239, 104, 104, 0.04);
-	border: 1px solid #ef6868;
-	box-shadow: none;
+	border: 1px solid ${(props) => props.theme.colors.selectedTheme.red};
 	transition: all 0s ease-in-out;
 
 	&:hover {
-		background: ${(props) => props.theme.colors.common.primaryRed};
-		color: ${(props) => props.theme.colors.white};
-		transform: scale(0.98);
+		background: ${(props) => props.theme.colors.selectedTheme.red};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 	}
 
 	&:disabled {
@@ -147,13 +144,13 @@ const CloseOrderButton = styled(Button)`
 `;
 
 const ManageOrderTitle = styled.p`
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 12px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 13px;
 	margin-bottom: 8px;
 	margin-left: 14px;
 
 	span {
-		color: ${(props) => props.theme.colors.common.secondaryGray};
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
 
