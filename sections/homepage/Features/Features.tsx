@@ -289,7 +289,7 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	text-align: center;
 	width: 500px;
 	${media.lessThan('sm')`
-		width: 385px;
+		width: 100vw;
 	`}
 `;
 

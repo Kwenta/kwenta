@@ -38,7 +38,7 @@ export const FlexSection = styled(FlexDivRow)`
 	`}
 `;
 
-export const GridContainer = styled(GridDiv)`git
+export const GridContainer = styled(GridDiv)`
 	grid-template-columns: repeat(2, 280px);
 	grid-gap: 24px;
 	justify-content: center;

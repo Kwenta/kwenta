@@ -435,7 +435,7 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	text-align: center;
 	width: 500px;
 	${media.lessThan('sm')`
-		width: 385px;
+		width: 100vw;
 	`}
 `;
 
@@ -445,7 +445,7 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	width: 500px;
 	font-size: 18px;
 	${media.lessThan('sm')`
-		width: 385px;
+		width: 100vw;
 	`}
 `;
 
