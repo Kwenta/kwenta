@@ -6,6 +6,8 @@ import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
 import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
@@ -14,6 +16,7 @@ import Convert from 'containers/Convert';
 import ROUTES from 'constants/routes';
 import {
 	AFTER_HOURS_SYNTHS,
+	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
@@ -64,8 +67,6 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { NoTextTransform } from 'styles/common';
 import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 
-import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
 import Connector from 'containers/Connector';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
@@ -583,24 +584,24 @@ const useExchange = ({
 
 	const getExchangeParams = useCallback(
 		(isAtomic: boolean) => {
-			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
 			const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 			if (isAtomic) {
 				return [
-					destinationCurrencyKey,
-					sourceAmount,
 					sourceCurrencyKey,
+					sourceAmount,
+					destinationCurrencyKey,
 					KWENTA_TRACKING_CODE,
 					minAmount,
 				];
 			} else {
 				return [
-					destinationCurrencyKey,
-					sourceAmount,
 					sourceCurrencyKey,
+					sourceAmount,
+					destinationCurrencyKey,
 					walletAddress,
 					KWENTA_TRACKING_CODE,
 				];
@@ -621,15 +622,20 @@ const useExchange = ({
 			try {
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
-					const destinationCurrencyKey = ethers.utils.parseBytes32String(
+					const sourceCurrencyKey = ethers.utils.parseBytes32String(
 						getExchangeParams(true)[0] as string
 					);
+
+					const destinationCurrencyKey = ethers.utils.parseBytes32String(
+						getExchangeParams(true)[2] as string
+					);
+
 					const isAtomic =
 						!isL2 &&
-						(destinationCurrencyKey === 'sBTC' ||
-							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR' ||
-							destinationCurrencyKey === 'sUSD');
+						[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+							ATOMIC_EXCHANGES_L1.includes(currency)
+						);
+
 					const exchangeParams = getExchangeParams(isAtomic);
 
 					let gasEstimate, gasLimitNum, metaTx;
@@ -793,16 +799,19 @@ const useExchange = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const destinationCurrencyKey = ethers.utils.parseBytes32String(
+			const sourceCurrencyKey = ethers.utils.parseBytes32String(
 				getExchangeParams(true)[0] as string
+			);
+
+			const destinationCurrencyKey = ethers.utils.parseBytes32String(
+				getExchangeParams(true)[2] as string
 			);
 
 			const isAtomic =
 				!isL2 &&
-				(destinationCurrencyKey === 'sBTC' ||
-					destinationCurrencyKey === 'sETH' ||
-					destinationCurrencyKey === 'sEUR' ||
-					destinationCurrencyKey === 'sUSD');
+				[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+					ATOMIC_EXCHANGES_L1.includes(currency)
+				);
 
 			const exchangeParams = getExchangeParams(isAtomic);
 
