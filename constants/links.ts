@@ -34,7 +34,6 @@ export const EXTERNAL_LINKS = {
 		DaoRoles: 'https://docs.kwenta.io/dao/dao-roles',
 		HowToUse: 'https://docs.kwenta.io/onboard/how-to-start-using-kwenta',
 		Perpetuals: 'https://docs.kwenta.io/products/futures',
-		Shorting: ' https://docs.kwenta.io/products/what-is-shorting',
 		Spot: 'https://docs.kwenta.io/products/swaps ',
 		DevDao: 'https://docs.kwenta.io/dao/contribute/devdao-contribute',
 		MarketingDao: 'https://docs.kwenta.io/dao/contribute/marketingDAO',
