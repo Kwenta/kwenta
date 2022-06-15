@@ -51,15 +51,15 @@ const darkTheme = {
 	input: {
 		background: '#151515',
 		secondary: {
-			background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(27, 27, 27, 0.075) 100%)',
+			background: '#0b0b0b',
 		},
 		placeholder: '#787878',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 	},
 	segmented: {
-		background: 'linear-gradient(180deg, rgba(27, 27, 27, 0.1) 0%, rgba(33, 33, 33, 0.1) 100%)',
+		background: '#0b0b0b',
 		button: {
-			background: '#2f2f2f',
+			background: '#1F1E1E',
 			shadow:
 				'0px 4px 4px rgba(0, 0, 0, 0.25), 0px 1px 2px rgba(0, 0, 0, 0.5), inset 0px 0px 20px rgba(255, 255, 255, 0.03), inset 0px 1px 0px rgba(255, 255, 255, 0.09)',
 			inactive: { color: '#787878' },
