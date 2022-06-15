@@ -145,6 +145,7 @@ const CopyRight = styled.div`
 	padding-top: 10px;
 	${media.lessThan('sm')`
 		margin-right: 0px;
+		padding-top: 0px;
 	`};
 `;
 
@@ -172,6 +173,7 @@ const PowerContainer = styled.div`
 		padding-top: 60px;
 		border-top: 1px solid #3d3c3c;
 		justify-content: center;
+		margin-bottom: 100px;
 	`};
 `;
 
@@ -192,6 +194,8 @@ const MultiListContainer = styled.div`
 		flex-wrap: wrap;
 		padding-top: 60px;
 		border-top: 1px solid #3d3c3c;
+		margin-top: 45px;
+		margin-bottom: 60px;
 	`};
 `;
 
@@ -226,6 +230,7 @@ const StyledGridContainer = styled(GridContainer)`
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		align-items: center;
 	`};
 `;
 
@@ -233,6 +238,10 @@ const SocialIcons = styled(FlexDivCentered)`
 	> * + * {
 		margin-left: 24px;
 	}
+
+	${media.lessThan('sm')`
+		padding-top: 5px;
+	`};
 `;
 
 export default Footer;

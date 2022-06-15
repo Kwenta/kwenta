@@ -48,6 +48,9 @@ const TransparentCard = styled.div`
 `;
 const Container = styled.div`
 	margin-bottom: 140px;
+	${media.lessThan('sm')`
+		margin-bottom: 105px;
+	`};
 `;
 
 const GrayDescription = styled(Paragraph)`
