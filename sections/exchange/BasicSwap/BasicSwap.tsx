@@ -51,11 +51,10 @@ const ExchangeTitle = styled(BoldText)`
 const DesktopCardsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	background: ${(props) => props.theme.colors.cellGradient};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	background: ${(props) => props.theme.colors.selectedTheme.cell.fill};
 	border-radius: 10px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
-	${border}
 	position: relative;
 `;
 

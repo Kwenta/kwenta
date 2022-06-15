@@ -2,7 +2,7 @@ import common from './common';
 
 const darkTheme = {
 	background: '#131212',
-	border: '1px solid #2B2A2A',
+	border: '1px solid rgba(255, 255, 255, 0.12)',
 	red: '#EF6868',
 	green: '#7FD482',
 	black: '#171002',

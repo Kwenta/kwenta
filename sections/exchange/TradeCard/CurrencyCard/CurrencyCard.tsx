@@ -113,7 +113,10 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									data-testid="currency-amount"
 								/>
 								{!isBase && (
-									<MaxButton onClick={hasWalletBalance ? onBalanceClick : undefined}>
+									<MaxButton
+										onClick={hasWalletBalance ? onBalanceClick : undefined}
+										noOutline={true}
+									>
 										<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
 									</MaxButton>
 								)}
@@ -192,7 +195,7 @@ const MaxButton = styled(Button)`
 	height: 21px;
 	font-size: 11px;
 	padding: 0px 10px;
-	margin: 16px 16px 0px 0px;
+	margin: 10px 15px 0px 0px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
 const TokenLabel = styled.div`
@@ -253,9 +256,6 @@ const CurrencySelector = styled.div<{
 	svg {
 		color: ${(props) => props.theme.colors.goldColors.color1};
 	}
-
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border-radius: 10px;
 	box-sizing: border-box;
 	position: relative;
@@ -302,6 +302,7 @@ const CurrencyAmount = styled(NumericInput)`
 	font-size: 30px;
 	line-height: 2.25em;
 	letter-spacing: -1px;
+	background: transparent;
 `;
 
 const CurrencyAmountValue = styled.div`
