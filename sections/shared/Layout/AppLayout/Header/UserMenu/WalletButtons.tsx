@@ -85,7 +85,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 	);
 
 	return (
-		<>
+		<Container>
 			{isWalletConnected
 				? isSupportedNetworkId(network.id)
 					? walletIsConnectedAndSupported
@@ -100,9 +100,15 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 			>
 				<ThemeIcon width={20} />
 			</MenuButton>
-		</>
+		</Container>
 	);
 };
+
+const Container = styled.div`
+	display: grid;
+	grid-gap: 15px;
+	grid-auto-flow: column;
+`;
 
 const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
