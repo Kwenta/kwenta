@@ -1,59 +1,54 @@
 import { useMemo } from 'react';
 import { Synths } from 'constants/currency';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 
-import Connector from 'containers/Connector';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-import { getMarketKey } from 'utils/futures';
 
-import { PotentialTrade } from '../types';
 import TVChart from 'components/TVChart';
+import { useRecoilValue } from 'recoil';
+import {
+	currentMarketState,
+	positionState,
+	potentialTradeDetailsState,
+	tradeSizeState,
+} from 'store/futures';
 
-type Props = {
-	marketAsset: CurrencyKey;
-	potentialTrade: PotentialTrade | null;
-};
+export default function PositionChart() {
+	const marketAsset = useRecoilValue(currentMarketState);
+	const position = useRecoilValue(positionState);
 
-export default function PositionChart({ marketAsset, potentialTrade }: Props) {
-	const { network } = Connector.useContainer();
-
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
-	const potentialTradeDetails = useGetFuturesPotentialTradeDetails(marketAsset, potentialTrade);
+	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
 	const positionHistory = futuresPositionsQuery?.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
-	const futuresMarketsPosition = futuresMarketPositionQuery?.data ?? null;
+
+	const tradeSize = useRecoilValue(tradeSizeState);
 
 	const modifiedAverage = useMemo(() => {
-		if (subgraphPosition && potentialTradeDetails.data && potentialTrade) {
-			const totalSize = subgraphPosition.size.add(potentialTrade.size);
+		if (subgraphPosition && previewTrade && !!tradeSize) {
+			const totalSize = subgraphPosition.size.add(tradeSize);
 
 			const existingValue = subgraphPosition.avgEntryPrice.mul(subgraphPosition.size);
-			const newValue = potentialTradeDetails.data.price.mul(potentialTrade.size);
+			const newValue = previewTrade.price.mul(tradeSize);
 			const totalValue = existingValue.add(newValue);
 			return totalValue.div(totalSize);
 		}
 		return null;
-	}, [subgraphPosition, potentialTradeDetails.data, potentialTrade]);
+	}, [subgraphPosition, previewTrade, tradeSize]);
 
 	const activePosition = useMemo(() => {
-		if (!futuresMarketsPosition?.position) {
+		if (!position?.position) {
 			return null;
 		}
 
 		return {
 			// As there's often a delay in subgraph sync we use the contract last
 			// price until we get average price to keep it snappy on opening a position
-			price: subgraphPosition?.avgEntryPrice || futuresMarketsPosition.position.lastPrice,
-			size: futuresMarketsPosition.position.size,
-			liqPrice: futuresMarketsPosition.position?.liquidationPrice,
+			price: subgraphPosition?.avgEntryPrice || position.position.lastPrice,
+			size: position.position.size,
+			liqPrice: position.position?.liquidationPrice,
 		};
-	}, [subgraphPosition, futuresMarketsPosition]);
+	}, [subgraphPosition, position]);
 
 	return (
 		<TVChart
@@ -61,11 +56,11 @@ export default function PositionChart({ marketAsset, potentialTrade }: Props) {
 			quoteCurrencyKey={Synths.sUSD}
 			activePosition={activePosition}
 			potentialTrade={
-				potentialTradeDetails?.data
+				previewTrade
 					? {
-							price: modifiedAverage || potentialTradeDetails.data.price,
-							liqPrice: potentialTradeDetails.data.liqPrice,
-							size: potentialTradeDetails.data.size,
+							price: modifiedAverage || previewTrade.price,
+							liqPrice: previewTrade.liqPrice,
+							size: previewTrade.size,
 					  }
 					: null
 			}

@@ -22,7 +22,7 @@ const Nav: FC = () => {
 		}
 	}
 
-	function getLink(link: string): string | undefined {
+	function getLink(link: string) {
 		if (link.slice(0, 7) === '/market') {
 			const lastVisited: string | null | undefined = getLastVisited();
 
@@ -45,8 +45,8 @@ const Nav: FC = () => {
 					const isActive = routeBase === linkBase;
 
 					return (
-						<MenuLinkItem key={`${getLink(link)}`} isActive={isActive}>
-							<Link href={`${getLink(link)}`}>
+						<MenuLinkItem key={getLink(link)} isActive={isActive}>
+							<Link href={getLink(link)}>
 								<a>{t(i18nLabel)}</a>
 							</Link>
 						</MenuLinkItem>

@@ -57,10 +57,14 @@ const StyledDialogContent = styled(DialogContent)`
 	border: 0;
 	background: none;
 	${media.lessThan('sm')`
-		&&& {		
+		&&& {
 			width: 100%;
 			height: 100%;
 			margin: 0;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	`}
 `;

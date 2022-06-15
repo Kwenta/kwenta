@@ -1,27 +1,25 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
 import Button from 'components/Button';
 import { PositionSide } from '../types';
+import { marketInfoState } from 'store/futures';
 
 interface PositionButtonsProps {
 	selected: PositionSide;
-	isMarketClosed: boolean;
 	onSelect(position: PositionSide): void;
 	type?: 'button' | 'submit' | 'reset' | undefined;
 }
 
-const PositionButtons: React.FC<PositionButtonsProps> = ({
-	selected,
-	isMarketClosed,
-	onSelect,
-}) => {
+const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect }) => {
+	const marketInfo = useRecoilValue(marketInfoState);
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
-				disabled={isMarketClosed}
+				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.LONG)}
 			>
 				<span>Long</span>
@@ -30,7 +28,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}
-				disabled={isMarketClosed}
+				disabled={marketInfo?.isSuspended}
 				onClick={() => onSelect(PositionSide.SHORT)}
 			>
 				<span>Short</span>
