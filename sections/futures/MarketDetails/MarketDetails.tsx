@@ -106,6 +106,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case 'External Price':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
@@ -116,6 +117,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Change':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
@@ -126,6 +128,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Volume':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
@@ -136,6 +139,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Trades':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
@@ -146,6 +150,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case 'Open Interest':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
@@ -155,13 +160,19 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				);
 			case assetName:
 				return (
-					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+					<TimerTooltip
+						key={key}
+						preset="bottom"
+						startTimeDate={lastOracleUpdateTime}
+						width={'131px'}
+					>
 						{children}
 					</TimerTooltip>
 				);
 			case fundingTitle:
 				return (
 					<OneHrFundingRateTooltip
+						key={key}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
