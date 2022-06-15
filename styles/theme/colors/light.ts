@@ -10,6 +10,7 @@ const lightTheme = {
 	gray: '#515151',
 	table: { fill: '#EEE', hover: '#E6E6E6' },
 	gold: '#724713',
+	badge: { background: '#A80300', text: 'white' },
 	button: {
 		border: 'rgb(0 0 0 / 10%)',
 		fill: '#e8e8e8',
@@ -52,9 +53,9 @@ const lightTheme = {
 	input: {
 		background: '#cbcbcb',
 		secondary: {
-			background: '#eaeaea',
+			background: '#eee',
 		},
-		placeholder: '#787878',
+		placeholder: '#686868',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 	},
 	segmented: {

@@ -10,6 +10,7 @@ const darkTheme = {
 	gray: '#787878',
 	table: { fill: 'rgba(255, 255, 255, 0.01)', hover: 'rgba(255, 255, 255, 0.05)' },
 	gold: '#E4B378',
+	badge: { background: '#EF6868', text: 'black' },
 	button: {
 		border: 'rgb(255 255 255 / 10%)',
 		fill: '#252525',
