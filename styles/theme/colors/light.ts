@@ -2,7 +2,7 @@ import common from './common';
 
 const lightTheme = {
 	background: '#F2F2F2',
-	border: '1px solid rgba(0, 0, 0, 0.1)',
+	border: '1px solid #C7C7C8',
 	red: '#A80300',
 	green: '#1D5D1F',
 	black: '#171002',
@@ -52,15 +52,15 @@ const lightTheme = {
 	input: {
 		background: '#cbcbcb',
 		secondary: {
-			background: 'transparent',
+			background: '#eaeaea',
 		},
 		placeholder: '#787878',
 		shadow: '0px 0.5px 0px rgba(255, 255, 255, 0.08)',
 	},
 	segmented: {
-		background: 'transparent',
+		background: '#eaeaea',
 		button: {
-			background: '#dfdfdf',
+			background: '#F2F2F2',
 			shadow:
 				'0px 2px 2px rgb(0 0 0 / 10%), inset 0px 0px 20px rgb(255 255 255 / 30%), inset 0px 1px 0px rgb(255 255 255 / 50%)',
 			inactive: { color: '#787878' },
