@@ -18,23 +18,16 @@ import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
-import { FuturesFilledPosition } from 'queries/futures/types';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { currentMarketState, positionState } from 'store/futures';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
-	position: FuturesFilledPosition | null;
-	onPositionClose: () => void;
-	currencyKey: string;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({
-	onDismiss,
-	position,
-	currencyKey,
-	onPositionClose,
-}) => {
+const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { synthetixjs } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
@@ -45,6 +38,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const currencyKey = useRecoilValue(currentMarketState);
+	const position = useRecoilValue(positionState);
+	const positionDetails = position?.position;
+
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -56,10 +54,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
+		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,
@@ -77,7 +75,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
 	);
 
-	const positionSize = position?.size ?? wei(0);
+	const positionSize = positionDetails?.size ?? wei(0);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -99,7 +97,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	}, [synthetixjs, currencyKey, positionSize]);
 
 	const dataRows = useMemo(() => {
-		if (!position || !currencyKey) return [];
+		if (!positionDetails || !currencyKey) return [];
 		return [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
@@ -107,21 +105,21 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
-				value: (position?.side ?? PositionSide.LONG).toUpperCase(),
+				value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase(),
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
+				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
 					sign: synthToAsset(currencyKey as CurrencyKey),
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.leverage'),
-				value: `${formatNumber(position?.leverage ?? zeroBN)}x`,
+				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatCurrency(Synths.sUSD, position?.roi ?? zeroBN, { sign: '$' }),
+				value: formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
@@ -134,7 +132,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				}),
 			},
 		];
-	}, [position, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
@@ -142,7 +140,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				txHash: closeTxn.hash,
 				onTxConfirmed: () => {
 					onDismiss();
-					onPositionClose();
+					handleRefetch('close-position');
 				},
 			});
 		}
@@ -183,7 +181,7 @@ export default ClosePositionModal;
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 400px;
+		max-width: 400px;
 	}
 	.card-body {
 		padding: 28px;

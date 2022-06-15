@@ -79,3 +79,15 @@ export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+export const ATOMIC_EXCHANGES_L1 = [
+	'sBTC',
+	'sETH',
+	'sEUR',
+	'sUSD',
+	'sCHF',
+	'sJPY',
+	'sAUD',
+	'sGBP',
+	'sKRW',
+];
