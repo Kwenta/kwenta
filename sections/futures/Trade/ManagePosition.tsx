@@ -56,7 +56,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 
 				<ManagePositionContainer>
 					<PlaceOrderButton
-						noOutline={true}
+						noOutline
 						fullWidth={true}
 						disabled={
 							!leverage ||
