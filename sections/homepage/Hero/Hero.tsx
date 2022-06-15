@@ -64,7 +64,7 @@ const Header = styled(Paragraph)`
 	text-align: center;
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.common.primaryGold};
-	text-shadow: 0px 0px 62px rgba(208, 168, 117, 0.35);
+	text-shadow: 0px 0px 60px rgba(208, 168, 117, 0.35), 0px -0.8px 0px rgba(255, 255, 255, 0.5);
 	padding-top: 40px;
 	${media.lessThan('sm')`
 		font-size: 40px;
