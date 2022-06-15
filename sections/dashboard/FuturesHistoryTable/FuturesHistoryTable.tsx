@@ -1,5 +1,5 @@
 import { FC, useMemo, ReactElement } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import { Synths } from 'constants/currency';
@@ -14,13 +14,14 @@ import * as _ from 'lodash/fp';
 import useGetAllFuturesTradesForAccount from '../../../queries/futures/useGetAllFuturesTradesForAccount';
 import { utils as ethersUtils } from 'ethers';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { FuturesTrade, PositionSide } from 'queries/futures/types';
+import { FuturesTrade } from 'queries/futures/types';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { wei } from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
 import React from 'react';
 import { TradeStatus } from 'sections/futures/types';
+import PositionType from 'components/Text/PositionType';
 
 const FuturesHistoryTable: FC = () => {
 	const { t } = useTranslation();
@@ -100,15 +101,17 @@ const FuturesHistoryTable: FC = () => {
 									{asset && (
 										<>
 											<IconContainer>
-												<StyledCurrencyIcon currencyKey={asset} />
+												<StyledCurrencyIcon currencyKey={(asset[0] !== 's' ? 's' : '') + asset} />
 											</IconContainer>
-											<StyledText>{asset}</StyledText>
+											<StyledText>
+												{(asset[0] === 's' ? asset.slice(1) : asset) + '-PERP'}
+											</StyledText>
 										</>
 									)}
 								</SynthContainer>
 							);
 						},
-						width: 100,
+						width: 120,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.side')}</TableHeader>,
@@ -117,11 +120,11 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.side,
 								<>
-									<StyledPositionSide side={cellProps.value}>{cellProps.value}</StyledPositionSide>
+									<PositionType side={cellProps.value} />
 								</>
 							);
 						},
-						width: 80,
+						width: 70,
 					},
 					{
 						Header: <TableHeader>{t('dashboard.overview.futures-history-table.size')}</TableHeader>,
@@ -237,7 +240,7 @@ const StyledText = styled.div`
 	align-items: center;
 	grid-column: 2;
 	grid-row: 1;
-	color: ${(props) => props.theme.colors.common.secondaryGray};
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 const SynthContainer = styled.div`
 	display: flex;
@@ -246,21 +249,6 @@ const SynthContainer = styled.div`
 	grid-row: 1;
 	column-gap: 5px;
 	margin-left: -4px;
-`;
-
-const StyledPositionSide = styled.div<{ side: PositionSide }>`
-	text-transform: uppercase;
-	${(props) =>
-		props.side === PositionSide.LONG &&
-		css`
-			color: ${props.theme.colors.selectedTheme.green};
-		`}
-
-	${(props) =>
-		props.side === PositionSide.SHORT &&
-		css`
-			color: ${props.theme.colors.selectedTheme.red};
-		`}
 `;
 
 const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
