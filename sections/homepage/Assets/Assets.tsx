@@ -551,22 +551,24 @@ const StatsCardContainer = styled.div`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	background-clip: padding-box;
 
-	&::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		border-radius: 15px;
-		padding: 1px;
-		background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
-		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		-webkit-mask-composite: xor;
-		mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-		mask-composite: exclude;
-	}
+	${media.lessThan('sm')`
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			border-radius: 15px;
+			padding: 1px;
+			background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
+			-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+			-webkit-mask-composite: xor;
+			mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+			mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+			mask-composite: exclude;
+		};
+	`};
 `;
 
 const StyledSlider = styled(Slider)`

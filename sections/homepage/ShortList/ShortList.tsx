@@ -38,7 +38,7 @@ type Stat = {
 const ShortList = () => {
 	const { t } = useTranslation();
 
-	const statsQuery = useGetStats();
+	const statsQuery = useGetStats(true);
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
 	const pnlMap = useMemo(
 		() =>
@@ -106,7 +106,7 @@ const ShortList = () => {
 		</>
 	);
 
-	const dailyTradeStats = useGetFuturesDailyTradeStats();
+	const dailyTradeStats = useGetFuturesDailyTradeStats(true);
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const openInterest = useMemo(() => {
