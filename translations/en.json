@@ -126,16 +126,16 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": {
+		"features": { 
 			"title": "FEATURE",
 			"description": "Trading Without The Limits Of A Centralised Exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
-				"copy": "Near-instant trade confirmations using Layer 2 scalability"
+				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
 			},
 			"low-gas-fees": {
 				"title": "Low Gas Fees",
-				"copy": "Transaction costs on Layer 2 are one-tenth of L1"
+				"copy": "Transaction costs on Optimism Layer 2 are one-tenth of Ethereum L1"
 			},
 			"unique-assets": {
 				"title": "Unique Assets",

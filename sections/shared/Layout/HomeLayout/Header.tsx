@@ -230,6 +230,12 @@ const StyledTextButton = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.tertiaryGray};
 	cursor: pointer;
+	padding: 8px 13px;
+	border-radius: 100px;
+
+	&:hover {
+		background: #252525;
+	}
 
 	&.governance:hover {
 		> div.governance {
