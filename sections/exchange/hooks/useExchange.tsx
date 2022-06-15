@@ -1202,7 +1202,6 @@ const useExchange = ({
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix' ? true : false}
 					isApproved={needsApproval ? isApproved : undefined}
-					show1InchProvider={txProvider === '1inch'}
 				/>
 			)}
 			{txConfirmationModalOpen && (
