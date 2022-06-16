@@ -1,9 +1,10 @@
+import { useInView } from 'react-intersection-observer';
 import Table from 'components/Table';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -22,7 +23,9 @@ type TradesHistoryTableProps = {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOfTrades }) => {
 	const { t } = useTranslation();
-	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
+	const [skip, setSkip] = useState<number>(0);
+	const { ref, inView } = useInView();
+	const futuresTradesQuery = useGetFuturesTrades(currencyKey, skip);
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 
 	let data = useMemo(() => {
@@ -144,12 +147,18 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						},
 					]}
 				/>
+				<LoadingBar ref={ref}>{`Header inside viewport ${inView}.`}</LoadingBar>
 			</TableContainer>
 		</HistoryContainer>
 	);
 };
 
 export default TradesHistoryTable;
+
+const LoadingBar = styled.div`
+	width: 100%;
+	text-align: center;
+`;
 
 const HistoryContainer = styled.div`
 	width: 100%;
