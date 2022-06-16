@@ -1,6 +1,5 @@
 import { FC, useState } from 'react';
 
-import { FlexDivCentered } from 'styles/common';
 import SettingsModal from 'sections/shared/modals/SettingsModal';
 import UniswapModal from 'sections/shared/modals/UniswapModal';
 import WalletButtons from './WalletButtons';
@@ -11,14 +10,12 @@ const UserMenu: FC = () => {
 
 	return (
 		<>
-			<FlexDivCentered>
-				<WalletButtons
-					settingsModalOpened={settingsModalOpened}
-					uniswapWidgetOpened={uniswapWidgetOpened}
-					setSettingsModalOpened={setSettingsModalOpened}
-					setUniswapWidgetOpened={setUniswapWidgetOpened}
-				/>
-			</FlexDivCentered>
+			<WalletButtons
+				settingsModalOpened={settingsModalOpened}
+				uniswapWidgetOpened={uniswapWidgetOpened}
+				setSettingsModalOpened={setSettingsModalOpened}
+				setUniswapWidgetOpened={setUniswapWidgetOpened}
+			/>
 			{settingsModalOpened && <SettingsModal onDismiss={() => setSettingsModalOpened(false)} />}
 			{uniswapWidgetOpened && <UniswapModal onDismiss={() => setUniswapWidgetOpened(false)} />}
 		</>
