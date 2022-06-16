@@ -1,7 +1,7 @@
 import { EXTERNAL_LINKS } from 'constants/links';
 import React from 'react';
 import styled from 'styled-components';
-import { ExternalLink, FlexDivColCentered, FlexDivRowCentered, Paragraph } from 'styles/common';
+import { ExternalLink, FlexDivColCentered, Paragraph } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';

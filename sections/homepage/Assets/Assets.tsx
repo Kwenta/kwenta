@@ -178,8 +178,9 @@ const Assets = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const synthList = futuresMarkets.map(({ asset }) => asset);
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
+
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList, true);
+	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets(true);
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
@@ -194,9 +195,9 @@ const Assets = () => {
 			: synths;
 
 	const synthNames = synths.map((synth) => synth.name);
-	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
+	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames, true);
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
+	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday, true);
 
 	const PERPS = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
