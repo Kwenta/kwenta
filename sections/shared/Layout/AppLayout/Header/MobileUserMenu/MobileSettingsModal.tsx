@@ -7,7 +7,6 @@ import Connector from 'containers/Connector';
 import FullScreenModal from 'components/FullScreenModal';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { isL2State } from 'store/wallet';
-
 import Logo from 'sections/shared/Layout/Logo';
 
 import MobileSubMenu from './MobileSubMenu';
