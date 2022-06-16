@@ -556,6 +556,7 @@
 			"info": "Deprecated synths can be exchanged for sUSD at any time at the fixed redemption rate.",
 			"button": {
 				"default": "Redeem All",
+				"redeem-synths": "Redeem deprecated synths",
 				"redeeming": "Pending"
 			},
 			"susd-total": "sUSD Total"
