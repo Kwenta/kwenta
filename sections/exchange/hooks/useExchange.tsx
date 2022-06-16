@@ -11,8 +11,13 @@ import { wei } from '@synthetixio/wei';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
+import TransactionNotifier from 'containers/TransactionNotifier';
+import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
 
+import Button from 'components/Button';
+
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import {
 	AFTER_HOURS_SYNTHS,
@@ -22,20 +27,22 @@ import {
 	ETH_ADDRESS,
 	Synths,
 } from 'constants/currency';
-
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
 import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
+import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
 import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCard';
 import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
-import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
 import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
@@ -46,11 +53,14 @@ import SelectTokenModal from 'sections/shared/modals/SelectTokenModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
-
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
+import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
+
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
+import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
+import useGas from 'hooks/useGas';
 
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
 import { isWalletConnectedState, walletAddressState, isL2State, networkState } from 'store/wallet';
@@ -58,21 +68,12 @@ import { ordersState } from 'store/orders';
 
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
-
 import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
+import { hexToAsciiV2 } from 'utils/formatters/string';
 
+import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
 import useCurrencyPair from './useCurrencyPair';
-import TransactionNotifier from 'containers/TransactionNotifier';
-
 import { NoTextTransform } from 'styles/common';
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
-
-import Connector from 'containers/Connector';
-import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import useGas from 'hooks/useGas';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -131,6 +132,7 @@ const useExchange = ({
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const [, setIsRedeeming] = useState<boolean>(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
@@ -143,12 +145,13 @@ const useExchange = ({
 	const [selectQuoteTokenModalOpen, setSelectQuoteTokenModalOpen] = useState<boolean>(false);
 	const [selectBaseTokenModalOpen, setSelectBaseTokenModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
+	const [redeemTxModalOpen, setRedeemTxModalOpen] = useState<boolean>(false);
 	const [atomicExchangeSlippage] = useState<string>('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
-	const { gasPrice, gasPriceWei, gasPrices, gasConfig } = useGas();
+	const { gasPrice, gasPriceWei, gasPrices, gasConfig, getGasLimitEstimate } = useGas();
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
@@ -677,6 +680,85 @@ const useExchange = ({
 		},
 		[getExchangeParams, isL2, synthetixjs, gasPrice, getL1SecurityFee]
 	);
+
+	const Redeemer = useMemo(() => synthetixjs?.contracts.SynthRedeemer ?? null, [synthetixjs]);
+	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
+	const redeemableDeprecatedSynths =
+		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
+			? redeemableDeprecatedSynthsQuery.data
+			: null;
+	const balances = redeemableDeprecatedSynths?.balances ?? [];
+	const totalUSDBalance = wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0);
+
+	const getMethodAndParams = useCallback(
+		() => ({
+			method: 'redeemAll',
+			params: [redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
+		}),
+		[redeemableDeprecatedSynths?.balances]
+	);
+
+	const gasLimitEstimate = useCallback(async (): Promise<number | null> => {
+		if (!Redeemer) return null;
+		try {
+			const { method, params } = getMethodAndParams();
+			return await getGasLimitEstimate(() => Redeemer.estimateGas[method](...params));
+		} catch (e) {
+			return null;
+		}
+	}, [getMethodAndParams, Redeemer, getGasLimitEstimate]);
+
+	const handleRedeem = async () => {
+		if (!(Redeemer && gasPrice)) return;
+
+		setTxError(null);
+		setRedeemTxModalOpen(true);
+
+		const { method, params } = getMethodAndParams();
+
+		try {
+			setIsRedeeming(true);
+
+			let transaction: ethers.ContractTransaction | null = null;
+
+			const limitEstimate = await gasLimitEstimate();
+
+			transaction = (await Redeemer[method](...params, {
+				gasPrice: gasPriceWei,
+				gasLimit: limitEstimate,
+			})) as ethers.ContractTransaction;
+
+			if (transaction != null) {
+				monitorTransaction({
+					txHash: transaction.hash,
+				});
+
+				await transaction.wait();
+			}
+			setRedeemTxModalOpen(false);
+			redeemableDeprecatedSynthsQuery.refetch();
+			synthsWalletBalancesQuery.refetch();
+		} catch (e) {
+			try {
+				await Redeemer.callStatic[method](...params);
+				throw e;
+			} catch (e) {
+				console.log(e);
+				setTxError(
+					e.data
+						? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
+						: e.message
+				);
+			}
+		} finally {
+			setIsRedeeming(false);
+		}
+	};
+
+	const handleDismiss = () => {
+		setRedeemTxModalOpen(false);
+		setIsRedeeming(false);
+	};
 
 	const checkAllowance = useCallback(async () => {
 		if (
@@ -1211,6 +1293,26 @@ const useExchange = ({
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix' ? true : false}
 					isApproved={needsApproval ? isApproved : undefined}
+				/>
+			)}
+			{balances.length !== 0 && totalUSDBalance.gt(0) && (
+				<Button
+					variant="primary"
+					isRounded={true}
+					disabled={false}
+					onClick={handleRedeem}
+					size="lg"
+					data-testid="submit-order"
+					fullWidth={true}
+				>
+					{t('dashboard.deprecated.button.redeem-synths')}
+				</Button>
+			)}
+			{!redeemTxModalOpen ? null : (
+				<RedeemTxModal
+					{...{ txError, balances, totalUSDBalance }}
+					onDismiss={handleDismiss}
+					attemptRetry={handleRedeem}
 				/>
 			)}
 			{txConfirmationModalOpen && (
