@@ -111,11 +111,11 @@
 				"copy": "Learn about the many features of Kwenta; 10x leverage, instant transactions, deep liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
-				"title": "Earn",
+				"title": "Learn how to start earning with Kwenta",
 				"copy": "Earn $KWENTA with trading incentives and staking."
 			},
 			"how-governance": {
-				"title": "Governance",
+				"title": "How Governance Works",
 				"copy": "Kwenta is governed, built, and maintained by its community. Learn more about how governance works, and how to get involved."
 			},
 			"faq": "FAQ"
@@ -126,8 +126,8 @@
 			"categories": "Commodities, Forex, Crypto and more."
 		},
 		"features": { 
-			"title": "FEATURE",
-			"description": "Trading Without The Limits Of A Centralised Exchange",
+			"title": "FEATURES",
+			"description": "Trading Without The Limits Of A Centralized Exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
 				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
@@ -142,7 +142,7 @@
 			},
 			"permissionless": {
 				"title": "Permissionless",
-				"copy": "A full on-chain DeFi futures trading experience"
+				"copy": "A fully on-chain DeFi futures trading experience"
 			},
 			"mobile": {
 				"title": "Mobile",
