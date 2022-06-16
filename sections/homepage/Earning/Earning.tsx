@@ -117,7 +117,7 @@ const Earning = () => {
 						<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
 					</StatsCard>
 				</StatsCardContainer>
-				<CTAContainer>
+				{/* <CTAContainer>
 					<Link href={ROUTES.Home.Overview}>
 						<Button variant="primary" isRounded={false} size="md" disabled>
 							{t('homepage.earning.stake-kwenta')}
@@ -129,7 +129,7 @@ const Earning = () => {
 							<ArrowUpRightIcon />
 						</StyledButton>
 					</Link>
-				</CTAContainer>
+				</CTAContainer> */}
 			</Container>
 		</StackSection>
 	);

@@ -120,7 +120,7 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home}>
-							<Button variant="primary" isRounded={false} size="sm">
+							<Button noOutline={true} size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>

@@ -181,11 +181,11 @@ const Container = styled.div`
 `;
 
 const FeatureCard = styled(FlexDivRow)`
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 15px;
-	padding: 32px;
+	background-color: #1a1a1a;
+	padding: 30px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	transition: all 0.2s ease-in-out;
+	border-radius: 10px;
 	height: 380px;
 
 	&.how-to-stake,
