@@ -129,7 +129,7 @@ const PositionCard: React.FC<PositionCardProps> = ({
 			positionSide: newSide,
 			positionSize: size?.abs(),
 			notionalValue: previewTradeData.notionalValue,
-			leverage: previewTradeData.notionalValue.div(previewTradeData.margin),
+			leverage: previewTradeData.notionalValue.div(previewTradeData.margin).abs(),
 			liquidationPrice: previewTradeData.liqPrice,
 			avgEntryPrice: modifiedAverage || zeroBN,
 			showStatus: previewTradeData.showStatus,
