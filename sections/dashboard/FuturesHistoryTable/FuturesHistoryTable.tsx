@@ -1,25 +1,25 @@
-import { FC, useMemo, ReactElement } from 'react';
+import { wei } from '@synthetixio/wei';
+import { utils as ethersUtils } from 'ethers';
+import * as _ from 'lodash/fp';
+import React, { FC, useMemo, ReactElement } from 'react';
+import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { isL2State, walletAddressState } from 'store/wallet';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 import { NO_VALUE } from 'constants/placeholder';
 import { GridDivCenteredRow } from 'styles/common';
-import * as _ from 'lodash/fp';
-import useGetAllFuturesTradesForAccount from '../../../queries/futures/useGetAllFuturesTradesForAccount';
-import { utils as ethersUtils } from 'ethers';
+import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { wei } from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
-import React from 'react';
 import { TradeStatus } from 'sections/futures/types';
 import PositionType from 'components/Text/PositionType';
 
@@ -62,12 +62,10 @@ const FuturesHistoryTable: FC = () => {
 				showPagination={true}
 				noResultsMessage={
 					!isL2 ? (
-						<>
-							<TableNoResults>
-								{t('dashboard.overview.futures-history-table.no-results')}
-								<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
-							</TableNoResults>
-						</>
+						<TableNoResults>
+							{t('dashboard.overview.futures-history-table.no-results')}
+							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+						</TableNoResults>
 					) : undefined
 				}
 				highlightRowsOnHover
@@ -119,9 +117,7 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.side,
-								<>
-									<PositionType side={cellProps.value} />
-								</>
+								<PositionType side={cellProps.value} />
 							);
 						},
 						width: 70,
@@ -197,7 +193,6 @@ const FuturesHistoryTable: FC = () => {
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
 								cellProps.row.original.orderType,
-
 								<StyledText>{cellProps.row.original.orderType}</StyledText>
 							);
 						},
