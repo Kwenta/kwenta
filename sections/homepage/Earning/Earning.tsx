@@ -13,14 +13,10 @@ import {
 } from 'styles/common';
 import { Copy, StackSection, Title } from '../common';
 
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
 import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
 import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 
-import Link from 'next/link';
-import ROUTES from 'constants/routes';
-import Button from 'components/Button';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import Loader from 'components/Loader';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
@@ -117,19 +113,6 @@ const Earning = () => {
 						<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
 					</StatsCard>
 				</StatsCardContainer>
-				{/* <CTAContainer>
-					<Link href={ROUTES.Home.Overview}>
-						<Button variant="primary" isRounded={false} size="md" disabled>
-							{t('homepage.earning.stake-kwenta')}
-						</Button>
-					</Link>
-					<Link href={ROUTES.Home.Overview}>
-						<StyledButton isRounded={false} size="md" disabled>
-							{t('homepage.earning.how-to-earn')}
-							<ArrowUpRightIcon />
-						</StyledButton>
-					</Link>
-				</CTAContainer> */}
 			</Container>
 		</StackSection>
 	);
@@ -157,13 +140,6 @@ const GrayCopy = styled(Copy)`
 
 const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryGold};
-`;
-
-const StyledButton = styled(Button)`
-	display: none;
-	align-items: center;
-	justify-content: center;
-	text-transform: none;
 `;
 
 const StatsName = styled.div`
@@ -259,20 +235,6 @@ const FeatureIconContainer = styled.div`
 const FeatureContentTitle = styled(FlexDivCentered)`
 	padding-bottom: 20px;
 	justify-content: center;
-`;
-
-const CTAContainer = styled.div`
-	margin-top: 28.5px;
-	display: flex;
-	justify-content: center;
-	gap: 20px;
-	width: 1160px;
-	${media.lessThan('sm')`
-		flex-direction: column;
-		width: 200px;
-		margin: auto;
-		padding: 0px;
-	`}
 `;
 
 export default Earning;
