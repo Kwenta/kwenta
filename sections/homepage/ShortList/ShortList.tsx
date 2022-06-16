@@ -27,6 +27,7 @@ import media, { Media } from 'styles/media';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
 import { Copy, Title } from '../common';
+import Button from 'components/Button';
 
 type Stat = {
 	pnl: Wei;
@@ -341,19 +342,21 @@ const StatsCardContainer = styled(FlexDivRow)`
 	`}
 `;
 
-const StatsCard = styled(FlexDivColCentered)`
+const StatsCard = styled(Button)`
+	disply: flex;
+	flex-direction: column;
+	align-items: center;
 	width: 291px;
 	height: 191px;
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 15px;
 	padding: 45px;
 	padding-bottom: 0px;
 	justify-content: flex-end;
 	svg {
-		width: 307px;
-		height: 79px;
+		width: 291px;
+		height: 75px;
 		background-size: cover;
 	}
 `;

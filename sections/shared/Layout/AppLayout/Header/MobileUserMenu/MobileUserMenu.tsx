@@ -50,7 +50,7 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 				<MobileFooterRight>
 					{homepage ? (
 						<Link href={ROUTES.Markets.Home}>
-							<Button variant="primary" isRounded={false} size="sm">
+							<Button isRounded={false} size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>

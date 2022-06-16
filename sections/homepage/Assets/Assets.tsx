@@ -29,8 +29,8 @@ import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import { getSynthDescription } from 'utils/futures';
 import { CurrencyKey, Synths } from 'constants/currency';
-import { GridContainer } from '../common';
 import Slider from 'react-slick';
+import Button from 'components/Button';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -172,7 +172,7 @@ const Assets = () => {
 		[activeMarketsTab, t]
 	);
 
-	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRatesQuery = useExchangeRatesQuery(true);
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const futuresMarketsQuery = useGetFuturesMarkets(true);
@@ -401,7 +401,7 @@ const Assets = () => {
 					</SliderContainer>
 				</TabPanel>
 			</Media>
-			<Media greaterThan="sm">
+			<Media greaterThanOrEqual="sm">
 				<FlexDivColCentered>
 					{title}
 					<TabButtonsContainer>
@@ -415,120 +415,112 @@ const Assets = () => {
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-								<div>
-									<StatsCardContainer key={key}>
-										<StatsCard
-											onClick={() => {
-												router.push(`/market/${key}`);
-											}}
-										>
-											<GridSvg className="bg" objectfit="cover" layout="fill" />
-											<StatsIconContainer>
-												{icon}
-												<StatsNameContainer>
-													<AssetName>{name}</AssetName>
-													<AssetDescription>{description}</AssetDescription>
-												</StatsNameContainer>
-											</StatsIconContainer>
-											<ChartContainer>{image}</ChartContainer>
-											<AssetPrice>
-												<Currency.Price
-													currencyKey={Synths.sUSD}
-													price={price}
-													sign={'$'}
-													conversionRate={1}
-												/>
-											</AssetPrice>
-											<StatsValueContainer>
-												<StatsValue>
-													{'CHG    '}
-													{priceChange === 0 ? (
-														<>-</>
-													) : (
-														<ChangePercent
-															value={priceChange}
-															decimals={1}
-															className="change-pct"
-														/>
-													)}
-												</StatsValue>
-												<StatsValue>
-													{'VOL    '}
-													{volume === 0 ? (
-														<>-</>
-													) : (
-														<Currency.Price
-															currencyKey={Synths.sUSD}
-															price={volume}
-															sign={'$'}
-															conversionRate={1}
-															formatOptions={{ minDecimals: 0 }}
-														/>
-													)}
-												</StatsValue>
-											</StatsValueContainer>
-										</StatsCard>
-									</StatsCardContainer>
-								</div>
+								<StatsCardContainer key={key}>
+									<StatsCard
+										onClick={() => {
+											router.push(`/market/${key}`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{name}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{priceChange === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={priceChange} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
 							))}
 						</StyledFlexDivRow>
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<div>
-									<StatsCardContainer key={key}>
-										<StatsCard
-											onClick={() => {
-												market !== 'sUSD'
-													? router.push(`/exchange/${market}-sUSD`)
-													: router.push(`/exchange/`);
-											}}
-										>
-											<GridSvg className="bg" objectfit="cover" layout="fill" />
-											<FlexDiv>
-												{icon}
-												<StatsNameContainer>
-													<AssetName>{market}</AssetName>
-													<AssetDescription>{description}</AssetDescription>
-												</StatsNameContainer>
-											</FlexDiv>
-											<ChartContainer>{image}</ChartContainer>
-											<AssetPrice>
-												<Currency.Price
-													currencyKey={Synths.sUSD}
-													price={price}
-													sign={'$'}
-													conversionRate={1}
-												/>
-											</AssetPrice>
-											<StatsValueContainer>
-												<StatsValue>
-													{'CHG    '}
-													{change === 0 ? (
-														<>-</>
-													) : (
-														<ChangePercent value={change} decimals={1} className="change-pct" />
-													)}
-												</StatsValue>
-												<StatsValue>
-													{'VOL    '}
-													{volume === 0 ? (
-														<>-</>
-													) : (
-														<Currency.Price
-															currencyKey={Synths.sUSD}
-															price={volume}
-															sign={'$'}
-															conversionRate={1}
-															formatOptions={{ minDecimals: 0 }}
-														/>
-													)}
-												</StatsValue>
-											</StatsValueContainer>
-										</StatsCard>
-									</StatsCardContainer>
-								</div>
+								<StatsCardContainer key={key}>
+									<StatsCard
+										onClick={() => {
+											market !== 'sUSD'
+												? router.push(`/exchange/${market}-sUSD`)
+												: router.push(`/exchange/`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<FlexDiv>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{market}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</FlexDiv>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{change === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={change} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
 							))}
 						</StyledFlexDivRow>
 					</TabPanel>
@@ -548,19 +540,19 @@ const StatsCardContainer = styled.div`
 	display: flex !important;
 	justify-content: center !important;
 	align-items: center !important;
-	border-radius: 15px;
+	border-radius: 9px;
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	background-clip: padding-box;
 
 	${media.lessThan('sm')`
 		&::before {
 			content: '';
 			position: absolute;
+			z-index: 9;
 			top: 0;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			border-radius: 15px;
+			border-radius: 9px;
 			padding: 1px;
 			background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
 			-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -641,32 +633,33 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	`}
 `;
 
-const StatsCard = styled(GridContainer)`
+const StatsCard = styled(Button)`
+	display: grid;
 	cursor: pointer;
-	grid-template-columns: repeat(2, auto);
 	width: 275px;
 	height: 140px;
+	grid-template-columns: repeat(2, auto);
 	padding: 16px 20px;
+	border-radius: 9px;
 
 	svg.bg {
 		position: absolute;
 		z-index: 10;
-		margin-top: 16px;
-		margin-left: -20px;
+		margin-top: 32px;
 		width: 275px;
 		height: 140px;
 	}
 
 	${media.lessThan('sm')`
-		grid-template-columns: repeat(2, 110px);
-		width: 290px;
+		grid-template-columns: repeat(2, 150px);
+		width: 307px;
 		height: 150px;
 
 		svg.bg {
 			position: absolute;
 			z-index: 10;
-			margin-top: 55px;
-			margin-left: -20px;
+			margin-top: 70px;
+			margin-left: 0px;
 			width: 307px;
 			height: 79px;
 		}
