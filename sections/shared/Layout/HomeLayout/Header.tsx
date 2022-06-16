@@ -154,8 +154,9 @@ const LogoContainer = styled.div`
 
 const StyledMenu = styled.div`
 	position: absolute;
-	background: linear-gradient(180deg, #1e1d1d 0%, #161515 100%);
+	background: ${(props) => props.theme.colors.selectedTheme.cell.fill};
 	border: 1px solid rgba(255, 255, 255, 0.1);
+	z-index: 10;
 	border-radius: 6px;
 	width: 120px;
 	margin: auto;
@@ -197,7 +198,7 @@ const StyledMenuItem = styled.p`
 	padding-bottom: 0px;
 	margin: 0px;
 	&:hover {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 	}
 	svg {
 		margin-right: 10px;
@@ -235,6 +236,7 @@ const StyledTextButton = styled.div`
 
 	&:hover {
 		background: #252525;
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 	}
 
 	&.governance:hover {
