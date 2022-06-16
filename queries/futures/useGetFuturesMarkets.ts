@@ -11,20 +11,21 @@ import { FuturesMarket } from './types';
 import { getMarketKey } from 'utils/futures';
 import { getReasonFromCode } from './utils';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
-const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
+const useGetFuturesMarkets = (homepage?: boolean, options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
-
+	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
+	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
-		QUERY_KEYS.Futures.Markets(network.id),
+		QUERY_KEYS.Futures.Markets(homepage ? DEFAULT_NETWORK_ID : network.id),
 		async () => {
-			if (isWalletConnected && !isL2) {
+			if (!homepage && isWalletConnected && !isL2) {
 				return null;
 			}
 
@@ -41,7 +42,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
 				markets.map((m: any) => {
 					const asset = utils.parseBytes32String(m.asset);
-					const marketKey = getMarketKey(asset, network.id);
+					const marketKey = getMarketKey(asset, homepage ? DEFAULT_NETWORK_ID : network.id);
 					return utils.formatBytes32String(marketKey);
 				})
 			);
@@ -81,7 +82,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			);
 		},
 		{
-			enabled: isWalletConnected ? isL2 && isReady : isReady,
+			enabled: !homepage && isWalletConnected ? isL2 && isReady : isReady,
 			refetchInterval: 15000,
 			...options,
 		}

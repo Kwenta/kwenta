@@ -22,10 +22,11 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 	ethers.utils.formatBytes32String
 );
 
-const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
+const useExchangeRatesQuery = (homepage?: boolean, options?: UseQueryOptions<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
+	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
 
 	return useQuery<Rates>(
 		['rates', 'exchangeRates2', network.id],

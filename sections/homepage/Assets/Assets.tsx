@@ -175,7 +175,7 @@ const Assets = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarketsQuery = useGetFuturesMarkets(true);
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 

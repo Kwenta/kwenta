@@ -108,7 +108,7 @@ const ShortList = () => {
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats(true);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarketsQuery = useGetFuturesMarkets(true);
 	const openInterest = useMemo(() => {
 		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets
