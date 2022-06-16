@@ -350,7 +350,7 @@ const StatsCard = styled(FlexDivColCentered)`
 	border-radius: 15px;
 	padding: 45px;
 	padding-bottom: 0px;
-	justify-conent: flex-end;
+	justify-content: flex-end;
 	svg {
 		width: 307px;
 		height: 79px;
