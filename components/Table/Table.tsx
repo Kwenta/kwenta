@@ -103,6 +103,7 @@ export const Table: FC<TableProps> = ({
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
+			autoResetPage: false,
 			...options,
 		},
 		useSortBy,

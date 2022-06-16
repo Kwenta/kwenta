@@ -1,5 +1,6 @@
 import React from 'react';
-import { CustomThemeProvider } from '../contexts/CustomThemeContext';
+import { ThemeProvider } from 'styled-components';
+import { themes } from '../styles/theme';
 import '../styles/main.css';
 
 export const parameters = {
@@ -12,10 +13,11 @@ export const parameters = {
 	},
 };
 
+// TODO: Maybe implement custom theme switcher for Storybook.
 export const decorators = [
 	(Story) => (
-		<CustomThemeProvider>
+		<ThemeProvider theme={themes.dark}>
 			<Story />
-		</CustomThemeProvider>
+		</ThemeProvider>
 	),
 ];

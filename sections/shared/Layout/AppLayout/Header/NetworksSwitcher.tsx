@@ -109,7 +109,6 @@ export default NetworksSwitcher;
 
 const Container = styled.div`
 	width: 100%;
-	margin-left: 15px;
 `;
 
 const StyledButton = styled(Button)`
