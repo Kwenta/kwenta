@@ -8,6 +8,11 @@ import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import { getMarketKey } from 'utils/futures';
+import Connector from 'containers/Connector';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+
 type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
 
 type RefetchContextType = {
@@ -28,6 +33,13 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const marketQuery = useGetFuturesMarket();
 	useGetFuturesPotentialTradeDetails();
 
+	const { network } = Connector.useContainer();
+	const futuresMarketsQuery = useGetFuturesMarkets();
+	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const futuresPositionQuery = useGetFuturesPositionForMarkets(
+		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
+	);
+
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
 		setTimeout(() => {
 			switch (refetchType) {
@@ -43,6 +55,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					openOrdersQuery.refetch();
 					break;
 				case 'margin-change':
+					futuresPositionQuery.refetch();
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
