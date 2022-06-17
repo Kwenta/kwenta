@@ -361,13 +361,13 @@ const Assets = () => {
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
-										<FlexDiv>
+										<StatsIconContainer>
 											{icon}
 											<StatsNameContainer>
 												<AssetName>{market}</AssetName>
 												<AssetDescription>{description}</AssetDescription>
 											</StatsNameContainer>
-										</FlexDiv>
+										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
@@ -679,7 +679,7 @@ const StatsIconContainer = styled(FlexDiv)`
 	justify-content: flex-start;
 	padding-left: 5px;
 	text-align: left;
-	padding-top: 10px;
+	padding-top: 5px;
 	text-transform: none;
 	${media.lessThan('sm')`
 		padding-left: 0;
