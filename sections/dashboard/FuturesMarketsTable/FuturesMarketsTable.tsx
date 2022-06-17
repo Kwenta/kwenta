@@ -104,7 +104,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 			<StyledTable
 				data={data}
 				// pageSize={5}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
 					router.push(`/market/${row.original.asset}`);
 				}}
@@ -229,13 +229,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 										currencyKey={Synths.sUSD}
 										price={cellProps.row.original.longInterest}
 										sign={'$'}
-										conversionRate={1}
 									/>
 									<StyledShortPrice
 										currencyKey={Synths.sUSD}
 										price={cellProps.row.original.shortInterest}
 										sign={'$'}
-										conversionRate={1}
 									/>
 								</OpenInterestContainer>
 							);
