@@ -694,9 +694,9 @@ const StatsCard = styled(Button)`
 		margin-top: 32px;
 		width: 275px;
 		height: 140px;
-		position:absolute;
-		right:0;
-		top:0;
+		position: absolute;
+		right: 0;
+		top: 0;
 	}
 
 	${media.lessThan('sm')`
