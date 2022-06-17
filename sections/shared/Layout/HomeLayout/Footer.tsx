@@ -161,7 +161,6 @@ const PowerContainer = styled.div`
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
-	width: 1280px;
 	padding-top: 45px;
 	border-top: 1px solid #3d3c3c;
 	margin-bottom: 50px;
@@ -181,8 +180,7 @@ const PowerContainer = styled.div`
 const MultiListContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	column-gap: 350px;
-	width: 1280px;
+	column-gap: calc(100vw / 3 - 350px);
 	padding-left: 40px;
 	padding-right: 40px;
 	margin-top: 80px;
@@ -213,7 +211,6 @@ const LogoFooter = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	width: 1280px;
 	padding-left: 40px;
 	padding-right: 40px;
 	${media.lessThan('sm')`
