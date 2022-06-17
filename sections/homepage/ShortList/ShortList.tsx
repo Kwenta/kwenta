@@ -362,13 +362,17 @@ const StatsCard = styled(Button)`
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	padding: 45px;
-	padding-bottom: 0px;
+	padding-bottom: 60px;
 	justify-content: flex-end;
 	svg {
 		width: 291px;
 		height: 75px;
-		margin-bottom: -10px;
-		z-index: 10;
+		position: absolute;
+		right: 0;
+		top: 0;
+
+		margin-top: 115px;
+		z-index: 20;
 		background-size: cover;
 	}
 `;
