@@ -290,6 +290,7 @@ const Assets = () => {
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCardContainer key={key}>
 									<StatsCard
+										noOutline={true}
 										onClick={() => {
 											router.push(`/market/${key}`);
 										}}
@@ -347,6 +348,7 @@ const Assets = () => {
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
 								<StatsCardContainer key={key}>
 									<StatsCard
+										noOutline={true}
 										onClick={() => {
 											market !== 'sUSD'
 												? router.push(`/exchange/${market}-sUSD`)
@@ -479,13 +481,13 @@ const Assets = () => {
 										}}
 									>
 										<GridSvg className="bg" objectfit="cover" layout="fill" />
-										<FlexDiv>
+										<StatsIconContainer>
 											{icon}
 											<StatsNameContainer>
 												<AssetName>{market}</AssetName>
 												<AssetDescription>{description}</AssetDescription>
 											</StatsNameContainer>
-										</FlexDiv>
+										</StatsIconContainer>
 										<ChartContainer>{image}</ChartContainer>
 										<AssetPrice>
 											<Currency.Price
@@ -544,23 +546,11 @@ const StatsCardContainer = styled.div`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 
 	${media.lessThan('sm')`
-		&::before {
-			content: '';
-			position: absolute;
-			z-index: 9;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			border-radius: 9px;
-			padding: 1px;
-			background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
-			-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-			-webkit-mask-composite: xor;
-			mask-image: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-			mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-			mask-composite: exclude;
-		};
+		width: 277px !important;
+		height: 152px !important;
+		margin: auto;
+		background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
+		padding: 1px;
 	`};
 `;
 
@@ -571,10 +561,17 @@ const StyledSlider = styled(Slider)`
 const StatsIconContainer = styled(FlexDiv)`
 	justify-content: flex-start;
 	padding-left: 5px;
+	text-align: left;
+	padding-top: 10px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	text-transform: none;
+	${media.lessThan('sm')`
+		padding-left: 0;
+	`};
 `;
 
 const ChartContainer = styled.div`
-	margin-left: -65px;
+	margin-left: -52.5px;
 	margin-top: -20px;
 	overflow: hidden;
 `;
@@ -585,11 +582,14 @@ const StatsValueContainer = styled.div`
 	width: 100px;
 	font-size: 13px;
 	align-self: flex-end;
+	text-align: left;
+	padding-left: 7.5px;
 `;
 
 const StatsNameContainer = styled.div`
 	font-size: 18px;
 	align-self: center;
+	margin-left: -5px;
 `;
 
 const AssetName = styled.div`
@@ -604,6 +604,7 @@ const AssetPrice = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	width: 120px;
 	padding-left: 5px;
+	text-align: left;
 `;
 
 const AssetDescription = styled.div`
@@ -639,7 +640,7 @@ const StatsCard = styled(Button)`
 	width: 275px;
 	height: 140px;
 	grid-template-columns: repeat(2, auto);
-	padding: 16px 20px;
+	padding: 16px 16px;
 	border-radius: 9px;
 
 	svg.bg {
@@ -651,8 +652,7 @@ const StatsCard = styled(Button)`
 	}
 
 	${media.lessThan('sm')`
-		grid-template-columns: repeat(2, 150px);
-		width: 307px;
+		grid-template-columns: repeat(2, 135px);
 		height: 150px;
 
 		svg.bg {
@@ -660,7 +660,7 @@ const StatsCard = styled(Button)`
 			z-index: 10;
 			margin-top: 70px;
 			margin-left: 0px;
-			width: 307px;
+			width: 275px;
 			height: 79px;
 		}
 	`}

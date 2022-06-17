@@ -357,6 +357,8 @@ const StatsCard = styled(Button)`
 	svg {
 		width: 291px;
 		height: 75px;
+		margin-bottom: -10px;
+		z-index: 10;
 		background-size: cover;
 	}
 `;
