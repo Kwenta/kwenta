@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import router from 'next/router';
 import values from 'lodash/values';
 import isNil from 'lodash/isNil';
@@ -269,7 +269,7 @@ const Assets = () => {
 		dots: true,
 		infinite: true,
 		centerPadding: (window.innerWidth - 380) / 2 + 40 + 'px',
-		speed: 200,
+		speed: 0,
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		initialSlide: 1,
@@ -293,7 +293,7 @@ const Assets = () => {
 					<SliderContainer>
 						<StyledSlider {...settings}>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-								<StatsCardContainer key={key}>
+								<StatsCardContainer key={key} className={key}>
 									<StatsCard
 										noOutline={true}
 										onClick={() => {
@@ -351,7 +351,7 @@ const Assets = () => {
 					<SliderContainer>
 						<StyledSlider {...settings}>
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<StatsCardContainer key={key}>
+								<StatsCardContainer key={key} className={key}>
 									<StatsCard
 										noOutline={true}
 										onClick={() => {
@@ -424,6 +424,8 @@ const Assets = () => {
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCardContainer key={key}>
 									<StatsCard
+										className={key}
+										noOutline={false}
 										onClick={() => {
 											router.push(`/market/${key}`);
 										}}
@@ -479,6 +481,8 @@ const Assets = () => {
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
 								<StatsCardContainer key={key}>
 									<StatsCard
+										className={key}
+										noOutline={false}
 										onClick={() => {
 											market !== 'sUSD'
 												? router.push(`/exchange/${market}-sUSD`)
@@ -536,6 +540,14 @@ const Assets = () => {
 		</Container>
 	);
 };
+
+const border = css`
+	padding: 1px;
+	width: 277px !important;
+	height: 152px !important;
+	margin: auto 10px;
+	border-radius: 15px;
+`;
 
 const SliderContainer = styled.div`
 	margin: auto;
@@ -597,13 +609,69 @@ const StyledSlider = styled(Slider)`
 		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
 	}
 
-	& > .slick-list > .slick-track > .slick-active {
-		background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
-		padding: 1px;
-		width: 277px !important;
-		height: 152px !important;
-		margin: auto 10px;
-		border-radius: 15px;
+	& .slick-active .sBTC, .slick-active .BTC {
+		${border}
+		background: linear-gradient(180deg, #EF9931 0%, #C97714 100%);
+	}
+
+	& .slick-active .sETH, .slick-active .ETH {
+		${border}
+		background: linear-gradient(180deg, #8297EA 0%, #627CE5 100%);
+	}
+
+	& .slick-active .sLINK, .slick-active .LINK {
+		${border}
+		background: linear-gradient(180deg, #2958D5 0%, #0036C5 100%);
+	}
+
+	& .slick-active .SOL {
+		${border}
+		background: linear-gradient(180deg, #90F5AA 0%, #874DF1 100%);
+	}
+
+	& .slick-active .AVAX {
+		${border}
+		background: linear-gradient(180deg, #DC5044 0%, #C92416 100%);
+	}
+
+	& .slick-active .AAVE {
+		${border}
+		background: linear-gradient(180deg, #A65A9D 0%, #51B2C3 100%);
+	}
+
+	& .slick-active .UNI {
+		${border}
+		background: linear-gradient(180deg, #F13578 0%, #D81F61 100%);
+	}
+
+	& .slick-active .MATIC {
+		${border}
+		background: linear-gradient(180deg, #6742D3 0%, #471DC0 100%);
+	}
+
+	& .slick-active .XAG {
+		${border}
+		background: linear-gradient(180deg, #CFCFCF 0%, #B1B1B1 100%);
+	}
+
+	& .slick-active .XAU {
+		${border}
+		background: linear-gradient(180deg, #EBD986 0%, #CFAC6D 100%);
+	}
+
+	& .slick-active .APE {
+		${border}
+		background: linear-gradient(180deg, #024DE2 0%, #0C3EA9 100%);
+	}
+
+	& .slick-active .DYDX {
+		${border}
+		background: linear-gradient(180deg, #6264F9 0%, #25348C 100%);
+	}
+
+	& .slick-active .EUR, .slick-active .INR, .slick-active .USD {
+		${border}
+		background: ${(props) => props.theme.colors.selectedTheme.button.border};
 	}
 `;
 
@@ -638,6 +706,8 @@ const StatsNameContainer = styled.div`
 	font-size: 18px;
 	align-self: center;
 	margin-left: -5px;
+	text-transform: none;
+	text-align: left;
 `;
 
 const AssetName = styled.div`
@@ -694,6 +764,62 @@ const StatsCard = styled(Button)`
 
 	&::before {
 		border-radius: 15px;
+	}
+
+	&.BTC:hover::before {
+		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
+	}
+	&.sBTC:hover::before {
+		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
+	}
+
+	&.sETH:hover::before {
+		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
+	}
+
+	&.ETH:hover::before {
+		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
+	}
+
+	&.sLINK:hover::before {
+		border-radius: 15px;
+		background: linear-gradient(180deg, #2958d5 0%, #0036c5 100%);
+	}
+
+	&.SOL:hover::before {
+		background: linear-gradient(180deg, #90f5aa 0%, #874df1 100%);
+	}
+
+	&.AVAX:hover::before {
+		background: linear-gradient(180deg, #dc5044 0%, #c92416 100%);
+	}
+
+	&.AAVE:hover::before {
+		background: linear-gradient(180deg, #a65a9d 0%, #51b2c3 100%);
+	}
+
+	&.UNI:hover::before {
+		background: linear-gradient(180deg, #f13578 0%, #d81f61 100%);
+	}
+
+	&.MATIC:hover::before {
+		background: linear-gradient(180deg, #6742d3 0%, #471dc0 100%);
+	}
+
+	&.XAG:hover::before {
+		background: linear-gradient(180deg, #cfcfcf 0%, #b1b1b1 100%);
+	}
+
+	&.XAU:hover::before {
+		background: linear-gradient(180deg, #ebd986 0%, #cfac6d 100%);
+	}
+
+	&.APE:hover::before {
+		background: linear-gradient(180deg, #024de2 0%, #0c3ea9 100%);
+	}
+
+	&.DYDX:hover::before {
+		background: linear-gradient(180deg, #6264f9 0%, #25348c 100%);
 	}
 
 	svg.bg {
