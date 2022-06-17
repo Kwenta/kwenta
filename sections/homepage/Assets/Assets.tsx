@@ -77,9 +77,8 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 					visible: false,
 				},
 			},
-			handleScale: {
-				mouseWheel: false,
-			},
+			handleScale: false,
+			handleScroll: false,
 			crosshair: {
 				vertLine: {
 					visible: false,
@@ -265,12 +264,17 @@ const Assets = () => {
 	);
 
 	var settings = {
+		className: 'center',
+		centerMode: true,
+		dots: true,
 		infinite: true,
-		speed: 0,
+		centerPadding: '40px',
+		speed: 200,
 		slidesToShow: 1,
 		slidesToScroll: 1,
-		fade: true,
 		initialSlide: 1,
+		nextArrow: <></>,
+		prevArrow: <></>,
 	};
 
 	return (
@@ -534,8 +538,6 @@ const Assets = () => {
 
 const SliderContainer = styled.div`
 	margin: auto;
-	margin-left: 10px;
-	margin-right: 10px;
 `;
 
 const StatsCardContainer = styled.div`
@@ -556,6 +558,45 @@ const StatsCardContainer = styled.div`
 
 const StyledSlider = styled(Slider)`
 	margin: auto;
+
+	& > ul.slick-dots {
+		display: flex !important;
+		position: relative;
+		bottom: -10px;
+		width: 240px;
+		margin: auto;
+		padding: 0px;
+	}
+
+	& > .slick-dots li {
+		display: flex;
+		align-items: center;
+	}
+
+	& > .slick-dots li button {
+		border-radius: 12px;
+		padding: 2.5px;
+		width: 0px;
+		height: 0px;
+		background: linear-gradient(180deg, #282727 0%, #191818 100%);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08),
+			inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	}
+
+	& > .slick-dots li button::before {
+		content: '';
+	}
+
+	& > .slick-dots li.slick-active button {
+		border-radius: 12px;
+		padding: 4px;
+		width: 0px;
+		height: 0px;
+		background: ${(props) => props.theme.colors.selectedTheme.white};
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
+	}
 `;
 
 const StatsIconContainer = styled(FlexDiv)`
@@ -593,7 +634,7 @@ const StatsNameContainer = styled.div`
 
 const AssetName = styled.div`
 	font-size: 18px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.white};
 `;
 
 const AssetPrice = styled.div`
@@ -672,6 +713,10 @@ const StatsCard = styled(Button)`
 
 const Container = styled.div`
 	margin-bottom: 140px;
+	${media.lessThan('sm')`
+		margin-left: -30px;
+		margin-right: -30px;
+	`}
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -711,7 +756,7 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 	border-radius: ${(props) => (props.isActive ? '100px' : '134px')};
 	color: ${(props) =>
 		props.isActive
-			? props.theme.colors.common.primaryWhite
+			? props.theme.colors.selectedTheme.white
 			: props.theme.colors.common.secondaryGray};
 	background: ${(props) =>
 		props.isActive ? 'linear-gradient(180deg, #BE9562 0%, #A07141 100%)' : null};
