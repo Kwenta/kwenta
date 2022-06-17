@@ -325,7 +325,7 @@ const StatsName = styled.div`
 
 const StatsValue = styled.div`
 	font-size: 32px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.white};
 	margin-top: 14px;
 `;
 
@@ -333,6 +333,7 @@ const StatsCardContainer = styled(FlexDivRow)`
 	margin-top: 40px;
 	justify-content: center;
 	column-gap: 20px;
+
 	${media.lessThan('sm')`
 		flex-direction: column;
 		margin: auto;
@@ -348,6 +349,11 @@ const StatsCard = styled(Button)`
 	align-items: center;
 	width: 291px;
 	height: 191px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	cursor: default;
+	&:hover {
+		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);		
+	}
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
