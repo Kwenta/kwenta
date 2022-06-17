@@ -268,7 +268,7 @@ const Assets = () => {
 		centerMode: true,
 		dots: true,
 		infinite: true,
-		centerPadding: '40px',
+		centerPadding: (window.innerWidth - 385) / 2 + 40 + 'px',
 		speed: 200,
 		slidesToShow: 1,
 		slidesToScroll: 1,
