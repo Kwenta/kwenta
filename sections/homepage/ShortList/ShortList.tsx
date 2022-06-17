@@ -350,9 +350,13 @@ const StatsCard = styled(Button)`
 	width: 291px;
 	height: 191px;
 	font-family: ${(props) => props.theme.fonts.regular};
+	border-radius: 15px;
+	&::before {
+		border-radius: 15px;
+	}
 	cursor: default;
 	&:hover {
-		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);		
+		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	}
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),

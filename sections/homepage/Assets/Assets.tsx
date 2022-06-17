@@ -542,7 +542,7 @@ const StatsCardContainer = styled.div`
 	display: flex !important;
 	justify-content: center !important;
 	align-items: center !important;
-	border-radius: 9px;
+	border-radius: 15px;
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 
 	${media.lessThan('sm')`
@@ -563,7 +563,6 @@ const StatsIconContainer = styled(FlexDiv)`
 	padding-left: 5px;
 	text-align: left;
 	padding-top: 10px;
-	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: none;
 	${media.lessThan('sm')`
 		padding-left: 0;
@@ -640,8 +639,13 @@ const StatsCard = styled(Button)`
 	width: 275px;
 	height: 140px;
 	grid-template-columns: repeat(2, auto);
+	font-family: ${(props) => props.theme.fonts.regular};
 	padding: 16px 16px;
-	border-radius: 9px;
+	border-radius: 15px;
+
+	&::before {
+		border-radius: 15px;
+	}
 
 	svg.bg {
 		position: absolute;
