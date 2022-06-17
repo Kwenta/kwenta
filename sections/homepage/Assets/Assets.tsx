@@ -268,11 +268,12 @@ const Assets = () => {
 		centerMode: true,
 		dots: true,
 		infinite: true,
-		centerPadding: (window.innerWidth - 385) / 2 + 40 + 'px',
+		centerPadding: (window.innerWidth - 380) / 2 + 40 + 'px',
 		speed: 200,
 		slidesToShow: 1,
 		slidesToScroll: 1,
 		initialSlide: 1,
+		focusOnSelect: true,
 		nextArrow: <></>,
 		prevArrow: <></>,
 	};
@@ -548,11 +549,9 @@ const StatsCardContainer = styled.div`
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 
 	${media.lessThan('sm')`
-		width: 277px !important;
-		height: 152px !important;
+		width: 275px !important;
+		height: 150px !important;
 		margin: auto;
-		background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
-		padding: 1px;
 	`};
 `;
 
@@ -596,6 +595,15 @@ const StyledSlider = styled(Slider)`
 		background: ${(props) => props.theme.colors.selectedTheme.white};
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
+	}
+
+	& > .slick-list > .slick-track > .slick-active {
+		background: linear-gradient(180deg, #af56a0 0%, #2fbac6 100%);
+		padding: 1px;
+		width: 277px !important;
+		height: 152px !important;
+		margin: auto 10px;
+		border-radius: 15px;
 	}
 `;
 
@@ -702,7 +710,6 @@ const StatsCard = styled(Button)`
 	${media.lessThan('sm')`
 		grid-template-columns: repeat(2, 135px);
 		height: 150px;
-
 		svg.bg {
 			position: absolute;
 			z-index: 10;
