@@ -25,37 +25,32 @@ const useGetAllFuturesTradesForAccount = (
 		async () => {
 			if (!account) return null;
 
-			try {
-				const response = await getFuturesTrades(
-					futuresEndpoint,
-					{
-						first: DEFAULT_NUMBER_OF_TRADES,
-						where: {
-							account: account,
-						},
-						orderDirection: 'desc',
-						orderBy: 'timestamp',
+			const response = await getFuturesTrades(
+				futuresEndpoint,
+				{
+					first: DEFAULT_NUMBER_OF_TRADES,
+					where: {
+						account: account,
 					},
-					{
-						id: true,
-						timestamp: true,
-						account: true,
-						size: true,
-						asset: true,
-						price: true,
-						positionId: true,
-						positionSize: true,
-						positionClosed: true,
-						pnl: true,
-						feesPaid: true,
-						orderType: true,
-					}
-				);
-				return response ? mapTrades(response) : null;
-			} catch (e) {
-				console.log(e);
-				return null;
-			}
+					orderDirection: 'desc',
+					orderBy: 'timestamp',
+				},
+				{
+					id: true,
+					timestamp: true,
+					account: true,
+					size: true,
+					asset: true,
+					price: true,
+					positionId: true,
+					positionSize: true,
+					positionClosed: true,
+					pnl: true,
+					feesPaid: true,
+					orderType: true,
+				}
+			);
+			return response ? mapTrades(response) : null;
 		},
 		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
 	);
