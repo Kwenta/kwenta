@@ -14,6 +14,7 @@ import { themes } from 'styles/theme';
 import WithAppContainers from 'containers';
 import SystemStatus from 'sections/shared/SystemStatus';
 import { isSupportedNetworkId } from 'utils/network';
+import RainbowKitWagmiWrapper from 'containers/RainbowKitWagmiWrapper';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import 'styles/main.css';
@@ -28,7 +29,7 @@ import '../i18n';
 
 import Layout from 'sections/shared/Layout';
 
-import Connector from 'containers/Connector';
+import Connector from 'containers/Connector/ConnectorWagmi';
 import { currentThemeState } from 'store/ui';
 
 type NextPageWithLayout = NextPage & {
@@ -41,6 +42,7 @@ type AppPropsWithLayout = AppProps & {
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { provider, signer, network } = Connector.useContainer();
+	console.log('inner app network', network);
 	const getLayout =
 		Component.layout === undefined
 			? (page: ReactElement) => <>{page}</>
@@ -76,7 +78,6 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 
 const App: FC<AppProps> = (props) => {
 	const { t } = useTranslation();
-
 	return (
 		<>
 			<Head>
@@ -101,9 +102,11 @@ const App: FC<AppProps> = (props) => {
 			</Head>
 			<RecoilRoot>
 				<QueryClientProvider client={new QueryClient()}>
-					<WithAppContainers>
-						<InnerApp {...props} />
-					</WithAppContainers>
+					<RainbowKitWagmiWrapper>
+						<WithAppContainers>
+							<InnerApp {...props} />
+						</WithAppContainers>
+					</RainbowKitWagmiWrapper>
 				</QueryClientProvider>
 			</RecoilRoot>
 		</>
