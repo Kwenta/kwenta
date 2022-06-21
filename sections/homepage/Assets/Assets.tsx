@@ -698,7 +698,7 @@ const ChartContainer = styled.div`
 const StatsValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 105px;
+	width: 110px;
 	font-size: 13px;
 	align-self: flex-end;
 	text-align: left;
@@ -706,6 +706,7 @@ const StatsValueContainer = styled.div`
 
 	${media.lessThan('sm')`
 		padding-left: 0px;
+		font-size: 12px;
 	`}
 `;
 
