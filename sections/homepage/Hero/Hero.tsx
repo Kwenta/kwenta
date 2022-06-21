@@ -48,16 +48,23 @@ const Hero = () => {
 
 const Container = styled(FlexDivColCentered)`
 	width: 100vw;
-	background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 220px),
-		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 500px);
-	background-size: 100% 150%, 100% 150%;
-	background-position: -600px -250px, -200px -250px;
-	background-repeat: no-repeat, no-repeat;
+	${media.greaterThan('sm')`
+		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 220px),
+			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 500px);
+		background-size: 100% 150%, 100% 150%;
+		background-position: -600px -250px, -200px -250px;
+		background-repeat: no-repeat, no-repeat;
+	`}
 	overflow: hidden;
 	justify-content: center;
 	padding: 110px 0px;
 	${media.lessThan('sm')`
 		padding-top: 100px;
+		background: radial-gradient(white, rgba(2, 225, 255, 0.08) 0px, transparent 120px),
+		radial-gradient(white, rgba(201, 151, 90, 0.15) 0px, transparent 180px);
+		background-size: 100% 100%, 100% 100%;
+		background-position: -100px 120px, 50px 0px;
+		background-repeat: no-repeat, no-repeat;
 	`}
 `;
 
