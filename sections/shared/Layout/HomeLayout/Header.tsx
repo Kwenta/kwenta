@@ -120,7 +120,7 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home}>
-							<Button noOutline={true} size="sm">
+							<Button noOutline size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>
