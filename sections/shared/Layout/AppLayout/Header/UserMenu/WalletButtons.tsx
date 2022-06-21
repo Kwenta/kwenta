@@ -20,8 +20,6 @@ import { isSupportedNetworkId } from 'utils/network';
 import SunIcon from 'assets/svg/app/sun.svg';
 import MoonIcon from 'assets/svg/app/moon.svg';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { NetworkNameById } from '@synthetixio/contracts-interface';
-import { getIsOVM } from 'utils/network';
 
 type WalletButtonsProps = {
 	settingsModalOpened: boolean;
@@ -40,6 +38,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 	const network = useRecoilValue(networkState);
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
+	const { setWalletAddress } = Connector.useContainer();
 
 	const ThemeIcon = currentTheme === 'dark' ? SunIcon : MoonIcon;
 
@@ -50,17 +49,21 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 	const WalletConnectOptions = () => (
 		<ConnectButton.Custom>
 			{({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
-				// if (chain?.id) {
-				// 	setNetwork({
-				// 		id: chain?.id,
-				// 		name: NetworkNameById[id],
-				// 		useOvm: getIsOVM(Number(chain?.id)),
-				// 	});
-				// }
-				// setWalletAddress(account?.address ?? null);
-				// setSelectedWallet(account?.address ?? null);
-				return isWalletConnected ? (
-					isSupportedNetworkId(network.id) && account ? (
+				console.log(account);
+				if (!mounted) {
+					return <div></div>;
+				}
+
+				console.log(isSupportedNetworkId(network.id));
+				console.log(isWalletConnected);
+				console.log(account);
+
+				if (account?.address) {
+					setWalletAddress(account?.address ?? null);
+				}
+
+				return isWalletConnected && account ? (
+					isSupportedNetworkId(network.id) ? (
 						<>
 							<BalanceActions
 								uniswapWidgetOpened={uniswapWidgetOpened}
@@ -76,28 +79,33 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 						</>
 					) : (
 						<>
+							{/* <StyledConnectButton onClick={disconnectWallet}>disconnect</StyledConnectButton> */}
+							<SwitchToL2Button variant="secondary" onClick={switchToL2}>
+								{t('homepage.l2.cta-buttons.switch-l2')}
+							</SwitchToL2Button>
 							<StyledConnectButton
 								size="sm"
 								variant="outline"
-								noOutline
-								onClick={async () => await openConnectModal()}
-								data-testid="connect-wallet"
+								data-testid="unsupported-network"
 								mono
 							>
 								<StyledConnectionDot />
-								{t('common.wallet.connect-wallet')}
+								{t('common.wallet.unsupported-network')}
 							</StyledConnectButton>
 						</>
 					)
 				) : (
 					<>
-						{/* <StyledConnectButton onClick={disconnectWallet}>disconnect</StyledConnectButton> */}
-						<SwitchToL2Button variant="secondary" onClick={switchToL2}>
-							{t('homepage.l2.cta-buttons.switch-l2')}
-						</SwitchToL2Button>
-						<StyledConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
+						<StyledConnectButton
+							size="sm"
+							variant="outline"
+							noOutline
+							onClick={async () => await openConnectModal()}
+							data-testid="connect-wallet"
+							mono
+						>
 							<StyledConnectionDot />
-							{t('common.wallet.unsupported-network')}
+							{t('common.wallet.connect-wallet')}
 						</StyledConnectButton>
 					</>
 				);

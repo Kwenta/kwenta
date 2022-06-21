@@ -37,42 +37,6 @@ type WithRainbowKitWagmiWrapperProps = {
 };
 
 const RainbowKitWagmiWrapper: FC<WithRainbowKitWagmiWrapperProps> = ({ children }) => {
-	// 	const { chains, provider, webSocketProvider } = configureChains(
-	// 		[chain.optimism],
-	// 		[infuraProvider({ infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID })]
-	// 	);
-
-	// 	const { wallets } = getDefaultWallets({
-	// 		appName: 'RainbowKit demo',
-	// 		chains,
-	// 	});
-
-	// const connectors = () => {
-	// 	return [
-	// 		new MetaMaskConnector({
-	// 			chains,
-	// 			options: { shimDisconnect: true },
-	// 		}),
-	// 	];
-	// };
-
-	// const connectors = connectorsForWallets([
-	// 	...wallets,
-	// 	{
-	// 		groupName: 'Other',
-	// 		wallets: [wallet.argent({ chains }), wallet.trust({ chains }), wallet.ledger({ chains })],
-	// 	},
-	// ]);
-
-	// console.log(connectors());
-
-	// const wagmiClient = createClient({
-	// 	autoConnect: false,
-	// 	connectors,
-	// 	provider,
-	// 	// webSocketProvider,
-	// });
-
 	// TODO handle light and dark theme
 	// theme={darkTheme({
 	//   accentColor: '#7b3fe4',
@@ -221,7 +185,6 @@ const RainbowKitWagmiWrapper: FC<WithRainbowKitWagmiWrapperProps> = ({ children 
 		chains,
 	});
 
-	console.log(wallets, chains);
 	const connectors = connectorsForWallets([...wallets]);
 
 	const wagmiClient = createClient({
@@ -231,7 +194,6 @@ const RainbowKitWagmiWrapper: FC<WithRainbowKitWagmiWrapperProps> = ({ children 
 		webSocketProvider,
 	});
 
-	// console.log(wagmiClient.connectors);
 	return (
 		<WagmiConfig client={wagmiClient}>
 			<RainbowKitProvider

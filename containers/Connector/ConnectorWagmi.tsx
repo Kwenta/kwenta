@@ -48,22 +48,14 @@ import {
 } from '@synthetixio/queries/build/node/src/currency';
 
 const useConnector = () => {
-	const wagmiProvider = useProvider();
-	const account = useAccount();
-	const signerData = useSigner();
-	const { activeConnector, connect, reset } = useConnect();
-	const { activeChain, chains } = useNetwork();
-	const { disconnect } = useDisconnect();
-
-	const wagmiWebSocketProvider = useWebSocketProvider();
 	const [network, setNetwork] = useRecoilState(networkState);
-	const [provider, setProvider] = useState<ethers.providers.Provider | null>(wagmiProvider);
+	const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
 	const [signer, setSigner] = useState<ethers.Signer | null>(null);
 	const [synthetixjs, setSynthetixjs] = useState<SynthetixJS | null>(null);
 	const [isAppReady, setAppReady] = useRecoilState(appReadyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const [walletAddress, setWalletAddress] = useRecoilState(walletAddressState);
-	const [wallet, setWallet] = useState<WagmiConnector | null>(activeConnector || null);
+	const [wallet, setWallet] = useState<WagmiConnector | null>(null);
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const [selectedWallet, setSelectedWallet] = useLocalStorage<string | null>(
@@ -71,13 +63,21 @@ const useConnector = () => {
 		''
 	);
 
-	const ensName = useEnsName({
-		address: walletAddress || undefined,
-		chainId: 1,
-		onError: (error) => {
-			// do nothing
-		},
-	});
+	const wagmiProvider = useProvider();
+	const wagmiWebSocketProvider = useWebSocketProvider();
+	const account = useAccount();
+	const signerData = useSigner();
+	const { activeConnector, connect, reset } = useConnect();
+	const { activeChain } = useNetwork();
+	const { disconnect } = useDisconnect();
+
+	// const ensName = useEnsName({
+	// 	address: walletAddress || undefined,
+	// 	chainId: 1,
+	// 	onError: (error) => {
+	// 		// do nothing
+	// 	},
+	// });
 
 	const [
 		transactionNotifier,
@@ -102,11 +102,12 @@ const useConnector = () => {
 	useEffect(() => {
 		if (account?.data) {
 			setWalletAddress(account?.data?.address ?? null);
+			setWallet(account?.data?.connector ?? null);
 		}
 
 		if (activeChain?.id && activeChain?.id !== network?.id) {
 			const name = NetworkNameById[activeChain.id as NetworkId];
-
+			// debugger;
 			setNetwork({
 				id: NetworkIdByName[name],
 				name,
@@ -116,9 +117,16 @@ const useConnector = () => {
 			// } else {
 			// }
 
-			if (signerData.data) {
+			if (signerData?.data) {
 				debugger;
+				setSigner(signerData.data);
 			}
+
+			if (!provider) {
+				setProvider(wagmiProvider);
+			}
+
+			console.log('here', account?.data, activeChain?.id, signerData?.data);
 		}
 	}, [account?.data, activeChain?.id, signerData?.data]);
 
@@ -135,7 +143,7 @@ const useConnector = () => {
 			const useOvm = getIsOVM(Number(networkId));
 
 			const snxjs = synthetix({ provider, networkId, useOvm });
-
+			// debugger;
 			// @ts-ignore
 			setNetwork(snxjs.network, useOvm);
 			setSynthetixjs(snxjs);
@@ -219,14 +227,15 @@ const useConnector = () => {
 		transactionNotifier,
 		getTokenAddress,
 		staticMainnetProvider,
-		ensName,
 		walletAddress,
 		wallet,
 		setNetwork,
 		setProvider,
 		setWalletAddress,
 		setWallet,
+		selectedWallet,
 		setSelectedWallet,
+		activeChain,
 	};
 };
 
