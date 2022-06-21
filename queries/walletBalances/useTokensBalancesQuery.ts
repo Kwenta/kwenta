@@ -51,7 +51,7 @@ const useTokensBalancesQuery = (
 						const tokenContract = new EthCallContract(address, erc20Abi);
 						calls.push(tokenContract.balanceOf(walletAddress));
 					} else {
-						const tokenContract = new Contract(address, erc20Abi, provider || undefined);
+						const tokenContract = new Contract(address, erc20Abi, provider);
 						calls.push(tokenContract.balanceOf(walletAddress));
 					}
 				}
