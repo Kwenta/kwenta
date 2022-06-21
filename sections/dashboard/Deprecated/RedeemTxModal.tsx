@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { DeprecatedSynthBalance } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivColCentered } from 'styles/common';
+import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 import { formatCryptoCurrency } from 'utils/formatters/number';
@@ -79,7 +79,7 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 270px;
+		width: 300px;
 	}
 	.card-body {
 		padding: 24px;
@@ -106,16 +106,17 @@ const BalanceItemTitle = styled.div`
 	display: flex;
 	grid-gap: 12px;
 	align-items: center;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const BalanceItemAmount = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	${numericValueCSS};
 `;
 
 const Subtitle = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	padding-bottom: 48px;
 `;
 
