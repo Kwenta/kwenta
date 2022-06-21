@@ -57,7 +57,7 @@ const Earning = () => {
 		</>
 	);
 
-	const totalTradeStats = useGetFuturesCumulativeStats(true);
+	const totalTradeStats = useGetFuturesCumulativeStats();
 	return (
 		<StackSection>
 			<Container>

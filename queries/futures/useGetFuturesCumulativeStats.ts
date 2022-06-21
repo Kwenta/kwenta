@@ -10,14 +10,13 @@ import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
 import { wei } from '@synthetixio/wei';
 import { FUTURES_ENDPOINT_MAINNET } from './constants';
+import ROUTES from 'constants/routes';
 
-const useGetFuturesCumulativeStats = (
-	homepage?: boolean,
-	options?: UseQueryOptions<FuturesCumulativeStats | null>
-) => {
+const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
+	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	return useQuery<FuturesCumulativeStats | null>(

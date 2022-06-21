@@ -20,15 +20,15 @@ import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
 import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { lanugageIcons } from './common';
+import ROUTES from 'constants/routes';
 
 type MobileSettingsModalProps = {
-	homepage?: boolean | null;
 	onDismiss: () => void;
 };
 
 type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
 
-export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, onDismiss }) => {
+export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
 	const [language, setLanguage] = usePersistedRecoilState(languageState);
@@ -59,7 +59,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ homepage, on
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
 
-				{!homepage && (
+				{!(window.location.pathname === ROUTES.Home.Root) && (
 					<>
 						<MenuButtonContainer>
 							<MobileSubMenu

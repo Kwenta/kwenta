@@ -10,15 +10,18 @@ import { SynthsVolumes } from './type';
 import request, { gql } from 'graphql-request';
 import { getSynthsEndpoint } from './utils';
 import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
+import ROUTES from 'constants/routes';
 
 const useGetSynthsTradingVolumeForAllMarkets = (
 	yesterday: number,
-	homepage?: boolean,
 	options?: UseQueryOptions<SynthsVolumes | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const synthsEndpoint = homepage ? SYNTHS_ENDPOINT_OPTIMISM_MAIN : getSynthsEndpoint(network);
+	const synthsEndpoint =
+		window.location.pathname === ROUTES.Home.Root
+			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
+			: getSynthsEndpoint(network);
 
 	return useQuery<SynthsVolumes | null>(
 		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network.id),

@@ -13,11 +13,7 @@ import Link from 'next/link';
 import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 
-type MobileUserMenuProps = {
-	homepage?: boolean;
-};
-
-const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
+const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
 	const { t } = useTranslation();
 	const closeModal = () => {
@@ -48,7 +44,7 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-					{homepage ? (
+					{window.location.pathname === ROUTES.Home.Root ? (
 						<Link href={ROUTES.Markets.Home}>
 							<Button isRounded={false} size="sm">
 								{t('homepage.nav.start-trade')}
@@ -59,8 +55,8 @@ const MobileUserMenu: FC<MobileUserMenuProps> = ({ homepage }) => {
 					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
-			{isOpen === 'menu' && <MobileMenuModal homepage={homepage} onDismiss={closeModal} />}
-			{isOpen === 'settings' && <MobileSettingsModal homepage={homepage} onDismiss={closeModal} />}
+			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}
+			{isOpen === 'settings' && <MobileSettingsModal onDismiss={closeModal} />}
 		</>
 	);
 };

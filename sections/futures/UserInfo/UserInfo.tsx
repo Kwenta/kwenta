@@ -55,7 +55,7 @@ const UserInfo: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 
-	const exchangeRatesQuery = useExchangeRatesQuery(false, {
+	const exchangeRatesQuery = useExchangeRatesQuery({
 		refetchInterval: 15000,
 	});
 

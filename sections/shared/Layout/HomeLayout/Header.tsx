@@ -91,7 +91,7 @@ const Header: FC = () => {
 			<MobileHiddenView>
 				<Container>
 					<LogoContainer>
-						<Logo isL2={isL2} isHomePage={true} />
+						<Logo isL2={isL2} />
 					</LogoContainer>
 					<Links>
 						{LINKS.map(({ id, label, icon, onClick }) => (
@@ -130,9 +130,9 @@ const Header: FC = () => {
 			<MobileOnlyView>
 				<MobileContainer>
 					<LogoContainer>
-						<Logo isL2={isL2} isHomePage={true} />
+						<Logo isL2={isL2} />
 					</LogoContainer>
-					<MobileUserMenu homepage={true} />
+					<MobileUserMenu />
 				</MobileContainer>
 			</MobileOnlyView>
 		</>

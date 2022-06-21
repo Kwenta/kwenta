@@ -107,9 +107,9 @@ const ShortList = () => {
 		</>
 	);
 
-	const dailyTradeStats = useGetFuturesDailyTradeStats(true);
+	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
-	const futuresMarketsQuery = useGetFuturesMarkets(true);
+	const futuresMarketsQuery = useGetFuturesMarkets();
 	const openInterest = useMemo(() => {
 		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets
@@ -418,7 +418,7 @@ const Container = styled(FlexDivColCentered)`
 	justify-content: center;
 	${media.greaterThan('sm')`
 		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
-			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 350px);
+			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 330px);
 		background-size: 100% 200%, 100% 200%;
 		background-position: -300px 0px, 250px 0px;
 		background-repeat: no-repeat, no-repeat;

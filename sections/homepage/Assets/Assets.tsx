@@ -171,15 +171,15 @@ const Assets = () => {
 		[activeMarketsTab, t]
 	);
 
-	const exchangeRatesQuery = useExchangeRatesQuery(true);
+	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const futuresMarketsQuery = useGetFuturesMarkets(true);
+	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList, true);
-	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets(true);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
+	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	const synths = useMemo(() => values(synthsMap) || [], [synthsMap]);
 	const queryCache = useQueryClient().getQueryCache();
@@ -194,9 +194,9 @@ const Assets = () => {
 			: synths;
 
 	const synthNames = synths.map((synth) => synth.name);
-	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames, true);
+	const spotDailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
-	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday, true);
+	const synthVolumesQuery = useGetSynthsTradingVolumeForAllMarkets(yesterday);
 
 	const PERPS = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
@@ -295,7 +295,7 @@ const Assets = () => {
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
 								<StatsCardContainer key={key} className={key}>
 									<StatsCard
-										noOutline={true}
+										noOutline
 										onClick={() => {
 											router.push(`/market/${key}`);
 										}}
@@ -353,7 +353,7 @@ const Assets = () => {
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
 								<StatsCardContainer key={key} className={key}>
 									<StatsCard
-										noOutline={true}
+										noOutline
 										onClick={() => {
 											market !== 'sUSD'
 												? router.push(`/exchange/${market}-sUSD`)

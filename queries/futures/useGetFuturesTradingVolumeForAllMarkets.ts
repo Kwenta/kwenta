@@ -10,14 +10,15 @@ import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
 import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 import { FuturesVolumes } from './types';
 import { getFuturesTrades } from './subgraph';
+import ROUTES from 'constants/routes';
 
 const useGetFuturesTradingVolumeForAllMarkets = (
-	homepage?: boolean,
 	options?: UseQueryOptions<FuturesVolumes | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
+	const homepage = window.location.pathname === ROUTES.Home.Root;
 	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	return useQuery<FuturesVolumes | null>(

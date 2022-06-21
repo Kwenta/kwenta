@@ -13,6 +13,7 @@ import Connector from 'containers/Connector';
 import { networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
 import { Rates } from './types';
+import ROUTES from 'constants/routes';
 
 type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];
@@ -22,11 +23,11 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 	ethers.utils.formatBytes32String
 );
 
-const useExchangeRatesQuery = (homepage?: boolean, options?: UseQueryOptions<Rates>) => {
+const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
-	const synthetixjs = homepage ? defaultSynthetixjs : snxjs;
+	const synthetixjs = window.location.pathname === ROUTES.Home.Root ? defaultSynthetixjs : snxjs;
 
 	return useQuery<Rates>(
 		['rates', 'exchangeRates2', network.id],
