@@ -110,17 +110,23 @@ export const QUERY_KEYS = {
 	},
 	Convert: {
 		quote1Inch: (
-			quoteCurrencyKey: string,
-			baseCurrencyKey: string,
+			quoteCurrencyKey: string | undefined,
+			baseCurrencyKey: string | undefined,
 			amount: string,
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
+		quoteSynthSwap: (
+			quoteCurrencyKey: string | undefined,
+			baseCurrencyKey: string | undefined,
+			amount: string,
+			networkId: NetworkId
+		) => ['convert', 'synthSwap', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
 		approveAddress1Inch: ['convert', '1inch', 'approve', 'address'],
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
 		Zapper: ['tokenLists', 'zapper'],
-		OneInch: ['tokenLists', 'oneInch'],
+		OneInch: (networkId: NetworkId) => ['tokenLists', 'oneInch', networkId],
 	},
 	CMC: {
 		Quotes: (currencyKeys: string[]) => ['cmc', 'quotes', currencyKeys.join('|')],

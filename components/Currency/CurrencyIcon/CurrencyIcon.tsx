@@ -19,6 +19,7 @@ export type CurrencyIconProps = {
 	height?: string;
 	isDeprecated?: boolean;
 	style?: any;
+	url?: string;
 };
 
 export const SNXIcon =
@@ -53,7 +54,7 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	</Container>
 );
 
-const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, ...rest }) => {
+const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
 	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
@@ -87,7 +88,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				return (
 					<TokenIcon
 						{...{ isDeprecated }}
-						src={getSynthIcon(currencyKey as CurrencyKey)}
+						src={url || getSynthIcon(currencyKey as CurrencyKey)}
 						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}

@@ -30,7 +30,7 @@ import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 
-export type TxProvider = 'synthetix' | '1inch' | 'balancer';
+export type TxProvider = 'synthetix' | '1inch' | 'balancer' | 'synthswap';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
@@ -42,7 +42,7 @@ type TxConfirmationModalProps = {
 	quoteCurrencyAmount?: string;
 	totalTradePrice: string;
 	feeCost: Wei | null;
-	txProvider: TxProvider;
+	txProvider: TxProvider | null;
 	quoteCurrencyLabel?: ReactNode;
 	baseCurrencyLabel: ReactNode;
 	icon?: ReactNode;

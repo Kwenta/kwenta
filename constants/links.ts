@@ -8,6 +8,10 @@ export const EXTERNAL_LINKS = {
 		DexAG: 'https://dex.ag/',
 		Uniswap: 'https://uniswap.exchange/',
 		OneInch: `https://1inch.exchange/`,
+		OneInchApi: {
+			ethereum: 'https://api.1inch.io/v4.0/1/',
+			optimism: 'https://api.1inch.io/v4.0/10/',
+		},
 		OneInchLink: (from: CurrencyKey, to: CurrencyKey) => `https://1inch.exchange/#/${from}/${to}`,
 		OptimismTokenBridge: 'https://gateway.optimism.io',
 	},
@@ -24,7 +28,6 @@ export const EXTERNAL_LINKS = {
 	TokenLists: {
 		Synthetix: 'https://synths.snx.eth.link/',
 		Zapper: 'https://zapper.fi/api/token-list',
-		OneInch: 'https://gateway.ipfs.io/ipns/tokens.1inch.eth',
 	},
 	Docs: {
 		DocsRoot: 'https://docs.kwenta.io/',

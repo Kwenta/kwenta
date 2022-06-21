@@ -33,6 +33,7 @@ import Button from 'components/Button';
 type CurrencyCardProps = {
 	side: Side;
 	currencyKey: string | null;
+	currencyName: string | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
 	walletBalance: Wei | null;
@@ -45,12 +46,14 @@ type CurrencyCardProps = {
 	disableInput?: boolean;
 	slippagePercent?: Wei | null;
 	isLoading?: boolean;
-	txProvider?: TxProvider;
+	txProvider?: TxProvider | null;
+	disabled?: boolean;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
 	side,
 	currencyKey,
+	currencyName,
 	amount,
 	slippagePercent,
 	onAmountChange,
@@ -63,6 +66,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	disableInput = false,
 	isLoading = false,
 	txProvider = 'synthetix',
+	disabled,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -91,6 +95,13 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 	const { synthsMap } = Connector.useContainer();
 
+	const tokenName =
+		currencyKey && synthsMap[currencyKey]
+			? t('common.currency.synthetic-currency-name', {
+					currencyName,
+			  })
+			: currencyName || t('exchange.currency-card.synth-name');
+
 	return (
 		<StyledCard
 			className={`currency-card currency-card-${side}`}
@@ -107,6 +118,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						>
 							<FlexDivRowCentered>
 								<CurrencyAmount
+									disabled={disabled}
 									value={amount}
 									onChange={(_, value) => onAmountChange(value)}
 									placeholder={t('exchange.currency-card.amount-placeholder')}
@@ -141,13 +153,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</InputContainer>
 
 					<SelectorContainer>
-						<CurrencyNameLabel data-testid="currency-name">
-							{currencyKeySelected
-								? t('common.currency.synthetic-currency-name', {
-										currencyName: synthsMap[currencyKey as CurrencyKey]?.description,
-								  })
-								: t('exchange.currency-card.synth-name')}
-						</CurrencyNameLabel>
+						<CurrencyNameLabel data-testid="currency-name">{tokenName}</CurrencyNameLabel>
 						<CurrencySelector
 							currencyKeySelected={currencyKeySelected}
 							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}

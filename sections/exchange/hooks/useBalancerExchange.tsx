@@ -236,7 +236,7 @@ const useBalancerExchange = ({
 			customGasPrice !== ''
 				? wei(customGasPrice, 9)
 				: ethGasPriceQuery.data != null
-				? wei(ethGasPriceQuery.data[gasSpeed], 9)
+				? wei(ethGasPriceQuery.data[gasSpeed].gasPrice, 9)
 				: null,
 		[customGasPrice, ethGasPriceQuery.data, gasSpeed]
 	);
@@ -627,6 +627,7 @@ const useBalancerExchange = ({
 		<StyledCurrencyCard
 			side="quote"
 			currencyKey={quoteCurrencyKey}
+			currencyName={quoteCurrencyKey}
 			amount={quoteCurrencyAmount}
 			onAmountChange={handleAmountChangeQuote}
 			walletBalance={quoteCurrencyBalance}
@@ -641,6 +642,7 @@ const useBalancerExchange = ({
 		<StyledCurrencyCard
 			side="base"
 			currencyKey={baseCurrencyKey}
+			currencyName={baseCurrencyKey}
 			amount={baseCurrencyAmount}
 			onAmountChange={handleAmountChangeBase}
 			walletBalance={baseCurrencyBalance}
