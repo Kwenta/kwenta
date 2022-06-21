@@ -145,9 +145,9 @@ const MobileContainer = styled(FlexDivRow)`
 `;
 
 const LogoContainer = styled.div`
-	padding-top: 8px;
-	${media.lessThan('md')`
-		padding-top: 4px;
+	margin-top: -4px;
+	${media.lessThan('sm')`
+		margin-top: 4px;
 		padding-left:17px;
 	`}
 `;
@@ -209,7 +209,7 @@ const StyledMenuItem = styled.p`
 
 const Container = styled.header`
 	display: grid;
-	align-items: start;
+	align-items: center;
 	width: 100%;
 	grid-template-columns: 1fr 1fr 1fr;
 `;
@@ -219,7 +219,6 @@ const Links = styled.div`
 	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
-	padding-top: 10px;
 `;
 
 const StyledTextButton = styled.div`
