@@ -200,7 +200,12 @@ const CenteredTitle = styled(Title)`
 
 const Container = styled(GridDiv)`
 	width: 100vw;
-	background: linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+	background: radial-gradient(white, rgba(2, 225, 255, 0.2) 0px, transparent 180px),
+		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 280px),
+		linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+	background-size: 100% 200%, 100% 200%, 100% 100%;
+	background-position: -650px -300px, -600px -450px, 0px 0px;
+	background-repeat: no-repeat, no-repeat, repeat;
 	overflow: hidden;
 	justify-content: center;
 	padding: 110px 0px;

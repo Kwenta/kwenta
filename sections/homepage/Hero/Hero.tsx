@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
 
-import { GridDiv, Paragraph } from 'styles/common';
+import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
 import { StackSection } from '../common';
 
 import media from 'styles/media';
@@ -20,29 +20,46 @@ const Hero = () => {
 
 	return (
 		<StackSection>
-			<LogoContainer>
-				<LogoNoTextSVG />
-			</LogoContainer>
-			<Header>{t('homepage.hero.title')}</Header>
-			<ProductDescription>
-				<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
-			</ProductDescription>
-			<SynthetixContainer>
-				<PoweredBySynthetix />
-			</SynthetixContainer>
-			<CTAContainer>
-				<Link href={ROUTES.Markets.Home}>
-					<Button variant="primary" isRounded={false} size="md">
-						{t('homepage.nav.trade-now')}
-					</Button>
-				</Link>
-			</CTAContainer>
-			<HeroImageContainer>
-				<Webp srcOrSrcset={MarketOrderPreview} StyledImg={HeroImage} />
-			</HeroImageContainer>
+			<Container>
+				<LogoContainer>
+					<LogoNoTextSVG />
+				</LogoContainer>
+				<Header>{t('homepage.hero.title')}</Header>
+				<ProductDescription>
+					<Trans i18nKey={'homepage.hero.copy'} components={[<Emphasis />]} />
+				</ProductDescription>
+				<SynthetixContainer>
+					<PoweredBySynthetix />
+				</SynthetixContainer>
+				<CTAContainer>
+					<Link href={ROUTES.Markets.Home}>
+						<Button variant="primary" isRounded={false} size="md">
+							{t('homepage.nav.trade-now')}
+						</Button>
+					</Link>
+				</CTAContainer>
+				<HeroImageContainer>
+					<Webp srcOrSrcset={MarketOrderPreview} StyledImg={HeroImage} />
+				</HeroImageContainer>
+			</Container>
 		</StackSection>
 	);
 };
+
+const Container = styled(FlexDivColCentered)`
+	width: 100vw;
+	background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 220px),
+		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 500px);
+	background-size: 100% 150%, 100% 150%;
+	background-position: -600px -250px, -200px -250px;
+	background-repeat: no-repeat, no-repeat;
+	overflow: hidden;
+	justify-content: center;
+	padding: 110px 0px;
+	${media.lessThan('sm')`
+		padding-top: 100px;
+	`}
+`;
 
 const LogoContainer = styled.div`
 	${media.lessThan('sm')`

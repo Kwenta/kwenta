@@ -406,10 +406,15 @@ const ColorCodedPrice = styled(Currency.Price)`
 `;
 
 const Container = styled(FlexDivColCentered)`
-	margin-bottom: 140px;
+	padding-bottom: 140px;
 	justify-content: center;
+	background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
+		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 350px);
+	background-size: 100% 200%, 100% 200%;
+	background-position: -300px 0px, 250px 0px;
+	background-repeat: no-repeat, no-repeat;
 	${media.lessThan('sm')`
-		margin-bottom: 100px;
+		padding-bottom: 100px;
 	`}
 `;
 
