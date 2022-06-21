@@ -690,6 +690,9 @@ const ChartContainer = styled.div`
 	margin-left: -52.5px;
 	margin-top: -20px;
 	overflow: hidden;
+	${media.lessThan('sm')`
+		margin-left: -60px;
+	`};
 `;
 
 const StatsValueContainer = styled.div`
@@ -700,6 +703,10 @@ const StatsValueContainer = styled.div`
 	align-self: flex-end;
 	text-align: left;
 	padding-left: 7.5px;
+
+	${media.lessThan('sm')`
+		padding-left: 0px;
+	`}
 `;
 
 const StatsNameContainer = styled.div`
