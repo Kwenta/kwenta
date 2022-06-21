@@ -44,7 +44,7 @@ export const EXTERNAL_LINKS = {
 		OptimismKovan: 'https://kovan-optimistic.etherscan.io/tx',
 	},
 	Optimism: {
-		Home: 'https://www.optimism.io/',
+		Home: 'https://optimism.io/',
 	},
 	Trade: {
 		NextPriceBlogPost: 'https://docs.kwenta.io/products/futures/next-price',
