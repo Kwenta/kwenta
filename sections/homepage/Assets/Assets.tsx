@@ -695,7 +695,7 @@ const ChartContainer = styled.div`
 const StatsValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 100px;
+	width: 105px;
 	font-size: 13px;
 	align-self: flex-end;
 	text-align: left;

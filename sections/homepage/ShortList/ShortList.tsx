@@ -16,13 +16,7 @@ import useGetStats from 'queries/futures/useGetStats';
 import { FuturesStat } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import {
-	FlexDivCol,
-	FlexDivColCentered,
-	FlexDivRow,
-	SmallGoldenHeader,
-	WhiteHeader,
-} from 'styles/common';
+import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
@@ -222,34 +216,29 @@ const ShortList = () => {
 								width: 45,
 							},
 							{
-								Header: (
-									<TableHeader>{t('leaderboard.leaderboard.table.trader-trade')}</TableHeader>
-								),
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
 								accessor: 'trader',
 								Cell: (cellProps: CellProps<any>) => {
 									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
 									return (
-										<CombinedContaier>
-											<StyledTrader>
-												{ensName ? (
-													<>
-														{ensAvatar && (
-															<img
-																src={ensAvatar}
-																alt={ensName}
-																width={16}
-																height={16}
-																style={{ borderRadius: '50%', marginRight: '8px' }}
-															/>
-														)}
-														{ensName}
-													</>
-												) : (
-													cellProps.row.original.traderShort
-												)}
-											</StyledTrader>
-											<GrayCell>{cellProps.row.original.totalTrades}</GrayCell>
-										</CombinedContaier>
+										<StyledTrader>
+											{ensName ? (
+												<>
+													{ensAvatar && (
+														<img
+															src={ensAvatar}
+															alt={ensName}
+															width={16}
+															height={16}
+															style={{ borderRadius: '50%', marginRight: '8px' }}
+														/>
+													)}
+													{ensName}
+												</>
+											) : (
+												cellProps.row.original.traderShort
+											)}
+										</StyledTrader>
 									);
 								},
 								width: 150,
@@ -316,15 +305,6 @@ const ShortList = () => {
 		</StackSection>
 	);
 };
-
-const GrayCell = styled.div`
-	color: ${(props) => props.theme.colors.common.secondaryGray};
-	font-size: 13px;
-`;
-
-const CombinedContaier = styled(FlexDivCol)`
-	justify-content: right;
-`;
 
 const StatsName = styled.div`
 	font-size: 15px;
@@ -419,15 +399,10 @@ const Container = styled(FlexDivColCentered)`
 	${media.greaterThan('sm')`
 		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
 			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 330px);
-		background-size: 100% 200%, 100% 200%;
-		background-position: -300px 0px, 250px 0px;
+		background-size: 100% 200%, 100% 100%;
+		background-position: -300px 0px, 250px 500px;
 		background-repeat: no-repeat, no-repeat;
 	`}
-	background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
-		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 350px);
-	background-size: 100% 200%, 100% 200%;
-	background-position: -300px 0px, 250px 0px;
-	background-repeat: no-repeat, no-repeat;
 	${media.lessThan('sm')`
 		padding-bottom: 100px;
 		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 120px),
