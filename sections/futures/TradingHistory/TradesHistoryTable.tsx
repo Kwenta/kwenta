@@ -4,10 +4,11 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
+import _ from 'lodash';
 
 import { isL2MainnetState } from 'store/wallet';
 import styled from 'styled-components';
@@ -23,25 +24,40 @@ type TradesHistoryTableProps = {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOfTrades }) => {
 	const { t } = useTranslation();
-	const [skip, setSkip] = useState<number>(0);
 	const { ref, inView } = useInView();
-	const futuresTradesQuery = useGetFuturesTrades(currencyKey, skip);
+	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 
+	// for example, should remove and make this conditional on hitting the bottom of container
+	useEffect(() => {
+		setTimeout(() => {
+			console.log('Fetching next page');
+			futuresTradesQuery.fetchNextPage();
+		}, 5000);
+	}, []);
+
 	let data = useMemo(() => {
-		const futuresTrades = futuresTradesQuery?.data ?? [];
-		return futuresTrades.length > 0
-			? futuresTrades.map((trade: FuturesTrade) => {
-					return {
-						value: Number(trade?.price),
-						amount: Number(trade?.size),
-						time: Number(trade?.timestamp),
-						id: trade?.txnHash,
-						currencyKey,
-						orderType: trade?.orderType,
-					};
-			  })
-			: [];
+		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
+		const futuresTrades =
+			futuresTradesPages.length > 0
+				? futuresTradesPages
+						.map((trades: FuturesTrade[] | null) => {
+							return (
+								trades?.map((trade: FuturesTrade) => {
+									return {
+										value: Number(trade?.price),
+										amount: Number(trade?.size),
+										time: Number(trade?.timestamp),
+										id: trade?.txnHash,
+										currencyKey,
+										orderType: trade?.orderType,
+									};
+								}) ?? []
+							);
+						})
+						.reduce((a, b) => [...a, ...b])
+				: [];
+		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
 
 	const calTimeDelta = (time: number) => {

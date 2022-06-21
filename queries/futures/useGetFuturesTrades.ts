@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, useInfiniteQuery, UseQueryOptions, UseInfiniteQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { utils as ethersUtils } from 'ethers';
 
@@ -9,12 +9,11 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { getFuturesEndpoint, mapTrades } from './utils';
 import { FuturesTrade } from './types';
 import { getFuturesTrades } from './subgraph';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import { DEFAULT_NUMBER_OF_TRADES, MAX_TIMESTAMP } from 'constants/defaults';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,
-	skip: number,
-	options?: UseQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
+	options?: UseInfiniteQueryOptions<FuturesTrade[] | null> & { forceAccount: boolean }
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
@@ -22,19 +21,20 @@ const useGetFuturesTrades = (
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
 
-	return useQuery<FuturesTrade[] | null>(
+	return useInfiniteQuery<FuturesTrade[] | null>(
 		QUERY_KEYS.Futures.Trades(network.id, currencyKey || null),
-		async () => {
+		async ({ pageParam = { maxTs: Math.floor(Date.now() / 1000), minTs: 0 } }) => {
 			if (!currencyKey) return null;
 
 			try {
 				const response = await getFuturesTrades(
 					futuresEndpoint,
 					{
-						skip: skip,
 						first: DEFAULT_NUMBER_OF_TRADES,
 						where: {
 							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							timestamp_gt: pageParam.minTs,
+							timestamp_lt: pageParam.maxTs,
 						},
 						orderDirection: 'desc',
 						orderBy: 'timestamp',
@@ -61,9 +61,25 @@ const useGetFuturesTrades = (
 			}
 		},
 		{
+			...options,
 			enabled: isWalletConnected ? isL2 && isAppReady : isAppReady,
 			refetchInterval: 15000,
-			...options,
+			getNextPageParam: (lastPage, _) => {
+				return lastPage
+					? {
+							minTs: 0,
+							maxTs: lastPage[lastPage.length - 1].timestamp.toNumber(),
+					  }
+					: null;
+			},
+			getPreviousPageParam: (firstPage, _) => {
+				return firstPage
+					? {
+							minTs: firstPage[0].timestamp.toNumber(),
+							maxTs: MAX_TIMESTAMP,
+					  }
+					: null;
+			},
 		}
 	);
 };
