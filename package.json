@@ -27,7 +27,6 @@
 		"@balancer-labs/sor": "1.0.0",
 		"@eth-optimism/contracts": "^0.5.1",
 		"@jaredborders/synthswap-utils": "^1.0.0",
-		"@kwenta/synthswap": "github:Kwenta/synthswap#main",
 		"@material-ui/core": "^4.12.3",
 		"@metamask/detect-provider": "1.2.0",
 		"@reach/accordion": "0.15.1",
