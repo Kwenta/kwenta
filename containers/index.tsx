@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import Connector from './Connector';
+import Connector from 'containers/Connector/ConnectorWagmi';
 import BlockExplorer from './BlockExplorer';
 import TransactionNotifier from './TransactionNotifier';
 import L2Gas from './L2Gas';
