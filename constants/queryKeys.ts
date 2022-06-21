@@ -163,6 +163,12 @@ export const QUERY_KEYS = {
 			currencyKey,
 			account,
 		],
+		AllTradesAccount: (networkId: NetworkId, account: string | null) => [
+			'futures',
+			'trades',
+			networkId,
+			account,
+		],
 		MarketClosure: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'closures',

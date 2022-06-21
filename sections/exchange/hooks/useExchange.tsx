@@ -1310,6 +1310,26 @@ const useExchange = ({
 					attemptRetry={handleRedeem}
 				/>
 			)}
+			{balances.length !== 0 && totalUSDBalance.gt(0) && (
+				<Button
+					variant="primary"
+					isRounded={true}
+					disabled={false}
+					onClick={handleRedeem}
+					size="lg"
+					data-testid="submit-order"
+					fullWidth={true}
+				>
+					{t('dashboard.deprecated.button.redeem-synths')}
+				</Button>
+			)}
+			{!redeemTxModalOpen ? null : (
+				<RedeemTxModal
+					{...{ txError, balances, totalUSDBalance }}
+					onDismiss={handleDismiss}
+					attemptRetry={handleRedeem}
+				/>
+			)}
 			{txConfirmationModalOpen && (
 				<TxConfirmationModal
 					onDismiss={() => setTxConfirmationModalOpen(false)}
