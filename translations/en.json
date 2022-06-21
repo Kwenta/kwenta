@@ -533,11 +533,22 @@
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
-			"history-table": {
+			"spot-history-table": {
 				"date-time": "Date/Time",
 				"from": "From",
 				"to": "To",
 				"usd-value": "USD Value"
+			},
+			"futures-history-table": {
+				"size": "Size",
+				"pnl": "P&L",
+				"date-time": "Date/Time",
+				"fees": "Fees",
+				"price": "Price",
+				"side": "Side",
+				"market": "Market",
+				"order-type": "Type",
+				"no-results": "Perpetual Futures are available on Optimism L2"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
