@@ -274,7 +274,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				</TableContainer>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<StyledTable
+				<StyledMobileTable
 					data={data}
 					showPagination
 					columns={[
@@ -303,7 +303,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 													futuresClosureReason={cellProps.row.original.marketClosureReason}
 												/>
 											</StyledText>
-											<StyledValue>{cellProps.row.original.description}</StyledValue>
 										</MarketContainer>
 									</div>
 								);
@@ -320,7 +319,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
-										{/* <div>{formatCurrency(cellProps.row.original.openInterest)}</div> */}
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.openInterest}
@@ -421,6 +419,13 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const StyledMobileTable = styled(StyledTable)`
+	border-radius: initial;
+	border-top: none;
+	border-left: none;
+	border-right: none;
 `;
 
 export default FuturesMarketsTable;
