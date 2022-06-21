@@ -16,6 +16,7 @@ import { formatNumber } from 'utils/formatters/number';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import ChangePercent from 'components/ChangePercent';
 import { isEurForex } from 'utils/futures';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;
@@ -77,143 +78,197 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 	}, [dailyPriceChangesQuery?.data, exchangeRates, synthBalances, synthsMap]);
 
 	return (
-		<TableContainer>
-			<StyledTable
-				data={data}
-				showPagination={true}
-				highlightRowsOnHover
-				columns={[
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.synth-balances-table.market')}</TableHeader>
-						),
-						accessor: 'market',
-						Cell: (cellProps: CellProps<Cell>) => {
-							return conditionalRender<Cell['synth']>(
-								cellProps.row.original.synth,
-								<MarketContainer>
-									<IconContainer>
-										<StyledCurrencyIcon currencyKey={cellProps.row.original.synth} />
-									</IconContainer>
-									<StyledText>{cellProps.row.original.synth}</StyledText>
-									<StyledValue>
-										{t('common.currency.synthetic-currency-name', {
-											currencyName: cellProps.row.original.description,
-										})}
-									</StyledValue>
-								</MarketContainer>
-							);
-						},
-						width: 198,
-					},
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.synth-balances-table.amount')}</TableHeader>
-						),
-						accessor: 'amount',
-						Cell: (cellProps: CellProps<Cell>) => {
-							return conditionalRender<Cell['balance']>(
-								cellProps.row.original.balance,
-								<AmountCol>
-									<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
-								</AmountCol>
-							);
-						},
-						width: 198,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-								const rowOne = rowA.original.balance ?? wei(0);
-								const rowTwo = rowB.original.balance ?? wei(0);
-								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+		<>
+			<MobileHiddenView>
+				<TableContainer>
+					<StyledTable
+						data={data}
+						showPagination={true}
+						highlightRowsOnHover
+						columns={[
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.synth-balances-table.market')}</TableHeader>
+								),
+								accessor: 'market',
+								Cell: (cellProps: CellProps<Cell>) => {
+									return conditionalRender<Cell['synth']>(
+										cellProps.row.original.synth,
+										<MarketContainer>
+											<IconContainer>
+												<StyledCurrencyIcon currencyKey={cellProps.row.original.synth} />
+											</IconContainer>
+											<StyledText>{cellProps.row.original.synth}</StyledText>
+											<StyledValue>
+												{t('common.currency.synthetic-currency-name', {
+													currencyName: cellProps.row.original.description,
+												})}
+											</StyledValue>
+										</MarketContainer>
+									);
+								},
+								width: 198,
 							},
-							[]
-						),
-					},
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.synth-balances-table.value-in-usd')}</TableHeader>
-						),
-						accessor: 'valueInUSD',
-						Cell: (cellProps: CellProps<Cell>) => {
-							return conditionalRender<Cell['usdBalance']>(
-								cellProps.row.original.usdBalance,
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.usdBalance}
-									sign={'$'}
-									conversionRate={1}
-								/>
-							);
-						},
-						width: 198,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-								const rowOne = rowA.original.usdBalance ?? wei(0);
-								const rowTwo = rowB.original.usdBalance ?? wei(0);
-								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+							{
+								Header: (
+									<TableHeader>{t('dashboard.overview.synth-balances-table.amount')}</TableHeader>
+								),
+								accessor: 'amount',
+								Cell: (cellProps: CellProps<Cell>) => {
+									return conditionalRender<Cell['balance']>(
+										cellProps.row.original.balance,
+										<AmountCol>
+											<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
+										</AmountCol>
+									);
+								},
+								width: 198,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+										const rowOne = rowA.original.balance ?? wei(0);
+										const rowTwo = rowB.original.balance ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
-							[]
-						),
-					},
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.synth-balances-table.oracle-price')}</TableHeader>
-						),
-						accessor: 'price',
-						Cell: (cellProps: CellProps<Cell>) => {
-							return conditionalRender<Cell['price']>(
-								cellProps.row.original.price,
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.price!}
-									sign={'$'}
-									conversionRate={1}
-									formatOptions={{ minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2 }}
-								/>
-							);
-						},
-						width: 198,
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-								const rowOne = rowA.original.price ?? wei(0);
-								const rowTwo = rowB.original.price ?? wei(0);
-								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+							{
+								Header: (
+									<TableHeader>
+										{t('dashboard.overview.synth-balances-table.value-in-usd')}
+									</TableHeader>
+								),
+								accessor: 'valueInUSD',
+								Cell: (cellProps: CellProps<Cell>) => {
+									return conditionalRender<Cell['usdBalance']>(
+										cellProps.row.original.usdBalance,
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.usdBalance}
+											sign={'$'}
+											conversionRate={1}
+										/>
+									);
+								},
+								width: 198,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+										const rowOne = rowA.original.usdBalance ?? wei(0);
+										const rowTwo = rowB.original.usdBalance ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
-							[]
-						),
-					},
-					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.synth-balances-table.daily-change')}</TableHeader>
-						),
-						accessor: 'priceChange',
-						Cell: (cellProps: CellProps<Cell>) => {
-							return conditionalRender<Cell['priceChange']>(
-								cellProps.row.original.priceChange,
-								<ChangePercent
-									value={cellProps.row.original.priceChange!}
-									decimals={2}
-									className="change-pct"
-								/>
-							);
-						},
-						sortable: true,
-						sortType: useMemo(
-							() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-								const rowOne = rowA.original.priceChange ?? 0;
-								const rowTwo = rowB.original.priceChange ?? 0;
-								return rowOne > rowTwo ? 1 : -1;
+							{
+								Header: (
+									<TableHeader>
+										{t('dashboard.overview.synth-balances-table.oracle-price')}
+									</TableHeader>
+								),
+								accessor: 'price',
+								Cell: (cellProps: CellProps<Cell>) => {
+									return conditionalRender<Cell['price']>(
+										cellProps.row.original.price,
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.price!}
+											sign={'$'}
+											conversionRate={1}
+											formatOptions={{
+												minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+											}}
+										/>
+									);
+								},
+								width: 198,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+										const rowOne = rowA.original.price ?? wei(0);
+										const rowTwo = rowB.original.price ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
-							[]
-						),
-						width: 105,
-					},
-				]}
-			/>
-		</TableContainer>
+							{
+								Header: (
+									<TableHeader>
+										{t('dashboard.overview.synth-balances-table.daily-change')}
+									</TableHeader>
+								),
+								accessor: 'priceChange',
+								Cell: (cellProps: CellProps<Cell>) => {
+									return conditionalRender<Cell['priceChange']>(
+										cellProps.row.original.priceChange,
+										<ChangePercent
+											value={cellProps.row.original.priceChange!}
+											decimals={2}
+											className="change-pct"
+										/>
+									);
+								},
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
+										const rowOne = rowA.original.priceChange ?? 0;
+										const rowTwo = rowB.original.priceChange ?? 0;
+										return rowOne > rowTwo ? 1 : -1;
+									},
+									[]
+								),
+								width: 105,
+							},
+						]}
+					/>
+				</TableContainer>
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<StyledMobileTable
+					data={data}
+					columns={[
+						{
+							Header: () => (
+								<div>
+									<TableHeader>Market</TableHeader>
+									<TableHeader>Oracle</TableHeader>
+								</div>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<Cell>) => {
+								return <div />;
+							},
+						},
+						{
+							Header: () => (
+								<div>
+									<TableHeader>Amount</TableHeader>
+									<TableHeader>USD Value</TableHeader>
+								</div>
+							),
+							accessor: 'amount',
+							Cell: () => {
+								return <div />;
+							},
+						},
+						{
+							Header: () => (
+								<div>
+									<TableHeader>24H Change</TableHeader>
+								</div>
+							),
+							accessor: 'priceChange',
+							Cell: () => {
+								return <div />;
+							},
+						},
+					]}
+				/>
+			</MobileOnlyView>
+		</>
 	);
 };
 
@@ -268,6 +323,13 @@ const MarketContainer = styled.div`
 const AmountCol = styled.div`
 	justify-self: flex-end;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
+
+const StyledMobileTable = styled(StyledTable)`
+	border-radius: initial;
+	border-top: none;
+	border-right: none;
+	border-left: none;
 `;
 
 export default SynthBalancesTable;

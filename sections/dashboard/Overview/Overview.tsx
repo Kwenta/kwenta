@@ -63,9 +63,7 @@ const Overview: FC = () => {
 	const totalSpotBalancesValue = formatCurrency(
 		Synths.sUSD,
 		wei(synthBalances?.totalUSDBalance ?? zeroBN),
-		{
-			sign: '$',
-		}
+		{ sign: '$' }
 	);
 
 	const totalFuturesPortfolioValue = formatCurrency(Synths.sUSD, wei(portfolioValue ?? zeroBN), {
@@ -144,17 +142,9 @@ const Overview: FC = () => {
 				totalShortsValue={zeroBN}
 			/>
 
-			<TabButtonsContainer hasDetail={true}>
-				{POSITIONS_TABS.map(({ name, label, badge, active, disabled, detail, onClick }) => (
-					<TabButton
-						key={name}
-						title={label}
-						badge={badge}
-						active={active}
-						disabled={disabled}
-						detail={detail}
-						onClick={onClick}
-					/>
+			<TabButtonsContainer hasDetail>
+				{POSITIONS_TABS.map(({ name, label, ...rest }) => (
+					<TabButton key={name} title={label} {...rest} />
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>

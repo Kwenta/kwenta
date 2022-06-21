@@ -1,5 +1,6 @@
 import React from 'react';
 import FuturesMarkets from './FuturesMarkets';
+import OpenPositions from './OpenPositions';
 
 // Structure:
 // - Portfolio Overview + Chart
@@ -8,6 +9,7 @@ import FuturesMarkets from './FuturesMarkets';
 const MobileDashboard = () => {
 	return (
 		<div>
+			<OpenPositions />
 			<FuturesMarkets />
 		</div>
 	);

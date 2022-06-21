@@ -15,7 +15,7 @@ import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositi
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_DATA } from './constants';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 
 type FuturesPositionTableProps = {
@@ -41,7 +41,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			(position: FuturesPosition) => position?.position
 		);
 		return activePositions.length > 0
-			? activePositions.map((position: FuturesPosition, i: number) => {
+			? activePositions.map((position: FuturesPosition) => {
 					const market = futuresMarkets.find((market) => market.asset === position.asset);
 					const description = getSynthDescription(position.asset, synthsMap, t);
 					const positionHistory = futuresPositionHistory?.find(
@@ -52,8 +52,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 
 					return {
 						asset: position.asset,
-						market:
-							(position.asset[0] === 's' ? position.asset.slice(1) : position.asset) + '-PERP',
+						market: getDisplayAsset(position.asset) + '-PERP',
 						description: description,
 						notionalValue: position?.position?.notionalValue.abs(),
 						position: position?.position?.side,
@@ -77,7 +76,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) =>
 					row.original.asset !== NO_VALUE ? router.push(`/market/${row.original.asset}`) : undefined
 				}
@@ -95,10 +94,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								<MarketContainer>
 									<IconContainer>
 										<StyledCurrencyIcon
-											currencyKey={
-												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-												cellProps.row.original.asset
-											}
+											currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
 										/>
 									</IconContainer>
 									<StyledText>

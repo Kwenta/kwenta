@@ -303,6 +303,16 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 													futuresClosureReason={cellProps.row.original.marketClosureReason}
 												/>
 											</StyledText>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.price}
+												sign="$"
+												formatOptions={
+													isEurForex(cellProps.row.original.asset)
+														? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+														: {}
+												}
+											/>
 										</MarketContainer>
 									</div>
 								);
