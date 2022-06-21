@@ -23,6 +23,10 @@
 			"learn-more": "Learn more",
 			"optimism-mainnet": "Optimism",
 			"optimism-testnet": "OΞ Kovan"
+		},
+		"banner": {
+			"exchange-v2": "This version of the exchange is outdated; please exchange synths using the new exchange on Kwenta",
+			"futures-v2": "This version of the exchange is outdated; please visit Kwenta.io"
 		}
 	},
 	"homepage": {
@@ -519,7 +523,8 @@
 				"accrued-interest": "Accrued Interest"
 			}
 		},
-		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
+		"deprecated": "Shorting has been disabled; you can short using Futures or manage your existing positions below.",
+		"visit-futures": "Visit Futures"
 
 	},
 	"not-found": {
