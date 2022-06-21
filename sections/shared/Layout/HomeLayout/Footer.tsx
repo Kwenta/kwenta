@@ -181,8 +181,6 @@ const MultiListContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	column-gap: calc(100vw / 3 - 350px);
-	padding-left: 40px;
-	padding-right: 40px;
 	margin-top: 80px;
 	margin-bottom: 42.5px;
 	${media.lessThan('sm')`
@@ -211,8 +209,6 @@ const LogoFooter = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	padding-left: 40px;
-	padding-right: 40px;
 	${media.lessThan('sm')`
 		width: 355px;
 		padding: 5px;

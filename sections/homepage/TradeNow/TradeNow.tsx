@@ -37,7 +37,12 @@ const TransparentCard = styled.div`
 	padding: 140px 303px;
 	box-sizing: border-box;
 	text-align: center;
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	background: radial-gradient(white, rgba(2, 225, 255, 0.3) 0px, transparent 280px),
+		radial-gradient(white, rgba(201, 151, 90, 0.3) 0px, transparent 320px),
+		linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	background-size: 100% 200%, 100% 200%, 100% 100%;
+	background-position: -650px -300px, 600px -450px, 0px 0px;
+	background-repeat: no-repeat, no-repeat, repeat;
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 15px;
@@ -46,6 +51,7 @@ const TransparentCard = styled.div`
 		padding: 80px 20px;
 	`};
 `;
+
 const Container = styled.div`
 	margin-bottom: 140px;
 	${media.lessThan('sm')`
