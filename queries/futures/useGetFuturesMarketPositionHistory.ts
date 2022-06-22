@@ -11,17 +11,17 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 import { getDisplayAsset } from 'utils/futures';
 import { FUTURES_POSITION_FRAGMENT } from './constants';
+import { currentMarketState } from 'store/futures';
 
-const useGetFuturesMarketPositionHistory = (
-	currencyKey: string | null,
-	options?: UseQueryOptions<any | null>
-) => {
+const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network);
+
+	const currencyKey = useRecoilValue(currentMarketState);
 
 	return useQuery<PositionHistory[] | null>(
 		QUERY_KEYS.Futures.MarketPositionHistory(network.id, currencyKey || null, walletAddress || ''),

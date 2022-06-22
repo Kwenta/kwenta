@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import FaqIcon from 'assets/png/learn/faq.png';
@@ -16,6 +17,7 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
+import media from 'styles/media';
 import { Copy, Title } from '../common';
 
 const LEARNS = [
@@ -44,7 +46,7 @@ const LEARNS = [
 		key: 'faq',
 		title: 'homepage.learn.faq',
 		copy: '',
-		image: <img src={FaqIcon} />,
+		image: <Image src={FaqIcon} width={60} height={60} />,
 		onClick: () => window.open(EXTERNAL_LINKS.Docs.Faq, '_blank'),
 	},
 ];
@@ -68,26 +70,26 @@ const Learn = () => {
 						<FeatureIconContainer className={key}>{image}</FeatureIconContainer>
 						<FeatureContentContainer>
 							{key !== 'faq' ? (
-								<FeatureTitle className={key}>{t(title)}</FeatureTitle>
+								<>
+									<FeatureTitle className={key}>{t(title)}</FeatureTitle>
+									<FeatureCopy className={key}>{t(copy)}</FeatureCopy>
+									<StyledButton
+										isRounded={false}
+										size="sm"
+										onClick={onClick}
+										disabled={key === 'how-to-stake'}
+									>
+										{key === 'how-to-stake'
+											? t('homepage.learn.coming-soon')
+											: t('homepage.learn.title')}
+										<ArrowUpRightIcon />
+									</StyledButton>
+								</>
 							) : (
 								<FeatureTitle className={key} onClick={onClick}>
 									{t(title)}
 									<ArrowUpRightIcon />
 								</FeatureTitle>
-							)}
-							<FeatureCopy>{t(copy)}</FeatureCopy>
-							{key !== 'faq' ? (
-								<StyledButton
-									isRounded={false}
-									size="sm"
-									onClick={onClick}
-									disabled={key === 'how-to-stake'}
-								>
-									{t('homepage.learn.title')}
-									<ArrowUpRightIcon />
-								</StyledButton>
-							) : (
-								<></>
 							)}
 						</FeatureContentContainer>
 					</FeatureCard>
@@ -112,6 +114,14 @@ const FeatureCopy = styled(Copy)`
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	margin-bottom: 36px;
 	width: 280px;
+
+	&.how-to-trade {
+		width: 300px;
+	}
+
+	${media.lessThan('sm')`
+		text-align: center;
+	`}
 `;
 
 const FeatureTitle = styled(Title)`
@@ -131,7 +141,6 @@ const FeatureTitle = styled(Title)`
 
 	&.how-to-trade {
 		margin-top: 0px;
-		width: 203px;
 	}
 
 	&.faq {
@@ -145,6 +154,16 @@ const FeatureTitle = styled(Title)`
 		width: 20px;
 		height: 20px;
 	}
+
+	${media.lessThan('sm')`
+		text-align: center;
+		
+		&.faq {
+			width: 240px;
+			text-align: left;
+			padding-left: 10px;
+		}
+	`}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
@@ -153,6 +172,9 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	gap: 20px 20px;
 	width: 766px;
 	flex-wrap: wrap;
+	${media.lessThan('sm')`
+		width: 325px;
+	`}
 `;
 
 const Container = styled.div`
@@ -160,11 +182,11 @@ const Container = styled.div`
 `;
 
 const FeatureCard = styled(FlexDivRow)`
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 15px;
-	padding: 32px 32px 32px 32px;
+	background-color: #1a1a1a;
+	padding: 30px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	transition: all 0.2s ease-in-out;
+	border-radius: 10px;
 	height: 380px;
 
 	&.how-to-stake,
@@ -188,6 +210,35 @@ const FeatureCard = styled(FlexDivRow)`
 		height: 100px;
 		flex-direction: row-reverse;
 	}
+
+	${media.lessThan('sm')`
+		&.how-to-stake,
+		&.how-governance {
+			width: 325px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+	
+		&.how-to-trade {
+			width: 325px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 460px;
+		}
+	
+		&.faq {
+			width: 325px;
+			height: 100px;
+			flex-direction: row-reverse;
+			justify-content: space-between;
+			align-items: center;
+			padding: 20px;
+		}
+	`}
 `;
 
 const FeatureIconContainer = styled.div`
@@ -198,11 +249,6 @@ const FeatureIconContainer = styled.div`
 
 	&.faq {
 		padding-bottom: 15px;
-	}
-
-	img {
-		width: 60px;
-		height: 60px;
 	}
 
 	&.how-to-stake {
@@ -223,12 +269,54 @@ const FeatureIconContainer = styled.div`
 		width: 332px;
 		height: 200px;
 	}
+
+	${media.lessThan('sm')`
+		&.how-to-stake {
+			width: 154px;
+			height: 100px;
+			margin-bottom: 15px;
+		}
+
+		&.how-governance {
+			width: 156px;
+			height: 100px;
+			margin-bottom: 15px;
+		}
+
+		&.how-to-trade {
+			width: 265px;
+			height: 160px;
+			margin-bottom: 15px;
+		}
+
+		&.faq {
+			padding-bottom: 0px;
+		}
+
+		img {
+			width: 50px;
+			height: 50px;
+		}
+	`};
 `;
 
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 10px;
-	width: 313px;
+	width: 288px;
 	justify-content: space-between;
+
+	${media.lessThan('sm')`
+		margin-left: 0px;
+		margin-right: 0px;
+		justify-content: center;
+		align-items: center;
+		
+		&.faq {
+			width: 0px;
+			padding-bottom: 0px;
+			justify-content: space-between;
+		}
+	`};
 `;
 
 export default Learn;

@@ -43,7 +43,7 @@ const SegmentedControlContainer = styled.div<{ $length: number }>`
 
 const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 	font-size: 13px;
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.regular};
 	cursor: pointer;
 
 	${(props) =>
@@ -51,10 +51,10 @@ const SegmentedControlOption = styled.button<{ isSelected: boolean }>`
 			? css`
 					background: ${(props) => props.theme.colors.selectedTheme.segmented.button.background};
 					position: relative;
-					box-shadow: ${(props) => props.theme.colors.selectedTheme.segmented.button.shadow};
 					border: ${(props) => props.theme.colors.selectedTheme.border};
 					border-radius: 6px;
 					color: ${(props) => props.theme.colors.selectedTheme.button.text};
+					font-family: ${(props) => props.theme.fonts.bold};
 					&::before {
 						border-radius: 6px;
 					}

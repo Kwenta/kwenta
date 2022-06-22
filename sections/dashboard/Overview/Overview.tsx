@@ -171,8 +171,6 @@ const Overview: FC = () => {
 				/>
 			</TabPanel>
 
-			{/* <TabPanel name={PositionsTab.SHORTS} activeTab={activePositionsTab}></TabPanel> */}
-
 			<TabButtonsContainer>
 				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
 					<TabButton key={name} title={label} active={active} onClick={onClick} />

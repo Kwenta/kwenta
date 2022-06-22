@@ -1,13 +1,15 @@
 import { FC, useState } from 'react';
+import styled, { css } from 'styled-components';
 import { format } from 'date-fns';
 
 import getLocale from 'utils/formatters/getLocale';
 
 type TimeDisplayProps = {
 	cellPropsValue: any;
+	horizontal?: boolean;
 };
 
-const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue }) => {
+const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue, horizontal }) => {
 	const [show12hr, setShow12h] = useState<boolean>(false);
 
 	const handleOnClick = () => {
@@ -23,13 +25,25 @@ const TimeDisplay: FC<TimeDisplayProps> = ({ cellPropsValue }) => {
 	});
 
 	return (
-		<>
-			<div onClick={handleOnClick}>
-				<div>{date}</div>
-				<div>{show12hr ? time12hr : time24hr}</div>
-			</div>
-		</>
+		<TimeDisplayContainer horizontal={horizontal} onClick={handleOnClick}>
+			<div>{date}</div>
+			<div>{show12hr ? time12hr : time24hr}</div>
+		</TimeDisplayContainer>
 	);
 };
+
+const TimeDisplayContainer = styled.div<{ horizontal?: boolean }>`
+	${(props) =>
+		props.horizontal &&
+		css`
+			display: flex;
+			div:first-child {
+				margin-right: 5px;
+			}
+			div:last-child {
+				color: ${(props) => props.theme.colors.common.secondaryGray};
+			}
+		`}
+`;
 
 export default TimeDisplay;
