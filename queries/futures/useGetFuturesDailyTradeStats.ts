@@ -9,7 +9,8 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
-import { DAY_PERIOD } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import ROUTES from 'constants/routes';
 
 const PAGE_SIZE = 500;
 
@@ -17,7 +18,8 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const homepage = window.location.pathname === ROUTES.Home.Root;
+	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	const queryTrades = async (
 		skip: number,
@@ -62,7 +64,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 
 			return calculateDailyTradeStats(trades);
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
 	);
 };
 
