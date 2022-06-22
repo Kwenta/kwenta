@@ -43,7 +43,7 @@ export const GridContainer = styled(GridDiv)`
 	grid-gap: 24px;
 	justify-content: center;
 	${media.lessThan('md')`
-	grid-template-columns: repeat(2, auto);
+		grid-template-columns: repeat(2, auto);
 	`}
 	${media.lessThan('sm')`
 		grid-template-columns: 1fr;

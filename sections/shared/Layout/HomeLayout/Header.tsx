@@ -14,10 +14,11 @@ import ROUTES from 'constants/routes';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
-import { FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
+import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
+import media from 'styles/media';
 import { isL2State } from 'store/wallet';
-import AppHeader from '../AppLayout/Header';
 import Logo from '../Logo';
+import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
 
 const Header: FC = () => {
 	const { t } = useTranslation();
@@ -90,9 +91,8 @@ const Header: FC = () => {
 			<MobileHiddenView>
 				<Container>
 					<LogoContainer>
-						<Logo isL2={isL2} isHomePage={true} />
+						<Logo isL2={isL2} />
 					</LogoContainer>
-
 					<Links>
 						{LINKS.map(({ id, label, icon, onClick }) => (
 							<StyledTextButton key={id} className={id} onClick={onClick}>
@@ -120,7 +120,7 @@ const Header: FC = () => {
 					</Links>
 					<MenuContainer>
 						<Link href={ROUTES.Markets.Home}>
-							<Button variant="primary" isRounded={false} size="sm">
+							<Button noOutline size="sm">
 								{t('homepage.nav.start-trade')}
 							</Button>
 						</Link>
@@ -128,20 +128,35 @@ const Header: FC = () => {
 				</Container>
 			</MobileHiddenView>
 			<MobileOnlyView>
-				<AppHeader />
+				<MobileContainer>
+					<LogoContainer>
+						<Logo isL2={isL2} />
+					</LogoContainer>
+					<MobileUserMenu />
+				</MobileContainer>
 			</MobileOnlyView>
 		</>
 	);
 };
 
+const MobileContainer = styled(FlexDivRow)`
+	justify-content: space-between;
+	align-items: center;
+`;
+
 const LogoContainer = styled.div`
-	padding-top: 8px;
+	margin-top: -4px;
+	${media.lessThan('sm')`
+		margin-top: 4px;
+		padding-left:17px;
+	`}
 `;
 
 const StyledMenu = styled.div`
 	position: absolute;
-	background: linear-gradient(180deg, #1e1d1d 0%, #161515 100%);
+	background: ${(props) => props.theme.colors.selectedTheme.cell.fill};
 	border: 1px solid rgba(255, 255, 255, 0.1);
+	z-index: 10;
 	border-radius: 6px;
 	width: 120px;
 	margin: auto;
@@ -183,7 +198,7 @@ const StyledMenuItem = styled.p`
 	padding-bottom: 0px;
 	margin: 0px;
 	&:hover {
-		color: ${(props) => props.theme.colors.common.primaryWhite};
+		color: ${(props) => props.theme.colors.selectedTheme.white};
 	}
 	svg {
 		margin-right: 10px;
@@ -194,7 +209,7 @@ const StyledMenuItem = styled.p`
 
 const Container = styled.header`
 	display: grid;
-	align-items: start;
+	align-items: center;
 	width: 100%;
 	grid-template-columns: 1fr 1fr 1fr;
 `;
@@ -204,7 +219,6 @@ const Links = styled.div`
 	flex-direction: row;
 	white-space: nowrap;
 	justify-self: center;
-	padding-top: 10px;
 `;
 
 const StyledTextButton = styled.div`
@@ -216,6 +230,13 @@ const StyledTextButton = styled.div`
 	font-family: ${(props) => props.theme.fonts.bold};
 	color: ${(props) => props.theme.colors.common.tertiaryGray};
 	cursor: pointer;
+	padding: 8px 13px;
+	border-radius: 100px;
+
+	&:hover {
+		background: #252525;
+		color: ${(props) => props.theme.colors.selectedTheme.white};
+	}
 
 	&.governance:hover {
 		> div.governance {

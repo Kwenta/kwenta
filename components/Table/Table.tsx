@@ -9,6 +9,7 @@ import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
+import media from 'styles/media';
 
 export type TablePalette = 'primary';
 
@@ -102,6 +103,7 @@ export const Table: FC<TableProps> = ({
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
+			autoResetPage: false,
 			...options,
 		},
 		useSortBy,
@@ -239,6 +241,17 @@ const TableCell = styled(FlexDivCentered)`
 	&:last-child {
 		padding-right: 14px;
 	}
+
+	${media.lessThan('sm')`
+		&:first-child {
+			margin: auto;
+			padding: 0px;
+		}
+		&:last-child {
+			margin: auto;
+			padding: 0px;
+		}
+	`}
 `;
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`

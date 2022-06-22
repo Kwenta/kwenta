@@ -21,6 +21,7 @@ import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import {
 	AFTER_HOURS_SYNTHS,
+	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
 	ETH_ADDRESS,
@@ -586,24 +587,24 @@ const useExchange = ({
 
 	const getExchangeParams = useCallback(
 		(isAtomic: boolean) => {
-			const destinationCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-			const sourceCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+			const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 			const sourceAmount = quoteCurrencyAmountBN.toBN();
 			const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 			if (isAtomic) {
 				return [
-					destinationCurrencyKey,
-					sourceAmount,
 					sourceCurrencyKey,
+					sourceAmount,
+					destinationCurrencyKey,
 					KWENTA_TRACKING_CODE,
 					minAmount,
 				];
 			} else {
 				return [
-					destinationCurrencyKey,
-					sourceAmount,
 					sourceCurrencyKey,
+					sourceAmount,
+					destinationCurrencyKey,
 					walletAddress,
 					KWENTA_TRACKING_CODE,
 				];
@@ -624,15 +625,20 @@ const useExchange = ({
 			try {
 				if (isL2 && !gasPrice) return null;
 				if (synthetixjs != null) {
-					const destinationCurrencyKey = ethers.utils.parseBytes32String(
+					const sourceCurrencyKey = ethers.utils.parseBytes32String(
 						getExchangeParams(true)[0] as string
 					);
+
+					const destinationCurrencyKey = ethers.utils.parseBytes32String(
+						getExchangeParams(true)[2] as string
+					);
+
 					const isAtomic =
 						!isL2 &&
-						(destinationCurrencyKey === 'sBTC' ||
-							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR' ||
-							destinationCurrencyKey === 'sUSD');
+						[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+							ATOMIC_EXCHANGES_L1.includes(currency)
+						);
+
 					const exchangeParams = getExchangeParams(isAtomic);
 
 					let gasEstimate, gasLimitNum, metaTx;
@@ -875,16 +881,19 @@ const useExchange = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
-			const destinationCurrencyKey = ethers.utils.parseBytes32String(
+			const sourceCurrencyKey = ethers.utils.parseBytes32String(
 				getExchangeParams(true)[0] as string
+			);
+
+			const destinationCurrencyKey = ethers.utils.parseBytes32String(
+				getExchangeParams(true)[2] as string
 			);
 
 			const isAtomic =
 				!isL2 &&
-				(destinationCurrencyKey === 'sBTC' ||
-					destinationCurrencyKey === 'sETH' ||
-					destinationCurrencyKey === 'sEUR' ||
-					destinationCurrencyKey === 'sUSD');
+				[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+					ATOMIC_EXCHANGES_L1.includes(currency)
+				);
 
 			const exchangeParams = getExchangeParams(isAtomic);
 
@@ -1284,7 +1293,26 @@ const useExchange = ({
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix' ? true : false}
 					isApproved={needsApproval ? isApproved : undefined}
-					show1InchProvider={txProvider === '1inch'}
+				/>
+			)}
+			{balances.length !== 0 && totalUSDBalance.gt(0) && (
+				<Button
+					variant="primary"
+					isRounded={true}
+					disabled={false}
+					onClick={handleRedeem}
+					size="lg"
+					data-testid="submit-order"
+					fullWidth={true}
+				>
+					{t('dashboard.deprecated.button.redeem-synths')}
+				</Button>
+			)}
+			{!redeemTxModalOpen ? null : (
+				<RedeemTxModal
+					{...{ txError, balances, totalUSDBalance }}
+					onDismiss={handleDismiss}
+					attemptRetry={handleRedeem}
 				/>
 			)}
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (

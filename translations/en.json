@@ -13,7 +13,6 @@
 		"nav": {
 			"exchange": "exchange",
 			"dashboard": "dashboard",
-			"shorting": "shorting",
 			"markets": "futures",
 			"leaderboard": "leaderboard",
 			"futures-dashboard": "dashboard",
@@ -57,7 +56,7 @@
 		},
 		"hero": {
 			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0>."
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>10x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "TRENDING MARKETS",
@@ -82,11 +81,11 @@
 		},
 		"earning": {
 			"title": "Earnings",
-			"description": "See What You Can Do With <0>$KWENTA</0> Token",
-			"copy": "Stake to earn, receive trading bonuses and participate in Kwenta DAO governance.",
+			"description": "See What You Can Do With <0>$KWENTA</0>",
+			"copy": "Stake to earn, receive trading bonuses and participate in KwentaDAO governance.",
 			"stake-to-earn": {
 				"title": "stake to earn",
-				"copy": "Staking $KWENTA earns weekly rewards which includes protocol fees and inflationary rewards"
+				"copy": "Staking $KWENTA earns weekly rewards which include protocol fees and inflationary rewards"
 			},
 			"trade-to-earn": {
 				"title": "trade to earn",
@@ -94,10 +93,10 @@
 			},
 			"vote-and-govern": {
 				"title": "vote & govern",
-				"copy": "Token-managed governance empowers the community to help steer the Kwenta Exchange"
+				"copy": "Token-managed governance empowers the community to help steer Kwenta"
 			},
 			"how-to-earn": "How to earn",
-			"stake-kwenta": "Stake KWENTA",
+			"stake-kwenta": "Coming Soon",
 			"stats": {
 				"volume": "Total Trading Volume",
 				"trades": "Total Trades"
@@ -105,14 +104,15 @@
 		},
 		"learn": {
 			"title": "Learn More",
-			"description": "Explore Endless Possibilities Of Kwenta Exchange",
+			"coming-soon": "Coming Soon",
+			"description": "Explore The Endless Possibilities Of Kwenta",
 			"how-to-trade": {
-				"title": "Learn How To Trade On Kwenta",
-				"copy": "Trading made easy, trade like a pro!"
+				"title": "Learn How to Trade on Kwenta",
+				"copy": "Learn about the many features of Kwenta; 10x leverage, instant transactions, deep liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
-				"copy": "Earn the Kwenta token by participating in staking or incentives"
+				"copy": "Earn $KWENTA with trading incentives and staking."
 			},
 			"how-governance": {
 				"title": "How Governance Works",
@@ -125,16 +125,16 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": {
-			"title": "FEATURE CALLOUTS",
-			"description": "Trading Without The Limits Of A Centralised Exchange",
+		"features": { 
+			"title": "FEATURES",
+			"description": "Trading Without The Limits Of A Centralized Exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
-				"copy": "Near-instant trade confirmations using Layer 2 scalability"
+				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
 			},
 			"low-gas-fees": {
 				"title": "Low Gas Fees",
-				"copy": "Transaction costs on Layer 2 are one-tenth of L1"
+				"copy": "Transaction costs on Optimism Layer 2 are one-tenth of Ethereum L1"
 			},
 			"unique-assets": {
 				"title": "Unique Assets",
@@ -142,7 +142,7 @@
 			},
 			"permissionless": {
 				"title": "Permissionless",
-				"copy": "A full on-chain DeFi futures trading experience"
+				"copy": "A fully on-chain DeFi futures trading experience"
 			},
 			"mobile": {
 				"title": "Mobile",
@@ -266,7 +266,6 @@
 				"title": "Use KWENTA",
 				"how-to": "How to use Kwenta",
 				"perps": "Perpetuals",
-				"short": "Shorting",
 				"spot": "Spot Trading",
 				"legacy": "Legacy Exchange"
 			},
@@ -535,11 +534,22 @@
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
-			"history-table": {
+			"spot-history-table": {
 				"date-time": "Date/Time",
 				"from": "From",
 				"to": "To",
 				"usd-value": "USD Value"
+			},
+			"futures-history-table": {
+				"size": "Size",
+				"pnl": "P&L",
+				"date-time": "Date/Time",
+				"fees": "Fees",
+				"price": "Price",
+				"side": "Side",
+				"market": "Market",
+				"order-type": "Type",
+				"no-results": "Perpetual Futures are available on Optimism L2"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
@@ -561,154 +571,6 @@
 			},
 			"susd-total": "sUSD Total"
 		}
-	},
-	"shorting": {
-		"page-title": "Shorting | Kwenta",
-		"common": {
-			"collateral": "collateral",
-			"posting": "posting",
-			"shorting": "shorting",
-			"interestRate": "Interest Rate",
-			"cRatio": "C-Ratio"
-		},
-		"shorting-card": {
-			"summary-info": {
-				"button": {
-					"c-ratio-too-low": "c-ratio is too low",
-					"add-more-collateral": "add more collateral",
-					"min-collateral": "min. collateral is <0>{{amount}}</0> <1>{{currencyKey}}</1>"
-				}
-			}
-		},
-		"c-ratio": {
-			"safe": "safe",
-			"safeMax": "safe max",
-			"highRisk": "high risk"
-		},
-		"stats": {
-			"title": "shorting statistics",
-			"table": {
-				"asset": "asset",
-				"apr": "APR",
-				"open-interest": "open interest",
-				"total": "total"
-			}
-		},
-		"rewards": {
-			"title": "available rewards",
-			"button": {
-				"claim": "claim",
-				"claiming": "claiming..."
-			},
-			"tx-confirm": {
-				"claiming": "claiming"
-			}
-		},
-		"history": {
-			"title": "your positions",
-			"assets-sort": {
-				"allAssets": "All Assets"
-			},
-			"dates-sort": {
-				"all-dates": "All Dates",
-				"past-week": "Past Week",
-				"past-month": "Past Month",
-				"past-year": "Past Year"
-			},
-			"sizes-sort": {
-				"all-sizes": "All Sizes"
-			},
-			"manage-short": {
-				"page-title": "Shorting | Kwenta",
-				"no-results": "Short not found",
-				"title": "Manage Position #{{loanId}}",
-				"close": "Close",
-				"subtitle": "Position Details",
-				"fields": {
-					"collateral": "Collateral",
-					"liquidation-price": "Liquidation Price",
-					"profit-loss": "Profit / Loss",
-					"shorting": "Shorting",
-					"collateral-ratio": "Collateral Ratio",
-					"date": "Date Opened",
-					"interest-rate": "Interest Rate",
-					"accrued-interest": "Accrued Interest"
-				},
-				"collateral-ratio-tooltip": {
-					"line1": "Position will be at risk of liquidation",
-					"line2": "if collateral ratio falls below the minimum of {{percent}}"
-				},
-				"interaction-disabled": {
-					"title": "There is a waiting period after interacting with a loan.",
-					"message": {
-						"part1": "Please wait approximately",
-						"part2": "before reinteracting with it."
-					}
-				},
-				"sections": {
-					"add-collateral": {
-						"nav-title": "Add Collateral",
-						"tx-confirm": {
-							"base-currency-label": "posting"
-						}
-					},
-					"remove-collateral": {
-						"nav-title": "Remove Collateral",
-						"tx-confirm": {
-							"base-currency-label": "withdrawing"
-						},
-						"button": {
-							"amount-greater-than-collateral": "Amount greater than collateral"
-						}
-					},
-					"decrease-position": {
-						"nav-title": "Decrease Position",
-						"tx-confirm": {
-							"base-currency-label": "decreasing position"
-						},
-						"button": {
-							"amount-greater-than-debt": "Amount greater than debt",
-							"close-position-instead": "Close position instead of repayment"
-						}
-					},
-					"increase-position": {
-						"nav-title": "Increase Position",
-						"tx-confirm": {
-							"base-currency-label": "increasing position"
-						}
-					},
-					"close-position": {
-						"nav-title": "Close Position",
-						"tx-confirm": {
-							"quote-currency-label": "returning",
-							"base-currency-label": "receiving"
-						},
-						"close-button-label": "Close position",
-						"total-to-replay-label": "Total to repay",
-						"button": {
-							"insufficient-balance-to-repay": "Insufficient balance to repay"
-						}
-					},
-					"panel": {
-						"collateral": "Collateral",
-						"shorting": "Shorting",
-						"wallet-balance": "Wallet Balance"
-					}
-				}
-			},
-			"table": {
-				"id": "ID",
-				"date": "Date",
-				"shorting": "Shorting",
-				"collateral": "Collateral",
-				"liquidation-price": "Liquidation Price",
-				"collateral-ratio": "C-Ratio",
-				"profit-loss": "Profit / Loss",
-				"no-results": "No shorts found",
-				"accrued-interest": "Accrued Interest"
-			}
-		},
-		"l1-deprecated": "Shorting on L1 is deprecated; please switch to L2, or manage your L1 positions below."
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
@@ -1036,7 +898,7 @@
 					"download": "Download"
 				},
 				"position-metadata": {
-					"open-at": "open at",
+					"open-at": "opened on",
 					"created-on": "created on",
 					"avg-open-price": "avg open price",
 					"current-price": "current price"
@@ -1061,7 +923,9 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL"
+				"total-pnl": "PnL ($)",
+				"percent-pnl": "PnL (%)",
+				"rank-mobile": "#"
 			}
 		},
 		"trader-history": {
@@ -1365,5 +1229,18 @@
 			"n-year-ago": "{{ timeDelta }}y ago"
 		},
 		"min": "min"
+	},
+	"mobile-menu": {
+		"currency": "Currency",
+		"cancel": "Cancel",
+		"wallet": "Wallet",
+		"network": "Network",
+		"language": "Language",
+		"connect": "Connect",
+		"disconnect": "Disconnect",
+		"switch": "Switch",
+		"switch-to-l1": "Switch to L1",
+		"switch-to-l2": "Switch to L2",
+		"bridge": "Bridge"
 	}
 }

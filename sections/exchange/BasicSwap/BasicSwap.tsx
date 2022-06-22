@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
 import { SwapCurrenciesButton, BoldText } from 'styles/common';
-import { border } from 'components/Button';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
@@ -51,11 +50,10 @@ const ExchangeTitle = styled(BoldText)`
 const DesktopCardsContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	background: ${(props) => props.theme.colors.cellGradient};
-	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
+	background: ${(props) => props.theme.colors.selectedTheme.cell.fill};
 	border-radius: 10px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
 	box-sizing: border-box;
-	${border}
 	position: relative;
 `;
 

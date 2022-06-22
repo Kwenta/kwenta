@@ -41,13 +41,14 @@
 	font-family: 'GT-America-Compressed-Black';
 	src: url('/fonts/GT-America-Compressed-Black.woff2') format('woff2'),
 		url('/fonts/GT-America-Compressed-Black.woff') format('woff');
-	font-display: monospace;
+	font-display: auto;
 }
 
 @font-face {
 	font-family: 'GT-America-Compressed-Medium';
 	src: url('/fonts/GT-America-Compressed-Medium.woff2') format('woff2'),
 		url('/fonts/GT-America-Compressed-Medium.woff') format('woff');
+	font-display: auto;
 }
 
 #__next {

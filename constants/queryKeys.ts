@@ -1,5 +1,4 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { PotentialTrade } from 'sections/futures/types';
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -140,6 +139,11 @@ export const QUERY_KEYS = {
 			currencyKey,
 		],
 		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
+		Market: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			currencyKey,
+			networkId,
+		],
 		Trades: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'trades',
@@ -151,6 +155,12 @@ export const QUERY_KEYS = {
 			'trades',
 			networkId,
 			currencyKey,
+			account,
+		],
+		AllTradesAccount: (networkId: NetworkId, account: string | null) => [
+			'futures',
+			'trades',
+			networkId,
 			account,
 		],
 		MarketClosure: (networkId: NetworkId, currencyKey: string | null) => [
@@ -222,9 +232,9 @@ export const QUERY_KEYS = {
 		PotentialTrade: (
 			networkId: NetworkId,
 			market: string | null,
-			trade: PotentialTrade | null,
+			tradeSize: string,
 			walletAddress: string
-		) => ['futures', 'potentialTrade', trade, networkId, market, walletAddress],
+		) => ['futures', 'potentialTrade', tradeSize, networkId, market, walletAddress],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
 			'marketLimit',
