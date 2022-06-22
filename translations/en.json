@@ -916,8 +916,7 @@
 				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
 				"amount-label": "amount",
 				"price-label": "price",
-				"time-label": "time",
-				"loading": "Loading More ..."
+				"time-label": "time"
 			},
 			"user": {
 				"position": {
