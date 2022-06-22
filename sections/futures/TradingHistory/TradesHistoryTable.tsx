@@ -174,7 +174,9 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						},
 					]}
 				/>
-				<Loading isLoading={futuresTradesQuery.isFetchingNextPage}>Loading More ...</Loading>
+				<Loading isLoading={futuresTradesQuery.isFetchingNextPage}>
+					{t('futures.market.history.loading')}
+				</Loading>
 			</TableContainer>
 		</HistoryContainer>
 	);
