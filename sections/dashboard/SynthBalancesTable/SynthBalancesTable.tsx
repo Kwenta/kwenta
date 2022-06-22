@@ -259,6 +259,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									</div>
 								);
 							},
+							width: 130,
 						},
 						{
 							Header: () => (
@@ -271,9 +272,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							Cell: (cellProps: CellProps<Cell>) => {
 								return (
 									<div>
-										<AmountCol>
-											<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
-										</AmountCol>
+										<div>{formatNumber(cellProps.row.original.balance ?? 0)}</div>
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.usdBalance ?? 0}
@@ -282,6 +281,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									</div>
 								);
 							},
+							width: 120,
 						},
 						{
 							Header: () => (
@@ -307,6 +307,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 
 								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 							},
+							width: 120,
 						},
 					]}
 				/>

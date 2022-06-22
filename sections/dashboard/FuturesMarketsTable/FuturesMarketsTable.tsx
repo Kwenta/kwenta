@@ -317,6 +317,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</div>
 								);
 							},
+							width: 125,
 						},
 						{
 							Header: () => (
@@ -342,6 +343,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</div>
 								);
 							},
+							width: 125,
 						},
 						{
 							Header: () => (
@@ -352,8 +354,17 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							),
 							accessor: '24h-change',
 							Cell: (cellProps: CellProps<any>) => {
-								return <div></div>;
+								return (
+									<div>
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.volume ?? 0}
+											sign="$"
+										/>
+									</div>
+								);
 							},
+							width: 125,
 						},
 					]}
 				/>
