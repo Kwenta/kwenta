@@ -4,10 +4,9 @@ import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 
 import Connector from 'containers/Connector';
-
-import { isL2State } from 'store/wallet';
-
 import FullScreenModal from 'components/FullScreenModal';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { isL2State } from 'store/wallet';
 import Logo from 'sections/shared/Layout/Logo';
 
 import MobileSubMenu from './MobileSubMenu';
@@ -19,12 +18,12 @@ import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
 import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
-import { EXTERNAL_LINKS } from 'constants/links';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { lanugageIcons } from './common';
+import ROUTES from 'constants/routes';
 
 type MobileSettingsModalProps = {
-	onDismiss(): void;
+	onDismiss: () => void;
 };
 
 type SettingCategories = 'wallet' | 'network' | 'language' | 'currency';
@@ -60,47 +59,51 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
 
-				<MenuButtonContainer>
-					<MobileSubMenu
-						i18nLabel={t('mobile-menu.wallet')}
-						onDismiss={onDismiss}
-						active={expanded === 'wallet'}
-						onToggle={handleToggle('wallet')}
-						options={[
-							{
-								label: t('mobile-menu.switch'),
-								icon: <MobileSwitchWalletIcon />,
-								onClick: connectWallet,
-							},
-							{
-								label: t('mobile-menu.disconnect'),
-								icon: <MobileMenuDisconnectIcon />,
-								onClick: disconnectWallet,
-							},
-						]}
-					/>
-				</MenuButtonContainer>
+				{!(window.location.pathname === ROUTES.Home.Root) && (
+					<>
+						<MenuButtonContainer>
+							<MobileSubMenu
+								i18nLabel={t('mobile-menu.wallet')}
+								onDismiss={onDismiss}
+								active={expanded === 'wallet'}
+								onToggle={handleToggle('wallet')}
+								options={[
+									{
+										label: t('mobile-menu.switch'),
+										icon: <MobileSwitchWalletIcon />,
+										onClick: connectWallet,
+									},
+									{
+										label: t('mobile-menu.disconnect'),
+										icon: <MobileMenuDisconnectIcon />,
+										onClick: disconnectWallet,
+									},
+								]}
+							/>
+						</MenuButtonContainer>
 
-				<MenuButtonContainer>
-					<MobileSubMenu
-						i18nLabel={t('mobile-menu.network')}
-						onDismiss={onDismiss}
-						active={expanded === 'network'}
-						onToggle={handleToggle('network')}
-						options={[
-							{
-								label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
-								icon: <MobileSwitchToL1Icon />,
-								onClick: isL2 ? switchToL1 : switchToL2,
-							},
-							{
-								label: `${t('mobile-menu.bridge')} ↗`,
-								icon: <MobileMenuBridgeIcon />,
-								externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
-							},
-						]}
-					/>
-				</MenuButtonContainer>
+						<MenuButtonContainer>
+							<MobileSubMenu
+								i18nLabel={t('mobile-menu.network')}
+								onDismiss={onDismiss}
+								active={expanded === 'network'}
+								onToggle={handleToggle('network')}
+								options={[
+									{
+										label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
+										icon: <MobileSwitchToL1Icon />,
+										onClick: isL2 ? switchToL1 : switchToL2,
+									},
+									{
+										label: `${t('mobile-menu.bridge')} ↗`,
+										icon: <MobileMenuBridgeIcon />,
+										externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
+									},
+								]}
+							/>
+						</MenuButtonContainer>
+					</>
+				)}
 
 				<MenuButtonContainer>
 					<MobileSubMenu

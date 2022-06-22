@@ -11,11 +11,11 @@ import FullScreenModal from 'components/FullScreenModal';
 import Logo from 'sections/shared/Layout/Logo';
 import Links from 'sections/dashboard/Links';
 
-import { menuLinksState } from '../states';
-
 import MobileSubMenu from './MobileSubMenu';
 import { MenuButton, SUB_MENUS } from './common';
 import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
+import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
+import ROUTES from 'constants/routes';
 
 type MobileMenuModalProps = {
 	onDismiss(): void;
@@ -24,7 +24,8 @@ type MobileMenuModalProps = {
 export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { asPath } = useRouter();
-	const menuLinks = useRecoilValue(menuLinksState);
+	const menuLinks =
+		window.location.pathname === ROUTES.Home.Root ? HOMEPAGE_MENU_LINKS : MENU_LINKS;
 	const isL2 = useRecoilValue(isL2State);
 
 	const [expanded, setExpanded] = useState<string | undefined>();

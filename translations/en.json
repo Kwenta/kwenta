@@ -81,11 +81,11 @@
 		},
 		"earning": {
 			"title": "Earnings",
-			"description": "See What You Can Do With <0>$KWENTA</0> Token",
-			"copy": "Stake to earn, receive trading bonuses and participate in Kwenta DAO governance.",
+			"description": "See What You Can Do With <0>$KWENTA</0>",
+			"copy": "Stake to earn, receive trading bonuses and participate in KwentaDAO governance.",
 			"stake-to-earn": {
 				"title": "stake to earn",
-				"copy": "Staking $KWENTA earns weekly rewards which includes protocol fees and inflationary rewards"
+				"copy": "Staking $KWENTA earns weekly rewards which include protocol fees and inflationary rewards"
 			},
 			"trade-to-earn": {
 				"title": "trade to earn",
@@ -93,10 +93,10 @@
 			},
 			"vote-and-govern": {
 				"title": "vote & govern",
-				"copy": "Token-managed governance empowers the community to help steer the Kwenta Exchange"
+				"copy": "Token-managed governance empowers the community to help steer Kwenta"
 			},
 			"how-to-earn": "How to earn",
-			"stake-kwenta": "Stake KWENTA",
+			"stake-kwenta": "Coming Soon",
 			"stats": {
 				"volume": "Total Trading Volume",
 				"trades": "Total Trades"
@@ -104,14 +104,15 @@
 		},
 		"learn": {
 			"title": "Learn More",
-			"description": "Explore Endless Possibilities Of Kwenta Exchange",
+			"coming-soon": "Coming Soon",
+			"description": "Explore The Endless Possibilities Of Kwenta",
 			"how-to-trade": {
-				"title": "Learn How To Trade On Kwenta",
-				"copy": "Trading made easy, trade like a pro!"
+				"title": "Learn How to Trade on Kwenta",
+				"copy": "Learn about the many features of Kwenta; 10x leverage, instant transactions, deep liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
-				"copy": "Earn the Kwenta token by participating in staking or incentives"
+				"copy": "Earn $KWENTA with trading incentives and staking."
 			},
 			"how-governance": {
 				"title": "How Governance Works",
@@ -124,16 +125,16 @@
 			"description": "Take Back The Market, Trade Like A Whale",
 			"categories": "Commodities, Forex, Crypto and more."
 		},
-		"features": {
-			"title": "FEATURE CALLOUTS",
-			"description": "Trading Without The Limits Of A Centralised Exchange",
+		"features": { 
+			"title": "FEATURES",
+			"description": "Trading Without The Limits Of A Centralized Exchange",
 			"blazing-fast": {
 				"title": "Blazing Fast",
-				"copy": "Near-instant trade confirmations using Layer 2 scalability"
+				"copy": "Near-instant trade confirmations using Optimism's Layer 2 scalability"
 			},
 			"low-gas-fees": {
 				"title": "Low Gas Fees",
-				"copy": "Transaction costs on Layer 2 are one-tenth of L1"
+				"copy": "Transaction costs on Optimism Layer 2 are one-tenth of Ethereum L1"
 			},
 			"unique-assets": {
 				"title": "Unique Assets",
@@ -141,7 +142,7 @@
 			},
 			"permissionless": {
 				"title": "Permissionless",
-				"copy": "A full on-chain DeFi futures trading experience"
+				"copy": "A fully on-chain DeFi futures trading experience"
 			},
 			"mobile": {
 				"title": "Mobile",
@@ -922,7 +923,9 @@
 				"total-volume": "Total Volume",
 				"liquidations": "Liquidations",
 				"24h-pnl": "24H PnL",
-				"total-pnl": "PnL"
+				"total-pnl": "PnL ($)",
+				"percent-pnl": "PnL (%)",
+				"rank-mobile": "#"
 			}
 		},
 		"trader-history": {

@@ -1,3 +1,4 @@
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
 
 export type MenuLink = {
@@ -28,6 +29,21 @@ export const MENU_LINKS: MenuLinks = [
 	// 	i18nLabel: 'header.nav.earn',
 	// 	link: ROUTES.Earn.Home,
 	// },
+];
+
+export const HOMEPAGE_MENU_LINKS: MenuLinks = [
+	{
+		i18nLabel: 'homepage.nav.markets',
+		link: ROUTES.Home.Markets,
+	},
+	{
+		i18nLabel: 'homepage.nav.governance.title',
+		link: ROUTES.Home.Root,
+	},
+	{
+		i18nLabel: 'homepage.nav.blog',
+		link: EXTERNAL_LINKS.Social.Mirror,
+	},
 ];
 
 export const MENU_LINKS_WALLET_CONNECTED: MenuLinks = [];

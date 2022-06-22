@@ -6,10 +6,11 @@ import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { DAY_PERIOD } from './constants';
+import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
 import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 import { FuturesVolumes } from './types';
 import { getFuturesTrades } from './subgraph';
+import ROUTES from 'constants/routes';
 
 const useGetFuturesTradingVolumeForAllMarkets = (
 	options?: UseQueryOptions<FuturesVolumes | null>
@@ -17,7 +18,8 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const homepage = window.location.pathname === ROUTES.Home.Root;
+	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	return useQuery<FuturesVolumes | null>(
 		QUERY_KEYS.Futures.TradingVolumeForAll(network.id),
@@ -53,7 +55,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
 	);
 };
 
