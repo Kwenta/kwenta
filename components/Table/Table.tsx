@@ -38,6 +38,7 @@ type TableProps = {
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
 	showShortList?: boolean;
+	lastRef?: any;
 };
 
 export const Table: FC<TableProps> = ({
@@ -57,6 +58,7 @@ export const Table: FC<TableProps> = ({
 	highlightRowsOnHover,
 	showShortList,
 	sortBy = [],
+	lastRef = null,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -153,13 +155,31 @@ export const Table: FC<TableProps> = ({
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
-								{page.map((row: Row) => {
+								{page.map((row: Row, idx: number) => {
 									prepareRow(row);
+									const props = row.getRowProps();
+									if (lastRef && idx === page.length - 1) {
+										return (
+											<TableBodyRow
+												className="table-body-row"
+												{...props}
+												ref={lastRef}
+												onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
+												$highlightRowsOnHover={highlightRowsOnHover}
+											>
+												{row.cells.map((cell: Cell) => (
+													<TableCell className="table-body-cell" {...cell.getCellProps()}>
+														{cell.render('Cell')}
+													</TableCell>
+												))}
+											</TableBodyRow>
+										);
+									}
 
 									return (
 										<TableBodyRow
 											className="table-body-row"
-											{...row.getRowProps()}
+											{...props}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>

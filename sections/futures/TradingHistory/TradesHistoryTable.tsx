@@ -1,14 +1,12 @@
-import { useInView } from 'react-intersection-observer';
 import Table from 'components/Table';
 import { EXTERNAL_LINKS } from 'constants/links';
 import { NO_VALUE } from 'constants/placeholder';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-import _ from 'lodash';
 
 import { isL2MainnetState } from 'store/wallet';
 import styled from 'styled-components';
@@ -24,41 +22,48 @@ type TradesHistoryTableProps = {
 
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOfTrades }) => {
 	const { t } = useTranslation();
-	const { ref, inView } = useInView();
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
-
-	// for example, should remove and make this conditional on hitting the bottom of container
-	useEffect(() => {
-		setTimeout(() => {
-			console.log('Fetching next page');
-			futuresTradesQuery.fetchNextPage();
-		}, 5000);
-	}, []);
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
 		const futuresTrades =
 			futuresTradesPages.length > 0
-				? futuresTradesPages
-						.map((trades: FuturesTrade[] | null) => {
-							return (
-								trades?.map((trade: FuturesTrade) => {
-									return {
-										value: Number(trade?.price),
-										amount: Number(trade?.size),
-										time: Number(trade?.timestamp),
-										id: trade?.txnHash,
-										currencyKey,
-										orderType: trade?.orderType,
-									};
-								}) ?? []
-							);
-						})
-						.reduce((a, b) => [...a, ...b])
+				? futuresTradesPages.flat().map((trade: FuturesTrade | null) => {
+						return {
+							value: Number(trade?.price),
+							amount: Number(trade?.size),
+							time: Number(trade?.timestamp),
+							id: trade?.txnHash,
+							currencyKey,
+							orderType: trade?.orderType,
+						};
+				  })
 				: [];
 		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
+
+	const observer = useRef<IntersectionObserver | null>(null);
+	const lastElementRef = useCallback(
+		(node) => {
+			if (futuresTradesQuery.isLoading) return;
+			if (observer) {
+				if (observer.current) {
+					observer.current.disconnect();
+				}
+
+				observer.current = new IntersectionObserver((entries) => {
+					if (entries[0].isIntersecting) {
+						futuresTradesQuery.fetchNextPage();
+					}
+				});
+			}
+			if (node) {
+				observer.current?.observe(node);
+			}
+		},
+		[futuresTradesQuery]
+	);
 
 	const calTimeDelta = (time: number) => {
 		const timeDelta = (Date.now() - time * 1000) / 1000;
@@ -91,8 +96,10 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 			<TableContainer>
 				<StyledTable
 					data={data}
-					pageSize={numberOfTrades}
 					showPagination={true}
+					pageSize={1000}
+					isLoading={futuresTradesQuery.isLoading}
+					lastRef={lastElementRef}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
 							? isL2Mainnet
@@ -163,7 +170,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 						},
 					]}
 				/>
-				<LoadingBar ref={ref}>{`Header inside viewport ${inView}.`}</LoadingBar>
+				<Loading isLoading={futuresTradesQuery.isFetchingNextPage}>Loading More ...</Loading>
 			</TableContainer>
 		</HistoryContainer>
 	);
@@ -171,9 +178,9 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 
 export default TradesHistoryTable;
 
-const LoadingBar = styled.div`
-	width: 100%;
+const Loading = styled.div<{ isLoading: boolean }>`
 	text-align: center;
+	visibility: ${(props) => (props.isLoading ? 'show' : 'hidden')};
 `;
 
 const HistoryContainer = styled.div`
