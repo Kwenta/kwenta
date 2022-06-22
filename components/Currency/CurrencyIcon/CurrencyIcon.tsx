@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
@@ -75,6 +75,10 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		alt: currencyKey,
 		...rest,
 	};
+
+	useEffect(() => {
+		setFirstFallbackError(false);
+	}, [currencyKey]);
 
 	if (!firstFallbackError) {
 		switch (currencyKey) {

@@ -119,17 +119,32 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		return oneInchQuery.data.tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey));
 	}, [oneInchQuery.isSuccess, oneInchQuery.data, synthKeys]);
 
+	const searchFilteredTokens = useDebouncedMemo(
+		() =>
+			assetSearch
+				? oneInchTokenList.filter(({ name, symbol }) => {
+						const assetSearchLC = assetSearch.toLowerCase();
+						return (
+							name.toLowerCase().includes(assetSearchLC) ||
+							symbol.toLowerCase().includes(assetSearchLC)
+						);
+				  })
+				: oneInchTokenList,
+		[oneInchTokenList, assetSearch],
+		DEFAULT_SEARCH_DEBOUNCE_MS
+	);
+
 	const oneInchTokensPaged = useMemo(() => {
 		if (!oneInchEnabled) return [];
 		const items =
-			oneInchTokenList.map((t) => ({
+			searchFilteredTokens.map((t) => ({
 				...t,
 				isSynth: false,
 			})) || [];
 		const ordered = orderBy(items, (i) => i.symbol);
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [oneInchTokenList, page, oneInchEnabled]);
+	}, [searchFilteredTokens, page, oneInchEnabled]);
 
 	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
 	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};

@@ -104,7 +104,13 @@ const useExchange = ({
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
 	const { synthsMap, synthetixjs, tokensMap: synthTokensMap } = Connector.useContainer();
-	const { createERC20Contract, swap1Inch, swapSynthSwap } = Convert.useContainer();
+	const {
+		createERC20Contract,
+		swap1Inch,
+		swapSynthSwap,
+		swapSynthSwapGasEstimate,
+		swap1InchGasEstimate,
+	} = Convert.useContainer();
 
 	const {
 		useETHBalanceQuery,
@@ -575,10 +581,8 @@ const useExchange = ({
 				setGasInfo(gasEstimate);
 			}
 		};
-		// TODO: Gas estimation for synthswap and 1inch
-		if (txProvider === 'synthetix') {
-			getGasLimitEstimate();
-		}
+		getGasLimitEstimate();
+
 		// eslint-disable-next-line
 	}, [submissionDisabledReason, gasInfo, txProvider]);
 
@@ -657,7 +661,7 @@ const useExchange = ({
 		async (gasPriceInWei: number | null) => {
 			try {
 				if (isL2 && !gasPrice) return null;
-				if (synthetixjs != null) {
+				if (synthetixjs != null && txProvider === 'synthetix') {
 					const sourceCurrencyKey = ethers.utils.parseBytes32String(
 						getExchangeParams(true)[0] as string
 					);
@@ -705,13 +709,73 @@ const useExchange = ({
 					});
 					const limit = isL2 ? gasLimitNum : normalizeGasLimit(gasLimitNum);
 					return { limit, l1Fee };
+				} else if (txProvider === 'synthswap') {
+					const gasEstimate = await swapSynthSwapGasEstimate(
+						allTokensMap[quoteCurrencyKey!],
+						allTokensMap[baseCurrencyKey!],
+						quoteCurrencyAmount,
+						slippage
+					);
+					const metaTx = await swapSynthSwap(
+						allTokensMap[quoteCurrencyKey!],
+						allTokensMap[baseCurrencyKey!],
+						quoteCurrencyAmount,
+						slippage,
+						'meta_tx'
+					);
+					const l1Fee = await getL1SecurityFee({
+						...metaTx,
+						gasPrice: gasPriceInWei!,
+						gasLimit: Number(gasEstimate),
+					});
+
+					return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee: l1Fee };
+				} else {
+					const estimate = await swap1InchGasEstimate(
+						quoteCurrencyTokenAddress!,
+						baseCurrencyTokenAddress!,
+						quoteCurrencyAmount,
+						slippage
+					);
+					const metaTx = await swap1Inch(
+						quoteCurrencyTokenAddress!,
+						baseCurrencyTokenAddress!,
+						quoteCurrencyAmount,
+						slippage,
+						true
+					);
+					const l1Fee = await getL1SecurityFee({
+						...metaTx,
+						gasPrice: gasPriceInWei!,
+						gasLimit: Number(estimate),
+					});
+
+					return { limit: normalizeGasLimit(Number(estimate)), l1Fee: l1Fee };
 				}
 			} catch (e) {
 				console.log(e);
 			}
 			return null;
 		},
-		[getExchangeParams, isL2, synthetixjs, gasPrice, getL1SecurityFee]
+		[
+			isL2,
+			synthetixjs,
+			gasPrice,
+			allTokensMap,
+			quoteCurrencyTokenAddress,
+			baseCurrencyTokenAddress,
+			quoteCurrencyAmount,
+			slippage,
+			txProvider,
+			baseCurrencyKey,
+			quoteCurrencyKey,
+			swapSynthSwapGasEstimate,
+			swap1Inch,
+			swap1InchGasEstimate,
+			swapSynthSwap,
+			getL1SecurityFee,
+			getExchangeParams,
+		]
 	);
 
 	const Redeemer = useMemo(() => synthetixjs?.contracts.SynthRedeemer ?? null, [synthetixjs]);
@@ -923,6 +987,7 @@ const useExchange = ({
 				let tx: ethers.ContractTransaction | null = null;
 
 				if (txProvider === '1inch' && oneInchTokensMap != null) {
+					// @ts-ignore is correct tx type
 					tx = await swap1Inch(
 						quoteCurrencyTokenAddress!,
 						baseCurrencyTokenAddress!,
@@ -1286,7 +1351,7 @@ const useExchange = ({
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					// show fee's only for "synthetix" (provider)
-					showFee={txProvider === 'synthetix' ? true : false}
+					showFee={txProvider === 'synthetix'}
 					isApproved={needsApproval ? isApproved : undefined}
 				/>
 			)}

@@ -2,12 +2,10 @@ import React, { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-
 import { currentThemeState } from 'store/ui';
-
 import Connector from 'containers/Connector';
-
 import Button from 'components/Button';
 
 import { isWalletConnectedState, networkState } from 'store/wallet';
@@ -22,16 +20,10 @@ import MoonIcon from 'assets/svg/app/moon.svg';
 
 type WalletButtonsProps = {
 	settingsModalOpened: boolean;
-	uniswapWidgetOpened: boolean;
 	setSettingsModalOpened: Dispatch<SetStateAction<boolean>>;
-	setUniswapWidgetOpened: Dispatch<SetStateAction<boolean>>;
 };
 
-const WalletButtons: React.FC<WalletButtonsProps> = ({
-	settingsModalOpened,
-	uniswapWidgetOpened,
-	setUniswapWidgetOpened,
-}) => {
+const WalletButtons: React.FC<WalletButtonsProps> = ({ settingsModalOpened }) => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
@@ -75,10 +67,7 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({
 
 	const walletIsConnectedAndSupported = (
 		<>
-			<BalanceActions
-				uniswapWidgetOpened={uniswapWidgetOpened}
-				setShowUniswapWidget={setUniswapWidgetOpened}
-			/>
+			<BalanceActions />
 			<NetworksSwitcher />
 			<WalletActions />
 		</>

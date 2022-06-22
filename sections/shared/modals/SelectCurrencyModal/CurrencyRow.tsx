@@ -52,9 +52,13 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 						: token.name
 				}
 				showIcon={true}
-				iconProps={{
-					url: token.logoURI,
-				}}
+				iconProps={
+					!token.isSynth
+						? {
+								url: token.logoURI,
+						  }
+						: undefined
+				}
 				{...{ currencyKey, marketClosureReason }}
 			/>
 			{isWalletConnected ? (

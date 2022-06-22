@@ -106,11 +106,21 @@ const useConvert = () => {
 		return ethers.utils.formatEther(response.data.toTokenAmount).toString();
 	};
 
-	const swapSynthSwap = async (
+	const swapSynthSwapGasEstimate = async (
 		fromToken: Token,
 		toToken: Token,
 		fromAmount: string,
 		slippage: number = 1
+	) => {
+		return swapSynthSwap(fromToken, toToken, fromAmount, slippage, 'estimate_gas');
+	};
+
+	const swapSynthSwap = async (
+		fromToken: Token,
+		toToken: Token,
+		fromAmount: string,
+		slippage: number = 1,
+		metaOnly?: 'meta_tx' | 'estimate_gas'
 	) => {
 		if (!signer) throw new Error(t('exchange.1inch.wallet-not-connected'));
 		if (network.id !== 10) throw new Error(t('exchange.1inch.unsupported-network'));
@@ -147,12 +157,19 @@ const useConvert = () => {
 			signer
 		);
 
+		const contractFunc =
+			metaOnly === 'meta_tx'
+				? synthSwapContract.populateTransaction
+				: metaOnly === 'estimate_gas'
+				? synthSwapContract.estimateGas
+				: synthSwapContract;
+
 		if (tokensMap[toToken.symbol]) {
 			const symbolBytes = formatBytes32String(toToken.symbol);
 			if (formattedData.functionSelector === 'swap') {
-				return await synthSwapContract.swapInto(symbolBytes, formattedData.data);
+				return contractFunc.swapInto(symbolBytes, formattedData.data);
 			} else {
-				return await synthSwapContract.uniswapSwapInto(
+				return contractFunc.uniswapSwapInto(
 					symbolBytes,
 					fromToken.address,
 					params.fromTokenAmount,
@@ -161,14 +178,14 @@ const useConvert = () => {
 			}
 		} else {
 			if (formattedData.functionSelector === 'swap') {
-				return await synthSwapContract.swapOutOf(
+				return contractFunc.swapOutOf(
 					fromSymbolBytes,
 					wei(fromAmount).toString(0, true),
 					formattedData.data
 				);
 			} else {
 				const usdValue = parseEther(synthAmountEth).toString();
-				return await synthSwapContract.uniswapSwapOutOf(
+				return contractFunc.uniswapSwapOutOf(
 					fromSymbolBytes,
 					toToken.address,
 					wei(fromAmount).toString(0, true),
@@ -183,20 +200,40 @@ const useConvert = () => {
 		quoteTokenAddress: string,
 		baseTokenAddress: string,
 		amount: string,
-		slippage: number = 1
+		slippage: number = 1,
+		metaOnly = false
 	) => {
 		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
 
 		const { from, to, data, value } = params.tx;
 
-		const tx = await signer!.sendTransaction({
-			from,
-			to,
-			data,
-			value: ethers.BigNumber.from(value),
-		});
-
+		const tx = metaOnly
+			? await signer!.populateTransaction({
+					from,
+					to,
+					data,
+					value: ethers.BigNumber.from(value),
+			  })
+			: await signer!.sendTransaction({
+					from,
+					to,
+					data,
+					value: ethers.BigNumber.from(value),
+			  });
 		return tx;
+	};
+
+	const swap1InchGasEstimate = async (
+		quoteTokenAddress: string,
+		baseTokenAddress: string,
+		amount: string,
+		slippage: number = 1
+	) => {
+		const params = await get1InchSwapParams(quoteTokenAddress, baseTokenAddress, amount, slippage);
+
+		const { gas } = params.tx;
+
+		return gas;
 	};
 
 	const get1InchApproveAddress = async () => {
@@ -219,6 +256,8 @@ const useConvert = () => {
 		quote1Inch,
 		get1InchApproveAddress,
 		createERC20Contract,
+		swapSynthSwapGasEstimate,
+		swap1InchGasEstimate,
 	};
 };
 

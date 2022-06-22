@@ -1,6 +1,8 @@
 import { FC, MouseEvent, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -25,10 +27,10 @@ import { border } from 'components/Button';
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import Wei, { wei } from '@synthetixio/wei';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
+import { isL2State } from 'store/wallet';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -77,6 +79,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	} = useSelectedPriceCurrency();
 
 	const isBase = useMemo(() => side === 'base', [side]);
+	const isL2 = useRecoilValue(isL2State);
 
 	const hasWalletBalance = useMemo(() => walletBalance != null && currencyKey != null, [
 		walletBalance,
@@ -170,7 +173,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								)}
 								{currencyKey ?? (
 									<CapitalizedText>
-										{txProvider === '1inch'
+										{isL2
 											? t('exchange.currency-card.currency-selector.select-token')
 											: t('exchange.currency-card.currency-selector.select-synth')}
 									</CapitalizedText>
