@@ -12,7 +12,7 @@ import { Price } from 'queries/rates/types';
 import * as _ from 'lodash/fp';
 import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
 import Wei, { wei } from '@synthetixio/wei';
-import { formatNumber } from 'utils/formatters/number';
+import { formatNumber, zeroBN } from 'utils/formatters/number';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import ChangePercent from 'components/ChangePercent';
 import { isEurForex } from 'utils/futures';
@@ -29,16 +29,16 @@ type Cell = {
 	balance: Wei;
 	usdBalance: Wei;
 	price: Wei | null;
-	priceChange: number | undefined;
+	priceChange: Wei | undefined;
 };
 
-const calculatePriceChange = (current: Wei | null, past: Price | undefined): number | undefined => {
+const calculatePriceChange = (current: Wei | null, past: Price | undefined) => {
 	if (_.isNil(current) || _.isNil(past)) {
 		return undefined;
 	}
-	const currentPrice = current.toNumber();
-	const pastPrice = past.price;
-	const priceChange = (currentPrice - pastPrice) / currentPrice;
+
+	const priceChange = current.sub(past.price).div(current);
+
 	return priceChange;
 };
 
@@ -83,7 +83,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				<TableContainer>
 					<StyledTable
 						data={data}
-						showPagination={true}
+						showPagination
 						highlightRowsOnHover
 						columns={[
 							{
@@ -187,8 +187,8 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 								sortable: true,
 								sortType: useMemo(
 									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.price ?? wei(0);
-										const rowTwo = rowB.original.price ?? wei(0);
+										const rowOne = rowA.original.price ?? zeroBN;
+										const rowTwo = rowB.original.price ?? zeroBN;
 										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 									},
 									[]
@@ -205,7 +205,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 									return conditionalRender<Cell['priceChange']>(
 										cellProps.row.original.priceChange,
 										<ChangePercent
-											value={cellProps.row.original.priceChange!}
+											value={cellProps.row.original.priceChange ?? zeroBN}
 											decimals={2}
 											className="change-pct"
 										/>
@@ -214,9 +214,10 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 								sortable: true,
 								sortType: useMemo(
 									() => (rowA: Row<Cell>, rowB: Row<Cell>) => {
-										const rowOne = rowA.original.priceChange ?? 0;
-										const rowTwo = rowB.original.priceChange ?? 0;
-										return rowOne > rowTwo ? 1 : -1;
+										const rowOne = rowA.original.priceChange ?? zeroBN;
+										const rowTwo = rowB.original.priceChange ?? zeroBN;
+
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 									},
 									[]
 								),
@@ -239,7 +240,24 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 							),
 							accessor: 'market',
 							Cell: (cellProps: CellProps<Cell>) => {
-								return <div />;
+								return (
+									<div>
+										<MarketContainer>
+											<IconContainer>
+												<StyledCurrencyIcon currencyKey={cellProps.row.original.synth} />
+											</IconContainer>
+											<StyledText>{cellProps.row.original.synth}</StyledText>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.price ?? 0}
+												sign="$"
+												formatOptions={{
+													minDecimals: isEurForex(cellProps.row.original.synth) ? 4 : 2,
+												}}
+											/>
+										</MarketContainer>
+									</div>
+								);
 							},
 						},
 						{
@@ -250,8 +268,19 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 								</div>
 							),
 							accessor: 'amount',
-							Cell: () => {
-								return <div />;
+							Cell: (cellProps: CellProps<Cell>) => {
+								return (
+									<div>
+										<AmountCol>
+											<p>{formatNumber(cellProps.row.original.balance ?? 0)}</p>
+										</AmountCol>
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.usdBalance ?? 0}
+											sign="$"
+										/>
+									</div>
+								);
 							},
 						},
 						{
@@ -261,8 +290,22 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 								</div>
 							),
 							accessor: 'priceChange',
-							Cell: () => {
-								return <div />;
+							Cell: (cellProps: CellProps<Cell>) => {
+								return conditionalRender<Cell['priceChange']>(
+									cellProps.row.original.priceChange,
+									<ChangePercent
+										value={cellProps.row.original.priceChange ?? 0}
+										decimals={2}
+										className="change-pct"
+									/>
+								);
+							},
+							sortable: true,
+							sortType: (rowA: Row<Cell>, rowB: Row<Cell>) => {
+								const rowOne = rowA.original.priceChange ?? zeroBN;
+								const rowTwo = rowB.original.priceChange ?? zeroBN;
+
+								return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
 							},
 						},
 					]}

@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
+import { wei, WeiSource } from '@synthetixio/wei';
 
 import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
@@ -7,18 +8,18 @@ import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 
 type ChangePercentProps = {
-	value: number;
+	value: WeiSource;
 	className?: string;
 	decimals?: number;
 };
 
 export const ChangePercent: FC<ChangePercentProps> = ({ value, decimals = 2, ...rest }) => {
-	const isPositive = value >= 0;
+	const isPositive = wei(value ?? 0).gt(0);
 
 	return (
 		<CurrencyChange isPositive={isPositive} {...rest}>
 			{isPositive ? <ChangePositiveIcon /> : <ChangeNegativeIcon />}
-			{formatPercent(Math.abs(value), { minDecimals: decimals })}
+			{formatPercent(wei(value ?? 0).abs(), { minDecimals: decimals })}
 		</CurrencyChange>
 	);
 };

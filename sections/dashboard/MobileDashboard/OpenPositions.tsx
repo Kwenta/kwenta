@@ -19,31 +19,24 @@ import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { TabPanel } from 'components/Tab';
 import SynthBalancesTable from '../SynthBalancesTable';
 import TabButton from 'components/Button/TabButton';
+import { PositionHistory } from 'queries/futures/types';
 
-export const OpenPosition = () => {
+export const OpenPosition: React.FC<{ positionHistory: PositionHistory }> = ({
+	positionHistory,
+}) => {
+	// Remove this, fetching global data in "dumb" component.
+	const { network } = Connector.useContainer();
+
 	return (
 		<OpenPositionContainer>
 			<div>
-				<CurrencyIcon currencyKey="sETH" />
+				<CurrencyIcon currencyKey={getMarketKey(positionHistory.asset, network.id)} />
 			</div>
 			<div></div>
 			<div></div>
 		</OpenPositionContainer>
 	);
 };
-
-const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	display: flex;
-	justify-content: space-between;
-	margin: 15px 0;
-`;
-
-const OpenPositionsHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	margin: 15px;
-`;
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -65,7 +58,7 @@ const OpenPositions: React.FC = () => {
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
-	// const futuresPositionHistory = futuresPositionQuery?.data ?? [];
+	const futuresPositionHistory = futuresPositionQuery?.data ?? [];
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
@@ -142,6 +135,9 @@ const OpenPositions: React.FC = () => {
 					<div>Oracle/Entry</div>
 					<div>Unrealized P&amp;L</div>
 				</OpenPositionsHeader>
+				{futuresPositionHistory.map((positionHistory) => (
+					<OpenPosition positionHistory={positionHistory} />
+				))}
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
@@ -153,6 +149,23 @@ const OpenPositions: React.FC = () => {
 		</div>
 	);
 };
+
+const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
+	background: ${(props) => props.theme.colors.selectedTheme.button.background};
+	display: flex;
+	justify-content: space-between;
+	margin: 15px 0;
+`;
+
+const OpenPositionsHeader = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin: 15px;
+
+	& > div {
+		color: ${(props) => props.theme.colors.selectedTheme.gray};
+	}
+`;
 
 const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
 	display: flex;
