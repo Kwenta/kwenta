@@ -197,7 +197,6 @@ const Loading = styled.div<{ isLoading: boolean }>`
 	visibility: ${(props) => (props.isLoading ? 'show' : 'hidden')};
 `;
 
-const HistoryContainer = styled.div`
 const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	margin-bottom: 16px;
