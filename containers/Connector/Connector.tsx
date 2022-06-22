@@ -26,6 +26,8 @@ import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currenc
 import { synthToContractName } from 'utils/currencies';
 import { invert, keyBy } from 'lodash';
 import { useMemo } from 'react';
+import { getOptimismProvider } from '@synthetixio/providers';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -49,6 +51,11 @@ const useConnector = () => {
 
 	// Provides a default mainnet provider, irrespective of the current network
 	const staticMainnetProvider = new ethers.providers.InfuraProvider();
+	const defaultSynthetixjs = synthetix({
+		provider: getOptimismProvider({ networkId: DEFAULT_NETWORK_ID }),
+		networkId: DEFAULT_NETWORK_ID,
+		useOvm: true,
+	});
 
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
 		if (synthetixjs == null) {
@@ -274,6 +281,7 @@ const useConnector = () => {
 		transactionNotifier,
 		getTokenAddress,
 		staticMainnetProvider,
+		defaultSynthetixjs,
 	};
 };
 

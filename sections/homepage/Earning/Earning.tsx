@@ -13,18 +13,15 @@ import {
 } from 'styles/common';
 import { Copy, StackSection, Title } from '../common';
 
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
 import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
 import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
 
-import Link from 'next/link';
-import ROUTES from 'constants/routes';
-import Button from 'components/Button';
 import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import Loader from 'components/Loader';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
+import media, { Media } from 'styles/media';
 
 const EARNINGS = [
 	{
@@ -65,17 +62,32 @@ const Earning = () => {
 		<StackSection>
 			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-				<StyledFlexContainer>
-					{EARNINGS.map(({ id, title, copy, image }) => (
-						<FeatureCard key={id}>
-							<FeatureIconContainer>{image}</FeatureIconContainer>
-							<FeatureContentTitle>
-								<CenteredTitle>{t(title)}</CenteredTitle>
-							</FeatureContentTitle>
-							<CenteredCopy>{t(copy)}</CenteredCopy>
-						</FeatureCard>
-					))}
-				</StyledFlexContainer>
+				<Media greaterThan="sm">
+					<StyledFlexContainer>
+						{EARNINGS.map(({ id, title, copy, image }) => (
+							<FeatureCard key={id}>
+								<FeatureIconContainer>{image}</FeatureIconContainer>
+								<FeatureContentTitle>
+									<CenteredTitle>{t(title)}</CenteredTitle>
+								</FeatureContentTitle>
+								<CenteredCopy>{t(copy)}</CenteredCopy>
+							</FeatureCard>
+						))}
+					</StyledFlexContainer>
+				</Media>
+				<Media lessThan="sm">
+					<StyledFlexDivColCentered>
+						{EARNINGS.map(({ id, title, copy, image }) => (
+							<FeatureCard key={id}>
+								<FeatureIconContainer>{image}</FeatureIconContainer>
+								<FeatureContentTitle>
+									<CenteredTitle>{t(title)}</CenteredTitle>
+								</FeatureContentTitle>
+								<CenteredCopy>{t(copy)}</CenteredCopy>
+							</FeatureCard>
+						))}
+					</StyledFlexDivColCentered>
+				</Media>
 				<StatsCardContainer>
 					<StatsCard className="first">
 						<StatsValue>
@@ -101,23 +113,16 @@ const Earning = () => {
 						<StatsName>{t('homepage.earning.stats.trades')}</StatsName>
 					</StatsCard>
 				</StatsCardContainer>
-				<CTAContainer>
-					<Link href={ROUTES.Home.Overview}>
-						<Button variant="primary" isRounded={false} size="md" disabled>
-							{t('homepage.earning.stake-kwenta')}
-						</Button>
-					</Link>
-					<Link href={ROUTES.Home.Overview}>
-						<StyledButton isRounded={false} size="md" disabled>
-							{t('homepage.earning.how-to-earn')}
-							<ArrowUpRightIcon />
-						</StyledButton>
-					</Link>
-				</CTAContainer>
 			</Container>
 		</StackSection>
 	);
 };
+
+const StyledFlexDivColCentered = styled(FlexDivColCentered)`
+	width: 405px;
+	margin: auto;
+	padding: 0px;
+`;
 
 const GrayCopy = styled(Copy)`
 	margin-top: 17px;
@@ -126,17 +131,15 @@ const GrayCopy = styled(Copy)`
 	font-size: 18px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+	${media.lessThan('sm')`
+		font-size: 16px;
+		width: 336px;
+		margin-bottom: 60px;
+	`}
 `;
 
 const Emphasis = styled.b`
 	color: ${(props) => props.theme.colors.common.primaryGold};
-`;
-
-const StyledButton = styled(Button)`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-transform: none;
 `;
 
 const StatsName = styled.div`
@@ -144,19 +147,32 @@ const StatsName = styled.div`
 	letter-spacing: -0.02em;
 	text-transform: uppercase;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+	${media.lessThan('sm')`
+		font-size: 11px;
+	`}
 `;
+
 const StatsValue = styled.div`
 	font-size: 40px;
 	line-height: 100%;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
 	margin-top: 14px;
 	margin-bottom: 10px;
+	${media.lessThan('sm')`
+		font-size: 24px;
+	`}
 `;
+
 const StatsCardContainer = styled(FlexDivRow)`
 	margin: 80px 0px;
 	justify-content: center;
 	border-top: 1px solid #3d3c3c;
 	width: 1160px;
+	${media.lessThan('sm')`
+		width: 345px;
+		margin: 60px auto;
+		padding: 0px;
+	`}
 `;
 
 const StatsCard = styled(FlexDivColCentered)`
@@ -184,10 +200,26 @@ const CenteredTitle = styled(Title)`
 
 const Container = styled(GridDiv)`
 	width: 100vw;
-	background: linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+	${media.greaterThan('sm')`
+		background: radial-gradient(white, rgba(2, 225, 255, 0.2) 0px, transparent 180px),
+		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 280px),
+		linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+		background-size: 100% 200%, 100% 200%, 100% 100%;
+		background-position: -650px -300px, -600px -450px, 0px 0px;
+		background-repeat: no-repeat, no-repeat, repeat;
+	`}
 	overflow: hidden;
 	justify-content: center;
 	padding: 110px 0px;
+	${media.lessThan('sm')`
+		padding-top: 100px;
+		background: radial-gradient(white, rgba(2, 225, 255, 0.12) 0px, transparent 100px),
+		radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 140px),
+		linear-gradient(180deg, #0f0f0f 0%, #1e1e1e 100%);
+		background-size: 100% 50%, 100% 50%, 100% 100%;
+		background-position: -120px 250px, -100px 40px, 0px 0px;
+		background-repeat: no-repeat, no-repeat, repeat;
+	`}
 `;
 
 const StyledFlexContainer = styled(FlexDivRow)`
@@ -198,6 +230,9 @@ const StyledFlexContainer = styled(FlexDivRow)`
 const FeatureCard = styled(FlexDivCol)`
 	margin-top: 90px;
 	padding: 0px 40px;
+	${media.lessThan('sm')`
+		margin-top: 40px;
+	`}
 `;
 
 const FeatureIconContainer = styled.div`
@@ -213,14 +248,6 @@ const FeatureIconContainer = styled.div`
 const FeatureContentTitle = styled(FlexDivCentered)`
 	padding-bottom: 20px;
 	justify-content: center;
-`;
-
-const CTAContainer = styled.div`
-	margin-top: 28.5px;
-	display: flex;
-	justify-content: center;
-	gap: 20px;
-	width: 1160px;
 `;
 
 export default Earning;

@@ -22,27 +22,22 @@ import {
 	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
+import { currentMarketState, positionState } from 'store/futures';
+import { useRefetchContext } from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
-	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	accessibleMargin: Wei;
-	market: string | null;
 };
 
 const PLACEHOLDER = '$0.00';
 const ZERO_WEI = wei(0);
 
-const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
-	onDismiss,
-	onTxConfirmed,
-	accessibleMargin,
-	market,
-}) => {
+const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [isDisabled, setDisabled] = React.useState<boolean>(true);
@@ -51,6 +46,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -63,6 +60,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const position = useRecoilValue(positionState);
+	const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI;
 
 	const computedAmount = React.useMemo(
 		() =>
@@ -96,7 +96,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			monitorTransaction({
 				txHash: withdrawTxn.hash,
 				onTxConfirmed: () => {
-					onTxConfirmed();
+					handleRefetch('margin-change');
 					onDismiss();
 				},
 			});

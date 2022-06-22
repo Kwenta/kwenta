@@ -9,6 +9,7 @@ import { EXTERNAL_LINKS } from 'constants/links';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import { FlexDivCentered, ExternalLink } from 'styles/common';
 import { GridContainer } from 'sections/homepage/common';
+import media from 'styles/media';
 import Logo from '../Logo';
 
 const Footer: React.FC = () => {
@@ -142,6 +143,10 @@ const CopyRight = styled.div`
 	opacity: 0.5;
 	margin-right: 20px;
 	padding-top: 10px;
+	${media.lessThan('sm')`
+		margin-right: 0px;
+		padding-top: 0px;
+	`};
 `;
 
 const ListTitle = styled.div`
@@ -155,51 +160,82 @@ const PowerContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	width: 1280px;
+	align-items: center;
 	padding-top: 45px;
-	border-top-width: 1px;
-	border-top-style: solid;
-	border-top-color: #3d3c3c;
+	border-top: 1px solid #3d3c3c;
 	margin-bottom: 50px;
+	${media.lessThan('sm')`
+		width: 355px;
+		padding-left: 10px;
+		padding-right: 10px;
+		gap: 20px 80px;
+		flex-wrap: wrap;
+		padding-top: 60px;
+		border-top: 1px solid #3d3c3c;
+		justify-content: center;
+		margin-bottom: 100px;
+	`};
 `;
 
 const MultiListContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	column-gap: 350px;
-	width: 1280px;
-	padding-left: 40px;
-	padding-right: 40px;
+	column-gap: calc(100vw / 3 - 350px);
 	margin-top: 80px;
 	margin-bottom: 42.5px;
+	${media.lessThan('sm')`
+		width: 355px;
+		padding-left: 10px;
+		padding-right: 10px;
+		gap: 20px 80px;
+		flex-wrap: wrap;
+		padding-top: 60px;
+		border-top: 1px solid #3d3c3c;
+		margin-top: 45px;
+		margin-bottom: 60px;
+	`};
 `;
 
 const ListContainer = styled.div`
-	disply: flex;
-	flex-direction: column;
 	font-size: 18px;
 	line-height: 150%;
 	color: ${(props) => props.theme.colors.common.primaryWhite};
+	${media.lessThan('sm')`
+		font-size: 15px;
+	`};
 `;
 
 const LogoFooter = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	width: 1280px;
-	padding-left: 40px;
-	padding-right: 40px;
+	${media.lessThan('sm')`
+		width: 355px;
+		padding: 5px;
+		align-items: center;
+		align-content: center;
+	`};
 `;
 
 const StyledGridContainer = styled(GridContainer)`
 	grid-template-columns: repeat(1, auto);
 	grid-column-gap: 20px;
+	${media.lessThan('sm')`
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		align-items: center;
+	`};
 `;
 
 const SocialIcons = styled(FlexDivCentered)`
 	> * + * {
 		margin-left: 24px;
 	}
+
+	${media.lessThan('sm')`
+		padding-top: 5px;
+	`};
 `;
 
 export default Footer;

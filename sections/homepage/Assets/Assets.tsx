@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import router from 'next/router';
 import values from 'lodash/values';
 import isNil from 'lodash/isNil';
@@ -15,7 +15,7 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import { Media } from 'styles/media';
+import media, { Media } from 'styles/media';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
@@ -29,7 +29,8 @@ import { TabPanel } from 'components/Tab';
 import Connector from 'containers/Connector';
 import { getSynthDescription } from 'utils/futures';
 import { CurrencyKey, Synths } from 'constants/currency';
-import { GridContainer } from '../common';
+import Slider from 'react-slick';
+import Button from 'components/Button';
 
 enum MarketsTab {
 	FUTURES = 'futures',
@@ -76,9 +77,8 @@ export const PriceChart = ({ asset }: PriceChartProps) => {
 					visible: false,
 				},
 			},
-			handleScale: {
-				mouseWheel: false,
-			},
+			handleScale: false,
+			handleScroll: false,
 			crosshair: {
 				vertLine: {
 					visible: false,
@@ -177,6 +177,7 @@ const Assets = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const synthList = futuresMarkets.map(({ asset }) => asset);
+
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
@@ -262,9 +263,152 @@ const Assets = () => {
 		</>
 	);
 
+	var settings = {
+		className: 'center',
+		centerMode: true,
+		dots: true,
+		infinite: true,
+		centerPadding: (window.innerWidth - 380) / 2 + 40 + 'px',
+		speed: 0,
+		slidesToShow: 1,
+		slidesToScroll: 1,
+		initialSlide: 1,
+		focusOnSelect: true,
+		nextArrow: <></>,
+		prevArrow: <></>,
+	};
+
 	return (
 		<Container>
-			<Media greaterThanOrEqual="lg">
+			<Media lessThan="sm">
+				<FlexDivColCentered>{title}</FlexDivColCentered>
+				<TabButtonsContainer>
+					{MARKETS_TABS.map(({ name, label, active, onClick }) => (
+						<MarketSwitcher key={name} className={name} isActive={active} onClick={onClick}>
+							{label}
+						</MarketSwitcher>
+					))}
+				</TabButtonsContainer>
+				<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
+					<SliderContainer>
+						<StyledSlider {...settings}>
+							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
+								<StatsCardContainer key={key} className={key}>
+									<StatsCard
+										noOutline
+										onClick={() => {
+											router.push(`/market/${key}`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{name}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{priceChange === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={priceChange} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
+							))}
+						</StyledSlider>
+					</SliderContainer>
+				</TabPanel>
+				<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
+					<SliderContainer>
+						<StyledSlider {...settings}>
+							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
+								<StatsCardContainer key={key} className={key}>
+									<StatsCard
+										noOutline
+										onClick={() => {
+											market !== 'sUSD'
+												? router.push(`/exchange/${market}-sUSD`)
+												: router.push(`/exchange/`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{market}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{change === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={change} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
+							))}
+						</StyledSlider>
+					</SliderContainer>
+				</TabPanel>
+			</Media>
+			<Media greaterThanOrEqual="sm">
 				<FlexDivColCentered>
 					{title}
 					<TabButtonsContainer>
@@ -274,114 +418,120 @@ const Assets = () => {
 							</MarketSwitcher>
 						))}
 					</TabButtonsContainer>
+
 					<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{PERPS.map(({ key, name, description, price, volume, priceChange, image, icon }) => (
-								<StatsCard
-									key={key}
-									onClick={() => {
-										console.log(`link`, `/market/${key}`);
-										router.push(`/market/${key}`);
-									}}
-								>
-									<GridSvg className="bg" objectfit="cover" layout="fill" />
-									<StatsIconContainer>
-										{icon}
-										<StatsNameContainer>
-											<AssetName>{name}</AssetName>
-											<AssetDescription>{description}</AssetDescription>
-										</StatsNameContainer>
-									</StatsIconContainer>
-									<ChartContainer>{image}</ChartContainer>
-									<AssetPrice>
-										<Currency.Price
-											currencyKey={Synths.sUSD}
-											price={price}
-											sign={'$'}
-											conversionRate={1}
-										/>
-									</AssetPrice>
-									<StatsValueContainer>
-										<StatsValue>
-											{'CHG    '}
-											{priceChange === 0 ? (
-												<>-</>
-											) : (
-												<ChangePercent value={priceChange} decimals={1} className="change-pct" />
-											)}
-										</StatsValue>
-										<StatsValue>
-											{'VOL    '}
-											{volume === 0 ? (
-												<>-</>
-											) : (
-												<Currency.Price
-													currencyKey={Synths.sUSD}
-													price={volume}
-													sign={'$'}
-													conversionRate={1}
-													formatOptions={{ minDecimals: 0 }}
-												/>
-											)}
-										</StatsValue>
-									</StatsValueContainer>
-								</StatsCard>
+								<StatsCardContainer key={key}>
+									<StatsCard
+										className={key}
+										noOutline={false}
+										onClick={() => {
+											router.push(`/market/${key}`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{name}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{priceChange === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={priceChange} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
 							))}
 						</StyledFlexDivRow>
 					</TabPanel>
 					<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
 						<StyledFlexDivRow>
 							{SPOTS.map(({ key, market, description, price, volume, change, image, icon }) => (
-								<StatsCard
-									key={key}
-									onClick={() => {
-										market !== 'sUSD'
-											? router.push(`/exchange/${market}-sUSD`)
-											: router.push(`/exchange/`);
-									}}
-								>
-									<GridSvg className="bg" objectfit="cover" layout="fill" />
-									<FlexDiv>
-										{icon}
-										<StatsNameContainer>
-											<AssetName>{market}</AssetName>
-											<AssetDescription>{description}</AssetDescription>
-										</StatsNameContainer>
-									</FlexDiv>
-									<ChartContainer>{image}</ChartContainer>
-									<AssetPrice>
-										<Currency.Price
-											currencyKey={Synths.sUSD}
-											price={price}
-											sign={'$'}
-											conversionRate={1}
-										/>
-									</AssetPrice>
-									<StatsValueContainer>
-										<StatsValue>
-											{'CHG    '}
-											{change === 0 ? (
-												<>-</>
-											) : (
-												<ChangePercent value={change} decimals={1} className="change-pct" />
-											)}
-										</StatsValue>
-										<StatsValue>
-											{'VOL    '}
-											{volume === 0 ? (
-												<>-</>
-											) : (
-												<Currency.Price
-													currencyKey={Synths.sUSD}
-													price={volume}
-													sign={'$'}
-													conversionRate={1}
-													formatOptions={{ minDecimals: 0 }}
-												/>
-											)}
-										</StatsValue>
-									</StatsValueContainer>
-								</StatsCard>
+								<StatsCardContainer key={key}>
+									<StatsCard
+										className={key}
+										noOutline={false}
+										onClick={() => {
+											market !== 'sUSD'
+												? router.push(`/exchange/${market}-sUSD`)
+												: router.push(`/exchange/`);
+										}}
+									>
+										<GridSvg className="bg" objectfit="cover" layout="fill" />
+										<StatsIconContainer>
+											{icon}
+											<StatsNameContainer>
+												<AssetName>{market}</AssetName>
+												<AssetDescription>{description}</AssetDescription>
+											</StatsNameContainer>
+										</StatsIconContainer>
+										<ChartContainer>{image}</ChartContainer>
+										<AssetPrice>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={price}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										</AssetPrice>
+										<StatsValueContainer>
+											<StatsValue>
+												{'CHG    '}
+												{change === 0 ? (
+													<>-</>
+												) : (
+													<ChangePercent value={change} decimals={1} className="change-pct" />
+												)}
+											</StatsValue>
+											<StatsValue>
+												{'VOL    '}
+												{volume === 0 ? (
+													<>-</>
+												) : (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={volume}
+														sign={'$'}
+														conversionRate={1}
+														formatOptions={{ minDecimals: 0 }}
+													/>
+												)}
+											</StatsValue>
+										</StatsValueContainer>
+									</StatsCard>
+								</StatsCardContainer>
 							))}
 						</StyledFlexDivRow>
 					</TabPanel>
@@ -391,32 +541,186 @@ const Assets = () => {
 	);
 };
 
+const border = css`
+	padding: 1px;
+	width: 277px !important;
+	height: 152px !important;
+	margin: auto 10px;
+	border-radius: 15px;
+`;
+
+const SliderContainer = styled.div`
+	margin: auto;
+`;
+
+const StatsCardContainer = styled.div`
+	display: flex !important;
+	justify-content: center !important;
+	align-items: center !important;
+	border-radius: 15px;
+	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+
+	${media.lessThan('sm')`
+		width: 275px !important;
+		height: 150px !important;
+		margin: auto;
+	`};
+`;
+
+const StyledSlider = styled(Slider)`
+	margin: auto;
+
+	& > ul.slick-dots {
+		display: flex !important;
+		position: relative;
+		bottom: -10px;
+		width: 240px;
+		margin: auto;
+		padding: 0px;
+	}
+
+	& > .slick-dots li {
+		display: flex;
+		align-items: center;
+	}
+
+	& > .slick-dots li button {
+		border-radius: 12px;
+		padding: 2.5px;
+		width: 0px;
+		height: 0px;
+		background: linear-gradient(180deg, #282727 0%, #191818 100%);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.08),
+			inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	}
+
+	& > .slick-dots li button::before {
+		content: '';
+	}
+
+	& > .slick-dots li.slick-active button {
+		border-radius: 12px;
+		padding: 4px;
+		width: 0px;
+		height: 0px;
+		background: ${(props) => props.theme.colors.selectedTheme.white};
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0px 0px 8px rgba(255, 255, 255, 0.25), 0px 0px 15px rgba(255, 255, 255, 0.7);
+	}
+
+	& .slick-active .sBTC, .slick-active .BTC {
+		${border}
+		background: linear-gradient(180deg, #EF9931 0%, #C97714 100%);
+	}
+
+	& .slick-active .sETH, .slick-active .ETH {
+		${border}
+		background: linear-gradient(180deg, #8297EA 0%, #627CE5 100%);
+	}
+
+	& .slick-active .sLINK, .slick-active .LINK {
+		${border}
+		background: linear-gradient(180deg, #2958D5 0%, #0036C5 100%);
+	}
+
+	& .slick-active .SOL {
+		${border}
+		background: linear-gradient(180deg, #90F5AA 0%, #874DF1 100%);
+	}
+
+	& .slick-active .AVAX {
+		${border}
+		background: linear-gradient(180deg, #DC5044 0%, #C92416 100%);
+	}
+
+	& .slick-active .AAVE {
+		${border}
+		background: linear-gradient(180deg, #A65A9D 0%, #51B2C3 100%);
+	}
+
+	& .slick-active .UNI {
+		${border}
+		background: linear-gradient(180deg, #F13578 0%, #D81F61 100%);
+	}
+
+	& .slick-active .MATIC {
+		${border}
+		background: linear-gradient(180deg, #6742D3 0%, #471DC0 100%);
+	}
+
+	& .slick-active .XAG {
+		${border}
+		background: linear-gradient(180deg, #CFCFCF 0%, #B1B1B1 100%);
+	}
+
+	& .slick-active .XAU {
+		${border}
+		background: linear-gradient(180deg, #EBD986 0%, #CFAC6D 100%);
+	}
+
+	& .slick-active .APE {
+		${border}
+		background: linear-gradient(180deg, #024DE2 0%, #0C3EA9 100%);
+	}
+
+	& .slick-active .DYDX {
+		${border}
+		background: linear-gradient(180deg, #6264F9 0%, #25348C 100%);
+	}
+
+	& .slick-active .EUR, .slick-active .INR, .slick-active .USD {
+		${border}
+		background: ${(props) => props.theme.colors.selectedTheme.button.border};
+	}
+`;
+
 const StatsIconContainer = styled(FlexDiv)`
 	justify-content: flex-start;
 	padding-left: 5px;
+	text-align: left;
+	padding-top: 5px;
+	text-transform: none;
+	${media.lessThan('sm')`
+		padding-left: 0;
+	`};
 `;
 
 const ChartContainer = styled.div`
-	margin-left: -65px;
+	margin-left: -52.5px;
 	margin-top: -20px;
+	overflow: hidden;
+	${media.lessThan('sm')`
+		margin-left: -60px;
+	`};
 `;
 
 const StatsValueContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 100px;
+	width: 110px;
 	font-size: 13px;
 	align-self: flex-end;
+	text-align: left;
+	padding-left: 7.5px;
+
+	${media.lessThan('sm')`
+		padding-left: 0px;
+		font-size: 12px;
+	`}
 `;
 
 const StatsNameContainer = styled.div`
 	font-size: 18px;
 	align-self: center;
+	margin-left: -5px;
+	text-transform: none;
+	text-align: left;
 `;
 
 const AssetName = styled.div`
 	font-size: 18px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.white};
 `;
 
 const AssetPrice = styled.div`
@@ -426,6 +730,7 @@ const AssetPrice = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	width: 120px;
 	padding-left: 5px;
+	text-align: left;
 `;
 
 const AssetDescription = styled.div`
@@ -447,31 +752,115 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	width: 1160px;
 	flex-wrap: wrap;
 	justify-content: center;
+
+	${media.lessThan('sm')`
+		flex-wrap: nowrap;
+		overflow-x: hidden;
+		max-width: 100vw;
+	`}
 `;
 
-const StatsCard = styled(GridContainer)`
+const StatsCard = styled(Button)`
+	display: grid;
 	cursor: pointer;
-	grid-template-columns: repeat(2, auto);
 	width: 275px;
 	height: 140px;
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
+	grid-template-columns: repeat(2, auto);
+	font-family: ${(props) => props.theme.fonts.regular};
+	padding: 16px 16px;
 	border-radius: 15px;
-	padding: 16px 20px;
+
+	&::before {
+		border-radius: 15px;
+	}
+
+	&.BTC:hover::before {
+		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
+	}
+	&.sBTC:hover::before {
+		background: linear-gradient(180deg, #ef9931 0%, #c97714 100%);
+	}
+
+	&.sETH:hover::before {
+		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
+	}
+
+	&.ETH:hover::before {
+		background: linear-gradient(180deg, #8297ea 0%, #627ce5 100%);
+	}
+
+	&.sLINK:hover::before {
+		border-radius: 15px;
+		background: linear-gradient(180deg, #2958d5 0%, #0036c5 100%);
+	}
+
+	&.SOL:hover::before {
+		background: linear-gradient(180deg, #90f5aa 0%, #874df1 100%);
+	}
+
+	&.AVAX:hover::before {
+		background: linear-gradient(180deg, #dc5044 0%, #c92416 100%);
+	}
+
+	&.AAVE:hover::before {
+		background: linear-gradient(180deg, #a65a9d 0%, #51b2c3 100%);
+	}
+
+	&.UNI:hover::before {
+		background: linear-gradient(180deg, #f13578 0%, #d81f61 100%);
+	}
+
+	&.MATIC:hover::before {
+		background: linear-gradient(180deg, #6742d3 0%, #471dc0 100%);
+	}
+
+	&.XAG:hover::before {
+		background: linear-gradient(180deg, #cfcfcf 0%, #b1b1b1 100%);
+	}
+
+	&.XAU:hover::before {
+		background: linear-gradient(180deg, #ebd986 0%, #cfac6d 100%);
+	}
+
+	&.APE:hover::before {
+		background: linear-gradient(180deg, #024de2 0%, #0c3ea9 100%);
+	}
+
+	&.DYDX:hover::before {
+		background: linear-gradient(180deg, #6264f9 0%, #25348c 100%);
+	}
 
 	svg.bg {
 		position: absolute;
 		z-index: 10;
-		margin-top: 16px;
-		margin-left: -20px;
+		margin-top: 32px;
 		width: 275px;
 		height: 140px;
+		position: absolute;
+		right: 0;
+		top: 0;
 	}
+
+	${media.lessThan('sm')`
+		grid-template-columns: repeat(2, 135px);
+		height: 150px;
+		svg.bg {
+			position: absolute;
+			z-index: 10;
+			margin-top: 70px;
+			margin-left: 0px;
+			width: 275px;
+			height: 79px;
+		}
+	`}
 `;
 
 const Container = styled.div`
 	margin-bottom: 140px;
+	${media.lessThan('sm')`
+		margin-left: -30px;
+		margin-right: -30px;
+	`}
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -491,8 +880,13 @@ const TabButtonsContainer = styled.div`
 	border-radius: 134px;
 	background: #1d1d1d;
 	border: 1px solid rgba(255, 255, 255, 0.1);
-	box-shadow: inset 0px -1.34783px 0px rgba(255, 255, 255, 0.08),
-		inset 0px 9.43478px 10.7826px rgba(0, 0, 0, 0.25);
+	box-shadow: inset 0px 9.43478px 10.7826px rgba(0, 0, 0, 0.25);
+
+	${media.lessThan('sm')`
+		margin: auto;
+		margin-top: 40px;
+		margin-bottom: 40px;
+	`}
 `;
 
 const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
@@ -506,7 +900,7 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 	border-radius: ${(props) => (props.isActive ? '100px' : '134px')};
 	color: ${(props) =>
 		props.isActive
-			? props.theme.colors.common.primaryWhite
+			? props.theme.colors.selectedTheme.white
 			: props.theme.colors.common.secondaryGray};
 	background: ${(props) =>
 		props.isActive ? 'linear-gradient(180deg, #BE9562 0%, #A07141 100%)' : null};
@@ -517,7 +911,7 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 		props.isActive
 			? '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03)'
 			: null};
-	border: ${(props) => (props.isActive ? '1px solid rgba(255, 255, 255, 0.15)' : null)};
+	/* border: ${(props) => (props.isActive ? '1px solid rgba(255, 255, 255, 0.15)' : null)}; */
 
 	&.short {
 		cursor: not-allowed;

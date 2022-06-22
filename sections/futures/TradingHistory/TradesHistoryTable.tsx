@@ -9,20 +9,22 @@ import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 
 import { isL2MainnetState } from 'store/wallet';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { isEurForex } from 'utils/futures';
 import LoaderIcon from 'assets/svg/app/loader.svg';
+import { currentMarketState } from 'store/futures';
 
 type TradesHistoryTableProps = {
-	currencyKey: string | undefined;
 	numberOfTrades: number;
+	mobile?: boolean;
 };
 
-const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOfTrades }) => {
+const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
 	const { t } = useTranslation();
+	const currencyKey = useRecoilValue(currentMarketState);
 	const futuresTradesQuery = useGetFuturesTrades(currencyKey);
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 
@@ -93,11 +95,13 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 	};
 
 	return (
-		<HistoryContainer>
-			<HistoryLabelContainer>
-				<HistoryLabel>{t('futures.market.history.history-label')}</HistoryLabel>
-				<LastTradesLabel>{t('futures.market.history.last-trades')}</LastTradesLabel>
-			</HistoryLabelContainer>
+		<HistoryContainer mobile={mobile}>
+			{!mobile && (
+				<HistoryLabelContainer>
+					<HistoryLabel>{t('futures.market.history.history-label')}</HistoryLabel>
+          <LastTradesLabel>{t('futures.market.history.last-trades')}</LastTradesLabel>
+        </HistoryLabelContainer>
+			)}
 			<TableContainer>
 				<StyledTable
 					data={data}
@@ -105,6 +109,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 					pageSize={1000}
 					isLoading={futuresTradesQuery.isLoading}
 					lastRef={lastElementRef}
+					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
 							? isL2Mainnet
@@ -192,13 +197,19 @@ const Loading = styled.div<{ isLoading: boolean }>`
 	visibility: ${(props) => (props.isLoading ? 'show' : 'hidden')};
 `;
 
-const HistoryContainer = styled.div`
+const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	margin-bottom: 16px;
 	box-sizing: border-box;
 
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
+
+	${(props) =>
+		props.mobile &&
+		css`
+			margin-bottom: 0;
+		`}
 `;
 
 const HistoryLabelContainer = styled(FlexDivRowCentered)`
@@ -217,9 +228,22 @@ const LastTradesLabel = styled(CapitalizedText)`
 `;
 const TableContainer = styled.div``;
 
-const StyledTable = styled(Table)`
+const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	border: 0px;
-	height: 695px;
+
+	${(props) =>
+		!props.mobile &&
+		css`
+			height: 695px;
+		`}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			height: 242px;
+		`}
+
+
 
 	.table-body-row {
 		padding: 0;

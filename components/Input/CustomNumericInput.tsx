@@ -49,7 +49,7 @@ const CustomNumericInput: FC<CustomNumericInputProps> = ({
 	return (
 		<InputWrapper style={style as React.CSSProperties}>
 			<StyledInput
-				type="text"
+				type="number"
 				value={value}
 				placeholder={placeholder + suffix}
 				onChange={handleOnChange}
