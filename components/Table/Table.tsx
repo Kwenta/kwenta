@@ -1,4 +1,4 @@
-import React, { FC, useMemo, DependencyList, useEffect } from 'react';
+import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 
@@ -116,6 +116,8 @@ export const Table: FC<TableProps> = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const defaultRef = useRef(null);
+
 	return (
 		<>
 			<TableContainer>
@@ -158,28 +160,12 @@ export const Table: FC<TableProps> = ({
 								{page.map((row: Row, idx: number) => {
 									prepareRow(row);
 									const props = row.getRowProps();
-									if (lastRef && idx === page.length - 1) {
-										return (
-											<TableBodyRow
-												className="table-body-row"
-												{...props}
-												ref={lastRef}
-												onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
-												$highlightRowsOnHover={highlightRowsOnHover}
-											>
-												{row.cells.map((cell: Cell) => (
-													<TableCell className="table-body-cell" {...cell.getCellProps()}>
-														{cell.render('Cell')}
-													</TableCell>
-												))}
-											</TableBodyRow>
-										);
-									}
-
+									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
 									return (
 										<TableBodyRow
 											className="table-body-row"
 											{...props}
+											ref={localRef}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>
