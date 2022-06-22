@@ -14,6 +14,7 @@ import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { isEurForex } from 'utils/futures';
+import LoaderIcon from 'assets/svg/app/loader.svg';
 
 type TradesHistoryTableProps = {
 	currencyKey: string | undefined;
@@ -175,7 +176,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 					]}
 				/>
 				<Loading isLoading={futuresTradesQuery.isFetchingNextPage}>
-					{t('futures.market.history.loading')}
+					<LoaderIcon />
 				</Loading>
 			</TableContainer>
 		</HistoryContainer>
@@ -185,6 +186,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 export default TradesHistoryTable;
 
 const Loading = styled.div<{ isLoading: boolean }>`
+	height: 0px;
+	transform: translateY(8px);
 	text-align: center;
 	visibility: ${(props) => (props.isLoading ? 'show' : 'hidden')};
 `;
