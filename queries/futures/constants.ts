@@ -35,6 +35,7 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 		avgEntryPrice
 		totalVolume
 		pnl
+		pnlWithFeesPaid
 		trades
 	}
 `;
