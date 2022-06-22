@@ -34,7 +34,7 @@ export const MENU_LINKS: MenuLinks = [
 export const HOMEPAGE_MENU_LINKS: MenuLinks = [
 	{
 		i18nLabel: 'homepage.nav.markets',
-		link: ROUTES.Home.Markets,
+		link: ROUTES.Markets.Home,
 	},
 	{
 		i18nLabel: 'homepage.nav.governance.title',
