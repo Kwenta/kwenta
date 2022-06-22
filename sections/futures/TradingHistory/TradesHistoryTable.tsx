@@ -27,6 +27,10 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ currencyKey, numberOf
 
 	let data = useMemo(() => {
 		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
+		// initially the currencyKey would as null
+		// the fetch would return [null]
+		if (futuresTradesPages[0] === null) return [];
+
 		const futuresTrades =
 			futuresTradesPages.length > 0
 				? futuresTradesPages.flat().map((trade: FuturesTrade | null) => {
