@@ -1,18 +1,14 @@
 import React from 'react';
 import FuturesMarkets from './FuturesMarkets';
 import OpenPositions from './OpenPositions';
+import Portfolio from './Portfolio';
 
-// Structure:
-// - Portfolio Overview + Chart
-// - Open Positions
-
-const MobileDashboard = () => {
-	return (
-		<div>
-			<OpenPositions />
-			<FuturesMarkets />
-		</div>
-	);
-};
+const MobileDashboard: React.FC = () => (
+	<div>
+		<Portfolio />
+		<OpenPositions />
+		<FuturesMarkets />
+	</div>
+);
 
 export default MobileDashboard;
