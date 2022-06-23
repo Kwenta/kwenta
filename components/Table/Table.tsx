@@ -241,17 +241,6 @@ const TableCell = styled(FlexDivCentered)`
 	&:last-child {
 		padding-right: 14px;
 	}
-
-	${media.lessThan('sm')`
-		&:first-child {
-			margin: auto;
-			padding: 0px;
-		}
-		&:last-child {
-			margin: auto;
-			padding: 0px;
-		}
-	`}
 `;
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
