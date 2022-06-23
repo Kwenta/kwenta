@@ -9,7 +9,6 @@ import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
-import media from 'styles/media';
 
 export type TablePalette = 'primary';
 
