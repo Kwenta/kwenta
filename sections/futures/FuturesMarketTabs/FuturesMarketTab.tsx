@@ -22,6 +22,11 @@ type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
 };
 
+enum TableColumnAccessor {
+	Market = 'market',
+	DailyVolume = 'dailyVolume',
+}
+
 const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	futuresMarkets,
 }: FuturesMarketsTableProps) => {
@@ -62,8 +67,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				highlightRowsOnHover
 				customCellProps={() => {
 					return {
-						dailyVolume: {
-							key: 'dailyVolume',
+						[TableColumnAccessor.DailyVolume]: {
+							key: TableColumnAccessor.DailyVolume,
 							style: {
 								justifyContent: 'end',
 								textAlign: 'right',
@@ -73,8 +78,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				}}
 				customHeaderProps={() => {
 					return {
-						dailyVolume: {
-							key: 'dailyVolume',
+						[TableColumnAccessor.DailyVolume]: {
+							key: TableColumnAccessor.DailyVolume,
 							style: {
 								justifyContent: 'end',
 								textAlign: 'right',
@@ -91,7 +96,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				columns={[
 					{
 						Header: <TableHeader>{t('futures.market.sidebar-tab.market-price')}</TableHeader>,
-						accessor: 'market',
+						accessor: TableColumnAccessor.Market,
 						Cell: (cellProps: CellProps<any>) => {
 							const formatOptions = isEurForex(cellProps.row.original.asset)
 								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
@@ -136,7 +141,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					},
 					{
 						Header: <TableHeader>{t('futures.market.sidebar-tab.daily-volume')}</TableHeader>,
-						accessor: 'dailyVolume',
+						accessor: TableColumnAccessor.DailyVolume,
 						Cell: (cellProps: CellProps<any>) => {
 							return (
 								<DataCol>
