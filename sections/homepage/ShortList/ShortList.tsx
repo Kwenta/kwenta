@@ -371,6 +371,9 @@ const StyledTable = styled(Table)`
 	width: 1160px;
 	${media.lessThan('sm')`
 		width: 345px;
+		& > .table-body >.table-body-row >.table-body-cell {
+			padding-left: 0px;
+		}
 	`}
 `;
 
