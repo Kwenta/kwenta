@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
-import TradesHistoryTable from './TradesHistoryTable';
 import SkewInfo from './SkewInfo';
 import FutureMarketDetailsTab from './FuturesMarketTabs';
 
@@ -9,7 +7,6 @@ const TradingHistory: React.FC = () => {
 		<Panel>
 			<SkewInfo />
 			<FutureMarketDetailsTab></FutureMarketDetailsTab>
-			<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
 		</Panel>
 	);
 };

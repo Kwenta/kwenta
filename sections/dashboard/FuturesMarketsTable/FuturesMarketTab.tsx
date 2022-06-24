@@ -1,10 +1,10 @@
-import Table from 'components/Table';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
-import Connector from 'containers/Connector';
+
+import Table from 'components/Table';
 import { FuturesMarket } from 'queries/futures/types';
 import Currency from 'components/Currency';
 import ChangePercent from 'components/ChangePercent';
@@ -13,13 +13,10 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
-import { getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
-import useGetAverageFundingRateForMarkets, {
-	FundingRateResponse,
-} from 'queries/futures/useGetAverageFundingRateForMarkets';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { FlexDivCol } from 'styles/common';
+import { isEurForex } from 'utils/futures';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -34,74 +31,29 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { synthsMap } = Connector.useContainer();
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
-	const fundingRates = useGetAverageFundingRateForMarkets(
-		futuresMarkets.map(({ asset, price, currentFundingRate }) => {
-			return {
-				currencyKey: asset,
-				assetPrice: price.toNumber(),
-				currentFundingRate: currentFundingRate.toNumber(),
-			};
-		}),
-		PERIOD_IN_SECONDS[Period.ONE_HOUR]
-	);
-
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
 
 		return futuresMarkets.map((market: FuturesMarket, i: number) => {
-			const description = getSynthDescription(market.asset, synthsMap, t);
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
-			const fundingRateResponse = fundingRates.find(
-				({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
-			);
 
 			return {
 				asset: market.asset,
 				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
-				synth: synthsMap[market.asset],
-				description: description,
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
-				pastPrice: pastPrice?.price || '-',
 				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
-				fundingRate:
-					(fundingRateResponse?.data as FundingRateResponse)?.fundingRate?.toNumber() ?? null,
-				openInterest: market.marketSize.mul(market.price).toNumber(),
-				openInterestNative: market.marketSize.toNumber(),
-				longInterest: market.marketSize
-					.add(market.marketSkew)
-					.div('2')
-					.abs()
-					.mul(market.price)
-					.toNumber(),
-				shortInterest: market.marketSize
-					.sub(market.marketSkew)
-					.div('2')
-					.abs()
-					.mul(market.price)
-					.toNumber(),
-				marketSkew: market.marketSkew,
-				isSuspended: market.isSuspended,
-				marketClosureReason: market.marketClosureReason,
 			};
 		});
-	}, [
-		synthsMap,
-		futuresMarkets,
-		fundingRates,
-		dailyPriceChangesQuery?.data,
-		futuresVolumeQuery?.data,
-		t,
-	]);
+	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);
 
 	return (
 		<TableContainer>
@@ -114,6 +66,17 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				}}
 				highlightRowsOnHover
 				hiddenColumns={tableOptions?.hiddenColumns ?? []}
+				customCellProps={() => {
+					return {
+						dailyVolume: {
+							key: 'dailyVolume',
+							style: {
+								justifyContent: 'end',
+								textAlign: 'right',
+							},
+						},
+					};
+				}}
 				sortBy={[
 					{
 						id: 'dailyVolume',
@@ -122,11 +85,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				]}
 				columns={[
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.sidebar-tab.market-price')}</TableHeader>,
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
+							const formatOptions = isEurForex(cellProps.row.original.asset)
+								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
+								: {};
 							return cellProps.row.original.market === '-' ? (
 								<DefaultCell>-</DefaultCell>
 							) : (
@@ -147,126 +111,58 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											futuresClosureReason={cellProps.row.original.marketClosureReason}
 										/>
 									</StyledText>
-									<StyledValue>{cellProps.row.original.description}</StyledValue>
+									{cellProps.row.original.price === '-' ? (
+										<DefaultCell>-</DefaultCell>
+									) : (
+										<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.price}
+												sign={'$'}
+												conversionRate={1}
+												formatOptions={formatOptions}
+											/>
+										</StyledPrice>
+									)}
 								</MarketContainer>
 							);
 						},
 						width: 190,
 					},
 					{
-						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-markets-table.oracle-price')}
-							</TableHeader>
-						),
-						accessor: 'oraclePrice',
-						Cell: (cellProps: CellProps<any>) => {
-							const formatOptions = isEurForex(cellProps.row.original.asset)
-								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
-								: {};
-							return cellProps.row.original.price === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.price}
-									sign={'$'}
-									conversionRate={1}
-									formatOptions={formatOptions}
-								/>
-							);
-						},
-						width: 130,
-					},
-					{
-						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-markets-table.daily-change')}
-							</TableHeader>
-						),
-						accessor: 'priceChange',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.priceChange === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<ChangePercent
-									value={cellProps.row.original.priceChange}
-									decimals={2}
-									className="change-pct"
-								/>
-							);
-						},
-						width: 105,
-					},
-					{
-						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-markets-table.funding-rate')}
-							</TableHeader>
-						),
-						accessor: 'fundingRate',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.fundingRate === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<ChangePercent
-									value={cellProps.row.original.fundingRate}
-									decimals={6}
-									className="change-pct"
-								/>
-							);
-						},
-						width: 125,
-					},
-					{
-						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-markets-table.open-interest')}
-							</TableHeader>
-						),
-						accessor: 'openInterest',
-						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.openInterest === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<OpenInterestContainer>
-									<StyledLongPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.longInterest}
-										sign={'$'}
-										conversionRate={1}
-									/>
-									<StyledShortPrice
-										currencyKey={Synths.sUSD}
-										price={cellProps.row.original.shortInterest}
-										sign={'$'}
-										conversionRate={1}
-									/>
-								</OpenInterestContainer>
-							);
-						},
-						width: 125,
-					},
-					{
-						Header: (
-							<TableHeader>
-								{t('dashboard.overview.futures-markets-table.daily-volume')}
-							</TableHeader>
-						),
+						Header: <TableHeader>{t('futures.market.sidebar-tab.daily-volume')}</TableHeader>,
 						accessor: 'dailyVolume',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.volume === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={cellProps.row.original.volume}
-									sign={'$'}
-									conversionRate={1}
-								/>
+							return (
+								<DataCol>
+									<DataRow>
+										{cellProps.row.original.volume === '-' ? (
+											<DefaultCell>-</DefaultCell>
+										) : (
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.volume}
+												sign={'$'}
+												conversionRate={1}
+											/>
+										)}
+									</DataRow>
+									<DataRow>
+										{cellProps.row.original.priceChange === '-' ? (
+											<DefaultCell>-</DefaultCell>
+										) : (
+											<ChangePercent
+												value={cellProps.row.original.priceChange}
+												decimals={2}
+												className="change-pct"
+											/>
+										)}
+									</DataRow>
+								</DataCol>
 							);
 						},
-						width: 125,
+						width: 100,
+						sortable: true,
 						sortType: useMemo(
 							() => (rowA: any, rowB: any) => {
 								const rowOne = rowA.original.volume;
@@ -282,12 +178,17 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	);
 };
 
-const StyledLongPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.green};
-`;
-
-const StyledShortPrice = styled(Currency.Price)`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
+const StyledPrice = styled.div<{ isPositive: boolean }>`
+	span {
+		span {
+			display: inline-flex;
+			align-items: center;
+			color: ${(props) =>
+				props.isPositive
+					? props.theme.colors.selectedTheme.green
+					: props.theme.colors.selectedTheme.red};
+		}
+	}
 `;
 
 const StyledCurrencyIcon = styled(Currency.Icon)`
@@ -296,23 +197,9 @@ const StyledCurrencyIcon = styled(Currency.Icon)`
 	margin-right: 8px;
 `;
 
-const OpenInterestContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-`;
-
 const IconContainer = styled.div`
 	grid-column: 1;
 	grid-row: 1 / span 2;
-`;
-
-const StyledValue = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-	font-family: ${(props) => props.theme.fonts.regular};
-	font-size: 12px;
-	grid-column: 2;
-	grid-row: 2;
 `;
 
 const DefaultCell = styled.p``;
@@ -349,6 +236,13 @@ const MarketContainer = styled.div`
 	grid-template-rows: auto auto;
 	grid-template-columns: auto auto;
 	align-items: center;
+`;
+
+const DataCol = styled(FlexDivCol)`
+	justify-content: space-between;
+`;
+const DataRow = styled.div`
+	align-items: 'flex-end';
 `;
 
 export default FuturesMarketsTable;
