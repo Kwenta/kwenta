@@ -21,6 +21,12 @@ type TradesHistoryTableProps = {
 	mobile?: boolean;
 };
 
+enum TableColumnAccessor {
+	Amount = 'amount',
+	Price = 'price',
+	Time = 'time',
+}
+
 const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobile }) => {
 	const { t } = useTranslation();
 	const currencyKey = useRecoilValue(currentMarketState);
@@ -88,11 +94,45 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
 							: undefined
 					}
+					customCellProps={() => {
+						return {
+							[TableColumnAccessor.Time]: {
+								key: TableColumnAccessor.Time,
+								style: {
+									justifyContent: 'end',
+									textAlign: 'right',
+								},
+							},
+							[TableColumnAccessor.Price]: {
+								key: TableColumnAccessor.Price,
+								style: {
+									justifyContent: 'center',
+								},
+							},
+						};
+					}}
+					customHeaderProps={() => {
+						return {
+							[TableColumnAccessor.Time]: {
+								key: TableColumnAccessor.Time,
+								style: {
+									justifyContent: 'end',
+									textAlign: 'right',
+								},
+							},
+							[TableColumnAccessor.Price]: {
+								key: TableColumnAccessor.Price,
+								style: {
+									justifyContent: 'center',
+								},
+							},
+						};
+					}}
 					highlightRowsOnHover
 					columns={[
 						{
 							Header: <TableHeader>{t('futures.market.history.amount-label')}</TableHeader>,
-							accessor: 'Amount',
+							accessor: TableColumnAccessor.Amount,
 							Cell: (cellProps: CellProps<any>) => {
 								const numValue = Math.abs(cellProps.row.original.amount / 1e18);
 								const numDecimals =
@@ -119,7 +159,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.price-label')}</TableHeader>,
-							accessor: 'Price',
+							accessor: TableColumnAccessor.Price,
 							Cell: (cellProps: CellProps<any>) => {
 								const formatOptions = isEurForex(cellProps.row.original.currencyKey)
 									? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
@@ -137,7 +177,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 						{
 							Header: <TableHeader>{t('futures.market.history.time-label')}</TableHeader>,
-							accessor: 'Time',
+							accessor: TableColumnAccessor.Time,
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<TimeValue>
