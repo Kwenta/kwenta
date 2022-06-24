@@ -71,6 +71,17 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 						},
 					};
 				}}
+				customHeaderProps={() => {
+					return {
+						dailyVolume: {
+							key: 'dailyVolume',
+							style: {
+								justifyContent: 'end',
+								textAlign: 'right',
+							},
+						},
+					};
+				}}
 				sortBy={[
 					{
 						id: 'dailyVolume',

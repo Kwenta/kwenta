@@ -10,6 +10,7 @@ import {
 	Cell,
 	TableRowProps,
 	TableCellProps,
+	TableHeaderProps,
 } from 'react-table';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
@@ -49,6 +50,7 @@ type TableProps = {
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
 	showShortList?: boolean;
+	customHeaderProps?: () => Record<string, TableHeaderProps>;
 	customRowProps?: () => TableRowProps;
 	customCellProps?: () => Record<string, TableCellProps>;
 };
@@ -70,6 +72,7 @@ export const Table: FC<TableProps> = ({
 	highlightRowsOnHover,
 	showShortList,
 	sortBy = [],
+	customHeaderProps = undefined,
 	customRowProps = undefined,
 	customCellProps = undefined,
 }) => {
@@ -136,32 +139,38 @@ export const Table: FC<TableProps> = ({
 				<ReactTable {...getTableProps()} palette={palette} className={className}>
 					{headerGroups.map((headerGroup) => (
 						<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column: any) => (
-								<TableCellHead
-									hideHeaders={hideHeaders}
-									{...column.getHeaderProps(
-										column.sortable ? column.getSortByToggleProps() : undefined
-									)}
-								>
-									{column.render('Header')}
-									{column.sortable && (
-										<SortIconContainer>
-											{column.isSorted ? (
-												column.isSortedDesc ? (
-													<StyledSortDownIcon />
+							{headerGroup.headers.map((column: any) => {
+								const customProps = customHeaderProps?.()[column.id] ?? {};
+								return (
+									<TableCellHead
+										hideHeaders={hideHeaders}
+										{..._.merge(
+											column.getHeaderProps(
+												column.sortable ? column.getSortByToggleProps() : undefined
+											),
+											customProps
+										)}
+									>
+										{column.render('Header')}
+										{column.sortable && (
+											<SortIconContainer>
+												{column.isSorted ? (
+													column.isSortedDesc ? (
+														<StyledSortDownIcon />
+													) : (
+														<StyledSortUpIcon />
+													)
 												) : (
-													<StyledSortUpIcon />
-												)
-											) : (
-												<>
-													<StyledSortUpIcon />
-													<StyledSortDownIcon />
-												</>
-											)}
-										</SortIconContainer>
-									)}
-								</TableCellHead>
-							))}
+													<>
+														<StyledSortUpIcon />
+														<StyledSortDownIcon />
+													</>
+												)}
+											</SortIconContainer>
+										)}
+									</TableCellHead>
+								);
+							})}
 						</TableRow>
 					))}
 					{isLoading ? (
@@ -179,11 +188,11 @@ export const Table: FC<TableProps> = ({
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>
 											{row.cells.map((cell: Cell) => {
-												const cellStyles = customCellProps?.()[cell.column.id] ?? {};
+												const customProps = customCellProps?.()[cell.column.id] ?? {};
 												return (
 													<TableCell
 														className="table-body-cell"
-														{..._.merge(cell.getCellProps(), cellStyles)}
+														{..._.merge(cell.getCellProps(), customProps)}
 													>
 														{cell.render('Cell')}
 													</TableCell>
