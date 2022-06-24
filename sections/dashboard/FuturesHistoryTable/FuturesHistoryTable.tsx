@@ -71,7 +71,7 @@ const FuturesHistoryTable: FC = () => {
 					) : (
 						<TableNoResults>
 							{t('dashboard.overview.futures-history-table.no-trade-history')}
-							<Link href={ROUTES.Exchange}>
+							<Link href={ROUTES.Markets.Home}>
 								<div>{t('dashboard.overview.futures-history-table.no-trade-history-link')}</div>
 							</Link>
 						</TableNoResults>

@@ -68,7 +68,7 @@ const SpotHistoryTable: FC = () => {
 				noResultsMessage={
 					<TableNoResults>
 						{t('dashboard.overview.spot-history-table.no-trade-history')}
-						<Link href={ROUTES.Markets.Home}>
+						<Link href={ROUTES.Exchange.Home}>
 							<div>{t('dashboard.overview.spot-history-table.no-trade-history-link')}</div>
 						</Link>
 					</TableNoResults>
