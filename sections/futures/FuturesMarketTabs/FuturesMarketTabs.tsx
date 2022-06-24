@@ -5,10 +5,10 @@ import { TabPanel } from 'components/Tab';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import SegmentedControl from '../../../components/SegmentedControl';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
-import TradesHistoryTable from './TradesHistoryTable';
 import { activeTabState } from '../../../store/futures';
 import { useRecoilState } from 'recoil';
-import FuturesMarketTab from '../../dashboard/FuturesMarketsTable/FuturesMarketTab';
+import FuturesMarketTab from './FuturesMarketTab';
+import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
 
 const FuturesMarketTabs: FC = () => {
 	const { t } = useTranslation();

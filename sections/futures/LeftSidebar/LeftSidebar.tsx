@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import SkewInfo from './SkewInfo';
-import FutureMarketDetailsTab from './FuturesMarketTabs';
+import FuturesMarketTabs from '../FuturesMarketTabs';
+import SkewInfo from '../TradingHistory/SkewInfo';
 
 const TradingHistory: React.FC = () => {
 	return (
 		<Panel>
 			<SkewInfo />
-			<FutureMarketDetailsTab></FutureMarketDetailsTab>
+			<FuturesMarketTabs />
 		</Panel>
 	);
 };
