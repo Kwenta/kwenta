@@ -1,6 +1,16 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import {
+	useTable,
+	useFlexLayout,
+	useSortBy,
+	Column,
+	Row,
+	usePagination,
+	Cell,
+	TableRowProps,
+	TableCellProps,
+} from 'react-table';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -9,6 +19,7 @@ import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
+import * as _ from 'lodash/fp';
 
 export type TablePalette = 'primary';
 
@@ -38,6 +49,8 @@ type TableProps = {
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
 	showShortList?: boolean;
+	customRowProps?: () => TableRowProps;
+	customCellProps?: () => Record<string, TableCellProps>;
 };
 
 export const Table: FC<TableProps> = ({
@@ -57,6 +70,8 @@ export const Table: FC<TableProps> = ({
 	highlightRowsOnHover,
 	showShortList,
 	sortBy = [],
+	customRowProps = undefined,
+	customCellProps = undefined,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -156,19 +171,24 @@ export const Table: FC<TableProps> = ({
 							<TableBody className="table-body" {...getTableBodyProps()}>
 								{page.map((row: Row) => {
 									prepareRow(row);
-
 									return (
 										<TableBodyRow
 											className="table-body-row"
-											{...row.getRowProps()}
+											{..._.merge(row.getRowProps(), customRowProps?.())}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>
-											{row.cells.map((cell: Cell) => (
-												<TableCell className="table-body-cell" {...cell.getCellProps()}>
-													{cell.render('Cell')}
-												</TableCell>
-											))}
+											{row.cells.map((cell: Cell) => {
+												const cellStyles = customCellProps?.()[cell.column.id] ?? {};
+												return (
+													<TableCell
+														className="table-body-cell"
+														{..._.merge(cell.getCellProps(), cellStyles)}
+													>
+														{cell.render('Cell')}
+													</TableCell>
+												);
+											})}
 										</TableBodyRow>
 									);
 								})}
