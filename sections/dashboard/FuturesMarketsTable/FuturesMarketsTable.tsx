@@ -295,14 +295,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
 												/>
 											</IconContainer>
-											<StyledText>
-												{cellProps.row.original.market}
-												<MarketBadge
-													currencyKey={cellProps.row.original.asset}
-													isFuturesMarketClosed={cellProps.row.original.isSuspended}
-													futuresClosureReason={cellProps.row.original.marketClosureReason}
-												/>
-											</StyledText>
+											<StyledText>{cellProps.row.original.market}</StyledText>
 											<Currency.Price
 												currencyKey={Synths.sUSD}
 												price={cellProps.row.original.price}
