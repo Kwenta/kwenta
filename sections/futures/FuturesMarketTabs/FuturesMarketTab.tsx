@@ -20,14 +20,10 @@ import { isEurForex } from 'utils/futures';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
-	tableOptions?: {
-		hiddenColumns: string[];
-	};
 };
 
 const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	futuresMarkets,
-	tableOptions,
 }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
 	const router = useRouter();
@@ -59,13 +55,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				// pageSize={5}
 				showPagination={true}
 				onTableRowClick={(row) => {
 					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
-				hiddenColumns={tableOptions?.hiddenColumns ?? []}
 				customCellProps={() => {
 					return {
 						dailyVolume: {

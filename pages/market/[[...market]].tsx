@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { currentMarketState } from 'store/futures';

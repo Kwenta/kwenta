@@ -33,12 +33,7 @@ const FuturesMarketTabs: FC = () => {
 				}}
 			/>
 			<TabPanel name={DETAIL_TABS[0]} activeTab={DETAIL_TABS[activeTab]}>
-				<FuturesMarketTab
-					futuresMarkets={futuresMarkets}
-					tableOptions={{
-						hiddenColumns: ['openInterest', 'fundingRate', 'priceChange', 'oraclePrice'],
-					}}
-				/>
+				<FuturesMarketTab futuresMarkets={futuresMarkets} />
 			</TabPanel>
 			<TabPanel name={DETAIL_TABS[1]} activeTab={DETAIL_TABS[activeTab]}>
 				<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
