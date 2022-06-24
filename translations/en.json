@@ -629,7 +629,9 @@
 			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
 			"sidebar-tab": {
 				"markets": "Markets",
-				"history": "History"
+				"history": "History",
+				"market-price": "Market/Price",
+				"daily-volume": "24H Vol"
 			},
 			"info": {
 				"asset": "asset",
