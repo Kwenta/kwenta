@@ -539,7 +539,7 @@
 				"from": "From",
 				"to": "To",
 				"usd-value": "USD Value",
-				"no-trade-history": "You have no trades yet",
+				"no-trade-history": "You have no trades yet.",
 				"no-trade-history-link": "Visit the Kwenta exchange to swap synths."
 			},
 			"futures-history-table": {
