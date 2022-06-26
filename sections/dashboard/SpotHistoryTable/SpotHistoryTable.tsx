@@ -273,6 +273,7 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	div {
 		text-decoration: underline;
+		cursor: pointer;
 		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
