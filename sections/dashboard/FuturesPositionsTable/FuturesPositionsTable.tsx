@@ -2,7 +2,7 @@ import Table from 'components/Table';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import Connector from 'containers/Connector';
 import Currency from 'components/Currency';
@@ -17,7 +17,7 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import { PositionSide } from 'sections/futures/types';
+import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -52,7 +52,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			return {
 				asset: position.asset,
 				market: getDisplayAsset(position.asset) + '-PERP',
+				marketKey: getMarketKey(position.asset, network.id),
 				description: description,
+				price: market?.price,
 				size: position?.position?.size,
 				notionalValue: position?.position?.notionalValue.abs(),
 				position: position?.position?.side,
@@ -69,7 +71,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory]);
+	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
 
 	return (
 		<>
@@ -255,38 +257,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.map((row) => (
-						<OpenPositionContainer key={row.asset}>
-							<div style={{ display: 'flex' }}>
-								<StyledCurrencyIcon currencyKey={getMarketKey(row.asset, network.id)} />
-								<div>
-									<OpenPositionSize>
-										{formatNumber(row.size ?? 0)}
-										<OpenPositionMarketName>{getDisplayAsset(row.asset)}</OpenPositionMarketName>
-									</OpenPositionSize>
-									<OpenPositionSide side={row.position ?? PositionSide.LONG}>
-										<span className="side">{row.position ?? PositionSide.LONG}</span>{' '}
-										<span className="at">@</span>{' '}
-										{formatNumber(row.leverage ?? 0, { maxDecimals: 1 })}
-									</OpenPositionSide>
-								</div>
-							</div>
-							<div>
-								<Currency.Price
-									currencyKey={Synths.sUSD}
-									price={row.avgEntryPrice ?? 0}
-									sign="$"
-									formatOptions={
-										isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}
-									}
-								/>
-							</div>
-							<div>
-								<ChangePercent value={row.pnlPct ?? 0} />
-								<div>
-									<Currency.Price currencyKey={Synths.sUSD} price={row.pnl ?? 0} sign="$" />
-								</div>
-							</div>
-						</OpenPositionContainer>
+						<MobilePositionRow row={row} />
 					))}
 				</div>
 			</MobileOnlyView>
@@ -355,71 +326,6 @@ const OpenPositionsHeader = styled.div`
 	margin: 15px;
 
 	& > div {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
-`;
-
-const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	display: flex;
-	justify-content: space-between;
-	margin: 15px 0;
-	padding: 10px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	border: 1px solid;
-
-	${(props) =>
-		props.side === PositionSide.LONG &&
-		css`
-			border-image-source: linear-gradient(
-				180deg,
-				rgba(127, 212, 130, 0.5) 0%,
-				rgba(50, 111, 52, 0.5) 100%
-			);
-		`}
-
-	${(props) =>
-		props.side === PositionSide.SHORT &&
-		css`
-			border-image-source: linear-gradient(
-				180deg,
-				rgba(239, 104, 104, 0.5) 0%,
-				rgba(147, 54, 54, 0.5) 100%
-			);
-		`}
-`;
-
-const OpenPositionSize = styled.div`
-	display: flex;
-	align-items: center;
-	font-family: ${(props) => props.theme.fonts.bold};
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	font-size: 12px;
-`;
-
-const OpenPositionMarketName = styled.span`
-	color: ${(props) => props.theme.colors.selectedTheme.gold};
-	border: 1px solid ${(props) => props.theme.colors.selectedTheme.gold};
-	border-radius: 4px;
-	font-size: 6px;
-	padding: 2px;
-	margin-left: 4px;
-`;
-
-const OpenPositionSide = styled.div<{ side: PositionSide }>`
-	font-size: 12px;
-	font-family: ${(props) => props.theme.fonts.bold};
-
-	.side {
-		text-transform: uppercase;
-		color: ${(props) =>
-			props.side === PositionSide.LONG
-				? props.theme.colors.selectedTheme.green
-				: props.theme.colors.selectedTheme.red};
-	}
-
-	.at {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
