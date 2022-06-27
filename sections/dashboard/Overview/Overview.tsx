@@ -142,7 +142,7 @@ const Overview: FC = () => {
 				totalShortsValue={zeroBN}
 			/>
 
-			<TabButtonsContainer hasDetail>
+			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, ...rest }) => (
 					<TabButton key={name} title={label} {...rest} />
 				))}
@@ -177,7 +177,7 @@ const Overview: FC = () => {
 	);
 };
 
-const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
+const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;

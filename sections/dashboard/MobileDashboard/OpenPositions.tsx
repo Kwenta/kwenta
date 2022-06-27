@@ -5,9 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-import { PositionSide } from 'sections/futures/types';
 import { SectionHeader } from 'sections/futures/MobileTrade/common';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
@@ -19,24 +17,7 @@ import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { TabPanel } from 'components/Tab';
 import SynthBalancesTable from '../SynthBalancesTable';
 import TabButton from 'components/Button/TabButton';
-import { PositionHistory } from 'queries/futures/types';
-
-export const OpenPosition: React.FC<{ positionHistory: PositionHistory }> = ({
-	positionHistory,
-}) => {
-	// Remove this, fetching global data in "dumb" component.
-	const { network } = Connector.useContainer();
-
-	return (
-		<OpenPositionContainer>
-			<div>
-				<CurrencyIcon currencyKey={getMarketKey(positionHistory.asset, network.id)} />
-			</div>
-			<div></div>
-			<div></div>
-		</OpenPositionContainer>
-	);
-};
+import FuturesPositionsTable from '../FuturesPositionsTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -122,7 +103,7 @@ const OpenPositions: React.FC = () => {
 			<div style={{ margin: '15px 15px 30px 15px' }}>
 				<SectionHeader>Open Positions</SectionHeader>
 
-				<TabButtonsContainer hasDetail>
+				<TabButtonsContainer>
 					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
 						<TabButton key={name} title={label} {...rest} />
 					))}
@@ -130,14 +111,10 @@ const OpenPositions: React.FC = () => {
 			</div>
 
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<OpenPositionsHeader>
-					<div>Market/Side</div>
-					<div>Oracle/Entry</div>
-					<div>Unrealized P&amp;L</div>
-				</OpenPositionsHeader>
-				{futuresPositionHistory.map((positionHistory) => (
-					<OpenPosition positionHistory={positionHistory} />
-				))}
+				<FuturesPositionsTable
+					futuresMarkets={futuresMarkets}
+					futuresPositionHistory={futuresPositionHistory}
+				/>
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
@@ -150,24 +127,7 @@ const OpenPositions: React.FC = () => {
 	);
 };
 
-const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
-	display: flex;
-	justify-content: space-between;
-	margin: 15px 0;
-`;
-
-const OpenPositionsHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	margin: 15px;
-
-	& > div {
-		color: ${(props) => props.theme.colors.selectedTheme.gray};
-	}
-`;
-
-const TabButtonsContainer = styled.div<{ hasDetail?: boolean }>`
+const TabButtonsContainer = styled.div`
 	display: flex;
 	margin-top: 16px;
 	margin-bottom: 16px;
