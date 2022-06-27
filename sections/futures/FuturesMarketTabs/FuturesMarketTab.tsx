@@ -17,6 +17,7 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { FlexDivCol } from 'styles/common';
 import { isEurForex } from 'utils/futures';
+import { NO_VALUE } from 'constants/placeholder';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -80,7 +81,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 								: {};
 							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>-</DefaultCell>
+								<DefaultCell>{NO_VALUE}</DefaultCell>
 							) : (
 								<MarketContainer>
 									<IconContainer>
@@ -100,7 +101,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 										/>
 									</StyledText>
 									{cellProps.row.original.price === '-' ? (
-										<DefaultCell>-</DefaultCell>
+										<DefaultCell>{NO_VALUE}</DefaultCell>
 									) : (
 										<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
 											<Currency.Price
@@ -125,7 +126,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								<DataCol>
 									<DataRow>
 										{cellProps.row.original.volume === '-' ? (
-											<DefaultCell>-</DefaultCell>
+											<DefaultCell>{NO_VALUE}</DefaultCell>
 										) : (
 											<Currency.Price
 												currencyKey={Synths.sUSD}
@@ -137,7 +138,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</DataRow>
 									<DataRow>
 										{cellProps.row.original.priceChange === '-' ? (
-											<DefaultCell>-</DefaultCell>
+											<DefaultCell>{NO_VALUE}</DefaultCell>
 										) : (
 											<ChangePercent
 												value={cellProps.row.original.priceChange}
@@ -191,7 +192,7 @@ const IconContainer = styled.div`
 `;
 
 const DefaultCell = styled.p`
-	margin: unset;
+	margin: ;
 `;
 
 const TableContainer = styled.div`
