@@ -224,6 +224,7 @@ const StyledTable = styled(Table)`
 	.table-body-row {
 		${TableAlignment}
 		padding: 0;
+		padding: 6px 0px;
 	}
 	margin-bottom: 20px;
 `;
@@ -238,7 +239,7 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-family: ${(props) => props.theme.fonts.mono};
+	font-family: ${(props) => props.theme.fonts.regular};
 	width: max-content;
 `;
 
