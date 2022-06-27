@@ -191,9 +191,7 @@ const IconContainer = styled.div`
 	grid-row: 1 / span 2;
 `;
 
-const DefaultCell = styled.p`
-	margin: ;
-`;
+const DefaultCell = styled.p``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;
@@ -212,7 +210,7 @@ const TableAlignment = css`
 
 	& > div:last-child {
 		justify-content: flex-end;
-		padding-right: 20px;
+		/* padding-right: 20px; */
 		text-align: right;
 	}
 `;
@@ -223,7 +221,6 @@ const StyledTable = styled(Table)`
 	}
 	.table-body-row {
 		${TableAlignment}
-		padding: 0;
 		padding: 6px 0px;
 	}
 	margin-bottom: 20px;
@@ -231,6 +228,7 @@ const StyledTable = styled(Table)`
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	font-size: 13px;
 `;
 
 const StyledText = styled.div`

@@ -73,14 +73,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 	return (
 		<HistoryContainer mobile={mobile}>
-			{!mobile && (
-				<HistoryLabelContainer>
-					<HistoryLabel>{t('futures.market.history.history-label')}</HistoryLabel>
-					<LastTradesLabel>
-						{t('futures.market.history.last-n-trades', { numberOfTrades: numberOfTrades })}
-					</LastTradesLabel>
-				</HistoryLabelContainer>
-			)}
 			<TableContainer>
 				<StyledTable
 					data={data}
@@ -133,6 +125,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 
 								return (
 									<PriceValue>
+										$
 										{cellProps.row.original.value !== NO_VALUE
 											? formatNumber(cellProps.row.original.value / 1e18, formatOptions)
 											: NO_VALUE}
@@ -179,20 +172,20 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 		`}
 `;
 
-const HistoryLabelContainer = styled(FlexDivRowCentered)`
-	font-size: 13px;
-	justify-content: space-between;
-	padding: 12px 18px;
-	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-`;
+// const HistoryLabelContainer = styled(FlexDivRowCentered)`
+// 	font-size: 13px;
+// 	justify-content: space-between;
+// 	padding: 12px 18px;
+// 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
+// `;
 
-const HistoryLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-`;
+// const HistoryLabel = styled(CapitalizedText)`
+// 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+// `;
 
-const LastTradesLabel = styled(CapitalizedText)`
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
+// const LastTradesLabel = styled(CapitalizedText)`
+// 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+// `;
 const TableContainer = styled.div``;
 
 const TableAlignment = css`
