@@ -136,11 +136,7 @@ const Overview: FC = () => {
 
 	return (
 		<>
-			<PortfolioChart
-				totalFuturesPortfolioValue={portfolioValue ?? zeroBN}
-				totalSpotBalanceValue={synthBalances?.totalUSDBalance ?? zeroBN}
-				totalShortsValue={zeroBN}
-			/>
+			<PortfolioChart />
 
 			<TabButtonsContainer>
 				{POSITIONS_TABS.map(({ name, label, ...rest }) => (
