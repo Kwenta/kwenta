@@ -235,11 +235,11 @@ const TableHeader = styled.div`
 const StyledText = styled.div`
 	display: flex;
 	align-items: center;
-	margin-bottom: -4px;
 	grid-column: 2;
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-family: ${(props) => props.theme.fonts.bold};
+	font-family: ${(props) => props.theme.fonts.mono};
+	width: max-content;
 `;
 
 const MarketContainer = styled.div`
