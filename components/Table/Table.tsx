@@ -1,17 +1,6 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import {
-	useTable,
-	useFlexLayout,
-	useSortBy,
-	Column,
-	Row,
-	usePagination,
-	Cell,
-	TableRowProps,
-	TableCellProps,
-	TableHeaderProps,
-} from 'react-table';
+import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
@@ -20,7 +9,6 @@ import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
-import * as _ from 'lodash/fp';
 
 export type TablePalette = 'primary';
 
@@ -50,9 +38,6 @@ type TableProps = {
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
 	showShortList?: boolean;
-	customHeaderProps?: () => Record<string, TableHeaderProps>;
-	customRowProps?: () => TableRowProps;
-	customCellProps?: () => Record<string, TableCellProps>;
 };
 
 export const Table: FC<TableProps> = ({
@@ -72,9 +57,6 @@ export const Table: FC<TableProps> = ({
 	highlightRowsOnHover,
 	showShortList,
 	sortBy = [],
-	customHeaderProps = undefined,
-	customRowProps = undefined,
-	customCellProps = undefined,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -139,38 +121,32 @@ export const Table: FC<TableProps> = ({
 				<ReactTable {...getTableProps()} palette={palette} className={className}>
 					{headerGroups.map((headerGroup) => (
 						<TableRow className="table-row" {...headerGroup.getHeaderGroupProps()}>
-							{headerGroup.headers.map((column: any) => {
-								const customProps = customHeaderProps?.()[column.id] ?? {};
-								return (
-									<TableCellHead
-										hideHeaders={hideHeaders}
-										{..._.merge(
-											column.getHeaderProps(
-												column.sortable ? column.getSortByToggleProps() : undefined
-											),
-											customProps
-										)}
-									>
-										{column.render('Header')}
-										{column.sortable && (
-											<SortIconContainer>
-												{column.isSorted ? (
-													column.isSortedDesc ? (
-														<StyledSortDownIcon />
-													) : (
-														<StyledSortUpIcon />
-													)
+							{headerGroup.headers.map((column: any) => (
+								<TableCellHead
+									hideHeaders={hideHeaders}
+									{...column.getHeaderProps(
+										column.sortable ? column.getSortByToggleProps() : undefined
+									)}
+								>
+									{column.render('Header')}
+									{column.sortable && (
+										<SortIconContainer>
+											{column.isSorted ? (
+												column.isSortedDesc ? (
+													<StyledSortDownIcon />
 												) : (
-													<>
-														<StyledSortUpIcon />
-														<StyledSortDownIcon />
-													</>
-												)}
-											</SortIconContainer>
-										)}
-									</TableCellHead>
-								);
-							})}
+													<StyledSortUpIcon />
+												)
+											) : (
+												<>
+													<StyledSortUpIcon />
+													<StyledSortDownIcon />
+												</>
+											)}
+										</SortIconContainer>
+									)}
+								</TableCellHead>
+							))}
 						</TableRow>
 					))}
 					{isLoading ? (
@@ -180,24 +156,19 @@ export const Table: FC<TableProps> = ({
 							<TableBody className="table-body" {...getTableBodyProps()}>
 								{page.map((row: Row) => {
 									prepareRow(row);
+
 									return (
 										<TableBodyRow
 											className="table-body-row"
-											{..._.merge(row.getRowProps(), customRowProps?.())}
+											{...row.getRowProps()}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>
-											{row.cells.map((cell: Cell) => {
-												const customProps = customCellProps?.()[cell.column.id] ?? {};
-												return (
-													<TableCell
-														className="table-body-cell"
-														{..._.merge(cell.getCellProps(), customProps)}
-													>
-														{cell.render('Cell')}
-													</TableCell>
-												);
-											})}
+											{row.cells.map((cell: Cell) => (
+												<TableCell className="table-body-cell" {...cell.getCellProps()}>
+													{cell.render('Cell')}
+												</TableCell>
+											))}
 										</TableBodyRow>
 									);
 								})}
