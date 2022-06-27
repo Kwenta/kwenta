@@ -310,7 +310,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</div>
 								);
 							},
-							width: 125,
+							width: 145,
 						},
 						{
 							Header: () => (
@@ -336,7 +336,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</div>
 								);
 							},
-							width: 125,
+							width: 130,
 						},
 						{
 							Header: () => (
@@ -357,7 +357,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									</div>
 								);
 							},
-							width: 125,
+							width: 120,
 						},
 					]}
 				/>

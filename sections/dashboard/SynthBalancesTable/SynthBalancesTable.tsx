@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import Currency from 'components/Currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { DEFAULT_DATA } from './constants';
 import Table from 'components/Table';
 import { Price } from 'queries/rates/types';
 import * as _ from 'lodash/fp';
@@ -57,24 +56,22 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 
 	let data = useMemo(() => {
 		const dailyPriceChanges: Price[] = dailyPriceChangesQuery?.data ?? [];
-		return synthBalances.length > 0
-			? synthBalances.map((synthBalance: SynthBalance, i: number) => {
-					const { currencyKey, balance, usdBalance } = synthBalance;
+		return synthBalances.map((synthBalance: SynthBalance) => {
+			const { currencyKey, balance, usdBalance } = synthBalance;
 
-					const price = exchangeRates && exchangeRates[currencyKey];
-					const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
+			const price = exchangeRates && exchangeRates[currencyKey];
+			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
 
-					const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
-					return {
-						synth: currencyKey,
-						description,
-						balance,
-						usdBalance,
-						price,
-						priceChange: calculatePriceChange(price, pastPrice),
-					};
-			  })
-			: DEFAULT_DATA;
+			const description = synthsMap != null ? synthsMap[currencyKey]?.description : '';
+			return {
+				synth: currencyKey,
+				description,
+				balance,
+				usdBalance,
+				price,
+				priceChange: calculatePriceChange(price, pastPrice),
+			};
+		});
 	}, [dailyPriceChangesQuery?.data, exchangeRates, synthBalances, synthsMap]);
 
 	return (
