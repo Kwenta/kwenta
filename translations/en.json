@@ -538,7 +538,9 @@
 				"date-time": "Date/Time",
 				"from": "From",
 				"to": "To",
-				"usd-value": "USD Value"
+				"usd-value": "USD Value",
+				"no-trade-history": "You have no trades yet.",
+				"no-trade-history-link": "Visit the Kwenta exchange to swap synths."
 			},
 			"futures-history-table": {
 				"size": "Size",
@@ -549,7 +551,9 @@
 				"side": "Side",
 				"market": "Market",
 				"order-type": "Type",
-				"no-results": "Perpetual Futures are available on Optimism L2"
+				"no-results": "Perpetual Futures are available on Optimism L2",
+				"no-trade-history": "You have no trades yet.",
+				"no-trade-history-link": "Trade Perpetual Futures on Kwenta now!"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",
