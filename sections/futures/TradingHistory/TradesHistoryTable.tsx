@@ -94,40 +94,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 								: window.open(`${EXTERNAL_LINKS.Explorer.OptimismKovan}/${row.original.id}`)
 							: undefined
 					}
-					customCellProps={() => {
-						return {
-							[TableColumnAccessor.Time]: {
-								key: TableColumnAccessor.Time,
-								style: {
-									justifyContent: 'end',
-									textAlign: 'right',
-								},
-							},
-							[TableColumnAccessor.Price]: {
-								key: TableColumnAccessor.Price,
-								style: {
-									justifyContent: 'center',
-								},
-							},
-						};
-					}}
-					customHeaderProps={() => {
-						return {
-							[TableColumnAccessor.Time]: {
-								key: TableColumnAccessor.Time,
-								style: {
-									justifyContent: 'end',
-									textAlign: 'right',
-								},
-							},
-							[TableColumnAccessor.Price]: {
-								key: TableColumnAccessor.Price,
-								style: {
-									justifyContent: 'center',
-								},
-							},
-						};
-					}}
 					highlightRowsOnHover
 					columns={[
 						{
@@ -229,6 +195,23 @@ const LastTradesLabel = styled(CapitalizedText)`
 `;
 const TableContainer = styled.div``;
 
+const TableAlignment = css`
+	justify-content: space-between;
+	& > div:first-child {
+		flex: 60 60 0 !important;
+	}
+	& > div:nth-child(2) {
+		flex: 100 100 0 !important;
+		display: flex;
+		justify-content: center;
+	}
+	& > div:last-child {
+		flex: 70 70 0 !important;
+		justify-content: flex-end;
+		padding-right: 20px;
+	}
+`;
+
 const StyledTable = styled(Table)<{ mobile?: boolean }>`
 	border: 0px;
 
@@ -244,7 +227,13 @@ const StyledTable = styled(Table)<{ mobile?: boolean }>`
 			height: 242px;
 		`}
 
-
+	.table-row {
+		${TableAlignment}
+	}
+	.table-body-row {
+		${TableAlignment}
+		padding: 0;
+	}
 
 	.table-body-row {
 		padding: 0;

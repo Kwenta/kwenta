@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useRouter } from 'next/router';
 
 import Table from 'components/Table';
@@ -65,28 +65,6 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					router.push(`/market/${row.original.asset}`);
 				}}
 				highlightRowsOnHover
-				customCellProps={() => {
-					return {
-						[TableColumnAccessor.DailyVolume]: {
-							key: TableColumnAccessor.DailyVolume,
-							style: {
-								justifyContent: 'end',
-								textAlign: 'right',
-							},
-						},
-					};
-				}}
-				customHeaderProps={() => {
-					return {
-						[TableColumnAccessor.DailyVolume]: {
-							key: TableColumnAccessor.DailyVolume,
-							style: {
-								justifyContent: 'end',
-								textAlign: 'right',
-							},
-						},
-					};
-				}}
 				sortBy={[
 					{
 						id: 'dailyVolume',
@@ -212,7 +190,9 @@ const IconContainer = styled.div`
 	grid-row: 1 / span 2;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.p`
+	margin: unset;
+`;
 
 const TableContainer = styled.div`
 	margin-top: 16px;
@@ -222,8 +202,28 @@ const TableContainer = styled.div`
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
 `;
+const TableAlignment = css`
+	justify-content: space-between;
+
+	& > div:first-child {
+		flex: 60 60 0 !important;
+	}
+
+	& > div:last-child {
+		justify-content: flex-end;
+		padding-right: 20px;
+		text-align: right;
+	}
+`;
 
 const StyledTable = styled(Table)`
+	.table-row {
+		${TableAlignment}
+	}
+	.table-body-row {
+		${TableAlignment}
+		padding: 0;
+	}
 	margin-bottom: 20px;
 `;
 
