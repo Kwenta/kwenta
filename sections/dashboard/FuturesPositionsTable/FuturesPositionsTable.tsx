@@ -324,6 +324,7 @@ const OpenPositionsHeader = styled.div`
 	display: flex;
 	justify-content: space-between;
 	margin: 15px;
+	padding: 0 10px;
 
 	& > div {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};

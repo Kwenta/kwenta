@@ -7,6 +7,7 @@ import { getDisplayAsset, isEurForex } from 'utils/futures';
 import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { border } from 'components/Button';
 
 type MobilePositionRowProps = {
 	row: any;
@@ -65,26 +66,31 @@ const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	padding: 10px;
 	border-radius: 8px;
 	box-sizing: border-box;
-	border: 1px solid;
+
+	${border};
 
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`
-			border-image-source: linear-gradient(
-				180deg,
-				rgba(127, 212, 130, 0.5) 0%,
-				rgba(50, 111, 52, 0.5) 100%
-			);
+			&::before {
+				background: linear-gradient(
+					180deg,
+					rgba(127, 212, 130, 0.5) 0%,
+					rgba(50, 111, 52, 0.5) 100%
+				);
+			}
 		`}
 
 	${(props) =>
 		props.side === PositionSide.SHORT &&
 		css`
-			border-image-source: linear-gradient(
-				180deg,
-				rgba(239, 104, 104, 0.5) 0%,
-				rgba(147, 54, 54, 0.5) 100%
-			);
+			&::before {
+				background: linear-gradient(
+					180deg,
+					rgba(239, 104, 104, 0.5) 0%,
+					rgba(147, 54, 54, 0.5) 100%
+				);
+			}
 		`}
 `;
 
