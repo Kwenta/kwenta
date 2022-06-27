@@ -17,12 +17,12 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import TradingHistory from 'sections/futures/TradingHistory';
 import { CurrencyKey } from 'constants/currency';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { currentMarketState } from 'store/futures';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import LeftSidebar from '../../sections/futures/LeftSidebar/LeftSidebar';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -51,7 +51,7 @@ const Market: MarketComponent = () => {
 				<PageContent>
 					<StyledFullHeightContainer>
 						<StyledLeftSideContent>
-							<TradingHistory />
+							<LeftSidebar />
 						</StyledLeftSideContent>
 						<StyledMainContent>
 							<MarketInfo />
