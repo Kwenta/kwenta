@@ -24,7 +24,8 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row }) => {
 					</OpenPositionSize>
 					<OpenPositionSide side={row.position ?? PositionSide.LONG}>
 						<span className="side">{row.position ?? PositionSide.LONG}</span>{' '}
-						<span className="at">@</span> {formatNumber(row.leverage ?? 0, { maxDecimals: 1 })}
+						<span className="at">@</span>{' '}
+						<span className="leverage">{formatNumber(row.leverage ?? 0, { maxDecimals: 1 })}x</span>
 					</OpenPositionSide>
 				</div>
 			</div>
@@ -118,6 +119,10 @@ const OpenPositionSide = styled.div<{ side: PositionSide }>`
 
 	.at {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
+	}
+
+	.leverage {
+		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
 `;
 

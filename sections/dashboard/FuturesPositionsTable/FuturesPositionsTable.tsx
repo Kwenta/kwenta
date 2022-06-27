@@ -257,7 +257,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.map((row) => (
-						<MobilePositionRow row={row} />
+						<MobilePositionRow key={row.asset} row={row} />
 					))}
 				</div>
 			</MobileOnlyView>
