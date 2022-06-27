@@ -10,7 +10,7 @@ import { useRecoilValue } from 'recoil';
 
 import { isL2MainnetState } from 'store/wallet';
 import styled, { css } from 'styled-components';
-import { CapitalizedText, FlexDivRowCentered, NumericValue } from 'styles/common';
+import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { isEurForex } from 'utils/futures';
@@ -172,20 +172,6 @@ const HistoryContainer = styled.div<{ mobile?: boolean }>`
 		`}
 `;
 
-// const HistoryLabelContainer = styled(FlexDivRowCentered)`
-// 	font-size: 13px;
-// 	justify-content: space-between;
-// 	padding: 12px 18px;
-// 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
-// `;
-
-// const HistoryLabel = styled(CapitalizedText)`
-// 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-// `;
-
-// const LastTradesLabel = styled(CapitalizedText)`
-// 	color: ${(props) => props.theme.colors.selectedTheme.gray};
-// `;
 const TableContainer = styled.div``;
 
 const TableAlignment = css`

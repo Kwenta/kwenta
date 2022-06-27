@@ -210,7 +210,6 @@ const TableAlignment = css`
 
 	& > div:last-child {
 		justify-content: flex-end;
-		/* padding-right: 20px; */
 		text-align: right;
 	}
 `;
