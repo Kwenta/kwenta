@@ -19,6 +19,11 @@ export const currentMarketState = atom<CurrencyKey>({
 	default: Synths.sETH,
 });
 
+export const activeTabState = atom<number>({
+	key: getFuturesKey('activeTab'),
+	default: 0,
+});
+
 export const positionState = atom<FuturesPosition | null>({
 	key: getFuturesKey('position'),
 	default: null,

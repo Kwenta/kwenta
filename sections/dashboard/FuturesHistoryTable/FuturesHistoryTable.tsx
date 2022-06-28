@@ -6,6 +6,8 @@ import { CellProps } from 'react-table';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import Link from 'next/link';
+import ROUTES from 'constants/routes';
 
 import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
@@ -66,7 +68,14 @@ const FuturesHistoryTable: FC = () => {
 							{t('dashboard.overview.futures-history-table.no-results')}
 							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
-					) : undefined
+					) : (
+						<TableNoResults>
+							{t('dashboard.overview.futures-history-table.no-trade-history')}
+							<Link href={ROUTES.Markets.Home}>
+								<div>{t('dashboard.overview.futures-history-table.no-trade-history-link')}</div>
+							</Link>
+						</TableNoResults>
+					)
 				}
 				highlightRowsOnHover
 				sortBy={[{ id: 'dateTime', asec: true }]}
@@ -266,6 +275,7 @@ const TableNoResults = styled(GridDivCenteredRow)`
 	font-family: ${(props) => props.theme.fonts.bold};
 	div {
 		text-decoration: underline;
+		cursor: pointer;
 		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.regular};
 	}
