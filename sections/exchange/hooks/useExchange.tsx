@@ -1212,8 +1212,7 @@ const useExchange = ({
 			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
 		}
 		return null;
-		// eslint-disable-next-line
-	}, [estimatedBaseTradePrice, txProvider]);
+	}, [estimatedBaseTradePrice, txProvider, totalTradePrice]);
 
 	const baseCurrencyCard = (
 		<>

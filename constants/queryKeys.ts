@@ -135,7 +135,12 @@ export const QUERY_KEYS = {
 		CoinList: ['cg', 'coinList'],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
 		Price: (priceId: string) => ['cg', 'price', priceId],
-		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
+		TokenPrices: (tokenAddresses: string[], platform: string) => [
+			'cg',
+			'prices',
+			tokenAddresses.join('|'),
+			platform,
+		],
 	},
 	Futures: {
 		DayTradeStats: (networkId: NetworkId, currencyKey: string | null) => [
