@@ -1208,7 +1208,7 @@ const useExchange = ({
 		) : null;
 
 	const slippagePercent = useMemo(() => {
-		if (txProvider === '1inch' && totalTradePrice.gt(0)) {
+		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
 			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
 		}
 		return null;
