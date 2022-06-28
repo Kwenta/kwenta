@@ -7,7 +7,7 @@ import { getDisplayAsset, isEurForex } from 'utils/futures';
 import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { border } from 'components/Button';
+// import { border } from 'components/Button';
 
 type MobilePositionRowProps = {
 	row: any;
