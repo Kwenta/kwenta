@@ -67,8 +67,6 @@ const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	border-radius: 8px;
 	box-sizing: border-box;
 
-	${border};
-
 	${(props) =>
 		props.side === PositionSide.LONG &&
 		css`

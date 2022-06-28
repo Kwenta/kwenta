@@ -328,11 +328,13 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											price={cellProps.row.original.openInterest}
 											sign="$"
 										/>
-										<ChangePercent
-											value={cellProps.row.original.fundingRate}
-											decimals={6}
-											className="change-pct"
-										/>
+										<div>
+											<ChangePercent
+												value={cellProps.row.original.fundingRate}
+												decimals={6}
+												className="change-pct"
+											/>
+										</div>
 									</div>
 								);
 							},
