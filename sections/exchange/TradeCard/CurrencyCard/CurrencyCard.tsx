@@ -328,7 +328,7 @@ const Slippage = styled.div`
 	${numericValueCSS};
 	padding: 0px 8px 2px 8px;
 	font-size: 11px;
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 `;
 
 const CurrencyNameLabel = styled.div`
