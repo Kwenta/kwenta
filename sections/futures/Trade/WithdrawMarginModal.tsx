@@ -138,6 +138,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			</BalanceContainer>
 
 			<CustomInput
+				dataTestId="funtures-market-trade-withdraw-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => {

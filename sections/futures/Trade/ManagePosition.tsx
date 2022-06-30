@@ -74,6 +74,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 					</PlaceOrderButton>
 
 					<CloseOrderButton
+						data-testid="trade-close-position-button"
 						fullWidth={true}
 						noOutline={true}
 						variant="danger"

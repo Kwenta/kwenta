@@ -13,14 +13,11 @@ describe('Trade 1 sUSD for sETH on Optimism', () => {
 	context(`Trade sUSD => ${testedAsset}`, () => {
 		before(() => {
 			// this line is necessary to make sure we have a clean slate and empty a cached connection by a previous test spec
-			cy.disconnectMetamaskWalletFromAllDapps();
+			exchange.disconnectMetamaskWalletFromAllDapps();
 
 			exchange.visit(`${testedAsset}-sUSD`);
 			exchange.connectBrowserWallet();
 			exchange.acceptMetamaskAccessRequest();
-
-			// we must be logged in now ; added statement we need a wallet address available
-			cy.findByTestId('wallet-btn').should(`contain.text`, '0x');
 		});
 		it(`should exchange with success`, () => {
 			// enters a value of 1 sUSD

@@ -93,6 +93,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 
 	return (
 		<StyledCard
+			data-testid={'currency-card-' + side}
 			className={`currency-card currency-card-${side}`}
 			interactive={interactive}
 			{...rest}

@@ -534,8 +534,8 @@ const useExchange = ({
 
 	useEffect(() => {
 		setCurrencyPair({
-			base: null,
-			quote: 'sUSD',
+			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || 'sUSD',
 		});
 	}, [network.id, setCurrencyPair]);
 
