@@ -81,6 +81,7 @@ const MarketStat = styled.div`
 	}
 
 	.value {
+		font-size: 16px;
 		font-family: ${(props) => props.theme.fonts.bold};
 		color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	}
