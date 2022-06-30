@@ -103,7 +103,9 @@ const useConvert = () => {
 			},
 		});
 
-		return ethers.utils.formatEther(response.data.toTokenAmount).toString();
+		return ethers.utils
+			.formatUnits(response.data.toTokenAmount, response.data.toToken.decimals)
+			.toString();
 	};
 
 	const swapSynthSwapGasEstimate = async (
