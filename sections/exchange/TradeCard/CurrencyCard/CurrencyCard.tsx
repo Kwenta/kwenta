@@ -148,7 +148,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									{!isLoading &&
 										slippagePercent != null &&
 										slippagePercent.lt(0) &&
-										formatPercent(slippagePercent)}
+										formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
 								</Slippage>
 							</FlexDivRowCentered>
 							{isLoading && <StyledLoader width="24px" height="24px" />}

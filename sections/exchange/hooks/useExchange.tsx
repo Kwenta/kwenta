@@ -489,6 +489,9 @@ const useExchange = ({
 		if (isApproving) {
 			return t('exchange.summary-info.button.approving');
 		}
+		if (oneInchQuoteQuery.error) {
+			return t('exchange.summary-info.button.insufficient-liquidity');
+		}
 		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
@@ -504,6 +507,7 @@ const useExchange = ({
 		isApproving,
 		t,
 		txProvider,
+		oneInchQuoteQuery,
 	]);
 
 	const noSynths =

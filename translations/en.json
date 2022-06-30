@@ -289,7 +289,8 @@
 				"select-synth": "select synth",
 				"select-token": "select token"
 			},
-			"max-button": "max"
+			"max-button": "max",
+			"slippage": " slippage"
 		},
 		"market-details-card": {
 			"title": "Market Details",
@@ -365,6 +366,7 @@
 				"settle-waiting-period": "settlement waiting period",
 				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
+				"insufficient-liquidity": "insufficient liquidity",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
