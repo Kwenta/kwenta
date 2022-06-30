@@ -20,6 +20,9 @@ import LinkIcon from 'assets/svg/app/link.svg';
 import * as _ from 'lodash/fp';
 import { isFiatCurrency } from 'utils/currencies';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+import { GridDivCenteredRow } from 'styles/common';
+import Link from 'next/link';
+import ROUTES from 'constants/routes';
 
 type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
 	timestamp: number;
@@ -62,6 +65,14 @@ const SpotHistoryTable: FC = () => {
 				data={filteredHistoricalTrades}
 				showPagination={true}
 				highlightRowsOnHover
+				noResultsMessage={
+					<TableNoResults>
+						{t('dashboard.overview.spot-history-table.no-trade-history')}
+						<Link href={ROUTES.Exchange.Home}>
+							<div>{t('dashboard.overview.spot-history-table.no-trade-history-link')}</div>
+						</Link>
+					</TableNoResults>
+				}
 				sortBy={[
 					{
 						id: 'dateTime',
@@ -249,6 +260,23 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 20px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	div {
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 16px;
+		font-family: ${(props) => props.theme.fonts.regular};
+	}
 `;
 
 const SynthContainer = styled.div`
