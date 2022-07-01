@@ -38,11 +38,6 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 		return positions
 			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
 			.map((stat: PositionHistory, i: number) => {
-				const pnlAfterFees = stat.pnl.sub(stat.feesPaid).add(stat.netFunding);
-				const actualPnl = pnlAfterFees.lt(stat.initialMargin.add(stat.totalDeposits).mul(-1))
-					? stat.initialMargin.add(stat.totalDeposits).mul(-1)
-					: pnlAfterFees;
-
 				return {
 					rank: i + 1,
 					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
@@ -52,8 +47,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
 					feesPaid: stat.feesPaid,
 					netFunding: stat.netFunding,
-					pnl: actualPnl,
-					pnlPct: `(${actualPnl
+					pnl: stat.pnlWithFeesPaid,
+					pnlPct: `(${stat.pnlWithFeesPaid
 						.div(stat.initialMargin.add(stat.totalDeposits))
 						.mul(100)
 						.toNumber()
