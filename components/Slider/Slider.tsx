@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
-import ImageBackground from 'assets/svg/futures/sliderbackground.svg';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number;
@@ -45,7 +44,7 @@ export default SliderComponent;
 const SliderContainer = styled.div`
 	width: 100vw;
 	height: 24px;
-	padding: 0 4px 0 4px;
+	padding: 0 8px 0 8px;
 	box-sizing: border-box;
 `;
 
@@ -96,7 +95,7 @@ const StyledSlider = styled(Slider)`
 		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 		margin-left: 3px;
 	}
-	
+
 	.MuiSlider-valueLabel {
 		.PrivateValueLabel-label-5 {
 			color: ${(props) => props.theme.colors.selectedTheme.slider.label};
