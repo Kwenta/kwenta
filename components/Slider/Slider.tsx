@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
+import media from 'styles/media';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number;
@@ -57,6 +58,9 @@ const StyledSlider = styled(Slider)`
 	.MuiSlider-markLabelActive {
 		left: 2% !important;
 	}
+	.MuiSlider-root {
+		padding: 10px 0;
+	}
 
 	.MuiSlider-rail {
 		margin-top: -2px;
@@ -101,6 +105,10 @@ const StyledSlider = styled(Slider)`
 		font-size: 11px;
 		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 		margin-left: 3px;
+		${media.lessThan('sm')`
+			top: -5px;
+			
+		`}
 	}
 
 	.MuiSlider-valueLabel {
@@ -111,5 +119,8 @@ const StyledSlider = styled(Slider)`
 		font-size: 11px;
 		top: initial;
 		bottom: -41.5px;
+		${media.lessThan('sm')`
+			top: -15px;
+		`}
 	}
 `;
