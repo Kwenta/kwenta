@@ -45,7 +45,7 @@ export default SliderComponent;
 const SliderContainer = styled.div`
 	width: 100vw;
 	height: 24px;
-	padding: 0 8px 0 8px;
+	padding: 0 6px;
 	box-sizing: border-box;
 	${media.lessThan('sm')`
 		padding: 0 4px 0 4px;
@@ -71,9 +71,11 @@ const StyledSlider = styled(Slider)`
 	.MuiSlider-track {
 		height: 6px;
 		background-color: #7d6b54;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.track.shadow};
 		margin-top: -3px;
-		border-radius: 2px;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
 	}
 
 	.MuiSlider-markActive {
@@ -84,8 +86,7 @@ const StyledSlider = styled(Slider)`
 	}
 
 	.MuiSlider-thumb {
-		background-color: #e4b378;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		width: 14px;
 		height: 14px;
 		margin-left: initial;
@@ -94,7 +95,6 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-thumb.Mui-focusVisible,
 	.MuiSlider-thumb:hover {
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
 	}
 
 	.MuiSlider-markLabel {
@@ -110,7 +110,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-valueLabel {
 		.PrivateValueLabel-label-5 {
-			color: ${(props) => props.theme.colors.selectedTheme.slider.label};
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;
