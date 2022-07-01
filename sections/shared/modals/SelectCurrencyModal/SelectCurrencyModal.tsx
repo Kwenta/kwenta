@@ -144,7 +144,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		const ordered = orderBy(items, (i) => i.symbol);
 		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
 		return ordered;
-	}, [searchFilteredTokens, page, oneInchEnabled]);
+	}, [searchFilteredTokens, page, oneInchEnabled, synthCategory]);
 
 	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
 	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};

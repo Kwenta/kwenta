@@ -106,8 +106,8 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 export const formatCryptoCurrency = (value: WeiSource, options?: FormatCurrencyOptions) =>
 	formatNumber(value, {
-		prefix: options?.currencyKey,
-		suffix: options?.sign,
+		prefix: options?.sign,
+		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_CRYPTO_DECIMALS,
 		maxDecimals: options?.maxDecimals,
 	});
