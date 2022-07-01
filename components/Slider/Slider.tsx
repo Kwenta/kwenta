@@ -52,12 +52,6 @@ const SliderContainer = styled.div`
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
-	.MuiSlider-markLabel {
-		left: 96% !important;
-	}
-	.MuiSlider-markLabelActive {
-		left: 2% !important;
-	}
 	.MuiSlider-root {
 		padding: 10px 0;
 	}
