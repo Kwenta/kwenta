@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
 import media from 'styles/media';
 
@@ -42,6 +42,14 @@ const SliderComponent: React.FC<SliderProps> = ({
 };
 export default SliderComponent;
 
+const styledMarkLabel = css`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
+	${media.lessThan('sm')`
+		top: -5px;
+	`}
+`;
 const SliderContainer = styled.div`
 	width: 100vw;
 	height: 24px;
@@ -93,23 +101,18 @@ const StyledSlider = styled(Slider)`
 		margin-top: -8px;
 	}
 
-	.MuiSlider-thumb.Mui-focusVisible,
-	.MuiSlider-thumb:hover {
+	.MuiSlider-markLabelActive {
+		${styledMarkLabel}
+		margin-left: 6px;
 	}
 
-	.MuiSlider-markLabel {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
-		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
-		margin-left: 3px;
-		${media.lessThan('sm')`
-			top: -5px;
-			margin-left: -4px;
-		`}
+	.MuiSlider-markLabel[data-index='1'] {
+		${styledMarkLabel}
+		margin-left: -16px;
 	}
 
 	.MuiSlider-valueLabel {
-		.PrivateValueLabel-label-5 {
+		span[class^='PrivateValueLabel-label'] {
 			color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		}
 		font-family: ${(props) => props.theme.fonts.mono};
