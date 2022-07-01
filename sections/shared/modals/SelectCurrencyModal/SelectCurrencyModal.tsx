@@ -16,7 +16,7 @@ import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
 import { RowsHeader, CenteredModal } from '../common';
 import CurrencyRow from './CurrencyRow';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
@@ -42,7 +42,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	onSelect,
 }) => {
 	const { t } = useTranslation();
-	const isL2 = useRecoilValue(isL2State);
+	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { synthetixjs } = Connector.useContainer();
@@ -51,7 +51,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 
-	const oneInchEnabled = isL2;
+	// Only available on Optimism mainnet
+	const oneInchEnabled = network.id === 10;
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
 
