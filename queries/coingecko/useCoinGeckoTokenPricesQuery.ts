@@ -23,7 +23,6 @@ const useCoinGeckoTokenPricesQuery = (
 					','
 				)}&vs_currencies=usd`
 			);
-			console.log('response', response);
 			return response.data;
 		},
 		{

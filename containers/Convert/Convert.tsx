@@ -3,10 +3,11 @@ import axios from 'axios';
 import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useCallback } from 'react';
-//@ts-ignore
+//@ts-ignore TODO: remove once types are added
 import getFormatedSwapData from '@jaredborders/synthswap-utils';
 import { wei } from '@synthetixio/wei';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 import Connector from 'containers/Connector';
 import { CurrencyKey } from 'constants/currency';
@@ -15,7 +16,6 @@ import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
-import { useTranslation } from 'react-i18next';
 
 type Token = {
 	symbol: CurrencyKey;

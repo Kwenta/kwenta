@@ -135,7 +135,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	);
 
 	const oneInchTokensPaged = useMemo(() => {
-		if (!oneInchEnabled) return [];
+		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
 		const items =
 			searchFilteredTokens.map((t) => ({
 				...t,
@@ -251,10 +251,6 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 								<span>
 									{assetSearch ? (
 										<span>{t('modals.select-currency.header.search-results')}</span>
-									) : synthCategory != null ? (
-										t('modals.select-currency.header.category-synths', {
-											category: synthCategory,
-										})
 									) : (
 										t('modals.select-currency.header.other-tokens')
 									)}
