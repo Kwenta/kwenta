@@ -47,13 +47,14 @@ const SliderContainer = styled.div`
 	height: 24px;
 	padding: 0 8px 0 8px;
 	box-sizing: border-box;
-	${media.lessThan('sm')`
-		margin-bottom: 10px;
-	`}
 `;
 
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
+
+	.MuiSlider-root {
+		padding: 10px 0;
+	}
 
 	.MuiSlider-rail {
 		margin-top: -2px;
@@ -99,7 +100,8 @@ const StyledSlider = styled(Slider)`
 		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
 		margin-left: 3px;
 		${media.lessThan('sm')`
-			margin-left: 0px;
+			top: -5px;
+			
 		`}
 	}
 
@@ -111,5 +113,8 @@ const StyledSlider = styled(Slider)`
 		font-size: 11px;
 		top: initial;
 		bottom: -41.5px;
+		${media.lessThan('sm')`
+			top: -15px;
+		`}
 	}
 `;
