@@ -10,6 +10,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from './utils';
 import { currentMarketState } from 'store/futures';
+import { getMarketKey } from 'utils/futures';
 
 export type NextPriceDetails = {
 	keeperDeposit: Wei;
@@ -39,6 +40,7 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 				const { contracts } = synthetixjs!;
 				const { ExchangeRates, FuturesMarketSettings } = contracts;
 				const FuturesMarketContract = getFuturesMarketContract(currencyKey, contracts);
+				const marketKey = getMarketKey(currencyKey, network.id);
 
 				const [
 					currentRoundId,
@@ -50,13 +52,13 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 					makerFeeNextPrice,
 					assetPrice,
 				] = await Promise.all([
-					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
+					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(marketKey)),
 					FuturesMarketSettings.minKeeperFee(),
 					FuturesMarketContract.marketSkew(),
-					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(marketKey)),
 					FuturesMarketContract.assetPrice(),
 				]);
 
