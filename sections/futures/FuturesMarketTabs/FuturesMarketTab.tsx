@@ -18,6 +18,7 @@ import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { FlexDivCol } from 'styles/common';
 import { isEurForex } from 'utils/futures';
 import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -26,6 +27,10 @@ type FuturesMarketsTableProps = {
 enum TableColumnAccessor {
 	Market = 'market',
 	DailyVolume = 'dailyVolume',
+}
+
+function setLastVisited(baseCurrencyPair: string): void {
+	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
 }
 
 const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
@@ -63,7 +68,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				data={data}
 				showPagination={true}
 				onTableRowClick={(row) => {
-					router.push(`/market/${row.original.asset}`);
+					router.push(ROUTES.Markets.MarketPair(row.original.asset));
+					setLastVisited(row.original.asset);
 				}}
 				highlightRowsOnHover
 				sortBy={[
