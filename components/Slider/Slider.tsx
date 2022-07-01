@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
-import imageBackground from 'assets/svg/futures/sliderbackground.svg';
+import ImageBackground from 'assets/svg/futures/sliderbackground.svg';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number;
@@ -43,10 +43,9 @@ const SliderComponent: React.FC<SliderProps> = ({
 export default SliderComponent;
 
 const SliderContainer = styled.div`
-	width: 334px;
+	width: 100vw;
 	height: 24px;
-	background: url(${imageBackground.src}) no-repeat;
-	padding: 0 19px 0 4px;
+	padding: 0 4px 0 4px;
 	box-sizing: border-box;
 `;
 
@@ -54,31 +53,26 @@ const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
 	.MuiSlider-rail {
-		margin-top: -11px;
-		background-color: transparent;
-		height: 24px;
+		margin-top: -2px;
+		border-radius: 2px;
+		background-color: #7d6b54;
+		height: 4px;
 		left: 0;
 		right: 0;
 	}
 
 	.MuiSlider-track {
-		height: 4px;
+		height: 6px;
 		background-color: #7d6b54;
 		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.track.shadow};
 		margin-top: -3px;
 		border-radius: 2px;
-		margin-left: 1px;
-		margin-right: 4px;
 	}
 
 	.MuiSlider-markActive {
-		width: 12px;
-		height: 12px;
-		border-radius: 6px;
-		background-color: #7d6b54;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.track.shadow};
-		margin-top: -7px;
-		margin-left: 1px;
+		width: 0px;
+		height: 0px;
+		background-color: transparent;
 		opacity: 1;
 	}
 
@@ -100,13 +94,16 @@ const StyledSlider = styled(Slider)`
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;
 		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
-		margin-left: 8px;
+		margin-left: 3px;
 	}
-
+	
 	.MuiSlider-valueLabel {
+		.PrivateValueLabel-label-5 {
+			color: ${(props) => props.theme.colors.selectedTheme.slider.label};
+		}
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;
 		top: initial;
-		bottom: -41px;
+		bottom: -41.5px;
 	}
 `;
