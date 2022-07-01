@@ -181,7 +181,6 @@ const TableAlignment = css`
 	}
 	& > div:nth-child(2) {
 		flex: 100 100 0 !important;
-		display: flex;
 		justify-content: center;
 	}
 	& > div:last-child {
