@@ -68,9 +68,8 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				data={data}
 				showPagination={true}
 				onTableRowClick={(row) => {
-					const asset = `/market/${row.original.asset}`;
-					router.push(asset);
-					setLastVisited(asset);
+					router.push(ROUTES.Markets.MarketPair(row.original.asset));
+					setLastVisited(row.original.asset);
 				}}
 				highlightRowsOnHover
 				sortBy={[
