@@ -2,10 +2,10 @@ import { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
 
 export const FUTURES_ENDPOINT_MAINNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';
 
 export const FUTURES_ENDPOINT_TESTNET =
-	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-kovan-main';
+	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-kovan-futures';
 
 export const DAY_PERIOD = 24;
 
@@ -35,6 +35,7 @@ export const FUTURES_POSITION_FRAGMENT = gql`
 		avgEntryPrice
 		totalVolume
 		pnl
+		pnlWithFeesPaid
 		trades
 	}
 `;

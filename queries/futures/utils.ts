@@ -325,6 +325,7 @@ export const mapTradeHistory = (
 					entryPrice,
 					exitPrice,
 					pnl,
+					pnlWithFeesPaid,
 					openTimestamp,
 					closeTimestamp,
 					totalVolume,
@@ -341,6 +342,7 @@ export const mapTradeHistory = (
 					const initialMarginWei = new Wei(initialMargin, 18, true);
 					const marginWei = new Wei(margin, 18, true);
 					const pnlWei = new Wei(pnl, 18, true);
+					const pnlWithFeesPaidWei = new Wei(pnlWithFeesPaid, 18, true);
 					const totalVolumeWei = new Wei(totalVolume, 18, true);
 					const avgEntryPriceWei = new Wei(avgEntryPrice, 18, true);
 					return {
@@ -364,6 +366,7 @@ export const mapTradeHistory = (
 						entryPrice: entryPriceWei,
 						exitPrice: exitPriceWei,
 						pnl: pnlWei,
+						pnlWithFeesPaid: pnlWithFeesPaidWei,
 						totalVolume: totalVolumeWei,
 						trades: trades,
 						avgEntryPrice: avgEntryPriceWei,

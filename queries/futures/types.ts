@@ -146,6 +146,7 @@ export type PositionHistory = {
 	leverage: Wei;
 	side: PositionSide;
 	pnl: Wei;
+	pnlWithFeesPaid: Wei;
 	totalVolume: Wei;
 	trades: number;
 };
