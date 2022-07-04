@@ -12,11 +12,9 @@ import { walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import usePortfolioData from 'queries/futures/usePortfolioData';
 
 const PortfolioChart: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	usePortfolioData();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const { network } = Connector.useContainer();

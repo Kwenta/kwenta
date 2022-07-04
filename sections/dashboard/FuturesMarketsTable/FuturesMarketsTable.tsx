@@ -13,7 +13,7 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
-import { getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
@@ -63,13 +63,14 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 			return {
 				asset: market.asset,
-				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
+				market: getDisplayAsset(market.asset) + '-PERP',
 				synth: synthsMap[market.asset],
 				description: description,
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
-				pastPrice: pastPrice?.price || '-',
-				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
+				pastPrice: pastPrice?.price || undefined,
+				priceChange:
+					(market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || undefined,
 				fundingRate:
 					(fundingRateResponse?.data as FundingRateResponse)?.fundingRate?.toNumber() ?? null,
 				openInterest: market.marketSize.mul(market.price).toNumber(),
@@ -181,7 +182,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'priceChange',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.priceChange === '-' ? (
+									return cellProps.row.original.priceChange === undefined ? (
 										<DefaultCell>-</DefaultCell>
 									) : (
 										<ChangePercent
@@ -351,6 +352,11 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
+										<ChangePercent
+											value={cellProps.row.original.priceChange ?? 0}
+											decimals={2}
+											className="change-pct"
+										/>
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.volume ?? 0}
