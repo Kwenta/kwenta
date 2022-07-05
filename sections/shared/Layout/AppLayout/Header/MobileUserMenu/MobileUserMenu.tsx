@@ -8,10 +8,14 @@ import CloseIcon from 'assets/svg/app/close.svg';
 import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
 import MobileMenuModal from './MobileMenuModal';
+import ROUTES from 'constants/routes';
+import Link from 'next/link';
+import Button from 'components/Button';
+import { useTranslation } from 'react-i18next';
 
 const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();
-
+	const { t } = useTranslation();
 	const closeModal = () => {
 		setIsOpen(undefined);
 	};
@@ -40,7 +44,15 @@ const MobileUserMenu: FC = () => {
 				</MobileFooterIconContainer>
 				<MobileFooterSeparator />
 				<MobileFooterRight>
-					<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
+					{window.location.pathname === ROUTES.Home.Root ? (
+						<Link href={ROUTES.Markets.Home}>
+							<Button isRounded={false} size="sm">
+								{t('homepage.nav.start-trade')}
+							</Button>
+						</Link>
+					) : (
+						<MobileWalletButton closeModal={closeModal} toggleModal={toggleModal('settings')} />
+					)}
 				</MobileFooterRight>
 			</MobileFooterContainer>
 			{isOpen === 'menu' && <MobileMenuModal onDismiss={closeModal} />}

@@ -14,11 +14,14 @@ import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
 type LogoProps = {
 	isL2: boolean;
 	isFutures?: boolean;
-	isHomePage?: boolean;
 };
 
-const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => {
+const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 	const currentTheme = useRecoilValue(currentThemeState);
+
+	if (window.location.pathname === ROUTES.Home.Root) {
+		return <LogoSvg />;
+	}
 
 	if (isFutures) {
 		if (currentTheme === 'dark') {
@@ -28,9 +31,7 @@ const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => 
 			return <LogoSvgBetaLight />;
 		}
 	}
-	if (isHomePage) {
-		return <LogoSvg />;
-	}
+
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
 };
 
