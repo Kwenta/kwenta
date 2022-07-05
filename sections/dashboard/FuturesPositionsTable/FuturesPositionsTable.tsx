@@ -329,6 +329,10 @@ const OpenPositionsHeader = styled.div`
 	& > div {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
+
+	& > div:first-child {
+		width: 150px;
+	}
 `;
 
 export default FuturesPositionsTable;

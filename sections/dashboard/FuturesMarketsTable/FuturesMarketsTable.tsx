@@ -352,16 +352,20 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							Cell: (cellProps: CellProps<any>) => {
 								return (
 									<div>
-										<ChangePercent
-											value={cellProps.row.original.priceChange ?? 0}
-											decimals={2}
-											className="change-pct"
-										/>
-										<Currency.Price
-											currencyKey={Synths.sUSD}
-											price={cellProps.row.original.volume ?? 0}
-											sign="$"
-										/>
+										<div>
+											<ChangePercent
+												value={cellProps.row.original.priceChange ?? 0}
+												decimals={2}
+												className="change-pct"
+											/>
+										</div>
+										<div>
+											<Currency.Price
+												currencyKey={Synths.sUSD}
+												price={cellProps.row.original.volume ?? 0}
+												sign="$"
+											/>
+										</div>
 									</div>
 								);
 							},
