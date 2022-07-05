@@ -7,6 +7,7 @@ import { getDisplayAsset, isEurForex } from 'utils/futures';
 import { Synths } from 'constants/currency';
 import ChangePercent from 'components/ChangePercent';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { border } from 'components/Button';
 // import { border } from 'components/Button';
 
 type MobilePositionRowProps = {
@@ -15,7 +16,7 @@ type MobilePositionRowProps = {
 
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row }) => {
 	return (
-		<OpenPositionContainer key={row.asset}>
+		<OpenPositionContainer side={row.position} key={row.asset}>
 			<div style={{ display: 'flex' }}>
 				<StyledCurrencyIcon currencyKey={row.marketKey} />
 				<div>
@@ -66,6 +67,9 @@ const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	padding: 10px;
 	border-radius: 8px;
 	box-sizing: border-box;
+	position: relative;
+
+	${border};
 
 	${(props) =>
 		props.side === PositionSide.LONG &&
