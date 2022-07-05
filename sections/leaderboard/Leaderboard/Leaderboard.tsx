@@ -320,7 +320,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 										Cell: (cellProps: CellProps<any>) => (
 											<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 										),
-										width: 100,
+										width: 45,
 									},
 									{
 										Header: () => (
@@ -366,6 +366,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 												</StyledOrderType>
 											);
 										},
+										width: 150,
 									},
 									{
 										Header: () => (
@@ -379,7 +380,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 												sign="$"
 											/>
 										),
-										width: 150,
+										width: 125,
 									},
 								]}
 							/>
