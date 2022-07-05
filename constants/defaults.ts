@@ -35,3 +35,6 @@ export const DEFAULT_SLIPPAGE = 1;
 
 // for Trading History
 export const DEFAULT_NUMBER_OF_TRADES: number = 50;
+
+// leverage adjustment
+export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;
