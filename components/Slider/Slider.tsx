@@ -53,7 +53,7 @@ const styledMarkLabel = css`
 const SliderContainer = styled.div`
 	width: 100vw;
 	height: 24px;
-	padding: 0 6px;
+	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;
 	${media.lessThan('sm')`
 		padding: 0 4px 0 4px;
@@ -64,10 +64,11 @@ const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
 	.MuiSlider-root {
-		padding: 10px 0;
+		padding: 10px 0px 10px 4px;
 	}
 
 	.MuiSlider-rail {
+		width: 102%;
 		margin-top: -2px;
 		border-radius: 2px;
 		background-color: #7d6b54;
@@ -97,7 +98,7 @@ const StyledSlider = styled(Slider)`
 		background-color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		width: 14px;
 		height: 14px;
-		margin-left: initial;
+		margin-left: -2px;
 		margin-top: -8px;
 		&.Mui-disabled {
 			background-color: transparent;
@@ -112,6 +113,10 @@ const StyledSlider = styled(Slider)`
 	.MuiSlider-markLabel[data-index='1'] {
 		${styledMarkLabel}
 		margin-left: -10px;
+	}
+
+	.MuiSlider-markLabel:nth-child(7) {
+		color: #787878 !important;
 	}
 
 	.MuiSlider-valueLabel {
