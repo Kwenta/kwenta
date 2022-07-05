@@ -99,6 +99,9 @@ const StyledSlider = styled(Slider)`
 		height: 14px;
 		margin-left: initial;
 		margin-top: -8px;
+		&.Mui-disabled {
+			background-color: transparent;
+		}
 	}
 
 	.MuiSlider-markLabelActive {
@@ -108,7 +111,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-markLabel[data-index='1'] {
 		${styledMarkLabel}
-		margin-left: -16px;
+		margin-left: -10px;
 	}
 
 	.MuiSlider-valueLabel {
