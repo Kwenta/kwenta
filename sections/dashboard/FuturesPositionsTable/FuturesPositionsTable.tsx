@@ -256,9 +256,11 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<div>Unrealized P&amp;L</div>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
-					{data.map((row) => (
-						<MobilePositionRow key={row.asset} row={row} />
-					))}
+					{data.length === 0 ? (
+						<NoPositionsText>There are no open positions.</NoPositionsText>
+					) : (
+						data.map((row) => <MobilePositionRow key={row.asset} row={row} />)
+					)}
 				</div>
 			</MobileOnlyView>
 		</>
@@ -333,6 +335,13 @@ const OpenPositionsHeader = styled.div`
 	& > div:first-child {
 		width: 150px;
 	}
+`;
+
+const NoPositionsText = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	margin: 20px 0;
+	font-size: 16px;
+	text-align: center;
 `;
 
 export default FuturesPositionsTable;
