@@ -55,9 +55,6 @@ const SliderContainer = styled.div`
 	height: 24px;
 	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;
-	${media.lessThan('sm')`
-		padding: 0 4px 0 4px;
-	`}
 `;
 
 const StyledSlider = styled(Slider)`
@@ -112,7 +109,7 @@ const StyledSlider = styled(Slider)`
 
 	.MuiSlider-markLabel[data-index='1'] {
 		${styledMarkLabel}
-		margin-left: -10px;
+		margin-left: -3px;
 	}
 
 	.MuiSlider-markLabel:nth-child(7) {
