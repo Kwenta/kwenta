@@ -22,18 +22,18 @@ const Leader: LeaderComponent = () => {
 				<title>{t('futures.page-title')}</title>
 			</Head>
 			<PageContent>
-				<FullHeightContainer>
-					<MobileHiddenView>
+				<MobileHiddenView>
+					<FullHeightContainer>
 						<MainContent>
 							<Leaderboard />
 						</MainContent>
-					</MobileHiddenView>
-					<MobileOnlyView>
-						<MobileMainContent>
-							<Leaderboard />
-						</MobileMainContent>
-					</MobileOnlyView>
-				</FullHeightContainer>
+					</FullHeightContainer>
+				</MobileHiddenView>
+				<MobileOnlyView>
+					<MobileMainContent>
+						<Leaderboard />
+					</MobileMainContent>
+				</MobileOnlyView>
 			</PageContent>
 		</>
 	);
