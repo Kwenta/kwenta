@@ -59,6 +59,12 @@ export const QUERY_KEYS = {
 		],
 	},
 	Synths: {
+		Balances: (networkId: NetworkId, walletAddress: string | null) => [
+			'synths',
+			'balances',
+			networkId,
+			walletAddress,
+		],
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
 		ExchangeFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [

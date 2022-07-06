@@ -1,18 +1,15 @@
-import useSynthetixQueries from '@synthetixio/queries';
 import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { balancesState, positionsState } from 'store/futures';
 import styled, { useTheme } from 'styled-components';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
@@ -30,58 +27,50 @@ type FuturesPositionTableProps = {
 	uniswapWidgetOpened: boolean;
 };
 
-const BalanceActions: FC<FuturesPositionTableProps> = ({
-	uniswapWidgetOpened,
-	setShowUniswapWidget,
-}) => {
+const BalanceActions: FC<FuturesPositionTableProps> = ({ setShowUniswapWidget }) => {
 	const [balanceLabel, setBalanceLabel] = useState('');
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
 	const { network } = Connector.useContainer();
 
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
-	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
+	const synthBalances = useRecoilValue(balancesState);
+	const futuresPositions = useRecoilValue(positionsState);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
-	);
-	const futuresPositions = futuresPositionQuery?.data ?? [];
+	const sUSDBalance = synthBalances?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
-	const accessiblePositions = futuresPositions.filter((position) =>
-		position.remainingMargin.gt(zeroBN)
-	);
+	const OPTIONS = useMemo(() => {
+		const accessiblePositions =
+			futuresPositions?.filter((position) => position.remainingMargin.gt(zeroBN)) ?? [];
 
-	const totalRemainingMargin = accessiblePositions.reduce(
-		(prev, position) => prev.add(position.remainingMargin),
-		zeroBN
-	);
+		const totalRemainingMargin = accessiblePositions.reduce(
+			(prev, position) => prev.add(position.remainingMargin),
+			zeroBN
+		);
 
-	const setMarketConfig = (asset: string): ReactSelectOptionProps => {
-		const remainingMargin =
-			accessiblePositions.find((posittion) => posittion.asset === asset)?.remainingMargin ?? zeroBN;
+		const setMarketConfig = (asset: string): ReactSelectOptionProps => {
+			const remainingMargin =
+				accessiblePositions.find((posittion) => posittion.asset === asset)?.remainingMargin ??
+				zeroBN;
 
-		const marketKey = getMarketKey(asset, network.id);
+			const marketKey = getMarketKey(asset, network.id);
 
-		return {
-			label: `${getDisplayAsset(asset)}-PERP`,
-			synthIcon: marketKey,
-			marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
-			onClick: () => router.push(`/market/${asset}`),
+			return {
+				label: `${getDisplayAsset(asset)}-PERP`,
+				synthIcon: marketKey,
+				marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
+				onClick: () => router.push(`/market/${asset}`),
+			};
 		};
-	};
 
-	const OPTIONS = [
-		{
-			label: 'header.balance.total-margin-label',
-			totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
-			options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
-		},
-	];
+		return [
+			{
+				label: 'header.balance.total-margin-label',
+				totalAvailableMargin: formatCurrency(Synths.sUSD, totalRemainingMargin, { sign: '$' }),
+				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
+			},
+		];
+	}, [futuresPositions, router, network]);
 
 	const OptionsGroupLabel: FC<{
 		label: string;
@@ -136,18 +125,13 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 		setBalanceLabel(formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' }));
 	}, [balanceLabel, sUSDBalance]);
 
-	useEffect(() => {
-		synthsBalancesQuery.refetch();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [uniswapWidgetOpened]);
-
 	if (!balanceLabel) {
 		return null;
 	}
 
 	return (
 		<Container>
-			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
+			{sUSDBalance.eq(zeroBN) && futuresPositions?.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
 					onClick={() => setShowUniswapWidget(true)}
