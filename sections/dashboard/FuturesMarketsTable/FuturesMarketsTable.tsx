@@ -278,6 +278,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				<StyledMobileTable
 					data={data}
 					showPagination
+					onTableRowClick={(row) => {
+						router.push(`/market/${row.original.asset}`);
+					}}
 					columns={[
 						{
 							Header: () => (

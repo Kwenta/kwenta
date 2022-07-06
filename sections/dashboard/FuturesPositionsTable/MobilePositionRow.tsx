@@ -11,11 +11,12 @@ import { border } from 'components/Button';
 
 type MobilePositionRowProps = {
 	row: any;
+	onClick(): void;
 };
 
-const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row }) => {
+const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
 	return (
-		<OpenPositionContainer side={row.position} key={row.asset}>
+		<OpenPositionContainer side={row.position} key={row.asset} onClick={onClick}>
 			<div style={{ display: 'flex' }}>
 				<StyledCurrencyIcon currencyKey={row.marketKey} />
 				<div>

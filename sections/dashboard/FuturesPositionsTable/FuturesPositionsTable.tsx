@@ -80,11 +80,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					<StyledTable
 						data={data}
 						showPagination
-						onTableRowClick={(row) =>
-							row.original.asset !== NO_VALUE
-								? router.push(`/market/${row.original.asset}`)
-								: undefined
-						}
+						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
 						highlightRowsOnHover
 						columns={[
 							{
@@ -259,7 +255,13 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					{data.length === 0 ? (
 						<NoPositionsText>There are no open positions.</NoPositionsText>
 					) : (
-						data.map((row) => <MobilePositionRow key={row.asset} row={row} />)
+						data.map((row) => (
+							<MobilePositionRow
+								onClick={() => router.push(`/market/${row.asset}`)}
+								key={row.asset}
+								row={row}
+							/>
+						))
 					)}
 				</div>
 			</MobileOnlyView>
