@@ -1,7 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
-import imageBackground from 'assets/svg/futures/sliderbackground.svg';
+import media from 'styles/media';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {
 	minValue: number;
@@ -42,71 +42,90 @@ const SliderComponent: React.FC<SliderProps> = ({
 };
 export default SliderComponent;
 
+const styledMarkLabel = css`
+	font-family: ${(props) => props.theme.fonts.mono};
+	font-size: 11px;
+	color: ${(props) => props.theme.colors.selectedTheme.slider.label};
+	${media.lessThan('sm')`
+		top: -5px;
+	`}
+`;
 const SliderContainer = styled.div`
-	width: 334px;
+	width: 100vw;
 	height: 24px;
-	background: url(${imageBackground.src}) no-repeat;
-	padding: 0 19px 0 4px;
+	padding: 0px 12px 0px 4px;
 	box-sizing: border-box;
 `;
 
 const StyledSlider = styled(Slider)`
 	color: transparent !important;
 
+	.MuiSlider-root {
+		padding: 10px 0px 10px 4px;
+	}
+
 	.MuiSlider-rail {
-		margin-top: -11px;
-		background-color: transparent;
-		height: 24px;
+		width: 102%;
+		margin-top: -2px;
+		border-radius: 2px;
+		background-color: #7d6b54;
+		height: 4px;
 		left: 0;
 		right: 0;
 	}
 
 	.MuiSlider-track {
-		height: 4px;
+		height: 6px;
 		background-color: #7d6b54;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.track.shadow};
 		margin-top: -3px;
-		border-radius: 2px;
-		margin-left: 1px;
-		margin-right: 4px;
+		border-top-left-radius: 3px;
+		border-bottom-left-radius: 3px;
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
 	}
 
 	.MuiSlider-markActive {
-		width: 12px;
-		height: 12px;
-		border-radius: 6px;
-		background-color: #7d6b54;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.track.shadow};
-		margin-top: -7px;
-		margin-left: 1px;
+		width: 0px;
+		height: 0px;
+		background-color: transparent;
 		opacity: 1;
 	}
 
 	.MuiSlider-thumb {
-		background-color: #e4b378;
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
+		background-color: ${(props) => props.theme.colors.selectedTheme.button.text};
 		width: 14px;
 		height: 14px;
-		margin-left: initial;
+		margin-left: -2px;
 		margin-top: -8px;
+		&.Mui-disabled {
+			background-color: transparent;
+		}
 	}
 
-	.MuiSlider-thumb.Mui-focusVisible,
-	.MuiSlider-thumb:hover {
-		box-shadow: ${(props) => props.theme.colors.selectedTheme.slider.thumb.shadow} !important;
+	.MuiSlider-markLabelActive {
+		${styledMarkLabel}
+		margin-left: 6px;
 	}
 
-	.MuiSlider-markLabel {
-		font-family: ${(props) => props.theme.fonts.mono};
-		font-size: 11px;
-		color: ${(props) => props.theme.colors.selectedTheme.slider.label};
-		margin-left: 8px;
+	.MuiSlider-markLabel[data-index='1'] {
+		${styledMarkLabel}
+		margin-left: -3px;
+	}
+
+	.MuiSlider-markLabel:nth-child(7) {
+		color: #787878 !important;
 	}
 
 	.MuiSlider-valueLabel {
+		span[class^='PrivateValueLabel-label'] {
+			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+		}
 		font-family: ${(props) => props.theme.fonts.mono};
 		font-size: 11px;
 		top: initial;
-		bottom: -41px;
+		bottom: -41.5px;
+		${media.lessThan('sm')`
+			top: -15px;
+		`}
 	}
 `;
