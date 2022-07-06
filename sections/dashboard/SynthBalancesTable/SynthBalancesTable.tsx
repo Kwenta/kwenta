@@ -227,6 +227,11 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 			<MobileOnlyView>
 				<StyledMobileTable
 					data={data}
+					noResultsMessage={
+						data.length === 0 ? (
+							<EmptyTableMessage>There are no synth balances.</EmptyTableMessage>
+						) : null
+					}
 					columns={[
 						{
 							Header: () => (
@@ -371,6 +376,13 @@ const StyledMobileTable = styled(StyledTable)`
 	border-top: none;
 	border-right: none;
 	border-left: none;
+`;
+
+const EmptyTableMessage = styled.div`
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	font-size: 16px;
+	text-align: center;
+	margin: 20px 0;
 `;
 
 export default SynthBalancesTable;
