@@ -27,7 +27,7 @@ const Nav: FC = () => {
 			const lastVisited: string | null | undefined = getLastVisited();
 
 			if (lastVisited !== null && lastVisited !== undefined) {
-				return lastVisited?.slice(8);
+				return lastVisited;
 			} else {
 				return link;
 			}

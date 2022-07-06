@@ -152,8 +152,8 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 				onChange={(x) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
-						setLastVisited(ROUTES.Markets.MarketPair(x.value));
 						router.push(ROUTES.Markets.MarketPair(x.value));
+						setLastVisited(x.value);
 					}
 				}}
 				value={assetToCurrencyOption({

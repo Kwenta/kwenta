@@ -1,24 +1,23 @@
-import { FC, useState, useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
-import TabButton from 'components/Button/TabButton';
-import PortfolioChart from '../PortfolioChart';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import FuturesPositionsTable from '../FuturesPositionsTable';
-import FuturesMarketsTable from '../FuturesMarketsTable';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
+import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { Synths } from '@synthetixio/contracts-interface';
-import { getMarketKey } from 'utils/futures';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
+
+import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import Connector from 'containers/Connector';
-import SpotMarketsTable from '../SpotMarketsTable';
+import { getMarketKey } from 'utils/futures';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
+import { walletAddressState } from 'store/wallet';
+import { Synths } from 'constants/currency';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { TabPanel } from 'components/Tab';
+import SynthBalancesTable from '../SynthBalancesTable';
+import TabButton from 'components/Button/TabButton';
+import FuturesPositionsTable from '../FuturesPositionsTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -26,12 +25,7 @@ enum PositionsTab {
 	SPOT = 'spot',
 }
 
-enum MarketsTab {
-	FUTURES = 'futures',
-	SPOT = 'spot',
-}
-
-const Overview: FC = () => {
+const OpenPositions: React.FC = () => {
 	const { t } = useTranslation();
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
@@ -57,8 +51,9 @@ const Overview: FC = () => {
 			? synthsBalancesQuery.data
 			: null;
 
-	const [activePositionsTab, setActivePositionsTab] = useState<PositionsTab>(PositionsTab.FUTURES);
-	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
+	const [activePositionsTab, setActivePositionsTab] = React.useState<PositionsTab>(
+		PositionsTab.FUTURES
+	);
 
 	const totalSpotBalancesValue = formatCurrency(
 		Synths.sUSD,
@@ -70,7 +65,7 @@ const Overview: FC = () => {
 		sign: '$',
 	});
 
-	const POSITIONS_TABS = useMemo(
+	const POSITIONS_TABS = React.useMemo(
 		() => [
 			{
 				name: PositionsTab.FUTURES,
@@ -93,15 +88,6 @@ const Overview: FC = () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
 			},
-			// {
-			// 	name: PositionsTab.SHORTS,
-			// 	label: t('dashboard.overview.positions-tabs.shorts'),
-			// 	disabled: true,
-			// 	active: activePositionsTab === PositionsTab.SHORTS,
-			// 	onClick: () => {
-			// 		setActivePositionsTab(PositionsTab.SHORTS);
-			// 	},
-			// },
 		],
 		[
 			activePositionsTab,
@@ -112,37 +98,18 @@ const Overview: FC = () => {
 		]
 	);
 
-	const MARKETS_TABS = useMemo(
-		() => [
-			{
-				name: MarketsTab.FUTURES,
-				label: t('dashboard.overview.markets-tabs.futures'),
-				active: activeMarketsTab === MarketsTab.FUTURES,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.FUTURES);
-				},
-			},
-			{
-				name: MarketsTab.SPOT,
-				label: t('dashboard.overview.markets-tabs.spot'),
-				active: activeMarketsTab === MarketsTab.SPOT,
-				onClick: () => {
-					setActiveMarketsTab(MarketsTab.SPOT);
-				},
-			},
-		],
-		[activeMarketsTab, t]
-	);
-
 	return (
-		<>
-			<PortfolioChart />
+		<div>
+			<div style={{ margin: '15px 15px 30px 15px' }}>
+				<SectionHeader>Open Positions</SectionHeader>
 
-			<TabButtonsContainer>
-				{POSITIONS_TABS.map(({ name, label, ...rest }) => (
-					<TabButton key={name} title={label} {...rest} />
-				))}
-			</TabButtonsContainer>
+				<TabButtonsContainer>
+					{POSITIONS_TABS.map(({ name, label, ...rest }) => (
+						<TabButton key={name} title={label} {...rest} />
+					))}
+				</TabButtonsContainer>
+			</div>
+
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
 				<FuturesPositionsTable
 					futuresMarkets={futuresMarkets}
@@ -156,20 +123,7 @@ const Overview: FC = () => {
 					exchangeRates={exchangeRates}
 				/>
 			</TabPanel>
-
-			<TabButtonsContainer>
-				{MARKETS_TABS.map(({ name, label, active, onClick }) => (
-					<TabButton key={name} title={label} active={active} onClick={onClick} />
-				))}
-			</TabButtonsContainer>
-			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
-			</TabPanel>
-
-			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>
-				<SpotMarketsTable exchangeRates={exchangeRates} />
-			</TabPanel>
-		</>
+		</div>
 	);
 };
 
@@ -185,4 +139,4 @@ const TabButtonsContainer = styled.div`
 	}
 `;
 
-export default Overview;
+export default OpenPositions;

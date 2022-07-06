@@ -9,7 +9,6 @@ import { FlexDivCentered } from 'styles/common';
 
 import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
-import media from 'styles/media';
 
 export type TablePalette = 'primary';
 
@@ -208,7 +207,6 @@ export const TableRow = styled.div``;
 const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
-	min-width: fit-content;
 `;
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`
@@ -241,17 +239,6 @@ const TableCell = styled(FlexDivCentered)`
 	&:last-child {
 		padding-right: 14px;
 	}
-
-	${media.lessThan('sm')`
-		&:first-child {
-			margin: auto;
-			padding: 0px;
-		}
-		&:last-child {
-			margin: auto;
-			padding: 0px;
-		}
-	`}
 `;
 
 const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`

@@ -193,7 +193,6 @@ export const FullScreenContainer = styled(FlexDiv)`
 	overflow-y: visible;
 	padding: 25px 25px 0;
 	margin: 0 auto;
-	max-width: 1800px;
 
 	${media.lessThan('sm')`
 		padding: 20px 15px 0;

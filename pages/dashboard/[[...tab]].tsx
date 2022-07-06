@@ -7,6 +7,8 @@ import { PageContent, FullHeightContainer } from 'styles/common';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { RefetchProvider } from 'contexts/RefetchContext';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import MobileDashboard from 'sections/dashboard/MobileDashboard';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -22,12 +24,17 @@ const Dashboard: DashboardComponent = () => {
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
-			<PageContent>
-				<StyledFullHeightContainer>
-					<DashboardContainer />
-				</StyledFullHeightContainer>
-			</PageContent>
-		</RefetchProvider>
+			<MobileHiddenView>
+				<PageContent>
+					<StyledFullHeightContainer>
+						<DashboardContainer />
+					</StyledFullHeightContainer>
+				</PageContent>
+			</MobileHiddenView>
+			<MobileOnlyView>
+				<MobileDashboard />
+			</MobileOnlyView>
+		</>
 	);
 };
 

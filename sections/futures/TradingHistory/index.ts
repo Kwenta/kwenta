@@ -1,1 +1,1 @@
-export { default } from './TradingHistory';
+export { default } from './TradesHistoryTable';
