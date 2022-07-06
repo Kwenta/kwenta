@@ -19,6 +19,7 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobilePositionRow from './MobilePositionRow';
 import { positionsState } from 'store/futures';
 import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -31,14 +32,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
 	const router = useRouter();
 
 	const futuresPositions = useRecoilValue(positionsState);
 
 	let data = useMemo(() => {
-		const activePositions = futuresPositions.filter(
-			(position: FuturesPosition) => position?.position
-		);
+		const activePositions =
+			futuresPositions?.filter((position: FuturesPosition) => position?.position) ?? [];
 
 		return activePositions.map((position: FuturesPosition) => {
 			const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -69,7 +70,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory]);
+	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
 
 	return (
 		<>

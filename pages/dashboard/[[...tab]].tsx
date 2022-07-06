@@ -34,7 +34,7 @@ const Dashboard: DashboardComponent = () => {
 			<MobileOnlyView>
 				<MobileDashboard />
 			</MobileOnlyView>
-		</>
+		</RefetchProvider>
 	);
 };
 

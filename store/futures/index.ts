@@ -24,6 +24,7 @@ export const currentMarketState = atom<CurrencyKey>({
 export const balancesState = atom<Balances | null>({
 	key: getSynthsKey('balances'),
 	default: null,
+});
 
 export const activeTabState = atom<number>({
 	key: getFuturesKey('activeTab'),
