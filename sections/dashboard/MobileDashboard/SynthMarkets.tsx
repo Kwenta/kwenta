@@ -1,17 +1,23 @@
 import React from 'react';
 import { SectionHeader } from 'sections/futures/MobileTrade/common';
-import FuturesMarketsTable from '../FuturesMarketsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { Synths } from 'constants/currency';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
+import SpotMarketsTable from '../SpotMarketsTable';
+import useSynthetixQueries from '@synthetixio/queries';
 
-const FuturesMarkets = () => {
+const SynthMarkets: React.FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = React.useMemo(() => futuresMarketsQuery?.data ?? [], [
 		futuresMarketsQuery?.data,
 	]);
+
+	const { useExchangeRatesQuery } = useSynthetixQueries();
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.data ?? null;
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
@@ -24,7 +30,7 @@ const FuturesMarkets = () => {
 	return (
 		<div>
 			<HeaderContainer>
-				<SectionHeader>Futures Markets</SectionHeader>
+				<SectionHeader>Spot Markets</SectionHeader>
 				<MarketStatsContainer>
 					<MarketStat>
 						<div className="title">24h Volume</div>
@@ -53,9 +59,9 @@ const FuturesMarkets = () => {
 				</MarketStatsContainer>
 			</HeaderContainer>
 
-			<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+			<SpotMarketsTable exchangeRates={exchangeRates} />
 		</div>
 	);
 };
 
-export default FuturesMarkets;
+export default SynthMarkets;
