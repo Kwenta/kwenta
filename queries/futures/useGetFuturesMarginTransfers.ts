@@ -43,7 +43,7 @@ const useGetFuturesMarginTransfers = (
 	return useQuery<MarginTransfer[]>(
 		QUERY_KEYS.Futures.MarginTransfers(network.id, walletAddress, currencyKey || null),
 		async () => {
-			if (!currencyKey) return [];
+			if (!currencyKey || !synthetixjs) return [];
 			const { contracts } = synthetixjs!;
 			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 			if (!marketAddress) return [];
