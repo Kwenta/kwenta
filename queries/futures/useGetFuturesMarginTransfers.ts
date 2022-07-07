@@ -61,7 +61,7 @@ const useGetFuturesMarginTransfers = (
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress,
+			enabled: isAppReady && isL2 && !!currencyKey && !!synthetixjs && !!walletAddress,
 			...options,
 		}
 	);
