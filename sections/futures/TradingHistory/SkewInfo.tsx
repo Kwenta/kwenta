@@ -23,43 +23,42 @@ const SkewInfo: React.FC = () => {
 
 	const futuresMarkets = useMemo(() => futuresMarketsQuery?.data ?? [], [futuresMarketsQuery]);
 	const data = useMemo(() => {
-		return futuresMarkets.length > 0
-			? futuresMarkets
-					.filter((i: FuturesMarket) => i.asset === currencyKey)
-					.map((i: FuturesMarket) => {
-						const basePriceRate = _.defaultTo(0, Number(i.price));
-						return {
-							short: i.marketSize.eq(0)
-								? 0
-								: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
-							long: i.marketSize.eq(0)
-								? 0
-								: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
-							shortValue: i.marketSize.eq(0)
-								? 0
-								: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
-							longValue: i.marketSize.eq(0)
-								? 0
-								: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
-						};
-					})
-			: [
-					{
-						short: 0,
-						long: 0,
-						shortValue: 0,
-						longValue: 0,
-					},
-			  ];
+		const cleanMarket = (i: FuturesMarket) => {
+			const basePriceRate = _.defaultTo(0, Number(i.price));
+			return {
+				short: i.marketSize.eq(0)
+					? 0
+					: i.marketSize.sub(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+				long: i.marketSize.eq(0)
+					? 0
+					: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
+				shortValue: i.marketSize.eq(0)
+					? 0
+					: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+				longValue: i.marketSize.eq(0)
+					? 0
+					: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+			};
+		};
+
+		const market = futuresMarkets.find((i: FuturesMarket) => i.asset === currencyKey);
+		return market
+			? cleanMarket(market)
+			: {
+					short: 0,
+					long: 0,
+					shortValue: 0,
+					longValue: 0,
+			  };
 	}, [futuresMarkets, currencyKey]);
 
-	const long = formatCurrency(selectedPriceCurrency.name, data[0].longValue, { sign: '$' });
-	const short = formatCurrency(selectedPriceCurrency.name, data[0].shortValue, { sign: '$' });
+	const long = formatCurrency(selectedPriceCurrency.name, data.longValue, { sign: '$' });
+	const short = formatCurrency(selectedPriceCurrency.name, data.shortValue, { sign: '$' });
 
 	return (
 		<SkewContainer>
 			<SkewHeader>
-				<SkewValue>{formatPercent(data[0].short, { minDecimals: 0 })}</SkewValue>
+				<SkewValue>{formatPercent(data.short, { minDecimals: 0 })}</SkewValue>
 				<SkewTooltip
 					preset="bottom"
 					width={'310px'}
@@ -70,7 +69,7 @@ const SkewInfo: React.FC = () => {
 						<SkewLabel>{t('futures.market.history.skew-label')}</SkewLabel>
 					</WithCursor>
 				</SkewTooltip>
-				<SkewValue>{formatPercent(data[0].long, { minDecimals: 0 })}</SkewValue>
+				<SkewValue>{formatPercent(data.long, { minDecimals: 0 })}</SkewValue>
 			</SkewHeader>
 			<OpenInterestBar skew={data} />
 			<OpenInterestRow>
