@@ -41,7 +41,7 @@ const useGetFuturesMarginTransfers = (
 	`;
 
 	return useQuery<MarginTransfer[]>(
-		QUERY_KEYS.Futures.MarginTransfers(network.id, walletAddress, currencyKey || null),
+		QUERY_KEYS.Futures.MarginTransfers(network.id, walletAddress ?? '', currencyKey || null),
 		async () => {
 			if (!currencyKey || !synthetixjs) return [];
 			const { contracts } = synthetixjs!;
@@ -51,7 +51,7 @@ const useGetFuturesMarginTransfers = (
 			try {
 				const response = await request(futuresEndpoint, gqlQuery, {
 					market: marketAddress,
-					walletAddress,
+					walletAddress: walletAddress ?? '',
 				});
 
 				return response ? mapMarginTransfers(response.futuresMarginTransfers) : [];
