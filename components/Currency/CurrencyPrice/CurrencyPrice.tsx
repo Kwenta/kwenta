@@ -38,7 +38,9 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
-					conversionRate && wei(conversionRate).gt(0) ? wei(price).div(conversionRate) : price,
+					conversionRate && price && wei(conversionRate).gt(0)
+						? wei(price).div(conversionRate)
+						: price,
 					{
 						sign,
 						currencyKey: showCurrencyKey != null ? currencyKey : undefined,
