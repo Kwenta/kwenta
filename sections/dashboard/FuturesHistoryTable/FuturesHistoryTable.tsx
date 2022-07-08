@@ -62,7 +62,6 @@ const FuturesHistoryTable: FC = () => {
 			<StyledTable
 				data={isL2 ? mappedHistoricalTrades : []}
 				showPagination={true}
-				pageSize={15}
 				isLoading={futuresTradesQuery.isLoading || futuresTradesQuery.isIdle}
 				noResultsMessage={
 					!isL2 ? (
