@@ -175,7 +175,7 @@ export const Table: FC<TableProps> = ({
 							</TableBody>
 						)
 					)}
-					{!!noResultsMessage && !isLoading && data.length == 0 && noResultsMessage}
+					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
 			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
