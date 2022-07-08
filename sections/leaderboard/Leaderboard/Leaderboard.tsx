@@ -21,7 +21,6 @@ import useENSs from 'hooks/useENSs';
 import useENSAvatar from 'hooks/useENSAvatar';
 import Connector from 'containers/Connector';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import useIPFSFile from 'queries/ipfs/useIPFSFile';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -43,9 +42,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 	const { staticMainnetProvider } = Connector.useContainer();
 
 	const walletAddress = useRecoilValue(walletAddressState);
-
-	const ipfsQuery = useIPFSFile();
-	console.log(ipfsQuery);
 
 	const statsQuery = useGetStats();
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
