@@ -52,7 +52,7 @@ const useGetAllFuturesTradesForAccount = (
 			);
 			return response ? mapTrades(response) : null;
 		},
-		{ enabled: isWalletConnected ? isL2 && isAppReady && !!account : isAppReady, ...options }
+		{ enabled: isL2 && isAppReady && isWalletConnected && !!account, ...options }
 	);
 };
 
