@@ -10,6 +10,8 @@ import { CurrencyKey } from 'constants/currency';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { MobileSwap } from 'sections/exchange/MobileSwap';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -44,11 +46,16 @@ const Exchange: ExchangeComponent = () => {
 				</title>
 			</Head>
 			<PageContent>
-				<StyledFullHeightContainer>
-					<MainContent>
-						<BasicSwap />
-					</MainContent>
-				</StyledFullHeightContainer>
+				<MobileHiddenView>
+					<StyledFullHeightContainer>
+						<MainContent>
+							<BasicSwap />
+						</MainContent>
+					</StyledFullHeightContainer>
+				</MobileHiddenView>
+				<MobileOnlyView>
+					<MobileSwap />
+				</MobileOnlyView>
 			</PageContent>
 		</>
 	);
