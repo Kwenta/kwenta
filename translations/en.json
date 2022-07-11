@@ -290,7 +290,8 @@
 				"select-synth": "select synth",
 				"select-token": "select token"
 			},
-			"max-button": "max"
+			"max-button": "max",
+			"slippage": " slippage"
 		},
 		"market-details-card": {
 			"title": "Market Details",
@@ -365,6 +366,7 @@
 				"settle-waiting-period": "settlement waiting period",
 				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
+				"insufficient-liquidity": "insufficient liquidity",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
@@ -425,6 +427,11 @@
 		"charts": {
 			"single": "single",
 			"double": "double"
+		},
+		"1inch": {
+			"unsupported-network": "Synth Swap is not supported on this network",
+			"wallet-not-connected": "Wallet not connected"
+
 		}
 	},
 	"dashboard": {
@@ -970,7 +977,8 @@
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "all synths",
+				"all-synths": "synths",
+				"other-tokens": "tokens",
 				"your-synths": "your synths",
 				"holdings": "holdings"
 			},

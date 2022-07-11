@@ -1,33 +1,27 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
+import { useRecoilValue } from 'recoil';
 import { NetworkId } from '@synthetixio/contracts-interface';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
-
-import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
-
-import { TokenListQueryResponse, TokenListResponse } from './types';
-import { EXTERNAL_LINKS } from 'constants/links';
-
-const ether = {
-	address: ETH_ADDRESS,
-	chainId: 1 as NetworkId,
-	decimals: 18,
-	logoURI: ETHIcon.src,
-	name: 'Ethereum',
-	symbol: CRYPTO_CURRENCY_MAP.ETH,
-	tags: [],
-};
+import { TokenListQueryResponse, OneInchTokenListResponse } from './types';
+import { isL2State, networkState } from 'store/wallet';
+import use1InchApiUrl from 'hooks/use1InchApiUrl';
 
 const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
-	return useQuery<TokenListQueryResponse>(
-		QUERY_KEYS.TokenLists.OneInch,
-		async () => {
-			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.OneInch);
+	const isL2 = useRecoilValue(isL2State);
+	const oneInchApiUrl = use1InchApiUrl();
+	const network = useRecoilValue(networkState);
 
-			const tokens = [ether, ...response.data.tokens];
+	return useQuery<TokenListQueryResponse>(
+		QUERY_KEYS.TokenLists.OneInch(network.id),
+		async () => {
+			const response = await axios.get<OneInchTokenListResponse>(oneInchApiUrl + 'tokens');
+
+			const tokensMap = response.data.tokens || {};
+			const chainId: NetworkId = isL2 ? 10 : 1;
+			const tokens = Object.values(tokensMap).map((t) => ({ ...t, chainId, tags: [] }));
 
 			return {
 				tokens,
