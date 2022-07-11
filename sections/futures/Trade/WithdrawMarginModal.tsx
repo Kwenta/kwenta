@@ -138,7 +138,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			</BalanceContainer>
 
 			<CustomInput
-				dataTestId="funtures-market-trade-withdraw-margin-input"
+				dataTestId="futures-market-trade-withdraw-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => {
@@ -146,11 +146,18 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 					setAmount(v);
 				}}
 				right={
-					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+					<MaxButton data-testid="futures-market-trade-withdraw-max-button" onClick={handleSetMax}>
+						{t('futures.market.trade.margin.modal.max')}
+					</MaxButton>
 				}
 			/>
 
-			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => withdrawTxn.mutate()}>
+			<MarginActionButton
+				data-testid="futures-market-trade-withdraw-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={() => withdrawTxn.mutate()}
+			>
 				{t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 

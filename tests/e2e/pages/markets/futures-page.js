@@ -46,19 +46,19 @@ export default class FuturesPage extends Page {
 	}
 
 	enterDepositMarginInsUSD(margin) {
-		return cy.findByTestId('funtures-market-trade-deposit-margin-input').type(margin.toString());
+		return cy.findByTestId('futures-market-trade-deposit-margin-input').type(margin.toString());
 	}
 
 	getDepositMarginBtn() {
-		return cy.findByTestId('funtures-market-trade-deposit-margin-button');
+		return cy.findByTestId('futures-market-trade-deposit-margin-button');
 	}
 
 	getWithdrawMarginBtn() {
-		return cy.findByTestId('funtures-market-trade-withdraw-margin-button');
+		return cy.findByTestId('futures-market-trade-withdraw-margin-button');
 	}
 
 	getWithdrawMarginMaxBtn() {
-		return cy.findByTestId('funtures-market-trade-withdraw-max-button');
+		return cy.findByTestId('futures-market-trade-withdraw-max-button');
 	}
 
 	getLongBtn() {

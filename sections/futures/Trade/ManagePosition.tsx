@@ -56,6 +56,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 
 				<ManagePositionContainer>
 					<PlaceOrderButton
+						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth={true}
 						disabled={

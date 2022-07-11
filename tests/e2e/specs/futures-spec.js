@@ -1,4 +1,5 @@
 import FuturesPage from '../pages/markets/futures-page';
+import { formatNumber } from '../../../utils/formatters/number';
 
 const futures = new FuturesPage();
 
@@ -18,7 +19,7 @@ describe('Futures Page', () => {
 					cy.findByTestId('market-info-box-0')
 						.invoke('text')
 						.then((totalMarginText) => {
-							const depositValue = 1;
+							const depositValue = 100;
 							// Deposit 100 sUSD
 							futures.getDepositBtn().click();
 
@@ -35,7 +36,7 @@ describe('Futures Page', () => {
 							const expectTotalMargin = originalTotalMargin + depositValue;
 							cy.findByTestId('market-info-box-0').should(
 								'have.text',
-								`${expectTotalMargin.toFixed(2)} sUSD`
+								`$${formatNumber(expectTotalMargin.toFixed(2))} sUSD`
 							);
 
 							futures.openPositionBtnShouldBeDisabled();
@@ -70,7 +71,7 @@ describe('Futures Page', () => {
 							futures.getWithdrawMarginMaxBtn().click();
 							futures.getWithdrawMarginBtn().click();
 							futures.confirmMetamaskTransaction();
-							cy.findByTestId('market-info-box-0').should('have.text', `0.00 sUSD`);
+							cy.findByTestId('market-info-box-0').should('have.text', `$0.00 sUSD`);
 						});
 				});
 			});
