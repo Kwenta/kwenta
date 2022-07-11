@@ -24,6 +24,7 @@ import {
 } from './DepositMarginModal';
 import { currentMarketState, positionState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { formatRevert } from 'utils/formatters/error';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
@@ -164,7 +165,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <Error>{withdrawTxn.errorMessage}</Error>}
+			{withdrawTxn.errorMessage && <Error>{formatRevert(withdrawTxn.errorMessage)}</Error>}
 		</StyledBaseModal>
 	);
 };

@@ -20,6 +20,7 @@ import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { formatRevert } from 'utils/formatters/error';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -147,7 +148,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <Error>{depositTxn.errorMessage}</Error>}
+			{depositTxn.errorMessage && <Error>{formatRevert(depositTxn.errorMessage)}</Error>}
 		</StyledBaseModal>
 	);
 };
