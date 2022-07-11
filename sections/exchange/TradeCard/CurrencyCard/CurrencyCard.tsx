@@ -1,6 +1,8 @@
 import { FC, MouseEvent, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
+import { useRecoilValue } from 'recoil';
+import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
@@ -25,14 +27,15 @@ import { border } from 'components/Button';
 import { Side } from '../types';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import Wei, { wei } from '@synthetixio/wei';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
+import { isL2State } from 'store/wallet';
 
 type CurrencyCardProps = {
 	side: Side;
 	currencyKey: string | null;
+	currencyName: string | null;
 	amount: string;
 	onAmountChange: (value: string) => void;
 	walletBalance: Wei | null;
@@ -45,12 +48,14 @@ type CurrencyCardProps = {
 	disableInput?: boolean;
 	slippagePercent?: Wei | null;
 	isLoading?: boolean;
-	txProvider?: TxProvider;
+	txProvider?: TxProvider | null;
+	disabled?: boolean;
 };
 
 const CurrencyCard: FC<CurrencyCardProps> = ({
 	side,
 	currencyKey,
+	currencyName,
 	amount,
 	slippagePercent,
 	onAmountChange,
@@ -63,6 +68,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	disableInput = false,
 	isLoading = false,
 	txProvider = 'synthetix',
+	disabled,
 	...rest
 }) => {
 	const { t } = useTranslation();
@@ -73,6 +79,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	} = useSelectedPriceCurrency();
 
 	const isBase = useMemo(() => side === 'base', [side]);
+	const isL2 = useRecoilValue(isL2State);
 
 	const hasWalletBalance = useMemo(() => walletBalance != null && currencyKey != null, [
 		walletBalance,
@@ -91,6 +98,13 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 	const { synthsMap } = Connector.useContainer();
 
+	const tokenName =
+		currencyKey && synthsMap[currencyKey]
+			? t('common.currency.synthetic-currency-name', {
+					currencyName,
+			  })
+			: currencyName || t('exchange.currency-card.synth-name');
+
 	return (
 		<StyledCard
 			className={`currency-card currency-card-${side}`}
@@ -107,6 +121,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						>
 							<FlexDivRowCentered>
 								<CurrencyAmount
+									disabled={disabled}
 									value={amount}
 									onChange={(_, value) => onAmountChange(value)}
 									placeholder={t('exchange.currency-card.amount-placeholder')}
@@ -133,7 +148,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									{!isLoading &&
 										slippagePercent != null &&
 										slippagePercent.lt(0) &&
-										formatPercent(slippagePercent)}
+										formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
 								</Slippage>
 							</FlexDivRowCentered>
 							{isLoading && <StyledLoader width="24px" height="24px" />}
@@ -141,13 +156,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 					</InputContainer>
 
 					<SelectorContainer>
-						<CurrencyNameLabel data-testid="currency-name">
-							{currencyKeySelected
-								? t('common.currency.synthetic-currency-name', {
-										currencyName: synthsMap[currencyKey as CurrencyKey]?.description,
-								  })
-								: t('exchange.currency-card.synth-name')}
-						</CurrencyNameLabel>
+						<CurrencyNameLabel data-testid="currency-name">{tokenName}</CurrencyNameLabel>
 						<CurrencySelector
 							currencyKeySelected={currencyKeySelected}
 							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
@@ -164,7 +173,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 								)}
 								{currencyKey ?? (
 									<CapitalizedText>
-										{txProvider === '1inch'
+										{isL2
 											? t('exchange.currency-card.currency-selector.select-token')
 											: t('exchange.currency-card.currency-selector.select-synth')}
 									</CapitalizedText>
@@ -319,7 +328,7 @@ const Slippage = styled.div`
 	${numericValueCSS};
 	padding: 0px 8px 2px 8px;
 	font-size: 11px;
-	color: ${(props) => props.theme.colors.yellow};
+	color: ${(props) => props.theme.colors.selectedTheme.gold};
 `;
 
 const CurrencyNameLabel = styled.div`

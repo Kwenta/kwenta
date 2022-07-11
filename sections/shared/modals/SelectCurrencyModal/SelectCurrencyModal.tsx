@@ -2,25 +2,26 @@ import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import orderBy from 'lodash/orderBy';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import useSynthetixQueries from '@synthetixio/queries';
+import { useRecoilValue } from 'recoil';
+import { wei } from '@synthetixio/wei';
 
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
-
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
-
 import { FlexDivCentered } from 'styles/common';
-
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-
-import { RowsHeader, RowsContainer, CenteredModal } from '../common';
-
-import SynthRow from './SynthRow';
-import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
+import { RowsHeader, CenteredModal } from '../common';
+import CurrencyRow from './CurrencyRow';
+import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
+import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
+import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+
+const PAGE_LENGTH = 50;
 
 export const CATEGORY_FILTERS = [
 	CATEGORY_MAP.crypto,
@@ -30,26 +31,30 @@ export const CATEGORY_FILTERS = [
 ];
 
 type SelectCurrencyModalProps = {
-	onDismiss: () => void;
-	onSelect: (currencyKey: CurrencyKey) => void;
 	synthsOverride?: Array<CurrencyKey>;
+	onDismiss: () => void;
+	onSelect: (currencyKey: string, isSynth: boolean) => void;
 };
 
 export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
+	synthsOverride,
 	onDismiss,
 	onSelect,
-	synthsOverride,
 }) => {
 	const { t } = useTranslation();
+	const network = useRecoilValue(networkState);
+	const walletAddress = useRecoilValue(walletAddressState);
 
 	const { synthetixjs } = Connector.useContainer();
 
 	const [assetSearch, setAssetSearch] = useState<string>('');
 	const [synthCategory, setSynthCategory] = useState<string | null>(null);
+	const [page, setPage] = useState(1);
+
+	// Only available on Optimism mainnet
+	const oneInchEnabled = network.id === 10;
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-
-	const walletAddress = useRecoilValue(walletAddressState);
 
 	// eslint-disable-next-line
 	const allSynths = synthetixjs?.synths ?? [];
@@ -59,6 +64,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 			: allSynths;
 
 	const synthsWalletBalancesQuery = useSynthsBalancesQuery(walletAddress);
+
 	const synthBalances = synthsWalletBalancesQuery.isSuccess
 		? synthsWalletBalancesQuery.data ?? null
 		: null;
@@ -106,87 +112,191 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 		synthBalances,
 	]);
 
+	const synthKeys = useMemo(() => synthsResults.map((s) => s.name), [synthsResults]);
+
+	const oneInchQuery = useOneInchTokenList({ enabled: oneInchEnabled });
+	const oneInchTokenList = useMemo(() => {
+		if (!oneInchQuery.isSuccess || !oneInchQuery.data) return [];
+		return oneInchQuery.data.tokens.filter((i) => !synthKeys.includes(i.symbol as CurrencyKey));
+	}, [oneInchQuery.isSuccess, oneInchQuery.data, synthKeys]);
+
+	const searchFilteredTokens = useDebouncedMemo(
+		() =>
+			assetSearch
+				? oneInchTokenList.filter(({ name, symbol }) => {
+						const assetSearchLC = assetSearch.toLowerCase();
+						return (
+							name.toLowerCase().includes(assetSearchLC) ||
+							symbol.toLowerCase().includes(assetSearchLC)
+						);
+				  })
+				: oneInchTokenList,
+		[oneInchTokenList, assetSearch],
+		DEFAULT_SEARCH_DEBOUNCE_MS
+	);
+
+	const oneInchTokensPaged = useMemo(() => {
+		if (!oneInchEnabled || (synthCategory && synthCategory !== 'crypto')) return [];
+		const items =
+			searchFilteredTokens.map((t) => ({
+				...t,
+				isSynth: false,
+			})) || [];
+		const ordered = orderBy(items, (i) => i.symbol);
+		if (ordered.length > PAGE_LENGTH) return ordered.slice(0, PAGE_LENGTH * page);
+		return ordered;
+	}, [searchFilteredTokens, page, oneInchEnabled, synthCategory]);
+
+	const tokenBalancesQuery = useTokensBalancesQuery(oneInchTokensPaged, walletAddress);
+	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
+
 	return (
 		<StyledCenteredModal
 			onDismiss={onDismiss}
 			isOpen={true}
 			title={t('modals.select-currency.title')}
 		>
-			<SearchContainer>
-				<AssetSearchInput
-					placeholder={t('modals.select-currency.search.placeholder')}
-					onChange={(e) => {
-						setSynthCategory(null);
-						setAssetSearch(e.target.value);
-					}}
-					value={assetSearch}
-					autoFocus={true}
-				/>
-			</SearchContainer>
-			<CategoryFilters>
-				{CATEGORY_FILTERS.map((category) => {
-					const isActive = synthCategory === category;
-					const noItem =
-						synths.filter((synth) => synth.category.toString() === category).length === 0;
-
-					return (
-						<CategoryButton
-							variant="secondary"
-							noOutline={true}
-							isActive={isActive}
-							disabled={noItem}
-							onClick={() => {
-								setAssetSearch('');
-								setSynthCategory(isActive ? null : category);
-							}}
-							key={category}
-						>
-							{t(`common.currency-category.${category}`)}
-						</CategoryButton>
-					);
-				})}
-			</CategoryFilters>
-			<RowsHeader>
-				<span>
-					{assetSearch ? (
-						<span>{t('modals.select-currency.header.search-results')}</span>
-					) : synthCategory != null ? (
-						t('modals.select-currency.header.category-synths', {
-							category: synthCategory,
-						})
-					) : (
-						t('modals.select-currency.header.all-synths')
-					)}
-				</span>
-				<span>{t('modals.select-currency.header.holdings')}</span>
-			</RowsHeader>
-			<RowsContainer>
-				{synthsWalletBalancesQuery.isLoading ? (
-					<Loader />
-				) : synthsResults.length > 0 ? (
-					// TODO: use `Synth` type from contracts-interface
-					synthsResults.map((synth: any) => {
-						const currencyKey = synth.name;
+			<Container id="scrollableDiv">
+				<SearchContainer>
+					<AssetSearchInput
+						placeholder={t('modals.select-currency.search.placeholder')}
+						onChange={(e) => {
+							setSynthCategory(null);
+							setAssetSearch(e.target.value);
+						}}
+						value={assetSearch}
+						autoFocus={true}
+					/>
+				</SearchContainer>
+				<CategoryFilters>
+					{CATEGORY_FILTERS.map((category) => {
+						const isActive = synthCategory === category;
+						const noItem =
+							synths.filter((synth) => synth.category.toString() === category).length === 0;
 
 						return (
-							<SynthRow
-								key={currencyKey}
+							<CategoryButton
+								variant="secondary"
+								isActive={isActive}
+								disabled={noItem}
 								onClick={() => {
-									onSelect(currencyKey as CurrencyKey);
-									onDismiss();
+									setAssetSearch('');
+									setSynthCategory(isActive ? null : category);
 								}}
-								synthBalance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
-								{...{ synth }}
-							/>
+								key={category}
+							>
+								{t(`common.currency-category.${category}`)}
+							</CategoryButton>
 						);
-					})
-				) : (
-					<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
-				)}
-			</RowsContainer>
+					})}
+				</CategoryFilters>
+
+				<InfiniteScroll
+					dataLength={synthsResults.length + oneInchTokensPaged.length}
+					next={() => {
+						setTimeout(() => {
+							setPage(page + 1);
+						}, 200);
+					}}
+					hasMore={oneInchEnabled && oneInchTokensPaged.length !== oneInchTokenList.length}
+					loader={
+						<LoadingMore>
+							<Loader inline />
+						</LoadingMore>
+					}
+					scrollableTarget="scrollableDiv"
+				>
+					<RowsHeader>
+						<span>
+							{assetSearch ? (
+								<span>{t('modals.select-currency.header.search-results')}</span>
+							) : synthCategory != null ? (
+								t('modals.select-currency.header.category-synths', {
+									category: synthCategory,
+								})
+							) : (
+								t('modals.select-currency.header.all-synths')
+							)}
+						</span>
+						<span>{t('modals.select-currency.header.holdings')}</span>
+					</RowsHeader>
+					{synthsWalletBalancesQuery.isLoading ? (
+						<Loader />
+					) : synthsResults.length > 0 ? (
+						// TODO: use `Synth` type from contracts-interface
+						synthsResults.map((synth) => {
+							const currencyKey = synth.name;
+
+							return (
+								<CurrencyRow
+									key={currencyKey}
+									onClick={() => {
+										onSelect(currencyKey, false);
+										onDismiss();
+									}}
+									balance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
+									token={{
+										name: synth.description,
+										symbol: synth.name,
+										isSynth: true,
+									}}
+								/>
+							);
+						})
+					) : (
+						<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
+					)}
+					{oneInchTokensPaged.length ? (
+						<>
+							<TokensHeader>
+								<span>
+									{assetSearch ? (
+										<span>{t('modals.select-currency.header.search-results')}</span>
+									) : (
+										t('modals.select-currency.header.other-tokens')
+									)}
+								</span>
+								<span>{t('modals.select-currency.header.holdings')}</span>
+							</TokensHeader>
+							{oneInchQuery.isLoading ? (
+								<Loader />
+							) : oneInchTokensPaged.length > 0 ? (
+								oneInchTokensPaged.map((token) => {
+									const currencyKey = token.symbol;
+									return (
+										<CurrencyRow
+											key={currencyKey}
+											onClick={() => {
+												onSelect(currencyKey, true);
+												onDismiss();
+											}}
+											balance={
+												tokenBalances[currencyKey]
+													? {
+															currencyKey: currencyKey,
+															balance: tokenBalances[currencyKey]?.balance || wei(0),
+													  }
+													: undefined
+											}
+											token={token}
+										/>
+									);
+								})
+							) : (
+								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
+							)}
+						</>
+					) : null}
+				</InfiniteScroll>
+			</Container>
 		</StyledCenteredModal>
 	);
 };
+
+const Container = styled.div`
+	height: 100%;
+	overflow: auto;
+`;
 
 const StyledCenteredModal = styled(CenteredModal)`
 	[data-reach-dialog-content] {
@@ -249,6 +359,14 @@ const EmptyDisplay = styled(FlexDivCentered)`
 	margin: 24px 0px;
 	height: 50px;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+`;
+
+const LoadingMore = styled.div`
+	text-align: center;
+`;
+
+const TokensHeader = styled(RowsHeader)`
+	margin-top: 10px;
 `;
 
 export default SelectCurrencyModal;
