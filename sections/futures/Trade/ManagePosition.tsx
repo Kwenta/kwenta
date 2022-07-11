@@ -109,8 +109,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 };
 
 const ManagePositionContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	display: flex;
 	grid-gap: 15px;
 	margin-bottom: 16px;
 `;
@@ -141,6 +140,7 @@ const CloseOrderButton = styled(Button)`
 		background: transparent;
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		transform: none;
+		display: none;
 	}
 `;
 
