@@ -20,7 +20,6 @@ import Button from 'components/Button';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import {
-	AFTER_HOURS_SYNTHS,
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
 	CurrencyKey,
@@ -44,7 +43,6 @@ import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/Combine
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
-import TradeBalancerFooterCard from 'sections/exchange/FooterCard/TradeBalancerFooterCard';
 import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
 import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
@@ -52,7 +50,6 @@ import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import SelectTokenModal from 'sections/shared/modals/SelectTokenModal';
 import TxApproveModal from 'sections/shared/modals/TxApproveModal';
 import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import BalancerTradeModal from 'sections/shared/modals/BalancerTradeModal';
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 
@@ -141,7 +138,6 @@ const useExchange = ({
 	const [txError, setTxError] = useState<string | null>(null);
 	const [selectBaseCurrencyModalOpen, setSelectBaseCurrencyModalOpen] = useState<boolean>(false);
 	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
-	const [selectBalancerTradeModal, setSelectBalancerTradeModal] = useState<boolean>(false);
 	const [selectQuoteTokenModalOpen, setSelectQuoteTokenModalOpen] = useState<boolean>(false);
 	const [selectBaseTokenModalOpen, setSelectBaseTokenModalOpen] = useState<boolean>(false);
 	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
@@ -1245,16 +1241,6 @@ const useExchange = ({
 		<>
 			{!isWalletConnected ? (
 				<ConnectWalletCard attached={footerCardAttached} />
-			) : (baseCurrencyMarketClosed.isMarketClosed &&
-					baseCurrencyKey &&
-					AFTER_HOURS_SYNTHS.has(baseCurrencyKey as CurrencyKey)) ||
-			  (quoteCurrencyMarketClosed.isMarketClosed &&
-					quoteCurrencyKey &&
-					AFTER_HOURS_SYNTHS.has(quoteCurrencyKey as CurrencyKey)) ? (
-				<TradeBalancerFooterCard
-					attached={footerCardAttached}
-					onClick={() => setSelectBalancerTradeModal(true)}
-				/>
 			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
 				<MarketClosureCard
 					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
@@ -1361,9 +1347,6 @@ const useExchange = ({
 					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
 					txProvider={txProvider}
 				/>
-			)}
-			{selectBalancerTradeModal && (
-				<BalancerTradeModal onDismiss={() => setSelectBalancerTradeModal(false)} />
 			)}
 			{txSettleModalOpen && (
 				<TxSettleModal

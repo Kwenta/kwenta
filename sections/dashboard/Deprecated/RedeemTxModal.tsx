@@ -11,7 +11,7 @@ import { formatCryptoCurrency } from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { CurrencyKey, Synths } from 'constants/currency';
 
-export type TxProvider = 'synthetix' | '1inch' | 'balancer';
+export type TxProvider = 'synthetix' | '1inch';
 
 type RedeemTxModalProps = {
 	onDismiss: () => void;
