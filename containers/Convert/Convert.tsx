@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { useRecoilValue } from 'recoil';
 import { useCallback } from 'react';
 //@ts-ignore TODO: remove once types are added
-import getFormatedSwapData from '@jaredborders/synthswap-utils';
+import getFormattedSwapData from '@kwenta/synthswap';
 import { wei } from '@synthetixio/wei';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
@@ -151,7 +151,7 @@ const useConvert = () => {
 
 		const params = await get1InchSwapParams(oneInchFrom, oneInchTo, synthAmountEth, slippage);
 
-		const formattedData = getFormatedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
+		const formattedData = getFormattedSwapData(params, SYNTH_SWAP_OPTIMISM_ADDRESS);
 
 		const synthSwapContract = new ethers.Contract(
 			SYNTH_SWAP_OPTIMISM_ADDRESS,
