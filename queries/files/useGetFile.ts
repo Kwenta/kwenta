@@ -12,7 +12,6 @@ const useGetFile = (fileName: string) => {
 	return useQuery(
 		QUERY_KEYS.Files.Get(fileName),
 		async () => {
-			console.log(`${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/${fileName}`);
 			const response = await axios.get(
 				`${FLEEK_BASE_URL}/${FLEEK_STORAGE_BUCKET}/data/${fileName}`
 			);
