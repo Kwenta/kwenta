@@ -373,7 +373,6 @@
 				"submit-order": "swap",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
-				"approve-balancer": "approve balancer contract",
 				"add-more-collateral": "add more collateral"
 			}
 		},
@@ -406,10 +405,6 @@
 					},
 					"both-synths-suspended": {
 						"message": "Synths selected are currently paused - reset in progress."
-					},
-					"after-hours": {
-						"message": "Stock exchange is closed. Trade after-hours on Balancer",
-						"button-label": "Open Balancer Pool"
 					}
 				}
 			},
@@ -1020,15 +1015,6 @@
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
 		},
-		"afterHours": {
-			"title": "Aftermarket Trading Pool",
-			"approve": "Approve",
-			"balancer-pool": "Balancer Pool",
-			"powered-by-balancer": "Powered by Balancer",
-			"estimated-slippage": "Estimated Slippage",
-			"confirm-text": "Confirm your transaction with your web3 provider",
-			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
-		},
 		"settings": {
 			"title": "settings",
 			"options": {
@@ -1217,9 +1203,6 @@
 		"dex-aggregators": {
 			"1inch": {
 				"title": "DEX Aggregator - 1inch.exchange"
-			},
-			"balancer": {
-				"title": "Balancer"
 			}
 		},
 		"totals": {

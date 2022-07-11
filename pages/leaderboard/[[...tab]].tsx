@@ -1,9 +1,11 @@
 import { FC } from 'react';
 import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -20,15 +22,27 @@ const Leader: LeaderComponent = () => {
 				<title>{t('futures.page-title')}</title>
 			</Head>
 			<PageContent>
-				<FullHeightContainer>
-					<MainContent>
+				<MobileHiddenView>
+					<FullHeightContainer>
+						<MainContent>
+							<Leaderboard />
+						</MainContent>
+					</FullHeightContainer>
+				</MobileHiddenView>
+				<MobileOnlyView>
+					<MobileMainContent>
 						<Leaderboard />
-					</MainContent>
-				</FullHeightContainer>
+					</MobileMainContent>
+				</MobileOnlyView>
 			</PageContent>
 		</>
 	);
 };
+
+const MobileMainContent = styled.div`
+	width: 100vw;
+	padding: 15px;
+`;
 
 Leader.layout = AppLayout;
 

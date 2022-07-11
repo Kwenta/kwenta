@@ -19,7 +19,6 @@ import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
-import BalancerImage from 'assets/svg/providers/balancer.svg';
 
 import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
 import { MessageButton } from 'sections/exchange/FooterCard/common';
@@ -261,12 +260,6 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 				<TxProviderContainer>
 					<span>{t('common.powered-by')}</span>
 					<OneInchImage width="40" height="40" alt={t('common.dex-aggregators.1inch.title')} />
-				</TxProviderContainer>
-			)}
-			{txProvider === 'balancer' && (
-				<TxProviderContainer>
-					<span>{t('common.powered-by')}</span>
-					<BalancerImage width="40" height="40" alt={t('common.dex-aggregators.balancer.title')} />
 				</TxProviderContainer>
 			)}
 			{txError != null && (

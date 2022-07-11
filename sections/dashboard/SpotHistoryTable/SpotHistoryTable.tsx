@@ -64,6 +64,7 @@ const SpotHistoryTable: FC = () => {
 			<StyledTable
 				data={filteredHistoricalTrades}
 				showPagination={true}
+				isLoading={walletTradesQuery.isLoading}
 				highlightRowsOnHover
 				noResultsMessage={
 					<TableNoResults>
