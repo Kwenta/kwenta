@@ -1,10 +1,11 @@
 import { EXTERNAL_LINKS } from 'constants/links';
 import React from 'react';
 import styled from 'styled-components';
-import { ExternalLink, Paragraph } from 'styles/common';
+import { ExternalLink, FlexDivColCentered, Paragraph } from 'styles/common';
 import { useTranslation } from 'react-i18next';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
+import OptimismIcon from 'assets/svg/partners/optimism.svg';
 
 const PoweredBySynthetix = () => {
 	const { t } = useTranslation();
@@ -14,14 +15,15 @@ const PoweredBySynthetix = () => {
 			<ExternalLink href={EXTERNAL_LINKS.Synthetix.Home}>
 				<TextLogo height="10.5px" />
 			</ExternalLink>
+			<ExternalLink href={EXTERNAL_LINKS.Optimism.Home}>
+				<OptimismIcon height="13px" />
+			</ExternalLink>
 		</Container>
 	);
 };
 
-const Container = styled.div`
-	display: grid;
-	grid-auto-flow: row;
-	grid-gap: 5px;
+const Container = styled(FlexDivColCentered)`
+	row-gap: 5px;
 `;
 
 const Text = styled(Paragraph)`

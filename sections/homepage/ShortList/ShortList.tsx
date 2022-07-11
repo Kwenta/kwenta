@@ -17,10 +17,11 @@ import { FuturesStat } from 'queries/futures/types';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
-import { Media } from 'styles/media';
+import media, { Media } from 'styles/media';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
-import { Copy, Title } from '../common';
+import { Copy, StackSection, Title } from '../common';
+import Button from 'components/Button';
 
 type Stat = {
 	pnl: Wei;
@@ -32,7 +33,7 @@ type Stat = {
 const ShortList = () => {
 	const { t } = useTranslation();
 
-	const statsQuery = useGetStats();
+	const statsQuery = useGetStats(true);
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
 	const pnlMap = useMemo(
 		() =>
@@ -111,129 +112,197 @@ const ShortList = () => {
 	}, [futuresMarketsQuery?.data]);
 
 	return (
-		<Container>
-			<Media greaterThanOrEqual="lg">
+		<StackSection>
+			<Container>
 				<FlexDivColCentered>{title}</FlexDivColCentered>
-			</Media>
-			<StyledTable
-				showPagination={true}
-				isLoading={statsQuery.isLoading}
-				showShortList={true}
-				onTableRowClick={(row) => onClickTrader(row.original.trader)}
-				data={data}
-				pageSize={5}
-				hideHeaders={false}
-				columns={[
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
-						accessor: 'rank',
-						Cell: (cellProps: CellProps<any>) => (
-							<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
-						),
-						width: 65,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
-						accessor: 'trader',
-						Cell: (cellProps: CellProps<any>) => {
-							const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
-							return (
-								<StyledTrader>
-									{ensName ? (
-										<>
-											{ensAvatar && (
-												<img
-													src={ensAvatar}
-													alt={ensName}
-													width={16}
-													height={16}
-													style={{ borderRadius: '50%', marginRight: '8px' }}
-												/>
+				<Media greaterThan="sm">
+					<StyledTable
+						showPagination={true}
+						isLoading={statsQuery.isLoading}
+						showShortList={true}
+						onTableRowClick={(row) => onClickTrader(row.original.trader)}
+						data={data}
+						pageSize={5}
+						hideHeaders={false}
+						columns={[
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+								accessor: 'rank',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
+								),
+								width: 65,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+								accessor: 'trader',
+								Cell: (cellProps: CellProps<any>) => {
+									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+									return (
+										<StyledTrader>
+											{ensName ? (
+												<>
+													{ensAvatar && (
+														<img
+															src={ensAvatar}
+															alt={ensName}
+															width={16}
+															height={16}
+															style={{ borderRadius: '50%', marginRight: '8px' }}
+														/>
+													)}
+													{ensName}
+												</>
+											) : (
+												cellProps.row.original.traderShort
 											)}
-											{ensName}
-										</>
-									) : (
-										cellProps.row.original.traderShort
-									)}
-								</StyledTrader>
-							);
-						},
-						width: 150,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>,
-						accessor: 'totalTrades',
-						Cell: (cellProps: CellProps<any>) => (
-							<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>,
-						accessor: 'liquidations',
-						Cell: (cellProps: CellProps<any>) => (
-							<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
-						),
-						width: 100,
-					},
-					{
-						Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
-						accessor: 'pnl',
-						Cell: (cellProps: CellProps<any>) => (
-							<ColorCodedPrice
-								currencyKey={Synths.sUSD}
-								price={cellProps.row.original.pnl}
-								sign={'$'}
-								conversionRate={1}
-							/>
-						),
-						width: 125,
-					},
-				]}
-			/>
-			<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
-			<StatsCardContainer>
-				<StatsCard>
-					<StatsName>{t('homepage.shortlist.stats.volume')}</StatsName>
-					<StatsValue>
-						{dailyTradeStats.isLoading ? (
-							<Loader />
-						) : (
-							formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
-								sign: '$',
-								minDecimals: 0,
-							})
-						)}
-					</StatsValue>
-					<GridSvg />
-				</StatsCard>
-				<StatsCard>
-					<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
-					<StatsValue>
-						{futuresMarketsQuery.isLoading ? (
-							<Loader />
-						) : (
-							formatCurrency(Synths.sUSD, openInterest ?? 0, {
-								sign: '$',
-								minDecimals: 0,
-							})
-						)}
-					</StatsValue>
-					<GridSvg />
-				</StatsCard>
-				<StatsCard>
-					<StatsName>{t('homepage.shortlist.stats.trades')}</StatsName>
-					<StatsValue>
-						{dailyTradeStats.isLoading ? (
-							<Loader />
-						) : (
-							formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
-						)}
-					</StatsValue>
-					<GridSvg />
-				</StatsCard>
-			</StatsCardContainer>
-		</Container>
+										</StyledTrader>
+									);
+								},
+								width: 150,
+							},
+							{
+								Header: (
+									<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
+								),
+								accessor: 'totalTrades',
+								Cell: (cellProps: CellProps<any>) => (
+									<DefaultCell>{cellProps.row.original.totalTrades}</DefaultCell>
+								),
+								width: 100,
+							},
+							{
+								Header: (
+									<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
+								),
+								accessor: 'liquidations',
+								Cell: (cellProps: CellProps<any>) => (
+									<DefaultCell>{cellProps.row.original.liquidations}</DefaultCell>
+								),
+								width: 100,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<any>) => (
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: 125,
+							},
+						]}
+					/>
+				</Media>
+				<Media lessThan="sm">
+					<StyledTable
+						showPagination={true}
+						isLoading={statsQuery.isLoading}
+						showShortList={true}
+						onTableRowClick={(row) => onClickTrader(row.original.trader)}
+						data={data}
+						pageSize={5}
+						hideHeaders={false}
+						columns={[
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.rank-mobile')}</TableHeader>,
+								accessor: 'rank',
+								Cell: (cellProps: CellProps<any>) => (
+									<StyledOrderType>{getMedal(cellProps.row.original.rank)}</StyledOrderType>
+								),
+								width: 45,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>,
+								accessor: 'trader',
+								Cell: (cellProps: CellProps<any>) => {
+									const { ensName, ensAvatar } = useENS(cellProps.row.original.trader);
+									return (
+										<StyledTrader>
+											{ensName ? (
+												<>
+													{ensAvatar && (
+														<img
+															src={ensAvatar}
+															alt={ensName}
+															width={16}
+															height={16}
+															style={{ borderRadius: '50%', marginRight: '8px' }}
+														/>
+													)}
+													{ensName}
+												</>
+											) : (
+												cellProps.row.original.traderShort
+											)}
+										</StyledTrader>
+									);
+								},
+								width: 150,
+							},
+							{
+								Header: <TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>,
+								accessor: 'pnl',
+								Cell: (cellProps: CellProps<any>) => (
+									<ColorCodedPrice
+										currencyKey={Synths.sUSD}
+										price={cellProps.row.original.pnl}
+										sign={'$'}
+										conversionRate={1}
+									/>
+								),
+								width: 125,
+							},
+						]}
+					/>
+				</Media>
+				<FlexDivColCentered>{sectionTitle}</FlexDivColCentered>
+				<StatsCardContainer>
+					<StatsCard>
+						<StatsName>{t('homepage.shortlist.stats.volume')}</StatsName>
+						<StatsValue>
+							{dailyTradeStats.isLoading ? (
+								<Loader />
+							) : (
+								formatCurrency(Synths.sUSD, dailyTradeStats.data?.totalVolume || zeroBN, {
+									sign: '$',
+									minDecimals: 0,
+								})
+							)}
+						</StatsValue>
+						<GridSvg />
+					</StatsCard>
+					<StatsCard>
+						<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
+						<StatsValue>
+							{futuresMarketsQuery.isLoading ? (
+								<Loader />
+							) : (
+								formatCurrency(Synths.sUSD, openInterest ?? 0, {
+									sign: '$',
+									minDecimals: 0,
+								})
+							)}
+						</StatsValue>
+						<GridSvg />
+					</StatsCard>
+					<StatsCard>
+						<StatsName>{t('homepage.shortlist.stats.trades')}</StatsName>
+						<StatsValue>
+							{dailyTradeStats.isLoading ? (
+								<Loader />
+							) : (
+								formatNumber(dailyTradeStats.data?.totalTrades ?? 0, { minDecimals: 0 })
+							)}
+						</StatsValue>
+						<GridSvg />
+					</StatsCard>
+				</StatsCardContainer>
+			</Container>
+		</StackSection>
 	);
 };
 
@@ -244,7 +313,7 @@ const StatsName = styled.div`
 
 const StatsValue = styled.div`
 	font-size: 32px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
+	color: ${(props) => props.theme.colors.selectedTheme.white};
 	margin-top: 14px;
 `;
 
@@ -252,21 +321,47 @@ const StatsCardContainer = styled(FlexDivRow)`
 	margin-top: 40px;
 	justify-content: center;
 	column-gap: 20px;
+
+	${media.lessThan('sm')`
+		flex-direction: column;
+		margin: auto;
+		padding: 0px;
+		row-gap: 15px;
+		margin-top: 30px;
+	`}
 `;
 
-const StatsCard = styled(FlexDivColCentered)`
-	width: 308px;
+const StatsCard = styled(Button)`
+	disply: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 291px;
 	height: 191px;
+	font-family: ${(props) => props.theme.fonts.regular};
+	border-radius: 15px;
+	&::before {
+		border-radius: 15px;
+	}
+	cursor: default;
+	&:hover {
+		background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
+	}
 	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 15px;
 	padding: 45px;
-	padding-bottom: 0px;
-	justify-conent: flex-end;
+	padding-bottom: 60px;
+	justify-content: flex-end;
 	svg {
-		width: 307px;
-		height: 79px;
+		width: 291px;
+		height: 75px;
+		position: absolute;
+		right: 0;
+		top: 0;
+
+		margin-top: 115px;
+		z-index: 20;
+		background-size: cover;
 	}
 `;
 
@@ -274,6 +369,12 @@ const StyledTable = styled(Table)`
 	margin-top: 60px;
 	font-size: 15px;
 	width: 1160px;
+	${media.lessThan('sm')`
+		width: 345px;
+		& > .table-body >.table-body-row >.table-body-cell {
+			padding-left: 0px;
+		}
+	`}
 `;
 
 const Medal = styled.span`
@@ -296,8 +397,24 @@ const ColorCodedPrice = styled(Currency.Price)`
 `;
 
 const Container = styled(FlexDivColCentered)`
-	margin-bottom: 140px;
+	padding-bottom: 140px;
 	justify-content: center;
+	${media.greaterThan('sm')`
+		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 280px),
+			radial-gradient(white, rgba(201, 151, 90, 0.25) 0px, transparent 330px);
+		background-size: 100% 200%, 100% 100%;
+		background-position: -300px 0px, 250px 500px;
+		background-repeat: no-repeat, no-repeat;
+	`}
+	${media.lessThan('sm')`
+		padding-bottom: 100px;
+		background: radial-gradient(white, rgba(2, 225, 255, 0.15) 0px, transparent 120px),
+		radial-gradient(white, rgba(201, 151, 90, 0.2) 0px, transparent 180px);
+		background-size: 100% 60%, 100% 60%;
+		background-position: -120px 1000px, 80px 1000px;
+		background-repeat: no-repeat, no-repeat;
+		z-index: 20;
+	`}
 `;
 
 const TableHeader = styled.div`
@@ -306,18 +423,10 @@ const TableHeader = styled.div`
 	font-size: 13px;
 `;
 
-export const Bullet = styled.span`
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	border-radius: 100%;
-	background: ${(props) => props.theme.colors.gold};
-`;
-
 const StyledOrderType = styled.div`
 	color: ${(props) => props.theme.colors.white};
 	text-align: center;
-	width: 40px;
+	width: 45px;
 `;
 
 const StyledTrader = styled.a`
@@ -348,6 +457,9 @@ const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
+	${media.lessThan('sm')`
+		width: 100vw;
+	`}
 `;
 
 const SectionFeatureCopy = styled(FeatureCopy)`
@@ -355,6 +467,9 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	text-align: center;
 	width: 500px;
 	font-size: 18px;
+	${media.lessThan('sm')`
+		width: 100vw;
+	`}
 `;
 
 export default ShortList;
