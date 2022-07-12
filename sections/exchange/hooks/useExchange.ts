@@ -32,8 +32,6 @@ import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
-import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCard';
-import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 
@@ -1059,11 +1057,6 @@ const useExchange = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [marketQuery, routingEnabled]);
 
-	const quoteMarketDetailsCard =
-		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={quoteCurrencyKey} />
-		) : null;
-
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {
 			return totalTradePrice.sub(estimatedBaseTradePrice).div(totalTradePrice).neg();
@@ -1175,30 +1168,11 @@ const useExchange = ({
 		txProvider,
 	]);
 
-	const baseMarketDetailsCard =
-		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={baseCurrencyKey} />
-		) : null;
-
-	const combinedMarketDetailsCard = showMarketDetailsCard ? (
-		<CombinedMarketDetailsCard
-			{...{
-				baseCurrencyKey,
-				basePriceRate,
-				quoteCurrencyKey,
-				quotePriceRate,
-			}}
-		/>
-	) : null;
-
 	return {
 		baseCurrencyKey,
-		baseMarketDetailsCard,
-		combinedMarketDetailsCard,
 		handleCurrencySwap,
 		inverseRate,
 		quoteCurrencyKey,
-		quoteMarketDetailsCard,
 		wideWidth,
 		txProvider,
 		openModal,

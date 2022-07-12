@@ -83,8 +83,6 @@ const FooterCard: React.FC = () => {
 					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
 					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
 					attached={footerCardAttached}
-					quoteCurrencyKey={quoteCurrencyKey}
-					baseCurrencyKey={baseCurrencyKey}
 				/>
 			) : showNoSynthsCard && noSynths ? (
 				<NoSynthsCard attached={footerCardAttached} />
@@ -112,7 +110,6 @@ const FooterCard: React.FC = () => {
 					baseFeeRate={baseFeeRate ?? null}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
-					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix'}
 					isApproved={needsApproval ? isApproved : undefined}
 				/>
@@ -120,12 +117,12 @@ const FooterCard: React.FC = () => {
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
 					variant="primary"
-					isRounded={true}
+					isRounded
 					disabled={false}
 					onClick={handleRedeem}
 					size="lg"
 					data-testid="submit-order"
-					fullWidth={true}
+					fullWidth
 				>
 					{t('dashboard.deprecated.button.redeem-synths')}
 				</Button>
@@ -133,12 +130,12 @@ const FooterCard: React.FC = () => {
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
 					variant="primary"
-					isRounded={true}
+					isRounded
 					disabled={false}
 					onClick={handleRedeem}
 					size="lg"
 					data-testid="submit-order"
-					fullWidth={true}
+					fullWidth
 				>
 					{t('dashboard.deprecated.button.redeem-synths')}
 				</Button>
