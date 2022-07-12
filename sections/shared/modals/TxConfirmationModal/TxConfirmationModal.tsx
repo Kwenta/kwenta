@@ -17,6 +17,7 @@ import { isL2State, walletAddressState } from 'store/wallet';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import Error from 'components/Error';
 
 import OneInchImage from 'assets/svg/providers/1inch.svg';
 
@@ -28,6 +29,7 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
+import { formatRevert } from 'utils/formatters/error';
 
 export type TxProvider = 'synthetix' | '1inch';
 
@@ -264,7 +266,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			)}
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Error>{formatRevert(txError)}</Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>
