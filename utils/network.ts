@@ -2,6 +2,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 import { NetworkId } from '@synthetixio/contracts-interface';
 import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { providers } from 'ethers';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import {
@@ -10,7 +11,9 @@ import {
 	GWEI_DECIMALS,
 	GasLimitEstimate,
 	SUPPORTED_NETWORKS,
+	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
+import loadProvider from '@synthetixio/providers';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
@@ -40,6 +43,23 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 export type GasInfo = {
 	limit: number;
 	l1Fee: number;
+};
+
+export const getDefaultProvider = (networkId: NetworkId) => {
+	// if blast API supported, return the blast URL
+	if (networkId in BLAST_NETWORK_LOOKUP) {
+		const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
+		const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
+		return new providers.JsonRpcProvider(networkUrl, networkId);
+	} else {
+		// otherwise use infura
+		// this should never trigger since the default network is OP mainnet
+		// this catch exists in the case that the OP Kovan networkId is provided
+		return loadProvider({
+			networkId,
+			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+		});
+	}
 };
 
 export const getTransactionPrice = (
