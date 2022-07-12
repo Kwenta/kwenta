@@ -333,7 +333,6 @@ function getLocale() {
 
 		default:
 			locale_ = enUS;
-			break;
 	}
 
 	return locale_;
