@@ -38,15 +38,25 @@ import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-import useGas from 'hooks/useGas';
 
 import { hasOrdersNotificationState, slippageState } from 'store/ui';
-import { isWalletConnectedState, walletAddressState, isL2State, networkState } from 'store/wallet';
+import {
+	isWalletConnectedState,
+	walletAddressState,
+	isL2State,
+	networkState,
+	gasSpeedState,
+} from 'store/wallet';
 import { ordersState } from 'store/orders';
 
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
-import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
+import {
+	normalizeGasLimit,
+	newGetTransactionPrice,
+	getTransactionPrice,
+	GasInfo,
+} from 'utils/network';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
@@ -59,6 +69,7 @@ import {
 	quoteCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -101,8 +112,10 @@ const useExchange = ({
 	const {
 		useETHBalanceQuery,
 		useSynthsBalancesQuery,
-		useExchangeRatesQuery,
 		useFeeReclaimPeriodQuery,
+		useEthGasPriceQuery,
+		useSynthetixTxn,
+		useContractTxn,
 	} = useSynthetixQueries();
 
 	const router = useRouter();
@@ -132,13 +145,14 @@ const useExchange = ({
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const network = useRecoilValue(networkState);
-	const { gasPrice, gasPriceWei, gasPrices, gasConfig, getGasLimitEstimate } = useGas();
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
 
 	const wideWidth = useChartWideWidth();
 
-	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
+	const gasSpeed = useRecoilValue(gasSpeedState);
+	const ethGasPriceQuery = useEthGasPriceQuery();
+	const gasPrice = ethGasPriceQuery?.data?.[gasSpeed] ?? null;
 
 	const setCurrencyPair = useSetRecoilState(currencyPairState);
 	const ETHBalanceQuery = useETHBalanceQuery(walletAddress);
@@ -282,11 +296,11 @@ const useExchange = ({
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
 	const rate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
 
-	const inverseRate = useMemo(() => (rate > 0 ? 1 / rate : 0), [rate]);
+	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
 	const getBalance = useCallback(
 		(currencyKey: string | null, isETH: boolean) => {
@@ -324,8 +338,8 @@ const useExchange = ({
 				  coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()] != null
 					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
 					  selectPriceCurrencyRate.toNumber()
-					: 0
-				: getExchangeRatesForCurrencies(
+					: wei(0)
+				: newGetExchangeRatesForCurrencies(
 						exchangeRates,
 						quoteCurrencyKey,
 						selectedPriceCurrency.name
@@ -347,10 +361,15 @@ const useExchange = ({
 			  baseCurrencyTokenAddress != null &&
 			  selectPriceCurrencyRate != null &&
 			  coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()] != null
-				? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd /
-				  selectPriceCurrencyRate.toNumber()
-				: 0
-			: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name);
+				? wei(coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd).div(
+						selectPriceCurrencyRate
+				  )
+				: wei(0)
+			: newGetExchangeRatesForCurrencies(
+					exchangeRates,
+					baseCurrencyKey,
+					selectedPriceCurrency.name
+			  );
 	}, [
 		exchangeRates,
 		baseCurrencyKey,
@@ -374,7 +393,7 @@ const useExchange = ({
 			: null;
 
 	const ethPriceRate = useMemo(
-		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
@@ -484,11 +503,6 @@ const useExchange = ({
 		}
 	};
 
-	const transactionFee = useMemo(
-		() => getTransactionPrice(gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee),
-		[gasPrice, gasInfo?.limit, ethPriceRate, gasInfo?.l1Fee]
-	);
-
 	const feeAmountInQuoteCurrency = useMemo(() => {
 		if (exchangeFeeRate != null && quoteCurrencyAmount) {
 			return wei(quoteCurrencyAmount).mul(exchangeFeeRate);
@@ -504,24 +518,6 @@ const useExchange = ({
 	useEffect(() => {
 		setCurrencyPair({ base: null, quote: Synths.sUSD });
 	}, [network.id, setCurrencyPair]);
-
-	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
-	useEffect(() => {
-		const getGasLimitEstimate = async () => {
-			if (gasInfo == null && submissionDisabledReason == null) {
-				const gasEstimate = await getGasEstimateForExchange(gasPriceWei);
-				setGasInfo(gasEstimate);
-			}
-		};
-		getGasLimitEstimate();
-
-		// eslint-disable-next-line
-	}, [submissionDisabledReason, gasInfo, txProvider]);
-
-	// reset estimated gas limit when currencies are changed.
-	useEffect(() => {
-		setGasInfo(null);
-	}, [baseCurrencyKey, quoteCurrencyKey]);
 
 	useEffect(() => {
 		if (
@@ -554,163 +550,132 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [baseCurrencyKey, exchangeFeeRate]);
 
-	const getExchangeParams = useCallback(
-		(isAtomic: boolean) => {
-			const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
-			const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
-			const sourceAmount = quoteCurrencyAmountBN.toBN();
-			const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+	const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
+	const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
 
-			if (isAtomic) {
-				return [
-					sourceCurrencyKey,
-					sourceAmount,
-					destinationCurrencyKey,
-					KWENTA_TRACKING_CODE,
-					minAmount,
-				];
-			} else {
-				return [
-					sourceCurrencyKey,
-					sourceAmount,
-					destinationCurrencyKey,
-					walletAddress,
-					KWENTA_TRACKING_CODE,
-				];
-			}
-		},
-		[
-			baseCurrencyKey,
-			quoteCurrencyAmountBN,
-			quoteCurrencyKey,
-			walletAddress,
-			baseCurrencyAmountBN,
-			atomicExchangeSlippage,
-		]
+	const isAtomic =
+		!isL2 &&
+		[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+			ATOMIC_EXCHANGES_L1.includes(currency)
+		);
+
+	const exchangeParams = useMemo(() => {
+		const sourceAmount = quoteCurrencyAmountBN.toBN();
+		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+
+		if (isAtomic) {
+			return [
+				sourceCurrencyKey,
+				sourceAmount,
+				destinationCurrencyKey,
+				KWENTA_TRACKING_CODE,
+				minAmount,
+			];
+		} else {
+			return [
+				sourceCurrencyKey,
+				sourceAmount,
+				destinationCurrencyKey,
+				walletAddress,
+				KWENTA_TRACKING_CODE,
+			];
+		}
+	}, [
+		quoteCurrencyAmountBN,
+		walletAddress,
+		baseCurrencyAmountBN,
+		atomicExchangeSlippage,
+		isAtomic,
+		sourceCurrencyKey,
+		destinationCurrencyKey,
+	]);
+
+	const exchangeTxn = useSynthetixTxn(
+		'Synthetix',
+		isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
+		exchangeParams,
+		gasPrice ?? undefined,
+		{ enabled: true }
 	);
 
-	const getGasEstimateForExchange = useCallback(
-		async (gasPriceInWei: number | null) => {
-			try {
-				if (isL2 && !gasPrice) return null;
-				if (synthetixjs != null && txProvider === 'synthetix') {
-					const sourceCurrencyKey = ethers.utils.parseBytes32String(
-						getExchangeParams(true)[0] as string
-					);
+	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
 
-					const destinationCurrencyKey = ethers.utils.parseBytes32String(
-						getExchangeParams(true)[2] as string
-					);
+	const getGasEstimateForExchange = useCallback(async () => {
+		if (isL2) return null;
+		if (txProvider === 'synthswap') {
+			const gasEstimate = await swapSynthSwapGasEstimate(
+				allTokensMap[quoteCurrencyKey!],
+				allTokensMap[baseCurrencyKey!],
+				quoteCurrencyAmount,
+				slippage
+			);
+			const metaTx = await swapSynthSwap(
+				allTokensMap[quoteCurrencyKey!],
+				allTokensMap[baseCurrencyKey!],
+				quoteCurrencyAmount,
+				slippage,
+				'meta_tx'
+			);
+			const l1Fee = await getL1SecurityFee({
+				...metaTx,
+				gasPrice: gasPrice?.gasPrice?.toNumber(),
+				gasLimit: Number(gasEstimate),
+			});
 
-					const isAtomic =
-						!isL2 &&
-						[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
-							ATOMIC_EXCHANGES_L1.includes(currency)
-						);
+			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee };
+		} else {
+			const estimate = await swap1InchGasEstimate(
+				quoteCurrencyTokenAddress!,
+				baseCurrencyTokenAddress!,
+				quoteCurrencyAmount,
+				slippage
+			);
+			const metaTx = await swap1Inch(
+				quoteCurrencyTokenAddress!,
+				baseCurrencyTokenAddress!,
+				quoteCurrencyAmount,
+				slippage,
+				true
+			);
+			const l1Fee = await getL1SecurityFee({
+				...metaTx,
+				gasPrice: gasPrice?.gasPrice?.toNumber() ?? 0,
+				gasLimit: Number(estimate),
+			});
 
-					const exchangeParams = getExchangeParams(isAtomic);
+			return { limit: normalizeGasLimit(Number(estimate)), l1Fee: l1Fee };
+		}
+	}, [
+		allTokensMap,
+		baseCurrencyKey,
+		baseCurrencyTokenAddress,
+		getL1SecurityFee,
+		isL2,
+		quoteCurrencyAmount,
+		quoteCurrencyKey,
+		quoteCurrencyTokenAddress,
+		slippage,
+		swap1Inch,
+		swap1InchGasEstimate,
+		swapSynthSwap,
+		swapSynthSwapGasEstimate,
+		txProvider,
+		gasPrice?.gasPrice,
+	]);
 
-					let gasEstimate, gasLimitNum, metaTx;
-
-					if (isAtomic) {
-						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeAtomically(
-							...exchangeParams
-						);
-					} else {
-						gasEstimate = await synthetixjs.contracts.Synthetix.estimateGas.exchangeWithTracking(
-							...exchangeParams
-						);
-					}
-
-					gasLimitNum = Number(gasEstimate);
-
-					if (isAtomic) {
-						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeAtomically(
-							...exchangeParams
-						);
-					} else {
-						metaTx = await synthetixjs.contracts.Synthetix.populateTransaction.exchangeWithTracking(
-							...exchangeParams
-						);
-					}
-
-					const l1Fee = await getL1SecurityFee({
-						...metaTx,
-						gasPrice: gasPriceInWei!,
-						gasLimit: gasLimitNum,
-					});
-					const limit = isL2 ? gasLimitNum : normalizeGasLimit(gasLimitNum);
-					return { limit, l1Fee };
-				} else if (txProvider === 'synthswap') {
-					const gasEstimate = await swapSynthSwapGasEstimate(
-						allTokensMap[quoteCurrencyKey!],
-						allTokensMap[baseCurrencyKey!],
-						quoteCurrencyAmount,
-						slippage
-					);
-					const metaTx = await swapSynthSwap(
-						allTokensMap[quoteCurrencyKey!],
-						allTokensMap[baseCurrencyKey!],
-						quoteCurrencyAmount,
-						slippage,
-						'meta_tx'
-					);
-					const l1Fee = await getL1SecurityFee({
-						...metaTx,
-						gasPrice: gasPriceInWei!,
-						gasLimit: Number(gasEstimate),
-					});
-
-					return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee: l1Fee };
-				} else {
-					const estimate = await swap1InchGasEstimate(
-						quoteCurrencyTokenAddress!,
-						baseCurrencyTokenAddress!,
-						quoteCurrencyAmount,
-						slippage
-					);
-					const metaTx = await swap1Inch(
-						quoteCurrencyTokenAddress!,
-						baseCurrencyTokenAddress!,
-						quoteCurrencyAmount,
-						slippage,
-						true
-					);
-					const l1Fee = await getL1SecurityFee({
-						...metaTx,
-						gasPrice: gasPriceInWei!,
-						gasLimit: Number(estimate),
-					});
-
-					return { limit: normalizeGasLimit(Number(estimate)), l1Fee: l1Fee };
-				}
-			} catch (e) {
-				console.log(e);
+	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
+	useEffect(() => {
+		const getGasLimitEstimate = async () => {
+			if (gasInfo == null && submissionDisabledReason == null) {
+				const gasEstimate = await getGasEstimateForExchange();
+				setGasInfo(gasEstimate);
 			}
-			return null;
-		},
-		[
-			isL2,
-			synthetixjs,
-			gasPrice,
-			allTokensMap,
-			quoteCurrencyTokenAddress,
-			baseCurrencyTokenAddress,
-			quoteCurrencyAmount,
-			slippage,
-			txProvider,
-			baseCurrencyKey,
-			quoteCurrencyKey,
-			swapSynthSwapGasEstimate,
-			swap1Inch,
-			swap1InchGasEstimate,
-			swapSynthSwap,
-			getL1SecurityFee,
-			getExchangeParams,
-		]
-	);
+		};
+		getGasLimitEstimate();
 
-	const Redeemer = useMemo(() => synthetixjs?.contracts.SynthRedeemer ?? null, [synthetixjs]);
+		// eslint-disable-next-line
+	}, [submissionDisabledReason, gasInfo, txProvider]);
+
 	const redeemableDeprecatedSynthsQuery = useRedeemableDeprecatedSynthsQuery(walletAddress);
 	const redeemableDeprecatedSynths =
 		redeemableDeprecatedSynthsQuery.isSuccess && redeemableDeprecatedSynthsQuery.data != null
@@ -719,66 +684,39 @@ const useExchange = ({
 	const balances = redeemableDeprecatedSynths?.balances ?? [];
 	const totalUSDBalance = wei(redeemableDeprecatedSynths?.totalUSDBalance ?? 0);
 
-	const getMethodAndParams = useCallback(
-		() => ({
-			method: 'redeemAll',
-			params: [redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
-		}),
-		[redeemableDeprecatedSynths?.balances]
+	const redeemTxn = useSynthetixTxn(
+		'SynthRedeemer',
+		'redeemAll',
+		[redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
+		gasPrice ?? undefined,
+		{ enabled: !!redeemableDeprecatedSynths && openModal === 'redeem' }
 	);
 
-	const gasLimitEstimate = useCallback(async (): Promise<number | null> => {
-		if (!Redeemer) return null;
-		try {
-			const { method, params } = getMethodAndParams();
-			return await getGasLimitEstimate(() => Redeemer.estimateGas[method](...params));
-		} catch (e) {
-			return null;
-		}
-	}, [getMethodAndParams, Redeemer, getGasLimitEstimate]);
-
 	const handleRedeem = async () => {
-		if (!(Redeemer && gasPrice)) return;
-
 		setTxError(null);
 		setOpenModal('redeem');
-
-		const { method, params } = getMethodAndParams();
 
 		try {
 			setIsRedeeming(true);
 
-			let transaction: ethers.ContractTransaction | null = null;
+			await redeemTxn.mutateAsync();
 
-			const limitEstimate = await gasLimitEstimate();
-
-			transaction = (await Redeemer[method](...params, {
-				gasPrice: gasPriceWei,
-				gasLimit: limitEstimate,
-			})) as ethers.ContractTransaction;
-
-			if (transaction != null) {
+			if (redeemTxn.hash !== null) {
 				monitorTransaction({
-					txHash: transaction.hash,
+					txHash: redeemTxn.hash,
+					onTxConfirmed: () => {
+						redeemableDeprecatedSynthsQuery.refetch();
+						synthsWalletBalancesQuery.refetch();
+					},
 				});
+			}
 
-				await transaction.wait();
-			}
 			setOpenModal(undefined);
-			redeemableDeprecatedSynthsQuery.refetch();
-			synthsWalletBalancesQuery.refetch();
 		} catch (e) {
-			try {
-				await Redeemer.callStatic[method](...params);
-				throw e;
-			} catch (e) {
-				console.log(e);
-				setTxError(
-					e.data
-						? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })
-						: e.message
-				);
-			}
+			console.log(e);
+			setTxError(
+				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
+			);
 		} finally {
 			setIsRedeeming(false);
 		}
@@ -826,41 +764,63 @@ const useExchange = ({
 		}
 	}, [checkAllowance, needsApproval]);
 
+	const approveTxn = useContractTxn(
+		createERC20Contract(allTokensMap[quoteCurrencyKey!].address),
+		'approve',
+		[approveAddress, ethers.constants.MaxUint256],
+		gasPrice ?? undefined,
+		{ enabled: !!quoteCurrencyKey && openModal === 'approve' }
+	);
+
+	const settleTxn = useSynthetixTxn(
+		'Exchanger',
+		'settle',
+		[walletAddress, destinationCurrencyKey],
+		gasPrice ?? undefined,
+		{ enabled: openModal === 'settle' }
+	);
+
+	const transactionFee = useMemo(() => {
+		if (txProvider === 'synthswap' || txProvider === '1inch') {
+			// TODO: We should refactor this to use Wei, instead of numbers.
+			return getTransactionPrice(
+				gasPrice?.gasPrice?.toNumber() ?? null,
+				gasInfo?.limit,
+				ethPriceRate.toNumber(),
+				gasInfo?.l1Fee
+			);
+		} else {
+			return newGetTransactionPrice(
+				gasPrice,
+				exchangeTxn.gasLimit,
+				ethPriceRate,
+				exchangeTxn.optimismLayerOneFee
+			);
+		}
+	}, [gasPrice, ethPriceRate, exchangeTxn, gasInfo, txProvider]);
+
 	const handleApprove = async () => {
-		if (quoteCurrencyKey != null && gasPrice != null && oneInchTokensMap != null) {
-			setTxError(null);
-			setOpenModal('approve');
+		setTxError(null);
+		setOpenModal('approve');
 
-			try {
-				const contract = createERC20Contract(allTokensMap[quoteCurrencyKey].address);
-				if (contract != null) {
-					const gasEstimate = await contract.estimateGas.approve(
-						approveAddress,
-						ethers.constants.MaxUint256
-					);
+		try {
+			await approveTxn.mutateAsync();
 
-					const tx = await contract.approve(approveAddress, ethers.constants.MaxUint256, {
-						gasLimit: isL2 ? Number(gasEstimate) : normalizeGasLimit(Number(gasEstimate)),
-						...gasConfig,
-					});
-
-					if (tx != null) {
-						monitorTransaction({
-							txHash: tx.hash,
-							onTxConfirmed: () => {
-								setIsApproving(false);
-								setIsApproved(true);
-							},
-						});
-					}
-				}
-
-				setOpenModal(undefined);
-			} catch (e) {
-				console.log(e);
-				setIsApproving(false);
-				setTxError(e.message);
+			if (approveTxn.hash != null) {
+				monitorTransaction({
+					txHash: approveTxn.hash,
+					onTxConfirmed: () => {
+						setIsApproving(false);
+						setIsApproved(true);
+					},
+				});
 			}
+
+			setOpenModal(undefined);
+		} catch (e) {
+			console.log(e);
+			setIsApproving(false);
+			setTxError(e.message);
 		}
 	};
 
@@ -870,26 +830,11 @@ const useExchange = ({
 			setOpenModal('settle');
 
 			try {
-				const gasEstimate = await synthetixjs.contracts.Exchanger.estimateGas.settle(
-					walletAddress,
-					ethers.utils.formatBytes32String(baseCurrencyKey!)
-				);
+				await settleTxn.mutateAsync();
 
-				const gas = {
-					gasPrice: gasPriceWei,
-					gasLimit: normalizeGasLimit(Number(gasEstimate)),
-				};
-
-				// send transaction
-				const tx = await synthetixjs.contracts.Exchanger.settle(
-					walletAddress,
-					ethers.utils.formatBytes32String(baseCurrencyKey!),
-					gas
-				);
-
-				if (tx != null) {
+				if (settleTxn.hash != null) {
 					monitorTransaction({
-						txHash: tx.hash,
+						txHash: settleTxn.hash,
 						onTxConfirmed: () => {
 							numEntriesQuery.refetch();
 						},
@@ -905,104 +850,80 @@ const useExchange = ({
 	};
 
 	const handleSubmit = useCallback(async () => {
-		if (synthetixjs != null && gasPrice != null) {
-			setTxError(null);
-			setOpenModal('confirm');
+		setTxError(null);
+		setOpenModal('confirm');
 
-			const destinationCurrencyKey = ethers.utils.parseBytes32String(
-				getExchangeParams(true)[2] as string
-			);
+		try {
+			setIsSubmitting(true);
 
-			try {
-				setIsSubmitting(true);
+			let tx: ethers.ContractTransaction | null = null;
 
-				let tx: ethers.ContractTransaction | null = null;
-
-				if (txProvider === '1inch' && oneInchTokensMap != null) {
-					// @ts-ignore is correct tx type
-					tx = await swap1Inch(
-						quoteCurrencyTokenAddress!,
-						baseCurrencyTokenAddress!,
-						quoteCurrencyAmount,
-						slippage
-					);
-				} else if (txProvider === 'synthswap') {
-					tx = await swapSynthSwap(
-						allTokensMap[quoteCurrencyKey!],
-						allTokensMap[baseCurrencyKey!],
-						quoteCurrencyAmount,
-						slippage
-					);
-				} else {
-					const gasInfo = await getGasEstimateForExchange(gasPriceWei);
-
-					setGasInfo(gasInfo);
-
-					const gas = { gasLimit: gasInfo?.limit, ...gasConfig };
-
-					const isAtomic =
-						!isL2 && ['sBTC', 'sETH', 'sEUR', 'sUSD'].includes(destinationCurrencyKey);
-
-					const exchangeParams = getExchangeParams(isAtomic);
-
-					if (isAtomic) {
-						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
-					} else {
-						tx = await synthetixjs.contracts.Synthetix.exchangeWithTracking(...exchangeParams, gas);
-					}
-				}
-
-				if (tx != null) {
-					setOrders((orders) =>
-						produce(orders, (draftState) => {
-							draftState.push({
-								timestamp: Date.now(),
-								hash: tx!.hash,
-								baseCurrencyKey: baseCurrencyKey!,
-								baseCurrencyAmount,
-								quoteCurrencyKey: quoteCurrencyKey!,
-								quoteCurrencyAmount,
-								orderType: 'market',
-								status: 'pending',
-								transaction: tx,
-							});
-						})
-					);
-					setHasOrdersNotification(true);
-
-					monitorTransaction({
-						txHash: tx.hash,
-						onTxConfirmed: () => {
-							setOrders((orders) =>
-								produce(orders, (draftState) => {
-									const orderIndex = orders.findIndex((order) => order.hash === tx!.hash);
-									if (draftState[orderIndex]) {
-										draftState[orderIndex].status = 'confirmed';
-									}
-								})
-							);
-							synthsWalletBalancesQuery.refetch();
-							numEntriesQuery.refetch();
-							setQuoteCurrencyAmount('');
-							setBaseCurrencyAmount('');
-						},
-					});
-				}
-				setOpenModal(undefined);
-			} catch (e) {
-				console.warn(e);
-				setTxError(e.message);
-			} finally {
-				setIsSubmitting(false);
+			if (txProvider === '1inch' && oneInchTokensMap != null) {
+				// @ts-ignore is correct tx type
+				tx = await swap1Inch(
+					quoteCurrencyTokenAddress!,
+					baseCurrencyTokenAddress!,
+					quoteCurrencyAmount,
+					slippage
+				);
+			} else if (txProvider === 'synthswap') {
+				tx = await swapSynthSwap(
+					allTokensMap[quoteCurrencyKey!],
+					allTokensMap[baseCurrencyKey!],
+					quoteCurrencyAmount,
+					slippage
+				);
+			} else {
+				await exchangeTxn.mutateAsync();
 			}
+
+			if (tx != null) {
+				setOrders((orders) =>
+					produce(orders, (draftState) => {
+						draftState.push({
+							timestamp: Date.now(),
+							hash: tx!.hash,
+							baseCurrencyKey: baseCurrencyKey!,
+							baseCurrencyAmount,
+							quoteCurrencyKey: quoteCurrencyKey!,
+							quoteCurrencyAmount,
+							orderType: 'market',
+							status: 'pending',
+							transaction: tx,
+						});
+					})
+				);
+				setHasOrdersNotification(true);
+
+				monitorTransaction({
+					txHash: tx.hash,
+					onTxConfirmed: () => {
+						setOrders((orders) =>
+							produce(orders, (draftState) => {
+								const orderIndex = orders.findIndex((order) => order.hash === tx!.hash);
+								if (draftState[orderIndex]) {
+									draftState[orderIndex].status = 'confirmed';
+								}
+							})
+						);
+						synthsWalletBalancesQuery.refetch();
+						numEntriesQuery.refetch();
+						setQuoteCurrencyAmount('');
+						setBaseCurrencyAmount('');
+					},
+				});
+			}
+			setOpenModal(undefined);
+		} catch (e) {
+			console.warn(e);
+			setTxError(e.message);
+		} finally {
+			setIsSubmitting(false);
 		}
 	}, [
 		baseCurrencyAmount,
 		baseCurrencyKey,
 		baseCurrencyTokenAddress,
-		gasPrice,
-		getExchangeParams,
-		getGasEstimateForExchange,
 		quoteCurrencyAmount,
 		quoteCurrencyKey,
 		quoteCurrencyTokenAddress,
@@ -1015,15 +936,12 @@ const useExchange = ({
 		monitorTransaction,
 		slippage,
 		oneInchTokensMap,
-		synthetixjs,
-		gasPriceWei,
-		gasConfig,
-		isL2,
 		allTokensMap,
 		swapSynthSwap,
 		setBaseCurrencyAmount,
 		setQuoteCurrencyAmount,
 		setTxError,
+		exchangeTxn,
 	]);
 
 	useEffect(() => {
@@ -1211,7 +1129,6 @@ const useExchange = ({
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 		totalTradePrice,
-		gasPrices,
 		onBaseCurrencyAmountChange,
 		onBaseBalanceClick,
 		onQuoteCurrencyAmountChange,

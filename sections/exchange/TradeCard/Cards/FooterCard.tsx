@@ -71,7 +71,6 @@ const FooterCard: React.FC = () => {
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 		totalTradePrice,
-		gasPrices,
 	} = useExchangeContext();
 
 	return (
@@ -103,7 +102,6 @@ const FooterCard: React.FC = () => {
 					baseCurrencyAmount={baseCurrencyAmount}
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
-					gasPrices={gasPrices}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
 					totalFeeRate={exchangeFeeRate ?? null}
@@ -113,19 +111,6 @@ const FooterCard: React.FC = () => {
 					showFee={txProvider === 'synthetix'}
 					isApproved={needsApproval ? isApproved : undefined}
 				/>
-			)}
-			{balances.length !== 0 && totalUSDBalance.gt(0) && (
-				<Button
-					variant="primary"
-					isRounded
-					disabled={false}
-					onClick={handleRedeem}
-					size="lg"
-					data-testid="submit-order"
-					fullWidth
-				>
-					{t('dashboard.deprecated.button.redeem-synths')}
-				</Button>
 			)}
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
 				<Button
