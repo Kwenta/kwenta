@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useRouter } from 'next/router';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import get from 'lodash/get';
 import produce from 'immer';
 import castArray from 'lodash/castArray';
@@ -9,13 +9,9 @@ import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
-
 import TransactionNotifier from 'containers/TransactionNotifier';
 import Connector from 'containers/Connector';
 import Convert from 'containers/Convert';
-
-import Button from 'components/Button';
 
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
@@ -36,23 +32,12 @@ import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
-import CurrencyCard from 'sections/exchange/TradeCard/CurrencyCard';
 import MarketDetailsCard from 'sections/exchange/TradeCard/Cards/MarketDetailsCard';
 import CombinedMarketDetailsCard from 'sections/exchange/TradeCard/Cards/CombinedMarketDetailsCard';
-import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
-import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
-import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
-import TxApproveModal from 'sections/shared/modals/TxApproveModal';
-import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
-import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useMarketClosed from 'hooks/useMarketClosed';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
 import useGas from 'hooks/useGas';
@@ -66,12 +51,16 @@ import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { getTransactionPrice, normalizeGasLimit, GasInfo } from 'utils/network';
 import { hexToAsciiV2 } from 'utils/formatters/string';
 
-import SettleTransactionsCard from '../FooterCard/SettleTransactionsCard';
-import useCurrencyPair from './useCurrencyPair';
-import { NoTextTransform } from 'styles/common';
-
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import {
+	baseCurrencyAmountState,
+	baseCurrencyKeyState,
+	currencyPairState,
+	quoteCurrencyAmountState,
+	quoteCurrencyKeyState,
+	txErrorState,
+} from 'store/exchange';
 
 type ExchangeCardProps = {
 	defaultBaseCurrencyKey?: string | null;
@@ -85,6 +74,8 @@ type ExchangeCardProps = {
 	allowBaseCurrencySelection?: boolean;
 	showNoSynthsCard?: boolean;
 };
+
+type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
 
 const useExchange = ({
 	defaultBaseCurrencyKey = null,
@@ -123,29 +114,22 @@ const useExchange = ({
 		[router.query]
 	);
 
-	const [currencyPair, setCurrencyPair] = useCurrencyPair<string>({
-		persistSelectedCurrencies,
-		defaultBaseCurrencyKey,
-		defaultQuoteCurrencyKey,
-	});
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
 
-	const [isApproving, setIsApproving] = useState<boolean>(false);
-	const [isApproved, setIsApproved] = useState<boolean>(false);
-	const [baseCurrencyAmount, setBaseCurrencyAmount] = useState<string>('');
-	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useState<string>('');
-	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-	const [, setIsRedeeming] = useState<boolean>(false);
+	const [openModal, setOpenModal] = useState<ExchangeModal>();
+
+	const [isApproving, setIsApproving] = useState(false);
+	const [isApproved, setIsApproved] = useState(false);
+	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
+	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [, setIsRedeeming] = useState(false);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
-	const [txSettleModalOpen, setTxSettleModalOpen] = useState<boolean>(false);
-	const [txConfirmationModalOpen, setTxConfirmationModalOpen] = useState<boolean>(false);
-	const [txError, setTxError] = useState<string | null>(null);
-	const [selectBaseCurrencyModalOpen, setSelectBaseCurrencyModalOpen] = useState<boolean>(false);
-	const [selectQuoteCurrencyModalOpen, setSelectQuoteCurrencyModalOpen] = useState<boolean>(false);
-	const [txApproveModalOpen, setTxApproveModalOpen] = useState<boolean>(false);
-	const [redeemTxModalOpen, setRedeemTxModalOpen] = useState<boolean>(false);
-	const [atomicExchangeSlippage] = useState<string>('0.01');
+	const setTxError = useSetRecoilState(txErrorState);
+	const [atomicExchangeSlippage] = useState('0.01');
 	const setOrders = useSetRecoilState(ordersState);
 	const setHasOrdersNotification = useSetRecoilState(hasOrdersNotificationState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
@@ -158,7 +142,7 @@ const useExchange = ({
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>(null);
 
-	const { base: baseCurrencyKey, quote: quoteCurrencyKey } = currencyPair;
+	const setCurrencyPair = useSetRecoilState(currencyPairState);
 	const ETHBalanceQuery = useETHBalanceQuery(walletAddress);
 	const ETHBalance = ETHBalanceQuery.isSuccess ? ETHBalanceQuery.data ?? zeroBN : null;
 
@@ -187,27 +171,13 @@ const useExchange = ({
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
-	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(
-		quoteCurrencyKey as CurrencyKey,
-		walletAddress
-	);
+	const feeReclaimPeriodQuery = useFeeReclaimPeriodQuery(quoteCurrencyKey, walletAddress);
 
-	const numEntriesQuery = useNumEntriesQuery(walletAddress || '', baseCurrencyKey as CurrencyKey);
+	const numEntriesQuery = useNumEntriesQuery(walletAddress || '', baseCurrencyKey);
 
-	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(
-		baseCurrencyKey as CurrencyKey,
-		walletAddress
-	);
+	const exchangeFeeRateQuery = useExchangeFeeRateQuery(quoteCurrencyKey, baseCurrencyKey);
 
-	const exchangeFeeRateQuery = useExchangeFeeRateQuery(
-		quoteCurrencyKey as CurrencyKey,
-		baseCurrencyKey as CurrencyKey
-	);
-
-	const baseFeeRateQuery = useBaseFeeRateQuery(
-		baseCurrencyKey as CurrencyKey,
-		quoteCurrencyKey as CurrencyKey
-	);
+	const baseFeeRateQuery = useBaseFeeRateQuery(baseCurrencyKey, quoteCurrencyKey);
 
 	const isBaseCurrencyETH = baseCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
 	const isQuoteCurrencyETH = quoteCurrencyKey === CRYPTO_CURRENCY_MAP.ETH;
@@ -307,13 +277,9 @@ const useExchange = ({
 		? feeReclaimPeriodQuery.data ?? 0
 		: 0;
 
-	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.isSuccess
-		? settlementWaitingPeriodQuery.data ?? 0
-		: 0;
-
 	const numEntries = numEntriesQuery.isSuccess ? numEntriesQuery.data ?? null : null;
 
-	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey as CurrencyKey]! : null;
+	const baseCurrency = baseCurrencyKey != null ? synthsMap[baseCurrencyKey]! : null;
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
@@ -321,51 +287,34 @@ const useExchange = ({
 		() => getExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
+
 	const inverseRate = useMemo(() => (rate > 0 ? 1 / rate : 0), [rate]);
 
-	const quoteCurrencyBalance = useMemo(() => {
-		if (quoteCurrencyKey != null) {
-			if (isQuoteCurrencyETH) {
-				return ETHBalance;
-			} else if (synthTokensMap[quoteCurrencyKey]) {
-				return synthsWalletBalance != null
-					? get(synthsWalletBalance, ['balancesMap', quoteCurrencyKey, 'balance'], zeroBN)
-					: null;
-			} else {
-				return tokenBalances?.[quoteCurrencyKey]?.balance ?? zeroBN;
+	const getBalance = useCallback(
+		(currencyKey: string | null, isETH: boolean) => {
+			if (currencyKey != null) {
+				if (isETH) {
+					return ETHBalance;
+				} else if (synthTokensMap[currencyKey]) {
+					return synthsWalletBalance != null
+						? get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN)
+						: null;
+				} else {
+					return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
+				}
 			}
-		}
-		return null;
-	}, [
-		ETHBalance,
-		isQuoteCurrencyETH,
-		quoteCurrencyKey,
-		synthsWalletBalance,
-		tokenBalances,
-		synthTokensMap,
-	]);
+			return null;
+		},
+		[ETHBalance, synthsWalletBalance, tokenBalances, synthTokensMap]
+	);
+
+	const quoteCurrencyBalance = useMemo(() => {
+		return getBalance(quoteCurrencyKey, isQuoteCurrencyETH);
+	}, [getBalance, quoteCurrencyKey, isQuoteCurrencyETH]);
 
 	const baseCurrencyBalance = useMemo(() => {
-		if (baseCurrencyKey != null) {
-			if (isBaseCurrencyETH) {
-				return ETHBalance;
-			} else if (synthTokensMap[baseCurrencyKey]) {
-				return synthsWalletBalance != null
-					? get(synthsWalletBalance, ['balancesMap', baseCurrencyKey, 'balance'], zeroBN)
-					: null;
-			} else {
-				return tokenBalances?.[baseCurrencyKey]?.balance ?? zeroBN;
-			}
-		}
-		return null;
-	}, [
-		ETHBalance,
-		isBaseCurrencyETH,
-		baseCurrencyKey,
-		synthsWalletBalance,
-		synthTokensMap,
-		tokenBalances,
-	]);
+		return getBalance(baseCurrencyKey, isBaseCurrencyETH);
+	}, [getBalance, baseCurrencyKey, isBaseCurrencyETH]);
 
 	// TODO: Fix coingecko prices (optimism issue maybe?)
 	const quotePriceRate = useMemo(
@@ -380,7 +329,7 @@ const useExchange = ({
 					: 0
 				: getExchangeRatesForCurrencies(
 						exchangeRates,
-						quoteCurrencyKey as CurrencyKey,
+						quoteCurrencyKey,
 						selectedPriceCurrency.name
 				  ),
 		[
@@ -403,11 +352,7 @@ const useExchange = ({
 				? coinGeckoPrices[baseCurrencyTokenAddress.toLowerCase()].usd /
 				  selectPriceCurrencyRate.toNumber()
 				: 0
-			: getExchangeRatesForCurrencies(
-					exchangeRates,
-					baseCurrencyKey as CurrencyKey,
-					selectedPriceCurrency.name
-			  );
+			: getExchangeRatesForCurrencies(exchangeRates, baseCurrencyKey, selectedPriceCurrency.name);
 	}, [
 		exchangeRates,
 		baseCurrencyKey,
@@ -419,7 +364,16 @@ const useExchange = ({
 		isBaseCurrencyETH,
 	]);
 
-	useEffect(() => {}, [baseCurrencyKey, quoteCurrencyKey]);
+	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
+
+	const settlementWaitingPeriodInSeconds = settlementWaitingPeriodQuery.isSuccess
+		? settlementWaitingPeriodQuery.data ?? 0
+		: 0;
+
+	const settlementDisabledReason =
+		settlementWaitingPeriodInSeconds > 0
+			? t('exchange.summary-info.button.settle-waiting-period')
+			: null;
 
 	const ethPriceRate = useMemo(
 		() => getExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
@@ -454,15 +408,6 @@ const useExchange = ({
 	}, [baseCurrencyAmountBN, basePriceRate, selectPriceCurrencyRate]);
 
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
-
-	// TODO: again, this fails when provider is not `synthetix`
-	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey as CurrencyKey);
-	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey as CurrencyKey);
-
-	const settlementDisabledReason =
-		settlementWaitingPeriodInSeconds > 0
-			? t('exchange.summary-info.button.settle-waiting-period')
-			: null;
 
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =
@@ -516,9 +461,7 @@ const useExchange = ({
 			? router.replace(
 					`/exchange/[[...market]]`,
 					ROUTES.Exchange.MarketPair(baseCurrencyKey, quoteCurrencyKey),
-					{
-						shallow: true,
-					}
+					{ shallow: true }
 			  )
 			: undefined;
 
@@ -532,10 +475,7 @@ const useExchange = ({
 	const handleCurrencySwap = () => {
 		const quoteAmount = quoteCurrencyAmount;
 
-		setCurrencyPair({
-			base: quoteCurrencyKey,
-			quote: baseCurrencyKey,
-		});
+		setCurrencyPair({ base: quoteCurrencyKey, quote: baseCurrencyKey });
 
 		// TODO: Allow reverse quote for other tx providers
 		setBaseCurrencyAmount(txProvider === 'synthetix' ? quoteAmount : '');
@@ -560,17 +500,11 @@ const useExchange = ({
 	}, [quoteCurrencyAmount, exchangeFeeRate]);
 
 	const feeCost = useMemo(() => {
-		if (feeAmountInQuoteCurrency != null) {
-			return feeAmountInQuoteCurrency.mul(quotePriceRate);
-		}
-		return null;
+		return feeAmountInQuoteCurrency?.mul(quotePriceRate) ?? null;
 	}, [feeAmountInQuoteCurrency, quotePriceRate]);
 
 	useEffect(() => {
-		setCurrencyPair({
-			base: null,
-			quote: 'sUSD',
-		});
+		setCurrencyPair({ base: null, quote: Synths.sUSD });
 	}, [network.id, setCurrencyPair]);
 
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
@@ -809,7 +743,7 @@ const useExchange = ({
 		if (!(Redeemer && gasPrice)) return;
 
 		setTxError(null);
-		setRedeemTxModalOpen(true);
+		setOpenModal('redeem');
 
 		const { method, params } = getMethodAndParams();
 
@@ -832,7 +766,7 @@ const useExchange = ({
 
 				await transaction.wait();
 			}
-			setRedeemTxModalOpen(false);
+			setOpenModal(undefined);
 			redeemableDeprecatedSynthsQuery.refetch();
 			synthsWalletBalancesQuery.refetch();
 		} catch (e) {
@@ -853,7 +787,7 @@ const useExchange = ({
 	};
 
 	const handleDismiss = () => {
-		setRedeemTxModalOpen(false);
+		setOpenModal(undefined);
 		setIsRedeeming(false);
 	};
 
@@ -897,7 +831,7 @@ const useExchange = ({
 	const handleApprove = async () => {
 		if (quoteCurrencyKey != null && gasPrice != null && oneInchTokensMap != null) {
 			setTxError(null);
-			setTxApproveModalOpen(true);
+			setOpenModal('approve');
 
 			try {
 				const contract = createERC20Contract(allTokensMap[quoteCurrencyKey].address);
@@ -923,7 +857,7 @@ const useExchange = ({
 					}
 				}
 
-				setTxApproveModalOpen(false);
+				setOpenModal(undefined);
 			} catch (e) {
 				console.log(e);
 				setIsApproving(false);
@@ -935,12 +869,12 @@ const useExchange = ({
 	const handleSettle = async () => {
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
-			setTxSettleModalOpen(true);
+			setOpenModal('settle');
 
 			try {
 				const gasEstimate = await synthetixjs.contracts.Exchanger.estimateGas.settle(
 					walletAddress,
-					ethers.utils.formatBytes32String(baseCurrencyKey as string)
+					ethers.utils.formatBytes32String(baseCurrencyKey!)
 				);
 
 				const gas = {
@@ -951,7 +885,7 @@ const useExchange = ({
 				// send transaction
 				const tx = await synthetixjs.contracts.Exchanger.settle(
 					walletAddress,
-					ethers.utils.formatBytes32String(baseCurrencyKey as string),
+					ethers.utils.formatBytes32String(baseCurrencyKey!),
 					gas
 				);
 
@@ -964,7 +898,7 @@ const useExchange = ({
 					});
 				}
 
-				setTxSettleModalOpen(false);
+				setOpenModal(undefined);
 			} catch (e) {
 				console.log(e);
 				setTxError(e.message);
@@ -975,7 +909,7 @@ const useExchange = ({
 	const handleSubmit = useCallback(async () => {
 		if (synthetixjs != null && gasPrice != null) {
 			setTxError(null);
-			setTxConfirmationModalOpen(true);
+			setOpenModal('confirm');
 
 			const destinationCurrencyKey = ethers.utils.parseBytes32String(
 				getExchangeParams(true)[2] as string
@@ -1006,16 +940,10 @@ const useExchange = ({
 
 					setGasInfo(gasInfo);
 
-					const gas = {
-						gasLimit: gasInfo?.limit,
-						...gasConfig,
-					};
+					const gas = { gasLimit: gasInfo?.limit, ...gasConfig };
+
 					const isAtomic =
-						!isL2 &&
-						(destinationCurrencyKey === 'sBTC' ||
-							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR' ||
-							destinationCurrencyKey === 'sUSD');
+						!isL2 && ['sBTC', 'sETH', 'sEUR', 'sUSD'].includes(destinationCurrencyKey);
 
 					const exchangeParams = getExchangeParams(isAtomic);
 
@@ -1062,7 +990,7 @@ const useExchange = ({
 						},
 					});
 				}
-				setTxConfirmationModalOpen(false);
+				setOpenModal(undefined);
 			} catch (e) {
 				console.warn(e);
 				setTxError(e.message);
@@ -1095,6 +1023,9 @@ const useExchange = ({
 		isL2,
 		allTokensMap,
 		swapSynthSwap,
+		setBaseCurrencyAmount,
+		setQuoteCurrencyAmount,
+		setTxError,
 	]);
 
 	useEffect(() => {
@@ -1128,83 +1059,9 @@ const useExchange = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [marketQuery, routingEnabled]);
 
-	const quoteCurrencyCard = (
-		<>
-			<CurrencyCard
-				side="quote"
-				currencyKey={quoteCurrencyKey}
-				currencyName={quoteCurrencyKey ? allTokensMap[quoteCurrencyKey]?.name : null}
-				amount={quoteCurrencyAmount}
-				onAmountChange={async (value) => {
-					if (value === '') {
-						setQuoteCurrencyAmount('');
-						setBaseCurrencyAmount('');
-					} else {
-						setQuoteCurrencyAmount(value);
-						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
-							const baseCurrencyAmountNoFee = wei(value).mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-							setBaseCurrencyAmount(
-								truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-							);
-						}
-					}
-				}}
-				walletBalance={quoteCurrencyBalance}
-				onBalanceClick={async () => {
-					if (quoteCurrencyBalance != null) {
-						if (quoteCurrencyKey === 'ETH') {
-							const ETH_TX_BUFFER = 0.1;
-							const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
-							setQuoteCurrencyAmount(
-								balanceWithBuffer.lt(0)
-									? '0'
-									: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS)
-							);
-						} else {
-							setQuoteCurrencyAmount(
-								truncateNumbers(quoteCurrencyBalance, DEFAULT_CRYPTO_DECIMALS)
-							);
-						}
-						if (txProvider === 'synthetix') {
-							const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-							setBaseCurrencyAmount(
-								truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
-							);
-						}
-					}
-				}}
-				onCurrencySelect={
-					allowQuoteCurrencySelection ? () => setSelectQuoteCurrencyModalOpen(true) : undefined
-				}
-				priceRate={quotePriceRate}
-				label={t('exchange.common.from')}
-				txProvider={txProvider}
-			/>
-			{selectQuoteCurrencyModalOpen && (
-				<SelectCurrencyModal
-					onDismiss={() => setSelectQuoteCurrencyModalOpen(false)}
-					onSelect={(currencyKey) => {
-						setBaseCurrencyAmount('');
-
-						// @ts-ignore
-						setCurrencyPair((pair) => ({
-							base: pair.base === currencyKey ? null : pair.base,
-							quote: currencyKey,
-						}));
-						if (currencyPair.base && currencyPair.base !== currencyKey) {
-							routeToMarketPair(currencyPair.base, currencyKey);
-						}
-					}}
-				/>
-			)}
-		</>
-	);
-
 	const quoteMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={quoteCurrencyKey as CurrencyKey} />
+			<MarketDetailsCard currencyKey={quoteCurrencyKey} />
 		) : null;
 
 	const slippagePercent = useMemo(() => {
@@ -1214,228 +1071,69 @@ const useExchange = ({
 		return null;
 	}, [estimatedBaseTradePrice, txProvider, totalTradePrice]);
 
-	const baseCurrencyCard = (
-		<>
-			<CurrencyCard
-				side="base"
-				currencyKey={baseCurrencyKey}
-				currencyName={baseCurrencyKey ? allTokensMap[baseCurrencyKey]?.name : null}
-				disabled={txProvider !== 'synthetix'}
-				amount={baseCurrencyAmount}
-				onAmountChange={async (value) => {
-					if (value === '') {
-						setBaseCurrencyAmount('');
-						setQuoteCurrencyAmount('');
-					} else {
-						setBaseCurrencyAmount(value);
-						if (txProvider === 'synthetix' && baseCurrencyKey != null) {
-							const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
-							const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-							setQuoteCurrencyAmount(
-								truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-							);
-						}
-					}
-				}}
-				walletBalance={baseCurrencyBalance}
-				onBalanceClick={async () => {
-					if (baseCurrencyBalance != null) {
-						setBaseCurrencyAmount(truncateNumbers(baseCurrencyBalance, DEFAULT_CRYPTO_DECIMALS));
-
-						if (txProvider === 'synthetix') {
-							const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
-							const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
-							setQuoteCurrencyAmount(
-								truncateNumbers(baseCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
-							);
-						}
-					}
-				}}
-				onCurrencySelect={
-					allowBaseCurrencySelection ? () => setSelectBaseCurrencyModalOpen(true) : undefined
-				}
-				priceRate={basePriceRate}
-				label={t('exchange.common.into')}
-				slippagePercent={slippagePercent}
-				isLoading={txProvider === '1inch' && oneInchQuoteQuery.isFetching}
-				txProvider={txProvider}
-			/>
-			{selectBaseCurrencyModalOpen && (
-				<SelectCurrencyModal
-					onDismiss={() => setSelectBaseCurrencyModalOpen(false)}
-					onSelect={(currencyKey) => {
-						setQuoteCurrencyAmount('');
-						// @ts-ignore
-						setCurrencyPair((pair) => ({
-							base: currencyKey,
-							quote: pair.quote === currencyKey ? null : pair.quote,
-						}));
-
-						if (currencyPair.quote != null) {
-							if (currencyPair.quote !== currencyKey) {
-								routeToMarketPair(currencyKey, currencyPair.quote);
-							}
-						} else {
-							routeToBaseCurrency(currencyKey);
-						}
-					}}
-				/>
-			)}
-		</>
-	);
-
 	const baseMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
-			<MarketDetailsCard currencyKey={baseCurrencyKey as CurrencyKey} />
+			<MarketDetailsCard currencyKey={baseCurrencyKey} />
 		) : null;
 
 	const combinedMarketDetailsCard = showMarketDetailsCard ? (
 		<CombinedMarketDetailsCard
 			{...{
-				baseCurrencyKey: baseCurrencyKey as CurrencyKey,
+				baseCurrencyKey,
 				basePriceRate,
-				quoteCurrencyKey: quoteCurrencyKey as CurrencyKey,
+				quoteCurrencyKey,
 				quotePriceRate,
 			}}
 		/>
 	) : null;
 
-	const footerCard = (
-		<>
-			{!isWalletConnected ? (
-				<ConnectWalletCard attached={footerCardAttached} />
-			) : baseCurrencyMarketClosed.isMarketClosed || quoteCurrencyMarketClosed.isMarketClosed ? (
-				<MarketClosureCard
-					baseCurrencyMarketClosed={baseCurrencyMarketClosed}
-					quoteCurrencyMarketClosed={quoteCurrencyMarketClosed}
-					attached={footerCardAttached}
-					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					baseCurrencyKey={baseCurrencyKey as CurrencyKey}
-				/>
-			) : showNoSynthsCard && noSynths ? (
-				<NoSynthsCard attached={footerCardAttached} />
-			) : !isL2 && numEntries >= 12 ? (
-				<SettleTransactionsCard
-					attached={footerCardAttached}
-					submissionDisabledReason={settlementDisabledReason}
-					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
-					onSubmit={handleSettle}
-					settleCurrency={baseCurrencyKey as CurrencyKey}
-					numEntries={numEntries}
-				/>
-			) : (
-				<TradeSummaryCard
-					attached={footerCardAttached}
-					submissionDisabledReason={submissionDisabledReason}
-					onSubmit={needsApproval ? (isApproved ? handleSubmit : handleApprove) : handleSubmit}
-					totalTradePrice={baseCurrencyAmount ? totalTradePrice.toString() : null}
-					baseCurrencyAmount={baseCurrencyAmount}
-					basePriceRate={basePriceRate}
-					baseCurrency={baseCurrency}
-					gasPrices={gasPrices}
-					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					totalFeeRate={exchangeFeeRate != null ? exchangeFeeRate : null}
-					baseFeeRate={baseFeeRate != null ? baseFeeRate : null}
-					transactionFee={transactionFee}
-					feeCost={feeCost}
-					// show fee's only for "synthetix" (provider)
-					showFee={txProvider === 'synthetix'}
-					isApproved={needsApproval ? isApproved : undefined}
-				/>
-			)}
-			{balances.length !== 0 && totalUSDBalance.gt(0) && (
-				<Button
-					variant="primary"
-					isRounded={true}
-					disabled={false}
-					onClick={handleRedeem}
-					size="lg"
-					data-testid="submit-order"
-					fullWidth={true}
-				>
-					{t('dashboard.deprecated.button.redeem-synths')}
-				</Button>
-			)}
-			{!redeemTxModalOpen ? null : (
-				<RedeemTxModal
-					{...{ txError, balances, totalUSDBalance }}
-					onDismiss={handleDismiss}
-					attemptRetry={handleRedeem}
-				/>
-			)}
-			{balances.length !== 0 && totalUSDBalance.gt(0) && (
-				<Button
-					variant="primary"
-					isRounded={true}
-					disabled={false}
-					onClick={handleRedeem}
-					size="lg"
-					data-testid="submit-order"
-					fullWidth={true}
-				>
-					{t('dashboard.deprecated.button.redeem-synths')}
-				</Button>
-			)}
-			{!redeemTxModalOpen ? null : (
-				<RedeemTxModal
-					{...{ txError, balances, totalUSDBalance }}
-					onDismiss={handleDismiss}
-					attemptRetry={handleRedeem}
-				/>
-			)}
-			{txConfirmationModalOpen && (
-				<TxConfirmationModal
-					onDismiss={() => setTxConfirmationModalOpen(false)}
-					txError={txError}
-					attemptRetry={handleSubmit}
-					baseCurrencyAmount={baseCurrencyAmount}
-					quoteCurrencyAmount={quoteCurrencyAmount}
-					feeCost={txProvider === 'synthetix' ? feeCost : null}
-					baseCurrencyKey={baseCurrencyKey!}
-					quoteCurrencyKey={quoteCurrencyKey!}
-					totalTradePrice={estimatedBaseTradePrice.toString()}
-					txProvider={txProvider}
-					quoteCurrencyLabel={t('exchange.common.from')}
-					baseCurrencyLabel={t('exchange.common.into')}
-					icon={<ArrowsIcon />}
-				/>
-			)}
-			{txApproveModalOpen && (
-				<TxApproveModal
-					onDismiss={() => setTxApproveModalOpen(false)}
-					txError={txError}
-					attemptRetry={handleApprove}
-					currencyKey={quoteCurrencyKey!}
-					currencyLabel={<NoTextTransform>{quoteCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
-				/>
-			)}
-			{txSettleModalOpen && (
-				<TxSettleModal
-					onDismiss={() => setTxSettleModalOpen(false)}
-					txError={txError}
-					attemptRetry={handleSettle}
-					currencyKey={baseCurrencyKey!}
-					currencyLabel={<NoTextTransform>{baseCurrencyKey}</NoTextTransform>}
-					txProvider={txProvider}
-				/>
-			)}
-		</>
-	);
-
 	return {
-		baseCurrencyCard,
 		baseCurrencyKey,
 		baseMarketDetailsCard,
 		combinedMarketDetailsCard,
-		footerCard,
 		handleCurrencySwap,
 		inverseRate,
-		quoteCurrencyCard,
 		quoteCurrencyKey,
 		quoteMarketDetailsCard,
 		wideWidth,
+		txProvider,
+		openModal,
+		setOpenModal,
+		slippagePercent,
+		baseCurrencyBalance,
+		handleSubmit,
+		handleSettle,
+		handleApprove,
+		handleRedeem,
+		transactionFee,
+		totalUSDBalance,
+		feeCost,
+		routeToBaseCurrency,
+		routeToMarketPair,
+		balances,
+		handleDismiss,
+		noSynths,
+		basePriceRate,
+		allTokensMap,
+		exchangeFeeRate,
+		oneInchQuoteQuery,
+		numEntries,
+		showNoSynthsCard,
+		footerCardAttached,
+		quoteCurrencyBalance,
+		quotePriceRate,
+		rate,
+		baseFeeRate,
+		needsApproval,
+		baseCurrency,
+		isApproved,
+		estimatedBaseTradePrice,
+		settlementWaitingPeriodInSeconds,
+		settlementDisabledReason,
+		submissionDisabledReason,
+		feeReclaimPeriodInSeconds,
+		totalTradePrice,
+		gasPrices,
 	};
 };
 

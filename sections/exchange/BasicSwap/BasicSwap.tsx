@@ -7,10 +7,13 @@ import { SwapCurrenciesButton, BoldText } from 'styles/common';
 import { zIndex } from 'constants/ui';
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
+import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
+import FooterCard from '../TradeCard/Cards/FooterCard';
 
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();
-	const { quoteCurrencyCard, baseCurrencyCard, footerCard, handleCurrencySwap } = useExchange({
+	const { handleCurrencySwap } = useExchange({
 		showPriceCard: true,
 		showMarketDetailsCard: true,
 		footerCardAttached: false,
@@ -24,16 +27,22 @@ const BasicSwap: FC = () => {
 			<ExchangeTitle>{t('exchange.synth-exchange')}</ExchangeTitle>
 			<PageWidthContainer>
 				<DesktopCardsContainer>
-					<TopCardContainer data-testid="top-side">{quoteCurrencyCard}</TopCardContainer>
+					<TopCardContainer data-testid="top-side">
+						<QuoteCurrencyCard allowQuoteCurrencySelection />
+					</TopCardContainer>
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
 							<ArrowIcon className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
-					<BottomCardContainer data-testid="bottom-side">{baseCurrencyCard}</BottomCardContainer>
+					<BottomCardContainer data-testid="bottom-side">
+						<BaseCurrencyCard allowBaseCurrencySelection />
+					</BottomCardContainer>
 				</DesktopCardsContainer>
 			</PageWidthContainer>
-			<PageWidthContainer>{footerCard}</PageWidthContainer>
+			<PageWidthContainer>
+				<FooterCard />
+			</PageWidthContainer>
 		</>
 	);
 };

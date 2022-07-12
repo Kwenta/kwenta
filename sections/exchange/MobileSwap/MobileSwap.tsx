@@ -4,11 +4,11 @@ import useExchange from '../hooks/useExchange';
 import RatioSelect from './RatioSelect';
 import SwapInfoBox from './SwapInfoBox';
 import SwapInput from './SwapInput';
-import { FlexDivRowCentered, SwapCurrenciesButton } from 'styles/common';
+import { SwapCurrenciesButton } from 'styles/common';
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
 const MobileSwap: React.FC = () => {
-	const { quoteCurrencyCard, baseCurrencyCard, footerCard, handleCurrencySwap } = useExchange({
+	const { handleCurrencySwap } = useExchange({
 		showPriceCard: true,
 		showMarketDetailsCard: true,
 		footerCardAttached: false,

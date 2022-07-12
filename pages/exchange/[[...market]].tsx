@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
+import { ExchangeContext } from 'contexts/ExchangeContext';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -21,7 +22,7 @@ type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
 
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
-	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = useExchange({
+	const exchangeData = useExchange({
 		showPriceCard: true,
 		showMarketDetailsCard: true,
 		footerCardAttached: false,
@@ -30,8 +31,10 @@ const Exchange: ExchangeComponent = () => {
 		showNoSynthsCard: true,
 	});
 
+	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = exchangeData;
+
 	return (
-		<>
+		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
 					{baseCurrencyKey != null && quoteCurrencyKey != null
@@ -57,7 +60,7 @@ const Exchange: ExchangeComponent = () => {
 					<MobileSwap />
 				</MobileOnlyView>
 			</PageContent>
-		</>
+		</ExchangeContext.Provider>
 	);
 };
 
