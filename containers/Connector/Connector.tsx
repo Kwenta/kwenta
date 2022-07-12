@@ -61,7 +61,6 @@ const useConnector = () => {
 		networkId: DEFAULT_NETWORK_ID,
 		useOvm: true,
 	});
-	console.log('Provider: ', provider);
 
 	const [synthsMap, tokensMap, chainIdToNetwork] = useMemo(() => {
 		if (synthetixjs == null) {
