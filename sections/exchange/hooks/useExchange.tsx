@@ -1071,6 +1071,110 @@ const useExchange = ({
 		return null;
 	}, [estimatedBaseTradePrice, txProvider, totalTradePrice]);
 
+	const onBaseCurrencyAmountChange = useCallback(
+		async (value: string) => {
+			if (value === '') {
+				setBaseCurrencyAmount('');
+				setQuoteCurrencyAmount('');
+			} else {
+				setBaseCurrencyAmount(value);
+				if (txProvider === 'synthetix' && baseCurrencyKey != null) {
+					const quoteCurrencyAmountNoFee = wei(value).mul(inverseRate);
+					const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+					setQuoteCurrencyAmount(
+						truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
+					);
+				}
+			}
+		},
+		[
+			setBaseCurrencyAmount,
+			setQuoteCurrencyAmount,
+			baseCurrencyKey,
+			exchangeFeeRate,
+			inverseRate,
+			txProvider,
+		]
+	);
+
+	const onBaseBalanceClick = useCallback(async () => {
+		if (baseCurrencyBalance != null) {
+			setBaseCurrencyAmount(truncateNumbers(baseCurrencyBalance, DEFAULT_CRYPTO_DECIMALS));
+
+			if (txProvider === 'synthetix') {
+				const baseCurrencyAmountNoFee = baseCurrencyBalance.mul(inverseRate);
+				const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+				setQuoteCurrencyAmount(
+					truncateNumbers(baseCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
+				);
+			}
+		}
+	}, [
+		baseCurrencyBalance,
+		exchangeFeeRate,
+		inverseRate,
+		setBaseCurrencyAmount,
+		setQuoteCurrencyAmount,
+		txProvider,
+	]);
+
+	const onQuoteCurrencyAmountChange = useCallback(
+		async (value: string) => {
+			if (value === '') {
+				setQuoteCurrencyAmount('');
+				setBaseCurrencyAmount('');
+			} else {
+				setQuoteCurrencyAmount(value);
+				if (txProvider === 'synthetix' && baseCurrencyKey != null) {
+					const baseCurrencyAmountNoFee = wei(value).mul(rate);
+					const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+					setBaseCurrencyAmount(
+						truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
+					);
+				}
+			}
+		},
+		[
+			setQuoteCurrencyAmount,
+			setBaseCurrencyAmount,
+			txProvider,
+			baseCurrencyKey,
+			exchangeFeeRate,
+			rate,
+		]
+	);
+
+	const onQuoteBalanceClick = useCallback(async () => {
+		if (quoteCurrencyBalance != null) {
+			if ((quoteCurrencyKey as string) === 'ETH') {
+				const ETH_TX_BUFFER = 0.1;
+				const balanceWithBuffer = quoteCurrencyBalance.sub(wei(ETH_TX_BUFFER));
+				setQuoteCurrencyAmount(
+					balanceWithBuffer.lt(0)
+						? '0'
+						: truncateNumbers(balanceWithBuffer, DEFAULT_CRYPTO_DECIMALS)
+				);
+			} else {
+				setQuoteCurrencyAmount(truncateNumbers(quoteCurrencyBalance, DEFAULT_CRYPTO_DECIMALS));
+			}
+			if (txProvider === 'synthetix') {
+				const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
+				const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
+				setBaseCurrencyAmount(
+					truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
+				);
+			}
+		}
+	}, [
+		quoteCurrencyBalance,
+		quoteCurrencyKey,
+		exchangeFeeRate,
+		rate,
+		setBaseCurrencyAmount,
+		setQuoteCurrencyAmount,
+		txProvider,
+	]);
+
 	const baseMarketDetailsCard =
 		txProvider === 'synthetix' && showMarketDetailsCard ? (
 			<MarketDetailsCard currencyKey={baseCurrencyKey} />
@@ -1134,6 +1238,10 @@ const useExchange = ({
 		feeReclaimPeriodInSeconds,
 		totalTradePrice,
 		gasPrices,
+		onBaseCurrencyAmountChange,
+		onBaseBalanceClick,
+		onQuoteCurrencyAmountChange,
+		onQuoteBalanceClick,
 	};
 };
 

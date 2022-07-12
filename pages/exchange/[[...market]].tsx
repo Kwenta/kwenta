@@ -6,7 +6,6 @@ import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { formatCurrency } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
@@ -41,8 +40,8 @@ const Exchange: ExchangeComponent = () => {
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
-								rate: formatCurrency(quoteCurrencyKey as CurrencyKey, inverseRate, {
-									currencyKey: quoteCurrencyKey as CurrencyKey,
+								rate: formatCurrency(quoteCurrencyKey, inverseRate, {
+									currencyKey: quoteCurrencyKey,
 								}),
 						  })
 						: t('exchange.page-title')}
