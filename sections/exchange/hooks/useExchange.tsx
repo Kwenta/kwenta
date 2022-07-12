@@ -977,9 +977,21 @@ const useExchange = ({
 			setTxError(null);
 			setTxConfirmationModalOpen(true);
 
+			const sourceCurrencyKey = ethers.utils.parseBytes32String(
+				getExchangeParams(true)[0] as string
+			);
+
 			const destinationCurrencyKey = ethers.utils.parseBytes32String(
 				getExchangeParams(true)[2] as string
 			);
+
+			const isAtomic =
+				!isL2 &&
+				[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+					ATOMIC_EXCHANGES_L1.includes(currency)
+				);
+
+			const exchangeParams = getExchangeParams(isAtomic);
 
 			try {
 				setIsSubmitting(true);
@@ -1010,14 +1022,6 @@ const useExchange = ({
 						gasLimit: gasInfo?.limit,
 						...gasConfig,
 					};
-					const isAtomic =
-						!isL2 &&
-						(destinationCurrencyKey === 'sBTC' ||
-							destinationCurrencyKey === 'sETH' ||
-							destinationCurrencyKey === 'sEUR' ||
-							destinationCurrencyKey === 'sUSD');
-
-					const exchangeParams = getExchangeParams(isAtomic);
 
 					if (isAtomic) {
 						tx = await synthetixjs.contracts.Synthetix.exchangeAtomically(...exchangeParams, gas);
@@ -1342,26 +1346,6 @@ const useExchange = ({
 					// show fee's only for "synthetix" (provider)
 					showFee={txProvider === 'synthetix'}
 					isApproved={needsApproval ? isApproved : undefined}
-				/>
-			)}
-			{balances.length !== 0 && totalUSDBalance.gt(0) && (
-				<Button
-					variant="primary"
-					isRounded={true}
-					disabled={false}
-					onClick={handleRedeem}
-					size="lg"
-					data-testid="submit-order"
-					fullWidth={true}
-				>
-					{t('dashboard.deprecated.button.redeem-synths')}
-				</Button>
-			)}
-			{!redeemTxModalOpen ? null : (
-				<RedeemTxModal
-					{...{ txError, balances, totalUSDBalance }}
-					onDismiss={handleDismiss}
-					attemptRetry={handleRedeem}
 				/>
 			)}
 			{balances.length !== 0 && totalUSDBalance.gt(0) && (
