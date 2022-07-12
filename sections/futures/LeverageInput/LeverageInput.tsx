@@ -6,7 +6,7 @@ import { FlexDivCol, FlexDivRow } from 'styles/common';
 import LeverageSlider from '../LeverageSlider';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
-import { formatNumber } from 'utils/formatters/number';
+import { truncateNumbers } from 'utils/formatters/number';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageState,
@@ -17,6 +17,7 @@ import {
 	orderTypeState,
 	positionState,
 } from 'store/futures';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 
 type LeverageInputProps = {
 	onLeverageChange: (value: string) => void;
@@ -49,12 +50,17 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
 	}, [position, maxLeverage]);
 
+	const truncateMaxLeverage = maxLeverage.gte(0)
+		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
+		: 10;
+	const truncateLeverage = truncateNumbers(leverage, DEFAULT_FIAT_DECIMALS);
+
 	return (
 		<LeverageInputWrapper>
 			<LeverageRow>
 				<LeverageTitle>
 					{t('futures.market.trade.input.leverage.title')}&nbsp; —
-					<span>&nbsp; Up to {formatNumber(maxLeverage, { maxDecimals: 1 })}x</span>
+					<span>&nbsp; Up to {truncateMaxLeverage}x</span>
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
@@ -68,8 +74,8 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 					<LeverageSlider
 						disabled={isDisabled}
 						minValue={0}
-						maxValue={maxLeverage.toNumber()}
-						value={leverage ? Number(leverage) : 0}
+						maxValue={Number(truncateMaxLeverage)}
+						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue.toString());

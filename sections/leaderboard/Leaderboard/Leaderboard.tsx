@@ -20,6 +20,7 @@ import ROUTES from 'constants/routes';
 import useENSs from 'hooks/useENSs';
 import useENSAvatar from 'hooks/useENSAvatar';
 import Connector from 'containers/Connector';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -161,38 +162,169 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						searchTerm={searchTerm}
 					/>
 				) : (
-					<StyledTable
-						compact={compact}
-						showPagination={true}
-						isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
-						data={data}
-						pageSize={20}
-						hideHeaders={compact}
-						hiddenColumns={
-							compact ? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl'] : undefined
-						}
-						columns={[
-							{
-								Header: (
-									<TableTitle>
-										<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
-									</TableTitle>
-								),
-								accessor: 'title',
-								columns: [
+					<>
+						<MobileHiddenView>
+							<StyledTable
+								compact={compact}
+								showPagination={true}
+								isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
+								data={data}
+								pageSize={20}
+								hideHeaders={compact}
+								hiddenColumns={
+									compact
+										? ['rank', 'totalTrades', 'liquidations', 'totalVolume', 'pnl']
+										: undefined
+								}
+								columns={[
 									{
-										Header: <TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>,
+										Header: (
+											<TableTitle>
+												<TitleText>{t('leaderboard.leaderboard.table.title')}</TitleText>
+											</TableTitle>
+										),
+										accessor: 'title',
+										columns: [
+											{
+												Header: (
+													<TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>
+												),
+												accessor: 'rank',
+												Cell: (cellProps: CellProps<any>) => (
+													<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
+												),
+												width: compact ? 40 : 100,
+											},
+											{
+												Header: !compact ? (
+													<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
+												) : (
+													<></>
+												),
+												accessor: 'trader',
+												Cell: (cellProps: CellProps<any>) => {
+													const avatar = useENSAvatar(
+														staticMainnetProvider,
+														cellProps.row.original.traderEns
+													);
+													return (
+														<StyledOrderType
+															onClick={() =>
+																onClickTrader(
+																	cellProps.row.original.trader,
+																	cellProps.row.original.traderEns
+																)
+															}
+														>
+															{compact && cellProps.row.original.rank + '. '}
+															<StyledTrader>
+																{avatar ? (
+																	<>
+																		{!avatar.isLoading && avatar.data && (
+																			<img
+																				src={avatar.data}
+																				alt={''}
+																				width={16}
+																				height={16}
+																				style={{ borderRadius: '50%', marginRight: '8px' }}
+																				// @ts-ignore
+																				onError={(err) => (err.target.style.display = 'none')}
+																			/>
+																		)}
+																		{cellProps.row.original.traderEns}
+																	</>
+																) : (
+																	cellProps.row.original.traderEns ??
+																	cellProps.row.original.traderShort
+																)}
+															</StyledTrader>
+															{getMedal(cellProps.row.original.rank)}
+														</StyledOrderType>
+													);
+												},
+												width: 175,
+											},
+											{
+												Header: (
+													<TableHeader>
+														{t('leaderboard.leaderboard.table.total-trades')}
+													</TableHeader>
+												),
+												accessor: 'totalTrades',
+												sortType: 'basic',
+												width: 100,
+												sortable: true,
+											},
+											{
+												Header: (
+													<TableHeader>
+														{t('leaderboard.leaderboard.table.liquidations')}
+													</TableHeader>
+												),
+												accessor: 'liquidations',
+												sortType: 'basic',
+												width: 100,
+												sortable: true,
+											},
+											{
+												Header: (
+													<TableHeader>
+														{t('leaderboard.leaderboard.table.total-volume')}
+													</TableHeader>
+												),
+												accessor: 'totalVolume',
+												sortType: 'basic',
+												Cell: (cellProps: CellProps<any>) => (
+													<Currency.Price
+														currencyKey={Synths.sUSD}
+														price={cellProps.row.original.totalVolume}
+														sign={'$'}
+														conversionRate={1}
+													/>
+												),
+												width: compact ? 'auto' : 125,
+												sortable: true,
+											},
+											{
+												Header: (
+													<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
+												),
+												accessor: 'pnl',
+												sortType: 'basic',
+												Cell: (cellProps: CellProps<any>) => (
+													<ColorCodedPrice
+														currencyKey={Synths.sUSD}
+														price={cellProps.row.original.pnl}
+														sign={'$'}
+														conversionRate={1}
+													/>
+												),
+												width: compact ? 'auto' : 100,
+												sortable: true,
+											},
+										],
+									},
+								]}
+							/>
+						</MobileHiddenView>
+						<MobileOnlyView>
+							<StyledTable
+								compact={compact}
+								data={data}
+								columns={[
+									{
+										Header: () => (
+											<TableHeader>{t('leaderboard.leaderboard.table.rank')}</TableHeader>
+										),
 										accessor: 'rank',
 										Cell: (cellProps: CellProps<any>) => (
 											<StyledOrderType>{cellProps.row.original.rank}</StyledOrderType>
 										),
-										width: compact ? 40 : 100,
+										width: 45,
 									},
 									{
-										Header: !compact ? (
+										Header: () => (
 											<TableHeader>{t('leaderboard.leaderboard.table.trader')}</TableHeader>
-										) : (
-											<></>
 										),
 										accessor: 'trader',
 										Cell: (cellProps: CellProps<any>) => {
@@ -234,64 +366,26 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 												</StyledOrderType>
 											);
 										},
-										width: 175,
+										width: 150,
 									},
 									{
-										Header: (
-											<TableHeader>{t('leaderboard.leaderboard.table.total-trades')}</TableHeader>
-										),
-										accessor: 'totalTrades',
-										sortType: 'basic',
-										width: 100,
-										sortable: true,
-									},
-									{
-										Header: (
-											<TableHeader>{t('leaderboard.leaderboard.table.liquidations')}</TableHeader>
-										),
-										accessor: 'liquidations',
-										sortType: 'basic',
-										width: 100,
-										sortable: true,
-									},
-									{
-										Header: (
-											<TableHeader>{t('leaderboard.leaderboard.table.total-volume')}</TableHeader>
-										),
-										accessor: 'totalVolume',
-										sortType: 'basic',
-										Cell: (cellProps: CellProps<any>) => (
-											<Currency.Price
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.totalVolume}
-												sign={'$'}
-												conversionRate={1}
-											/>
-										),
-										width: compact ? 'auto' : 125,
-										sortable: true,
-									},
-									{
-										Header: (
+										Header: () => (
 											<TableHeader>{t('leaderboard.leaderboard.table.total-pnl')}</TableHeader>
 										),
 										accessor: 'pnl',
-										sortType: 'basic',
 										Cell: (cellProps: CellProps<any>) => (
 											<ColorCodedPrice
 												currencyKey={Synths.sUSD}
 												price={cellProps.row.original.pnl}
-												sign={'$'}
-												conversionRate={1}
+												sign="$"
 											/>
 										),
-										width: compact ? 'auto' : 100,
-										sortable: true,
+										width: 125,
 									},
-								],
-							},
-						]}
-					/>
+								]}
+							/>
+						</MobileOnlyView>
+					</>
 				)}
 			</TableContainer>
 		</>

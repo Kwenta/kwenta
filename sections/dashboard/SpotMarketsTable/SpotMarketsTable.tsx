@@ -16,7 +16,7 @@ import ChangePercent from 'components/ChangePercent';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import MarketBadge from 'components/Badge/MarketBadge';
 import Table from 'components/Table';
-import { isEurForex } from 'utils/futures';
+import { getMarketKey, isEurForex } from 'utils/futures';
 import { useRouter } from 'next/router';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
@@ -66,6 +66,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			return {
 				asset: synth.asset,
 				market: synth.name,
+				marketKey: getMarketKey(synth.asset, network.id),
 				synth: synthsMap[synth.asset],
 				description: description,
 				price,
@@ -73,7 +74,15 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [synthsMap, unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
+	}, [
+		synthsMap,
+		unfrozenSynths,
+		synthVolumesQuery,
+		dailyPriceChangesQuery,
+		exchangeRates,
+		t,
+		network.id,
+	]);
 
 	return (
 		<TableContainer>

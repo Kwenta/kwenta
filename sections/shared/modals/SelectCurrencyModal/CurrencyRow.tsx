@@ -2,48 +2,69 @@ import { FC } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-
-import { SynthBalance } from '@synthetixio/queries';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import Wei from '@synthetixio/wei';
 
 import { NO_VALUE } from 'constants/placeholder';
-
 import Currency from 'components/Currency';
-
 import { SelectableCurrencyRow } from 'styles/common';
-
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
 import { isWalletConnectedState } from 'store/wallet';
-import { Synth } from '@synthetixio/contracts-interface';
+
+type Token = {
+	name: string;
+	symbol: string;
+	isSynth: boolean;
+	logoURI?: string;
+};
+
+type TokenBalance = {
+	currencyKey: string;
+	balance: Wei;
+	usdBalance?: Wei;
+};
 
 type SynthRowProps = {
-	synth: Synth;
+	token: Token;
+	balance?: TokenBalance;
 	onClick: () => void;
-	synthBalance?: SynthBalance;
 };
-const SynthRow: FC<SynthRowProps> = ({ synth, onClick, synthBalance }) => {
+const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	const { t } = useTranslation();
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 
-	const currencyKey = synth.name;
+	const currencyKey = token.symbol;
 
-	const { marketClosureReason } = useMarketClosed(currencyKey);
+	const { marketClosureReason } = useMarketClosed(
+		token.isSynth ? (currencyKey as CurrencyKey) : null
+	);
 
 	return (
 		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable={true}>
 			<Currency.Name
-				name={t('common.currency.synthetic-currency-name', {
-					currencyName: synth.description,
-				})}
+				name={
+					token.isSynth
+						? t('common.currency.synthetic-currency-name', {
+								currencyName: token.name,
+						  })
+						: token.name
+				}
 				showIcon={true}
+				iconProps={
+					!token.isSynth
+						? {
+								url: token.logoURI,
+						  }
+						: undefined
+				}
 				{...{ currencyKey, marketClosureReason }}
 			/>
 			{isWalletConnected ? (
 				<Currency.Amount
-					amount={synthBalance?.balance ?? 0}
-					totalValue={synthBalance?.usdBalance ?? 0}
+					amount={balance?.balance ?? 0}
+					totalValue={balance?.usdBalance ?? 0}
 					sign={selectedPriceCurrency.sign}
 					conversionRate={selectPriceCurrencyRate}
 					{...{ currencyKey }}
@@ -59,4 +80,4 @@ const StyledSelectableCurrencyRow = styled(SelectableCurrencyRow)`
 	padding: 5px 16px;
 `;
 
-export default SynthRow;
+export default CurrencyRow;

@@ -15,9 +15,9 @@ export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWi
 export const synthToContractName = (currencyKey: CurrencyKey) => `Synth${currencyKey}`;
 
 export const getExchangeRatesForCurrencies = (
-	rates: Rates | null,
-	base: string | null,
-	quote: string | null
+	rates: Rates | null | undefined,
+	base: string | null | undefined,
+	quote: string | null | undefined
 ) =>
 	rates == null ||
 	base == null ||
