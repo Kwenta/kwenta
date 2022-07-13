@@ -89,7 +89,7 @@ const useExchange = ({
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 
-	const { synthsMap, synthetixjs, tokensMap: synthTokensMap } = Connector.useContainer();
+	const { synthsMap, tokensMap: synthTokensMap } = Connector.useContainer();
 	const {
 		createERC20Contract,
 		swap1Inch,
@@ -596,7 +596,7 @@ const useExchange = ({
 		isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
 		exchangeParams,
 		gasPrice ?? undefined,
-		{ enabled: isSubmitting }
+		{ enabled: needsApproval ? isApproved : true }
 	);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
@@ -770,7 +770,7 @@ const useExchange = ({
 		'approve',
 		[approveAddress, ethers.constants.MaxUint256],
 		gasPrice ?? undefined,
-		{ enabled: !!quoteCurrencyKey && !!oneInchTokensMap && openModal === 'approve' }
+		{ enabled: !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
 	);
 
 	const settleTxn = useSynthetixTxn(
@@ -778,7 +778,7 @@ const useExchange = ({
 		'settle',
 		[walletAddress, destinationCurrencyKey],
 		gasPrice ?? undefined,
-		{ enabled: openModal === 'settle' }
+		{ enabled: !isL2 && numEntries >= 12 }
 	);
 
 	const transactionFee = useMemo(() => {
@@ -826,27 +826,25 @@ const useExchange = ({
 	};
 
 	const handleSettle = async () => {
-		if (synthetixjs != null && gasPrice != null) {
-			setTxError(null);
-			setOpenModal('settle');
+		setTxError(null);
+		setOpenModal('settle');
 
-			try {
-				await settleTxn.mutateAsync();
+		try {
+			await settleTxn.mutateAsync();
 
-				if (settleTxn.hash != null) {
-					monitorTransaction({
-						txHash: settleTxn.hash,
-						onTxConfirmed: () => {
-							numEntriesQuery.refetch();
-						},
-					});
-				}
-
-				setOpenModal(undefined);
-			} catch (e) {
-				console.log(e);
-				setTxError(e.message);
+			if (settleTxn.hash != null) {
+				monitorTransaction({
+					txHash: settleTxn.hash,
+					onTxConfirmed: () => {
+						numEntriesQuery.refetch();
+					},
+				});
 			}
+
+			setOpenModal(undefined);
+		} catch (e) {
+			console.log(e);
+			setTxError(e.message);
 		}
 	};
 
@@ -895,9 +893,13 @@ const useExchange = ({
 					})
 				);
 				setHasOrdersNotification(true);
+			}
 
+			const hash = tx?.hash || exchangeTxn.hash;
+
+			if (hash) {
 				monitorTransaction({
-					txHash: tx.hash,
+					txHash: hash,
 					onTxConfirmed: () => {
 						setOrders((orders) =>
 							produce(orders, (draftState) => {
