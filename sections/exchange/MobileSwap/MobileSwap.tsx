@@ -14,7 +14,7 @@ const MobileSwap: React.FC = () => {
 
 	return (
 		<MobileSwapContainer>
-			<QuoteCurrencyCard />
+			<QuoteCurrencyCard allowQuoteCurrencySelection />
 
 			<RatioSelect />
 
@@ -24,7 +24,7 @@ const MobileSwap: React.FC = () => {
 				</StyledSwapButton>
 			</ButtonContainer>
 
-			<BaseCurrencyCard />
+			<BaseCurrencyCard allowBaseCurrencySelection />
 
 			<SwapInfoBox />
 

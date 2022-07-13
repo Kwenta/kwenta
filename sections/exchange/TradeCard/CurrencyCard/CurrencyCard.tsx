@@ -1,4 +1,4 @@
-import { FC, MouseEvent, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -241,6 +241,17 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 									: null}
 							</SwapCurrencyPrice>
 						</div>
+						<MobileCurrencySelector
+							currencyKeySelected={currencyKeySelected}
+							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
+							data-testid="currency-selector"
+						>
+							{currencyKeySelected && (
+								<CurrencyIcon currencyKey={currencyKey as CurrencyKey} width="20px" height="20px" />
+							)}
+							<div className="label">{currencyKey ?? 'Select'}</div>
+							{hasCurrencySelectCallback && <CaretDownIcon />}
+						</MobileCurrencySelector>
 					</MainInput>
 				</div>
 			</MobileOrTabletView>
@@ -305,7 +316,6 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 
 const CurrencySelector = styled.div<{
 	currencyKeySelected: boolean;
-	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
 	interactive?: boolean;
 }>`
 	display: flex;
@@ -339,6 +349,30 @@ const CurrencySelector = styled.div<{
 				cursor: pointer;
 			}
 		`};
+`;
+
+const MobileCurrencySelector = styled.button<{
+	currencyKeySelected: boolean;
+}>`
+	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+	padding: 6px;
+	padding-left: 5px;
+	border-radius: 12px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	display: flex;
+	align-items: center;
+
+	.label {
+		margin-left: 6px;
+		margin-right: 6px;
+		font-family: ${(props) => props.theme.fonts.regular};
+		font-size: 15px;
+	}
+
+	svg {
+		margin-top: -2px;
+	}
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
