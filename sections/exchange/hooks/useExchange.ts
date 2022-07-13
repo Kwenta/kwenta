@@ -7,7 +7,7 @@ import produce from 'immer';
 import castArray from 'lodash/castArray';
 import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
 import Connector from 'containers/Connector';
@@ -67,34 +67,23 @@ import {
 	currencyPairState,
 	quoteCurrencyAmountState,
 	quoteCurrencyKeyState,
+	ratioState,
 	txErrorState,
 } from 'store/exchange';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 type ExchangeCardProps = {
-	defaultBaseCurrencyKey?: string | null;
-	defaultQuoteCurrencyKey?: string | null;
-	showPriceCard?: boolean;
-	showMarketDetailsCard?: boolean;
 	footerCardAttached?: boolean;
 	routingEnabled?: boolean;
-	persistSelectedCurrencies?: boolean;
-	allowQuoteCurrencySelection?: boolean;
-	allowBaseCurrencySelection?: boolean;
 	showNoSynthsCard?: boolean;
 };
 
 type ExchangeModal = 'settle' | 'confirm' | 'approve' | 'redeem' | 'base-select' | 'quote-select';
+export type SwapRatio = 25 | 50 | 75 | 100;
 
 const useExchange = ({
-	defaultBaseCurrencyKey = null,
-	defaultQuoteCurrencyKey = null,
-	showMarketDetailsCard = false,
 	footerCardAttached = false,
 	routingEnabled = false,
-	persistSelectedCurrencies = false,
-	allowQuoteCurrencySelection = true,
-	allowBaseCurrencySelection = true,
 	showNoSynthsCard = true,
 }: ExchangeCardProps) => {
 	const { t } = useTranslation();
@@ -136,6 +125,7 @@ const useExchange = ({
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [, setIsRedeeming] = useState(false);
+	const [ratio, setRatio] = useRecoilState(ratioState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const isL2 = useRecoilValue(isL2State);
@@ -309,7 +299,7 @@ const useExchange = ({
 					return ETHBalance;
 				} else if (synthTokensMap[currencyKey]) {
 					return synthsWalletBalance != null
-						? get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN)
+						? (get(synthsWalletBalance, ['balancesMap', currencyKey, 'balance'], zeroBN) as Wei)
 						: null;
 				} else {
 					return tokenBalances?.[currencyKey]?.balance ?? zeroBN;
@@ -776,11 +766,11 @@ const useExchange = ({
 	}, [checkAllowance, needsApproval]);
 
 	const approveTxn = useContractTxn(
-		createERC20Contract(allTokensMap[quoteCurrencyKey!].address),
+		quoteCurrencyContract,
 		'approve',
 		[approveAddress, ethers.constants.MaxUint256],
 		gasPrice ?? undefined,
-		{ enabled: !!quoteCurrencyKey && openModal === 'approve' }
+		{ enabled: !!quoteCurrencyKey && !!oneInchTokensMap && openModal === 'approve' }
 	);
 
 	const settleTxn = useSynthetixTxn(
@@ -1097,6 +1087,18 @@ const useExchange = ({
 		txProvider,
 	]);
 
+	const onRatioChange = useCallback(
+		(ratio: SwapRatio) => {
+			setRatio(ratio);
+			if (!!quoteCurrencyBalance) {
+				onQuoteCurrencyAmountChange(
+					truncateNumbers(quoteCurrencyBalance.mul(ratio / 100) ?? 0, DEFAULT_CRYPTO_DECIMALS)
+				);
+			}
+		},
+		[quoteCurrencyBalance, onQuoteCurrencyAmountChange, setRatio]
+	);
+
 	return {
 		baseCurrencyKey,
 		handleCurrencySwap,
@@ -1144,6 +1146,9 @@ const useExchange = ({
 		onBaseBalanceClick,
 		onQuoteCurrencyAmountChange,
 		onQuoteBalanceClick,
+		ratio,
+		onRatioChange,
+		setRatio,
 	};
 };
 

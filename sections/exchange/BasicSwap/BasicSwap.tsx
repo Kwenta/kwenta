@@ -5,22 +5,15 @@ import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
 import { SwapCurrenciesButton, BoldText } from 'styles/common';
 import { zIndex } from 'constants/ui';
-import useExchange from 'sections/exchange/hooks/useExchange';
 import { useTranslation } from 'react-i18next';
 import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
 import FooterCard from '../TradeCard/Cards/FooterCard';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();
-	const { handleCurrencySwap } = useExchange({
-		showPriceCard: true,
-		showMarketDetailsCard: true,
-		footerCardAttached: false,
-		routingEnabled: true,
-		persistSelectedCurrencies: true,
-		showNoSynthsCard: false,
-	});
+	const { handleCurrencySwap } = useExchangeContext();
 
 	return (
 		<>

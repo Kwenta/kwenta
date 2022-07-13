@@ -22,11 +22,8 @@ type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
 	const exchangeData = useExchange({
-		showPriceCard: true,
-		showMarketDetailsCard: true,
 		footerCardAttached: false,
 		routingEnabled: true,
-		persistSelectedCurrencies: true,
 		showNoSynthsCard: true,
 	});
 

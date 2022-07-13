@@ -19,6 +19,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 		['WalletBalances', 'RedeemableDeprecatedSynths', network.id, walletAddress],
 		async () => {
 			await ethCallProvider.init(provider as any);
+
 			const {
 				contracts: { SynthRedeemer },
 				sources,

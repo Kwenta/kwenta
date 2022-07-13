@@ -1,17 +1,22 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-
-type SwapRatio = 25 | 50 | 75 | 100;
+import { useExchangeContext } from 'contexts/ExchangeContext';
+import type { SwapRatio } from 'sections/exchange/hooks/useExchange';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 
 const RatioSelect: React.FC = () => {
-	const [ratio, setRatio] = React.useState<SwapRatio>();
+	const { quoteCurrencyBalance, ratio, onRatioChange } = useExchangeContext();
 
 	return (
 		<RatioSelectContainer>
 			{RATIOS.map((v) => (
-				<RatioButton key={`ratio-${v}`} $selected={ratio === v} onClick={() => setRatio(v)}>
+				<RatioButton
+					key={`ratio-${v}`}
+					$selected={ratio === v}
+					onClick={() => onRatioChange(v)}
+					disabled={quoteCurrencyBalance?.eq(0) || !quoteCurrencyBalance}
+				>
 					{`${v}%`}
 				</RatioButton>
 			))}

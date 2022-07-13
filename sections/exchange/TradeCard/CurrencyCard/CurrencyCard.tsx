@@ -1,7 +1,7 @@
 import { FC, MouseEvent, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
@@ -33,6 +33,7 @@ import Button from 'components/Button';
 import { isL2State } from 'store/wallet';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { ratioState } from 'store/exchange';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -100,6 +101,8 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 	const { synthsMap } = Connector.useContainer();
 
+	const setRatio = useSetRecoilState(ratioState);
+
 	const tokenName =
 		currencyKey && synthsMap[currencyKey]
 			? t('common.currency.synthetic-currency-name', {
@@ -128,14 +131,17 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 											<CurrencyAmount
 												disabled={disabled}
 												value={amount}
-												onChange={(_, value) => onAmountChange(value)}
+												onChange={(_, value) => {
+													onAmountChange(value);
+													setRatio(undefined);
+												}}
 												placeholder={t('exchange.currency-card.amount-placeholder')}
 												data-testid="currency-amount"
 											/>
 											{!isBase && (
 												<MaxButton
 													onClick={hasWalletBalance ? onBalanceClick : undefined}
-													noOutline={true}
+													noOutline
 												>
 													<CapitalizedText>
 														{t('exchange.currency-card.max-button')}
@@ -210,7 +216,10 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 				<div>
 					<SectionHeader>
 						<SectionTitle>{label}</SectionTitle>
-						<SectionSubTitle onClick={hasWalletBalance ? onBalanceClick : undefined}>
+						<SectionSubTitle
+							onClick={hasWalletBalance ? onBalanceClick : undefined}
+							style={{ cursor: 'pointer' }}
+						>
 							Balance: {hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
 						</SectionSubTitle>
 					</SectionHeader>
@@ -218,7 +227,10 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						<div>
 							<SwapTextInput
 								value={amount}
-								onChange={(e) => onAmountChange(e.target.value)}
+								onChange={(e) => {
+									onAmountChange(e.target.value);
+									setRatio(undefined);
+								}}
 								placeholder={t('exchange.currency-card.amount-placeholder')}
 							/>
 							<SwapCurrencyPrice data-testid="amount-value">
@@ -423,6 +435,7 @@ const MainInput = styled.div`
 	border: ${(props) => props.theme.colors.selectedTheme.border};
 	border-radius: 10px;
 	padding: 10px;
+	padding-left: 0;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -436,7 +449,6 @@ const SwapTextInput = styled(NumericInput)`
 	font-size: 18px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	margin-bottom: 10px;
-	padding-left: 0;
 	height: initial;
 
 	&:focus {
@@ -448,6 +460,7 @@ const SwapCurrencyPrice = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	height: 12px;
+	margin-left: 10px;
 `;
 
 export default CurrencyCard;
