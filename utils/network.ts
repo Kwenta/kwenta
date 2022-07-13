@@ -45,21 +45,38 @@ export type GasInfo = {
 	l1Fee: number;
 };
 
-export const getDefaultProvider = (networkId: NetworkId) => {
-	// if blast API supported, return the blast URL
-	if (networkId in BLAST_NETWORK_LOOKUP && !!process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID) {
-		const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
-		const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
-		return new providers.JsonRpcProvider(networkUrl, networkId);
-	} else {
-		// otherwise use infura
-		// this should never trigger since the default network is OP mainnet
-		// this catch exists in the case that the OP Kovan networkId is provided
-		return loadProvider({
-			networkId,
-			infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-		});
+const loadInfuraProvider = (networkId: NetworkId) => {
+	if (!process.env.NEXT_PUBLIC_INFURA_PROJECT_ID) {
+		throw new Error('You must define NEXT_PUBLIC_INFURA_PROJECT_ID in your environment');
 	}
+
+	return loadProvider({
+		networkId,
+		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+	});
+};
+
+const loadBlastProvider = (networkId: NetworkId) => {
+	const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
+	const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
+	return new providers.JsonRpcProvider(networkUrl, networkId);
+};
+
+export const getDefaultProvider = (networkId: NetworkId) => {
+	const providerId = process.env.NEXT_PUBLIC_PROVIDER_ID;
+
+	let ethersProvider;
+	switch (providerId) {
+		case 'BLAST_API':
+			ethersProvider = loadBlastProvider(networkId);
+			break;
+		case 'INFURA':
+			ethersProvider = loadInfuraProvider(networkId);
+			break;
+		default:
+			throw new Error('You must define NEXT_PUBLIC_PROVIDER_ID in your environment');
+	}
+	return ethersProvider;
 };
 
 export const getTransactionPrice = (
