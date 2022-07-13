@@ -47,7 +47,7 @@ export type GasInfo = {
 
 export const getDefaultProvider = (networkId: NetworkId) => {
 	// if blast API supported, return the blast URL
-	if (networkId in BLAST_NETWORK_LOOKUP) {
+	if (networkId in BLAST_NETWORK_LOOKUP && !!process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID) {
 		const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
 		const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
 		return new providers.JsonRpcProvider(networkUrl, networkId);
