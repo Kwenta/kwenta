@@ -2,17 +2,18 @@ import React from 'react';
 import styled from 'styled-components';
 import RatioSelect from './RatioSelect';
 import SwapInfoBox from './SwapInfoBox';
-import SwapInput from './SwapInput';
 import { SwapCurrenciesButton } from 'styles/common';
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
 
 const MobileSwap: React.FC = () => {
 	const { handleCurrencySwap } = useExchangeContext();
 
 	return (
 		<MobileSwapContainer>
-			<SwapInput />
+			<QuoteCurrencyCard />
 
 			<RatioSelect />
 
@@ -22,7 +23,7 @@ const MobileSwap: React.FC = () => {
 				</StyledSwapButton>
 			</ButtonContainer>
 
-			<SwapInput />
+			<BaseCurrencyCard />
 
 			<SwapInfoBox />
 		</MobileSwapContainer>

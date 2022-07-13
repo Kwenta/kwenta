@@ -4,8 +4,6 @@ import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
 
 import Button from 'components/Button';
 
-import { CurrencyKey } from 'constants/currency';
-
 import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
 import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
@@ -90,7 +88,7 @@ const FooterCard: React.FC = () => {
 					attached={footerCardAttached}
 					settlementWaitingPeriodInSeconds={settlementWaitingPeriodInSeconds}
 					onSubmit={handleSettle}
-					settleCurrency={baseCurrencyKey as CurrencyKey}
+					settleCurrency={baseCurrencyKey}
 					numEntries={numEntries}
 				/>
 			) : (
@@ -103,9 +101,9 @@ const FooterCard: React.FC = () => {
 					basePriceRate={basePriceRate}
 					baseCurrency={baseCurrency}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
-					quoteCurrencyKey={quoteCurrencyKey as CurrencyKey}
-					totalFeeRate={exchangeFeeRate ?? null}
-					baseFeeRate={baseFeeRate ?? null}
+					quoteCurrencyKey={quoteCurrencyKey}
+					totalFeeRate={exchangeFeeRate}
+					baseFeeRate={baseFeeRate}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					showFee={txProvider === 'synthetix'}

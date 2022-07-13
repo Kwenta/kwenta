@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 
@@ -27,17 +27,13 @@ const BasicSwap: FC = () => {
 			<ExchangeTitle>{t('exchange.synth-exchange')}</ExchangeTitle>
 			<PageWidthContainer>
 				<DesktopCardsContainer>
-					<TopCardContainer data-testid="top-side">
-						<QuoteCurrencyCard allowQuoteCurrencySelection />
-					</TopCardContainer>
+					<QuoteCurrencyCard allowQuoteCurrencySelection />
 					<SwapCurrenciesButtonContainer>
 						<SwapCurrenciesButton onClick={handleCurrencySwap} data-testid="swap-btn">
 							<ArrowIcon className="arrow" />
 						</SwapCurrenciesButton>
 					</SwapCurrenciesButtonContainer>
-					<BottomCardContainer data-testid="bottom-side">
-						<BaseCurrencyCard allowBaseCurrencySelection />
-					</BottomCardContainer>
+					<BaseCurrencyCard allowBaseCurrencySelection />
 				</DesktopCardsContainer>
 			</PageWidthContainer>
 			<PageWidthContainer>
@@ -69,19 +65,6 @@ const DesktopCardsContainer = styled.div`
 const PageWidthContainer = styled.div`
 	width: 565px;
 	margin: 0 auto;
-`;
-
-const CardContainerMixin = css`
-	display: grid;
-	height: 183px;
-`;
-
-const TopCardContainer = styled.div`
-	${CardContainerMixin};
-`;
-
-const BottomCardContainer = styled.div`
-	${CardContainerMixin};
 `;
 
 const SwapCurrenciesButtonContainer = styled.div`

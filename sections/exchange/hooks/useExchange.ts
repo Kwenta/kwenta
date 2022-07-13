@@ -550,14 +550,25 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [baseCurrencyKey, exchangeFeeRate]);
 
-	const destinationCurrencyKey = ethers.utils.formatBytes32String(baseCurrencyKey!);
-	const sourceCurrencyKey = ethers.utils.formatBytes32String(quoteCurrencyKey!);
+	const destinationCurrencyKey = useMemo(
+		() => (baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null),
+		[baseCurrencyKey]
+	);
 
-	const isAtomic =
-		!isL2 &&
-		[sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+	const sourceCurrencyKey = useMemo(
+		() => (quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null),
+		[quoteCurrencyKey]
+	);
+
+	const isAtomic = useMemo(() => {
+		if (isL2 || !sourceCurrencyKey || !destinationCurrencyKey) {
+			return false;
+		}
+
+		return [sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
 			ATOMIC_EXCHANGES_L1.includes(currency)
 		);
+	}, [isL2, sourceCurrencyKey, destinationCurrencyKey]);
 
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
@@ -595,7 +606,7 @@ const useExchange = ({
 		isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
 		exchangeParams,
 		gasPrice ?? undefined,
-		{ enabled: true }
+		{ enabled: isSubmitting }
 	);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>();

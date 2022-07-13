@@ -9,7 +9,7 @@ import { formatCurrency } from 'utils/formatters/number';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
 import { ExchangeContext } from 'contexts/ExchangeContext';
 
@@ -48,16 +48,16 @@ const Exchange: ExchangeComponent = () => {
 				</title>
 			</Head>
 			<PageContent>
-				<MobileHiddenView>
+				<DesktopOnlyView>
 					<StyledFullHeightContainer>
 						<MainContent>
 							<BasicSwap />
 						</MainContent>
 					</StyledFullHeightContainer>
-				</MobileHiddenView>
-				<MobileOnlyView>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
 					<MobileSwap />
-				</MobileOnlyView>
+				</MobileOrTabletView>
 			</PageContent>
 		</ExchangeContext.Provider>
 	);
