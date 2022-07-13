@@ -96,7 +96,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 						}}
 						disabled={isDisabled}
 					/>
-					{['2', '5', '10'].map((l) => (
+					{['2', '5', '25'].map((l) => (
 						<LeverageButton
 							key={l}
 							mono
