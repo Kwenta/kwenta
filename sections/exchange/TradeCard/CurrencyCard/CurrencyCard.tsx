@@ -32,7 +32,7 @@ import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import { isL2State } from 'store/wallet';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -146,7 +146,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 										<FlexDivRowCentered>
 											<CurrencyAmountValue data-testid="amount-value">
 												{currencyKeySelected && tradeAmount != null
-													? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
+													? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
 															sign: selectedPriceCurrency.sign,
 													  })
 													: null}
@@ -208,16 +208,22 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 			</DesktopOnlyView>
 			<MobileOrTabletView>
 				<div>
-					<SwapInputHeader>
-						<SectionHeader>{label}</SectionHeader>
-						<div onClick={hasWalletBalance ? onBalanceClick : undefined}>Balance: 2.34343</div>
-					</SwapInputHeader>
+					<SectionHeader>
+						<SectionTitle>{label}</SectionTitle>
+						<SectionSubTitle onClick={hasWalletBalance ? onBalanceClick : undefined}>
+							Balance: {hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
+						</SectionSubTitle>
+					</SectionHeader>
 					<MainInput>
 						<div>
-							<SwapTextInput value={amount} onChange={(e) => onAmountChange(e.target.value)} />
+							<SwapTextInput
+								value={amount}
+								onChange={(e) => onAmountChange(e.target.value)}
+								placeholder={t('exchange.currency-card.amount-placeholder')}
+							/>
 							<SwapCurrencyPrice data-testid="amount-value">
 								{currencyKeySelected && tradeAmount != null
-									? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
+									? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
 											sign: selectedPriceCurrency.sign,
 									  })
 									: null}
@@ -412,12 +418,6 @@ const StyledLoader = styled(Loader)`
 	left: 90%;
 `;
 
-const SwapInputHeader = styled.div`
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-`;
-
 const MainInput = styled.div`
 	box-sizing: border-box;
 	border: ${(props) => props.theme.colors.selectedTheme.border};
@@ -429,13 +429,15 @@ const MainInput = styled.div`
 	margin-bottom: 15px;
 `;
 
-const SwapTextInput = styled.input`
+const SwapTextInput = styled(NumericInput)`
 	background-color: transparent;
 	border: none;
 	color: ${(props) => props.theme.colors.selectedTheme.text.value};
 	font-size: 18px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	margin-bottom: 10px;
+	padding-left: 0;
+	height: initial;
 
 	&:focus {
 		outline: none;
@@ -445,6 +447,7 @@ const SwapTextInput = styled.input`
 const SwapCurrencyPrice = styled.div`
 	font-size: 12px;
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	height: 12px;
 `;
 
 export default CurrencyCard;

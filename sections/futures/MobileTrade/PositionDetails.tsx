@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
 import { currentMarketState, positionState } from 'store/futures';
-import { SectionHeader, SectionSeparator } from './common';
+import { SectionHeader, SectionSeparator, SectionTitle } from './common';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { Synths } from 'constants/currency';
 import PositionCard from '../PositionCard';
@@ -27,7 +27,9 @@ const PositionDetails = () => {
 
 	return position ? (
 		<PositionDetailsContainer>
-			<SectionHeader>Open Position</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Open Position</SectionTitle>
+			</SectionHeader>
 			<PositionCard mobile currencyKeyRate={marketAssetRate} />
 		</PositionDetailsContainer>
 	) : (
