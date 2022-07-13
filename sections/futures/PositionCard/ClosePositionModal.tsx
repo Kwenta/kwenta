@@ -29,7 +29,7 @@ type ClosePositionModalProps = {
 
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -110,7 +110,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			{
 				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
-					sign: synthToAsset(currencyKey as CurrencyKey),
+					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
 				}),
 			},
 			{
