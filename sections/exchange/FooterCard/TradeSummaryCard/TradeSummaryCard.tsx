@@ -62,7 +62,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	const { t } = useTranslation();
 	const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
+	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
 		submissionDisabledReason,
 	]);
 
@@ -108,12 +108,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				>
 					<span>
 						<Button
-							isRounded={true}
+							isRounded
 							disabled={isSubmissionDisabled}
 							onClick={onSubmit}
 							size="lg"
 							data-testid="submit-order"
-							fullWidth={true}
+							fullWidth
 						>
 							{isSubmissionDisabled
 								? submissionDisabledReason

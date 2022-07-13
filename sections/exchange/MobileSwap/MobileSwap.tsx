@@ -7,6 +7,7 @@ import ArrowIcon from 'assets/svg/app/arrow-down.svg';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
+import SwapButton from './SwapButton';
 
 const MobileSwap: React.FC = () => {
 	const { handleCurrencySwap } = useExchangeContext();
@@ -26,6 +27,8 @@ const MobileSwap: React.FC = () => {
 			<BaseCurrencyCard />
 
 			<SwapInfoBox />
+
+			<SwapButton />
 		</MobileSwapContainer>
 	);
 };

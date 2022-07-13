@@ -1,17 +1,21 @@
 import React from 'react';
+import styled from 'styled-components';
 import InfoBox from 'components/InfoBox';
 
-const SwapInfoBox = () => {
+const SwapInfoBox: React.FC = () => {
 	return (
-		<InfoBox
+		<StyledInfoBox
 			details={{
 				Fee: { value: '' },
 				'Gas Fee/Cost': { value: '' },
 				'USD Value': { value: '' },
-				Total: { value: '' },
 			}}
 		/>
 	);
 };
+
+const StyledInfoBox = styled(InfoBox)`
+	margin-bottom: 15px;
+`;
 
 export default SwapInfoBox;
