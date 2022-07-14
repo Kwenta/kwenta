@@ -19,6 +19,9 @@ import Badge from 'components/Badge';
 import { currentMarketState, openOrdersState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import Connector from 'containers/Connector';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import OrderDrawer from '../MobileTrade/drawers/OrderDrawer';
+import { GridDivCenteredRow } from 'styles/common';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
@@ -34,6 +37,7 @@ const OpenOrdersTable: React.FC = () => {
 	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
+	const [selectedOrder, setSelectedOrder] = React.useState<any>();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -92,104 +96,186 @@ const OpenOrdersTable: React.FC = () => {
 	}, [openOrders, nextPriceDetails?.currentRoundId, network.id]);
 
 	return (
-		<StyledTable
-			data={data}
-			highlightRowsOnHover
-			showPagination
-			columns={[
-				{
-					Header: (
-						<StyledTableHeader>
-							{t('futures.market.user.open-orders.table.market-type')}
-						</StyledTableHeader>
-					),
-					accessor: 'market',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<MarketContainer>
-								<IconContainer>
-									<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
-								</IconContainer>
-								<StyledText>
-									{cellProps.row.original.market}
-									{cellProps.row.original.isStale && (
-										<ExpiredBadge>
-											{t('futures.market.user.open-orders.badges.expired')}
-										</ExpiredBadge>
-									)}
-								</StyledText>
-								<StyledValue>{cellProps.row.original.orderType}</StyledValue>
-							</MarketContainer>
-						);
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.open-orders.table.side')}</StyledTableHeader>
-					),
-					accessor: 'side',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								<PositionType side={cellProps.row.original.side} />
-							</div>
-						);
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>{t('futures.market.user.open-orders.table.size')}</StyledTableHeader>
-					),
-					accessor: 'size',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
-									sign: cellProps.row.original.asset,
-								})}
-							</div>
-						);
-					},
-					sortable: true,
-					width: 50,
-				},
-				{
-					Header: (
-						<StyledTableHeader>
-							{t('futures.market.user.open-orders.table.actions')}
-						</StyledTableHeader>
-					),
-					accessor: 'actions',
-					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div style={{ display: 'flex' }}>
-								<CancelButton
-									onClick={() => {
-										setAction('cancel');
-									}}
-								>
-									{t('futures.market.user.open-orders.actions.cancel')}
-								</CancelButton>
-								{cellProps.row.original.isExecutable && (
-									<EditButton
-										onClick={() => {
-											setAction('execute');
-										}}
-									>
-										{t('futures.market.user.open-orders.actions.execute')}
-									</EditButton>
-								)}
-							</div>
-						);
-					},
-					width: 50,
-				},
-			]}
-		/>
+		<>
+			<DesktopOnlyView>
+				<StyledTable
+					data={data}
+					highlightRowsOnHover
+					showPagination
+					columns={[
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.market-type')}
+								</StyledTableHeader>
+							),
+							accessor: 'market',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<MarketContainer>
+										<IconContainer>
+											<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
+										</IconContainer>
+										<StyledText>
+											{cellProps.row.original.market}
+											{cellProps.row.original.isStale && (
+												<ExpiredBadge>
+													{t('futures.market.user.open-orders.badges.expired')}
+												</ExpiredBadge>
+											)}
+										</StyledText>
+										<StyledValue>{cellProps.row.original.orderType}</StyledValue>
+									</MarketContainer>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.side')}
+								</StyledTableHeader>
+							),
+							accessor: 'side',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div>
+										<PositionType side={cellProps.row.original.side} />
+									</div>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.size')}
+								</StyledTableHeader>
+							),
+							accessor: 'size',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div>
+										{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
+											sign: cellProps.row.original.asset,
+										})}
+									</div>
+								);
+							},
+							sortable: true,
+							width: 50,
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.actions')}
+								</StyledTableHeader>
+							),
+							accessor: 'actions',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div style={{ display: 'flex' }}>
+										<CancelButton
+											onClick={() => {
+												setAction('cancel');
+											}}
+										>
+											{t('futures.market.user.open-orders.actions.cancel')}
+										</CancelButton>
+										{cellProps.row.original.isExecutable && (
+											<EditButton
+												onClick={() => {
+													setAction('execute');
+												}}
+											>
+												{t('futures.market.user.open-orders.actions.execute')}
+											</EditButton>
+										)}
+									</div>
+								);
+							},
+							width: 50,
+						},
+					]}
+				/>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<Table
+					data={data}
+					onTableRowClick={(row) => {
+						setSelectedOrder(row.original);
+					}}
+					columns={[
+						{
+							Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
+							accessor: 'side/type',
+							Cell: (cellProps: CellProps<any>) => (
+								<div>
+									<PositionType side={cellProps.row.original.side} />
+									<div>{cellProps.row.original.orderType}</div>
+								</div>
+							),
+							width: 100,
+						},
+						{
+							Header: <StyledTableHeader>Size</StyledTableHeader>,
+							accessor: 'size',
+							Cell: (cellProps: CellProps<any>) => (
+								<div>
+									{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
+										sign: cellProps.row.original.asset,
+									})}
+								</div>
+							),
+						},
+						{
+							Header: (
+								<StyledTableHeader>
+									{t('futures.market.user.open-orders.table.actions')}
+								</StyledTableHeader>
+							),
+							accessor: 'actions',
+							Cell: (cellProps: CellProps<any>) => {
+								return (
+									<div style={{ display: 'flex' }}>
+										<CancelButton
+											onClick={() => {
+												setAction('cancel');
+											}}
+										>
+											{t('futures.market.user.open-orders.actions.cancel')}
+										</CancelButton>
+										{cellProps.row.original.isExecutable && (
+											<EditButton
+												onClick={() => {
+													setAction('execute');
+												}}
+											>
+												{t('futures.market.user.open-orders.actions.execute')}
+											</EditButton>
+										)}
+									</div>
+								);
+							},
+							width: 100,
+						},
+					]}
+					noResultsMessage={
+						openOrders.length === 0 ? (
+							<TableNoResults>You have no open orders.</TableNoResults>
+						) : undefined
+					}
+				/>
+				<OrderDrawer
+					open={!!selectedOrder}
+					order={selectedOrder}
+					closeDrawer={() => setSelectedOrder(undefined)}
+					setAction={setAction}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -260,6 +346,16 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.common.primaryWhite};
+	font-size: 16px;
 `;
 
 export default OpenOrdersTable;
