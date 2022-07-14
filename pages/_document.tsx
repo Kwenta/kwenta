@@ -43,6 +43,13 @@ export default class MyDocument extends Document {
 					/>
 					<link
 						rel="preload"
+						href="/fonts/AkkuratLLWeb-Black.woff2"
+						as="font"
+						type="font/woff2"
+						crossOrigin="anonymous"
+					/>
+					<link
+						rel="preload"
 						href="/fonts/AkkuratLLWeb-Bold.woff2"
 						as="font"
 						type="font/woff2"
@@ -51,6 +58,27 @@ export default class MyDocument extends Document {
 					<link
 						rel="preload"
 						href="/fonts/AkkuratMonoLLWeb-Regular.woff2"
+						as="font"
+						type="font/woff2"
+						crossOrigin="anonymous"
+					/>
+					<link
+						rel="preload"
+						href="/fonts/AkkuratMonoLLWeb-Bold.woff2"
+						as="font"
+						type="font/woff2"
+						crossOrigin="anonymous"
+					/>
+					<link
+						rel="preload"
+						href="/fonts/GT-America-Compressed-Black.woff2"
+						as="font"
+						type="font/woff2"
+						crossOrigin="anonymous"
+					/>
+					<link
+						rel="preload"
+						href="/fonts/GT-America-Compressed-Medium.woff2"
 						as="font"
 						type="font/woff2"
 						crossOrigin="anonymous"
