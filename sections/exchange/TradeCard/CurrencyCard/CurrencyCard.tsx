@@ -227,11 +227,12 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 						<div>
 							<SwapTextInput
 								value={amount}
-								onChange={(e) => {
-									onAmountChange(e.target.value);
+								onChange={(_, value) => {
+									onAmountChange(value);
 									setRatio(undefined);
 								}}
 								placeholder={t('exchange.currency-card.amount-placeholder')}
+								disabled={disabled}
 							/>
 							<SwapCurrencyPrice data-testid="amount-value">
 								{currencyKeySelected && tradeAmount != null
