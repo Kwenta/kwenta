@@ -564,6 +564,10 @@ const useExchange = ({
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
 		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
+		if (!sourceCurrencyKey || !destinationCurrencyKey) {
+			return null;
+		}
+
 		if (isAtomic) {
 			return [
 				sourceCurrencyKey,
@@ -594,9 +598,11 @@ const useExchange = ({
 	const exchangeTxn = useSynthetixTxn(
 		'Synthetix',
 		isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
-		exchangeParams,
+		exchangeParams!,
 		gasPrice ?? undefined,
-		{ enabled: needsApproval ? isApproved : true }
+		{
+			enabled: (needsApproval ? isApproved : true) && !!exchangeParams,
+		}
 	);
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
