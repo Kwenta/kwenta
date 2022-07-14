@@ -696,7 +696,7 @@ const useExchange = ({
 		'redeemAll',
 		[redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
 		gasPrice ?? undefined,
-		{ enabled: !!redeemableDeprecatedSynths && numEntries >= 12 }
+		{ enabled: !!redeemableDeprecatedSynths && redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
 	);
 
 	const handleRedeem = async () => {
