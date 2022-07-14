@@ -657,6 +657,14 @@ const useExchange = ({
 		]
 	);
 
+	const oneInchSlippage = useMemo(() => {
+		// ETH swaps often fail with lower slippage
+		if (txProvider === '1inch' && (baseCurrencyKey === 'ETH' || quoteCurrencyKey === 'ETH')) {
+			return 3;
+		}
+		return slippage;
+	}, [txProvider, baseCurrencyKey, quoteCurrencyKey, slippage]);
+
 	const getGasEstimateForExchange = useCallback(
 		async (gasPriceInWei: number | null) => {
 			try {
@@ -735,13 +743,13 @@ const useExchange = ({
 						quoteCurrencyTokenAddress!,
 						baseCurrencyTokenAddress!,
 						quoteCurrencyAmount,
-						slippage
+						oneInchSlippage
 					);
 					const metaTx = await swap1Inch(
 						quoteCurrencyTokenAddress!,
 						baseCurrencyTokenAddress!,
 						quoteCurrencyAmount,
-						slippage,
+						oneInchSlippage,
 						true
 					);
 					const l1Fee = await getL1SecurityFee({
@@ -766,6 +774,7 @@ const useExchange = ({
 			baseCurrencyTokenAddress,
 			quoteCurrencyAmount,
 			slippage,
+			oneInchSlippage,
 			txProvider,
 			baseCurrencyKey,
 			quoteCurrencyKey,
@@ -1004,7 +1013,7 @@ const useExchange = ({
 						quoteCurrencyTokenAddress!,
 						baseCurrencyTokenAddress!,
 						quoteCurrencyAmount,
-						slippage
+						oneInchSlippage
 					);
 				} else if (txProvider === 'synthswap') {
 					tx = await swapSynthSwap(
@@ -1092,6 +1101,7 @@ const useExchange = ({
 		txProvider,
 		monitorTransaction,
 		slippage,
+		oneInchSlippage,
 		oneInchTokensMap,
 		synthetixjs,
 		gasPriceWei,
