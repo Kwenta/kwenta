@@ -630,7 +630,7 @@ const useExchange = ({
 			});
 
 			return { limit: normalizeGasLimit(Number(gasEstimate)), l1Fee };
-		} else {
+		} else if (txProvider === '1inch') {
 			const estimate = await swap1InchGasEstimate(
 				quoteCurrencyTokenAddress!,
 				baseCurrencyTokenAddress!,
