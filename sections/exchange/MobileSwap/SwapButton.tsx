@@ -1,10 +1,16 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
+
 import Button from 'components/Button';
 import { useExchangeContext } from 'contexts/ExchangeContext';
 import { useTranslation } from 'react-i18next';
+import { isWalletConnectedState } from 'store/wallet';
+import Connector from 'containers/Connector';
 
 const SwapButton: React.FC = () => {
 	const { t } = useTranslation();
+	const isWalletConnected = useRecoilValue(isWalletConnectedState);
+	const { connectWallet } = Connector.useContainer();
 	const {
 		isApproved,
 		needsApproval,
@@ -13,7 +19,7 @@ const SwapButton: React.FC = () => {
 		submissionDisabledReason,
 	} = useExchangeContext();
 
-	return (
+	return isWalletConnected ? (
 		<Button
 			isRounded
 			disabled={!!submissionDisabledReason}
@@ -28,6 +34,10 @@ const SwapButton: React.FC = () => {
 				: !isApproved
 				? t('exchange.summary-info.button.approve')
 				: t('exchange.summary-info.button.submit-order')}
+		</Button>
+	) : (
+		<Button onClick={connectWallet} size="md" fullWidth variant="primary">
+			{t('common.wallet.connect-wallet')}
 		</Button>
 	);
 };
