@@ -27,9 +27,9 @@ const useRedeemableDeprecatedSynthsQuery = (
 
 			const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 			const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
-			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents.map(
-				(e: any) => e.args?.synth ?? ''
-			);
+			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents
+				.map((e) => e.args?.synth)
+				.filter(Boolean);
 
 			const Redeemer = new Contract(SynthRedeemer.address, sources.SynthRedeemer.abi as any);
 
