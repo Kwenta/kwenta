@@ -151,12 +151,8 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
 
 	return (
-		<StyledCenteredModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.select-currency.title')}
-		>
-			<Container id="scrollableDiv">
+		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
+			<Container id="scrollableDiv" style={{ paddingBottom: '0 !important' }}>
 				<SearchContainer>
 					<AssetSearchInput
 						placeholder={t('modals.select-currency.search.placeholder')}
@@ -165,7 +161,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							setAssetSearch(e.target.value);
 						}}
 						value={assetSearch}
-						autoFocus={true}
+						autoFocus
 					/>
 				</SearchContainer>
 				<CategoryFilters>
