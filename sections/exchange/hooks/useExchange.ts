@@ -607,6 +607,17 @@ const useExchange = ({
 
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
 
+	const oneInchSlippage = useMemo(() => {
+		// ETH swaps often fail with lower slippage
+		if (
+			txProvider === '1inch' &&
+			((baseCurrencyKey as string) === 'ETH' || (quoteCurrencyKey as string) === 'ETH')
+		) {
+			return 3;
+		}
+		return slippage;
+	}, [txProvider, baseCurrencyKey, quoteCurrencyKey, slippage]);
+
 	const getGasEstimateForExchange = useCallback(async () => {
 		if (isL2) return null;
 		if (txProvider === 'synthswap') {
@@ -635,13 +646,13 @@ const useExchange = ({
 				quoteCurrencyTokenAddress!,
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
-				slippage
+				oneInchSlippage
 			);
 			const metaTx = await swap1Inch(
 				quoteCurrencyTokenAddress!,
 				baseCurrencyTokenAddress!,
 				quoteCurrencyAmount,
-				slippage,
+				oneInchSlippage,
 				true
 			);
 			const l1Fee = await getL1SecurityFee({
@@ -668,6 +679,7 @@ const useExchange = ({
 		swapSynthSwapGasEstimate,
 		txProvider,
 		gasPrice?.gasPrice,
+		oneInchSlippage,
 	]);
 
 	// An attempt to show correct gas fees while making as few calls as possible. (as soon as the submission is "valid", compute it once)
