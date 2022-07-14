@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 
-import { DesktopOnlyView, MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import {
 	PageContent,
@@ -47,7 +47,7 @@ const Market: MarketComponent = () => {
 			<Head>
 				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
 			</Head>
-			<MobileHiddenView>
+			<DesktopOnlyView>
 				<PageContent>
 					<StyledFullHeightContainer>
 						<StyledLeftSideContent>
@@ -56,17 +56,15 @@ const Market: MarketComponent = () => {
 						<StyledMainContent>
 							<MarketInfo />
 						</StyledMainContent>
-						<DesktopOnlyView>
-							<StyledRightSideContent>
-								<Trade />
-							</StyledRightSideContent>
-						</DesktopOnlyView>
+						<StyledRightSideContent>
+							<Trade />
+						</StyledRightSideContent>
 					</StyledFullHeightContainer>
 				</PageContent>
-			</MobileHiddenView>
-			<MobileOnlyView>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
 				<MobileTrade />
-			</MobileOnlyView>
+			</MobileOrTabletView>
 		</RefetchProvider>
 	);
 };

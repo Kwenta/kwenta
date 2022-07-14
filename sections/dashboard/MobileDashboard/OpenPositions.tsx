@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import Connector from 'containers/Connector';
 import { getMarketKey } from 'utils/futures';
@@ -101,7 +101,9 @@ const OpenPositions: React.FC = () => {
 	return (
 		<div>
 			<div style={{ margin: '15px 15px 30px 15px' }}>
-				<SectionHeader>Open Positions</SectionHeader>
+				<SectionHeader>
+					<SectionTitle>Open Positions</SectionTitle>
+				</SectionHeader>
 
 				<TabButtonsContainer>
 					{POSITIONS_TABS.map(({ name, label, ...rest }) => (

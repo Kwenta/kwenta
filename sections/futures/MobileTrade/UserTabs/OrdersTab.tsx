@@ -10,7 +10,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import { positionState, currentMarketState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
-import { SectionHeader } from '../common';
+import { SectionHeader, SectionTitle } from '../common';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { useRefetchContext } from 'contexts/RefetchContext';
@@ -94,7 +94,9 @@ const OrdersTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>Orders</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Orders</SectionTitle>
+			</SectionHeader>
 
 			<StyledTable
 				data={data}
