@@ -601,7 +601,7 @@ const useExchange = ({
 		exchangeParams!,
 		gasPrice ?? undefined,
 		{
-			enabled: (needsApproval ? isApproved : true) && !!exchangeParams,
+			enabled: (needsApproval ? isApproved : true) && !!exchangeParams && !!walletAddress,
 		}
 	);
 
