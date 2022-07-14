@@ -49,6 +49,7 @@ const StyledDialogOverlay = styled(DialogOverlay)`
 	background: rgba(0, 0, 0, 0.7);
 	${media.lessThan('sm')`
 		overflow: hidden;
+		padding-bottom: 90px;
 	`}
 `;
 
@@ -77,7 +78,7 @@ const StyledCard = styled(Card)`
 
 	${media.lessThan('sm')`
 		&&& {
-			margin-top: 15px;
+			margin-top: 30px;
 		}
 	`}
 `;
@@ -90,12 +91,7 @@ const StyledCardHeader = styled(Card.Header)`
 `;
 
 const StyledCardBody = styled(Card.Body)`
-	${media.lessThan('sm')`
-		&&& {
-			max-height: unset;
-			height: unset;
-		}
-	`}
+	overflow-y: scroll;
 `;
 
 const DismissButton = styled.button`
