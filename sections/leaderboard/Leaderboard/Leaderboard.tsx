@@ -143,10 +143,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
 
-	if (statsQuery.isLoading) {
-		return <Loader />;
-	}
-
 	return (
 		<>
 			<SearchContainer>
