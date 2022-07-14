@@ -881,7 +881,7 @@ const useExchange = ({
 					quoteCurrencyTokenAddress!,
 					baseCurrencyTokenAddress!,
 					quoteCurrencyAmount,
-					slippage
+					oneInchSlippage
 				);
 			} else if (txProvider === 'synthswap') {
 				tx = await swapSynthSwap(
@@ -963,6 +963,7 @@ const useExchange = ({
 		setQuoteCurrencyAmount,
 		setTxError,
 		exchangeTxn,
+		oneInchSlippage,
 	]);
 
 	useEffect(() => {
