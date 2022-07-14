@@ -776,7 +776,7 @@ const useExchange = ({
 		'approve',
 		[approveAddress, ethers.constants.MaxUint256],
 		gasPrice ?? undefined,
-		{ enabled: !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
+		{ enabled: !!approveAddress && !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
 	);
 
 	const settleTxn = useSynthetixTxn(
