@@ -187,7 +187,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 					})}
 				</CategoryFilters>
 
-				{/* <InfiniteScroll
+				<InfiniteScroll
 					dataLength={synthsResults.length + oneInchTokensPaged.length}
 					next={() => {
 						setTimeout(() => {
@@ -201,89 +201,89 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 						</LoadingMore>
 					}
 					scrollableTarget="scrollableDiv"
-				> */}
-				<RowsHeader>
-					<span>
-						{assetSearch ? (
-							<span>{t('modals.select-currency.header.search-results')}</span>
-						) : synthCategory != null ? (
-							t('modals.select-currency.header.category-synths', {
-								category: synthCategory,
-							})
-						) : (
-							t('modals.select-currency.header.all-synths')
-						)}
-					</span>
-					<span>{t('modals.select-currency.header.holdings')}</span>
-				</RowsHeader>
-				{synthsWalletBalancesQuery.isLoading ? (
-					<Loader />
-				) : synthsResults.length > 0 ? (
-					// TODO: use `Synth` type from contracts-interface
-					synthsResults.map((synth) => {
-						const currencyKey = synth.name;
+				>
+					<RowsHeader>
+						<span>
+							{assetSearch ? (
+								<span>{t('modals.select-currency.header.search-results')}</span>
+							) : synthCategory != null ? (
+								t('modals.select-currency.header.category-synths', {
+									category: synthCategory,
+								})
+							) : (
+								t('modals.select-currency.header.all-synths')
+							)}
+						</span>
+						<span>{t('modals.select-currency.header.holdings')}</span>
+					</RowsHeader>
+					{synthsWalletBalancesQuery.isLoading ? (
+						<Loader />
+					) : synthsResults.length > 0 ? (
+						// TODO: use `Synth` type from contracts-interface
+						synthsResults.map((synth) => {
+							const currencyKey = synth.name;
 
-						return (
-							<CurrencyRow
-								key={currencyKey}
-								onClick={() => {
-									onSelect(currencyKey, false);
-									onDismiss();
-								}}
-								balance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
-								token={{
-									name: synth.description,
-									symbol: synth.name,
-									isSynth: true,
-								}}
-							/>
-						);
-					})
-				) : (
-					<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
-				)}
-				{oneInchTokensPaged.length ? (
-					<>
-						<TokensHeader>
-							<span>
-								{assetSearch ? (
-									<span>{t('modals.select-currency.header.search-results')}</span>
-								) : (
-									t('modals.select-currency.header.other-tokens')
-								)}
-							</span>
-							<span>{t('modals.select-currency.header.holdings')}</span>
-						</TokensHeader>
-						{oneInchQuery.isLoading ? (
-							<Loader />
-						) : oneInchTokenList.length > 0 ? (
-							oneInchTokenList.map((token) => {
-								const currencyKey = token.symbol;
-								return (
-									<CurrencyRow
-										key={currencyKey}
-										onClick={() => {
-											onSelect(currencyKey, true);
-											onDismiss();
-										}}
-										balance={
-											tokenBalances[currencyKey]
-												? {
-														currencyKey: currencyKey,
-														balance: tokenBalances[currencyKey]?.balance || wei(0),
-												  }
-												: undefined
-										}
-										token={{ ...token, isSynth: false }}
-									/>
-								);
-							})
-						) : (
-							<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
-						)}
-					</>
-				) : null}
-				{/* </InfiniteScroll> */}
+							return (
+								<CurrencyRow
+									key={currencyKey}
+									onClick={() => {
+										onSelect(currencyKey, false);
+										onDismiss();
+									}}
+									balance={synthBalances?.balancesMap[currencyKey as CurrencyKey]}
+									token={{
+										name: synth.description,
+										symbol: synth.name,
+										isSynth: true,
+									}}
+								/>
+							);
+						})
+					) : (
+						<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
+					)}
+					{oneInchTokensPaged.length ? (
+						<>
+							<TokensHeader>
+								<span>
+									{assetSearch ? (
+										<span>{t('modals.select-currency.header.search-results')}</span>
+									) : (
+										t('modals.select-currency.header.other-tokens')
+									)}
+								</span>
+								<span>{t('modals.select-currency.header.holdings')}</span>
+							</TokensHeader>
+							{oneInchQuery.isLoading ? (
+								<Loader />
+							) : oneInchTokensPaged.length > 0 ? (
+								oneInchTokensPaged.map((token) => {
+									const currencyKey = token.symbol;
+									return (
+										<CurrencyRow
+											key={currencyKey}
+											onClick={() => {
+												onSelect(currencyKey, true);
+												onDismiss();
+											}}
+											balance={
+												tokenBalances[currencyKey]
+													? {
+															currencyKey: currencyKey,
+															balance: tokenBalances[currencyKey]?.balance || wei(0),
+													  }
+													: undefined
+											}
+											token={{ ...token, isSynth: false }}
+										/>
+									);
+								})
+							) : (
+								<EmptyDisplay>{t('modals.select-currency.search.empty-results')}</EmptyDisplay>
+							)}
+						</>
+					) : null}
+				</InfiniteScroll>
 			</Container>
 		</StyledCenteredModal>
 	);
