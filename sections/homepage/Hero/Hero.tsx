@@ -125,6 +125,7 @@ const HeroImageContainer = styled(GridDiv)`
 
 const HeroImage = styled.img`
 	width: 960px;
+	aspect-ratio: 1.72;
 	${media.lessThan('md')`
 		width: 785px;
 	`}
