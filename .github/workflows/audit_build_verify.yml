@@ -3,12 +3,12 @@ name: Kwenta CI
 on:
   push:
   pull_request:
-    branches: [main, dev]
+    branches: [master, dev]
 
 jobs:
   audit:
-    # run only on main/dev branch and pull requests
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+    # run only on master/dev branch and pull requests
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     container:
@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Audit dependencies
         run: npm audit --audit-level=critical
@@ -35,14 +35,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
         with:
           path: |
             .npm-cache
@@ -63,21 +63,21 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Lint
-        # run only on main/dev branch and pull requests
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        # run only on master/dev branch and pull requests
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run lint:sarif
 
       - name: Upload lint results
-        # run if lint failed and only on main/dev branch and pull requests
-        if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
-        uses: github/codeql-action/upload-sarif@3f62b754e23e0dd60f91b744033e1dc1654c0ec6 # pin@codeql-bundle-20220322
+        # run if lint failed and only on master/dev branch and pull requests
+        if: always() && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request')
+        uses: github/codeql-action/upload-sarif@81bfc289f5947eca8a3358341c874cb4f4697b64 # pin@codeql-bundle-20220322
         with:
           sarif_file: lint-results.sarif
         continue-on-error: true
 
       - name: Unit tests
-        # run only on main/dev branch and pull requests
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        # run only on master/dev branch and pull requests
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
         run: npm run test:unit
 
   build:
@@ -91,14 +91,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # pin@v2
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
 
       - name: Set npm cache directory
         run: npm config set cache .npm-cache --global
         continue-on-error: true
 
       - name: Cache node modules
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v3
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
         with:
           path: |
             .npm-cache
@@ -119,7 +119,7 @@ jobs:
           npm install --prefer-offline --no-audit --legacy-peer-deps
 
       - name: Cache next.js build cache
-        uses: actions/cache@c3f1317a9e7b1ef106c153ac8c0f00fed3ddbc0d # pin@v2
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v2
         with:
           path: .next/cache
           key: ${{ runner.os }}-next-cache-${{ hashFiles('**/package-lock.json') }}
@@ -134,8 +134,97 @@ jobs:
         run: tar -zcvf build.tar.gz .next
 
       - name: Archive build
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # pin@v3
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev' || github.event_name == 'pull_request'
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v3
         with:
           name: build
           path: build.tar.gz
+
+  e2e:
+    needs: build
+    # run only on master/dev branch
+    # if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    container:
+      image: synthetixio/docker-e2e:16.14-ubuntu
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # pin@v2
+
+      - name: Set npm cache directory
+        run: npm config set cache .npm-cache --global
+        continue-on-error: true
+
+      - name: Cache node modules
+        uses: actions/cache@136d96b4aee02b1f0de3ba493b1d47135042d9c0 # pin@v3
+        with:
+          path: |
+            .npm-cache
+            node_modules
+          key: ${{ runner.os }}-e2e-cache-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-e2e-cache-
+        continue-on-error: true
+
+      # fixes permission issues on gh actions + docker + npm@8
+      - name: Chown workspace
+        run: chown -R $(whoami) .
+
+      # mkdir -p node_modules fixes https://github.com/npm/cli/issues/3208 starting from npm@7
+      - name: Install dependencies
+        run: |
+          mkdir -p node_modules
+          npm install --prefer-offline --no-audit --legacy-peer-deps
+        env:
+          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
+
+      - name: Set deployment url
+        shell: bash
+        run: |
+          if [ ${{ github.event_name }} == pull_request ]
+          then
+            export BRANCH_NAME=$(echo ${GITHUB_HEAD_REF#refs/heads/} | sed -e 's/\//-/g')
+            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
+          else
+            export BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | sed -e 's/\//-/g')
+            echo "BASE_URL=https://${{ secrets.VERCEL_PREFIX }}-$BRANCH_NAME-${{ secrets.VERCEL_DOMAIN }}" >> $GITHUB_ENV
+          fi
+        env:
+          VERCEL_PREFIX: ${{ secrets.VERCEL_PREFIX }}
+          VERCEL_DOMAIN: ${{ secrets.VERCEL_DOMAIN }}
+
+      - name: Download build
+        uses: actions/download-artifact@f023be2c48cc18debc3bacd34cb396e0295e2869 # pin@v2
+        with:
+          name: build
+
+      - name: Extract build
+        run: tar -xf build.tar.gz
+
+      - name: Run e2e tests
+        run: npm run test:e2e:ci
+        env:
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          ETHERSCAN_KEY: ${{ secrets.ETHERSCAN_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/node_modules/.cache/Cypress
+          RPC_URL: https://kovan.optimism.io
+          NETWORK_NAME: OptimisticKovan
+          BLOCK_EXPLORER: https://kovan-optimistic.etherscan.io
+          IS_TESTNET: true
+          CHAIN_ID: 69
+
+      - name: Archive e2e artifacts
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # pin@v2
+        if: always()
+        with:
+          name: e2e-artifacts
+          path: |
+            tests/e2e/videos
+            tests/e2e/screenshots
+        continue-on-error: true
