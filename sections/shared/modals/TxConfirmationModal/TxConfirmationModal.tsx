@@ -29,7 +29,6 @@ import { ESTIMATE_VALUE } from 'constants/placeholder';
 import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
-import { formatRevert } from 'utils/formatters/error';
 
 export type TxProvider = 'synthetix' | '1inch';
 
@@ -266,7 +265,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			)}
 			{txError != null && (
 				<Actions>
-					<Error>{formatRevert(txError)}</Error>
+					<Error message={txError}></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>
@@ -334,15 +333,6 @@ const SummaryItemValue = styled.div`
 
 const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
-`;
-
-const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	flex-grow: 1;
-	text-align: center;
-	margin: 16px 0px;
 `;
 
 const TxProviderContainer = styled.div`

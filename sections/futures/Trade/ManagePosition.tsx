@@ -100,7 +100,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 			</div>
 
 			{(orderError || error || previewTrade?.showStatus) && (
-				<Error>{orderError || error || previewTrade?.statusMessage}</Error>
+				<Error message={orderError || error || previewTrade?.statusMessage || ''} />
 			)}
 
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}

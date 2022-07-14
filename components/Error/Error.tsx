@@ -1,6 +1,17 @@
+import React, { FC } from 'react';
 import styled from 'styled-components';
+import { formatRevert } from 'utils/formatters/error';
 
-const Error = styled.div`
+type ErrorProps = {
+	message: string;
+	formatError?: (error: string) => string | undefined;
+};
+
+export const Error: FC<ErrorProps> = ({ message, formatError = formatRevert }) => {
+	return <ErrorContainer>{formatError(message)}</ErrorContainer>;
+};
+
+const ErrorContainer = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.red};
 	flex: none;
 	order: 0;
@@ -13,7 +24,5 @@ const Error = styled.div`
 	border-radius: 8px;
 	cursor: default;
 `;
-
-Error.displayName = 'Error';
 
 export default Error;
