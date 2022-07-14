@@ -74,6 +74,12 @@ const StyledCard = styled(Card)`
 	position: relative;
 	box-shadow: ${(props) => props.theme.colors.selectedTheme.button.shadow};
 	border: ${(props) => props.theme.colors.selectedTheme.border};
+
+	${media.lessThan('sm')`
+		&&& {
+			margin-top: 15px;
+		}
+	`}
 `;
 
 const StyledCardHeader = styled(Card.Header)`
