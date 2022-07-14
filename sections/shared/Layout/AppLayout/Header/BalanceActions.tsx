@@ -4,7 +4,7 @@ import Select from 'components/Select';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
-import { FC, Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
