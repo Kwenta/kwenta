@@ -551,14 +551,14 @@ const useExchange = ({
 	);
 
 	const isAtomic = useMemo(() => {
-		if (isL2 || !sourceCurrencyKey || !destinationCurrencyKey) {
+		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
 			return false;
 		}
 
-		return [sourceCurrencyKey, destinationCurrencyKey].every((currency) =>
+		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
 			ATOMIC_EXCHANGES_L1.includes(currency)
 		);
-	}, [isL2, sourceCurrencyKey, destinationCurrencyKey]);
+	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
 
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
