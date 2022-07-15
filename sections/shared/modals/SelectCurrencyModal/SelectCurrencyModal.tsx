@@ -151,11 +151,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 	const tokenBalances = tokenBalancesQuery.isSuccess ? tokenBalancesQuery.data ?? {} : {};
 
 	return (
-		<StyledCenteredModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.select-currency.title')}
-		>
+		<StyledCenteredModal onDismiss={onDismiss} isOpen title={t('modals.select-currency.title')}>
 			<Container id="scrollableDiv">
 				<SearchContainer>
 					<AssetSearchInput
@@ -165,7 +161,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 							setAssetSearch(e.target.value);
 						}}
 						value={assetSearch}
-						autoFocus={true}
+						autoFocus
 					/>
 				</SearchContainer>
 				<CategoryFilters>
@@ -278,7 +274,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 													  }
 													: undefined
 											}
-											token={token}
+											token={{ ...token, isSynth: false }}
 										/>
 									);
 								})
@@ -295,7 +291,7 @@ export const SelectCurrencyModal: FC<SelectCurrencyModalProps> = ({
 
 const Container = styled.div`
 	height: 100%;
-	overflow: auto;
+	overflow-y: scroll;
 `;
 
 const StyledCenteredModal = styled(CenteredModal)`
@@ -305,7 +301,7 @@ const StyledCenteredModal = styled(CenteredModal)`
 	.card-body {
 		height: 80vh;
 		padding: 0px;
-		overflow: hidden;
+		overflow-y: scroll;
 	}
 `;
 
@@ -341,7 +337,6 @@ const CategoryButton = styled(Button)`
 		css`
 			color: ${props.theme.colors.selectedTheme.button.text};
 			background: ${props.theme.colors.selectedTheme.button.fill};
-			/* background: transparent */
 		`};
 	${(props) =>
 		props.disabled &&

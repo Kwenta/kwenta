@@ -5,6 +5,7 @@ import Wei from '@synthetixio/wei';
 
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { getFuturesEndpoint } from './utils';
+// @ts-ignore
 import EthDater from 'ethereum-block-by-date';
 import moment from 'moment';
 import { appReadyState } from 'store/app';
@@ -46,7 +47,7 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 				gql`
 					query marginAccounts($account: String!) {
 						${blocks.map(
-							(block) => gql`
+							(block: any) => gql`
 								${block.block}: query futuresMarginAccounts(
 									where: { account: $account },
 									block: { number: ${block.block} }
