@@ -11,13 +11,15 @@ import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobilePositionRow from './MobilePositionRow';
+import { positionsState } from 'store/futures';
+import { useRecoilValue } from 'recoil';
+import { networkState } from 'store/wallet';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -29,18 +31,15 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
+	const network = useRecoilValue(networkState);
 	const router = useRouter();
 
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
-	);
+	const futuresPositions = useRecoilValue(positionsState);
 
 	let data = useMemo(() => {
-		const futuresPositions = futuresPositionQuery?.data ?? [];
-		const activePositions = futuresPositions.filter(
-			(position: FuturesPosition) => position?.position
-		);
+		const activePositions =
+			futuresPositions?.filter((position: FuturesPosition) => position?.position) ?? [];
 
 		return activePositions.map((position: FuturesPosition) => {
 			const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -71,7 +70,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
+	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
 
 	return (
 		<>

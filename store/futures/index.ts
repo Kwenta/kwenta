@@ -1,7 +1,7 @@
 import { atom, selector } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
-import { getFuturesKey } from 'store/utils';
+import { getFuturesKey, getSynthsKey } from 'store/utils';
 import {
 	FuturesMarket,
 	FuturesPosition,
@@ -11,6 +11,7 @@ import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
 import { Synths, CurrencyKey } from 'constants/currency';
+import { Balances } from '@synthetixio/queries';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
@@ -18,6 +19,11 @@ const DEFAULT_MAX_LEVERAGE = wei(10);
 export const currentMarketState = atom<CurrencyKey>({
 	key: getFuturesKey('currentMarket'),
 	default: Synths.sETH,
+});
+
+export const balancesState = atom<Balances | null>({
+	key: getSynthsKey('balances'),
+	default: null,
 });
 
 export const activeTabState = atom<number>({
@@ -28,6 +34,16 @@ export const activeTabState = atom<number>({
 export const positionState = atom<FuturesPosition | null>({
 	key: getFuturesKey('position'),
 	default: null,
+});
+
+export const positionsState = atom<FuturesPosition[] | null>({
+	key: getFuturesKey('positions'),
+	default: null,
+});
+
+export const futuresMarketsState = atom<FuturesMarket[] | null>({
+	key: getFuturesKey('markets'),
+	default: [],
 });
 
 export const tradeSizeState = atom({
