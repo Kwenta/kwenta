@@ -2,7 +2,7 @@ import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Tippy from '@tippyjs/react';
-
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
@@ -20,7 +20,6 @@ import { SummaryItems } from '../common';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
 import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
-import { GasPrices } from '@synthetixio/queries';
 import { Synth } from '@synthetixio/contracts-interface';
 
 type TradeSummaryCardProps = {
@@ -28,9 +27,8 @@ type TradeSummaryCardProps = {
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
 	totalTradePrice: string | null;
-	basePriceRate: number;
+	basePriceRate: Wei;
 	baseCurrency: Synth | null;
-	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
@@ -38,7 +36,7 @@ type TradeSummaryCardProps = {
 	className?: string;
 	totalFeeRate: Wei | null;
 	baseFeeRate?: Wei | null;
-	transactionFee?: number | null;
+	transactionFee?: Wei | number | null;
 	feeCost: Wei | null;
 	isApproved?: boolean;
 };
@@ -50,7 +48,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	totalTradePrice,
 	basePriceRate,
 	baseCurrency,
-	gasPrices,
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
 	showFee = true,
@@ -63,10 +60,18 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	...rest
 }) => {
 	const { t } = useTranslation();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
+	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
 		submissionDisabledReason,
 	]);
+
+	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	const gasPrices = useMemo(
+		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
+		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	);
 
 	const summaryItems = (
 		<SummaryItems attached={attached}>
@@ -103,12 +108,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				>
 					<span>
 						<Button
-							isRounded={true}
+							isRounded
 							disabled={isSubmissionDisabled}
 							onClick={onSubmit}
 							size="lg"
 							data-testid="submit-order"
-							fullWidth={true}
+							fullWidth
 						>
 							{isSubmissionDisabled
 								? submissionDisabledReason

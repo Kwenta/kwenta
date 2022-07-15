@@ -6,10 +6,12 @@ import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
 import useExchange from 'sections/exchange/hooks/useExchange';
 import { formatCurrency } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { MobileSwap } from 'sections/exchange/MobileSwap';
+import { ExchangeContext } from 'contexts/ExchangeContext';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -19,38 +21,42 @@ type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
 
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
-	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = useExchange({
-		showPriceCard: true,
-		showMarketDetailsCard: true,
+	const exchangeData = useExchange({
 		footerCardAttached: false,
 		routingEnabled: true,
-		persistSelectedCurrencies: true,
 		showNoSynthsCard: true,
 	});
 
+	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = exchangeData;
+
 	return (
-		<>
+		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
 					{baseCurrencyKey != null && quoteCurrencyKey != null
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
-								rate: formatCurrency(quoteCurrencyKey as CurrencyKey, inverseRate, {
-									currencyKey: quoteCurrencyKey as CurrencyKey,
+								rate: formatCurrency(quoteCurrencyKey, inverseRate, {
+									currencyKey: quoteCurrencyKey,
 								}),
 						  })
 						: t('exchange.page-title')}
 				</title>
 			</Head>
 			<PageContent>
-				<StyledFullHeightContainer>
-					<MainContent>
-						<BasicSwap />
-					</MainContent>
-				</StyledFullHeightContainer>
+				<DesktopOnlyView>
+					<StyledFullHeightContainer>
+						<MainContent>
+							<BasicSwap />
+						</MainContent>
+					</StyledFullHeightContainer>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<MobileSwap />
+				</MobileOrTabletView>
 			</PageContent>
-		</>
+		</ExchangeContext.Provider>
 	);
 };
 

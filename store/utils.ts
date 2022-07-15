@@ -5,3 +5,4 @@ export const getWalletKey = (subKey: string) => `wallet/${subKey}`;
 export const getShortsKey = (subKey: string) => `shorts/${subKey}`;
 export const getFuturesKey = (subKey: string) => `futures/${subKey}`;
 export const getSynthsKey = (subKey: string) => `synths/${subKey}`;
+export const getExchangeKey = (subKey: string) => `exchange/${subKey}`;
