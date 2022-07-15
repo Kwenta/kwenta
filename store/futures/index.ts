@@ -13,7 +13,7 @@ import { zeroBN } from 'utils/formatters/number';
 import { Synths, CurrencyKey } from 'constants/currency';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 
-const DEFAULT_MAX_LEVERAGE = wei(25);
+const DEFAULT_MAX_LEVERAGE = wei(10);
 
 export const currentMarketState = atom<CurrencyKey>({
 	key: getFuturesKey('currentMarket'),

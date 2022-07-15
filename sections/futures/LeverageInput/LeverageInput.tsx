@@ -50,9 +50,10 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
 	}, [position, maxLeverage]);
 
+	const leverageButtons = maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
-		: 25;
+		: 10;
 	const truncateLeverage = truncateNumbers(leverage, DEFAULT_FIAT_DECIMALS);
 
 	return (
@@ -96,7 +97,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 						}}
 						disabled={isDisabled}
 					/>
-					{['2', '5', '10', '25'].map((l) => (
+					{leverageButtons.map((l) => (
 						<LeverageButton
 							key={l}
 							mono
@@ -143,7 +144,7 @@ const SliderRow = styled(FlexDivRow)`
 
 const LeverageInputContainer = styled.div`
 	display: grid;
-	grid-template-columns: 1fr 43px 43px 43px 43px;
+	grid-template-columns: 1fr 43px 43px 43px;
 	grid-gap: 15px;
 	align-items: center;
 `;
