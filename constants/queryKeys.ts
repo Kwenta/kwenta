@@ -271,6 +271,9 @@ export const QUERY_KEYS = {
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
 		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
 	},
+	Files: {
+		Get: (fileName: string) => ['files', 'get', fileName],
+	},
 };
 
 export default QUERY_KEYS;

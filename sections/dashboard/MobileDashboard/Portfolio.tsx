@@ -1,11 +1,13 @@
 import React from 'react';
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import PortfolioChart from '../PortfolioChart';
 
 const Portfolio: React.FC = () => (
 	<div>
 		<div style={{ margin: 15 }}>
-			<SectionHeader>Portfolio</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Portfolio</SectionTitle>
+			</SectionHeader>
 		</div>
 		<PortfolioChart />
 	</div>
