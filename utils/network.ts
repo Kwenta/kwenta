@@ -57,6 +57,10 @@ const loadInfuraProvider = (networkId: NetworkId) => {
 };
 
 const loadBlastProvider = (networkId: NetworkId) => {
+	if (!process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID) {
+		throw new Error('You must define NEXT_PUBLIC_BLASTAPI_PROJECT_ID in your environment');
+	}
+
 	const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
 	const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
 	return new providers.JsonRpcProvider(networkUrl, networkId);
