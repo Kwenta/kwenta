@@ -7,8 +7,7 @@ import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FC } from 'react';
+import { useEffect, useState, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
@@ -25,15 +24,7 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-type FuturesPositionTableProps = {
-	setShowUniswapWidget: Dispatch<SetStateAction<boolean>>;
-	uniswapWidgetOpened: boolean;
-};
-
-const BalanceActions: FC<FuturesPositionTableProps> = ({
-	uniswapWidgetOpened,
-	setShowUniswapWidget,
-}) => {
+const BalanceActions: FC = () => {
 	const [balanceLabel, setBalanceLabel] = useState('');
 	const { t } = useTranslation();
 	const theme = useTheme();
@@ -110,8 +101,8 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 		</LabelContainer>
 	);
 
-	const UniswapButton = () => (
-		<StyledButton textTransform="none" onClick={() => setShowUniswapWidget(true)}>
+	const GetUsdButton = () => (
+		<StyledButton textTransform="none" onClick={() => router.push(`/exchange/sUSD`)}>
 			{t('header.balance.get-more-susd')}
 		</StyledButton>
 	);
@@ -119,7 +110,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	const Group: FC<any> = ({ children, ...props }) => (
 		<components.Group {...props}>
 			<StyledOptions>{children}</StyledOptions>
-			<UniswapButton />
+			<GetUsdButton />
 		</components.Group>
 	);
 
@@ -127,7 +118,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 		return (
 			<components.NoOptionsMessage {...props}>
 				<span>{t('header.balance.no-accessible-margin')}</span>
-				<UniswapButton />
+				<GetUsdButton />
 			</components.NoOptionsMessage>
 		);
 	};
@@ -135,11 +126,6 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 	useEffect(() => {
 		setBalanceLabel(formatCurrency(Synths.sUSD, sUSDBalance, { sign: '$' }));
 	}, [balanceLabel, sUSDBalance]);
-
-	useEffect(() => {
-		synthsBalancesQuery.refetch();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [uniswapWidgetOpened]);
 
 	if (!balanceLabel) {
 		return null;
@@ -150,7 +136,7 @@ const BalanceActions: FC<FuturesPositionTableProps> = ({
 			{sUSDBalance.eq(zeroBN) && accessiblePositions.length === 0 ? (
 				<StyledWidgetButton
 					textTransform="none"
-					onClick={() => setShowUniswapWidget(true)}
+					onClick={() => router.push(`/exchange/sUSD`)}
 					noOutline={true}
 				>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />

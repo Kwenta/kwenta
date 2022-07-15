@@ -2,22 +2,20 @@ import { NetworkId } from '@synthetixio/contracts-interface';
 
 export type Token = {
 	address: string;
-	chainId: NetworkId;
 	decimals: number;
 	logoURI: string;
 	name: string;
 	symbol: string;
+	chainId: NetworkId;
 	tags: string[];
 };
 
-export type TokenListResponse = {
-	keywords: string[];
-	logoURI: string;
-	name: string;
-	tags: any;
-	timestamp: string;
+export type ZapperTokenListResponse = {
 	tokens: Token[];
-	version: { major: number; minor: number; patch: number };
+};
+
+export type OneInchTokenListResponse = {
+	tokens: Record<string, Token>;
 };
 
 export type TokenListQueryResponse = {

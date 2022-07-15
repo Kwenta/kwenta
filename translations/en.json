@@ -290,7 +290,8 @@
 				"select-synth": "select synth",
 				"select-token": "select token"
 			},
-			"max-button": "max"
+			"max-button": "max",
+			"slippage": " slippage"
 		},
 		"market-details-card": {
 			"title": "Market Details",
@@ -365,13 +366,13 @@
 				"settle-waiting-period": "settlement waiting period",
 				"settle": "settle",
 				"insufficient-balance": "insufficient balance",
+				"insufficient-liquidity": "insufficient liquidity",
 				"enter-amount": "enter amount",
 				"select-synth": "select synth",
 				"select-token": "select token",
 				"submit-order": "swap",
 				"submitting-order": "submitting order...",
 				"submitting-approval": "submitting approval...",
-				"approve-balancer": "approve balancer contract",
 				"add-more-collateral": "add more collateral"
 			}
 		},
@@ -404,10 +405,6 @@
 					},
 					"both-synths-suspended": {
 						"message": "Synths selected are currently paused - reset in progress."
-					},
-					"after-hours": {
-						"message": "Stock exchange is closed. Trade after-hours on Balancer",
-						"button-label": "Open Balancer Pool"
 					}
 				}
 			},
@@ -430,6 +427,11 @@
 		"charts": {
 			"single": "single",
 			"double": "double"
+		},
+		"1inch": {
+			"unsupported-network": "Synth Swap is not supported on this network",
+			"wallet-not-connected": "Wallet not connected"
+
 		}
 	},
 	"dashboard": {
@@ -975,7 +977,8 @@
 			"header": {
 				"search-results": "search results",
 				"category-synths": "{{category}} synths",
-				"all-synths": "all synths",
+				"all-synths": "synths",
+				"other-tokens": "tokens",
 				"your-synths": "your synths",
 				"holdings": "holdings"
 			},
@@ -1011,15 +1014,6 @@
 		"approve-transaction": {
 			"title": "approve transaction",
 			"confirm-with-provider": "Confirm your transaction through your wallet."
-		},
-		"afterHours": {
-			"title": "Aftermarket Trading Pool",
-			"approve": "Approve",
-			"balancer-pool": "Balancer Pool",
-			"powered-by-balancer": "Powered by Balancer",
-			"estimated-slippage": "Estimated Slippage",
-			"confirm-text": "Confirm your transaction with your web3 provider",
-			"notice-text": "During trading hours we provide exact prices based on Chainlink data. After trading hours you may trade at the going rate on Balancer. Please take note of potential price deviations as well as slippage on larger orders."
 		},
 		"settings": {
 			"title": "settings",
@@ -1209,9 +1203,6 @@
 		"dex-aggregators": {
 			"1inch": {
 				"title": "DEX Aggregator - 1inch.exchange"
-			},
-			"balancer": {
-				"title": "Balancer"
 			}
 		},
 		"totals": {
