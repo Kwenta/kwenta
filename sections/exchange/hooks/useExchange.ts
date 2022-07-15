@@ -599,7 +599,7 @@ const useExchange = ({
 		'Synthetix',
 		isAtomic ? 'exchangeAtomically' : 'exchangeWithTracking',
 		exchangeParams!,
-		gasPrice ?? undefined,
+		undefined,
 		{
 			enabled: (needsApproval ? isApproved : true) && !!exchangeParams && !!walletAddress,
 		}
@@ -707,7 +707,7 @@ const useExchange = ({
 		'SynthRedeemer',
 		'redeemAll',
 		[redeemableDeprecatedSynths?.balances.map((b) => b.proxyAddress)],
-		gasPrice ?? undefined,
+		undefined,
 		{ enabled: !!redeemableDeprecatedSynths && redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
 	);
 
@@ -787,7 +787,7 @@ const useExchange = ({
 		quoteCurrencyContract,
 		'approve',
 		[approveAddress, ethers.constants.MaxUint256],
-		gasPrice ?? undefined,
+		undefined,
 		{ enabled: !!approveAddress && !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
 	);
 
@@ -795,7 +795,7 @@ const useExchange = ({
 		'Exchanger',
 		'settle',
 		[walletAddress, destinationCurrencyKey],
-		gasPrice ?? undefined,
+		undefined,
 		{ enabled: !isL2 && numEntries >= 12 }
 	);
 
