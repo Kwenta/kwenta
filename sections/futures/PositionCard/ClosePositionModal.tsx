@@ -14,7 +14,7 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
@@ -132,7 +132,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				}),
 			},
 		];
-	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency, synthsMap]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
