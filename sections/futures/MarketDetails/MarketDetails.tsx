@@ -18,7 +18,6 @@ import { Price, Rates } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
-import Connector from 'containers/Connector';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -36,7 +35,6 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);

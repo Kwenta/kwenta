@@ -25,7 +25,6 @@ import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobilePositionRow from './MobilePositionRow';
 import { positionsState } from 'store/futures';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -38,7 +37,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const network = useRecoilValue(networkState);
 	const router = useRouter();
 
 	const futuresPositions = useRecoilValue(positionsState);
@@ -76,7 +74,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
+	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<>

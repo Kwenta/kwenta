@@ -1,7 +1,7 @@
 import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
 import { Rates } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { FuturesMarketAsset, FuturesMarketKey } from './futures';
+import { FuturesMarketKey } from './futures';
 
 export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];

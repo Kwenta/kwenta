@@ -1,5 +1,4 @@
 import { FuturesMarketAsset } from 'utils/futures';
-import { CurrencyKey } from './currency';
 
 const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 
