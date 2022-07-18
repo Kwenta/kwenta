@@ -25,7 +25,6 @@ import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
-import { CurrencyKey } from 'constants/currency';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
