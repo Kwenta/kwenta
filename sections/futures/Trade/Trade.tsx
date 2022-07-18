@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import SegmentedControl from 'components/SegmentedControl';
-import useFuturesData from 'hooks/useFuturesData';
 import { leverageSideState, orderTypeState } from 'store/futures';
 
 import LeverageInput from '../LeverageInput';
@@ -17,6 +16,7 @@ import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketInfoBox from '../MarketInfoBox';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
 const Trade: React.FC = () => {
 	const {
@@ -28,7 +28,7 @@ const Trade: React.FC = () => {
 		dynamicFee,
 		isMarketCapReached,
 		orderTxn,
-	} = useFuturesData();
+	} = useFuturesContext();
 
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);

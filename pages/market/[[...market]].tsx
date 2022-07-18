@@ -23,6 +23,8 @@ import AppLayout from 'sections/shared/Layout/AppLayout';
 import LeftSidebar from '../../sections/futures/LeftSidebar/LeftSidebar';
 import { FuturesMarketAsset } from 'utils/futures';
 import { currentMarketState } from 'store/futures';
+import { FuturesContext } from 'contexts/FuturesContext';
+import useFuturesData from 'hooks/useFuturesData';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -38,34 +40,38 @@ const Market: MarketComponent = () => {
 
 	const setCurrentMarket = useSetRecoilState(currentMarketState);
 
+	const futuresData = useFuturesData();
+
 	useEffect(() => {
 		if (marketAsset) setCurrentMarket(marketAsset);
 	}, [setCurrentMarket, marketAsset]);
 
 	return (
-		<RefetchProvider>
-			<Head>
-				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
-			</Head>
-			<DesktopOnlyView>
-				<PageContent>
-					<StyledFullHeightContainer>
-						<StyledLeftSideContent>
-							<LeftSidebar />
-						</StyledLeftSideContent>
-						<StyledMainContent>
-							<MarketInfo />
-						</StyledMainContent>
-						<StyledRightSideContent>
-							<Trade />
-						</StyledRightSideContent>
-					</StyledFullHeightContainer>
-				</PageContent>
-			</DesktopOnlyView>
-			<MobileOrTabletView>
-				<MobileTrade />
-			</MobileOrTabletView>
-		</RefetchProvider>
+		<FuturesContext.Provider value={futuresData}>
+			<RefetchProvider>
+				<Head>
+					<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
+				</Head>
+				<DesktopOnlyView>
+					<PageContent>
+						<StyledFullHeightContainer>
+							<StyledLeftSideContent>
+								<LeftSidebar />
+							</StyledLeftSideContent>
+							<StyledMainContent>
+								<MarketInfo />
+							</StyledMainContent>
+							<StyledRightSideContent>
+								<Trade />
+							</StyledRightSideContent>
+						</StyledFullHeightContainer>
+					</PageContent>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<MobileTrade />
+				</MobileOrTabletView>
+			</RefetchProvider>
+		</FuturesContext.Provider>
 	);
 };
 
