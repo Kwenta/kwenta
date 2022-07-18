@@ -38,7 +38,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
-					conversionRate && price && wei(conversionRate).gt(0)
+					conversionRate && wei(price) && wei(conversionRate).gt(0)
 						? wei(price).div(conversionRate)
 						: price,
 					{
