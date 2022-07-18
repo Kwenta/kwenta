@@ -13,13 +13,18 @@ import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures
 import { formatNumber } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getSynthDescription,
+	isEurForex,
+	MarketKeyByAsset,
+} from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobilePositionRow from './MobilePositionRow';
 import { positionsState } from 'store/futures';
 import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -32,7 +37,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
-	const network = useRecoilValue(networkState);
 	const router = useRouter();
 
 	const futuresPositions = useRecoilValue(positionsState);
@@ -51,8 +55,8 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			return {
 				asset: position.asset,
 				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: getMarketKey(position.asset, network.id),
-				description: description,
+				marketKey: MarketKeyByAsset[position.asset as FuturesMarketAsset],
+				description,
 				price: market?.price,
 				size: position?.position?.size,
 				notionalValue: position?.position?.notionalValue.abs(),
@@ -70,7 +74,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
+	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<>
@@ -96,7 +100,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
-													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
+													currencyKey={
+														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+													}
 												/>
 											</IconContainer>
 											<StyledText>

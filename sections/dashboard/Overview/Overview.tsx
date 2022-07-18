@@ -15,9 +15,8 @@ import SynthBalancesTable from '../SynthBalancesTable';
 import { wei } from '@synthetixio/wei';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { Synths } from '@synthetixio/contracts-interface';
-import { getMarketKey } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import Connector from 'containers/Connector';
 import SpotMarketsTable from '../SpotMarketsTable';
 
 enum PositionsTab {
@@ -39,8 +38,7 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset as FuturesMarketAsset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

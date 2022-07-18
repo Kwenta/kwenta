@@ -32,7 +32,7 @@ export const PRICE_CURRENCIES = [
 	Synths.sETH,
 ];
 
-export const appReadyState = atom<boolean>({
+export const appReadyState = atom({
 	key: getAppKey('appReady'),
 	default: false,
 });

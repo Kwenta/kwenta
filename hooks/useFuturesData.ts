@@ -8,7 +8,6 @@ import { ethers } from 'ethers';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import { Synths } from 'constants/currency';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import {
@@ -18,6 +17,7 @@ import {
 	leverageState,
 	leverageValueCommittedState,
 	marketInfoState,
+	marketKeyState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -40,13 +40,14 @@ const useFuturesData = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
-	const { synthetixjs, network } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);
-	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
+	const marketKey = useRecoilValue(marketKeyState);
+	const marketLimitQuery = useGetFuturesMarketLimit(marketKey);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -69,8 +70,8 @@ const useFuturesData = () => {
 	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
 	const marketAssetRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
-		[exchangeRates, marketAsset]
+		() => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD),
+		[exchangeRates, marketKey]
 	);
 
 	const positionLeverage = position?.position?.leverage ?? wei(0);
@@ -221,7 +222,7 @@ const useFuturesData = () => {
 				const [volatilityFee, orderFee] = await Promise.all([
 					synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
 						ethers.utils.formatBytes32String('sUSD'),
-						ethers.utils.formatBytes32String(marketAsset as string)
+						ethers.utils.formatBytes32String(marketAsset)
 					),
 					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);

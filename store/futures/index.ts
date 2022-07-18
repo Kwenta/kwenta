@@ -10,15 +10,20 @@ import {
 import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
 import { zeroBN } from 'utils/formatters/number';
-import { Synths, CurrencyKey } from 'constants/currency';
 import { Balances } from '@synthetixio/queries';
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-export const currentMarketState = atom<CurrencyKey>({
+export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
-	default: Synths.sETH,
+	default: FuturesMarketAsset.sETH,
+});
+
+export const marketKeyState = selector({
+	key: getFuturesKey('marketKey'),
+	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
 });
 
 export const balancesState = atom<Balances | null>({

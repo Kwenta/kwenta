@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
-import { getMarketKey } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 import { futuresMarketsState, positionsState } from 'store/futures';
 
 const useGetFuturesPositionForMarkets = (
@@ -37,10 +37,10 @@ const useGetFuturesPositionForMarkets = (
 			} = synthetixjs!;
 
 			const positionsForMarkets = await Promise.all(
-				(assets as string[]).map((asset: string) => {
+				assets.map((asset) => {
 					return Promise.all([
 						FuturesMarketData.positionDetailsForMarketKey(
-							ethersUtils.formatBytes32String(getMarketKey(asset, network.id)),
+							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
 							walletAddress
 						),
 						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(walletAddress),
@@ -49,7 +49,7 @@ const useGetFuturesPositionForMarkets = (
 			);
 
 			const futuresPositions = positionsForMarkets.map(([position, canLiquidate], i) =>
-				mapFuturesPosition(position, canLiquidate, getMarketKey(assets[i], network.id))
+				mapFuturesPosition(position, canLiquidate, assets[i])
 			);
 
 			setFuturesPositions(futuresPositions);

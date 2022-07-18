@@ -9,16 +9,14 @@ import { zeroBN } from 'utils/formatters/number';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { MarketKeyByAsset } from 'utils/futures';
 
 const PortfolioChart: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 
