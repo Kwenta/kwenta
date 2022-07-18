@@ -265,7 +265,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			)}
 			{txError != null && (
 				<Actions>
-					<Error message={txError}></Error>
+					<Error message={txError} formatter="revert"></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>

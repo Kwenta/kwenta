@@ -148,7 +148,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} />}
+			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
 		</StyledBaseModal>
 	);
 };

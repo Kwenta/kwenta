@@ -1,14 +1,23 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 import { formatRevert } from 'utils/formatters/error';
 
 type ErrorProps = {
 	message: string;
-	formatError?: (error: string) => string | undefined;
+	formatter?: 'revert' | undefined;
 };
 
-export const Error: FC<ErrorProps> = ({ message, formatError = formatRevert }) => {
-	return <ErrorContainer>{formatError(message)}</ErrorContainer>;
+export const Error: FC<ErrorProps> = ({ message, formatter }) => {
+	const formattedMessage = useMemo(() => {
+		switch (formatter) {
+			case 'revert':
+				return formatRevert(message);
+			default:
+				return message;
+		}
+	}, [message, formatter]);
+
+	return <ErrorContainer>{formattedMessage}</ErrorContainer>;
 };
 
 const ErrorContainer = styled.div`

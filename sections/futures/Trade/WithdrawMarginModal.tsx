@@ -164,7 +164,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <Error message={withdrawTxn.errorMessage}></Error>}
+			{withdrawTxn.errorMessage && (
+				<Error message={withdrawTxn.errorMessage} formatter="revert"></Error>
+			)}
 		</StyledBaseModal>
 	);
 };
