@@ -39,7 +39,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 		} catch {
 			return '';
 		}
-	}, [price])
+	}, [price]);
 
 	const cleanConversionRate = useMemo(() => {
 		try {
@@ -47,7 +47,7 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 		} catch {
 			return '';
 		}
-	}, [conversionRate])
+	}, [conversionRate]);
 
 	return (
 		<Container {...rest}>
