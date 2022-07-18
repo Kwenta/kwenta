@@ -50,6 +50,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
 	}, [position, maxLeverage]);
 
+	const leverageButtons = marketInfo?.maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
@@ -96,7 +97,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 						}}
 						disabled={isDisabled}
 					/>
-					{['2', '5', '10'].map((l) => (
+					{leverageButtons.map((l) => (
 						<LeverageButton
 							key={l}
 							mono

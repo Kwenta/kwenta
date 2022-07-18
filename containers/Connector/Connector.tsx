@@ -6,7 +6,12 @@ import {
 } from '@synthetixio/transaction-notifier';
 import { loadProvider } from '@synthetixio/providers';
 
-import { getDefaultNetworkId, getIsOVM, isSupportedNetworkId } from 'utils/network';
+import {
+	getDefaultNetworkId,
+	getDefaultProvider,
+	getIsOVM,
+	isSupportedNetworkId,
+} from 'utils/network';
 import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { NetworkId, SynthetixJS, synthetix, NetworkName } from '@synthetixio/contracts-interface';
 import { ethers } from 'ethers';
@@ -73,12 +78,15 @@ const useConnector = () => {
 		const init = async () => {
 			// TODO: need to verify we support the network
 			const networkId = await getDefaultNetworkId(isWalletConnected);
+			const defaultProvider = getDefaultProvider(networkId);
 
-			const provider = loadProvider({
-				networkId,
-				infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
-				provider: isWalletConnected ? window.ethereum : undefined,
-			});
+			const provider = isWalletConnected
+				? loadProvider({
+						networkId,
+						infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+						provider: window.ethereum,
+				  })
+				: defaultProvider;
 
 			const useOvm = getIsOVM(Number(networkId));
 

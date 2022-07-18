@@ -1,7 +1,7 @@
-import { FC, MouseEvent, ReactNode, useMemo } from 'react';
+import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import Wei, { wei } from '@synthetixio/wei';
 
 import { CurrencyKey } from 'constants/currency';
@@ -31,6 +31,9 @@ import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import { isL2State } from 'store/wallet';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { ratioState } from 'store/exchange';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -98,6 +101,8 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	const hasCurrencySelectCallback = onCurrencySelect != null;
 	const { synthsMap } = Connector.useContainer();
 
+	const setRatio = useSetRecoilState(ratioState);
+
 	const tokenName =
 		currencyKey && synthsMap[currencyKey]
 			? t('common.currency.synthetic-currency-name', {
@@ -106,96 +111,152 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 			: currencyName || t('exchange.currency-card.synth-name');
 
 	return (
-		<StyledCard
-			className={`currency-card currency-card-${side}`}
-			interactive={interactive}
-			{...rest}
-		>
-			<StyledCardBody className="currency-card-body">
-				<CurrencyContainer className="currency-container">
-					<InputContainer>
-						<InputLabel data-testid="destination">{label}</InputLabel>
-						<CurrencyAmountContainer
-							className="currency-amount-container"
-							disableInput={disableInput}
-						>
-							<FlexDivRowCentered>
-								<CurrencyAmount
-									disabled={disabled}
-									value={amount}
-									onChange={(_, value) => onAmountChange(value)}
-									placeholder={t('exchange.currency-card.amount-placeholder')}
-									data-testid="currency-amount"
-								/>
-								{!isBase && (
-									<MaxButton
-										onClick={hasWalletBalance ? onBalanceClick : undefined}
-										noOutline={true}
+		<>
+			<DesktopOnlyView>
+				<CardContainer>
+					<StyledCard
+						className={`currency-card currency-card-${side}`}
+						interactive={interactive}
+						{...rest}
+					>
+						<StyledCardBody className="currency-card-body">
+							<CurrencyContainer className="currency-container">
+								<InputContainer>
+									<InputLabel data-testid="destination">{label}</InputLabel>
+									<CurrencyAmountContainer
+										className="currency-amount-container"
+										disableInput={disableInput}
 									>
-										<CapitalizedText>{t('exchange.currency-card.max-button')}</CapitalizedText>
-									</MaxButton>
-								)}
-							</FlexDivRowCentered>
-							<FlexDivRowCentered>
-								<CurrencyAmountValue data-testid="amount-value">
-									{currencyKeySelected && tradeAmount != null
-										? formatCurrency(selectedPriceCurrency.name as CurrencyKey, tradeAmount, {
-												sign: selectedPriceCurrency.sign,
-										  })
-										: null}
-								</CurrencyAmountValue>
-								<Slippage>
-									{!isLoading &&
-										slippagePercent != null &&
-										slippagePercent.lt(0) &&
-										formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
-								</Slippage>
-							</FlexDivRowCentered>
-							{isLoading && <StyledLoader width="24px" height="24px" />}
-						</CurrencyAmountContainer>
-					</InputContainer>
+										<FlexDivRowCentered>
+											<CurrencyAmount
+												disabled={disabled}
+												value={amount}
+												onChange={(_, value) => {
+													onAmountChange(value);
+													setRatio(undefined);
+												}}
+												placeholder={t('exchange.currency-card.amount-placeholder')}
+												data-testid="currency-amount"
+											/>
+											{!isBase && (
+												<MaxButton
+													onClick={hasWalletBalance ? onBalanceClick : undefined}
+													noOutline
+												>
+													<CapitalizedText>
+														{t('exchange.currency-card.max-button')}
+													</CapitalizedText>
+												</MaxButton>
+											)}
+										</FlexDivRowCentered>
+										<FlexDivRowCentered>
+											<CurrencyAmountValue data-testid="amount-value">
+												{currencyKeySelected && tradeAmount != null
+													? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+															sign: selectedPriceCurrency.sign,
+													  })
+													: null}
+											</CurrencyAmountValue>
+											<Slippage>
+												{!isLoading &&
+													slippagePercent != null &&
+													slippagePercent.lt(0) &&
+													formatPercent(slippagePercent) + t('exchange.currency-card.slippage')}
+											</Slippage>
+										</FlexDivRowCentered>
+										{isLoading && <StyledLoader width="24px" height="24px" />}
+									</CurrencyAmountContainer>
+								</InputContainer>
 
-					<SelectorContainer>
-						<CurrencyNameLabel data-testid="currency-name">{tokenName}</CurrencyNameLabel>
-						<CurrencySelector
+								<SelectorContainer>
+									<CurrencyNameLabel data-testid="currency-name">{tokenName}</CurrencyNameLabel>
+									<CurrencySelector
+										currencyKeySelected={currencyKeySelected}
+										onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
+										role="button"
+										data-testid="currency-selector"
+									>
+										<TokenLabel>
+											{currencyKeySelected && (
+												<CurrencyIcon
+													currencyKey={currencyKey as CurrencyKey}
+													width="25px"
+													height="25px"
+												/>
+											)}
+											{currencyKey ?? (
+												<CapitalizedText>
+													{isL2
+														? t('exchange.currency-card.currency-selector.select-token')
+														: t('exchange.currency-card.currency-selector.select-synth')}
+												</CapitalizedText>
+											)}
+										</TokenLabel>
+										{hasCurrencySelectCallback && <CaretDownIcon />}
+									</CurrencySelector>
+									<WalletBalanceContainer disableInput={disableInput}>
+										<WalletBalanceLabel>
+											{t('exchange.currency-card.wallet-balance')}
+										</WalletBalanceLabel>
+										<WalletBalance
+											onClick={hasWalletBalance ? onBalanceClick : undefined}
+											insufficientBalance={insufficientBalance}
+											data-testid="wallet-balance"
+										>
+											{hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
+										</WalletBalance>
+									</WalletBalanceContainer>
+								</SelectorContainer>
+							</CurrencyContainer>
+						</StyledCardBody>
+					</StyledCard>
+				</CardContainer>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<div>
+					<SectionHeader>
+						<SectionTitle>{label}</SectionTitle>
+						<SectionSubTitle
+							onClick={hasWalletBalance ? onBalanceClick : undefined}
+							style={{ cursor: 'pointer' }}
+						>
+							Balance: {hasWalletBalance ? formatCurrency(currencyKey!, walletBalance!) : NO_VALUE}
+						</SectionSubTitle>
+					</SectionHeader>
+					<MainInput>
+						<div>
+							<SwapTextInput
+								value={amount}
+								onChange={(_, value) => {
+									onAmountChange(value);
+									setRatio(undefined);
+								}}
+								placeholder={t('exchange.currency-card.amount-placeholder')}
+								disabled={disabled}
+							/>
+							<SwapCurrencyPrice data-testid="amount-value">
+								{currencyKeySelected && tradeAmount != null
+									? formatCurrency(selectedPriceCurrency.name, tradeAmount, {
+											sign: selectedPriceCurrency.sign,
+									  })
+									: null}
+							</SwapCurrencyPrice>
+						</div>
+						<MobileCurrencySelector
 							currencyKeySelected={currencyKeySelected}
 							onClick={hasCurrencySelectCallback ? onCurrencySelect : undefined}
-							role="button"
 							data-testid="currency-selector"
 						>
-							<TokenLabel>
-								{currencyKeySelected && (
-									<CurrencyIcon
-										currencyKey={currencyKey as CurrencyKey}
-										width="25px"
-										height="25px"
-									/>
-								)}
-								{currencyKey ?? (
-									<CapitalizedText>
-										{isL2
-											? t('exchange.currency-card.currency-selector.select-token')
-											: t('exchange.currency-card.currency-selector.select-synth')}
-									</CapitalizedText>
-								)}
-							</TokenLabel>
+							{currencyKeySelected && (
+								<CurrencyIcon currencyKey={currencyKey as CurrencyKey} width="20px" height="20px" />
+							)}
+							<div className="label">{currencyKey ?? 'Select'}</div>
 							{hasCurrencySelectCallback && <CaretDownIcon />}
-						</CurrencySelector>
-						<WalletBalanceContainer disableInput={disableInput}>
-							<WalletBalanceLabel>{t('exchange.currency-card.wallet-balance')}</WalletBalanceLabel>
-							<WalletBalance
-								onClick={hasWalletBalance ? onBalanceClick : undefined}
-								insufficientBalance={insufficientBalance}
-								data-testid="wallet-balance"
-							>
-								{/* @ts-ignore */}
-								{hasWalletBalance ? formatCurrency(currencyKey, walletBalance) : NO_VALUE}
-							</WalletBalance>
-						</WalletBalanceContainer>
-					</SelectorContainer>
-				</CurrencyContainer>
-			</StyledCardBody>
-		</StyledCard>
+						</MobileCurrencySelector>
+					</MainInput>
+				</div>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -207,11 +268,17 @@ const MaxButton = styled(Button)`
 	margin: 10px 15px 0px 0px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
+
 const TokenLabel = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
 	gap: 10px;
+`;
+
+const CardContainer = styled.div`
+	display: grid;
+	height: 183px;
 `;
 
 const StyledCard = styled(Card)<{ interactive?: boolean }>`
@@ -250,7 +317,6 @@ const CurrencyContainer = styled(FlexDivRowCentered)`
 
 const CurrencySelector = styled.div<{
 	currencyKeySelected: boolean;
-	onClick: ((event: MouseEvent<HTMLDivElement, MouseEvent>) => void) | undefined;
 	interactive?: boolean;
 }>`
 	display: flex;
@@ -284,6 +350,30 @@ const CurrencySelector = styled.div<{
 				cursor: pointer;
 			}
 		`};
+`;
+
+const MobileCurrencySelector = styled.button<{
+	currencyKeySelected: boolean;
+}>`
+	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
+	padding: 6px;
+	padding-left: 5px;
+	border-radius: 12px;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	display: flex;
+	align-items: center;
+
+	.label {
+		margin-left: 6px;
+		margin-right: 6px;
+		font-family: ${(props) => props.theme.fonts.regular};
+		font-size: 15px;
+	}
+
+	svg {
+		margin-top: -2px;
+	}
 `;
 
 const CurrencyAmountContainer = styled.div<{ disableInput?: boolean }>`
@@ -373,6 +463,39 @@ const WalletBalance = styled.div<{ insufficientBalance: boolean }>`
 
 const StyledLoader = styled(Loader)`
 	left: 90%;
+`;
+
+const MainInput = styled.div`
+	box-sizing: border-box;
+	border: ${(props) => props.theme.colors.selectedTheme.border};
+	border-radius: 10px;
+	padding: 10px;
+	padding-left: 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+`;
+
+const SwapTextInput = styled(NumericInput)`
+	background-color: transparent;
+	border: none;
+	color: ${(props) => props.theme.colors.selectedTheme.text.value};
+	font-size: 18px;
+	font-family: ${(props) => props.theme.fonts.mono};
+	margin-bottom: 10px;
+	height: initial;
+
+	&:focus {
+		outline: none;
+	}
+`;
+
+const SwapCurrencyPrice = styled.div`
+	font-size: 12px;
+	color: ${(props) => props.theme.colors.selectedTheme.gray};
+	height: 12px;
+	margin-left: 10px;
 `;
 
 export default CurrencyCard;

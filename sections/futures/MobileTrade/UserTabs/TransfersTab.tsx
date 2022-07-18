@@ -8,7 +8,7 @@ import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTra
 import { GridDivCenteredRow } from 'styles/common';
 import Table from 'components/Table';
 import { timePresentation } from 'utils/formatters/date';
-import { SectionHeader } from '../common';
+import { SectionHeader, SectionTitle } from '../common';
 
 const TransfersTab: React.FC = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -26,7 +26,9 @@ const TransfersTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>Transfers</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Transfers</SectionTitle>
+			</SectionHeader>
 
 			<StyledTable
 				highlightRowsOnHover
