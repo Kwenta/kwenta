@@ -12,7 +12,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 const useGetCurrentPortfolioValue = (
-	markets: string[] | [],
+	markets: FuturesMarketKey[] | [],
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -44,7 +44,7 @@ const useGetCurrentPortfolioValue = (
 						const mappedPosition = mapFuturesPosition(
 							position,
 							false,
-							MarketAssetByKey[markets[i] as FuturesMarketKey]
+							MarketAssetByKey[markets[i]]
 						);
 						return mappedPosition.remainingMargin;
 					})

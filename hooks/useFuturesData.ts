@@ -47,7 +47,7 @@ const useFuturesData = () => {
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
-	const marketLimitQuery = useGetFuturesMarketLimit(marketAsset);
+	const marketLimitQuery = useGetFuturesMarketLimit(marketKey);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 

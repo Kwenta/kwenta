@@ -2,12 +2,12 @@ import { useRecoilValue } from 'recoil';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import { getReasonFromCode } from 'queries/futures/utils';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import QUERY_KEYS from 'constants/queryKeys';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { appReadyState } from 'store/app';
 import { ethers } from 'ethers';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { FuturesMarketKey } from 'utils/futures';
 
 interface FuturesMarketClosure {
 	isSuspended: boolean;
@@ -16,7 +16,7 @@ interface FuturesMarketClosure {
 }
 
 const useFuturesSuspensionQuery = (
-	currencyKey: CurrencyKey | null,
+	marketKey: FuturesMarketKey | null,
 	options?: UseQueryOptions<FuturesMarketClosure>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -27,7 +27,7 @@ const useFuturesSuspensionQuery = (
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<any>(
-		QUERY_KEYS.Futures.MarketClosure(network.id, currencyKey),
+		QUERY_KEYS.Futures.MarketClosure(network.id, marketKey),
 		async () => {
 			try {
 				const {
@@ -35,9 +35,9 @@ const useFuturesSuspensionQuery = (
 					utils,
 				} = synthetixjs!;
 
-				if (!currencyKey) return null;
+				if (!marketKey) return null;
 
-				const marketKeyBytes32 = utils.formatBytes32String(currencyKey);
+				const marketKeyBytes32 = utils.formatBytes32String(marketKey);
 				const [isSuspended, reasonCode] = await SystemStatus.futuresMarketSuspension(
 					marketKeyBytes32
 				);

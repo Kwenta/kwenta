@@ -16,13 +16,17 @@ import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { getSynthDescription, isEurForex } from 'utils/futures';
 import Wei, { wei } from '@synthetixio/wei';
-import { CurrencyKey } from 'constants/currency';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price } from 'queries/rates/types';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { currentMarketState, positionState, potentialTradeDetailsState } from 'store/futures';
+import {
+	currentMarketState,
+	marketKeyState,
+	positionState,
+	potentialTradeDetailsState,
+} from 'store/futures';
 import PreviewArrow from 'components/PreviewArrow';
 import media from 'styles/media';
 
@@ -68,10 +72,11 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const positionDetails = position?.position ?? null;
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
+	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 
@@ -79,7 +84,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 
 	const { synthsMap } = Connector.useContainer();
 
-	const marketKey = currencyKey;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)

@@ -24,6 +24,7 @@ import {
 	getDisplayAsset,
 	getSynthDescription,
 	isEurForex,
+	MarketKeyByAsset,
 } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
@@ -76,8 +77,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const asset = useRecoilValue(currentMarketState);
 
-	// TODO: FuturesMarketAsset end-to-end
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(asset as any);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
+		MarketKeyByAsset[asset]
+	);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();

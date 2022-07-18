@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
@@ -10,23 +10,23 @@ import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
 import { getReasonFromCode } from './utils';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { currentMarketState, marketInfoState } from 'store/futures';
+import { marketInfoState, marketKeyState } from 'store/futures';
 import { FuturesMarketAsset } from 'utils/futures';
 
 const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const currentMarket = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
-	const [, setMarketInfo] = useRecoilState(marketInfoState);
+	const setMarketInfo = useSetRecoilState(marketInfoState);
 
 	const { synthetixjs } = Connector.useContainer();
 
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket | null>(
-		QUERY_KEYS.Futures.Market(network.id, currentMarket),
+		QUERY_KEYS.Futures.Market(network.id, marketKey),
 		async () => {
 			if (isWalletConnected && !isL2) {
 				return null;
@@ -38,9 +38,9 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 			} = synthetixjs!;
 
 			const [markets, globals, { suspended, reason }] = await Promise.all([
-				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(currentMarket)]),
+				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(marketKey)]),
 				FuturesMarketData.globals(),
-				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(currentMarket)),
+				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(marketKey)),
 			]);
 
 			const market = markets[0];
