@@ -14,7 +14,7 @@ import { formatNumber } from 'utils/formatters/number';
 import Connector from 'containers/Connector';
 import { NO_VALUE } from 'constants/placeholder';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 import Wei, { wei } from '@synthetixio/wei';
 import { CurrencyKey } from 'constants/currency';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
@@ -77,9 +77,9 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 
-	const marketKey = getMarketKey(currencyKey, network.id);
+	const marketKey = currencyKey;
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)

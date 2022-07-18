@@ -9,7 +9,7 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition } from './utils';
 import Wei, { wei } from '@synthetixio/wei';
-import { getMarketAssetFromKey } from 'utils/futures';
+import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 const useGetCurrentPortfolioValue = (
 	markets: string[] | [],
@@ -44,7 +44,7 @@ const useGetCurrentPortfolioValue = (
 						const mappedPosition = mapFuturesPosition(
 							position,
 							false,
-							getMarketAssetFromKey(markets[i], network.id)
+							MarketAssetByKey[markets[i] as FuturesMarketKey]
 						);
 						return mappedPosition.remainingMargin;
 					})

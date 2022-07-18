@@ -8,7 +8,7 @@ import { wei } from '@synthetixio/wei';
 
 import Table from 'components/Table';
 import Currency from 'components/Currency';
-import { getDisplayAsset, getMarketKey } from 'utils/futures';
+import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 import { PositionSide } from '../types';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
@@ -79,7 +79,7 @@ const OpenOrdersTable: React.FC = () => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getDisplayAsset(order.asset) + '-PERP',
-			marketKey: getMarketKey(order.asset, network.id),
+			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size.abs(),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,

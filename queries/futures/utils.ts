@@ -25,6 +25,7 @@ import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { Synths } from '@synthetixio/contracts-interface';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -45,7 +46,7 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
 	canLiquidatePosition: boolean,
-	asset: string
+	asset: FuturesMarketAsset
 ): FuturesPosition => {
 	const {
 		remainingMargin,

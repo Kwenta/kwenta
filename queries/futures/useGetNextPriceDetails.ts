@@ -10,7 +10,6 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { getFuturesMarketContract } from './utils';
 import { currentMarketState } from 'store/futures';
-import { getMarketKey } from 'utils/futures';
 
 export type NextPriceDetails = {
 	keeperDeposit: Wei;
@@ -40,7 +39,7 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 				const { contracts } = synthetixjs!;
 				const { ExchangeRates, FuturesMarketSettings } = contracts;
 				const FuturesMarketContract = getFuturesMarketContract(currencyKey, contracts);
-				const marketKey = getMarketKey(currencyKey, network.id);
+				const marketKey = currencyKey;
 
 				const [
 					currentRoundId,

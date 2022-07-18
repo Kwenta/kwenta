@@ -8,7 +8,6 @@ import { ethers } from 'ethers';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import { Synths } from 'constants/currency';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import {
@@ -18,6 +17,7 @@ import {
 	leverageState,
 	leverageValueCommittedState,
 	marketInfoState,
+	marketKeyState,
 	maxLeverageState,
 	orderTypeState,
 	positionState,
@@ -46,7 +46,8 @@ const useFuturesData = () => {
 	const { handleRefetch } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);
-	const marketLimitQuery = useGetFuturesMarketLimit(getMarketKey(marketAsset, network.id));
+	const marketKey = useRecoilValue(marketKeyState);
+	const marketLimitQuery = useGetFuturesMarketLimit(marketAsset);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -69,7 +70,7 @@ const useFuturesData = () => {
 	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
 	const marketAssetRate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, marketAsset, Synths.sUSD),
+		() => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD),
 		[exchangeRates, marketAsset]
 	);
 

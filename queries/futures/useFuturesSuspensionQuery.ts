@@ -1,4 +1,3 @@
-import { getMarketKey } from 'utils/futures';
 import { useRecoilValue } from 'recoil';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
@@ -36,8 +35,9 @@ const useFuturesSuspensionQuery = (
 					utils,
 				} = synthetixjs!;
 
-				const marketKey = getMarketKey(currencyKey, network.id);
-				const marketKeyBytes32 = utils.formatBytes32String(marketKey);
+				if (!currencyKey) return null;
+
+				const marketKeyBytes32 = utils.formatBytes32String(currencyKey);
 				const [isSuspended, reasonCode] = await SystemStatus.futuresMarketSuspension(
 					marketKeyBytes32
 				);

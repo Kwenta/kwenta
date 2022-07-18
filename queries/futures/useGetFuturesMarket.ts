@@ -8,10 +8,10 @@ import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
-import { getMarketKey } from 'utils/futures';
 import { getReasonFromCode } from './utils';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { currentMarketState, marketInfoState } from 'store/futures';
+import { FuturesMarketAsset } from 'utils/futures';
 
 const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -37,12 +37,10 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 				utils,
 			} = synthetixjs!;
 
-			const marketKey = getMarketKey(currentMarket, network.id);
-
 			const [markets, globals, { suspended, reason }] = await Promise.all([
-				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(marketKey)]),
+				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(currentMarket)]),
 				FuturesMarketData.globals(),
-				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(marketKey)),
+				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(currentMarket)),
 			]);
 
 			const market = markets[0];
@@ -61,7 +59,7 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 
 			const parsedMarket = {
 				market: m,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).neg(),
 				feeRates: {
