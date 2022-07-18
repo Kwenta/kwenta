@@ -40,7 +40,7 @@ const useFuturesData = () => {
 	const walletAddress = useRecoilValue(walletAddressState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
-	const { synthetixjs, network } = Connector.useContainer();
+	const { synthetixjs } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { handleRefetch } = useRefetchContext();
@@ -71,7 +71,7 @@ const useFuturesData = () => {
 
 	const marketAssetRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, marketKey, Synths.sUSD),
-		[exchangeRates, marketAsset]
+		[exchangeRates, marketKey]
 	);
 
 	const positionLeverage = position?.position?.leverage ?? wei(0);
@@ -222,7 +222,7 @@ const useFuturesData = () => {
 				const [volatilityFee, orderFee] = await Promise.all([
 					synthetixjs.contracts.Exchanger.dynamicFeeRateForExchange(
 						ethers.utils.formatBytes32String('sUSD'),
-						ethers.utils.formatBytes32String(marketAsset as string)
+						ethers.utils.formatBytes32String(marketAsset)
 					),
 					FuturesMarketContract.orderFee(sizeDelta.toBN()),
 				]);

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FuturesPosition } from 'queries/futures/types';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
 import { PositionSide } from '../types';
 import { getDisplayAsset } from 'utils/futures';
 import { currentMarketState } from 'store/futures';

@@ -2,7 +2,6 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +25,6 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-	const { network } = Connector.useContainer();
 
 	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
@@ -61,7 +59,7 @@ const BalanceActions: FC = () => {
 				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 			},
 		];
-	}, [futuresPositions, router, network]);
+	}, [futuresPositions, router]);
 
 	const OptionsGroupLabel: FC<{
 		label: string;

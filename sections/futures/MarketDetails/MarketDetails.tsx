@@ -59,7 +59,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
 		futureRates,
 		marketKey,
-		network.id,
 	]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(

@@ -8,7 +8,6 @@ import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
 
-import { CurrencyKey } from 'constants/currency';
 import { FuturesPosition, PositionHistory } from 'queries/futures/types';
 
 import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
