@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
+import Error from 'components/Error';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import Button from 'components/Button';
@@ -147,7 +148,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
+			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
 		</StyledBaseModal>
 	);
 };
@@ -202,13 +203,8 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
-export const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin-top: 13px;
+	margin: 13px 0px;
 	padding: 0 14px;
 	p {
 		margin: 0;

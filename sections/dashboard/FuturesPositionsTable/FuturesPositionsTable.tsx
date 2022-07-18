@@ -58,7 +58,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				notionalValue: position?.position?.notionalValue.abs(),
 				position: position?.position?.side,
 				lastPrice: position?.position?.lastPrice,
-				avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
+				avgEntryPrice: positionHistory?.entryPrice,
 				liquidationPrice: position?.position?.liquidationPrice,
 				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
 				pnlPct: position?.position?.profitLoss

@@ -14,6 +14,7 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
@@ -170,8 +171,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					onClick={() => closeTxn.mutate()}
 					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
+					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
+				{(error || closeTxn.errorMessage) && (
+					<Error message={error || closeTxn.errorMessage || ''} formatter="revert" />
+				)}
 			</>
 		</StyledBaseModal>
 	);
@@ -213,6 +217,7 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
