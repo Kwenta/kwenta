@@ -80,7 +80,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const externalPriceQuery = useExternalPriceQuery(marketAsset as CurrencyKey);
+	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)

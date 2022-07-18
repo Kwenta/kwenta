@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
+import { useRecoilValue } from 'recoil';
 
 import Select from 'components/Select';
 import Connector from 'containers/Connector';
@@ -26,7 +27,6 @@ import {
 } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { useRecoilState } from 'recoil';
 import { currentMarketState } from 'store/futures';
 
 function setLastVisited(baseCurrencyPair: string): void {
@@ -74,7 +74,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		dailyPriceChangesQuery,
 	]);
 
-	const [asset, setCurrentMarket] = useRecoilState(currentMarketState);
+	const asset = useRecoilValue(currentMarketState);
 
 	// TODO: FuturesMarketAsset end-to-end
 	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(asset as any);
@@ -163,7 +163,6 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 					// Types are not perfect from react-select, this should always be true (just helping typescript)
 					if (x && 'value' in x) {
 						router.push(ROUTES.Markets.MarketPair(x.value));
-						setCurrentMarket(x.value);
 						setLastVisited(x.value);
 					}
 				}}

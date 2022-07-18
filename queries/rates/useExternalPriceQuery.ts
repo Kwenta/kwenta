@@ -7,8 +7,9 @@ import { CG_BASE_API_URL } from './constants';
 import { PriceResponse } from './types';
 import { synthToCoingeckoPriceId } from './utils';
 import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
+import { FuturesMarketKey } from 'utils/futures';
 
-const getCoinGeckoPrice = async (currencyKey: CurrencyKey) => {
+const getCoinGeckoPrice = async (currencyKey: FuturesMarketKey) => {
 	const priceId = synthToCoingeckoPriceId(currencyKey);
 
 	const response = await axios.get<PriceResponse>(
@@ -37,20 +38,20 @@ const getForexPrice = async (currencyKey: CurrencyKey) => {
 };
 
 const useExternalPriceQuery = (
-	baseCurrencyKey: CurrencyKey,
+	marketKey: FuturesMarketKey,
 	options?: UseQueryOptions<number | null>
 ) => {
 	return useQuery<number | null>(
-		QUERY_KEYS.Rates.ExternalPrice(baseCurrencyKey),
+		QUERY_KEYS.Rates.ExternalPrice(marketKey),
 		async () => {
-			return COMMODITY_SYNTHS.has(baseCurrencyKey)
-				? getCommodityPrice(baseCurrencyKey)
-				: FIAT_SYNTHS.has(baseCurrencyKey)
-				? getForexPrice(baseCurrencyKey)
-				: getCoinGeckoPrice(baseCurrencyKey);
+			return COMMODITY_SYNTHS.has(marketKey as any)
+				? getCommodityPrice(marketKey as any)
+				: FIAT_SYNTHS.has(marketKey as any)
+				? getForexPrice(marketKey as any)
+				: getCoinGeckoPrice(marketKey);
 		},
 		{
-			enabled: !!baseCurrencyKey,
+			enabled: !!marketKey,
 			refetchInterval: 60000,
 			...options,
 		}
