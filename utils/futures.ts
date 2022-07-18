@@ -40,20 +40,6 @@ export const getSynthDescription = (synth: string, synthsMap: Dictionary<Synth>,
 export const isEurForex = (marketKeyOrAsset: string | undefined): boolean =>
 	marketKeyOrAsset === Synths.sEUR || marketKeyOrAsset === 'EUR';
 
-// Notes on the futures config:
-// 1. On the FuturesMarketKey and FuturesMarketAsset enums:
-//    We might be able to handle this more cleanly with objects/template literals,
-//    but this feels more concrete.
-//    Plese feel free to recommend better, cleaner methods of doing this.
-//    One consideration to make when making changes to this structure is that
-//    Synthetix has deviated from the "marketKey = 's' + marketAsset" pattern in the past.
-// 2. On the "supports" property:
-//    This prevents us from having to duplicate code across mainnet and testnet markets.
-// 3. On "marketsForNetwork":
-//    This allows us to get the markets list for either testnet/mainnet. It also throw an
-//    error (which we should catch on the UI) when the user attempts to use a feature
-//    that depends on this config on L1 (or other unsupported networks).
-
 export enum FuturesMarketKey {
 	sBTC = 'sBTC',
 	sETH = 'sETH',
