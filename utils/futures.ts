@@ -2,8 +2,6 @@ import { NetworkId, NetworkNameById, Synth } from '@synthetixio/contracts-interf
 import { TFunction } from 'i18next';
 import { Dictionary } from 'lodash';
 
-// import futuresMarketsKovan from 'synthetix/publish/deployed/kovan-ovm/futures-markets.json';
-// import futuresMarketsMainnet from 'synthetix/publish/deployed/mainnet-ovm/futures-markets.json';
 import { Synths } from 'constants/currency';
 
 export const getMarketAsset = (marketKey: FuturesMarketKey) => {
@@ -210,11 +208,12 @@ export const testnetMarkets = marketsList.filter(
 export const marketsForNetwork = (networkId: NetworkId) => {
 	const network = NetworkNameById[networkId];
 
-	if (network === 'mainnet-ovm') {
-		return mainnetMarkets;
-	} else if (network === 'kovan-ovm') {
-		return testnetMarkets;
-	} else {
-		throw new Error('You cannot use futures on this network.');
+	switch (network) {
+		case 'mainnet-ovm':
+			return mainnetMarkets;
+		case 'kovan-ovm':
+			return testnetMarkets;
+		default:
+			throw new Error('You cannot use futures on this network.');
 	}
 };
