@@ -39,7 +39,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
 
-	const synthList = futuresMarkets.map(({ asset }) => asset);
+	const synthList = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
