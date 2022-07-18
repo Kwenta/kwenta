@@ -20,6 +20,7 @@ import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { getDisplayAsset } from 'utils/futures';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -56,7 +57,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		`FuturesMarket${getDisplayAsset(market)}`,
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,

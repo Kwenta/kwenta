@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { PageContent, FullHeightContainer } from 'styles/common';
 import DashboardContainer from 'sections/dashboard/DashboardContainer';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { RefetchProvider } from 'contexts/RefetchContext';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobileDashboard from 'sections/dashboard/MobileDashboard';
 
@@ -19,7 +20,7 @@ const Dashboard: DashboardComponent = () => {
 	const { t } = useTranslation();
 
 	return (
-		<>
+		<RefetchProvider>
 			<Head>
 				<title>{t('futures.page-title')}</title>
 			</Head>
@@ -33,7 +34,7 @@ const Dashboard: DashboardComponent = () => {
 			<MobileOnlyView>
 				<MobileDashboard />
 			</MobileOnlyView>
-		</>
+		</RefetchProvider>
 	);
 };
 

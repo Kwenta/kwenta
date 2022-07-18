@@ -19,6 +19,7 @@ const useRedeemableDeprecatedSynthsQuery = (
 		['WalletBalances', 'RedeemableDeprecatedSynths', network.id, walletAddress],
 		async () => {
 			await ethCallProvider.init(provider as any);
+
 			const {
 				contracts: { SynthRedeemer },
 				sources,
@@ -26,9 +27,9 @@ const useRedeemableDeprecatedSynthsQuery = (
 
 			const synthDeprecatedFilter = SynthRedeemer.filters.SynthDeprecated();
 			const deprecatedSynthsEvents = await SynthRedeemer.queryFilter(synthDeprecatedFilter);
-			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents.map(
-				(e: any) => e.args?.synth ?? ''
-			);
+			const deprecatedProxySynthsAddresses: string[] = deprecatedSynthsEvents
+				.map((e) => e.args?.synth)
+				.filter(Boolean);
 
 			const Redeemer = new Contract(SynthRedeemer.address, sources.SynthRedeemer.abi as any);
 
@@ -40,8 +41,8 @@ const useRedeemableDeprecatedSynthsQuery = (
 				balanceCalls.push(Redeemer.balanceOf(addr, walletAddress));
 			}
 
-			const deprecatedSynths = (await ethCallProvider.all(symbolCalls, {})) as CurrencyKey[];
-			const balanceData = (await ethCallProvider.all(balanceCalls, {})) as ethers.BigNumber[];
+			const deprecatedSynths = (await ethCallProvider.all(symbolCalls)) as CurrencyKey[];
+			const balanceData = (await ethCallProvider.all(balanceCalls)) as ethers.BigNumber[];
 			const balances = balanceData.map((balance) => wei(balance));
 
 			let totalUSDBalance = wei(0);

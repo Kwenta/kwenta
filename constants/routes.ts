@@ -24,7 +24,7 @@ export const ROUTES = {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
-		Into: (currencyKey: CurrencyKey) => normalizeRoute(`/exchange`, currencyKey, 'market'),
+		Into: (currencyKey: string) => normalizeRoute(`/exchange`, currencyKey, 'market'),
 	},
 	Markets: {
 		Home: '/market/sETH',

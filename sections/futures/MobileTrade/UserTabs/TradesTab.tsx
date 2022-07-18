@@ -15,7 +15,7 @@ import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { CellProps } from 'react-table';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 import TradeDrawer from '../drawers/TradeDrawer';
-import { SectionHeader } from '../common';
+import { SectionHeader, SectionTitle } from '../common';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
@@ -53,7 +53,9 @@ const TradesTab: React.FC = () => {
 
 	return (
 		<div>
-			<SectionHeader>Trades</SectionHeader>
+			<SectionHeader>
+				<SectionTitle>Trades</SectionTitle>
+			</SectionHeader>
 			<StyledTable
 				palette="primary"
 				onTableRowClick={(row) => {

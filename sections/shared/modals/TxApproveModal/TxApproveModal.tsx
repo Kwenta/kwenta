@@ -17,7 +17,7 @@ type TxApproveModalProps = {
 	attemptRetry: () => void;
 	currencyKey: string;
 	currencyLabel: ReactNode;
-	txProvider?: TxProvider;
+	txProvider?: TxProvider | null;
 };
 
 export const TxApproveModal: FC<TxApproveModalProps> = ({

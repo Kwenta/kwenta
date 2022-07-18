@@ -1,12 +1,12 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
 
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
+
+import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import useSynthBalances from 'queries/synths/useSynthBalances';
 
 type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
 
@@ -19,12 +19,10 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
+	const positionsQuery = useGetFuturesPositionForMarkets([]);
 	const marketQuery = useGetFuturesMarket();
 	useGetFuturesPotentialTradeDetails();
 
@@ -43,6 +41,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					openOrdersQuery.refetch();
 					break;
 				case 'margin-change':
+					positionsQuery.refetch();
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
