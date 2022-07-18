@@ -352,9 +352,9 @@ export const mapTradeHistory = (
 						timestamp: timestamp * 1000,
 						openTimestamp: openTimestamp * 1000,
 						closeTimestamp: closeTimestamp * 1000,
-						market: market,
-						asset: utils.parseBytes32String(asset),
-						account: account,
+						market,
+						asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+						account,
 						isOpen,
 						isLiquidated,
 						size: sizeWei.abs(),
@@ -369,7 +369,7 @@ export const mapTradeHistory = (
 						pnl: pnlWei,
 						pnlWithFeesPaid: pnlWithFeesPaidWei,
 						totalVolume: totalVolumeWei,
-						trades: trades,
+						trades,
 						avgEntryPrice: avgEntryPriceWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)

@@ -130,7 +130,7 @@ export type PositionHistory = {
 	openTimestamp: number;
 	closeTimestamp: number;
 	market: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	account: string;
 	isOpen: boolean;
 	isLiquidated: boolean;
