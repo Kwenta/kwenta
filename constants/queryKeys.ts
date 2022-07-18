@@ -51,11 +51,12 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Tokens: (walletAddress: string, networkId: NetworkId) => [
+		Tokens: (walletAddress: string | null, networkId: NetworkId, tokenAddresses: string) => [
 			'walletBalances',
 			'tokens',
 			walletAddress,
 			networkId,
+			tokenAddresses,
 		],
 	},
 	Synths: {
