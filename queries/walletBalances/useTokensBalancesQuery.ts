@@ -1,80 +1,63 @@
 import { Provider, Contract as EthCallContract } from 'ethcall';
-import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { wei } from '@synthetixio/wei';
 import keyBy from 'lodash/keyBy';
-import omitBy from 'lodash/omitBy';
-import zipObject from 'lodash/zipObject';
-import mapValues from 'lodash/mapValues';
 import erc20Abi from 'lib/abis/ERC20.json';
-import { Contract, BigNumber } from 'ethers';
+import { BigNumber } from 'ethers';
 import { TokenBalances } from '@synthetixio/queries';
 
 import { CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import Connector from 'containers/Connector';
 import { Token } from 'queries/tokenLists/types';
+import QUERY_KEYS from 'constants/queryKeys';
 
 const FILTERED_TOKENS = ['0x4922a015c4407f87432b179bb209e125432e4a2a'];
 
-type UseTokensBalancesQueryReturn = UseQueryResult<TokenBalances>;
 const useTokensBalancesQuery = (
 	tokens: Token[],
 	walletAddress: string | null,
-	options?: UseQueryOptions<TokenBalances>
-): UseTokensBalancesQueryReturn => {
+	options?: UseQueryOptions<TokenBalances | null>
+) => {
 	const { provider, network } = Connector.useContainer();
 
 	const filteredTokens = tokens.filter((t) => !FILTERED_TOKENS.includes(t.address.toLowerCase()));
 	const symbols = filteredTokens.map((token) => token.symbol);
 	const tokensMap = keyBy(filteredTokens, 'symbol');
 
-	return useQuery<TokenBalances>(
-		[
-			'walletBalances',
-			'tokens',
-			network!.id,
+	return useQuery<TokenBalances | null>(
+		QUERY_KEYS.WalletBalances.Tokens(
 			walletAddress,
-			filteredTokens.map((f) => f.address).join(),
-		],
+			network!.id,
+			filteredTokens.map((f) => f.address).join()
+		),
 		async () => {
-			if (!provider) return {};
+			if (!provider) return null;
 			const ethcallProvider = new Provider();
-			await ethcallProvider.init(provider as any);
+			await ethcallProvider.init(provider);
 
 			const calls = [];
 			for (const { address, symbol } of filteredTokens) {
 				if (symbol === CRYPTO_CURRENCY_MAP.ETH) {
-					network.id === 1
-						? calls.push(ethcallProvider.getEthBalance(walletAddress!))
-						: calls.push(provider?.getBalance(walletAddress!));
+					calls.push(ethcallProvider.getEthBalance(walletAddress!));
 				} else {
-					if (network.id === 1) {
-						const tokenContract = new EthCallContract(address, erc20Abi);
-						calls.push(tokenContract.balanceOf(walletAddress));
-					} else {
-						const tokenContract = new Contract(address, erc20Abi, provider);
-						calls.push(tokenContract.balanceOf(walletAddress));
-					}
+					const tokenContract = new EthCallContract(address, erc20Abi);
+					calls.push(tokenContract.balanceOf(walletAddress));
 				}
 			}
 
-			// ethcall doesn't seem to work with Optimism currently
+			const data = (await ethcallProvider.all(calls)) as BigNumber[];
 
-			const data =
-				network.id === 1
-					? ((await ethcallProvider.all(calls, {})) as BigNumber[])
-					: await Promise.all(calls);
+			const tokenBalances: TokenBalances = {};
+			data.forEach((value, index) => {
+				if (value.lte(0)) return;
+				const token = tokensMap[symbols[index]];
 
-			const balancesMap = zipObject(symbols, data);
-			const positiveBalances = omitBy(balancesMap, (entry) => entry.lte(0));
-
-			return mapValues(positiveBalances, (balance, symbol: string) => {
-				const token = tokensMap[symbol];
-
-				return {
-					balance: wei(balance, token.decimals ?? 18),
+				tokenBalances[symbols[index]] = {
+					balance: wei(value, token.decimals ?? 18),
 					token,
 				};
 			});
+			return tokenBalances;
 		},
 		{
 			enabled: !!provider && tokens.length > 0 && !!walletAddress,

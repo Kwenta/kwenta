@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
-import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
+import { utils } from 'ethers';
 
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import {

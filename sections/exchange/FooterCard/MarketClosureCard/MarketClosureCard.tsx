@@ -2,26 +2,25 @@ import { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { MarketClosure } from 'hooks/useMarketClosed';
-import { CurrencyKey } from 'constants/currency';
+import useMarketClosed, { MarketClosure } from 'hooks/useMarketClosed';
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
+import { baseCurrencyKeyState, quoteCurrencyKeyState } from 'store/exchange';
+import { useRecoilValue } from 'recoil';
 
 type MarketClosureCardProps = {
 	attached?: boolean;
 	baseCurrencyMarketClosed: MarketClosure;
 	quoteCurrencyMarketClosed: MarketClosure;
-	baseCurrencyKey: CurrencyKey | null;
-	quoteCurrencyKey: CurrencyKey | null;
 };
 
-const MarketClosureCard: FC<MarketClosureCardProps> = ({
-	attached,
-	baseCurrencyMarketClosed,
-	quoteCurrencyMarketClosed,
-	baseCurrencyKey,
-	quoteCurrencyKey,
-}) => {
+const MarketClosureCard: FC<MarketClosureCardProps> = ({ attached }) => {
 	const { t } = useTranslation();
+
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
+
+	const quoteCurrencyMarketClosed = useMarketClosed(quoteCurrencyKey);
+	const baseCurrencyMarketClosed = useMarketClosed(baseCurrencyKey);
 
 	const getSuspensionReason = useMemo(() => {
 		if (baseCurrencyMarketClosed.isMarketClosed && quoteCurrencyMarketClosed.isMarketClosed) {

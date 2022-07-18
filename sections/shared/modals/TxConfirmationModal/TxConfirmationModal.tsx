@@ -29,7 +29,7 @@ import InfoIcon from 'assets/svg/app/info.svg';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 
-export type TxProvider = 'synthetix' | '1inch' | 'balancer' | 'synthswap';
+export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
 type TxConfirmationModalProps = {
 	onDismiss: () => void;
