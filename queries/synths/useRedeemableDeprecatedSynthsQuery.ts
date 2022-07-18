@@ -41,8 +41,8 @@ const useRedeemableDeprecatedSynthsQuery = (
 				balanceCalls.push(Redeemer.balanceOf(addr, walletAddress));
 			}
 
-			const deprecatedSynths = (await ethCallProvider.all(symbolCalls, {})) as CurrencyKey[];
-			const balanceData = (await ethCallProvider.all(balanceCalls, {})) as ethers.BigNumber[];
+			const deprecatedSynths = (await ethCallProvider.all(symbolCalls)) as CurrencyKey[];
+			const balanceData = (await ethCallProvider.all(balanceCalls)) as ethers.BigNumber[];
 			const balances = balanceData.map((balance) => wei(balance));
 
 			let totalUSDBalance = wei(0);
