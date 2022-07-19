@@ -20,7 +20,8 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { futuresAccountState } from 'store/futures';
+import { isL2State } from 'store/wallet';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
@@ -28,13 +29,13 @@ import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/fut
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { t } = useTranslation();
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
-	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
-	const trades = useMemo(
+	const futuresTradesQuery = useGetAllFuturesTradesForAccount(selectedFuturesAddress);
+	const trades: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);

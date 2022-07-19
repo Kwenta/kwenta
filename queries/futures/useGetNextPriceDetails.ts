@@ -6,8 +6,8 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { marketKeyState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { futuresAccountState, marketKeyState } from 'store/futures';
+import { isL2State, networkState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { getFuturesMarketContract } from './utils';
@@ -24,15 +24,15 @@ export type NextPriceDetails = {
 };
 
 const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | null>) => {
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<NextPriceDetails | null>(
-		QUERY_KEYS.Futures.NextPriceDetails(network.id, walletAddress, marketKey),
+		QUERY_KEYS.Futures.NextPriceDetails(network.id, selectedFuturesAddress, marketKey),
 		async () => {
 			try {
 				const { contracts } = synthetixjs!;
@@ -75,7 +75,7 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!marketKey && !!walletAddress,
+			enabled: isAppReady && isL2 && !!marketKey && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

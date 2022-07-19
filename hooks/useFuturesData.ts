@@ -17,6 +17,7 @@ import { PositionSide } from 'sections/futures/types';
 import {
 	currentMarketState,
 	feeCostState,
+	futuresAccountState,
 	leverageSideState,
 	leverageState,
 	leverageValueCommittedState,
@@ -30,7 +31,7 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -39,7 +40,6 @@ import logError from 'utils/logError';
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { synthetixjs } = Connector.useContainer();
@@ -65,6 +65,7 @@ const useFuturesData = () => {
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -216,7 +217,7 @@ const useFuturesData = () => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
-				!walletAddress ||
+				!selectedFuturesAddress ||
 				!isLeverageValueCommitted ||
 				!position?.remainingMargin
 			) {
@@ -247,7 +248,7 @@ const useFuturesData = () => {
 		marketAsset,
 		position,
 		leverageSide,
-		walletAddress,
+		selectedFuturesAddress,
 		isLeverageValueCommitted,
 		sizeDelta,
 		setFeeCost,
