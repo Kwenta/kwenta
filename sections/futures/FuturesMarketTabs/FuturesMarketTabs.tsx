@@ -28,9 +28,7 @@ const FuturesMarketTabs: FC = () => {
 			<StyledSegmentedControl
 				values={DETAIL_TABS}
 				selectedIndex={activeTab}
-				onChange={(index) => {
-					setActiveTab(index);
-				}}
+				onChange={setActiveTab}
 			/>
 			<TabPanel name={DETAIL_TABS[0]} activeTab={DETAIL_TABS[activeTab]}>
 				<FuturesMarketTab futuresMarkets={futuresMarkets} />

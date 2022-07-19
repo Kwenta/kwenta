@@ -33,7 +33,6 @@ import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import useChartWideWidth from 'sections/exchange/hooks/useChartWideWidth';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
@@ -137,8 +136,6 @@ const useExchange = ({
 	const network = useRecoilValue(networkState);
 	const slippage = useRecoilValue(slippageState);
 	const getL1SecurityFee = useGetL1SecurityFee();
-
-	const wideWidth = useChartWideWidth();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const ethGasPriceQuery = useEthGasPriceQuery();
@@ -1125,7 +1122,6 @@ const useExchange = ({
 		handleCurrencySwap,
 		inverseRate,
 		quoteCurrencyKey,
-		wideWidth,
 		txProvider,
 		openModal,
 		setOpenModal,

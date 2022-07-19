@@ -7,12 +7,6 @@ export const CardTitle = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
-export const ConvertContainer = styled.div`
-	max-width: 1000px;
-	margin: 0 auto;
-	width: 100%;
-`;
-
 export const Title = styled(Text.Body)`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
 	font-size: 14px;
