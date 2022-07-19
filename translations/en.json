@@ -435,36 +435,18 @@
 		}
 	},
 	"dashboard": {
-		"page-title": "Dashboard | Kwenta",
-		"trending": "Trending",
-		"watchlist": {
-			"title": "Watchlist"
+		"titles": {
+			"trading": "Trading",
+			"community": "Community",
+			"staking": "Stake & Rewards"
 		},
 		"tabs": {
-			"nav": {
-				"synth-balances": "Synth Balances",
-				"convert": "Synth Onramp",
-				"crypto-balances": "Crypto Balances",
-				"transactions": "Transactions",
-				"deprecated": "Deprecated"
-			}
-		},
-		"onboard": {
-			"convert": "Synth Onramp",
-			"title": "Learn How it Works",
-			"subtitle": "Get up and running on Kwenta and exchange everything.",
-			"learn-more": "Learn More",
-			"how-it-works-modal": {
-				"title": "How it works"
-			},
-			"convert-card": {
-				"slippage-selector": {
-					"title": "Slippage"
-				}
-			}
-		},
-		"your-portfolio": {
-			"title": "Your Portfolio"
+			"overview": "Overview",
+			"history": "History",
+			"rewards": "Rewards",
+			"markets": "Markets",
+			"governance": "Governance",
+			"staking": "Staking"
 		},
 		"synth-sort": {
 			"price": "Price",
@@ -472,38 +454,6 @@
 			"24h-high": "24H High",
 			"24h-low": "24H Low",
 			"24h-change": "24H Change"
-		},
-		"transactions": {
-			"synth-sort": {
-				"allSynths": "All Synths"
-			},
-			"order-type-sort": {
-				"allOrderTypes": "All Order Types",
-				"market": "Market",
-				"limit": "Limit"
-			},
-			"table": {
-				"orderType": "Order Type",
-				"from": "From",
-				"to": "To",
-				"value": "Value",
-				"fee-reclaim": "Fee Rebate/Reclaim",
-				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
-				"price-adjustment-hint": "Price adjustment currently in progress"
-			}
-		},
-		"fee-reclaiming-synths": {
-			"title": "In Progress",
-			"row": {
-				"main-col-subtitle": "Price adjustment in progress",
-				"main-col-complete-subtitle": "Price adjustment complete",
-				"col-trades": "Trades",
-				"col-debt-surplus": "Debt/Surplus",
-				"col-remaining": "Remaining"
-			},
-			"settling-fee": "Settling...",
-			"settle-fee": "Settle fee"
 		},
 		"overview": {
 			"futures-positions-table": {
@@ -1066,30 +1016,6 @@
 		},
 		"uniswap-widget": {
 			"title": "Swap Widget"
-		}
-	},
-	"futures-dashboard": {
-		"page-title": "Futures Dashboard | Kwenta",
-		"titles": {
-			"trading": "Trading",
-			"community": "Community",
-			"staking": "Stake & Rewards"
-		},
-		"tabs": {
-			"nav": {
-				"overview": "Overview",
-				"history": "History",
-				"rewards": "Rewards",
-				"markets": "Markets",
-				"governance": "Governance",
-				"staking": "Staking"
-			}
-		},
-		"position": {
-			"tab": "open position"
-		},
-		"trades": {
-			"tab": "history"
 		}
 	},
 	"common": {
