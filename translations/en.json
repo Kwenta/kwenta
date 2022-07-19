@@ -448,13 +448,6 @@
 			"governance": "Governance",
 			"staking": "Staking"
 		},
-		"synth-sort": {
-			"price": "Price",
-			"24h-vol": "24H Volume",
-			"24h-high": "24H High",
-			"24h-low": "24H Low",
-			"24h-change": "24H Change"
-		},
 		"overview": {
 			"futures-positions-table": {
 				"market": "Market",
@@ -480,6 +473,12 @@
 				"funding-rate": "1H Funding Rate",
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
+			},
+			"spot-markets-table": {
+				"market": "Market",
+				"price": "Price",
+				"24h-vol": "24H Volume",
+				"24h-change": "24H Change"
 			},
 			"positions-tabs": {
 				"futures": "Futures Positions",

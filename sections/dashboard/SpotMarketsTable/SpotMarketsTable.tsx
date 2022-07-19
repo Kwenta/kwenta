@@ -94,9 +94,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				]}
 				columns={[
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
-						),
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>,
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.market === '-' ? (
@@ -126,7 +124,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.price')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<any>) => {
 							const formatOptions = isEurForex(cellProps.row.original.asset)
@@ -147,7 +145,9 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 130,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-change')}</TableHeader>,
+						Header: (
+							<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+						),
 						accessor: '24hChange',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.change === '-' ? (
@@ -163,7 +163,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 105,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-vol')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>,
 						accessor: '24hVolume',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.volume === '-' ? (
