@@ -1,5 +1,5 @@
 import { useRef, useContext, useEffect, useCallback, useState } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import { ThemeContext } from 'styled-components';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
 
 import {
@@ -180,14 +180,5 @@ export function TVChart({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [lastSubscription, onSubscribe, network.id]);
 
-	return (
-		<Container>
-			<ChartBody id={containerId} />
-		</Container>
-	);
+	return <ChartBody id={containerId} />;
 }
-
-const Container = styled.div`
-	border-radius: 4px;
-	background: ${(props) => props.theme.colors.selectedTheme.background};
-`;
