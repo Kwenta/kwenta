@@ -19,22 +19,13 @@ import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import { PositionSide } from 'queries/futures/types';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
 type ManagePositionProps = {
-	translationKey: string;
-	marketCapReached: boolean;
-	error: string | null;
-	orderError: string | null;
 	openConfirmationModal(): void;
 };
 
-const ManagePosition: React.FC<ManagePositionProps> = ({
-	translationKey,
-	marketCapReached,
-	openConfirmationModal,
-	error,
-	orderError,
-}) => {
+const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
@@ -47,6 +38,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const [, setLeverageSide] = useRecoilState(leverageSideState);
 	const [, setTradeSize] = useRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
+	const { error, orderTxn, isMarketCapReached, placeOrderTranslationKey } = useFuturesContext();
 
 	return (
 		<>
@@ -65,13 +57,13 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 							Number(leverage) > maxLeverageValue.toNumber() ||
 							sizeDelta.eq(zeroBN) ||
 							!!error ||
-							translationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
+							placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
 							marketInfo?.isSuspended ||
-							marketCapReached
+							isMarketCapReached
 						}
 						onClick={openConfirmationModal}
 					>
-						{t(translationKey)}
+						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton
@@ -99,9 +91,9 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 				</ManagePositionContainer>
 			</div>
 
-			{(orderError || error || previewTrade?.showStatus) && (
+			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
 				<Error
-					message={previewTrade?.statusMessage || orderError || error || ''}
+					message={previewTrade?.statusMessage || orderTxn.errorMessage || error || ''}
 					formatter="revert"
 				/>
 			)}

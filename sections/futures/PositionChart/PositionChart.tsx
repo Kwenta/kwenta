@@ -11,6 +11,7 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
+import styled from 'styled-components';
 
 export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -51,19 +52,26 @@ export default function PositionChart() {
 	}, [subgraphPosition, position]);
 
 	return (
-		<TVChart
-			baseCurrencyKey={marketAsset}
-			quoteCurrencyKey={Synths.sUSD}
-			activePosition={activePosition}
-			potentialTrade={
-				previewTrade
-					? {
-							price: modifiedAverage || previewTrade.price,
-							liqPrice: previewTrade.liqPrice,
-							size: previewTrade.size,
-					  }
-					: null
-			}
-		/>
+		<Container>
+			<TVChart
+				baseCurrencyKey={marketAsset}
+				quoteCurrencyKey={Synths.sUSD}
+				activePosition={activePosition}
+				potentialTrade={
+					previewTrade
+						? {
+								price: modifiedAverage || previewTrade.price,
+								liqPrice: previewTrade.liqPrice,
+								size: previewTrade.size,
+						  }
+						: null
+				}
+			/>
+		</Container>
 	);
 }
+
+const Container = styled.div`
+	min-height: 45vh;
+	background: ${(props) => props.theme.colors.selectedTheme.background};
+`;
