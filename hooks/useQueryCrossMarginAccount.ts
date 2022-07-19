@@ -1,5 +1,5 @@
 import { FuturesAccountType } from 'queries/futures/types';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { futuresAccountState } from 'store/futures';
@@ -15,7 +15,7 @@ export default function useQueryCrossMarginAccount() {
 	const network = useRecoilValue(networkState);
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 
-	const queryAccountLogs = async () => {
+	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return;
 		const accountFilter = crossMarginContractFactory.filters.NewAccount(walletAddress);
 		if (accountFilter && crossMarginContractFactory) {
@@ -25,9 +25,10 @@ export default function useQueryCrossMarginAccount() {
 			}
 		}
 		return null;
-	};
+	}, [walletAddress, crossMarginContractFactory]);
 
-	const queryAndSetAccount = async () => {
+	const queryAndSetAccount = useCallback(async () => {
+		console.log('querying...');
 		if (!network.id || !walletAddress || !crossMarginContractFactory) return null;
 		if (!supportedNetworks.includes(network.id)) {
 			const accountState = {
@@ -60,11 +61,19 @@ export default function useQueryCrossMarginAccount() {
 			setFuturesAccount(accountState);
 			return accountState;
 		}
-	};
+	}, [
+		walletAddress,
+		crossMarginContractFactory,
+		futuresAccount.selectedType,
+		network.id,
+		setFuturesAccount,
+		queryAccountLogs,
+	]);
 
 	useEffect(() => {
 		queryAndSetAccount();
-	}, [walletAddress, crossMarginContractFactory, network.id]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [network.id, walletAddress, crossMarginContractFactory]);
 
 	return { queryAndSetAccount, futuresAccount };
 }

@@ -1,6 +1,9 @@
+import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import { wei } from '@synthetixio/wei';
+import { constants } from 'ethers';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
@@ -10,10 +13,7 @@ import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import { futuresAccountState } from 'store/futures';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import NumericInput from 'components/Input/NumericInput';
-import { ChangeEvent, useState } from 'react';
-import { wei } from '@synthetixio/wei';
 import useSUSDContract from 'hooks/useSUSDContract';
-import { constants } from 'ethers';
 import Loader from 'components/Loader';
 import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 
@@ -66,6 +66,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 				},
 			});
 		} catch (err) {
+			setCreatingAccount(false);
 			console.warn(err);
 		}
 	};

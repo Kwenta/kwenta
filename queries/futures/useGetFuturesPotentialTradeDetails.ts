@@ -14,7 +14,7 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 
 import { FuturesPotentialTradeDetails } from './types';
 import { getFuturesMarketContract } from './utils';

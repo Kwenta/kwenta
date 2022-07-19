@@ -4,7 +4,6 @@ import { atom, selector } from 'recoil';
 
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
-	CrossMarginAccountState,
 	FuturesAccountState,
 	FuturesMarket,
 	FuturesPosition,
