@@ -16,20 +16,8 @@ import NextPriceConfirmationModal from './NextPriceConfirmationModal';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketInfoBox from '../MarketInfoBox';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 const Trade: React.FC = () => {
-	const {
-		onLeverageChange,
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		placeOrderTranslationKey,
-		error,
-		dynamicFee,
-		isMarketCapReached,
-		orderTxn,
-	} = useFuturesContext();
-
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [openModal, setOpenModal] = useState<'trade' | 'next-price' | null>(null);
@@ -52,40 +40,20 @@ const Trade: React.FC = () => {
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
-			<OrderSizing
-				onAmountChange={onTradeAmountChange}
-				onAmountSUSDChange={onTradeAmountSUSDChange}
-				onLeverageChange={onLeverageChange}
-			/>
+			<OrderSizing />
 
-			<LeverageInput onLeverageChange={onLeverageChange} />
+			<LeverageInput />
 
 			<ManagePosition
-				translationKey={placeOrderTranslationKey}
-				marketCapReached={isMarketCapReached}
 				openConfirmationModal={() => setOpenModal(orderType === 1 ? 'next-price' : 'trade')}
-				error={error}
-				orderError={orderTxn.errorMessage}
 			/>
 
-			<FeeInfoBox dynamicFee={dynamicFee} />
+			<FeeInfoBox />
 
-			{openModal === 'trade' && (
-				<TradeConfirmationModal
-					onConfirmOrder={() => orderTxn.mutate()}
-					gasLimit={orderTxn.gasLimit}
-					l1Fee={orderTxn.optimismLayerOneFee}
-					onDismiss={() => setOpenModal(null)}
-				/>
-			)}
+			{openModal === 'trade' && <TradeConfirmationModal onDismiss={() => setOpenModal(null)} />}
 
 			{openModal === 'next-price' && (
-				<NextPriceConfirmationModal
-					onConfirmOrder={() => orderTxn.mutate()}
-					gasLimit={orderTxn.gasLimit}
-					l1Fee={orderTxn.optimismLayerOneFee}
-					onDismiss={() => setOpenModal(null)}
-				/>
+				<NextPriceConfirmationModal onDismiss={() => setOpenModal(null)} />
 			)}
 		</div>
 	);

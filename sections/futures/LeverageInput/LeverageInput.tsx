@@ -18,12 +18,9 @@ import {
 	positionState,
 } from 'store/futures';
 import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
-type LeverageInputProps = {
-	onLeverageChange: (value: string) => void;
-};
-
-const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
+const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const leverage = useRecoilValue(leverageState);
@@ -33,6 +30,8 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommittedState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const position = useRecoilValue(positionState);
+
+	const { onLeverageChange } = useFuturesContext();
 
 	const modeButton = useMemo(() => {
 		return (
