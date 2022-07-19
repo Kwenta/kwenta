@@ -5,15 +5,12 @@ import { FlexDivCentered } from 'styles/common';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { MarketsCurrencyOption } from './MarketsDropdown';
+import { MarketKeyByAsset } from 'utils/futures';
 
 const MarketsDropdownSingleValue: React.FC<SingleValueProps<MarketsCurrencyOption>> = (props) => (
 	<SingleValueWrapper {...props}>
 		<SingleValueContainer>
-			<CurrencyIcon
-				currencyKey={(props.data.value[0] !== 's' ? 's' : '') + props.data.value}
-				width="31px"
-				height="31px"
-			/>
+			<CurrencyIcon currencyKey={MarketKeyByAsset[props.data.value]} width="31px" height="31px" />
 			<div className="currency-meta">
 				<CurrencyLabel>
 					{props.data.label}

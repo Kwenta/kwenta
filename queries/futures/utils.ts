@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
-import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
+import { utils } from 'ethers';
 
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import {
@@ -25,6 +25,7 @@ import { ETH_UNIT } from 'constants/network';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 import { Synths } from '@synthetixio/contracts-interface';
 import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -45,7 +46,7 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
 	canLiquidatePosition: boolean,
-	asset: string
+	asset: FuturesMarketAsset
 ): FuturesPosition => {
 	const {
 		remainingMargin,
@@ -351,9 +352,9 @@ export const mapTradeHistory = (
 						timestamp: timestamp * 1000,
 						openTimestamp: openTimestamp * 1000,
 						closeTimestamp: closeTimestamp * 1000,
-						market: market,
-						asset: utils.parseBytes32String(asset),
-						account: account,
+						market,
+						asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+						account,
 						isOpen,
 						isLiquidated,
 						size: sizeWei.abs(),
@@ -368,7 +369,7 @@ export const mapTradeHistory = (
 						pnl: pnlWei,
 						pnlWithFeesPaid: pnlWithFeesPaidWei,
 						totalVolume: totalVolumeWei,
-						trades: trades,
+						trades,
 						avgEntryPrice: avgEntryPriceWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)

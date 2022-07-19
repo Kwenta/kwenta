@@ -5,12 +5,13 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import theme from 'styles/theme';
+import { FuturesMarketAsset } from 'utils/futures';
 import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';
 
 import Badge from './Badge';
 
 type MarketBadgeProps = {
-	currencyKey: CurrencyKey | null;
+	currencyKey: FuturesMarketAsset | null;
 	isFuturesMarketClosed: boolean;
 	futuresClosureReason: FuturesClosureReason;
 };

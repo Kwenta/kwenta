@@ -22,7 +22,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 			const ReverseLookup = new Contract(
 				ENS_REVERSE_LOOKUP,
 				reverseRecordsAbi,
-				// @ts-ignore InfuraProvider type
+				// @ts-ignore provider type
 				staticMainnetProvider
 			);
 

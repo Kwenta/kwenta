@@ -56,7 +56,7 @@
 		},
 		"hero": {
 			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>10x leverage</0> and <0>deep liquidity</0>."
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "TRENDING MARKETS",
@@ -108,7 +108,7 @@
 			"description": "Explore The Endless Possibilities Of Kwenta",
 			"how-to-trade": {
 				"title": "Learn How to Trade on Kwenta",
-				"copy": "Learn about the many features of Kwenta; 10x leverage, instant transactions, deep liquidity, synthetic assets, and more."
+				"copy": "Learn about the many features of Kwenta; 25x leverage, instant transactions, deep liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
@@ -608,7 +608,7 @@
 			},
 			"welcome": {
 				"title": "Decentralized Perpetual Futures on Layer 2",
-				"subtitle": "Trade with up to 10x more capital.",
+				"subtitle": "Trade with up to 25x more capital.",
 				"body": "Open long or short leveraged positions with low gas fees, fast transactions, and the deepest liquidity available on the market.",
 				"button": "Learn more"
 			},
@@ -736,7 +736,7 @@
 					"warning": "WARNING: this will close your position",
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
-					"modify-position": "Modify Position",
+					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next-Price Order"
@@ -806,7 +806,7 @@
 					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
 					"accrued-funding": "accrued funding",
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
-					"close-position": "close position",
+					"close-position": "close",
 					"manage-position": "manage position",
 					"modal": {
 						"title": "Close position",

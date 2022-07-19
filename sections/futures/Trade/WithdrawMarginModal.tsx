@@ -13,13 +13,13 @@ import { newGetTransactionPrice } from 'utils/network';
 import { formatCurrency } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import CustomInput from 'components/Input/CustomInput';
+import Error from 'components/Error';
 import {
 	StyledBaseModal,
 	BalanceContainer,
 	BalanceText,
 	GasFeeContainer,
 	MaxButton,
-	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
 import { currentMarketState, positionState } from 'store/futures';
@@ -172,7 +172,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <ErrorMessage>{withdrawTxn.errorMessage}</ErrorMessage>}
+			{withdrawTxn.errorMessage && (
+				<Error message={withdrawTxn.errorMessage} formatter="revert"></Error>
+			)}
 		</StyledBaseModal>
 	);
 };

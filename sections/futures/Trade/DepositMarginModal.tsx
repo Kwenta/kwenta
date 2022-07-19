@@ -4,6 +4,7 @@ import Wei, { wei } from '@synthetixio/wei';
 import { useTranslation } from 'react-i18next';
 
 import BaseModal from 'components/BaseModal';
+import Error from 'components/Error';
 import { formatCurrency } from 'utils/formatters/number';
 import { Synths } from 'constants/currency';
 import Button from 'components/Button';
@@ -19,6 +20,7 @@ import CustomInput from 'components/Input/CustomInput';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { currentMarketState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { getDisplayAsset } from 'utils/futures';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -55,7 +57,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		`FuturesMarket${getDisplayAsset(market)}`,
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
@@ -152,7 +154,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
+			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
 		</StyledBaseModal>
 	);
 };
@@ -207,13 +209,8 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
-export const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin-top: 13px;
+	margin: 13px 0px;
 	padding: 0 14px;
 	p {
 		margin: 0;

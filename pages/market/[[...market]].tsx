@@ -2,9 +2,9 @@ import { useEffect, FC } from 'react';
 import styled from 'styled-components';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { DesktopOnlyView, MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 
 import {
 	PageContent,
@@ -17,12 +17,14 @@ import { useTranslation } from 'react-i18next';
 
 import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
-import { CurrencyKey } from 'constants/currency';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
-import { currentMarketState } from 'store/futures';
 import { RefetchProvider } from 'contexts/RefetchContext';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import LeftSidebar from '../../sections/futures/LeftSidebar/LeftSidebar';
+import { FuturesMarketAsset } from 'utils/futures';
+import { currentMarketState } from 'store/futures';
+import { FuturesContext } from 'contexts/FuturesContext';
+import useFuturesData from 'hooks/useFuturesData';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -34,40 +36,42 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const marketAsset = router.query.market?.[0] as CurrencyKey;
+	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 
-	const [, setCurrentMarket] = useRecoilState(currentMarketState);
+	const setCurrentMarket = useSetRecoilState(currentMarketState);
+
+	const futuresData = useFuturesData();
 
 	useEffect(() => {
 		if (marketAsset) setCurrentMarket(marketAsset);
 	}, [setCurrentMarket, marketAsset]);
 
 	return (
-		<RefetchProvider>
-			<Head>
-				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
-			</Head>
-			<MobileHiddenView>
-				<PageContent>
-					<StyledFullHeightContainer>
-						<StyledLeftSideContent>
-							<LeftSidebar />
-						</StyledLeftSideContent>
-						<StyledMainContent>
-							<MarketInfo />
-						</StyledMainContent>
-						<DesktopOnlyView>
+		<FuturesContext.Provider value={futuresData}>
+			<RefetchProvider>
+				<Head>
+					<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
+				</Head>
+				<DesktopOnlyView>
+					<PageContent>
+						<StyledFullHeightContainer>
+							<StyledLeftSideContent>
+								<LeftSidebar />
+							</StyledLeftSideContent>
+							<StyledMainContent>
+								<MarketInfo />
+							</StyledMainContent>
 							<StyledRightSideContent>
 								<Trade />
 							</StyledRightSideContent>
-						</DesktopOnlyView>
-					</StyledFullHeightContainer>
-				</PageContent>
-			</MobileHiddenView>
-			<MobileOnlyView>
-				<MobileTrade />
-			</MobileOnlyView>
-		</RefetchProvider>
+						</StyledFullHeightContainer>
+					</PageContent>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<MobileTrade />
+				</MobileOrTabletView>
+			</RefetchProvider>
+		</FuturesContext.Provider>
 	);
 };
 

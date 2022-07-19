@@ -8,11 +8,11 @@ import OrderSizing from 'sections/futures/OrderSizing';
 import LeverageInput from 'sections/futures/LeverageInput';
 
 import { leverageSideState, orderTypeState } from 'store/futures';
-import useFuturesData from 'hooks/useFuturesData';
 import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import FeeInfoBox from 'sections/futures/FeeInfoBox';
 import NextPrice from 'sections/futures/Trade/NextPrice';
 import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
 const OpenPositionTab: React.FC = () => {
 	const [modalOpen, setModalOpen] = React.useState(false);
@@ -29,7 +29,7 @@ const OpenPositionTab: React.FC = () => {
 		dynamicFee,
 		error,
 		orderTxn,
-	} = useFuturesData();
+	} = useFuturesContext();
 
 	return (
 		<div>

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
 
 import { NO_VALUE } from 'constants/placeholder';
@@ -22,8 +22,8 @@ type GasPriceSelectProps = {
 
 const GasPriceSelect: FC<GasPriceSelectProps> = ({ gasPrices, transactionFee, ...rest }) => {
 	const { t } = useTranslation();
-	const [gasSpeed] = useRecoilState<keyof GasPrices>(gasSpeedState);
-	const [customGasPrice] = useRecoilState(customGasPriceState);
+	const gasSpeed = useRecoilValue(gasSpeedState);
+	const customGasPrice = useRecoilValue(customGasPriceState);
 	const isMainnet = useRecoilValue(isMainnetState);
 	const isL2 = useRecoilValue(isL2State);
 

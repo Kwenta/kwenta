@@ -1,14 +1,25 @@
 import { Provider, Contract } from 'ethcall';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
+import Wei, { wei } from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
 
 import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 const ethcallProvider = new Provider();
+
+type TradeFees = {
+	fee: Wei;
+	noOfTrades: number;
+};
+
+type FeeResult = {
+	rebate: BigNumber;
+	reclaim: BigNumber;
+	noOfTrades: BigNumber;
+};
 
 const useFeeReclaimPeriodsQuery = (
 	walletAddress: string,
@@ -50,17 +61,18 @@ const useFeeReclaimPeriodsQuery = (
 			}
 
 			const waitingPeriodsRaw = (await ethcallProvider.all(
-				waitingPeriodCalls,
-				{}
+				waitingPeriodCalls
 			)) as ethers.BigNumberish[];
-			const feesRaw = await ethcallProvider.all(feeCalls, {});
+			const feesRaw = (await ethcallProvider.all(feeCalls)) as FeeResult[];
 
 			const waitingPeriods = waitingPeriodsRaw.map((period) => Number(period));
 
-			const fees = feesRaw.map(([rebate, reclaim, noOfTrades]) => ({
-				fee: wei(ethers.utils.formatEther(rebate.sub(reclaim))),
-				noOfTrades: Number(noOfTrades.toString()),
-			}));
+			const fees = feesRaw.map(
+				(value): TradeFees => ({
+					fee: wei(ethers.utils.formatEther(value.rebate.sub(value.reclaim))),
+					noOfTrades: Number(value.noOfTrades.toString()),
+				})
+			);
 
 			return synths.map((currencyKey, i) => {
 				const { fee, noOfTrades } = fees[i];

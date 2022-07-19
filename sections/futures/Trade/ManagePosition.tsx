@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageSideState,
@@ -101,7 +102,10 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 			</div>
 
 			{(orderError || error || previewTrade?.showStatus) && (
-				<ErrorMessage>{orderError || error || previewTrade?.statusMessage}</ErrorMessage>
+				<Error
+					message={previewTrade?.statusMessage || orderError || error || ''}
+					formatter="revert"
+				/>
 			)}
 
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
@@ -110,8 +114,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 };
 
 const ManagePositionContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	display: flex;
 	grid-gap: 15px;
 	margin-bottom: 16px;
 `;
@@ -142,6 +145,7 @@ const CloseOrderButton = styled(Button)`
 		background: transparent;
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		transform: none;
+		display: none;
 	}
 `;
 
@@ -154,12 +158,6 @@ const ManageOrderTitle = styled.p`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
-`;
-
-const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-	font-size: 12px;
-	margin-bottom: 16px;
 `;
 
 export default ManagePosition;
