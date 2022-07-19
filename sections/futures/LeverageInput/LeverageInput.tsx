@@ -7,7 +7,7 @@ import LeverageSlider from '../LeverageSlider';
 import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
 import { truncateNumbers } from 'utils/formatters/number';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageState,
 	leverageValueCommittedState,
@@ -27,7 +27,7 @@ const LeverageInput: FC = () => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
-	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommittedState);
+	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const position = useRecoilValue(positionState);
 
