@@ -601,19 +601,28 @@ const useExchange = ({
 		}
 	);
 
+	const setDraftOrder = useCallback(
+		(hash: string | null) => {
+			if (hash) {
+				setOrders((orders) =>
+					produce(orders, (draftState) => {
+						const orderIndex = orders.findIndex((order) => order.hash === hash);
+						if (draftState[orderIndex]) {
+							draftState[orderIndex].status = 'confirmed';
+						}
+					})
+				);
+			}
+		},
+		[setOrders]
+	);
+
 	useEffect(() => {
 		if (exchangeTxn.hash) {
 			monitorTransaction({
 				txHash: exchangeTxn.hash,
 				onTxConfirmed: () => {
-					setOrders((orders) =>
-						produce(orders, (draftState) => {
-							const orderIndex = orders.findIndex((order) => order.hash === exchangeTxn.hash);
-							if (draftState[orderIndex]) {
-								draftState[orderIndex].status = 'confirmed';
-							}
-						})
-					);
+					setDraftOrder(exchangeTxn.hash);
 					synthsWalletBalancesQuery.refetch();
 					numEntriesQuery.refetch();
 					setQuoteCurrencyAmount('');
@@ -945,14 +954,7 @@ const useExchange = ({
 				monitorTransaction({
 					txHash: hash,
 					onTxConfirmed: () => {
-						setOrders((orders) =>
-							produce(orders, (draftState) => {
-								const orderIndex = orders.findIndex((order) => order.hash === tx!.hash);
-								if (draftState[orderIndex]) {
-									draftState[orderIndex].status = 'confirmed';
-								}
-							})
-						);
+						setDraftOrder(hash);
 						synthsWalletBalancesQuery.refetch();
 						numEntriesQuery.refetch();
 						setQuoteCurrencyAmount('');
@@ -990,6 +992,7 @@ const useExchange = ({
 		setTxError,
 		exchangeTxn,
 		oneInchSlippage,
+		setDraftOrder,
 	]);
 
 	useEffect(() => {
