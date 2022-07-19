@@ -97,15 +97,13 @@ const useFuturesData = () => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === '' || !position?.remainingMargin || position?.remainingMargin.eq(0)
+				value === '' || !position?.remainingMargin
 					? ''
 					: marketAssetRate.mul(Number(value)).div(position?.remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
 			setLeverage(
-				marketMaxLeverage != null && marketMaxLeverage?.lt(leverage)
-					? ''
-					: leverage.toString().substring(0, 4)
+				leverage !== '' && leverage.lt(marketMaxLeverage) ? leverage.toString().substring(0, 4) : ''
 			);
 		},
 		[
