@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import { currentMarketState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
+import { currentMarketState, futuresAccountState } from 'store/futures';
 import { GridDivCenteredRow } from 'styles/common';
 import Table from 'components/Table';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
@@ -19,13 +18,12 @@ import { SectionHeader, SectionTitle } from '../common';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();
-
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const marketAsset = useRecoilValue(currentMarketState);
-	const walletAddress = useRecoilValue(walletAddressState);
 
 	const [selectedTrade, setSelectedTrade] = React.useState<any>();
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, selectedFuturesAddress);
 
 	const { isLoading, isFetched: isLoaded } = futuresTradesQuery;
 

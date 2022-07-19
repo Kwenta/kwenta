@@ -7,8 +7,13 @@ import { CellProps } from 'react-table';
 import { wei } from '@synthetixio/wei';
 
 import TransactionNotifier from 'containers/TransactionNotifier';
-import { positionState, currentMarketState, openOrdersState } from 'store/futures';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import {
+	positionState,
+	currentMarketState,
+	openOrdersState,
+	futuresAccountState,
+} from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
 import { SectionHeader, SectionTitle } from '../common';
 import { PositionSide } from 'queries/futures/types';
@@ -22,10 +27,10 @@ import { GridDivCenteredRow } from 'styles/common';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -45,7 +50,7 @@ const OrdersTab: React.FC = () => {
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
 		`${action}NextPriceOrder`,
-		[walletAddress],
+		[selectedFuturesAddress],
 		gasPrice,
 		{
 			enabled: !!action,

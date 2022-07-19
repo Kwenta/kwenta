@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -11,6 +11,7 @@ import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'section
 import { wei } from '@synthetixio/wei';
 import {
 	currentMarketState,
+	futuresAccountState,
 	leverageSideState,
 	leverageState,
 	potentialTradeDetailsState,
@@ -23,10 +24,10 @@ const UNKNOWN = 'Unknown';
 const useGetFuturesPotentialTradeDetails = (
 	options?: UseQueryOptions<FuturesPotentialTradeDetails | null>
 ) => {
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
@@ -55,7 +56,7 @@ const useGetFuturesPotentialTradeDetails = (
 			network.id,
 			marketAsset || null,
 			tradeSize,
-			walletAddress || ''
+			selectedFuturesAddress || ''
 		),
 		async () => {
 			if (!marketAsset || !tradeSize || !isL2) {
@@ -72,7 +73,7 @@ const useGetFuturesPotentialTradeDetails = (
 
 			const [globals, { fee, liqPrice, margin, price, size, status }] = await Promise.all([
 				await FuturesMarketData.globals(),
-				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), walletAddress),
+				await FuturesMarketContract.postTradeDetails(wei(newSize).toBN(), selectedFuturesAddress),
 			]);
 
 			const potentialTradeDetails = {
@@ -95,7 +96,7 @@ const useGetFuturesPotentialTradeDetails = (
 			return potentialTradeDetails;
 		},
 		{
-			enabled: isAppReady && isL2 && !!walletAddress && !!marketAsset && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!marketAsset && !!synthetixjs,
 			...options,
 		}
 	);

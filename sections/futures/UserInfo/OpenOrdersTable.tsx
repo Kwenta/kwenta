@@ -12,20 +12,20 @@ import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/fut
 import { PositionSide } from '../types';
 import PositionType from 'components/Text/PositionType';
 import { formatCurrency } from 'utils/formatters/number';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import Badge from 'components/Badge';
-import { currentMarketState, openOrdersState } from 'store/futures';
+import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
 
@@ -43,7 +43,7 @@ const OpenOrdersTable: React.FC = () => {
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
 		`${action}NextPriceOrder`,
-		[walletAddress],
+		[selectedFuturesAddress],
 		gasPrice,
 		{
 			enabled: !!action,

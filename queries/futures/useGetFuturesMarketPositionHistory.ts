@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import request, { gql } from 'graphql-request';
 
 import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
@@ -11,12 +11,13 @@ import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
 import { getDisplayAsset } from 'utils/futures';
 import { FUTURES_POSITION_FRAGMENT } from './constants';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, futuresAccountState } from 'store/futures';
 
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
 	const futuresEndpoint = getFuturesEndpoint(network);
@@ -24,7 +25,11 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 	const currencyKey = useRecoilValue(currentMarketState);
 
 	return useQuery<PositionHistory[] | null>(
-		QUERY_KEYS.Futures.MarketPositionHistory(network.id, currencyKey || null, walletAddress || ''),
+		QUERY_KEYS.Futures.MarketPositionHistory(
+			network.id,
+			currencyKey || null,
+			selectedFuturesAddress || ''
+		),
 		async () => {
 			if (!currencyKey) return null;
 			try {
@@ -45,7 +50,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 							}
 						}
 					`,
-					{ market: marketAddress, account: walletAddress }
+					{ market: marketAddress, account: selectedFuturesAddress }
 				);
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
@@ -54,7 +59,10 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!walletAddress && !!currencyKey && !!synthetixjs, ...options }
+		{
+			enabled: isAppReady && isL2 && !!selectedFuturesAddress && !!currencyKey && !!synthetixjs,
+			...options,
+		}
 	);
 };
 

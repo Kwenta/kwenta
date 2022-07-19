@@ -914,6 +914,9 @@
 					"avg-open-price": "avg open price",
 					"current-price": "current price"
 				}
+			},
+			"onboard": {
+				"title": "Open Futures Account"
 			}
 		}
 	},

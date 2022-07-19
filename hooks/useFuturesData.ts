@@ -5,7 +5,7 @@ import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import Connector from 'containers/Connector';
 import { Synths } from 'constants/currency';
@@ -13,6 +13,7 @@ import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import {
 	currentMarketState,
 	feeCostState,
+	futuresAccountState,
 	leverageSideState,
 	leverageState,
 	leverageValueCommittedState,
@@ -37,7 +38,6 @@ import { useRefetchContext } from 'contexts/RefetchContext';
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
-	const walletAddress = useRecoilValue(walletAddressState);
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const router = useRouter();
 	const { synthetixjs } = Connector.useContainer();
@@ -63,6 +63,7 @@ const useFuturesData = () => {
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -208,7 +209,7 @@ const useFuturesData = () => {
 			if (
 				!synthetixjs ||
 				!marketAsset ||
-				!walletAddress ||
+				!selectedFuturesAddress ||
 				!tradeSize ||
 				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted ||
@@ -241,7 +242,7 @@ const useFuturesData = () => {
 		marketAsset,
 		position,
 		leverageSide,
-		walletAddress,
+		selectedFuturesAddress,
 		isLeverageValueCommitted,
 		sizeDelta,
 		setFeeCost,

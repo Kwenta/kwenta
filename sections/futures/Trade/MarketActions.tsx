@@ -5,22 +5,21 @@ import Button from 'components/Button';
 import { useTranslation } from 'react-i18next';
 import { zeroBN } from 'utils/formatters/number';
 import { useRecoilValue } from 'recoil';
-import { marketInfoState, positionState } from 'store/futures';
+import { futuresAccountState, marketInfoState, positionState } from 'store/futures';
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
 import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
 import { Synths } from 'constants/currency';
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(selectedFuturesAddress);
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	return (

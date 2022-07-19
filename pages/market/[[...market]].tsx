@@ -19,12 +19,13 @@ import MarketInfo from 'sections/futures/MarketInfo';
 import Trade from 'sections/futures/Trade';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import { RefetchProvider } from 'contexts/RefetchContext';
+import { FuturesContext } from 'contexts/FuturesContext';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import LeftSidebar from '../../sections/futures/LeftSidebar/LeftSidebar';
 import { FuturesMarketAsset } from 'utils/futures';
 import { currentMarketState } from 'store/futures';
-import { FuturesContext } from 'contexts/FuturesContext';
 import useFuturesData from 'hooks/useFuturesData';
+import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -35,6 +36,8 @@ type MarketComponent = FC & { layout: FC<AppLayoutProps> };
 const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+
+	useQueryCrossMarginAccount();
 
 	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 

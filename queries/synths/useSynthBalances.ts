@@ -6,22 +6,21 @@ import { wei } from '@synthetixio/wei';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { networkState, walletAddressState } from 'store/wallet';
+import { networkState } from 'store/wallet';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
-const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
-	const walletAddress = useRecoilValue(walletAddressState);
+const useSynthBalances = (address: string | null, options?: UseQueryOptions<Balances>) => {
 	const network = useRecoilValue(networkState);
 	const [, setBalances] = useRecoilState(balancesState);
 
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances(network.id, walletAddress),
+		QUERY_KEYS.Synths.Balances(network.id, address),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined
@@ -32,7 +31,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 				currencyKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(walletAddress);
+			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(address);
 
 			let totalUSDBalance = wei(0);
 
@@ -68,7 +67,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			return balances;
 		},
 		{
-			enabled: !!synthetixjs && !!walletAddress,
+			enabled: !!synthetixjs && !!address,
 			...options,
 		}
 	);

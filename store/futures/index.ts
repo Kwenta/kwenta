@@ -3,6 +3,7 @@ import Wei, { wei } from '@synthetixio/wei';
 
 import { getFuturesKey, getSynthsKey } from 'store/utils';
 import {
+	FuturesAccountState,
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
@@ -152,4 +153,14 @@ export const nextPriceDisclaimerState = selector({
 export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
 	key: getFuturesKey('potentialTradeDetails'),
 	default: null,
+});
+
+export const futuresAccountState = atom<FuturesAccountState>({
+	key: getFuturesKey('futuresAccountState'),
+	default: {
+		selectedType: 'pending',
+		crossMarginAddress: null,
+		walletAddress: null,
+		selectedFuturesAddress: null,
+	},
 });
