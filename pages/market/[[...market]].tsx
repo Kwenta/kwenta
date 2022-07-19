@@ -9,6 +9,7 @@ import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useFuturesData from 'hooks/useFuturesData';
+import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 import MarketInfo from 'sections/futures/MarketInfo';
 import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
 import Trade from 'sections/futures/Trade';
@@ -34,6 +35,8 @@ type MarketComponent = FC & { layout: FC<AppLayoutProps> };
 const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+
+	useQueryCrossMarginAccount();
 
 	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 

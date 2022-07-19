@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { futuresMarketsState, positionsState } from 'store/futures';
+import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { MarketKeyByAsset } from 'utils/futures';
 
@@ -18,17 +18,18 @@ const useGetFuturesPositionForMarkets = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
-	const network = useRecoilValue(networkState);
-	const walletAddress = useRecoilValue(walletAddressState);
-	const { synthetixjs } = Connector.useContainer();
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+
+	const { synthetixjs, network } = Connector.useContainer();
+
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
 	return useQuery<FuturesPosition[] | []>(
-		QUERY_KEYS.Futures.MarketsPositions(network.id, walletAddress, assets || []),
+		QUERY_KEYS.Futures.MarketsPositions(network.id, selectedFuturesAddress, assets || []),
 		async () => {
-			if (!markets || (walletAddress && !isL2)) {
+			if (!markets || (selectedFuturesAddress && !isL2)) {
 				return [];
 			}
 
@@ -41,9 +42,11 @@ const useGetFuturesPositionForMarkets = (
 					return Promise.all([
 						FuturesMarketData.positionDetailsForMarketKey(
 							ethersUtils.formatBytes32String(MarketKeyByAsset[asset]),
-							walletAddress
+							selectedFuturesAddress
 						),
-						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(walletAddress),
+						getFuturesMarketContract(asset, synthetixjs!.contracts).canLiquidate(
+							selectedFuturesAddress
+						),
 					]);
 				})
 			);
@@ -57,7 +60,7 @@ const useGetFuturesPositionForMarkets = (
 			return futuresPositions;
 		},
 		{
-			enabled: isAppReady && isL2 && !!network && !!walletAddress && !!synthetixjs,
+			enabled: isAppReady && isL2 && !!network && !!selectedFuturesAddress && !!synthetixjs,
 			...options,
 		}
 	);

@@ -6,8 +6,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { Synths } from 'constants/currency';
-import { marketInfoState, positionState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
+import { futuresAccountState, marketInfoState, positionState } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
 
 import DepositMarginModal from './DepositMarginModal';
@@ -15,13 +14,13 @@ import WithdrawMarginModal from './WithdrawMarginModal';
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const position = useRecoilValue(positionState);
 	const marketInfo = useRecoilValue(marketInfoState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const [openModal, setOpenModal] = React.useState<'deposit' | 'withdraw' | null>(null);
 
 	const { useSynthsBalancesQuery } = useSynthetixQueries();
-	const synthsBalancesQuery = useSynthsBalancesQuery(walletAddress);
+	const synthsBalancesQuery = useSynthsBalancesQuery(selectedFuturesAddress);
 	const sUSDBalance = synthsBalancesQuery?.data?.balancesMap?.[Synths.sUSD]?.balance ?? zeroBN;
 
 	return (

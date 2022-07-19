@@ -12,7 +12,12 @@ import PositionType from 'components/Text/PositionType';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { positionState, currentMarketState, openOrdersState } from 'store/futures';
+import {
+	positionState,
+	currentMarketState,
+	futuresAccountState,
+	openOrdersState,
+} from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -22,10 +27,10 @@ import OrderDrawer from '../drawers/OrderDrawer';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const walletAddress = useRecoilValue(walletAddressState);
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -45,7 +50,7 @@ const OrdersTab: React.FC = () => {
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
 		`${action}NextPriceOrder`,
-		[walletAddress],
+		[selectedFuturesAddress],
 		gasPrice,
 		{
 			enabled: !!action,

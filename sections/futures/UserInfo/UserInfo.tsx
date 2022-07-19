@@ -22,8 +22,12 @@ import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositi
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import { currentMarketState, openOrdersState, positionState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
+import {
+	currentMarketState,
+	futuresAccountState,
+	openOrdersState,
+	positionState,
+} from 'store/futures';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 
 import PositionCard from '../PositionCard';
@@ -46,7 +50,7 @@ const FutureTabs = Object.values(FuturesTab);
 
 const UserInfo: React.FC = () => {
 	const router = useRouter();
-	const walletAddress = useRecoilValue(walletAddressState);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
@@ -69,7 +73,7 @@ const UserInfo: React.FC = () => {
 		[marginTransfersQuery.isSuccess, marginTransfersQuery.data]
 	);
 
-	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, walletAddress);
+	const futuresTradesQuery = useGetFuturesTradesForAccount(marketAsset, selectedFuturesAddress);
 
 	const history: FuturesTrade[] = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),

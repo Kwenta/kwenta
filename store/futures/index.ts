@@ -4,6 +4,8 @@ import { atom, selector } from 'recoil';
 
 import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
+	CrossMarginAccountState,
+	FuturesAccountState,
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
@@ -152,4 +154,14 @@ export const nextPriceDisclaimerState = selector({
 export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | null>({
 	key: getFuturesKey('potentialTradeDetails'),
 	default: null,
+});
+
+export const futuresAccountState = atom<FuturesAccountState>({
+	key: getFuturesKey('futuresAccountState'),
+	default: {
+		selectedType: 'pending',
+		crossMarginAddress: null,
+		walletAddress: null,
+		selectedFuturesAddress: null,
+	},
 });
