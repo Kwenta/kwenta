@@ -601,34 +601,41 @@ const useExchange = ({
 		}
 	);
 
-	const setDraftOrder = useCallback(
+	const monitorExchangeTxn = useCallback(
 		(hash: string | null) => {
 			if (hash) {
-				setOrders((orders) =>
-					produce(orders, (draftState) => {
-						const orderIndex = orders.findIndex((order) => order.hash === hash);
-						if (draftState[orderIndex]) {
-							draftState[orderIndex].status = 'confirmed';
-						}
-					})
-				);
+				monitorTransaction({
+					txHash: hash,
+					onTxConfirmed: () => {
+						setOrders((orders) =>
+							produce(orders, (draftState) => {
+								const orderIndex = orders.findIndex((order) => order.hash === hash);
+								if (draftState[orderIndex]) {
+									draftState[orderIndex].status = 'confirmed';
+								}
+							})
+						);
+						synthsWalletBalancesQuery.refetch();
+						numEntriesQuery.refetch();
+						setQuoteCurrencyAmount('');
+						setBaseCurrencyAmount('');
+					},
+				});
 			}
 		},
-		[setOrders]
+		[
+			monitorTransaction,
+			numEntriesQuery,
+			setBaseCurrencyAmount,
+			setOrders,
+			setQuoteCurrencyAmount,
+			synthsWalletBalancesQuery,
+		]
 	);
 
 	useEffect(() => {
 		if (exchangeTxn.hash) {
-			monitorTransaction({
-				txHash: exchangeTxn.hash,
-				onTxConfirmed: () => {
-					setDraftOrder(exchangeTxn.hash);
-					synthsWalletBalancesQuery.refetch();
-					numEntriesQuery.refetch();
-					setQuoteCurrencyAmount('');
-					setBaseCurrencyAmount('');
-				},
-			});
+			monitorExchangeTxn(exchangeTxn.hash);
 		}
 
 		// eslint-disable-next-line
@@ -951,16 +958,7 @@ const useExchange = ({
 			const hash = tx?.hash;
 
 			if (hash) {
-				monitorTransaction({
-					txHash: hash,
-					onTxConfirmed: () => {
-						setDraftOrder(hash);
-						synthsWalletBalancesQuery.refetch();
-						numEntriesQuery.refetch();
-						setQuoteCurrencyAmount('');
-						setBaseCurrencyAmount('');
-					},
-				});
+				monitorExchangeTxn(hash);
 			}
 			setOpenModal(undefined);
 		} catch (e) {
@@ -979,20 +977,15 @@ const useExchange = ({
 		setHasOrdersNotification,
 		setOrders,
 		swap1Inch,
-		synthsWalletBalancesQuery,
-		numEntriesQuery,
 		txProvider,
-		monitorTransaction,
 		slippage,
 		oneInchTokensMap,
 		allTokensMap,
 		swapSynthSwap,
-		setBaseCurrencyAmount,
-		setQuoteCurrencyAmount,
 		setTxError,
 		exchangeTxn,
 		oneInchSlippage,
-		setDraftOrder,
+		monitorExchangeTxn,
 	]);
 
 	useEffect(() => {
