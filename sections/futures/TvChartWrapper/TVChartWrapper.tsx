@@ -4,6 +4,8 @@ import TVChart from 'components/TVChart';
 import MarketOverlay from '../MarketOverlay';
 import { ChartPosition } from 'components/TVChart/types';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import { useRecoilValue } from 'recoil';
+import { marketKeyState } from 'store/futures';
 
 type TVChartWrapperProps = {
 	baseCurrencyKey: CurrencyKey;
@@ -22,7 +24,8 @@ export const TVChartWrapper: FC<TVChartWrapperProps> = ({
 	activePosition,
 	potentialTrade,
 }) => {
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(baseCurrencyKey);
+	const marketKey = useRecoilValue(marketKeyState);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(marketKey);
 
 	return isFuturesMarketClosed ? (
 		<MarketOverlay marketClosureReason={futuresClosureReason} baseCurrencyKey={baseCurrencyKey} />

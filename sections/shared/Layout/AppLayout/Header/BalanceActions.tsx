@@ -2,7 +2,6 @@ import Button from 'components/Button';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import Select from 'components/Select';
 import { Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +11,7 @@ import { balancesState, positionsState } from 'store/futures';
 import styled, { useTheme } from 'styled-components';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, getMarketKey } from 'utils/futures';
+import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -26,7 +25,6 @@ const BalanceActions: FC = () => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const router = useRouter();
-	const { network } = Connector.useContainer();
 
 	const synthBalances = useRecoilValue(balancesState);
 	const futuresPositions = useRecoilValue(positionsState);
@@ -42,16 +40,13 @@ const BalanceActions: FC = () => {
 			zeroBN
 		);
 
-		const setMarketConfig = (asset: string): ReactSelectOptionProps => {
+		const setMarketConfig = (asset: FuturesMarketAsset): ReactSelectOptionProps => {
 			const remainingMargin =
-				accessiblePositions.find((posittion) => posittion.asset === asset)?.remainingMargin ??
-				zeroBN;
-
-			const marketKey = getMarketKey(asset, network.id);
+				accessiblePositions.find((position) => position.asset === asset)?.remainingMargin ?? zeroBN;
 
 			return {
 				label: `${getDisplayAsset(asset)}-PERP`,
-				synthIcon: marketKey,
+				synthIcon: MarketKeyByAsset[asset],
 				marketRemainingMargin: formatCurrency(Synths.sUSD, remainingMargin, { sign: '$' }),
 				onClick: () => router.push(`/market/${asset}`),
 			};
@@ -64,7 +59,7 @@ const BalanceActions: FC = () => {
 				options: accessiblePositions.map((market) => setMarketConfig(market.asset)),
 			},
 		];
-	}, [futuresPositions, router, network]);
+	}, [futuresPositions, router]);
 
 	const OptionsGroupLabel: FC<{
 		label: string;

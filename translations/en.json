@@ -736,7 +736,7 @@
 					"warning": "WARNING: this will close your position",
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
-					"modify-position": "Modify Position",
+					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next-Price Order"
@@ -806,7 +806,7 @@
 					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
 					"accrued-funding": "accrued funding",
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
-					"close-position": "close position",
+					"close-position": "close",
 					"manage-position": "manage position",
 					"modal": {
 						"title": "Close position",

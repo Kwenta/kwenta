@@ -7,8 +7,7 @@ import { wei } from '@synthetixio/wei';
 
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import { walletAddressState } from 'store/wallet';
@@ -33,8 +32,7 @@ const OpenPositions: React.FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

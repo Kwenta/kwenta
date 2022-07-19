@@ -8,7 +8,7 @@ import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
-import { getMarketKey } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import { getReasonFromCode } from './utils';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
@@ -46,9 +46,8 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 
 			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
 				markets.map((m: any) => {
-					const asset = utils.parseBytes32String(m.asset);
-					const marketKey = getMarketKey(asset, networkId);
-					return utils.formatBytes32String(marketKey);
+					const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+					return utils.formatBytes32String(MarketKeyByAsset[asset]);
 				})
 			);
 
@@ -67,10 +66,10 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					}: FuturesMarket,
 					i: number
 				) => ({
-					market: market,
-					asset: utils.parseBytes32String(asset),
+					market,
+					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate).mul(-1),
+					currentFundingRate: wei(currentFundingRate).neg(),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),

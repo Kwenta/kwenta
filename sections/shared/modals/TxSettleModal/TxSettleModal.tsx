@@ -9,6 +9,7 @@ import Currency from 'components/Currency';
 import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
 
 import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { formatRevert } from 'utils/formatters/error';
 
 type TxSettleModalProps = {
 	onDismiss: () => void;
@@ -50,7 +51,7 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 			<Subtitle>{t('modals.settle-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>

@@ -94,8 +94,10 @@ const MarketInfoBox: React.FC = () => {
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(tradeSize || zeroBN);
-		const potentialMarginUsage =
-			previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ?? zeroBN;
+		const potentialMarginUsage = previewTrade?.margin.gt(0)
+			? previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ??
+			  zeroBN
+			: zeroBN;
 		const potentialBuyingPower =
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
