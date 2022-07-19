@@ -66,14 +66,14 @@ const FuturesHistoryTable: FC = () => {
 				noResultsMessage={
 					!isL2 ? (
 						<TableNoResults>
-							{t('dashboard.overview.futures-history-table.no-results')}
+							{t('dashboard.history.futures-history-table.no-results')}
 							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
 					) : (
 						<TableNoResults>
-							{t('dashboard.overview.futures-history-table.no-trade-history')}
+							{t('dashboard.history.futures-history-table.no-trade-history')}
 							<Link href={ROUTES.Markets.Home}>
-								<div>{t('dashboard.overview.futures-history-table.no-trade-history-link')}</div>
+								<div>{t('dashboard.history.futures-history-table.no-trade-history-link')}</div>
 							</Link>
 						</TableNoResults>
 					)
@@ -83,7 +83,7 @@ const FuturesHistoryTable: FC = () => {
 				columns={[
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.date-time')}</TableHeader>
+							<TableHeader>{t('dashboard.history.futures-history-table.date-time')}</TableHeader>
 						),
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
@@ -98,7 +98,7 @@ const FuturesHistoryTable: FC = () => {
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.market')}</TableHeader>
+							<TableHeader>{t('dashboard.history.futures-history-table.market')}</TableHeader>
 						),
 						accessor: 'market',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
@@ -122,7 +122,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.side')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.futures-history-table.side')}</TableHeader>,
 						accessor: 'side',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -133,7 +133,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 70,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.size')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.futures-history-table.size')}</TableHeader>,
 						accessor: 'size',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -144,9 +144,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 100,
 					},
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.price')}</TableHeader>
-						),
+						Header: <TableHeader>{t('dashboard.history.futures-history-table.price')}</TableHeader>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -161,7 +159,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.pnl')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.futures-history-table.pnl')}</TableHeader>,
 						accessor: 'pnl',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -180,7 +178,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.fees')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.futures-history-table.fees')}</TableHeader>,
 						accessor: 'fees',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -197,7 +195,7 @@ const FuturesHistoryTable: FC = () => {
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.order-type')}</TableHeader>
+							<TableHeader>{t('dashboard.history.futures-history-table.order-type')}</TableHeader>
 						),
 						accessor: 'orderType',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {

@@ -531,7 +531,19 @@
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
-			"history-tabs": {
+			"positions-tabs": {
+				"futures": "Futures Positions",
+				"shorts": "Shorts",
+				"spot": "Spot Balances"
+			},
+			"markets-tabs": {
+				"futures": "Futures Markets",
+				"spot": "Spot Markets",
+				"synths": "Synths Markets"
+			}
+		},
+		"history": {
+			"tabs": {
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
@@ -555,16 +567,6 @@
 				"no-results": "Perpetual Futures are available on Optimism L2",
 				"no-trade-history": "You have no trades yet.",
 				"no-trade-history-link": "Trade Perpetual Futures on Kwenta now!"
-			},
-			"positions-tabs": {
-				"futures": "Futures Positions",
-				"shorts": "Shorts",
-				"spot": "Spot Balances"
-			},
-			"markets-tabs": {
-				"futures": "Futures Markets",
-				"spot": "Spot Markets",
-				"synths": "Synths Markets"
 			}
 		},
 		"deprecated": {

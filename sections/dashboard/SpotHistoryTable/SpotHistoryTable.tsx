@@ -10,7 +10,7 @@ import Currency from 'components/Currency';
 import { CellProps } from 'react-table';
 import Table from 'components/Table';
 import { walletAddressState } from 'store/wallet';
-import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
 import { NO_VALUE } from 'constants/placeholder';
@@ -23,6 +23,10 @@ import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { GridDivCenteredRow } from 'styles/common';
 import Link from 'next/link';
 import ROUTES from 'constants/routes';
+
+interface SynthTradesExchangeResult extends SynthExchangeResult {
+	hash: string;
+}
 
 type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
 	timestamp: number;
@@ -68,9 +72,9 @@ const SpotHistoryTable: FC = () => {
 				highlightRowsOnHover
 				noResultsMessage={
 					<TableNoResults>
-						{t('dashboard.overview.spot-history-table.no-trade-history')}
+						{t('dashboard.history.spot-history-table.no-trade-history')}
 						<Link href={ROUTES.Exchange.Home}>
-							<div>{t('dashboard.overview.spot-history-table.no-trade-history-link')}</div>
+							<div>{t('dashboard.history.spot-history-table.no-trade-history-link')}</div>
 						</Link>
 					</TableNoResults>
 				}
@@ -83,7 +87,7 @@ const SpotHistoryTable: FC = () => {
 				columns={[
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.spot-history-table.date-time')}</TableHeader>
+							<TableHeader>{t('dashboard.history.spot-history-table.date-time')}</TableHeader>
 						),
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
@@ -97,7 +101,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.spot-history-table.from')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.spot-history-table.from')}</TableHeader>,
 						accessor: 'fromAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -127,7 +131,7 @@ const SpotHistoryTable: FC = () => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.spot-history-table.to')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.history.spot-history-table.to')}</TableHeader>,
 						accessor: 'toAmount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {
 							return conditionalRender(
@@ -158,7 +162,7 @@ const SpotHistoryTable: FC = () => {
 					},
 					{
 						Header: (
-							<TableHeader>{t('dashboard.overview.spot-history-table.usd-value')}</TableHeader>
+							<TableHeader>{t('dashboard.history.spot-history-table.usd-value')}</TableHeader>
 						),
 						accessor: 'amount',
 						Cell: (cellProps: CellProps<WalletTradesExchangeResult>) => {

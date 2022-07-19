@@ -20,7 +20,7 @@ const History: FC = () => {
 		() => [
 			{
 				name: HistoryTab.FUTURES,
-				label: t('dashboard.overview.history-tabs.futures'),
+				label: t('dashboard.history.tabs.futures'),
 				active: activeMarketsTab === HistoryTab.FUTURES,
 				onClick: () => {
 					setActiveMarketsTab(HistoryTab.FUTURES);
@@ -28,7 +28,7 @@ const History: FC = () => {
 			},
 			{
 				name: HistoryTab.SPOT,
-				label: t('dashboard.overview.history-tabs.spot'),
+				label: t('dashboard.history.tabs.spot'),
 				active: activeMarketsTab === HistoryTab.SPOT,
 				onClick: () => {
 					setActiveMarketsTab(HistoryTab.SPOT);
