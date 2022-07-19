@@ -123,7 +123,6 @@ const useExchange = ({
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
 	const [quoteCurrencyAmount, setQuoteCurrencyAmount] = useRecoilState(quoteCurrencyAmountState);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [, setIsRedeeming] = useState(false);
 	const [ratio, setRatio] = useRecoilState(ratioState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -602,6 +601,46 @@ const useExchange = ({
 		}
 	);
 
+	const monitorExchangeTxn = useCallback(
+		(hash: string | null) => {
+			if (hash) {
+				monitorTransaction({
+					txHash: hash,
+					onTxConfirmed: () => {
+						setOrders((orders) =>
+							produce(orders, (draftState) => {
+								const orderIndex = orders.findIndex((order) => order.hash === hash);
+								if (draftState[orderIndex]) {
+									draftState[orderIndex].status = 'confirmed';
+								}
+							})
+						);
+						synthsWalletBalancesQuery.refetch();
+						numEntriesQuery.refetch();
+						setQuoteCurrencyAmount('');
+						setBaseCurrencyAmount('');
+					},
+				});
+			}
+		},
+		[
+			monitorTransaction,
+			numEntriesQuery,
+			setBaseCurrencyAmount,
+			setOrders,
+			setQuoteCurrencyAmount,
+			synthsWalletBalancesQuery,
+		]
+	);
+
+	useEffect(() => {
+		if (exchangeTxn.hash) {
+			monitorExchangeTxn(exchangeTxn.hash);
+		}
+
+		// eslint-disable-next-line
+	}, [exchangeTxn.hash]);
+
 	const [gasInfo, setGasInfo] = useState<GasInfo | null>();
 
 	const oneInchSlippage = useMemo(() => {
@@ -708,39 +747,37 @@ const useExchange = ({
 		{ enabled: !!redeemableDeprecatedSynths && redeemableDeprecatedSynths?.totalUSDBalance.gt(0) }
 	);
 
+	useEffect(() => {
+		if (redeemTxn.hash) {
+			monitorTransaction({
+				txHash: redeemTxn.hash,
+				onTxConfirmed: () => {
+					setOpenModal(undefined);
+					redeemableDeprecatedSynthsQuery.refetch();
+					synthsWalletBalancesQuery.refetch();
+				},
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [redeemTxn.hash]);
+
 	const handleRedeem = async () => {
 		setTxError(null);
 		setOpenModal('redeem');
 
 		try {
-			setIsRedeeming(true);
-
 			await redeemTxn.mutateAsync();
-
-			if (redeemTxn.hash !== null) {
-				monitorTransaction({
-					txHash: redeemTxn.hash,
-					onTxConfirmed: () => {
-						redeemableDeprecatedSynthsQuery.refetch();
-						synthsWalletBalancesQuery.refetch();
-					},
-				});
-			}
-
-			setOpenModal(undefined);
 		} catch (e) {
 			console.log(e);
 			setTxError(
 				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
 			);
-		} finally {
-			setIsRedeeming(false);
 		}
 	};
 
 	const handleDismiss = () => {
 		setOpenModal(undefined);
-		setIsRedeeming(false);
 	};
 
 	const checkAllowance = useCallback(async () => {
@@ -788,6 +825,20 @@ const useExchange = ({
 		{ enabled: !!approveAddress && !!quoteCurrencyKey && !!oneInchTokensMap && needsApproval }
 	);
 
+	useEffect(() => {
+		if (approveTxn.hash) {
+			monitorTransaction({
+				txHash: approveTxn.hash,
+				onTxConfirmed: () => {
+					setIsApproving(false);
+					setIsApproved(true);
+				},
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [approveTxn.hash]);
+
 	const settleTxn = useSynthetixTxn(
 		'Exchanger',
 		'settle',
@@ -795,6 +846,19 @@ const useExchange = ({
 		undefined,
 		{ enabled: !isL2 && numEntries >= 12 }
 	);
+
+	useEffect(() => {
+		if (settleTxn.hash) {
+			monitorTransaction({
+				txHash: settleTxn.hash,
+				onTxConfirmed: () => {
+					numEntriesQuery.refetch();
+				},
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [settleTxn.hash]);
 
 	const transactionFee = useMemo(() => {
 		if (txProvider === 'synthswap' || txProvider === '1inch') {
@@ -822,16 +886,6 @@ const useExchange = ({
 		try {
 			await approveTxn.mutateAsync();
 
-			if (approveTxn.hash != null) {
-				monitorTransaction({
-					txHash: approveTxn.hash,
-					onTxConfirmed: () => {
-						setIsApproving(false);
-						setIsApproved(true);
-					},
-				});
-			}
-
 			setOpenModal(undefined);
 		} catch (e) {
 			console.log(e);
@@ -846,15 +900,6 @@ const useExchange = ({
 
 		try {
 			await settleTxn.mutateAsync();
-
-			if (settleTxn.hash != null) {
-				monitorTransaction({
-					txHash: settleTxn.hash,
-					onTxConfirmed: () => {
-						numEntriesQuery.refetch();
-					},
-				});
-			}
 
 			setOpenModal(undefined);
 		} catch (e) {
@@ -910,26 +955,10 @@ const useExchange = ({
 				setHasOrdersNotification(true);
 			}
 
-			const hash = tx?.hash || exchangeTxn.hash;
+			const hash = tx?.hash;
 
 			if (hash) {
-				monitorTransaction({
-					txHash: hash,
-					onTxConfirmed: () => {
-						setOrders((orders) =>
-							produce(orders, (draftState) => {
-								const orderIndex = orders.findIndex((order) => order.hash === tx!.hash);
-								if (draftState[orderIndex]) {
-									draftState[orderIndex].status = 'confirmed';
-								}
-							})
-						);
-						synthsWalletBalancesQuery.refetch();
-						numEntriesQuery.refetch();
-						setQuoteCurrencyAmount('');
-						setBaseCurrencyAmount('');
-					},
-				});
+				monitorExchangeTxn(hash);
 			}
 			setOpenModal(undefined);
 		} catch (e) {
@@ -948,19 +977,15 @@ const useExchange = ({
 		setHasOrdersNotification,
 		setOrders,
 		swap1Inch,
-		synthsWalletBalancesQuery,
-		numEntriesQuery,
 		txProvider,
-		monitorTransaction,
 		slippage,
 		oneInchTokensMap,
 		allTokensMap,
 		swapSynthSwap,
-		setBaseCurrencyAmount,
-		setQuoteCurrencyAmount,
 		setTxError,
 		exchangeTxn,
 		oneInchSlippage,
+		monitorExchangeTxn,
 	]);
 
 	useEffect(() => {
