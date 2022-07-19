@@ -12,24 +12,11 @@ import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import FeeInfoBox from 'sections/futures/FeeInfoBox';
 import NextPrice from 'sections/futures/Trade/NextPrice';
 import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 const OpenPositionTab: React.FC = () => {
 	const [modalOpen, setModalOpen] = React.useState(false);
-
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-
-	const {
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		onLeverageChange,
-		isMarketCapReached,
-		placeOrderTranslationKey,
-		dynamicFee,
-		error,
-		orderTxn,
-	} = useFuturesContext();
 
 	return (
 		<div>
@@ -43,31 +30,15 @@ const OpenPositionTab: React.FC = () => {
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
-			<OrderSizing
-				onAmountChange={onTradeAmountChange}
-				onAmountSUSDChange={onTradeAmountSUSDChange}
-				onLeverageChange={onLeverageChange}
-			/>
+			<OrderSizing />
 
-			<LeverageInput onLeverageChange={onLeverageChange} />
+			<LeverageInput />
 
-			<ManagePosition
-				marketCapReached={isMarketCapReached}
-				translationKey={placeOrderTranslationKey}
-				openConfirmationModal={() => setModalOpen(true)}
-				error={error}
-				orderError={orderTxn.errorMessage}
-			/>
+			<ManagePosition openConfirmationModal={() => setModalOpen(true)} />
 
-			<FeeInfoBox dynamicFee={dynamicFee} />
+			<FeeInfoBox />
 
-			<TradeConfirmationDrawer
-				open={modalOpen}
-				closeDrawer={() => setModalOpen(false)}
-				gasLimit={orderTxn.gasLimit}
-				l1Fee={orderTxn.optimismLayerOneFee}
-				onConfirmOrder={() => orderTxn.mutate()}
-			/>
+			<TradeConfirmationDrawer open={modalOpen} closeDrawer={() => setModalOpen(false)} />
 		</div>
 	);
 };

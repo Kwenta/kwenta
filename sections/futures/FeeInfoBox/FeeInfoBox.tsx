@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
-import Wei, { WeiSource } from '@synthetixio/wei';
 
 import InfoBox from 'components/InfoBox';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
@@ -15,12 +14,9 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { useRecoilValue } from 'recoil';
 import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
-type FeeInfoBoxProps = {
-	dynamicFee: Wei | WeiSource | null;
-};
-
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
+const FeeInfoBox: React.FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const costDetailsQuery = useGetNextPriceDetails();
 	const costDetails = costDetailsQuery.data;
@@ -28,6 +24,7 @@ const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({ dynamicFee }) => {
 	const orderType = useRecoilValue(orderTypeState);
 	const feeCost = useRecoilValue(feeCostState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const { dynamicFee } = useFuturesContext();
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(
 		() => computeNPFee(costDetails, sizeDelta),

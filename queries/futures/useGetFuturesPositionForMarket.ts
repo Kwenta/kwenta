@@ -9,7 +9,8 @@ import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 import { FuturesPosition } from './types';
-import { currentMarketState, positionState } from 'store/futures';
+import { marketKeyState, positionState } from 'store/futures';
+import { MarketAssetByKey } from 'utils/futures';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -17,7 +18,7 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
-	const market = useRecoilValue(currentMarketState);
+	const market = useRecoilValue(marketKeyState);
 	const setPosition = useSetRecoilState(positionState);
 
 	return useQuery<FuturesPosition | null>(
@@ -36,7 +37,11 @@ const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPositio
 				getFuturesMarketContract(market, synthetixjs!.contracts).canLiquidate(walletAddress),
 			]);
 
-			const position = mapFuturesPosition(futuresPosition, canLiquidatePosition, market);
+			const position = mapFuturesPosition(
+				futuresPosition,
+				canLiquidatePosition,
+				MarketAssetByKey[market]
+			);
 
 			setPosition(position);
 
