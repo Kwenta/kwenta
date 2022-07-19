@@ -15,7 +15,6 @@
 			"dashboard": "dashboard",
 			"markets": "futures",
 			"leaderboard": "leaderboard",
-			"futures-dashboard": "dashboard",
 			"earn": "earn"
 		},
 		"networks-switcher": {
@@ -435,6 +434,7 @@
 		}
 	},
 	"dashboard": {
+		"page-title": "Dashboard | Kwenta",
 		"titles": {
 			"trading": "Trading",
 			"community": "Community",
