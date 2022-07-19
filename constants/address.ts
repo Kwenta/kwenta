@@ -13,5 +13,3 @@ export const CROSS_MARGIN_BASE_SETTINGS: Record<string, string> = {
 	69: '0xA8EE338DbeB651A6483578683Fca90b8FfbdE417',
 	// 10: awaiting mainnet
 };
-
-export const GELATO_OPS = '0xB3f5503f93d5Ef84b06993a1975B9D21B962892F';
