@@ -197,7 +197,7 @@ const IconContainer = styled.div`
 	grid-row: 1 / span 2;
 `;
 
-const DefaultCell = styled.p``;
+const DefaultCell = styled.div``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;
