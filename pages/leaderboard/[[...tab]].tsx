@@ -20,7 +20,7 @@ const Leader: LeaderComponent = () => {
 	return (
 		<>
 			<Head>
-				<title>{t('futures.page-title')}</title>
+				<title>{t('leaderboard.page-title')}</title>
 			</Head>
 			<PageContent>
 				<MobileHiddenView>
