@@ -123,7 +123,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.trade.confirmation.modal.confirm-order')}
 		>
 			{dataRows.map(({ label, value }, i) => (

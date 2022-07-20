@@ -30,7 +30,7 @@ const ShareModalButton = () => {
 			<ButtonContainer>
 				<Button
 					variant="primary"
-					isRounded={true}
+					isRounded
 					onClick={handleDownloadImage}
 					size="sm"
 					disabled={false}

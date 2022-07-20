@@ -88,7 +88,7 @@ const FAQ = () => {
 					<TabPanels>
 						{tabs.map(({ title, items }) => (
 							<TabPanel key={title}>
-								<StyledAccordion collapsible={true} multiple={true}>
+								<StyledAccordion collapsible multiple>
 									{items.map(({ question, answer, link }) => (
 										<AccordionItem key={question}>
 											<AccordionButton>

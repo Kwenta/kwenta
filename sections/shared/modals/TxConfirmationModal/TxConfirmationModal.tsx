@@ -104,11 +104,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	);
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Currencies>
 				{quoteCurrencyKey && (
 					<CurrencyItem>
@@ -189,7 +185,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 									/>
 								}
 								arrow={false}
-								interactive={true}
+								interactive
 							>
 								<TooltipItem>
 									<InfoIcon />
@@ -240,7 +236,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 									/>
 								}
 								arrow={false}
-								interactive={true}
+								interactive
 							>
 								<TooltipItem>
 									<InfoIcon />

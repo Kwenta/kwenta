@@ -146,7 +146,7 @@
 		}
 	},
 	"lint-staged": {
-		"*.{ts, tsx}": [
+		"*.{ts,tsx}": [
 			"eslint"
 		]
 	},

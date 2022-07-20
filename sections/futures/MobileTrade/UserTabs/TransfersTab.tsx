@@ -80,7 +80,7 @@ const TransfersTab: React.FC = () => {
 						</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</div>

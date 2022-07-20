@@ -159,7 +159,7 @@ const TradeHistory: FC<TradeHistoryProps> = ({ trades, isLoading, isLoaded }) =>
 					</TableNoResults>
 				) : undefined
 			}
-			showPagination={true}
+			showPagination
 		/>
 	);
 };

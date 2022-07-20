@@ -127,7 +127,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.withdraw.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>

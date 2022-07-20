@@ -79,7 +79,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
 					row.original.market !== 'sUSD'
 						? router.push(`/exchange/${row.original.market}-sUSD`)

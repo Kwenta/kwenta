@@ -51,13 +51,7 @@ const DeprecatedSynthsFooter: FC<DeprecatedSynthsFooterProps> = ({
 					</SummaryItem>
 				</Col>
 				<div>
-					<Button
-						variant="primary"
-						isRounded={true}
-						size="lg"
-						disabled={isRedeeming}
-						onClick={onSubmit}
-					>
+					<Button variant="primary" isRounded size="lg" disabled={isRedeeming} onClick={onSubmit}>
 						{t(`dashboard.deprecated.button.${isRedeeming ? 'redeeming' : 'default'}`)}
 					</Button>
 				</div>

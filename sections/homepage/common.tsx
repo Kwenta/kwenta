@@ -31,7 +31,6 @@ export const StackSection = styled(FlexDivColCentered)`
 
 export const FlexSection = styled(FlexDivRow)`
 	width: 100%;
-	/* justify-content: center; */
 	${media.lessThan('lg')`
 		align-items: center;
 		flex-direction: column;

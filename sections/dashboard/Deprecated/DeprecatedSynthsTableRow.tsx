@@ -44,7 +44,7 @@ const DeprecatedSynthsTableRow: FC<DeprecatedSynthsTableRowProps> = ({
 					<Currency.Name
 						currencyKey={currencyKey}
 						name={t('common.currency.synthetic-currency-name', { currencyName: synthDesc })}
-						showIcon={true}
+						showIcon
 						isDeprecated
 					/>
 				</div>

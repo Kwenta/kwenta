@@ -61,7 +61,7 @@ const FuturesHistoryTable: FC = () => {
 		<TableContainer>
 			<StyledTable
 				data={isL2 ? mappedHistoricalTrades : []}
-				showPagination={true}
+				showPagination
 				isLoading={futuresTradesQuery.isLoading}
 				noResultsMessage={
 					!isL2 ? (
@@ -167,7 +167,7 @@ const FuturesHistoryTable: FC = () => {
 							return conditionalRender(
 								cellProps.row.original.pnl,
 								cellProps.row.original.pnl.eq(wei(0)) ? (
-									<PNL normal={true}>--</PNL>
+									<PNL normal>--</PNL>
 								) : (
 									<PNL negative={cellProps.value.lt(wei(0))}>
 										{formatCurrency(Synths.sUSD, cellProps.value, {

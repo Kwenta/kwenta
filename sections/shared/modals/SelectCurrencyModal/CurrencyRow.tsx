@@ -42,7 +42,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 	);
 
 	return (
-		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable={true}>
+		<StyledSelectableCurrencyRow key={currencyKey} onClick={onClick} isSelectable>
 			<Currency.Name
 				name={
 					token.isSynth
@@ -51,7 +51,7 @@ const CurrencyRow: FC<SynthRowProps> = ({ token, onClick, balance }) => {
 						  })
 						: token.name
 				}
-				showIcon={true}
+				showIcon
 				iconProps={
 					!token.isSynth
 						? {

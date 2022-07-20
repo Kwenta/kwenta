@@ -122,7 +122,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		<>
 			<BaseModal
 				onDismiss={() => setOpenProfitCalcModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.profit-calculator.title')}
 			>
 				<ModalWindow>

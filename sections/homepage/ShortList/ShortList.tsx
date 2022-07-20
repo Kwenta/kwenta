@@ -117,9 +117,9 @@ const ShortList = () => {
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<Media greaterThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={data}
 						pageSize={5}
@@ -199,9 +199,9 @@ const ShortList = () => {
 				</Media>
 				<Media lessThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={data}
 						pageSize={5}

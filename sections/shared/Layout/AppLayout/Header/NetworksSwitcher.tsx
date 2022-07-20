@@ -84,7 +84,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			<StyledButton noOutline={true} size="sm">
+			<StyledButton noOutline size="sm">
 				{t('header.networks-switcher.l2')}
 			</StyledButton>
 		</Container>
@@ -99,7 +99,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				optionPadding={'0px'} //override default padding to 0
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
-				noOutline={true}
+				noOutline
 			></L2Select>
 		</Container>
 	);

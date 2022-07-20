@@ -66,7 +66,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
 					router.push(ROUTES.Markets.MarketPair(row.original.asset));
 					setLastVisited(row.original.asset);

@@ -132,9 +132,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.market === '-' ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
@@ -168,9 +166,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 									const formatOptions = isEurForex(cellProps.row.original.asset)
 										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 										: {};
-									return cellProps.row.original.price === '-' ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.price}
@@ -190,9 +186,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'priceChange',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.priceChange === undefined ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<ChangePercent
 											value={cellProps.row.original.priceChange}
 											decimals={2}
@@ -210,9 +204,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'fundingRate',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.fundingRate === '-' ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<ChangePercent
 											value={cellProps.row.original.fundingRate}
 											decimals={6}
@@ -230,9 +222,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'openInterest',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.openInterest === '-' ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<OpenInterestContainer>
 											<StyledLongPrice
 												currencyKey={Synths.sUSD}
@@ -257,9 +247,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 								),
 								accessor: 'dailyVolume',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.volume === '-' ? (
-										<DefaultCell>-</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.volume}
@@ -423,8 +411,6 @@ const StyledValue = styled.div`
 	grid-column: 2;
 	grid-row: 2;
 `;
-
-const DefaultCell = styled.p``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;

@@ -84,7 +84,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 					</TableNoResults>
 				) : undefined
 			}
-			showPagination={true}
+			showPagination
 		/>
 	);
 };

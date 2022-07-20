@@ -124,7 +124,7 @@ const BalanceActions: FC = () => {
 				<StyledWidgetButton
 					textTransform="none"
 					onClick={() => router.push(`/exchange/sUSD`)}
-					noOutline={true}
+					noOutline
 				>
 					<StyledCurrencyIcon currencyKey={Synths.sUSD} width="20px" height="20px" />
 					{t('header.balance.get-susd')}
@@ -147,7 +147,7 @@ const BalanceActions: FC = () => {
 						IndicatorSeparator: () => null,
 					}}
 					isSearchable={false}
-					noOutline={true}
+					noOutline
 				></BalanceSelect>
 			)}
 		</Container>

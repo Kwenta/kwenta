@@ -49,7 +49,7 @@ const MarketClosureCard: FC<MarketClosureCardProps> = ({ attached }) => {
 						/>
 					</Message>
 				</DesktopOnlyView>
-				<MessageButton disabled={true}>
+				<MessageButton disabled>
 					{t(`exchange.footer-card.market-closure.button-label`)}
 				</MessageButton>
 			</MessageContainer>

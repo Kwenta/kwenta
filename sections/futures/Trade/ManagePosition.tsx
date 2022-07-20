@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageSideState,
 	leverageState,
@@ -35,8 +35,8 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionDetails = position?.position;
 	const orderType = useRecoilValue(orderTypeState);
-	const [, setLeverageSide] = useRecoilState(leverageSideState);
-	const [, setTradeSize] = useRecoilState(tradeSizeState);
+	const setLeverageSide = useSetRecoilState(leverageSideState);
+	const setTradeSize = useSetRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
 	const { error, orderTxn, isMarketCapReached, placeOrderTranslationKey } = useFuturesContext();
 
@@ -50,7 +50,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 				<ManagePositionContainer>
 					<PlaceOrderButton
 						noOutline
-						fullWidth={true}
+						fullWidth
 						disabled={
 							!leverage ||
 							Number(leverage) < 0 ||
@@ -67,8 +67,8 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 					</PlaceOrderButton>
 
 					<CloseOrderButton
-						fullWidth={true}
-						noOutline={true}
+						fullWidth
+						noOutline
 						variant="danger"
 						onClick={() => {
 							if (orderType === 1 && position?.position?.size) {

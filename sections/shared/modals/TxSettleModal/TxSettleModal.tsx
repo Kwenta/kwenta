@@ -31,11 +31,7 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.settle-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.settle-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
 					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>

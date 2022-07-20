@@ -72,7 +72,7 @@ const SynthBalanceRow: FC<SynthBalanceRowProps> = ({ exchangeRates, synth, total
 					<Currency.Name
 						currencyKey={currencyKey}
 						name={t('common.currency.synthetic-currency-name', { currencyName: synthDesc })}
-						showIcon={true}
+						showIcon
 					/>
 				</div>
 				<AmountCol>
