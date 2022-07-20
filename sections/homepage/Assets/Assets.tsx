@@ -214,7 +214,8 @@ const Assets = () => {
 				description: description.split(' ')[0],
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
-				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || 0,
+				priceChange:
+					(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
 				image: <PriceChart asset={market.asset} />,
 				icon: (
 					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
@@ -246,7 +247,7 @@ const Assets = () => {
 				market: synth.name,
 				description: description.split(' ')[1],
 				price,
-				change: price !== 0 ? (price - pastPrice?.price) / price || 0 : 0,
+				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || 0 : 0,
 				volume: !isNil(synthVolumes[synth.name]) ? Number(synthVolumes[synth.name]) ?? 0 : 0,
 				image: <PriceChart asset={synth.asset} />,
 				icon: (

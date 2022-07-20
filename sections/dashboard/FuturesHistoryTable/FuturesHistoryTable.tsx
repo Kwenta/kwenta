@@ -24,6 +24,7 @@ import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { ETH_UNIT } from 'constants/network';
 import { TradeStatus } from 'sections/futures/types';
 import PositionType from 'components/Text/PositionType';
+import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 
 const FuturesHistoryTable: FC = () => {
 	const { t } = useTranslation();
@@ -32,24 +33,27 @@ const FuturesHistoryTable: FC = () => {
 	const { selectPriceCurrencyRate, selectedPriceCurrency } = useSelectedPriceCurrency();
 	const { switchToL2 } = useNetworkSwitcher();
 	const futuresTradesQuery = useGetAllFuturesTradesForAccount(walletAddress);
-	const trades: FuturesTrade[] = useMemo(
+	const trades = useMemo(
 		() => (futuresTradesQuery.isSuccess ? futuresTradesQuery?.data ?? [] : []),
 		[futuresTradesQuery.isSuccess, futuresTradesQuery.data]
 	);
 
 	const mappedHistoricalTrades = useMemo(
 		() =>
-			trades.map((trade: FuturesTrade) => {
+			trades.map((trade) => {
+				const parsedAsset = ethersUtils.parseBytes32String(trade.asset);
 				return {
 					...trade,
-					price: Number(trade?.price?.div(ETH_UNIT)),
-					size: Number(trade?.size.div(ETH_UNIT).abs()),
-					timestamp: Number(trade?.timestamp.mul(1000)),
-					pnl: trade?.pnl.div(ETH_UNIT),
-					feesPaid: trade?.feesPaid.div(ETH_UNIT),
-					id: trade?.txnHash,
-					orderType: trade?.orderType === 'NextPrice' ? 'Next Price' : trade?.orderType,
-					status: trade?.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
+					asset: parsedAsset,
+					market: getDisplayAsset(parsedAsset) + '-PERP',
+					price: Number(trade.price?.div(ETH_UNIT)),
+					size: Number(trade.size.div(ETH_UNIT).abs()),
+					timestamp: Number(trade.timestamp.mul(1000)),
+					pnl: trade.pnl.div(ETH_UNIT),
+					feesPaid: trade.feesPaid.div(ETH_UNIT),
+					id: trade.txnHash,
+					orderType: trade.orderType === 'NextPrice' ? 'Next Price' : trade.orderType,
+					status: trade.positionClosed ? TradeStatus.CLOSED : TradeStatus.OPEN,
 				};
 			}),
 		[trades]
@@ -98,19 +102,20 @@ const FuturesHistoryTable: FC = () => {
 					{
 						Header: <div>{t('dashboard.overview.futures-history-table.market')}</div>,
 						accessor: 'market',
-						Cell: (cellProps: CellProps<FuturesTrade>) => {
-							const asset = `${ethersUtils.parseBytes32String(cellProps.row.original.asset)}`;
+						Cell: (cellProps: CellProps<typeof mappedHistoricalTrades[number]>) => {
 							return conditionalRender(
-								asset,
+								cellProps.row.original.asset,
 								<SynthContainer>
-									{asset && (
+									{cellProps.row.original.asset && (
 										<>
 											<IconContainer>
-												<StyledCurrencyIcon currencyKey={(asset[0] !== 's' ? 's' : '') + asset} />
+												<StyledCurrencyIcon
+													currencyKey={
+														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+													}
+												/>
 											</IconContainer>
-											<StyledText>
-												{(asset[0] === 's' ? asset.slice(1) : asset) + '-PERP'}
-											</StyledText>
+											<StyledText>{cellProps.row.original.market}</StyledText>
 										</>
 									)}
 								</SynthContainer>
