@@ -1,13 +1,10 @@
 import { useMemo, FC } from 'react';
-
-import Select from 'components/Select';
-
-import { languageState } from 'store/app';
-
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-
 import { useTranslation } from 'react-i18next';
 import { Language } from 'translations/constants';
+
+import Select from 'components/Select';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { languageState } from 'store/app';
 
 export const LanguageSelect: FC = () => {
 	const { t } = useTranslation();

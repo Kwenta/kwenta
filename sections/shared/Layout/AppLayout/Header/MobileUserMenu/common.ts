@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
-import ROUTES from 'constants/routes';
+
 import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
 
 export const MenuButton = styled.div<{ isActive: boolean }>`
 	outline: none;

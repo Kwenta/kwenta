@@ -1,11 +1,12 @@
 import { FC, useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import useMarketClosed, { MarketClosure } from 'hooks/useMarketClosed';
-import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 import { baseCurrencyKeyState, quoteCurrencyKeyState } from 'store/exchange';
-import { useRecoilValue } from 'recoil';
+
+import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
 
 type MarketClosureCardProps = {
 	attached?: boolean;

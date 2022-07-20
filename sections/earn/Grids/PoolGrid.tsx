@@ -1,4 +1,5 @@
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
+
 import {
 	BigText,
 	KwentaText,

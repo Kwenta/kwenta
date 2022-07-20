@@ -1,30 +1,31 @@
 import { wei } from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
 import * as _ from 'lodash/fp';
-import React, { FC, useMemo, ReactElement } from 'react';
-import { CellProps } from 'react-table';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import Link from 'next/link';
-import ROUTES from 'constants/routes';
+import React, { FC, useMemo, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
-import { isL2State, walletAddressState } from 'store/wallet';
-import TimeDisplay from '../../futures/Trades/TimeDisplay';
+import PositionType from 'components/Text/PositionType';
+import { Synths } from 'constants/currency';
+import { ETH_UNIT } from 'constants/network';
 import { NO_VALUE } from 'constants/placeholder';
-import { GridDivCenteredRow } from 'styles/common';
-import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
+import ROUTES from 'constants/routes';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesTrade } from 'queries/futures/types';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
-import { ETH_UNIT } from 'constants/network';
+import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
-import PositionType from 'components/Text/PositionType';
+import { isL2State, walletAddressState } from 'store/wallet';
+import { GridDivCenteredRow } from 'styles/common';
+import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
+
+import TimeDisplay from '../../futures/Trades/TimeDisplay';
 
 const FuturesHistoryTable: FC = () => {
 	const { t } = useTranslation();

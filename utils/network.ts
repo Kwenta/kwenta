@@ -1,5 +1,6 @@
 import detectEthereumProvider from '@metamask/detect-provider';
 import { NetworkId } from '@synthetixio/contracts-interface';
+import loadProvider from '@synthetixio/providers';
 import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { providers } from 'ethers';
@@ -13,7 +14,8 @@ import {
 	SUPPORTED_NETWORKS,
 	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
-import loadProvider from '@synthetixio/providers';
+
+import logError from './logError';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
@@ -35,7 +37,7 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 		}
 		return DEFAULT_NETWORK_ID;
 	} catch (e) {
-		console.log(e);
+		logError(e);
 		return DEFAULT_NETWORK_ID;
 	}
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import useFuturesData from 'hooks/useFuturesData';
 
 export const FuturesContext = React.createContext<ReturnType<typeof useFuturesData> | undefined>(

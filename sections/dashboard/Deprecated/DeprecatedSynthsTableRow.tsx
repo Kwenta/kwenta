@@ -1,20 +1,17 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { SynthBalance } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
-
-import { SynthBalance } from '@synthetixio/queries';
-
-import { formatPercent } from 'utils/formatters/number';
-
-import media from 'styles/media';
-import { GridDivCentered } from 'styles/common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import Connector from 'containers/Connector';
 import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { GridDivCentered } from 'styles/common';
+import media from 'styles/media';
+import { formatPercent } from 'utils/formatters/number';
 
 type DeprecatedSynthsTableRowProps = {
 	synth: SynthBalance;

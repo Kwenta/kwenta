@@ -1,22 +1,21 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
+import MoonIcon from 'assets/svg/app/moon.svg';
+import SunIcon from 'assets/svg/app/sun.svg';
+import Button from 'components/Button';
+import Connector from 'containers/Connector';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { currentThemeState } from 'store/ui';
-import Connector from 'containers/Connector';
-import Button from 'components/Button';
-
 import { isWalletConnectedState, networkState } from 'store/wallet';
-
-import WalletActions from './WalletActions';
-import ConnectionDot from './ConnectionDot';
-import BalanceActions from './BalanceActions';
-import NetworksSwitcher from './NetworksSwitcher';
 import { isSupportedNetworkId } from 'utils/network';
-import SunIcon from 'assets/svg/app/sun.svg';
-import MoonIcon from 'assets/svg/app/moon.svg';
+
+import BalanceActions from './BalanceActions';
+import ConnectionDot from './ConnectionDot';
+import NetworksSwitcher from './NetworksSwitcher';
+import WalletActions from './WalletActions';
 
 const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();

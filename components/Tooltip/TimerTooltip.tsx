@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Tooltip, ToolTipWrapper } from './TooltipStyles';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
 import useInterval from 'hooks/useInterval';
+
+import { Tooltip, ToolTipWrapper } from './TooltipStyles';
 
 interface ToolTipProps {
 	startTimeDate: Date | undefined;

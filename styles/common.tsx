@@ -1,11 +1,9 @@
-import styled, { css } from 'styled-components';
 import Tippy from '@tippyjs/react';
+import styled, { css } from 'styled-components';
 
 import Button, { border } from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
-
 import { zIndex } from 'constants/ui';
-
 import media from 'styles/media';
 
 export const FlexDiv = styled.div`

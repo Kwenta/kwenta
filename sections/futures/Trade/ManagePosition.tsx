@@ -1,9 +1,12 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { PositionSide } from 'queries/futures/types';
 import {
 	leverageSideState,
 	leverageState,
@@ -16,10 +19,8 @@ import {
 	tradeSizeState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
+
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
-import { PositionSide } from 'queries/futures/types';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 type ManagePositionProps = {
 	openConfirmationModal(): void;

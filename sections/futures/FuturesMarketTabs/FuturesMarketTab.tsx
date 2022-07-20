@@ -1,21 +1,21 @@
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
-import { useRouter } from 'next/router';
 
-import Table from 'components/Table';
-import { FuturesMarket } from 'queries/futures/types';
-import Currency from 'components/Currency';
-import ChangePercent from 'components/ChangePercent';
-import { Synths } from 'constants/currency';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import MarketBadge from 'components/Badge/MarketBadge';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import ROUTES from 'constants/routes';
+import { FuturesMarket } from 'queries/futures/types';
+import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { FlexDivCol } from 'styles/common';
 import { FuturesMarketAsset, getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
-import ROUTES from 'constants/routes';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];

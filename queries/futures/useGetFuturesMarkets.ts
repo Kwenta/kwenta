@@ -1,19 +1,19 @@
+import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
-import QUERY_KEYS from 'constants/queryKeys';
-import { FuturesMarket } from './types';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
-import { getReasonFromCode } from './utils';
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { appReadyState } from 'store/app';
 import { futuresMarketsState } from 'store/futures';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+
+import { FuturesMarket } from './types';
+import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);

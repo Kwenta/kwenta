@@ -1,9 +1,9 @@
-import Loader from 'components/Loader';
-import useGetFuturesOpenInterest from 'queries/futures/useGetFuturesOpenInterest';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart, XAxis, YAxis, CartesianGrid, Bar, ResponsiveContainer } from 'recharts';
 
+import Loader from 'components/Loader';
+import useGetFuturesOpenInterest from 'queries/futures/useGetFuturesOpenInterest';
 import colors from 'styles/theme/colors';
 
 type Props = {

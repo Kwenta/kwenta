@@ -1,18 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-
-import InfoBox from 'components/InfoBox';
 import { useExchangeContext } from 'contexts/ExchangeContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import TimerIcon from 'assets/svg/app/timer.svg';
+import InfoBox from 'components/InfoBox';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import { parseGasPriceObject } from 'hooks/useGas';
 import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
 import { formatCurrency, formatNumber, formatPercent, zeroBN } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import { Synths } from 'constants/currency';
-import { parseGasPriceObject } from 'hooks/useGas';
-import TimerIcon from 'assets/svg/app/timer.svg';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
 
 const SwapInfoBox: React.FC = () => {
 	const { t } = useTranslation();

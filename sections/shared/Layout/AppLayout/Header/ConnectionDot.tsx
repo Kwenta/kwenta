@@ -1,8 +1,9 @@
-import React from 'react';
-import styled, { useTheme } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { networkState, isWalletConnectedState } from 'store/wallet';
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
+import React from 'react';
+import { useRecoilValue } from 'recoil';
+import styled, { useTheme } from 'styled-components';
+
+import { networkState, isWalletConnectedState } from 'store/wallet';
 
 type ConnectionDotProps = {
 	className?: string;

@@ -1,15 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
-import { NetworkId } from '@synthetixio/contracts-interface';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
+import { EXTERNAL_LINKS } from 'constants/links';
+import QUERY_KEYS from 'constants/queryKeys';
 
 import { TokenListQueryResponse, ZapperTokenListResponse } from './types';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 const ether = {
 	address: ETH_ADDRESS,

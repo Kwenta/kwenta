@@ -1,23 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { CellProps } from 'react-table';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import Table from 'components/Table';
+import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
-import { PositionSide } from '../types';
+import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { formatCurrency } from 'utils/formatters/number';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import Badge from 'components/Badge';
 import { currentMarketState, openOrdersState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { formatCurrency } from 'utils/formatters/number';
+import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+
+import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();

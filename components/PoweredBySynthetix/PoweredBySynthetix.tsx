@@ -1,11 +1,11 @@
-import { EXTERNAL_LINKS } from 'constants/links';
 import React from 'react';
-import styled from 'styled-components';
-import { ExternalLink, FlexDivColCentered, Paragraph } from 'styles/common';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import TextLogo from 'assets/svg/brand/text-logo-white.svg';
 import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { ExternalLink, FlexDivColCentered, Paragraph } from 'styles/common';
 
 const PoweredBySynthetix = () => {
 	const { t } = useTranslation();

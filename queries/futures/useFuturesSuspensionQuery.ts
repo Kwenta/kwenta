@@ -1,12 +1,13 @@
-import { useRecoilValue } from 'recoil';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-import Connector from 'containers/Connector';
-import { getReasonFromCode } from 'queries/futures/utils';
-import QUERY_KEYS from 'constants/queryKeys';
-import { useQuery, UseQueryOptions } from 'react-query';
-import { appReadyState } from 'store/app';
 import { ethers } from 'ethers';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
+
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import { getReasonFromCode } from 'queries/futures/utils';
+import { appReadyState } from 'store/app';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import { FuturesMarketKey } from 'utils/futures';
 
 interface FuturesMarketClosure {

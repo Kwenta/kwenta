@@ -1,9 +1,8 @@
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import Connector from 'containers/Connector';
-
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import Connector from 'containers/Connector';
 
 import { MessageButton, MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
 

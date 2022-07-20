@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 
-import Connector from './Connector';
 import BlockExplorer from './BlockExplorer';
-import TransactionNotifier from './TransactionNotifier';
+import Connector from './Connector';
 import Convert from './Convert';
+import TransactionNotifier from './TransactionNotifier';
 
 type WithAppContainersProps = {
 	children: React.ReactNode;

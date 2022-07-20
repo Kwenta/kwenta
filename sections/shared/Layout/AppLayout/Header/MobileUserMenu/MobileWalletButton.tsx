@@ -1,14 +1,15 @@
 import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Connector from 'containers/Connector';
-import { isWalletConnectedState, networkState } from 'store/wallet';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import ConnectionDot from '../ConnectionDot';
+import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isSupportedNetworkId } from 'utils/network';
+
+import ConnectionDot from '../ConnectionDot';
 import MobileWalletActions from './MobileWalletActions';
 
 type MobileWalletButtonProps = {

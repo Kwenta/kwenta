@@ -1,21 +1,22 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
+import Table from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { PositionSide, TradeStatus } from 'sections/futures/types';
 import { currentMarketState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { GridDivCenteredRow } from 'styles/common';
-import Table from 'components/Table';
-import { PositionSide, TradeStatus } from 'sections/futures/types';
-import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { CellProps } from 'react-table';
 import { formatCryptoCurrency } from 'utils/formatters/number';
-import TradeDrawer from '../drawers/TradeDrawer';
+
 import { SectionHeader, SectionTitle } from '../common';
+import TradeDrawer from '../drawers/TradeDrawer';
 
 const TradesTab: React.FC = () => {
 	const { t } = useTranslation();

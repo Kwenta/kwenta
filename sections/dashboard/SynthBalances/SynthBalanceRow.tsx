@@ -1,23 +1,19 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { Synths } from '@synthetixio/contracts-interface';
+import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import Currency from 'components/Currency';
 import ProgressBar from 'components/ProgressBar';
-
-import useSynthetixQueries, { Rates, SynthBalance } from '@synthetixio/queries';
-
-import { formatPercent } from 'utils/formatters/number';
-
-import media from 'styles/media';
-import { GridDivCentered } from 'styles/common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import Connector from 'containers/Connector';
-
-import { Synths } from '@synthetixio/contracts-interface';
-import { useRecoilValue } from 'recoil';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { networkState } from 'store/wallet';
+import { GridDivCentered } from 'styles/common';
+import media from 'styles/media';
+import { formatPercent } from 'utils/formatters/number';
 
 export type SynthBalanceRowProps = {
 	exchangeRates: Rates | null;

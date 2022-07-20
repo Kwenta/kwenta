@@ -1,22 +1,23 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { MarketKeyByAsset } from 'utils/futures';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
-import { Synths } from 'constants/currency';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { TabPanel } from 'components/Tab';
-import SynthBalancesTable from '../SynthBalancesTable';
 import TabButton from 'components/Button/TabButton';
+import { TabPanel } from 'components/Tab';
+import { Synths } from 'constants/currency';
+import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { walletAddressState } from 'store/wallet';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { MarketKeyByAsset } from 'utils/futures';
+
 import FuturesPositionsTable from '../FuturesPositionsTable';
+import SynthBalancesTable from '../SynthBalancesTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',

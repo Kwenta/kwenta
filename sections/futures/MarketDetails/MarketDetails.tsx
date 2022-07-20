@@ -1,29 +1,29 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import _ from 'lodash';
-
 import { wei } from '@synthetixio/wei';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Rates } from 'queries/rates/types';
-import { NO_VALUE } from 'constants/placeholder';
+import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
+import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
+import { Rates } from 'queries/rates/types';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 

@@ -1,26 +1,25 @@
 import { FC, useMemo, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
-
-import Connector from 'containers/Connector';
-import FullScreenModal from 'components/FullScreenModal';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { isL2State } from 'store/wallet';
-import Logo from 'sections/shared/Layout/Logo';
-
-import MobileSubMenu from './MobileSubMenu';
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
-import { languageState } from 'store/app';
 import { Language } from 'translations/constants';
 
 import MobileMenuBridgeIcon from 'assets/svg/app/mobile-menu-bridge.svg';
 import MobileMenuDisconnectIcon from 'assets/svg/app/mobile-menu-disconnect.svg';
 import MobileSwitchToL1Icon from 'assets/svg/app/mobile-switch-to-l1.svg';
 import MobileSwitchWalletIcon from 'assets/svg/app/mobile-switch-wallet.svg';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { lanugageIcons } from './common';
+import FullScreenModal from 'components/FullScreenModal';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import Logo from 'sections/shared/Layout/Logo';
+import { languageState } from 'store/app';
+import { isL2State } from 'store/wallet';
+
+import { lanugageIcons } from './common';
+import MobileSubMenu from './MobileSubMenu';
 
 type MobileSettingsModalProps = {
 	onDismiss: () => void;

@@ -1,5 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
+
 import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
+
 import { zeroBN } from './formatters/number';
 
 export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {
@@ -12,10 +14,7 @@ export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeD
 		!details?.makerFeeNextPrice ||
 		!sizeDelta
 	) {
-		return {
-			commitDeposit: undefined,
-			nextPriceFee: undefined,
-		};
+		return { commitDeposit: undefined, nextPriceFee: undefined };
 	}
 
 	const notionalDiff = sizeDelta.mul(details.assetPrice);

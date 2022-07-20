@@ -1,15 +1,19 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import { ethers } from 'ethers';
+import { useRouter } from 'next/router';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { gasSpeedState, walletAddressState } from 'store/wallet';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import Connector from 'containers/Connector';
 import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { PositionSide } from 'sections/futures/types';
 import {
 	currentMarketState,
 	feeCostState,
@@ -26,13 +30,10 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { PositionSide } from 'sections/futures/types';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import logError from 'utils/logError';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -99,16 +100,21 @@ const useFuturesData = () => {
 			const leverage =
 				value === '' || !position?.remainingMargin
 					? ''
-					: marketAssetRate
-							.mul(Number(value))
-							.div(position?.remainingMargin)
-							.toString()
-							.substring(0, 4);
+					: marketAssetRate.mul(Number(value)).div(position?.remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
-			setLeverage(leverage);
+			setLeverage(
+				leverage !== '' && leverage.lt(marketMaxLeverage) ? leverage.toString().substring(0, 4) : ''
+			);
 		},
-		[marketAssetRate, position?.remainingMargin, setTradeSize, setTradeSizeSUSD, setLeverage]
+		[
+			marketAssetRate,
+			position?.remainingMargin,
+			marketMaxLeverage,
+			setTradeSize,
+			setTradeSizeSUSD,
+			setLeverage,
+		]
 	);
 
 	useEffect(() => {
@@ -227,7 +233,7 @@ const useFuturesData = () => {
 				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}

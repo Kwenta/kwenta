@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import { CurrencyKey } from 'constants/currency';
-
 import { SynthSuspensionReason } from '@synthetixio/queries';
+
+import { CurrencyKey } from 'constants/currency';
 
 export type MarketClosureReason = 'frozen' | SynthSuspensionReason;
 export type MarketClosure = ReturnType<typeof useMarketClosed>;

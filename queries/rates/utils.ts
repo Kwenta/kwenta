@@ -1,12 +1,14 @@
-import { RateUpdates, Candles, Prices } from './types';
-import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
+import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+
 import { CandleResult } from 'queries/futures/subgraph';
-import { Candle } from './types';
 import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
 import { FuturesMarketKey } from 'utils/futures';
+
+import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { Candle } from './types';
+import { RateUpdates, Candles, Prices } from './types';
 
 export const getRatesEndpoint = (networkId: number): string => {
 	return networkId === 1 || networkId === 42

@@ -1,14 +1,13 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
+import { isL2State } from 'store/wallet';
 
 import Logo from '../../Logo';
-
 import Nav from './Nav';
-import { isL2State } from 'store/wallet';
 import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {

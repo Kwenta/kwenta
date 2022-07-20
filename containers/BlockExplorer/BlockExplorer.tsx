@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
-import { createContainer } from 'unstated-next';
-import { OPTIMISM_NETWORKS, MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
-import { useRecoilValue } from 'recoil';
-
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
-import { Network } from 'store/wallet';
+import { OPTIMISM_NETWORKS, MAINNET_OPTIMISM_EXPLORER } from '@synthetixio/optimism-networks';
+import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { createContainer } from 'unstated-next';
 
+import { Network } from 'store/wallet';
 import { networkState } from 'store/wallet';
 
 type BlockExplorerInstance = {

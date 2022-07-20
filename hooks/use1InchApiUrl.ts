@@ -1,5 +1,6 @@
-import { EXTERNAL_LINKS } from 'constants/links';
 import { useRecoilValue } from 'recoil';
+
+import { EXTERNAL_LINKS } from 'constants/links';
 import { networkState } from 'store/wallet';
 
 type SupportedNetwork = 'optimism' | 'ethereum';

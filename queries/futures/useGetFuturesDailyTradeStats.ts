@@ -1,16 +1,17 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
-import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
-import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
 import ROUTES from 'constants/routes';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
+import { calculateTimestampForPeriod } from 'utils/formatters/date';
+import logError from 'utils/logError';
+
+import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
+import { FuturesDailyTradeStats, FuturesOneMinuteStat } from './types';
+import { getFuturesEndpoint, calculateDailyTradeStats } from './utils';
 
 const PAGE_SIZE = 500;
 
@@ -52,7 +53,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 			}
 			return [];
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			return [];
 		}
 	};

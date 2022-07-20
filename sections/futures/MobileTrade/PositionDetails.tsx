@@ -1,12 +1,14 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
-import { currentMarketState, positionState } from 'store/futures';
-import { SectionHeader, SectionSeparator, SectionTitle } from './common';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
+import React from 'react';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
 import { Synths } from 'constants/currency';
+import { currentMarketState, positionState } from 'store/futures';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+
 import PositionCard from '../PositionCard';
+import { SectionHeader, SectionSeparator, SectionTitle } from './common';
 
 const PositionDetails = () => {
 	const position = useRecoilValue(positionState);

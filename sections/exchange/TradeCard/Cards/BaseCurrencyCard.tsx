@@ -1,9 +1,10 @@
-import React from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useTranslation } from 'react-i18next';
 import { useExchangeContext } from 'contexts/ExchangeContext';
-import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { CurrencyKey } from 'constants/currency';
+import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import {
 	baseCurrencyKeyState,
 	baseCurrencyAmountState,
@@ -11,8 +12,8 @@ import {
 	quoteCurrencyKeyState,
 	currencyPairState,
 } from 'store/exchange';
+
 import CurrencyCard from '../CurrencyCard';
-import { CurrencyKey } from 'constants/currency';
 
 type BaseCurrencyCardProps = {
 	allowBaseCurrencySelection?: boolean;

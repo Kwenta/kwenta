@@ -1,20 +1,20 @@
-import Table from 'components/Table';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { NO_VALUE } from 'constants/placeholder';
-import { FuturesTrade } from 'queries/futures/types';
-import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-
-import { isL2MainnetState } from 'store/wallet';
 import styled, { css } from 'styled-components';
+
+import Table from 'components/Table';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { NO_VALUE } from 'constants/placeholder';
+import { FuturesTrade } from 'queries/futures/types';
+import useGetFuturesTrades from 'queries/futures/useGetFuturesTrades';
+import { currentMarketState } from 'store/futures';
+import { isL2MainnetState } from 'store/wallet';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { isEurForex } from 'utils/futures';
-import { currentMarketState } from 'store/futures';
 
 type TradesHistoryTableProps = {
 	numberOfTrades: number;

@@ -1,17 +1,16 @@
-import { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import Tippy from '@tippyjs/react';
 import { differenceInMinutes } from 'date-fns';
-import useSynthetixQueries from '@synthetixio/queries';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-
-import { walletAddressState } from 'store/wallet';
+import styled from 'styled-components';
 
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import CircleTick from 'assets/svg/app/circle-tick.svg';
-import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { walletAddressState } from 'store/wallet';
 
 const SynthFeeReclaimStatus: FC<{ trade: SynthExchangeResult }> = ({ trade }) => {
 	const { t } = useTranslation();

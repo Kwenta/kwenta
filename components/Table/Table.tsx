@@ -1,13 +1,12 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
-import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
-
+import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCentered } from 'styles/common';
 
-import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
 
 export type TablePalette = 'primary';

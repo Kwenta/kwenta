@@ -1,17 +1,16 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import Head from 'next/head';
-
-import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
-
-import useExchange from 'hooks/useExchange';
-import { formatCurrency } from 'utils/formatters/number';
-import BasicSwap from 'sections/exchange/BasicSwap';
-import { useTranslation } from 'react-i18next';
-import AppLayout from 'sections/shared/Layout/AppLayout';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { MobileSwap } from 'sections/exchange/MobileSwap';
 import { ExchangeContext } from 'contexts/ExchangeContext';
+import Head from 'next/head';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import useExchange from 'hooks/useExchange';
+import BasicSwap from 'sections/exchange/BasicSwap';
+import { MobileSwap } from 'sections/exchange/MobileSwap';
+import AppLayout from 'sections/shared/Layout/AppLayout';
+import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
 
 type AppLayoutProps = {
 	children: React.ReactNode;

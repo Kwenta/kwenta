@@ -1,8 +1,9 @@
-import React from 'react';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
+
+import CustomInput from '../components/Input/CustomInput';
 import Input from '../components/Input/Input';
 import NumericInput from '../components/Input/NumericInput';
-import CustomInput from '../components/Input/CustomInput';
 
 export default {
 	title: 'Components/Input',

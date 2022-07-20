@@ -1,14 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
-
+import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
-
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type CurrencyIconProps = {

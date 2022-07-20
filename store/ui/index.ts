@@ -1,6 +1,6 @@
-import { DEFAULT_SLIPPAGE } from 'constants/defaults';
 import { atom } from 'recoil';
 
+import { DEFAULT_SLIPPAGE } from 'constants/defaults';
 import { DEFAULT_SORT_OPTION } from 'sections/dashboard/TrendingSynths/constants';
 import { localStorageEffect } from 'store/effects';
 import { ThemeName } from 'styles/theme';

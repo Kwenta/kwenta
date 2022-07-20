@@ -1,20 +1,20 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { UseQueryResult } from 'react-query';
 import { DeprecatedSynthsBalances, DeprecatedSynthBalance } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { UseQueryResult } from 'react-query';
+import styled from 'styled-components';
 
-import media from 'styles/media';
-import { GridDivCentered } from 'styles/common';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
-import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
-
-import SynthBalanceRow from './DeprecatedSynthsTableRow';
-import DeprecatedSynthsFooter from './DeprecatedSynthsFooter';
-import RedeemTxModal from './RedeemTxModal';
 import ROUTES from 'constants/routes';
+import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
+import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import { GridDivCentered } from 'styles/common';
+import media from 'styles/media';
+
+import DeprecatedSynthsFooter from './DeprecatedSynthsFooter';
+import SynthBalanceRow from './DeprecatedSynthsTableRow';
+import RedeemTxModal from './RedeemTxModal';
 
 type DeprecatedSynthsTableProps = {
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>;

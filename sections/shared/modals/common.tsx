@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import { FlexDivRow } from 'styles/common';
 
 import BaseModal from 'components/BaseModal';
+import { HEADER_HEIGHT } from 'constants/ui';
+import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 
 export const RowsHeader = styled(FlexDivRow)`

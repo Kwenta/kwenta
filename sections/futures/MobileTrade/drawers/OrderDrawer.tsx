@@ -1,11 +1,12 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
+import Button from 'components/Button';
+import { PositionSide } from 'sections/futures/types';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
+
 import BaseDrawer from './BaseDrawer';
-import { PositionSide } from 'sections/futures/types';
-import Button from 'components/Button';
 
 type OrderDrawerProps = {
 	open: boolean;

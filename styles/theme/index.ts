@@ -1,6 +1,6 @@
+import animations from './animations';
 import colors, { themeColors } from './colors';
 import fonts from './fonts';
-import animations from './animations';
 
 const theme = {
 	colors,
