@@ -286,7 +286,6 @@
 			"amount-placeholder": "0.0000",
 			"wallet-balance": "balance:",
 			"currency-selector": {
-				"select-synth": "select synth",
 				"select-token": "select token"
 			},
 			"max-button": "max",

@@ -183,9 +183,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 											)}
 											{currencyKey ?? (
 												<CapitalizedText>
-													{isL2
-														? t('exchange.currency-card.currency-selector.select-token')
-														: t('exchange.currency-card.currency-selector.select-synth')}
+													t('exchange.currency-card.currency-selector.select-token')
 												</CapitalizedText>
 											)}
 										</TokenLabel>
