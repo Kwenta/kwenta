@@ -19,7 +19,7 @@ export default function PositionChart() {
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const positionHistory = futuresPositionsQuery?.data ?? [];
+	const positionHistory = futuresPositionsQuery.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 
 	const tradeSize = useRecoilValue(tradeSizeState);

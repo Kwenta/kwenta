@@ -1,4 +1,5 @@
 import { Synths } from '@synthetixio/contracts-interface';
+import type { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import Link from 'next/link';
@@ -24,7 +25,10 @@ import { GridDivCenteredRow } from 'styles/common';
 import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
-import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
+
+interface SynthTradesExchangeResult extends SynthExchangeResult {
+	hash: string;
+}
 
 type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
 	timestamp: number;
