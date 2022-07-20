@@ -1,12 +1,12 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
 
-import QUERY_KEYS from 'constants/queryKeys';
 import { SynthsVolumes } from './type';
-import request, { gql } from 'graphql-request';
 import { getSynthsEndpoint } from './utils';
 
 const useGetWalletTrades = (

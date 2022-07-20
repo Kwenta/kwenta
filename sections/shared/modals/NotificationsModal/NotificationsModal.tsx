@@ -1,12 +1,11 @@
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+
 import useFeeReclaimPeriodsQuery from 'queries/synths/useFeeReclaimPeriodsQuery';
-
 import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
-
-import { walletAddressState } from 'store/wallet';
 import { ordersByStatusState } from 'store/orders';
+import { walletAddressState } from 'store/wallet';
 
 import FullScreen from './FullScreen';
 import Popup from './Popup';

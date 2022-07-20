@@ -1,11 +1,13 @@
 import { FC, useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
+import styled from 'styled-components';
+
 import TabButton from 'components/Button/TabButton';
+import { TabPanel } from 'components/Tab';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import FuturesMarketsTable from '../FuturesMarketsTable';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+
+import FuturesMarketsTable from '../FuturesMarketsTable';
 import SpotMarketsTable from '../SpotMarketsTable';
 
 enum MarketsTab {

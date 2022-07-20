@@ -1,17 +1,17 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
+import { currentMarketState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { getDisplayAsset } from 'utils/futures';
+
+import { FUTURES_POSITION_FRAGMENT } from './constants';
 import { PositionHistory } from './types';
 import { getFuturesEndpoint, mapTradeHistory } from './utils';
-import { getDisplayAsset } from 'utils/futures';
-import { FUTURES_POSITION_FRAGMENT } from './constants';
-import { currentMarketState } from 'store/futures';
 
 const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);

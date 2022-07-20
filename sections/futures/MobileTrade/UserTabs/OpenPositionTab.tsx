@@ -1,16 +1,16 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
-import PositionButtons from 'sections/futures/PositionButtons';
-import OrderSizing from 'sections/futures/OrderSizing';
-import LeverageInput from 'sections/futures/LeverageInput';
-
-import { leverageSideState, orderTypeState } from 'store/futures';
-import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import FeeInfoBox from 'sections/futures/FeeInfoBox';
+import LeverageInput from 'sections/futures/LeverageInput';
+import OrderSizing from 'sections/futures/OrderSizing';
+import PositionButtons from 'sections/futures/PositionButtons';
+import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import NextPrice from 'sections/futures/Trade/NextPrice';
+import { leverageSideState, orderTypeState } from 'store/futures';
+
 import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
 
 const OpenPositionTab: React.FC = () => {

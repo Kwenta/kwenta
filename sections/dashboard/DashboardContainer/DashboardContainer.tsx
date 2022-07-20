@@ -1,16 +1,18 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 import castArray from 'lodash/castArray';
-import ROUTES from 'constants/routes';
-import { TabList, TabPanel } from 'components/Tab';
+import { useRouter } from 'next/router';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
 import NavButton from 'components/Button/NavButton';
+import { TabList, TabPanel } from 'components/Tab';
+import ROUTES from 'constants/routes';
+import { MainContent, LeftSideContent } from 'styles/common';
+
+import History from '../History';
 import Links from '../Links';
 import Markets from '../Markets';
 import Overview from '../Overview';
-import { MainContent, LeftSideContent } from 'styles/common';
-import History from '../History';
 
 enum Tab {
 	Overview = 'overview',

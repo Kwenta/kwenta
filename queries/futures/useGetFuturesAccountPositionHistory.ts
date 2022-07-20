@@ -1,15 +1,14 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
 
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 
-import QUERY_KEYS from 'constants/queryKeys';
-import { PositionHistory } from './types';
-
-import { mapTradeHistory, getFuturesEndpoint } from './utils';
 import { FUTURES_POSITION_FRAGMENT } from './constants';
+import { PositionHistory } from './types';
+import { mapTradeHistory, getFuturesEndpoint } from './utils';
 
 const useGetFuturesAccountPositionHistory = (
 	account: string,

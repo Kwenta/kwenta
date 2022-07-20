@@ -1,12 +1,12 @@
+import { SynthBalance } from '@synthetixio/queries';
 import { FC } from 'react';
 import styled from 'styled-components';
 
-import media from 'styles/media';
+import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 import { GridDivCentered } from 'styles/common';
+import media from 'styles/media';
 
 import SynthBalanceRow, { SynthBalanceRowProps } from './SynthBalanceRow';
-import { SynthBalance } from '@synthetixio/queries';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
 
 type SynthBalancesProps = Omit<SynthBalanceRowProps, 'synth'> & {
 	balances: SynthBalance[];

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell } from 'recharts';
-
 import styled from 'styled-components';
 
 type ChartDataItem = {

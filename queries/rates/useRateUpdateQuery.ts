@@ -1,10 +1,12 @@
 import request, { gql } from 'graphql-request';
-import QUERY_KEYS from 'constants/queryKeys';
-import { useRecoilValue } from 'recoil';
-import { isL2State, networkState } from 'store/wallet';
-import { getRatesEndpoint } from './utils';
 import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
+
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
+
+import { getRatesEndpoint } from './utils';
 
 interface RateUpdate {
 	baseCurrencyKey: string;

@@ -1,15 +1,15 @@
+import { DeprecatedSynthBalance } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivColCentered, numericValueCSS } from 'styles/common';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { CurrencyKey, Synths } from 'constants/currency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { FlexDivColCentered, numericValueCSS } from 'styles/common';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 export type TxProvider = 'synthetix' | '1inch';
 

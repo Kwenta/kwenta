@@ -1,16 +1,16 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
 import Wei from '@synthetixio/wei';
 import { utils as ethersUtils } from 'ethers';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
 import { DAY_PERIOD } from './constants';
-import { calculateTradeVolume, getFuturesEndpoint } from './utils';
 import { getFuturesTrades } from './subgraph';
+import { calculateTradeVolume, getFuturesEndpoint } from './utils';
 
 const useGetFuturesTradingVolume = (
 	currencyKey: string | null,

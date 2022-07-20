@@ -1,11 +1,11 @@
+import { ethers } from 'ethers';
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import Connector from 'containers/Connector';
-import { ethers } from 'ethers';
 
 import { CurrencyKey } from 'constants/currency';
-import { appReadyState } from 'store/app';
 import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
 
 const useBaseFeeRateQuery = (
 	sourceCurrencyKey: CurrencyKey | null,

@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
 import { wei } from '@synthetixio/wei';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import BaseModal from 'components/BaseModal';
+import PositionButtons from 'sections/futures/PositionButtons';
+
+import { PositionSide } from '../types';
+import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
-import BaseModal from 'components/BaseModal';
-import LabelWithInput from './LabelWithInput';
-import PositionButtons from 'sections/futures/PositionButtons';
-import { PositionSide } from '../types';
 
 const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;

@@ -1,22 +1,19 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import { Synth } from '@synthetixio/contracts-interface';
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 import { useRouter } from 'next/router';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
-
-import { SelectableCurrencyRow } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useSynthetixQueries from '@synthetixio/queries';
-import { Synth } from '@synthetixio/contracts-interface';
-
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-import { useRecoilValue } from 'recoil';
 import { networkState } from 'store/wallet';
+import { SelectableCurrencyRow } from 'styles/common';
 
 type SynthRowProps = {
 	price: number | null;

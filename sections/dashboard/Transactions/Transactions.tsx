@@ -1,15 +1,15 @@
-import { FC, useState, useMemo, useCallback } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { CATEGORY_MAP } from 'constants/currency';
-import useSynthetixQueries from '@synthetixio/queries';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import { FC, useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import Select from 'components/Select';
+import { CATEGORY_MAP } from 'constants/currency';
+import Connector from 'containers/Connector';
 import { walletAddressState } from 'store/wallet';
 import { CapitalizedText, GridDiv } from 'styles/common';
-import Connector from 'containers/Connector';
 
 import TradeHistory from './TradeHistory';
 import { SynthTradesExchangeResult } from './TradeHistory/TradeHistory';

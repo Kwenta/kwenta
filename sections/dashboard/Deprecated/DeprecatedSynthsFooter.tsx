@@ -1,22 +1,19 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
-
-import useSynthetixQueries from '@synthetixio/queries';
-
-import media from 'styles/media';
-
-import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import { Synths } from 'constants/currency';
 import {
 	SummaryItem,
 	SummaryItemValue,
 	SummaryItemLabel,
 } from 'sections/exchange/FooterCard/common';
+import GasPriceSummaryItem from 'sections/exchange/FooterCard/TradeSummaryCard/GasPriceSummaryItem';
+import media from 'styles/media';
 import { formatCurrency } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 
 type DeprecatedSynthsFooterProps = {
 	totalUSDBalance: Wei;

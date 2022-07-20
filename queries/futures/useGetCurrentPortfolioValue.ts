@@ -1,15 +1,15 @@
+import { wei } from '@synthetixio/wei';
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
-import QUERY_KEYS from 'constants/queryKeys';
-import { mapFuturesPosition } from './utils';
-import { wei } from '@synthetixio/wei';
 import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
+
+import { mapFuturesPosition } from './utils';
 
 const useGetCurrentPortfolioValue = (
 	markets: FuturesMarketKey[] | [],

@@ -1,24 +1,25 @@
 import Link from 'next/link';
 import router from 'next/router';
 import { FC, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right-tg.svg';
 import CaretDownGrayIcon from 'assets/svg/app/caret-down-gray-slim.svg';
+import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
 import DiscordLogo from 'assets/svg/social/discord.svg';
 import MirrorLogo from 'assets/svg/social/mirror.svg';
-import TwitterLogo from 'assets/svg/marketing/twitter-icon.svg';
-import ROUTES from 'constants/routes';
-import { EXTERNAL_LINKS } from 'constants/links';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Button from 'components/Button';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
+import { isL2State } from 'store/wallet';
 import { FlexDivRow, FlexDivRowCentered, GridDivCenteredCol } from 'styles/common';
 import media from 'styles/media';
-import { isL2State } from 'store/wallet';
-import Logo from '../Logo';
+
 import MobileUserMenu from '../AppLayout/Header/MobileUserMenu';
+import Logo from '../Logo';
 
 const Header: FC = () => {
 	const { t } = useTranslation();

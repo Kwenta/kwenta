@@ -1,13 +1,13 @@
+import Image from 'next/image';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Image from 'next/image';
 
-import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import FaqIcon from 'assets/png/learn/faq.png';
-import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
-import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
+import ArrowUpRightIcon from 'assets/svg/app/arrow-up-right.svg';
 import HowGovernanceIcon from 'assets/svg/learn/how-governance.svg';
+import HowToStakeIcon from 'assets/svg/learn/how-to-stake.svg';
+import HowToTradeIcon from 'assets/svg/learn/how-to-trade.svg';
 import Button from 'components/Button';
 import { EXTERNAL_LINKS } from 'constants/links';
 import {
@@ -18,6 +18,7 @@ import {
 	WhiteHeader,
 } from 'styles/common';
 import media from 'styles/media';
+
 import { Copy, Title } from '../common';
 
 const LEARNS = [

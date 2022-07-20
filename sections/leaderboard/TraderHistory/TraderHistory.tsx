@@ -1,19 +1,19 @@
-import Table from 'components/Table';
+import router from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { Synths } from 'constants/currency';
-import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
-import { PositionHistory } from 'queries/futures/types';
-import Loader from 'components/Loader';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDiv } from 'styles/common';
-import router from 'next/router';
+import Loader from 'components/Loader';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
+import { PositionHistory } from 'queries/futures/types';
+import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { FlexDiv } from 'styles/common';
 
 type TraderHistoryProps = {
 	trader: string;

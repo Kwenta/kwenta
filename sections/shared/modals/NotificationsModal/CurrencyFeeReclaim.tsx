@@ -3,8 +3,8 @@ import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
 
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
-import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
 import { CurrencyKey } from 'constants/currency';
+import { FlexDivRowCentered, NoTextTransform } from 'styles/common';
 
 type CurrencyFeeReclaimProps = {
 	currencyKey: CurrencyKey;

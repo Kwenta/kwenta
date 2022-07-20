@@ -1,5 +1,4 @@
 import common from './common';
-
 import darkTheme from './dark';
 import lightTheme from './light';
 

@@ -1,13 +1,14 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import { PositionSide } from 'sections/futures/types';
+
+import { border } from 'components/Button';
+import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { Synths } from 'constants/currency';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { PositionSide } from 'sections/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import { getDisplayAsset, isEurForex } from 'utils/futures';
-import { Synths } from 'constants/currency';
-import ChangePercent from 'components/ChangePercent';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { border } from 'components/Button';
 
 type MobilePositionRowProps = {
 	row: any;

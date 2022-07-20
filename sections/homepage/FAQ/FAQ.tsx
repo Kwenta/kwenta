@@ -1,21 +1,17 @@
+import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
 import React, { useMemo } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from '@reach/tabs';
-import { Accordion, AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
-
-import { EXTERNAL_LINKS } from 'constants/links';
-
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
-
-import PlusThinIcon from 'assets/svg/app/plus-thin.svg';
 import LinkIcon from 'assets/svg/app/link.svg';
-
+import PlusThinIcon from 'assets/svg/app/plus-thin.svg';
+import { EXTERNAL_LINKS } from 'constants/links';
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+import { ExternalLink, resetButtonCSS } from 'styles/common';
 import media from 'styles/media';
 
 import { StackSection, CenterSubHeader } from '../common';
-import { ExternalLink, resetButtonCSS } from 'styles/common';
 
 type Item = {
 	question: string;

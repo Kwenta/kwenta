@@ -1,8 +1,8 @@
+import { BaseRateUpdate } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { CurrencyKey } from 'constants/currency';
 import { Query } from 'react-query';
 
-import { BaseRateUpdate } from '@synthetixio/queries';
+import { CurrencyKey } from 'constants/currency';
 
 // The function turns react query cached queries into a map (with the currencyKey) as the key to be used in the sorting.
 export const toCurrencyKeyMap = (

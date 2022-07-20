@@ -1,30 +1,24 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
 import React, { FC, useMemo } from 'react';
-import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-
-import { formatCurrency } from 'utils/formatters/number';
-
-import { NO_VALUE } from 'constants/placeholder';
-
-import { ExternalLink, GridDivCenteredRow, NoTextTransform } from 'styles/common';
-
-import BlockExplorer from 'containers/BlockExplorer';
-
-import Table from 'components/Table';
-import Currency from 'components/Currency';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 import NoNotificationIcon from 'assets/svg/app/no-notifications.svg';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { NO_VALUE } from 'constants/placeholder';
+import BlockExplorer from 'containers/BlockExplorer';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { isL2State } from 'store/wallet';
+import { ExternalLink, GridDivCenteredRow, NoTextTransform } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
 
 import SynthFeeReclaimStatus from './SynthFeeReclaimStatus';
 import TxReclaimFee from './TxReclaimFee';
-
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { SynthExchangeResult } from '@synthetixio/queries/build/node/generated/mainSubgraphQueries';
-import { isL2State } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
 
 export interface SynthTradesExchangeResult extends SynthExchangeResult {
 	hash: string;

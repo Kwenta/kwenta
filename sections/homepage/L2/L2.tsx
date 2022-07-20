@@ -1,7 +1,18 @@
+import Link from 'next/link';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import TransactionSpeedNumber from 'assets/svg/marketing/1-2s.svg';
+import TransactionCostNumber from 'assets/svg/marketing/50x.svg';
+import Optimism from 'assets/svg/marketing/Optimism_Alpha.svg';
+import Button from 'components/Button';
+import Currency from 'components/Currency';
+import { EXTERNAL_LINKS } from 'constants/links';
+import ROUTES from 'constants/routes';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { isL2State } from 'store/wallet';
 import {
 	FlexDiv,
 	FlexDivCentered,
@@ -10,21 +21,9 @@ import {
 	FlexDivRow,
 	ExternalLink,
 } from 'styles/common';
+import media, { Media } from 'styles/media';
 
 import { Copy, FlexSection, GridContainer, LeftSubHeader, Title } from '../common';
-import media, { Media } from 'styles/media';
-import Button from 'components/Button';
-
-import Optimism from 'assets/svg/marketing/Optimism_Alpha.svg';
-import TransactionSpeedNumber from 'assets/svg/marketing/1-2s.svg';
-import TransactionCostNumber from 'assets/svg/marketing/50x.svg';
-import Currency from 'components/Currency';
-import Link from 'next/link';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
-import ROUTES from 'constants/routes';
-import { EXTERNAL_LINKS } from 'constants/links';
 
 const L2 = () => {
 	const { t } = useTranslation();

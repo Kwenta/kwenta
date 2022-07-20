@@ -1,14 +1,14 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
 import { appReadyState } from 'store/app';
 import { networkState, walletAddressState } from 'store/wallet';
 
-import QUERY_KEYS from 'constants/queryKeys';
-import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 import { RATES_ENDPOINT_MAINNET } from './constants';
-import ROUTES from 'constants/routes';
+import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);

@@ -1,17 +1,17 @@
-import { atom, selector } from 'recoil';
+import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { atom, selector } from 'recoil';
 
-import { getFuturesKey, getSynthsKey } from 'store/utils';
+import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
-import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
+import { PositionSide } from 'sections/futures/types';
+import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { Balances } from '@synthetixio/queries';
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);

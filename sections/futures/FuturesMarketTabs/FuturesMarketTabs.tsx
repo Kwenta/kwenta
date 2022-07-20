@@ -1,14 +1,16 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import SegmentedControl from '../../../components/SegmentedControl';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
-import { activeTabState } from '../../../store/futures';
 import { useRecoilState } from 'recoil';
-import FuturesMarketTab from './FuturesMarketTab';
+import styled from 'styled-components';
+
+import { TabPanel } from 'components/Tab';
+import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+
+import SegmentedControl from '../../../components/SegmentedControl';
+import { activeTabState } from '../../../store/futures';
 import TradesHistoryTable from '../TradingHistory/TradesHistoryTable';
+import FuturesMarketTab from './FuturesMarketTab';
 
 const FuturesMarketTabs: FC = () => {
 	const { t } = useTranslation();

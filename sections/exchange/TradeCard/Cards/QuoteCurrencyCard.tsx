@@ -1,7 +1,9 @@
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { CurrencyKey } from 'constants/currency';
 import SelectCurrencyModal from 'sections/shared/modals/SelectCurrencyModal';
 import {
 	baseCurrencyKeyState,
@@ -10,9 +12,8 @@ import {
 	quoteCurrencyAmountState,
 	currencyPairState,
 } from 'store/exchange';
+
 import CurrencyCard from '../CurrencyCard';
-import { CurrencyKey } from 'constants/currency';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 
 type QuoteCurrencyCardProps = {
 	allowQuoteCurrencySelection?: boolean;

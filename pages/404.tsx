@@ -2,11 +2,10 @@ import Head from 'next/head';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import media from 'styles/media';
-import { FlexDivRowCentered } from 'styles/common';
-
 import CaretLeftXLIcon from 'assets/svg/app/caret-left-xl.svg';
 import CaretRightXLICon from 'assets/svg/app/caret-right-xl.svg';
+import { FlexDivRowCentered } from 'styles/common';
+import media from 'styles/media';
 
 const NotFoundPage = () => {
 	const { t } = useTranslation();

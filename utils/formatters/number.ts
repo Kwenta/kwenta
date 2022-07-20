@@ -1,12 +1,12 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { ethers, utils } from 'ethers';
 
+import { CurrencyKey } from 'constants/currency';
 import {
 	DEFAULT_CRYPTO_DECIMALS,
 	DEFAULT_FIAT_DECIMALS,
 	DEFAULT_NUMBER_DECIMALS,
 } from 'constants/defaults';
-import { CurrencyKey } from 'constants/currency';
 import { isFiatCurrency } from 'utils/currencies';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;

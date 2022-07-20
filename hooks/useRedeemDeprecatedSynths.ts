@@ -1,16 +1,18 @@
-import Connector from 'containers/Connector';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import useGas from './useGas';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useSynthetixQueries, { DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { ethers } from 'ethers';
-import { getTransactionPrice } from 'utils/network';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { UseQueryResult } from 'react-query';
+
+import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { hexToAsciiV2 } from 'utils/formatters/string';
-import { Synths } from 'constants/currency';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UseQueryResult } from 'react-query';
-import { useTranslation } from 'react-i18next';
+import { getTransactionPrice } from 'utils/network';
+
+import useGas from './useGas';
 
 const useRedeemDeprecatedSynths = (
 	redeemableDeprecatedSynthsQuery: UseQueryResult<DeprecatedSynthsBalances>,

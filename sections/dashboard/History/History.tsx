@@ -1,10 +1,12 @@
 import { FC, useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
+import styled from 'styled-components';
+
 import TabButton from 'components/Button/TabButton';
-import SpotHistoryTable from '../SpotHistoryTable';
+import { TabPanel } from 'components/Tab';
+
 import FuturesHistoryTable from '../FuturesHistoryTable';
+import SpotHistoryTable from '../SpotHistoryTable';
 
 enum HistoryTab {
 	FUTURES = 'futures',

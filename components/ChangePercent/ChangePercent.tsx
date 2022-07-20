@@ -1,11 +1,11 @@
+import { wei, WeiSource } from '@synthetixio/wei';
 import { FC } from 'react';
 import styled from 'styled-components';
-import { wei, WeiSource } from '@synthetixio/wei';
 
+import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
+import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
 import media from 'styles/media';
 import { formatPercent } from 'utils/formatters/number';
-import ChangePositiveIcon from 'assets/svg/app/change-positive.svg';
-import ChangeNegativeIcon from 'assets/svg/app/change-negative.svg';
 
 type ChangePercentProps = {
 	value: WeiSource;

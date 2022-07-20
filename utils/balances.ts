@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import get from 'lodash/get';
+
 import { CurrencyKey } from '../constants/currency';
 import { isSynth } from './currencies';
 

@@ -1,16 +1,16 @@
+import Wei, { wei } from '@synthetixio/wei';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
-import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, calculateFundingRate } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
 import { getDisplayAsset } from 'utils/futures';
+
 import { FundingRateUpdate } from './types';
+import { getFuturesEndpoint, calculateFundingRate } from './utils';
 
 const useGetAverageFundingRateForMarket = (
 	currencyKey: string | null,

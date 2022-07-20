@@ -1,28 +1,30 @@
-import { FC, useMemo, ReactElement } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { Synths } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
-import values from 'lodash/values';
-import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
-import Table from 'components/Table';
-import { walletAddressState } from 'store/wallet';
-import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import TimeDisplay from '../../futures/Trades/TimeDisplay';
-import { NO_VALUE } from 'constants/placeholder';
-import BlockExplorer from 'containers/BlockExplorer';
-import { ExternalLink } from 'styles/common';
-import LinkIcon from 'assets/svg/app/link.svg';
 import * as _ from 'lodash/fp';
-import { isFiatCurrency } from 'utils/currencies';
-import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
-import { GridDivCenteredRow } from 'styles/common';
+import values from 'lodash/values';
 import Link from 'next/link';
+import { FC, useMemo, ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import LinkIcon from 'assets/svg/app/link.svg';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
+import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
+import { walletAddressState } from 'store/wallet';
+import { ExternalLink } from 'styles/common';
+import { GridDivCenteredRow } from 'styles/common';
+import { isFiatCurrency } from 'utils/currencies';
+
+import TimeDisplay from '../../futures/Trades/TimeDisplay';
+import { SynthTradesExchangeResult } from '../Transactions/TradeHistory/TradeHistory';
 
 type WalletTradesExchangeResult = Omit<SynthTradesExchangeResult, 'timestamp'> & {
 	timestamp: number;

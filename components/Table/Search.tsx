@@ -1,8 +1,8 @@
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-import SearchInput from 'components/Input/SearchInput';
 import SearchIconPath from 'assets/svg/app/search.svg';
+import SearchInput from 'components/Input/SearchInput';
 
 type Props = {
 	value: string | undefined;

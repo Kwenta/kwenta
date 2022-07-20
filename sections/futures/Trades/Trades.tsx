@@ -1,19 +1,21 @@
 import { wei } from '@synthetixio/wei';
-import LinkIcon from 'assets/svg/app/link-blue.svg';
-import Card from 'components/Card';
-import Table from 'components/Table';
-import TimeDisplay from './TimeDisplay';
-import { Synths } from 'constants/currency';
-import { ETH_UNIT } from 'constants/network';
-import BlockExplorer from 'containers/BlockExplorer';
-import { FuturesTrade } from 'queries/futures/types';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled, { css } from 'styled-components';
+
+import LinkIcon from 'assets/svg/app/link-blue.svg';
+import Card from 'components/Card';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
+import { ETH_UNIT } from 'constants/network';
+import BlockExplorer from 'containers/BlockExplorer';
+import { FuturesTrade } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
+
 import { PositionSide, TradeStatus } from '../types';
+import TimeDisplay from './TimeDisplay';
 
 type TradesProps = {
 	history: FuturesTrade[] | [];

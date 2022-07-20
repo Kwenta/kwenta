@@ -1,15 +1,15 @@
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
 
+import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 
-import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesEndpoint, mapTrades } from './utils';
-import { FuturesTrade } from './types';
 import { getFuturesTrades } from './subgraph';
-import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
+import { FuturesTrade } from './types';
+import { getFuturesEndpoint, mapTrades } from './utils';
 
 const useGetFuturesTrades = (
 	currencyKey: string | undefined,

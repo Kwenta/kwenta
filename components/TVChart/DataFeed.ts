@@ -1,4 +1,3 @@
-import { Synths } from 'constants/currency';
 import {
 	HistoryCallback,
 	IBasicDataFeed,
@@ -10,9 +9,11 @@ import {
 	SubscribeBarsCallback,
 } from 'public/static/charting_library/charting_library';
 
+import { Synths } from 'constants/currency';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import { combineDataToPair } from 'sections/exchange/TradeCard/Charts/hooks/useCombinedCandleSticksChartData';
 import { getDisplayAsset } from 'utils/futures';
+
 import { resolutionToSeconds } from './utils';
 
 const supportedResolutions = [

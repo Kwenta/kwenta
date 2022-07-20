@@ -1,6 +1,6 @@
 import { toPng } from 'html-to-image';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 

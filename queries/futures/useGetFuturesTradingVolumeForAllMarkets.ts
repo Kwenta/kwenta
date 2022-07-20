@@ -1,16 +1,16 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
-
-import QUERY_KEYS from 'constants/queryKeys';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
+
 import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
-import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
-import { FuturesVolumes } from './types';
 import { getFuturesTrades } from './subgraph';
-import ROUTES from 'constants/routes';
+import { FuturesVolumes } from './types';
+import { calculateTradeVolumeForAll, getFuturesEndpoint } from './utils';
 
 const useGetFuturesTradingVolumeForAllMarkets = (
 	options?: UseQueryOptions<FuturesVolumes | null>

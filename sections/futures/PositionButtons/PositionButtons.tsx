@@ -1,9 +1,11 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
 import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import Button from 'components/Button';
-import { PositionSide } from '../types';
 import { marketInfoState } from 'store/futures';
+
+import { PositionSide } from '../types';
 
 interface PositionButtonsProps {
 	selected: PositionSide;

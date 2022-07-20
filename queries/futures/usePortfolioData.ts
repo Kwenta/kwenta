@@ -1,15 +1,16 @@
+import Wei from '@synthetixio/wei';
+import EthDater from 'ethereum-block-by-date';
 import request, { gql } from 'graphql-request';
+import moment from 'moment';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import Wei from '@synthetixio/wei';
 
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+
 import { getFuturesEndpoint } from './utils';
 // @ts-ignore
-import EthDater from 'ethereum-block-by-date';
-import moment from 'moment';
-import { appReadyState } from 'store/app';
-import Connector from 'containers/Connector';
 
 type PortfolioData = {
 	margin: Wei;

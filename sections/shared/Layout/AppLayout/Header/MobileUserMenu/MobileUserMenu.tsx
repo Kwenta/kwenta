@@ -1,17 +1,17 @@
+import Link from 'next/link';
 import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import { FixedFooterMixin } from 'styles/common';
-import MenuIcon from 'assets/svg/app/menu.svg';
 import CloseIcon from 'assets/svg/app/close.svg';
+import MenuIcon from 'assets/svg/app/menu.svg';
+import Button from 'components/Button';
+import ROUTES from 'constants/routes';
+import { FixedFooterMixin } from 'styles/common';
 
+import MobileMenuModal from './MobileMenuModal';
 import MobileSettingsModal from './MobileSettingsModal';
 import MobileWalletButton from './MobileWalletButton';
-import MobileMenuModal from './MobileMenuModal';
-import ROUTES from 'constants/routes';
-import Link from 'next/link';
-import Button from 'components/Button';
-import { useTranslation } from 'react-i18next';
 
 const MobileUserMenu: FC = () => {
 	const [isOpen, setIsOpen] = useState<'menu' | 'settings' | undefined>();

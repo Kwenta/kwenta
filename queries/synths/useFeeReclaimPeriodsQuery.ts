@@ -1,12 +1,11 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { Provider, Contract } from 'ethcall';
 import { BigNumber, ethers } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
 
 import Connector from 'containers/Connector';
-
-import { SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 const ethcallProvider = new Provider();
 

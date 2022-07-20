@@ -1,14 +1,13 @@
+import { Synth } from '@synthetixio/contracts-interface';
 import { atom } from 'recoil';
 import { Language } from 'translations/constants';
 
+import { ChartType } from 'constants/chartType';
+import { Synths } from 'constants/currency';
 import { DEFAULT_LANGUAGE, DEFAULT_PRICE_CURRENCY } from 'constants/defaults';
 import { Period } from 'constants/period';
-import { Synths } from 'constants/currency';
-
-import { Synth } from '@synthetixio/contracts-interface';
 
 import { getAppKey } from '../utils';
-
 import {
 	languageStateKey,
 	priceCurrencyStateKey,
@@ -19,7 +18,6 @@ import {
 	baseChartTypeStateKey,
 	quoteChartTypeStateKey,
 } from './constants';
-import { ChartType } from 'constants/chartType';
 
 export const PRICE_CURRENCIES = [
 	Synths.sUSD,

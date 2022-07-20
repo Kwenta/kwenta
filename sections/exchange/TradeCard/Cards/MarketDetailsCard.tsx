@@ -1,25 +1,20 @@
-import { useTranslation, Trans } from 'react-i18next';
+import useSynthetixQueries from '@synthetixio/queries';
 import { FC } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import styled, { useTheme } from 'styled-components';
-import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 
-import BlockExplorer from 'containers/BlockExplorer';
-
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
-
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { CurrencyKey, MARKET_HOURS_SYNTHS, Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
-
-import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
-
-import { truncateAddress } from 'utils/formatters/string';
-import { formatCurrency } from 'utils/formatters/number';
-
+import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useMarketHoursTimer from 'sections/exchange/hooks/useMarketHoursTimer';
+import { FlexDivRowCentered, NoTextTransform, ExternalLink } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
+import { truncateAddress } from 'utils/formatters/string';
 import { marketIsOpen, marketNextTransition } from 'utils/marketHours';
-import useSynthetixQueries from '@synthetixio/queries';
-import Connector from 'containers/Connector';
 
 type MarketDetailsCardProps = {
 	currencyKey: CurrencyKey | null;

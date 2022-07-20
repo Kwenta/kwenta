@@ -1,20 +1,23 @@
-import { FC, ReactElement, ReactNode, useMemo } from 'react';
+import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
+import WithAppContainers from 'containers';
+import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { FC, ReactElement, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QueryClientProvider, QueryClient } from 'react-query';
-import { NextPage } from 'next';
-import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 
+import Connector from 'containers/Connector';
+import Layout from 'sections/shared/Layout';
+import AppLayout from 'sections/shared/Layout/AppLayout';
+import SystemStatus from 'sections/shared/SystemStatus';
+import { currentThemeState } from 'store/ui';
 import { MediaContextProvider } from 'styles/media';
 import { themes } from 'styles/theme';
-import WithAppContainers from 'containers';
-import SystemStatus from 'sections/shared/SystemStatus';
 import { isSupportedNetworkId } from 'utils/network';
-import AppLayout from 'sections/shared/Layout/AppLayout';
 
 import 'styles/main.css';
 import 'slick-carousel/slick/slick.css';
@@ -25,11 +28,6 @@ import '@reach/accordion/styles.css';
 import 'tippy.js/dist/tippy.css';
 
 import '../i18n';
-
-import Layout from 'sections/shared/Layout';
-
-import Connector from 'containers/Connector';
-import { currentThemeState } from 'store/ui';
 
 type NextPageWithLayout = NextPage & {
 	layout?: (page: ReactElement) => ReactNode;

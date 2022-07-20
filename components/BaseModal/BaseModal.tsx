@@ -1,12 +1,11 @@
-import { FC, ReactNode } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { FC, ReactNode } from 'react';
 import styled from 'styled-components';
 
 import CrossIcon from 'assets/svg/app/cross.svg';
-
 import Card from 'components/Card';
-import { resetButtonCSS } from 'styles/common';
 import { zIndex } from 'constants/ui';
+import { resetButtonCSS } from 'styles/common';
 import media from 'styles/media';
 
 type BaseModalProps = {
