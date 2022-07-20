@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import SegmentedControl from 'components/SegmentedControl';
-import { futuresAccountState, leverageSideState, orderTypeState } from 'store/futures';
+import { leverageSideState, orderTypeState } from 'store/futures';
 
 import CrossMarginOnboard from '../CrossMarginOnboard';
 import FeeInfoBox from '../FeeInfoBox';
@@ -22,23 +22,7 @@ import TradeConfirmationModal from './TradeConfirmationModal';
 const Trade: React.FC = () => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
-	const [openModal, setOpenModal] = useState<'trade' | 'next-price' | 'onboard' | null>(null);
-
-	const [accountState, setAccountState] = useRecoilState(futuresAccountState);
-
-	const onCreatedAccount = () => {
-		// TODO: handle complete
-	};
-
-	const onSelectCrossMargin = () => {
-		accountState.crossMarginAddress
-			? setAccountState({
-					...accountState,
-					selectedType: 'cross_margin',
-					selectedFuturesAddress: accountState.crossMarginAddress,
-			  })
-			: setOpenModal('onboard');
-	};
+	const [openModal, setOpenModal] = useState<'trade' | 'next-price' | null>(null);
 
 	return (
 		<div>
