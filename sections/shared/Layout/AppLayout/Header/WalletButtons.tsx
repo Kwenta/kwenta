@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -12,17 +12,12 @@ import { currentThemeState } from 'store/ui';
 import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isSupportedNetworkId } from 'utils/network';
 
-import BalanceActions from '../BalanceActions';
-import ConnectionDot from '../ConnectionDot';
-import NetworksSwitcher from '../NetworksSwitcher';
-import WalletActions from '../WalletActions';
+import BalanceActions from './BalanceActions';
+import ConnectionDot from './ConnectionDot';
+import NetworksSwitcher from './NetworksSwitcher';
+import WalletActions from './WalletActions';
 
-type WalletButtonsProps = {
-	settingsModalOpened: boolean;
-	setSettingsModalOpened: Dispatch<SetStateAction<boolean>>;
-};
-
-const WalletButtons: React.FC<WalletButtonsProps> = ({ settingsModalOpened }) => {
+const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
@@ -83,7 +78,6 @@ const WalletButtons: React.FC<WalletButtonsProps> = ({ settingsModalOpened }) =>
 				onClick={() => {
 					toggleTheme();
 				}}
-				isActive={settingsModalOpened}
 				noOutline
 			>
 				<ThemeIcon width={20} />

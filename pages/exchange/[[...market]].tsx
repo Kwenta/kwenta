@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import useExchange from 'hooks/useExchange';
 import BasicSwap from 'sections/exchange/BasicSwap';
-import useExchange from 'sections/exchange/hooks/useExchange';
 import { MobileSwap } from 'sections/exchange/MobileSwap';
 import AppLayout from 'sections/shared/Layout/AppLayout';
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';

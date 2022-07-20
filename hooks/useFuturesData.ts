@@ -33,6 +33,7 @@ import {
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
@@ -98,9 +99,9 @@ const useFuturesData = () => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === '' || !position?.remainingMargin
+				value === '' || !position?.remainingMargin || position.remainingMargin.eq(0)
 					? ''
-					: marketAssetRate.mul(Number(value)).div(position?.remainingMargin);
+					: marketAssetRate.mul(Number(value)).div(position.remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
 			setLeverage(
@@ -135,9 +136,10 @@ const useFuturesData = () => {
 		const valueIsNull = value === '' || Number(value) === 0;
 		if (marketAssetRate.gt(0)) {
 			const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
-			const leverage = valueIsNull
-				? ''
-				: wei(value).div(position?.remainingMargin).toString().substring(0, 4);
+			const leverage =
+				valueIsNull || !position?.remainingMargin || position.remainingMargin.eq(0)
+					? ''
+					: wei(value).div(position.remainingMargin).toString().substring(0, 4);
 			setTradeSizeSUSD(value);
 			setTradeSize(size);
 			setLeverage(leverage);
@@ -171,7 +173,7 @@ const useFuturesData = () => {
 	);
 
 	const orderTxn = useSynthetixTxn(
-		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		gasPrice,

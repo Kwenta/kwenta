@@ -15,7 +15,7 @@ import { truncatedWalletAddressState } from 'store/wallet';
 import { FlexDivRow } from 'styles/common';
 
 import ConnectionDot from './ConnectionDot';
-import getENSName from './UserMenu/getENSName';
+import getENSName from './getENSName';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -43,8 +43,8 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	} = Connector.useContainer();
 	const hardwareWallet = isHardwareWallet();
 
-	const [ensName, setEns] = useState<string>('');
-	const [walletLabel, setWalletLabel] = useState<string>('');
+	const [ensName, setEns] = useState('');
+	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
 	const WALLET_OPTIONS = useMemo(() => {
@@ -136,8 +136,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"

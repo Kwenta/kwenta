@@ -293,7 +293,7 @@ export const mapMarginTransfers = (
 				action: isPositive ? 'deposit' : 'withdraw',
 				amount,
 				isPositive,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
 			};
 		}

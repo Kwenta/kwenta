@@ -32,7 +32,7 @@ const ShareModal: FC<ShareModalProps> = ({
 		<>
 			<BaseModal
 				onDismiss={() => setShowShareModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.share.title')}
 			>
 				<ModalWindow>
