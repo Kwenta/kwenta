@@ -19,8 +19,9 @@
 		"jsx-a11y/alt-text": "off",
 		"import/no-anonymous-default-export": "off",
 		"@next/next/no-img-element": "off",
+		"no-console": "off",
 		"import/order": [
-			"error",
+			"warn",
 			{
 				"alphabetize": {
 					"order": "asc",
