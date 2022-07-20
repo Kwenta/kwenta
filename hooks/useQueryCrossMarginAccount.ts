@@ -28,10 +28,10 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	const queryAndSetAccount = useCallback(async () => {
-		console.log('querying...');
 		if (!network.id || !walletAddress || !crossMarginContractFactory) return null;
 		if (!supportedNetworks.includes(network.id)) {
 			const accountState = {
+				crossMarginEnabled: false,
 				crossMarginAddress: null,
 				walletAddress,
 				selectedFuturesAddress: walletAddress,
@@ -44,6 +44,7 @@ export default function useQueryCrossMarginAccount() {
 
 		if (walletAddress && crossMarginContractFactory) {
 			setFuturesAccount({
+				crossMarginEnabled: true,
 				crossMarginAddress: null,
 				walletAddress,
 				selectedFuturesAddress: walletAddress,
@@ -51,6 +52,7 @@ export default function useQueryCrossMarginAccount() {
 			});
 			const crossMarginAccount = await queryAccountLogs();
 			const accountState = {
+				crossMarginEnabled: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
 				selectedFuturesAddress: crossMarginAccount || walletAddress,
