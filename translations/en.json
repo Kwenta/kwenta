@@ -280,6 +280,10 @@
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"common": {
+			"from": "from",
+			"into": "into"
+		},
 		"synth-exchange": "Synth Exchange",
 		"currency-card": {
 			"synth-name": "-",
@@ -315,42 +319,6 @@
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
 			}
 		},
-		"price-chart-card": {
-			"compare": "compare",
-			"ratio": "ratio",
-			"overlay-messages": {
-				"frozen": {
-					"title": "{{currencyKey}} synth has been frozen",
-					"subtitle": "Reset in progress."
-				},
-				"market-closure": {
-					"title": "{{currencyKey}} market has been closed",
-					"subtitle": "Reset in progress.",
-					"after-hours": "Aftermarket trading pool available <linkTag>{{linkText}}</linkTag>",
-					"here": "here"
-				},
-				"system-upgrade": {
-					"title": "{{currencyKey}} synth paused",
-					"subtitle": "Please check the Synthetix Discord for details."
-				},
-				"circuit-breaker": {
-					"title": "Circuit breaker triggered for {{currencyKey}}",
-					"subtitle": "Reset in progress"
-				},
-				"emergency": {
-					"title": "Emergency shutdown activated for {{currencyKey}}",
-					"subtitle": "Reset in progress"
-				}
-			},
-			"tooltip": {
-				"close": "close",
-				"high": "high",
-				"low": "low",
-				"open": "open",
-				"price": "price"
-			},
-			"no-data": "No data"
-		},
 		"summary-info": {
 			"gas-price-gwei": "gas price (GWEI)",
 			"max-fee-gwei": "Max Fee (GWEI)",
@@ -375,8 +343,6 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
-			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch to trade Synths:",
 			"1inch-button": "Visit 1inch"
 		},
 		"connect-wallet-card": {
@@ -413,10 +379,6 @@
 				"message": "You have <0>{{numEntries}}</0> consecutive trades into <0>{{currencyKey}}</0>. Please trade out of <0>{{currencyKey}}</0> or settle: ",
 				"learn-more": "Learn more"
 			}
-		},
-		"common": {
-			"from": "from",
-			"into": "into"
 		},
 		"errors": {
 			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}",
@@ -529,7 +491,6 @@
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
-		"not-available-on-l1": "Futures is not available on L1",
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -998,8 +959,6 @@
 			"futures-market-gold-short-name": "Gold Perpetual",
 			"futures-market-silver-short-name": "Silver Perpetual"
 		},
-		"total-assets": "{{total}} assets",
-		"total-results": "{{total}} results",
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
@@ -1007,18 +966,12 @@
 			"equities": "equities"
 		},
 		"contract": "contract",
-		"search-results": "search results",
 		"chart-periods": {
 			"1H": "1H",
 			"4H": "4H",
 			"1D": "1D",
 			"1W": "1W",
 			"1M": "1M"
-		},
-		"chart-types": {
-			"compare": "compare",
-			"ratio": "ratio",
-			"candlesticks": "candlesticks"
 		},
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",
