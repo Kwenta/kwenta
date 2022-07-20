@@ -507,7 +507,7 @@ const useExchange = ({
 			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
 		});
 		// eslint-disable-next-line
-	}, [network.id, setCurrencyPair]);
+	}, [network.id, walletAddress, setCurrencyPair]);
 
 	useEffect(() => {
 		if (
