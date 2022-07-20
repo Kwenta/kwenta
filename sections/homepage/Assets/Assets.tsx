@@ -911,7 +911,6 @@ const MarketSwitcher = styled(FlexDiv)<{ isActive: boolean }>`
 		props.isActive
 			? '0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1), inset 0px 0px 20px rgba(255, 255, 255, 0.03)'
 			: null};
-	/* border: ${(props) => (props.isActive ? '1px solid rgba(255, 255, 255, 0.15)' : null)}; */
 
 	&.short {
 		cursor: not-allowed;

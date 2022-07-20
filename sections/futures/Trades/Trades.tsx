@@ -152,12 +152,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'type',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
-								{cellProps.value}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
 						width: 100,
 					},
 					{

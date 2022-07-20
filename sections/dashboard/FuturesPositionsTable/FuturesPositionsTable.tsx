@@ -80,7 +80,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<MobileHiddenView>
 				<TableContainer>
-					<StyledTable
+					<Table
 						data={data}
 						showPagination
 						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
@@ -303,10 +303,6 @@ const DefaultCell = styled.p`
 `;
 
 const TableContainer = styled.div``;
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};
