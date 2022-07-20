@@ -56,7 +56,8 @@ const FuturesHistoryTable: FC = () => {
 	);
 
 	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
+		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
+
 	return (
 		<TableContainer>
 			<StyledTable
@@ -82,9 +83,7 @@ const FuturesHistoryTable: FC = () => {
 				sortBy={[{ id: 'dateTime', asec: true }]}
 				columns={[
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.date-time')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.overview.futures-history-table.date-time')}</div>,
 						accessor: 'dateTime',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -97,9 +96,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 100,
 					},
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.market')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.overview.futures-history-table.market')}</div>,
 						accessor: 'market',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							const asset = `${ethersUtils.parseBytes32String(cellProps.row.original.asset)}`;
@@ -122,7 +119,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.side')}</TableHeader>,
+						Header: <div>{t('dashboard.overview.futures-history-table.side')}</div>,
 						accessor: 'side',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -133,7 +130,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 70,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.size')}</TableHeader>,
+						Header: <div>{t('dashboard.overview.futures-history-table.size')}</div>,
 						accessor: 'size',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -144,9 +141,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 100,
 					},
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.price')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.overview.futures-history-table.price')}</div>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -161,7 +156,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.pnl')}</TableHeader>,
+						Header: <div>{t('dashboard.overview.futures-history-table.pnl')}</div>,
 						accessor: 'pnl',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -180,7 +175,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.overview.futures-history-table.fees')}</TableHeader>,
+						Header: <div>{t('dashboard.overview.futures-history-table.fees')}</div>,
 						accessor: 'fees',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -196,9 +191,7 @@ const FuturesHistoryTable: FC = () => {
 						width: 120,
 					},
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-history-table.order-type')}</TableHeader>
-						),
+						Header: <div>{t('dashboard.overview.futures-history-table.order-type')}</div>,
 						accessor: 'orderType',
 						Cell: (cellProps: CellProps<FuturesTrade>) => {
 							return conditionalRender(
@@ -213,21 +206,24 @@ const FuturesHistoryTable: FC = () => {
 		</TableContainer>
 	);
 };
-const DefaultCell = styled.p``;
+
 const StyledTimeDisplay = styled.div`
 	div {
 		margin-left: 2px;
 	}
 `;
+
 const StyledCurrencyIcon = styled(Currency.Icon)`
 	width: 30px;
 	height: 30px;
 	margin-right: 5px;
 `;
+
 const IconContainer = styled.div`
 	grid-column: 1;
 	grid-row: 1 / span 2;
 `;
+
 const TableContainer = styled.div`
 	margin-top: 16px;
 	margin-bottom: '40px';
@@ -236,10 +232,11 @@ const TableContainer = styled.div`
 		color: ${(props) => props.theme.colors.common.secondaryGray};
 	}
 `;
+
 const StyledTable = styled(Table)`
 	margin-bottom: 20px;
 `;
-const TableHeader = styled.div``;
+
 const StyledText = styled.div`
 	display: flex;
 	align-items: center;

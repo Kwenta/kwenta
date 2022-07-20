@@ -16,8 +16,7 @@ import { FuturesVolumes } from 'queries/futures/types';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { FlexDivCol } from 'styles/common';
-import { isEurForex } from 'utils/futures';
-import { NO_VALUE } from 'constants/placeholder';
+import { FuturesMarketAsset, getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 import ROUTES from 'constants/routes';
 
 type FuturesMarketsTableProps = {
@@ -54,10 +53,10 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 			return {
 				asset: market.asset,
-				market: (market.asset[0] === 's' ? market.asset.slice(1) : market.asset) + '-PERP',
+				market: getDisplayAsset(market.asset) + '-PERP',
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
-				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || '-',
+				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || 0,
 			};
 		});
 	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);
@@ -72,12 +71,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 					setLastVisited(row.original.asset);
 				}}
 				highlightRowsOnHover
-				sortBy={[
-					{
-						id: 'dailyVolume',
-						desc: true,
-					},
-				]}
+				sortBy={[{ id: 'dailyVolume', desc: true }]}
 				columns={[
 					{
 						Header: <TableHeader>{t('futures.market.sidebar-tab.market-price')}</TableHeader>,
@@ -86,15 +80,12 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							const formatOptions = isEurForex(cellProps.row.original.asset)
 								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 								: {};
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>{NO_VALUE}</DefaultCell>
-							) : (
+							return (
 								<MarketContainer>
 									<IconContainer>
 										<StyledCurrencyIcon
 											currencyKey={
-												(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-												cellProps.row.original.asset
+												MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
 											}
 										/>
 									</IconContainer>
@@ -106,19 +97,15 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 											futuresClosureReason={cellProps.row.original.marketClosureReason}
 										/>
 									</StyledText>
-									{cellProps.row.original.price === '-' ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
-											<Currency.Price
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.price}
-												sign={'$'}
-												conversionRate={1}
-												formatOptions={formatOptions}
-											/>
-										</StyledPrice>
-									)}
+									<StyledPrice isPositive={cellProps.row.original.priceChange > 0}>
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.price}
+											sign={'$'}
+											conversionRate={1}
+											formatOptions={formatOptions}
+										/>
+									</StyledPrice>
 								</MarketContainer>
 							);
 						},
@@ -131,27 +118,19 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 							return (
 								<DataCol>
 									<DataRow>
-										{cellProps.row.original.volume === '-' ? (
-											<DefaultCell>{NO_VALUE}</DefaultCell>
-										) : (
-											<Currency.Price
-												currencyKey={Synths.sUSD}
-												price={cellProps.row.original.volume}
-												sign={'$'}
-												conversionRate={1}
-											/>
-										)}
+										<Currency.Price
+											currencyKey={Synths.sUSD}
+											price={cellProps.row.original.volume}
+											sign={'$'}
+											conversionRate={1}
+										/>
 									</DataRow>
 									<DataRow>
-										{cellProps.row.original.priceChange === '-' ? (
-											<DefaultCell>{NO_VALUE}</DefaultCell>
-										) : (
-											<ChangePercent
-												value={cellProps.row.original.priceChange}
-												decimals={2}
-												className="change-pct"
-											/>
-										)}
+										<ChangePercent
+											value={cellProps.row.original.priceChange}
+											decimals={2}
+											className="change-pct"
+										/>
 									</DataRow>
 								</DataCol>
 							);
@@ -196,8 +175,6 @@ const IconContainer = styled.div`
 	grid-column: 1;
 	grid-row: 1 / span 2;
 `;
-
-const DefaultCell = styled.p``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;

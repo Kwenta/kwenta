@@ -57,7 +57,7 @@ const SpotHistoryTable: FC = () => {
 	);
 
 	const conditionalRender = <T,>(prop: T, children: ReactElement): ReactElement =>
-		_.isNil(prop) ? <DefaultCell>{NO_VALUE}</DefaultCell> : children;
+		_.isNil(prop) ? <p>{NO_VALUE}</p> : children;
 
 	return (
 		<TableContainer>
@@ -206,8 +206,6 @@ const SpotHistoryTable: FC = () => {
 		</TableContainer>
 	);
 };
-
-const DefaultCell = styled.p``;
 
 const StyledExternalLink = styled(ExternalLink)`
 	margin-left: auto;

@@ -9,7 +9,7 @@ import Currency from 'components/Currency';
 import PositionType from 'components/Text/PositionType';
 import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
+import { FuturesMarket, PositionHistory } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -42,20 +42,19 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresPositions = useRecoilValue(positionsState);
 
 	let data = useMemo(() => {
-		const activePositions =
-			futuresPositions?.filter((position: FuturesPosition) => position?.position) ?? [];
+		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
 
-		return activePositions.map((position: FuturesPosition) => {
+		return activePositions.map((position) => {
 			const market = futuresMarkets.find((market) => market.asset === position.asset);
 			const description = getSynthDescription(position.asset, synthsMap, t);
-			const positionHistory = futuresPositionHistory?.find((positionHistory: PositionHistory) => {
+			const positionHistory = futuresPositionHistory?.find((positionHistory) => {
 				return positionHistory.isOpen && positionHistory.asset === position.asset;
 			});
 
 			return {
 				asset: position.asset,
 				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: MarketKeyByAsset[position.asset as FuturesMarketAsset],
+				marketKey: MarketKeyByAsset[position.asset],
 				description,
 				price: market?.price,
 				size: position?.position?.size,
@@ -94,9 +93,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.market === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
@@ -127,11 +124,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'position',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.position === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<PositionType side={cellProps.row.original.position} />
-									);
+									return <PositionType side={cellProps.row.original.position} />;
 								},
 								width: 90,
 							},
@@ -143,9 +136,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.notionalValue === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.notionalValue}
@@ -164,9 +155,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.leverage === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
 									);
 								},
@@ -178,9 +167,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.pnl === undefined ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<PnlContainer>
 											<ChangePercent value={cellProps.row.original.pnlPct} />
 											<div>
@@ -232,9 +219,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									const formatOptions = isEurForex(cellProps.row.original.asset)
 										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 										: {};
-									return cellProps.row.original.liquidationPrice === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.liquidationPrice}
