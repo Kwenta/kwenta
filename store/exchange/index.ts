@@ -6,7 +6,7 @@ import { atom, selector } from 'recoil';
 import { Synths, CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
 import { getExchangeKey } from 'store/utils';
 import { localStorageEffect } from 'store/effects';
-import { SwapRatio } from 'sections/exchange/hooks/useExchange';
+import { SwapRatio } from 'hooks/useExchange';
 
 type CurrencyPair = {
 	base: CurrencyKey | null;

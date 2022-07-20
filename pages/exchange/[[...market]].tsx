@@ -4,7 +4,7 @@ import Head from 'next/head';
 
 import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
 
-import useExchange from 'sections/exchange/hooks/useExchange';
+import useExchange from 'hooks/useExchange';
 import { formatCurrency } from 'utils/formatters/number';
 import BasicSwap from 'sections/exchange/BasicSwap';
 import { useTranslation } from 'react-i18next';
