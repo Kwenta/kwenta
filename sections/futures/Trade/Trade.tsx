@@ -42,29 +42,7 @@ const Trade: React.FC = () => {
 
 	return (
 		<div>
-			<CrossMarginOnboard
-				isOpen={openModal === 'onboard'}
-				onClose={() => setOpenModal(null)}
-				onComplete={onCreatedAccount}
-			/>
-
-			{accountState.selectedType === 'cross_margin' ? (
-				<LegacyFuturesButton
-					onClick={() =>
-						setAccountState({
-							...accountState,
-							selectedType: 'isolated_margin',
-							selectedFuturesAddress: accountState.walletAddress,
-						})
-					}
-				>
-					← Switch to Legacy Futures
-				</LegacyFuturesButton>
-			) : (
-				<SwitchAccountButton variant="primary" onClick={onSelectCrossMargin}>
-					Switch to Cross Margin
-				</SwitchAccountButton>
-			)}
+			<AccountTypeToggle />
 
 			<MarketsDropdown />
 
@@ -105,17 +83,4 @@ export default Trade;
 
 const StyledSegmentedControl = styled(SegmentedControl)`
 	margin-bottom: 16px;
-`;
-
-const SwitchAccountButton = styled(Button)`
-	margin-bottom: 24px;
-	overflow: hidden;
-	white-space: nowrap;
-	height: 55px;
-	width: 100%;
-`;
-
-const LegacyFuturesButton = styled.div`
-	cursor: pointer;
-	margin-bottom: 24px;
 `;

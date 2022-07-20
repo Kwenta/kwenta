@@ -162,5 +162,6 @@ export const futuresAccountState = atom<FuturesAccountState>({
 		crossMarginAddress: null,
 		walletAddress: null,
 		selectedFuturesAddress: null,
+		crossMarginEnabled: false,
 	},
 });

@@ -16,6 +16,7 @@ import NumericInput from 'components/Input/NumericInput';
 import useSUSDContract from 'hooks/useSUSDContract';
 import Loader from 'components/Loader';
 import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
+import ErrorView from 'components/Error';
 
 type Props = {
 	isOpen: boolean;
@@ -125,6 +126,9 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 	};
 
 	const renderContent = () => {
+		if (futuresAccount && !futuresAccount.crossMarginEnabled) {
+			return <ErrorView message="Cross margin is not supported on this network" />;
+		}
 		if (creatingAccount || !futuresAccount || futuresAccount?.selectedType === 'pending') {
 			return <Loader />;
 		}

@@ -245,7 +245,8 @@ export type FuturesAccountType = 'cross_margin' | 'isolated_margin' | 'pending';
 
 export type FuturesAccountState = {
 	selectedType: FuturesAccountType;
+	walletAddress: string | null;
 	selectedFuturesAddress: string | null;
 	crossMarginAddress: string | null;
-	walletAddress: string | null;
+	crossMarginEnabled: boolean;
 };
