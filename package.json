@@ -9,6 +9,7 @@
 		"tsc": "tsc --noEmit",
 		"format": "prettier --write \"**/*.{ts,tsx}\"",
 		"lint": "eslint . --ext ts,.tsx && tsc",
+		"lint:sarif": "node tests/lint.js . --ext ts,.tsx && tsc",
 		"lint:fix": "eslint . --ext ts,.tsx --fix",
 		"test:unit": "jest",
 		"test:e2e": "start-server-and-test 'npm run build && npm run start' http-get://localhost:3000 'synpress run'",
@@ -84,6 +85,7 @@
 		"unstated-next": "1.1.0"
 	},
 	"devDependencies": {
+		"@microsoft/eslint-formatter-sarif": "2.1.7",
 		"@next/eslint-plugin-next": "^12.1.6",
 		"@storybook/addon-actions": "^6.4.13",
 		"@storybook/addon-essentials": "^6.5.9",
