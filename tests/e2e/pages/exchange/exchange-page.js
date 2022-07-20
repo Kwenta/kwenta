@@ -42,7 +42,7 @@ export default class ExchangePage extends Page {
 			return walletButton.should('exist');
 		});
 		// waiting for wallet button is not enough in rare cases to be logged in
-		cy.wait(10000);
+		cy.wait(5000);
 	}
 
 	getLoggedInWalletAddress() {

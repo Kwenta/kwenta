@@ -30,7 +30,7 @@ export default class FuturesPage extends Page {
 			return walletButton.should('exist');
 		});
 		// waiting for wallet button is not enough in rare cases to be logged in
-		return cy.wait(10000);
+		return cy.wait(5000);
 	}
 
 	getLoggedInWalletAddress() {

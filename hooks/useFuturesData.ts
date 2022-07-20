@@ -209,8 +209,6 @@ const useFuturesData = () => {
 				!synthetixjs ||
 				!marketAsset ||
 				!walletAddress ||
-				!tradeSize ||
-				Number(tradeSize) === 0 ||
 				!isLeverageValueCommitted ||
 				!position?.remainingMargin
 			) {
