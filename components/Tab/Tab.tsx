@@ -1,13 +1,7 @@
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode, FC } from 'react';
 import styled from 'styled-components';
 
-export const TabList = ({
-	children,
-	...props
-}: {
-	children: ReactNode;
-	style?: CSSProperties | undefined;
-}) => (
+export const TabList: FC = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
 	</div>
