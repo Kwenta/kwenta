@@ -8,7 +8,7 @@ import useENS from 'hooks/useENS';
 import { truncatedWalletAddressState } from 'store/wallet';
 
 import ConnectionDot from '../ConnectionDot';
-import getENSName from '../UserMenu/getENSName';
+import getENSName from '../getENSName';
 
 type MobileWalletButtonProps = {
 	toggleModal(): void;

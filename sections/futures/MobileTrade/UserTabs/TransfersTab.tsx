@@ -31,7 +31,7 @@ const TransfersTab: React.FC = () => {
 				<SectionTitle>Transfers</SectionTitle>
 			</SectionHeader>
 
-			<StyledTable
+			<Table
 				highlightRowsOnHover
 				columns={[
 					{
@@ -81,16 +81,12 @@ const TransfersTab: React.FC = () => {
 						</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</div>
 	);
 };
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.common.primaryWhite};

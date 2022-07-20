@@ -70,7 +70,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				synth: synthsMap[synth.asset],
 				description,
 				price,
-				change: price !== 0 ? (price - pastPrice?.price) / price || '-' : '-',
+				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || '-' : '-',
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
@@ -80,7 +80,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
 					row.original.market !== 'sUSD'
 						? router.push(`/exchange/${row.original.market}-sUSD`)
@@ -100,9 +100,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						),
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<MarketContainer>
 									<IconContainer>
 										<StyledCurrencyIcon
@@ -133,9 +131,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 							const formatOptions = isEurForex(cellProps.row.original.asset)
 								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 								: {};
-							return cellProps.row.original.price === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.price}
@@ -152,7 +148,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						accessor: '24hChange',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.change === '-' ? (
-								<DefaultCell>-</DefaultCell>
+								<p>-</p>
 							) : (
 								<ChangePercent
 									value={cellProps.row.original.change}
@@ -167,9 +163,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						Header: <TableHeader>{t('dashboard.synth-sort.24h-vol')}</TableHeader>,
 						accessor: '24hVolume',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.volume === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.volume}
@@ -212,8 +206,6 @@ const StyledValue = styled.div`
 	grid-column: 2;
 	grid-row: 2;
 `;
-
-const DefaultCell = styled.p``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;

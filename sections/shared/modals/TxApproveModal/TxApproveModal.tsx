@@ -30,11 +30,7 @@ export const TxApproveModal: FC<TxApproveModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.approve-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.approve-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
 					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>

@@ -1,11 +1,7 @@
-// This file should contain the state requirements for the exchange view.
-// It should simplify sharing states between mobile/desktop and simple/advanced
-// versions of the exchange screen (synthswap).
-
 import { atom, selector } from 'recoil';
 
 import { Synths, CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { SwapRatio } from 'sections/exchange/hooks/useExchange';
+import { SwapRatio } from 'hooks/useExchange';
 import { localStorageEffect } from 'store/effects';
 import { getExchangeKey } from 'store/utils';
 

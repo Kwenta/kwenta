@@ -21,7 +21,7 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 	const columnsDeps = useMemo(() => [marginTransfers], [marginTransfers]);
 
 	return (
-		<StyledTable
+		<Table
 			highlightRowsOnHover
 			columns={[
 				{
@@ -85,16 +85,12 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 					</TableNoResults>
 				) : undefined
 			}
-			showPagination={true}
+			showPagination
 		/>
 	);
 };
 
 export default Transfers;
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};

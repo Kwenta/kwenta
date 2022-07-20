@@ -9,9 +9,10 @@ import { networkState, walletAddressState } from 'store/wallet';
 import logError from 'utils/logError';
 
 import { RATES_ENDPOINT_MAINNET } from './constants';
+import { Price } from './types';
 import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
-const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
+const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<Price[] | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -24,7 +25,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 			? RATES_ENDPOINT_MAINNET
 			: getRatesEndpoint(network.id);
 
-	return useQuery<any | null>(
+	return useQuery<Price[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {

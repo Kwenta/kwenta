@@ -162,7 +162,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						<MobileHiddenView>
 							<StyledTable
 								compact={compact}
-								showPagination={true}
+								showPagination
 								isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
 								data={data}
 								pageSize={20}

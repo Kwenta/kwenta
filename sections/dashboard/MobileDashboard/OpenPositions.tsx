@@ -21,7 +21,6 @@ import SynthBalancesTable from '../SynthBalancesTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
-	SHORTS = 'shorts',
 	SPOT = 'spot',
 }
 

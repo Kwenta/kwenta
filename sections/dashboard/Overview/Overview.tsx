@@ -13,7 +13,7 @@ import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
+import { MarketKeyByAsset } from 'utils/futures';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import FuturesPositionsTable from '../FuturesPositionsTable';
@@ -40,7 +40,7 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset as FuturesMarketAsset]);
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

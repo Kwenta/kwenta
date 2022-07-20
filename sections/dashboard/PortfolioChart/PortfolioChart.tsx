@@ -73,9 +73,6 @@ const PortfolioText = styled(Currency.Price)`
 `;
 
 const MobileChartPlaceholder = styled.div`
-	/* height: 273px;
-	width: 100%;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border}; */
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 

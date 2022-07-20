@@ -42,7 +42,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 			</IconContainer>
 			<TransactionInfo>
 				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
-				<TransactionInfoBody isFailureMessage={true}>{failureReason}</TransactionInfoBody>
+				<TransactionInfoBody isFailureMessage>{failureReason}</TransactionInfoBody>
 			</TransactionInfo>
 		</NotificationContainer>
 	);

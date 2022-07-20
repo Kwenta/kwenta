@@ -73,7 +73,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	return (
 		<StyledTable
 			compact={compact}
-			showPagination={true}
+			showPagination
 			pageSize={10}
 			isLoading={false}
 			data={data}
