@@ -3,12 +3,7 @@
 	"plugins": ["prettier"],
 	"rules": {
 		"react/react-in-jsx-scope": "off",
-		"prettier/prettier":[
-			"error",
-			{
-				"endOfLine": "auto"
-			}
-		],
+		"prettier/prettier":"error",
 		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"],
 		"comma-dangle": [
 			"error",
