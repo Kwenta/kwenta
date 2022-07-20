@@ -1,15 +1,31 @@
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import Image from 'next/image';
 
-import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
+import ETHIcon from 'assets/png/currencies/sETH.png';
+import UNIIcon from 'assets/png/currencies/sUni.png';
+import SOLIcon from 'assets/png/currencies/sSOL.png';
+import BTCIcon from 'assets/png/currencies/sBTC.png';
+import AVAXIcon from 'assets/png/currencies/sAVAX.png';
+import MATICIcon from 'assets/png/currencies/sMATIC.png';
+import LINKIcon from 'assets/png/currencies/sLINK.png';
+import APEIcon from 'assets/png/currencies/sAPECOIN.png';
+import AAVEIcon from 'assets/png/currencies/sAAVE.png';
+import DYDXIcon from 'assets/png/currencies/sDYDX.png';
+import XAUIcon from 'assets/png/currencies/sXAU.png';
+import XAGIcon from 'assets/png/currencies/sXAG.png';
+import EURIcon from 'assets/png/currencies/sEUR.png';
+import USDIcon from 'assets/png/currencies/sUSD.png';
+import INRIcon from 'assets/png/currencies/sINR.png';
+import SNXIcon from 'assets/png/currencies/SNX.png';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
 
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
 
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 
 import { FlexDivCentered } from 'styles/common';
+import { FuturesMarketKey } from 'utils/futures';
 
 export type CurrencyIconProps = {
 	currencyKey: string;
@@ -21,9 +37,6 @@ export type CurrencyIconProps = {
 	style?: any;
 	url?: string;
 };
-
-export const SNXIcon =
-	'https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/snx/SNX.svg';
 
 export const getSynthIcon = (currencyKey: CurrencyKey) => {
 	let parsedCurrencyKey = currencyKey as string;
@@ -57,12 +70,6 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
 	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
 	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
-	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
-
-	const ZapperTokenListQuery = useZapperTokenList();
-	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
-		? ZapperTokenListQuery.data?.tokensMap ?? null
-		: null;
 
 	const OneInchTokenListQuery = useOneInchTokenList();
 	const OneInchTokenListMap = OneInchTokenListQuery.isSuccess
@@ -82,11 +89,53 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 
 	if (!firstFallbackError) {
 		switch (currencyKey) {
-			case CRYPTO_CURRENCY_MAP.ETH: {
-				return <ETHIcon {...props} />;
+			case FuturesMarketKey.sETH: {
+				return <Image src={ETHIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sUNI: {
+				return <Image src={UNIIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sBTC: {
+				return <Image src={BTCIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sSOL: {
+				return <Image src={SOLIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sAVAX: {
+				return <Image src={AVAXIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sMATIC: {
+				return <Image src={MATICIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sLINK: {
+				return <Image src={LINKIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sAPE: {
+				return <Image src={APEIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sAAVE: {
+				return <Image src={AAVEIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sDYDX: {
+				return <Image src={DYDXIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sXAU: {
+				return <Image src={XAUIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sXAG: {
+				return <Image src={XAGIcon} layout="raw" {...props} />;
+			}
+			case FuturesMarketKey.sEUR: {
+				return <Image src={EURIcon} layout="raw" {...props} />;
+			}
+			case 'sUSD': {
+				return <Image src={USDIcon} layout="raw" {...props} />;
+			}
+			case 'sINR': {
+				return <Image src={INRIcon} layout="raw" {...props} />;
 			}
 			case CRYPTO_CURRENCY_MAP.SNX: {
-				return <img src={SNXIcon} {...props} alt="snx-icon" />;
+				return <Image src={SNXIcon} layout="raw" {...props} />;
 			}
 			default:
 				return (
@@ -112,19 +161,6 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				{...props}
 			/>
 		);
-	} else if (
-		ZapperTokenListMap != null &&
-		ZapperTokenListMap[currencyKey] != null &&
-		!thirdFallbackError
-	) {
-		return (
-			<TokenIcon
-				src={ZapperTokenListMap[currencyKey].logoURI}
-				onError={() => setThirdFallbackError(true)}
-				{...{ isDeprecated }}
-				{...props}
-			/>
-		);
 	} else {
 		return (
 			<Placeholder
@@ -142,6 +178,11 @@ const Container = styled.div`
 	position: relative;
 	display: flex;
 	align-items: center;
+
+	& img {
+		border-radius: 100%;
+		border: 2px solid transparent;
+	}
 `;
 
 const DeprecatedXIconContainer = styled.div`

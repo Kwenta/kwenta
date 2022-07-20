@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+import Image from 'next/image';
 
 import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
 import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
@@ -52,7 +53,7 @@ const FEATURES = [
 		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
-		image: <img src={PermissionlessIcon} />,
+		image: <Image src={PermissionlessIcon} layout="raw" height="64px" width="64px" />,
 	},
 	{
 		key: 'mobile',
