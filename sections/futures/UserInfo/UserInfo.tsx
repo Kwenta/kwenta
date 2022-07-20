@@ -129,7 +129,8 @@ const UserInfo: React.FC = () => {
 				label: 'Position',
 				active: activeTab === FuturesTab.POSITION,
 				icon: <PositionIcon />,
-				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
+				onClick: () =>
+					router.push(ROUTES.Markets.Position(marketAsset), undefined, { scroll: false }),
 			},
 			{
 				name: FuturesTab.ORDERS,
@@ -137,7 +138,8 @@ const UserInfo: React.FC = () => {
 				badge: openOrders?.length,
 				active: activeTab === FuturesTab.ORDERS,
 				icon: <OpenPositionsIcon />,
-				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
+				onClick: () =>
+					router.push(ROUTES.Markets.Orders(marketAsset), undefined, { scroll: false }),
 			},
 			{
 				name: FuturesTab.TRADES,
@@ -145,7 +147,8 @@ const UserInfo: React.FC = () => {
 				badge: undefined,
 				active: activeTab === FuturesTab.TRADES,
 				icon: <OrderHistoryIcon />,
-				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
+				onClick: () =>
+					router.push(ROUTES.Markets.Trades(marketAsset), undefined, { scroll: false }),
 			},
 			{
 				name: FuturesTab.TRANSFERS,
@@ -154,7 +157,8 @@ const UserInfo: React.FC = () => {
 				disabled: false, // leave this until we determine a disbaled state
 				active: activeTab === FuturesTab.TRANSFERS,
 				icon: <TransfersIcon />,
-				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
+				onClick: () =>
+					router.push(ROUTES.Markets.Transfers(marketAsset), undefined, { scroll: false }),
 			},
 		],
 		[activeTab, router, marketAsset, openOrders?.length]

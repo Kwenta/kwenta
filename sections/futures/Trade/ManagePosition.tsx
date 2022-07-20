@@ -39,7 +39,13 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 	const [, setLeverageSide] = useRecoilState(leverageSideState);
 	const [, setTradeSize] = useRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
-	const { error, orderTxn, isMarketCapReached, placeOrderTranslationKey } = useFuturesContext();
+	const {
+		error,
+		orderTxn,
+		isMarketCapReached,
+		placeOrderTranslationKey,
+		onTradeAmountChange,
+	} = useFuturesContext();
 
 	return (
 		<>
@@ -80,6 +86,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
 								setTradeSize(newTradeSize.toString());
+								onTradeAmountChange(newTradeSize.toString(), true);
 								openConfirmationModal();
 							} else {
 								setCancelModalOpen(true);
