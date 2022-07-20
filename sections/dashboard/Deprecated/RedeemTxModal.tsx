@@ -1,17 +1,17 @@
+import { DeprecatedSynthBalance } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { DeprecatedSynthBalance } from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
 
-import { FlexDivColCentered } from 'styles/common';
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
-import { formatCryptoCurrency } from 'utils/formatters/number';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
 import { CurrencyKey, Synths } from 'constants/currency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { FlexDivColCentered, numericValueCSS } from 'styles/common';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
-export type TxProvider = 'synthetix' | '1inch' | 'balancer';
+export type TxProvider = 'synthetix' | '1inch';
 
 type RedeemTxModalProps = {
 	onDismiss: () => void;
@@ -31,11 +31,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Title>{t('modals.deprecated-synths.from')}</Title>
 			<Balances>
 				{balances.map((balance) => (
@@ -79,7 +75,7 @@ const BalanceItem: FC<{ currencyKey: CurrencyKey; amount: Wei | null }> = ({
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 270px;
+		width: 300px;
 	}
 	.card-body {
 		padding: 24px;
@@ -106,16 +102,17 @@ const BalanceItemTitle = styled.div`
 	display: flex;
 	grid-gap: 12px;
 	align-items: center;
-	color: ${(props) => props.theme.colors.blueberry};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 `;
 
 const BalanceItemAmount = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	${numericValueCSS};
 `;
 
 const Subtitle = styled.div`
 	text-align: center;
-	color: ${(props) => props.theme.colors.silver};
+	color: ${(props) => props.theme.colors.common.secondaryGray};
 	padding-bottom: 48px;
 `;
 

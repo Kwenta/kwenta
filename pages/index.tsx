@@ -1,16 +1,17 @@
-import { FC } from 'react';
-import Head from 'next/head';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Hero from 'sections/homepage/Hero';
-import HomeLayout from 'sections/shared/Layout/HomeLayout';
-import Features from 'sections/homepage/Features';
-import ShortList from 'sections/homepage/ShortList';
 import Earning from 'sections/homepage/Earning';
+import Features from 'sections/homepage/Features';
+import Hero from 'sections/homepage/Hero';
 import Learn from 'sections/homepage/Learn';
+import ShortList from 'sections/homepage/ShortList';
 import TradeNow from 'sections/homepage/TradeNow';
+import HomeLayout from 'sections/shared/Layout/HomeLayout';
+import media from 'styles/media';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -48,6 +49,9 @@ export const Container = styled.div`
 	width: 100%;
 	margin: 0 auto;
 	padding: 100px 20px 0 20px;
+	${media.lessThan('sm')`
+		padding: 50px 15px 0 15px;
+	`}
 `;
 
 export default HomePage;

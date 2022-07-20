@@ -2,21 +2,21 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
-import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
-import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
 import PermissionlessIcon from 'assets/png/features/permissionless.png';
-import MobileIcon from 'assets/svg/features/mobile.svg';
+import BlazingFastIcon from 'assets/svg/features/blazing-fast.svg';
 import EasyRampingIcon from 'assets/svg/features/easy-ramping.svg';
+import LowGasFeeIcon from 'assets/svg/features/low-gas-fee.svg';
+import MobileIcon from 'assets/svg/features/mobile.svg';
+import UniqueAssetsIcon from 'assets/svg/features/unique-assets.svg';
 import ZeroSlippageIcon from 'assets/svg/features/zero-slippage.svg';
-import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
-import LyraIcon from 'assets/svg/partners/lyra.svg';
 import AelinIcon from 'assets/svg/partners/aelin.svg';
-import ThalesIcon from 'assets/svg/partners/thales.svg';
-import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
 import GraphIcon from 'assets/svg/partners/graph.svg';
 import HopIcon from 'assets/svg/partners/hop.svg';
-import ChainLinkIcon from 'assets/svg/partners/chainlink.svg';
+import LyraIcon from 'assets/svg/partners/lyra.svg';
+import OptimismIcon from 'assets/svg/partners/optimism.svg';
+import SynthetixIcon from 'assets/svg/partners/synthetix.svg';
+import ThalesIcon from 'assets/svg/partners/thales.svg';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -26,6 +26,8 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
+import media from 'styles/media';
+
 import { Copy, Title } from '../common';
 
 const FEATURES = [
@@ -116,7 +118,7 @@ const Features = () => {
 	const title = (
 		<>
 			<SmallGoldenHeader>{t('homepage.features.title')}</SmallGoldenHeader>
-			<WhiteHeader>{t('homepage.features.description')}</WhiteHeader>
+			<BigWhiteHeader>{t('homepage.features.description')}</BigWhiteHeader>
 		</>
 	);
 
@@ -162,6 +164,9 @@ const FeatureCopy = styled(Copy)`
 	letter-spacing: -0.04em;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
 	width: 250px;
+	${media.lessThan('sm')`
+		width: 183px;
+	`}
 `;
 
 const FeatureTitle = styled(Title)`
@@ -172,6 +177,9 @@ const FeatureTitle = styled(Title)`
 	color: ${(props) => props.theme.colors.white};
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
 	width: 150px;
+	${media.lessThan('sm')`
+		font-size: 20px;
+	`}
 `;
 
 const StyledFlexDivRow = styled(FlexDivRow)`
@@ -181,18 +189,140 @@ const StyledFlexDivRow = styled(FlexDivRow)`
 	width: 826px;
 	flex-wrap: wrap;
 	justify-content: center;
+
+	${media.lessThan('sm')`
+		flex-direction: column;
+		width: 305px;
+	`}
+`;
+
+const FeatureCard = styled(FlexDivRow)`
+	background-color: #1a1a1a;
+	border-radius: 10px;
+	padding: 30px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	transition: all 0.2s ease-in-out;
+
+	:hover {
+		background-color: #202020;
+	}
+
+	${media.lessThan('sm')`
+		width: 305px;
+		height: auto;
+		align-items: center; 
+		padding: 20px 40px 20px 20px;
+	`}
 `;
 
 const IconGridContainer = styled(GridDivCentered)`
 	place-items: center;
 	justify-content: center;
-	grid-template-rows: 1fr 1fr;
-	grid-template-columns: repeat(4, 280px);
-	gap: 80px 20px;
-	margin-top: 80px;
-	svg {
-		width: 128px;
-		height: 64px;
+	grid-template-rows: 150px 150px;
+	grid-template-columns: repeat(4, 200px);
+	gap: 20px 20px;
+	margin-top: 40px;
+
+	.lyra {
+		svg {
+			width: 80px;
+		}
+	}
+
+	.synthetix {
+		svg {
+			width: 120px;
+		}
+	}
+	.aelin {
+		svg {
+			width: 95px;
+		}
+	}
+
+	.thales {
+		svg {
+			width: 95px;
+		}
+	}
+
+	.graph {
+		svg {
+			width: 40px;
+		}
+	}
+
+	.hop {
+		svg {
+			width: 90px;
+		}
+	}
+
+	.chainlink {
+		svg {
+			width: 100px;
+		}
+	}
+
+	${media.lessThan('sm')`
+		grid-template-rows: repeat(4, 100px);
+		grid-template-columns: repeat(2, 140px);
+
+		.hop {
+			svg {
+				width: 70px;
+			}
+		}
+		.optimism {
+			svg {
+				width: 80px;
+			}
+		}
+		.aelin {
+			svg {
+				width: 80px;
+			}
+		}
+		.synthetix {
+			svg {
+				width: 85px;
+			}
+		}
+		.thales {
+			svg {
+				width: 80px;
+			}
+		}
+		.chainlink {
+			svg {
+				width: 85px;
+			}
+		}
+		.graph {
+			svg {
+				width: 35px;
+			}
+		}
+		.lyra {
+			svg {
+				width: 30px;
+			}
+		}
+	`}
+`;
+
+const PartnerIconContainer = styled.div`
+	background-color: #1a1a1a;
+	border-radius: 8px;
+	place-items: center;
+	width: 100%;
+	height: 100%;
+	display: grid;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	transition: all 0.2s ease-in-out;
+
+	:hover {
+		background-color: #202020;
 	}
 `;
 
@@ -200,39 +330,28 @@ const Container = styled.div`
 	margin: 140px 0px;
 `;
 
-const FeatureCard = styled(FlexDivRow)`
-	background: linear-gradient(180deg, rgba(40, 39, 39, 0.5) 0%, rgba(25, 24, 24, 0.5) 100%);
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25), inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
-	border-radius: 15px;
-	padding: 32px 80px 32px 32px;
-	width: 403px;
-	height: 135px;
-`;
-
-const PartnerIconContainer = styled.div`
-	place-self: center;
-	svg {
-		width: 128px;
-		height: 64px;
-	}
-`;
-
 const FeatureIconContainer = styled.div`
-	padding-bottom: 40px;
 	img,
 	svg {
 		width: 64px;
 		height: 64px;
 	}
+	${media.lessThan('sm')`
+		padding-bottom: 0px;
+	`}
 `;
 
 const FeatureContentContainer = styled(FlexDivCol)`
 	margin-left: 20px;
+	${media.lessThan('sm')`
+		width: 305px;
+		height: auto;
+		padding-top: 0px;
+	`}
 `;
 
 const FeatureContentTitle = styled(FlexDivRow)`
-	padding-bottom: 12px;
+	padding-bottom: 5px;
 `;
 
 const ComingSoonTag = styled(FlexDivCentered)`
@@ -247,12 +366,20 @@ const ComingSoonTag = styled(FlexDivCentered)`
 		inset 0px 0px 20px rgba(255, 255, 255, 0.03);
 	border-radius: 8px;
 	border: 1px solid #9c6c3c;
+	cursor: default;
+
+	${media.lessThan('sm')`
+		margin-left: -16px;
+	`}
 `;
 
 const SectionFeatureTitle = styled(FeatureTitle)`
 	margin-top: 80px;
 	text-align: center;
 	width: 500px;
+	${media.lessThan('sm')`
+		width: 100vw;
+	`}
 `;
 
 const SectionFeatureCopy = styled(FeatureCopy)`
@@ -260,6 +387,15 @@ const SectionFeatureCopy = styled(FeatureCopy)`
 	text-align: center;
 	width: 500px;
 	font-size: 18px;
+	${media.lessThan('sm')`
+		width: 333px;
+	`}
+`;
+
+const BigWhiteHeader = styled(WhiteHeader)`
+	${media.lessThan('sm')`
+		width: 336px;
+	`}
 `;
 
 export default Features;

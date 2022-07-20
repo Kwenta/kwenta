@@ -1,14 +1,11 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
-
+import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
-
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type CurrencyIconProps = {
@@ -19,6 +16,7 @@ export type CurrencyIconProps = {
 	height?: string;
 	isDeprecated?: boolean;
 	style?: any;
+	url?: string;
 };
 
 export const SNXIcon =
@@ -53,10 +51,10 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	</Container>
 );
 
-const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, ...rest }) => {
-	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
-	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
-	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
+const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
+	const [firstFallbackError, setFirstFallbackError] = useState(false);
+	const [secondFallbackError, setSecondFallbackError] = useState(false);
+	const [thirdFallbackError, setThirdFallbackError] = useState(false);
 
 	const ZapperTokenListQuery = useZapperTokenList();
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess
@@ -75,6 +73,10 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		...rest,
 	};
 
+	useEffect(() => {
+		setFirstFallbackError(false);
+	}, [currencyKey]);
+
 	if (!firstFallbackError) {
 		switch (currencyKey) {
 			case CRYPTO_CURRENCY_MAP.ETH: {
@@ -87,7 +89,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 				return (
 					<TokenIcon
 						{...{ isDeprecated }}
-						src={getSynthIcon(currencyKey as CurrencyKey)}
+						src={url || getSynthIcon(currencyKey as CurrencyKey)}
 						onError={() => setFirstFallbackError(true)}
 						{...props}
 						alt={currencyKey}

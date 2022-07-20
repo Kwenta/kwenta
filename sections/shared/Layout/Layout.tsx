@@ -1,14 +1,12 @@
-import { FC, useEffect } from 'react';
-import { createGlobalStyle } from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import i18n from 'i18n';
+import { FC, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { createGlobalStyle } from 'styled-components';
 
 import { zIndex } from 'constants/ui';
-
+import { languageState } from 'store/app';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
-
-import { languageState } from 'store/app';
 
 type LayoutProps = {
 	children: React.ReactNode;
@@ -30,33 +28,8 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 };
 
 const GlobalStyle = createGlobalStyle`
-	/* ${media.greaterThan('mdUp')`
-		@media (prefers-color-scheme: light) {
-			::-webkit-scrollbar {
-				width: 13px;
-				height: 13px;
-			}
-
-			::-webkit-scrollbar-track {
-				box-shadow: inset 0 0 13px 13px transparent;
-				border: solid 3px transparent;
-			}
-
-			::-webkit-scrollbar-thumb {
-				box-shadow: inset 0 0 13px 13px #2C2C42;
-				border: solid 3px transparent;
-				border-radius: 16px;
-
-				&:hover {
-					box-shadow: inset 0 0 13px 13px #3B3B5A;
-				}
-			}
-		}
-	`}; */
-
 	body {
 		background-color: ${(props) => props.theme.colors.selectedTheme.background};
-		color: ${(props) => props.theme.colors.blueberry};
 	}
 
 	a {
@@ -68,7 +41,7 @@ const GlobalStyle = createGlobalStyle`
 	.bn-onboard-custom {
 		&&& {
 			font-family: ${(props) => props.theme.fonts.regular};
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 			
 		}
 		&&.bn-onboard-modal {
@@ -83,7 +56,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-selected-wallet {
 			background-color: ${(props) => props.theme.colors.navy};
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 		}
 		&&.bn-onboard-modal-content {
 			background-color: ${(props) => props.theme.colors.elderberry};
@@ -93,7 +66,7 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-select-wallet-info {
 			cursor: pointer;
-			color: ${(props) => props.theme.colors.selectedTheme.button.text};
+			color: ${(props) => props.theme.colors.common.primaryWhite};
 		}
 		&&.bn-onboard-dark-mode-background-hover {
 			&:hover {
@@ -102,12 +75,12 @@ const GlobalStyle = createGlobalStyle`
 		}
 		&&.bn-onboard-prepare-button {
 			border-radius: 2px;
-			color: ${(props) => props.theme.colors.selectedTheme.button.text} ;
+			color: ${(props) => props.theme.colors.common.primaryWhite} ;
 			background-color: ${(props) => props.theme.colors.elderberry} ;
 			border: 1px solid ${(props) => props.theme.colors.navy} ;
 		}
 		.bn-onboard-clickable {
-			color: ${(props) => props.theme.colors.selectedTheme.button.text} !important;
+			color: ${(props) => props.theme.colors.common.primaryWhite} !important;
 		}		
 	}
 `;

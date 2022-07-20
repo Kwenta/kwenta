@@ -1,48 +1,44 @@
-import React from 'react';
-import Wei, { wei } from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { newGetTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
+
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
 import {
 	StyledBaseModal,
 	BalanceContainer,
 	BalanceText,
 	GasFeeContainer,
 	MaxButton,
-	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
-	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	accessibleMargin: Wei;
-	market: string | null;
 };
 
 const PLACEHOLDER = '$0.00';
 const ZERO_WEI = wei(0);
 
-const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
-	onDismiss,
-	onTxConfirmed,
-	accessibleMargin,
-	market,
-}) => {
+const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [isDisabled, setDisabled] = React.useState<boolean>(true);
@@ -51,6 +47,8 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -63,6 +61,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+
+	const position = useRecoilValue(positionState);
+	const accessibleMargin = position?.accessibleMargin ?? ZERO_WEI;
 
 	const computedAmount = React.useMemo(
 		() =>
@@ -96,7 +97,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 			monitorTransaction({
 				txHash: withdrawTxn.hash,
 				onTxConfirmed: () => {
-					onTxConfirmed();
+					handleRefetch('margin-change');
 					onDismiss();
 				},
 			});
@@ -127,7 +128,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.withdraw.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>
@@ -164,7 +165,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <ErrorMessage>{withdrawTxn.errorMessage}</ErrorMessage>}
+			{withdrawTxn.errorMessage && (
+				<Error message={withdrawTxn.errorMessage} formatter="revert"></Error>
+			)}
 		</StyledBaseModal>
 	);
 };

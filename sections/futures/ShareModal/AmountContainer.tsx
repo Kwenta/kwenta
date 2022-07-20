@@ -1,15 +1,16 @@
 import { FC } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import { FuturesPosition } from 'queries/futures/types';
+import { currentMarketState } from 'store/futures';
 import { formatNumber, zeroBN } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
+import { getDisplayAsset } from 'utils/futures';
+
 import { PositionSide } from '../types';
-import { getDisplayAsset, getMarketAssetFromKey } from 'utils/futures';
 
 type AmountContainerProps = {
-	marketAsset: CurrencyKey;
 	position: FuturesPosition | null;
 };
 
@@ -19,7 +20,10 @@ const currencyIconStyle = {
 	margin: '-0.3vw 0.5vw 0vw 0vw',
 };
 
-const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) => {
+const AmountContainer: FC<AmountContainerProps> = ({ position }) => {
+	const marketAsset = useRecoilValue(currentMarketState);
+	// TODO: Probably store the market key separately in Recoil
+	// using a selector to handle these scenarios.
 	const marketAsset__RemovedSChar = getDisplayAsset(marketAsset);
 	const positionDetails = position?.position ?? null;
 	const leverage = formatNumber(positionDetails?.leverage ?? zeroBN) + 'x';
@@ -40,10 +44,7 @@ const AmountContainer: FC<AmountContainerProps> = ({ marketAsset, position }) =>
 		<>
 			<Container>
 				<StyledPositionType>
-					<CurrencyIcon
-						style={currencyIconStyle}
-						currencyKey={getMarketAssetFromKey(marketAsset, 10)}
-					/>
+					<CurrencyIcon style={currencyIconStyle} currencyKey={marketAsset} />
 					<StyledPositionDetails>{`${marketAsset__RemovedSChar}-PERP`}</StyledPositionDetails>
 					<StyledPositionDetails className="line-separator">{`|`}</StyledPositionDetails>
 					<StyledPositionSide className={side}>{side.toUpperCase()}</StyledPositionSide>

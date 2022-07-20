@@ -1,39 +1,30 @@
+import { Synth } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+import Tippy from '@tippyjs/react';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-
-import Wei from '@synthetixio/wei';
-
-import { CurrencyKey } from 'constants/currency';
-
-import { secondsToTime } from 'utils/formatters/date';
 
 import Button from 'components/Button';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
-
-import { formatPercent } from 'utils/formatters/number';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { CurrencyKey } from 'constants/currency';
+import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
+import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import { secondsToTime } from 'utils/formatters/date';
 
 import { MessageContainer } from '../common';
-
-import { SummaryItems, SummaryItem, SummaryItemLabel, SummaryItemValue } from '../common';
-
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
-import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
-import { GasPrices } from '@synthetixio/queries';
-import PoweredBy1Inch from 'components/PoweredBy1Inch';
-import { Synth } from '@synthetixio/contracts-interface';
+import { SummaryItems } from '../common';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;
 	baseCurrencyAmount: string;
 	onSubmit: () => void;
 	totalTradePrice: string | null;
-	basePriceRate: number;
+	basePriceRate: Wei;
 	baseCurrency: Synth | null;
-	gasPrices: GasPrices | undefined;
 	feeReclaimPeriodInSeconds: number;
 	quoteCurrencyKey: CurrencyKey | null;
 	showFee?: boolean;
@@ -41,12 +32,9 @@ type TradeSummaryCardProps = {
 	className?: string;
 	totalFeeRate: Wei | null;
 	baseFeeRate?: Wei | null;
-	transactionFee?: number | null;
+	transactionFee?: Wei | number | null;
 	feeCost: Wei | null;
 	isApproved?: boolean;
-	isCreateShort?: boolean;
-	shortInterestRate?: Wei | null;
-	show1InchProvider?: boolean;
 };
 
 const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
@@ -56,7 +44,6 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	totalTradePrice,
 	basePriceRate,
 	baseCurrency,
-	gasPrices,
 	feeReclaimPeriodInSeconds,
 	quoteCurrencyKey,
 	showFee = true,
@@ -66,30 +53,25 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 	transactionFee,
 	feeCost,
 	isApproved = true,
-	isCreateShort = false,
-	shortInterestRate = null,
-	show1InchProvider = false,
 	...rest
 }) => {
 	const { t } = useTranslation();
+	const { useEthGasPriceQuery } = useSynthetixQueries();
 
-	const isSubmissionDisabled = useMemo(() => (submissionDisabledReason != null ? true : false), [
+	const isSubmissionDisabled = useMemo(() => submissionDisabledReason != null, [
 		submissionDisabledReason,
 	]);
+
+	const ethGasPriceQuery = useEthGasPriceQuery();
+
+	const gasPrices = useMemo(
+		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
+		[ethGasPriceQuery.isSuccess, ethGasPriceQuery.data]
+	);
 
 	const summaryItems = (
 		<SummaryItems attached={attached}>
 			<GasPriceSelect gasPrices={gasPrices} transactionFee={transactionFee} />
-			{isCreateShort && (
-				<SummaryItem>
-					<>
-						<SummaryItemLabel>{t('shorting.common.interestRate')}</SummaryItemLabel>
-						<SummaryItemValue data-testid="short-interest-rate">
-							{formatPercent((shortInterestRate ?? 0).toString())}
-						</SummaryItemValue>
-					</>
-				</SummaryItem>
-			)}
 			{showFee && (
 				<>
 					<FeeRateSummaryItem totalFeeRate={totalFeeRate} baseFeeRate={baseFeeRate} />
@@ -106,13 +88,7 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 					<Card.Body>{summaryItems}</Card.Body>
 				</MobileCard>
 			</MobileOrTabletView>
-			<MessageContainer
-				attached={attached}
-				className="footer-card"
-				showProvider={show1InchProvider}
-				{...rest}
-			>
-				{show1InchProvider && <PoweredBy1Inch />}
+			<MessageContainer attached={attached} className="footer-card" {...rest}>
 				<DesktopOnlyView>{summaryItems}</DesktopOnlyView>
 				<ErrorTooltip
 					visible={feeReclaimPeriodInSeconds > 0}
@@ -128,13 +104,12 @@ const TradeSummaryCard: FC<TradeSummaryCardProps> = ({
 				>
 					<span>
 						<Button
-							variant="primary"
-							isRounded={true}
+							isRounded
 							disabled={isSubmissionDisabled}
 							onClick={onSubmit}
 							size="lg"
 							data-testid="submit-order"
-							fullWidth={true}
+							fullWidth
 						>
 							{isSubmissionDisabled
 								? submissionDisabledReason

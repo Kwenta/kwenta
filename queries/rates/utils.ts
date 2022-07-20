@@ -1,12 +1,14 @@
-import { RateUpdates, Candles, Prices } from './types';
-import Wei, { wei } from '@synthetixio/wei';
 import { RateUpdateResult } from '@synthetixio/queries/build/node/generated/exchangesSubgraphQueries';
+import Wei, { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
-import { Synths } from 'constants/currency';
-import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+
 import { CandleResult } from 'queries/futures/subgraph';
-import { Candle } from './types';
 import { SYNTHS_ENDPOINT_MAIN } from 'queries/synths/constants';
+import { FuturesMarketKey } from 'utils/futures';
+
+import { RATES_ENDPOINT_MAINNET, RATES_ENDPOINT_TESTNET } from './constants';
+import { Candle } from './types';
+import { RateUpdates, Candles, Prices } from './types';
 
 export const getRatesEndpoint = (networkId: number): string => {
 	return networkId === 1 || networkId === 42
@@ -68,43 +70,44 @@ export const mapLaggedDailyPrices = (prices: Candles): Prices => {
 	});
 };
 
-const markets = [
-	Synths.sETH,
-	Synths.sBTC,
-	Synths.sLINK,
-	Synths.sSOL,
-	Synths.sAVAX,
-	Synths.sMATIC,
-	Synths.sAAVE,
-	Synths.sUNI,
-	Synths.sEUR,
-	'sXAU',
-	'sXAG',
-	'sWTI',
-	'sDYDX',
-	'sAPE',
-] as const;
+const markets = new Set<FuturesMarketKey>([
+	FuturesMarketKey.sETH,
+	FuturesMarketKey.sBTC,
+	FuturesMarketKey.sLINK,
+	FuturesMarketKey.sSOL,
+	FuturesMarketKey.sAVAX,
+	FuturesMarketKey.sMATIC,
+	FuturesMarketKey.sAAVE,
+	FuturesMarketKey.sUNI,
+	FuturesMarketKey.sEUR,
+	FuturesMarketKey.sXAU,
+	FuturesMarketKey.sXAG,
+	FuturesMarketKey.sWTI,
+	FuturesMarketKey.sDYDX,
+	FuturesMarketKey.sAPE,
+]);
 
-const map: Record<typeof markets[number], string> = {
-	[Synths.sETH]: 'ethereum',
-	[Synths.sBTC]: 'bitcoin',
-	[Synths.sLINK]: 'chainlink',
-	[Synths.sSOL]: 'solana',
-	[Synths.sAVAX]: 'avalanche-2',
-	[Synths.sMATIC]: 'matic-network',
-	[Synths.sAAVE]: 'aave',
-	[Synths.sUNI]: 'uniswap',
-	[Synths.sEUR]: 'euro',
-	sXAU: '',
-	sXAG: '',
-	sWTI: '',
-	sDYDX: 'dydx',
-	sAPE: 'apecoin',
+const map: Record<FuturesMarketKey, string> = {
+	[FuturesMarketKey.sETH]: 'ethereum',
+	[FuturesMarketKey.sBTC]: 'bitcoin',
+	[FuturesMarketKey.sLINK]: 'chainlink',
+	[FuturesMarketKey.sSOL]: 'solana',
+	[FuturesMarketKey.sAVAX]: 'avalanche-2',
+	[FuturesMarketKey.sMATIC]: 'matic-network',
+	[FuturesMarketKey.sAAVE]: 'aave',
+	[FuturesMarketKey.sUNI]: 'uniswap',
+	[FuturesMarketKey.sEUR]: 'euro',
+	[FuturesMarketKey.sXAU]: '',
+	[FuturesMarketKey.sXAG]: '',
+	[FuturesMarketKey.sWTI]: '',
+	[FuturesMarketKey.sDYDX]: 'dydx',
+	[FuturesMarketKey.sAPE]: 'apecoin',
+	[FuturesMarketKey.sAXS]: '',
 };
 
-export const synthToCoingeckoPriceId = (synth: any) => {
-	if (markets.includes(synth)) {
-		return map[synth as typeof markets[number]];
+export const synthToCoingeckoPriceId = (marketKey: FuturesMarketKey) => {
+	if (markets.has(marketKey)) {
+		return map[marketKey];
 	} else {
 		return 'ethereum';
 	}

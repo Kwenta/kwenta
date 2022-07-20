@@ -1,4 +1,4 @@
-import { CurrencyKey } from './currency';
+import { FuturesMarketAsset } from 'utils/futures';
 
 const prettyURLsDisabled = !!process.env.NEXT_PUBLIC_DISABLE_PRETTY_URLS;
 
@@ -24,39 +24,26 @@ export const ROUTES = {
 		Home: '/exchange',
 		MarketPair: (baseCurrencyKey: string, quoteCurrencyKey: string) =>
 			normalizeRoute('/exchange', `${baseCurrencyKey}-${quoteCurrencyKey}`, 'market'),
-		Into: (currencyKey: CurrencyKey) => normalizeRoute(`/exchange`, currencyKey, 'market'),
+		Into: (currencyKey: string) => normalizeRoute(`/exchange`, currencyKey, 'market'),
 	},
 	Markets: {
 		Home: '/market/sETH',
-		MarketPair: (baseCurrencyKey: CurrencyKey | string) =>
-			normalizeRoute('/market', `${baseCurrencyKey}`, 'market'),
-		Position: (baseCurrencyKey: CurrencyKey) =>
-			normalizeRoute(`/market/${baseCurrencyKey}`, 'position', 'tab'),
-		Orders: (baseCurrencyKey: CurrencyKey) =>
-			normalizeRoute(`/market/${baseCurrencyKey}`, 'orders', 'tab'),
-		Trades: (baseCurrencyKey: CurrencyKey) =>
-			normalizeRoute(`/market/${baseCurrencyKey}`, 'trades', 'tab'),
-		Calculator: (baseCurrencyKey: CurrencyKey) =>
-			normalizeRoute(`/market/${baseCurrencyKey}`, 'calculator', 'tab'),
-		Transfers: (baseCurrencyKey: CurrencyKey) =>
-			normalizeRoute(`/market/${baseCurrencyKey}`, 'transfers', 'tab'),
+		MarketPair: (marketAsset: FuturesMarketAsset | string) =>
+			normalizeRoute('/market', `${marketAsset}`, 'market'),
+		Position: (marketAsset: FuturesMarketAsset) =>
+			normalizeRoute(`/market/${marketAsset}`, 'position', 'tab'),
+		Orders: (marketAsset: FuturesMarketAsset) =>
+			normalizeRoute(`/market/${marketAsset}`, 'orders', 'tab'),
+		Trades: (marketAsset: FuturesMarketAsset) =>
+			normalizeRoute(`/market/${marketAsset}`, 'trades', 'tab'),
+		Calculator: (marketAsset: FuturesMarketAsset) =>
+			normalizeRoute(`/market/${marketAsset}`, 'calculator', 'tab'),
+		Transfers: (marketAsset: FuturesMarketAsset) =>
+			normalizeRoute(`/market/${marketAsset}`, 'transfers', 'tab'),
 	},
 	Leaderboard: {
 		Home: '/leaderboard',
 		Trader: (trader: string) => normalizeRoute('/leaderboard', `${trader}`, 'trader'),
-	},
-	Shorting: {
-		Home: '/shorting',
-		ManageShortAddCollateral: (id: string) =>
-			normalizeRoute(`/shorting/manage/add-collateral`, id, 'id'),
-		ManageShortRemoveCollateral: (id: string) =>
-			normalizeRoute(`/shorting/manage/remove-collateral`, id, 'id'),
-		ManageShortDecreasePosition: (id: string) =>
-			normalizeRoute(`/shorting/manage/decrease-position`, id, 'id'),
-		ManageShortIncreasePosition: (id: string) =>
-			normalizeRoute(`/shorting/manage/increase-position`, id, 'id'),
-		ManageShortClosePosition: (id: string) =>
-			normalizeRoute(`/shorting/manage/close-position`, id, 'id'),
 	},
 	Earn: {
 		Home: '/earn',

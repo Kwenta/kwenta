@@ -1,10 +1,19 @@
-import { useState, useCallback, FC } from 'react';
-import styled from 'styled-components';
+import { FuturesContext } from 'contexts/FuturesContext';
+import { RefetchProvider } from 'contexts/RefetchContext';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect, FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSetRecoilState } from 'recoil';
+import styled from 'styled-components';
 
-import { DesktopOnlyView } from 'components/Media';
-
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import useFuturesData from 'hooks/useFuturesData';
+import MarketInfo from 'sections/futures/MarketInfo';
+import MobileTrade from 'sections/futures/MobileTrade/MobileTrade';
+import Trade from 'sections/futures/Trade';
+import AppLayout from 'sections/shared/Layout/AppLayout';
+import { currentMarketState } from 'store/futures';
 import {
 	PageContent,
 	FullHeightContainer,
@@ -12,18 +21,9 @@ import {
 	RightSideContent,
 	LeftSideContent,
 } from 'styles/common';
-import { useTranslation } from 'react-i18next';
+import { FuturesMarketAsset } from 'utils/futures';
 
-import MarketInfo from 'sections/futures/MarketInfo';
-import Trade from 'sections/futures/Trade';
-import { PotentialTrade } from 'sections/futures/types';
-import TradingHistory from 'sections/futures/TradingHistory';
-import { CurrencyKey } from 'constants/currency';
-import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
-import { getMarketKey } from 'utils/futures';
-import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import Connector from 'containers/Connector';
-import AppLayout from 'sections/shared/Layout/AppLayout';
+import LeftSidebar from '../../sections/futures/LeftSidebar/LeftSidebar';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -35,65 +35,48 @@ const Market: MarketComponent = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 
-	const [potentialTrade, setPotentialTrade] = useState<PotentialTrade | null>(null);
-	const marketAsset = (router.query.market?.[0] as CurrencyKey) ?? null;
-	const { network } = Connector.useContainer();
+	const marketAsset = router.query.market?.[0] as FuturesMarketAsset;
 
-	const futuresMarketPositionQuery = useGetFuturesPositionForMarket(
-		getMarketKey(marketAsset, network.id)
-	);
+	const setCurrentMarket = useSetRecoilState(currentMarketState);
 
-	const futuresMarketPosition = futuresMarketPositionQuery?.data ?? null;
+	const futuresData = useFuturesData();
 
-	const openOrdersQuery = useGetFuturesOpenOrders(marketAsset);
-	const openOrders = openOrdersQuery?.data ?? [];
-
-	const refetch = useCallback(() => {
-		futuresMarketPositionQuery.refetch();
-		openOrdersQuery.refetch();
-	}, [futuresMarketPositionQuery, openOrdersQuery]);
+	useEffect(() => {
+		if (marketAsset) setCurrentMarket(marketAsset);
+	}, [setCurrentMarket, marketAsset]);
 
 	return (
-		<>
-			<Head>
-				<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
-			</Head>
-			<StyledPageContent>
-				<StyledFullHeightContainer>
-					<StyledLeftSideContent>
-						<TradingHistory currencyKey={marketAsset} />
-					</StyledLeftSideContent>
-					<StyledMainContent>
-						<MarketInfo
-							market={marketAsset}
-							position={futuresMarketPosition}
-							openOrders={openOrders}
-							refetch={refetch}
-							potentialTrade={potentialTrade}
-						/>
-					</StyledMainContent>
-					<DesktopOnlyView>
-						<StyledRightSideContent>
-							<Trade
-								onEditPositionInput={setPotentialTrade}
-								potentialTrade={potentialTrade}
-								refetch={refetch}
-								position={futuresMarketPosition}
-								currencyKey={marketAsset}
-							/>
-						</StyledRightSideContent>
-					</DesktopOnlyView>
-				</StyledFullHeightContainer>
-			</StyledPageContent>
-		</>
+		<FuturesContext.Provider value={futuresData}>
+			<RefetchProvider>
+				<Head>
+					<title>{t('futures.market.page-title', { pair: router.query.market })}</title>
+				</Head>
+				<DesktopOnlyView>
+					<PageContent>
+						<StyledFullHeightContainer>
+							<StyledLeftSideContent>
+								<LeftSidebar />
+							</StyledLeftSideContent>
+							<StyledMainContent>
+								<MarketInfo />
+							</StyledMainContent>
+							<StyledRightSideContent>
+								<Trade />
+							</StyledRightSideContent>
+						</StyledFullHeightContainer>
+					</PageContent>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<MobileTrade />
+				</MobileOrTabletView>
+			</RefetchProvider>
+		</FuturesContext.Provider>
 	);
 };
 
 Market.layout = AppLayout;
 
 export default Market;
-
-const StyledPageContent = styled(PageContent)``;
 
 const StyledMainContent = styled(MainContent)`
 	margin: unset;

@@ -10,5 +10,17 @@ export const SUPPORTED_NETWORKS = [
 	1, // Ethereum (mainnet)
 	10, // Optimism (mainnet)
 	42, // Ethereum Kovan (testnet)
-	69, // Optimism Kovan (tesnet)
+	69, // Optimism Kovan (testnet)
 ];
+
+export enum BlastNetwork {
+	ETHEREUM_MAINNET = 'eth-mainnet',
+	OPTIMISM_MAINNET = 'optimism-mainnet',
+	ETHEREUM_KOVAN = 'eth-kovan',
+}
+
+export const BLAST_NETWORK_LOOKUP: Record<number, BlastNetwork> = {
+	1: BlastNetwork.ETHEREUM_MAINNET,
+	10: BlastNetwork.OPTIMISM_MAINNET,
+	42: BlastNetwork.ETHEREUM_KOVAN,
+};

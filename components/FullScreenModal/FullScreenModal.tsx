@@ -1,6 +1,7 @@
-import { FC, ReactNode, SyntheticEvent } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { FC, ReactNode, SyntheticEvent } from 'react';
 import styled from 'styled-components';
+
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
 type FullScreenModalProps = {
@@ -27,7 +28,7 @@ export const FullScreenModal: FC<FullScreenModalProps> = ({
 
 const StyledDialogOverlay = styled(DialogOverlay)`
 	z-index: ${zIndex.DIALOG_OVERLAY};
-	background: ${(props) => props.theme.colors.black};
+	background: ${(props) => props.theme.colors.selectedTheme.background};
 	top: ${HEADER_HEIGHT};
 `;
 

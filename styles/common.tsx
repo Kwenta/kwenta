@@ -1,11 +1,9 @@
-import styled, { css, keyframes } from 'styled-components';
 import Tippy from '@tippyjs/react';
+import styled, { css } from 'styled-components';
 
 import Button, { border } from 'components/Button';
 import NumericInput from 'components/Input/NumericInput';
-
 import { zIndex } from 'constants/ui';
-
 import media from 'styles/media';
 
 export const FlexDiv = styled.div`
@@ -52,24 +50,6 @@ export const resetButtonCSS = css`
 	outline: none;
 	cursor: pointer;
 	padding: 0;
-`;
-
-export const fadeInAnimation = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-`;
-
-export const fadeOutAnimation = keyframes`
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
 `;
 
 export const GridDiv = styled.div`
@@ -162,11 +142,6 @@ export const FixedFooterMixin = `
 	border-radius: 0;
 `;
 
-export const MobileContainerMixin = `
-	padding-top: 55px;
-	margin: 0 auto;
-`;
-
 export const Paragraph = styled.p`
 	margin: 0;
 `;
@@ -193,6 +168,17 @@ export const FullScreenContainer = styled(FlexDiv)`
 	overflow-y: visible;
 	padding: 25px 25px 0;
 	margin: 0 auto;
+
+	${media.lessThan('sm')`
+		padding: 20px 15px 0;
+	`};
+`;
+
+export const MobileScreenContainer = styled.div`
+	width: 100%;
+	height: 100vh;
+	overflow-y: scroll;
+	padding-bottom: 80px;
 `;
 
 export const Tooltip = styled(Tippy)`
@@ -257,16 +243,6 @@ export const IconButton = styled.button`
 	${resetButtonCSS};
 `;
 
-export const CenteredMessage = styled.div`
-	${absoluteCenteredCSS};
-	font-size: 14px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-family: ${(props) => props.theme.fonts.bold};
-	text-align: center;
-	display: grid;
-	grid-gap: 10px;
-`;
-
 export const FullHeightContainer = styled(FlexDiv)`
 	justify-content: space-between;
 	width: 100%;
@@ -295,106 +271,6 @@ export const LeftSideContent = styled.div`
 	height: auto;
 `;
 
-export const Table = styled.table.attrs({
-	cellSpacing: 0,
-	cellPadding: 0,
-})`
-	width: 100%;
-	border-collapse: collapse;
-	border: 0;
-`;
-
-export const CurrencyCardsSelector = styled.div`
-	position: absolute;
-	padding: 6px;
-	border-radius: 4px;
-	background: ${(props) => props.theme.colors.selectedTheme.gray};
-	border: 2px solid ${(props) => props.theme.colors.black};
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-
-	${media.lessThan('md')`
-		margin-top: -14px;
-	`}
-`;
-
-export const DropdownSelection = styled.span.attrs({
-	role: 'button',
-})<{
-	tooltipOpened: boolean;
-}>`
-	user-select: none;
-	display: inline-flex;
-	align-items: center;
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding-left: 5px;
-	cursor: pointer;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	text-transform: uppercase;
-	svg {
-		color: ${(props) => props.theme.colors.goldColors.color3};
-		width: 10px;
-		margin-left: 5px;
-		transition: transform 0.2s ease-in-out;
-		${(props) =>
-			props.tooltipOpened &&
-			css`
-				transform: rotate(-180deg);
-			`};
-	}
-`;
-
-export const ExchangeCardsWithSelector = styled.div`
-	position: relative;
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-gap: 2px;
-	padding-bottom: 2px;
-	width: 100%;
-	margin: 0 auto;
-	${media.lessThan('md')`
-		grid-template-columns: unset;
-		grid-template-rows: auto auto;
-		padding-bottom: 24px;
-	`}
-
-	.currency-card {
-		padding: 0 14px;
-		${media.lessThan('md')`
-			padding: unset;
-		`}
-		.currency-wallet-container {
-			width: 90%;
-			${media.lessThan('md')`
-				width: 100%;
-			`}
-		}
-	}
-	.currency-card-base {
-		.currency-wallet-container {
-			width: 100%;
-		}
-		.currency-card-body {
-			position: relative;
-			padding-left: 61px;
-			${media.lessThan('md')`
-				padding-left: 18px;
-			`}
-		}
-	}
-	.currency-card-quote {
-		.currency-wallet-container {
-			width: 100%;
-		}
-		.currency-card-body {
-			position: relative;
-			${media.lessThan('md')`
-				padding-left: 18px;
-			`}
-		}
-	}
-`;
 export const SwapCurrenciesButton = styled.button`
 	${resetButtonCSS};
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
@@ -450,6 +326,10 @@ export const SmallGoldenHeader = styled(Paragraph)`
 	text-align: center;
 	letter-spacing: 0.65em;
 	margin-bottom: 20px;
+	${media.lessThan('sm')`
+		font-size: 12px;
+		margin-bottom: 12px;
+	`}
 `;
 
 export const WhiteHeader = styled.div`
@@ -462,4 +342,9 @@ export const WhiteHeader = styled.div`
 	text-shadow: 0px 0px 12.83px rgba(255, 255, 255, 0.2);
 	letter-spacing: 0.05em;
 	width: 550px;
+	${media.lessThan('sm')`
+		font-size: 32px;
+		width: 306px;
+		text-shadow: none;
+	`}
 `;

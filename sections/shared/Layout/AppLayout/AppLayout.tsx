@@ -1,20 +1,32 @@
 import { FC } from 'react';
 
-import { FullScreenContainer } from 'styles/common';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import NotificationContainer from 'constants/NotificationContainer';
+import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 import Header from './Header';
-import NotificationContainer from 'constants/NotificationContainer';
+import MobileUserMenu from './Header/MobileUserMenu';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
 };
 
 const AppLayout: FC<AppLayoutProps> = ({ children }) => (
-	<FullScreenContainer>
-		<Header />
-		{children}
-		<NotificationContainer />
-	</FullScreenContainer>
+	<>
+		<DesktopOnlyView>
+			<FullScreenContainer>
+				<Header />
+				{children}
+				<NotificationContainer />
+			</FullScreenContainer>
+		</DesktopOnlyView>
+		<MobileOrTabletView>
+			<MobileScreenContainer>
+				{children}
+				<MobileUserMenu />
+			</MobileScreenContainer>
+		</MobileOrTabletView>
+	</>
 );
 
 export default AppLayout;

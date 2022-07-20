@@ -1,43 +1,40 @@
-import React from 'react';
-import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import { formatCurrency } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 import Button from 'components/Button';
-import { FlexDivRowCentered } from 'styles/common';
-import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { NO_VALUE } from 'constants/placeholder';
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { currentMarketState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivRowCentered } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
+import { newGetTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
-	onTxConfirmed(): void;
 	sUSDBalance: Wei;
-	accessibleMargin: Wei;
-	market: string | null;
 };
 
 const PLACEHOLDER = '$0.00';
 const MIN_DEPOSIT_AMOUNT = wei('50');
 
-const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
-	onDismiss,
-	onTxConfirmed,
-	sUSDBalance,
-	market,
-}) => {
+const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSDBalance }) => {
 	const { t } = useTranslation();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
+	const market = useRecoilValue(currentMarketState);
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const [amount, setAmount] = React.useState<string>('');
 	const [isDisabled, setDisabled] = React.useState<boolean>(true);
@@ -45,6 +42,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = React.useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -59,7 +57,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const depositTxn = useSynthetixTxn(
-		`FuturesMarket${market?.[0] === 's' ? market?.substring(1) : market}`,
+		`FuturesMarket${getDisplayAsset(market)}`,
 		'transferMargin',
 		[wei(amount || 0).toBN()],
 		gasPrice || undefined,
@@ -97,7 +95,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 			monitorTransaction({
 				txHash: depositTxn.hash,
 				onTxConfirmed: () => {
-					onTxConfirmed();
+					handleRefetch('margin-change');
 					onDismiss();
 				},
 			});
@@ -113,7 +111,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.deposit.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>
@@ -150,7 +148,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
+			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
 		</StyledBaseModal>
 	);
 };
@@ -205,13 +203,8 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
-export const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin-top: 13px;
+	margin: 13px 0px;
 	padding: 0 14px;
 	p {
 		margin: 0;

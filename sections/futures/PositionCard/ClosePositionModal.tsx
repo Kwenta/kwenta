@@ -1,42 +1,37 @@
-import { FC, useMemo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import { FC, useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import BaseModal from 'components/BaseModal';
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import { PositionSide } from '../types';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { getFuturesMarketContract } from 'queries/futures/utils';
-import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
+import Error from 'components/Error';
+import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { gasSpeedState } from 'store/wallet';
-import { FuturesFilledPosition } from 'queries/futures/types';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCentered, FlexDivCol } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
-	position: FuturesFilledPosition | null;
-	onPositionClose: () => void;
-	currencyKey: string;
 };
 
-const ClosePositionModal: FC<ClosePositionModalProps> = ({
-	onDismiss,
-	position,
-	currencyKey,
-	onPositionClose,
-}) => {
+const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -45,6 +40,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	const [error, setError] = useState<string | null>(null);
 	const [orderFee, setOrderFee] = useState<Wei>(wei(0));
 	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const currencyKey = useRecoilValue(currentMarketState);
+	const position = useRecoilValue(positionState);
+	const positionDetails = position?.position;
+
+	const { handleRefetch } = useRefetchContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -56,10 +56,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[exchangeRates, selectedPriceCurrency.name]
 	);
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed] ?? null;
 
 	const closeTxn = useSynthetixTxn(
-		`FuturesMarket${currencyKey[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
+		`FuturesMarket${currencyKey?.[0] === 's' ? currencyKey.substring(1) : currencyKey}`,
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,
@@ -77,7 +77,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 		[gasPrice, ethPriceRate, closeTxn.gasLimit, closeTxn.optimismLayerOneFee]
 	);
 
-	const positionSize = position?.size ?? wei(0);
+	const positionSize = positionDetails?.size ?? wei(0);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -90,7 +90,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
 				// @ts-ignore
-				console.log(e.message);
+				logError(e.message);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
@@ -99,7 +99,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	}, [synthetixjs, currencyKey, positionSize]);
 
 	const dataRows = useMemo(() => {
-		if (!position || !currencyKey) return [];
+		if (!positionDetails || !currencyKey) return [];
 		return [
 			{
 				label: t('futures.market.user.position.modal.order-type'),
@@ -107,21 +107,21 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 			},
 			{
 				label: t('futures.market.user.position.modal.side'),
-				value: (position?.side ?? PositionSide.LONG).toUpperCase(),
+				value: (positionDetails?.side ?? PositionSide.LONG).toUpperCase(),
 			},
 			{
 				label: t('futures.market.user.position.modal.size'),
-				value: formatCurrency(currencyKey || '', position?.size ?? zeroBN, {
-					sign: synthToAsset(currencyKey as CurrencyKey),
+				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
+					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
 				}),
 			},
 			{
 				label: t('futures.market.user.position.modal.leverage'),
-				value: `${formatNumber(position?.leverage ?? zeroBN)}x`,
+				value: `${formatNumber(positionDetails?.leverage ?? zeroBN)}x`,
 			},
 			{
 				label: t('futures.market.user.position.modal.ROI'),
-				value: formatCurrency(Synths.sUSD, position?.roi ?? zeroBN, { sign: '$' }),
+				value: formatCurrency(Synths.sUSD, positionDetails?.roi ?? zeroBN, { sign: '$' }),
 			},
 			{
 				label: t('futures.market.user.position.modal.fee'),
@@ -134,7 +134,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				}),
 			},
 		];
-	}, [position, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency, synthsMap]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
@@ -142,7 +142,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 				txHash: closeTxn.hash,
 				onTxConfirmed: () => {
 					onDismiss();
-					onPositionClose();
+					handleRefetch('close-position');
 				},
 			});
 		}
@@ -153,7 +153,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.user.position.modal.title')}
 		>
 			<>
@@ -172,8 +172,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({
 					onClick={() => closeTxn.mutate()}
 					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
+					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
+				{(error || closeTxn.errorMessage) && (
+					<Error message={error || closeTxn.errorMessage || ''} formatter="revert" />
+				)}
 			</>
 		</StyledBaseModal>
 	);
@@ -183,7 +186,7 @@ export default ClosePositionModal;
 
 const StyledBaseModal = styled(BaseModal)`
 	[data-reach-dialog-content] {
-		width: 400px;
+		max-width: 400px;
 	}
 	.card-body {
 		padding: 28px;
@@ -215,6 +218,7 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

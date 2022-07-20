@@ -1,7 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
-import { EXTERNAL_LINKS } from 'constants/links';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import { EXTERNAL_LINKS } from 'constants/links';
 
 const NextPrice: React.FC = () => {
 	const { t } = useTranslation();

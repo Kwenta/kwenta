@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { RecoilState, useRecoilState } from 'recoil';
+
 import localStore from 'utils/localStore';
 
 export function usePersistedRecoilState<T>(recoilState: RecoilState<T>) {

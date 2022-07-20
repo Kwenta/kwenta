@@ -1,24 +1,26 @@
-import { FC } from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
-import ROUTES from 'constants/routes';
-
-import { currentThemeState } from 'store/ui';
+import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
+import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
+import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
 import LogoSvg from 'assets/svg/brand/logo.svg';
 import LogoSvgL2 from 'assets/svg/brand/logol2.svg';
-import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
-import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
+import ROUTES from 'constants/routes';
+import { currentThemeState } from 'store/ui';
 
 type LogoProps = {
 	isL2: boolean;
 	isFutures?: boolean;
-	isHomePage?: boolean;
 };
 
-const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => {
+const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
 	const currentTheme = useRecoilValue(currentThemeState);
+
+	if (window.location.pathname === ROUTES.Home.Root) {
+		return <LogoSvg />;
+	}
 
 	if (isFutures) {
 		if (currentTheme === 'dark') {
@@ -28,9 +30,7 @@ const SvgLogo = ({ isFutures = false, isHomePage = false, isL2 }: LogoProps) => 
 			return <LogoSvgBetaLight />;
 		}
 	}
-	if (isHomePage) {
-		return <LogoSvg />;
-	}
+
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
 };
 

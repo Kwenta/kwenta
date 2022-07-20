@@ -1,5 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
-import { PotentialTrade } from 'sections/futures/types';
+
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -52,14 +52,21 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Tokens: (walletAddress: string, networkId: NetworkId) => [
+		Tokens: (walletAddress: string | null, networkId: NetworkId, tokenAddresses: string) => [
 			'walletBalances',
 			'tokens',
 			walletAddress,
 			networkId,
+			tokenAddresses,
 		],
 	},
 	Synths: {
+		Balances: (networkId: NetworkId, walletAddress: string | null) => [
+			'synths',
+			'balances',
+			networkId,
+			walletAddress,
+		],
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
 		ExchangeFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
@@ -111,17 +118,23 @@ export const QUERY_KEYS = {
 	},
 	Convert: {
 		quote1Inch: (
-			quoteCurrencyKey: string,
-			baseCurrencyKey: string,
+			quoteCurrencyKey: string | undefined,
+			baseCurrencyKey: string | undefined,
 			amount: string,
 			networkId: NetworkId
 		) => ['convert', '1inch', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
+		quoteSynthSwap: (
+			quoteCurrencyKey: string | undefined,
+			baseCurrencyKey: string | undefined,
+			amount: string,
+			networkId: NetworkId
+		) => ['convert', 'synthSwap', quoteCurrencyKey, baseCurrencyKey, amount, networkId],
 		approveAddress1Inch: ['convert', '1inch', 'approve', 'address'],
 	},
 	TokenLists: {
 		Synthetix: ['tokenLists', 'synthetix'],
 		Zapper: ['tokenLists', 'zapper'],
-		OneInch: ['tokenLists', 'oneInch'],
+		OneInch: (networkId: NetworkId) => ['tokenLists', 'oneInch', networkId],
 	},
 	CMC: {
 		Quotes: (currencyKeys: string[]) => ['cmc', 'quotes', currencyKeys.join('|')],
@@ -130,7 +143,12 @@ export const QUERY_KEYS = {
 		CoinList: ['cg', 'coinList'],
 		Prices: (priceIds: string[]) => ['cg', 'prices', priceIds.join('|')],
 		Price: (priceId: string) => ['cg', 'price', priceId],
-		TokenPrices: (tokenAddresses: string[]) => ['cg', 'prices', tokenAddresses.join('|')],
+		TokenPrices: (tokenAddresses: string[], platform: string) => [
+			'cg',
+			'prices',
+			tokenAddresses.join('|'),
+			platform,
+		],
 	},
 	Futures: {
 		DayTradeStats: (networkId: NetworkId, currencyKey: string | null) => [
@@ -140,6 +158,11 @@ export const QUERY_KEYS = {
 			currencyKey,
 		],
 		Markets: (networkId: NetworkId) => ['futures', 'marketsSummaries', networkId],
+		Market: (networkId: NetworkId, currencyKey: string | null) => [
+			'futures',
+			currencyKey,
+			networkId,
+		],
 		Trades: (networkId: NetworkId, currencyKey: string | null) => [
 			'futures',
 			'trades',
@@ -151,6 +174,12 @@ export const QUERY_KEYS = {
 			'trades',
 			networkId,
 			currencyKey,
+			account,
+		],
+		AllTradesAccount: (networkId: NetworkId, account: string | null) => [
+			'futures',
+			'trades',
+			networkId,
 			account,
 		],
 		MarketClosure: (networkId: NetworkId, currencyKey: string | null) => [
@@ -222,9 +251,9 @@ export const QUERY_KEYS = {
 		PotentialTrade: (
 			networkId: NetworkId,
 			market: string | null,
-			trade: PotentialTrade | null,
+			tradeSize: string,
 			walletAddress: string
-		) => ['futures', 'potentialTrade', trade, networkId, market, walletAddress],
+		) => ['futures', 'potentialTrade', tradeSize, networkId, market, walletAddress],
 		MarketLimit: (networkId: NetworkId, market: string | null) => [
 			'futures',
 			'marketLimit',
@@ -248,6 +277,10 @@ export const QUERY_KEYS = {
 			walletAddress: string | null,
 			currencyKey: string | null
 		) => ['futures', 'currentRoundId', networkId, walletAddress, currencyKey],
+		OverviewStats: (networkId: NetworkId) => ['futures', 'overview-stats', networkId],
+	},
+	Files: {
+		Get: (fileName: string) => ['files', 'get', fileName],
 	},
 };
 

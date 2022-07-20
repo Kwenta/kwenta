@@ -1,40 +1,44 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import Wei from '@synthetixio/wei';
 
-import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import {
+	currentMarketState,
+	maxLeverageState,
+	positionState,
+	tradeSizeState,
+	tradeSizeSUSDState,
+} from 'store/futures';
 import { FlexDivRow } from 'styles/common';
+import { zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
-	assetRate: Wei;
-	amount: string;
-	amountSUSD: string;
 	disabled?: boolean;
-	onAmountChange: (value: string) => void;
-	onAmountSUSDChange: (value: string) => void;
-	onLeverageChange: (value: string) => void;
-	marketAsset: string | null;
-	maxLeverage: Wei;
-	totalMargin: Wei;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({
-	marketAsset,
-	amount,
-	amountSUSD,
-	disabled,
-	onAmountChange,
-	onAmountSUSDChange,
-	onLeverageChange,
-	maxLeverage,
-	totalMargin,
-}) => {
+const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
+	const tradeSize = useRecoilValue(tradeSizeState);
+	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
+	const position = useRecoilValue(positionState);
+	const marketAsset = useRecoilValue(currentMarketState);
+	const maxLeverage = useRecoilValue(maxLeverageState);
+
+	const { onTradeAmountChange, onTradeAmountSUSDChange, onLeverageChange } = useFuturesContext();
+
 	const handleSetMax = () => {
-		const maxOrderSizeUSDValue = Number(maxLeverage.mul(totalMargin)).toFixed(0);
-		onAmountSUSDChange(maxOrderSizeUSDValue);
+		const maxOrderSizeUSDValue = Number(
+			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
+		).toFixed(0);
+		onTradeAmountSUSDChange(maxOrderSizeUSDValue);
 		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
+
+	const isDisabled = React.useMemo(() => {
+		return position?.remainingMargin.lte(0) || disabled;
+	}, [position, disabled]);
 
 	return (
 		<OrderSizingContainer>
@@ -46,11 +50,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			</OrderSizingRow>
 
 			<CustomInput
-				disabled={disabled}
+				disabled={isDisabled}
 				right={marketAsset || Synths.sUSD}
-				value={amount}
+				value={tradeSize}
 				placeholder="0.0"
-				onChange={(_, v) => onAmountChange(v)}
+				onChange={(_, v) => onTradeAmountChange(v)}
 				style={{
 					marginBottom: '-1px',
 					borderBottom: 'none',
@@ -60,11 +64,11 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			/>
 
 			<CustomInput
-				disabled={disabled}
+				disabled={isDisabled}
 				right={Synths.sUSD}
-				value={amountSUSD}
+				value={tradeSizeSUSD}
 				placeholder="0.0"
-				onChange={(_, v) => onAmountSUSDChange(v)}
+				onChange={(_, v) => onTradeAmountSUSDChange(v)}
 				style={{
 					borderTopRightRadius: '0px',
 					borderTopLeftRadius: '0px',

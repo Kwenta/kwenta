@@ -1,39 +1,38 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import Wei from '@synthetixio/wei';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { FlexDivCol, FlexDivRow } from 'styles/common';
-import { PositionSide } from '../types';
-import { FuturesPosition } from 'queries/futures/types';
-import LeverageSlider from '../LeverageSlider';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
-import { formatNumber } from 'utils/formatters/number';
+import CustomNumericInput from 'components/Input/CustomNumericInput';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import {
+	leverageState,
+	leverageValueCommittedState,
+	marketInfoState,
+	maxLeverageState,
+	nextPriceDisclaimerState,
+	orderTypeState,
+	positionState,
+} from 'store/futures';
+import { FlexDivCol, FlexDivRow } from 'styles/common';
+import { truncateNumbers } from 'utils/formatters/number';
 
-type LeverageInputProps = {
-	currentLeverage: string;
-	currentTradeSize: number;
-	maxLeverage: Wei;
-	side: PositionSide;
-	assetRate: Wei;
-	onLeverageChange: (value: string) => void;
-	setIsLeverageValueCommitted: (value: boolean) => void;
-	currentPosition: FuturesPosition | null;
-	isMarketClosed: boolean;
-	isDisclaimerDisplayed: boolean;
-};
+import LeverageSlider from '../LeverageSlider';
 
-const LeverageInput: FC<LeverageInputProps> = ({
-	currentLeverage,
-	maxLeverage,
-	onLeverageChange,
-	setIsLeverageValueCommitted,
-	isMarketClosed,
-	isDisclaimerDisplayed,
-}) => {
+const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
+	const leverage = useRecoilValue(leverageState);
+	const maxLeverage = useRecoilValue(maxLeverageState);
+	const orderType = useRecoilValue(orderTypeState);
+	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
+	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
+	const marketInfo = useRecoilValue(marketInfoState);
+	const position = useRecoilValue(positionState);
+
+	const { onLeverageChange } = useFuturesContext();
 
 	const modeButton = useMemo(() => {
 		return (
@@ -47,16 +46,26 @@ const LeverageInput: FC<LeverageInputProps> = ({
 		);
 	}, [mode]);
 
+	const isDisabled = useMemo(() => {
+		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
+	}, [position, maxLeverage]);
+
+	const leverageButtons = marketInfo?.maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
+	const truncateMaxLeverage = maxLeverage.gte(0)
+		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
+		: 10;
+	const truncateLeverage = truncateNumbers(leverage, DEFAULT_FIAT_DECIMALS);
+
 	return (
 		<LeverageInputWrapper>
 			<LeverageRow>
 				<LeverageTitle>
 					{t('futures.market.trade.input.leverage.title')}&nbsp; —
-					<span>&nbsp; Up to {formatNumber(maxLeverage, { maxDecimals: 1 })}x</span>
+					<span>&nbsp; Up to {truncateMaxLeverage}x</span>
 				</LeverageTitle>
 				{modeButton}
 			</LeverageRow>
-			{isDisclaimerDisplayed && (
+			{orderType === 1 && isDisclaimerDisplayed && (
 				<LeverageDisclaimer>
 					{t('futures.market.trade.input.leverage.disclaimer')}
 				</LeverageDisclaimer>
@@ -64,10 +73,10 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			{mode === 'slider' ? (
 				<SliderRow>
 					<LeverageSlider
-						disabled={maxLeverage.lte(0)}
+						disabled={isDisabled}
 						minValue={0}
-						maxValue={maxLeverage.toNumber()}
-						value={currentLeverage ? Number(currentLeverage) : 0}
+						maxValue={Number(truncateMaxLeverage)}
+						value={Number(truncateLeverage)}
 						onChange={(_, newValue) => {
 							setIsLeverageValueCommitted(false);
 							onLeverageChange(newValue.toString());
@@ -78,7 +87,7 @@ const LeverageInput: FC<LeverageInputProps> = ({
 			) : (
 				<LeverageInputContainer>
 					<StyledInput
-						value={currentLeverage}
+						value={leverage}
 						placeholder="1"
 						suffix="x"
 						maxValue={maxLeverage.toNumber()}
@@ -86,15 +95,16 @@ const LeverageInput: FC<LeverageInputProps> = ({
 							setIsLeverageValueCommitted(true);
 							onLeverageChange(newValue.toString());
 						}}
+						disabled={isDisabled}
 					/>
-					{['2', '5', '10'].map((l) => (
+					{leverageButtons.map((l) => (
 						<LeverageButton
 							key={l}
 							mono
 							onClick={() => {
 								onLeverageChange(l);
 							}}
-							disabled={maxLeverage.lt(Number(l)) || isMarketClosed}
+							disabled={maxLeverage.lt(Number(l)) || marketInfo?.isSuspended}
 						>
 							{l}x
 						</LeverageButton>

@@ -1,5 +1,7 @@
 import { Contract } from 'ethcall';
+
 import { Network } from 'store/wallet';
+
 import {
 	SYNTHS_ENDPOINT_MAIN,
 	SYNTHS_ENDPOINT_OPTIMISM_KOVAN,

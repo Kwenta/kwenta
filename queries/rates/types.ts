@@ -1,4 +1,5 @@
 import Wei from '@synthetixio/wei';
+
 import { CurrencyKey } from 'constants/currency';
 
 export type SynthExchange = {

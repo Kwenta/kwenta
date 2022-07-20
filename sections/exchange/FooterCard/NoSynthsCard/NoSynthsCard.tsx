@@ -1,18 +1,16 @@
+import Link from 'next/link';
 import { FC } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import Link from 'next/link';
-
-import { Synths } from 'constants/currency';
-import { EXTERNAL_LINKS } from 'constants/links';
-
-import { NoTextTransform, ExternalLink } from 'styles/common';
+import { useRecoilValue } from 'recoil';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { Synths } from 'constants/currency';
+import { EXTERNAL_LINKS } from 'constants/links';
 import ROUTES from 'constants/routes';
+import { isL2State } from 'store/wallet';
+import { NoTextTransform, ExternalLink } from 'styles/common';
 
 import { MessageContainer, Message, MessageButton, FixedMessageContainerSpacer } from '../common';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
 
 const { sUSD } = Synths;
 
@@ -42,7 +40,7 @@ const NoSynthsCard: FC<NoSynthsCardProps> = ({ attached }) => {
 				</DesktopOnlyView>
 				{isL2 ? (
 					<ExternalLink href={EXTERNAL_LINKS.Trading.OneInch}>
-						<MessageButton size="lg" variant="primary" isRounded={true}>
+						<MessageButton size="lg" variant="primary" isRounded>
 							<Trans
 								t={t}
 								i18nKey="exchange.onboard.1inch-button"

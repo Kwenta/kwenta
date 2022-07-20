@@ -1,41 +1,28 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { FC } from 'react';
-import styled from 'styled-components';
-import Wei, { WeiSource } from '@synthetixio/wei';
-
-import InfoBox from 'components/InfoBox';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-
-import Connector from 'containers/Connector';
-import { getMarketKey } from 'utils/futures';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
+import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
-type FeeInfoBoxProps = {
-	currencyKey: string | null;
-	orderType: number;
-	feeCost: Wei | null;
-	dynamicFee: Wei | WeiSource | null;
-	sizeDelta: Wei;
-};
-
-const FeeInfoBox: React.FC<FeeInfoBoxProps> = ({
-	orderType,
-	feeCost,
-	dynamicFee,
-	currencyKey,
-	sizeDelta,
-}) => {
+const FeeInfoBox: React.FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const { network } = Connector.useContainer();
-	const costDetailsQuery = useGetNextPriceDetails(getMarketKey(currencyKey, network.id));
+	const costDetailsQuery = useGetNextPriceDetails();
 	const costDetails = costDetailsQuery.data;
 	const { t } = useTranslation();
+	const orderType = useRecoilValue(orderTypeState);
+	const feeCost = useRecoilValue(feeCostState);
+	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const { dynamicFee } = useFuturesContext();
 
 	const { commitDeposit, nextPriceFee } = React.useMemo(
 		() => computeNPFee(costDetails, sizeDelta),

@@ -1,13 +1,12 @@
 import React, { FC, useMemo, DependencyList, useEffect } from 'react';
-import styled, { css } from 'styled-components';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
+import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
-
+import Spinner from 'assets/svg/app/loader.svg';
 import { FlexDivCentered } from 'styles/common';
 
-import Spinner from 'assets/svg/app/loader.svg';
 import Pagination from './Pagination';
 
 export type TablePalette = 'primary';
@@ -102,6 +101,7 @@ export const Table: FC<TableProps> = ({
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
+			autoResetPage: false,
 			...options,
 		},
 		useSortBy,
@@ -174,7 +174,7 @@ export const Table: FC<TableProps> = ({
 							</TableBody>
 						)
 					)}
-					{!!noResultsMessage && noResultsMessage}
+					{!!noResultsMessage && !isLoading && data.length === 0 && noResultsMessage}
 				</ReactTable>
 			</TableContainer>
 			{!showShortList && showPagination && data.length > (pageSize ? pageSize : MAX_PAGE_ROWS) ? (
@@ -206,7 +206,6 @@ export const TableRow = styled.div``;
 const TableBody = styled.div`
 	overflow-y: auto;
 	overflow-x: hidden;
-	min-width: fit-content;
 `;
 
 const TableBodyRow = styled.div<{ $highlightRowsOnHover?: boolean }>`

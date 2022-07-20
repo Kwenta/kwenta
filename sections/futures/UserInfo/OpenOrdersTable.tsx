@@ -1,49 +1,46 @@
-import React from 'react';
-import styled from 'styled-components';
-import Table from 'components/Table';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { CellProps } from 'react-table';
-import Currency from 'components/Currency';
-import { getDisplayAsset } from 'utils/futures';
-import { wei } from '@synthetixio/wei';
-import { PositionSide } from '../types';
-import PositionType from 'components/Text/PositionType';
-import { formatCurrency } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { FuturesPosition } from 'queries/futures/types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import styled from 'styled-components';
+
 import Badge from 'components/Badge';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import PositionType from 'components/Text/PositionType';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import { currentMarketState, openOrdersState } from 'store/futures';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { formatCurrency } from 'utils/formatters/number';
+import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
-type OpenOrdersTableProps = {
-	currencyKey: CurrencyKey;
-	position: FuturesPosition | null;
-	openOrders: any[];
-	refetch(): void;
-};
+import { PositionSide } from '../types';
 
-const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
-	currencyKey,
-	position,
-	openOrders,
-	refetch,
-}) => {
+const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
+	const { synthsMap } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
+
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const currencyKey = useRecoilValue(currentMarketState);
+	const openOrders = useRecoilValue(openOrdersState);
+
+	const { handleRefetch } = useRefetchContext();
 
 	const [action, setAction] = React.useState<'' | 'cancel' | 'execute'>('');
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
-	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : undefined;
+	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
 
-	const nextPriceDetailsQuery = useGetNextPriceDetails(currencyKey);
+	const nextPriceDetailsQuery = useGetNextPriceDetails();
 	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
@@ -71,9 +68,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 			monitorTransaction({
 				txHash: cancelOrExecuteOrderTxn.hash,
 				onTxConfirmed: () => {
-					setTimeout(async () => {
-						refetch();
-					}, 5 * 1000);
+					handleRefetch('new-order');
 				},
 			});
 		}
@@ -85,8 +80,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getDisplayAsset(order.asset) + '-PERP',
+			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: order.size.abs(),
+			size: formatCurrency(order.asset, order.size.abs(), {
+				sign: order.asset ? synthsMap[order.asset]?.sign : '',
+			}),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
@@ -94,7 +92,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, nextPriceDetails?.currentRoundId]);
+	}, [openOrders, nextPriceDetails?.currentRoundId, synthsMap]);
 
 	return (
 		<StyledTable
@@ -113,12 +111,7 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 						return (
 							<MarketContainer>
 								<IconContainer>
-									<StyledCurrencyIcon
-										currencyKey={
-											(cellProps.row.original.asset[0] !== 's' ? 's' : '') +
-											cellProps.row.original.asset
-										}
-									/>
+									<StyledCurrencyIcon currencyKey={cellProps.row.original.marketKey} />
 								</IconContainer>
 								<StyledText>
 									{cellProps.row.original.market}
@@ -156,24 +149,11 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 					),
 					accessor: 'size',
 					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
-									sign: cellProps.row.original.asset,
-								})}
-							</div>
-						);
+						return <div>{cellProps.row.original.size}</div>;
 					},
 					sortable: true,
 					width: 50,
 				},
-				// {
-				// 	Header: <div>{t('futures.market.user.open-orders.table.parameters')}</div>,
-				// 	accessor: 'parameters',
-				// 	Cell: (cellProps: CellProps<any>) => {
-				// 		return <div>-</div>;
-				// 	},
-				// },
 				{
 					Header: (
 						<StyledTableHeader>
@@ -200,8 +180,6 @@ const OpenOrdersTable: React.FC<OpenOrdersTableProps> = ({
 										{t('futures.market.user.open-orders.actions.execute')}
 									</EditButton>
 								)}
-								{/* TODO: This will probably be used for other order types. */}
-								{/*<EditButton>{t('futures.market.user.open-orders.actions.edit')}</EditButton>*/}
 							</div>
 						);
 					},

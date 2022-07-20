@@ -1,17 +1,19 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { BigNumberish, ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import {
 	CRYPTO_CURRENCY_MAP,
 	iStandardSynth,
 	synthToAsset,
 } from '@synthetixio/queries/build/node/src/currency';
+import { wei } from '@synthetixio/wei';
+import { BigNumberish, ethers } from 'ethers';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
+import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
-import { networkState } from 'store/wallet';
 import { appReadyState } from 'store/app';
+import { networkState } from 'store/wallet';
+
 import { Rates } from './types';
 
 type CurrencyRate = BigNumberish;
@@ -25,7 +27,8 @@ const additionalCurrencies = [CRYPTO_CURRENCY_MAP.SNX, 'XAU', 'XAG', 'DYDX', 'AP
 const useExchangeRatesQuery = (options?: UseQueryOptions<Rates>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs: snxjs, defaultSynthetixjs } = Connector.useContainer();
+	const synthetixjs = window.location.pathname === ROUTES.Home.Root ? defaultSynthetixjs : snxjs;
 
 	return useQuery<Rates>(
 		['rates', 'exchangeRates2', network.id],

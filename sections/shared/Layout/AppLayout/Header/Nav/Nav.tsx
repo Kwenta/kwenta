@@ -1,10 +1,9 @@
-import styled from 'styled-components';
-import { FC } from 'react';
-import { useRecoilValue } from 'recoil';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
-
+import { useRouter } from 'next/router';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { linkCSS } from 'styles/common';
 
@@ -22,12 +21,12 @@ const Nav: FC = () => {
 		}
 	}
 
-	function getLink(link: string): string | undefined {
+	function getLink(link: string) {
 		if (link.slice(0, 7) === '/market') {
 			const lastVisited: string | null | undefined = getLastVisited();
 
 			if (lastVisited !== null && lastVisited !== undefined) {
-				return lastVisited?.slice(8);
+				return lastVisited;
 			} else {
 				return link;
 			}
@@ -45,8 +44,8 @@ const Nav: FC = () => {
 					const isActive = routeBase === linkBase;
 
 					return (
-						<MenuLinkItem key={`${getLink(link)}`} isActive={isActive}>
-							<Link href={`${getLink(link)}`}>
+						<MenuLinkItem key={getLink(link)} isActive={isActive}>
+							<Link href={getLink(link)}>
 								<a>{t(i18nLabel)}</a>
 							</Link>
 						</MenuLinkItem>

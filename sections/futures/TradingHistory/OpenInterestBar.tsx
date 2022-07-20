@@ -1,17 +1,18 @@
 import styled from 'styled-components';
+
 import { formatPercent } from 'utils/formatters/number';
 
 type OpenInterestProps = {
 	skew: {
 		long: number;
 		short: number;
-	}[];
+	};
 };
 
 const OpenInterestChart: React.FC<OpenInterestProps> = ({ skew }) => {
 	return (
 		<OIContainer>
-			{skew[0].long !== 0 || skew[0].short !== 0 ? (
+			{skew.long !== 0 || skew.short !== 0 ? (
 				<LongOI>
 					<ShortOI skew={skew}></ShortOI>
 				</LongOI>
@@ -30,10 +31,10 @@ const OIContainer = styled.div`
 	width: 100%;
 `;
 
-const ShortOI = styled.div<{ skew: { long: number; short: number }[] }>`
+const ShortOI = styled.div<{ skew: { long: number; short: number } }>`
 	background-color: ${(props) => props.theme.colors.selectedTheme.red};
 	height: 9px;
-	width: ${(props) => formatPercent(props.skew[0].short, { minDecimals: 0 })};
+	width: ${(props) => formatPercent(props.skew.short, { minDecimals: 0 })};
 `;
 
 const LongOI = styled.div`

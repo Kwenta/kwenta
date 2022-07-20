@@ -1,20 +1,24 @@
+import { wei } from '@synthetixio/wei';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
+
+import { FUTURES_ENDPOINT_MAINNET } from './constants';
 import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
-import { wei } from '@synthetixio/wei';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const futuresEndpoint = getFuturesEndpoint(network);
+	const homepage = window.location.pathname === ROUTES.Home.Root;
+	const futuresEndpoint = homepage ? FUTURES_ENDPOINT_MAINNET : getFuturesEndpoint(network);
 
 	return useQuery<FuturesCumulativeStats | null>(
 		QUERY_KEYS.Futures.TotalTrades(network.id),
@@ -47,11 +51,11 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 					  }
 					: null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2, ...options }
+		{ enabled: homepage ? isAppReady : isAppReady && isL2, ...options }
 	);
 };
 

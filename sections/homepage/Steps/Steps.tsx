@@ -1,17 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivCol, FlexDivColCentered, Paragraph } from 'styles/common';
 
 import StepOne from 'assets/svg/marketing/step-one.svg';
-import StepTwo from 'assets/svg/marketing/step-two.svg';
 import StepThree from 'assets/svg/marketing/step-three.svg';
-
+import StepTwo from 'assets/svg/marketing/step-two.svg';
+import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
+import { FlexDivCol, FlexDivColCentered, Paragraph } from 'styles/common';
 import media from 'styles/media';
 
 import { FlexSection, LeftSubHeader } from '../common';
-
-import SmoothScroll from 'sections/homepage/containers/SmoothScroll';
 
 export const STEPS = [
 	{

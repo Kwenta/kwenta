@@ -1,12 +1,10 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import styled from 'styled-components';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
 
-import Button from '../components/Button';
 import TabButton from 'components/Button/TabButton';
 
-import PositionButtons from 'sections/futures/PositionButtons';
-import { PositionSide } from 'queries/futures/types';
+import Button from '../components/Button';
 
 export default {
 	title: 'Components/Button',
@@ -81,12 +79,6 @@ Monospace.args = {
 	size: 'sm',
 	children: '10x',
 	mono: true,
-};
-
-export const Position = () => {
-	const [selected, setSelected] = React.useState<PositionSide>(PositionSide.LONG);
-
-	return <PositionButtons selected={selected} onSelect={setSelected} isMarketClosed={false} />;
 };
 
 export const Tab = () => {

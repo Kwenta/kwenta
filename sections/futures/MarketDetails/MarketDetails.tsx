@@ -1,71 +1,71 @@
-import React from 'react';
-import styled from 'styled-components';
-
 import { wei } from '@synthetixio/wei';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import { FuturesMarket } from 'queries/futures/types';
-import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price, Rates } from 'queries/rates/types';
-import { NO_VALUE } from 'constants/placeholder';
+import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getDisplayAsset, getMarketKey, isEurForex } from 'utils/futures';
-import Connector from 'containers/Connector';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
+import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
+import { Rates } from 'queries/rates/types';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import _ from 'lodash';
-import { useTranslation } from 'react-i18next';
-
-type MarketDetailsProps = {
-	baseCurrencyKey: CurrencyKey;
-};
+import { currentMarketState, marketKeyState } from 'store/futures';
+import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
-const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
+type MarketDetailsProps = {
+	mobile?: boolean;
+};
+
+const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
+
+	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(baseCurrencyKey);
+	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
-	const marketSummary: FuturesMarket | null =
-		futuresMarketsQuery?.data?.find(({ asset }) => asset === baseCurrencyKey) ?? null;
+	const marketSummary = futuresMarketsQuery.data?.find(({ asset }) => asset === marketAsset);
 
 	const futureRates = futuresMarketsQuery.isSuccess
-		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
-				const currencyKey = getMarketKey(asset, network.id);
-				acc[currencyKey] = price;
+		? futuresMarketsQuery.data?.reduce((acc: Rates, { asset, price }) => {
+				acc[MarketKeyByAsset[asset]] = price;
 				return acc;
 		  }, {})
 		: null;
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const basePriceRate = React.useMemo(
-		() => _.defaultTo(Number(futureRates?.[getMarketKey(baseCurrencyKey, network.id)]), 0),
-		[futureRates, baseCurrencyKey, network.id]
-	);
+	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
+		futureRates,
+		marketKey,
+	]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
-		baseCurrencyKey,
-		basePriceRate,
+		marketAsset,
+		basePriceRate.toNumber(),
 		PERIOD_IN_SECONDS[Period.ONE_HOUR],
 		marketSummary?.currentFundingRate.toNumber()
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
-		baseCurrencyKey,
+		baseCurrencyKey: marketAsset,
 	});
 
 	const lastOracleUpdateTime: Date = React.useMemo(
@@ -74,25 +74,24 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
-	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(baseCurrencyKey);
+	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const externalPriceQuery = useExternalPriceQuery(baseCurrencyKey);
+	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
-	const marketKey = getMarketKey(baseCurrencyKey, network.id);
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
 	);
-	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
+	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 
-	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === baseCurrencyKey);
+	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
 
-	const assetName = baseCurrencyKey ? `${getDisplayAsset(baseCurrencyKey)}-PERP` : '';
+	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
 	const fundingTitle = React.useMemo(
 		() =>
 			`${
@@ -106,6 +105,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case 'External Price':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
@@ -116,6 +116,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Change':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
@@ -126,6 +127,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Volume':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
@@ -136,6 +138,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case '24H Trades':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
@@ -146,6 +149,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 			case 'Open Interest':
 				return (
 					<MarketDetailsTooltip
+						key={key}
 						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
@@ -155,13 +159,19 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 				);
 			case assetName:
 				return (
-					<TimerTooltip preset="bottom" startTimeDate={lastOracleUpdateTime} width={'131px'}>
+					<TimerTooltip
+						key={key}
+						preset="bottom"
+						startTimeDate={lastOracleUpdateTime}
+						width={'131px'}
+					>
 						{children}
 					</TimerTooltip>
 				);
 			case fundingTitle:
 				return (
 					<OneHrFundingRateTooltip
+						key={key}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
@@ -206,17 +216,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 					marketSummary?.price && pastPrice?.price
 						? `${formatCurrency(
 								selectedPriceCurrency.name,
-								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+								marketSummary.price.sub(pastPrice.price) ?? zeroBN,
 								{ sign: '$', minDecimals }
 						  )} (${formatPercent(
-								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+								marketSummary.price.sub(pastPrice.price).div(marketSummary.price) ?? zeroBN
 						  )})`
 						: NO_VALUE,
 				color:
 					marketSummary?.price && pastPrice?.price
-						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
+						? marketSummary.price.sub(pastPrice.price).gt(zeroBN)
 							? 'green'
-							: marketSummary?.price.sub(pastPrice?.price).lt(zeroBN)
+							: marketSummary.price.sub(pastPrice.price).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -247,7 +257,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
-		baseCurrencyKey,
+		marketAsset,
 		marketSummary,
 		basePriceRate,
 		futuresTradingVolume,
@@ -264,7 +274,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ baseCurrencyKey }) => {
 	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
 
 	return (
-		<MarketDetailsContainer>
+		<MarketDetailsContainer mobile={mobile}>
 			{Object.entries(data).map(([key, { value, color }]) => {
 				const colorClass = color || '';
 
@@ -288,10 +298,12 @@ const WithCursor = styled.div<{ cursor: 'help' }>`
 `;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	bottom: -115px;
-	z-index: 2;
-	left: -200px;
-	padding: 10px;
+	${media.greaterThan('sm')`
+		bottom: -115px;
+		z-index: 2;
+		left: -200px;
+		padding: 10px;
+	`}
 `;
 
 const MarketDetailsTooltip = styled(StyledTooltip)`
@@ -299,7 +311,7 @@ const MarketDetailsTooltip = styled(StyledTooltip)`
 	padding: 10px;
 `;
 
-const MarketDetailsContainer = styled.div`
+const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;
 	height: 55px;
 	padding: 10px 45px 10px 15px;
@@ -342,6 +354,20 @@ const MarketDetailsContainer = styled.div`
 	.paused {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
+
+	${(props) =>
+		props.mobile &&
+		css`
+			height: auto;
+			padding: 15px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			grid-gap: 20px 0;
+
+			.heading {
+				margin-bottom: 2px;
+			}
+		`}
 `;
 
 export default MarketDetails;

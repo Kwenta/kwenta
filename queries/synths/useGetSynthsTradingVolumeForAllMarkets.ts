@@ -1,13 +1,16 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
+import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
-import QUERY_KEYS from 'constants/queryKeys';
-import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
+import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
 import { SynthsVolumes } from './type';
-import request, { gql } from 'graphql-request';
 import { getSynthsEndpoint } from './utils';
 
 const useGetSynthsTradingVolumeForAllMarkets = (
@@ -16,7 +19,10 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const synthsEndpoint = getSynthsEndpoint(network);
+	const synthsEndpoint =
+		window.location.pathname === ROUTES.Home.Root
+			? SYNTHS_ENDPOINT_OPTIMISM_MAIN
+			: getSynthsEndpoint(network);
 
 	return useQuery<SynthsVolumes | null>(
 		QUERY_KEYS.Synths.TradingVolumeForAllSynths(network.id),
@@ -45,7 +51,7 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 				);
 				return response ? calculateTradeVolumeForAllSynths(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

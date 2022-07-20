@@ -1,8 +1,7 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import keyBy from 'lodash/keyBy';
-
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import keyBy from 'lodash/keyBy';
 
 export type { CurrencyKey } from '@synthetixio/contracts-interface';
 export { Synths } from '@synthetixio/contracts-interface';
@@ -79,3 +78,15 @@ export const sUSD_EXCHANGE_RATE = new Wei(1);
 export const SYNTH_DECIMALS = 18;
 
 export const ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+export const ATOMIC_EXCHANGES_L1 = [
+	'sBTC',
+	'sETH',
+	'sEUR',
+	'sUSD',
+	'sCHF',
+	'sJPY',
+	'sAUD',
+	'sGBP',
+	'sKRW',
+];

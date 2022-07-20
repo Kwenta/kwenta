@@ -1,23 +1,21 @@
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { useTheme } from 'styled-components';
-import { FlexDivRow } from 'styles/common';
-
-import Connector from 'containers/Connector';
-import { truncatedWalletAddressState } from 'store/wallet';
+import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
+import styled, { css, useTheme } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down.svg';
 import DisconnectIcon from 'assets/svg/app/disconnect.svg';
 import SwitchWalletIcon from 'assets/svg/app/switch-wallet.svg';
-
-import { components } from 'react-select';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
-
-import getENSName from './UserMenu/getENSName';
-import ConnectionDot from './ConnectionDot';
+import Connector from 'containers/Connector';
 import useENS from 'hooks/useENS';
+import { truncatedWalletAddressState } from 'store/wallet';
+import { FlexDivRow } from 'styles/common';
+
+import ConnectionDot from './ConnectionDot';
+import getENSName from './getENSName';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -26,7 +24,11 @@ type ReactSelectOptionProps = {
 	onClick?: () => {};
 };
 
-export const WalletActions: FC = () => {
+type WalletActionsProps = {
+	isMobile?: boolean;
+};
+
+export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const [address, setAddress] = useState('');
 	const { ensAvatar } = useENS(address);
 	const { t } = useTranslation();
@@ -41,8 +43,8 @@ export const WalletActions: FC = () => {
 	} = Connector.useContainer();
 	const hardwareWallet = isHardwareWallet();
 
-	const [ensName, setEns] = useState<string>('');
-	const [walletLabel, setWalletLabel] = useState<string>('');
+	const [ensName, setEns] = useState('');
+	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
 	const WALLET_OPTIONS = useMemo(() => {
@@ -124,7 +126,7 @@ export const WalletActions: FC = () => {
 	}, [signer, truncatedWalletAddress]);
 
 	return (
-		<Container>
+		<Container isMobile={isMobile}>
 			<WalletOptionsSelect
 				formatOptionLabel={formatOptionLabel}
 				controlHeight={41}
@@ -134,13 +136,11 @@ export const WalletActions: FC = () => {
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
-				noOutline={true}
-			></WalletOptionsSelect>
+				noOutline
+			/>
 		</Container>
 	);
 };
@@ -149,11 +149,15 @@ const StyledConnectionDot = styled(ConnectionDot)`
 	margin-right: 6px;
 `;
 
-const Container = styled.div`
-	width: 100%;
+const Container = styled.div<{ isMobile?: boolean }>`
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.mono};
-	margin-left: 15px;
+
+	${(props) =>
+		!props.isMobile &&
+		css`
+			width: 100%;
+		`};
 `;
 
 const WalletOptionsSelect = styled(Select)`

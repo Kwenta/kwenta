@@ -1,7 +1,9 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import Heading from './Heading';
+
 import KwentaLogo from 'assets/svg/earn/KWENTA.svg';
+
+import Heading from './Heading';
 
 export const BigText: React.FC<{ white?: boolean; logo?: boolean }> = ({
 	children,

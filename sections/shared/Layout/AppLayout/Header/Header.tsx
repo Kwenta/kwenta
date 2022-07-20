@@ -1,18 +1,14 @@
 import { FC } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
-
-import media from 'styles/media';
+import { isL2State } from 'store/wallet';
 
 import Logo from '../../Logo';
-
 import Nav from './Nav';
-import UserMenu from './UserMenu';
-import MobileUserMenu from './MobileUserMenu';
-import { useRecoilValue } from 'recoil';
-import { isL2State } from 'store/wallet';
+import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
@@ -21,17 +17,11 @@ const Header: FC = () => {
 		<Container isL2={isL2}>
 			<MobileHiddenView>
 				<LogoNav>
-					<StyledLogo isL2={isL2} isFutures={true} />
+					<StyledLogo isL2={isL2} isFutures />
 					<Nav />
 				</LogoNav>
-				<UserMenu />
+				<WalletButtons />
 			</MobileHiddenView>
-			<MobileOnlyView>
-				<LogoNav>
-					<StyledLogo isL2={isL2} isFutures={true} />
-				</LogoNav>
-				<MobileUserMenu />
-			</MobileOnlyView>
 		</Container>
 	);
 };
@@ -41,11 +31,7 @@ const Container = styled.header<{ isL2: boolean }>`
 	left: 0;
 	right: 0;
 	z-index: ${zIndex.HEADER};
-	${media.lessThan('md')`
-		position: fixed;
-		background-color: ${(props) => props.theme.colors.black};
-		box-shadow: 0 8px 8px 0 ${(props) => props.theme.colors.black};
-	`};
+
 	> div {
 		padding-bottom: 20px;
 		display: flex;

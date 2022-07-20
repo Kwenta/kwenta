@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import styled from 'styled-components';
 import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components';
 import 'react-toastify/dist/ReactToastify.css';
 
 const NotificationContainer = () => {

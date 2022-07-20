@@ -1,13 +1,15 @@
+import Wei, { wei } from '@synthetixio/wei';
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-import Wei, { wei } from '@synthetixio/wei';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
+import { marketKeyState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
+
 import { getFuturesMarketContract } from './utils';
 
 export type NextPriceDetails = {
@@ -21,25 +23,21 @@ export type NextPriceDetails = {
 	assetPrice: Wei;
 };
 
-const useGetNextPriceDetails = (
-	currencyKey: string | null,
-	options?: UseQueryOptions<NextPriceDetails | null>
-) => {
+const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
+	const marketKey = useRecoilValue(marketKeyState);
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<NextPriceDetails | null>(
-		QUERY_KEYS.Futures.NextPriceDetails(network.id, walletAddress, currencyKey),
+		QUERY_KEYS.Futures.NextPriceDetails(network.id, walletAddress, marketKey),
 		async () => {
 			try {
-				if (!currencyKey) return null;
-
 				const { contracts } = synthetixjs!;
 				const { ExchangeRates, FuturesMarketSettings } = contracts;
-				const FuturesMarketContract = getFuturesMarketContract(currencyKey, contracts);
+				const FuturesMarketContract = getFuturesMarketContract(marketKey, contracts);
 
 				const [
 					currentRoundId,
@@ -51,13 +49,13 @@ const useGetNextPriceDetails = (
 					makerFeeNextPrice,
 					assetPrice,
 				] = await Promise.all([
-					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(currencyKey)),
+					ExchangeRates.getCurrentRoundId(ethersUtils.formatBytes32String(marketKey)),
 					FuturesMarketSettings.minKeeperFee(),
 					FuturesMarketContract.marketSkew(),
-					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
-					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(currencyKey)),
+					FuturesMarketSettings.takerFee(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.makerFee(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.takerFeeNextPrice(ethersUtils.formatBytes32String(marketKey)),
+					FuturesMarketSettings.makerFeeNextPrice(ethersUtils.formatBytes32String(marketKey)),
 					FuturesMarketContract.assetPrice(),
 				]);
 
@@ -72,12 +70,12 @@ const useGetNextPriceDetails = (
 					assetPrice: wei(assetPrice[0]),
 				};
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!walletAddress,
+			enabled: isAppReady && isL2 && !!marketKey && !!walletAddress,
 			refetchInterval: 5000,
 			...options,
 		}

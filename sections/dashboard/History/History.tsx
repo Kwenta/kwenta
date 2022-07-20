@@ -1,8 +1,11 @@
 import { FC, useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
+import styled from 'styled-components';
+
 import TabButton from 'components/Button/TabButton';
+import { TabPanel } from 'components/Tab';
+
+import FuturesHistoryTable from '../FuturesHistoryTable';
 import SpotHistoryTable from '../SpotHistoryTable';
 
 enum HistoryTab {
@@ -13,7 +16,7 @@ enum HistoryTab {
 const History: FC = () => {
 	const { t } = useTranslation();
 
-	const [activeMarketsTab, setActiveMarketsTab] = useState<HistoryTab>(HistoryTab.SPOT);
+	const [activeMarketsTab, setActiveMarketsTab] = useState<HistoryTab>(HistoryTab.FUTURES);
 
 	const HISTORY_TABS = useMemo(
 		() => [
@@ -21,7 +24,6 @@ const History: FC = () => {
 				name: HistoryTab.FUTURES,
 				label: t('dashboard.overview.history-tabs.futures'),
 				active: activeMarketsTab === HistoryTab.FUTURES,
-				disabled: true,
 				onClick: () => {
 					setActiveMarketsTab(HistoryTab.FUTURES);
 				},
@@ -41,17 +43,13 @@ const History: FC = () => {
 	return (
 		<>
 			<TabButtonsContainer>
-				{HISTORY_TABS.map(({ name, label, active, disabled, onClick }) => (
-					<TabButton
-						key={name}
-						title={label}
-						active={active}
-						onClick={onClick}
-						disabled={disabled}
-					/>
+				{HISTORY_TABS.map(({ name, label, active, onClick }) => (
+					<TabButton key={name} title={label} active={active} onClick={onClick} />
 				))}
 			</TabButtonsContainer>
-			<TabPanel name={HistoryTab.FUTURES} activeTab={activeMarketsTab}></TabPanel>
+			<TabPanel name={HistoryTab.FUTURES} activeTab={activeMarketsTab}>
+				<FuturesHistoryTable></FuturesHistoryTable>
+			</TabPanel>
 
 			<TabPanel name={HistoryTab.SPOT} activeTab={activeMarketsTab}>
 				<SpotHistoryTable />

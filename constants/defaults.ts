@@ -1,9 +1,8 @@
+import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
 import { Language } from 'translations/constants';
 
-import localStore from 'utils/localStore';
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
-
-import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
+import localStore from 'utils/localStore';
 
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;
@@ -35,3 +34,6 @@ export const DEFAULT_SLIPPAGE = 1;
 
 // for Trading History
 export const DEFAULT_NUMBER_OF_TRADES: number = 50;
+
+// leverage adjustment
+export const DEFAULT_NP_LEVERAGE_ADJUSTMENT: number = 0.9975;

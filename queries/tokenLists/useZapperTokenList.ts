@@ -1,15 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
-import { NetworkId } from '@synthetixio/contracts-interface';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
-
-import { TokenListQueryResponse, TokenListResponse } from './types';
+import { CRYPTO_CURRENCY_MAP, ETH_ADDRESS } from 'constants/currency';
 import { EXTERNAL_LINKS } from 'constants/links';
+import QUERY_KEYS from 'constants/queryKeys';
+
+import { TokenListQueryResponse, ZapperTokenListResponse } from './types';
 
 const ether = {
 	address: ETH_ADDRESS,
@@ -25,7 +24,7 @@ const useZapperTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) =
 	return useQuery<TokenListQueryResponse>(
 		QUERY_KEYS.TokenLists.Zapper,
 		async () => {
-			const response = await axios.get<TokenListResponse>(EXTERNAL_LINKS.TokenLists.Zapper);
+			const response = await axios.get<ZapperTokenListResponse>(EXTERNAL_LINKS.TokenLists.Zapper);
 
 			const tokens = [ether, ...response.data.tokens];
 
