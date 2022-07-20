@@ -550,36 +550,6 @@
 				"roi": "ROI"
 			}
 		},
-		"hero": {
-			"countdown": {
-				"title": "Countdown",
-				"endMessage": "Competition ends ",
-				"closed": "NOW CLOSED"
-			},
-			"welcome": {
-				"title": "Decentralized Perpetual Futures on Layer 2",
-				"subtitle": "Trade with up to 25x more capital.",
-				"body": "Open long or short leveraged positions with low gas fees, fast transactions, and the deepest liquidity available on the market.",
-				"button": "Learn more"
-			},
-			"refer": {
-				"title": "Refer a friend for rewards",
-				"body": "Share Kwenta’s Futures trading experience and receive rewards.",
-				"button": "refer"
-			}
-		},
-		"leaderboard": {
-			"title": "leaderboard"
-		},
-		"markets": {
-			"title": "markets",
-			"table": {
-				"market": "market",
-				"price": "price",
-				"change": "24H change",
-				"funding": "24H funding rate"
-			}
-		},
 		"market": {
 			"page-title": "{{baseCurrencyKey}} Futures | Kwenta",
 			"page-title-rate": "{{baseCurrencyKey}} - {{rate}} Futures | Kwenta",
@@ -869,12 +839,6 @@
 	},
 	"leaderboard": {
 		"page-title": "Leaderboard | Kwenta",
-		"tabs": {
-			"nav": {
-				"leaderboard": "Leaderboard",
-				"statistics": "Statistics"
-			}
-		},
 		"leaderboard": {
 			"table": {
 				"title": "All Traders",
@@ -898,16 +862,6 @@
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
-			}
-		},
-		"statistics": {
-			"failed-loading": "Failed to fetch results.",
-			"empty-results": "No results found.",
-			"open-interest": {
-				"title": "Open Interest"
-			},
-			"distribution": {
-				"title": "Synths Distribution"
 			}
 		}
 	},
