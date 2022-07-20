@@ -62,15 +62,6 @@ export const MessageContainer = styled(GridDivCenteredRow)<{
 	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
 
-	/*
-	width: 100%;
-	border-radius: 1000px;
-	grid-template-columns: 1fr auto;
-	padding: 16px 32px;
-	max-width: 750px;
-	margin: 0 auto;
-	*/
-
 	${(props) =>
 		props.attached &&
 		css`

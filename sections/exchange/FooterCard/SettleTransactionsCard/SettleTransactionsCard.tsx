@@ -68,7 +68,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 					<span>
 						<Button
 							variant="primary"
-							isRounded={true}
+							isRounded
 							disabled={!!settlementDisabledReason}
 							onClick={onSubmit}
 							size="lg"
@@ -91,7 +91,6 @@ const MessageItem = styled(Message)`
 export const UnderlineExternalLink = styled(ExternalLink)`
 	text-decoration: underline;
 	grid-column-start: 2;
-	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 export const MessageItems = styled.span`

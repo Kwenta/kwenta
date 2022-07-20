@@ -46,7 +46,7 @@ export type MarketsCurrencyOption = {
 };
 
 type AssetToCurrencyOptionArgs = {
-	asset: string;
+	asset: FuturesMarketAsset;
 	description: string;
 	price?: string;
 	change?: string;
@@ -56,7 +56,7 @@ type AssetToCurrencyOptionArgs = {
 };
 
 const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
-	value: args.asset as FuturesMarketAsset,
+	value: args.asset,
 	label: `${getDisplayAsset(args.asset)}-PERP`,
 	...args,
 });
@@ -68,7 +68,7 @@ type MarketsDropdownProps = {
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
 	);
 
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [

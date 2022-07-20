@@ -79,7 +79,7 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 		<>
 			<MobileHiddenView>
 				<TableContainer>
-					<StyledTable
+					<Table
 						data={data}
 						showPagination
 						highlightRowsOnHover
@@ -344,10 +344,6 @@ const DefaultCell = styled.p`
 
 const TableContainer = styled.div``;
 
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
-
 const TableHeader = styled.div``;
 
 const StyledText = styled.div`
@@ -372,7 +368,7 @@ const AmountCol = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;
 
-const StyledMobileTable = styled(StyledTable)`
+const StyledMobileTable = styled(Table)`
 	border-radius: initial;
 	border-top: none;
 	border-right: none;

@@ -99,7 +99,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
-							noOutline={true}
+							noOutline
 						>
 							{label}
 						</NavButton>
@@ -113,7 +113,7 @@ const DashboardContainer: FC = () => {
 							isActive={active}
 							disabled={disabled}
 							onClick={onClick}
-							noOutline={true}
+							noOutline
 						>
 							{label}
 						</NavButton>

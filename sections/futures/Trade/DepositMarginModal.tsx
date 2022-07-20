@@ -111,7 +111,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.deposit.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>

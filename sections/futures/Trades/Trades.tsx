@@ -117,7 +117,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						sortType: 'basic',
 						Cell: (cellProps: CellProps<FuturesTrade>) =>
 							cellProps.row.original.pnl.eq(wei(0)) ? (
-								<PNL normal={true}>--</PNL>
+								<PNL normal>--</PNL>
 							) : (
 								<PNL negative={cellProps.value.lt(wei(0))}>
 									{formatCurrency(Synths.sUSD, cellProps.value, {
@@ -154,12 +154,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						),
 						accessor: 'type',
 						sortType: 'basic',
-						Cell: (cellProps: CellProps<FuturesTrade>) => (
-							<>
-								{/* <CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} /> */}
-								{cellProps.value}
-							</>
-						),
+						Cell: (cellProps: CellProps<FuturesTrade>) => <>{cellProps.value}</>,
 						width: 100,
 					},
 					{
@@ -181,7 +176,7 @@ const Trades: React.FC<TradesProps> = ({ history, isLoading, isLoaded, marketAss
 						<TableNoResults>{t('futures.market.user.trades.table.no-results')}</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</Card>

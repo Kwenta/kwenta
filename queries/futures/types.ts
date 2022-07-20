@@ -121,7 +121,7 @@ export type MarginTransfer = {
 	action: string;
 	amount: string;
 	isPositive: boolean;
-	asset: string;
+	asset: FuturesMarketAsset;
 };
 
 export type PositionHistory = {

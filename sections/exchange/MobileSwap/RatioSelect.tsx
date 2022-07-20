@@ -2,7 +2,7 @@ import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import type { SwapRatio } from 'sections/exchange/hooks/useExchange';
+import type { SwapRatio } from 'hooks/useExchange';
 
 const RATIOS: SwapRatio[] = [25, 50, 75, 100];
 

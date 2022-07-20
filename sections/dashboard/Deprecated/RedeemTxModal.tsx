@@ -31,11 +31,7 @@ export const RedeemTxModal: FC<RedeemTxModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Title>{t('modals.deprecated-synths.from')}</Title>
 			<Balances>
 				{balances.map((balance) => (

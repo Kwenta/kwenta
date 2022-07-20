@@ -77,7 +77,7 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 				<StyledTable
 					data={data}
 					pageSize={numberOfTrades}
-					showPagination={true}
+					showPagination
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE

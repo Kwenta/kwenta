@@ -123,7 +123,7 @@ const GasPriceSummaryItem: FC<GasPriceSummaryItemProps> = ({
 										))}
 									</GasSelectContainer>
 								}
-								interactive={true}
+								interactive
 							>
 								<StyledGasEditButton role="button">{t('common.edit')}</StyledGasEditButton>
 							</GasPriceTooltip>

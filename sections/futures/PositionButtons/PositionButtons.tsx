@@ -118,12 +118,6 @@ const StyledPositionButton = styled(Button)<PositionButtonProps>`
 				);
 			`};
 		`};
-
-	/* ${(props) =>
-		props.$isActive &&
-		css`
-			text-shadow: ${props.theme.colors.selectedTheme.button.active.textShadow};
-		`}; */
 `;
 
 export default PositionButtons;

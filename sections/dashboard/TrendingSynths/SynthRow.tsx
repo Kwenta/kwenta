@@ -58,7 +58,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 
 	return (
 		<StyledSelectableCurrencyRow
-			isSelectable={true}
+			isSelectable
 			onClick={() => router.push(ROUTES.Exchange.Into(currencyKey))}
 		>
 			<Currency.Name
@@ -70,7 +70,7 @@ const SynthRow: FC<SynthRowProps> = ({ price, synth }) => {
 						  })
 						: ''
 				}
-				showIcon={true}
+				showIcon
 				marketClosureReason={marketClosureReason}
 			/>
 			{price != null ? (

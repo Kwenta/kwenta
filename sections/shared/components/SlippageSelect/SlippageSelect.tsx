@@ -95,7 +95,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 							))}
 						</SlippageSelectContainer>
 					}
-					interactive={true}
+					interactive
 				>
 					<StyledSlippageEditButton role="button">{t('common.edit')}</StyledSlippageEditButton>
 				</Tooltip>
