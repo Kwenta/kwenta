@@ -1,27 +1,28 @@
+import { Synths } from '@synthetixio/contracts-interface';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
-import styled from 'styled-components';
 import { CellProps } from 'react-table';
-import Wei, { wei } from '@synthetixio/wei';
-import { Synths } from '@synthetixio/contracts-interface';
+import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
-import Table from 'components/Table';
+import Button from 'components/Button';
 import Currency from 'components/Currency';
 import Loader from 'components/Loader';
+import Table from 'components/Table';
 import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
-import useGetStats from 'queries/futures/useGetStats';
 import { FuturesStat } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetStats from 'queries/futures/useGetStats';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { truncateAddress } from 'utils/formatters/string';
+
 import { Copy, StackSection, Title } from '../common';
-import Button from 'components/Button';
 
 type Stat = {
 	pnl: Wei;
@@ -117,9 +118,9 @@ const ShortList = () => {
 				<FlexDivColCentered>{title}</FlexDivColCentered>
 				<Media greaterThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={data}
 						pageSize={5}
@@ -199,9 +200,9 @@ const ShortList = () => {
 				</Media>
 				<Media lessThan="sm">
 					<StyledTable
-						showPagination={true}
+						showPagination
 						isLoading={statsQuery.isLoading}
-						showShortList={true}
+						showShortList
 						onTableRowClick={(row) => onClickTrader(row.original.trader)}
 						data={data}
 						pageSize={5}

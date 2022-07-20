@@ -1,20 +1,15 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { ethers } from 'ethers';
-import { useRouter } from 'next/router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import get from 'lodash/get';
-import produce from 'immer';
-import castArray from 'lodash/castArray';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+import produce from 'immer';
+import castArray from 'lodash/castArray';
+import get from 'lodash/get';
+import { useRouter } from 'next/router';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
-import Connector from 'containers/Connector';
-import Convert from 'containers/Convert';
-
-import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
-import ROUTES from 'constants/routes';
+import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
 import {
 	ATOMIC_EXCHANGES_L1,
 	CRYPTO_CURRENCY_MAP,
@@ -22,44 +17,26 @@ import {
 	ETH_ADDRESS,
 	Synths,
 } from 'constants/currency';
-import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
-import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
-import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
-import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
-import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
-import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
-import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
-
-import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
+import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import Convert from 'containers/Convert';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import { useGetL1SecurityFee } from 'hooks/useGetL1SecurityGasFee';
-
-import { hasOrdersNotificationState, slippageState } from 'store/ui';
-import {
-	isWalletConnectedState,
-	walletAddressState,
-	isL2State,
-	networkState,
-	gasSpeedState,
-} from 'store/wallet';
-import { ordersState } from 'store/orders';
-
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { truncateNumbers, zeroBN } from 'utils/formatters/number';
-import {
-	normalizeGasLimit,
-	newGetTransactionPrice,
-	getTransactionPrice,
-	GasInfo,
-} from 'utils/network';
-import { hexToAsciiV2 } from 'utils/formatters/string';
-
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQuery';
+import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
+import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
+import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
+import useNumEntriesQuery from 'queries/synths/useNumEntriesQuery';
+import useRedeemableDeprecatedSynthsQuery from 'queries/synths/useRedeemableDeprecatedSynthsQuery';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
@@ -69,7 +46,25 @@ import {
 	ratioState,
 	txErrorState,
 } from 'store/exchange';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { ordersState } from 'store/orders';
+import { hasOrdersNotificationState, slippageState } from 'store/ui';
+import {
+	isWalletConnectedState,
+	walletAddressState,
+	isL2State,
+	networkState,
+	gasSpeedState,
+} from 'store/wallet';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { truncateNumbers, zeroBN } from 'utils/formatters/number';
+import { hexToAsciiV2 } from 'utils/formatters/string';
+import logError from 'utils/logError';
+import {
+	normalizeGasLimit,
+	newGetTransactionPrice,
+	getTransactionPrice,
+	GasInfo,
+} from 'utils/network';
 
 type ExchangeCardProps = {
 	footerCardAttached?: boolean;
@@ -769,7 +764,7 @@ const useExchange = ({
 		try {
 			await redeemTxn.mutateAsync();
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setTxError(
 				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
 			);
@@ -798,7 +793,7 @@ const useExchange = ({
 					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
 				}
 			} catch (e) {
-				console.log(e);
+				logError(e);
 			}
 		}
 	}, [
@@ -888,7 +883,7 @@ const useExchange = ({
 
 			setOpenModal(undefined);
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setIsApproving(false);
 			setTxError(e.message);
 		}
@@ -903,7 +898,7 @@ const useExchange = ({
 
 			setOpenModal(undefined);
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setTxError(e.message);
 		}
 	};
@@ -962,7 +957,7 @@ const useExchange = ({
 			}
 			setOpenModal(undefined);
 		} catch (e) {
-			console.warn(e);
+			logError(e);
 			setTxError(e.message);
 		} finally {
 			setIsSubmitting(false);

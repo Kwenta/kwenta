@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
 import { wei } from '@synthetixio/wei';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { PositionSide } from '../types';
 

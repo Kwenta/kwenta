@@ -1,14 +1,11 @@
+import { wei } from '@synthetixio/wei';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { getFuturesMarketContract } from './utils';
-import { FuturesPotentialTradeDetails } from './types';
+import Connector from 'containers/Connector';
 import { PotentialTradeStatus, POTENTIAL_TRADE_STATUS_TO_MESSAGE } from 'sections/futures/types';
-import { wei } from '@synthetixio/wei';
+import { appReadyState } from 'store/app';
 import {
 	currentMarketState,
 	leverageSideState,
@@ -16,6 +13,10 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
+
+import { FuturesPotentialTradeDetails } from './types';
+import { getFuturesMarketContract } from './utils';
 
 const SUCCESS = 'Success';
 const UNKNOWN = 'Unknown';
@@ -82,7 +83,7 @@ const useGetFuturesPotentialTradeDetails = (
 				price: wei(price),
 				size: wei(size),
 				side: leverageSide,
-				leverage: wei(leverage),
+				leverage: wei(leverage !== '' ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				status,

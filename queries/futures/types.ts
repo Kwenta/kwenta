@@ -1,4 +1,5 @@
 import Wei from '@synthetixio/wei';
+
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
 import { FuturesMarketAsset } from 'utils/futures';
@@ -120,7 +121,7 @@ export type MarginTransfer = {
 	action: string;
 	amount: string;
 	isPositive: boolean;
-	asset: string;
+	asset: FuturesMarketAsset;
 };
 
 export type PositionHistory = {

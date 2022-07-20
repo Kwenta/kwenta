@@ -1,14 +1,14 @@
 import { FC, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import Connector from 'containers/Connector';
-import { truncatedWalletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
-
-import getENSName from '../UserMenu/getENSName';
-import ConnectionDot from '../ConnectionDot';
-import useENS from 'hooks/useENS';
 import Button from 'components/Button';
+import Connector from 'containers/Connector';
+import useENS from 'hooks/useENS';
+import { truncatedWalletAddressState } from 'store/wallet';
+
+import ConnectionDot from '../ConnectionDot';
+import getENSName from '../getENSName';
 
 type MobileWalletButtonProps = {
 	toggleModal(): void;

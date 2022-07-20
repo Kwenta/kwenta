@@ -1,15 +1,14 @@
-import { createContainer } from 'unstated-next';
-import { toast } from 'react-toastify';
 import { TransactionStatusData } from '@synthetixio/transaction-notifier';
-
-import Connector from 'containers/Connector';
-import BlockExplorer from 'containers/BlockExplorer';
+import { toast } from 'react-toastify';
+import { createContainer } from 'unstated-next';
 
 import {
 	NotificationSuccess,
 	NotificationPending,
 	NotificationError,
 } from 'components/TransactionNotification';
+import BlockExplorer from 'containers/BlockExplorer';
+import Connector from 'containers/Connector';
 
 const useTransactionNotifier = () => {
 	const { transactionNotifier } = Connector.useContainer();

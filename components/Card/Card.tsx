@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import styled from 'styled-components';
 
-import CardHeader, { CardHeaderProps } from './CardHeader';
 import CardBody, { CardBodyProps } from './CardBody';
+import CardHeader, { CardHeaderProps } from './CardHeader';
 
 type CardProps = {
 	children: React.ReactNode;

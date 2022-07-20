@@ -1,11 +1,11 @@
+import i18n from 'i18n';
 import React from 'react';
 import styled from 'styled-components';
-import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
-import i18n from 'i18n';
 
+import Failure from 'assets/svg/app/failure.svg';
 import Spinner from 'assets/svg/app/spinner.svg';
 import Success from 'assets/svg/app/success.svg';
-import Failure from 'assets/svg/app/failure.svg';
+import { FlexDivCentered, FlexDivCol, FlexDivRowCentered } from 'styles/common';
 
 type NotificationProps = {
 	closeToast?: Function;
@@ -42,7 +42,7 @@ const NotificationError = ({ failureReason }: NotificationProps) => {
 			</IconContainer>
 			<TransactionInfo>
 				<TransactionInfoBody>{i18n.t('common.transaction.transaction-failed')}</TransactionInfoBody>
-				<TransactionInfoBody isFailureMessage={true}>{failureReason}</TransactionInfoBody>
+				<TransactionInfoBody isFailureMessage>{failureReason}</TransactionInfoBody>
 			</TransactionInfo>
 		</NotificationContainer>
 	);

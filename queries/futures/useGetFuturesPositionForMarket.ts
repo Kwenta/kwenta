@@ -1,16 +1,16 @@
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import Connector from 'containers/Connector';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { mapFuturesPosition, getFuturesMarketContract } from './utils';
-import { FuturesPosition } from './types';
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
 import { marketKeyState, positionState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { MarketAssetByKey } from 'utils/futures';
+
+import { FuturesPosition } from './types';
+import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarket = (options?: UseQueryOptions<FuturesPosition | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);

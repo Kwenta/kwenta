@@ -1,19 +1,22 @@
-import React from 'react';
-import Wei, { wei } from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { newGetTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import CustomInput from 'components/Input/CustomInput';
+
 import Error from 'components/Error';
+import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
 import {
 	StyledBaseModal,
 	BalanceContainer,
@@ -22,8 +25,6 @@ import {
 	MaxButton,
 	MarginActionButton,
 } from './DepositMarginModal';
-import { currentMarketState, positionState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
@@ -127,7 +128,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.withdraw.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>

@@ -1,18 +1,20 @@
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { DAY_PERIOD } from './constants';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { getFuturesEndpoint } from './utils';
+import { FuturesMarketAsset } from 'utils/futures';
+import logError from 'utils/logError';
+
+import { DAY_PERIOD } from './constants';
 import { getFuturesTrades } from './subgraph';
+import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesDailyTradeStatsForMarket = (
-	currencyKey: string | null,
+	marketAsset: FuturesMarketAsset | null,
 	options?: UseQueryOptions<number | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -21,9 +23,9 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, currencyKey),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, marketAsset),
 		async () => {
-			if (!currencyKey) return null;
+			if (!marketAsset) return null;
 
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
@@ -32,7 +34,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 					{
 						first: 999999,
 						where: {
-							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							asset: `${ethersUtils.formatBytes32String(marketAsset)}`,
 							timestamp_gte: `${minTimestamp}`,
 						},
 					},
@@ -49,11 +51,11 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				);
 				return response ? response.length : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!currencyKey, ...options }
+		{ enabled: isAppReady && isL2 && !!marketAsset, ...options }
 	);
 };
 

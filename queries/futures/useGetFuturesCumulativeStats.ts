@@ -1,16 +1,17 @@
+import { wei } from '@synthetixio/wei';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
+
+import { FUTURES_ENDPOINT_MAINNET } from './constants';
 import { FuturesCumulativeStats } from './types';
 import { getFuturesEndpoint } from './utils';
-import { wei } from '@synthetixio/wei';
-import { FUTURES_ENDPOINT_MAINNET } from './constants';
-import ROUTES from 'constants/routes';
 
 const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativeStats | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -50,7 +51,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 					  }
 					: null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

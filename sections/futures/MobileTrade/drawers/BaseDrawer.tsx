@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import FullScreenModal from 'components/FullScreenModal';
 import CrossIcon from 'assets/svg/app/cross.svg';
+import FullScreenModal from 'components/FullScreenModal';
 import { resetButtonCSS } from 'styles/common';
 
 type DrawerItem = {

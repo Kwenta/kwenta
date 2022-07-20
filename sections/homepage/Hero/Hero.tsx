@@ -1,19 +1,18 @@
+import Link from 'next/link';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import MarketOrderPreview from 'assets/png/marketing/market-order-preview.png';
-
-import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
-import { StackSection } from '../common';
-
-import media from 'styles/media';
-import Link from 'next/link';
+import LogoNoTextSVG from 'assets/svg/brand/logo-no-text.svg';
 import Button from 'components/Button';
-import ROUTES from 'constants/routes';
 import PoweredBySynthetix from 'components/PoweredBySynthetix';
 import Webp from 'components/Webp';
+import ROUTES from 'constants/routes';
+import { FlexDivColCentered, GridDiv, Paragraph } from 'styles/common';
+import media from 'styles/media';
+
+import { StackSection } from '../common';
 
 const Hero = () => {
 	const { t } = useTranslation();

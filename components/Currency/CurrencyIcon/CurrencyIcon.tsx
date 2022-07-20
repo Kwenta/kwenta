@@ -1,29 +1,26 @@
+import Image from 'next/image';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Image from 'next/image';
 
-import ETHIcon from 'assets/png/currencies/sETH.png';
-import UNIIcon from 'assets/png/currencies/sUni.png';
-import SOLIcon from 'assets/png/currencies/sSOL.png';
-import BTCIcon from 'assets/png/currencies/sBTC.png';
-import AVAXIcon from 'assets/png/currencies/sAVAX.png';
-import MATICIcon from 'assets/png/currencies/sMATIC.png';
-import LINKIcon from 'assets/png/currencies/sLINK.png';
-import APEIcon from 'assets/png/currencies/sAPECOIN.png';
 import AAVEIcon from 'assets/png/currencies/sAAVE.png';
+import APEIcon from 'assets/png/currencies/sAPECOIN.png';
+import AVAXIcon from 'assets/png/currencies/sAVAX.png';
+import BTCIcon from 'assets/png/currencies/sBTC.png';
 import DYDXIcon from 'assets/png/currencies/sDYDX.png';
-import XAUIcon from 'assets/png/currencies/sXAU.png';
-import XAGIcon from 'assets/png/currencies/sXAG.png';
+import ETHIcon from 'assets/png/currencies/sETH.png';
 import EURIcon from 'assets/png/currencies/sEUR.png';
-import USDIcon from 'assets/png/currencies/sUSD.png';
 import INRIcon from 'assets/png/currencies/sINR.png';
+import LINKIcon from 'assets/png/currencies/sLINK.png';
+import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
+import SOLIcon from 'assets/png/currencies/sSOL.png';
+import UNIIcon from 'assets/png/currencies/sUNI.png';
+import USDIcon from 'assets/png/currencies/sUSD.png';
+import XAGIcon from 'assets/png/currencies/sXAG.png';
+import XAUIcon from 'assets/png/currencies/sXAU.png';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
-
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
-
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-
 import { FlexDivCentered } from 'styles/common';
 import { FuturesMarketKey } from 'utils/futures';
 

@@ -1,15 +1,13 @@
+import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
-import Wei, { wei } from '@synthetixio/wei';
 
 import ChangePercent from 'components/ChangePercent';
-
 import { CurrencyKey } from 'constants/currency';
-
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { ethers } from 'ethers';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 

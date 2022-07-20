@@ -1,15 +1,15 @@
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
-
-import { SwapCurrenciesButton, BoldText } from 'styles/common';
 import { zIndex } from 'constants/ui';
-import { useTranslation } from 'react-i18next';
-import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import { SwapCurrenciesButton, BoldText } from 'styles/common';
+
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
 import FooterCard from '../TradeCard/Cards/FooterCard';
-import { useExchangeContext } from 'contexts/ExchangeContext';
+import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
 
 const BasicSwap: FC = () => {
 	const { t } = useTranslation();

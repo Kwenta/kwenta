@@ -1,6 +1,7 @@
+import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import Slider, { SliderProps as DefaultSliderProps } from '@material-ui/core/Slider';
+
 import media from 'styles/media';
 
 export type SliderProps = Omit<DefaultSliderProps, 'onChange'> & {

@@ -1,11 +1,9 @@
 import { useMemo, FC } from 'react';
 
 import Select from 'components/Select';
-
-import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
-
-import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
 import Connector from 'containers/Connector';
+import usePersistedRecoilState from 'hooks/usePersistedRecoilState';
+import { priceCurrencyState, PRICE_CURRENCIES } from 'store/app';
 
 export const PriceCurrencySelect: FC = () => {
 	const [priceCurrency, setPriceCurrency] = usePersistedRecoilState(priceCurrencyState);

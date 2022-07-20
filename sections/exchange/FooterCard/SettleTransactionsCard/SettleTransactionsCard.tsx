@@ -1,19 +1,16 @@
+import Tippy from '@tippyjs/react';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { FC, ReactNode } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
 
-import { EXTERNAL_LINKS } from 'constants/links';
-
-import { NoTextTransform, ExternalLink } from 'styles/common';
-
+import Button from 'components/Button';
 import { MobileOrTabletView } from 'components/Media';
+import { EXTERNAL_LINKS } from 'constants/links';
+import { NoTextTransform, ExternalLink } from 'styles/common';
+import { secondsToTime } from 'utils/formatters/date';
 
 import { MessageContainer, Message, FixedMessageContainerSpacer } from '../common';
-import Button from 'components/Button';
-
-import { secondsToTime } from 'utils/formatters/date';
-import { useExchangeContext } from 'contexts/ExchangeContext';
 
 type SettleTransactionsCardProps = {
 	submissionDisabledReason?: ReactNode;
@@ -71,7 +68,7 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 					<span>
 						<Button
 							variant="primary"
-							isRounded={true}
+							isRounded
 							disabled={!!settlementDisabledReason}
 							onClick={onSubmit}
 							size="lg"
@@ -94,7 +91,6 @@ const MessageItem = styled(Message)`
 export const UnderlineExternalLink = styled(ExternalLink)`
 	text-decoration: underline;
 	grid-column-start: 2;
-	color: ${(props) => props.theme.colors.blueberry};
 `;
 
 export const MessageItems = styled.span`

@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
+
 import { formatRevert } from 'utils/formatters/error';
 
 type ErrorProps = {
@@ -32,6 +33,10 @@ const ErrorContainer = styled.div`
 	border: 1px solid rgba(239, 104, 104, 0.2);
 	border-radius: 8px;
 	cursor: default;
+
+	:first-letter {
+		text-transform: uppercase;
+	}
 `;
 
 export default Error;

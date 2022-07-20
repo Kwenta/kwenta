@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { UseQueryOptions, useQuery } from 'react-query';
 
+import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import { FuturesMarketKey } from 'utils/futures';
 
 import { CG_BASE_API_URL } from './constants';
 import { PriceResponse } from './types';
 import { synthToCoingeckoPriceId } from './utils';
-import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
-import { FuturesMarketKey } from 'utils/futures';
 
 const getCoinGeckoPrice = async (currencyKey: FuturesMarketKey) => {
 	const priceId = synthToCoingeckoPriceId(currencyKey);

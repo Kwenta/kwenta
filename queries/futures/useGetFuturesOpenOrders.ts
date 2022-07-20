@@ -1,18 +1,19 @@
+import Wei from '@synthetixio/wei';
+import { utils as ethersUtils } from 'ethers';
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
 
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
-
-import QUERY_KEYS from 'constants/queryKeys';
-import request, { gql } from 'graphql-request';
-import { getFuturesEndpoint } from './utils';
-import Wei from '@synthetixio/wei';
 import { ETH_UNIT } from 'constants/network';
+import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { getDisplayAsset } from 'utils/futures';
+import { appReadyState } from 'store/app';
 import { currentMarketState, openOrdersState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
+
+import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -62,7 +63,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 
 				return openOrders;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

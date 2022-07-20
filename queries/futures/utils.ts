@@ -1,9 +1,18 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
+import { Synths } from '@synthetixio/contracts-interface';
+import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import Wei, { wei } from '@synthetixio/wei';
 import { utils } from 'ethers';
 
+import { ETH_UNIT } from 'constants/network';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { Network } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { FuturesMarketAsset } from 'utils/futures';
+
+import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
+import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -17,15 +26,6 @@ import {
 	FuturesTrade,
 	MarginTransfer,
 } from './types';
-import { Network } from 'store/wallet';
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
-
-import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
-import { ETH_UNIT } from 'constants/network';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
-import { Synths } from '@synthetixio/contracts-interface';
-import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
-import { FuturesMarketAsset } from 'utils/futures';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -293,7 +293,7 @@ export const mapMarginTransfers = (
 				action: isPositive ? 'deposit' : 'withdraw',
 				amount,
 				isPositive,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
 			};
 		}

@@ -1,25 +1,26 @@
-import Table from 'components/Table';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRouter } from 'next/router';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
-import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import Wei, { wei } from '@synthetixio/wei';
+import styled from 'styled-components';
 
 import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table from 'components/Table';
+import Search from 'components/Table/Search';
 import { Synths } from 'constants/currency';
+import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import useENSAvatar from 'hooks/useENSAvatar';
+import useENSs from 'hooks/useENSs';
+import { FuturesStat } from 'queries/futures/types';
 import useGetStats from 'queries/futures/useGetStats';
 import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
-import { FuturesStat } from 'queries/futures/types';
-import { useRouter } from 'next/router';
+
 import TraderHistory from '../TraderHistory';
-import Search from 'components/Table/Search';
-import ROUTES from 'constants/routes';
-import useENSs from 'hooks/useENSs';
-import useENSAvatar from 'hooks/useENSAvatar';
-import Connector from 'containers/Connector';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type LeaderboardProps = {
 	compact?: boolean;
@@ -161,7 +162,7 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 						<MobileHiddenView>
 							<StyledTable
 								compact={compact}
-								showPagination={true}
+								showPagination
 								isLoading={statsQuery.isLoading || ensInfoQuery.isLoading}
 								data={data}
 								pageSize={20}

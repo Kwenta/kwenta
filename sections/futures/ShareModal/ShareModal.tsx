@@ -1,17 +1,15 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
+import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
+import { FuturesPosition, PositionHistory } from 'queries/futures/types';
+import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
-
-import { FuturesPosition, PositionHistory } from 'queries/futures/types';
-
-import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
-import { FuturesMarketAsset } from 'utils/futures';
 
 type ShareModalProps = {
 	position: FuturesPosition | null;
@@ -34,7 +32,7 @@ const ShareModal: FC<ShareModalProps> = ({
 		<>
 			<BaseModal
 				onDismiss={() => setShowShareModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.share.title')}
 			>
 				<ModalWindow>
