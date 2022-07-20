@@ -1,20 +1,18 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import InfoBox from 'components/InfoBox';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-
-import { useTranslation } from 'react-i18next';
-
 import TimerIcon from 'assets/svg/app/timer.svg';
+import InfoBox from 'components/InfoBox';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
-import { useRecoilValue } from 'recoil';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();

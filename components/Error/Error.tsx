@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
+
 import { formatRevert } from 'utils/formatters/error';
 
 type ErrorProps = {

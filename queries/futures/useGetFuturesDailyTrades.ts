@@ -1,15 +1,16 @@
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { DAY_PERIOD } from './constants';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { getFuturesEndpoint } from './utils';
+import logError from 'utils/logError';
+
+import { DAY_PERIOD } from './constants';
 import { getFuturesTrades } from './subgraph';
+import { getFuturesEndpoint } from './utils';
 
 const useGetFuturesDailyTradeStatsForMarket = (
 	currencyKey: string | null,
@@ -49,7 +50,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				);
 				return response ? response.length : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

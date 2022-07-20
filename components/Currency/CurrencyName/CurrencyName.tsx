@@ -1,16 +1,13 @@
 import React, { FC } from 'react';
-import styled, { css } from 'styled-components';
 import { useTranslation } from 'react-i18next';
-
-import { MarketClosureReason } from 'hooks/useMarketClosed';
+import styled, { css } from 'styled-components';
 
 import MarketClosureIcon from 'components/MarketClosureIcon';
-
-import CurrencyIcon from '../CurrencyIcon';
-
-import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 import { ContainerRowMixin } from '../common';
+import CurrencyIcon from '../CurrencyIcon';
+import { CurrencyIconProps } from '../CurrencyIcon/CurrencyIcon';
 
 type CurrencyNameProps = {
 	currencyKey: string;

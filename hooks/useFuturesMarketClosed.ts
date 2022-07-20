@@ -1,4 +1,5 @@
 import { SynthSuspensionReason } from '@synthetixio/queries';
+
 import useFuturesSuspensionQuery from 'queries/futures/useFuturesSuspensionQuery';
 import { FuturesMarketKey } from 'utils/futures';
 

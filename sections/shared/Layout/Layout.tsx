@@ -1,14 +1,12 @@
-import { FC, useEffect } from 'react';
-import { createGlobalStyle } from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import i18n from 'i18n';
+import { FC, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { createGlobalStyle } from 'styled-components';
 
 import { zIndex } from 'constants/ui';
-
+import { languageState } from 'store/app';
 import { linkCSS } from 'styles/common';
 import media from 'styles/media';
-
-import { languageState } from 'store/app';
 
 type LayoutProps = {
 	children: React.ReactNode;

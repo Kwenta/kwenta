@@ -1,18 +1,26 @@
-import Table from 'components/Table';
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+
+import MarketBadge from 'components/Badge/MarketBadge';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import Connector from 'containers/Connector';
 import { FuturesMarket } from 'queries/futures/types';
-import Currency from 'components/Currency';
-import ChangePercent from 'components/ChangePercent';
-import { Synths } from 'constants/currency';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { FuturesVolumes } from 'queries/futures/types';
+import useGetAverageFundingRateForMarkets, {
+	FundingRateResponse,
+} from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
-import { FuturesVolumes } from 'queries/futures/types';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import {
 	getDisplayAsset,
 	getSynthDescription,
@@ -20,13 +28,6 @@ import {
 	MarketKeyByAsset,
 	FuturesMarketAsset,
 } from 'utils/futures';
-import MarketBadge from 'components/Badge/MarketBadge';
-import useGetAverageFundingRateForMarkets, {
-	FundingRateResponse,
-} from 'queries/futures/useGetAverageFundingRateForMarkets';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type FuturesMarketsTableProps = {
 	futuresMarkets: FuturesMarket[];

@@ -1,5 +1,7 @@
 import Wei, { wei, WeiSource } from '@synthetixio/wei';
+
 import { NextPriceDetails } from 'queries/futures/useGetNextPriceDetails';
+
 import { zeroBN } from './formatters/number';
 
 export const computeNPFee = (details: NextPriceDetails | null | undefined, sizeDelta: Wei) => {

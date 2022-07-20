@@ -1,41 +1,38 @@
 /* eslint-disable react/forbid-foreign-prop-types */
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
-import styled from 'styled-components';
 import { castArray } from 'lodash';
 import { useRouter } from 'next/router';
-
-import { TabPanel } from 'components/Tab';
-import TabButton from 'components/Button/TabButton';
-
-import Trades from '../Trades';
-import Transfers from '../Transfers';
-import ShareModal from '../ShareModal';
-import PositionCard from '../PositionCard';
-import ProfitCalculator from '../ProfitCalculator';
-
-import ROUTES from 'constants/routes';
-import { Synths } from 'constants/currency';
-import { getExchangeRatesForCurrencies } from 'utils/currencies';
-import OpenOrdersTable from './OpenOrdersTable';
-import { PositionHistory } from 'queries/futures/types';
-
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { FuturesTrade } from 'queries/futures/types';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { walletAddressState } from 'store/wallet';
-import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
-import { currentMarketState, openOrdersState, positionState } from 'store/futures';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import styled from 'styled-components';
 
-import UploadIcon from 'assets/svg/futures/upload-icon.svg';
+import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import PositionIcon from 'assets/svg/futures/icon-position.svg';
 import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
-import CalculatorIcon from 'assets/svg/futures/calculator-icon.svg';
-import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
-import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
+import UploadIcon from 'assets/svg/futures/upload-icon.svg';
+import TabButton from 'components/Button/TabButton';
+import { TabPanel } from 'components/Tab';
+import { Synths } from 'constants/currency';
+import ROUTES from 'constants/routes';
+import { PositionHistory } from 'queries/futures/types';
+import { FuturesTrade } from 'queries/futures/types';
+import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import FuturesPositionsTable from 'sections/dashboard/FuturesPositionsTable';
+import { currentMarketState, openOrdersState, positionState } from 'store/futures';
+import { walletAddressState } from 'store/wallet';
+import { getExchangeRatesForCurrencies } from 'utils/currencies';
+
+import PositionCard from '../PositionCard';
+import ProfitCalculator from '../ProfitCalculator';
+import ShareModal from '../ShareModal';
+import Trades from '../Trades';
+import Transfers from '../Transfers';
+import OpenOrdersTable from './OpenOrdersTable';
 
 enum FuturesTab {
 	POSITION = 'position',

@@ -1,12 +1,12 @@
-import { FC } from 'react';
-import { UseQueryResult } from 'react-query';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
 import { DeprecatedSynthsBalances } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { UseQueryResult } from 'react-query';
+import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import Button from 'components/Button';
+import { Synths } from 'constants/currency';
 import useRedeemDeprecatedSynths from 'hooks/useRedeemDeprecatedSynths';
 import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
 import { formatCurrency } from 'utils/formatters/number';

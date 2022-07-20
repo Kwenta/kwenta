@@ -1,13 +1,27 @@
+import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
+import isNil from 'lodash/isNil';
+import values from 'lodash/values';
+import router from 'next/router';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
+import Slider from 'react-slick';
 import styled, { css } from 'styled-components';
-import router from 'next/router';
-import values from 'lodash/values';
-import isNil from 'lodash/isNil';
-import { ColorType, createChart, UTCTimestamp } from 'lightweight-charts';
 
 import GridSvg from 'assets/svg/app/grid.svg';
+import Button from 'components/Button';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { TabPanel } from 'components/Tab';
+import { CurrencyKey, Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
+import { Price } from 'queries/rates/types';
+import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -16,21 +30,7 @@ import {
 	WhiteHeader,
 } from 'styles/common';
 import media, { Media } from 'styles/media';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
-import { Price } from 'queries/rates/types';
-import ChangePercent from 'components/ChangePercent';
-import Currency from 'components/Currency';
-import { TabPanel } from 'components/Tab';
-import Connector from 'containers/Connector';
 import { getSynthDescription } from 'utils/futures';
-import { CurrencyKey, Synths } from 'constants/currency';
-import Slider from 'react-slick';
-import Button from 'components/Button';
 
 enum MarketsTab {
 	FUTURES = 'futures',

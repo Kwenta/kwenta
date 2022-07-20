@@ -1,10 +1,9 @@
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-
+import { zIndex } from 'constants/ui';
 import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
-import { zIndex } from 'constants/ui';
 
 export const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;

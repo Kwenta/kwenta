@@ -1,21 +1,20 @@
-import { FC, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
+import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
+import FullScreenModal from 'components/FullScreenModal';
+import ROUTES from 'constants/routes';
+import Links from 'sections/dashboard/Links';
+import Logo from 'sections/shared/Layout/Logo';
 import { isL2State } from 'store/wallet';
 
-import FullScreenModal from 'components/FullScreenModal';
-import Logo from 'sections/shared/Layout/Logo';
-import Links from 'sections/dashboard/Links';
-
-import MobileSubMenu from './MobileSubMenu';
-import { MenuButton, SUB_MENUS } from './common';
-import MobileMenuArrow from 'assets/svg/app/mobile-menu-arrow.svg';
 import { HOMEPAGE_MENU_LINKS, MENU_LINKS } from '../constants';
-import ROUTES from 'constants/routes';
+import { MenuButton, SUB_MENUS } from './common';
+import MobileSubMenu from './MobileSubMenu';
 
 type MobileMenuModalProps = {
 	onDismiss(): void;

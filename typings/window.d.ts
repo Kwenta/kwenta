@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
 import { NetworkId } from '@synthetixio/contracts-interface';
+import { ethers } from 'ethers';
 
 declare global {
 	interface Window {

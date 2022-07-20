@@ -1,12 +1,14 @@
-import React from 'react';
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
-import SpotMarketsTable from '../SpotMarketsTable';
 import useSynthetixQueries from '@synthetixio/queries';
+import React from 'react';
+
+import { Synths } from 'constants/currency';
+import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+
+import SpotMarketsTable from '../SpotMarketsTable';
+import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const SynthMarkets: React.FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();

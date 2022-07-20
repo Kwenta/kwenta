@@ -1,26 +1,26 @@
-import React from 'react';
-import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import Error from 'components/Error';
-import { formatCurrency } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 import Button from 'components/Button';
-import { FlexDivRowCentered } from 'styles/common';
-import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { NO_VALUE } from 'constants/placeholder';
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivRowCentered } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
+import { newGetTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;

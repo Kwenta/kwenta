@@ -1,20 +1,17 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-
 import { Synth } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-
-import { NO_VALUE } from 'constants/placeholder';
-
-import { SelectableCurrencyRow } from 'styles/common';
+import { CurrencyKey } from 'constants/currency';
 import { Period } from 'constants/period';
+import { NO_VALUE } from 'constants/placeholder';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useSynthetixQueries from '@synthetixio/queries';
-import { CurrencyKey } from 'constants/currency';
-import { wei } from '@synthetixio/wei';
+import { SelectableCurrencyRow } from 'styles/common';
 
 type SynthRowProps = {
 	price: number | null;

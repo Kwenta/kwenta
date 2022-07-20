@@ -1,6 +1,7 @@
 import React from 'react';
-import Select from 'components/Select';
 import { useRecoilState } from 'recoil';
+
+import Select from 'components/Select';
 import { currentThemeState } from 'store/ui';
 
 const themes = {

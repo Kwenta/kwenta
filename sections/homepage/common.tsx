@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { FlexDivCol, FlexDivColCentered, FlexDivRow, GridDiv, Paragraph } from 'styles/common';
-
 import media from 'styles/media';
 
 export const SubHeader = styled(Paragraph)`

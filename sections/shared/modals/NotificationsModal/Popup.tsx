@@ -1,15 +1,13 @@
+import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
-import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
+import { OrderByStatus } from 'store/orders';
 import { TextButton } from 'styles/common';
 
 import { MenuModal } from '../common';
-import CurrencyExchange from './CurrencyExchange';
-import RedeemableDeprecatedSynths from './RedeemableDeprecatedSynths';
-
 import {
 	OrdersGroup,
 	OrdersGroupTitle,
@@ -17,10 +15,10 @@ import {
 	OrdersGroupListItem,
 	NoResults,
 } from './common';
+import CurrencyExchange from './CurrencyExchange';
 import CurrencyFeeReclaim from './CurrencyFeeReclaim';
-
+import RedeemableDeprecatedSynths from './RedeemableDeprecatedSynths';
 import { OrderGroup } from './types';
-import { OrderByStatus } from 'store/orders';
 
 type PopupProps = {
 	onDismiss: () => void;

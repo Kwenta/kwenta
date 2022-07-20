@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+
 import PortfolioChart from '../PortfolioChart';
 
 const Portfolio: React.FC = () => (

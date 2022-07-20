@@ -1,13 +1,15 @@
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import styled from 'styled-components';
-import RatioSelect from './RatioSelect';
-import SwapInfoBox from './SwapInfoBox';
-import { SwapCurrenciesButton } from 'styles/common';
+
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import { SwapCurrenciesButton } from 'styles/common';
+
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
+import QuoteCurrencyCard from '../TradeCard/Cards/QuoteCurrencyCard';
+import RatioSelect from './RatioSelect';
 import SwapButton from './SwapButton';
+import SwapInfoBox from './SwapInfoBox';
 
 const MobileSwap: React.FC = () => {
 	const { handleCurrencySwap } = useExchangeContext();

@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { createGlobalStyle } from 'styled-components';
+
 import { FullScreenContainer } from 'styles/common';
+
 import Footer from './Footer';
 import Header from './Header';
 

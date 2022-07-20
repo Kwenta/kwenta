@@ -1,11 +1,12 @@
-import { FC } from 'react';
 import Head from 'next/head';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
+
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import Leaderboard from 'sections/leaderboard/Leaderboard';
 import AppLayout from 'sections/shared/Layout/AppLayout';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { PageContent, MainContent, FullHeightContainer } from 'styles/common';
 
 type AppLayoutProps = {
 	children: React.ReactNode;

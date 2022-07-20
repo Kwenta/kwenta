@@ -1,6 +1,11 @@
 import { useRef, useContext, useEffect, useCallback, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
+
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
+import { currentThemeState } from 'store/ui';
+import { networkState } from 'store/wallet';
+import { formatNumber } from 'utils/formatters/number';
 
 import {
 	IChartingLibraryWidget,
@@ -8,11 +13,7 @@ import {
 	widget,
 } from '../../public/static/charting_library';
 import DataFeedFactory from './DataFeed';
-import { useRecoilValue } from 'recoil';
-import { networkState } from 'store/wallet';
-import { formatNumber } from 'utils/formatters/number';
 import { ChartPosition } from './types';
-import { currentThemeState } from 'store/ui';
 
 export type ChartProps = {
 	baseCurrencyKey: string;

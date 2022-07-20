@@ -1,15 +1,14 @@
-import { FC } from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
-import ROUTES from 'constants/routes';
-
-import { currentThemeState } from 'store/ui';
+import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
+import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
+import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
 import LogoSvg from 'assets/svg/brand/logo.svg';
 import LogoSvgL2 from 'assets/svg/brand/logol2.svg';
-import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
-import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
+import ROUTES from 'constants/routes';
+import { currentThemeState } from 'store/ui';
 
 type LogoProps = {
 	isL2: boolean;

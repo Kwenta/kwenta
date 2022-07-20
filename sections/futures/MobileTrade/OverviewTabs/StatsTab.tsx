@@ -1,7 +1,8 @@
 import React from 'react';
-import { Pane, SectionHeader, SectionTitle } from '../common';
 
 import MarketDetails from 'sections/futures/MarketDetails';
+
+import { Pane, SectionHeader, SectionTitle } from '../common';
 
 const StatsTab: React.FC = () => {
 	return (

@@ -1,8 +1,7 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import keyBy from 'lodash/keyBy';
-
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import keyBy from 'lodash/keyBy';
 
 export type { CurrencyKey } from '@synthetixio/contracts-interface';
 export { Synths } from '@synthetixio/contracts-interface';

@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
 import { leverageSideState, orderTypeState } from 'store/futures';
 
-import LeverageInput from '../LeverageInput';
-import TradeConfirmationModal from './TradeConfirmationModal';
-import MarketsDropdown from './MarketsDropdown';
-import PositionButtons from '../PositionButtons';
-import OrderSizing from '../OrderSizing';
 import FeeInfoBox from '../FeeInfoBox';
-import NextPrice from './NextPrice';
-import NextPriceConfirmationModal from './NextPriceConfirmationModal';
+import LeverageInput from '../LeverageInput';
+import MarketInfoBox from '../MarketInfoBox';
+import OrderSizing from '../OrderSizing';
+import PositionButtons from '../PositionButtons';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
-import MarketInfoBox from '../MarketInfoBox';
+import MarketsDropdown from './MarketsDropdown';
+import NextPrice from './NextPrice';
+import NextPriceConfirmationModal from './NextPriceConfirmationModal';
+import TradeConfirmationModal from './TradeConfirmationModal';
 
 const Trade: React.FC = () => {
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);

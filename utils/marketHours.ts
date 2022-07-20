@@ -1,3 +1,6 @@
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import moment from 'moment-business-time';
+
 import {
 	AFTER_HOURS_SYNTHS,
 	COMMODITY_SYNTHS,
@@ -6,8 +9,6 @@ import {
 	LSE_SYNTHS,
 	TSE_SYNTHS,
 } from 'constants/currency';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
-import moment from 'moment-business-time';
 
 export const forexHours = () => {
 	// Sunday 5pm ET to Friday 4pm ET

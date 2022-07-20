@@ -1,17 +1,17 @@
+import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UseQueryResult } from 'react-query';
 import styled from 'styled-components';
-import { DeprecatedSynthsBalances, SynthFeeAndWaitingPeriod } from '@synthetixio/queries';
 
 import Card from 'components/Card';
+import FullScreenModal from 'components/FullScreenModal';
 
 import { OrdersGroupListItem, NoResults } from './common';
-import FullScreenModal from 'components/FullScreenModal';
-import { OrderGroup } from './types';
-import CurrencyFeeReclaim from './CurrencyFeeReclaim';
 import CurrencyExchange from './CurrencyExchange';
+import CurrencyFeeReclaim from './CurrencyFeeReclaim';
 import RedeemableDeprecatedSynths from './RedeemableDeprecatedSynths';
+import { OrderGroup } from './types';
 
 type FullScreenProps = {
 	onDismiss?: () => void;

@@ -1,11 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
 import { components, SingleValueProps } from 'react-select';
-import { FlexDivCentered } from 'styles/common';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import styled from 'styled-components';
+
 import MarketBadge from 'components/Badge/MarketBadge';
-import { MarketsCurrencyOption } from './MarketsDropdown';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivCentered } from 'styles/common';
 import { MarketKeyByAsset } from 'utils/futures';
+
+import { MarketsCurrencyOption } from './MarketsDropdown';
 
 const MarketsDropdownSingleValue: React.FC<SingleValueProps<MarketsCurrencyOption>> = (props) => (
 	<SingleValueWrapper {...props}>

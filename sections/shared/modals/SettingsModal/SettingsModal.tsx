@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import { FlexDivRowCentered } from 'styles/common';
 
 import { MenuModal } from '../common';
-
 import { OPTIONS } from './constants';
 
 type SettingsModalProps = {

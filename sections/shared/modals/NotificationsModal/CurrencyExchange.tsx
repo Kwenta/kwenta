@@ -5,10 +5,9 @@ import styled from 'styled-components';
 import CircleEllipsis from 'assets/svg/app/circle-ellipsis.svg';
 import CircleTick from 'assets/svg/app/circle-tick.svg';
 import Link from 'assets/svg/app/link.svg';
-
-import { CapitalizedText, ExternalLink, FlexDivRowCentered, NumericValue } from 'styles/common';
-import { Order } from 'store/orders';
 import BlockExplorer from 'containers/BlockExplorer';
+import { Order } from 'store/orders';
+import { CapitalizedText, ExternalLink, FlexDivRowCentered, NumericValue } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
 type CurrencyExchangeProps = {

@@ -1,8 +1,9 @@
-import { renderHook } from '@testing-library/react-hooks';
 import useSynthetixQueries from '@synthetixio/queries';
-import useCurrencyPrice from './useCurrencyPrice';
 import { wei } from '@synthetixio/wei';
+import { renderHook } from '@testing-library/react-hooks';
 import ContextProvider from 'test-utils/ContextProvider';
+
+import useCurrencyPrice from './useCurrencyPrice';
 
 jest.mock('@synthetixio/queries');
 const useSynthetixQueriesMock = useSynthetixQueries as jest.MockedFunction<

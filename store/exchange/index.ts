@@ -3,10 +3,11 @@
 // versions of the exchange screen (synthswap).
 
 import { atom, selector } from 'recoil';
+
 import { Synths, CurrencyKey, CRYPTO_CURRENCY_MAP } from 'constants/currency';
-import { getExchangeKey } from 'store/utils';
-import { localStorageEffect } from 'store/effects';
 import { SwapRatio } from 'sections/exchange/hooks/useExchange';
+import { localStorageEffect } from 'store/effects';
+import { getExchangeKey } from 'store/utils';
 
 type CurrencyPair = {
 	base: CurrencyKey | null;

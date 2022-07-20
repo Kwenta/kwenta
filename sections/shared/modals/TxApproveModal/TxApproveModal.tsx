@@ -1,15 +1,14 @@
 import { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivColCentered } from 'styles/common';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { FlexDivColCentered } from 'styles/common';
+import { formatRevert } from 'utils/formatters/error';
 
 import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
-
-import { MessageButton } from 'sections/exchange/FooterCard/common';
-import { formatRevert } from 'utils/formatters/error';
 
 type TxApproveModalProps = {
 	onDismiss: () => void;
