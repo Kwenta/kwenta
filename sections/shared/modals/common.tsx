@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import { HEADER_HEIGHT } from 'constants/ui';
 import { FlexDivRow } from 'styles/common';
 import media from 'styles/media';
 

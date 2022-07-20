@@ -12,7 +12,7 @@ const StakingInfo: FC = () => {
 
 	return (
 		<StakingContainer>
-			<CardTitle>{t('futures-dashboard.titles.staking')}</CardTitle>
+			<CardTitle>{t('dashboard.titles.staking')}</CardTitle>
 			<StakingBody>
 				<Title>APY:</Title>
 				<BigText white>--%</BigText>

@@ -1,7 +1,7 @@
 import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
@@ -19,7 +19,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import { ratioState } from 'store/exchange';
-import { isL2State } from 'store/wallet';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -79,7 +78,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	} = useSelectedPriceCurrency();
 
 	const isBase = useMemo(() => side === 'base', [side]);
-	const isL2 = useRecoilValue(isL2State);
 
 	const hasWalletBalance = useMemo(() => walletBalance != null && currencyKey != null, [
 		walletBalance,
@@ -183,9 +181,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 											)}
 											{currencyKey ?? (
 												<CapitalizedText>
-													{isL2
-														? t('exchange.currency-card.currency-selector.select-token')
-														: t('exchange.currency-card.currency-selector.select-synth')}
+													{t('exchange.currency-card.currency-selector.select-token')}
 												</CapitalizedText>
 											)}
 										</TokenLabel>

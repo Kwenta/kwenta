@@ -45,40 +45,40 @@ const DashboardContainer: FC = () => {
 		() => [
 			{
 				name: Tab.Overview,
-				label: t('futures-dashboard.tabs.nav.overview'),
+				label: t('dashboard.tabs.overview'),
 				active: activeTab === Tab.Overview,
 				onClick: () => router.push(ROUTES.Home.Overview),
 			},
 			{
 				name: Tab.History,
-				label: t('futures-dashboard.tabs.nav.history'),
+				label: t('dashboard.tabs.history'),
 				active: activeTab === Tab.History,
 				onClick: () => router.push(ROUTES.Home.History),
 			},
 			{
 				name: Tab.Rewards,
-				label: t('futures-dashboard.tabs.nav.rewards'),
+				label: t('dashboard.tabs.rewards'),
 				active: activeTab === Tab.Rewards,
 				disabled: true,
 				onClick: () => {},
 			},
 			{
 				name: Tab.Markets,
-				label: t('futures-dashboard.tabs.nav.markets'),
+				label: t('dashboard.tabs.markets'),
 				active: activeTab === Tab.Markets,
 				disabled: false,
 				onClick: () => router.push(ROUTES.Home.Markets),
 			},
 			{
 				name: Tab.Governance,
-				label: t('futures-dashboard.tabs.nav.governance'),
+				label: t('dashboard.tabs.governance'),
 				active: activeTab === Tab.Governance,
 				disabled: true,
 				onClick: () => {},
 			},
 			{
 				name: Tab.Staking,
-				label: t('futures-dashboard.tabs.nav.staking'),
+				label: t('dashboard.tabs.staking'),
 				active: activeTab === Tab.Staking,
 				disabled: true,
 				onClick: () => {},
@@ -91,7 +91,7 @@ const DashboardContainer: FC = () => {
 		<>
 			<LeftSideContent>
 				<StyledTabList>
-					<TabGroupTitle>{t('futures-dashboard.titles.trading')}</TabGroupTitle>
+					<TabGroupTitle>{t('dashboard.titles.trading')}</TabGroupTitle>
 					{TABS.slice(0, 4).map(({ name, label, active, disabled, onClick }) => (
 						<NavButton
 							key={name}
@@ -105,7 +105,7 @@ const DashboardContainer: FC = () => {
 						</NavButton>
 					))}
 
-					<TabGroupTitle>{t('futures-dashboard.titles.community')}</TabGroupTitle>
+					<TabGroupTitle>{t('dashboard.titles.community')}</TabGroupTitle>
 					{TABS.slice(4).map(({ name, label, active, disabled, onClick }) => (
 						<NavButton
 							key={name}

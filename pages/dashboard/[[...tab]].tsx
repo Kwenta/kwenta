@@ -22,7 +22,7 @@ const Dashboard: DashboardComponent = () => {
 	return (
 		<RefetchProvider>
 			<Head>
-				<title>{t('futures.page-title')}</title>
+				<title>{t('dashboard.page-title')}</title>
 			</Head>
 			<MobileHiddenView>
 				<PageContent>
