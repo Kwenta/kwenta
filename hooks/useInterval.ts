@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import noop from 'lodash/noop';
+import { useEffect, useRef } from 'react';
 
 function useInterval(callback: () => void, delay: number | null, deps: Array<any> = []) {
 	const savedCallback = useRef(noop);

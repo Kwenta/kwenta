@@ -1,21 +1,22 @@
+import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
 import { Rates, SynthBalance } from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
+import * as _ from 'lodash/fp';
 import { FC, ReactElement, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps, Row } from 'react-table';
 import styled from 'styled-components';
+
+import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import Table from 'components/Table';
 import { Price } from 'queries/rates/types';
-import * as _ from 'lodash/fp';
-import { CurrencyKey, Synths } from '@synthetixio/contracts-interface';
-import Wei, { wei } from '@synthetixio/wei';
-import { formatNumber, zeroBN } from 'utils/formatters/number';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import ChangePercent from 'components/ChangePercent';
+import { formatNumber, zeroBN } from 'utils/formatters/number';
 import { isEurForex } from 'utils/futures';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 
 type SynthBalancesTableProps = {
 	exchangeRates: Rates | null;

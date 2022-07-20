@@ -1,16 +1,18 @@
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import * as _ from 'lodash/fp';
-import { FuturesMarket } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState } from 'store/futures';
 import styled from 'styled-components';
+
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { FuturesMarket } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { currentMarketState } from 'store/futures';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
+
 import OpenInterestBar from './OpenInterestBar';
 
 const SkewInfo: React.FC = () => {

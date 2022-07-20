@@ -1,38 +1,36 @@
-import { useState, useEffect } from 'react';
-import { createContainer } from 'unstated-next';
+import { NetworkId, SynthetixJS, synthetix, NetworkName } from '@synthetixio/contracts-interface';
+import { loadProvider } from '@synthetixio/providers';
+import { getOptimismProvider } from '@synthetixio/providers';
 import {
 	TransactionNotifier,
 	TransactionNotifierInterface,
 } from '@synthetixio/transaction-notifier';
-import { loadProvider } from '@synthetixio/providers';
+import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
+import { ethers } from 'ethers';
+import { invert, keyBy } from 'lodash';
+import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
+import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { createContainer } from 'unstated-next';
 
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
+import { DEFAULT_NETWORK_ID } from 'constants/defaults';
+import { LOCAL_STORAGE_KEYS } from 'constants/storage';
+import useLocalStorage from 'hooks/useLocalStorage';
+import { appReadyState } from 'store/app';
+import { ordersState } from 'store/orders';
+import { hasOrdersNotificationState } from 'store/ui';
+import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
+import { synthToContractName } from 'utils/currencies';
+import logError from 'utils/logError';
 import {
 	getDefaultNetworkId,
 	getDefaultProvider,
 	getIsOVM,
 	isSupportedNetworkId,
 } from 'utils/network';
-import { useSetRecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { NetworkId, SynthetixJS, synthetix, NetworkName } from '@synthetixio/contracts-interface';
-import { ethers } from 'ethers';
-
-import { ordersState } from 'store/orders';
-import { hasOrdersNotificationState } from 'store/ui';
-import { appReadyState } from 'store/app';
-import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
-
-import { Wallet as OnboardWallet } from 'bnc-onboard/dist/src/interfaces';
-
-import useLocalStorage from 'hooks/useLocalStorage';
 
 import { initOnboard } from './config';
-import { LOCAL_STORAGE_KEYS } from 'constants/storage';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS } from 'constants/currency';
-import { synthToContractName } from 'utils/currencies';
-import { invert, keyBy } from 'lodash';
-import { useMemo } from 'react';
-import { getOptimismProvider } from '@synthetixio/providers';
-import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 
 const useConnector = () => {
 	const [network, setNetwork] = useRecoilState(networkState);
@@ -229,7 +227,7 @@ const useConnector = () => {
 				}
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 
@@ -240,7 +238,7 @@ const useConnector = () => {
 				resetCachedUI();
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 
@@ -250,7 +248,7 @@ const useConnector = () => {
 				onboard.accountSelect();
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 

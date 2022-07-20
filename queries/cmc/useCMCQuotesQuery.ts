@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { UseQueryOptions, useQuery } from 'react-query';
 import zipObject from 'lodash/zipObject';
+import { UseQueryOptions, useQuery } from 'react-query';
 
-import QUERY_KEYS from 'constants/queryKeys';
 import { CurrencyKey } from 'constants/currency';
+import QUERY_KEYS from 'constants/queryKeys';
 
 const CMC_PRICES_API = 'https://coinmarketcap-api.synthetix.io/public/prices?symbols=';
 

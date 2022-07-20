@@ -1,9 +1,10 @@
-import { CurrencyKey } from 'constants/currency';
-import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+
+import { CurrencyKey } from 'constants/currency';
+import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
+import useIsMarketTransitioning from 'hooks/useIsMarketTransitioning';
 import theme from 'styles/theme';
 import { FuturesMarketAsset } from 'utils/futures';
 import { marketIsOpen, marketNextOpen, marketNextTransition } from 'utils/marketHours';

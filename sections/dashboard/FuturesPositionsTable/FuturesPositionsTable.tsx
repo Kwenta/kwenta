@@ -1,18 +1,23 @@
-import Table from 'components/Table';
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import Connector from 'containers/Connector';
-import Currency from 'components/Currency';
-import PositionType from 'components/Text/PositionType';
+
+import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table from 'components/Table';
+import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
+import { positionsState } from 'store/futures';
+import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getDisplayAsset,
@@ -20,11 +25,8 @@ import {
 	isEurForex,
 	MarketKeyByAsset,
 } from 'utils/futures';
-import MarketBadge from 'components/Badge/MarketBadge';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+
 import MobilePositionRow from './MobilePositionRow';
-import { positionsState } from 'store/futures';
-import { useRecoilValue } from 'recoil';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];

@@ -1,23 +1,18 @@
+import { Synth } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
 import { FC } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { Synth } from '@synthetixio/contracts-interface';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-
-import { BottomShadow, NoTextTransform } from 'styles/common';
-
 import { CurrencyKey } from 'constants/currency';
-
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { walletAddressState } from 'store/wallet';
+import { BottomShadow, NoTextTransform } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 
 import { RowsContainer, CenteredModal, RowsHeader } from '../common';
-
 import SynthRow from './SynthRow';
-import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
 
 type SelectShortCurrencyModalProps = {
 	onDismiss: () => void;

@@ -1,11 +1,10 @@
 import React from 'react';
 
+import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
-import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
-import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
-
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
+import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 
 type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';

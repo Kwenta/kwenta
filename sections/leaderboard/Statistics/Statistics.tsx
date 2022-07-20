@@ -1,16 +1,16 @@
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import Loader from 'components/Loader';
+import { Synths } from 'constants/currency';
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
+import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import media from 'styles/media';
+import { formatCurrency, zeroBN } from 'utils/formatters/number';
 
 import DistributionChart from './DistributionChart';
 import OpenInterestChart from './OpenInterestChart';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
-
-import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import Loader from 'components/Loader';
-import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
-import media from 'styles/media';
 
 export default function Statistics() {
 	const { t } = useTranslation();

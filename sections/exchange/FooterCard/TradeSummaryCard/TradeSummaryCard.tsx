@@ -1,26 +1,22 @@
+import { Synth } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei from '@synthetixio/wei';
+import Tippy from '@tippyjs/react';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
-
-import { CurrencyKey } from 'constants/currency';
-
-import { secondsToTime } from 'utils/formatters/date';
 
 import Button from 'components/Button';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import Card from 'components/Card';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { CurrencyKey } from 'constants/currency';
+import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
+import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
+import { secondsToTime } from 'utils/formatters/date';
 
 import { MessageContainer } from '../common';
-
 import { SummaryItems } from '../common';
-
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import FeeRateSummaryItem from 'sections/shared/components/FeeRateSummary';
-import FeeCostSummaryItem from 'sections/shared/components/FeeCostSummary';
-import { Synth } from '@synthetixio/contracts-interface';
 
 type TradeSummaryCardProps = {
 	submissionDisabledReason: ReactNode;

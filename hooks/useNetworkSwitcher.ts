@@ -1,11 +1,12 @@
+import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
+import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
+import { utils, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { isWalletConnectedState, networkState } from 'store/wallet';
+
 import Connector from 'containers/Connector';
-import { addOptimismNetworkToMetamask } from '@synthetixio/optimism-networks';
-import { utils, BigNumber } from 'ethers';
-import { L2_TO_L1_NETWORK_MAPPER } from '@synthetixio/optimism-networks';
+import { isWalletConnectedState, networkState } from 'store/wallet';
 
 const useNetworkSwitcher = () => {
 	const [, setNetworkError] = useState<string | null>(null);

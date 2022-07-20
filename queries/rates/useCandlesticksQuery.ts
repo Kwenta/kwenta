@@ -1,4 +1,5 @@
 import { getCandles } from 'queries/futures/subgraph';
+
 import { getRatesEndpoint, mapCandles, mapPriceChart } from './utils';
 
 export const requestCandlesticks = async (

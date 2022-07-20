@@ -1,9 +1,10 @@
-import Table from 'components/Table';
-import BlockExplorer from 'containers/BlockExplorer';
-import { MarginTransfer } from 'queries/futures/types';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
+
+import Table from 'components/Table';
+import BlockExplorer from 'containers/BlockExplorer';
+import { MarginTransfer } from 'queries/futures/types';
 import { ExternalLink, GridDivCenteredRow } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
 import { truncateAddress } from 'utils/formatters/string';

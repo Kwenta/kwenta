@@ -1,14 +1,15 @@
-import Button from 'components/Button';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Select from 'components/Select';
-import { Synths } from 'constants/currency';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { components } from 'react-select';
 import { useRecoilValue } from 'recoil';
-import { balancesState, positionsState } from 'store/futures';
 import styled, { useTheme } from 'styled-components';
+
+import Button from 'components/Button';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import Select from 'components/Select';
+import { Synths } from 'constants/currency';
+import { balancesState, positionsState } from 'store/futures';
 import { FlexDivRow, FlexDivRowCentered } from 'styles/common';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';

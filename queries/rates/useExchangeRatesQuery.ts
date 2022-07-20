@@ -1,19 +1,20 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { BigNumberish, ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import {
 	CRYPTO_CURRENCY_MAP,
 	iStandardSynth,
 	synthToAsset,
 } from '@synthetixio/queries/build/node/src/currency';
+import { wei } from '@synthetixio/wei';
+import { BigNumberish, ethers } from 'ethers';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useRecoilValue } from 'recoil';
 
-import Connector from 'containers/Connector';
-import { networkState } from 'store/wallet';
-import { appReadyState } from 'store/app';
-import { Rates } from './types';
 import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
+import { appReadyState } from 'store/app';
+import { networkState } from 'store/wallet';
+
+import { Rates } from './types';
 
 type CurrencyRate = BigNumberish;
 type SynthRatesTuple = [string[], CurrencyRate[]];

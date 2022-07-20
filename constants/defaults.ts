@@ -1,9 +1,8 @@
+import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
 import { Language } from 'translations/constants';
 
-import localStore from 'utils/localStore';
 import { languageStateKey, priceCurrencyStateKey } from 'store/app/constants';
-
-import { CurrencyCategory, NetworkIdByName, Synth } from '@synthetixio/contracts-interface';
+import localStore from 'utils/localStore';
 
 // app defaults
 export const DEFAULT_LANGUAGE: Language = localStore.get(languageStateKey) ?? Language.EN;

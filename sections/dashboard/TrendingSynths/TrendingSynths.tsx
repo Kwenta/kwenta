@@ -1,33 +1,27 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilState, useRecoilValue } from 'recoil';
-
 import { Synth } from '@synthetixio/contracts-interface';
+import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
+import mapValues from 'lodash/mapValues';
+import values from 'lodash/values';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient, Query } from 'react-query';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import Select from 'components/Select';
-
-import { CardTitle } from 'sections/dashboard/common';
-
-import { FlexDivRowCentered } from 'styles/common';
-
-import SynthRow from './SynthRow';
-import { numericSort } from './utils';
-import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
-import { trendingSynthsOptionState } from 'store/ui';
-import useSynthetixQueries, { HistoricalRatesUpdates } from '@synthetixio/queries';
 import { CurrencyKey } from 'constants/currency';
-import mapValues from 'lodash/mapValues';
-import Connector from 'containers/Connector';
-import values from 'lodash/values';
-
-import { useQueryClient, Query } from 'react-query';
-import { networkState } from 'store/wallet';
 import { Period } from 'constants/period';
-
+import { PERIOD_IN_HOURS } from 'constants/period';
+import Connector from 'containers/Connector';
+import { CardTitle } from 'sections/dashboard/common';
+import { trendingSynthsOptionState } from 'store/ui';
+import { networkState } from 'store/wallet';
+import { FlexDivRowCentered } from 'styles/common';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 
-import { PERIOD_IN_HOURS } from 'constants/period';
+import { SYNTH_SORT_OPTIONS, SynthSort } from './constants';
+import SynthRow from './SynthRow';
+import { numericSort } from './utils';
 
 const TrendingSynths: FC = () => {
 	const { t } = useTranslation();

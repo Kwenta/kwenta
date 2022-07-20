@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 import { formatPercent } from 'utils/formatters/number';
 
 type OpenInterestProps = {

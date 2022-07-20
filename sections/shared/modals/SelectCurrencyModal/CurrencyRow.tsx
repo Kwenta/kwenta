@@ -1,16 +1,16 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { NO_VALUE } from 'constants/placeholder';
 import Currency from 'components/Currency';
-import { SelectableCurrencyRow } from 'styles/common';
+import { NO_VALUE } from 'constants/placeholder';
 import useMarketClosed from 'hooks/useMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { isWalletConnectedState } from 'store/wallet';
+import { SelectableCurrencyRow } from 'styles/common';
 
 type Token = {
 	name: string;

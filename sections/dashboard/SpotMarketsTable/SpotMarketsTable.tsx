@@ -1,25 +1,26 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
+import * as _ from 'lodash/fp';
 import values from 'lodash/values';
-import { useQueryClient } from 'react-query';
-import { networkState } from 'store/wallet';
-import { Price, Rates } from 'queries/rates/types';
-import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
-import ChangePercent from 'components/ChangePercent';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import MarketBadge from 'components/Badge/MarketBadge';
-import Table from 'components/Table';
-import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 import { useRouter } from 'next/router';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import MarketBadge from 'components/Badge/MarketBadge';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import Connector from 'containers/Connector';
+import { Price, Rates } from 'queries/rates/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import { networkState } from 'store/wallet';
+import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
 	exchangeRates: Rates | null;

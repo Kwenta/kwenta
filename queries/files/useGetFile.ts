@@ -2,8 +2,9 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
 import QUERY_KEYS from 'constants/queryKeys';
+import { appReadyState } from 'store/app';
+
 import { FLEEK_BASE_URL, FLEEK_STORAGE_BUCKET } from './constants';
 
 const useGetFile = (fileName: string) => {

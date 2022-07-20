@@ -1,13 +1,13 @@
-import React, { FC } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { walletAddressState } from 'store/wallet';
-import { formatCryptoCurrency } from 'utils/formatters/number';
 import { InfoTooltip } from 'styles/common';
+import { formatCryptoCurrency } from 'utils/formatters/number';
 
 const TxReclaimFee: FC<{ trade: Record<string, any> }> = ({ trade }) => {
 	const { t } = useTranslation();

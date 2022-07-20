@@ -1,21 +1,21 @@
-import { createContainer } from 'unstated-next';
-import axios from 'axios';
-import { ethers } from 'ethers';
-import { useRecoilValue } from 'recoil';
-import { useCallback } from 'react';
 //@ts-ignore TODO: remove once types are added
 import getFormattedSwapData from '@kwenta/synthswap';
 import { wei } from '@synthetixio/wei';
+import axios from 'axios';
+import { ethers } from 'ethers';
 import { formatBytes32String, formatEther, parseEther } from 'ethers/lib/utils';
-import { useTranslation } from 'react-i18next';
-
-import Connector from 'containers/Connector';
-import { CurrencyKey } from 'constants/currency';
-import { walletAddressState } from 'store/wallet';
-import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
-import use1InchApiUrl from 'hooks/use1InchApiUrl';
 import erc20Abi from 'lib/abis/ERC20.json';
 import synthSwapAbi from 'lib/abis/SynthSwap.json';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import { createContainer } from 'unstated-next';
+
+import { KWENTA_REFERRAL_ADDRESS, SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
+import { CurrencyKey } from 'constants/currency';
+import Connector from 'containers/Connector';
+import use1InchApiUrl from 'hooks/use1InchApiUrl';
+import { walletAddressState } from 'store/wallet';
 
 type Token = {
 	symbol: CurrencyKey;

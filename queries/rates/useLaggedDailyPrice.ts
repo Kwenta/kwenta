@@ -1,14 +1,15 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
-import { RATES_ENDPOINT_MAINNET } from './constants';
 import ROUTES from 'constants/routes';
+import { appReadyState } from 'store/app';
+import { networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
+
+import { RATES_ENDPOINT_MAINNET } from './constants';
+import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
 
 const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -58,7 +59,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 				);
 				return response ? mapLaggedDailyPrices(response.candles) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},
