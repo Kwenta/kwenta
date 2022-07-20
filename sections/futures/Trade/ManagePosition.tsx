@@ -1,5 +1,5 @@
 import { useFuturesContext } from 'contexts/FuturesContext';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -26,6 +26,10 @@ type ManagePositionProps = {
 	openConfirmationModal(): void;
 };
 
+type OrderTxnError = {
+	reason: string;
+};
+
 const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
@@ -46,6 +50,11 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 		placeOrderTranslationKey,
 		onTradeAmountChange,
 	} = useFuturesContext();
+
+	const orderError = useMemo(() => {
+		const orderTxnError = orderTxn.error as OrderTxnError;
+		return orderTxnError?.reason;
+	}, [orderTxn]);
 
 	return (
 		<>
@@ -99,9 +108,17 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 				</ManagePositionContainer>
 			</div>
 
-			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+			{(orderTxn.isError || error || previewTrade?.showStatus) && (
 				<Error
-					message={previewTrade?.statusMessage || orderTxn.errorMessage || error || ''}
+					message={
+						orderTxn.isError
+							? orderError
+							: error
+							? error
+							: previewTrade?.showStatus
+							? previewTrade?.statusMessage
+							: ''
+					}
 					formatter="revert"
 				/>
 			)}
