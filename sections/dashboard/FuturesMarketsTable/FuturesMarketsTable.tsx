@@ -13,7 +13,13 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { FuturesVolumes } from 'queries/futures/types';
-import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+import {
+	getDisplayAsset,
+	getSynthDescription,
+	isEurForex,
+	MarketKeyByAsset,
+	FuturesMarketAsset,
+} from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
@@ -31,7 +37,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 }: FuturesMarketsTableProps) => {
 	const { t } = useTranslation();
 	const router = useRouter();
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
@@ -65,7 +71,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				asset: market.asset,
 				market: getDisplayAsset(market.asset) + '-PERP',
 				synth: synthsMap[market.asset],
-				description: description,
+				description,
 				price: market.price.toNumber(),
 				volume: volume?.toNumber() || 0,
 				pastPrice: pastPrice?.price || undefined,
@@ -132,7 +138,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
-													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
+													currencyKey={
+														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+													}
 												/>
 											</IconContainer>
 											<StyledText>
@@ -296,7 +304,9 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
-													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
+													currencyKey={
+														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+													}
 												/>
 											</IconContainer>
 											<StyledText>{cellProps.row.original.market}</StyledText>

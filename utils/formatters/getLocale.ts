@@ -332,7 +332,7 @@ function getLocale() {
 			break;
 
 		default:
-			console.error('Locale could not be detected.');
+			locale_ = enUS;
 	}
 
 	return locale_;

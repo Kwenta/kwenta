@@ -8,11 +8,11 @@ import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { mapFuturesPosition } from './utils';
-import Wei, { wei } from '@synthetixio/wei';
-import { getMarketAssetFromKey } from 'utils/futures';
+import { wei } from '@synthetixio/wei';
+import { FuturesMarketKey, MarketAssetByKey } from 'utils/futures';
 
 const useGetCurrentPortfolioValue = (
-	markets: string[] | [],
+	markets: FuturesMarketKey[] | [],
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -31,7 +31,7 @@ const useGetCurrentPortfolioValue = (
 
 			try {
 				const positionsForMarkets = await Promise.all(
-					markets.map((market: string) =>
+					markets.map((market) =>
 						FuturesMarketData.positionDetailsForMarketKey(
 							ethersUtils.formatBytes32String(market),
 							walletAddress
@@ -44,11 +44,11 @@ const useGetCurrentPortfolioValue = (
 						const mappedPosition = mapFuturesPosition(
 							position,
 							false,
-							getMarketAssetFromKey(markets[i], network.id)
+							MarketAssetByKey[markets[i]]
 						);
 						return mappedPosition.remainingMargin;
 					})
-					.reduce((sum: Wei, val) => sum.add(val), wei(0));
+					.reduce((sum, val) => sum.add(val), wei(0));
 				return !!portfolioValue ? portfolioValue : wei(0);
 			} catch (e) {
 				console.log(e);

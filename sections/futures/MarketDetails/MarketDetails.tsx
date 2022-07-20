@@ -17,14 +17,13 @@ import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { Price, Rates } from 'queries/rates/types';
 import { NO_VALUE } from 'constants/placeholder';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getDisplayAsset, getMarketKey, isEurForex } from 'utils/futures';
-import Connector from 'containers/Connector';
+import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
@@ -35,9 +34,9 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
 
 	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
@@ -47,22 +46,21 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const futureRates = futuresMarketsQuery.isSuccess
 		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
-				const currencyKey = getMarketKey(asset, network.id);
-				acc[currencyKey] = price;
+				acc[MarketKeyByAsset[asset]] = price;
 				return acc;
 		  }, {})
 		: null;
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const basePriceRate = React.useMemo(
-		() => _.defaultTo(Number(futureRates?.[getMarketKey(marketAsset, network.id)]), 0),
-		[futureRates, marketAsset, network.id]
-	);
+	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
+		futureRates,
+		marketKey,
+	]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
 		marketAsset,
-		basePriceRate,
+		basePriceRate.toNumber(),
 		PERIOD_IN_SECONDS[Period.ONE_HOUR],
 		marketSummary?.currentFundingRate.toNumber()
 	);
@@ -81,9 +79,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const externalPriceQuery = useExternalPriceQuery(marketAsset);
+	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
-	const marketKey = getMarketKey(marketAsset, network.id);
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS

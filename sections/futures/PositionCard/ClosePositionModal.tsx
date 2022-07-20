@@ -14,7 +14,8 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import Connector from 'containers/Connector';
 import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
+import Error from 'components/Error';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { newGetTransactionPrice } from 'utils/network';
 import { gasSpeedState } from 'store/wallet';
@@ -29,7 +30,7 @@ type ClosePositionModalProps = {
 
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -110,7 +111,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			{
 				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
-					sign: synthToAsset(currencyKey as CurrencyKey),
+					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
 				}),
 			},
 			{
@@ -132,7 +133,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				}),
 			},
 		];
-	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency, synthsMap]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
@@ -170,8 +171,11 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					onClick={() => closeTxn.mutate()}
 					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
+					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
+				{(error || closeTxn.errorMessage) && (
+					<Error message={error || closeTxn.errorMessage || ''} formatter="revert" />
+				)}
 			</>
 		</StyledBaseModal>
 	);
@@ -213,6 +217,7 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

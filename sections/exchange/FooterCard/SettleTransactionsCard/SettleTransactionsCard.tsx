@@ -13,6 +13,7 @@ import { MessageContainer, Message, FixedMessageContainerSpacer } from '../commo
 import Button from 'components/Button';
 
 import { secondsToTime } from 'utils/formatters/date';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 
 type SettleTransactionsCardProps = {
 	submissionDisabledReason?: ReactNode;
@@ -24,14 +25,13 @@ type SettleTransactionsCardProps = {
 };
 
 const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
-	submissionDisabledReason,
 	attached,
 	onSubmit,
 	settleCurrency,
 	numEntries,
-	settlementWaitingPeriodInSeconds,
 }) => {
 	const { t } = useTranslation();
+	const { settlementWaitingPeriodInSeconds, settlementDisabledReason } = useExchangeContext();
 
 	return (
 		<>
@@ -72,14 +72,12 @@ const SettleTransactionsCard: FC<SettleTransactionsCardProps> = ({
 						<Button
 							variant="primary"
 							isRounded={true}
-							disabled={!!submissionDisabledReason}
+							disabled={!!settlementDisabledReason}
 							onClick={onSubmit}
 							size="lg"
 							data-testid="settle"
 						>
-							{submissionDisabledReason
-								? submissionDisabledReason
-								: t('exchange.summary-info.button.settle')}
+							{settlementDisabledReason ?? t('exchange.summary-info.button.settle')}
 						</Button>
 					</span>
 				</ErrorTooltip>

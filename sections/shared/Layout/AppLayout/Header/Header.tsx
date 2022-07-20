@@ -18,7 +18,7 @@ const Header: FC = () => {
 		<Container isL2={isL2}>
 			<MobileHiddenView>
 				<LogoNav>
-					<StyledLogo isL2={isL2} isFutures={true} />
+					<StyledLogo isL2={isL2} isFutures />
 					<Nav />
 				</LogoNav>
 				<UserMenu />

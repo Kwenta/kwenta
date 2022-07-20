@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
 
 import { appReadyState } from 'store/app';
@@ -8,11 +8,12 @@ import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
 import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesMarket } from './types';
-import { getMarketKey } from 'utils/futures';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 import { getReasonFromCode } from './utils';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { DEFAULT_NETWORK_ID } from 'constants/defaults';
 import ROUTES from 'constants/routes';
+import { futuresMarketsState } from 'store/futures';
 
 const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -23,6 +24,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 	const networkId = homepage ? DEFAULT_NETWORK_ID : network.id;
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
+	const [, setFuturesMarkets] = useRecoilState(futuresMarketsState);
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket[]>(
@@ -44,13 +46,12 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 
 			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
 				markets.map((m: any) => {
-					const asset = utils.parseBytes32String(m.asset);
-					const marketKey = getMarketKey(asset, networkId);
-					return utils.formatBytes32String(marketKey);
+					const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+					return utils.formatBytes32String(MarketKeyByAsset[asset]);
 				})
 			);
 
-			return markets.map(
+			const futuresMarkets = markets.map(
 				(
 					{
 						market,
@@ -65,10 +66,10 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					}: FuturesMarket,
 					i: number
 				) => ({
-					market: market,
-					asset: utils.parseBytes32String(asset),
+					market,
+					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
-					currentFundingRate: wei(currentFundingRate).mul(-1),
+					currentFundingRate: wei(currentFundingRate).neg(),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),
@@ -83,6 +84,10 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})
 			);
+
+			setFuturesMarkets(futuresMarkets);
+
+			return futuresMarkets;
 		},
 		{
 			enabled: !homepage && isWalletConnected ? isL2 && isReady : isReady,

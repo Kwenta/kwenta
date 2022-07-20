@@ -1,5 +1,5 @@
 import React from 'react';
-import { SectionHeader } from 'sections/futures/MobileTrade/common';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { Synths } from 'constants/currency';
@@ -24,7 +24,9 @@ const FuturesMarkets = () => {
 	return (
 		<div>
 			<HeaderContainer>
-				<SectionHeader>Futures Markets</SectionHeader>
+				<SectionHeader>
+					<SectionTitle>Futures Markets</SectionTitle>
+				</SectionHeader>
 				<MarketStatsContainer>
 					<MarketStat>
 						<div className="title">24h Volume</div>

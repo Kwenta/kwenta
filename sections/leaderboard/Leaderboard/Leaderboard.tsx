@@ -13,7 +13,6 @@ import { walletAddressState } from 'store/wallet';
 import { truncateAddress } from 'utils/formatters/string';
 import { FuturesStat } from 'queries/futures/types';
 import { useRouter } from 'next/router';
-import Loader from 'components/Loader';
 import TraderHistory from '../TraderHistory';
 import Search from 'components/Table/Search';
 import ROUTES from 'constants/routes';
@@ -142,10 +141,6 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 		setTraderENSName(ensName);
 		router.push(ROUTES.Leaderboard.Trader(trader));
 	};
-
-	if (statsQuery.isLoading) {
-		return <Loader />;
-	}
 
 	return (
 		<>

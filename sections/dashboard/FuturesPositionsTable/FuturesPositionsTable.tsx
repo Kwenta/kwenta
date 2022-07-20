@@ -11,13 +11,20 @@ import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
 import { formatNumber } from 'utils/formatters/number';
-import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
 import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { getDisplayAsset, getMarketKey, getSynthDescription, isEurForex } from 'utils/futures';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getSynthDescription,
+	isEurForex,
+	MarketKeyByAsset,
+} from 'utils/futures';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import MobilePositionRow from './MobilePositionRow';
+import { positionsState } from 'store/futures';
+import { useRecoilValue } from 'recoil';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -29,18 +36,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	futuresPositionHistory,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 
-	const futuresPositionQuery = useGetFuturesPositionForMarkets(
-		futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id))
-	);
+	const futuresPositions = useRecoilValue(positionsState);
 
 	let data = useMemo(() => {
-		const futuresPositions = futuresPositionQuery?.data ?? [];
-		const activePositions = futuresPositions.filter(
-			(position: FuturesPosition) => position?.position
-		);
+		const activePositions =
+			futuresPositions?.filter((position: FuturesPosition) => position?.position) ?? [];
 
 		return activePositions.map((position: FuturesPosition) => {
 			const market = futuresMarkets.find((market) => market.asset === position.asset);
@@ -52,14 +55,14 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			return {
 				asset: position.asset,
 				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: getMarketKey(position.asset, network.id),
-				description: description,
+				marketKey: MarketKeyByAsset[position.asset as FuturesMarketAsset],
+				description,
 				price: market?.price,
 				size: position?.position?.size,
 				notionalValue: position?.position?.notionalValue.abs(),
 				position: position?.position?.side,
 				lastPrice: position?.position?.lastPrice,
-				avgEntryPrice: positionHistory?.entryPrice ?? NO_VALUE,
+				avgEntryPrice: positionHistory?.entryPrice,
 				liquidationPrice: position?.position?.liquidationPrice,
 				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
 				pnlPct: position?.position?.profitLoss
@@ -71,7 +74,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 				marketClosureReason: market?.marketClosureReason,
 			};
 		});
-	}, [futuresPositionQuery?.data, futuresMarkets, synthsMap, t, futuresPositionHistory, network]);
+	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory]);
 
 	return (
 		<>
@@ -97,7 +100,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
-													currencyKey={getMarketKey(cellProps.row.original.asset, network.id)}
+													currencyKey={
+														MarketKeyByAsset[cellProps.row.original.asset as FuturesMarketAsset]
+													}
 												/>
 											</IconContainer>
 											<StyledText>

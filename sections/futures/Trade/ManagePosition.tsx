@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
+import Error from 'components/Error';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
 	leverageSideState,
@@ -18,22 +19,13 @@ import { zeroBN } from 'utils/formatters/number';
 import { useTranslation } from 'react-i18next';
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
 import { PositionSide } from 'queries/futures/types';
+import { useFuturesContext } from 'contexts/FuturesContext';
 
 type ManagePositionProps = {
-	translationKey: string;
-	marketCapReached: boolean;
-	error: string | null;
-	orderError: string | null;
 	openConfirmationModal(): void;
 };
 
-const ManagePosition: React.FC<ManagePositionProps> = ({
-	translationKey,
-	marketCapReached,
-	openConfirmationModal,
-	error,
-	orderError,
-}) => {
+const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }) => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
@@ -46,6 +38,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 	const [, setLeverageSide] = useRecoilState(leverageSideState);
 	const [, setTradeSize] = useRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
+	const { error, orderTxn, isMarketCapReached, placeOrderTranslationKey } = useFuturesContext();
 
 	return (
 		<>
@@ -64,13 +57,13 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 							Number(leverage) > maxLeverageValue.toNumber() ||
 							sizeDelta.eq(zeroBN) ||
 							!!error ||
-							translationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
+							placeOrderTranslationKey === 'futures.market.trade.button.deposit-margin-minimum' ||
 							marketInfo?.isSuspended ||
-							marketCapReached
+							isMarketCapReached
 						}
 						onClick={openConfirmationModal}
 					>
-						{t(translationKey)}
+						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
 
 					<CloseOrderButton
@@ -98,8 +91,11 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 				</ManagePositionContainer>
 			</div>
 
-			{(orderError || error || previewTrade?.showStatus) && (
-				<ErrorMessage>{orderError || error || previewTrade?.statusMessage}</ErrorMessage>
+			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+				<Error
+					message={previewTrade?.statusMessage || orderTxn.errorMessage || error || ''}
+					formatter="revert"
+				/>
 			)}
 
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
@@ -108,8 +104,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({
 };
 
 const ManagePositionContainer = styled.div`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+	display: flex;
 	grid-gap: 15px;
 	margin-bottom: 16px;
 `;
@@ -140,6 +135,7 @@ const CloseOrderButton = styled(Button)`
 		background: transparent;
 		color: ${(props) => props.theme.colors.selectedTheme.button.disabled.text};
 		transform: none;
+		display: none;
 	}
 `;
 
@@ -152,12 +148,6 @@ const ManageOrderTitle = styled.p`
 	span {
 		color: ${(props) => props.theme.colors.selectedTheme.gray};
 	}
-`;
-
-const ErrorMessage = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.red};
-	font-size: 12px;
-	margin-bottom: 16px;
 `;
 
 export default ManagePosition;
