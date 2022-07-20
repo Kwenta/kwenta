@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { SynthsVolumes } from './type';
 import { getSynthsEndpoint } from './utils';
@@ -57,7 +58,7 @@ const useGetWalletTrades = (
 				);
 				return response;
 			} catch (e) {
-				console.error(e);
+				logError(e);
 				return null;
 			}
 		},

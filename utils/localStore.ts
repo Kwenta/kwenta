@@ -1,3 +1,5 @@
+import logError from './logError';
+
 export const set = (key: string, value: any) => {
 	if (typeof window !== 'undefined') {
 		window.localStorage.setItem(key, JSON.stringify(value));
@@ -16,7 +18,7 @@ export function get<T>(key: string): T | null {
 				}
 			}
 		} catch (e) {
-			console.error(e);
+			logError(e);
 		}
 	}
 	return null;

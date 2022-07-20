@@ -11,6 +11,7 @@ import { appReadyState } from 'store/app';
 import { currentMarketState, openOrdersState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
 
@@ -62,7 +63,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 
 				return openOrders;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

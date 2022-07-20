@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { getRatesEndpoint } from './utils';
 
@@ -57,7 +58,7 @@ const useRateUpdateQuery = (
 
 				return updateTime;
 			} catch (e) {
-				console.log('query ERROR', e);
+				logError(`query ERROR ${e}`);
 				return null;
 			}
 		},

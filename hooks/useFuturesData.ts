@@ -33,6 +33,7 @@ import {
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -227,7 +228,7 @@ const useFuturesData = () => {
 				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}

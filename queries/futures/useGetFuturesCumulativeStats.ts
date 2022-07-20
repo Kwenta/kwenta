@@ -7,6 +7,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import ROUTES from 'constants/routes';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { FUTURES_ENDPOINT_MAINNET } from './constants';
 import { FuturesCumulativeStats } from './types';
@@ -50,7 +51,7 @@ const useGetFuturesCumulativeStats = (options?: UseQueryOptions<FuturesCumulativ
 					  }
 					: null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

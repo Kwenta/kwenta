@@ -8,6 +8,7 @@ import {
 	DEFAULT_NUMBER_DECIMALS,
 } from 'constants/defaults';
 import { isFiatCurrency } from 'utils/currencies';
+import logError from 'utils/logError';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
@@ -74,7 +75,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 	try {
 		weiValue = wei(value);
 	} catch (e) {
-		console.error('***Error in formatNumber', e);
+		logError(`***Error in formatNumber ${e}`);
 	}
 
 	const isNegative = weiValue.lt(wei(0));

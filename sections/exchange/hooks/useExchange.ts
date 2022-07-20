@@ -58,6 +58,7 @@ import {
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { truncateNumbers, zeroBN } from 'utils/formatters/number';
 import { hexToAsciiV2 } from 'utils/formatters/string';
+import logError from 'utils/logError';
 import {
 	normalizeGasLimit,
 	newGetTransactionPrice,
@@ -763,7 +764,7 @@ const useExchange = ({
 		try {
 			await redeemTxn.mutateAsync();
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setTxError(
 				e.data ? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) }) : e.message
 			);
@@ -792,7 +793,7 @@ const useExchange = ({
 					setIsApproved(wei(ethers.utils.formatEther(allowance)).gte(quoteCurrencyAmount));
 				}
 			} catch (e) {
-				console.log(e);
+				logError(e);
 			}
 		}
 	}, [
@@ -882,7 +883,7 @@ const useExchange = ({
 
 			setOpenModal(undefined);
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setIsApproving(false);
 			setTxError(e.message);
 		}
@@ -897,7 +898,7 @@ const useExchange = ({
 
 			setOpenModal(undefined);
 		} catch (e) {
-			console.log(e);
+			logError(e);
 			setTxError(e.message);
 		}
 	};
@@ -956,7 +957,7 @@ const useExchange = ({
 			}
 			setOpenModal(undefined);
 		} catch (e) {
-			console.warn(e);
+			logError(e);
 			setTxError(e.message);
 		} finally {
 			setIsSubmitting(false);

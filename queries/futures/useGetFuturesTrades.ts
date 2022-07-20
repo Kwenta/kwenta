@@ -6,6 +6,7 @@ import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { getFuturesTrades } from './subgraph';
 import { FuturesTrade } from './types';
@@ -54,7 +55,7 @@ const useGetFuturesTrades = (
 				);
 				return response ? mapTrades(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

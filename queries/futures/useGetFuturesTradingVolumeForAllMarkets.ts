@@ -6,6 +6,7 @@ import ROUTES from 'constants/routes';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
+import logError from 'utils/logError';
 
 import { DAY_PERIOD, FUTURES_ENDPOINT_MAINNET } from './constants';
 import { getFuturesTrades } from './subgraph';
@@ -51,7 +52,7 @@ const useGetFuturesTradingVolumeForAllMarkets = (
 				);
 				return response ? calculateTradeVolumeForAll(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

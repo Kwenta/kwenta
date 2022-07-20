@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
 import { PositionHistory } from './types';
@@ -42,7 +43,7 @@ const useGetFuturesAccountPositionHistory = (
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

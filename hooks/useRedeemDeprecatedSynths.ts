@@ -10,6 +10,7 @@ import TransactionNotifier from 'containers/TransactionNotifier';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { hexToAsciiV2 } from 'utils/formatters/string';
+import logError from 'utils/logError';
 import { getTransactionPrice } from 'utils/network';
 
 import useGas from './useGas';
@@ -113,7 +114,7 @@ const useRedeemDeprecatedSynths = (
 				await Redeemer.callStatic[method](...params);
 				throw e;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				setTxError(
 					e.data
 						? t('common.transaction.revert-reason', { reason: hexToAsciiV2(e.data) })

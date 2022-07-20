@@ -8,6 +8,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { marketKeyState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { getFuturesMarketContract } from './utils';
 
@@ -69,7 +70,7 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 					assetPrice: wei(assetPrice[0]),
 				};
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

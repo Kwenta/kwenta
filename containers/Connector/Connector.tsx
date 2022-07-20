@@ -22,6 +22,7 @@ import { ordersState } from 'store/orders';
 import { hasOrdersNotificationState } from 'store/ui';
 import { walletAddressState, networkState, isWalletConnectedState } from 'store/wallet';
 import { synthToContractName } from 'utils/currencies';
+import logError from 'utils/logError';
 import {
 	getDefaultNetworkId,
 	getDefaultProvider,
@@ -226,7 +227,7 @@ const useConnector = () => {
 				}
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 
@@ -237,7 +238,7 @@ const useConnector = () => {
 				resetCachedUI();
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 
@@ -247,7 +248,7 @@ const useConnector = () => {
 				onboard.accountSelect();
 			}
 		} catch (e) {
-			console.log(e);
+			logError(e);
 		}
 	};
 

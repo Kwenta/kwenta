@@ -19,7 +19,7 @@
 		"jsx-a11y/alt-text": "off",
 		"import/no-anonymous-default-export": "off",
 		"@next/next/no-img-element": "off",
-		"no-console": "off",
+		"no-console": "error",
 		"import/order": [
 			"warn",
 			{

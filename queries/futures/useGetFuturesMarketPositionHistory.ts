@@ -8,6 +8,7 @@ import { appReadyState } from 'store/app';
 import { currentMarketState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 import { FUTURES_POSITION_FRAGMENT } from './constants';
 import { PositionHistory } from './types';
@@ -50,7 +51,7 @@ const useGetFuturesMarketPositionHistory = (options?: UseQueryOptions<any | null
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

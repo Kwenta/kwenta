@@ -90,7 +90,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
 				// @ts-ignore
-				console.log(e.message);
+				logError(e.message);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}

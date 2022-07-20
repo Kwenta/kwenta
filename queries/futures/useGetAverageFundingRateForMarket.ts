@@ -8,6 +8,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
 import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 import { FundingRateUpdate } from './types';
 import { getFuturesEndpoint, calculateFundingRate } from './utils';
@@ -89,7 +90,7 @@ const useGetAverageFundingRateForMarket = (
 					  )
 					: wei(0);
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

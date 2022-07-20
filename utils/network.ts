@@ -15,6 +15,8 @@ import {
 	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
 
+import logError from './logError';
+
 type EthereumProvider = {
 	isMetaMask: boolean;
 	chainId: string;
@@ -35,7 +37,7 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 		}
 		return DEFAULT_NETWORK_ID;
 	} catch (e) {
-		console.log(e);
+		logError(e);
 		return DEFAULT_NETWORK_ID;
 	}
 }

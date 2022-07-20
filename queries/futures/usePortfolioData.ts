@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
 // @ts-ignore
@@ -69,15 +70,8 @@ const usePortfolioData = (options?: UseQueryOptions<PortfolioData | null>) => {
 				{ account: walletAddress }
 			);
 
-			console.log(response);
+			logError(response);
 
-			// if (response?.futuresMarginAccounts) {
-			// 	const margin = response.futuresMarginAccounts.reduce((acc: Wei, next: any) => {
-			// 		return acc.add(wei(next.margin));
-			// 	}, zeroBN);
-
-			// 	res.push({ block: block.block, margin, timestamp: 0 });
-			// }
 			return [];
 		},
 		{ enabled: isAppReady && isL2, ...options }
