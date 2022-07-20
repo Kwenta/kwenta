@@ -11,8 +11,6 @@ import ChangePercent from 'components/ChangePercent';
 import { Synths } from 'constants/currency';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
-import { Price } from 'queries/rates/types';
-import { FuturesVolumes } from 'queries/futures/types';
 import MarketBadge from 'components/Badge/MarketBadge';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { FlexDivCol } from 'styles/common';
@@ -45,18 +43,18 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-		const futuresVolume: FuturesVolumes = futuresVolumeQuery?.data ?? ({} as FuturesVolumes);
+		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
-		return futuresMarkets.map((market: FuturesMarket, i: number) => {
+		return futuresMarkets.map((market) => {
 			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === market.asset);
+			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
 
 			return {
 				asset: market.asset,
 				market: getDisplayAsset(market.asset) + '-PERP',
-				price: market.price.toNumber(),
-				volume: volume?.toNumber() || 0,
-				priceChange: (market.price.toNumber() - pastPrice?.price) / market.price.toNumber() || 0,
+				price: market.price,
+				volume: volume ?? 0,
+				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,
 			};
 		});
 	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);

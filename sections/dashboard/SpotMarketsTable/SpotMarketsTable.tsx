@@ -69,7 +69,7 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				synth: synthsMap[synth.asset],
 				description,
 				price,
-				change: price !== 0 ? (price - pastPrice?.price) / price || '-' : '-',
+				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || '-' : '-',
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});

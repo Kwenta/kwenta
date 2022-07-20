@@ -13,7 +13,7 @@ import {
 	OverlappingIcons,
 	LiquidityAmount,
 } from '../common';
-import { useRewardsTimer } from '../hooks';
+import useRewardsTimer from 'hooks/useRewardsTimer';
 
 const DEADLINE = new Date('2022-03-20T23:59:59Z');
 
