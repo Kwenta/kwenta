@@ -136,8 +136,6 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 				menuWidth={240}
 				optionPadding={'0px'} //override default padding to 0
 				optionBorderBottom={`1px solid ${theme.colors.navy}`}
-				dropdownIndicatorColor={theme.colors.blueberry}
-				dropdownIndicatorColorHover={theme.colors.blueberry}
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
 				data-testid="wallet-btn"
