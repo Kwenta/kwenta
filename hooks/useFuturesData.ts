@@ -99,16 +99,21 @@ const useFuturesData = () => {
 			const leverage =
 				value === '' || !position?.remainingMargin
 					? ''
-					: marketAssetRate
-							.mul(Number(value))
-							.div(position?.remainingMargin)
-							.toString()
-							.substring(0, 4);
+					: marketAssetRate.mul(Number(value)).div(position?.remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
-			setLeverage(leverage);
+			setLeverage(
+				leverage !== '' && leverage.lt(marketMaxLeverage) ? leverage.toString().substring(0, 4) : ''
+			);
 		},
-		[marketAssetRate, position?.remainingMargin, setTradeSize, setTradeSizeSUSD, setLeverage]
+		[
+			marketAssetRate,
+			position?.remainingMargin,
+			marketMaxLeverage,
+			setTradeSize,
+			setTradeSizeSUSD,
+			setLeverage,
+		]
 	);
 
 	useEffect(() => {

@@ -82,7 +82,7 @@ const useGetFuturesPotentialTradeDetails = (
 				price: wei(price),
 				size: wei(size),
 				side: leverageSide,
-				leverage: wei(leverage),
+				leverage: wei(leverage !== '' ? leverage : 1),
 				notionalValue: wei(size).mul(wei(price)),
 				minInitialMargin: wei(globals.minInitialMargin),
 				status,
