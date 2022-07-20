@@ -2,7 +2,9 @@ import { useRef, useContext, useEffect, useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 
+import { Synths } from 'constants/currency';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
+import { marketKeyState } from 'store/futures';
 import { currentThemeState } from 'store/ui';
 import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
@@ -17,10 +19,9 @@ import DataFeedFactory from './DataFeed';
 import { ChartPosition } from './types';
 
 export type ChartProps = {
-	baseCurrencyKey: string;
-	quoteCurrencyKey: string;
 	activePosition?: ChartPosition | null;
 	potentialTrade?: ChartPosition | null;
+	onChartReady?: () => void;
 };
 
 export type Props = ChartProps & {
@@ -34,8 +35,6 @@ export type Props = ChartProps & {
 };
 
 export function TVChart({
-	baseCurrencyKey,
-	quoteCurrencyKey,
 	interval = DEFAULT_RESOLUTION,
 	containerId = 'tv_chart_container',
 	libraryPath = '/static/charting_library/',
@@ -44,6 +43,9 @@ export function TVChart({
 	studiesOverrides = {},
 	activePosition,
 	potentialTrade,
+	onChartReady = () => {
+		return;
+	},
 }: Props) {
 	const [lastSubscription, setLastSubscription] = useState(0);
 	const [intervalId, setIntervalId] = useState(0);
@@ -54,6 +56,7 @@ export function TVChart({
 
 	const { colors } = useContext(ThemeContext);
 	let network = useRecoilValue(networkState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,
@@ -63,7 +66,7 @@ export function TVChart({
 
 	useEffect(() => {
 		const widgetOptions = {
-			symbol: baseCurrencyKey + ':' + quoteCurrencyKey,
+			symbol: marketKey + ':' + Synths.sUSD,
 			datafeed: DataFeedFactory(network.id, onSubscribe),
 			interval: interval,
 			container: containerId,
@@ -112,13 +115,14 @@ export function TVChart({
 
 		_widget.current?.onChartReady(() => {
 			_widget.current?.applyOverrides(DEFAULT_OVERRIDES);
+			onChartReady();
 		});
 
 		return () => {
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [baseCurrencyKey, quoteCurrencyKey, network.id, currentTheme]);
+	}, [network.id, currentTheme]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
@@ -172,12 +176,12 @@ export function TVChart({
 		_widget.current?.onChartReady(() => {
 			const symbolInterval = _widget.current?.symbolInterval();
 			_widget.current?.setSymbol(
-				baseCurrencyKey + ':' + quoteCurrencyKey,
+				marketKey + ':' + Synths.sUSD,
 				symbolInterval?.interval ?? DEFAULT_RESOLUTION,
 				() => {}
 			);
 		});
-	}, [baseCurrencyKey, quoteCurrencyKey]);
+	}, [marketKey]);
 
 	const onSubscribe = useCallback(
 		(newIntervalId: number) => {
