@@ -15,7 +15,7 @@ import { components } from 'react-select';
 import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
 
-import getENSName from './UserMenu/getENSName';
+import getENSName from './getENSName';
 import ConnectionDot from './ConnectionDot';
 import useENS from 'hooks/useENS';
 

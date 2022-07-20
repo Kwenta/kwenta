@@ -10,9 +10,10 @@ import { DAY_PERIOD } from './constants';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
 import { getFuturesEndpoint } from './utils';
 import { getFuturesTrades } from './subgraph';
+import { FuturesMarketAsset } from 'utils/futures';
 
 const useGetFuturesDailyTradeStatsForMarket = (
-	currencyKey: string | null,
+	marketAsset: FuturesMarketAsset | null,
 	options?: UseQueryOptions<number | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
@@ -21,9 +22,9 @@ const useGetFuturesDailyTradeStatsForMarket = (
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, currencyKey),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, marketAsset),
 		async () => {
-			if (!currencyKey) return null;
+			if (!marketAsset) return null;
 
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
@@ -32,7 +33,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 					{
 						first: 999999,
 						where: {
-							asset: `${ethersUtils.formatBytes32String(currencyKey)}`,
+							asset: `${ethersUtils.formatBytes32String(marketAsset)}`,
 							timestamp_gte: `${minTimestamp}`,
 						},
 					},
@@ -53,7 +54,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!currencyKey, ...options }
+		{ enabled: isAppReady && isL2 && !!marketAsset, ...options }
 	);
 };
 

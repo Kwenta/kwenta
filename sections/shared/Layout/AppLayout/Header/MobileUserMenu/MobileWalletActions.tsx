@@ -5,7 +5,7 @@ import Connector from 'containers/Connector';
 import { truncatedWalletAddressState } from 'store/wallet';
 import { useRecoilValue } from 'recoil';
 
-import getENSName from '../UserMenu/getENSName';
+import getENSName from '../getENSName';
 import ConnectionDot from '../ConnectionDot';
 import useENS from 'hooks/useENS';
 import Button from 'components/Button';
