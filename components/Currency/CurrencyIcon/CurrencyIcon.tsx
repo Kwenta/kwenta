@@ -55,9 +55,9 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 );
 
 const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
-	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
-	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
-	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
+	const [firstFallbackError, setFirstFallbackError] = useState(false);
+	const [secondFallbackError, setSecondFallbackError] = useState(false);
+	const [thirdFallbackError, setThirdFallbackError] = useState(false);
 
 	const ZapperTokenListQuery = useZapperTokenList();
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess

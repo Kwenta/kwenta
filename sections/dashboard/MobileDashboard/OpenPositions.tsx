@@ -20,7 +20,6 @@ import FuturesPositionsTable from '../FuturesPositionsTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
-	SHORTS = 'shorts',
 	SPOT = 'spot',
 }
 

@@ -8,7 +8,7 @@ export type MarketClosure = ReturnType<typeof useFuturesMarketClosed>;
 const useFuturesMarketClosed = (marketKey: FuturesMarketKey | null) => {
 	const futuresMarketSuspendedQuery = useFuturesSuspensionQuery(marketKey);
 
-	const isFutureMarketSuspended =
+	const isFuturesMarketClosed =
 		futuresMarketSuspendedQuery.isSuccess && futuresMarketSuspendedQuery.data
 			? futuresMarketSuspendedQuery.data.isFuturesMarketClosed
 			: null;
@@ -19,8 +19,7 @@ const useFuturesMarketClosed = (marketKey: FuturesMarketKey | null) => {
 			: null;
 
 	return {
-		isFuturesMarketClosed: isFutureMarketSuspended,
-		isFutureMarketSuspended,
+		isFuturesMarketClosed,
 		futuresClosureReason: reason as FuturesClosureReason,
 	};
 };

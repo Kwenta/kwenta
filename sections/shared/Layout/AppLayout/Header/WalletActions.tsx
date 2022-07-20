@@ -45,8 +45,8 @@ export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	} = Connector.useContainer();
 	const hardwareWallet = isHardwareWallet();
 
-	const [ensName, setEns] = useState<string>('');
-	const [walletLabel, setWalletLabel] = useState<string>('');
+	const [ensName, setEns] = useState('');
+	const [walletLabel, setWalletLabel] = useState('');
 	const truncatedWalletAddress = useRecoilValue(truncatedWalletAddressState);
 
 	const WALLET_OPTIONS = useMemo(() => {
