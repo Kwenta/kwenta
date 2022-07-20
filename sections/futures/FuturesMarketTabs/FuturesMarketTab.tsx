@@ -53,7 +53,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				asset: market.asset,
 				market: getDisplayAsset(market.asset) + '-PERP',
 				price: market.price,
-				volume: volume ?? 0,
+				volume: volume?.toNumber() ?? 0,
 				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,
 			};
 		});
