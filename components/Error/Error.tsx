@@ -33,6 +33,10 @@ const ErrorContainer = styled.div`
 	border: 1px solid rgba(239, 104, 104, 0.2);
 	border-radius: 8px;
 	cursor: default;
+
+	:first-letter {
+		text-transform: uppercase;
+	}
 `;
 
 export default Error;

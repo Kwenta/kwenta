@@ -11,6 +11,7 @@ import Badge from 'components/Badge';
 import Currency from 'components/Currency';
 import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
+import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { currentMarketState, openOrdersState } from 'store/futures';
@@ -22,6 +23,7 @@ import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
+	const { synthsMap } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
 
@@ -80,7 +82,9 @@ const OpenOrdersTable: React.FC = () => {
 			market: getDisplayAsset(order.asset) + '-PERP',
 			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: order.size.abs(),
+			size: formatCurrency(order.asset, order.size.abs(), {
+				sign: order.asset ? synthsMap[order.asset]?.sign : '',
+			}),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
@@ -88,7 +92,7 @@ const OpenOrdersTable: React.FC = () => {
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, nextPriceDetails?.currentRoundId]);
+	}, [openOrders, nextPriceDetails?.currentRoundId, synthsMap]);
 
 	return (
 		<StyledTable
@@ -145,13 +149,7 @@ const OpenOrdersTable: React.FC = () => {
 					),
 					accessor: 'size',
 					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
-									sign: cellProps.row.original.asset,
-								})}
-							</div>
-						);
+						return <div>{cellProps.row.original.size}</div>;
 					},
 					sortable: true,
 					width: 50,
