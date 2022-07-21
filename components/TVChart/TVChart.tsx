@@ -1,10 +1,11 @@
-import { useRef, useContext, useEffect, useCallback, useState } from 'react';
+import { castArray } from 'lodash';
+import { useRouter } from 'next/router';
+import { useRef, useContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { ThemeContext } from 'styled-components';
 
 import { Synths } from 'constants/currency';
 import { ChartBody } from 'sections/exchange/TradeCard/Charts/common/styles';
-import { marketKeyState } from 'store/futures';
 import { currentThemeState } from 'store/ui';
 import { networkState } from 'store/wallet';
 import { formatNumber } from 'utils/formatters/number';
@@ -56,7 +57,7 @@ export function TVChart({
 
 	const { colors } = useContext(ThemeContext);
 	let network = useRecoilValue(networkState);
-	const marketKey = useRecoilValue(marketKeyState);
+	const router = useRouter();
 
 	const DEFAULT_OVERRIDES = {
 		'paneProperties.background': colors.selectedTheme.background,
@@ -64,9 +65,13 @@ export function TVChart({
 		'paneProperties.backgroundType': 'solid',
 	};
 
+	const [marketAsset, marketAssetLoaded] = useMemo(() => {
+		return router.query.market ? [castArray(router.query.market)[0], true] : [null, false];
+	}, [router.query]);
+
 	useEffect(() => {
 		const widgetOptions = {
-			symbol: marketKey + ':' + Synths.sUSD,
+			symbol: marketAsset + ':' + Synths.sUSD,
 			datafeed: DataFeedFactory(network.id, onSubscribe),
 			interval: interval,
 			container: containerId,
@@ -122,7 +127,7 @@ export function TVChart({
 			clearExistingWidget();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [network.id, currentTheme]);
+	}, [network.id, currentTheme, marketAssetLoaded]);
 
 	useEffect(() => {
 		_widget.current?.onChartReady(() => {
@@ -176,12 +181,12 @@ export function TVChart({
 		_widget.current?.onChartReady(() => {
 			const symbolInterval = _widget.current?.symbolInterval();
 			_widget.current?.setSymbol(
-				marketKey + ':' + Synths.sUSD,
+				marketAsset + ':' + Synths.sUSD,
 				symbolInterval?.interval ?? DEFAULT_RESOLUTION,
 				() => {}
 			);
 		});
-	}, [marketKey]);
+	}, [marketAsset]);
 
 	const onSubscribe = useCallback(
 		(newIntervalId: number) => {
