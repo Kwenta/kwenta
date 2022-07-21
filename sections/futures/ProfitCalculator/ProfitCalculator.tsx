@@ -1,29 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
 import { wei } from '@synthetixio/wei';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import BaseModal from 'components/BaseModal';
+import PositionButtons from 'sections/futures/PositionButtons';
+
+import { PositionSide } from '../types';
+import LabelWithInput from './LabelWithInput';
 import PnLs from './PnLs';
 import ProfitDetails from './ProfitDetails';
-import BaseModal from 'components/BaseModal';
-import LabelWithInput from './LabelWithInput';
-import PositionButtons from 'sections/futures/PositionButtons';
-import { PositionSide } from '../types';
 
 const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal }: any) => {
 	const marketAsset__RemovedSChar = marketAsset[0] === 's' ? marketAsset.slice(1) : marketAsset;
 	const { t } = useTranslation();
 
 	// Wei
-	const [entryPrice, setEntryPrice] = useState<string>('');
-	const [exitPrice, setExitPrice] = useState<string>('');
-	const [gainPercent, setGainPercent] = useState<string>('');
-	const [stopLoss, setStopLoss] = useState<string>('');
-	const [lossPercent, setLossPercent] = useState<string>('');
-	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState<string>('');
-	const [basePositionSize, setBasePositionSize] = useState<string>('');
+	const [entryPrice, setEntryPrice] = useState('');
+	const [exitPrice, setExitPrice] = useState('');
+	const [gainPercent, setGainPercent] = useState('');
+	const [stopLoss, setStopLoss] = useState('');
+	const [lossPercent, setLossPercent] = useState('');
+	const [marketAssetPositionSize, setMarketAssetPositionSize] = useState('');
+	const [basePositionSize, setBasePositionSize] = useState('');
 	// Custom type
-	const [leverageSide, setLeverageSide] = useState<PositionSide>(PositionSide.LONG);
+	const [leverageSide, setLeverageSide] = useState(PositionSide.LONG);
 
 	const onEntryPriceAmountChange = (value: string) => {
 		setEntryPrice(value);
@@ -122,7 +123,7 @@ const ProfitCalculator = ({ marketAsset, marketAssetRate, setOpenProfitCalcModal
 		<>
 			<BaseModal
 				onDismiss={() => setOpenProfitCalcModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.profit-calculator.title')}
 			>
 				<ModalWindow>

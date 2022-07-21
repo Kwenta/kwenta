@@ -1,27 +1,54 @@
-import { atom, selector } from 'recoil';
+import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { atom, selector } from 'recoil';
 
-import { getFuturesKey } from 'store/utils';
+import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
-import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
+import { PositionSide } from 'sections/futures/types';
+import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { Synths, CurrencyKey } from 'constants/currency';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-export const currentMarketState = atom<CurrencyKey>({
+export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
-	default: Synths.sETH,
+	default: FuturesMarketAsset.sETH,
+});
+
+export const marketKeyState = selector({
+	key: getFuturesKey('marketKey'),
+	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
+});
+
+export const balancesState = atom<Balances | null>({
+	key: getSynthsKey('balances'),
+	default: null,
+});
+
+export const activeTabState = atom<number>({
+	key: getFuturesKey('activeTab'),
+	default: 0,
 });
 
 export const positionState = atom<FuturesPosition | null>({
 	key: getFuturesKey('position'),
 	default: null,
+});
+
+export const positionsState = atom<FuturesPosition[] | null>({
+	key: getFuturesKey('positions'),
+	default: null,
+});
+
+export const futuresMarketsState = atom<FuturesMarket[] | null>({
+	key: getFuturesKey('markets'),
+	default: [],
 });
 
 export const tradeSizeState = atom({
@@ -93,18 +120,21 @@ export const maxLeverageState = selector({
 	key: getFuturesKey('maxLeverage'),
 	get: ({ get }) => {
 		const position = get(positionState);
+		const orderType = get(orderTypeState);
 		const market = get(marketInfoState);
 		const leverageSide = get(leverageSideState);
 
 		const positionLeverage = position?.position?.leverage ?? wei(0);
 		const positionSide = position?.position?.side;
 		const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
+		const adjustedMaxLeverage =
+			orderType === 1 ? marketMaxLeverage.mul(DEFAULT_NP_LEVERAGE_ADJUSTMENT) : marketMaxLeverage;
 
-		if (!positionLeverage || positionLeverage.eq(wei(0))) return marketMaxLeverage;
+		if (!positionLeverage || positionLeverage.eq(wei(0))) return adjustedMaxLeverage;
 		if (positionSide === leverageSide) {
-			return marketMaxLeverage?.sub(positionLeverage);
+			return adjustedMaxLeverage?.sub(positionLeverage);
 		} else {
-			return positionLeverage.add(marketMaxLeverage);
+			return positionLeverage.add(adjustedMaxLeverage);
 		}
 	},
 });

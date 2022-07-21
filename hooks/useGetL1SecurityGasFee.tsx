@@ -1,13 +1,13 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
-import { ethers } from 'ethers';
+import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
+import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
-import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
 type MetaTx = {
-	data?: string | undefined;
+	data?: BytesLike | undefined;
 	to?: string | undefined;
 	gasLimit: number;
 	gasPrice: number;

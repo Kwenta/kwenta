@@ -1,39 +1,29 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import Wei from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
-import { gasSpeedState } from 'store/wallet';
-
-import { FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
-import { newGetTransactionPrice } from 'utils/network';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { PositionSide } from '../types';
-import { GasLimitEstimate } from 'constants/network';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
-	gasLimit: GasLimitEstimate;
-	onConfirmOrder: () => void;
-	l1Fee: Wei | null;
 };
 
-const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
-	onDismiss,
-	gasLimit,
-	onConfirmOrder,
-	l1Fee,
-}) => {
+const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -43,6 +33,8 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+
+	const { orderTxn } = useFuturesContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -57,8 +49,14 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const transactionFee = useMemo(
-		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
-		[gasPrice, gasLimit, ethPriceRate, l1Fee]
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				orderTxn.gasLimit,
+				ethPriceRate,
+				orderTxn.optimismLayerOneFee
+			),
+		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 
 	const positionDetails = useMemo(() => {
@@ -117,14 +115,14 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 	);
 
 	const handleConfirmOrder = async () => {
-		onConfirmOrder();
+		orderTxn.mutate();
 		onDismiss();
 	};
 
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.trade.confirmation.modal.confirm-order')}
 		>
 			{dataRows.map(({ label, value }, i) => (
@@ -134,6 +132,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({
 				</Row>
 			))}
 			<ConfirmTradeButton
+				data-testid="trade-open-position-confirm-order-button"
 				variant="primary"
 				isRounded
 				onClick={handleConfirmOrder}

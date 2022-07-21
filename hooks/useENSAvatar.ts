@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query';
+
 import QUERY_KEYS from 'constants/queryKeys';
 
 const useENSAvatar = (provider: any, ensName: string, options?: UseQueryOptions<any | null>) => {

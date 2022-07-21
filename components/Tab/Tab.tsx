@@ -1,33 +1,7 @@
-import { CSSProperties, ReactNode } from 'react';
+import { ReactNode, FC } from 'react';
 import styled from 'styled-components';
 
-import { resetButtonCSS } from 'styles/common';
-
-type TabProps = {
-	name: string;
-	active: boolean;
-	onClick?: () => void;
-	children: ReactNode;
-};
-
-export const TabButton = (props: TabProps) => (
-	<StyledTabButton
-		id={`${props.name}-tab`}
-		role="tab"
-		aria-selected={props.active}
-		aria-controls={`${props.name}-tabpanel`}
-		tabIndex={-1}
-		{...props}
-	/>
-);
-
-export const TabList = ({
-	children,
-	...props
-}: {
-	children: ReactNode;
-	style?: CSSProperties | undefined;
-}) => (
+export const TabList: FC = ({ children, ...props }) => (
 	<div role="tablist" {...props}>
 		{children}
 	</div>
@@ -57,19 +31,4 @@ export const TabPanel = ({
 
 const TabPanelContainer = styled.div`
 	outline: none;
-`;
-
-const StyledTabButton = styled.button<TabProps>`
-	${resetButtonCSS};
-	font-family: ${(props) => props.theme.fonts.bold};
-	padding: 0;
-	color: ${(props) =>
-		props.active ? props.theme.colors.selectedTheme.button.text : props.theme.colors.blueberry};
-	border-bottom: 2px solid
-		${(props) => (props.active ? props.theme.colors.goldColors.color1 : 'transparent')};
-	&:hover {
-		color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	}
-	margin-right: 12px;
-	padding-bottom: 3px;
 `;

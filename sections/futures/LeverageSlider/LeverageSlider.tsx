@@ -1,5 +1,6 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+
 import Slider, { SliderProps } from 'components/Slider/Slider';
 
 type LeverageSliderProps = SliderProps & {
@@ -31,11 +32,11 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
 			onChangeCommitted={onChangeCommitted}
 			disabled={disabled}
 			marks={[
-				{ value: minValue ?? 0, label: `${minValue ? minValue.toFixed(1) : 0}x` },
-				{ value: maxValue ?? 10, label: `${maxValue ? maxValue.toFixed(1) : 10}x` },
+				{ value: minValue ?? 0, label: `${minValue}x` },
+				{ value: maxValue ?? 10, label: `${maxValue}x` },
 			]}
 			valueLabelDisplay="on"
-			valueLabelFormat={(v) => `${v.toFixed(1)}x`}
+			valueLabelFormat={(v) => `${v}x`}
 			$currentMark={value ?? defaultValue ?? 0}
 		/>
 	);

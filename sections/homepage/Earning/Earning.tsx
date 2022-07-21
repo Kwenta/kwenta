@@ -2,6 +2,12 @@ import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
+import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
+import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
+import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
+import Loader from 'components/Loader';
+import { Synths } from 'constants/currency';
+import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
 import {
 	FlexDivCentered,
 	FlexDivCol,
@@ -11,17 +17,10 @@ import {
 	SmallGoldenHeader,
 	WhiteHeader,
 } from 'styles/common';
-import { Copy, StackSection, Title } from '../common';
-
-import StakeToEarnIcon from 'assets/svg/earn/stake-to-earn.svg';
-import TradeToEarnIcon from 'assets/svg/earn/trade-to-earn.svg';
-import VoteNGovernIcon from 'assets/svg/earn/vote-n-govern.svg';
-
-import useGetFuturesCumulativeStats from 'queries/futures/useGetFuturesCumulativeStats';
-import Loader from 'components/Loader';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 import media, { Media } from 'styles/media';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+
+import { Copy, StackSection, Title } from '../common';
 
 const EARNINGS = [
 	{

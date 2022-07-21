@@ -1,8 +1,7 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import keyBy from 'lodash/keyBy';
-
 import { Synths } from '@synthetixio/contracts-interface';
 import Wei from '@synthetixio/wei';
+import keyBy from 'lodash/keyBy';
 
 export type { CurrencyKey } from '@synthetixio/contracts-interface';
 export { Synths } from '@synthetixio/contracts-interface';
@@ -91,3 +90,25 @@ export const ATOMIC_EXCHANGES_L1 = [
 	'sGBP',
 	'sKRW',
 ];
+
+export enum SynthsName {
+	sUSD = 'sUSD',
+	sETH = 'sETH',
+	sBTC = 'sBTC',
+	sLINK = 'sLINK',
+	sSOL = 'sSOL',
+	sAVAX = 'sAVAX',
+	sMATIC = 'sMATIC',
+	sEUR = 'sEUR',
+	sAAVE = 'sAAVE',
+	sUNI = 'sUNI',
+	sINR = 'sINR',
+	sJPY = 'sJPY',
+	sGBP = 'sGBP',
+	sCHF = 'sCHF',
+	sKRW = 'sKRW',
+	sADA = 'sADA',
+	sAUD = 'sAUD',
+	sDOT = 'sDOT',
+	sETHBTC = 'sETHBTC',
+}

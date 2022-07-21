@@ -1,15 +1,16 @@
-import { FC } from 'react';
-import styled from 'styled-components';
+import { ExchangeContext } from 'contexts/ExchangeContext';
 import Head from 'next/head';
-
-import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
-
-import useExchange from 'sections/exchange/hooks/useExchange';
-import { formatCurrency } from 'utils/formatters/number';
-import { CurrencyKey } from 'constants/currency';
-import BasicSwap from 'sections/exchange/BasicSwap';
+import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
+
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import useExchange from 'hooks/useExchange';
+import BasicSwap from 'sections/exchange/BasicSwap';
+import { MobileSwap } from 'sections/exchange/MobileSwap';
 import AppLayout from 'sections/shared/Layout/AppLayout';
+import { PageContent, FullHeightContainer, MainContent } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -19,38 +20,42 @@ type ExchangeComponent = FC & { layout: FC<AppLayoutProps> };
 
 const Exchange: ExchangeComponent = () => {
 	const { t } = useTranslation();
-	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = useExchange({
-		showPriceCard: true,
-		showMarketDetailsCard: true,
+	const exchangeData = useExchange({
 		footerCardAttached: false,
 		routingEnabled: true,
-		persistSelectedCurrencies: true,
 		showNoSynthsCard: true,
 	});
 
+	const { baseCurrencyKey, quoteCurrencyKey, inverseRate } = exchangeData;
+
 	return (
-		<>
+		<ExchangeContext.Provider value={exchangeData}>
 			<Head>
 				<title>
 					{baseCurrencyKey != null && quoteCurrencyKey != null
 						? t('exchange.page-title-currency-pair', {
 								baseCurrencyKey,
 								quoteCurrencyKey,
-								rate: formatCurrency(quoteCurrencyKey as CurrencyKey, inverseRate, {
-									currencyKey: quoteCurrencyKey as CurrencyKey,
+								rate: formatCurrency(quoteCurrencyKey, inverseRate, {
+									currencyKey: quoteCurrencyKey,
 								}),
 						  })
 						: t('exchange.page-title')}
 				</title>
 			</Head>
 			<PageContent>
-				<StyledFullHeightContainer>
-					<MainContent>
-						<BasicSwap />
-					</MainContent>
-				</StyledFullHeightContainer>
+				<DesktopOnlyView>
+					<StyledFullHeightContainer>
+						<MainContent>
+							<BasicSwap />
+						</MainContent>
+					</StyledFullHeightContainer>
+				</DesktopOnlyView>
+				<MobileOrTabletView>
+					<MobileSwap />
+				</MobileOrTabletView>
 			</PageContent>
-		</>
+		</ExchangeContext.Provider>
 	);
 };
 

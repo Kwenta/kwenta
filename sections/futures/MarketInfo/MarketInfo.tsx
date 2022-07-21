@@ -1,18 +1,18 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import Head from 'next/head';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import Head from 'next/head';
-import styled from 'styled-components';
-import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { currentMarketState } from 'store/futures';
 import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency } from 'utils/formatters/number';
 
-import UserInfo from '../UserInfo';
 import MarketDetails from '../MarketDetails';
 import PositionChart from '../PositionChart';
-import { currentMarketState } from 'store/futures';
+import UserInfo from '../UserInfo';
 
 const MarketInfo: FC = () => {
 	const { t } = useTranslation();

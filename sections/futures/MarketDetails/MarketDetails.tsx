@@ -1,31 +1,29 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
-import _ from 'lodash';
-
 import { wei } from '@synthetixio/wei';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import { FuturesMarket } from 'queries/futures/types';
-import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price, Rates } from 'queries/rates/types';
-import { NO_VALUE } from 'constants/placeholder';
+import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import { getDisplayAsset, getMarketKey, isEurForex } from 'utils/futures';
-import Connector from 'containers/Connector';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { Period, PERIOD_IN_SECONDS } from 'constants/period';
+import { NO_VALUE } from 'constants/placeholder';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
+import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
+import { Rates } from 'queries/rates/types';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -35,34 +33,32 @@ type MarketDetailsProps = {
 
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
-	const { network } = Connector.useContainer();
 
 	const marketAsset = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
-	const marketSummary: FuturesMarket | null =
-		futuresMarketsQuery?.data?.find(({ asset }) => asset === marketAsset) ?? null;
+	const marketSummary = futuresMarketsQuery.data?.find(({ asset }) => asset === marketAsset);
 
 	const futureRates = futuresMarketsQuery.isSuccess
-		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
-				const currencyKey = getMarketKey(asset, network.id);
-				acc[currencyKey] = price;
+		? futuresMarketsQuery.data?.reduce((acc: Rates, { asset, price }) => {
+				acc[MarketKeyByAsset[asset]] = price;
 				return acc;
 		  }, {})
 		: null;
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const basePriceRate = React.useMemo(
-		() => _.defaultTo(Number(futureRates?.[getMarketKey(marketAsset, network.id)]), 0),
-		[futureRates, marketAsset, network.id]
-	);
+	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
+		futureRates,
+		marketKey,
+	]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
 		marketAsset,
-		basePriceRate,
+		basePriceRate.toNumber(),
 		PERIOD_IN_SECONDS[Period.ONE_HOUR],
 		marketSummary?.currentFundingRate.toNumber()
 	);
@@ -81,20 +77,19 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
-	const externalPriceQuery = useExternalPriceQuery(marketAsset);
+	const externalPriceQuery = useExternalPriceQuery(marketKey);
 	const externalPrice = externalPriceQuery?.data ?? 0;
-	const marketKey = getMarketKey(marketAsset, network.id);
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
 	);
-	const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
+	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 
-	const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === marketAsset);
+	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
 
 	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
 	const fundingTitle = React.useMemo(
@@ -221,17 +216,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					marketSummary?.price && pastPrice?.price
 						? `${formatCurrency(
 								selectedPriceCurrency.name,
-								marketSummary?.price.sub(pastPrice?.price) ?? zeroBN,
+								marketSummary.price.sub(pastPrice.price) ?? zeroBN,
 								{ sign: '$', minDecimals }
 						  )} (${formatPercent(
-								marketSummary?.price.sub(pastPrice?.price).div(marketSummary?.price) ?? zeroBN
+								marketSummary.price.sub(pastPrice.price).div(marketSummary.price) ?? zeroBN
 						  )})`
 						: NO_VALUE,
 				color:
 					marketSummary?.price && pastPrice?.price
-						? marketSummary?.price.sub(pastPrice?.price).gt(zeroBN)
+						? marketSummary.price.sub(pastPrice.price).gt(zeroBN)
 							? 'green'
-							: marketSummary?.price.sub(pastPrice?.price).lt(zeroBN)
+							: marketSummary.price.sub(pastPrice.price).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,

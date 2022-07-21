@@ -1,10 +1,11 @@
-import Connector from 'containers/Connector';
-import { useQuery, UseQueryOptions } from 'react-query';
 import { Contract } from 'ethers';
-import { ENS_REVERSE_LOOKUP } from 'constants/address';
 import reverseRecordsAbi from 'lib/abis/ReverseRecords.json';
-import QUERY_KEYS from 'constants/queryKeys';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+
+import { ENS_REVERSE_LOOKUP } from 'constants/address';
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State } from 'store/wallet';
 
@@ -22,6 +23,7 @@ const useENSs = (addresses: string[], options?: UseQueryOptions<any | null>) => 
 			const ReverseLookup = new Contract(
 				ENS_REVERSE_LOOKUP,
 				reverseRecordsAbi,
+				// @ts-ignore provider type
 				staticMainnetProvider
 			);
 

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import OverviewTabs from './OverviewTabs';
-import UserTabs from './UserTabs';
 import MarketsDropdown from '../Trade/MarketsDropdown';
+import OverviewTabs from './OverviewTabs';
 import PositionDetails from './PositionDetails';
+import UserTabs from './UserTabs';
 
 const MobileTrade: React.FC = () => (
 	<div>

@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei from '@synthetixio/wei';
-
 import { useRecoilValue } from 'recoil';
+
 import { priceCurrencyState } from 'store/app';
 
 const useSelectedPriceCurrency = () => {

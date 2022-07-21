@@ -1,20 +1,6 @@
-import { CurrencyKey } from 'constants/currency';
-
-export enum MarketState {
-	OPEN = 'OPEN',
-	CLOSED = 'CLOSED',
-	PAUSED = 'PAUSED',
-}
-
 export enum PositionSide {
 	LONG = 'long',
 	SHORT = 'short',
-}
-
-export enum OrderStatus {
-	PENDING = 'pending',
-	CONFIRMED = 'confirmed',
-	FAILED = 'failed',
 }
 
 export enum TradeStatus {
@@ -22,59 +8,6 @@ export enum TradeStatus {
 	OPEN = 'Open',
 	CLOSED = 'Closed',
 }
-
-export type Position = {
-	position: {
-		side: PositionSide;
-		amount: number;
-		currency: CurrencyKey;
-	};
-	price: number;
-	liquidationPrice: number;
-	margin: number;
-	marginChange: number;
-	riskOfLiquidation: boolean;
-};
-
-export type Order = {
-	id: string;
-	position: {
-		side: PositionSide;
-		amount: number;
-		currency: CurrencyKey;
-	};
-	leverage: {
-		amount: number;
-		side: PositionSide;
-	};
-	status: OrderStatus;
-	fee: number;
-	txHash: string;
-};
-
-export type Trade = {
-	id: string;
-	position: {
-		side: PositionSide;
-		amount: number;
-		currency: CurrencyKey;
-	};
-	leverage: {
-		amount: number;
-		side: PositionSide;
-	};
-	entryPrice: number;
-	finalPrice: number;
-	pnl: number;
-	status: TradeStatus;
-	txHash: string;
-};
-
-export type PotentialTrade = {
-	size: string;
-	side: PositionSide;
-	leverage: string;
-};
 
 // https://github.com/Synthetixio/synthetix/blob/4d2add4f74c68ac4f1106f6e7be4c31d4f1ccc76/contracts/interfaces/IFuturesMarketBaseTypes.sol#L6-L19
 export enum PotentialTradeStatus {

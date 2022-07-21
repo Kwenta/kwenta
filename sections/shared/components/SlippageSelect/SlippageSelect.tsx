@@ -1,18 +1,16 @@
+import Tippy from '@tippyjs/react';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import InfoIcon from 'assets/svg/app/info.svg';
-
 import Button from 'components/Button';
+import NumericInput from 'components/Input/NumericInput';
+import { Tooltip, NumericValue, FlexDivRowCentered } from 'styles/common';
+import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemLabel, SummaryItemValue } from '../common';
-import { Tooltip, NumericValue, FlexDivRowCentered } from 'styles/common';
-
-import { formatPercent } from 'utils/formatters/number';
-import NumericInput from 'components/Input/NumericInput';
-import Tippy from '@tippyjs/react';
-import { useState } from 'react';
 
 type SlippageSelectProps = {
 	setMaxSlippageTolerance: (num: string) => void;
@@ -97,7 +95,7 @@ const SlippageSelect: React.FC<SlippageSelectProps> = ({
 							))}
 						</SlippageSelectContainer>
 					}
-					interactive={true}
+					interactive
 				>
 					<StyledSlippageEditButton role="button">{t('common.edit')}</StyledSlippageEditButton>
 				</Tooltip>

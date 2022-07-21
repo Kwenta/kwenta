@@ -1,6 +1,6 @@
-import { generateMedia } from 'styled-media-query';
 import { createMedia } from '@artsy/fresnel';
 import mapValues from 'lodash/mapValues';
+import { generateMedia } from 'styled-media-query';
 
 type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type Breakpoints = Record<Breakpoint, number>;

@@ -1,19 +1,19 @@
-import Table from 'components/Table';
+import router from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import { Synths } from 'constants/currency';
-import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
-import { PositionHistory } from 'queries/futures/types';
-import Loader from 'components/Loader';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FlexDiv } from 'styles/common';
-import router from 'next/router';
+import Loader from 'components/Loader';
+import Table from 'components/Table';
+import { Synths } from 'constants/currency';
 import ROUTES from 'constants/routes';
+import { PositionHistory } from 'queries/futures/types';
+import useGetFuturesAccountPositionHistory from 'queries/futures/useGetFuturesAccountPositionHistory';
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
+import { FlexDiv } from 'styles/common';
 
 type TraderHistoryProps = {
 	trader: string;
@@ -38,11 +38,6 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 		return positions
 			.sort((a: PositionHistory, b: PositionHistory) => b.timestamp - a.timestamp)
 			.map((stat: PositionHistory, i: number) => {
-				const pnlAfterFees = stat.pnl.sub(stat.feesPaid).add(stat.netFunding);
-				const actualPnl = pnlAfterFees.lt(stat.initialMargin.add(stat.totalDeposits).mul(-1))
-					? stat.initialMargin.add(stat.totalDeposits).mul(-1)
-					: pnlAfterFees;
-
 				return {
 					rank: i + 1,
 					currencyIconKey: stat.asset ? (stat.asset[0] !== 's' ? 's' : '') + stat.asset : '',
@@ -52,8 +47,8 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 					status: stat.isOpen ? 'Open' : stat.isLiquidated ? 'Liquidated' : 'Closed',
 					feesPaid: stat.feesPaid,
 					netFunding: stat.netFunding,
-					pnl: actualPnl,
-					pnlPct: `(${actualPnl
+					pnl: stat.pnlWithFeesPaid,
+					pnlPct: `(${stat.pnlWithFeesPaid
 						.div(stat.initialMargin.add(stat.totalDeposits))
 						.mul(100)
 						.toNumber()
@@ -78,7 +73,7 @@ const TraderHistory: FC<TraderHistoryProps> = ({
 	return (
 		<StyledTable
 			compact={compact}
-			showPagination={true}
+			showPagination
 			pageSize={10}
 			isLoading={false}
 			data={data}

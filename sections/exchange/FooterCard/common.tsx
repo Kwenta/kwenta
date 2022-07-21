@@ -1,10 +1,9 @@
 import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-
+import { zIndex } from 'constants/ui';
 import { FixedFooterMixin, GridDivCenteredRow, numericValueCSS } from 'styles/common';
 import media from 'styles/media';
-import { zIndex } from 'constants/ui';
 
 export const SummaryItems = styled.div<{ attached?: boolean }>`
 	display: grid;
@@ -62,15 +61,6 @@ export const MessageContainer = styled(GridDivCenteredRow)<{
 	grid-template-columns: ${(props) => props.showProvider && '.5fr'} 1fr;
 	grid-template-rows: 99px 70px;
 	margin: 0 0 20px;
-
-	/*
-	width: 100%;
-	border-radius: 1000px;
-	grid-template-columns: 1fr auto;
-	padding: 16px 32px;
-	max-width: 750px;
-	margin: 0 auto;
-	*/
 
 	${(props) =>
 		props.attached &&

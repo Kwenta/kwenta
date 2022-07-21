@@ -1,20 +1,21 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import { isL2State, networkState } from 'store/wallet';
-import Select from 'components/Select';
-import { ExternalLink, FlexDivRowCentered } from 'styles/common';
-import CaretDownIcon from 'assets/svg/app/caret-down.svg';
-import Button from 'components/Button';
-import SwitchIcon from 'assets/svg/app/switch.svg';
-import LinkIcon from 'assets/svg/app/link-blue.svg';
-import OptimismIcon from 'assets/svg/providers/optimism.svg';
-import BlockExplorer from 'containers/BlockExplorer';
 import { components } from 'react-select';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import CaretDownIcon from 'assets/svg/app/caret-down.svg';
+import LinkIcon from 'assets/svg/app/link-blue.svg';
+import SwitchIcon from 'assets/svg/app/switch.svg';
+import OptimismIcon from 'assets/svg/providers/optimism.svg';
+import Button from 'components/Button';
+import Select from 'components/Select';
 import { IndicatorSeparator } from 'components/Select/Select';
-import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { EXTERNAL_LINKS } from 'constants/links';
+import BlockExplorer from 'containers/BlockExplorer';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
+import { isL2State, networkState } from 'store/wallet';
+import { ExternalLink, FlexDivRowCentered } from 'styles/common';
 
 type ReactSelectOptionProps = {
 	label: string;
@@ -84,7 +85,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 
 	return !isL2 ? (
 		<Container onClick={switchToL2}>
-			<StyledButton noOutline={true} size="sm">
+			<StyledButton noOutline size="sm">
 				{t('header.networks-switcher.l2')}
 			</StyledButton>
 		</Container>
@@ -99,7 +100,7 @@ const NetworksSwitcher: FC<NetworksSwitcherProps> = () => {
 				optionPadding={'0px'} //override default padding to 0
 				components={{ IndicatorSeparator, DropdownIndicator }}
 				isSearchable={false}
-				noOutline={true}
+				noOutline
 			></L2Select>
 		</Container>
 	);

@@ -1,6 +1,7 @@
-import { NO_VALUE } from 'constants/placeholder';
 import React from 'react';
 import styled from 'styled-components';
+
+import { NO_VALUE } from 'constants/placeholder';
 
 type DetailedInfo = {
 	value: string;
@@ -15,18 +16,20 @@ type InfoBoxProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	disabled?: boolean;
+	dataTestId?: string;
 };
 
-const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled }) => {
+const InfoBox: React.FC<InfoBoxProps> = ({ details, style, className, disabled, dataTestId }) => {
 	return (
 		<InfoBoxContainer style={style} className={className}>
-			{Object.entries(details).map(([key, value]) => (
+			{Object.entries(details).map(([key, value], index) => (
 				<React.Fragment key={key}>
 					<div>
 						<div className="key">
 							{key}: {value.keyNode}
 						</div>
 						<p
+							data-testid={`${dataTestId}-${index}`}
 							className={`${disabled ? 'value closed' : 'value'}${
 								value.color ? ` ${value.color}` : ''
 							}`}

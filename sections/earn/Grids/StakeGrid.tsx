@@ -1,4 +1,7 @@
 import styled from 'styled-components';
+
+import useRewardsTimer from 'hooks/useRewardsTimer';
+
 import {
 	BigText,
 	KwentaText,
@@ -14,7 +17,6 @@ import {
 	SplitColumn,
 	LiquidityAmount,
 } from '../common';
-import { useRewardsTimer } from '../hooks';
 
 const DEADLINE = new Date('2022-03-20T23:59:59Z');
 

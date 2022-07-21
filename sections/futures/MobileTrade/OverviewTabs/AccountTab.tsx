@@ -1,12 +1,15 @@
 import React from 'react';
+
+import MarketInfoBox from 'sections/futures/MarketInfoBox';
 import MarketActions from 'sections/futures/Trade/MarketActions';
 
-import { Pane, SectionHeader } from '../common';
-import MarketInfoBox from 'sections/futures/MarketInfoBox';
+import { Pane, SectionHeader, SectionTitle } from '../common';
 
 const AccountTab: React.FC = () => (
 	<Pane>
-		<SectionHeader>Account</SectionHeader>
+		<SectionHeader>
+			<SectionTitle>Account</SectionTitle>
+		</SectionHeader>
 
 		<MarketInfoBox />
 

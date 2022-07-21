@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import LoaderIcon from 'assets/svg/app/loader.svg';
 
+import LoaderIcon from 'assets/svg/app/loader.svg';
 import { AbsoluteCenteredDiv } from 'styles/common';
 
 type LoaderProps = {

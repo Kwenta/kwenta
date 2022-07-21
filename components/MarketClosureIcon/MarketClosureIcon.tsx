@@ -1,10 +1,9 @@
 import React, { FC } from 'react';
-import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
-import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';
-// import LimitResetIcon from 'assets/svg/app/market-closure/limit-reset.svg';
+
 import CircuitBreakerIcon from 'assets/svg/app/market-closure/circuit-breaker.svg';
 import EmergencyShutdownIcon from 'assets/svg/app/market-closure/emergency-shutdown.svg';
-
+import FrozenIcon from 'assets/svg/app/market-closure/frozen.svg';
+import MarketPauseIcon from 'assets/svg/app/market-closure/market-pause.svg';
 import { MarketClosureReason } from 'hooks/useMarketClosed';
 
 type MarketClosureIconProps = {

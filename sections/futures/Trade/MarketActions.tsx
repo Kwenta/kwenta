@@ -1,16 +1,17 @@
+import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
-import { useTranslation } from 'react-i18next';
-import { zeroBN } from 'utils/formatters/number';
-import { useRecoilValue } from 'recoil';
+import { Synths } from 'constants/currency';
 import { marketInfoState, positionState } from 'store/futures';
+import { walletAddressState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
+
 import DepositMarginModal from './DepositMarginModal';
 import WithdrawMarginModal from './WithdrawMarginModal';
-import useSynthetixQueries from '@synthetixio/queries';
-import { walletAddressState } from 'store/wallet';
-import { Synths } from 'constants/currency';
 
 const MarketActions: React.FC = () => {
 	const { t } = useTranslation();
@@ -27,6 +28,7 @@ const MarketActions: React.FC = () => {
 		<>
 			<MarketActionsContainer>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-deposit"
 					disabled={marketInfo?.isSuspended}
 					onClick={() => setOpenModal('deposit')}
 					noOutline
@@ -34,6 +36,7 @@ const MarketActions: React.FC = () => {
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-withdraw"
 					disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
 					onClick={() => setOpenModal('withdraw')}
 					noOutline

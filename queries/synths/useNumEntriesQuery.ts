@@ -1,11 +1,10 @@
 import { ethers } from 'ethers';
 import { useQuery } from 'react-query';
-import { CurrencyKey } from 'constants/currency';
-
-import Connector from 'containers/Connector';
-
-import QUERY_KEYS from 'constants/queryKeys';
 import { useRecoilValue } from 'recoil';
+
+import { CurrencyKey } from 'constants/currency';
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 
 const useNumEntriesQuery = (walletAddress: string, currencyKey: CurrencyKey | null) => {

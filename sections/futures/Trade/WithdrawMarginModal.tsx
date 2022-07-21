@@ -1,29 +1,30 @@
-import React from 'react';
-import Wei, { wei } from '@synthetixio/wei';
-import { useTranslation } from 'react-i18next';
 import useSynthetixQueries from '@synthetixio/queries';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
+import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { newGetTransactionPrice } from 'utils/network';
-import { formatCurrency } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
+
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
 import {
 	StyledBaseModal,
 	BalanceContainer,
 	BalanceText,
 	GasFeeContainer,
 	MaxButton,
-	ErrorMessage,
 	MarginActionButton,
 } from './DepositMarginModal';
-import { currentMarketState, positionState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
@@ -127,7 +128,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.withdraw.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>
@@ -138,6 +139,7 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 			</BalanceContainer>
 
 			<CustomInput
+				dataTestId="futures-market-trade-withdraw-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => {
@@ -145,11 +147,18 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 					setAmount(v);
 				}}
 				right={
-					<MaxButton onClick={handleSetMax}>{t('futures.market.trade.margin.modal.max')}</MaxButton>
+					<MaxButton data-testid="futures-market-trade-withdraw-max-button" onClick={handleSetMax}>
+						{t('futures.market.trade.margin.modal.max')}
+					</MaxButton>
 				}
 			/>
 
-			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => withdrawTxn.mutate()}>
+			<MarginActionButton
+				data-testid="futures-market-trade-withdraw-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={() => withdrawTxn.mutate()}
+			>
 				{t('futures.market.trade.margin.modal.withdraw.button')}
 			</MarginActionButton>
 
@@ -164,7 +173,9 @@ const WithdrawMarginModal: React.FC<WithdrawMarginModalProps> = ({ onDismiss }) 
 				</BalanceText>
 			</GasFeeContainer>
 
-			{withdrawTxn.errorMessage && <ErrorMessage>{withdrawTxn.errorMessage}</ErrorMessage>}
+			{withdrawTxn.errorMessage && (
+				<Error message={withdrawTxn.errorMessage} formatter="revert"></Error>
+			)}
 		</StyledBaseModal>
 	);
 };
