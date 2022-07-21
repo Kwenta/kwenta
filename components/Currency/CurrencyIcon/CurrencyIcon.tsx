@@ -150,11 +150,7 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 		);
 	} else {
 		return (
-			<Placeholder
-				{...{ isDeprecated }}
-				style={{ width: props.width, height: props.height }}
-				{...props}
-			>
+			<Placeholder {...{ isDeprecated }} {...props}>
 				{currencyKey}
 			</Placeholder>
 		);
@@ -178,7 +174,11 @@ const DeprecatedXIconContainer = styled.div`
 	bottom: -3px;
 `;
 
-const Placeholder = styled(FlexDivCentered)<{ isDeprecated?: boolean }>`
+const Placeholder = styled(FlexDivCentered)<{
+	isDeprecated?: boolean;
+	height?: string;
+	width?: string;
+}>`
 	border-radius: 100%;
 	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 	border: 2px solid
@@ -188,6 +188,8 @@ const Placeholder = styled(FlexDivCentered)<{ isDeprecated?: boolean }>`
 	font-family: ${(props) => props.theme.fonts.bold};
 	justify-content: center;
 	margin: 0 auto;
+	height: ${(props) => props.height};
+	width: ${(props) => props.width};
 `;
 
 const TokenIcon = styled.img<{ isDeprecated?: boolean }>`
