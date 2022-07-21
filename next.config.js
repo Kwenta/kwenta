@@ -93,5 +93,6 @@ module.exports = withPlugins([
 			// ssr and displayName are configured by default
 			styledComponents: true,
 		},
+		experimental: { images: { layoutRaw: true } },
 	},
 ]);
