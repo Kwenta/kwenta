@@ -1,15 +1,15 @@
-import { FC } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
+import { FC } from 'react';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import Currency from 'components/Currency';
-import { zeroBN } from 'utils/formatters/number';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import { walletAddressState } from 'store/wallet';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { walletAddressState } from 'store/wallet';
+import { zeroBN } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
 const PortfolioChart: FC = () => {
@@ -73,9 +73,6 @@ const PortfolioText = styled(Currency.Price)`
 `;
 
 const MobileChartPlaceholder = styled.div`
-	/* height: 273px;
-	width: 100%;
-	border-top: ${(props) => props.theme.colors.selectedTheme.border}; */
 	border-bottom: ${(props) => props.theme.colors.selectedTheme.border};
 `;
 

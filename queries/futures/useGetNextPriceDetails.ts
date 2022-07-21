@@ -1,15 +1,16 @@
+import Wei, { wei } from '@synthetixio/wei';
+import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { utils as ethersUtils } from 'ethers';
-import Wei, { wei } from '@synthetixio/wei';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
-import { getFuturesMarketContract } from './utils';
+import { appReadyState } from 'store/app';
 import { marketKeyState } from 'store/futures';
+import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
+
+import { getFuturesMarketContract } from './utils';
 
 export type NextPriceDetails = {
 	keeperDeposit: Wei;
@@ -69,7 +70,7 @@ const useGetNextPriceDetails = (options?: UseQueryOptions<NextPriceDetails | nul
 					assetPrice: wei(assetPrice[0]),
 				};
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

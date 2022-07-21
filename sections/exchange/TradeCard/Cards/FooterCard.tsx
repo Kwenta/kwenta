@@ -1,21 +1,19 @@
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
 
 import ArrowsIcon from 'assets/svg/app/circle-arrows.svg';
-
 import Button from 'components/Button';
-
-import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
-import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
-import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
-import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
-import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
-import TxApproveModal from 'sections/shared/modals/TxApproveModal';
-import TxSettleModal from 'sections/shared/modals/TxSettleModal';
-import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
-
-import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
-import { NoTextTransform } from 'styles/common';
 import useMarketClosed from 'hooks/useMarketClosed';
+import RedeemTxModal from 'sections/dashboard/Deprecated/RedeemTxModal';
+import ConnectWalletCard from 'sections/exchange/FooterCard/ConnectWalletCard';
+import MarketClosureCard from 'sections/exchange/FooterCard/MarketClosureCard';
+import NoSynthsCard from 'sections/exchange/FooterCard/NoSynthsCard';
+import TradeSummaryCard from 'sections/exchange/FooterCard/TradeSummaryCard';
+import TxApproveModal from 'sections/shared/modals/TxApproveModal';
+import TxConfirmationModal from 'sections/shared/modals/TxConfirmationModal';
+import TxSettleModal from 'sections/shared/modals/TxSettleModal';
 import {
 	baseCurrencyAmountState,
 	baseCurrencyKeyState,
@@ -23,10 +21,10 @@ import {
 	quoteCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
-import { useRecoilValue } from 'recoil';
 import { isL2State, isWalletConnectedState } from 'store/wallet';
-import { useExchangeContext } from 'contexts/ExchangeContext';
-import { useTranslation } from 'react-i18next';
+import { NoTextTransform } from 'styles/common';
+
+import SettleTransactionsCard from '../../FooterCard/SettleTransactionsCard';
 
 const FooterCard: React.FC = () => {
 	const { t } = useTranslation();

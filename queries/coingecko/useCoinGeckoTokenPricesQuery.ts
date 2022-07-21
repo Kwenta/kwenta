@@ -3,10 +3,10 @@ import { UseQueryOptions, useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
+import { isL2State } from 'store/wallet';
 
 import { CG_BASE_API_URL } from './constants';
 import { PriceResponse } from './types';
-import { isL2State } from 'store/wallet';
 
 const useCoinGeckoTokenPricesQuery = (
 	tokenAddresses: string[],

@@ -1,15 +1,19 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { useRouter } from 'next/router';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import { ethers } from 'ethers';
+import { useRouter } from 'next/router';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { gasSpeedState, walletAddressState } from 'store/wallet';
-import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
-import Connector from 'containers/Connector';
 import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
+import { PositionSide } from 'sections/futures/types';
 import {
 	currentMarketState,
 	feeCostState,
@@ -26,13 +30,11 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import { PositionSide } from 'sections/futures/types';
-import { getFuturesMarketContract } from 'queries/futures/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import { getDisplayAsset } from 'utils/futures';
+import logError from 'utils/logError';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
@@ -97,18 +99,23 @@ const useFuturesData = () => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === '' || !position?.remainingMargin
+				value === '' || !position?.remainingMargin || position.remainingMargin.eq(0)
 					? ''
-					: marketAssetRate
-							.mul(Number(value))
-							.div(position?.remainingMargin)
-							.toString()
-							.substring(0, 4);
+					: marketAssetRate.mul(Number(value)).div(position.remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
-			setLeverage(leverage);
+			setLeverage(
+				leverage !== '' && leverage.lt(marketMaxLeverage) ? leverage.toString().substring(0, 4) : ''
+			);
 		},
-		[marketAssetRate, position?.remainingMargin, setTradeSize, setTradeSizeSUSD, setLeverage]
+		[
+			marketAssetRate,
+			position?.remainingMargin,
+			marketMaxLeverage,
+			setTradeSize,
+			setTradeSizeSUSD,
+			setLeverage,
+		]
 	);
 
 	useEffect(() => {
@@ -129,9 +136,10 @@ const useFuturesData = () => {
 		const valueIsNull = value === '' || Number(value) === 0;
 		if (marketAssetRate.gt(0)) {
 			const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
-			const leverage = valueIsNull
-				? ''
-				: wei(value).div(position?.remainingMargin).toString().substring(0, 4);
+			const leverage =
+				valueIsNull || !position?.remainingMargin || position.remainingMargin.eq(0)
+					? ''
+					: wei(value).div(position.remainingMargin).toString().substring(0, 4);
 			setTradeSizeSUSD(value);
 			setTradeSize(size);
 			setLeverage(leverage);
@@ -165,7 +173,7 @@ const useFuturesData = () => {
 	);
 
 	const orderTxn = useSynthetixTxn(
-		`FuturesMarket${marketAsset?.[0] === 's' ? marketAsset?.substring(1) : marketAsset}`,
+		`FuturesMarket${getDisplayAsset(marketAsset)}`,
 		orderType === 1 ? 'submitNextPriceOrderWithTracking' : 'modifyPositionWithTracking',
 		[sizeDelta.toBN(), KWENTA_TRACKING_CODE],
 		gasPrice,
@@ -227,7 +235,7 @@ const useFuturesData = () => {
 				setDynamicFee(wei(volatilityFee.feeRate));
 				setFeeCost(wei(orderFee.fee));
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}

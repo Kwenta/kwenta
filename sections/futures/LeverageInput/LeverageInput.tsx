@@ -1,13 +1,12 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-
-import { FlexDivCol, FlexDivRow } from 'styles/common';
-import LeverageSlider from '../LeverageSlider';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
-import Button from 'components/Button';
-import { truncateNumbers } from 'utils/formatters/number';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import Button from 'components/Button';
+import CustomNumericInput from 'components/Input/CustomNumericInput';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import {
 	leverageState,
 	leverageValueCommittedState,
@@ -17,8 +16,10 @@ import {
 	orderTypeState,
 	positionState,
 } from 'store/futures';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { FlexDivCol, FlexDivRow } from 'styles/common';
+import { truncateNumbers } from 'utils/formatters/number';
+
+import LeverageSlider from '../LeverageSlider';
 
 const LeverageInput: FC = () => {
 	const { t } = useTranslation();

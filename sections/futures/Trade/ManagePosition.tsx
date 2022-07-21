@@ -1,9 +1,12 @@
-import React from 'react';
+import { useFuturesContext } from 'contexts/FuturesContext';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { PositionSide } from 'queries/futures/types';
 import {
 	leverageSideState,
 	leverageState,
@@ -16,13 +19,15 @@ import {
 	tradeSizeState,
 } from 'store/futures';
 import { zeroBN } from 'utils/formatters/number';
-import { useTranslation } from 'react-i18next';
+
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
-import { PositionSide } from 'queries/futures/types';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 type ManagePositionProps = {
 	openConfirmationModal(): void;
+};
+
+type OrderTxnError = {
+	reason: string;
 };
 
 const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }) => {
@@ -35,10 +40,21 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 	const positionDetails = position?.position;
 	const orderType = useRecoilValue(orderTypeState);
-	const [, setLeverageSide] = useRecoilState(leverageSideState);
-	const [, setTradeSize] = useRecoilState(tradeSizeState);
+	const setLeverageSide = useSetRecoilState(leverageSideState);
+	const setTradeSize = useSetRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
-	const { error, orderTxn, isMarketCapReached, placeOrderTranslationKey } = useFuturesContext();
+	const {
+		error,
+		orderTxn,
+		isMarketCapReached,
+		placeOrderTranslationKey,
+		onTradeAmountChange,
+	} = useFuturesContext();
+
+	const orderError = useMemo(() => {
+		const orderTxnError = orderTxn.error as OrderTxnError;
+		return orderTxnError?.reason;
+	}, [orderTxn]);
 
 	return (
 		<>
@@ -51,7 +67,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 					<PlaceOrderButton
 						data-testid="trade-open-position-button"
 						noOutline
-						fullWidth={true}
+						fullWidth
 						disabled={
 							!leverage ||
 							Number(leverage) < 0 ||
@@ -69,8 +85,8 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 
 					<CloseOrderButton
 						data-testid="trade-close-position-button"
-						fullWidth={true}
-						noOutline={true}
+						fullWidth
+						noOutline
 						variant="danger"
 						onClick={() => {
 							if (orderType === 1 && position?.position?.size) {
@@ -81,6 +97,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 										: PositionSide.LONG;
 								setLeverageSide(newLeverageSide);
 								setTradeSize(newTradeSize.toString());
+								onTradeAmountChange(newTradeSize.toString(), true);
 								openConfirmationModal();
 							} else {
 								setCancelModalOpen(true);
@@ -93,9 +110,17 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 				</ManagePositionContainer>
 			</div>
 
-			{(orderTxn.errorMessage || error || previewTrade?.showStatus) && (
+			{(orderTxn.isError || error || previewTrade?.showStatus) && (
 				<Error
-					message={previewTrade?.statusMessage || orderTxn.errorMessage || error || ''}
+					message={
+						orderTxn.isError
+							? orderError
+							: error
+							? error
+							: previewTrade?.showStatus
+							? previewTrade?.statusMessage
+							: ''
+					}
 					formatter="revert"
 				/>
 			)}

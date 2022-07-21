@@ -1,15 +1,14 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import { MobileHiddenView } from 'components/Media';
 import { zIndex } from 'constants/ui';
+import { isL2State } from 'store/wallet';
 
 import Logo from '../../Logo';
-
 import Nav from './Nav';
-import UserMenu from './UserMenu';
-import { isL2State } from 'store/wallet';
+import WalletButtons from './WalletButtons';
 
 const Header: FC = () => {
 	const isL2 = useRecoilValue(isL2State);
@@ -21,7 +20,7 @@ const Header: FC = () => {
 					<StyledLogo isL2={isL2} isFutures />
 					<Nav />
 				</LogoNav>
-				<UserMenu />
+				<WalletButtons />
 			</MobileHiddenView>
 		</Container>
 	);

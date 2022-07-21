@@ -1,6 +1,7 @@
-import { NO_VALUE } from 'constants/placeholder';
 import React from 'react';
 import styled from 'styled-components';
+
+import { NO_VALUE } from 'constants/placeholder';
 
 type DetailedInfo = {
 	value: string;

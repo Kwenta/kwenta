@@ -1,34 +1,34 @@
-import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-
-import { FlexDivCol } from 'styles/common';
-import { useTranslation } from 'react-i18next';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { isFiatCurrency } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { PositionSide } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import Connector from 'containers/Connector';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription, isEurForex } from 'utils/futures';
 import Wei, { wei } from '@synthetixio/wei';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price } from 'queries/rates/types';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
+import PreviewArrow from 'components/PreviewArrow';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { Price } from 'queries/rates/types';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import {
 	currentMarketState,
 	marketKeyState,
 	positionState,
 	potentialTradeDetailsState,
 } from 'store/futures';
-import PreviewArrow from 'components/PreviewArrow';
+import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 
 type PositionCardProps = {
 	currencyKeyRate: number;

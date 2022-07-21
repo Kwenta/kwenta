@@ -1,16 +1,18 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { networkState, walletAddressState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
-import { RATES_ENDPOINT_MAINNET } from './constants';
 import ROUTES from 'constants/routes';
+import { appReadyState } from 'store/app';
+import { networkState, walletAddressState } from 'store/wallet';
+import logError from 'utils/logError';
 
-const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | null>) => {
+import { RATES_ENDPOINT_MAINNET } from './constants';
+import { Price } from './types';
+import { getRatesEndpoint, mapLaggedDailyPrices } from './utils';
+
+const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<Price[] | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -23,7 +25,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 			? RATES_ENDPOINT_MAINNET
 			: getRatesEndpoint(network.id);
 
-	return useQuery<any | null>(
+	return useQuery<Price[] | null>(
 		QUERY_KEYS.Futures.AllPositionHistory(network.id, walletAddress || ''),
 		async () => {
 			try {
@@ -58,7 +60,7 @@ const useLaggedDailyPrice = (synths: string[], options?: UseQueryOptions<any | n
 				);
 				return response ? mapLaggedDailyPrices(response.candles) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

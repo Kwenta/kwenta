@@ -1,5 +1,5 @@
-import React from 'react';
 import { differenceInSeconds } from 'date-fns';
+import React from 'react';
 
 const secondsToDDHHMM = (seconds: number) => {
 	return (

@@ -1,24 +1,23 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
-import Connector from 'containers/Connector';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-
-import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
-import MarketsDropdownOption from './MarketsDropdownOption';
-import MarketsDropdownIndicator from './MarketsDropdownIndicator';
+import Connector from 'containers/Connector';
+import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { assetToSynth, iStandardSynth } from 'utils/currencies';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { Price, Rates } from 'queries/rates/types';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { currentMarketState } from 'store/futures';
+import { assetToSynth, iStandardSynth } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getDisplayAsset,
@@ -26,9 +25,10 @@ import {
 	isEurForex,
 	MarketKeyByAsset,
 } from 'utils/futures';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { currentMarketState } from 'store/futures';
+
+import MarketsDropdownIndicator from './MarketsDropdownIndicator';
+import MarketsDropdownOption from './MarketsDropdownOption';
+import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
@@ -46,7 +46,7 @@ export type MarketsCurrencyOption = {
 };
 
 type AssetToCurrencyOptionArgs = {
-	asset: string;
+	asset: FuturesMarketAsset;
 	description: string;
 	price?: string;
 	change?: string;
@@ -56,7 +56,7 @@ type AssetToCurrencyOptionArgs = {
 };
 
 const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
-	value: args.asset as FuturesMarketAsset,
+	value: args.asset,
 	label: `${getDisplayAsset(args.asset)}-PERP`,
 	...args,
 });
@@ -68,7 +68,7 @@ type MarketsDropdownProps = {
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
 	);
 
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [

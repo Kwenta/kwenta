@@ -1,12 +1,14 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
+
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { isL2State, networkState } from 'store/wallet';
-import QUERY_KEYS from 'constants/queryKeys';
-import request, { gql } from 'graphql-request';
+
+import { FUTURES_ENDPOINT_MAINNET } from './constants';
 import { FuturesStat } from './types';
 import { getFuturesEndpoint } from './utils';
-import { FUTURES_ENDPOINT_MAINNET } from './constants';
 
 const PAGE_SIZE = 500;
 

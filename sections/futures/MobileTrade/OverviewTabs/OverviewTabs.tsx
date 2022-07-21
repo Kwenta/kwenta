@@ -1,17 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import AccountIcon from 'assets/svg/app/account.svg';
+import PriceIcon from 'assets/svg/app/price.svg';
+import StatsIcon from 'assets/svg/app/stats.svg';
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 import TabButton from 'components/Button/TabButton';
 
 import AccountTab from './AccountTab';
 import PriceTab from './PriceTab';
 import StatsTab from './StatsTab';
 import TradesTab from './TradesTab';
-
-import AccountIcon from 'assets/svg/app/account.svg';
-import PriceIcon from 'assets/svg/app/price.svg';
-import StatsIcon from 'assets/svg/app/stats.svg';
-import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
 
 const TABS = [
 	{

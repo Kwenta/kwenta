@@ -1,12 +1,14 @@
+import { wei } from '@synthetixio/wei';
 import React from 'react';
 import styled, { css } from 'styled-components';
-import BaseDrawer from './BaseDrawer';
+
+import { Synths } from 'constants/currency';
 import { PositionSide } from 'queries/futures/types';
+import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
-import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
-import { Synths } from 'constants/currency';
-import { wei } from '@synthetixio/wei';
+
+import BaseDrawer from './BaseDrawer';
 
 type TradeDrawerProps = {
 	trade?: any;

@@ -1,9 +1,10 @@
+import { ComponentStory, ComponentMeta } from '@storybook/react';
 import React from 'react';
 import styled from 'styled-components';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+
+import TabButton from 'components/Button/TabButton';
 
 import Button from '../components/Button';
-import TabButton from 'components/Button/TabButton';
 
 export default {
 	title: 'Components/Button',

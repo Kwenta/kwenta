@@ -1,8 +1,9 @@
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
 import onboard from 'bnc-onboard';
 import { Subscriptions } from 'bnc-onboard/dist/src/interfaces';
-import { getInfuraRpcURL } from 'utils/infura';
+
 import { Network } from 'store/wallet';
+import { getInfuraRpcURL } from 'utils/infura';
 
 export const initOnboard = (network: Network, subscriptions: Subscriptions) => {
 	const infuraRpc = getInfuraRpcURL(network.id);

@@ -1,12 +1,13 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
-import QUERY_KEYS from 'constants/queryKeys';
 import { SynthsVolumes } from './type';
-import request, { gql } from 'graphql-request';
 import { getSynthsEndpoint } from './utils';
 
 const useGetWalletTrades = (
@@ -57,7 +58,7 @@ const useGetWalletTrades = (
 				);
 				return response;
 			} catch (e) {
-				console.error(e);
+				logError(e);
 				return null;
 			}
 		},

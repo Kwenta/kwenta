@@ -1,9 +1,10 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
-import { FlexDivRow } from 'styles/common';
+import { Synths } from 'constants/currency';
 import {
 	currentMarketState,
 	maxLeverageState,
@@ -11,9 +12,8 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
-import { useRecoilValue } from 'recoil';
+import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 type OrderSizingProps = {
 	disabled?: boolean;

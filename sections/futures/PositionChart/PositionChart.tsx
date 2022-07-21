@@ -1,17 +1,16 @@
 import { useMemo } from 'react';
-import { Synths } from 'constants/currency';
-
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
-import { useRecoilValue } from 'recoil';
+import { Synths } from 'constants/currency';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import {
 	currentMarketState,
 	positionState,
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import styled from 'styled-components';
 
 export default function PositionChart() {
 	const marketAsset = useRecoilValue(currentMarketState);
@@ -20,7 +19,7 @@ export default function PositionChart() {
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const positionHistory = futuresPositionsQuery?.data ?? [];
+	const positionHistory = futuresPositionsQuery.data ?? [];
 	const subgraphPosition = positionHistory.find((p) => p.isOpen && p.asset === marketAsset);
 
 	const tradeSize = useRecoilValue(tradeSizeState);

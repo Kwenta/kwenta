@@ -1,27 +1,19 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
-import { gasSpeedState } from 'store/wallet';
-
-import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
-import { newGetTransactionPrice } from 'utils/network';
-
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
-import { zeroBN, formatCurrency } from 'utils/formatters/number';
-import { PositionSide } from '../types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { computeNPFee } from 'utils/costCalculations';
 import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	currentMarketState,
 	leverageSideState,
@@ -29,7 +21,14 @@ import {
 	positionState,
 	tradeSizeState,
 } from 'store/futures';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCol, FlexDivCentered } from 'styles/common';
+import { computeNPFee } from 'utils/costCalculations';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { zeroBN, formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;

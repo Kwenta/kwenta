@@ -1,10 +1,12 @@
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import styled, { css } from 'styled-components';
-import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
-import { FlexDivCentered } from 'styles/common';
 import { components, OptionProps } from 'react-select';
+import styled, { css } from 'styled-components';
+
 import MarketBadge from 'components/Badge/MarketBadge';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
+import { FlexDivCentered } from 'styles/common';
+
 import { MarketsCurrencyOption } from './MarketsDropdown';
+import { CurrencyLabel, SingleValueContainer } from './MarketsDropdownSingleValue';
 
 const MarketsDropdownOption: React.FC<OptionProps<MarketsCurrencyOption>> = (props) => (
 	<components.Option {...props}>

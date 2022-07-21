@@ -1,24 +1,25 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
 import useSynthetixQueries from '@synthetixio/queries';
-import { CellProps } from 'react-table';
 import { wei } from '@synthetixio/wei';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
-import { positionState, currentMarketState, openOrdersState } from 'store/futures';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
-import { SectionHeader, SectionTitle } from '../common';
-import { PositionSide } from 'queries/futures/types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
 import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { formatCurrency } from 'utils/formatters/number';
-import OrderDrawer from '../drawers/OrderDrawer';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import { PositionSide } from 'queries/futures/types';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import { positionState, currentMarketState, openOrdersState } from 'store/futures';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { GridDivCenteredRow } from 'styles/common';
+import { formatCurrency } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
+
+import { SectionHeader, SectionTitle } from '../common';
+import OrderDrawer from '../drawers/OrderDrawer';
 
 const OrdersTab: React.FC = () => {
 	const { t } = useTranslation();

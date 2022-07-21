@@ -1,4 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 

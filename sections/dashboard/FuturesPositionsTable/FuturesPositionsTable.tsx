@@ -1,18 +1,23 @@
-import Table from 'components/Table';
+import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import Connector from 'containers/Connector';
-import Currency from 'components/Currency';
-import PositionType from 'components/Text/PositionType';
+
+import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+import Table from 'components/Table';
+import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
-import { FuturesPosition, FuturesMarket, PositionHistory } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import { NO_VALUE } from 'constants/placeholder';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import { FuturesMarket, PositionHistory } from 'queries/futures/types';
+import { positionsState } from 'store/futures';
+import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
 	getDisplayAsset,
@@ -20,11 +25,8 @@ import {
 	isEurForex,
 	MarketKeyByAsset,
 } from 'utils/futures';
-import MarketBadge from 'components/Badge/MarketBadge';
-import { MobileHiddenView, MobileOnlyView } from 'components/Media';
+
 import MobilePositionRow from './MobilePositionRow';
-import { positionsState } from 'store/futures';
-import { useRecoilValue } from 'recoil';
 
 type FuturesPositionTableProps = {
 	futuresMarkets: FuturesMarket[];
@@ -42,20 +44,19 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const futuresPositions = useRecoilValue(positionsState);
 
 	let data = useMemo(() => {
-		const activePositions =
-			futuresPositions?.filter((position: FuturesPosition) => position?.position) ?? [];
+		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
 
-		return activePositions.map((position: FuturesPosition) => {
+		return activePositions.map((position) => {
 			const market = futuresMarkets.find((market) => market.asset === position.asset);
 			const description = getSynthDescription(position.asset, synthsMap, t);
-			const positionHistory = futuresPositionHistory?.find((positionHistory: PositionHistory) => {
+			const positionHistory = futuresPositionHistory?.find((positionHistory) => {
 				return positionHistory.isOpen && positionHistory.asset === position.asset;
 			});
 
 			return {
 				asset: position.asset,
 				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: MarketKeyByAsset[position.asset as FuturesMarketAsset],
+				marketKey: MarketKeyByAsset[position.asset],
 				description,
 				price: market?.price,
 				size: position?.position?.size,
@@ -80,7 +81,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 		<>
 			<MobileHiddenView>
 				<TableContainer>
-					<StyledTable
+					<Table
 						data={data}
 						showPagination
 						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
@@ -94,9 +95,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'market',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.market === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<MarketContainer>
 											<IconContainer>
 												<StyledCurrencyIcon
@@ -127,11 +126,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'position',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.position === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
-										<PositionType side={cellProps.row.original.position} />
-									);
+									return <PositionType side={cellProps.row.original.position} />;
 								},
 								width: 90,
 							},
@@ -143,9 +138,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.notionalValue === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.notionalValue}
@@ -164,9 +157,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'leverage',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.leverage === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<DefaultCell>{formatNumber(cellProps.row.original.leverage ?? 0)}x</DefaultCell>
 									);
 								},
@@ -178,9 +169,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'pnl',
 								Cell: (cellProps: CellProps<any>) => {
-									return cellProps.row.original.pnl === undefined ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<PnlContainer>
 											<ChangePercent value={cellProps.row.original.pnlPct} />
 											<div>
@@ -232,9 +221,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 									const formatOptions = isEurForex(cellProps.row.original.asset)
 										? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 										: {};
-									return cellProps.row.original.liquidationPrice === NO_VALUE ? (
-										<DefaultCell>{NO_VALUE}</DefaultCell>
-									) : (
+									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.liquidationPrice}
@@ -303,10 +290,6 @@ const DefaultCell = styled.p`
 `;
 
 const TableContainer = styled.div``;
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const TableHeader = styled.div`
 	color: ${(props) => props.theme.colors.selectedTheme.gray};

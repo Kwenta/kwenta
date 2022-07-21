@@ -1,24 +1,23 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import useSynthetixQueries from '@synthetixio/queries';
 
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
-import { gasSpeedState } from 'store/wallet';
-
-import { FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
-import { newGetTransactionPrice } from 'utils/network';
-
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
-import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
-import { PositionSide } from '../types';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
-import { useFuturesContext } from 'contexts/FuturesContext';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type TradeConfirmationModalProps = {
 	onDismiss: () => void;
@@ -123,7 +122,7 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) 
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.trade.confirmation.modal.confirm-order')}
 		>
 			{dataRows.map(({ label, value }, i) => (

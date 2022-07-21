@@ -1,15 +1,15 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import request, { gql } from 'graphql-request';
-
-import { appReadyState } from 'store/app';
-import { isL2State, networkState } from 'store/wallet';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { PositionHistory } from './types';
+import { appReadyState } from 'store/app';
+import { isL2State, networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
-import { mapTradeHistory, getFuturesEndpoint } from './utils';
 import { FUTURES_POSITION_FRAGMENT } from './constants';
+import { PositionHistory } from './types';
+import { mapTradeHistory, getFuturesEndpoint } from './utils';
 
 const useGetFuturesAccountPositionHistory = (
 	account: string,
@@ -43,7 +43,7 @@ const useGetFuturesAccountPositionHistory = (
 
 				return response ? mapTradeHistory(response.futuresPositions, false) : [];
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

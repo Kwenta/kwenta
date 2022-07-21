@@ -1,28 +1,29 @@
-import { FC, useMemo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import { FC, useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import TransactionNotifier from 'containers/TransactionNotifier';
 import BaseModal from 'components/BaseModal';
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import { PositionSide } from '../types';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { getFuturesMarketContract } from 'queries/futures/utils';
-import Connector from 'containers/Connector';
 import Button from 'components/Button';
 import Error from 'components/Error';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { gasSpeedState } from 'store/wallet';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { getFuturesMarketContract } from 'queries/futures/utils';
 import { currentMarketState, positionState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCentered, FlexDivCol } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -89,7 +90,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
 				// @ts-ignore
-				console.log(e.message);
+				logError(e.message);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
@@ -152,7 +153,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.user.position.modal.title')}
 		>
 			<>

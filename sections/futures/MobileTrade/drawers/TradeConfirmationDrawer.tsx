@@ -1,21 +1,22 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
+import styled from 'styled-components';
 
+import Button from 'components/Button';
+import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'sections/futures/types';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
-import { PositionSide } from 'sections/futures/types';
-import { Synths, CurrencyKey } from 'constants/currency';
+
 import BaseDrawer from './BaseDrawer';
-import Button from 'components/Button';
-import { useFuturesContext } from 'contexts/FuturesContext';
 
 type TradeConfirmationDrawerProps = {
 	open: boolean;

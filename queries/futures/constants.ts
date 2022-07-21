@@ -1,5 +1,5 @@
-import { gql } from 'graphql-request';
 import { utils as ethersUtils } from 'ethers';
+import { gql } from 'graphql-request';
 
 export const FUTURES_ENDPOINT_MAINNET =
 	'https://api.thegraph.com/subgraphs/name/kwenta/optimism-futures';

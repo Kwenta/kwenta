@@ -1,13 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { NetworkId } from '@synthetixio/contracts-interface';
 import axios from 'axios';
 import keyBy from 'lodash/keyBy';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { NetworkId } from '@synthetixio/contracts-interface';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import { TokenListQueryResponse, OneInchTokenListResponse } from './types';
-import { isL2State, networkState } from 'store/wallet';
 import use1InchApiUrl from 'hooks/use1InchApiUrl';
+import { isL2State, networkState } from 'store/wallet';
+
+import { TokenListQueryResponse, OneInchTokenListResponse } from './types';
 
 const useOneInchTokenList = (options?: UseQueryOptions<TokenListQueryResponse>) => {
 	const isL2 = useRecoilValue(isL2State);

@@ -1,15 +1,15 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { ethers } from 'ethers';
-import orderBy from 'lodash/orderBy';
-import { wei } from '@synthetixio/wei';
-
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+import orderBy from 'lodash/orderBy';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { networkState, walletAddressState } from 'store/wallet';
+
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
+import { networkState, walletAddressState } from 'store/wallet';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 

@@ -1,25 +1,26 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import orderBy from 'lodash/orderBy';
 import { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styled, { css } from 'styled-components';
-import orderBy from 'lodash/orderBy';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import useSynthetixQueries from '@synthetixio/queries';
 import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
+import styled, { css } from 'styled-components';
 
 import Button from 'components/Button';
-import Loader from 'components/Loader';
 import SearchInput from 'components/Input/SearchInput';
-import useDebouncedMemo from 'hooks/useDebouncedMemo';
-import { FlexDivCentered } from 'styles/common';
+import Loader from 'components/Loader';
 import { CurrencyKey, CATEGORY_MAP } from 'constants/currency';
 import { DEFAULT_SEARCH_DEBOUNCE_MS } from 'constants/defaults';
-import { RowsHeader, CenteredModal } from '../common';
-import CurrencyRow from './CurrencyRow';
-import { networkState, walletAddressState } from 'store/wallet';
 import Connector from 'containers/Connector';
+import useDebouncedMemo from 'hooks/useDebouncedMemo';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuery';
+import { networkState, walletAddressState } from 'store/wallet';
+import { FlexDivCentered } from 'styles/common';
+
+import { RowsHeader, CenteredModal } from '../common';
+import CurrencyRow from './CurrencyRow';
 
 const PAGE_LENGTH = 50;
 

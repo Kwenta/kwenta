@@ -1,4 +1,5 @@
 import { NetworkIdByName } from '@synthetixio/contracts-interface';
+
 import { Network } from 'store/wallet';
 
 const getEtherscanBaseURL = (network: Network) => {

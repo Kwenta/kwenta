@@ -1,14 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
-
+import ETHIcon from 'assets/svg/currencies/crypto/ETH.svg';
 import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
-
-import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
-
+import useZapperTokenList from 'queries/tokenLists/useZapperTokenList';
 import { FlexDivCentered } from 'styles/common';
 
 export type CurrencyIconProps = {
@@ -55,9 +52,9 @@ const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 );
 
 const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, url, ...rest }) => {
-	const [firstFallbackError, setFirstFallbackError] = useState<boolean>(false);
-	const [secondFallbackError, setSecondFallbackError] = useState<boolean>(false);
-	const [thirdFallbackError, setThirdFallbackError] = useState<boolean>(false);
+	const [firstFallbackError, setFirstFallbackError] = useState(false);
+	const [secondFallbackError, setSecondFallbackError] = useState(false);
+	const [thirdFallbackError, setThirdFallbackError] = useState(false);
 
 	const ZapperTokenListQuery = useZapperTokenList();
 	const ZapperTokenListMap = ZapperTokenListQuery.isSuccess

@@ -49,7 +49,6 @@
 		"ethcall": "4.7.2",
 		"ethereum-block-by-date": "^1.4.5",
 		"ethers": "5.6.9",
-		"framer-motion": "4.1.17",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"imagemin-mozjpeg": "^10.0.0",
@@ -132,6 +131,7 @@
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
 		"jest": "27.3.1",
+		"lint-staged": "^13.0.3",
 		"pinst": "3.0.0",
 		"prettier": "2.0.5",
 		"react-test-renderer": "17.0.1",
@@ -143,6 +143,11 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"eslint"
+		]
 	},
 	"engines": {
 		"node": ">=16",

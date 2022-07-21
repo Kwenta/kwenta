@@ -1,13 +1,14 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { currentMarketState } from 'store/futures';
+import styled from 'styled-components';
 
-import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import { GridDivCenteredRow } from 'styles/common';
 import Table from 'components/Table';
+import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
+import { currentMarketState } from 'store/futures';
+import { GridDivCenteredRow } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
+
 import { SectionHeader, SectionTitle } from '../common';
 
 const TransfersTab: React.FC = () => {
@@ -30,7 +31,7 @@ const TransfersTab: React.FC = () => {
 				<SectionTitle>Transfers</SectionTitle>
 			</SectionHeader>
 
-			<StyledTable
+			<Table
 				highlightRowsOnHover
 				columns={[
 					{
@@ -80,16 +81,12 @@ const TransfersTab: React.FC = () => {
 						</TableNoResults>
 					) : undefined
 				}
-				showPagination={true}
+				showPagination
 				pageSize={5}
 			/>
 		</div>
 	);
 };
-
-const StyledTable = styled(Table)`
-	/* margin-top: 20px; */
-`;
 
 const DefaultCell = styled.p`
 	color: ${(props) => props.theme.colors.common.primaryWhite};
