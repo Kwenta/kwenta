@@ -66,4 +66,8 @@ export default class ExchangePage extends Page {
 		const txUrl = this.notifications.getTransactionSuccessNotificationLink();
 		return txUrl.invoke('attr', 'href');
 	}
+
+	wait(time) {
+		cy.wait(time);
+	}
 }

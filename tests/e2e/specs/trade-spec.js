@@ -21,6 +21,7 @@ describe('Trade 1 sUSD for sETH on Optimism', () => {
 		});
 		it(`should exchange with success`, () => {
 			// enters a value of 1 sUSD
+			exchange.wait(5000);
 			exchange.getCurrencyAmount().type('1');
 			exchange.getSubmitOrderBtn().click();
 			exchange.confirmMetamaskTransaction();
