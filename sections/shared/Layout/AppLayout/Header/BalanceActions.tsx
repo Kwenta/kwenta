@@ -158,6 +158,7 @@ const BalanceActions: FC = () => {
 export default BalanceActions;
 
 const Container = styled.div`
+	height: 41px;
 	font-size: 12px;
 	font-family: ${(props) => props.theme.fonts.mono};
 `;
