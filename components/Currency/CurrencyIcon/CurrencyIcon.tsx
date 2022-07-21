@@ -3,13 +3,21 @@ import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import AAVEIcon from 'assets/png/currencies/sAAVE.png';
+import ADAIcon from 'assets/png/currencies/sADA.png';
 import APEIcon from 'assets/png/currencies/sAPECOIN.png';
+import AUDIcon from 'assets/png/currencies/sAUD.png';
 import AVAXIcon from 'assets/png/currencies/sAVAX.png';
 import BTCIcon from 'assets/png/currencies/sBTC.png';
+import CHFIcon from 'assets/png/currencies/sCHF.png';
+import DOTIcon from 'assets/png/currencies/sDOT.png';
 import DYDXIcon from 'assets/png/currencies/sDYDX.png';
 import ETHIcon from 'assets/png/currencies/sETH.png';
+import ETHBTCIcon from 'assets/png/currencies/sETHBTC.png';
 import EURIcon from 'assets/png/currencies/sEUR.png';
+import GBPIcon from 'assets/png/currencies/sGBP.png';
 import INRIcon from 'assets/png/currencies/sINR.png';
+import JPYIcon from 'assets/png/currencies/sJPY.png';
+import KRWIcon from 'assets/png/currencies/sKRW.png';
 import LINKIcon from 'assets/png/currencies/sLINK.png';
 import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
@@ -19,7 +27,7 @@ import USDIcon from 'assets/png/currencies/sUSD.png';
 import XAGIcon from 'assets/png/currencies/sXAG.png';
 import XAUIcon from 'assets/png/currencies/sXAU.png';
 import DeprecatedXIcon from 'assets/svg/app/deprecated-x.svg';
-import { CRYPTO_CURRENCY_MAP, CurrencyKey } from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, SynthsName } from 'constants/currency';
 import useOneInchTokenList from 'queries/tokenLists/useOneInchTokenList';
 import { FlexDivCentered } from 'styles/common';
 import { FuturesMarketKey } from 'utils/futures';
@@ -125,11 +133,35 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 			case FuturesMarketKey.sEUR: {
 				return <Image src={EURIcon} layout="raw" {...props} />;
 			}
-			case 'sUSD': {
+			case SynthsName.sUSD: {
 				return <Image src={USDIcon} layout="raw" {...props} />;
 			}
-			case 'sINR': {
+			case SynthsName.sINR: {
 				return <Image src={INRIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sJPY: {
+				return <Image src={JPYIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sGBP: {
+				return <Image src={GBPIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sCHF: {
+				return <Image src={CHFIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sKRW: {
+				return <Image src={KRWIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sDOT: {
+				return <Image src={DOTIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sETHBTC: {
+				return <Image src={ETHBTCIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sADA: {
+				return <Image src={ADAIcon} layout="raw" {...props} />;
+			}
+			case SynthsName.sAUD: {
+				return <Image src={AUDIcon} layout="raw" {...props} />;
 			}
 			case CRYPTO_CURRENCY_MAP.SNX: {
 				return <Image src={SNXIcon} layout="raw" {...props} />;
