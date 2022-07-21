@@ -21,6 +21,7 @@ import KRWIcon from 'assets/png/currencies/sKRW.png';
 import LINKIcon from 'assets/png/currencies/sLINK.png';
 import MATICIcon from 'assets/png/currencies/sMATIC.png';
 import SNXIcon from 'assets/png/currencies/SNX.png';
+import OILIcon from 'assets/png/currencies/sOIL.png';
 import SOLIcon from 'assets/png/currencies/sSOL.png';
 import UNIIcon from 'assets/png/currencies/sUNI.png';
 import USDIcon from 'assets/png/currencies/sUSD.png';
@@ -61,6 +62,35 @@ export const getSynthIcon = (currencyKey: CurrencyKey) => {
 	return `https://raw.githubusercontent.com/Synthetixio/synthetix-assets/master/synths/png/${parsedCurrencyKey}.png`;
 };
 
+const SYNTH_ICONS: Record<FuturesMarketKey | SynthsName | string, any> = {
+	sBTC: BTCIcon,
+	sETH: ETHIcon,
+	sLINK: LINKIcon,
+	sSOL: SOLIcon,
+	sAVAX: AVAXIcon,
+	sAAVE: AAVEIcon,
+	sUNI: UNIIcon,
+	sMATIC: MATICIcon,
+	sXAU: XAUIcon,
+	sXAG: XAGIcon,
+	sEUR: EURIcon,
+	sAPE: APEIcon,
+	sDYDX: DYDXIcon,
+	sWTI: OILIcon,
+	sAXS: null,
+	sUSD: USDIcon,
+	sINR: INRIcon,
+	sJPY: JPYIcon,
+	sGBP: GBPIcon,
+	sCHF: CHFIcon,
+	sKRW: KRWIcon,
+	sDOT: DOTIcon,
+	sETHBTC: ETHBTCIcon,
+	sADA: ADAIcon,
+	sAUD: AUDIcon,
+	[CRYPTO_CURRENCY_MAP.SNX]: SNXIcon,
+};
+
 const CurrencyIconContainer: FC<CurrencyIconProps> = (props) => (
 	<Container>
 		<CurrencyIcon style={props.style} {...props} />
@@ -93,90 +123,18 @@ const CurrencyIcon: FC<CurrencyIconProps> = ({ currencyKey, type, isDeprecated, 
 	}, [currencyKey]);
 
 	if (!firstFallbackError) {
-		switch (currencyKey) {
-			case FuturesMarketKey.sETH: {
-				return <Image src={ETHIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sUNI: {
-				return <Image src={UNIIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sBTC: {
-				return <Image src={BTCIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sSOL: {
-				return <Image src={SOLIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sAVAX: {
-				return <Image src={AVAXIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sMATIC: {
-				return <Image src={MATICIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sLINK: {
-				return <Image src={LINKIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sAPE: {
-				return <Image src={APEIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sAAVE: {
-				return <Image src={AAVEIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sDYDX: {
-				return <Image src={DYDXIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sXAU: {
-				return <Image src={XAUIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sXAG: {
-				return <Image src={XAGIcon} layout="raw" {...props} />;
-			}
-			case FuturesMarketKey.sEUR: {
-				return <Image src={EURIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sUSD: {
-				return <Image src={USDIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sINR: {
-				return <Image src={INRIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sJPY: {
-				return <Image src={JPYIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sGBP: {
-				return <Image src={GBPIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sCHF: {
-				return <Image src={CHFIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sKRW: {
-				return <Image src={KRWIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sDOT: {
-				return <Image src={DOTIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sETHBTC: {
-				return <Image src={ETHBTCIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sADA: {
-				return <Image src={ADAIcon} layout="raw" {...props} />;
-			}
-			case SynthsName.sAUD: {
-				return <Image src={AUDIcon} layout="raw" {...props} />;
-			}
-			case CRYPTO_CURRENCY_MAP.SNX: {
-				return <Image src={SNXIcon} layout="raw" {...props} />;
-			}
-			default:
-				return (
-					<TokenIcon
-						{...{ isDeprecated }}
-						src={url || getSynthIcon(currencyKey as CurrencyKey)}
-						onError={() => setFirstFallbackError(true)}
-						{...props}
-						alt={currencyKey}
-					/>
-				);
-		}
+		const src = SYNTH_ICONS[currencyKey as FuturesMarketKey];
+		return src ? (
+			<Image src={src} layout="raw" {...props} />
+		) : (
+			<TokenIcon
+				{...{ isDeprecated }}
+				src={url || getSynthIcon(currencyKey as CurrencyKey)}
+				onError={() => setFirstFallbackError(true)}
+				{...props}
+				alt={currencyKey}
+			/>
+		);
 	} else if (
 		OneInchTokenListMap != null &&
 		OneInchTokenListMap[currencyKey] != null &&
