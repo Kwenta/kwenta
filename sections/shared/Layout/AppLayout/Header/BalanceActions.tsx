@@ -223,6 +223,7 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledWidgetButton = styled(Button)`
+	height: 41px;
 	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.mono};
 	padding: 10px;
