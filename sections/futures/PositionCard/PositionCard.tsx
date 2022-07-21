@@ -109,7 +109,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
 			const newValue = previewTradeData.price.mul(potentialTrade.size);
 			const totalValue = existingValue.add(newValue);
-			return totalValue.div(totalSize);
+
+			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
 	}, [positionHistory, previewTradeData, potentialTrade]);
