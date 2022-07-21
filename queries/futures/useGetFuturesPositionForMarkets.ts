@@ -26,7 +26,7 @@ const useGetFuturesPositionForMarkets = (
 	const assets = futuresMarkets?.map(({ asset }) => asset) ?? [];
 
 	return useQuery<FuturesPosition[] | []>(
-		QUERY_KEYS.Futures.MarketsPositions(assets || []),
+		QUERY_KEYS.Futures.MarketsPositions(network.id, walletAddress, assets || []),
 		async () => {
 			if (!markets || (walletAddress && !isL2)) {
 				return [];
