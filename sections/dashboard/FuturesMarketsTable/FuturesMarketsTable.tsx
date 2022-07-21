@@ -70,7 +70,7 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 				synth: synthsMap[market.asset],
 				description,
 				price: market.price,
-				volume: volume ?? 0,
+				volume: volume?.toNumber() ?? 0,
 				pastPrice: pastPrice?.price,
 				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price),
 				fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate ?? null,
