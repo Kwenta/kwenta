@@ -1,30 +1,31 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { CellProps } from 'react-table';
 import useSynthetixQueries from '@synthetixio/queries';
-import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import Table from 'components/Table';
+import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import { getDisplayAsset, getMarketKey } from 'utils/futures';
-import { PositionSide } from '../types';
+import Table from 'components/Table';
 import PositionType from 'components/Text/PositionType';
-import { formatCurrency } from 'utils/formatters/number';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import Badge from 'components/Badge';
 import { currentMarketState, openOrdersState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
-import Connector from 'containers/Connector';
+import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { formatCurrency } from 'utils/formatters/number';
+import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
+
+import { PositionSide } from '../types';
 
 const OpenOrdersTable: React.FC = () => {
 	const { t } = useTranslation();
+	const { synthsMap } = Connector.useContainer();
 	const { monitorTransaction } = TransactionNotifier.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
-	const { network } = Connector.useContainer();
 
 	const gasSpeed = useRecoilValue(gasSpeedState);
 	const walletAddress = useRecoilValue(walletAddressState);
@@ -79,9 +80,11 @@ const OpenOrdersTable: React.FC = () => {
 		return openOrders.map((order: any) => ({
 			asset: order.asset,
 			market: getDisplayAsset(order.asset) + '-PERP',
-			marketKey: getMarketKey(order.asset, network.id),
+			marketKey: MarketKeyByAsset[order.asset as FuturesMarketAsset],
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
-			size: order.size.abs(),
+			size: formatCurrency(order.asset, order.size.abs(), {
+				sign: order.asset ? synthsMap[order.asset]?.sign : '',
+			}),
 			side: wei(order.size).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
 			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
@@ -89,7 +92,7 @@ const OpenOrdersTable: React.FC = () => {
 				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, nextPriceDetails?.currentRoundId, network.id]);
+	}, [openOrders, nextPriceDetails?.currentRoundId, synthsMap]);
 
 	return (
 		<StyledTable
@@ -146,13 +149,7 @@ const OpenOrdersTable: React.FC = () => {
 					),
 					accessor: 'size',
 					Cell: (cellProps: CellProps<any>) => {
-						return (
-							<div>
-								{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
-									sign: cellProps.row.original.asset,
-								})}
-							</div>
-						);
+						return <div>{cellProps.row.original.size}</div>;
 					},
 					sortable: true,
 					width: 50,

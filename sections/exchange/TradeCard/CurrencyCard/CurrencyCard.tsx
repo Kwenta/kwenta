@@ -1,20 +1,24 @@
+import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import Wei, { wei } from '@synthetixio/wei';
-
-import { CurrencyKey } from 'constants/currency';
-import { NO_VALUE } from 'constants/placeholder';
 
 import CaretDownIcon from 'assets/svg/app/caret-down-gray.svg';
-
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-
+import { border } from 'components/Button';
+import Button from 'components/Button';
 import Card from 'components/Card';
+import CurrencyIcon from 'components/Currency/CurrencyIcon';
 import NumericInput from 'components/Input/NumericInput';
 import Loader from 'components/Loader';
-
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { CurrencyKey } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
+import { ratioState } from 'store/exchange';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -23,17 +27,9 @@ import {
 	FlexDivCol,
 	FlexDivRow,
 } from 'styles/common';
-import { border } from 'components/Button';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+
 import { Side } from '../types';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
-import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import Connector from 'containers/Connector';
-import Button from 'components/Button';
-import { isL2State } from 'store/wallet';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import { SectionHeader, SectionSubTitle, SectionTitle } from 'sections/futures/MobileTrade/common';
-import { ratioState } from 'store/exchange';
 
 type CurrencyCardProps = {
 	side: Side;
@@ -82,7 +78,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 	} = useSelectedPriceCurrency();
 
 	const isBase = useMemo(() => side === 'base', [side]);
-	const isL2 = useRecoilValue(isL2State);
 
 	const hasWalletBalance = useMemo(() => walletBalance != null && currencyKey != null, [
 		walletBalance,
@@ -115,6 +110,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 			<DesktopOnlyView>
 				<CardContainer>
 					<StyledCard
+						data-testid={'currency-card-' + side}
 						className={`currency-card currency-card-${side}`}
 						interactive={interactive}
 						{...rest}
@@ -186,9 +182,7 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 											)}
 											{currencyKey ?? (
 												<CapitalizedText>
-													{isL2
-														? t('exchange.currency-card.currency-selector.select-token')
-														: t('exchange.currency-card.currency-selector.select-synth')}
+													{t('exchange.currency-card.currency-selector.select-token')}
 												</CapitalizedText>
 											)}
 										</TokenLabel>

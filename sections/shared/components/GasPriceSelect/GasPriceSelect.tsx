@@ -1,18 +1,17 @@
-import { FC } from 'react';
-import { useTranslation } from 'react-i18next';
-import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
-import { useRecoilValue } from 'recoil';
-import Wei from '@synthetixio/wei';
-
-import { NO_VALUE } from 'constants/placeholder';
-
-import { formatCurrency, formatNumber } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
-import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 import { GasPrices } from '@synthetixio/queries';
-
-import { parseGasPriceObject } from 'hooks/useGas';
+import Wei from '@synthetixio/wei';
+import { FC } from 'react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
+import { parseGasPriceObject } from 'hooks/useGas';
+import { customGasPriceState, gasSpeedState, isL2State, isMainnetState } from 'store/wallet';
+import { formatCurrency, formatNumber } from 'utils/formatters/number';
+
+import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
 
 type GasPriceSelectProps = {
 	gasPrices: GasPrices | undefined;

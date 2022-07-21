@@ -32,9 +32,9 @@
 		"@reach/dialog": "0.15.0",
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.13",
-		"@synthetixio/contracts-interface": "2.73.1",
+		"@synthetixio/contracts-interface": "2.74.1",
 		"@synthetixio/optimism-networks": "2.73.1",
-		"@synthetixio/providers": "2.73.1",
+		"@synthetixio/providers": "2.74.1",
 		"@synthetixio/queries": "2.73.1",
 		"@synthetixio/transaction-notifier": "2.73.1",
 		"@synthetixio/wei": "2.73.1",
@@ -46,10 +46,9 @@
 		"cors": "^2.8.5",
 		"date-fns": "2.21.3",
 		"date-fns-tz": "1.1.4",
-		"ethcall": "3.2.0",
+		"ethcall": "4.7.2",
 		"ethereum-block-by-date": "^1.4.5",
-		"ethers": "5.5.0",
-		"framer-motion": "4.1.17",
+		"ethers": "5.6.9",
 		"graphql-request": "3.4.0",
 		"i18next": "19.7.0",
 		"imagemin-mozjpeg": "^10.0.0",
@@ -93,7 +92,7 @@
 		"@storybook/react": "^6.5.9",
 		"@svgr/core": "5.5.0",
 		"@svgr/webpack": "6.2.1",
-		"@synthetixio/synpress": "1.1.1",
+		"@synthetixio/synpress": "avclarke/synpress#mm-timeout",
 		"@testing-library/jest-dom": "5.14.1",
 		"@testing-library/react": "12.1.5",
 		"@testing-library/react-hooks": "7.0.2",
@@ -132,7 +131,8 @@
 		"imagemin-optipng": "8.0.0",
 		"imagemin-svgo": "8.0.0",
 		"jest": "27.3.1",
-		"pinst": "2.1.4",
+		"lint-staged": "^13.0.3",
+		"pinst": "3.0.0",
 		"prettier": "2.0.5",
 		"react-test-renderer": "17.0.1",
 		"typescript": "4.4.3",
@@ -143,6 +143,11 @@
 		"hooks": {
 			"pre-commit": "npm run lint"
 		}
+	},
+	"lint-staged": {
+		"*.{ts,tsx}": [
+			"eslint"
+		]
 	},
 	"engines": {
 		"node": ">=16",

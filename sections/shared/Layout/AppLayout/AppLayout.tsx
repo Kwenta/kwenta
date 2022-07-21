@@ -1,10 +1,10 @@
 import { FC } from 'react';
 
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import NotificationContainer from 'constants/NotificationContainer';
 import { FullScreenContainer, MobileScreenContainer } from 'styles/common';
 
 import Header from './Header';
-import NotificationContainer from 'constants/NotificationContainer';
-import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import MobileUserMenu from './Header/MobileUserMenu';
 
 type AppLayoutProps = {

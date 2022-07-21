@@ -1,35 +1,22 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import SegmentedControl from 'components/SegmentedControl';
-import PositionButtons from 'sections/futures/PositionButtons';
-import OrderSizing from 'sections/futures/OrderSizing';
-import LeverageInput from 'sections/futures/LeverageInput';
-
-import { leverageSideState, orderTypeState } from 'store/futures';
-import useFuturesData from 'hooks/useFuturesData';
-import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import FeeInfoBox from 'sections/futures/FeeInfoBox';
+import LeverageInput from 'sections/futures/LeverageInput';
+import OrderSizing from 'sections/futures/OrderSizing';
+import PositionButtons from 'sections/futures/PositionButtons';
+import ManagePosition from 'sections/futures/Trade/ManagePosition';
 import NextPrice from 'sections/futures/Trade/NextPrice';
+import { leverageSideState, orderTypeState } from 'store/futures';
+
 import TradeConfirmationDrawer from '../drawers/TradeConfirmationDrawer';
 
 const OpenPositionTab: React.FC = () => {
 	const [modalOpen, setModalOpen] = React.useState(false);
-
 	const [orderType, setOrderType] = useRecoilState(orderTypeState);
 	const [leverageSide, setLeverageSide] = useRecoilState(leverageSideState);
-
-	const {
-		onTradeAmountChange,
-		onTradeAmountSUSDChange,
-		onLeverageChange,
-		isMarketCapReached,
-		placeOrderTranslationKey,
-		dynamicFee,
-		error,
-		orderTxn,
-	} = useFuturesData();
 
 	return (
 		<div>
@@ -43,31 +30,15 @@ const OpenPositionTab: React.FC = () => {
 
 			<PositionButtons selected={leverageSide} onSelect={setLeverageSide} />
 
-			<OrderSizing
-				onAmountChange={onTradeAmountChange}
-				onAmountSUSDChange={onTradeAmountSUSDChange}
-				onLeverageChange={onLeverageChange}
-			/>
+			<OrderSizing />
 
-			<LeverageInput onLeverageChange={onLeverageChange} />
+			<LeverageInput />
 
-			<ManagePosition
-				marketCapReached={isMarketCapReached}
-				translationKey={placeOrderTranslationKey}
-				openConfirmationModal={() => setModalOpen(true)}
-				error={error}
-				orderError={orderTxn.errorMessage}
-			/>
+			<ManagePosition openConfirmationModal={() => setModalOpen(true)} />
 
-			<FeeInfoBox dynamicFee={dynamicFee} />
+			<FeeInfoBox />
 
-			<TradeConfirmationDrawer
-				open={modalOpen}
-				closeDrawer={() => setModalOpen(false)}
-				gasLimit={orderTxn.gasLimit}
-				l1Fee={orderTxn.optimismLayerOneFee}
-				onConfirmOrder={() => orderTxn.mutate()}
-			/>
+			<TradeConfirmationDrawer open={modalOpen} closeDrawer={() => setModalOpen(false)} />
 		</div>
 	);
 };

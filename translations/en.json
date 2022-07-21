@@ -15,7 +15,6 @@
 			"dashboard": "dashboard",
 			"markets": "futures",
 			"leaderboard": "leaderboard",
-			"futures-dashboard": "dashboard",
 			"earn": "earn"
 		},
 		"networks-switcher": {
@@ -56,7 +55,7 @@
 		},
 		"hero": {
 			"title": "UNSTOPPABLE SYNTHETIC LEVERAGE",
-			"copy": "Trade commodities, forex, crypto, and more with up to <0>10x leverage</0> and <0>deep liquidity</0>."
+			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0>."
 		},
 		"assets": {
 			"title": "TRENDING MARKETS",
@@ -108,7 +107,7 @@
 			"description": "Explore The Endless Possibilities Of Kwenta",
 			"how-to-trade": {
 				"title": "Learn How to Trade on Kwenta",
-				"copy": "Learn about the many features of Kwenta; 10x leverage, instant transactions, deep liquidity, synthetic assets, and more."
+				"copy": "Learn about the many features of Kwenta; 25x leverage, instant transactions, deep liquidity, synthetic assets, and more."
 			},
 			"how-to-stake": {
 				"title": "Learn how to start earning with Kwenta",
@@ -281,13 +280,16 @@
 	"exchange": {
 		"page-title": "Exchange | Kwenta",
 		"page-title-currency-pair": "{{baseCurrencyKey}}/{{quoteCurrencyKey}} - {{rate}} | Kwenta",
+		"common": {
+			"from": "from",
+			"into": "into"
+		},
 		"synth-exchange": "Synth Exchange",
 		"currency-card": {
 			"synth-name": "-",
 			"amount-placeholder": "0.0000",
 			"wallet-balance": "balance:",
 			"currency-selector": {
-				"select-synth": "select synth",
 				"select-token": "select token"
 			},
 			"max-button": "max",
@@ -317,42 +319,6 @@
 				"1h-funding-rate": "Funding applies to all open positions. A positive rate means longs pay shorts, a negative rate means shorts pay longs. The rate is calculated as the average funding paid by open positions for the last hour. Funding accrues on a position every time it is opened, modified, or closed. Funding accrues on open positions."
 			}
 		},
-		"price-chart-card": {
-			"compare": "compare",
-			"ratio": "ratio",
-			"overlay-messages": {
-				"frozen": {
-					"title": "{{currencyKey}} synth has been frozen",
-					"subtitle": "Reset in progress."
-				},
-				"market-closure": {
-					"title": "{{currencyKey}} market has been closed",
-					"subtitle": "Reset in progress.",
-					"after-hours": "Aftermarket trading pool available <linkTag>{{linkText}}</linkTag>",
-					"here": "here"
-				},
-				"system-upgrade": {
-					"title": "{{currencyKey}} synth paused",
-					"subtitle": "Please check the Synthetix Discord for details."
-				},
-				"circuit-breaker": {
-					"title": "Circuit breaker triggered for {{currencyKey}}",
-					"subtitle": "Reset in progress"
-				},
-				"emergency": {
-					"title": "Emergency shutdown activated for {{currencyKey}}",
-					"subtitle": "Reset in progress"
-				}
-			},
-			"tooltip": {
-				"close": "close",
-				"high": "high",
-				"low": "low",
-				"open": "open",
-				"price": "price"
-			},
-			"no-data": "No data"
-		},
 		"summary-info": {
 			"gas-price-gwei": "gas price (GWEI)",
 			"max-fee-gwei": "Max Fee (GWEI)",
@@ -377,8 +343,6 @@
 			}
 		},
 		"onboard": {
-			"message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> to trade Synths:",
-			"l2-message": "Your wallet has no Synths. Buy <0>{{currencyKey}}</0> on 1inch to trade Synths:",
 			"1inch-button": "Visit 1inch"
 		},
 		"connect-wallet-card": {
@@ -416,10 +380,6 @@
 				"learn-more": "Learn more"
 			}
 		},
-		"common": {
-			"from": "from",
-			"into": "into"
-		},
 		"errors": {
 			"fee-reclamation": "There is a waiting period after completing a trade. Please wait approximately {{waitingPeriod}} minutes before attempting to exchange {{currencyKey}}",
 			"settlement-waiting": "Please wait approximately {{waitingPeriod}} minutes before attempting to settle {{currencyKey}}"
@@ -436,74 +396,18 @@
 	},
 	"dashboard": {
 		"page-title": "Dashboard | Kwenta",
-		"trending": "Trending",
-		"watchlist": {
-			"title": "Watchlist"
+		"titles": {
+			"trading": "Trading",
+			"community": "Community",
+			"staking": "Stake & Rewards"
 		},
 		"tabs": {
-			"nav": {
-				"synth-balances": "Synth Balances",
-				"convert": "Synth Onramp",
-				"crypto-balances": "Crypto Balances",
-				"transactions": "Transactions",
-				"deprecated": "Deprecated"
-			}
-		},
-		"onboard": {
-			"convert": "Synth Onramp",
-			"title": "Learn How it Works",
-			"subtitle": "Get up and running on Kwenta and exchange everything.",
-			"learn-more": "Learn More",
-			"how-it-works-modal": {
-				"title": "How it works"
-			},
-			"convert-card": {
-				"slippage-selector": {
-					"title": "Slippage"
-				}
-			}
-		},
-		"your-portfolio": {
-			"title": "Your Portfolio"
-		},
-		"synth-sort": {
-			"price": "Price",
-			"24h-vol": "24H Volume",
-			"24h-high": "24H High",
-			"24h-low": "24H Low",
-			"24h-change": "24H Change"
-		},
-		"transactions": {
-			"synth-sort": {
-				"allSynths": "All Synths"
-			},
-			"order-type-sort": {
-				"allOrderTypes": "All Order Types",
-				"market": "Market",
-				"limit": "Limit"
-			},
-			"table": {
-				"orderType": "Order Type",
-				"from": "From",
-				"to": "To",
-				"value": "Value",
-				"fee-reclaim": "Fee Rebate/Reclaim",
-				"no-results": "No transactions found",
-				"tx-reclaim-fee-hint": "Transaction incurred a fee rebate if +ve. Otherwise, fee was reclaimed.",
-				"price-adjustment-hint": "Price adjustment currently in progress"
-			}
-		},
-		"fee-reclaiming-synths": {
-			"title": "In Progress",
-			"row": {
-				"main-col-subtitle": "Price adjustment in progress",
-				"main-col-complete-subtitle": "Price adjustment complete",
-				"col-trades": "Trades",
-				"col-debt-surplus": "Debt/Surplus",
-				"col-remaining": "Remaining"
-			},
-			"settling-fee": "Settling...",
-			"settle-fee": "Settle fee"
+			"overview": "Overview",
+			"history": "History",
+			"rewards": "Rewards",
+			"markets": "Markets",
+			"governance": "Governance",
+			"staking": "Staking"
 		},
 		"overview": {
 			"futures-positions-table": {
@@ -531,7 +435,25 @@
 				"open-interest": "Open Interest",
 				"daily-volume": "24H Volume"
 			},
-			"history-tabs": {
+			"spot-markets-table": {
+				"market": "Market",
+				"price": "Price",
+				"24h-vol": "24H Volume",
+				"24h-change": "24H Change"
+			},
+			"positions-tabs": {
+				"futures": "Futures Positions",
+				"shorts": "Shorts",
+				"spot": "Spot Balances"
+			},
+			"markets-tabs": {
+				"futures": "Futures Markets",
+				"spot": "Spot Markets",
+				"synths": "Synths Markets"
+			}
+		},
+		"history": {
+			"tabs": {
 				"futures": "Futures History",
 				"spot": "Spot History"
 			},
@@ -555,16 +477,6 @@
 				"no-results": "Perpetual Futures are available on Optimism L2",
 				"no-trade-history": "You have no trades yet.",
 				"no-trade-history-link": "Trade Perpetual Futures on Kwenta now!"
-			},
-			"positions-tabs": {
-				"futures": "Futures Positions",
-				"shorts": "Shorts",
-				"spot": "Spot Balances"
-			},
-			"markets-tabs": {
-				"futures": "Futures Markets",
-				"spot": "Spot Markets",
-				"synths": "Synths Markets"
 			}
 		},
 		"deprecated": {
@@ -579,7 +491,6 @@
 	},
 	"futures": {
 		"page-title": "Futures | Kwenta",
-		"not-available-on-l1": "Futures is not available on L1",
 		"wallet-overview": {
 			"no-positions": "You have no open positions. Open a position now: ",
 			"title": "wallet overview",
@@ -598,36 +509,6 @@
 				"margin": "Remaining margin",
 				"liquidation": "liquidation price",
 				"roi": "ROI"
-			}
-		},
-		"hero": {
-			"countdown": {
-				"title": "Countdown",
-				"endMessage": "Competition ends ",
-				"closed": "NOW CLOSED"
-			},
-			"welcome": {
-				"title": "Decentralized Perpetual Futures on Layer 2",
-				"subtitle": "Trade with up to 10x more capital.",
-				"body": "Open long or short leveraged positions with low gas fees, fast transactions, and the deepest liquidity available on the market.",
-				"button": "Learn more"
-			},
-			"refer": {
-				"title": "Refer a friend for rewards",
-				"body": "Share Kwenta’s Futures trading experience and receive rewards.",
-				"button": "refer"
-			}
-		},
-		"leaderboard": {
-			"title": "leaderboard"
-		},
-		"markets": {
-			"title": "markets",
-			"table": {
-				"market": "market",
-				"price": "price",
-				"change": "24H change",
-				"funding": "24H funding rate"
 			}
 		},
 		"market": {
@@ -736,7 +617,7 @@
 					"warning": "WARNING: this will close your position",
 					"competition-closed": "Competition Closed",
 					"open-position": "Open Position",
-					"modify-position": "Modify Position",
+					"modify-position": "modify",
 					"deposit-margin-minimum": "Deposit Margin",
 					"oi-caps-reached": "Open Interest Cap Reached",
 					"place-next-price-order": "Place Next-Price Order"
@@ -806,7 +687,7 @@
 					"margin-ratio-tooltip": "Margin ratio is your remaining margin / notional value.",
 					"accrued-funding": "accrued funding",
 					"accrued-funding-tooltip": "Funding is continuous and accrued over time. Longs pay shorts if market is skewed long and vice versa.",
-					"close-position": "close position",
+					"close-position": "close",
 					"manage-position": "manage position",
 					"modal": {
 						"title": "Close position",
@@ -919,12 +800,6 @@
 	},
 	"leaderboard": {
 		"page-title": "Leaderboard | Kwenta",
-		"tabs": {
-			"nav": {
-				"leaderboard": "Leaderboard",
-				"statistics": "Statistics"
-			}
-		},
 		"leaderboard": {
 			"table": {
 				"title": "All Traders",
@@ -948,16 +823,6 @@
 				"total-trades": "Trades",
 				"total-volume": "Total Volume",
 				"total-pnl": "Realized PnL"
-			}
-		},
-		"statistics": {
-			"failed-loading": "Failed to fetch results.",
-			"empty-results": "No results found.",
-			"open-interest": {
-				"title": "Open Interest"
-			},
-			"distribution": {
-				"title": "Synths Distribution"
 			}
 		}
 	},
@@ -1066,30 +931,6 @@
 			"title": "Swap Widget"
 		}
 	},
-	"futures-dashboard": {
-		"page-title": "Futures Dashboard | Kwenta",
-		"titles": {
-			"trading": "Trading",
-			"community": "Community",
-			"staking": "Stake & Rewards"
-		},
-		"tabs": {
-			"nav": {
-				"overview": "Overview",
-				"history": "History",
-				"rewards": "Rewards",
-				"markets": "Markets",
-				"governance": "Governance",
-				"staking": "Staking"
-			}
-		},
-		"position": {
-			"tab": "open position"
-		},
-		"trades": {
-			"tab": "history"
-		}
-	},
 	"common": {
 		"order-type": {
 			"market": "market",
@@ -1118,8 +959,6 @@
 			"futures-market-gold-short-name": "Gold Perpetual",
 			"futures-market-silver-short-name": "Silver Perpetual"
 		},
-		"total-assets": "{{total}} assets",
-		"total-results": "{{total}} results",
 		"currency-category": {
 			"crypto": "crypto",
 			"forex": "forex",
@@ -1127,18 +966,12 @@
 			"equities": "equities"
 		},
 		"contract": "contract",
-		"search-results": "search results",
 		"chart-periods": {
 			"1H": "1H",
 			"4H": "4H",
 			"1D": "1D",
 			"1W": "1W",
 			"1M": "1M"
-		},
-		"chart-types": {
-			"compare": "compare",
-			"ratio": "ratio",
-			"candlesticks": "candlesticks"
 		},
 		"transaction": {
 			"revert-reason": "Error: {{reason}}",

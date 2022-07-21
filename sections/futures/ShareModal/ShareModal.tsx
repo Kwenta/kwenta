@@ -1,21 +1,19 @@
 import { FC } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
+import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
 import BaseModal from 'components/BaseModal';
+import { FuturesPosition, PositionHistory } from 'queries/futures/types';
+import { FuturesMarketAsset } from 'utils/futures';
 
 import AmountContainer from './AmountContainer';
 import PositionMetadata from './PositionMetadata';
 import ShareModalButton from './ShareModalButton';
 
-import { CurrencyKey } from 'constants/currency';
-import { FuturesPosition, PositionHistory } from 'queries/futures/types';
-
-import PNLGraphicPNG from 'assets/png/pnl-graphic.png';
-
 type ShareModalProps = {
 	position: FuturesPosition | null;
-	marketAsset: CurrencyKey;
+	marketAsset: FuturesMarketAsset;
 	marketAssetRate: number;
 	setShowShareModal: React.Dispatch<React.SetStateAction<boolean>>;
 	futuresPositionHistory: PositionHistory[];
@@ -34,7 +32,7 @@ const ShareModal: FC<ShareModalProps> = ({
 		<>
 			<BaseModal
 				onDismiss={() => setShowShareModal(false)}
-				isOpen={true}
+				isOpen
 				title={t('futures.modals.share.title')}
 			>
 				<ModalWindow>
@@ -42,7 +40,7 @@ const ShareModal: FC<ShareModalProps> = ({
 						<PNLImageFrame>
 							<PNLImage src={PNLGraphicPNG} aria-label="pnl-graphic" />
 						</PNLImageFrame>
-						<AmountContainer marketAsset={marketAsset} position={position} />
+						<AmountContainer position={position} />
 						<PositionMetadata
 							marketAsset={marketAsset}
 							marketAssetRate={marketAssetRate}

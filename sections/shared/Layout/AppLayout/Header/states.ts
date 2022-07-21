@@ -1,4 +1,5 @@
 import { selector } from 'recoil';
+
 import { MENU_LINKS, MenuLink, HOMEPAGE_MENU_LINKS } from './constants';
 
 export const menuLinksState = selector<MenuLink[]>({

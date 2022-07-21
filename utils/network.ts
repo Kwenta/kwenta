@@ -1,7 +1,9 @@
 import detectEthereumProvider from '@metamask/detect-provider';
 import { NetworkId } from '@synthetixio/contracts-interface';
+import loadProvider from '@synthetixio/providers';
 import { GasPrice } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { providers } from 'ethers';
 
 import { DEFAULT_GAS_BUFFER, DEFAULT_NETWORK_ID } from 'constants/defaults';
 import {
@@ -10,7 +12,10 @@ import {
 	GWEI_DECIMALS,
 	GasLimitEstimate,
 	SUPPORTED_NETWORKS,
+	BLAST_NETWORK_LOOKUP,
 } from 'constants/network';
+
+import logError from './logError';
 
 type EthereumProvider = {
 	isMetaMask: boolean;
@@ -32,7 +37,7 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 		}
 		return DEFAULT_NETWORK_ID;
 	} catch (e) {
-		console.log(e);
+		logError(e);
 		return DEFAULT_NETWORK_ID;
 	}
 }
@@ -40,6 +45,44 @@ export async function getDefaultNetworkId(walletConnected: boolean = true): Prom
 export type GasInfo = {
 	limit: number;
 	l1Fee: number;
+};
+
+const loadInfuraProvider = (networkId: NetworkId) => {
+	if (!process.env.NEXT_PUBLIC_INFURA_PROJECT_ID) {
+		throw new Error('You must define NEXT_PUBLIC_INFURA_PROJECT_ID in your environment');
+	}
+
+	return loadProvider({
+		networkId,
+		infuraId: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID,
+	});
+};
+
+const loadBlastProvider = (networkId: NetworkId) => {
+	if (!process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID) {
+		throw new Error('You must define NEXT_PUBLIC_BLASTAPI_PROJECT_ID in your environment');
+	}
+
+	const networkSlug = BLAST_NETWORK_LOOKUP[networkId];
+	const networkUrl = `https://${networkSlug}.blastapi.io/${process.env.NEXT_PUBLIC_BLASTAPI_PROJECT_ID}/`;
+	return new providers.JsonRpcProvider(networkUrl, networkId);
+};
+
+export const getDefaultProvider = (networkId: NetworkId) => {
+	const providerId = process.env.NEXT_PUBLIC_PROVIDER_ID;
+
+	let ethersProvider;
+	switch (providerId) {
+		case 'BLAST_API':
+			ethersProvider = loadBlastProvider(networkId);
+			break;
+		case 'INFURA':
+			ethersProvider = loadInfuraProvider(networkId);
+			break;
+		default:
+			throw new Error('You must define NEXT_PUBLIC_PROVIDER_ID in your environment');
+	}
+	return ethersProvider;
 };
 
 export const getTransactionPrice = (

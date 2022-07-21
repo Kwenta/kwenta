@@ -1,28 +1,19 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import Wei, { wei } from '@synthetixio/wei';
-import useSynthetixQueries from '@synthetixio/queries';
 
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import BaseModal from 'components/BaseModal';
-import { gasSpeedState } from 'store/wallet';
-
-import { FlexDivCol, FlexDivCentered } from 'styles/common';
 import Button from 'components/Button';
-import { newGetTransactionPrice } from 'utils/network';
-
-import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { Synths } from 'constants/currency';
-import Connector from 'containers/Connector';
-import { zeroBN, formatCurrency } from 'utils/formatters/number';
-import { PositionSide } from '../types';
-import { GasLimitEstimate } from 'constants/network';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { computeNPFee } from 'utils/costCalculations';
 import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
+import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	currentMarketState,
 	leverageSideState,
@@ -30,20 +21,20 @@ import {
 	positionState,
 	tradeSizeState,
 } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCol, FlexDivCentered } from 'styles/common';
+import { computeNPFee } from 'utils/costCalculations';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { zeroBN, formatCurrency } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type NextPriceConfirmationModalProps = {
 	onDismiss: () => void;
-	gasLimit: GasLimitEstimate;
-	onConfirmOrder: () => void;
-	l1Fee: Wei | null;
 };
 
-const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
-	onDismiss,
-	gasLimit,
-	onConfirmOrder,
-	l1Fee,
-}) => {
+const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -58,6 +49,8 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);
+
+	const { orderTxn } = useFuturesContext();
 
 	const gasPrices = useMemo(
 		() => (ethGasPriceQuery.isSuccess ? ethGasPriceQuery?.data ?? undefined : undefined),
@@ -78,8 +71,14 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	const nextPriceDetails = nextPriceDetailsQuery?.data;
 
 	const transactionFee = useMemo(
-		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
-		[gasPrice, gasLimit, ethPriceRate, l1Fee]
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				orderTxn.gasLimit,
+				ethPriceRate,
+				orderTxn.optimismLayerOneFee
+			),
+		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 
 	const positionSize = position?.position?.size ?? zeroBN;
@@ -155,7 +154,7 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({
 	);
 
 	const handleConfirmOrder = async () => {
-		onConfirmOrder();
+		orderTxn.mutate();
 		onDismiss();
 	};
 

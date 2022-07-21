@@ -1,16 +1,17 @@
+import request, { gql } from 'graphql-request';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import ROUTES from 'constants/routes';
+import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
+import logError from 'utils/logError';
 
-import QUERY_KEYS from 'constants/queryKeys';
-import { calculateTradeVolumeForAllSynths } from 'queries/futures/utils';
-import { SynthsVolumes } from './type';
-import request, { gql } from 'graphql-request';
-import { getSynthsEndpoint } from './utils';
 import { SYNTHS_ENDPOINT_OPTIMISM_MAIN } from './constants';
-import ROUTES from 'constants/routes';
+import { SynthsVolumes } from './type';
+import { getSynthsEndpoint } from './utils';
 
 const useGetSynthsTradingVolumeForAllMarkets = (
 	yesterday: number,
@@ -50,7 +51,7 @@ const useGetSynthsTradingVolumeForAllMarkets = (
 				);
 				return response ? calculateTradeVolumeForAllSynths(response) : null;
 			} catch (e) {
-				console.log(e);
+				logError(e);
 				return null;
 			}
 		},

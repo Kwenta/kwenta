@@ -1,6 +1,7 @@
-import nc from 'next-connect';
-import cors from 'cors';
 import axios from 'axios';
+import cors from 'cors';
+import nc from 'next-connect';
+
 import { FOREX_BASE_API_URL } from 'queries/rates/constants';
 
 enum Symbols {

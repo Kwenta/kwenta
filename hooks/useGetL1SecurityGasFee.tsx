@@ -1,9 +1,9 @@
 import { getContractFactory, predeploys } from '@eth-optimism/contracts';
 import { BytesLike, ethers } from 'ethers';
 import { omit } from 'lodash';
+import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
-import { useRecoilValue } from 'recoil';
 import { isL2State } from 'store/wallet';
 
 type MetaTx = {

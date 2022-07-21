@@ -1,30 +1,34 @@
-import React, { useMemo } from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilValue } from 'recoil';
-
-import { FlexDivCol } from 'styles/common';
-import { useTranslation } from 'react-i18next';
-import StyledTooltip from 'components/Tooltip/StyledTooltip';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { isFiatCurrency } from 'utils/currencies';
-import { Synths } from 'constants/currency';
-import { PositionSide } from 'queries/futures/types';
-import { formatNumber } from 'utils/formatters/number';
-import Connector from 'containers/Connector';
-import { NO_VALUE } from 'constants/placeholder';
-import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { getSynthDescription, getMarketKey, isEurForex } from 'utils/futures';
 import Wei, { wei } from '@synthetixio/wei';
-import { CurrencyKey } from 'constants/currency';
-import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { Price } from 'queries/rates/types';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { currentMarketState, positionState, potentialTradeDetailsState } from 'store/futures';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
+
 import PreviewArrow from 'components/PreviewArrow';
+import StyledTooltip from 'components/Tooltip/StyledTooltip';
+import { Synths } from 'constants/currency';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import { NO_VALUE } from 'constants/placeholder';
+import Connector from 'containers/Connector';
+import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'queries/futures/types';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { Price } from 'queries/rates/types';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import {
+	currentMarketState,
+	marketKeyState,
+	positionState,
+	potentialTradeDetailsState,
+} from 'store/futures';
+import { FlexDivCol } from 'styles/common';
 import media from 'styles/media';
+import { isFiatCurrency } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import { formatNumber } from 'utils/formatters/number';
+import { getSynthDescription, isEurForex } from 'utils/futures';
 
 type PositionCardProps = {
 	currencyKeyRate: number;
@@ -68,18 +72,18 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 
 	const positionDetails = position?.position ?? null;
 	const futuresPositionsQuery = useGetFuturesPositionForAccount();
-	const { isFuturesMarketClosed } = useFuturesMarketClosed(currencyKey as CurrencyKey);
+	const { isFuturesMarketClosed } = useFuturesMarketClosed(marketKey);
 
 	const potentialTrade = useRecoilValue(potentialTradeDetailsState);
 
 	const futuresPositions = futuresPositionsQuery?.data ?? null;
 
-	const { synthsMap, network } = Connector.useContainer();
+	const { synthsMap } = Connector.useContainer();
 
-	const marketKey = getMarketKey(currencyKey, network.id);
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const minDecimals =
 		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
@@ -105,7 +109,8 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			const existingValue = positionHistory.avgEntryPrice.mul(positionHistory.size);
 			const newValue = previewTradeData.price.mul(potentialTrade.size);
 			const totalValue = existingValue.add(newValue);
-			return totalValue.div(totalSize);
+
+			return totalSize.gt(0) ? totalValue.div(totalSize) : null;
 		}
 		return null;
 	}, [positionHistory, previewTradeData, potentialTrade]);
@@ -317,7 +322,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 								{t('futures.market.position-card.position-side')}
 							</StyledSubtitleWithCursor>
 						</PositionCardTooltip>
-						{data.positionSide}
+						<div data-testid="position-card-side-value">{data.positionSide}</div>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip
@@ -409,7 +414,7 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 								{t('futures.market.position-card.leverage')}
 							</StyledSubtitleWithCursor>
 						</LeftMarginTooltip>
-						<StyledValue>{data.leverage}</StyledValue>
+						<StyledValue data-testid="position-card-leverage-value">{data.leverage}</StyledValue>
 					</InfoRow>
 					<InfoRow>
 						<PositionCardTooltip

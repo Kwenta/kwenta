@@ -1,16 +1,14 @@
+import Wei from '@synthetixio/wei';
+import Tippy from '@tippyjs/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import Tippy from '@tippyjs/react';
-
-import { NO_VALUE } from 'constants/placeholder';
 
 import TimerIcon from 'assets/svg/app/timer.svg';
-
+import { NO_VALUE } from 'constants/placeholder';
 import { formatPercent } from 'utils/formatters/number';
 
 import { SummaryItem, SummaryItemValue, SummaryItemLabel } from '../common';
-import Wei from '@synthetixio/wei';
 
 type FeeRateSummaryItemProps = {
 	totalFeeRate: Wei | null;

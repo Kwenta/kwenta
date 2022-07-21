@@ -1,6 +1,8 @@
 import Wei from '@synthetixio/wei';
+
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import { PotentialTradeStatus } from 'sections/futures/types';
+import { FuturesMarketAsset } from 'utils/futures';
 
 export type PositionDetail = {
 	remainingMargin: Wei;
@@ -49,7 +51,7 @@ export type FuturesFilledPosition = {
 };
 
 export type FuturesPosition = {
-	asset: string;
+	asset: FuturesMarketAsset;
 	order: FuturesOrder | null;
 	remainingMargin: Wei;
 	accessibleMargin: Wei;
@@ -58,7 +60,7 @@ export type FuturesPosition = {
 
 export type FuturesMarket = {
 	market: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: Wei;
 	feeRates: {
@@ -119,7 +121,7 @@ export type MarginTransfer = {
 	action: string;
 	amount: string;
 	isPositive: boolean;
-	asset: string;
+	asset: FuturesMarketAsset;
 };
 
 export type PositionHistory = {
@@ -129,7 +131,7 @@ export type PositionHistory = {
 	openTimestamp: number;
 	closeTimestamp: number;
 	market: string;
-	asset: string;
+	asset: FuturesMarketAsset;
 	account: string;
 	isOpen: boolean;
 	isLiquidated: boolean;

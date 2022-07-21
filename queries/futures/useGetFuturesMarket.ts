@@ -1,32 +1,32 @@
-import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { wei } from '@synthetixio/wei';
+import { useQuery, UseQueryOptions } from 'react-query';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
-import { appReadyState } from 'store/app';
-import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
-
-import Connector from 'containers/Connector';
 import QUERY_KEYS from 'constants/queryKeys';
-import { FuturesMarket } from './types';
-import { getMarketKey } from 'utils/futures';
-import { getReasonFromCode } from './utils';
+import Connector from 'containers/Connector';
 import { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { currentMarketState, marketInfoState } from 'store/futures';
+import { appReadyState } from 'store/app';
+import { marketInfoState, marketKeyState } from 'store/futures';
+import { isL2State, isWalletConnectedState, networkState } from 'store/wallet';
+import { FuturesMarketAsset } from 'utils/futures';
+
+import { FuturesMarket } from './types';
+import { getReasonFromCode } from './utils';
 
 const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
-	const currentMarket = useRecoilValue(currentMarketState);
+	const marketKey = useRecoilValue(marketKeyState);
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const isL2 = useRecoilValue(isL2State);
-	const [, setMarketInfo] = useRecoilState(marketInfoState);
+	const setMarketInfo = useSetRecoilState(marketInfoState);
 
 	const { synthetixjs } = Connector.useContainer();
 
 	const isReady = isAppReady && !!synthetixjs;
 
 	return useQuery<FuturesMarket | null>(
-		QUERY_KEYS.Futures.Market(network.id, currentMarket),
+		QUERY_KEYS.Futures.Market(network.id, marketKey),
 		async () => {
 			if (isWalletConnected && !isL2) {
 				return null;
@@ -36,8 +36,6 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 				contracts: { FuturesMarketData, SystemStatus },
 				utils,
 			} = synthetixjs!;
-
-			const marketKey = getMarketKey(currentMarket, network.id);
 
 			const [markets, globals, { suspended, reason }] = await Promise.all([
 				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(marketKey)]),
@@ -61,7 +59,7 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 
 			const parsedMarket = {
 				market: m,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).neg(),
 				feeRates: {

@@ -1,11 +1,11 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
+import QUERY_KEYS from 'constants/queryKeys';
+import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { isL2State, walletAddressState } from 'store/wallet';
 
-import Connector from 'containers/Connector';
-import QUERY_KEYS from 'constants/queryKeys';
 import { FuturesOpenInterest } from './types';
 import { mapOpenInterest } from './utils';
 

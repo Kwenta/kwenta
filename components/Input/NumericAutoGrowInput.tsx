@@ -1,5 +1,5 @@
-import AutosizeInput from 'react-input-autosize';
 import { ChangeEvent, FC, useState } from 'react';
+import AutosizeInput from 'react-input-autosize';
 
 type NumericAutoGrowInputProps = {
 	value: string | number;

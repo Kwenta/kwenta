@@ -1,13 +1,12 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { FlexDivCol, FlexDivRow } from 'styles/common';
-import LeverageSlider from '../LeverageSlider';
-import CustomNumericInput from 'components/Input/CustomNumericInput';
 import Button from 'components/Button';
-import { truncateNumbers } from 'utils/formatters/number';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import CustomNumericInput from 'components/Input/CustomNumericInput';
+import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
 import {
 	leverageState,
 	leverageValueCommittedState,
@@ -17,22 +16,23 @@ import {
 	orderTypeState,
 	positionState,
 } from 'store/futures';
-import { DEFAULT_FIAT_DECIMALS } from 'constants/defaults';
+import { FlexDivCol, FlexDivRow } from 'styles/common';
+import { truncateNumbers } from 'utils/formatters/number';
 
-type LeverageInputProps = {
-	onLeverageChange: (value: string) => void;
-};
+import LeverageSlider from '../LeverageSlider';
 
-const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
+const LeverageInput: FC = () => {
 	const { t } = useTranslation();
 	const [mode, setMode] = useState<'slider' | 'input'>('input');
 	const leverage = useRecoilValue(leverageState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 	const orderType = useRecoilValue(orderTypeState);
 	const isDisclaimerDisplayed = useRecoilValue(nextPriceDisclaimerState);
-	const [, setIsLeverageValueCommitted] = useRecoilState(leverageValueCommittedState);
+	const setIsLeverageValueCommitted = useSetRecoilState(leverageValueCommittedState);
 	const marketInfo = useRecoilValue(marketInfoState);
 	const position = useRecoilValue(positionState);
+
+	const { onLeverageChange } = useFuturesContext();
 
 	const modeButton = useMemo(() => {
 		return (
@@ -50,6 +50,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 		return position?.remainingMargin.lte(0) || maxLeverage.lte(0);
 	}, [position, maxLeverage]);
 
+	const leverageButtons = marketInfo?.maxLeverage.eq(25) ? ['5', '10', '25'] : ['2', '5', '10'];
 	const truncateMaxLeverage = maxLeverage.gte(0)
 		? truncateNumbers(maxLeverage, DEFAULT_FIAT_DECIMALS)
 		: 10;
@@ -86,6 +87,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 			) : (
 				<LeverageInputContainer>
 					<StyledInput
+						data-testid="leverage-input"
 						value={leverage}
 						placeholder="1"
 						suffix="x"
@@ -96,7 +98,7 @@ const LeverageInput: FC<LeverageInputProps> = ({ onLeverageChange }) => {
 						}}
 						disabled={isDisabled}
 					/>
-					{['2', '5', '10'].map((l) => (
+					{leverageButtons.map((l) => (
 						<LeverageButton
 							key={l}
 							mono

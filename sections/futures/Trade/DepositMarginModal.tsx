@@ -1,25 +1,26 @@
-import React from 'react';
-import styled from 'styled-components';
+import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
-import { formatCurrency } from 'utils/formatters/number';
-import { Synths } from 'constants/currency';
 import Button from 'components/Button';
-import { FlexDivRowCentered } from 'styles/common';
-import useSynthetixQueries from '@synthetixio/queries';
-import { useRecoilValue } from 'recoil';
-import { gasSpeedState } from 'store/wallet';
-import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { NO_VALUE } from 'constants/placeholder';
+import Error from 'components/Error';
 import CustomInput from 'components/Input/CustomInput';
+import { Synths } from 'constants/currency';
+import { NO_VALUE } from 'constants/placeholder';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { currentMarketState } from 'store/futures';
-import { useRefetchContext } from 'contexts/RefetchContext';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivRowCentered } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
+import { newGetTransactionPrice } from 'utils/network';
 
 type DepositMarginModalProps = {
 	onDismiss(): void;
@@ -110,7 +111,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 	return (
 		<StyledBaseModal
 			title={t('futures.market.trade.margin.modal.deposit.title')}
-			isOpen={true}
+			isOpen
 			onDismiss={onDismiss}
 		>
 			<BalanceContainer>
@@ -120,6 +121,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</BalanceContainer>
 			<CustomInput
+				dataTestId="futures-market-trade-deposit-margin-input"
 				placeholder={PLACEHOLDER}
 				value={amount}
 				onChange={(_, v) => setAmount(v)}
@@ -132,7 +134,12 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				{t('futures.market.trade.margin.modal.deposit.disclaimer')}
 			</MinimumAmountDisclaimer>
 
-			<MarginActionButton disabled={isDisabled} fullWidth onClick={() => depositTxn.mutate()}>
+			<MarginActionButton
+				data-testid="futures-market-trade-deposit-margin-button"
+				disabled={isDisabled}
+				fullWidth
+				onClick={() => depositTxn.mutate()}
+			>
 				{t('futures.market.trade.margin.modal.deposit.button')}
 			</MarginActionButton>
 
@@ -147,7 +154,7 @@ const DepositMarginModal: React.FC<DepositMarginModalProps> = ({ onDismiss, sUSD
 				</BalanceText>
 			</GasFeeContainer>
 
-			{depositTxn.errorMessage && <ErrorMessage>{depositTxn.errorMessage}</ErrorMessage>}
+			{depositTxn.errorMessage && <Error message={depositTxn.errorMessage} formatter="revert" />}
 		</StyledBaseModal>
 	);
 };
@@ -202,13 +209,8 @@ const MinimumAmountDisclaimer = styled.div`
 	text-align: center;
 `;
 
-export const ErrorMessage = styled.div`
-	margin-top: 16px;
-	color: ${(props) => props.theme.colors.selectedTheme.gray};
-`;
-
 export const GasFeeContainer = styled(FlexDivRowCentered)`
-	margin-top: 13px;
+	margin: 13px 0px;
 	padding: 0 14px;
 	p {
 		margin: 0;

@@ -1,27 +1,29 @@
-import { FC, useMemo, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { useTranslation } from 'react-i18next';
+import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-
-import TransactionNotifier from 'containers/TransactionNotifier';
-import BaseModal from 'components/BaseModal';
-import { FlexDivCentered, FlexDivCol } from 'styles/common';
-import { PositionSide } from '../types';
-import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
-import { getFuturesMarketContract } from 'queries/futures/utils';
-import Connector from 'containers/Connector';
-import Button from 'components/Button';
-import { newGetExchangeRatesForCurrencies, synthToAsset } from 'utils/currencies';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { newGetTransactionPrice } from 'utils/network';
-import { gasSpeedState } from 'store/wallet';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import { currentMarketState, positionState } from 'store/futures';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { FC, useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import BaseModal from 'components/BaseModal';
+import Button from 'components/Button';
+import Error from 'components/Error';
+import { Synths } from 'constants/currency';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import { getFuturesMarketContract } from 'queries/futures/utils';
+import { currentMarketState, positionState } from 'store/futures';
+import { gasSpeedState } from 'store/wallet';
+import { FlexDivCentered, FlexDivCol } from 'styles/common';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import { newGetTransactionPrice } from 'utils/network';
+
+import { PositionSide } from '../types';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -29,7 +31,7 @@ type ClosePositionModalProps = {
 
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
-	const { synthetixjs } = Connector.useContainer();
+	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
@@ -88,7 +90,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				setOrderFee(wei(orderFee.fee));
 			} catch (e) {
 				// @ts-ignore
-				console.log(e.message);
+				logError(e.message);
 				// @ts-ignore
 				setError(e?.data?.message ?? e.message);
 			}
@@ -110,7 +112,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 			{
 				label: t('futures.market.user.position.modal.size'),
 				value: formatCurrency(currencyKey || '', positionDetails?.size ?? zeroBN, {
-					sign: synthToAsset(currencyKey as CurrencyKey),
+					sign: currencyKey ? synthsMap[currencyKey]?.sign : '',
 				}),
 			},
 			{
@@ -132,7 +134,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 				}),
 			},
 		];
-	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency]);
+	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency, synthsMap]);
 
 	useEffect(() => {
 		if (closeTxn.hash) {
@@ -151,7 +153,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	return (
 		<StyledBaseModal
 			onDismiss={onDismiss}
-			isOpen={true}
+			isOpen
 			title={t('futures.market.user.position.modal.title')}
 		>
 			<>
@@ -164,14 +166,18 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					</Row>
 				))}
 				<StyledButton
+					data-testid="trade-close-position-confirm-order-button"
 					variant="primary"
 					isRounded
 					size="lg"
 					onClick={() => closeTxn.mutate()}
 					disabled={!!error || !!closeTxn.errorMessage}
 				>
-					{error || closeTxn.errorMessage || t('futures.market.user.position.modal.title')}
+					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
+				{(error || closeTxn.errorMessage) && (
+					<Error message={error || closeTxn.errorMessage || ''} formatter="revert" />
+				)}
 			</>
 		</StyledBaseModal>
 	);
@@ -213,6 +219,7 @@ const ValueColumn = styled(FlexDivCol)`
 
 const StyledButton = styled(Button)`
 	margin-top: 24px;
+	margin-bottom: 16px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

@@ -1,6 +1,9 @@
-import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
 import { Rates } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
+
+import { CurrencyKey, Synths, CRYPTO_CURRENCY_MAP, FIAT_SYNTHS } from 'constants/currency';
+
+import { FuturesMarketKey } from './futures';
 
 export const isSynth = (currencyKey: CurrencyKey) => !!Synths[currencyKey];
 export const isCryptoCurrency = (currencyKey: CurrencyKey) => !!CRYPTO_CURRENCY_MAP[currencyKey];
@@ -29,8 +32,8 @@ export const getExchangeRatesForCurrencies = (
 
 export const newGetExchangeRatesForCurrencies = (
 	rates: Rates | null,
-	base: CurrencyKey | null,
-	quote: CurrencyKey | null
+	base: CurrencyKey | FuturesMarketKey | null,
+	quote: CurrencyKey | FuturesMarketKey | null
 ) =>
 	rates == null ||
 	base == null ||

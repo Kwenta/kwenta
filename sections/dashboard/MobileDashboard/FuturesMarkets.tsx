@@ -1,10 +1,12 @@
 import React from 'react';
-import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
-import FuturesMarketsTable from '../FuturesMarketsTable';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+
 import { Synths } from 'constants/currency';
-import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+
+import FuturesMarketsTable from '../FuturesMarketsTable';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const FuturesMarkets = () => {

@@ -1,26 +1,26 @@
-import { FC, useMemo } from 'react';
-import styled from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
-import * as _ from 'lodash/fp';
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { CurrencyKey } from 'constants/currency';
-import Connector from 'containers/Connector';
+import * as _ from 'lodash/fp';
 import values from 'lodash/values';
-import { useQueryClient, Query } from 'react-query';
-import { networkState } from 'store/wallet';
-import { Price, Rates } from 'queries/rates/types';
-import Currency from 'components/Currency';
-import { CellProps } from 'react-table';
-import ChangePercent from 'components/ChangePercent';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import MarketBadge from 'components/Badge/MarketBadge';
-import Table from 'components/Table';
-import { getMarketKey, isEurForex } from 'utils/futures';
 import { useRouter } from 'next/router';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import MarketBadge from 'components/Badge/MarketBadge';
+import ChangePercent from 'components/ChangePercent';
+import Currency from 'components/Currency';
+import Table from 'components/Table';
+import { CurrencyKey } from 'constants/currency';
+import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import Connector from 'containers/Connector';
+import { Price, Rates } from 'queries/rates/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
-import { SynthsVolumes } from 'queries/synths/type';
+import { networkState } from 'store/wallet';
+import { isEurForex, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
 type SpotMarketsTableProps = {
 	exchangeRates: Rates | null;
@@ -39,13 +39,13 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 	const frozenSynthsQuery = queryCache.find(['synths', 'frozenSynths', network.id]);
 
 	const unfrozenSynths =
-		frozenSynthsQuery && (frozenSynthsQuery as Query).state.status === 'success'
+		frozenSynthsQuery && frozenSynthsQuery.state.status === 'success'
 			? synths.filter(
 					(synth) => !(frozenSynthsQuery.state.data as Set<CurrencyKey>).has(synth.name)
 			  )
 			: synths;
 
-	const synthNames: string[] = synths.map((synth): string => synth.name);
+	const synthNames = synths.map((synth) => synth.name);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthNames);
 
 	const yesterday = Math.floor(new Date().setDate(new Date().getDate() - 1) / 1000);
@@ -62,33 +62,25 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 			const price = _.isNil(rate) ? 0 : rate.toNumber();
 			const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 			const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === synth.name);
-			const synthVolumes: SynthsVolumes = synthVolumesQuery?.data ?? ({} as SynthsVolumes);
+			const synthVolumes = synthVolumesQuery?.data ?? {};
 			return {
 				asset: synth.asset,
 				market: synth.name,
-				marketKey: getMarketKey(synth.asset, network.id),
+				marketKey: MarketKeyByAsset[synth.asset as FuturesMarketAsset],
 				synth: synthsMap[synth.asset],
-				description: description,
+				description,
 				price,
-				change: price !== 0 ? (price - pastPrice?.price) / price || '-' : '-',
+				change: price !== 0 ? (price - (pastPrice?.price ?? 0)) / price || '-' : '-',
 				volume: synthVolumes[synth.name] ?? 0,
 			};
 		});
-	}, [
-		synthsMap,
-		unfrozenSynths,
-		synthVolumesQuery,
-		dailyPriceChangesQuery,
-		exchangeRates,
-		t,
-		network.id,
-	]);
+	}, [synthsMap, unfrozenSynths, synthVolumesQuery, dailyPriceChangesQuery, exchangeRates, t]);
 
 	return (
 		<TableContainer>
 			<StyledTable
 				data={data}
-				showPagination={true}
+				showPagination
 				onTableRowClick={(row) => {
 					row.original.market !== 'sUSD'
 						? router.push(`/exchange/${row.original.market}-sUSD`)
@@ -103,14 +95,10 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 				]}
 				columns={[
 					{
-						Header: (
-							<TableHeader>{t('dashboard.overview.futures-markets-table.market')}</TableHeader>
-						),
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.market')}</TableHeader>,
 						accessor: 'market',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.market === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<MarketContainer>
 									<IconContainer>
 										<StyledCurrencyIcon
@@ -135,15 +123,13 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 190,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.price')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.price')}</TableHeader>,
 						accessor: 'price',
 						Cell: (cellProps: CellProps<any>) => {
 							const formatOptions = isEurForex(cellProps.row.original.asset)
 								? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS }
 								: {};
-							return cellProps.row.original.price === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.price}
@@ -156,11 +142,13 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 130,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-change')}</TableHeader>,
+						Header: (
+							<TableHeader>{t('dashboard.overview.spot-markets-table.24h-change')}</TableHeader>
+						),
 						accessor: '24hChange',
 						Cell: (cellProps: CellProps<any>) => {
 							return cellProps.row.original.change === '-' ? (
-								<DefaultCell>-</DefaultCell>
+								<p>-</p>
 							) : (
 								<ChangePercent
 									value={cellProps.row.original.change}
@@ -172,12 +160,10 @@ const SpotMarketsTable: FC<SpotMarketsTableProps> = ({ exchangeRates }) => {
 						width: 105,
 					},
 					{
-						Header: <TableHeader>{t('dashboard.synth-sort.24h-vol')}</TableHeader>,
+						Header: <TableHeader>{t('dashboard.overview.spot-markets-table.24h-vol')}</TableHeader>,
 						accessor: '24hVolume',
 						Cell: (cellProps: CellProps<any>) => {
-							return cellProps.row.original.volume === '-' ? (
-								<DefaultCell>-</DefaultCell>
-							) : (
+							return (
 								<Currency.Price
 									currencyKey={Synths.sUSD}
 									price={cellProps.row.original.volume}
@@ -220,8 +206,6 @@ const StyledValue = styled.div`
 	grid-column: 2;
 	grid-row: 2;
 `;
-
-const DefaultCell = styled.p``;
 
 const TableContainer = styled.div`
 	margin-top: 16px;

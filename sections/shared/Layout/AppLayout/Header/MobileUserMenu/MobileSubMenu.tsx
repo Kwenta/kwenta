@@ -1,12 +1,12 @@
-import styled, { css } from 'styled-components';
-import { useTranslation } from 'react-i18next';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'react-i18next';
+import styled, { css } from 'styled-components';
+
+import ChevronDown from 'assets/svg/app/chevron-down.svg';
+import ChevronUp from 'assets/svg/app/chevron-up.svg';
 
 import { SUB_MENUS, MenuButton } from './common';
-
-import ChevronUp from 'assets/svg/app/chevron-up.svg';
-import ChevronDown from 'assets/svg/app/chevron-down.svg';
 
 type MobileSubMenuOption = {
 	label: string;

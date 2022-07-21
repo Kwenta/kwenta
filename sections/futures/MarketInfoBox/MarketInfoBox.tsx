@@ -1,8 +1,13 @@
+import Wei, { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
-import InfoBox from 'components/InfoBox';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
+import InfoBox from 'components/InfoBox';
+import PreviewArrow from 'components/PreviewArrow';
+import { Synths } from 'constants/currency';
+import { FuturesPotentialTradeDetails } from 'queries/futures/types';
+import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import {
 	leverageSideState,
 	marketInfoState,
@@ -12,13 +17,10 @@ import {
 	potentialTradeDetailsState,
 	tradeSizeState,
 } from 'store/futures';
-import Wei, { wei } from '@synthetixio/wei';
-import { Synths } from 'constants/currency';
-import { PositionSide } from '../types';
-import PreviewArrow from 'components/PreviewArrow';
-import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { computeNPFee } from 'utils/costCalculations';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+
+import { PositionSide } from '../types';
 
 const MarketInfoBox: React.FC = () => {
 	const maxLeverage = useRecoilValue(maxLeverageState);
@@ -94,8 +96,10 @@ const MarketInfoBox: React.FC = () => {
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(tradeSize || zeroBN);
-		const potentialMarginUsage =
-			previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ?? zeroBN;
+		const potentialMarginUsage = previewTrade?.margin.gt(0)
+			? previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ??
+			  zeroBN
+			: zeroBN;
 		const potentialBuyingPower =
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 
@@ -110,6 +114,7 @@ const MarketInfoBox: React.FC = () => {
 
 	return (
 		<StyledInfoBox
+			dataTestId="market-info-box"
 			details={{
 				'Total Margin': {
 					value: `${formatCurrency(Synths.sUSD, totalMargin, {

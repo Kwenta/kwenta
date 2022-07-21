@@ -1,35 +1,41 @@
-import React from 'react';
-import styled, { css } from 'styled-components';
-import { useRouter } from 'next/router';
 import { CurrencyKey } from '@synthetixio/contracts-interface';
-import { useTranslation } from 'react-i18next';
 import { wei } from '@synthetixio/wei';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useRecoilValue } from 'recoil';
+import styled, { css } from 'styled-components';
 
 import Select from 'components/Select';
-import Connector from 'containers/Connector';
-import ROUTES from 'constants/routes';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-
-import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
-import MarketsDropdownOption from './MarketsDropdownOption';
-import MarketsDropdownIndicator from './MarketsDropdownIndicator';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { assetToSynth, iStandardSynth } from 'utils/currencies';
-import { Price, Rates } from 'queries/rates/types';
-import { getDisplayAsset, getSynthDescription, isEurForex } from 'utils/futures';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
+import ROUTES from 'constants/routes';
+import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
-import { useRecoilValue } from 'recoil';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { Price, Rates } from 'queries/rates/types';
+import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import { currentMarketState } from 'store/futures';
+import { assetToSynth, iStandardSynth } from 'utils/currencies';
+import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
+import {
+	FuturesMarketAsset,
+	getDisplayAsset,
+	getSynthDescription,
+	isEurForex,
+	MarketKeyByAsset,
+} from 'utils/futures';
+
+import MarketsDropdownIndicator from './MarketsDropdownIndicator';
+import MarketsDropdownOption from './MarketsDropdownOption';
+import MarketsDropdownSingleValue from './MarketsDropdownSingleValue';
 
 function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
 }
 
 export type MarketsCurrencyOption = {
-	value: CurrencyKey;
+	value: FuturesMarketAsset;
 	label: string;
 	description: string;
 	price?: string;
@@ -40,7 +46,7 @@ export type MarketsCurrencyOption = {
 };
 
 type AssetToCurrencyOptionArgs = {
-	asset: string;
+	asset: FuturesMarketAsset;
 	description: string;
 	price?: string;
 	change?: string;
@@ -50,7 +56,7 @@ type AssetToCurrencyOptionArgs = {
 };
 
 const assetToCurrencyOption = (args: AssetToCurrencyOptionArgs): MarketsCurrencyOption => ({
-	value: args.asset as CurrencyKey,
+	value: args.asset,
 	label: `${getDisplayAsset(args.asset)}-PERP`,
 	...args,
 });
@@ -62,7 +68,7 @@ type MarketsDropdownProps = {
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
+		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
 	);
 
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
@@ -71,7 +77,9 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 	const asset = useRecoilValue(currentMarketState);
 
-	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(asset);
+	const { isFuturesMarketClosed, futuresClosureReason } = useFuturesMarketClosed(
+		MarketKeyByAsset[asset]
+	);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const router = useRouter();
@@ -89,8 +97,12 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 		: null;
 
 	const getBasePriceRate = React.useCallback(
-		(asset: CurrencyKey) => {
-			return Number(futureRates?.[iStandardSynth(asset) ? asset : assetToSynth(asset)] ?? 0);
+		(asset: FuturesMarketAsset) => {
+			return Number(
+				futureRates?.[
+					iStandardSynth(asset as CurrencyKey) ? asset : assetToSynth(asset as CurrencyKey)
+				] ?? 0
+			);
 		},
 		[futureRates]
 	);
@@ -113,7 +125,7 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 
 		return markets.map((market) => {
 			const pastPrice = getPastPrice(market.asset);
-			const basePriceRate = getBasePriceRate(market.asset as CurrencyKey);
+			const basePriceRate = getBasePriceRate(market.asset);
 
 			return assetToCurrencyOption({
 				asset: market.asset,

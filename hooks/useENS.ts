@@ -1,5 +1,6 @@
-import Connector from 'containers/Connector';
 import { useEffect, useState } from 'react';
+
+import Connector from 'containers/Connector';
 
 const useENS = (address?: string): { ensName: string | null; ensAvatar: string | null } => {
 	const [ensName, setENSName] = useState<string | null>(null);

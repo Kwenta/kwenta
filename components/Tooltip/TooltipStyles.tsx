@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+
 import media from 'styles/media';
 
 // base styles for each component that make up the tooltip.

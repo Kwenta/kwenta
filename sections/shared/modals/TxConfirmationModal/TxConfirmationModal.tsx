@@ -1,9 +1,21 @@
+import { CurrencyKey } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import Wei, { wei } from '@synthetixio/wei';
 import { FC, ReactNode, useMemo } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import styled from 'styled-components';
-import Wei, { wei } from '@synthetixio/wei';
 import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
+import InfoIcon from 'assets/svg/app/info.svg';
+import OneInchImage from 'assets/svg/providers/1inch.svg';
+import BaseModal from 'components/BaseModal';
+import Currency from 'components/Currency';
+import Error from 'components/Error';
+import { ESTIMATE_VALUE } from 'constants/placeholder';
+import useCurrencyPrice from 'hooks/useCurrencyPrice';
+import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { isL2State, walletAddressState } from 'store/wallet';
 import {
 	FlexDivRowCentered,
 	numericValueCSS,
@@ -12,22 +24,7 @@ import {
 	Tooltip,
 	ExternalLink,
 } from 'styles/common';
-
-import { isL2State, walletAddressState } from 'store/wallet';
-
-import BaseModal from 'components/BaseModal';
-import Currency from 'components/Currency';
-
-import OneInchImage from 'assets/svg/providers/1inch.svg';
-
 import { formatCurrency, LONG_CRYPTO_CURRENCY_DECIMALS } from 'utils/formatters/number';
-import { MessageButton } from 'sections/exchange/FooterCard/common';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useCurrencyPrice from 'hooks/useCurrencyPrice';
-import { ESTIMATE_VALUE } from 'constants/placeholder';
-import InfoIcon from 'assets/svg/app/info.svg';
-import { CurrencyKey } from '@synthetixio/contracts-interface';
-import useSynthetixQueries from '@synthetixio/queries';
 
 export type TxProvider = 'synthetix' | '1inch' | 'synthswap';
 
@@ -103,11 +100,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 	);
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.confirm-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.confirm-transaction.title')}>
 			<Currencies>
 				{quoteCurrencyKey && (
 					<CurrencyItem>
@@ -188,7 +181,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 									/>
 								}
 								arrow={false}
-								interactive={true}
+								interactive
 							>
 								<TooltipItem>
 									<InfoIcon />
@@ -239,7 +232,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 									/>
 								}
 								arrow={false}
-								interactive={true}
+								interactive
 							>
 								<TooltipItem>
 									<InfoIcon />
@@ -264,7 +257,7 @@ export const TxConfirmationModal: FC<TxConfirmationModalProps> = ({
 			)}
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Error message={txError} formatter="revert"></Error>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>
@@ -332,15 +325,6 @@ const SummaryItemValue = styled.div`
 
 const Actions = styled(FlexDivColCentered)`
 	margin: 8px 0px;
-`;
-
-const Message = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 14px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	flex-grow: 1;
-	text-align: center;
-	margin: 16px 0px;
 `;
 
 const TxProviderContainer = styled.div`

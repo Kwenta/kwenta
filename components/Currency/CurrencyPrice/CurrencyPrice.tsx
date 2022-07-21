@@ -1,15 +1,13 @@
-import React, { FC } from 'react';
-import styled from 'styled-components';
 import Wei, { wei } from '@synthetixio/wei';
+import { ethers } from 'ethers';
+import React, { FC, useMemo } from 'react';
+import styled from 'styled-components';
 
 import ChangePercent from 'components/ChangePercent';
-
 import { CurrencyKey } from 'constants/currency';
-
 import { formatCurrency, FormatCurrencyOptions } from 'utils/formatters/number';
 
 import { ContainerRowMixin } from '../common';
-import { ethers } from 'ethers';
 
 type WeiSource = Wei | number | string | ethers.BigNumber;
 
@@ -33,14 +31,30 @@ export const CurrencyPrice: FC<CurrencyPriceProps> = ({
 	formatOptions,
 	...rest
 }) => {
+	const cleanPrice = useMemo(() => {
+		try {
+			return wei(price);
+		} catch {
+			return '';
+		}
+	}, [price]);
+
+	const cleanConversionRate = useMemo(() => {
+		try {
+			return wei(conversionRate);
+		} catch {
+			return '';
+		}
+	}, [conversionRate]);
+
 	return (
 		<Container {...rest}>
 			<Price className="price">
 				{formatCurrency(
 					currencyKey,
-					conversionRate && price && wei(conversionRate).gt(0)
-						? wei(price).div(conversionRate)
-						: price,
+					cleanConversionRate && cleanPrice && cleanConversionRate.gt(0)
+						? cleanPrice.div(cleanConversionRate)
+						: cleanPrice,
 					{
 						sign,
 						currencyKey: showCurrencyKey != null ? currencyKey : undefined,

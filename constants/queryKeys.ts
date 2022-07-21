@@ -1,4 +1,5 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
+
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -51,14 +52,21 @@ export const QUERY_KEYS = {
 			walletAddress,
 			networkId,
 		],
-		Tokens: (walletAddress: string, networkId: NetworkId) => [
+		Tokens: (walletAddress: string | null, networkId: NetworkId, tokenAddresses: string) => [
 			'walletBalances',
 			'tokens',
 			walletAddress,
 			networkId,
+			tokenAddresses,
 		],
 	},
 	Synths: {
+		Balances: (networkId: NetworkId, walletAddress: string | null) => [
+			'synths',
+			'balances',
+			networkId,
+			walletAddress,
+		],
 		FrozenSynths: ['synths', 'frozenSynths'],
 		Suspension: (currencyKey: CurrencyKey) => ['synths', 'suspension', currencyKey],
 		ExchangeFeeRate: (sourceCurrencyKey: CurrencyKey, destinationCurrencyKey: CurrencyKey) => [
@@ -218,7 +226,11 @@ export const QUERY_KEYS = {
 			market,
 			walletAddress,
 		],
-		MarketsPositions: (markets: string[] | []) => ['futures', 'marketsPositions', markets],
+		MarketsPositions: (
+			networkId: NetworkId,
+			walletAddress: string | null,
+			markets: string[] | []
+		) => ['futures', 'marketsPositions', networkId, walletAddress, markets],
 		Positions: (networkId: NetworkId, markets: string[] | [], walletAddress: string) => [
 			'futures',
 			'positions',

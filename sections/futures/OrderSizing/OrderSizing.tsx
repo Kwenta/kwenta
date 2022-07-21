@@ -1,9 +1,10 @@
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import { Synths } from 'constants/currency';
 import CustomInput from 'components/Input/CustomInput';
-import { FlexDivRow } from 'styles/common';
+import { Synths } from 'constants/currency';
 import {
 	currentMarketState,
 	maxLeverageState,
@@ -11,33 +12,27 @@ import {
 	tradeSizeState,
 	tradeSizeSUSDState,
 } from 'store/futures';
-import { useRecoilValue } from 'recoil';
+import { FlexDivRow } from 'styles/common';
 import { zeroBN } from 'utils/formatters/number';
 
 type OrderSizingProps = {
 	disabled?: boolean;
-	onAmountChange: (value: string) => void;
-	onAmountSUSDChange: (value: string) => void;
-	onLeverageChange: (value: string) => void;
 };
 
-const OrderSizing: React.FC<OrderSizingProps> = ({
-	disabled,
-	onAmountChange,
-	onAmountSUSDChange,
-	onLeverageChange,
-}) => {
+const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const tradeSizeSUSD = useRecoilValue(tradeSizeSUSDState);
 	const position = useRecoilValue(positionState);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const maxLeverage = useRecoilValue(maxLeverageState);
 
+	const { onTradeAmountChange, onTradeAmountSUSDChange, onLeverageChange } = useFuturesContext();
+
 	const handleSetMax = () => {
 		const maxOrderSizeUSDValue = Number(
 			maxLeverage.mul(position?.remainingMargin ?? zeroBN)
 		).toFixed(0);
-		onAmountSUSDChange(maxOrderSizeUSDValue);
+		onTradeAmountSUSDChange(maxOrderSizeUSDValue);
 		onLeverageChange(Number(maxLeverage).toString().substring(0, 4));
 	};
 
@@ -59,7 +54,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 				right={marketAsset || Synths.sUSD}
 				value={tradeSize}
 				placeholder="0.0"
-				onChange={(_, v) => onAmountChange(v)}
+				onChange={(_, v) => onTradeAmountChange(v)}
 				style={{
 					marginBottom: '-1px',
 					borderBottom: 'none',
@@ -69,11 +64,12 @@ const OrderSizing: React.FC<OrderSizingProps> = ({
 			/>
 
 			<CustomInput
+				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
 				right={Synths.sUSD}
 				value={tradeSizeSUSD}
 				placeholder="0.0"
-				onChange={(_, v) => onAmountSUSDChange(v)}
+				onChange={(_, v) => onTradeAmountSUSDChange(v)}
 				style={{
 					borderTopRightRadius: '0px',
 					borderTopLeftRadius: '0px',

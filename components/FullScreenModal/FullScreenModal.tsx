@@ -1,6 +1,7 @@
-import { FC, ReactNode, SyntheticEvent } from 'react';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { FC, ReactNode, SyntheticEvent } from 'react';
 import styled from 'styled-components';
+
 import { HEADER_HEIGHT, zIndex } from 'constants/ui';
 
 type FullScreenModalProps = {

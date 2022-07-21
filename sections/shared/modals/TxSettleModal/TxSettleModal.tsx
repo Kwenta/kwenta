@@ -1,14 +1,14 @@
 import { FC, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { FlexDivColCentered } from 'styles/common';
 
 import BaseModal from 'components/BaseModal';
 import Currency from 'components/Currency';
+import { MessageButton } from 'sections/exchange/FooterCard/common';
+import { FlexDivColCentered } from 'styles/common';
+import { formatRevert } from 'utils/formatters/error';
 
 import { TxProvider } from '../TxConfirmationModal/TxConfirmationModal';
-
-import { MessageButton } from 'sections/exchange/FooterCard/common';
 
 type TxSettleModalProps = {
 	onDismiss: () => void;
@@ -30,11 +30,7 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 	const { t } = useTranslation();
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen={true}
-			title={t('modals.settle-transaction.title')}
-		>
+		<StyledBaseModal onDismiss={onDismiss} isOpen title={t('modals.settle-transaction.title')}>
 			<Currencies>
 				<CurrencyItem>
 					<CurrencyItemTitle>{currencyLabel}</CurrencyItemTitle>
@@ -50,7 +46,7 @@ export const TxSettleModal: FC<TxSettleModalProps> = ({
 			<Subtitle>{t('modals.settle-transaction.confirm-with-provider')}</Subtitle>
 			{txError != null && (
 				<Actions>
-					<Message>{txError}</Message>
+					<Message>{formatRevert(txError)}</Message>
 					<MessageButton onClick={attemptRetry} data-testid="retry-btn">
 						{t('common.transaction.reattempt')}
 					</MessageButton>

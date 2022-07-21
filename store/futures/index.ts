@@ -1,23 +1,34 @@
-import { atom, selector } from 'recoil';
+import { Balances } from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
+import { atom, selector } from 'recoil';
 
-import { getFuturesKey } from 'store/utils';
+import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
 import {
 	FuturesMarket,
 	FuturesPosition,
 	FuturesPotentialTradeDetails,
 } from 'queries/futures/types';
-import { PositionSide } from 'sections/futures/types';
 import { Rates } from 'queries/rates/types';
+import { PositionSide } from 'sections/futures/types';
+import { getFuturesKey, getSynthsKey } from 'store/utils';
 import { zeroBN } from 'utils/formatters/number';
-import { Synths, CurrencyKey } from 'constants/currency';
-import { DEFAULT_NP_LEVERAGE_ADJUSTMENT } from 'constants/defaults';
+import { FuturesMarketAsset, MarketKeyByAsset } from 'utils/futures';
 
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
-export const currentMarketState = atom<CurrencyKey>({
+export const currentMarketState = atom({
 	key: getFuturesKey('currentMarket'),
-	default: Synths.sETH,
+	default: FuturesMarketAsset.sETH,
+});
+
+export const marketKeyState = selector({
+	key: getFuturesKey('marketKey'),
+	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
+});
+
+export const balancesState = atom<Balances | null>({
+	key: getSynthsKey('balances'),
+	default: null,
 });
 
 export const activeTabState = atom<number>({
@@ -28,6 +39,16 @@ export const activeTabState = atom<number>({
 export const positionState = atom<FuturesPosition | null>({
 	key: getFuturesKey('position'),
 	default: null,
+});
+
+export const positionsState = atom<FuturesPosition[] | null>({
+	key: getFuturesKey('positions'),
+	default: null,
+});
+
+export const futuresMarketsState = atom<FuturesMarket[] | null>({
+	key: getFuturesKey('markets'),
+	default: [],
 });
 
 export const tradeSizeState = atom({

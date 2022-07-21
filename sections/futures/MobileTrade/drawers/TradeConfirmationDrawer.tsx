@@ -1,38 +1,29 @@
+import useSynthetixQueries from '@synthetixio/queries';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import useSynthetixQueries from '@synthetixio/queries';
-import Wei from '@synthetixio/wei';
+import styled from 'styled-components';
 
+import Button from 'components/Button';
+import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { PositionSide } from 'sections/futures/types';
 import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
-import { PositionSide } from 'sections/futures/types';
-import { GasLimitEstimate } from 'constants/network';
-import { Synths, CurrencyKey } from 'constants/currency';
+
 import BaseDrawer from './BaseDrawer';
-import Button from 'components/Button';
 
 type TradeConfirmationDrawerProps = {
 	open: boolean;
 	closeDrawer(): void;
-	gasLimit: GasLimitEstimate;
-	l1Fee: Wei | null;
-	onConfirmOrder(): void;
 };
 
-const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
-	open,
-	closeDrawer,
-	gasLimit,
-	l1Fee,
-	onConfirmOrder,
-}) => {
+const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({ open, closeDrawer }) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -42,6 +33,8 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+
+	const { orderTxn } = useFuturesContext();
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -56,8 +49,14 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
 
 	const transactionFee = useMemo(
-		() => newGetTransactionPrice(gasPrice, gasLimit, ethPriceRate, l1Fee),
-		[gasPrice, gasLimit, ethPriceRate, l1Fee]
+		() =>
+			newGetTransactionPrice(
+				gasPrice,
+				orderTxn.gasLimit,
+				ethPriceRate,
+				orderTxn.optimismLayerOneFee
+			),
+		[gasPrice, orderTxn.gasLimit, ethPriceRate, orderTxn.optimismLayerOneFee]
 	);
 
 	const positionDetails = useMemo(() => {
@@ -125,7 +124,7 @@ const TradeConfirmationDrawer: React.FC<TradeConfirmationDrawerProps> = ({
 					variant="primary"
 					isRounded
 					onClick={() => {
-						onConfirmOrder();
+						orderTxn.mutate();
 						closeDrawer();
 					}}
 					disabled={!positionDetails}

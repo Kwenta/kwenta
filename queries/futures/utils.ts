@@ -1,9 +1,18 @@
-import Wei, { wei } from '@synthetixio/wei';
-import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
 import { BigNumber } from '@ethersproject/bignumber';
-import { utils } from '@synthetixio/contracts-interface/node_modules/ethers';
+import { Synths } from '@synthetixio/contracts-interface';
+import { ContractsMap } from '@synthetixio/contracts-interface/build/node/src/types';
+import Wei, { wei } from '@synthetixio/wei';
+import { utils } from 'ethers';
 
+import { ETH_UNIT } from 'constants/network';
+import { MarketClosureReason } from 'hooks/useMarketClosed';
+import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
+import { Network } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
+import { FuturesMarketAsset } from 'utils/futures';
+
+import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
+import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
 import {
 	FuturesPosition,
 	FuturesOpenInterest,
@@ -17,14 +26,6 @@ import {
 	FuturesTrade,
 	MarginTransfer,
 } from './types';
-import { Network } from 'store/wallet';
-import { FUTURES_ENDPOINT_MAINNET, FUTURES_ENDPOINT_TESTNET, SECONDS_PER_DAY } from './constants';
-
-import { FuturesMarginTransferResult, FuturesTradeResult } from './subgraph';
-import { ETH_UNIT } from 'constants/network';
-import { MarketClosureReason } from 'hooks/useMarketClosed';
-import { Synths } from '@synthetixio/contracts-interface';
-import { SynthsTrades, SynthsVolumes } from 'queries/synths/type';
 
 export const getFuturesEndpoint = (network: Network): string => {
 	return network && network.id === 10
@@ -45,7 +46,7 @@ export const getFuturesMarketContract = (asset: string | null, contracts: Contra
 export const mapFuturesPosition = (
 	positionDetail: PositionDetail,
 	canLiquidatePosition: boolean,
-	asset: string
+	asset: FuturesMarketAsset
 ): FuturesPosition => {
 	const {
 		remainingMargin,
@@ -292,7 +293,7 @@ export const mapMarginTransfers = (
 				action: isPositive ? 'deposit' : 'withdraw',
 				amount,
 				isPositive,
-				asset: utils.parseBytes32String(asset),
+				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				txHash,
 			};
 		}
@@ -351,9 +352,9 @@ export const mapTradeHistory = (
 						timestamp: timestamp * 1000,
 						openTimestamp: openTimestamp * 1000,
 						closeTimestamp: closeTimestamp * 1000,
-						market: market,
-						asset: utils.parseBytes32String(asset),
-						account: account,
+						market,
+						asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
+						account,
 						isOpen,
 						isLiquidated,
 						size: sizeWei.abs(),
@@ -368,7 +369,7 @@ export const mapTradeHistory = (
 						pnl: pnlWei,
 						pnlWithFeesPaid: pnlWithFeesPaidWei,
 						totalVolume: totalVolumeWei,
-						trades: trades,
+						trades,
 						avgEntryPrice: avgEntryPriceWei,
 						leverage: marginWei.eq(wei(0))
 							? wei(0)

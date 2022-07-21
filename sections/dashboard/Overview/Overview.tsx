@@ -1,24 +1,25 @@
+import { Synths } from '@synthetixio/contracts-interface';
+import useSynthetixQueries from '@synthetixio/queries';
+import { wei } from '@synthetixio/wei';
 import { FC, useState, useMemo } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
-import { TabPanel } from 'components/Tab';
+import { useRecoilValue } from 'recoil';
+import styled from 'styled-components';
+
 import TabButton from 'components/Button/TabButton';
-import PortfolioChart from '../PortfolioChart';
+import { TabPanel } from 'components/Tab';
+import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
 import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import FuturesPositionsTable from '../FuturesPositionsTable';
-import FuturesMarketsTable from '../FuturesMarketsTable';
-import { useRecoilValue } from 'recoil';
 import { walletAddressState } from 'store/wallet';
-import useSynthetixQueries from '@synthetixio/queries';
-import SynthBalancesTable from '../SynthBalancesTable';
-import { wei } from '@synthetixio/wei';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
-import { Synths } from '@synthetixio/contracts-interface';
-import { getMarketKey } from 'utils/futures';
-import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import Connector from 'containers/Connector';
+import { MarketKeyByAsset } from 'utils/futures';
+
+import FuturesMarketsTable from '../FuturesMarketsTable';
+import FuturesPositionsTable from '../FuturesPositionsTable';
+import PortfolioChart from '../PortfolioChart';
 import SpotMarketsTable from '../SpotMarketsTable';
+import SynthBalancesTable from '../SynthBalancesTable';
 
 enum PositionsTab {
 	FUTURES = 'futures',
@@ -39,8 +40,7 @@ const Overview: FC = () => {
 	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
-	const { network } = Connector.useContainer();
-	const markets = futuresMarkets.map(({ asset }) => getMarketKey(asset, network.id));
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

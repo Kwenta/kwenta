@@ -1,7 +1,7 @@
-import { FC, useLayoutEffect, useState } from 'react';
 import { format } from 'date-fns';
-import styled from 'styled-components';
+import { FC, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styled from 'styled-components';
 
 import { PositionHistory } from 'queries/futures/types';
 import getLocale from 'utils/formatters/getLocale';
