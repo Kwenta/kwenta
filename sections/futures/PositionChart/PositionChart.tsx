@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import TVChart from 'components/TVChart';
-import { Synths } from 'constants/currency';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import {
 	currentMarketState,
@@ -13,6 +12,7 @@ import {
 } from 'store/futures';
 
 export default function PositionChart() {
+	const [isChartReady, setIsChartReady] = useState(false);
 	const marketAsset = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 
@@ -50,11 +50,13 @@ export default function PositionChart() {
 		};
 	}, [subgraphPosition, position]);
 
+	const visible = useMemo(() => {
+		return isChartReady ? 'visible' : 'hidden';
+	}, [isChartReady]);
+
 	return (
-		<Container>
+		<Container visible={visible}>
 			<TVChart
-				baseCurrencyKey={marketAsset}
-				quoteCurrencyKey={Synths.sUSD}
 				activePosition={activePosition}
 				potentialTrade={
 					previewTrade
@@ -65,12 +67,16 @@ export default function PositionChart() {
 						  }
 						: null
 				}
+				onChartReady={() => {
+					setIsChartReady(true);
+				}}
 			/>
 		</Container>
 	);
 }
 
-const Container = styled.div`
-	min-height: 45vh;
+const Container = styled.div<{ visible: 'hidden' | 'visible' }>`
+	min-height: 450px;
 	background: ${(props) => props.theme.colors.selectedTheme.background};
+	visibility: ${(props) => props.visible};
 `;
