@@ -28,6 +28,7 @@ const MarketActions: React.FC = () => {
 		<>
 			<MarketActionsContainer>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-deposit"
 					disabled={marketInfo?.isSuspended}
 					onClick={() => setOpenModal('deposit')}
 					noOutline
@@ -35,6 +36,7 @@ const MarketActions: React.FC = () => {
 					{t('futures.market.trade.button.deposit')}
 				</MarketActionButton>
 				<MarketActionButton
+					data-testid="futures-market-trade-button-withdraw"
 					disabled={position?.remainingMargin?.lte(zeroBN) || marketInfo?.isSuspended}
 					onClick={() => setOpenModal('withdraw')}
 					noOutline

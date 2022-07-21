@@ -87,6 +87,7 @@ const LeverageInput: FC = () => {
 			) : (
 				<LeverageInputContainer>
 					<StyledInput
+						data-testid="leverage-input"
 						value={leverage}
 						placeholder="1"
 						suffix="x"

@@ -114,6 +114,7 @@ const MarketInfoBox: React.FC = () => {
 
 	return (
 		<StyledInfoBox
+			dataTestId="market-info-box"
 			details={{
 				'Total Margin': {
 					value: `${formatCurrency(Synths.sUSD, totalMargin, {
