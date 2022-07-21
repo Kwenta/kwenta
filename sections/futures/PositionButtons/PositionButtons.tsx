@@ -18,6 +18,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect })
 	return (
 		<PositionButtonsContainer>
 			<StyledPositionButton
+				data-testid="position-side-long-button"
 				fullWidth
 				$position={PositionSide.LONG}
 				$isActive={selected === 'long'}
@@ -27,6 +28,7 @@ const PositionButtons: React.FC<PositionButtonsProps> = ({ selected, onSelect })
 				<span>Long</span>
 			</StyledPositionButton>
 			<StyledPositionButton
+				data-testid="position-side-short-button"
 				fullWidth
 				$position={PositionSide.SHORT}
 				$isActive={selected === 'short'}

@@ -497,8 +497,14 @@ const useExchange = ({
 	}, [feeAmountInQuoteCurrency, quotePriceRate]);
 
 	useEffect(() => {
-		setCurrencyPair({ base: null, quote: Synths.sUSD });
-	}, [network.id, setCurrencyPair]);
+		if (!synthsMap) return;
+
+		setCurrencyPair({
+			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
+			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
+		});
+		// eslint-disable-next-line
+	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
 
 	useEffect(() => {
 		if (
@@ -1012,7 +1018,7 @@ const useExchange = ({
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [marketQuery, routingEnabled]);
+	}, [marketQuery, routingEnabled, synthsMap, oneInchQuery.data]);
 
 	const slippagePercent = useMemo(() => {
 		if (txProvider === '1inch' && totalTradePrice.gt(0) && estimatedBaseTradePrice.gt(0)) {

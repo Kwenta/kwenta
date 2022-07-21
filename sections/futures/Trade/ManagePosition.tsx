@@ -65,6 +65,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 
 				<ManagePositionContainer>
 					<PlaceOrderButton
+						data-testid="trade-open-position-button"
 						noOutline
 						fullWidth
 						disabled={
@@ -83,6 +84,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 					</PlaceOrderButton>
 
 					<CloseOrderButton
+						data-testid="trade-close-position-button"
 						fullWidth
 						noOutline
 						variant="danger"

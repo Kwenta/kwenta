@@ -64,6 +64,7 @@ const OrderSizing: React.FC<OrderSizingProps> = ({ disabled }) => {
 			/>
 
 			<CustomInput
+				dataTestId="set-order-size-amount-susd"
 				disabled={isDisabled}
 				right={Synths.sUSD}
 				value={tradeSizeSUSD}
