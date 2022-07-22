@@ -33,7 +33,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 export const DEFAULT_SLIPPAGE = 1;
 
 // for Trading History
-export const DEFAULT_NUMBER_OF_TRADES: number = 16;
+export const DEFAULT_NUMBER_OF_TRADES: number = 25;
 export const MAX_TIMESTAMP: number = 8640000000000000;
 
 // leverage adjustment

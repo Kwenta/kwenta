@@ -4,7 +4,6 @@ import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import LoaderIcon from 'assets/svg/app/loader.svg';
 import Table from 'components/Table';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { EXTERNAL_LINKS } from 'constants/links';
@@ -107,8 +106,6 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 					data={data}
 					isLoading={futuresTradesQuery.isLoading}
 					lastRef={lastElementRef}
-					pageSize={numberOfTrades}
-					showPagination
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
@@ -181,22 +178,12 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 						},
 					]}
 				/>
-				<Loading isLoading={futuresTradesQuery.isFetchingNextPage}>
-					<LoaderIcon />
-				</Loading>
 			</TableContainer>
 		</HistoryContainer>
 	);
 };
 
 export default TradesHistoryTable;
-
-const Loading = styled.div<{ isLoading: boolean }>`
-	height: 0px;
-	transform: translateY(8px);
-	text-align: center;
-	visibility: ${(props) => (props.isLoading ? 'show' : 'hidden')};
-`;
 
 const HistoryContainer = styled.div<{ mobile?: boolean }>`
 	width: 100%;

@@ -13,6 +13,7 @@ export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
 const MAX_PAGE_ROWS = 100;
+const MAX_TOTAL_ROWS = 1000;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -99,7 +100,7 @@ export const Table: FC<TableProps> = ({
 						: MAX_PAGE_ROWS
 					: showShortList
 					? pageSize ?? 5
-					: 15,
+					: MAX_TOTAL_ROWS,
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
