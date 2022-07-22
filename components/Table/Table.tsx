@@ -97,7 +97,7 @@ export const Table: FC<TableProps> = ({
 						: MAX_PAGE_ROWS
 					: showShortList
 					? pageSize ?? 5
-					: data.length,
+					: 15,
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
