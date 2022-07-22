@@ -1,4 +1,4 @@
-import Wei, { wei } from '@synthetixio/wei';
+import Wei from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -13,10 +13,7 @@ import Connector from 'containers/Connector';
 import useFuturesMarketClosed from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { PositionSide } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
-import { Price } from 'queries/rates/types';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import {
 	currentMarketState,
 	marketKeyState,
@@ -42,7 +39,6 @@ type PositionData = {
 	marketShortName: string;
 	marketLongName: string;
 	marketPrice: string;
-	price24h: Wei;
 	positionSide: JSX.Element;
 	positionSize: string | React.ReactNode;
 	leverage: string | React.ReactNode;
@@ -94,12 +90,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 		({ asset, isOpen }) => isOpen && asset === currencyKey
 	);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery?.data?.map(({ asset }) => asset) ?? []
-	);
-
 	const previewTradeData = useRecoilValue(potentialTradeDetailsState);
 
 	const modifiedAverage = useMemo(() => {
@@ -146,10 +136,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 			: zeroBN;
 		const netFunding =
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
-		const lastPriceWei = wei(currencyKeyRate) ?? zeroBN;
-		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
-		const pastPrice = dailyPriceChanges.find((price: Price) => price.synth === currencyKey);
-		const pastPriceWei = pastPrice?.price ?? zeroBN;
 
 		return {
 			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
@@ -161,7 +147,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 				sign: '$',
 				minDecimals: currencyKeyRate < 0.01 ? 4 : 2,
 			}),
-			price24h: lastPriceWei.sub(pastPriceWei),
 			positionSide: positionDetails ? (
 				<PositionValue
 					side={positionDetails.side === 'long' ? PositionSide.LONG : PositionSide.SHORT}
@@ -289,7 +274,6 @@ const PositionCard: React.FC<PositionCardProps> = ({ currencyKeyRate, mobile }) 
 		positionDetails,
 		positionHistory,
 		currencyKeyRate,
-		dailyPriceChangesQuery?.data,
 		currencyKey,
 		synthsMap,
 		t,

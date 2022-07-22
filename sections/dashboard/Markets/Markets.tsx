@@ -4,7 +4,6 @@ import styled from 'styled-components';
 
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
@@ -17,9 +16,6 @@ enum MarketsTab {
 
 const Markets: FC = () => {
 	const { t } = useTranslation();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
@@ -56,7 +52,7 @@ const Markets: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+				<FuturesMarketsTable />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>

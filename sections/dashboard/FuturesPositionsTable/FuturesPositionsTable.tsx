@@ -15,8 +15,8 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
-import { FuturesMarket, PositionHistory } from 'queries/futures/types';
-import { positionsState } from 'store/futures';
+import { PositionHistory } from 'queries/futures/types';
+import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -29,53 +29,65 @@ import {
 import MobilePositionRow from './MobilePositionRow';
 
 type FuturesPositionTableProps = {
-	futuresMarkets: FuturesMarket[];
 	futuresPositionHistory: PositionHistory[];
+	showCurrentMarket?: boolean;
 };
 
 const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
-	futuresMarkets,
 	futuresPositionHistory,
+	showCurrentMarket = true,
 }: FuturesPositionTableProps) => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
 
 	const futuresPositions = useRecoilValue(positionsState);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const currentMarket = useRecoilValue(currentMarketState);
 
 	let data = useMemo(() => {
 		const activePositions = futuresPositions?.filter((position) => position?.position) ?? [];
 
-		return activePositions.map((position) => {
-			const market = futuresMarkets.find((market) => market.asset === position.asset);
-			const description = getSynthDescription(position.asset, synthsMap, t);
-			const positionHistory = futuresPositionHistory?.find((positionHistory) => {
-				return positionHistory.isOpen && positionHistory.asset === position.asset;
-			});
+		return activePositions
+			.map((position) => {
+				const market = futuresMarkets?.find((market) => market.asset === position.asset);
+				const description = getSynthDescription(position.asset, synthsMap, t);
+				const positionHistory = futuresPositionHistory?.find((positionHistory) => {
+					return positionHistory.isOpen && positionHistory.asset === position.asset;
+				});
 
-			return {
-				asset: position.asset,
-				market: getDisplayAsset(position.asset) + '-PERP',
-				marketKey: MarketKeyByAsset[position.asset],
-				description,
-				price: market?.price,
-				size: position?.position?.size,
-				notionalValue: position?.position?.notionalValue.abs(),
-				position: position?.position?.side,
-				lastPrice: position?.position?.lastPrice,
-				avgEntryPrice: positionHistory?.entryPrice,
-				liquidationPrice: position?.position?.liquidationPrice,
-				pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
-				pnlPct: position?.position?.profitLoss
-					.add(position?.position?.accruedFunding)
-					.div(position?.position?.initialMargin),
-				margin: position.accessibleMargin,
-				leverage: position?.position?.leverage,
-				isSuspended: market?.isSuspended,
-				marketClosureReason: market?.marketClosureReason,
-			};
-		});
-	}, [futuresPositions, futuresMarkets, synthsMap, t, futuresPositionHistory]);
+				return {
+					asset: position.asset,
+					market: getDisplayAsset(position.asset) + '-PERP',
+					marketKey: MarketKeyByAsset[position.asset],
+					description,
+					price: market?.price,
+					size: position?.position?.size,
+					notionalValue: position?.position?.notionalValue.abs(),
+					position: position?.position?.side,
+					lastPrice: position?.position?.lastPrice,
+					avgEntryPrice: positionHistory?.entryPrice,
+					liquidationPrice: position?.position?.liquidationPrice,
+					pnl: position?.position?.profitLoss.add(position?.position?.accruedFunding),
+					pnlPct: position?.position?.profitLoss
+						.add(position?.position?.accruedFunding)
+						.div(position?.position?.initialMargin),
+					margin: position.accessibleMargin,
+					leverage: position?.position?.leverage,
+					isSuspended: market?.isSuspended,
+					marketClosureReason: market?.marketClosureReason,
+				};
+			})
+			.filter((position) => position.asset !== currentMarket || showCurrentMarket);
+	}, [
+		futuresPositions,
+		futuresMarkets,
+		currentMarket,
+		synthsMap,
+		t,
+		showCurrentMarket,
+		futuresPositionHistory,
+	]);
 
 	return (
 		<>

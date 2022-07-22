@@ -18,7 +18,6 @@ import ROUTES from 'constants/routes';
 import { PositionHistory } from 'queries/futures/types';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesMarginTransfers from 'queries/futures/useGetFuturesMarginTransfers';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -55,10 +54,6 @@ const UserInfo: React.FC = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery({
 		refetchInterval: 15000,
 	});
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
-	const otherFuturesMarkets = futuresMarkets.filter((market) => market.asset !== marketAsset) ?? [];
 
 	const futuresPositionQuery = useGetFuturesPositionForAccount();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,8 +208,8 @@ const UserInfo: React.FC = () => {
 			<TabPanel name={FuturesTab.POSITION} activeTab={activeTab}>
 				<PositionCard currencyKeyRate={marketAssetRate} />
 				<FuturesPositionsTable
-					futuresMarkets={otherFuturesMarkets}
 					futuresPositionHistory={futuresPositionHistory}
+					showCurrentMarket={false}
 				/>
 			</TabPanel>
 			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>

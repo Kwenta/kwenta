@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 import { TabPanel } from 'components/Tab';
 import { DEFAULT_NUMBER_OF_TRADES } from 'constants/defaults';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 
 import SegmentedControl from '../../../components/SegmentedControl';
 import { activeTabState } from '../../../store/futures';
@@ -14,9 +13,6 @@ import FuturesMarketTab from './FuturesMarketTab';
 
 const FuturesMarketTabs: FC = () => {
 	const { t } = useTranslation();
-
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 
 	const [activeTab, setActiveTab] = useRecoilState(activeTabState);
 
@@ -33,7 +29,7 @@ const FuturesMarketTabs: FC = () => {
 				onChange={setActiveTab}
 			/>
 			<TabPanel name={DETAIL_TABS[0]} activeTab={DETAIL_TABS[activeTab]}>
-				<FuturesMarketTab futuresMarkets={futuresMarkets} />
+				<FuturesMarketTab />
 			</TabPanel>
 			<TabPanel name={DETAIL_TABS[1]} activeTab={DETAIL_TABS[activeTab]}>
 				<TradesHistoryTable numberOfTrades={DEFAULT_NUMBER_OF_TRADES} />
