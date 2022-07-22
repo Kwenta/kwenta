@@ -282,6 +282,9 @@ const useExchange = ({
 		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
 	);
 
+	// eslint-disable-next-line no-console
+	console.log(`rate in useExchange`, Number(rate));
+
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
 	const getBalance = useCallback(
@@ -558,29 +561,51 @@ const useExchange = ({
 		);
 	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
 
-	const atomicPriceRateQuery = useAtomicRatesQuery(
+	const atomicRatesQuery = useAtomicRatesQuery(
 		sourceCurrencyKey,
 		quoteCurrencyAmountBN.toBN(),
 		destinationCurrencyKey
 	);
 
-	const atomicPriceRate = atomicPriceRateQuery.isSuccess ? atomicPriceRateQuery.data ?? null : null;
-
-	// eslint-disable-next-line no-console
-	if (atomicPriceRate !== null) {
-		// eslint-disable-next-line no-console
-		console.log(atomicPriceRate);
-	}
+	const atomicRate = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
+	const atomicAmountBN = useMemo(() => {
+		if (atomicRate != null) {
+			return truncateNumbers(Number(atomicRate.amountReceived) / 1e18, DEFAULT_CRYPTO_DECIMALS);
+		}
+		return '0';
+	}, [atomicRate]);
+	const atomicFee = useMemo(() => {
+		if (atomicRate != null) {
+			return atomicRate.fee;
+		}
+		return zeroBN;
+	}, [atomicRate]);
+	const atomicExchangeFee = useMemo(() => {
+		if (atomicRate != null) {
+			return atomicRate.exchangeFeeRate;
+		}
+		return zeroBN;
+	}, [atomicRate]);
 
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
-		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 		if (!sourceCurrencyKey || !destinationCurrencyKey) {
 			return null;
 		}
 
 		if (isAtomic) {
+			let minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+			if (atomicAmountBN !== null) {
+				// minAmount = atomicRateAmount.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+				// eslint-disable-next-line no-console
+				console.log(
+					`baseCurrencyAmount-atomic: `,
+					Number(atomicAmountBN),
+					`baseCurrencyAmount-chainlink: `,
+					Number(baseCurrencyAmountBN)
+				);
+			}
 			return [
 				sourceCurrencyKey,
 				sourceAmount,
@@ -599,11 +624,12 @@ const useExchange = ({
 		}
 	}, [
 		quoteCurrencyAmountBN,
-		baseCurrencyAmountBN,
-		atomicExchangeSlippage,
 		sourceCurrencyKey,
 		destinationCurrencyKey,
 		isAtomic,
+		baseCurrencyAmountBN,
+		atomicExchangeSlippage,
+		atomicAmountBN,
 		walletAddress,
 	]);
 
@@ -1207,6 +1233,10 @@ const useExchange = ({
 		ratio,
 		onRatioChange,
 		setRatio,
+		atomicAmountBN,
+		atomicFee,
+		atomicExchangeFee,
+		isAtomic,
 	};
 };
 

@@ -1,10 +1,13 @@
-import { useQuery } from 'react-query';
+import Wei from '@synthetixio/wei';
 import { BigNumber } from 'ethers';
+import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { networkState } from 'store/wallet';
+
+import { AtomicExchangeRate } from './types';
 
 const useAtomicRatesQuery = (
 	sourceCurrencyKey: string | null,
@@ -15,28 +18,37 @@ const useAtomicRatesQuery = (
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
 
-	// eslint-disable-next-line no-console
-	console.log(
-		`sourceCurrencyKey ${sourceCurrencyKey} sourceAmount ${sourceAmount} destKey ${destinationCurrencyKey}`
-	);
-
-	return useQuery(
-		['rates', 'atomicRates', network.id],
+	return useQuery<AtomicExchangeRate>(
+		['rates', 'amountsForAtomicExchange', network.id],
 		async () => {
-			const [data] = await Promise.all([
-				synthetixjs!.contracts.ExchangeRatesWithDexPricing.effectiveAtomicValueAndRates(
-					'0x7355534400000000000000000000000000000000000000000000000000000000',
-					18611900000000000000,
-					'0x7345544800000000000000000000000000000000000000000000000000000000'
-				),
-			]);
+			const res = await synthetixjs!.contracts.Exchanger.getAmountsForAtomicExchange(
+				sourceAmount,
+				sourceCurrencyKey,
+				destinationCurrencyKey
+			);
 			// eslint-disable-next-line no-console
-			console.log(`atomic rate: ${data.value}`);
-			return data.value;
+			console.log(
+				`getAmountsForAtomicExchange:`,
+				Number(sourceAmount) / 1e18,
+				sourceCurrencyKey,
+				destinationCurrencyKey
+			);
+			// eslint-disable-next-line no-console
+			console.log(`destination amount:`, Number(res.amountReceived) / 1e18);
+			// eslint-disable-next-line no-console
+			console.log(`exchange fee:`, Number(res.exchangeFeeRate) / 1e18);
+			// eslint-disable-next-line no-console
+			console.log(`base fee:`, Number(res.fee) / 1e18);
+			return res;
 		},
 		{
-			enabled: isAppReady && !!synthetixjs,
-			refetchInterval: 60000,
+			enabled:
+				isAppReady &&
+				!!synthetixjs &&
+				sourceCurrencyKey != null &&
+				destinationCurrencyKey != null &&
+				sourceAmount?.gte(0),
+			refetchInterval: 3000,
 		}
 	);
 };
