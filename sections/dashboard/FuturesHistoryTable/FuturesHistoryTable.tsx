@@ -72,14 +72,14 @@ const FuturesHistoryTable: FC = () => {
 				noResultsMessage={
 					!isL2 ? (
 						<TableNoResults>
-							{t('dashboard.history.futures-history-table.no-results')}
+							{t('common.l2-cta')}
 							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
 					) : (
 						<TableNoResults>
-							{t('dashboard.history.futures-history-table.no-trade-history')}
+							{t('dashboard.history.futures-history-table.no-result')}
 							<Link href={ROUTES.Markets.Home}>
-								<div>{t('dashboard.history.futures-history-table.no-trade-history-link')}</div>
+								<div>{t('common.perp-cta')}</div>
 							</Link>
 						</TableNoResults>
 					)

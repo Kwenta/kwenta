@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +15,13 @@ import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { NO_VALUE } from 'constants/placeholder';
+import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
+import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
 import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
+import { isL2State } from 'store/wallet';
+import { GridDivCenteredRow } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -40,7 +45,9 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const router = useRouter();
+	const { switchToL2 } = useNetworkSwitcher();
 
+	const isL2 = useRecoilValue(isL2State);
 	const futuresPositions = useRecoilValue(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const currentMarket = useRecoilValue(currentMarketState);
@@ -97,6 +104,24 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 						data={data}
 						showPagination
 						onTableRowClick={(row) => router.push(`/market/${row.original.asset}`)}
+						noResultsMessage={
+							!isL2 ? (
+								<TableNoResults>
+									{t('common.l2-cta')}
+									<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
+								</TableNoResults>
+							) : (
+								<TableNoResults>
+									{!showCurrentMarket ? (
+										t('dashboard.overview.futures-positions-table.no-result')
+									) : (
+										<Link href={ROUTES.Markets.Home}>
+											<div>{t('common.perp-cta')}</div>
+										</Link>
+									)}
+								</TableNoResults>
+							)
+						}
 						highlightRowsOnHover
 						columns={[
 							{
@@ -251,13 +276,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 			</MobileHiddenView>
 			<MobileOnlyView>
 				<OpenPositionsHeader>
-					<div>Market/Side</div>
-					<div>Oracle/Entry</div>
-					<div>Unrealized P&amp;L</div>
+					<div>{t('dashboard.overview.futures-positions-table.mobile.market')}</div>
+					<div>{t('dashboard.overview.futures-positions-table.mobile.price')}</div>
+					<div>{t('dashboard.overview.futures-positions-table.mobile.pnl')}</div>
 				</OpenPositionsHeader>
 				<div style={{ margin: '0 15px' }}>
 					{data.length === 0 ? (
-						<NoPositionsText>There are no open positions.</NoPositionsText>
+						<NoPositionsText>
+							<Link href={ROUTES.Markets.Home}>
+								<div>{t('common.perp-cta')}</div>
+							</Link>
+						</NoPositionsText>
 					) : (
 						data.map((row) => (
 							<MobilePositionRow
@@ -344,6 +373,23 @@ const NoPositionsText = styled.div`
 	margin: 20px 0;
 	font-size: 16px;
 	text-align: center;
+	text-decoration: underline;
+`;
+
+const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 12px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 16px;
+	div {
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 16px;
+		font-family: ${(props) => props.theme.fonts.regular};
+	}
 `;
 
 export default FuturesPositionsTable;

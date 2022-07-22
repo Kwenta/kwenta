@@ -418,7 +418,13 @@
 				"leverage": "Leverage",
 				"pnl": "Unrealized P&L",
 				"notionalValue": "Size",
-				"liquidationPrice": "Liq. Price"
+				"liquidationPrice": "Liq. Price",
+				"no-result": "You have no other open positions",
+				"mobile": {
+					"market": "Market/Side",
+					"price": "Oracle/Entry",
+					"pnl": "Unrealized P&L"
+				}
 			},
 			"synth-balances-table": {
 				"market": "Market",
@@ -462,8 +468,8 @@
 				"from": "From",
 				"to": "To",
 				"usd-value": "USD Value",
-				"no-trade-history": "You have no trades yet.",
-				"no-trade-history-link": "Visit the Kwenta exchange to swap synths."
+				"no-trade-history": "You have no synth trading history",
+				"no-trade-history-link": "Visit the Kwenta exchange to swap synths"
 			},
 			"futures-history-table": {
 				"size": "Size",
@@ -474,9 +480,7 @@
 				"side": "Side",
 				"market": "Market",
 				"order-type": "Type",
-				"no-results": "Perpetual Futures are available on Optimism L2",
-				"no-trade-history": "You have no trades yet.",
-				"no-trade-history-link": "Trade Perpetual Futures on Kwenta now!"
+				"no-result": "You have no futures trading history"
 			}
 		},
 		"deprecated": {
@@ -745,7 +749,7 @@
 						"fees": "fees",
 						"price": "price",
 						"side": "side",
-						"no-results": "You have no trades yet.",
+						"no-results": "You have no trade history",
 						"order-type": "order type",
 						"trade-types": {
 							"exit": "exit",
@@ -936,6 +940,8 @@
 			"market": "market",
 			"limit": "limit"
 		},
+		"l2-cta": "Perpetual futures are available on Optimism L2",
+		"perp-cta": "Trade perpetual futures now!",
 		"currency": {
 			"currency-amount": "<0>{{currencyKey}}</0> Amount",
 			"exchange-fee": "Exchange Fee",
