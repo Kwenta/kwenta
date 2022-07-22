@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link.svg';
 import Currency from 'components/Currency';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import { CurrencyKey } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import ROUTES from 'constants/routes';
@@ -21,7 +21,6 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetWalletTrades from 'queries/synths/useGetWalletTrades';
 import { walletAddressState } from 'store/wallet';
 import { ExternalLink } from 'styles/common';
-import { GridDivCenteredRow } from 'styles/common';
 import { isFiatCurrency } from 'utils/currencies';
 
 import TimeDisplay from '../../futures/Trades/TimeDisplay';
@@ -73,7 +72,7 @@ const SpotHistoryTable: FC = () => {
 				isLoading={walletTradesQuery.isLoading}
 				highlightRowsOnHover
 				noResultsMessage={
-					<TableNoResults>
+					<TableNoResults wide>
 						{t('dashboard.history.spot-history-table.no-trade-history')}
 						<Link href={ROUTES.Exchange.Home}>
 							<div>{t('dashboard.history.spot-history-table.no-trade-history-link')}</div>
@@ -265,23 +264,6 @@ const StyledText = styled.div`
 	grid-column: 2;
 	grid-row: 1;
 	color: ${(props) => props.theme.colors.common.secondaryGray};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 20px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	div {
-		text-decoration: underline;
-		cursor: pointer;
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `;
 
 const SynthContainer = styled.div`

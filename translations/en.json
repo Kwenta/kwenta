@@ -709,17 +709,6 @@
 						"np-discount": "Next-Price Discount"
 					}
 				},
-				"orders": {
-					"tab": "Orders",
-					"table": {
-						"id": "ID",
-						"position": "position",
-						"leverage": "leverage",
-						"fee": "fee",
-						"status": "status",
-						"cancel": "cancel"
-					}
-				},
 				"open-orders": {
 					"tab": "Open Orders",
 					"table": {
@@ -727,7 +716,8 @@
 						"side": "Side",
 						"size": "Size",
 						"parameters": "Parameters",
-						"actions": "Actions"
+						"actions": "Actions",
+						"no-result": "You have no open orders"
 					},
 					"actions": {
 						"cancel": "Cancel",

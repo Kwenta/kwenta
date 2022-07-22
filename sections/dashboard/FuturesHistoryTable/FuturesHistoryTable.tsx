@@ -9,7 +9,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Currency from 'components/Currency';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
 import { ETH_UNIT } from 'constants/network';
@@ -21,7 +21,6 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
 import { isL2State, walletAddressState } from 'store/wallet';
-import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 
@@ -71,12 +70,12 @@ const FuturesHistoryTable: FC = () => {
 				isLoading={futuresTradesQuery.isLoading}
 				noResultsMessage={
 					!isL2 ? (
-						<TableNoResults>
+						<TableNoResults wide>
 							{t('common.l2-cta')}
 							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
 					) : (
-						<TableNoResults>
+						<TableNoResults wide>
 							{t('dashboard.history.futures-history-table.no-result')}
 							<Link href={ROUTES.Markets.Home}>
 								<div>{t('common.perp-cta')}</div>
@@ -266,23 +265,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 20px;
-	font-family: ${(props) => props.theme.fonts.bold};
-	div {
-		text-decoration: underline;
-		cursor: pointer;
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `;
 
 export default FuturesHistoryTable;

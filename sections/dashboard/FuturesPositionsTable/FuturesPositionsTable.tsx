@@ -10,7 +10,7 @@ import MarketBadge from 'components/Badge/MarketBadge';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
@@ -21,7 +21,6 @@ import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { PositionHistory } from 'queries/futures/types';
 import { currentMarketState, futuresMarketsState, positionsState } from 'store/futures';
 import { isL2State } from 'store/wallet';
-import { GridDivCenteredRow } from 'styles/common';
 import { formatNumber } from 'utils/formatters/number';
 import {
 	FuturesMarketAsset,
@@ -374,22 +373,6 @@ const NoPositionsText = styled.div`
 	font-size: 16px;
 	text-align: center;
 	text-decoration: underline;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 12px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 16px;
-	div {
-		text-decoration: underline;
-		cursor: pointer;
-		font-size: 16px;
-		font-family: ${(props) => props.theme.fonts.regular};
-	}
 `;
 
 export default FuturesPositionsTable;
