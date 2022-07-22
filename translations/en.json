@@ -431,7 +431,8 @@
 				"amount": "Amount",
 				"value-in-usd": "Value in USD",
 				"oracle-price": "Oracle Price",
-				"daily-change": "24H Change"
+				"daily-change": "24H Change",
+				"no-result": "You have no synths"
 			},
 			"futures-markets-table": {
 				"market": "Market",
