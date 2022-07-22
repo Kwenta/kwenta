@@ -29,6 +29,7 @@ import use1InchApproveSpenderQuery from 'queries/1inch/use1InchApproveAddressQue
 import use1InchQuoteQuery from 'queries/1inch/use1InchQuoteQuery';
 import useCoinGeckoTokenPricesQuery from 'queries/coingecko/useCoinGeckoTokenPricesQuery';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useAtomicRatesQuery from 'queries/rates/useAtomicRatesQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useBaseFeeRateQuery from 'queries/synths/useBaseFeeRateQuery';
 import useExchangeFeeRateQuery from 'queries/synths/useExchangeFeeRateQuery';
@@ -557,6 +558,20 @@ const useExchange = ({
 		);
 	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
 
+	const atomicPriceRateQuery = useAtomicRatesQuery(
+		sourceCurrencyKey,
+		quoteCurrencyAmountBN.toBN(),
+		destinationCurrencyKey
+	);
+
+	const atomicPriceRate = atomicPriceRateQuery.isSuccess ? atomicPriceRateQuery.data ?? null : null;
+
+	// eslint-disable-next-line no-console
+	if (atomicPriceRate !== null) {
+		// eslint-disable-next-line no-console
+		console.log(atomicPriceRate);
+	}
+
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
 		const minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
@@ -584,12 +599,12 @@ const useExchange = ({
 		}
 	}, [
 		quoteCurrencyAmountBN,
-		walletAddress,
 		baseCurrencyAmountBN,
 		atomicExchangeSlippage,
-		isAtomic,
 		sourceCurrencyKey,
 		destinationCurrencyKey,
+		isAtomic,
+		walletAddress,
 	]);
 
 	const exchangeTxn = useSynthetixTxn(
