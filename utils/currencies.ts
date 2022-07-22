@@ -32,16 +32,25 @@ export const getExchangeRatesForCurrencies = (
 
 export const newGetExchangeRatesForCurrencies = (
 	rates: Rates | null,
-	base: CurrencyKey | FuturesMarketKey | null,
+	base: CurrencyKey | FuturesMarketKey | string | null,
 	quote: CurrencyKey | FuturesMarketKey | null
-) =>
-	rates == null ||
-	base == null ||
-	quote == null ||
-	rates[base] === undefined ||
-	rates[quote] === undefined
+) => {
+	base = new Set([
+		FuturesMarketKey.sAPE,
+		FuturesMarketKey.sDYDX,
+		FuturesMarketKey.sXAU,
+		FuturesMarketKey.sXAG,
+	]).has(base as FuturesMarketKey)
+		? synthToAsset(base as CurrencyKey)
+		: base;
+	return rates == null ||
+		base == null ||
+		quote == null ||
+		rates[base] === undefined ||
+		rates[quote] === undefined
 		? wei(0)
 		: rates[base].div(rates[quote]);
+};
 
 export const getCurrencyKeyURLPath = (currencyKey: CurrencyKey) =>
 	`https:///www.synthetix.io/assets/synths/svg/${currencyKey}.svg`;
