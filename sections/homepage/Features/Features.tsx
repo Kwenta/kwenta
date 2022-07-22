@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
@@ -53,7 +54,7 @@ const FEATURES = [
 		key: 'permissionless',
 		title: 'homepage.features.permissionless.title',
 		copy: 'homepage.features.permissionless.copy',
-		image: <img src={PermissionlessIcon} />,
+		image: <Image src={PermissionlessIcon} layout="raw" height="64px" width="64px" />,
 	},
 	{
 		key: 'mobile',
