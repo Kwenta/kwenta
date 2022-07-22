@@ -177,7 +177,7 @@ const Assets = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const synthList = futuresMarkets?.map(({ asset }) => asset) ?? [];
+	const synthList = futuresMarkets.map(({ asset }) => asset);
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();

@@ -15,7 +15,7 @@ import { MarketKeyByAsset } from 'utils/futures';
 const PortfolioChart: FC = () => {
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
-	const markets = futuresMarkets?.map(({ asset }) => MarketKeyByAsset[asset]) ?? [];
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
 	const portfolioValue = portfolioValueQuery?.data ?? null;
 

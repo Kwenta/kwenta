@@ -41,7 +41,7 @@ const SkewInfo: React.FC = () => {
 			};
 		};
 
-		const market = futuresMarkets?.find((i: FuturesMarket) => i.asset === currencyKey);
+		const market = futuresMarkets.find((i: FuturesMarket) => i.asset === currencyKey);
 		return market
 			? cleanMarket(market)
 			: {

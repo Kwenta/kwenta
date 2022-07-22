@@ -35,17 +35,17 @@ const FuturesMarketsTable: FC = () => {
 
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
-	const synthList = futuresMarkets?.map(({ asset }) => asset) ?? [];
+	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
 	const fundingRates = useGetAverageFundingRateForMarkets(
-		futuresMarkets?.map(({ asset, price, currentFundingRate }) => ({
+		futuresMarkets.map(({ asset, price, currentFundingRate }) => ({
 			currencyKey: asset,
 			assetPrice: price.toNumber(),
 			currentFundingRate: currentFundingRate.toNumber(),
-		})) ?? [],
+		})),
 		PERIOD_IN_SECONDS[Period.ONE_HOUR]
 	);
 
@@ -53,35 +53,33 @@ const FuturesMarketsTable: FC = () => {
 		const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 		const futuresVolume = futuresVolumeQuery.data ?? {};
 
-		return (
-			futuresMarkets?.map((market) => {
-				const description = getSynthDescription(market.asset, synthsMap, t);
-				const volume = futuresVolume[market.assetHex];
-				const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
-				const fundingRateResponse = fundingRates.find(
-					({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
-				);
+		return futuresMarkets.map((market) => {
+			const description = getSynthDescription(market.asset, synthsMap, t);
+			const volume = futuresVolume[market.assetHex];
+			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
+			const fundingRateResponse = fundingRates.find(
+				({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
+			);
 
-				return {
-					asset: market.asset,
-					market: getDisplayAsset(market.asset) + '-PERP',
-					synth: synthsMap[market.asset],
-					description,
-					price: market.price,
-					volume: volume?.toNumber() ?? 0,
-					pastPrice: pastPrice?.price,
-					priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price),
-					fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate ?? null,
-					openInterest: market.marketSize.mul(market.price),
-					openInterestNative: market.marketSize,
-					longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
-					shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(market.price),
-					marketSkew: market.marketSkew,
-					isSuspended: market.isSuspended,
-					marketClosureReason: market.marketClosureReason,
-				};
-			}) ?? []
-		);
+			return {
+				asset: market.asset,
+				market: getDisplayAsset(market.asset) + '-PERP',
+				synth: synthsMap[market.asset],
+				description,
+				price: market.price,
+				volume: volume?.toNumber() ?? 0,
+				pastPrice: pastPrice?.price,
+				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price),
+				fundingRate: (fundingRateResponse?.data as FundingRateResponse)?.fundingRate ?? null,
+				openInterest: market.marketSize.mul(market.price),
+				openInterestNative: market.marketSize,
+				longInterest: market.marketSize.add(market.marketSkew).div('2').abs().mul(market.price),
+				shortInterest: market.marketSize.sub(market.marketSkew).div('2').abs().mul(market.price),
+				marketSkew: market.marketSkew,
+				isSuspended: market.isSuspended,
+				marketClosureReason: market.marketClosureReason,
+			};
+		});
 	}, [
 		synthsMap,
 		futuresMarkets,

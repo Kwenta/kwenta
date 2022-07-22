@@ -109,7 +109,7 @@ const ShortList = () => {
 
 	const openInterest = useMemo(() => {
 		return futuresMarkets
-			?.map((market) => market.marketSize.mul(market.price).toNumber())
+			.map((market) => market.marketSize.mul(market.price).toNumber())
 			.reduce((total, openInterest) => total + openInterest, 0);
 	}, [futuresMarkets]);
 

@@ -39,14 +39,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
-	const markets = futuresMarkets?.map(({ asset }) => MarketKeyByAsset[asset]) ?? [];
-	const marketSummary = futuresMarkets?.find(({ asset }) => asset === marketAsset);
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
+	const marketSummary = futuresMarkets.find(({ asset }) => asset === marketAsset);
 
-	const futureRates =
-		futuresMarkets?.reduce((acc: Rates, { asset, price }) => {
-			acc[MarketKeyByAsset[asset]] = price;
-			return acc;
-		}, {}) ?? null;
+	const futureRates = futuresMarkets.reduce((acc: Rates, { asset, price }) => {
+		acc[MarketKeyByAsset[asset]] = price;
+		return acc;
+	}, {});
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
