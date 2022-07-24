@@ -12,7 +12,7 @@ export const Error: FC<ErrorProps> = ({ message, formatter }) => {
 	const formattedMessage = useMemo(() => {
 		switch (formatter) {
 			case 'revert':
-				return formatRevert(message);
+				return formatRevert(message ?? '');
 			default:
 				return message;
 		}
