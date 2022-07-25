@@ -1,5 +1,4 @@
 import { useExchangeContext } from 'contexts/ExchangeContext';
-import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -15,7 +14,6 @@ import {
 } from 'store/exchange';
 
 import CurrencyCard from '../CurrencyCard';
-import { zeroBN } from 'utils/formatters/number';
 
 type BaseCurrencyCardProps = {
 	allowBaseCurrencySelection?: boolean;

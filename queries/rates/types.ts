@@ -57,12 +57,6 @@ export type Price = {
 	price: number;
 };
 
-export type AtomicExchangeRate = {
-	amountReceived: Wei;
-	fee: Wei;
-	exchangeFeeRate: Wei;
-};
-
 export type Prices = Price[];
 
 export type Rates = Record<string, Wei>;

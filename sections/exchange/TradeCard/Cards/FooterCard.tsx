@@ -67,9 +67,6 @@ const FooterCard: React.FC = () => {
 		submissionDisabledReason,
 		feeReclaimPeriodInSeconds,
 		totalTradePrice,
-		isAtomic,
-		atomicExchangeFee,
-		atomicFee,
 	} = useExchangeContext();
 
 	return (
@@ -103,8 +100,8 @@ const FooterCard: React.FC = () => {
 					baseCurrency={baseCurrency}
 					feeReclaimPeriodInSeconds={feeReclaimPeriodInSeconds}
 					quoteCurrencyKey={quoteCurrencyKey}
-					totalFeeRate={isAtomic ? atomicExchangeFee : exchangeFeeRate}
-					baseFeeRate={isAtomic ? atomicFee : baseFeeRate}
+					totalFeeRate={exchangeFeeRate}
+					baseFeeRate={baseFeeRate}
 					transactionFee={transactionFee}
 					feeCost={feeCost}
 					showFee={txProvider === 'synthetix'}

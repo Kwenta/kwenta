@@ -111,9 +111,7 @@ const useExchange = ({
 
 	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
 	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
-
 	const [openModal, setOpenModal] = useState<ExchangeModal>();
-
 	const [isApproving, setIsApproving] = useState(false);
 	const [isApproved, setIsApproved] = useState(false);
 	const [baseCurrencyAmount, setBaseCurrencyAmount] = useRecoilState(baseCurrencyAmountState);
@@ -162,6 +160,42 @@ const useExchange = ({
 		if (oneInchTokensMap?.[baseCurrencyKey] && oneInchTokensMap?.[quoteCurrencyKey]) return '1inch';
 		return 'synthswap';
 	}, [baseCurrencyKey, quoteCurrencyKey, synthTokensMap, oneInchTokensMap]);
+
+	const destinationCurrencyKey = useMemo(
+		() => (baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null),
+		[baseCurrencyKey]
+	);
+
+	const sourceCurrencyKey = useMemo(
+		() => (quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null),
+		[quoteCurrencyKey]
+	);
+
+	const isAtomic = useMemo(() => {
+		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
+			return false;
+		}
+
+		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
+			ATOMIC_EXCHANGES_L1.includes(currency)
+		);
+	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
+
+	const quoteCurrencyAmountBN = useMemo(
+		() => (quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount)),
+		[quoteCurrencyAmount]
+	);
+	const baseCurrencyAmountBN = useMemo(
+		() => (baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount)),
+		[baseCurrencyAmount]
+	);
+	const atomicRatesQuery = useAtomicRatesQuery(
+		sourceCurrencyKey,
+		quoteCurrencyAmountBN.toBN(),
+		destinationCurrencyKey
+	);
+
+	const rateForAtomicExchange = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
@@ -277,13 +311,11 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const rate = useMemo(
-		() => newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey),
-		[exchangeRates, quoteCurrencyKey, baseCurrencyKey]
-	);
-
-	// eslint-disable-next-line no-console
-	console.log(`rate in useExchange`, Number(rate));
+	const rate = useMemo(() => {
+		return isAtomic && rateForAtomicExchange != null
+			? rateForAtomicExchange
+			: newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
+	}, [isAtomic, rateForAtomicExchange, exchangeRates, quoteCurrencyKey, baseCurrencyKey]);
 
 	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
@@ -324,20 +356,24 @@ const useExchange = ({
 					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
 					  selectPriceCurrencyRate.toNumber()
 					: wei(0)
+				: isAtomic && rateForAtomicExchange != null
+				? rateForAtomicExchange
 				: newGetExchangeRatesForCurrencies(
 						exchangeRates,
 						quoteCurrencyKey,
 						selectedPriceCurrency.name
 				  ),
 		[
+			txProvider,
+			isQuoteCurrencyETH,
+			coinGeckoPrices,
+			quoteCurrencyTokenAddress,
+			selectPriceCurrencyRate,
+			isAtomic,
+			rateForAtomicExchange,
 			exchangeRates,
 			quoteCurrencyKey,
 			selectedPriceCurrency.name,
-			txProvider,
-			selectPriceCurrencyRate,
-			coinGeckoPrices,
-			quoteCurrencyTokenAddress,
-			isQuoteCurrencyETH,
 		]
 	);
 	const basePriceRate = useMemo(() => {
@@ -350,20 +386,24 @@ const useExchange = ({
 						selectPriceCurrencyRate
 				  )
 				: wei(0)
+			: isAtomic && rateForAtomicExchange != null && rateForAtomicExchange.gt(0)
+			? wei(1).div(rateForAtomicExchange)
 			: newGetExchangeRatesForCurrencies(
 					exchangeRates,
 					baseCurrencyKey,
 					selectedPriceCurrency.name
 			  );
 	}, [
+		txProvider,
+		isBaseCurrencyETH,
+		coinGeckoPrices,
+		baseCurrencyTokenAddress,
+		selectPriceCurrencyRate,
+		isAtomic,
+		rateForAtomicExchange,
 		exchangeRates,
 		baseCurrencyKey,
 		selectedPriceCurrency.name,
-		txProvider,
-		selectPriceCurrencyRate,
-		baseCurrencyTokenAddress,
-		coinGeckoPrices,
-		isBaseCurrencyETH,
 	]);
 
 	const settlementWaitingPeriodQuery = useFeeReclaimPeriodQuery(baseCurrencyKey, walletAddress);
@@ -380,15 +420,6 @@ const useExchange = ({
 	const ethPriceRate = useMemo(
 		() => newGetExchangeRatesForCurrencies(exchangeRates, Synths.sETH, selectedPriceCurrency.name),
 		[exchangeRates, selectedPriceCurrency.name]
-	);
-
-	const quoteCurrencyAmountBN = useMemo(
-		() => (quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount)),
-		[quoteCurrencyAmount]
-	);
-	const baseCurrencyAmountBN = useMemo(
-		() => (baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount)),
-		[baseCurrencyAmount]
 	);
 
 	const totalTradePrice = useMemo(() => {
@@ -496,9 +527,10 @@ const useExchange = ({
 		return null;
 	}, [quoteCurrencyAmount, exchangeFeeRate]);
 
-	const feeCost = useMemo(() => {
-		return feeAmountInQuoteCurrency?.mul(quotePriceRate) ?? null;
-	}, [feeAmountInQuoteCurrency, quotePriceRate]);
+	const feeCost = useMemo(() => feeAmountInQuoteCurrency?.mul(quotePriceRate) ?? null, [
+		feeAmountInQuoteCurrency,
+		quotePriceRate,
+	]);
 
 	useEffect(() => {
 		if (!synthsMap) return;
@@ -541,52 +573,6 @@ const useExchange = ({
 		// eslint-disable-next-line
 	}, [baseCurrencyKey, exchangeFeeRate]);
 
-	const destinationCurrencyKey = useMemo(
-		() => (baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null),
-		[baseCurrencyKey]
-	);
-
-	const sourceCurrencyKey = useMemo(
-		() => (quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null),
-		[quoteCurrencyKey]
-	);
-
-	const isAtomic = useMemo(() => {
-		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
-			return false;
-		}
-
-		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
-			ATOMIC_EXCHANGES_L1.includes(currency)
-		);
-	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
-
-	const atomicRatesQuery = useAtomicRatesQuery(
-		sourceCurrencyKey,
-		quoteCurrencyAmountBN.toBN(),
-		destinationCurrencyKey
-	);
-
-	const atomicRate = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
-	const atomicAmountBN = useMemo(() => {
-		if (atomicRate != null) {
-			return truncateNumbers(Number(atomicRate.amountReceived) / 1e18, DEFAULT_CRYPTO_DECIMALS);
-		}
-		return '0';
-	}, [atomicRate]);
-	const atomicFee = useMemo(() => {
-		if (atomicRate != null) {
-			return atomicRate.fee;
-		}
-		return zeroBN;
-	}, [atomicRate]);
-	const atomicExchangeFee = useMemo(() => {
-		if (atomicRate != null) {
-			return atomicRate.exchangeFeeRate;
-		}
-		return zeroBN;
-	}, [atomicRate]);
-
 	const exchangeParams = useMemo(() => {
 		const sourceAmount = quoteCurrencyAmountBN.toBN();
 
@@ -596,16 +582,7 @@ const useExchange = ({
 
 		if (isAtomic) {
 			let minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
-			if (atomicAmountBN !== null) {
-				// minAmount = atomicRateAmount.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
-				// eslint-disable-next-line no-console
-				console.log(
-					`baseCurrencyAmount-atomic: `,
-					Number(atomicAmountBN),
-					`baseCurrencyAmount-chainlink: `,
-					Number(baseCurrencyAmountBN)
-				);
-			}
+
 			return [
 				sourceCurrencyKey,
 				sourceAmount,
@@ -629,7 +606,6 @@ const useExchange = ({
 		isAtomic,
 		baseCurrencyAmountBN,
 		atomicExchangeSlippage,
-		atomicAmountBN,
 		walletAddress,
 	]);
 
@@ -1136,8 +1112,8 @@ const useExchange = ({
 			setBaseCurrencyAmount,
 			txProvider,
 			baseCurrencyKey,
-			exchangeFeeRate,
 			rate,
+			exchangeFeeRate,
 		]
 	);
 
@@ -1165,11 +1141,11 @@ const useExchange = ({
 	}, [
 		quoteCurrencyBalance,
 		quoteCurrencyKey,
-		exchangeFeeRate,
-		rate,
-		setBaseCurrencyAmount,
-		setQuoteCurrencyAmount,
 		txProvider,
+		setQuoteCurrencyAmount,
+		rate,
+		exchangeFeeRate,
+		setBaseCurrencyAmount,
 	]);
 
 	const onRatioChange = useCallback(
@@ -1233,10 +1209,6 @@ const useExchange = ({
 		ratio,
 		onRatioChange,
 		setRatio,
-		atomicAmountBN,
-		atomicFee,
-		atomicExchangeFee,
-		isAtomic,
 	};
 };
 

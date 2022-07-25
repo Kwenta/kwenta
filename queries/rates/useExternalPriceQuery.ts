@@ -3,6 +3,7 @@ import { UseQueryOptions, useQuery } from 'react-query';
 
 import { FIAT_SYNTHS, COMMODITY_SYNTHS, CurrencyKey } from 'constants/currency';
 import QUERY_KEYS from 'constants/queryKeys';
+import { synthToAsset } from 'utils/currencies';
 import { FuturesMarketKey } from 'utils/futures';
 
 import { CG_BASE_API_URL } from './constants';
@@ -44,8 +45,8 @@ const useExternalPriceQuery = (
 	return useQuery<number | null>(
 		QUERY_KEYS.Rates.ExternalPrice(marketKey),
 		async () => {
-			return COMMODITY_SYNTHS.has(marketKey as any)
-				? getCommodityPrice(marketKey as any)
+			return COMMODITY_SYNTHS.has(synthToAsset(marketKey) as any)
+				? getCommodityPrice(synthToAsset(marketKey) as any)
 				: FIAT_SYNTHS.has(marketKey as any)
 				? getForexPrice(marketKey as any)
 				: getCoinGeckoPrice(marketKey);
