@@ -265,6 +265,7 @@ const OpenOrdersTable: React.FC = () => {
 						) : undefined
 					}
 				/>
+
 				<OrderDrawer
 					open={!!selectedOrder}
 					order={selectedOrder}

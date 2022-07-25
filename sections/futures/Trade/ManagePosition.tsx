@@ -1,13 +1,14 @@
 import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
 import { PositionSide } from 'queries/futures/types';
 import {
+	confirmationModalOpenState,
 	leverageSideState,
 	leverageState,
 	marketInfoState,
@@ -21,16 +22,14 @@ import {
 import { zeroBN } from 'utils/formatters/number';
 
 import ClosePositionModal from '../PositionCard/ClosePositionModal';
-
-type ManagePositionProps = {
-	openConfirmationModal(): void;
-};
+import NextPriceConfirmationModal from './NextPriceConfirmationModal';
+import TradeConfirmationModal from './TradeConfirmationModal';
 
 type OrderTxnError = {
 	reason: string;
 };
 
-const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }) => {
+const ManagePosition: React.FC = () => {
 	const { t } = useTranslation();
 	const leverage = useRecoilValue(leverageState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
@@ -43,6 +42,9 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 	const setLeverageSide = useSetRecoilState(leverageSideState);
 	const setTradeSize = useSetRecoilState(tradeSizeState);
 	const [isCancelModalOpen, setCancelModalOpen] = React.useState(false);
+	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
+		confirmationModalOpenState
+	);
 	const {
 		error,
 		orderTxn,
@@ -78,7 +80,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 							marketInfo?.isSuspended ||
 							isMarketCapReached
 						}
-						onClick={openConfirmationModal}
+						onClick={() => setConfirmationModalOpen(true)}
 					>
 						{t(placeOrderTranslationKey)}
 					</PlaceOrderButton>
@@ -98,7 +100,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 								setLeverageSide(newLeverageSide);
 								setTradeSize(newTradeSize.toString());
 								onTradeAmountChange(newTradeSize.toString(), true);
-								openConfirmationModal();
+								setConfirmationModalOpen(true);
 							} else {
 								setCancelModalOpen(true);
 							}
@@ -126,6 +128,10 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 			)}
 
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}
+
+			{isConfirmationModalOpen && orderType === 0 && <TradeConfirmationModal />}
+
+			{isConfirmationModalOpen && orderType === 1 && <NextPriceConfirmationModal />}
 		</>
 	);
 };

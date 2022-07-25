@@ -2,28 +2,30 @@ import useSynthetixQueries from '@synthetixio/queries';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths, CurrencyKey } from 'constants/currency';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import { currentMarketState, potentialTradeDetailsState } from 'store/futures';
+import {
+	confirmationModalOpenState,
+	currentMarketState,
+	potentialTradeDetailsState,
+} from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency, formatNumber } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 
+import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
 
-type TradeConfirmationModalProps = {
-	onDismiss: () => void;
-};
-
-const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) => {
+const TradeConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -33,6 +35,8 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const potentialTradeDetails = useRecoilValue(potentialTradeDetailsState);
+
+	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
 	const { orderTxn } = useFuturesContext();
 
@@ -114,33 +118,58 @@ const TradeConfirmationModal: FC<TradeConfirmationModalProps> = ({ onDismiss }) 
 		[positionDetails, market, synthsMap, transactionFee, selectedPriceCurrency]
 	);
 
+	const onDismiss = () => {
+		setConfirmationModalOpen(false);
+	};
+
 	const handleConfirmOrder = async () => {
 		orderTxn.mutate();
 		onDismiss();
 	};
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen
-			title={t('futures.market.trade.confirmation.modal.confirm-order')}
-		>
-			{dataRows.map(({ label, value }, i) => (
-				<Row key={`datarow-${i}`}>
-					<Label>{label}</Label>
-					<Value>{value}</Value>
-				</Row>
-			))}
-			<ConfirmTradeButton
-				data-testid="trade-open-position-confirm-order-button"
-				variant="primary"
-				isRounded
-				onClick={handleConfirmOrder}
-				disabled={!positionDetails}
-			>
-				{t('futures.market.trade.confirmation.modal.confirm-order')}
-			</ConfirmTradeButton>
-		</StyledBaseModal>
+		<>
+			<DesktopOnlyView>
+				<StyledBaseModal
+					onDismiss={onDismiss}
+					isOpen
+					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+				>
+					{dataRows.map(({ label, value }, i) => (
+						<Row key={`datarow-${i}`}>
+							<Label>{label}</Label>
+							<Value>{value}</Value>
+						</Row>
+					))}
+					<ConfirmTradeButton
+						data-testid="trade-open-position-confirm-order-button"
+						variant="primary"
+						isRounded
+						onClick={handleConfirmOrder}
+						disabled={!positionDetails}
+					>
+						{t('futures.market.trade.confirmation.modal.confirm-order')}
+					</ConfirmTradeButton>
+				</StyledBaseModal>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<BaseDrawer
+					open
+					closeDrawer={onDismiss}
+					items={dataRows}
+					buttons={
+						<MobileConfirmTradeButton
+							variant="primary"
+							isRounded
+							onClick={handleConfirmOrder}
+							disabled={!positionDetails}
+						>
+							{t('futures.market.trade.confirmation.modal.confirm-order')}
+						</MobileConfirmTradeButton>
+					}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
@@ -177,6 +206,14 @@ const ConfirmTradeButton = styled(Button)`
 	overflow: hidden;
 	white-space: nowrap;
 	height: 55px;
+`;
+
+const MobileConfirmTradeButton = styled(Button)`
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	height: 45px;
+	width: 100%;
 `;
 
 export default TradeConfirmationModal;

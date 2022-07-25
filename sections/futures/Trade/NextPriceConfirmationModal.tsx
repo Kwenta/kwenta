@@ -3,7 +3,7 @@ import { wei } from '@synthetixio/wei';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
@@ -15,6 +15,7 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
+	confirmationModalOpenState,
 	currentMarketState,
 	leverageSideState,
 	nextPriceDisclaimerState,
@@ -30,11 +31,7 @@ import { newGetTransactionPrice } from 'utils/network';
 
 import { PositionSide } from '../types';
 
-type NextPriceConfirmationModalProps = {
-	onDismiss: () => void;
-};
-
-const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({ onDismiss }) => {
+const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
 	const { synthsMap } = Connector.useContainer();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -49,6 +46,8 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({ onDis
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);
+
+	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
 	const { orderTxn } = useFuturesContext();
 
@@ -152,6 +151,10 @@ const NextPriceConfirmationModal: FC<NextPriceConfirmationModalProps> = ({ onDis
 			selectedPriceCurrency.sign,
 		]
 	);
+
+	const onDismiss = () => {
+		setConfirmationModalOpen(false);
+	};
 
 	const handleConfirmOrder = async () => {
 		orderTxn.mutate();
