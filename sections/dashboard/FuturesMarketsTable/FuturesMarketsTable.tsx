@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -13,12 +14,12 @@ import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import Connector from 'containers/Connector';
-import { FuturesMarket } from 'queries/futures/types';
 import useGetAverageFundingRateForMarkets, {
 	FundingRateResponse,
 } from 'queries/futures/useGetAverageFundingRateForMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { futuresMarketsState } from 'store/futures';
 import {
 	getDisplayAsset,
 	getSynthDescription,
@@ -27,16 +28,12 @@ import {
 	FuturesMarketAsset,
 } from 'utils/futures';
 
-type FuturesMarketsTableProps = {
-	futuresMarkets: FuturesMarket[];
-};
-
-const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
-	futuresMarkets,
-}: FuturesMarketsTableProps) => {
+const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
 	const { synthsMap } = Connector.useContainer();
+
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);

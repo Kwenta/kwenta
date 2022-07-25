@@ -10,14 +10,13 @@ import styled from 'styled-components';
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { currentMarketState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
-import { GridDivCenteredRow } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset, MarketKeyByAsset, FuturesMarketAsset } from 'utils/futures';
 
@@ -105,6 +104,9 @@ const OpenOrdersTable: React.FC = () => {
 					data={data}
 					highlightRowsOnHover
 					showPagination
+					noResultsMessage={
+						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+					}
 					columns={[
 						{
 							Header: (
@@ -201,9 +203,10 @@ const OpenOrdersTable: React.FC = () => {
 			<MobileOrTabletView>
 				<StyledTable
 					data={data}
-					onTableRowClick={(row) => {
-						setSelectedOrder(row.original);
-					}}
+					noResultsMessage={
+						<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+					}
+					onTableRowClick={(row) => setSelectedOrder(row.original)}
 					columns={[
 						{
 							Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
@@ -259,11 +262,6 @@ const OpenOrdersTable: React.FC = () => {
 							width: 100,
 						},
 					]}
-					noResultsMessage={
-						openOrders.length === 0 ? (
-							<TableNoResults>You have no open orders.</TableNoResults>
-						) : undefined
-					}
 				/>
 
 				<OrderDrawer
@@ -344,16 +342,6 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 16px;
 `;
 
 export default OpenOrdersTable;

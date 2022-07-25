@@ -20,6 +20,7 @@ import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 
@@ -171,7 +172,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					isRounded
 					size="lg"
 					onClick={() => closeTxn.mutate()}
-					disabled={!!error || !!closeTxn.errorMessage}
+					disabled={
+						!!error || (!!closeTxn.errorMessage && !isUserDeniedError(closeTxn.errorMessage))
+					}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>

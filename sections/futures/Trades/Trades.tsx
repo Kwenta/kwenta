@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 
 import LinkIcon from 'assets/svg/app/link-blue.svg';
 import Card from 'components/Card';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import { Synths } from 'constants/currency';
 import { ETH_UNIT } from 'constants/network';
 import BlockExplorer from 'containers/BlockExplorer';
@@ -213,16 +213,6 @@ const PNL = styled.div<{ negative?: boolean; normal?: boolean }>`
 			: props.negative
 			? props.theme.colors.selectedTheme.red
 			: props.theme.colors.selectedTheme.green};
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.selectedTheme.button.text};
-	font-size: 16px;
 `;
 
 const StyledExternalLink = styled(ExternalLink)`

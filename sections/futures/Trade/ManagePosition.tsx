@@ -55,8 +55,11 @@ const ManagePosition: React.FC = () => {
 
 	const orderError = useMemo(() => {
 		const orderTxnError = orderTxn.error as OrderTxnError;
-		return orderTxnError?.reason;
-	}, [orderTxn]);
+		if (orderTxnError) return orderTxnError.reason;
+		if (error) return error;
+		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
+		return null;
+	}, [orderTxn.error, error, previewTrade?.showStatus, previewTrade?.statusMessage]);
 
 	return (
 		<>
@@ -112,19 +115,8 @@ const ManagePosition: React.FC = () => {
 				</ManagePositionContainer>
 			</div>
 
-			{(orderTxn.isError || error || previewTrade?.showStatus) && (
-				<Error
-					message={
-						orderTxn.isError
-							? orderError
-							: error
-							? error
-							: previewTrade?.showStatus
-							? previewTrade?.statusMessage
-							: ''
-					}
-					formatter="revert"
-				/>
+			{orderError && (
+				<Error message={orderError} formatter={orderTxn.error ? 'revert' : undefined} />
 			)}
 
 			{isCancelModalOpen && <ClosePositionModal onDismiss={() => setCancelModalOpen(false)} />}

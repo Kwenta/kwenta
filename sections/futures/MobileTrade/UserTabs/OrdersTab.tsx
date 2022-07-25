@@ -15,5 +15,4 @@ const OrdersTab: React.FC = () => {
 		</div>
 	);
 };
-
 export default OrdersTab;

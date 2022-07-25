@@ -12,10 +12,9 @@ import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
 import useFuturesMarketClosed, { FuturesClosureReason } from 'hooks/useFuturesMarketClosed';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { Price, Rates } from 'queries/rates/types';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, futuresMarketsState } from 'store/futures';
 import { assetToSynth, iStandardSynth } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import {
@@ -66,10 +65,10 @@ type MarketsDropdownProps = {
 };
 
 const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
-	);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
+
+	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
 
 	const dailyPriceChanges = React.useMemo(() => dailyPriceChangesQuery?.data ?? [], [
 		dailyPriceChangesQuery,
@@ -86,15 +85,14 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	const { synthsMap } = Connector.useContainer();
 	const { t } = useTranslation();
 
-	const futureRates = futuresMarketsQuery.isSuccess
-		? futuresMarketsQuery?.data?.reduce((acc: Rates, { asset, price }) => {
-				const currencyKey = iStandardSynth(asset as CurrencyKey)
-					? asset
-					: assetToSynth(asset as CurrencyKey);
-				acc[currencyKey] = price;
-				return acc;
-		  }, {})
-		: null;
+	const futureRates =
+		futuresMarkets?.reduce((acc: Rates, { asset, price }) => {
+			const currencyKey = iStandardSynth(asset as CurrencyKey)
+				? asset
+				: assetToSynth(asset as CurrencyKey);
+			acc[currencyKey] = price;
+			return acc;
+		}, {}) ?? null;
 
 	const getBasePriceRate = React.useCallback(
 		(asset: FuturesMarketAsset) => {
@@ -121,32 +119,32 @@ const MarketsDropdown: React.FC<MarketsDropdownProps> = ({ mobile }) => {
 	);
 
 	const options = React.useMemo(() => {
-		const markets = futuresMarketsQuery?.data ?? [];
+		return (
+			futuresMarkets?.map((market) => {
+				const pastPrice = getPastPrice(market.asset);
+				const basePriceRate = getBasePriceRate(market.asset);
 
-		return markets.map((market) => {
-			const pastPrice = getPastPrice(market.asset);
-			const basePriceRate = getBasePriceRate(market.asset);
-
-			return assetToCurrencyOption({
-				asset: market.asset,
-				description: getSynthDescription(market.asset, synthsMap, t),
-				price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-					sign: '$',
-					minDecimals: getMinDecimals(market.asset),
-				}),
-				change: formatPercent(
-					basePriceRate && pastPrice?.price
-						? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
-						: zeroBN
-				),
-				negativeChange:
-					basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
-				isMarketClosed: market.isSuspended,
-				closureReason: market.marketClosureReason,
-			});
-		});
+				return assetToCurrencyOption({
+					asset: market.asset,
+					description: getSynthDescription(market.asset, synthsMap, t),
+					price: formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+						sign: '$',
+						minDecimals: getMinDecimals(market.asset),
+					}),
+					change: formatPercent(
+						basePriceRate && pastPrice?.price
+							? wei(basePriceRate).sub(pastPrice?.price).div(basePriceRate)
+							: zeroBN
+					),
+					negativeChange:
+						basePriceRate && pastPrice?.price ? wei(basePriceRate).lt(pastPrice?.price) : false,
+					isMarketClosed: market.isSuspended,
+					closureReason: market.marketClosureReason,
+				});
+			}) ?? []
+		);
 	}, [
-		futuresMarketsQuery?.data,
+		futuresMarkets,
 		selectedPriceCurrency.name,
 		synthsMap,
 		t,

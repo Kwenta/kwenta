@@ -46,7 +46,7 @@ export const positionsState = atom<FuturesPosition[] | null>({
 	default: null,
 });
 
-export const futuresMarketsState = atom<FuturesMarket[] | null>({
+export const futuresMarketsState = atom<FuturesMarket[]>({
 	key: getFuturesKey('markets'),
 	default: [],
 });
