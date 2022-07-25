@@ -5,6 +5,7 @@ export const formatRevert = (revertMsg: string) => {
 	return revertMsg.replace(REVERT_REGEX, '');
 };
 
-export const isMMUserDeniedError = (message: string) => {
+export const isUserDeniedError = (message: string) => {
+	if (!message) return false;
 	return message.includes('User denied transaction signature');
 };

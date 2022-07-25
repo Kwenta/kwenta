@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import styled from 'styled-components';
 
-import { formatRevert, isMMUserDeniedError } from 'utils/formatters/error';
+import { formatRevert, isUserDeniedError } from 'utils/formatters/error';
 
 type ErrorProps = {
 	message: string;
@@ -18,7 +18,7 @@ export const Error: FC<ErrorProps> = ({ message, formatter }) => {
 		}
 	}, [message, formatter]);
 
-	if (isMMUserDeniedError(message) || !message) return null;
+	if (isUserDeniedError(message) || !message) return null;
 
 	return <ErrorContainer>{formattedMessage}</ErrorContainer>;
 };
