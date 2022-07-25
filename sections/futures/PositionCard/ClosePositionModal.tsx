@@ -24,6 +24,7 @@ import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 
 import { PositionSide } from '../types';
+import { isMMUserDeniedError } from 'utils/formatters/error';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
@@ -171,7 +172,9 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					isRounded
 					size="lg"
 					onClick={() => closeTxn.mutate()}
-					disabled={!!error || !!closeTxn.errorMessage}
+					disabled={
+						!!error || (!!closeTxn.errorMessage && !isMMUserDeniedError(closeTxn.errorMessage))
+					}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
