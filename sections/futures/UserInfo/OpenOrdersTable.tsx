@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
@@ -213,7 +213,7 @@ const OpenOrdersTable: React.FC = () => {
 							accessor: 'side/type',
 							Cell: (cellProps: CellProps<any>) => (
 								<div>
-									<PositionType side={cellProps.row.original.side} />
+									<MobilePositionSide $side={cellProps.row.original.side} />
 									<div>{cellProps.row.original.orderType}</div>
 								</div>
 							),
@@ -342,6 +342,27 @@ const ExpiredBadge = styled(Badge)`
 	background: ${(props) => props.theme.colors.selectedTheme.red};
 	padding: 1px 5px;
 	line-height: 9px;
+`;
+
+const MobilePositionSide = styled.div<{ $side: PositionSide }>`
+	text-transform: uppercase;
+	font-size: 12px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	font-variant: all-small-caps;
+	letter-spacing: 1.4px;
+	margin-bottom: 4px;
+
+	${(props) =>
+		props.$side === 'long' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.green};
+		`};
+
+	${(props) =>
+		props.$side === 'short' &&
+		css`
+			color: ${(props) => props.theme.colors.selectedTheme.red};
+		`};
 `;
 
 export default OpenOrdersTable;

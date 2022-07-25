@@ -208,7 +208,7 @@ const ConfirmTradeButton = styled(Button)`
 	height: 55px;
 `;
 
-const MobileConfirmTradeButton = styled(Button)`
+export const MobileConfirmTradeButton = styled(Button)`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;

@@ -8,6 +8,7 @@ import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
+import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
 import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
@@ -29,7 +30,9 @@ import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { zeroBN, formatCurrency } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 
+import BaseDrawer from '../MobileTrade/drawers/BaseDrawer';
 import { PositionSide } from '../types';
+import { MobileConfirmTradeButton } from './TradeConfirmationModal';
 
 const NextPriceConfirmationModal: FC = () => {
 	const { t } = useTranslation();
@@ -162,29 +165,45 @@ const NextPriceConfirmationModal: FC = () => {
 	};
 
 	return (
-		<StyledBaseModal
-			onDismiss={onDismiss}
-			isOpen
-			title={t('futures.market.trade.confirmation.modal.confirm-order')}
-		>
-			{dataRows.map(({ label, value }, i) => (
-				<Row key={`datarow-${i}`}>
-					<Label>{label}</Label>
-					<Value>{value}</Value>
-				</Row>
-			))}
-			<NetworkFees>
-				<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
-			</NetworkFees>
-			{isDisclaimerDisplayed && (
-				<Disclaimer>
-					{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
-				</Disclaimer>
-			)}
-			<ConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
-				{t('futures.market.trade.confirmation.modal.confirm-order')}
-			</ConfirmTradeButton>
-		</StyledBaseModal>
+		<>
+			<DesktopOnlyView>
+				<StyledBaseModal
+					onDismiss={onDismiss}
+					isOpen
+					title={t('futures.market.trade.confirmation.modal.confirm-order')}
+				>
+					{dataRows.map(({ label, value }, i) => (
+						<Row key={`datarow-${i}`}>
+							<Label>{label}</Label>
+							<Value>{value}</Value>
+						</Row>
+					))}
+					<NetworkFees>
+						<StyledGasPriceSelect {...{ gasPrices, transactionFee }} />
+					</NetworkFees>
+					{isDisclaimerDisplayed && (
+						<Disclaimer>
+							{t('futures.market.trade.confirmation.modal.max-leverage-disclaimer')}
+						</Disclaimer>
+					)}
+					<ConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+						{t('futures.market.trade.confirmation.modal.confirm-order')}
+					</ConfirmTradeButton>
+				</StyledBaseModal>
+			</DesktopOnlyView>
+			<MobileOrTabletView>
+				<BaseDrawer
+					open
+					items={dataRows}
+					closeDrawer={onDismiss}
+					buttons={
+						<MobileConfirmTradeButton variant="primary" isRounded onClick={handleConfirmOrder}>
+							{t('futures.market.trade.confirmation.modal.confirm-order')}
+						</MobileConfirmTradeButton>
+					}
+				/>
+			</MobileOrTabletView>
+		</>
 	);
 };
 
