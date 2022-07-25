@@ -666,6 +666,7 @@
 			"history": {
 				"history-label": "trade history",
 				"last-n-trades": "last {{ numberOfTrades }} trades",
+				"last-trades": "last trades",
 				"skew-label": "skew",
 				"skew-tooltip": "Skew is the total amount of outstanding long and short contracts expressed as a percentage",
 				"amount-label": "amount",

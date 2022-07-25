@@ -1,4 +1,4 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
@@ -34,20 +34,48 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 	const isL2Mainnet = useRecoilValue(isL2MainnetState);
 
 	let data = useMemo(() => {
-		const futuresTrades = futuresTradesQuery?.data ?? [];
-		return futuresTrades.length > 0
-			? futuresTrades.map((trade: FuturesTrade) => {
-					return {
-						value: Number(trade?.price),
-						amount: Number(trade?.size),
-						time: Number(trade?.timestamp),
-						id: trade?.txnHash,
-						currencyKey,
-						orderType: trade?.orderType,
-					};
-			  })
-			: [];
+		const futuresTradesPages = futuresTradesQuery?.data?.pages ?? [];
+		// initially the currencyKey would as null
+		// the fetch would return [null]
+		if (futuresTradesPages[0] === null) return [];
+
+		const futuresTrades =
+			futuresTradesPages.length > 0
+				? futuresTradesPages.flat().map((trade: FuturesTrade | null) => {
+						return {
+							value: Number(trade?.price),
+							amount: Number(trade?.size),
+							time: Number(trade?.timestamp),
+							id: trade?.txnHash,
+							currencyKey,
+							orderType: trade?.orderType,
+						};
+				  })
+				: [];
+		return [...new Set(futuresTrades)];
 	}, [futuresTradesQuery.data, currencyKey]);
+
+	const observer = useRef<IntersectionObserver | null>(null);
+	const lastElementRef = useCallback(
+		(node) => {
+			if (futuresTradesQuery.isLoading) return;
+			if (observer) {
+				if (observer.current) {
+					observer.current.disconnect();
+				}
+
+				observer.current = new IntersectionObserver((entries) => {
+					if (entries[0].isIntersecting) {
+						futuresTradesQuery.fetchNextPage();
+					}
+				});
+			}
+			if (node) {
+				observer.current?.observe(node);
+			}
+		},
+		[futuresTradesQuery]
+	);
 
 	const calTimeDelta = (time: number) => {
 		const timeDelta = (Date.now() - time * 1000) / 1000;
@@ -76,8 +104,8 @@ const TradesHistoryTable: FC<TradesHistoryTableProps> = ({ numberOfTrades, mobil
 			<TableContainer>
 				<StyledTable
 					data={data}
-					pageSize={numberOfTrades}
-					showPagination
+					isLoading={futuresTradesQuery.isLoading}
+					lastRef={lastElementRef}
 					mobile={mobile}
 					onTableRowClick={(row) =>
 						row.original.id !== NO_VALUE
