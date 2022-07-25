@@ -2,10 +2,10 @@ import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import BlockExplorer from 'containers/BlockExplorer';
 import { MarginTransfer } from 'queries/futures/types';
-import { ExternalLink, GridDivCenteredRow } from 'styles/common';
+import { ExternalLink } from 'styles/common';
 import { timePresentation } from 'utils/formatters/date';
 import { truncateAddress } from 'utils/formatters/string';
 
@@ -79,11 +79,9 @@ const Transfers: FC<TransferProps> = ({ marginTransfers, isLoading, isLoaded }: 
 			columnsDeps={columnsDeps}
 			isLoading={isLoading && !isLoaded}
 			noResultsMessage={
-				marginTransfers?.length === 0 ? (
-					<TableNoResults>
-						<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
-					</TableNoResults>
-				) : undefined
+				<TableNoResults>
+					<StyledTitle>{t('futures.market.user.transfers.table.no-results')}</StyledTitle>
+				</TableNoResults>
 			}
 			showPagination
 		/>
@@ -124,12 +122,4 @@ const StyledAmountCell = styled(DefaultCell)<{ isPositive: boolean }>`
 const StyledTableHeader = styled.div`
 	font-family: ${(props) => props.theme.fonts.regular};
 	text-transform: capitalize;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	background-color: transparent;
-	margin-top: -2px;
-	justify-items: center;
 `;

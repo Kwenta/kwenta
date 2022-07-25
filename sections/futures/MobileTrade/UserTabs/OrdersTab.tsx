@@ -7,14 +7,13 @@ import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { positionState, currentMarketState, openOrdersState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
-import { GridDivCenteredRow } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 
@@ -104,6 +103,9 @@ const OrdersTab: React.FC = () => {
 				onTableRowClick={(row) => {
 					setSelectedOrder(row.original);
 				}}
+				noResultsMessage={
+					<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+				}
 				columns={[
 					{
 						Header: <StyledTableHeader>Side/Type</StyledTableHeader>,
@@ -159,11 +161,6 @@ const OrdersTab: React.FC = () => {
 						width: 100,
 					},
 				]}
-				noResultsMessage={
-					openOrders.length === 0 ? (
-						<TableNoResults>You have no open orders.</TableNoResults>
-					) : undefined
-				}
 			/>
 
 			<OrderDrawer
@@ -201,16 +198,6 @@ const CancelButton = styled(EditButton)`
 	border: 1px solid ${(props) => props.theme.colors.common.primaryRed};
 	color: ${(props) => props.theme.colors.common.primaryRed};
 	margin-right: 8px;
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 16px;
 `;
 
 export default OrdersTab;

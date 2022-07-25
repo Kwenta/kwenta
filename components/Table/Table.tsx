@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import Pagination from './Pagination';
 
@@ -256,6 +256,23 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 		padding-right: 18px;
 	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
+`;
+
+export const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	div {
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 16px;
+		font-family: ${(props) => props.theme.fonts.regular};
+	}
 `;
 
 const SortIconContainer = styled.span`

@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { Synths } from 'constants/currency';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { futuresMarketsState } from 'store/futures';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import FuturesMarketsTable from '../FuturesMarketsTable';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const FuturesMarkets = () => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = React.useMemo(() => futuresMarketsQuery?.data ?? [], [
-		futuresMarketsQuery?.data,
-	]);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
-	const openInterest = React.useMemo(() => {
-		return futuresMarkets
-			.map((market) => market.marketSize.mul(market.price).toNumber())
-			.reduce((total, openInterest) => total + openInterest, 0);
+	const openInterest = useMemo(() => {
+		return (
+			futuresMarkets
+				.map((market) => market.marketSize.mul(market.price).toNumber())
+				.reduce((total, openInterest) => total + openInterest, 0) ?? null
+		);
 	}, [futuresMarkets]);
 
 	return (
@@ -57,7 +57,7 @@ const FuturesMarkets = () => {
 				</MarketStatsContainer>
 			</HeaderContainer>
 
-			<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+			<FuturesMarketsTable />
 		</div>
 	);
 };

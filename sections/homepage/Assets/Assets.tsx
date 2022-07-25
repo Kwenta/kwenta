@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 import Slider from 'react-slick';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
@@ -15,13 +16,13 @@ import Currency from 'components/Currency';
 import { TabPanel } from 'components/Tab';
 import { CurrencyKey, Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import { Price } from 'queries/rates/types';
 import { requestCandlesticks } from 'queries/rates/useCandlesticksQuery';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useGetSynthsTradingVolumeForAllMarkets from 'queries/synths/useGetSynthsTradingVolumeForAllMarkets';
+import { futuresMarketsState } from 'store/futures';
 import {
 	FlexDiv,
 	FlexDivColCentered,
@@ -147,6 +148,8 @@ const Assets = () => {
 	const { synthsMap } = Connector.useContainer();
 	const [activeMarketsTab, setActiveMarketsTab] = useState<MarketsTab>(MarketsTab.FUTURES);
 
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
+
 	const MARKETS_TABS = useMemo(
 		() => [
 			{
@@ -174,8 +177,6 @@ const Assets = () => {
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
@@ -202,28 +203,30 @@ const Assets = () => {
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
-		return futuresMarkets.map((market, i) => {
-			const description = getSynthDescription(market.asset, synthsMap, t);
-			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find(
-				(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
-			);
-			return {
-				key: market.asset,
-				name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
-				description: description.split(' ')[0],
-				price: market.price.toNumber(),
-				volume: volume?.toNumber() || 0,
-				priceChange:
-					(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
-				image: <PriceChart asset={market.asset} />,
-				icon: (
-					<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
-				),
-			};
-		});
+		return (
+			futuresMarkets?.map((market, i) => {
+				const description = getSynthDescription(market.asset, synthsMap, t);
+				const volume = futuresVolume[market.assetHex];
+				const pastPrice = dailyPriceChanges.find(
+					(price: Price) => price.synth === market.asset || price.synth === market.asset.slice(1)
+				);
+				return {
+					key: market.asset,
+					name: market.asset[0] === 's' ? market.asset.slice(1) : market.asset,
+					description: description.split(' ')[0],
+					price: market.price.toNumber(),
+					volume: volume?.toNumber() || 0,
+					priceChange:
+						(market.price.toNumber() - (pastPrice?.price ?? 0)) / market.price.toNumber() || 0,
+					image: <PriceChart asset={market.asset} />,
+					icon: (
+						<StyledCurrencyIcon currencyKey={(market.asset[0] !== 's' ? 's' : '') + market.asset} />
+					),
+				};
+			}) ?? []
+		);
 		// eslint-disable-next-line
-	}, [synthsMap, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
+	}, [futuresMarkets, synthsMap, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data, t]);
 
 	const SPOTS = useMemo(() => {
 		const spotDailyPriceChanges = spotDailyPriceChangesQuery?.data ?? [];

@@ -1,20 +1,18 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { Synths } from 'constants/currency';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import { SectionHeader, SectionTitle } from 'sections/futures/MobileTrade/common';
+import { futuresMarketsState } from 'store/futures';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 
 import SpotMarketsTable from '../SpotMarketsTable';
 import { HeaderContainer, MarketStatsContainer, MarketStat } from './common';
 
 const SynthMarkets: React.FC = () => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = React.useMemo(() => futuresMarketsQuery?.data ?? [], [
-		futuresMarketsQuery?.data,
-	]);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const { useExchangeRatesQuery } = useSynthetixQueries();
 

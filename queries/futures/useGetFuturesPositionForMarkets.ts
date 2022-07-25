@@ -23,7 +23,7 @@ const useGetFuturesPositionForMarkets = (
 	const { synthetixjs } = Connector.useContainer();
 	const [, setFuturesPositions] = useRecoilState(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
-	const assets = futuresMarkets?.map(({ asset }) => asset) ?? [];
+	const assets = futuresMarkets.map(({ asset }) => asset);
 
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(network.id, walletAddress, assets || []),
