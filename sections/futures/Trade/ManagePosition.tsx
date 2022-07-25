@@ -57,7 +57,7 @@ const ManagePosition: React.FC<ManagePositionProps> = ({ openConfirmationModal }
 		if (error) return error;
 		if (previewTrade?.showStatus) return previewTrade?.statusMessage;
 		return null;
-	}, [orderTxn, previewTrade?.showStatus, error]);
+	}, [orderTxn.error, error, previewTrade?.showStatus, previewTrade?.statusMessage]);
 
 	return (
 		<>

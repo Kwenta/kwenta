@@ -20,11 +20,11 @@ import { currentMarketState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
+import { isUserDeniedError } from 'utils/formatters/error';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
 import { newGetTransactionPrice } from 'utils/network';
 
 import { PositionSide } from '../types';
-import { isUserDeniedError } from 'utils/formatters/error';
 
 type ClosePositionModalProps = {
 	onDismiss: () => void;
