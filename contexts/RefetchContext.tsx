@@ -1,6 +1,7 @@
 import React from 'react';
 
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
+import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
 import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositionForMarkets';
@@ -23,6 +24,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionQuery = useGetFuturesPositionForMarket();
 	const positionsQuery = useGetFuturesPositionForMarkets([]);
 	const marketQuery = useGetFuturesMarket();
+	useGetFuturesMarkets();
 	useGetFuturesPotentialTradeDetails();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {

@@ -7,14 +7,13 @@ import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
 import { Synths } from 'constants/currency';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
+import { futuresMarketsState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
 
 const PortfolioChart: FC = () => {
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);

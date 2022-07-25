@@ -8,8 +8,7 @@ import styled from 'styled-components';
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { FuturesMarket } from 'queries/futures/types';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
-import { currentMarketState } from 'store/futures';
+import { currentMarketState, futuresMarketsState } from 'store/futures';
 import { CapitalizedText, NumericValue } from 'styles/common';
 import { formatCurrency, formatPercent } from 'utils/formatters/number';
 
@@ -18,12 +17,11 @@ import OpenInterestBar from './OpenInterestBar';
 const SkewInfo: React.FC = () => {
 	const { t } = useTranslation();
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
 	const currencyKey = useRecoilValue(currentMarketState);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const futuresMarkets = useMemo(() => futuresMarketsQuery?.data ?? [], [futuresMarketsQuery]);
 	const data = useMemo(() => {
 		const cleanMarket = (i: FuturesMarket) => {
 			const basePriceRate = _.defaultTo(0, Number(i.price));

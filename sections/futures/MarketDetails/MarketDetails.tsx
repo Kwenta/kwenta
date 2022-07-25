@@ -13,13 +13,12 @@ import { NO_VALUE } from 'constants/placeholder';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
 import { Rates } from 'queries/rates/types';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, marketKeyState } from 'store/futures';
+import { currentMarketState, futuresMarketsState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -36,18 +35,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
-	const marketSummary = futuresMarketsQuery.data?.find(({ asset }) => asset === marketAsset);
+	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
+	const marketSummary = futuresMarkets.find(({ asset }) => asset === marketAsset);
 
-	const futureRates = futuresMarketsQuery.isSuccess
-		? futuresMarketsQuery.data?.reduce((acc: Rates, { asset, price }) => {
-				acc[MarketKeyByAsset[asset]] = price;
-				return acc;
-		  }, {})
-		: null;
+	const futureRates = futuresMarkets.reduce((acc: Rates, { asset, price }) => {
+		acc[MarketKeyByAsset[asset]] = price;
+		return acc;
+	}, {});
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
@@ -84,9 +82,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice(
-		futuresMarketsQuery.data?.map(({ asset }) => asset) ?? []
-	);
+	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
 	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 
 	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);

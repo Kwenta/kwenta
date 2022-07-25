@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import MarketBadge from 'components/Badge/MarketBadge';
@@ -11,15 +12,11 @@ import Table from 'components/Table';
 import { Synths } from 'constants/currency';
 import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
-import { FuturesMarket } from 'queries/futures/types';
 import useGetFuturesTradingVolumeForAllMarkets from 'queries/futures/useGetFuturesTradingVolumeForAllMarkets';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
+import { futuresMarketsState } from 'store/futures';
 import { FlexDivCol } from 'styles/common';
 import { FuturesMarketAsset, getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
-
-type FuturesMarketsTableProps = {
-	futuresMarkets: FuturesMarket[];
-};
 
 enum TableColumnAccessor {
 	Market = 'market',
@@ -30,11 +27,11 @@ function setLastVisited(baseCurrencyPair: string): void {
 	localStorage.setItem('lastVisited', ROUTES.Markets.MarketPair(baseCurrencyPair));
 }
 
-const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
-	futuresMarkets,
-}: FuturesMarketsTableProps) => {
+const FuturesMarketsTable: FC = () => {
 	const { t } = useTranslation();
 	const router = useRouter();
+
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const synthList = futuresMarkets.map(({ asset }) => asset);
 	const dailyPriceChangesQuery = useLaggedDailyPrice(synthList);
@@ -45,18 +42,20 @@ const FuturesMarketsTable: FC<FuturesMarketsTableProps> = ({
 		const dailyPriceChanges = dailyPriceChangesQuery?.data ?? [];
 		const futuresVolume = futuresVolumeQuery?.data ?? {};
 
-		return futuresMarkets.map((market) => {
-			const volume = futuresVolume[market.assetHex];
-			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
+		return (
+			futuresMarkets?.map((market) => {
+				const volume = futuresVolume[market.assetHex];
+				const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
 
-			return {
-				asset: market.asset,
-				market: getDisplayAsset(market.asset) + '-PERP',
-				price: market.price,
-				volume: volume?.toNumber() ?? 0,
-				priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,
-			};
-		});
+				return {
+					asset: market.asset,
+					market: getDisplayAsset(market.asset) + '-PERP',
+					price: market.price,
+					volume: volume?.toNumber() ?? 0,
+					priceChange: market.price.sub(pastPrice?.price ?? 0).div(market.price) || 0,
+				};
+			}) ?? []
+		);
 	}, [futuresMarkets, dailyPriceChangesQuery?.data, futuresVolumeQuery?.data]);
 
 	return (

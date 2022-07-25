@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import GridSvg from 'assets/svg/app/grid.svg';
@@ -15,8 +16,8 @@ import ROUTES from 'constants/routes';
 import useENS from 'hooks/useENS';
 import { FuturesStat } from 'queries/futures/types';
 import useGetFuturesDailyTradeStats from 'queries/futures/useGetFuturesDailyTradeStats';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetStats from 'queries/futures/useGetStats';
+import { futuresMarketsState } from 'store/futures';
 import { FlexDivColCentered, FlexDivRow, SmallGoldenHeader, WhiteHeader } from 'styles/common';
 import media, { Media } from 'styles/media';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
@@ -33,6 +34,8 @@ type Stat = {
 
 const ShortList = () => {
 	const { t } = useTranslation();
+
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const statsQuery = useGetStats(true);
 	const stats = useMemo(() => statsQuery.data ?? [], [statsQuery]);
@@ -104,13 +107,11 @@ const ShortList = () => {
 
 	const dailyTradeStats = useGetFuturesDailyTradeStats();
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
 	const openInterest = useMemo(() => {
-		const futuresMarkets = futuresMarketsQuery?.data ?? [];
 		return futuresMarkets
 			.map((market) => market.marketSize.mul(market.price).toNumber())
 			.reduce((total, openInterest) => total + openInterest, 0);
-	}, [futuresMarketsQuery?.data]);
+	}, [futuresMarkets]);
 
 	return (
 		<StackSection>
@@ -279,7 +280,7 @@ const ShortList = () => {
 					<StatsCard>
 						<StatsName>{t('homepage.shortlist.stats.open-interest')}</StatsName>
 						<StatsValue>
-							{futuresMarketsQuery.isLoading ? (
+							{!openInterest ? (
 								<Loader />
 							) : (
 								formatCurrency(Synths.sUSD, openInterest ?? 0, {

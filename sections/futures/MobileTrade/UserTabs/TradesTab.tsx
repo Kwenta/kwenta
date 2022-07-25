@@ -4,7 +4,7 @@ import { CellProps } from 'react-table';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import { ETH_UNIT } from 'constants/network';
 import { FuturesTrade } from 'queries/futures/types';
 import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesForAccount';
@@ -144,14 +144,4 @@ const StyledPositionSide = styled.div<{ side: PositionSide }>`
 		css`
 			color: ${props.theme.colors.common.primaryRed};
 		`}
-`;
-
-const TableNoResults = styled(GridDivCenteredRow)`
-	padding: 50px 0;
-	justify-content: center;
-	margin-top: -2px;
-	justify-items: center;
-	grid-gap: 10px;
-	color: ${(props) => props.theme.colors.common.primaryWhite};
-	font-size: 16px;
 `;
