@@ -12,7 +12,9 @@ export const isFiatCurrency = (currencyKey: CurrencyKey) => FIAT_SYNTHS.has(curr
 // TODO: replace this with a more robust logic (like checking the asset field)
 export const toInverseSynth = (currencyKey: CurrencyKey) => currencyKey.replace(/^s/i, 'i');
 export const toStandardSynth = (currencyKey: CurrencyKey) => currencyKey.replace(/^i/i, 's');
-export const synthToAsset = (currencyKey: CurrencyKey) => currencyKey.replace(/^(i|s)/, '');
+export const synthToAsset = (currencyKey: CurrencyKey | FuturesMarketKey) => {
+	return currencyKey.replace(/^(i|s)/, '');
+};
 export const assetToSynth = (currencyKey: CurrencyKey) => `s${currencyKey}`;
 export const iStandardSynth = (currencyKey: CurrencyKey) => currencyKey.startsWith('s');
 export const synthToContractName = (currencyKey: CurrencyKey) => `Synth${currencyKey}`;
