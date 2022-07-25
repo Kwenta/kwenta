@@ -13,6 +13,7 @@ export type SingleQueryOptions = {
 		  };
 };
 export type MultiQueryOptions<T, R> = {
+	skip?: number;
 	first?: number;
 	where?: T;
 	block?:
