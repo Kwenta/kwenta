@@ -251,8 +251,8 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 	${(props) => (props.hideHeaders ? `display: none` : '')}
 `;
 
-export const TableNoResults = styled(GridDivCenteredRow)<{ wide?: boolean }>`
-	padding: ${(props) => (props.wide ? '50px' : '12px')} 0;
+export const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
 	justify-content: center;
 	margin-top: -2px;
 	justify-items: center;

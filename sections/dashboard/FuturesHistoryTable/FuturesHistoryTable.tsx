@@ -70,12 +70,12 @@ const FuturesHistoryTable: FC = () => {
 				isLoading={futuresTradesQuery.isLoading}
 				noResultsMessage={
 					!isL2 ? (
-						<TableNoResults wide>
+						<TableNoResults>
 							{t('common.l2-cta')}
 							<div onClick={switchToL2}>{t('homepage.l2.cta-buttons.switch-l2')}</div>
 						</TableNoResults>
 					) : (
-						<TableNoResults wide>
+						<TableNoResults>
 							{t('dashboard.history.futures-history-table.no-result')}
 							<Link href={ROUTES.Markets.Home}>
 								<div>{t('common.perp-cta')}</div>

@@ -72,7 +72,7 @@ const SpotHistoryTable: FC = () => {
 				isLoading={walletTradesQuery.isLoading}
 				highlightRowsOnHover
 				noResultsMessage={
-					<TableNoResults wide>
+					<TableNoResults>
 						{t('dashboard.history.spot-history-table.no-trade-history')}
 						<Link href={ROUTES.Exchange.Home}>
 							<div>{t('dashboard.history.spot-history-table.no-trade-history-link')}</div>
