@@ -18,7 +18,7 @@ import {
 	futuresAccountState,
 	openOrdersState,
 } from 'store/futures';
-import { gasSpeedState, walletAddressState } from 'store/wallet';
+import { gasSpeedState } from 'store/wallet';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';

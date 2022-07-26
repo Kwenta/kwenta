@@ -2,6 +2,7 @@ import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
 import { useRefetchContext } from 'contexts/RefetchContext';
+import { formatBytes32String } from 'ethers/lib/utils';
 import { FC, useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -13,14 +14,16 @@ import Error from 'components/Error';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import { getFuturesMarketContract } from 'queries/futures/utils';
-import { currentMarketState, positionState } from 'store/futures';
+import { currentMarketState, futuresAccountState, positionState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';
 import { FlexDivCentered, FlexDivCol } from 'styles/common';
 import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 import { formatCurrency, formatNumber, zeroBN } from 'utils/formatters/number';
+import logError from 'utils/logError';
 import { newGetTransactionPrice } from 'utils/network';
 
 import { PositionSide } from '../types';
@@ -31,8 +34,10 @@ type ClosePositionModalProps = {
 
 const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const { t } = useTranslation();
+	const { handleRefetch } = useRefetchContext();
 	const { synthetixjs, synthsMap } = Connector.useContainer();
 	const { useEthGasPriceQuery, useExchangeRatesQuery, useSynthetixTxn } = useSynthetixQueries();
+	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
 	const gasSpeed = useRecoilValue(gasSpeedState);
@@ -43,8 +48,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	const currencyKey = useRecoilValue(currentMarketState);
 	const position = useRecoilValue(positionState);
 	const positionDetails = position?.position;
-
-	const { handleRefetch } = useRefetchContext();
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
 
 	const exchangeRates = useMemo(
 		() => (exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null),
@@ -63,9 +67,10 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 		'closePositionWithTracking',
 		[KWENTA_TRACKING_CODE],
 		gasPrice ?? undefined,
-		{ enabled: !!currencyKey }
+		{ enabled: !!currencyKey && selectedAccountType === 'isolated_margin' }
 	);
 
+	// TODO: Get free for cross margin
 	const transactionFee = useMemo(
 		() =>
 			newGetTransactionPrice(
@@ -137,7 +142,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 	}, [positionDetails, currencyKey, t, orderFee, transactionFee, selectedPriceCurrency, synthsMap]);
 
 	useEffect(() => {
-		if (closeTxn.hash) {
+		if (closeTxn?.hash) {
 			monitorTransaction({
 				txHash: closeTxn.hash,
 				onTxConfirmed: () => {
@@ -148,7 +153,26 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [closeTxn.hash]);
+	}, [closeTxn?.hash]);
+
+	const closePosition = async () => {
+		if (selectedAccountType === 'cross_margin') {
+			if (!crossMarginAccountContract) return;
+			try {
+				await crossMarginAccountContract.distributeMargin([
+					{
+						marketKey: formatBytes32String(currencyKey),
+						marginDelta: zeroBN.toBN(),
+						sizeDelta: positionSize.neg().toBN(),
+					},
+				]);
+			} catch (err) {
+				logError(err);
+			}
+		} else {
+			closeTxn?.mutate();
+		}
+	};
 
 	return (
 		<StyledBaseModal
@@ -169,12 +193,12 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					variant="primary"
 					isRounded
 					size="lg"
-					onClick={() => closeTxn.mutate()}
-					disabled={!!error || !!closeTxn.errorMessage}
+					onClick={closePosition}
+					disabled={!!error || !!closeTxn?.errorMessage}
 				>
 					{t('futures.market.user.position.modal.title')}
 				</StyledButton>
-				{(error || closeTxn.errorMessage) && (
+				{(error || closeTxn?.errorMessage) && (
 					<Error message={error || closeTxn.errorMessage || ''} formatter="revert" />
 				)}
 			</>

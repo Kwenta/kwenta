@@ -45,9 +45,7 @@ const MarketActions: React.FC = () => {
 				<DepositMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
 			)}
 
-			{openModal === 'withdraw' && (
-				<WithdrawMarginModal sUSDBalance={sUSDBalance} onDismiss={() => setOpenModal(null)} />
-			)}
+			{openModal === 'withdraw' && <WithdrawMarginModal onDismiss={() => setOpenModal(null)} />}
 		</>
 	);
 };

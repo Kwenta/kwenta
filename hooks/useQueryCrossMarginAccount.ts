@@ -1,9 +1,10 @@
-import { FuturesAccountType } from 'queries/futures/types';
 import { useCallback, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { FuturesAccountType } from 'queries/futures/types';
 import { futuresAccountState } from 'store/futures';
 import { networkState, walletAddressState } from 'store/wallet';
+
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
 
 const supportedNetworks = [10, 69];
@@ -31,11 +32,11 @@ export default function useQueryCrossMarginAccount() {
 		if (!network.id || !walletAddress || !crossMarginContractFactory) return null;
 		if (!supportedNetworks.includes(network.id)) {
 			const accountState = {
-				crossMarginEnabled: false,
+				crossMarginAvailable: false,
 				crossMarginAddress: null,
 				walletAddress,
 				selectedFuturesAddress: walletAddress,
-				selectedType: 'isolated_margin' as FuturesAccountType,
+				selectedAccountType: 'isolated_margin' as FuturesAccountType,
 			};
 			setFuturesAccount(accountState);
 			return accountState;
@@ -44,19 +45,19 @@ export default function useQueryCrossMarginAccount() {
 
 		if (walletAddress && crossMarginContractFactory) {
 			setFuturesAccount({
-				crossMarginEnabled: true,
+				crossMarginAvailable: true,
 				crossMarginAddress: null,
 				walletAddress,
 				selectedFuturesAddress: walletAddress,
-				selectedType: futuresAccount?.selectedType || 'pending',
+				selectedAccountType: futuresAccount?.selectedAccountType || 'pending',
 			});
 			const crossMarginAccount = await queryAccountLogs();
 			const accountState = {
-				crossMarginEnabled: true,
+				crossMarginAvailable: true,
 				crossMarginAddress: crossMarginAccount,
 				walletAddress,
 				selectedFuturesAddress: crossMarginAccount || walletAddress,
-				selectedType: (crossMarginAccount
+				selectedAccountType: (crossMarginAccount
 					? 'cross_margin'
 					: 'isolated_margin') as FuturesAccountType,
 			};
@@ -66,7 +67,7 @@ export default function useQueryCrossMarginAccount() {
 	}, [
 		walletAddress,
 		crossMarginContractFactory,
-		futuresAccount.selectedType,
+		futuresAccount.selectedAccountType,
 		network.id,
 		setFuturesAccount,
 		queryAccountLogs,

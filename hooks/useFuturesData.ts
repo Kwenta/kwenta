@@ -10,6 +10,7 @@ import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
+import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
@@ -50,6 +51,7 @@ const useFuturesData = () => {
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketLimitQuery = useGetFuturesMarketLimit(marketKey);
+	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -65,7 +67,7 @@ const useFuturesData = () => {
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const { selectedFuturesAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
@@ -256,10 +258,15 @@ const useFuturesData = () => {
 
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
+	const crossMarginAccount = crossMarginAvailable
+		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
+		: null;
+
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
 		onTradeAmountSUSDChange,
+		crossMarginAccount,
 		marketAssetRate,
 		maxLeverageValue,
 		position,

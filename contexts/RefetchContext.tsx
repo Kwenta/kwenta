@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
+import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarket from 'queries/futures/useGetFuturesMarket';
 import useGetFuturesOpenOrders from 'queries/futures/useGetFuturesOpenOrders';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -9,7 +10,12 @@ import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPot
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { walletAddressState } from 'store/wallet';
 
-type RefetchType = 'modify-position' | 'new-order' | 'close-position' | 'margin-change';
+type RefetchType =
+	| 'modify-position'
+	| 'new-order'
+	| 'close-position'
+	| 'margin-change'
+	| 'account-margin-change';
 
 type RefetchContextType = {
 	handleRefetch: (refetchType: RefetchType, timeout?: number) => void;
@@ -28,6 +34,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const positionQuery = useGetFuturesPositionForMarket();
 	const positionsQuery = useGetFuturesPositionForMarkets([]);
 	const marketQuery = useGetFuturesMarket();
+	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
 	useGetFuturesPotentialTradeDetails();
 
 	const handleRefetch = (refetchType: RefetchType, timeout?: number) => {
@@ -49,6 +56,9 @@ export const RefetchProvider: React.FC = ({ children }) => {
 					positionQuery.refetch();
 					openOrdersQuery.refetch();
 					synthsBalancesQuery.refetch();
+					break;
+				case 'account-margin-change':
+					crossMarginAccountOverview.refetch();
 					break;
 			}
 		}, timeout ?? 5000);

@@ -1,5 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
-import Wei, { wei } from '@synthetixio/wei';
+import { wei } from '@synthetixio/wei';
 import { useRefetchContext } from 'contexts/RefetchContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +28,6 @@ import {
 
 type WithdrawMarginModalProps = {
 	onDismiss(): void;
-	sUSDBalance: Wei;
 };
 
 const PLACEHOLDER = '$0.00';
