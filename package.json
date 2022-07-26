@@ -68,7 +68,7 @@
 		"react-infinite-scroll-component": "^6.1.0",
 		"react-input-autosize": "3.0.0",
 		"react-is": "^18.0.0",
-		"react-query": "3.35.0",
+		"react-query": "4.0.0",
 		"react-redux": "^7.2.8",
 		"react-responsive": "8.2.0",
 		"react-select": "4.3.1",
