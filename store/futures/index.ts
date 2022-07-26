@@ -153,3 +153,8 @@ export const potentialTradeDetailsState = atom<FuturesPotentialTradeDetails | nu
 	key: getFuturesKey('potentialTradeDetails'),
 	default: null,
 });
+
+export const confirmationModalOpenState = atom({
+	key: getFuturesKey('confirmationModalOpen'),
+	default: false,
+});

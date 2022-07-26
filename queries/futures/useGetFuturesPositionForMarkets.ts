@@ -1,6 +1,6 @@
 import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
@@ -13,19 +13,19 @@ import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
 const useGetFuturesPositionForMarkets = (
-	markets: string[] | [],
-	options?: UseQueryOptions<FuturesPosition[] | []>
+	markets: string[],
+	options?: UseQueryOptions<FuturesPosition[]>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const { synthetixjs } = Connector.useContainer();
-	const [, setFuturesPositions] = useRecoilState(positionsState);
+	const setFuturesPositions = useSetRecoilState(positionsState);
 	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const assets = futuresMarkets.map(({ asset }) => asset);
 
-	return useQuery<FuturesPosition[] | []>(
+	return useQuery<FuturesPosition[]>(
 		QUERY_KEYS.Futures.MarketsPositions(network.id, walletAddress, assets || []),
 		async () => {
 			if (!markets || (walletAddress && !isL2)) {

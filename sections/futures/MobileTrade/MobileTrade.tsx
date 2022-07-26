@@ -6,12 +6,12 @@ import PositionDetails from './PositionDetails';
 import UserTabs from './UserTabs';
 
 const MobileTrade: React.FC = () => (
-	<div>
+	<>
 		<MarketsDropdown mobile />
 		<OverviewTabs />
 		<PositionDetails />
 		<UserTabs />
-	</div>
+	</>
 );
 
 export default MobileTrade;
