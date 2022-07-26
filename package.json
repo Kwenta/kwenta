@@ -72,7 +72,7 @@
 		"react-redux": "^7.2.8",
 		"react-responsive": "8.2.0",
 		"react-select": "4.3.1",
-		"react-slick": "0.28.1",
+		"react-slick": "0.29.0",
 		"react-table": "7.7.0",
 		"react-toastify": "9.0.4",
 		"recharts": "2.0.9",
