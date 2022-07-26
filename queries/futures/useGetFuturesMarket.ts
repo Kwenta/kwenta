@@ -33,14 +33,15 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 			}
 
 			const {
-				contracts: { FuturesMarketData, SystemStatus },
+				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus },
 				utils,
 			} = synthetixjs!;
 
-			const [markets, globals, { suspended, reason }] = await Promise.all([
+			const [markets, globals, { suspended, reason }, marketLimit] = await Promise.all([
 				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(marketKey)]),
 				FuturesMarketData.globals(),
 				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(marketKey)),
+				FuturesMarketSettings.maxMarketValueUSD(utils.formatBytes32String(marketKey)),
 			]);
 
 			const market = markets[0];
@@ -74,6 +75,7 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 				minInitialMargin: wei(globals.minInitialMargin),
 				isSuspended: suspended,
 				marketClosureReason: getReasonFromCode(reason) as FuturesClosureReason,
+				marketLimit: wei(marketLimit),
 			};
 
 			setMarketInfo(parsedMarket);

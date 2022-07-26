@@ -75,6 +75,7 @@ export type FuturesMarket = {
 	minInitialMargin: Wei;
 	isSuspended: boolean;
 	marketClosureReason: FuturesClosureReason;
+	marketLimit: Wei;
 };
 
 export type FuturesOpenInterest = {
