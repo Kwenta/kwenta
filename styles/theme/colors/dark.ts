@@ -92,6 +92,9 @@ const darkTheme = {
 		fill: '#787878',
 		hover: '#ECE8E3',
 	},
+	openInterestBar: {
+		border: '1px solid #2b2a2a'
+	},
 };
 
 export default darkTheme;
