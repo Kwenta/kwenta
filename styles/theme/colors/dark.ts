@@ -93,7 +93,7 @@ const darkTheme = {
 		hover: '#ECE8E3',
 	},
 	openInterestBar: {
-		border: '1px solid #2b2a2a'
+		border: '1px solid #2b2a2a',
 	},
 };
 

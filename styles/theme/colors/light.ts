@@ -94,7 +94,7 @@ const lightTheme = {
 		hover: '#171002',
 	},
 	openInterestBar: {
-		border: '1px solid #F2F2F2'
+		border: '1px solid #F2F2F2',
 	},
 };
 
