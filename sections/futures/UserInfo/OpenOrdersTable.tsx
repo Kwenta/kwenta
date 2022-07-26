@@ -213,7 +213,9 @@ const OpenOrdersTable: React.FC = () => {
 							accessor: 'side/type',
 							Cell: (cellProps: CellProps<any>) => (
 								<div>
-									<MobilePositionSide $side={cellProps.row.original.side} />
+									<MobilePositionSide $side={cellProps.row.original.side}>
+										{cellProps.row.original.side}
+									</MobilePositionSide>
 									<div>{cellProps.row.original.orderType}</div>
 								</div>
 							),
@@ -346,9 +348,8 @@ const ExpiredBadge = styled(Badge)`
 
 const MobilePositionSide = styled.div<{ $side: PositionSide }>`
 	text-transform: uppercase;
-	font-size: 12px;
+	font-size: 13px;
 	font-family: ${(props) => props.theme.fonts.bold};
-	font-variant: all-small-caps;
 	letter-spacing: 1.4px;
 	margin-bottom: 4px;
 
