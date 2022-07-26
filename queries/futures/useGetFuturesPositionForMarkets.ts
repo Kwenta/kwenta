@@ -6,7 +6,7 @@ import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { futuresMarketsState, futuresAccountState, positionsState } from 'store/futures';
-import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import { MarketKeyByAsset } from 'utils/futures';
 
 import { FuturesPosition } from './types';

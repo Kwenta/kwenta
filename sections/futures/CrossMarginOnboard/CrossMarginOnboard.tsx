@@ -1,22 +1,24 @@
+import { wei } from '@synthetixio/wei';
+import { useRefetchContext } from 'contexts/RefetchContext';
+import { constants } from 'ethers';
 import { ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
-import { wei } from '@synthetixio/wei';
-import { constants } from 'ethers';
+import styled from 'styled-components';
 
 import BaseModal from 'components/BaseModal';
 import Button from 'components/Button';
-import Connector from 'containers/Connector';
-import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
-import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
-import { futuresAccountState } from 'store/futures';
-import TransactionNotifier from 'containers/TransactionNotifier';
-import NumericInput from 'components/Input/NumericInput';
-import useSUSDContract from 'hooks/useSUSDContract';
-import Loader from 'components/Loader';
-import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 import ErrorView from 'components/Error';
+import NumericInput from 'components/Input/NumericInput';
+import Loader from 'components/Loader';
+import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
+import Connector from 'containers/Connector';
+import TransactionNotifier from 'containers/TransactionNotifier';
+import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
+import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
+import useSUSDContract from 'hooks/useSUSDContract';
+import { futuresAccountState } from 'store/futures';
+import logError from 'utils/logError';
 
 type Props = {
 	isOpen: boolean;
@@ -40,6 +42,8 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 	const [depositComplete, setDepositComplete] = useState(false);
 	const [creatingAccount, setCreatingAccount] = useState(false);
 
+	const { handleRefetch } = useRefetchContext();
+
 	const createAccount = async () => {
 		try {
 			if (!signer || !synthetixjs || !crossMarginContractFactory)
@@ -57,7 +61,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 					try {
 						queryAndSetAccount();
 					} catch (err) {
-						console.warn(err);
+						logError(err);
 					} finally {
 						setCreatingAccount(false);
 					}
@@ -68,7 +72,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 			});
 		} catch (err) {
 			setCreatingAccount(false);
-			console.warn(err);
+			logError(err);
 		}
 	};
 
@@ -84,7 +88,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 				},
 			});
 		} catch (err) {
-			console.warn(err);
+			logError(err);
 		}
 	};
 
@@ -111,7 +115,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 				submitDeposit(weiAmountString);
 			}
 		} catch (err) {
-			console.warn(err);
+			logError(err);
 		}
 	};
 
@@ -121,15 +125,16 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 
 	const onDepositComplete = () => {
 		setDepositComplete(true);
+		handleRefetch('account-margin-change');
 		onComplete?.();
 		onClose();
 	};
 
 	const renderContent = () => {
-		if (futuresAccount && !futuresAccount.crossMarginEnabled) {
+		if (futuresAccount && !futuresAccount.crossMarginAvailable) {
 			return <ErrorView message="Cross margin is not supported on this network" />;
 		}
-		if (creatingAccount || !futuresAccount || futuresAccount?.selectedType === 'pending') {
+		if (creatingAccount || !futuresAccount || futuresAccount?.selectedAccountType === 'pending') {
 			return <Loader />;
 		}
 

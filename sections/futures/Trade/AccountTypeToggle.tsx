@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import Button from 'components/Button';
 import { futuresAccountState } from 'store/futures';
+
 import CrossMarginOnboard from '../CrossMarginOnboard';
 
 export default function AccountTypeToggle() {
@@ -18,11 +19,12 @@ export default function AccountTypeToggle() {
 		accountState.crossMarginAddress
 			? setAccountState({
 					...accountState,
-					selectedType: 'cross_margin',
+					selectedAccountType: 'cross_margin',
 					selectedFuturesAddress: accountState.crossMarginAddress,
 			  })
 			: setOpenModal(true);
 	};
+
 	return (
 		<>
 			<CrossMarginOnboard
@@ -31,12 +33,12 @@ export default function AccountTypeToggle() {
 				onComplete={onCreatedAccount}
 			/>
 
-			{accountState.selectedType === 'cross_margin' ? (
+			{accountState.selectedAccountType === 'cross_margin' ? (
 				<LegacyFuturesButton
 					onClick={() =>
 						setAccountState({
 							...accountState,
-							selectedType: 'isolated_margin',
+							selectedAccountType: 'isolated_margin',
 							selectedFuturesAddress: accountState.walletAddress,
 						})
 					}
@@ -62,5 +64,6 @@ const SwitchAccountButton = styled(Button)`
 
 const LegacyFuturesButton = styled.div`
 	cursor: pointer;
-	margin-bottom: 24px;
+	margin-bottom: 20px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
 `;

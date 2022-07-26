@@ -11,7 +11,6 @@ import useGetFuturesTradesForAccount from 'queries/futures/useGetFuturesTradesFo
 import TimeDisplay from 'sections/futures/Trades/TimeDisplay';
 import { PositionSide, TradeStatus } from 'sections/futures/types';
 import { currentMarketState, futuresAccountState } from 'store/futures';
-import { walletAddressState } from 'store/wallet';
 import { GridDivCenteredRow } from 'styles/common';
 import { formatCryptoCurrency } from 'utils/formatters/number';
 
