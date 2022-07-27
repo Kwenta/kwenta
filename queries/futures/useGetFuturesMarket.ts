@@ -33,15 +33,23 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 			}
 
 			const {
-				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus },
+				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
 				utils,
 			} = synthetixjs!;
 
-			const [markets, globals, { suspended, reason }, marketLimit] = await Promise.all([
-				FuturesMarketData.marketSummariesForKeys([utils.formatBytes32String(marketKey)]),
+			const assetKey = utils.formatBytes32String(marketKey);
+			const [
+				markets,
+				globals,
+				{ suspended, reason },
+				marketLimit,
+				currentRoundId,
+			] = await Promise.all([
+				FuturesMarketData.marketSummariesForKeys(assetKey),
 				FuturesMarketData.globals(),
-				SystemStatus.futuresMarketSuspension(utils.formatBytes32String(marketKey)),
-				FuturesMarketSettings.maxMarketValueUSD(utils.formatBytes32String(marketKey)),
+				SystemStatus.futuresMarketSuspension(assetKey),
+				FuturesMarketSettings.maxMarketValueUSD(),
+				ExchangeRates.getCurrentRoundId(assetKey),
 			]);
 
 			const market = markets[0];
@@ -63,9 +71,12 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 				asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 				assetHex: asset,
 				currentFundingRate: wei(currentFundingRate).neg(),
+				currentRoundId: wei(currentRoundId, 0),
 				feeRates: {
 					makerFee: wei(feeRates.makerFee),
 					takerFee: wei(feeRates.takerFee),
+					makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
+					takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
 				},
 				marketDebt: wei(marketDebt),
 				marketSkew: wei(marketSkew),
@@ -73,6 +84,7 @@ const useGetFuturesMarket = (options?: UseQueryOptions<FuturesMarket | null>) =>
 				marketSize: wei(marketSize),
 				price: wei(price),
 				minInitialMargin: wei(globals.minInitialMargin),
+				keeperDeposit: wei(globals.minKeeperFee),
 				isSuspended: suspended,
 				marketClosureReason: getReasonFromCode(reason) as FuturesClosureReason,
 				marketLimit: wei(marketLimit),

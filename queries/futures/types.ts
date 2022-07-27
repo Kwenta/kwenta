@@ -63,9 +63,12 @@ export type FuturesMarket = {
 	asset: FuturesMarketAsset;
 	assetHex: string;
 	currentFundingRate: Wei;
+	currentRoundId: Wei;
 	feeRates: {
 		makerFee: Wei;
 		takerFee: Wei;
+		makerFeeNextPrice: Wei;
+		takerFeeNextPrice: Wei;
 	};
 	marketDebt: Wei;
 	marketSkew: Wei;
@@ -73,6 +76,7 @@ export type FuturesMarket = {
 	maxLeverage: Wei;
 	price: Wei;
 	minInitialMargin: Wei;
+	keeperDeposit: Wei;
 	isSuspended: boolean;
 	marketClosureReason: FuturesClosureReason;
 	marketLimit: Wei;

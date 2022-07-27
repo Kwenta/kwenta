@@ -35,7 +35,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			}
 
 			const {
-				contracts: { FuturesMarketData, SystemStatus },
+				contracts: { FuturesMarketData, SystemStatus, ExchangeRates },
 				utils,
 			} = synthetixjs!;
 
@@ -44,11 +44,14 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				FuturesMarketData.globals(),
 			]);
 
-			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(
-				markets.map((m: any) => {
-					const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
-					return utils.formatBytes32String(MarketKeyByAsset[asset]);
-				})
+			const assetKeys = markets.map((m: any) => {
+				const asset = utils.parseBytes32String(m.asset) as FuturesMarketAsset;
+				return utils.formatBytes32String(MarketKeyByAsset[asset]);
+			});
+
+			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
+			const currentRoundIds = await Promise.all(
+				assetKeys.map((key: string) => ExchangeRates.getCurrentRoundId(key))
 			);
 
 			const futuresMarkets = markets.map(
@@ -70,9 +73,12 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					asset: utils.parseBytes32String(asset) as FuturesMarketAsset,
 					assetHex: asset,
 					currentFundingRate: wei(currentFundingRate).neg(),
+					currentRoundId: wei(currentRoundIds[i], 0),
 					feeRates: {
 						makerFee: wei(feeRates.makerFee),
 						takerFee: wei(feeRates.takerFee),
+						makerFeeNextPrice: wei(feeRates.makerFeeNextPrice),
+						takerFeeNextPrice: wei(feeRates.takerFeeNextPrice),
 					},
 					marketDebt: wei(marketDebt),
 					marketSkew: wei(marketSkew),
@@ -80,6 +86,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketSize: wei(marketSize),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
+					keeperDeposit: wei(globals.minKeeperFee),
 					isSuspended: suspensions[i],
 					marketClosureReason: getReasonFromCode(reasons[i]) as FuturesClosureReason,
 				})
