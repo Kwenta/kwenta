@@ -1,6 +1,5 @@
 import { wei } from '@synthetixio/wei';
-import _ from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
@@ -14,15 +13,19 @@ import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
 import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
 import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import { Rates } from 'queries/rates/types';
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, futuresMarketsState, marketKeyState } from 'store/futures';
+import {
+	currentMarketState,
+	marketInfoState,
+	marketKeysState,
+	marketKeyState,
+} from 'store/futures';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, isEurForex, MarketKeyByAsset } from 'utils/futures';
+import { getDisplayAsset, isEurForex } from 'utils/futures';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -35,30 +38,17 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
-	const futuresMarkets = useRecoilValue(futuresMarketsState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
 
-	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
-	const marketSummary = futuresMarkets.find(({ asset }) => asset === marketAsset);
-
-	const futureRates = futuresMarkets.reduce((acc: Rates, { asset, price }) => {
-		acc[MarketKeyByAsset[asset]] = price;
-		return acc;
-	}, {});
-
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
-		futureRates,
-		marketKey,
-	]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
 		marketAsset,
-		basePriceRate.toNumber(),
+		marketInfo?.price.toNumber() ?? 0,
 		PERIOD_IN_SECONDS[Period.ONE_HOUR],
-		marketSummary?.currentFundingRate.toNumber()
+		marketInfo?.currentFundingRate.toNumber()
 	);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
@@ -66,10 +56,9 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		baseCurrencyKey: marketAsset,
 	});
 
-	const lastOracleUpdateTime: Date = React.useMemo(
-		() => lastOracleUpdateTimeQuery?.data ?? new Date(),
-		[lastOracleUpdateTimeQuery]
-	);
+	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
+		lastOracleUpdateTimeQuery,
+	]);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
 	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
@@ -82,18 +71,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			? DEFAULT_FIAT_EURO_DECIMALS
 			: undefined;
 
-	const dailyPriceChangesQuery = useLaggedDailyPrice(markets);
+	const dailyPriceChangesQuery = useLaggedDailyPrice([marketKey]);
 	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
 
 	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
 
 	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
-	const fundingTitle = React.useMemo(
+	const fundingTitle = useMemo(
 		() =>
 			`${
-				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary ? 'Inst.' : '1H'
+				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo ? 'Inst.' : '1H'
 			} Funding Rate`,
-		[fundingRateQuery, avgFundingRate, marketSummary]
+		[fundingRateQuery, avgFundingRate, marketInfo]
 	);
 
 	const enableTooltip = (key: string, children: React.ReactElement) => {
@@ -179,24 +168,27 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		}
 	};
 
-	const data: MarketData = React.useMemo(() => {
+	const data: MarketData = useMemo(() => {
 		const fundingValue =
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketSummary
-				? marketSummary?.currentFundingRate
+			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo
+				? marketInfo?.currentFundingRate
 				: avgFundingRate;
+
+		const marketPrice = marketInfo?.price;
 
 		return {
 			[assetName]: {
-				value:
-					formatCurrency(selectedPriceCurrency.name, basePriceRate, {
-						sign: '$',
-						minDecimals,
-					}) && lastOracleUpdateTime
-						? formatCurrency(selectedPriceCurrency.name, basePriceRate, {
+				value: marketPrice
+					? formatCurrency(selectedPriceCurrency.name, marketPrice, {
+							sign: '$',
+							minDecimals,
+					  }) && lastOracleUpdateTime
+						? formatCurrency(selectedPriceCurrency.name, marketPrice, {
 								sign: '$',
 								minDecimals,
 						  })
-						: NO_VALUE,
+						: NO_VALUE
+					: NO_VALUE,
 			},
 			'External Price': {
 				value:
@@ -209,20 +201,18 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			},
 			'24H Change': {
 				value:
-					marketSummary?.price && pastPrice?.price
+					marketPrice && pastPrice?.price
 						? `${formatCurrency(
 								selectedPriceCurrency.name,
-								marketSummary.price.sub(pastPrice.price) ?? zeroBN,
+								marketPrice.sub(pastPrice.price) ?? zeroBN,
 								{ sign: '$', minDecimals }
-						  )} (${formatPercent(
-								marketSummary.price.sub(pastPrice.price).div(marketSummary.price) ?? zeroBN
-						  )})`
+						  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
 						: NO_VALUE,
 				color:
-					marketSummary?.price && pastPrice?.price
-						? marketSummary.price.sub(pastPrice.price).gt(zeroBN)
+					marketPrice && pastPrice?.price
+						? marketPrice.sub(pastPrice.price).gt(zeroBN)
 							? 'green'
-							: marketSummary.price.sub(pastPrice.price).lt(zeroBN)
+							: marketPrice.sub(pastPrice.price).lt(zeroBN)
 							? 'red'
 							: ''
 						: undefined,
@@ -238,10 +228,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
 			},
 			'Open Interest': {
-				value: marketSummary?.marketSize?.mul(wei(basePriceRate))
+				value: marketInfo?.marketSize?.mul(wei(marketPrice))
 					? formatCurrency(
 							selectedPriceCurrency.name,
-							marketSummary?.marketSize?.mul(wei(basePriceRate)).toNumber(),
+							marketInfo?.marketSize?.mul(wei(marketPrice)).toNumber(),
 							{ sign: '$' }
 					  )
 					: NO_VALUE,
@@ -254,8 +244,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		marketAsset,
-		marketSummary,
-		basePriceRate,
+		marketInfo,
 		futuresTradingVolume,
 		futuresDailyTradeStats,
 		selectedPriceCurrency.name,
@@ -267,7 +256,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 		minDecimals,
 	]);
 
-	const pausedClass = marketSummary?.isSuspended ? 'paused' : '';
+	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>

@@ -26,6 +26,16 @@ export const marketKeyState = selector({
 	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
 });
 
+export const marketKeysState = selector({
+	key: getFuturesKey('marketKeys'),
+	get: ({ get }) => {
+		const futuresMarkets = get(futuresMarketsState);
+		return futuresMarkets.map(({ asset }) => {
+			return MarketKeyByAsset[asset];
+		});
+	},
+});
+
 export const balancesState = atom<Balances | null>({
 	key: getSynthsKey('balances'),
 	default: null,
