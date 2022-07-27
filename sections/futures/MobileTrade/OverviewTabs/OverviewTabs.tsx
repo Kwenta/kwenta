@@ -62,19 +62,14 @@ const OverviewTabs: React.FC = () => {
 
 const OverviewTabsContainer = styled.div`
 	margin-top: 55px;
+	padding: 0 15px;
 `;
 
 const MainTabButtonsContainer = styled.div`
-	display: flex;
-	justify-content: space-between;
-	padding: 0 15px;
-
-	& > button {
-		flex: 1;
-		&:not(:last-child) {
-			margin-right: 10px;
-		}
-	}
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-column-gap: 15px;
+	overflow: auto;
 `;
 
 export default OverviewTabs;
