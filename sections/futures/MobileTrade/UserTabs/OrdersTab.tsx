@@ -11,8 +11,7 @@ import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { PositionSide } from 'queries/futures/types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { positionState, currentMarketState, openOrdersState } from 'store/futures';
+import { positionState, currentMarketState, openOrdersState, marketInfoState } from 'store/futures';
 import { gasSpeedState, walletAddressState } from 'store/wallet';
 import { formatCurrency } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
@@ -29,6 +28,7 @@ const OrdersTab: React.FC = () => {
 	const position = useRecoilValue(positionState);
 	const currencyKey = useRecoilValue(currentMarketState);
 	const openOrders = useRecoilValue(openOrdersState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	const { handleRefetch } = useRefetchContext();
 
@@ -38,9 +38,6 @@ const OrdersTab: React.FC = () => {
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
 	const gasPrice = ethGasPriceQuery.data?.[gasSpeed];
-
-	const nextPriceDetailsQuery = useGetNextPriceDetails();
-	const nextPriceDetails = nextPriceDetailsQuery.data;
 
 	const cancelOrExecuteOrderTxn = useSynthetixTxn(
 		`FuturesMarket${getDisplayAsset(currencyKey)}`,
@@ -84,13 +81,13 @@ const OrdersTab: React.FC = () => {
 			orderType: order.orderType === 'NextPrice' ? 'Next-Price' : order.orderType,
 			size: order.size,
 			side: positionSize.add(wei(order.size)).gt(0) ? PositionSide.LONG : PositionSide.SHORT,
-			isStale: wei(nextPriceDetails?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
+			isStale: wei(marketInfo?.currentRoundId ?? 0).gte(wei(order.targetRoundId).add(2)),
 			isExecutable:
-				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId) ||
-				wei(nextPriceDetails?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
+				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId) ||
+				wei(marketInfo?.currentRoundId ?? 0).eq(order.targetRoundId.add(1)),
 			timestamp: order.timestamp,
 		}));
-	}, [openOrders, position, nextPriceDetails?.currentRoundId]);
+	}, [openOrders, position, marketInfo?.currentRoundId]);
 
 	return (
 		<div>
