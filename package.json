@@ -62,7 +62,6 @@
 		"next-connect": "^0.12.2",
 		"next-optimized-images": "^2.6.2",
 		"react": "17.0.1",
-		"react-countdown": "2.3.1",
 		"react-dom": "17.0.1",
 		"react-i18next": "11.17.2",
 		"react-infinite-scroll-component": "^6.1.0",
