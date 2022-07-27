@@ -111,9 +111,14 @@ export const sizeDeltaState = selector({
 	},
 });
 
-export const marketInfoState = atom<FuturesMarket | undefined>({
+export const marketInfoState = selector({
 	key: getFuturesKey('marketInfo'),
-	default: undefined,
+	get: ({ get }) => {
+		const markets = get(futuresMarketsState);
+		const currentMarket = get(currentMarketState);
+
+		return markets.find((market: FuturesMarket) => market.asset === currentMarket);
+	},
 });
 
 export const maxLeverageState = selector({

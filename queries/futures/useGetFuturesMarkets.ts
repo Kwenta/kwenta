@@ -35,7 +35,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 			}
 
 			const {
-				contracts: { FuturesMarketData, SystemStatus, ExchangeRates },
+				contracts: { FuturesMarketData, FuturesMarketSettings, SystemStatus, ExchangeRates },
 				utils,
 			} = synthetixjs!;
 
@@ -49,10 +49,21 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 				return utils.formatBytes32String(MarketKeyByAsset[asset]);
 			});
 
-			const { suspensions, reasons } = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
-			const currentRoundIds = await Promise.all(
+			const currentRoundIdPromises = Promise.all(
 				assetKeys.map((key: string) => ExchangeRates.getCurrentRoundId(key))
 			);
+
+			const marketLimitPromises = Promise.all(
+				assetKeys.map((key: string) => FuturesMarketSettings.maxMarketValueUSD(key))
+			);
+
+			const systemStatusPromise = await SystemStatus.getFuturesMarketSuspensions(assetKeys);
+
+			const [currentRoundIds, marketLimits, { suspensions, reasons }] = await Promise.all([
+				currentRoundIdPromises,
+				marketLimitPromises,
+				systemStatusPromise,
+			]);
 
 			const futuresMarkets = markets.map(
 				(
@@ -84,6 +95,7 @@ const useGetFuturesMarkets = (options?: UseQueryOptions<FuturesMarket[]>) => {
 					marketSkew: wei(marketSkew),
 					maxLeverage: wei(maxLeverage),
 					marketSize: wei(marketSize),
+					marketLimit: wei(marketLimits[i]),
 					price: wei(price),
 					minInitialMargin: wei(globals.minInitialMargin),
 					keeperDeposit: wei(globals.minKeeperFee),
