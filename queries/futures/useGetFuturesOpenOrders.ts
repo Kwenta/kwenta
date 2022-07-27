@@ -10,6 +10,7 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { currentMarketState, openOrdersState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
+import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -20,6 +21,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
+	const { synthetixjs } = Connector.useContainer();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const [, setOpenOrders] = useRecoilState(openOrdersState);
 
@@ -27,15 +29,13 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
 		async () => {
 			try {
+				const { contracts } = synthetixjs!;
+				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query OpenOrders($account: String!) {
-							futuresOrders(
-								where: { account: $account, status: Pending }
-								orderBy: timestamp
-								orderDirection: asc
-							) {
+						query OpenOrders($account: String!, $market: String!) {
+							futuresOrders(where: { account: $account, market: $market, status: Pending }) {
 								id
 								account
 								size
@@ -47,7 +47,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							}
 						}
 					`,
-					{ account: walletAddress }
+					{ account: walletAddress, market: marketAddress }
 				);
 
 				const openOrders = response
