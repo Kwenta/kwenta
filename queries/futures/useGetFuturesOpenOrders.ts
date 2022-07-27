@@ -10,7 +10,6 @@ import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
 import { currentMarketState, openOrdersState } from 'store/futures';
 import { isL2State, networkState, walletAddressState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -21,7 +20,6 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const network = useRecoilValue(networkState);
 	const walletAddress = useRecoilValue(walletAddressState);
 	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
 	const currencyKey = useRecoilValue(currentMarketState);
 	const [, setOpenOrders] = useRecoilState(openOrdersState);
 
@@ -29,7 +27,6 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 		QUERY_KEYS.Futures.OpenOrders(network.id, walletAddress),
 		async () => {
 			try {
-				const { contracts } = synthetixjs!;
 				const response = await request(
 					futuresEndpoint,
 					gql`
