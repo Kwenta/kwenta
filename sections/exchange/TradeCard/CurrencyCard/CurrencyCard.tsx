@@ -83,7 +83,6 @@ const CurrencyCard: FC<CurrencyCardProps> = ({
 		walletBalance,
 		currencyKey,
 	]);
-
 	const amountBN = useMemo(() => (amount === '' ? zeroBN : wei(amount)), [amount]);
 
 	const insufficientBalance = !isBase && hasWalletBalance ? amountBN.gt(walletBalance!) : false;
