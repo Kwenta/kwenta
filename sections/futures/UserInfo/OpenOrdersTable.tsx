@@ -224,44 +224,7 @@ const OpenOrdersTable: React.FC = () => {
 						{
 							Header: <StyledTableHeader>Size</StyledTableHeader>,
 							accessor: 'size',
-							Cell: (cellProps: CellProps<any>) => (
-								<div>
-									{formatCurrency(cellProps.row.original.asset, cellProps.row.original.size, {
-										sign: cellProps.row.original.asset,
-									})}
-								</div>
-							),
-						},
-						{
-							Header: (
-								<StyledTableHeader>
-									{t('futures.market.user.open-orders.table.actions')}
-								</StyledTableHeader>
-							),
-							accessor: 'actions',
-							Cell: (cellProps: CellProps<any>) => {
-								return (
-									<div style={{ display: 'flex' }}>
-										<CancelButton
-											onClick={() => {
-												setAction('cancel');
-											}}
-										>
-											{t('futures.market.user.open-orders.actions.cancel')}
-										</CancelButton>
-										{cellProps.row.original.isExecutable && (
-											<EditButton
-												onClick={() => {
-													setAction('execute');
-												}}
-											>
-												{t('futures.market.user.open-orders.actions.execute')}
-											</EditButton>
-										)}
-									</div>
-								);
-							},
-							width: 100,
+							Cell: (cellProps: CellProps<any>) => <div>{cellProps.row.original.size}</div>,
 						},
 					]}
 				/>
