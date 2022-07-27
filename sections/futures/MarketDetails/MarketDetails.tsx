@@ -8,8 +8,8 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
 import { Period, PERIOD_IN_SECONDS } from 'constants/period';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
+import { FuturesMarket } from 'queries/futures/types';
 import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import { Rates } from 'queries/rates/types';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
 import { currentMarketState, futuresMarketsState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
@@ -34,17 +34,13 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const marketSummary = futuresMarkets.find(({ asset }) => asset === marketAsset);
 
-	const futureRates = futuresMarkets.reduce((acc: Rates, { asset, price }) => {
-		acc[MarketKeyByAsset[asset]] = price;
-		return acc;
-	}, {});
+	const market = futuresMarkets.find(
+		({ asset }: FuturesMarket) => MarketKeyByAsset[asset] === marketKey
+	);
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const basePriceRate = React.useMemo(() => _.defaultTo(futureRates?.[marketKey], zeroBN), [
-		futureRates,
-		marketKey,
-	]);
+	const basePriceRate = React.useMemo(() => _.defaultTo(market?.price, zeroBN), [market]);
 
 	const fundingRateQuery = useGetAverageFundingRateForMarket(
 		marketAsset,
