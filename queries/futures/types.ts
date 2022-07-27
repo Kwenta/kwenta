@@ -169,8 +169,8 @@ export type Participant = {
 };
 
 export type FuturesOneMinuteStat = {
-	trades: string;
-	volume: string;
+	trades: Wei;
+	volume: Wei;
 };
 
 export type FuturesDailyTradeStats = {

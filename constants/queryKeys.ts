@@ -151,7 +151,7 @@ export const QUERY_KEYS = {
 		],
 	},
 	Futures: {
-		DayTradeStats: (networkId: NetworkId, currencyKey: string | null) => [
+		DayTradeStats: (networkId: NetworkId, currencyKey: string | undefined) => [
 			'futures',
 			'dayTradeStats',
 			networkId,

@@ -1,31 +1,28 @@
-import { utils as ethersUtils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import { appReadyState } from 'store/app';
+import { marketInfoState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import { calculateTimestampForPeriod } from 'utils/formatters/date';
-import { FuturesMarketAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { DAY_PERIOD } from './constants';
 import { getFuturesTrades } from './subgraph';
 import { getFuturesEndpoint } from './utils';
 
-const useGetFuturesDailyTradeStatsForMarket = (
-	marketAsset: FuturesMarketAsset | null,
-	options?: UseQueryOptions<number | null>
-) => {
+const useGetFuturesDailyTradeStatsForMarket = (options?: UseQueryOptions<number | null>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
 	return useQuery<number | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, marketAsset),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, marketInfo?.assetHex),
 		async () => {
-			if (!marketAsset) return null;
+			if (!marketInfo) return null;
 
 			try {
 				const minTimestamp = Math.floor(calculateTimestampForPeriod(DAY_PERIOD) / 1000);
@@ -34,7 +31,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 					{
 						first: 999999,
 						where: {
-							asset: `${ethersUtils.formatBytes32String(marketAsset)}`,
+							asset: `${marketInfo.assetHex}`,
 							timestamp_gte: `${minTimestamp}`,
 						},
 					},
@@ -55,7 +52,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 				return null;
 			}
 		},
-		{ enabled: isAppReady && isL2 && !!marketAsset, ...options }
+		{ enabled: isAppReady && isL2 && !!marketInfo, ...options }
 	);
 };
 
