@@ -21,7 +21,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 	const synthsBalancesQuery = useSynthBalances();
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
-	const positionsQuery = useGetFuturesPositionForMarkets([]);
+	const positionsQuery = useGetFuturesPositionForMarkets();
 	const marketsQuery = useGetFuturesMarkets();
 	useGetFuturesPotentialTradeDetails();
 
