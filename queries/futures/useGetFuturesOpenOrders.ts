@@ -30,12 +30,15 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 		async () => {
 			try {
 				const { contracts } = synthetixjs!;
-				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
 				const response = await request(
 					futuresEndpoint,
 					gql`
-						query OpenOrders($account: String!, $market: String!) {
-							futuresOrders(where: { account: $account, market: $market, status: Pending }) {
+						query OpenOrders($account: String!) {
+							futuresOrders(
+								where: { account: $account, status: Pending }
+								orderBy: timestamp
+								orderDirection: asc
+							) {
 								id
 								account
 								size
@@ -47,7 +50,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 							}
 						}
 					`,
-					{ account: walletAddress, market: marketAddress }
+					{ account: walletAddress }
 				);
 
 				const openOrders = response
