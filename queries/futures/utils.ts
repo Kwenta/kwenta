@@ -203,8 +203,8 @@ export const calculateFundingRate = (
 	minTimestamp: number,
 	periodLength: number,
 	fundingRates: FundingRateUpdate[],
-	assetPrice: number,
-	currentFundingRate: number
+	assetPrice: Wei,
+	currentFundingRate: Wei
 ): Wei | null => {
 	const numUpdates = fundingRates.length;
 	if (numUpdates < 2) return null;

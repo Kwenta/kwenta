@@ -16,12 +16,7 @@ import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolu
 import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
 import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import {
-	currentMarketState,
-	marketInfoState,
-	marketKeysState,
-	marketKeyState,
-} from 'store/futures';
+import { currentMarketState, marketInfoState, marketKeyState } from 'store/futures';
 import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
@@ -44,12 +39,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 
-	const fundingRateQuery = useGetAverageFundingRateForMarket(
-		marketAsset,
-		marketInfo?.price.toNumber() ?? 0,
-		PERIOD_IN_SECONDS[Period.ONE_HOUR],
-		marketInfo?.currentFundingRate.toNumber()
-	);
+	const fundingRateQuery = useGetAverageFundingRateForMarket(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 	const avgFundingRate = fundingRateQuery?.data ?? null;
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
