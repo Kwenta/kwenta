@@ -22,16 +22,15 @@ const useAtomicRatesQuery = (
 		async () => {
 			const {
 				value,
-				systemSourceRate,
+				systemDestinationRate,
 			} = await synthetixjs!.contracts.ExchangeRates.effectiveAtomicValueAndRates(
 				sourceCurrencyKey,
 				sourceAmount,
 				destinationCurrencyKey
 			);
-
 			return sourceAmount !== null && sourceAmount.gt(0)
 				? wei(value).div(sourceAmount)
-				: wei(systemSourceRate / 1e18);
+				: wei(1e18 / systemDestinationRate);
 		},
 		{
 			enabled:

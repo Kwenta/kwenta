@@ -356,8 +356,6 @@ const useExchange = ({
 					? coinGeckoPrices[quoteCurrencyTokenAddress.toLowerCase()].usd /
 					  selectPriceCurrencyRate.toNumber()
 					: wei(0)
-				: isAtomic && rateForAtomicExchange != null
-				? rateForAtomicExchange
 				: newGetExchangeRatesForCurrencies(
 						exchangeRates,
 						quoteCurrencyKey,
@@ -369,8 +367,6 @@ const useExchange = ({
 			coinGeckoPrices,
 			quoteCurrencyTokenAddress,
 			selectPriceCurrencyRate,
-			isAtomic,
-			rateForAtomicExchange,
 			exchangeRates,
 			quoteCurrencyKey,
 			selectedPriceCurrency.name,
@@ -386,8 +382,6 @@ const useExchange = ({
 						selectPriceCurrencyRate
 				  )
 				: wei(0)
-			: isAtomic && rateForAtomicExchange != null && rateForAtomicExchange.gt(0)
-			? wei(1).div(rateForAtomicExchange)
 			: newGetExchangeRatesForCurrencies(
 					exchangeRates,
 					baseCurrencyKey,
@@ -399,8 +393,6 @@ const useExchange = ({
 		coinGeckoPrices,
 		baseCurrencyTokenAddress,
 		selectPriceCurrencyRate,
-		isAtomic,
-		rateForAtomicExchange,
 		exchangeRates,
 		baseCurrencyKey,
 		selectedPriceCurrency.name,
@@ -553,7 +545,15 @@ const useExchange = ({
 		}
 
 		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			// eslint-disable-next-line no-console
+			console.log(
+				`step2`,
+				baseCurrencyKey,
+				quoteCurrencyKey,
+				quoteCurrencyAmount,
+				Number(isAtomic ? inverseRate : rate)
+			);
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(isAtomic ? inverseRate : rate);
 			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setBaseCurrencyAmount(
 				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
@@ -564,7 +564,15 @@ const useExchange = ({
 
 	useEffect(() => {
 		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
-			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
+			// eslint-disable-next-line no-console
+			console.log(
+				`step1`,
+				baseCurrencyKey,
+				quoteCurrencyKey,
+				baseCurrencyAmount,
+				Number(isAtomic ? rate : inverseRate)
+			);
+			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(isAtomic ? rate : inverseRate);
 			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setQuoteCurrencyAmount(
 				truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
@@ -1063,10 +1071,10 @@ const useExchange = ({
 		[
 			setBaseCurrencyAmount,
 			setQuoteCurrencyAmount,
-			baseCurrencyKey,
-			exchangeFeeRate,
-			inverseRate,
 			txProvider,
+			baseCurrencyKey,
+			inverseRate,
+			exchangeFeeRate,
 		]
 	);
 
