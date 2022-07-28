@@ -24,7 +24,7 @@ export default function useGetCrossMarginAccountOverview() {
 			if (!crossMarginAddress || !crossMarginAccountContract) return { freeMargin: zeroBN };
 
 			const freeMargin = await crossMarginAccountContract.freeMargin();
-			setFreeMargin(freeMargin);
+			setFreeMargin(wei(freeMargin));
 
 			return { freeMargin: wei(freeMargin) };
 		},

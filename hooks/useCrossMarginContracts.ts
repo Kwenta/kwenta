@@ -1,16 +1,19 @@
-import { Contract } from 'ethers';
-import crossMarginAccountFactory from 'lib/abis/CrossMarginAccountFactory.json';
-import MarginBaseAbi from 'lib/abis/MarginBase.json';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import Connector from 'containers/Connector';
+import {
+	CrossMarginAccountFactory__factory,
+	MarginBase__factory,
+	CrossMarginAccountFactory,
+	MarginBase,
+} from 'lib/abis/types';
 import { futuresAccountState } from 'store/futures';
 
 export default function useCrossMarginAccountContracts(): {
-	crossMarginAccountContract: Contract | null;
-	crossMarginContractFactory: Contract | null;
+	crossMarginAccountContract: MarginBase | null;
+	crossMarginContractFactory: CrossMarginAccountFactory | null;
 } {
 	const futuresAccount = useRecoilValue(futuresAccountState);
 
@@ -18,14 +21,15 @@ export default function useCrossMarginAccountContracts(): {
 
 	const crossMarginAccountContract = useMemo(() => {
 		if (!signer || !futuresAccount?.crossMarginAddress) return null;
-		return new Contract(futuresAccount.crossMarginAddress, MarginBaseAbi, signer);
+
+		return MarginBase__factory.connect(futuresAccount.crossMarginAddress, signer);
 	}, [futuresAccount?.crossMarginAddress, signer]);
 
 	const crossMarginContractFactory = useMemo(() => {
 		const address = CROSS_MARGIN_ACCOUNT_FACTORY[network.id];
 		if (!signer || !address) return null;
 
-		return new Contract(address, crossMarginAccountFactory, signer);
+		return CrossMarginAccountFactory__factory.connect(address, signer);
 	}, [network, signer]);
 
 	return { crossMarginAccountContract, crossMarginContractFactory };

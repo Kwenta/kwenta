@@ -21,7 +21,7 @@ import { FuturesTrade } from 'queries/futures/types';
 import useGetAllFuturesTradesForAccount from 'queries/futures/useGetAllFuturesTradesForAccount';
 import { TradeStatus } from 'sections/futures/types';
 import { futuresAccountState } from 'store/futures';
-import { isL2State, walletAddressState } from 'store/wallet';
+import { isL2State } from 'store/wallet';
 import { formatCryptoCurrency, formatCurrency } from 'utils/formatters/number';
 import { FuturesMarketAsset, getDisplayAsset, MarketKeyByAsset } from 'utils/futures';
 

@@ -17,12 +17,12 @@ export default function useQueryCrossMarginAccount() {
 	const [futuresAccount, setFuturesAccount] = useRecoilState(futuresAccountState);
 
 	const queryAccountLogs = useCallback(async () => {
-		if (!walletAddress || !crossMarginContractFactory) return;
+		if (!walletAddress || !crossMarginContractFactory) return null;
 		const accountFilter = crossMarginContractFactory.filters.NewAccount(walletAddress);
 		if (accountFilter && crossMarginContractFactory) {
 			const logs = await crossMarginContractFactory.queryFilter(accountFilter);
 			if (logs.length) {
-				return logs[0].args?.[1];
+				return logs[0].args?.[1] || null;
 			}
 		}
 		return null;

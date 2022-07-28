@@ -78,6 +78,10 @@
 					{
 						"pattern": "utils/**",
 						"group": "internal"
+					},
+					{
+						"pattern": "lib/**",
+						"group": "internal"
 					}
 				],
 				"pathGroupsExcludedImportTypes": []
