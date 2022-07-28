@@ -9,8 +9,8 @@ import styled from 'styled-components';
 import TabButton from 'components/Button/TabButton';
 import { TabPanel } from 'components/Tab';
 import useGetCurrentPortfolioValue from 'queries/futures/useGetCurrentPortfolioValue';
-import useGetFuturesMarkets from 'queries/futures/useGetFuturesMarkets';
 import useGetFuturesPositionForAccount from 'queries/futures/useGetFuturesPositionForAccount';
+import { futuresMarketsState } from 'store/futures';
 import { walletAddressState } from 'store/wallet';
 import { formatCurrency, zeroBN } from 'utils/formatters/number';
 import { MarketKeyByAsset } from 'utils/futures';
@@ -37,8 +37,7 @@ const Overview: FC = () => {
 
 	const { useExchangeRatesQuery, useSynthsBalancesQuery } = useSynthetixQueries();
 
-	const futuresMarketsQuery = useGetFuturesMarkets();
-	const futuresMarkets = futuresMarketsQuery?.data ?? [];
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 
 	const markets = futuresMarkets.map(({ asset }) => MarketKeyByAsset[asset]);
 	const portfolioValueQuery = useGetCurrentPortfolioValue(markets);
@@ -93,15 +92,6 @@ const Overview: FC = () => {
 					setActivePositionsTab(PositionsTab.SPOT);
 				},
 			},
-			// {
-			// 	name: PositionsTab.SHORTS,
-			// 	label: t('dashboard.overview.positions-tabs.shorts'),
-			// 	disabled: true,
-			// 	active: activePositionsTab === PositionsTab.SHORTS,
-			// 	onClick: () => {
-			// 		setActivePositionsTab(PositionsTab.SHORTS);
-			// 	},
-			// },
 		],
 		[
 			activePositionsTab,
@@ -144,10 +134,7 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={PositionsTab.FUTURES} activeTab={activePositionsTab}>
-				<FuturesPositionsTable
-					futuresMarkets={futuresMarkets}
-					futuresPositionHistory={futuresPositionHistory}
-				/>
+				<FuturesPositionsTable futuresPositionHistory={futuresPositionHistory} />
 			</TabPanel>
 
 			<TabPanel name={PositionsTab.SPOT} activeTab={activePositionsTab}>
@@ -163,7 +150,7 @@ const Overview: FC = () => {
 				))}
 			</TabButtonsContainer>
 			<TabPanel name={MarketsTab.FUTURES} activeTab={activeMarketsTab}>
-				<FuturesMarketsTable futuresMarkets={futuresMarkets} />
+				<FuturesMarketsTable />
 			</TabPanel>
 
 			<TabPanel name={MarketsTab.SPOT} activeTab={activeMarketsTab}>

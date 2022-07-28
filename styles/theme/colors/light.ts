@@ -93,6 +93,9 @@ const lightTheme = {
 		fill: '#515151',
 		hover: '#171002',
 	},
+	openInterestBar: {
+		border: '1px solid #F2F2F2',
+	},
 };
 
 export default lightTheme;

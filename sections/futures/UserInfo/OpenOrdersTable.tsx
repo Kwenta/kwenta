@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import Badge from 'components/Badge';
 import Currency from 'components/Currency';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
@@ -99,6 +99,9 @@ const OpenOrdersTable: React.FC = () => {
 			data={data}
 			highlightRowsOnHover
 			showPagination
+			noResultsMessage={
+				<TableNoResults>{t('futures.market.user.open-orders.table.no-result')}</TableNoResults>
+			}
 			columns={[
 				{
 					Header: (

@@ -1,11 +1,11 @@
-import React, { FC, useMemo, DependencyList, useEffect } from 'react';
+import React, { FC, useMemo, DependencyList, useEffect, useRef } from 'react';
 import { useTable, useFlexLayout, useSortBy, Column, Row, usePagination, Cell } from 'react-table';
 import styled, { css } from 'styled-components';
 
 import SortDownIcon from 'assets/svg/app/caret-down.svg';
 import SortUpIcon from 'assets/svg/app/caret-up.svg';
 import Spinner from 'assets/svg/app/loader.svg';
-import { FlexDivCentered } from 'styles/common';
+import { FlexDivCentered, GridDivCenteredRow } from 'styles/common';
 
 import Pagination from './Pagination';
 
@@ -13,6 +13,7 @@ export type TablePalette = 'primary';
 
 const CARD_HEIGHT = '40px';
 const MAX_PAGE_ROWS = 100;
+const MAX_TOTAL_ROWS = 1000;
 
 type ColumnWithSorting<D extends object = {}> = Column<D> & {
 	sortType?: string | ((rowA: Row<any>, rowB: Row<any>) => -1 | 1);
@@ -37,6 +38,7 @@ type TableProps = {
 	highlightRowsOnHover?: boolean;
 	sortBy?: object[];
 	showShortList?: boolean;
+	lastRef?: any;
 };
 
 export const Table: FC<TableProps> = ({
@@ -56,6 +58,7 @@ export const Table: FC<TableProps> = ({
 	highlightRowsOnHover,
 	showShortList,
 	sortBy = [],
+	lastRef = null,
 }) => {
 	const memoizedColumns = useMemo(
 		() => columns,
@@ -97,7 +100,7 @@ export const Table: FC<TableProps> = ({
 						: MAX_PAGE_ROWS
 					: showShortList
 					? pageSize ?? 5
-					: 15,
+					: MAX_TOTAL_ROWS,
 				hiddenColumns: hiddenColumns,
 				sortBy: sortBy,
 			},
@@ -113,6 +116,8 @@ export const Table: FC<TableProps> = ({
 		setHiddenColumns(hiddenColumns);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const defaultRef = useRef(null);
 
 	return (
 		<>
@@ -153,13 +158,15 @@ export const Table: FC<TableProps> = ({
 					) : (
 						page.length > 0 && (
 							<TableBody className="table-body" {...getTableBodyProps()}>
-								{page.map((row: Row) => {
+								{page.map((row: Row, idx: number) => {
 									prepareRow(row);
-
+									const props = row.getRowProps();
+									const localRef = lastRef && idx === page.length - 1 ? lastRef : defaultRef;
 									return (
 										<TableBodyRow
 											className="table-body-row"
-											{...row.getRowProps()}
+											{...props}
+											ref={localRef}
 											onClick={onTableRowClick ? () => onTableRowClick(row) : undefined}
 											$highlightRowsOnHover={highlightRowsOnHover}
 										>
@@ -249,6 +256,23 @@ const TableCellHead = styled(TableCell)<{ hideHeaders: boolean }>`
 		padding-right: 18px;
 	}
 	${(props) => (props.hideHeaders ? `display: none` : '')}
+`;
+
+export const TableNoResults = styled(GridDivCenteredRow)`
+	padding: 50px 0;
+	justify-content: center;
+	margin-top: -2px;
+	justify-items: center;
+	grid-gap: 10px;
+	color: ${(props) => props.theme.colors.selectedTheme.button.text};
+	font-size: 16px;
+	font-family: ${(props) => props.theme.fonts.bold};
+	div {
+		text-decoration: underline;
+		cursor: pointer;
+		font-size: 16px;
+		font-family: ${(props) => props.theme.fonts.regular};
+	}
 `;
 
 const SortIconContainer = styled.span`

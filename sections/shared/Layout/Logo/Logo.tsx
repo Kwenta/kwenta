@@ -11,7 +11,7 @@ import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 
 type LogoProps = {
-	isL2: boolean;
+	isL2?: boolean;
 	isFutures?: boolean;
 };
 

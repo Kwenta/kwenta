@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import ChangePercent from 'components/ChangePercent';
 import Currency from 'components/Currency';
 import { MobileHiddenView, MobileOnlyView } from 'components/Media';
-import Table from 'components/Table';
+import Table, { TableNoResults } from 'components/Table';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import { Price } from 'queries/rates/types';
@@ -83,6 +83,11 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 						data={data}
 						showPagination
 						highlightRowsOnHover
+						noResultsMessage={
+							<TableNoResults>
+								{t('dashboard.overview.synth-balances-table.no-result')}
+							</TableNoResults>
+						}
 						columns={[
 							{
 								Header: (
@@ -229,9 +234,9 @@ const SynthBalancesTable: FC<SynthBalancesTableProps> = ({
 				<StyledMobileTable
 					data={data}
 					noResultsMessage={
-						data.length === 0 ? (
-							<EmptyTableMessage>There are no synth balances.</EmptyTableMessage>
-						) : null
+						<TableNoResults>
+							{t('dashboard.overview.synth-balances-table.no-result')}
+						</TableNoResults>
 					}
 					columns={[
 						{
@@ -373,13 +378,6 @@ const StyledMobileTable = styled(Table)`
 	border-top: none;
 	border-right: none;
 	border-left: none;
-`;
-
-const EmptyTableMessage = styled.div`
-	color: ${(props) => props.theme.colors.selectedTheme.text.value};
-	font-size: 16px;
-	text-align: center;
-	margin: 20px 0;
 `;
 
 export default SynthBalancesTable;
