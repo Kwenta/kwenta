@@ -33,7 +33,7 @@
 		"@reach/tabs": "0.15.0",
 		"@synthetixio/assets": "2.0.13",
 		"@synthetixio/contracts-interface": "2.74.1",
-		"@synthetixio/optimism-networks": "2.73.1",
+		"@synthetixio/optimism-networks": "2.74.1",
 		"@synthetixio/providers": "2.74.1",
 		"@synthetixio/queries": "2.74.3",
 		"@synthetixio/transaction-notifier": "2.74.1",
