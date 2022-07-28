@@ -58,66 +58,68 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
 
-				{!(window.location.pathname === ROUTES.Home.Root) && (
-					<>
-						<MenuButtonContainer>
-							<MobileSubMenu
-								i18nLabel={t('mobile-menu.wallet')}
-								onDismiss={onDismiss}
-								active={expanded === 'wallet'}
-								onToggle={handleToggle('wallet')}
-								options={[
-									{
-										label: t('mobile-menu.switch'),
-										icon: <MobileSwitchWalletIcon />,
-										onClick: connectWallet,
-									},
-									{
-										label: t('mobile-menu.disconnect'),
-										icon: <MobileMenuDisconnectIcon />,
-										onClick: disconnectWallet,
-									},
-								]}
-							/>
-						</MenuButtonContainer>
+				<div>
+					{!(window.location.pathname === ROUTES.Home.Root) && (
+						<>
+							<MenuButtonContainer>
+								<MobileSubMenu
+									i18nLabel={t('mobile-menu.wallet')}
+									onDismiss={onDismiss}
+									active={expanded === 'wallet'}
+									onToggle={handleToggle('wallet')}
+									options={[
+										{
+											label: t('mobile-menu.switch'),
+											icon: <MobileSwitchWalletIcon />,
+											onClick: connectWallet,
+										},
+										{
+											label: t('mobile-menu.disconnect'),
+											icon: <MobileMenuDisconnectIcon />,
+											onClick: disconnectWallet,
+										},
+									]}
+								/>
+							</MenuButtonContainer>
 
-						<MenuButtonContainer>
-							<MobileSubMenu
-								i18nLabel={t('mobile-menu.network')}
-								onDismiss={onDismiss}
-								active={expanded === 'network'}
-								onToggle={handleToggle('network')}
-								options={[
-									{
-										label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
-										icon: <MobileSwitchToL1Icon />,
-										onClick: isL2 ? switchToL1 : switchToL2,
-									},
-									{
-										label: `${t('mobile-menu.bridge')} ↗`,
-										icon: <MobileMenuBridgeIcon />,
-										externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
-									},
-								]}
-							/>
-						</MenuButtonContainer>
-					</>
-				)}
+							<MenuButtonContainer>
+								<MobileSubMenu
+									i18nLabel={t('mobile-menu.network')}
+									onDismiss={onDismiss}
+									active={expanded === 'network'}
+									onToggle={handleToggle('network')}
+									options={[
+										{
+											label: isL2 ? t('mobile-menu.switch-to-l1') : t('mobile-menu.switch-to-l2'),
+											icon: <MobileSwitchToL1Icon />,
+											onClick: isL2 ? switchToL1 : switchToL2,
+										},
+										{
+											label: `${t('mobile-menu.bridge')} ↗`,
+											icon: <MobileMenuBridgeIcon />,
+											externalLink: EXTERNAL_LINKS.Trading.OptimismTokenBridge,
+										},
+									]}
+								/>
+							</MenuButtonContainer>
+						</>
+					)}
 
-				<MenuButtonContainer>
-					<MobileSubMenu
-						i18nLabel={t('mobile-menu.language')}
-						onDismiss={onDismiss}
-						active={expanded === 'language'}
-						onToggle={handleToggle('language')}
-						options={languageOptions.map((option) => ({
-							label: option.label,
-							icon: <div>{lanugageIcons[option.value as Language]}</div>,
-							selected: languages[language] === option.value,
-							onClick: () => setLanguage(option.value as Language),
-						}))}
-					/>
-				</MenuButtonContainer>
+					<MenuButtonContainer>
+						<MobileSubMenu
+							i18nLabel={t('mobile-menu.language')}
+							onDismiss={onDismiss}
+							active={expanded === 'language'}
+							onToggle={handleToggle('language')}
+							options={languageOptions.map((option) => ({
+								label: option.label,
+								icon: <div>{lanugageIcons[option.value as Language]}</div>,
+								selected: languages[language] === option.value,
+								onClick: () => setLanguage(option.value as Language),
+							}))}
+						/>
+					</MenuButtonContainer>
+				</div>
 			</Container>
 		</StyledFullScreenModal>
 	);
@@ -129,11 +131,21 @@ const StyledFullScreenModal = styled(FullScreenModal)`
 	[data-reach-dialog-content] {
 		margin: 0;
 		width: 100%;
+		height: 100%;
+
+		& > div {
+			height: 100%;
+		}
 	}
 `;
 
 const Container = styled.div<{ hasBorder?: boolean }>`
-	padding: 24px 32px;
+	padding: 24px 32px 100px;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
 	${(props) =>
 		props.hasBorder &&
 		css`

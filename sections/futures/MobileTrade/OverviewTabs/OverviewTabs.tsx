@@ -14,15 +14,15 @@ import TradesTab from './TradesTab';
 
 const TABS = [
 	{
-		title: 'Account',
-		component: <AccountTab />,
-		icon: <AccountIcon />,
-	},
-	{
 		title: 'Price',
 		component: <PriceTab />,
 		icon: <PriceIcon />,
 		nofill: true,
+	},
+	{
+		title: 'Account',
+		component: <AccountTab />,
+		icon: <AccountIcon />,
 	},
 	{
 		title: 'Trades',

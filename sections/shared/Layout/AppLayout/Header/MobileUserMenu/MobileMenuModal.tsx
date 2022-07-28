@@ -39,28 +39,30 @@ export const MobileMenuModal: FC<MobileMenuModalProps> = ({ onDismiss }) => {
 				<LogoContainer>
 					<Logo isFutures isL2={isL2} />
 				</LogoContainer>
-				{menuLinks.map(({ i18nLabel, link }) => (
-					<div key={link}>
-						{SUB_MENUS[link] ? (
-							<MobileSubMenu
-								active={expanded === link}
-								i18nLabel={i18nLabel}
-								link={link}
-								defaultOpen={asPath.includes(link)}
-								onDismiss={onDismiss}
-								onToggle={handleToggle(link)}
-							/>
-						) : (
-							<Link href={link}>
-								<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
-									{t(i18nLabel)}
-									<MobileMenuArrow />
-								</MenuButton>
-							</Link>
-						)}
-					</div>
-				))}
-				<Links isMobile />
+				<div>
+					{menuLinks.map(({ i18nLabel, link }) => (
+						<div key={link}>
+							{SUB_MENUS[link] ? (
+								<MobileSubMenu
+									active={expanded === link}
+									i18nLabel={i18nLabel}
+									link={link}
+									defaultOpen={asPath.includes(link)}
+									onDismiss={onDismiss}
+									onToggle={handleToggle(link)}
+								/>
+							) : (
+								<Link href={link}>
+									<MenuButton isActive={asPath.includes(link)} onClick={onDismiss}>
+										{t(i18nLabel)}
+										<MobileMenuArrow />
+									</MenuButton>
+								</Link>
+							)}
+						</div>
+					))}
+					<Links isMobile />
+				</div>
 			</Container>
 		</StyledFullScreenModal>
 	);
@@ -72,11 +74,21 @@ const StyledFullScreenModal = styled(FullScreenModal)`
 	[data-reach-dialog-content] {
 		margin: 0;
 		width: 100%;
+		height: 100%;
+
+		& > div {
+			height: 100%;
+		}
 	}
 `;
 
 const Container = styled.div<{ hasBorder?: boolean }>`
-	padding: 24px 32px;
+	height: 100%;
+	padding: 24px 32px 100px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
 	${(props) =>
 		props.hasBorder &&
 		css`
