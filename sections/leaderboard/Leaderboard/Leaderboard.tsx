@@ -307,6 +307,8 @@ const Leaderboard: FC<LeaderboardProps> = ({ compact }: LeaderboardProps) => {
 							<StyledTable
 								compact={compact}
 								data={data}
+								showPagination
+								pageSize={20}
 								columns={[
 									{
 										Header: () => (

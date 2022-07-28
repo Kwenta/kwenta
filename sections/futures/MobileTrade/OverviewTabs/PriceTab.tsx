@@ -15,12 +15,12 @@ const PriceTab: React.FC = () => {
 
 const StyledPane = styled(Pane)`
 	#tv_chart_container {
-		min-height: 301px;
-		max-height: 301px;
+		min-height: 313px;
+		max-height: 313px;
 	}
 
 	iframe {
-		max-height: 301px;
+		max-height: 313px;
 	}
 `;
 
