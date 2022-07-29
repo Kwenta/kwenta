@@ -17,6 +17,7 @@ export type FormatNumberOptions = {
 	maxDecimals?: number;
 	prefix?: string;
 	suffix?: string;
+	units?: string;
 };
 
 export type FormatCurrencyOptions = {
@@ -24,6 +25,7 @@ export type FormatCurrencyOptions = {
 	maxDecimals?: number;
 	sign?: string;
 	currencyKey?: string;
+	units?: string;
 };
 
 const DEFAULT_CURRENCY_DECIMALS = 2;
@@ -70,6 +72,7 @@ export const commifyAndPadDecimals = (value: string, decimals: number) => {
 export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) => {
 	const prefix = options?.prefix;
 	const suffix = options?.suffix;
+	const units = options?.units;
 
 	let weiValue = wei(0);
 	try {
@@ -87,9 +90,12 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue
-		.abs()
-		.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
+	const weiAsStringWithDecimals = weiValue.abs().gte(1e6)
+		? weiValue
+				.abs()
+				.div(1e6)
+				.toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS)
+		: weiValue.abs().toString(options?.minDecimals ?? DEFAULT_NUMBER_DECIMALS);
 
 	const withCommas = commifyAndPadDecimals(
 		weiAsStringWithDecimals,
@@ -100,6 +106,10 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 
 	if (suffix) {
 		formattedValue.push(` ${suffix}`);
+	}
+
+	if (units) {
+		formattedValue.push(units);
 	}
 
 	return formattedValue.join('');
@@ -119,6 +129,7 @@ export const formatFiatCurrency = (value: WeiSource, options?: FormatCurrencyOpt
 		suffix: options?.currencyKey,
 		minDecimals: options?.minDecimals ?? DEFAULT_FIAT_DECIMALS,
 		maxDecimals: options?.maxDecimals,
+		units: options?.units,
 	});
 
 export const formatCurrency = (

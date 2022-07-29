@@ -62,15 +62,6 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					return positionHistory.isOpen && positionHistory.asset === position.asset;
 				});
 
-				let _notionalValue = position?.position?.notionalValue;
-				let notionalValue;
-
-				if (_notionalValue !== undefined) {
-					notionalValue = _notionalValue.abs().gte(1e6)
-						? _notionalValue.abs().div(1e6).toNumber().toFixed(1) + 'M'
-						: _notionalValue.abs();
-				}
-
 				return {
 					asset: position.asset,
 					market: getDisplayAsset(position.asset) + '-PERP',
@@ -78,7 +69,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 					description,
 					price: market?.price,
 					size: position?.position?.size,
-					notionalValue,
+					notionalValue: position?.position?.notionalValue.abs(),
 					position: position?.position?.side,
 					lastPrice: position?.position?.lastPrice,
 					avgEntryPrice: positionHistory?.entryPrice,
@@ -183,12 +174,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
+									const formatOptions = cellProps.row.original.price.abs().gte(1e6)
+										? { units: 'M' }
+										: {};
+
 									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.notionalValue}
 											sign={'$'}
 											conversionRate={1}
+											formatOptions={formatOptions}
 										/>
 									);
 								},
