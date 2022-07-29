@@ -74,8 +74,9 @@
 			"stats": {
 				"title": "Fostering a growing community of traders",
 				"copy": "Zero withdrawals frozen",
-				"volume": "Trading Volume",
-				"trades": "Total Daily Trades",
+				"volume": "Total Volume",
+				"traders": "Total Traders",
+				"trades": "Total Trades",
 				"open-interest": "Open Interest"
 			}
 		},
