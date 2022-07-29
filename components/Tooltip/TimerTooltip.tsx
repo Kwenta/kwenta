@@ -94,8 +94,6 @@ const TimerTooltip = (props: ToolTipProps) => {
 export default TimerTooltip;
 
 const Container = styled.div`
-	padding-top: 10px;
-	padding-bottom: 10px;
 	p {
 		font-family: ${(props) => props.theme.fonts.mono};
 		span {
