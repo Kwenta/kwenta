@@ -90,7 +90,7 @@ export const formatNumber = (value: WeiSource, options?: FormatNumberOptions) =>
 		formattedValue.push(prefix);
 	}
 
-	const weiAsStringWithDecimals = weiValue.abs().gte(1e6)
+	const weiAsStringWithDecimals = units
 		? weiValue
 				.abs()
 				.div(1e6)
