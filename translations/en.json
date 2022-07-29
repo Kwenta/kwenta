@@ -59,8 +59,8 @@
 			"copy": "Trade commodities, forex, crypto, and more with up to <0>25x leverage</0> and <0>deep liquidity</0> without the risk of your assets being frozen."
 		},
 		"assets": {
-			"title": "TRENDING MARKETS",
-			"description": "Start Trading Synths now",
+			"title": "UNIQUE MARKETS",
+			"description": "Backed by Chainlink Oracles",
 			"index": "Unique Indices",
 			"forex": "Forex",
 			"equities": "Traditional Equities",
