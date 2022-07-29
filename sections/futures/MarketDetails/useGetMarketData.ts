@@ -61,7 +61,7 @@ const useGetMarketData = (mobile?: boolean) => {
 				? marketInfo?.currentFundingRate
 				: avgFundingRate;
 
-		const marketPrice = wei(marketInfo?.price);
+		const marketPrice = wei(marketInfo?.price ?? 0);
 
 		if (mobile) {
 			return {
@@ -101,7 +101,7 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				'24H Change': {
 					value:
-						marketPrice && pastPrice?.price
+						marketPrice && marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
@@ -137,7 +137,7 @@ const useGetMarketData = (mobile?: boolean) => {
 				},
 				'24H Change': {
 					value:
-						marketPrice && pastPrice?.price
+						marketPrice && marketPrice.gt(0) && pastPrice?.price
 							? `${formatCurrency(
 									selectedPriceCurrency.name,
 									marketPrice.sub(pastPrice.price) ?? zeroBN,
