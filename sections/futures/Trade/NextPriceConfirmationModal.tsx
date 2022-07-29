@@ -13,12 +13,12 @@ import { Synths } from 'constants/currency';
 import { NO_VALUE } from 'constants/placeholder';
 import Connector from 'containers/Connector';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import GasPriceSelect from 'sections/shared/components/GasPriceSelect';
 import {
 	confirmationModalOpenState,
 	currentMarketState,
 	leverageSideState,
+	marketInfoState,
 	nextPriceDisclaimerState,
 	positionState,
 	tradeSizeState,
@@ -43,12 +43,12 @@ const NextPriceConfirmationModal: FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
 	const ethGasPriceQuery = useEthGasPriceQuery();
 	const exchangeRatesQuery = useExchangeRatesQuery();
-	const nextPriceDetailsQuery = useGetNextPriceDetails();
 
 	const tradeSize = useRecoilValue(tradeSizeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(currentMarketState);
+	const marketInfo = useRecoilValue(marketInfoState);
 
 	const setConfirmationModalOpen = useSetRecoilState(confirmationModalOpenState);
 
@@ -70,7 +70,6 @@ const NextPriceConfirmationModal: FC = () => {
 	);
 
 	const gasPrice = ethGasPriceQuery.data != null ? ethGasPriceQuery.data[gasSpeed] : null;
-	const nextPriceDetails = nextPriceDetailsQuery?.data;
 
 	const transactionFee = useMemo(
 		() =>
@@ -92,13 +91,13 @@ const NextPriceConfirmationModal: FC = () => {
 	}, [leverageSide, tradeSize, positionSize]);
 
 	const { commitDeposit, nextPriceFee } = useMemo(
-		() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)),
-		[nextPriceDetails, orderDetails]
+		() => computeNPFee(marketInfo, wei(orderDetails.newSize)),
+		[marketInfo, orderDetails]
 	);
 
 	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const nextPriceDiscount = useMemo(() => {
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);

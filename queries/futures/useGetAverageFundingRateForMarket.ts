@@ -4,35 +4,33 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
+import { marketInfoState, marketKeyState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { FundingRateUpdate } from './types';
 import { getFuturesEndpoint, calculateFundingRate } from './utils';
 
 const useGetAverageFundingRateForMarket = (
-	currencyKey: string | null,
-	assetPrice: number | null,
 	periodLength: number,
-	currentFundingRate: number | undefined,
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const marketKey = useRecoilValue(marketKeyState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
+	const price = marketInfo?.price;
+	const currentFundingRate = marketInfo?.currentFundingRate;
+	const marketAddress = marketInfo?.market;
+
 	return useQuery<Wei | null>(
-		QUERY_KEYS.Futures.FundingRate(network.id, currencyKey || '', assetPrice, currentFundingRate),
+		QUERY_KEYS.Futures.FundingRate(network.id, marketKey || ''),
 		async () => {
-			if (!currencyKey || !assetPrice) return null;
-			const { contracts } = synthetixjs!;
-			const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-			if (!marketAddress) return null;
+			if (!marketKey || !price || !marketInfo) return null;
 			const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 			try {
 				const response: { string: FundingRateUpdate[] } = await request(
@@ -85,7 +83,7 @@ const useGetAverageFundingRateForMarket = (
 							minTimestamp,
 							periodLength,
 							responseFilt,
-							assetPrice,
+							price,
 							currentFundingRate
 					  )
 					: wei(0);
@@ -95,7 +93,7 @@ const useGetAverageFundingRateForMarket = (
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!synthetixjs && !!currentFundingRate,
+			enabled: isAppReady && isL2 && !!marketInfo && !!currentFundingRate,
 			...options,
 		}
 	);

@@ -26,6 +26,16 @@ export const marketKeyState = selector({
 	get: ({ get }) => MarketKeyByAsset[get(currentMarketState)],
 });
 
+export const marketKeysState = selector({
+	key: getFuturesKey('marketKeys'),
+	get: ({ get }) => {
+		const futuresMarkets = get(futuresMarketsState);
+		return futuresMarkets.map(({ asset }) => {
+			return MarketKeyByAsset[asset];
+		});
+	},
+});
+
 export const balancesState = atom<Balances | null>({
 	key: getSynthsKey('balances'),
 	default: null,
@@ -111,9 +121,14 @@ export const sizeDeltaState = selector({
 	},
 });
 
-export const marketInfoState = atom<FuturesMarket | undefined>({
+export const marketInfoState = selector({
 	key: getFuturesKey('marketInfo'),
-	default: undefined,
+	get: ({ get }) => {
+		const markets = get(futuresMarketsState);
+		const currentMarket = get(currentMarketState);
+
+		return markets.find((market: FuturesMarket) => market.asset === currentMarket);
+	},
 });
 
 export const maxLeverageState = selector({
