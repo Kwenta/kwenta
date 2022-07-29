@@ -1,3 +1,4 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -33,17 +34,7 @@ const WalletButtons: React.FC = () => {
 
 	const walletIsNotConnected = (
 		<>
-			<ConnectButton
-				size="sm"
-				variant="outline"
-				noOutline
-				onClick={connectWallet}
-				data-testid="connect-wallet"
-				mono
-			>
-				<StyledConnectionDot />
-				{t('common.wallet.connect-wallet')}
-			</ConnectButton>
+			<ConnectButton />
 		</>
 	);
 
@@ -52,10 +43,7 @@ const WalletButtons: React.FC = () => {
 			<SwitchToL2Button variant="secondary" onClick={switchToL2}>
 				{t('homepage.l2.cta-buttons.switch-l2')}
 			</SwitchToL2Button>
-			<ConnectButton size="sm" variant="outline" data-testid="unsupported-network" mono>
-				<StyledConnectionDot />
-				{t('common.wallet.unsupported-network')}
-			</ConnectButton>
+			<ConnectButton />
 		</>
 	);
 
@@ -116,10 +104,6 @@ const MenuButton = styled(Button)`
 			}
 		}
 	}
-`;
-
-const ConnectButton = styled(Button)`
-	font-size: 13px;
 `;
 
 const SwitchToL2Button = styled(Button)`

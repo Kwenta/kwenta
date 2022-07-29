@@ -1,3 +1,4 @@
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { createQueryContext, SynthetixQueryContextProvider } from '@synthetixio/queries';
 import WithAppContainers from 'containers';
 import { NextPage } from 'next';
@@ -9,6 +10,8 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
 
 import Connector from 'containers/Connector';
 import Layout from 'sections/shared/Layout';
@@ -26,6 +29,7 @@ import '@reach/dialog/styles.css';
 import '@reach/tabs/styles.css';
 import '@reach/accordion/styles.css';
 import 'tippy.js/dist/tippy.css';
+import '@rainbow-me/rainbowkit/styles.css';
 
 import '../i18n';
 
@@ -36,6 +40,19 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
+
+const { chains, provider } = configureChains([chain.mainnet, chain.optimism], [publicProvider()]);
+
+const { connectors } = getDefaultWallets({
+	appName: 'Kwenta',
+	chains,
+});
+
+const wagmiClient = createClient({
+	autoConnect: true,
+	connectors,
+	provider,
+});
 
 const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) => {
 	const { provider, signer, network } = Connector.useContainer();
@@ -49,26 +66,30 @@ const InnerApp: FC<AppProps> = ({ Component, pageProps }: AppPropsWithLayout) =>
 	const isReady = useMemo(() => typeof window !== 'undefined', []);
 
 	return isReady ? (
-		<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
-			<MediaContextProvider>
-				<SynthetixQueryContextProvider
-					value={
-						provider && isSupportedNetworkId(network.id)
-							? createQueryContext({
-									provider,
-									signer: signer || undefined,
-									networkId: network!.id,
-							  })
-							: createQueryContext({ networkId: null })
-					}
-				>
-					<Layout>
-						<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
-					</Layout>
-					<ReactQueryDevtools position="top-left" />
-				</SynthetixQueryContextProvider>
-			</MediaContextProvider>
-		</ThemeProvider>
+		<WagmiConfig client={wagmiClient}>
+			<RainbowKitProvider chains={chains}>
+				<ThemeProvider theme={Component.layout === undefined ? themes['dark'] : theme}>
+					<MediaContextProvider>
+						<SynthetixQueryContextProvider
+							value={
+								provider && isSupportedNetworkId(network.id)
+									? createQueryContext({
+											provider,
+											signer: signer || undefined,
+											networkId: network!.id,
+									})
+									: createQueryContext({ networkId: null })
+							}
+						>
+							<Layout>
+								<SystemStatus>{getLayout(<Component {...pageProps} />)}</SystemStatus>
+							</Layout>
+							<ReactQueryDevtools position="top-left" />
+						</SynthetixQueryContextProvider>
+					</MediaContextProvider>
+				</ThemeProvider>
+			</RainbowKitProvider>
+		</WagmiConfig>
 	) : null;
 };
 
