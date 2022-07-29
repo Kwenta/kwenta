@@ -51,7 +51,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	]);
 
 	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
-	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket();
+	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
 	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
 
 	const externalPriceQuery = useExternalPriceQuery(marketKey);

@@ -1,5 +1,7 @@
 import { NetworkId } from '@synthetixio/contracts-interface';
 
+import { FuturesMarketAsset } from 'utils/futures';
+
 import { CurrencyKey } from './currency';
 import { Period } from './period';
 
@@ -151,7 +153,7 @@ export const QUERY_KEYS = {
 		],
 	},
 	Futures: {
-		DayTradeStats: (networkId: NetworkId, currencyKey: string | undefined) => [
+		DayTradeStats: (networkId: NetworkId, currencyKey: FuturesMarketAsset | null) => [
 			'futures',
 			'dayTradeStats',
 			networkId,

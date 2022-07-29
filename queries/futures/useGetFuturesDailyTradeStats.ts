@@ -48,7 +48,7 @@ const useGetFuturesDailyTradeStats = (options?: UseQueryOptions<FuturesDailyTrad
 	};
 
 	return useQuery<FuturesDailyTradeStats | null>(
-		QUERY_KEYS.Futures.DayTradeStats(network.id, undefined),
+		QUERY_KEYS.Futures.DayTradeStats(network.id, null),
 		async () => {
 			const trades = await queryTrades(0, []);
 
