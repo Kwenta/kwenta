@@ -61,7 +61,6 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 };
 
 const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
-	background: ${(props) => props.theme.colors.selectedTheme.button.background};
 	display: flex;
 	justify-content: space-between;
 	margin: 15px 0;
@@ -71,6 +70,7 @@ const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	position: relative;
 
 	${border};
+	background: ${(props) => props.theme.colors.selectedTheme.button.fill};
 
 	${(props) =>
 		props.side === PositionSide.LONG &&
