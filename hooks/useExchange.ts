@@ -190,9 +190,9 @@ const useExchange = ({
 		[baseCurrencyAmount]
 	);
 	const atomicRatesQuery = useAtomicRatesQuery(
-		sourceCurrencyKey,
+		quoteCurrencyKey,
 		quoteCurrencyAmountBN.toBN(),
-		destinationCurrencyKey
+		baseCurrencyKey
 	);
 
 	const rateForAtomicExchange = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
@@ -526,11 +526,14 @@ const useExchange = ({
 
 	useEffect(() => {
 		if (!synthsMap) return;
-
+		// eslint-disable-next-line no-console
+		console.log(`Line 530 before Swap: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey}`);
 		setCurrencyPair({
 			base: (baseCurrencyKey && synthsMap[baseCurrencyKey]?.name) || null,
 			quote: (quoteCurrencyKey && synthsMap[quoteCurrencyKey]?.name) || Synths.sUSD,
 		});
+		// eslint-disable-next-line no-console
+		console.log(`Line 530 after Swap: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey}`);
 		// eslint-disable-next-line
 	}, [network.id, walletAddress, setCurrencyPair, synthsMap]);
 
@@ -545,7 +548,11 @@ const useExchange = ({
 		}
 
 		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(isAtomic ? inverseRate : rate);
+			// eslint-disable-next-line no-console
+			console.log(
+				`Line 548: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey} quoteAmount ${quoteCurrencyAmount} rate ${rate}`
+			);
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
 			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setBaseCurrencyAmount(
 				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
@@ -556,7 +563,11 @@ const useExchange = ({
 
 	useEffect(() => {
 		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
-			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(isAtomic ? rate : inverseRate);
+			// eslint-disable-next-line no-console
+			console.log(
+				`Line 565: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey} quoteAmount ${quoteCurrencyAmount} rate ${inverseRate}`
+			);
+			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(inverseRate);
 			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setQuoteCurrencyAmount(
 				truncateNumbers(quoteCurrencyAmountNoFee.add(fee), DEFAULT_CRYPTO_DECIMALS)
