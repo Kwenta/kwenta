@@ -174,7 +174,7 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
-									const formatOptions = cellProps.row.original.price.abs().gte(1e6)
+									const formatOptions = cellProps.row.original.notionalValue.abs().gte(1e6)
 										? { units: 'M' }
 										: {};
 
