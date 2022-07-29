@@ -1,4 +1,3 @@
-import { wei } from '@synthetixio/wei';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
@@ -6,21 +5,14 @@ import styled, { css } from 'styled-components';
 
 import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import TimerTooltip from 'components/Tooltip/TimerTooltip';
-import { DEFAULT_FIAT_EURO_DECIMALS } from 'constants/defaults';
-import { Period, PERIOD_IN_SECONDS } from 'constants/period';
-import { NO_VALUE } from 'constants/placeholder';
-import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetAverageFundingRateForMarket from 'queries/futures/useGetAverageFundingRateForMarket';
-import useGetFuturesDailyTradeStatsForMarket from 'queries/futures/useGetFuturesDailyTrades';
-import useGetFuturesTradingVolume from 'queries/futures/useGetFuturesTradingVolume';
-import useExternalPriceQuery from 'queries/rates/useExternalPriceQuery';
-import useLaggedDailyPrice from 'queries/rates/useLaggedDailyPrice';
 import useRateUpdateQuery from 'queries/rates/useRateUpdateQuery';
-import { currentMarketState, marketInfoState, marketKeyState } from 'store/futures';
+import { currentMarketState, marketInfoState } from 'store/futures';
 import media from 'styles/media';
-import { isFiatCurrency } from 'utils/currencies';
-import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
-import { getDisplayAsset, isEurForex } from 'utils/futures';
+import { formatPercent } from 'utils/formatters/number';
+import { getDisplayAsset } from 'utils/futures';
+
+import useGetMarketData from './useGetMarketData';
+import useGetSkewData from './useGetSkewData';
 
 type MarketData = Record<string, { value: string | JSX.Element; color?: string }>;
 
@@ -31,16 +23,14 @@ type MarketDetailsProps = {
 const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const { t } = useTranslation();
 
-	const marketAsset = useRecoilValue(currentMarketState);
-	const marketKey = useRecoilValue(marketKeyState);
 	const marketInfo = useRecoilValue(marketInfoState);
+	const marketAsset = useRecoilValue(currentMarketState);
 
-	const futuresTradingVolumeQuery = useGetFuturesTradingVolume(marketAsset);
+	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
+	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
-	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-
-	const fundingRateQuery = useGetAverageFundingRateForMarket(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
-	const avgFundingRate = fundingRateQuery?.data ?? null;
+	const skewData = useGetSkewData();
+	const data: MarketData = useGetMarketData(mobile);
 
 	const lastOracleUpdateTimeQuery = useRateUpdateQuery({
 		baseCurrencyKey: marketAsset,
@@ -49,31 +39,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 	const lastOracleUpdateTime: Date = useMemo(() => lastOracleUpdateTimeQuery?.data ?? new Date(), [
 		lastOracleUpdateTimeQuery,
 	]);
-
-	const futuresTradingVolume = futuresTradingVolumeQuery?.data ?? null;
-	const futuresDailyTradeStatsQuery = useGetFuturesDailyTradeStatsForMarket(marketAsset);
-	const futuresDailyTradeStats = futuresDailyTradeStatsQuery?.data ?? null;
-
-	const externalPriceQuery = useExternalPriceQuery(marketKey);
-	const externalPrice = externalPriceQuery?.data ?? 0;
-	const minDecimals =
-		isFiatCurrency(selectedPriceCurrency.name) && isEurForex(marketKey)
-			? DEFAULT_FIAT_EURO_DECIMALS
-			: undefined;
-
-	const dailyPriceChangesQuery = useLaggedDailyPrice([marketKey]);
-	const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];
-
-	const pastPrice = dailyPriceChanges.find((price) => price.synth === marketAsset);
-
-	const assetName = `${getDisplayAsset(marketAsset)}-PERP`;
-	const fundingTitle = useMemo(
-		() =>
-			`${
-				fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo ? 'Inst.' : '1H'
-			} Funding Rate`,
-		[fundingRateQuery, avgFundingRate, marketInfo]
-	);
 
 	const enableTooltip = (key: string, children: React.ReactElement) => {
 		switch (key) {
@@ -143,7 +108,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						{children}
 					</TimerTooltip>
 				);
-			case fundingTitle:
+			case 'Inst. Funding Rate' || '1H Funding Rate':
 				return (
 					<OneHrFundingRateTooltip
 						key={key}
@@ -157,96 +122,6 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return children;
 		}
 	};
-
-	const data: MarketData = useMemo(() => {
-		const fundingValue =
-			fundingRateQuery.failureCount > 0 && !avgFundingRate && !!marketInfo
-				? marketInfo?.currentFundingRate
-				: avgFundingRate;
-
-		const marketPrice = marketInfo?.price;
-
-		return {
-			[assetName]: {
-				value: marketPrice
-					? formatCurrency(selectedPriceCurrency.name, marketPrice, {
-							sign: '$',
-							minDecimals,
-					  }) && lastOracleUpdateTime
-						? formatCurrency(selectedPriceCurrency.name, marketPrice, {
-								sign: '$',
-								minDecimals,
-						  })
-						: NO_VALUE
-					: NO_VALUE,
-			},
-			'External Price': {
-				value:
-					externalPrice === 0
-						? '-'
-						: formatCurrency(selectedPriceCurrency.name, externalPrice, {
-								sign: '$',
-								minDecimals,
-						  }),
-			},
-			'24H Change': {
-				value:
-					marketPrice && pastPrice?.price
-						? `${formatCurrency(
-								selectedPriceCurrency.name,
-								marketPrice.sub(pastPrice.price) ?? zeroBN,
-								{ sign: '$', minDecimals }
-						  )} (${formatPercent(marketPrice.sub(pastPrice.price).div(marketPrice) ?? zeroBN)})`
-						: NO_VALUE,
-				color:
-					marketPrice && pastPrice?.price
-						? marketPrice.sub(pastPrice.price).gt(zeroBN)
-							? 'green'
-							: marketPrice.sub(pastPrice.price).lt(zeroBN)
-							? 'red'
-							: ''
-						: undefined,
-			},
-			'24H Volume': {
-				value: !!futuresTradingVolume
-					? formatCurrency(selectedPriceCurrency.name, futuresTradingVolume ?? zeroBN, {
-							sign: '$',
-					  })
-					: NO_VALUE,
-			},
-			'24H Trades': {
-				value: !!futuresDailyTradeStats ? `${futuresDailyTradeStats ?? 0}` : NO_VALUE,
-			},
-			'Open Interest': {
-				value: marketInfo?.marketSize?.mul(wei(marketPrice))
-					? formatCurrency(
-							selectedPriceCurrency.name,
-							marketInfo?.marketSize?.mul(wei(marketPrice)).toNumber(),
-							{ sign: '$' }
-					  )
-					: NO_VALUE,
-			},
-			[fundingTitle]: {
-				value: fundingValue ? formatPercent(fundingValue ?? zeroBN, { minDecimals: 6 }) : NO_VALUE,
-				color: fundingValue?.gt(zeroBN) ? 'green' : fundingValue?.lt(zeroBN) ? 'red' : undefined,
-			},
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [
-		marketAsset,
-		marketInfo,
-		futuresTradingVolume,
-		futuresDailyTradeStats,
-		selectedPriceCurrency.name,
-		externalPrice,
-		pastPrice?.price,
-		avgFundingRate,
-		fundingRateQuery,
-		lastOracleUpdateTime,
-		minDecimals,
-	]);
-
-	const pausedClass = marketInfo?.isSuspended ? 'paused' : '';
 
 	return (
 		<MarketDetailsContainer mobile={mobile}>
@@ -263,6 +138,20 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 					</WithCursor>
 				);
 			})}
+
+			{mobile && (
+				<div key="Skew">
+					<p className="heading">Skew</p>
+					<SkewDataContainer>
+						<div className={`value green ${pausedClass}`}>
+							{formatPercent(skewData.data.long, { minDecimals: 0 })} ({skewData.long})
+						</div>
+						<div className={`value red ${pausedClass}`}>
+							{formatPercent(skewData.data.short, { minDecimals: 0 })} ({skewData.short})
+						</div>
+					</SkewDataContainer>
+				</div>
+			)}
 		</MarketDetailsContainer>
 	);
 };
@@ -270,6 +159,10 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 // Extend type of cursor to accept different style of cursor. Currently accept only 'help'
 const WithCursor = styled.div<{ cursor: 'help' }>`
 	cursor: ${(props) => props.cursor};
+`;
+
+const SkewDataContainer = styled.div`
+	grid-row: 1;
 `;
 
 const OneHrFundingRateTooltip = styled(StyledTooltip)`

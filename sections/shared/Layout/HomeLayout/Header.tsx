@@ -92,7 +92,7 @@ const Header: FC = () => {
 			<MobileHiddenView>
 				<Container>
 					<LogoContainer>
-						<Logo isL2={isL2} />
+						<Logo />
 					</LogoContainer>
 					<Links>
 						{LINKS.map(({ id, label, icon, onClick }) => (
@@ -146,7 +146,6 @@ const MobileContainer = styled(FlexDivRow)`
 `;
 
 const LogoContainer = styled.div`
-	margin-top: -4px;
 	${media.lessThan('sm')`
 		margin-top: 4px;
 		padding-left:17px;
