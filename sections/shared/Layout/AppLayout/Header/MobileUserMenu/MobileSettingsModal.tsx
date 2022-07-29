@@ -55,7 +55,7 @@ export const MobileSettingsModal: FC<MobileSettingsModalProps> = ({ onDismiss })
 		<StyledFullScreenModal isOpen>
 			<Container>
 				<LogoContainer>
-					<Logo isFutures isL2={isL2} />
+					<Logo />
 				</LogoContainer>
 
 				<div>
