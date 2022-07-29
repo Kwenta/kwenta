@@ -545,14 +545,6 @@ const useExchange = ({
 		}
 
 		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
-			// eslint-disable-next-line no-console
-			console.log(
-				`step2`,
-				baseCurrencyKey,
-				quoteCurrencyKey,
-				quoteCurrencyAmount,
-				Number(isAtomic ? inverseRate : rate)
-			);
 			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(isAtomic ? inverseRate : rate);
 			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setBaseCurrencyAmount(
@@ -564,14 +556,6 @@ const useExchange = ({
 
 	useEffect(() => {
 		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
-			// eslint-disable-next-line no-console
-			console.log(
-				`step1`,
-				baseCurrencyKey,
-				quoteCurrencyKey,
-				baseCurrencyAmount,
-				Number(isAtomic ? rate : inverseRate)
-			);
 			const quoteCurrencyAmountNoFee = wei(baseCurrencyAmount).mul(isAtomic ? rate : inverseRate);
 			const fee = quoteCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setQuoteCurrencyAmount(
