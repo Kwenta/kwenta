@@ -143,19 +143,19 @@
 			},
 			"permissionless": {
 				"title": "Permissionless",
-				"copy": "A fully on-chain DeFi futures trading experience"
+				"copy": "A full on-chain DeFi futures trading experience"
 			},
 			"mobile": {
 				"title": "Mobile",
 				"copy": "Manage your trades at home or on the go"
 			},
 			"easy-ramping": {
-				"title": "Easy Ramping",
-				"copy": "Deposit any asset to get started"
+				"title": "Easy On/Off Ramping",
+				"copy": "Deposit or withdraw assets freely"
 			},
 			"zero-slippage": {
 				"title": "Zero slippage",
-				"copy": "Trade any available market with little to no slippage regardless of size"
+				"copy": "Trade with no slippage on any market"
 			},
 			"partners": {
 				"title": "Kwenta Ecosystem",
