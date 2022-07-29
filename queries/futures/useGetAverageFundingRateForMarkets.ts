@@ -4,19 +4,20 @@ import { useQueries, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
+import { futuresMarketsState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
+import { FuturesMarketKey, MarketKeyByAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { FundingRateUpdate } from './types';
 import { getFuturesEndpoint, calculateFundingRate } from './utils';
 
 type FundingRateInput = {
-	currencyKey: string;
-	assetPrice: number | null;
-	currentFundingRate: number | undefined;
+	marketAddress: string | undefined;
+	marketKey: FuturesMarketKey;
+	price: Wei | undefined;
+	currentFundingRate: Wei | undefined;
 };
 
 export type FundingRateResponse = {
@@ -25,30 +26,32 @@ export type FundingRateResponse = {
 };
 
 const useGetAverageFundingRateForMarkets = (
-	fundingRateInputs: FundingRateInput[] | [],
 	periodLength: number,
 	options?: UseQueryOptions<any | null>
 ) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
-	const { synthetixjs } = Connector.useContainer();
+	const futuresMarkets = useRecoilValue(futuresMarketsState);
 	const futuresEndpoint = getFuturesEndpoint(network);
 
-	return useQueries(
-		fundingRateInputs.map(({ currencyKey, assetPrice, currentFundingRate }: FundingRateInput) => {
+	const fundingRateInputs: FundingRateInput[] = futuresMarkets.map(
+		({ asset, market, price, currentFundingRate }) => {
 			return {
-				queryKey: QUERY_KEYS.Futures.FundingRate(
-					network.id,
-					currencyKey || '',
-					assetPrice,
-					currentFundingRate
-				),
+				marketAddress: market,
+				marketKey: MarketKeyByAsset[asset],
+				price: price,
+				currentFundingRate: currentFundingRate,
+			};
+		}
+	);
+
+	return useQueries(
+		fundingRateInputs.map(({ marketAddress, marketKey, price, currentFundingRate }) => {
+			return {
+				queryKey: QUERY_KEYS.Futures.FundingRate(network.id, marketKey || ''),
 				queryFn: async () => {
-					if (!currencyKey || !assetPrice) return null;
-					const { contracts } = synthetixjs!;
-					const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
-					if (!marketAddress) return null;
+					if (!marketKey || !price || !marketAddress) return null;
 					const minTimestamp = Math.floor(Date.now() / 1000) - periodLength;
 					try {
 						const response: { string: FundingRateUpdate[] } = await request(
@@ -97,14 +100,14 @@ const useGetAverageFundingRateForMarkets = (
 							.sort((a: FundingRateUpdate, b: FundingRateUpdate) => a.timestamp - b.timestamp);
 
 						const fundingRateResponse: FundingRateResponse = {
-							asset: currencyKey,
+							asset: marketKey,
 							fundingRate:
 								responseFilt && !!currentFundingRate
 									? calculateFundingRate(
 											minTimestamp,
 											periodLength,
 											responseFilt,
-											assetPrice,
+											price,
 											currentFundingRate
 									  )
 									: wei(0),
@@ -115,7 +118,7 @@ const useGetAverageFundingRateForMarkets = (
 						return null;
 					}
 				},
-				enabled: isAppReady && isL2 && !!synthetixjs && !!currentFundingRate,
+				enabled: isAppReady && isL2 && !!futuresMarkets,
 				...options,
 			};
 		})
