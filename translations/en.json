@@ -81,9 +81,9 @@
 			}
 		},
 		"earning": {
-			"title": "Earnings",
-			"description": "See What You Can Do With <0>$KWENTA</0>",
-			"copy": "Stake to earn, receive trading bonuses and participate in KwentaDAO governance.",
+			"title": "Community Run",
+			"description": "GOVERNED BY THE <0>$KWENTA</0> TOKEN",
+			"copy": "Community members earn and vote with $KWENTA",
 			"stake-to-earn": {
 				"title": "stake to earn",
 				"copy": "Staking $KWENTA earns weekly rewards which include protocol fees and inflationary rewards"
