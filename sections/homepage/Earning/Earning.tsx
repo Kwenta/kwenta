@@ -24,22 +24,22 @@ import { Copy, StackSection, Title } from '../common';
 
 const EARNINGS = [
 	{
-		id: 'stake-to-earn',
-		title: 'homepage.earning.stake-to-earn.title',
-		copy: 'homepage.earning.stake-to-earn.copy',
-		image: <StakeToEarnIcon />,
-	},
-	{
-		id: 'trade-to-earn',
-		title: 'homepage.earning.trade-to-earn.title',
-		copy: 'homepage.earning.trade-to-earn.copy',
-		image: <TradeToEarnIcon />,
-	},
-	{
 		id: 'vote-and-govern',
 		title: 'homepage.earning.vote-and-govern.title',
 		copy: 'homepage.earning.vote-and-govern.copy',
 		image: <VoteNGovernIcon />,
+	},
+	{
+		id: 'stake-to-earn',
+		title: 'homepage.earning.stake-and-earn.title',
+		copy: 'homepage.earning.stake-and-earn.copy',
+		image: <StakeToEarnIcon />,
+	},
+	{
+		id: 'trade-to-earn',
+		title: 'homepage.earning.trade-and-earn.title',
+		copy: 'homepage.earning.trade-and-earn.copy',
+		image: <TradeToEarnIcon />,
 	},
 ];
 

@@ -84,17 +84,17 @@
 			"title": "Community Run",
 			"description": "GOVERNED BY THE <0>$KWENTA</0> TOKEN",
 			"copy": "Community members earn and vote with $KWENTA",
-			"stake-to-earn": {
-				"title": "stake to earn",
-				"copy": "Staking $KWENTA earns weekly rewards which include protocol fees and inflationary rewards"
-			},
-			"trade-to-earn": {
-				"title": "trade to earn",
-				"copy": "Stakers who trade actively will receive increased staking rewards"
-			},
 			"vote-and-govern": {
 				"title": "vote & govern",
-				"copy": "Token-managed governance empowers the community to help steer Kwenta"
+				"copy": "Token-managed governance empowers the community to steer Kwenta"
+			},
+			"stake-and-earn": {
+				"title": "stake & earn",
+				"copy": "$KWENTA stakers earn protocol fees and inflationary rewards"
+			},
+			"trade-and-earn": {
+				"title": "trade & earn",
+				"copy": "Trade on Kwenta to begin earning tokens"
 			},
 			"how-to-earn": "How to earn",
 			"stake-kwenta": "Coming Soon",
