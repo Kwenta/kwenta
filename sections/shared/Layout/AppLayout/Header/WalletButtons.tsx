@@ -7,14 +7,12 @@ import styled from 'styled-components';
 import MoonIcon from 'assets/svg/app/moon.svg';
 import SunIcon from 'assets/svg/app/sun.svg';
 import Button from 'components/Button';
-import Connector from 'containers/Connector';
 import useNetworkSwitcher from 'hooks/useNetworkSwitcher';
 import { currentThemeState } from 'store/ui';
 import { isWalletConnectedState, networkState } from 'store/wallet';
 import { isSupportedNetworkId } from 'utils/network';
 
 import BalanceActions from './BalanceActions';
-import ConnectionDot from './ConnectionDot';
 import NetworksSwitcher from './NetworksSwitcher';
 import WalletActions from './WalletActions';
 
@@ -22,7 +20,6 @@ const WalletButtons: React.FC = () => {
 	const { t } = useTranslation();
 	const isWalletConnected = useRecoilValue(isWalletConnectedState);
 	const network = useRecoilValue(networkState);
-	const { connectWallet } = Connector.useContainer();
 	const [currentTheme, setTheme] = useRecoilState(currentThemeState);
 	const { switchToL2 } = useNetworkSwitcher();
 
@@ -78,10 +75,6 @@ const Container = styled.div`
 	display: grid;
 	grid-gap: 15px;
 	grid-auto-flow: column;
-`;
-
-const StyledConnectionDot = styled(ConnectionDot)`
-	margin-right: 6px;
 `;
 
 const MenuButton = styled(Button)`
