@@ -1,25 +1,49 @@
 import Wei, { wei } from '@synthetixio/wei';
-import { BigNumber } from 'ethers';
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
 import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
+import {
+	baseCurrencyKeyState,
+	destinationCurrencyKeyState,
+	isAtomicState,
+	quoteCurrencyAmountWeiState,
+	quoteCurrencyKeyState,
+	sourceCurrencyKeyState,
+} from 'store/exchange';
 import { isL2State, networkState } from 'store/wallet';
+import { newGetExchangeRatesForCurrencies } from 'utils/currencies';
 
-const useAtomicRatesQuery = (
-	sourceCurrencyKey: string | null,
-	sourceAmount: BigNumber | null,
-	destinationCurrencyKey: string | null
-) => {
+import useExchangeRatesQuery from './useExchangeRatesQuery';
+
+const useAtomicRatesQuery = (options?: UseQueryOptions<Wei | null>) => {
 	const isL2 = useRecoilValue(isL2State);
 	const isAppReady = useRecoilValue(appReadyState);
 	const network = useRecoilValue(networkState);
 	const { synthetixjs } = Connector.useContainer();
 
-	return useQuery<Wei>(
-		['rates', 'rateForAtomicExchange', network.id],
+	const quoteCurrencyKey = useRecoilValue(quoteCurrencyKeyState);
+	const baseCurrencyKey = useRecoilValue(baseCurrencyKeyState);
+	const sourceCurrencyKey = useRecoilValue(sourceCurrencyKeyState);
+	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
+	const quoteCurrencyAmountWei = useRecoilValue(quoteCurrencyAmountWeiState);
+	const isAtomic = useRecoilValue(isAtomicState);
+
+	const exchangeRatesQuery = useExchangeRatesQuery();
+	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
+
+	const sourceAmount = quoteCurrencyAmountWei.toBN();
+
+	return useQuery<Wei | null>(
+		['rates', 'rateForAtomicExchange', sourceAmount, network.id],
 		async () => {
+			if (!isAtomic) {
+				return newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
+			}
+
+			if (sourceAmount.lte(0)) return null;
+
 			const {
 				value,
 				systemSourceRate,
@@ -29,19 +53,14 @@ const useAtomicRatesQuery = (
 				sourceAmount,
 				destinationCurrencyKey
 			);
+
 			return sourceAmount !== null && sourceAmount.gt(0)
 				? wei(value).div(sourceAmount)
 				: wei(systemSourceRate).div(systemDestinationRate);
 		},
 		{
 			enabled:
-				!isL2 &&
-				isAppReady &&
-				!!synthetixjs &&
-				sourceCurrencyKey != null &&
-				destinationCurrencyKey != null &&
-				sourceAmount != null &&
-				sourceAmount.gt(0),
+				isAppReady && !!synthetixjs && sourceCurrencyKey != null && destinationCurrencyKey != null,
 			refetchInterval: 60000,
 		}
 	);

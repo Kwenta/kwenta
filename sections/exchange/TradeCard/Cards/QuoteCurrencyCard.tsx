@@ -37,6 +37,7 @@ const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrenc
 		quotePriceRate,
 		onQuoteCurrencyAmountChange,
 		onQuoteBalanceClick,
+		disabled,
 	} = useExchangeContext();
 
 	return (
@@ -55,6 +56,7 @@ const QuoteCurrencyCard: React.FC<QuoteCurrencyCardProps> = ({ allowQuoteCurrenc
 				priceRate={quotePriceRate}
 				label={t('exchange.common.from')}
 				txProvider={txProvider}
+				disabled={disabled}
 			/>
 			{openModal === 'quote-select' && (
 				<SelectCurrencyModal

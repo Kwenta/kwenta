@@ -40,6 +40,7 @@ const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySe
 		oneInchQuoteQuery,
 		onBaseCurrencyAmountChange,
 		onBaseBalanceClick,
+		disabled,
 	} = useExchangeContext();
 
 	return (
@@ -48,7 +49,7 @@ const BaseCurrencyCard: React.FC<BaseCurrencyCardProps> = ({ allowBaseCurrencySe
 				side="base"
 				currencyKey={baseCurrencyKey}
 				currencyName={baseCurrencyKey ? allTokensMap[baseCurrencyKey]?.name : null}
-				disabled={txProvider !== 'synthetix'}
+				disabled={txProvider !== 'synthetix' || disabled}
 				amount={baseCurrencyAmount}
 				onAmountChange={onBaseCurrencyAmountChange}
 				walletBalance={baseCurrencyBalance}

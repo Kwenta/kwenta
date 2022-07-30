@@ -10,13 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { SYNTH_SWAP_OPTIMISM_ADDRESS } from 'constants/address';
-import {
-	ATOMIC_EXCHANGES_L1,
-	CRYPTO_CURRENCY_MAP,
-	CurrencyKey,
-	ETH_ADDRESS,
-	Synths,
-} from 'constants/currency';
+import { CRYPTO_CURRENCY_MAP, CurrencyKey, ETH_ADDRESS, Synths } from 'constants/currency';
 import { DEFAULT_CRYPTO_DECIMALS } from 'constants/defaults';
 import ROUTES from 'constants/routes';
 import Connector from 'containers/Connector';
@@ -40,11 +34,16 @@ import useTokensBalancesQuery from 'queries/walletBalances/useTokensBalancesQuer
 import { TxProvider } from 'sections/shared/modals/TxConfirmationModal/TxConfirmationModal';
 import {
 	baseCurrencyAmountState,
+	baseCurrencyAmountWeiState,
 	baseCurrencyKeyState,
 	currencyPairState,
+	destinationCurrencyKeyState,
+	isAtomicState,
 	quoteCurrencyAmountState,
+	quoteCurrencyAmountWeiState,
 	quoteCurrencyKeyState,
 	ratioState,
+	sourceCurrencyKeyState,
 	txErrorState,
 } from 'store/exchange';
 import { ordersState } from 'store/orders';
@@ -161,41 +160,17 @@ const useExchange = ({
 		return 'synthswap';
 	}, [baseCurrencyKey, quoteCurrencyKey, synthTokensMap, oneInchTokensMap]);
 
-	const destinationCurrencyKey = useMemo(
-		() => (baseCurrencyKey ? ethers.utils.formatBytes32String(baseCurrencyKey) : null),
-		[baseCurrencyKey]
-	);
+	const destinationCurrencyKey = useRecoilValue(destinationCurrencyKeyState);
+	const sourceCurrencyKey = useRecoilValue(sourceCurrencyKeyState);
 
-	const sourceCurrencyKey = useMemo(
-		() => (quoteCurrencyKey ? ethers.utils.formatBytes32String(quoteCurrencyKey) : null),
-		[quoteCurrencyKey]
-	);
+	const isAtomic = useRecoilValue(isAtomicState);
 
-	const isAtomic = useMemo(() => {
-		if (isL2 || !baseCurrencyKey || !quoteCurrencyKey) {
-			return false;
-		}
+	const quoteCurrencyAmountWei = useRecoilValue(quoteCurrencyAmountWeiState);
+	const baseCurrencyAmountWei = useRecoilValue(baseCurrencyAmountWeiState);
 
-		return [baseCurrencyKey, quoteCurrencyKey].every((currency) =>
-			ATOMIC_EXCHANGES_L1.includes(currency)
-		);
-	}, [isL2, baseCurrencyKey, quoteCurrencyKey]);
+	const atomicRatesQuery = useAtomicRatesQuery();
 
-	const quoteCurrencyAmountBN = useMemo(
-		() => (quoteCurrencyAmount === '' ? zeroBN : wei(quoteCurrencyAmount)),
-		[quoteCurrencyAmount]
-	);
-	const baseCurrencyAmountBN = useMemo(
-		() => (baseCurrencyAmount === '' ? zeroBN : wei(baseCurrencyAmount)),
-		[baseCurrencyAmount]
-	);
-	const atomicRatesQuery = useAtomicRatesQuery(
-		quoteCurrencyKey,
-		quoteCurrencyAmountBN.toBN(),
-		baseCurrencyKey
-	);
-
-	const rateForAtomicExchange = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
+	const rate = atomicRatesQuery.isSuccess ? atomicRatesQuery.data ?? null : null;
 
 	// TODO: these queries break when `txProvider` is not `synthetix` and should not be called.
 	// however, condition would break rule of hooks here
@@ -311,13 +286,13 @@ const useExchange = ({
 
 	const exchangeRates = exchangeRatesQuery.isSuccess ? exchangeRatesQuery.data ?? null : null;
 
-	const rate = useMemo(() => {
-		return isAtomic && rateForAtomicExchange != null
-			? rateForAtomicExchange
-			: newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
-	}, [isAtomic, rateForAtomicExchange, exchangeRates, quoteCurrencyKey, baseCurrencyKey]);
+	// const rate = useMemo(() => {
+	// 	// return isAtomic && rateForAtomicExchange != null
+	// 	// 	? rateForAtomicExchange
+	// 	return newGetExchangeRatesForCurrencies(exchangeRates, quoteCurrencyKey, baseCurrencyKey);
+	// }, [isAtomic, rateForAtomicExchange, exchangeRates, quoteCurrencyKey, baseCurrencyKey]);
 
-	const inverseRate = useMemo(() => (rate.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
+	const inverseRate = useMemo(() => (rate?.gt(0) ? wei(1).div(rate) : wei(0)), [rate]);
 
 	const getBalance = useCallback(
 		(currencyKey: string | null, isETH: boolean) => {
@@ -415,28 +390,28 @@ const useExchange = ({
 	);
 
 	const totalTradePrice = useMemo(() => {
-		let tradePrice = quoteCurrencyAmountBN.mul(quotePriceRate || 0);
+		let tradePrice = quoteCurrencyAmountWei.mul(quotePriceRate || 0);
 		if (selectPriceCurrencyRate) {
 			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice;
-	}, [quoteCurrencyAmountBN, quotePriceRate, selectPriceCurrencyRate]);
+	}, [quoteCurrencyAmountWei, quotePriceRate, selectPriceCurrencyRate]);
 
 	const estimatedBaseTradePrice = useMemo(() => {
-		let tradePrice = baseCurrencyAmountBN.mul(basePriceRate);
+		let tradePrice = baseCurrencyAmountWei.mul(basePriceRate);
 		if (selectPriceCurrencyRate) {
 			tradePrice = tradePrice.div(selectPriceCurrencyRate);
 		}
 
 		return tradePrice;
-	}, [baseCurrencyAmountBN, basePriceRate, selectPriceCurrencyRate]);
+	}, [baseCurrencyAmountWei, basePriceRate, selectPriceCurrencyRate]);
 
 	const selectedBothSides = baseCurrencyKey != null && quoteCurrencyKey != null;
 
 	const submissionDisabledReason = useMemo(() => {
 		const insufficientBalance =
-			quoteCurrencyBalance != null ? quoteCurrencyAmountBN.gt(quoteCurrencyBalance) : false;
+			quoteCurrencyBalance != null ? quoteCurrencyAmountWei.gt(quoteCurrencyBalance) : false;
 
 		if (feeReclaimPeriodInSeconds > 0) {
 			return t('exchange.summary-info.button.fee-reclaim-period');
@@ -458,7 +433,7 @@ const useExchange = ({
 		if (oneInchQuoteQuery.error) {
 			return t('exchange.summary-info.button.insufficient-liquidity');
 		}
-		if (!isWalletConnected || baseCurrencyAmountBN.lte(0) || quoteCurrencyAmountBN.lte(0)) {
+		if (!isWalletConnected || baseCurrencyAmountWei.lte(0) || quoteCurrencyAmountWei.lte(0)) {
 			return t('exchange.summary-info.button.enter-amount');
 		}
 		return null;
@@ -467,8 +442,8 @@ const useExchange = ({
 		selectedBothSides,
 		isSubmitting,
 		feeReclaimPeriodInSeconds,
-		baseCurrencyAmountBN,
-		quoteCurrencyAmountBN,
+		baseCurrencyAmountWei,
+		quoteCurrencyAmountWei,
 		isWalletConnected,
 		isApproving,
 		t,
@@ -501,6 +476,13 @@ const useExchange = ({
 		const quoteAmount = quoteCurrencyAmount;
 
 		setCurrencyPair({ base: quoteCurrencyKey, quote: baseCurrencyKey });
+
+		// TODO: When we swap, we want to load the new rate
+		// before switching the currencies, or we can switch the currencies
+		// but only allow the user to resume typing when the new rate has loaded.
+
+		// Step 1: Disable the input,
+		// Step 2: Once the rate is loaded, re-enable the input
 
 		// TODO: Allow reverse quote for other tx providers
 		setBaseCurrencyAmount(txProvider === 'synthetix' ? quoteAmount : '');
@@ -547,22 +529,40 @@ const useExchange = ({
 			setBaseCurrencyAmount(oneInchQuoteQuery.data);
 		}
 
-		if (txProvider === 'synthetix' && quoteCurrencyAmount !== '' && baseCurrencyKey != null) {
+		if (
+			txProvider === 'synthetix' &&
+			quoteCurrencyAmount !== '' &&
+			baseCurrencyKey != null &&
+			!atomicRatesQuery.isFetching &&
+			!!rate
+		) {
 			// eslint-disable-next-line no-console
 			console.log(
 				`Line 548: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey} quoteAmount ${quoteCurrencyAmount} rate ${rate}`
 			);
-			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate);
+			const baseCurrencyAmountNoFee = wei(quoteCurrencyAmount).mul(rate ?? 0);
 			const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 			setBaseCurrencyAmount(
 				truncateNumbers(baseCurrencyAmountNoFee.sub(fee), DEFAULT_CRYPTO_DECIMALS)
 			);
 		}
 		// eslint-disable-next-line
-	}, [quoteCurrencyKey, exchangeFeeRate, oneInchQuoteQuery.isSuccess, oneInchQuoteQuery.data]);
+	}, [
+		quoteCurrencyKey,
+		exchangeFeeRate,
+		oneInchQuoteQuery.isSuccess,
+		oneInchQuoteQuery.data,
+		atomicRatesQuery.isFetching,
+	]);
 
 	useEffect(() => {
-		if (txProvider === 'synthetix' && baseCurrencyAmount !== '' && quoteCurrencyKey != null) {
+		if (
+			txProvider === 'synthetix' &&
+			baseCurrencyAmount !== '' &&
+			quoteCurrencyKey != null &&
+			!atomicRatesQuery.isFetching &&
+			!!rate
+		) {
 			// eslint-disable-next-line no-console
 			console.log(
 				`Line 565: quoteKey ${quoteCurrencyKey} baseKey ${baseCurrencyKey} quoteAmount ${quoteCurrencyAmount} rate ${inverseRate}`
@@ -574,17 +574,17 @@ const useExchange = ({
 			);
 		}
 		// eslint-disable-next-line
-	}, [baseCurrencyKey, exchangeFeeRate]);
+	}, [baseCurrencyKey, exchangeFeeRate, atomicRatesQuery.isFetching]);
 
 	const exchangeParams = useMemo(() => {
-		const sourceAmount = quoteCurrencyAmountBN.toBN();
+		const sourceAmount = quoteCurrencyAmountWei.toBN();
 
 		if (!sourceCurrencyKey || !destinationCurrencyKey) {
 			return null;
 		}
 
 		if (isAtomic) {
-			let minAmount = baseCurrencyAmountBN.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
+			let minAmount = baseCurrencyAmountWei.mul(wei(1).sub(atomicExchangeSlippage)).toBN();
 
 			return [
 				sourceCurrencyKey,
@@ -603,11 +603,11 @@ const useExchange = ({
 			];
 		}
 	}, [
-		quoteCurrencyAmountBN,
+		quoteCurrencyAmountWei,
 		sourceCurrencyKey,
 		destinationCurrencyKey,
 		isAtomic,
-		baseCurrencyAmountBN,
+		baseCurrencyAmountWei,
 		atomicExchangeSlippage,
 		walletAddress,
 	]);
@@ -1101,7 +1101,7 @@ const useExchange = ({
 				setBaseCurrencyAmount('');
 			} else {
 				setQuoteCurrencyAmount(value);
-				if (txProvider === 'synthetix' && baseCurrencyKey != null) {
+				if (txProvider === 'synthetix' && baseCurrencyKey != null && !!rate) {
 					const baseCurrencyAmountNoFee = wei(value).mul(rate);
 					const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 					setBaseCurrencyAmount(
@@ -1133,7 +1133,7 @@ const useExchange = ({
 			} else {
 				setQuoteCurrencyAmount(truncateNumbers(quoteCurrencyBalance, DEFAULT_CRYPTO_DECIMALS));
 			}
-			if (txProvider === 'synthetix') {
+			if (txProvider === 'synthetix' && !!rate) {
 				const baseCurrencyAmountNoFee = quoteCurrencyBalance.mul(rate);
 				const fee = baseCurrencyAmountNoFee.mul(exchangeFeeRate ?? 0);
 				setBaseCurrencyAmount(
@@ -1162,6 +1162,8 @@ const useExchange = ({
 		},
 		[quoteCurrencyBalance, onQuoteCurrencyAmountChange, setRatio]
 	);
+
+	const disabled = atomicRatesQuery.isLoading;
 
 	return {
 		baseCurrencyKey,
@@ -1212,6 +1214,7 @@ const useExchange = ({
 		ratio,
 		onRatioChange,
 		setRatio,
+		disabled,
 	};
 };
 
