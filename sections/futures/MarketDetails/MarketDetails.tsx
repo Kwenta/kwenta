@@ -234,6 +234,11 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 		text-align: left;
 	}
 
+	.heading,
+	.value {
+		white-space: nowrap;
+	}
+
 	.heading {
 		font-size: 13px;
 		color: ${(props) => props.theme.colors.selectedTheme.text.title};
