@@ -9,11 +9,13 @@ import Error from 'components/Error';
 import { PositionSide } from 'queries/futures/types';
 import {
 	confirmationModalOpenState,
+	isMarketCapReachedState,
 	leverageSideState,
 	leverageState,
 	marketInfoState,
 	maxLeverageState,
 	orderTypeState,
+	placeOrderTranslationKeyState,
 	positionState,
 	potentialTradeDetailsState,
 	sizeDeltaState,
@@ -45,13 +47,9 @@ const ManagePosition: React.FC = () => {
 	const [isConfirmationModalOpen, setConfirmationModalOpen] = useRecoilState(
 		confirmationModalOpenState
 	);
-	const {
-		error,
-		orderTxn,
-		isMarketCapReached,
-		placeOrderTranslationKey,
-		onTradeAmountChange,
-	} = useFuturesContext();
+	const { error, orderTxn, onTradeAmountChange } = useFuturesContext();
+	const isMarketCapReached = useRecoilValue(isMarketCapReachedState);
+	const placeOrderTranslationKey = useRecoilValue(placeOrderTranslationKeyState);
 
 	const orderError = useMemo(() => {
 		const orderTxnError = orderTxn.error as OrderTxnError;
