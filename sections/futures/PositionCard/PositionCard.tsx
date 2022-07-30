@@ -26,7 +26,7 @@ import media from 'styles/media';
 import { isFiatCurrency } from 'utils/currencies';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 import { formatNumber } from 'utils/formatters/number';
-import { getSynthDescription, isEurForex } from 'utils/futures';
+import { getDisplayAsset, getSynthDescription, isEurForex, MarketKeyByAsset } from 'utils/futures';
 
 type PositionCardProps = {
 	dashboard?: boolean;
@@ -65,7 +65,7 @@ type PositionPreviewData = {
 const PositionCard: React.FC<PositionCardProps> = () => {
 	const { t } = useTranslation();
 	const position = useRecoilValue(positionState);
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 
 	const positionDetails = position?.position ?? null;
@@ -85,7 +85,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			: undefined;
 
 	const positionHistory = futuresPositions?.find(
-		({ asset, isOpen }) => isOpen && asset === currencyKey
+		({ asset, isOpen }) => isOpen && asset === marketAsset
 	);
 
 	const { marketAssetRate } = useFuturesContext();
@@ -138,11 +138,9 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 			positionDetails?.accruedFunding.add(positionHistory?.netFunding ?? zeroBN) ?? zeroBN;
 
 		return {
-			currencyIconKey: currencyKey ? (currencyKey[0] !== 's' ? 's' : '') + currencyKey : '',
-			marketShortName: currencyKey
-				? (currencyKey[0] === 's' ? currencyKey.slice(1) : currencyKey) + '-PERP'
-				: 'Select a market',
-			marketLongName: getSynthDescription(currencyKey, synthsMap, t),
+			currencyIconKey: MarketKeyByAsset[marketAsset],
+			marketShortName: marketAsset ? getDisplayAsset(marketAsset) + '-PERP' : 'Select a market',
+			marketLongName: getSynthDescription(marketAsset, synthsMap, t),
 			marketPrice: formatCurrency(Synths.sUSD, marketAssetRate, {
 				sign: '$',
 				minDecimals: marketAssetRate.lt(0.01) ? 4 : 2,
@@ -274,7 +272,7 @@ const PositionCard: React.FC<PositionCardProps> = () => {
 		positionDetails,
 		positionHistory,
 		marketAssetRate,
-		currencyKey,
+		marketAsset,
 		synthsMap,
 		t,
 		previewData.positionSide,

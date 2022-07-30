@@ -27,7 +27,7 @@ export const SectionSeparator = styled.div`
 `;
 
 export const Pane = styled.div<{ noPadding?: boolean }>`
-	padding: 15px 15px 0;
+	padding-top: 15px;
 	box-sizing: border-box;
 
 	${(props) =>
@@ -36,5 +36,5 @@ export const Pane = styled.div<{ noPadding?: boolean }>`
 			padding: 0;
 		`}
 
-	height: 315px;
+	height: 325px;
 `;
