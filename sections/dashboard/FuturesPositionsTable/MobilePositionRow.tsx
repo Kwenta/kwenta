@@ -18,7 +18,7 @@ type MobilePositionRowProps = {
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
 	return (
 		<OpenPositionContainer side={row.position} key={row.asset} onClick={onClick}>
-			<div style={{ display: 'flex', width: 120 }}>
+			<div style={{ display: 'flex', width: 120, marginRight: 35 }}>
 				<StyledCurrencyIcon currencyKey={row.marketKey} />
 				<div>
 					<OpenPositionSize>
@@ -32,7 +32,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 					</OpenPositionSide>
 				</div>
 			</div>
-			<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', marginLeft: 59 }}>
+			<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between' }}>
 				<div>
 					<div>
 						<Currency.Price
@@ -69,7 +69,7 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 const OpenPositionContainer = styled.div<{ side?: PositionSide }>`
 	display: flex;
 	justify-content: space-between;
-	margin: 15px 0;
+	margin-bottom: 15px;
 	padding: 10px;
 	border-radius: 8px;
 	box-sizing: border-box;
