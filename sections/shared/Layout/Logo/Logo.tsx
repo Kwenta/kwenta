@@ -12,23 +12,20 @@ import { currentThemeState } from 'store/ui';
 
 type LogoProps = {
 	isL2?: boolean;
-	isFutures?: boolean;
 };
 
-const SvgLogo = ({ isFutures = false, isL2 }: LogoProps) => {
+const SvgLogo = ({ isL2 }: LogoProps) => {
 	const currentTheme = useRecoilValue(currentThemeState);
 
 	if (window.location.pathname === ROUTES.Home.Root) {
 		return <LogoSvg />;
 	}
 
-	if (isFutures) {
-		if (currentTheme === 'dark') {
-			return <LogoSvgBetaDark />;
-		}
-		if (currentTheme === 'light') {
-			return <LogoSvgBetaLight />;
-		}
+	if (currentTheme === 'dark') {
+		return <LogoSvgBetaDark />;
+	}
+	if (currentTheme === 'light') {
+		return <LogoSvgBetaLight />;
 	}
 
 	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
