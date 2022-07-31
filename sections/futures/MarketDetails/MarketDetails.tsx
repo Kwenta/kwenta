@@ -73,8 +73,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			case 'External Price':
 				return (
 					<MarketDetailsTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.external-price')}
 					>
@@ -85,7 +85,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-change')}
 					>
@@ -96,7 +96,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-vol')}
 					>
@@ -107,7 +107,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.24h-trades')}
 					>
@@ -118,7 +118,7 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				return (
 					<MarketDetailsTooltip
 						key={key}
-						preset="bottom"
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.open-interest')}
 					>
@@ -128,8 +128,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 			case assetName:
 				return (
 					<TimerTooltip
+						position={'fixed'}
 						key={key}
-						preset="bottom"
 						startTimeDate={lastOracleUpdateTime}
 						width={'131px'}
 					>
@@ -138,13 +138,14 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 				);
 			case fundingTitle:
 				return (
-					<OneHrFundingRateTooltip
+					<MarketDetailsTooltip
 						key={key}
+						position={'fixed'}
 						height={'auto'}
 						content={t('exchange.market-details-card.tooltips.1h-funding-rate')}
 					>
 						{children}
-					</OneHrFundingRateTooltip>
+					</MarketDetailsTooltip>
 				);
 			default:
 				return children;
@@ -199,15 +200,6 @@ const SkewDataContainer = styled.div`
 	grid-row: 1;
 `;
 
-const OneHrFundingRateTooltip = styled(StyledTooltip)`
-	${media.greaterThan('sm')`
-		bottom: -115px;
-		z-index: 2;
-		left: -200px;
-		padding: 10px;
-	`}
-`;
-
 const MarketDetailsTooltip = styled(StyledTooltip)`
 	z-index: 2;
 	padding: 10px;
@@ -219,6 +211,7 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	padding: 10px 45px 10px 15px;
 	margin-bottom: 16px;
 	box-sizing: border-box;
+	overflow-y: scroll;
 
 	display: flex;
 	justify-content: space-between;

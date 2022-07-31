@@ -15,6 +15,8 @@ interface ToolTipProps {
 	bottom?: string;
 	left?: string;
 	right?: string;
+	style?: React.CSSProperties;
+	position?: string;
 }
 
 const formatTimeUnit = (value: number) => {
