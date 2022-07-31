@@ -40,14 +40,7 @@ const FuturesMarketsTable: FC = () => {
 
 	const futuresVolumeQuery = useGetFuturesTradingVolumeForAllMarkets();
 
-	const fundingRates = useGetAverageFundingRateForMarkets(
-		futuresMarkets.map(({ asset, price, currentFundingRate }) => ({
-			currencyKey: asset,
-			assetPrice: price.toNumber(),
-			currentFundingRate: currentFundingRate.toNumber(),
-		})),
-		PERIOD_IN_SECONDS[Period.ONE_HOUR]
-	);
+	const fundingRates = useGetAverageFundingRateForMarkets(PERIOD_IN_SECONDS[Period.ONE_HOUR]);
 
 	let data = useMemo(() => {
 		const dailyPriceChanges = dailyPriceChangesQuery.data ?? [];

@@ -10,7 +10,6 @@ import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
-import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
 import { getFuturesMarketContract } from 'queries/futures/utils';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { PositionSide } from 'sections/futures/types';
@@ -49,7 +48,6 @@ const useFuturesData = () => {
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
-	const marketLimitQuery = useGetFuturesMarketLimit(marketKey);
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -80,7 +78,7 @@ const useFuturesData = () => {
 	const positionSide = position?.position?.side;
 	const marketMaxLeverage = market?.maxLeverage ?? DEFAULT_MAX_LEVERAGE;
 
-	const maxMarketValueUSD = marketLimitQuery?.data ?? wei(0);
+	const maxMarketValueUSD = market?.marketLimit ?? wei(0);
 	const marketSize = market?.marketSize ?? wei(0);
 	const marketSkew = market?.marketSkew ?? wei(0);
 

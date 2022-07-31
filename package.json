@@ -106,7 +106,7 @@
 		"@types/react-input-autosize": "2.2.1",
 		"@types/react-responsive": "8.0.5",
 		"@types/react-select": "3.0.19",
-		"@types/react-slick": "0.23.4",
+		"@types/react-slick": "0.23.10",
 		"@types/react-table": "7.0.22",
 		"@types/styled-components": "5.1.2",
 		"@typescript-eslint/eslint-plugin": "4.33.0",

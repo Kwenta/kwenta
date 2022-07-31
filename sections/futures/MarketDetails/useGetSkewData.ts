@@ -1,10 +1,9 @@
-import { Synth } from '@synthetixio/contracts-interface';
 import * as _ from 'lodash/fp';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { FuturesMarket } from 'queries/futures/types';
-import { currentMarketState } from 'store/futures';
+import { marketInfoState, marketKeyState } from 'store/futures';
 import { formatCurrency } from 'utils/formatters/number';
 
 export type SkewData = {
@@ -18,14 +17,12 @@ export type SkewData = {
 	short: string;
 };
 
-const useGetSkewData = (
-	selectedPriceCurrency: Synth,
-	futuresMarkets: FuturesMarket[]
-): SkewData => {
-	const currencyKey = useRecoilValue(currentMarketState);
-	const skewData = useMemo(() => {
+const useGetSkewData = (): SkewData => {
+	const marketKey = useRecoilValue(marketKeyState);
+	const marketInfo = useRecoilValue(marketInfoState);
+	const [skewData, long, short] = useMemo(() => {
 		const cleanMarket = (i: FuturesMarket) => {
-			const basePriceRate = _.defaultTo(0, Number(i.price));
+			const marketPrice = _.defaultTo(0, Number(i.price));
 			return {
 				short: i.marketSize.eq(0)
 					? 0
@@ -35,27 +32,27 @@ const useGetSkewData = (
 					: i.marketSize.add(i.marketSkew).div('2').div(i.marketSize).toNumber(),
 				shortValue: i.marketSize.eq(0)
 					? 0
-					: i.marketSize.sub(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+					: i.marketSize.sub(i.marketSkew).div('2').mul(marketPrice).toNumber(),
 				longValue: i.marketSize.eq(0)
 					? 0
-					: i.marketSize.add(i.marketSkew).div('2').mul(basePriceRate).toNumber(),
+					: i.marketSize.add(i.marketSkew).div('2').mul(marketPrice).toNumber(),
 			};
 		};
 
-		const market = futuresMarkets.find((i: FuturesMarket) => i.asset === currencyKey);
-
-		return market
-			? cleanMarket(market)
+		const skewData = marketInfo
+			? cleanMarket(marketInfo)
 			: {
 					short: 0,
 					long: 0,
 					shortValue: 0,
 					longValue: 0,
 			  };
-	}, [futuresMarkets, currencyKey]);
 
-	const long = formatCurrency(selectedPriceCurrency.name, skewData.longValue, { sign: '$' });
-	const short = formatCurrency(selectedPriceCurrency.name, skewData.shortValue, { sign: '$' });
+		const long = formatCurrency(marketKey, skewData.longValue, { sign: '$' });
+		const short = formatCurrency(marketKey, skewData.shortValue, { sign: '$' });
+
+		return [skewData, long, short];
+	}, [marketInfo, marketKey]);
 
 	return { data: skewData, long, short };
 };
