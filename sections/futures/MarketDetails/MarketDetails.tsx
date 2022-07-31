@@ -221,6 +221,12 @@ const MarketDetailsContainer = styled.div<{ mobile?: boolean }>`
 	border-radius: 10px;
 	box-sizing: border-box;
 
+	${media.lessThan('xl')`
+		& > div {
+			margin-right: 10px;
+		}
+	`}
+
 	p,
 	span {
 		margin: 0;
