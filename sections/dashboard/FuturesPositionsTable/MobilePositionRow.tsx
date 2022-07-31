@@ -18,7 +18,7 @@ type MobilePositionRowProps = {
 const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) => {
 	return (
 		<OpenPositionContainer side={row.position} key={row.asset} onClick={onClick}>
-			<div style={{ display: 'flex' }}>
+			<div style={{ display: 'flex', width: 120 }}>
 				<StyledCurrencyIcon currencyKey={row.marketKey} />
 				<div>
 					<OpenPositionSize>
@@ -32,28 +32,34 @@ const MobilePositionRow: React.FC<MobilePositionRowProps> = ({ row, onClick }) =
 					</OpenPositionSide>
 				</div>
 			</div>
-			<div>
+			<div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', marginLeft: 59 }}>
 				<div>
-					<Currency.Price
-						currencyKey={Synths.sUSD}
-						price={row.price ?? 0}
-						sign="$"
-						formatOptions={isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}}
-					/>
+					<div>
+						<Currency.Price
+							currencyKey={Synths.sUSD}
+							price={row.price ?? 0}
+							sign="$"
+							formatOptions={
+								isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}
+							}
+						/>
+					</div>
+					<EntryPrice>
+						<Currency.Price
+							currencyKey={Synths.sUSD}
+							price={row.avgEntryPrice ?? 0}
+							sign="$"
+							formatOptions={
+								isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}
+							}
+						/>
+					</EntryPrice>
 				</div>
-				<EntryPrice>
-					<Currency.Price
-						currencyKey={Synths.sUSD}
-						price={row.avgEntryPrice ?? 0}
-						sign="$"
-						formatOptions={isEurForex(row.asset) ? { minDecimals: DEFAULT_FIAT_EURO_DECIMALS } : {}}
-					/>
-				</EntryPrice>
-			</div>
-			<div>
-				<ChangePercent value={row.pnlPct ?? 0} />
 				<div>
-					<Currency.Price currencyKey={Synths.sUSD} price={row.pnl ?? 0} sign="$" />
+					<ChangePercent value={row.pnlPct ?? 0} />
+					<div>
+						<Currency.Price currencyKey={Synths.sUSD} price={row.pnl ?? 0} sign="$" />
+					</div>
 				</div>
 			</div>
 		</OpenPositionContainer>
