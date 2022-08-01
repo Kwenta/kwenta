@@ -1,5 +1,4 @@
 import { Synth, Synths } from '@synthetixio/contracts-interface';
-import { wei } from '@synthetixio/wei';
 import * as _ from 'lodash/fp';
 import values from 'lodash/values';
 import { useRouter } from 'next/router';
