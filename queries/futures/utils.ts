@@ -188,7 +188,7 @@ export const calculateDailyTradeStats = (futuresTrades: FuturesOneMinuteStat[]) 
 	return futuresTrades.reduce(
 		(acc, stat) => {
 			return {
-				totalVolume: acc.totalVolume.add(new Wei(stat.volume, 18, true).abs()),
+				totalVolume: acc.totalVolume.add(stat.volume.div(ETH_UNIT).abs()),
 				totalTrades: acc.totalTrades + Number(stat.trades),
 			};
 		},
@@ -203,8 +203,8 @@ export const calculateFundingRate = (
 	minTimestamp: number,
 	periodLength: number,
 	fundingRates: FundingRateUpdate[],
-	assetPrice: number,
-	currentFundingRate: number
+	assetPrice: Wei,
+	currentFundingRate: Wei
 ): Wei | null => {
 	const numUpdates = fundingRates.length;
 	if (numUpdates < 2) return null;

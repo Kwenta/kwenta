@@ -17,7 +17,7 @@ const Header: FC = () => {
 		<Container isL2={isL2}>
 			<MobileHiddenView>
 				<LogoNav>
-					<StyledLogo isL2={isL2} isFutures />
+					<Logo />
 					<Nav />
 				</LogoNav>
 				<WalletButtons />
@@ -43,7 +43,5 @@ const LogoNav = styled.div`
 	display: flex;
 	align-items: center;
 `;
-
-const StyledLogo = styled(Logo)``;
 
 export default Header;
