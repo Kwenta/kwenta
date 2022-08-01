@@ -9,36 +9,34 @@ import StyledTooltip from 'components/Tooltip/StyledTooltip';
 import { NO_VALUE } from 'constants/placeholder';
 import { useFuturesContext } from 'contexts/FuturesContext';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
-import { feeCostState, orderTypeState, sizeDeltaState } from 'store/futures';
+import { feeCostState, marketInfoState, orderTypeState, sizeDeltaState } from 'store/futures';
 import { computeNPFee, computeMarketFee } from 'utils/costCalculations';
 import { formatCurrency, formatPercent, zeroBN } from 'utils/formatters/number';
 
 const FeeInfoBox: React.FC = () => {
 	const { selectedPriceCurrency } = useSelectedPriceCurrency();
-	const costDetailsQuery = useGetNextPriceDetails();
-	const costDetails = costDetailsQuery.data;
 	const { t } = useTranslation();
 	const orderType = useRecoilValue(orderTypeState);
 	const feeCost = useRecoilValue(feeCostState);
 	const sizeDelta = useRecoilValue(sizeDeltaState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const { dynamicFee } = useFuturesContext();
 
-	const { commitDeposit, nextPriceFee } = React.useMemo(
-		() => computeNPFee(costDetails, sizeDelta),
-		[costDetails, sizeDelta]
-	);
+	const { commitDeposit, nextPriceFee } = React.useMemo(() => computeNPFee(marketInfo, sizeDelta), [
+		marketInfo,
+		sizeDelta,
+	]);
 
 	const totalDeposit = React.useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(costDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, costDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const nextPriceDiscount = React.useMemo(() => {
 		return (nextPriceFee ?? zeroBN).sub(commitDeposit ?? zeroBN);
 	}, [commitDeposit, nextPriceFee]);
 
-	const staticRate = React.useMemo(() => computeMarketFee(costDetails, sizeDelta), [
-		costDetails,
+	const staticRate = React.useMemo(() => computeMarketFee(marketInfo, sizeDelta), [
+		marketInfo,
 		sizeDelta,
 	]);
 
@@ -75,8 +73,8 @@ const FeeInfoBox: React.FC = () => {
 				...(orderType === 1
 					? {
 							'Keeper Deposit': {
-								value: !!costDetails?.keeperDeposit
-									? formatCurrency(selectedPriceCurrency.name, costDetails.keeperDeposit, {
+								value: !!marketInfo?.keeperDeposit
+									? formatCurrency(selectedPriceCurrency.name, marketInfo.keeperDeposit, {
 											sign: selectedPriceCurrency.sign,
 											minDecimals: 2,
 									  })

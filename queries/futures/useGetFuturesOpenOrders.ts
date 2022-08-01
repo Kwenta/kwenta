@@ -6,11 +6,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { ETH_UNIT } from 'constants/network';
 import QUERY_KEYS from 'constants/queryKeys';
-import Connector from 'containers/Connector';
 import { appReadyState } from 'store/app';
-import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
+import { futuresAccountState, openOrdersState, marketInfoState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
-import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
 import { getFuturesEndpoint } from './utils';
@@ -21,16 +19,14 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const futuresEndpoint = getFuturesEndpoint(network);
-	const { synthetixjs } = Connector.useContainer();
-	const currencyKey = useRecoilValue(currentMarketState);
+	const marketInfo = useRecoilValue(marketInfoState);
 	const [, setOpenOrders] = useRecoilState(openOrdersState);
 
 	return useQuery<any[]>(
 		QUERY_KEYS.Futures.OpenOrders(network.id, selectedFuturesAddress),
 		async () => {
 			try {
-				const { contracts } = synthetixjs!;
-				const marketAddress = contracts[`FuturesMarket${getDisplayAsset(currencyKey)}`].address;
+				const marketAddress = marketInfo?.market;
 				const response = await request(
 					futuresEndpoint,
 					gql`
@@ -68,7 +64,7 @@ const useGetFuturesOpenOrders = (options?: UseQueryOptions<any>) => {
 			}
 		},
 		{
-			enabled: isAppReady && isL2 && !!currencyKey && !!selectedFuturesAddress,
+			enabled: isAppReady && isL2 && !!marketInfo?.market && !!selectedFuturesAddress,
 			refetchInterval: 5000,
 			...options,
 		}

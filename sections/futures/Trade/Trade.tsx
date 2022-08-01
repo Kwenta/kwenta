@@ -11,6 +11,7 @@ import MarketInfoBox from '../MarketInfoBox';
 import OrderSizing from '../OrderSizing';
 import PositionButtons from '../PositionButtons';
 import AccountTypeToggle from './AccountTypeToggle';
+import CrossMarginAccountActions from './CrossMarginAccountActions';
 import ManagePosition from './ManagePosition';
 import MarketActions from './MarketActions';
 import MarketsDropdown from './MarketsDropdown';
@@ -30,7 +31,11 @@ const Trade: React.FC = () => {
 
 			<MarketsDropdown />
 
-			{futuresAccount.selectedAccountType === 'isolated_margin' && <MarketActions />}
+			{futuresAccount.selectedAccountType === 'isolated_margin' ? (
+				<MarketActions />
+			) : (
+				<CrossMarginAccountActions />
+			)}
 
 			<MarketInfoBox />
 

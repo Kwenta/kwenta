@@ -7,7 +7,6 @@ import InfoBox from 'components/InfoBox';
 import PreviewArrow from 'components/PreviewArrow';
 import { Synths } from 'constants/currency';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
-import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import {
 	crossMarginAvailableMarginState,
 	futuresAccountState,
@@ -54,8 +53,6 @@ const MarketInfoBox: React.FC = () => {
 		: zeroBN;
 
 	const isNextPriceOrder = orderType === 1;
-	const nextPriceDetailsQuery = useGetNextPriceDetails();
-	const nextPriceDetails = nextPriceDetailsQuery?.data;
 
 	const positionSize = position?.position?.size ? wei(position?.position?.size) : zeroBN;
 	const orderDetails = useMemo(() => {
@@ -65,14 +62,14 @@ const MarketInfoBox: React.FC = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leverageSide, positionSize]);
 
-	const { commitDeposit } = useMemo(
-		() => computeNPFee(nextPriceDetails, wei(orderDetails.newSize)),
-		[nextPriceDetails, orderDetails]
-	);
+	const { commitDeposit } = useMemo(() => computeNPFee(marketInfo, wei(orderDetails.newSize)), [
+		marketInfo,
+		orderDetails,
+	]);
 
 	const totalDeposit = useMemo(() => {
-		return (commitDeposit ?? zeroBN).add(nextPriceDetails?.keeperDeposit ?? zeroBN);
-	}, [commitDeposit, nextPriceDetails?.keeperDeposit]);
+		return (commitDeposit ?? zeroBN).add(marketInfo?.keeperDeposit ?? zeroBN);
+	}, [commitDeposit, marketInfo?.keeperDeposit]);
 
 	const getPotentialAvailableMargin = (
 		previewTrade: FuturesPotentialTradeDetails | null,

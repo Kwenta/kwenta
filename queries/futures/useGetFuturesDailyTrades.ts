@@ -1,4 +1,4 @@
-import { utils as ethersUtils } from 'ethers';
+import { utils } from 'ethers';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useRecoilValue } from 'recoil';
 
@@ -34,7 +34,7 @@ const useGetFuturesDailyTradeStatsForMarket = (
 					{
 						first: 999999,
 						where: {
-							asset: `${ethersUtils.formatBytes32String(marketAsset)}`,
+							asset: `${utils.formatBytes32String(marketAsset)}`,
 							timestamp_gte: `${minTimestamp}`,
 						},
 					},

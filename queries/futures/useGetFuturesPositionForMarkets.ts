@@ -12,10 +12,7 @@ import { MarketKeyByAsset } from 'utils/futures';
 import { FuturesPosition } from './types';
 import { mapFuturesPosition, getFuturesMarketContract } from './utils';
 
-const useGetFuturesPositionForMarkets = (
-	markets: string[] | [],
-	options?: UseQueryOptions<FuturesPosition[] | []>
-) => {
+const useGetFuturesPositionForMarkets = (options?: UseQueryOptions<FuturesPosition[] | []>) => {
 	const isAppReady = useRecoilValue(appReadyState);
 	const isL2 = useRecoilValue(isL2State);
 	const [, setFuturesPositions] = useRecoilState(positionsState);
@@ -29,7 +26,7 @@ const useGetFuturesPositionForMarkets = (
 	return useQuery<FuturesPosition[] | []>(
 		QUERY_KEYS.Futures.MarketsPositions(network.id, assets || [], selectedFuturesAddress || ''),
 		async () => {
-			if (!markets || (selectedFuturesAddress && !isL2)) {
+			if (!assets || (selectedFuturesAddress && !isL2)) {
 				return [];
 			}
 
