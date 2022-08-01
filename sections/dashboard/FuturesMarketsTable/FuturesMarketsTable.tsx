@@ -1,3 +1,4 @@
+import { wei } from '@synthetixio/wei';
 import { useRouter } from 'next/router';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -147,6 +148,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 130,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.price ?? wei(0);
+										const rowTwo = rowB.original.price ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -165,6 +175,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 105,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.priceChange ?? wei(0);
+										const rowTwo = rowB.original.priceChange ?? wei(0);
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -183,6 +202,15 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne = rowA.original.fundingRate ?? wei(0);
+										const rowTwo = rowB.original.fundingRate ?? wei(0);
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -208,6 +236,17 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
+								sortType: useMemo(
+									() => (rowA: any, rowB: any) => {
+										const rowOne =
+											rowA.original.longInterest.add(rowA.original.shortInterest) ?? wei(0);
+										const rowTwo =
+											rowB.original.longInterest.add(rowB.original.shortInterest) ?? wei(0);
+										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+									},
+									[]
+								),
 							},
 							{
 								Header: (
@@ -227,6 +266,7 @@ const FuturesMarketsTable: FC = () => {
 									);
 								},
 								width: 125,
+								sortable: true,
 								sortType: useMemo(
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.volume;
