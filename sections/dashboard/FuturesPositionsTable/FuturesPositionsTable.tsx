@@ -174,12 +174,17 @@ const FuturesPositionsTable: FC<FuturesPositionTableProps> = ({
 								),
 								accessor: 'notionalValue',
 								Cell: (cellProps: CellProps<any>) => {
+									const formatOptions = cellProps.row.original.notionalValue.gte(1e6)
+										? { truncation: { divisor: 1e6, unit: 'M' } }
+										: {};
+
 									return (
 										<Currency.Price
 											currencyKey={Synths.sUSD}
 											price={cellProps.row.original.notionalValue}
 											sign={'$'}
 											conversionRate={1}
+											formatOptions={formatOptions}
 										/>
 									);
 								},
