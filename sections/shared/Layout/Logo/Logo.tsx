@@ -3,39 +3,30 @@ import { FC } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import LogoSvgBetaDark from 'assets/svg/brand/logo-beta-dark.svg';
-import LogoSvgBetaLight from 'assets/svg/brand/logo-beta-light.svg';
+import LogoDarkSvg from 'assets/svg/brand/logo-dark.svg';
 import LogoSvg from 'assets/svg/brand/logo.svg';
-import LogoSvgL2 from 'assets/svg/brand/logol2.svg';
 import ROUTES from 'constants/routes';
 import { currentThemeState } from 'store/ui';
 
-type LogoProps = {
-	isL2?: boolean;
-};
-
-const SvgLogo = ({ isL2 }: LogoProps) => {
+const SvgLogo = () => {
 	const currentTheme = useRecoilValue(currentThemeState);
 
 	if (window.location.pathname === ROUTES.Home.Root) {
 		return <LogoSvg />;
 	}
 
-	if (currentTheme === 'dark') {
-		return <LogoSvgBetaDark />;
-	}
 	if (currentTheme === 'light') {
-		return <LogoSvgBetaLight />;
+		return <LogoDarkSvg />;
 	}
 
-	return isL2 ? <LogoSvgL2 /> : <LogoSvg />;
+	return <LogoSvg />;
 };
 
-const Logo: FC<LogoProps> = (props) => {
+const Logo: FC = () => {
 	return (
 		<Link href={ROUTES.Home.Root}>
 			<LogoContainer>
-				<SvgLogo {...props} />
+				<SvgLogo />
 			</LogoContainer>
 		</Link>
 	);

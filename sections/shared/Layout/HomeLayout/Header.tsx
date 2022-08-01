@@ -131,7 +131,7 @@ const Header: FC = () => {
 			<MobileOnlyView>
 				<MobileContainer>
 					<LogoContainer>
-						<Logo isL2={isL2} />
+						<Logo />
 					</LogoContainer>
 					<MobileUserMenu />
 				</MobileContainer>
