@@ -179,7 +179,7 @@ const FuturesMarketsTable: FC = () => {
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.priceChange ?? wei(0);
 										const rowTwo = rowB.original.priceChange ?? wei(0);
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
 									},
 									[]
 								),
@@ -206,7 +206,7 @@ const FuturesMarketsTable: FC = () => {
 									() => (rowA: any, rowB: any) => {
 										const rowOne = rowA.original.fundingRate ?? wei(0);
 										const rowTwo = rowB.original.fundingRate ?? wei(0);
-										return rowOne.toSortable() > rowTwo.toSortable() ? 1 : -1;
+										return rowOne.toNumber() > rowTwo.toNumber() ? -1 : 1;
 									},
 									[]
 								),
