@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 
 import Connector from 'containers/Connector';
@@ -41,7 +42,10 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
-const { chains, provider } = configureChains([chain.mainnet, chain.optimism], [publicProvider()]);
+const { chains, provider } = configureChains(
+	[chain.mainnet, chain.optimism, chain.goerli, chain.kovan, chain.optimismKovan],
+	[infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_PROJECT_ID }), publicProvider()]
+);
 
 const { connectors } = getDefaultWallets({
 	appName: 'Kwenta',
