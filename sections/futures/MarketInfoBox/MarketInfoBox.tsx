@@ -9,6 +9,8 @@ import { Synths } from 'constants/currency';
 import { FuturesPotentialTradeDetails } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import {
+	crossMarginAvailableMarginState,
+	futuresAccountState,
 	leverageSideState,
 	marketInfoState,
 	maxLeverageState,
@@ -29,21 +31,27 @@ const MarketInfoBox: React.FC = () => {
 	const orderType = useRecoilValue(orderTypeState);
 	const leverageSide = useRecoilValue(leverageSideState);
 	const tradeSize = useRecoilValue(tradeSizeState);
-
-	const totalMargin = position?.remainingMargin ?? zeroBN;
-	const availableMargin = position?.accessibleMargin ?? zeroBN;
-
-	const buyingPower =
-		position && position?.accessibleMargin.gt(zeroBN)
-			? position?.accessibleMargin?.mul(maxLeverage ?? zeroBN)
-			: zeroBN;
-
-	const marginUsage =
-		position && position?.remainingMargin.gt(zeroBN)
-			? position?.remainingMargin?.sub(position?.accessibleMargin).div(position?.remainingMargin)
-			: zeroBN;
-
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
+	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
+	const { selectedAccountType } = useRecoilValue(futuresAccountState);
+
+	const totalMargin =
+		selectedAccountType === 'cross_margin'
+			? position?.remainingMargin.add(crossMarginFreeMargin) ?? zeroBN
+			: position?.remainingMargin ?? zeroBN;
+
+	const availableMargin =
+		selectedAccountType === 'cross_margin'
+			? position?.accessibleMargin.add(crossMarginFreeMargin) ?? zeroBN
+			: position?.accessibleMargin ?? zeroBN;
+
+	const buyingPower = availableMargin.gt(zeroBN)
+		? availableMargin.mul(maxLeverage ?? zeroBN)
+		: zeroBN;
+
+	const marginUsage = availableMargin.gt(zeroBN)
+		? totalMargin.sub(availableMargin).div(totalMargin)
+		: zeroBN;
 
 	const isNextPriceOrder = orderType === 1;
 	const nextPriceDetailsQuery = useGetNextPriceDetails();
@@ -96,10 +104,12 @@ const MarketInfoBox: React.FC = () => {
 
 	const previewTradeData = React.useMemo(() => {
 		const size = wei(tradeSize || zeroBN);
+
 		const potentialMarginUsage = previewTrade?.margin.gt(0)
 			? previewTrade?.margin?.sub(previewAvailableMargin)?.div(previewTrade?.margin)?.abs() ??
 			  zeroBN
 			: zeroBN;
+
 		const potentialBuyingPower =
 			previewAvailableMargin?.mul(maxLeverage ?? zeroBN)?.abs() ?? zeroBN;
 

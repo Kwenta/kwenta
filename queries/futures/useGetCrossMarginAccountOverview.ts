@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import QUERY_KEYS from 'constants/queryKeys';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import { appReadyState } from 'store/app';
-import { crossMarginFreeMarginState, futuresAccountState } from 'store/futures';
+import { crossMarginAvailableMarginState, futuresAccountState } from 'store/futures';
 import { isL2State, networkState } from 'store/wallet';
 import { zeroBN } from 'utils/formatters/number';
 
@@ -14,7 +14,7 @@ export default function useGetCrossMarginAccountOverview() {
 	const isL2 = useRecoilValue(isL2State);
 	const network = useRecoilValue(networkState);
 	const { crossMarginAddress } = useRecoilValue(futuresAccountState);
-	const setFreeMargin = useSetRecoilState(crossMarginFreeMarginState);
+	const setFreeMargin = useSetRecoilState(crossMarginAvailableMarginState);
 
 	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
 

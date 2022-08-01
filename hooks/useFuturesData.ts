@@ -1,7 +1,7 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import { ethers } from 'ethers';
+import { formatBytes32String } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
 import useGetCrossMarginAccountOverview from 'queries/futures/useGetCrossMarginAccountOverview';
 import useGetFuturesMarketLimit from 'queries/futures/useGetFuturesMarketLimit';
@@ -16,6 +17,7 @@ import { getFuturesMarketContract } from 'queries/futures/utils';
 import useExchangeRatesQuery from 'queries/rates/useExchangeRatesQuery';
 import { PositionSide } from 'sections/futures/types';
 import {
+	crossMarginAvailableMarginState,
 	currentMarketState,
 	feeCostState,
 	futuresAccountState,
@@ -38,6 +40,8 @@ import { zeroBN } from 'utils/formatters/number';
 import { getDisplayAsset } from 'utils/futures';
 import logError from 'utils/logError';
 
+import useCrossMarginAccountContracts from './useCrossMarginContracts';
+
 const DEFAULT_MAX_LEVERAGE = wei(10);
 
 const useFuturesData = () => {
@@ -45,13 +49,14 @@ const useFuturesData = () => {
 	const router = useRouter();
 	const { synthetixjs } = Connector.useContainer();
 	const { useSynthetixTxn, useEthGasPriceQuery } = useSynthetixQueries();
-	const { monitorTransaction } = TransactionNotifier.useContainer();
-	const { handleRefetch } = useRefetchContext();
 
 	const marketAsset = useRecoilValue(currentMarketState);
 	const marketKey = useRecoilValue(marketKeyState);
 	const marketLimitQuery = useGetFuturesMarketLimit(marketKey);
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();
+	const { crossMarginAccountContract } = useCrossMarginAccountContracts();
+	const { monitorTransaction } = TransactionNotifier.useContainer();
+	const { handleRefetch } = useRefetchContext();
 
 	const ethGasPriceQuery = useEthGasPriceQuery();
 
@@ -67,10 +72,17 @@ const useFuturesData = () => {
 	const position = useRecoilValue(positionState);
 	const market = useRecoilValue(marketInfoState);
 	const gasSpeed = useRecoilValue(gasSpeedState);
-	const { selectedFuturesAddress, crossMarginAvailable } = useRecoilValue(futuresAccountState);
+	const { selectedFuturesAddress, crossMarginAvailable, selectedAccountType } = useRecoilValue(
+		futuresAccountState
+	);
+	const crossMarginFreeMargin = useRecoilValue(crossMarginAvailableMarginState);
 
 	const [dynamicFee, setDynamicFee] = useState<Wei | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	const crossMarginAccount = crossMarginAvailable
+		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
+		: null;
 
 	const exchangeRates = useMemo(() => exchangeRatesQuery.data ?? null, [exchangeRatesQuery.data]);
 
@@ -97,14 +109,23 @@ const useFuturesData = () => {
 		[leverageSide, marketSize, marketSkew, marketAssetRate, maxMarketValueUSD]
 	);
 
+	const remainingMargin: Wei = useMemo(() => {
+		if (selectedAccountType === 'isolated_margin') {
+			return position?.remainingMargin || zeroBN;
+		}
+		const positionMargin = position?.remainingMargin || zeroBN;
+		const accountMargin = crossMarginAccount?.freeMargin || zeroBN;
+		return positionMargin.add(accountMargin);
+	}, [position?.remainingMargin, crossMarginAccount?.freeMargin, selectedAccountType]);
+
 	const onTradeAmountChange = React.useCallback(
 		(value: string, fromLeverage: boolean = false) => {
 			const size = fromLeverage ? (value === '' ? '' : wei(value).toNumber().toString()) : value;
 			const sizeSUSD = value === '' ? '' : marketAssetRate.mul(Number(value)).toNumber().toString();
 			const leverage =
-				value === '' || !position?.remainingMargin || position.remainingMargin.eq(0)
+				value === '' || remainingMargin.eq(0)
 					? ''
-					: marketAssetRate.mul(Number(value)).div(position.remainingMargin);
+					: marketAssetRate.mul(Number(value)).div(remainingMargin);
 			setTradeSize(size);
 			setTradeSizeSUSD(sizeSUSD);
 			setLeverage(
@@ -113,7 +134,7 @@ const useFuturesData = () => {
 		},
 		[
 			marketAssetRate,
-			position?.remainingMargin,
+			remainingMargin,
 			marketMaxLeverage,
 			setTradeSize,
 			setTradeSizeSUSD,
@@ -140,9 +161,9 @@ const useFuturesData = () => {
 		if (marketAssetRate.gt(0)) {
 			const size = valueIsNull ? '' : wei(value).div(marketAssetRate).toNumber().toString();
 			const leverage =
-				valueIsNull || !position?.remainingMargin || position.remainingMargin.eq(0)
+				valueIsNull || remainingMargin.eq(0)
 					? ''
-					: wei(value).div(position.remainingMargin).toString().substring(0, 4);
+					: wei(value).div(remainingMargin).toString().substring(0, 4);
 			setTradeSizeSUSD(value);
 			setTradeSize(size);
 			setLeverage(leverage);
@@ -158,15 +179,13 @@ const useFuturesData = () => {
 			} else {
 				const newTradeSize = marketAssetRate.eq(0)
 					? 0
-					: wei(value)
-							.mul(position?.remainingMargin ?? zeroBN)
-							.div(marketAssetRate);
+					: wei(value).mul(remainingMargin).div(marketAssetRate);
 				onTradeAmountChange(newTradeSize.toString(), true);
 				setLeverage(value.substring(0, 4));
 			}
 		},
 		[
-			position?.remainingMargin,
+			remainingMargin,
 			marketAssetRate,
 			onTradeAmountChange,
 			setTradeSize,
@@ -182,6 +201,7 @@ const useFuturesData = () => {
 		gasPrice,
 		{
 			enabled:
+				selectedAccountType === 'isolated_margin' &&
 				!!marketAsset &&
 				!!leverage &&
 				Number(leverage) >= 0 &&
@@ -189,6 +209,29 @@ const useFuturesData = () => {
 				!sizeDelta.eq(zeroBN),
 		}
 	);
+
+	const submitCrossMarginOrder = async () => {
+		if (!crossMarginAccountContract) return;
+
+		// TODO: Properly assign margin when we have new designs.
+		// Temporarily using all free margin (minus fees buffer) for testing.
+
+		const margin = crossMarginFreeMargin.toBN().sub(wei('10').toBN());
+
+		const newPosition = [
+			{
+				marketKey: formatBytes32String(marketAsset),
+				marginDelta: margin,
+				sizeDelta: wei(tradeSize).toBN(),
+			},
+		];
+
+		return await crossMarginAccountContract.distributeMargin(newPosition);
+	};
+
+	const submitIsolatedMarginOrder = () => {
+		orderTxn.mutate();
+	};
 
 	useEffect(() => {
 		if (orderTxn.hash) {
@@ -207,12 +250,12 @@ const useFuturesData = () => {
 	const placeOrderTranslationKey = React.useMemo(() => {
 		if (orderType === 1) return 'futures.market.trade.button.place-next-price-order';
 		if (!!position?.position) return 'futures.market.trade.button.modify-position';
-		return !position?.remainingMargin || position.remainingMargin.lt('50')
+		return remainingMargin.lt('50')
 			? 'futures.market.trade.button.deposit-margin-minimum'
 			: isMarketCapReached
 			? 'futures.market.trade.button.oi-caps-reached'
 			: 'futures.market.trade.button.open-position';
-	}, [position, orderType, isMarketCapReached]);
+	}, [position, orderType, isMarketCapReached, remainingMargin]);
 
 	useEffect(() => {
 		const getOrderFee = async () => {
@@ -221,7 +264,7 @@ const useFuturesData = () => {
 				!marketAsset ||
 				!selectedFuturesAddress ||
 				!isLeverageValueCommitted ||
-				!position?.remainingMargin
+				!remainingMargin
 			) {
 				return;
 			}
@@ -253,19 +296,19 @@ const useFuturesData = () => {
 		selectedFuturesAddress,
 		isLeverageValueCommitted,
 		sizeDelta,
+		remainingMargin,
 		setFeeCost,
 	]);
 
 	const previewTrade = useRecoilValue(potentialTradeDetailsState);
 
-	const crossMarginAccount = crossMarginAvailable
-		? { freeMargin: crossMarginAccountOverview.data?.freeMargin }
-		: null;
-
 	return {
 		onLeverageChange,
 		onTradeAmountChange,
 		onTradeAmountSUSDChange,
+		submitIsolatedMarginOrder,
+		submitCrossMarginOrder,
+		remainingMargin,
 		crossMarginAccount,
 		marketAssetRate,
 		maxLeverageValue,

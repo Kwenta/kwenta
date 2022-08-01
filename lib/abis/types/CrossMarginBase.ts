@@ -54,7 +54,7 @@ export declare namespace IMarginBaseTypes {
   ] & { marketKey: string; margin: BigNumber; size: BigNumber };
 }
 
-export interface MarginBaseInterface extends utils.Interface {
+export interface CrossMarginBaseInterface extends utils.Interface {
   functions: {
     "ETH()": FunctionFragment;
     "activeMarketKeys(uint256)": FunctionFragment;
@@ -335,12 +335,12 @@ export type WithdrawEvent = TypedEvent<
 
 export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 
-export interface MarginBase extends BaseContract {
+export interface CrossMarginBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MarginBaseInterface;
+  interface: CrossMarginBaseInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -1,4 +1,3 @@
-import { useFuturesContext } from 'contexts/FuturesContext';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
@@ -6,6 +5,7 @@ import styled from 'styled-components';
 
 import Button from 'components/Button';
 import Error from 'components/Error';
+import { useFuturesContext } from 'contexts/FuturesContext';
 import { PositionSide } from 'queries/futures/types';
 import {
 	leverageSideState,

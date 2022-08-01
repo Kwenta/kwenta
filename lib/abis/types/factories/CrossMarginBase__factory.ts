@@ -4,7 +4,10 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { MarginBase, MarginBaseInterface } from "../MarginBase";
+import type {
+  CrossMarginBase,
+  CrossMarginBaseInterface,
+} from "../CrossMarginBase";
 
 const _abi = [
   {
@@ -604,15 +607,15 @@ const _abi = [
   },
 ];
 
-export class MarginBase__factory {
+export class CrossMarginBase__factory {
   static readonly abi = _abi;
-  static createInterface(): MarginBaseInterface {
-    return new utils.Interface(_abi) as MarginBaseInterface;
+  static createInterface(): CrossMarginBaseInterface {
+    return new utils.Interface(_abi) as CrossMarginBaseInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): MarginBase {
-    return new Contract(address, _abi, signerOrProvider) as MarginBase;
+  ): CrossMarginBase {
+    return new Contract(address, _abi, signerOrProvider) as CrossMarginBase;
   }
 }

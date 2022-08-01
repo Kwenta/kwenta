@@ -7,7 +7,7 @@ import { networkState, walletAddressState } from 'store/wallet';
 
 import useCrossMarginAccountContracts from './useCrossMarginContracts';
 
-const supportedNetworks = [10, 69];
+const supportedNetworks = [69];
 
 export default function useQueryCrossMarginAccount() {
 	const { crossMarginContractFactory } = useCrossMarginAccountContracts();

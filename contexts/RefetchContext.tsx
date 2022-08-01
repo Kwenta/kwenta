@@ -46,6 +46,7 @@ export const RefetchProvider: React.FC = ({ children }) => {
 				case 'modify-position':
 					marketQuery.refetch();
 					openOrdersQuery.refetch();
+					crossMarginAccountOverview.refetch();
 					break;
 				case 'new-order':
 					openOrdersQuery.refetch();

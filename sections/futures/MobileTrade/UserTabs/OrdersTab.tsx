@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -10,6 +9,7 @@ import styled from 'styled-components';
 import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import { PositionSide } from 'queries/futures/types';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import {

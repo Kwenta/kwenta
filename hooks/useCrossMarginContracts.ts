@@ -5,14 +5,14 @@ import { CROSS_MARGIN_ACCOUNT_FACTORY } from 'constants/address';
 import Connector from 'containers/Connector';
 import {
 	CrossMarginAccountFactory__factory,
-	MarginBase__factory,
+	CrossMarginBase__factory,
 	CrossMarginAccountFactory,
-	MarginBase,
+	CrossMarginBase,
 } from 'lib/abis/types';
 import { futuresAccountState } from 'store/futures';
 
-export default function useCrossMarginAccountContracts(): {
-	crossMarginAccountContract: MarginBase | null;
+export default function useCrossMarginContracts(): {
+	crossMarginAccountContract: CrossMarginBase | null;
 	crossMarginContractFactory: CrossMarginAccountFactory | null;
 } {
 	const futuresAccount = useRecoilValue(futuresAccountState);
@@ -22,7 +22,7 @@ export default function useCrossMarginAccountContracts(): {
 	const crossMarginAccountContract = useMemo(() => {
 		if (!signer || !futuresAccount?.crossMarginAddress) return null;
 
-		return MarginBase__factory.connect(futuresAccount.crossMarginAddress, signer);
+		return CrossMarginBase__factory.connect(futuresAccount.crossMarginAddress, signer);
 	}, [futuresAccount?.crossMarginAddress, signer]);
 
 	const crossMarginContractFactory = useMemo(() => {

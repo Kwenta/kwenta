@@ -1,5 +1,4 @@
 import { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import { constants } from 'ethers';
 import { ChangeEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import Loader from 'components/Loader';
 import { CROSS_MARGIN_BASE_SETTINGS } from 'constants/address';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 import useSUSDContract from 'hooks/useSUSDContract';

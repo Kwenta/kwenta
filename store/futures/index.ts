@@ -166,7 +166,7 @@ export const futuresAccountState = atom<FuturesAccountState>({
 	},
 });
 
-export const crossMarginFreeMarginState = atom<Wei>({
-	key: getFuturesKey('crossMarginFreeMargin'),
+export const crossMarginAvailableMarginState = atom<Wei>({
+	key: getFuturesKey('crossMarginAvailableMarginState'),
 	default: zeroBN,
 });

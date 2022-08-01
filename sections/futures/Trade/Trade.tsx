@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import SegmentedControl from 'components/SegmentedControl';
 import { futuresAccountState, leverageSideState, orderTypeState } from 'store/futures';
 
-import CrossMarginAccountInfoBox from '../CrossMarginAccountInfoBox';
 import FeeInfoBox from '../FeeInfoBox';
 import LeverageInput from '../LeverageInput';
 import MarketInfoBox from '../MarketInfoBox';
@@ -28,8 +27,6 @@ const Trade: React.FC = () => {
 	return (
 		<div>
 			{futuresAccount.crossMarginAvailable && <AccountTypeToggle />}
-
-			{futuresAccount.selectedAccountType === 'cross_margin' && <CrossMarginAccountInfoBox />}
 
 			<MarketsDropdown />
 

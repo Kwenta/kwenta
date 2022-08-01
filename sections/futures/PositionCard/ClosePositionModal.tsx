@@ -1,7 +1,6 @@
 import { CurrencyKey } from '@synthetixio/contracts-interface';
 import useSynthetixQueries from '@synthetixio/queries';
 import Wei, { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import { formatBytes32String } from 'ethers/lib/utils';
 import { FC, useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import Error from 'components/Error';
 import { Synths } from 'constants/currency';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useCrossMarginAccountContracts from 'hooks/useCrossMarginContracts';
 import useSelectedPriceCurrency from 'hooks/useSelectedPriceCurrency';
 import { KWENTA_TRACKING_CODE } from 'queries/futures/constants';
@@ -144,29 +144,37 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 
 	useEffect(() => {
 		if (closeTxn?.hash) {
-			monitorTransaction({
-				txHash: closeTxn.hash,
-				onTxConfirmed: () => {
-					onDismiss();
-					handleRefetch('close-position');
-				},
-			});
+			monitorTx(closeTxn.hash);
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [closeTxn?.hash]);
 
+	const monitorTx = (txHash: string) => {
+		if (txHash) {
+			monitorTransaction({
+				txHash: txHash,
+				onTxConfirmed: () => {
+					onDismiss();
+					handleRefetch('close-position');
+					handleRefetch('account-margin-change');
+				},
+			});
+		}
+	};
+
 	const closePosition = async () => {
 		if (selectedAccountType === 'cross_margin') {
 			if (!crossMarginAccountContract) return;
 			try {
-				await crossMarginAccountContract.distributeMargin([
+				const tx = await crossMarginAccountContract.distributeMargin([
 					{
 						marketKey: formatBytes32String(currencyKey),
 						marginDelta: zeroBN.toBN(),
 						sizeDelta: positionSize.neg().toBN(),
 					},
 				]);
+				monitorTx(tx.hash);
 			} catch (err) {
 				logError(err);
 			}
@@ -195,7 +203,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 					variant="primary"
 					isRounded
 					size="lg"
-					onClick={() => closeTxn.mutate()}
+					onClick={closePosition}
 					disabled={
 						!!error || (!!closeTxn.errorMessage && !isUserDeniedError(closeTxn.errorMessage))
 					}

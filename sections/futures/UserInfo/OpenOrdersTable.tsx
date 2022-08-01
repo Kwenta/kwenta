@@ -1,6 +1,5 @@
 import useSynthetixQueries from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
-import { useRefetchContext } from 'contexts/RefetchContext';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CellProps } from 'react-table';
@@ -13,6 +12,7 @@ import Table, { TableNoResults } from 'components/Table';
 import PositionType from 'components/Text/PositionType';
 import Connector from 'containers/Connector';
 import TransactionNotifier from 'containers/TransactionNotifier';
+import { useRefetchContext } from 'contexts/RefetchContext';
 import useGetNextPriceDetails from 'queries/futures/useGetNextPriceDetails';
 import { currentMarketState, futuresAccountState, openOrdersState } from 'store/futures';
 import { gasSpeedState } from 'store/wallet';

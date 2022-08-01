@@ -52,6 +52,10 @@
 						"group": "internal"
 					},
 					{
+						"pattern": "contexts/**",
+						"group": "internal"
+					},
+					{
 						"pattern": "hooks/**",
 						"group": "internal"
 					},

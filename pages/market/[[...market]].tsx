@@ -1,5 +1,3 @@
-import { FuturesContext } from 'contexts/FuturesContext';
-import { RefetchProvider } from 'contexts/RefetchContext';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, FC } from 'react';
@@ -8,6 +6,8 @@ import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { DesktopOnlyView, MobileOrTabletView } from 'components/Media';
+import { FuturesContext } from 'contexts/FuturesContext';
+import { RefetchProvider } from 'contexts/RefetchContext';
 import useFuturesData from 'hooks/useFuturesData';
 import useQueryCrossMarginAccount from 'hooks/useQueryCrossMarginAccount';
 import MarketInfo from 'sections/futures/MarketInfo';

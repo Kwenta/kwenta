@@ -1,8 +1,8 @@
-import { useExchangeContext } from 'contexts/ExchangeContext';
 import React from 'react';
 import styled from 'styled-components';
 
 import ArrowIcon from 'assets/svg/app/arrow-down.svg';
+import { useExchangeContext } from 'contexts/ExchangeContext';
 import { SwapCurrenciesButton } from 'styles/common';
 
 import BaseCurrencyCard from '../TradeCard/Cards/BaseCurrencyCard';
