@@ -51,7 +51,8 @@ const FuturesMarketsTable: FC = () => {
 			const volume = futuresVolume[market.assetHex];
 			const pastPrice = dailyPriceChanges.find((price) => price.synth === market.asset);
 			const fundingRateResponse = fundingRates.find(
-				({ data: fundingData }) => (fundingData as FundingRateResponse)?.asset === market.asset
+				({ data: fundingData }) =>
+					(fundingData as FundingRateResponse)?.asset === MarketKeyByAsset[market.asset]
 			);
 
 			return {
