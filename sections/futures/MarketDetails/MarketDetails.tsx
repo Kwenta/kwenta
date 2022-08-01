@@ -108,7 +108,8 @@ const MarketDetails: React.FC<MarketDetailsProps> = ({ mobile }) => {
 						{children}
 					</TimerTooltip>
 				);
-			case 'Inst. Funding Rate' || '1H Funding Rate':
+			case 'Inst. Funding Rate':
+			case '1H Funding Rate':
 				return (
 					<MarketDetailsTooltip
 						key={key}
