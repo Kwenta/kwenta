@@ -131,6 +131,7 @@ class FuturesMarketInternal {
 			formatBytes32String('sUSD'),
 			this._marketKeyBytes
 		);
+
 		if (dynamicFee.tooVolatile) {
 			return { newPos: oldPos, fee: ZERO_BIG_NUM, status: PotentialTradeStatus.PRICE_TOO_VOLATILE };
 		}
@@ -180,6 +181,7 @@ class FuturesMarketInternal {
 			multiplyDecimal(newPos.size, tradeParams.price),
 			margin.add(fee)
 		);
+
 		if (maxLeverage.add(UNIT_BIG_NUM.div(100)).lt(leverage.abs())) {
 			return { newPos: oldPos, fee: zeroBN, status: PotentialTradeStatus.MAX_LEVERAGE_EXCEEDED };
 		}
@@ -266,7 +268,8 @@ class FuturesMarketInternal {
 	_currentFundingRate = async (price: BigNumber) => {
 		const maxFundingRate = await this._getSetting('maxFundingRate', [this._marketKeyBytes]);
 		const skew = await this._proportionalSkew(price);
-		const max = BN.max(UNIT_BN.neg(), new BN('-' + skew.toString()));
+
+		const max = BN.max(UNIT_BN.neg(), new BN(skew.toString()).neg());
 		const min = BigNumber.from(BN.min(max, UNIT_BN).toString());
 
 		return multiplyDecimal(min, maxFundingRate);

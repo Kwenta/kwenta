@@ -19,7 +19,7 @@ export default function useQueryCrossMarginAccount() {
 	const queryAccountLogs = useCallback(async () => {
 		if (!walletAddress || !crossMarginContractFactory) return null;
 		const accountFilter = crossMarginContractFactory.filters.NewAccount(walletAddress);
-		if (accountFilter && crossMarginContractFactory) {
+		if (accountFilter) {
 			const logs = await crossMarginContractFactory.queryFilter(accountFilter);
 			if (logs.length) {
 				return logs[0].args?.[1] || null;
@@ -43,7 +43,7 @@ export default function useQueryCrossMarginAccount() {
 		}
 		// TODO: Get selected type from persisted state
 
-		if (walletAddress && crossMarginContractFactory) {
+		if (crossMarginContractFactory) {
 			setFuturesAccount({
 				crossMarginAvailable: true,
 				crossMarginAddress: null,

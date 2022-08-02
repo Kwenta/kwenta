@@ -71,7 +71,7 @@ const ClosePositionModal: FC<ClosePositionModalProps> = ({ onDismiss }) => {
 		{ enabled: !!currencyKey && selectedAccountType === 'isolated_margin' }
 	);
 
-	// TODO: Get free for cross margin
+	// TODO: Get fee for cross margin
 	const transactionFee = useMemo(
 		() =>
 			newGetTransactionPrice(

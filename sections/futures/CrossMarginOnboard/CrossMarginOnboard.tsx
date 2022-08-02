@@ -1,6 +1,6 @@
 import { wei } from '@synthetixio/wei';
 import { constants } from 'ethers';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -44,7 +44,7 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 
 	const { handleRefetch } = useRefetchContext();
 
-	const createAccount = async () => {
+	const createAccount = useCallback(async () => {
 		try {
 			if (!signer || !synthetixjs || !crossMarginContractFactory)
 				throw new Error('Signer or snx lib missing');
@@ -74,25 +74,39 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 			setCreatingAccount(false);
 			logError(err);
 		}
-	};
+	}, [
+		signer,
+		synthetixjs,
+		crossMarginContractFactory,
+		network,
+		setCreatingAccount,
+		queryAndSetAccount,
+		monitorTransaction,
+	]);
 
-	const submitDeposit = async (weiAmount: string) => {
-		try {
-			if (!crossMarginAccountContract) throw new Error('No cross margin account');
+	const submitDeposit = useCallback(
+		async (weiAmount: string) => {
+			try {
+				if (!crossMarginAccountContract) throw new Error('No cross margin account');
 
-			const tx = await crossMarginAccountContract.deposit(weiAmount);
-			monitorTransaction({
-				txHash: tx.hash,
-				onTxConfirmed: () => {
-					onDepositComplete();
-				},
-			});
-		} catch (err) {
-			logError(err);
-		}
-	};
+				const tx = await crossMarginAccountContract.deposit(weiAmount);
+				monitorTransaction({
+					txHash: tx.hash,
+					onTxConfirmed: () => {
+						setDepositComplete(true);
+						handleRefetch('account-margin-change');
+						onComplete?.();
+						onClose();
+					},
+				});
+			} catch (err) {
+				logError(err);
+			}
+		},
+		[crossMarginAccountContract, monitorTransaction, handleRefetch, onComplete, onClose]
+	);
 
-	const depositToAccount = async () => {
+	const depositToAccount = useCallback(async () => {
 		try {
 			if (!crossMarginAccountContract) throw new Error('No cross margin account');
 			const weiAmount = wei(depositAmount ?? 0, 18);
@@ -117,17 +131,17 @@ export default function CrossMarginOnboard({ onClose, onComplete, isOpen }: Prop
 		} catch (err) {
 			logError(err);
 		}
-	};
+	}, [
+		crossMarginAccountContract,
+		depositAmount,
+		signer,
+		susdContract,
+		monitorTransaction,
+		submitDeposit,
+	]);
 
 	const onEditAmount = (_: ChangeEvent<HTMLInputElement>, value: string) => {
 		setDepositAmount(value);
-	};
-
-	const onDepositComplete = () => {
-		setDepositComplete(true);
-		handleRefetch('account-margin-change');
-		onComplete?.();
-		onClose();
 	};
 
 	const renderContent = () => {
