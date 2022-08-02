@@ -9,6 +9,7 @@ import useGetFuturesPositionForMarkets from 'queries/futures/useGetFuturesPositi
 import useGetFuturesPotentialTradeDetails from 'queries/futures/useGetFuturesPotentialTradeDetails';
 import useSynthBalances from 'queries/synths/useSynthBalances';
 import { walletAddressState } from 'store/wallet';
+import { futuresAccountState } from 'store/futures';
 
 type RefetchType =
 	| 'modify-position'
@@ -26,10 +27,8 @@ const RefetchContext = React.createContext<RefetchContextType>({
 });
 
 export const RefetchProvider: React.FC = ({ children }) => {
-	// TODO: use correct margin account
-	const walletAddress = useRecoilValue(walletAddressState);
-
-	const synthsBalancesQuery = useSynthBalances(walletAddress);
+	const { selectedFuturesAddress } = useRecoilValue(futuresAccountState);
+	const synthsBalancesQuery = useSynthBalances(selectedFuturesAddress);
 	const openOrdersQuery = useGetFuturesOpenOrders();
 	const positionQuery = useGetFuturesPositionForMarket();
 	const crossMarginAccountOverview = useGetCrossMarginAccountOverview();

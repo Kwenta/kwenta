@@ -29,7 +29,7 @@ export default function useQueryCrossMarginAccount() {
 	}, [walletAddress, crossMarginContractFactory]);
 
 	const queryAndSetAccount = useCallback(async () => {
-		if (!network.id || !walletAddress || !crossMarginContractFactory) return null;
+		if (!network.id || !walletAddress) return null;
 		if (!supportedNetworks.includes(network.id)) {
 			const accountState = {
 				crossMarginAvailable: false,
