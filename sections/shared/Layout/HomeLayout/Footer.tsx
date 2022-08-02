@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
 	return (
 		<StyledGridContainer>
 			<LogoFooter>
-				<Logo isL2={false} />
+				<Logo />
 				<SocialIcons>
 					<ExternalLink href={EXTERNAL_LINKS.Social.Twitter}>
 						<TwitterLogo />
