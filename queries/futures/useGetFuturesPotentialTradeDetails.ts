@@ -56,7 +56,8 @@ const useGetFuturesPotentialTradeDetails = (
 			network.id,
 			marketAsset || null,
 			tradeSize,
-			walletAddress || ''
+			walletAddress || '',
+			leverageSide
 		),
 		async () => {
 			if (!marketAsset || !tradeSize || !isL2) {
