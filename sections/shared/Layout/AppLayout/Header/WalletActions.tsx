@@ -29,8 +29,8 @@ type WalletActionsProps = {
 
 export const WalletActions: FC<WalletActionsProps> = ({ isMobile }) => {
 	const { address } = useAccount();
-	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address });
-	const { data: ensName } = useEnsName({ address });
+	const { data: ensAvatar } = useEnsAvatar({ addressOrName: address, chainId: 1 });
+	const { data: ensName } = useEnsName({ address, chainId: 1 });
 	const { t } = useTranslation();
 	const theme = useTheme();
 	const { isHardwareWallet } = Connector.useContainer();
