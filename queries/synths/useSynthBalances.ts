@@ -1,27 +1,27 @@
-import { CurrencyKey } from '@synthetixio/contracts-interface';
+import { CurrencyKey, NetworkId } from '@synthetixio/contracts-interface';
 import { Balances, SynthBalancesMap } from '@synthetixio/queries';
 import { wei } from '@synthetixio/wei';
 import { ethers } from 'ethers';
 import orderBy from 'lodash/orderBy';
 import { useQuery, UseQueryOptions } from 'react-query';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
+import { useAccount, useNetwork } from 'wagmi';
 
 import QUERY_KEYS from 'constants/queryKeys';
 import Connector from 'containers/Connector';
 import { balancesState } from 'store/futures';
-import { networkState, walletAddressState } from 'store/wallet';
 
 type SynthBalancesTuple = [string[], ethers.BigNumber[], ethers.BigNumber[]];
 
 const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
-	const walletAddress = useRecoilValue(walletAddressState);
-	const network = useRecoilValue(networkState);
+	const { address } = useAccount();
+	const { chain } = useNetwork();
 	const [, setBalances] = useRecoilState(balancesState);
 
 	const { synthetixjs } = Connector.useContainer();
 
 	return useQuery<Balances>(
-		QUERY_KEYS.Synths.Balances(network.id, walletAddress),
+		QUERY_KEYS.Synths.Balances((chain?.id ?? '69') as NetworkId, address!),
 		async () => {
 			if (!synthetixjs) {
 				// This should never happen since the query is not enabled when synthetixjs is undefined
@@ -32,7 +32,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 				currencyKeys,
 				synthsBalances,
 				synthsUSDBalances,
-			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(walletAddress);
+			]: SynthBalancesTuple = await synthetixjs.contracts.SynthUtil.synthsBalances(address);
 
 			let totalUSDBalance = wei(0);
 
@@ -68,7 +68,7 @@ const useSynthBalances = (options?: UseQueryOptions<Balances>) => {
 			return balances;
 		},
 		{
-			enabled: !!synthetixjs && !!walletAddress,
+			enabled: !!synthetixjs && !!address,
 			...options,
 		}
 	);
